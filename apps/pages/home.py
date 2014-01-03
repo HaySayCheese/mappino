@@ -1,4 +1,4 @@
-from django.http.response import HttpResponse
+from django.http import HttpResponse
 from mappino.wsgi import templates
 
 

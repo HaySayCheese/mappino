@@ -1,5 +1,37 @@
-{% extends 'main/_base.html' %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        {% block title %}
+            Mappino
+        {% endblock title %}
+    </title>
 
-{% block content %}
-    {{ static }}
-{% endblock content %}
+    {% block css %}
+    {% endblock css %}
+    <link rel="stylesheet/less" href="{{ static }}/less/flat-ui.less"/>
+
+    {% block js %}
+    {% endblock js %}
+    <script type="text/javascript" src="{{ static }}/js/libs/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="{{ static }}/js/libs/less-1.6.0.min.js"></script>
+
+    <script type="text/javascript" src="{{ static }}/js/libs/angular-1.2.6.min.js"></script>
+    <script type="text/javascript" src="{{ static }}/js/libs/angular-route-1.2.6.min.js"></script>
+
+
+    <script type="text/javascript" src="{{ static }}/js/logic/app.js"></script>
+
+    <script type="text/javascript" src="{{ static }}/js/logic/services/router.js"></script>
+
+    <script type="text/javascript" src="{{ static }}/js/logic/controllers/appCtrl.js"></script>
+</head>
+<body ng-app="Mappino" ng-controller="AppCtrl">
+    {% block content %}
+    {% endblock content %}
+
+    <div ng-view="content-view">
+
+    </div>
+</body>
+</html>
