@@ -2,10 +2,19 @@
 // Scaffolding
 // --------------------------------------------------
 
+// Reset the box-sizing
+
+*,
+*:before,
+*:after {
+    .box-sizing(border-box);
+}
 
 // Body reset
 // -------------------------
-
+body, html {
+    height: 100%;
+}
 body {
   font-family: @font-family-base;
   font-size: @font-size-base;
