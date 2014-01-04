@@ -4,8 +4,14 @@ app.controller('AppCtrl', function($scope, $location) {
 
     // Відслідковуєм перший вхід на сайт
     $scope.$on("$routeChangeSuccess", function() {
-        localStorage.firstEnter == "true"
-            ? ($location.path("/"), $scope.firstEnter = false)
-            : ($location.path("/first-enter"), $scope.firstEnter = true);
+        if (localStorage.visited == "true" || Object.keys($location.search()).length > 2) {
+            $location.path("/search");
+            localStorage.visited = "true";
+            $scope.visited = true;
+        } else {
+            $location.path("/first-enter");
+            $scope.visited = false;
+            localStorage.visited = "false";
+        }
     });
 });

@@ -1,35 +1,39 @@
-<div class="first-enter-container">
-    <div class="first-enter-video">
+<div class="first-enter-video">
+</div>
 
+<div class="first-enter-search">
+
+    <div class="first-enter-city" ng-show="firstEnterState == 'selectCity'">
+        <input id="first-enter-search-city-input" type="text" placeholder="" value="" class="form-control input-lg" select-on-click>
+        <span class="text-muted text-center">Укажите, пожалуйста, желаемый регион</span>
     </div>
 
-    <div class="first-enter-search">
+    <div class="first-enter-type" ng-show="firstEnterState == 'selectType'">
+        <select id="first-enter-search-property-type-select" class="mvl">
+            <option value="flat">Квартиры</option>
+            <option value="apartments">Аппартаменты</option>
+            <option value="house">Дома</option>
+            <option value="dacha">Дачи</option>
+            <option value="cottage">Коттеджы</option>
+            <option value="room">Комнаты</option>
+            <option value="trade">Торговые помещения</option>
+            <option value="office">Офисы</option>
+            <option value="warehouse">Склады</option>
+            <option value="business">Готовый бизнес</option>
+            <option value="catering">Обьекты общепита</option>
+            <option value="garage">Гаражы</option>
+            <option value="land">Земельные участки</option>
+        </select>
+        <span class="text-muted text-center">Укажите, пожалуйста, желаемый тип недвижимости</span>
+    </div>
 
-        <div class="first-enter-city" ng-show="firstEnterState == 'selectCity'">
-            <input id="first-enter-city-input" type="text" value="" class="form-control" select-on-click>
-
-            <span class="text-muted text-center">Укажите, пожалуйста, желаемый регион</span>
-        </div>
-
-        <div class="first-enter-type" ng-show="firstEnterState == 'selectType'">
-            <select id="property-type-select">
-                <option value="0">1</option>
-                <option value="1">2</option>
-                <option value="2">3</option>
-                <option value="3">5</option>
-            </select>
-
-            <span class="text-muted text-center">Укажите, пожалуйста, желаемый регион</span>
-        </div>
-
-        <div class="first-enter-search-footer">
-            <span class="text-muted">Возможно,</span> самый удобный поисковик недвижимости. <span class="text-muted">Binno. 2014.</span>
-            <ul class="social-icons">
-                <li><a href="http://vk.com"></a></li>
-                <li><a href="http://facebook.com"></a></li>
-                <li><a href="http://twitter.com"></a></li>
-                <li><a href="http://plus.google.com"></a></li>
-            </ul>
-        </div>
+    <div class="first-enter-search-footer">
+        <span class="text-muted">Возможно,</span> самый удобный поисковик недвижимости. <span class="text-muted">Binno. 2014.</span>
+        <ul class="social-icons pull-right">
+            <li><a href="http://vk.com"></a></li>
+            <li><a href="http://facebook.com"></a></li>
+            <li><a href="http://twitter.com"></a></li>
+            <li><a href="http://plus.google.com"></a></li>
+        </ul>
     </div>
 </div>

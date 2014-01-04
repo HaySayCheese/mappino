@@ -10,8 +10,10 @@
     {% block css %}
     {% endblock css %}
     <link rel="stylesheet" href="{{ static }}/css/bootstrap.css"/>
+
     <link rel="stylesheet/less" href="{{ static }}/less/flat-ui.less"/>
     <link rel="stylesheet/less" href="{{ static }}/less/pages/first-enter.less"/>
+    <link rel="stylesheet/less" href="{{ static }}/less/pages/search.less"/>
 
 
     {% block js %}
@@ -52,8 +54,22 @@
 
         </div>
 
-        <div class="sidebar" ng-hide="firstEnter">
+        <div class="sidebar" ng-show="visited">
+            <div class="sidebar-header">
 
+            </div>
+            <div class="sidebar-body">
+
+            </div>
+            <div class="sidebar-footer text-center">
+                <div class="pull-left">Данные - mappino. 2014.<br> &copy; Binno.</div>
+                <ul class="social-icons pull-right">
+                    <li><a href="http://vk.com"></a></li>
+                    <li><a href="http://facebook.com"></a></li>
+                    <li><a href="http://twitter.com"></a></li>
+                    <li><a href="http://plus.google.com"></a></li>
+                </ul>
+            </div>
         </div>
 
     </div>

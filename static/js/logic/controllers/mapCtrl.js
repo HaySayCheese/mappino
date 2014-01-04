@@ -16,8 +16,8 @@ app.controller('MapCtrl', function($scope, $location) {
      **/
     $scope.filters = {
         city: "",
-        latLng: "50.008197,33.498954",
-        zoom:   7,
+        latLng: "50.442218,30.779838",
+        zoom:   9,
 
         propertyType:   localStorage.propertyType   || "houses",
         propertyTypeUa: localStorage.propertyTypeUa || "Дома",
@@ -97,7 +97,7 @@ app.controller('MapCtrl', function($scope, $location) {
             // то центруємо карту по координатах в урлу і грузим дані
             if (Object.keys($location.search()).length && $location.search().city) {
                 setMapParametersToUrl();
-                loadData();
+                //loadData();
                 // якшо пустий то просто ставим карту на Україну
                 // і додаєм параметри в урл
             } else {
@@ -221,8 +221,16 @@ app.controller('MapCtrl', function($scope, $location) {
      * Клік по кнопці пошука
      **/
     $scope.reloadPropertyByFilters = function() {
-        returnMapPositionFromAddress();
+        //returnMapPositionFromAddress();
         parseFiltersCollectionAndUpdateUrl();
-        loadData();
+        //loadData();
     };
+
+    $scope.$watch("visited", function(newValue, oldValue) {
+        if (newValue == true) {
+            $scope.reloadPropertyByFilters();
+            map.panTo(new google.maps.LatLng($scope.filters.latLng.split(",")[0], $scope.filters.latLng.split(",")[1]));
+        }
+
+    })
 });

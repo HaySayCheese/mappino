@@ -2,12 +2,31 @@
 
 app.controller('FirstEnterCtrl', function($scope, $location) {
     $scope.firstEnterState = "selectCity";
-    $("#property-type-select").selectpicker({
+
+    var propertyTypeSelect = $("#first-enter-search-property-type-select");
+    propertyTypeSelect.selectpicker({
         style: 'btn-hg btn-info',
         menuStyle: 'dropdown-inverse'
     });
 
-    var firstEnterCityInput = document.getElementById('first-enter-city-input');
+    // Евент вибору елемента в дропдауні
+    propertyTypeSelect.change(function() {
+        $scope.filters.propertyType   = propertyTypeSelect.find("option:selected").val();
+        $scope.filters.propertyTypeUa = propertyTypeSelect.find("option:selected").text();
+
+        // Міняємо дані про те що юзер відвідав сайт
+        localStorage.visited = "true";
+        $scope.visited = true;
+
+        // Перенаправляємо його на сторінку пошуку
+        $location.path("/search");
+        if(!$scope.$$phase)
+            $scope.$apply();
+    });
+
+
+    // Ставим фокус на поле пошуку
+    var firstEnterCityInput = document.getElementById('first-enter-search-city-input');
     angular.element(firstEnterCityInput).focus();
 
     var autocompleteOptions = {
@@ -17,8 +36,10 @@ app.controller('FirstEnterCtrl', function($scope, $location) {
         }
     };
 
+    // Ініціалізуємо автокомпліт
     var autocomplete = new google.maps.places.Autocomplete(firstEnterCityInput, autocompleteOptions);
 
+    // Евент вибору міста в автокомпліті
     google.maps.event.addListener(autocomplete, 'place_changed', function() {
         var place = autocomplete.getPlace();
         if (!place.geometry) {

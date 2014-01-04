@@ -1,15 +1,6 @@
 @import "../variables";
 @import "../mixins";
 
-.first-enter-container {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    overflow: auto;
-}
-
 .first-enter-video {
     width: 600px;
     height: 300px;
@@ -27,7 +18,7 @@
 
     position: absolute;
     top: 450px;
-    left: calc(~"50% - 300px");
+    left: calc(~"50% - 325px");
 
     text-align: center;
     background: white;
@@ -47,12 +38,18 @@
 
         background: #f2f1ef;
         border-top: 1px solid #e5e1d9;
+
+        .social-icons {
+            margin-top: 7px;
+        }
     }
 }
 
-#first-enter-city-input {
+#first-enter-search-city-input {
     width: 95%;
-    margin: 20px 0;
+    margin: 21px 0;
+
+    display: inline-block;
 
     font-size: @font-size-h4;
     text-align: center;
@@ -60,6 +57,6 @@
     border: none;
 }
 
-#property-type-select {
-    margin: 20px 0;
+#first-enter-search-property-type-select {
+    width: 250px;
 }

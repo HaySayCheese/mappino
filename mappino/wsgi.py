@@ -18,9 +18,9 @@ application = get_wsgi_application()
 
 # jinja2 configs
 templates = Environment(
-	loader=FileSystemLoader(os.path.join(BASE_DIR, 'templates')),
-	trim_blocks=True,
-	lstrip_blocks=True
+    loader=FileSystemLoader(os.path.join(BASE_DIR, 'templates')),
+    trim_blocks=True,
+    lstrip_blocks=True
 )
 templates.globals.update({
 	'static': STATIC_URL
