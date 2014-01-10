@@ -1,0 +1,60 @@
+
+//
+// Load core variables and mixins
+// --------------------------------------------------
+
+@import "../components/variables";
+@import "../components/mixins.less";
+
+// bwb - base white block
+.bwb {
+    .box-shadow(~"0 0 15px rgba(0, 0, 0, 0.4)");
+
+    .bwb-header,
+    .bwb-body,
+    .bwb-footer {
+        display: block;
+        padding: 10px;
+    }
+
+    .bwb-header {
+        background: #f2f1ef;
+        border-bottom: 1px solid #e5e1d9;
+    }
+
+
+    .bwb-body {
+        background: #ffffff;
+    }
+
+
+    .bwb-footer {
+        background: #f2f1ef;
+        border-top: 1px solid #e5e1d9;
+
+        text-align: center;
+        line-height: 36px;
+        .clearfix();
+
+        .bwb-footer-text {
+            color: lighten(@gray, 10%);
+            float: left;
+        }
+    }
+
+
+    .bwb-social-icons {
+        float: right;
+        .clearfix();
+
+        > a {
+            .square(35px);
+            float: left;
+        }
+
+        > a:nth-child(1) { background-image: url("../img/vk.png"); }
+        > a:nth-child(2) { background-image: url("../img/facebook.png"); }
+        > a:nth-child(3) { background-image: url("../img/twitter.png"); }
+        > a:nth-child(4) { background-image: url("../img/google-plus.png"); }
+    }
+}

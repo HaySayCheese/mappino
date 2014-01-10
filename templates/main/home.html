@@ -9,12 +9,8 @@
 
     {% block css %}
     {% endblock css %}
-    <link rel="stylesheet" href="{{ static }}/css/bootstrap.css"/>
-
-    <link rel="stylesheet/less" href="{{ static }}/less/flat-ui.less"/>
-    <link rel="stylesheet/less" href="{{ static }}/less/pages/first-enter.less"/>
-    <link rel="stylesheet/less" href="{{ static }}/less/pages/search.less"/>
-
+    <link rel="stylesheet/less" href="{{ static }}less/base.less"/>
+    <link rel="stylesheet" href="{{ static }}css/bootstrap-select.css"/>
 
     {% block js %}
     {% endblock js %}
@@ -25,7 +21,7 @@
 
     <script type="text/javascript" src="{{ static }}js/libs/jquery-2.0.3.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/less-1.6.0.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/bootstrap.min.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/bootstrap.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select.js"></script>
 
     <script type="text/javascript" src="{{ static }}js/libs/angular-1.2.6.min.js"></script>
@@ -42,7 +38,7 @@
 
     <script type="text/javascript" src="{{ static }}js/logic/directives/selectOnClick.js"></script>
 </head>
-<body ng-app="Mappino" ng-controller="AppCtrl">
+<body ng-app="Mappino" ng-controller="AppCtrl" ng-init="firstEnterInit()">
     {% block content %}
     {% endblock content %}
 
@@ -54,21 +50,93 @@
 
         </div>
 
-        <div class="sidebar" ng-show="visited">
+        <div class="bwb sidebar" ng-show="visited">
             <div class="sidebar-header">
-
+                <div class="bwb-header text-right">
+                    <a href="#">Подать обьявление</a>
+                    <span class="text-muted">&#8226;</span>
+                    <a href="#">Регистрация</a>
+                    <span class="text-muted">&#8226;</span>
+                    <a ng-href="#!/account/login/[[ urlFiltersPart ]]">Войти</a>
+                </div>
+                <div class="sidebar-header-city-search">
+                    <input id="sidebar-city-input" type="text" placeholder="" value="" class="form-control sidebar-city-input input-lg text-center" select-on-click ng-model="filters.city">
+                </div>
             </div>
-            <div class="sidebar-body">
-
+            <div class="bwb-body sidebar-body">
+                <div class="panel-group" id="markers-accordion">
+                    <div class="panel panel-danger">
+                        <div class="panel-heading red-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#redMarkersPanel">
+                            <h4 class="panel-title">
+                                <b>Дома,</b> <small>(30 000 - 50 000)</small>
+                            </h4>
+                        </div>
+                        <div id="redMarkersPanel" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-primary">
+                        <div class="panel-heading blue-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#blueMarkersPanel">
+                            <h4 class="panel-title">
+                                <b>Дома,</b> <small>(30 000 - 50 000)</small>
+                            </h4>
+                        </div>
+                        <div id="blueMarkersPanel" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-success">
+                        <div class="panel-heading green-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#greenMarkersPanel">
+                            <h4 class="panel-title">
+                                <b>Дома,</b> <small>(30 000 - 50 000)</small>
+                            </h4>
+                        </div>
+                        <div id="greenMarkersPanel" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-warning">
+                        <div class="panel-heading yellow-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#yellowMarkersPanel">
+                            <h4 class="panel-title">
+                                <b>Дома,</b> <small>(30 000 - 50 000)</small>
+                            </h4>
+                        </div>
+                        <div id="yellowMarkersPanel" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-favorites">
+                        <div class="panel-heading favorites-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#favoritesMarkersPanel">
+                            <h4 class="panel-title">
+                                <b>Избранные (3)</b>
+                            </h4>
+                        </div>
+                        <div id="favoritesMarkersPanel" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="sidebar-footer text-center">
-                <div class="pull-left">Данные - mappino. 2014.<br> &copy; Binno.</div>
-                <ul class="social-icons pull-right">
-                    <li><a href="http://vk.com"></a></li>
-                    <li><a href="http://facebook.com"></a></li>
-                    <li><a href="http://twitter.com"></a></li>
-                    <li><a href="http://plus.google.com"></a></li>
-                </ul>
+            <div class="bwb-footer">
+                <div class="bwb-footer-text">
+                    Данные - mappino. 2014.
+                </div>
+                <div class="bwb-social-icons">
+                    <a href="http://vk.com"></a>
+                    <a href="http://facebook.com"></a>
+                    <a href="http://twitter.com"></a>
+                    <a href="http://plus.google.com"></a>
+                </div>
             </div>
         </div>
 

@@ -16,6 +16,13 @@ app.config(['$routeProvider', function($routeProvider) {
             reloadOnSearch: false
         })
 
+        .when('/account/login', {
+            //controller: "MainCtrl"
+            templateUrl: "/ajax/template/home/search/",
+            view: "content-view",
+            reloadOnSearch: false
+        })
+
         .otherwise({
             redirectTo: '/'
         });
