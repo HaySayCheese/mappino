@@ -1,0 +1,124 @@
+
+//
+// Load core variables and mixins
+// --------------------------------------------------
+
+@import "../components/variables";
+@import "../components/mixins.less";
+
+
+.sidebar {
+    width: 350px;
+
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    bottom: 30px;
+
+    background: white;
+    .box-shadow(~"0 0 15px rgba(0, 0, 0, 0.4)");
+}
+
+.sidebar-header {
+    display: block;
+
+    .bwb-header {
+        padding: 5px 10px !important;
+        font-size: @font-size-h6;
+    }
+
+    .sidebar-header-city-search {
+        display: block;
+        height: 80px;
+
+        padding: 20px 10px;
+
+        background: white;
+        text-align: center;
+
+        .sidebar-city-input {
+            border: none;
+            .box-shadow(none);
+        }
+    }
+}
+
+.sidebar-body {
+    display: block;
+    height: calc(~"100% - 165px");
+    //overflow: auto;
+
+    position: relative;
+
+    padding: 0px !important;
+
+    .red-markers-panel-icon,
+    .blue-markers-panel-icon,
+    .green-markers-panel-icon,
+    .yellow-markers-panel-icon,
+    .favorites-markers-panel-icon {
+        background-size: 31px 34px;
+        background-position: right bottom;
+        background-repeat: no-repeat;
+
+        position: relative;
+        cursor: pointer;
+
+        &:after {
+            content: " ";
+
+            position: absolute;
+            bottom: -8px;
+            right: 0;
+
+            width: 0;
+            height: 0;
+
+            border-top-style: solid;
+            border-top-width: 8px;
+
+            border-right: 8px solid transparent;
+        }
+    }
+
+    .red-markers-panel-icon {
+        background-image: url("../img/red-panel-marker.png");
+
+        &:after {
+            border-top-color: #c14949;
+        }
+    }
+    .blue-markers-panel-icon {
+        background-image: url("../img/blue-panel-marker.png");
+
+        &:after {
+            border-top-color: #c14949;
+        }
+    }
+    .green-markers-panel-icon {
+        background-image: url("../img/green-panel-marker.png");
+
+        &:after {
+            border-top-color: #c14949;
+        }
+    }
+    .yellow-markers-panel-icon {
+        background-image: url("../img/yellow-panel-marker.png");
+
+        &:after {
+            border-top-color: #c14949;
+        }
+    }
+    .favorites-markers-panel-icon {
+        background-image: url("../img/panel-star.png");
+        background-size: 35px 31px;
+
+        &:after {
+            border-top-color: #857858;
+        }
+    }
+
+    .panel {
+        margin-right: -8px;
+    }
+}

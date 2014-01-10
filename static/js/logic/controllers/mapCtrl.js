@@ -7,7 +7,7 @@ app.controller('MapCtrl', function($scope, $location) {
      **/
     var map,
         markers = [],
-        //cityInput = document.getElementById('filter-city'),
+        cityInput = document.getElementById('sidebar-city-input'),
         markerClusterer,
         geocoder;
 
@@ -17,26 +17,11 @@ app.controller('MapCtrl', function($scope, $location) {
     $scope.filters = {
         city: "",
         latLng: "50.442218,30.779838",
-        zoom:   9,
-
+        zoom:   9
+    };
+    $scope.redFilters = {
         propertyType:   localStorage.propertyType   || "houses",
-        propertyTypeUa: localStorage.propertyTypeUa || "Дома",
-
-        operationType: "all",
-
-        priceMin: "",
-        priceMax: "",
-
-        areaMin: "",
-        areaMax: "",
-
-        floorMin: "",
-        floorMax: "",
-
-        internet:   false,
-        phone:      false,
-
-        onlyBuildings: false
+        propertyTypeUa: localStorage.propertyTypeUa || "Дома"
     };
 
     /**
@@ -65,8 +50,8 @@ app.controller('MapCtrl', function($scope, $location) {
                 country: "ua"
             }
         };
-//        var autocomplete = new google.maps.places.Autocomplete(cityInput, autocompleteOptions);
-//        autocomplete.bindTo('bounds', map);
+        var autocomplete = new google.maps.places.Autocomplete(cityInput, autocompleteOptions);
+        autocomplete.bindTo('bounds', map);
 
         /**
          * Інші екземпляри
@@ -106,24 +91,27 @@ app.controller('MapCtrl', function($scope, $location) {
         });
 
         // Вибір елемента в автокомпліті
-//        google.maps.event.addListener(autocomplete, 'place_changed', function() {
-//            var place = autocomplete.getPlace();
-//            if (!place.geometry) {
-//                return;
-//            }
-//
-//            // If the place has a geometry, then present it on a map.
-//            if (place.geometry.viewport) {
-//                map.fitBounds(place.geometry.viewport);
-//            } else {
-//                map.panTo(place.geometry.location);
-//                map.setZoom(17);  // Why 17? Because it looks good.
-//            }
-//
-//            $scope.filters.city = cityInput.value;
-//            if(!$scope.$$phase)
-//                $scope.$apply();
-//        });
+        google.maps.event.addListener(autocomplete, 'place_changed', function() {
+            var place = autocomplete.getPlace();
+
+            if (!place.geometry) {
+                return;
+            }
+
+            // If the place has a geometry, then present it on a map.
+            if (place.geometry.viewport) {
+                map.fitBounds(place.geometry.viewport);
+            } else {
+                map.panTo(place.geometry.location);
+                map.setZoom(17);  // Why 17? Because it looks good.
+            }
+
+            $scope.filters.city = cityInput.value;
+
+            console.log($scope.filters.city)
+            if(!$scope.$$phase)
+                $scope.$apply();
+        });
     }
 
 
@@ -141,8 +129,7 @@ app.controller('MapCtrl', function($scope, $location) {
         }
 
         initializeMap();
-//        dropdownInit();
-//        radioButtonInit();
+        initPlugins();
 
         console.log("Filters are parsed");
     };
@@ -160,11 +147,11 @@ app.controller('MapCtrl', function($scope, $location) {
                 if (key == "city")
                     $location.search(key, encodeURI(filters[key]));
 
-                if (filters[key] != "" && filters[key] != false /* не додаєм в урл деякі параметри */ && key != "propertyTypeUa" && key)
+                if (filters[key] != "" && filters[key] != false)
                     $location.search(key, filters[key]);
 
                 if (filters[key] === false || filters[key] == "")
-                    $location.search(key, null)
+                    $location.search(key, null);
             }
         }
 
@@ -207,7 +194,7 @@ app.controller('MapCtrl', function($scope, $location) {
         geocoder.geocode({ 'address': address }, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
                 if (results[0].geometry.viewport)
-                    map.fitBounds(results[0].geometry.viewport)
+                    map.fitBounds(results[0].geometry.viewport);
                 else {
                     map.panTo(results[0].geometry.location);
                     map.setZoom(17);
@@ -218,19 +205,41 @@ app.controller('MapCtrl', function($scope, $location) {
 
 
     /**
-     * Клік по кнопці пошука
+     * Слідкуємо за тим чи користувач закінчив екскурсію ))
      **/
-    $scope.reloadPropertyByFilters = function() {
-        //returnMapPositionFromAddress();
-        parseFiltersCollectionAndUpdateUrl();
-        //loadData();
-    };
-
+    var visitCount = 0;
     $scope.$watch("visited", function(newValue, oldValue) {
-        if (newValue == true) {
-            $scope.reloadPropertyByFilters();
-            map.panTo(new google.maps.LatLng($scope.filters.latLng.split(",")[0], $scope.filters.latLng.split(",")[1]));
+        visitCount++;
+        if (newValue == true && visitCount > 2) {
+            parseFiltersCollectionAndUpdateUrl();
+            returnMapPositionFromAddress();
         }
+    });
 
-    })
+
+    /**
+     * Слідкуємо за зміною фільттрів. Динамічно оновлюємо урл
+     **/
+    $scope.$watchCollection("filters", function(newValue, oldValue) {
+        parseFiltersCollectionAndUpdateUrl();
+        console.log(newValue);
+    });
+
+
+    /**
+     * Ініціалізація бутстраповських плагінів
+     **/
+    function initPlugins() {
+        var propertyTypeSelect = $("#sidebar-property-type-select");
+        propertyTypeSelect.selectpicker({
+            style: 'btn btn-lg btn-default',
+            menuStyle: 'dropdown-inverse'
+        });
+
+        var sidebarRedCurrencyTypeSelect = $("#sidebar-red-currency-type-select");
+        sidebarRedCurrencyTypeSelect.selectpicker({
+            style: 'btn btn-lg btn-default',
+            menuStyle: 'dropdown-inverse'
+        });
+    }
 });
