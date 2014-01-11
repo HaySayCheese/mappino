@@ -7,18 +7,19 @@
         {% endblock title %}
     </title>
 
-    {% block css %}
-    {% endblock css %}
-    <link rel="stylesheet/less" href="{{ static }}less/base.less"/>
+    <!-- Styles include -->
+    <link rel="stylesheet/less" href="{{ static }}less/main/base.less"/>
     <link rel="stylesheet" href="{{ static }}css/bootstrap-select.css"/>
 
-    {% block js %}
-    {% endblock js %}
+
+    <!-- Map include -->
     <script type="text/javascript"
             src="http://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places">
     </script>
     <script type="text/javascript" src="{{ static }}js/libs/markerclusterer.min.js"></script>
 
+
+    <!-- Libs include -->
     <script type="text/javascript" src="{{ static }}js/libs/jquery-2.0.3.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/less-1.6.0.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/bootstrap.js"></script>
@@ -28,19 +29,18 @@
     <script type="text/javascript" src="{{ static }}js/libs/angular-route-1.2.6.min.js"></script>
 
 
-    <script type="text/javascript" src="{{ static }}js/logic/app.js"></script>
+    <!-- Logic files include -->
+    <script type="text/javascript" src="{{ static }}js/main/app.js"></script>
 
-    <script type="text/javascript" src="{{ static }}js/logic/services/router.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/services/router.js"></script>
 
-    <script type="text/javascript" src="{{ static }}js/logic/controllers/appCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/logic/controllers/mapCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/logic/controllers/firstEnterCtrl.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/controllers/appCtrl.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/controllers/mapCtrl.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/controllers/firstEnterCtrl.js"></script>
 
-    <script type="text/javascript" src="{{ static }}js/logic/directives/selectOnClick.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/directives/selectOnClick.js"></script>
 </head>
 <body ng-app="Mappino" ng-controller="AppCtrl" ng-init="firstEnterInit()">
-    {% block content %}
-    {% endblock content %}
 
     <div class="wrapper" ng-controller="MapCtrl" ng-init="parseSearchParametersFromUrl()">
 

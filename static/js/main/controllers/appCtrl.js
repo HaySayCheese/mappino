@@ -26,7 +26,19 @@ app.controller('AppCtrl', function($scope, $rootScope, $location) {
         }
 
         if (localStorage.visited == "true" && Object.keys($location.search()).length > 2) {
-            $rootScope.visited = true;
+            if (!$rootScope.visited)
+                $rootScope.visited = true;
+
+            if (!localStorage.visited)
+                localStorage.visited = "true";
+
+            if(!$scope.$$phase)
+                $scope.$apply();
+        }
+
+        if (Object.keys($location.search()).length > 2) {
+            if (!$rootScope.visited)
+                $rootScope.visited = true;
 
             if (!localStorage.visited)
                 localStorage.visited = "true";
