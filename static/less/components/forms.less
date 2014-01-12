@@ -128,7 +128,7 @@ output {
   background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
   border: 2px solid @input-border;
   border-radius: @input-border-radius;
-  .transition(~"border-color ease-in-out .15s, box-shadow ease-in-out .15s");
+  .transition(~"border-color ease-in-out .15s");
 
   // Customize the `:focus` state to imitate native WebKit styles.
   .form-control-focus();
@@ -156,6 +156,27 @@ output {
   }
 }
 
+.form-control + .input-icon {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    line-height: 34px;
+    vertical-align: middle;
+    background-color: transparent;
+    padding: 0 8px 0 0;
+    border-radius: 6px;
+
+    .glyphicon {
+        width: auto;
+        top: 3px;
+
+        padding-left: 8px;
+        border-left-width: 1px;
+        border-left-style: solid;
+        border-left-color: @gray-lighter;
+    }
+}
+
 
 // Form groups
 //
@@ -164,6 +185,7 @@ output {
 
 .form-group {
   margin-bottom: 15px;
+    position: relative;
 }
 
 

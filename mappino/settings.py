@@ -10,9 +10,6 @@ DEBUG = True
 if not DEBUG:
 	import production_settings
 else:
-	# pypy psycopg2cffi compatible hook
-	from psycopg2cffi import compat
-	compat.register()
 
 	# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 	import os

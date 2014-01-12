@@ -444,7 +444,7 @@
 .button-variant(@color; @background) {
   color: @color;
   background-color: @background;
-  border-color: @background;
+      border-color: @background;
 
   &:hover,
   &:focus,
@@ -452,13 +452,15 @@
   &.active,
   .open .dropdown-toggle& {
     color: @color;
-    background-color: darken(@background, 8%);
-        border-color: darken(@background, 8%);
+    background-color: darken(@background, 4%);
+        border-color: darken(@background, 4%);
   }
   &:active,
   &.active,
   .open .dropdown-toggle& {
     background-image: none;
+    background-color: darken(@background, 6%);
+        border-color: darken(@background, 6%);
   }
   &.disabled,
   &[disabled],

@@ -1,1 +1,46 @@
-<div></div>
+<div class="modal fade">
+    <div class="modal-dialog login-dialog">
+        <div class="modal-content content-blue">
+            <div class="modal-header header-blue">
+                <img src="{{ static }}img/login/login-reg-logo.png" alt=""/>
+                <img class="close" src="{{ static }}img/login/login-reg-close.png" alt="" data-dismiss="modal"/>
+            </div>
+            <div class="modal-body modal-body-wtp">
+                <div class="row">
+                    <div class="col-sm-7 text-center">
+                        <h2>Добро пожаловать!</h2>
+                        <h5>Войдите используя аккаунт mappino.</h5>
+
+                        <div class="col-sm-10 col-sm-offset-1 top-margin">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Моб. телефон или эл. почта">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Пароль">
+                            </div>
+                            <div class="form-group">
+                                <div class="btn btn-success btn-block">Войти</div>
+                            </div>
+                            <a href="#">Не удаеться войти?</a>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-5 text-center">
+                        <div class="login-picture">
+                            <img src="{{ static }}img/login/promo/login-favorites.png" alt=""/>
+                        </div>
+                        <p class="text-with-picture">
+                            После входа, избранные обьявления станут доступны на других устройствах.
+                            Это также касается контактов риелторов.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer footer-blue"></div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script>
+    $(".modal").modal();
+</script>

@@ -3,6 +3,19 @@
 app.controller('AppCtrl', function($scope, $rootScope, $location) {
     $rootScope.visited = true;
 
+    $(document).on('hidden.bs.modal', function (e) {
+
+        $location.path("/search");
+
+        if(!$scope.$$phase)
+            $scope.$apply();
+    });
+
+    $scope.$on("$routeChangeSuccess", function() {
+        console.log("fsfs")
+        $scope.urlFiltersPart = $location.url().replace("/search", "");
+    });
+
 
     $scope.firstEnterInit = function() {
 

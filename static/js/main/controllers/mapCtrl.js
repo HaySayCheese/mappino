@@ -152,7 +152,10 @@ app.controller('MapCtrl', function($scope, $location) {
         }
 
         // частина урла яка додається до ссилок
-        $scope.urlFiltersPart = $location.url().replace("/search", "");
+        $scope.urlFiltersPart = $location.url()
+                                    .replace("/search", "")
+                                    .replace("/account/registration", "")
+                                    .replace("/account/login", "");
 
         console.log("Filters collection parsed");
     }
