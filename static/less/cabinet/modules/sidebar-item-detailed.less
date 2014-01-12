@@ -1,0 +1,42 @@
+
+//
+// Load core variables and mixins
+// --------------------------------------------------
+
+@import "../../components/variables";
+@import "../../components/mixins.less";
+
+/**
+* sidebar-item-detailed styles
+**/
+.sidebar-item-detailed {
+    .size(calc(~"100% - 600px"), 100%);
+
+    float: left;
+
+    background: #ffffff;
+
+    .sidebar-item-detailed-header {
+        .size(100%, 65px);
+
+        background: #f2f2f2;
+    }
+
+    .sidebar-item-detailed-body {
+        .size(100%, calc(~"100% - 65px"));
+        overflow: auto;
+
+        &::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        &::-webkit-scrollbar-track {
+            border-radius: 10px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            background: #f2f2f2;
+        }
+    }
+}
