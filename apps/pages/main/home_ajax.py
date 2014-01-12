@@ -10,3 +10,8 @@ def first_enter_template(request):
 def search_template(request):
 	t = templates.get_template('main/parts/home/search.html')
 	return HttpResponse(content=t.render())
+
+
+def detailed_templates(request):
+	t = templates.get_template('main/parts/home/detailed.html')
+	return HttpResponse(content=t.render())

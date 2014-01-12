@@ -4,14 +4,14 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider
         .when('/first-enter', {
             controller: "FirstEnterCtrl",
-            templateUrl: "/ajax/template/home/first-enter/",
+            templateUrl: "/ajax/template/main/first-enter/",
             view: "content-view",
             reloadOnSearch: false
         })
 
         .when('/search', {
             //controller: "MainCtrl"
-            templateUrl: "/ajax/template/home/search/",
+            templateUrl: "/ajax/template/main/search/",
             view: "content-view",
             reloadOnSearch: false
         })
