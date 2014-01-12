@@ -18,11 +18,32 @@
 // Brand colors
 // -------------------------
 
-@brand-primary:         #428bca;
-@brand-success:         #5cb85c;
-@brand-warning:         #f0ad4e;
-@brand-danger:          #d9534f;
-@brand-info:            #5bc0de;
+@green-10:      #71c187;
+@green-20:      #49bb7f;
+@green-30:      #23c563;
+@green-40:      #06b358;
+
+
+@blue-10:       #54adeb;
+@blue-20:       #4996cc;
+@blue-30:       #318ce1;
+@blue-40:       #3075b5;
+
+@pink-10:       #4faaa5;
+
+@red-10:        #fb6262;
+@red-20:        #d44d4d;
+@red-30:        #cf1d4f;
+
+@yellow-10:     #ffc63e;
+@yellow-20:     #dcb323;
+
+@brand-primary:         @blue-20;
+@brand-success:         @green-20;
+@brand-warning:         @yellow-20;
+@brand-danger:          @red-20;
+@brand-info:            @pink-10;
+
 
 // Scaffolding
 // -------------------------
@@ -33,7 +54,7 @@
 // Links
 // -------------------------
 
-@link-color:            @brand-primary;
+@link-color:            @brand-info;
 @link-hover-color:      darken(@link-color, 15%);
 
 // Typography
@@ -67,7 +88,7 @@
 // Iconography
 // -------------------------
 
-@icon-font-path:          "../fonts/";
+@icon-font-path:          "../../fonts/";
 @icon-font-name:          "glyphicons-halflings-regular";
 
 
@@ -77,6 +98,9 @@
 
 @padding-base-vertical:          6px;
 @padding-base-horizontal:        12px;
+
+@padding-xlarge-vertical:         19px;
+@padding-xlarge-horizontal:       24px;
 
 @padding-large-vertical:         10px;
 @padding-large-horizontal:       16px;
@@ -121,27 +145,21 @@
 
 @btn-default-color:              #333;
 @btn-default-bg:                 #fff;
-@btn-default-border:             #ccc;
 
 @btn-primary-color:              #fff;
 @btn-primary-bg:                 @brand-primary;
-@btn-primary-border:             darken(@btn-primary-bg, 5%);
 
 @btn-success-color:              #fff;
 @btn-success-bg:                 @brand-success;
-@btn-success-border:             darken(@btn-success-bg, 5%);
 
 @btn-warning-color:              #fff;
 @btn-warning-bg:                 @brand-warning;
-@btn-warning-border:             darken(@btn-warning-bg, 5%);
 
 @btn-danger-color:               #fff;
 @btn-danger-bg:                  @brand-danger;
-@btn-danger-border:              darken(@btn-danger-bg, 5%);
 
 @btn-info-color:                 #fff;
 @btn-info-bg:                    @brand-info;
-@btn-info-border:                darken(@btn-info-bg, 5%);
 
 @btn-link-disabled-color:        @gray-light;
 
@@ -380,7 +398,7 @@
 // Form states and alerts
 // -------------------------
 
-@state-success-text:             #3c763d;
+@state-success-text:             @green-40;
 @state-success-bg:               #dff0d8;
 @state-success-border:           darken(spin(@state-success-bg, -10), 5%);
 
@@ -388,11 +406,11 @@
 @state-info-bg:                  #d9edf7;
 @state-info-border:              darken(spin(@state-info-bg, -10), 7%);
 
-@state-warning-text:             #8a6d3b;
+@state-warning-text:             @yellow-20;
 @state-warning-bg:               #fcf8e3;
 @state-warning-border:           darken(spin(@state-warning-bg, -10), 5%);
 
-@state-danger-text:              #a94442;
+@state-danger-text:              @red-30;
 @state-danger-bg:                #f2dede;
 @state-danger-border:            darken(spin(@state-danger-bg, -10), 5%);
 
@@ -517,19 +535,19 @@
 
 @panel-primary-text:          #fff;
 @panel-primary-border:        @brand-primary;
-@panel-primary-heading-bg:    #4996cc;
+@panel-primary-heading-bg:    @blue-20;
 
 @panel-success-text:          #ffffff;
 @panel-success-border:        @state-success-border;
-@panel-success-heading-bg:    #71c187;
+@panel-success-heading-bg:    @green-10;
 
 @panel-warning-text:          #ffffff;
 @panel-warning-border:        @state-warning-border;
-@panel-warning-heading-bg:    #ffc63e;
+@panel-warning-heading-bg:    @yellow-10;
 
 @panel-danger-text:           #ffffff;
 @panel-danger-border:         @state-danger-border;
-@panel-danger-heading-bg:     #fb6262;
+@panel-danger-heading-bg:     @red-10;
 
 @panel-info-text:             #ffffff;
 @panel-info-border:           @state-info-border;

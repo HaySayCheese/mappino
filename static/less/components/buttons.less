@@ -51,26 +51,26 @@
 // --------------------------------------------------
 
 .btn-default {
-  .button-variant(@btn-default-color; @btn-default-bg; @btn-default-border);
+  .button-variant(@btn-default-color; @btn-default-bg);
 }
 .btn-primary {
-  .button-variant(@btn-primary-color; @btn-primary-bg; @btn-primary-border);
+  .button-variant(@btn-primary-color; @btn-primary-bg);
 }
 // Warning appears as orange
 .btn-warning {
-  .button-variant(@btn-warning-color; @btn-warning-bg; @btn-warning-border);
+  .button-variant(@btn-warning-color; @btn-warning-bg);
 }
 // Danger and error appear as red
 .btn-danger {
-  .button-variant(@btn-danger-color; @btn-danger-bg; @btn-danger-border);
+  .button-variant(@btn-danger-color; @btn-danger-bg);
 }
 // Success appears as green
 .btn-success {
-  .button-variant(@btn-success-color; @btn-success-bg; @btn-success-border);
+  .button-variant(@btn-success-color; @btn-success-bg);
 }
 // Info appears as blue-green
 .btn-info {
-  .button-variant(@btn-info-color; @btn-info-bg; @btn-info-border);
+  .button-variant(@btn-info-color; @btn-info-bg);
 }
 
 
@@ -83,6 +83,7 @@
   font-weight: normal;
   cursor: pointer;
   border-radius: 0;
+  text-decoration: none !important;
 
   &,
   &:active,
@@ -116,7 +117,10 @@
 
 // Button Sizes
 // --------------------------------------------------
-
+.btn-xlg {
+    // line-height: ensure even-numbered height of button next to large input
+    .button-size(@padding-xlarge-vertical; @padding-xlarge-horizontal; @font-size-large; @line-height-large; 0);
+}
 .btn-lg {
   // line-height: ensure even-numbered height of button next to large input
   .button-size(@padding-large-vertical; @padding-large-horizontal; @font-size-large; @line-height-large; @border-radius-large);

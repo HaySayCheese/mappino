@@ -16,12 +16,8 @@ app.controller('MapCtrl', function($scope, $location) {
      **/
     $scope.filters = {
         city: "",
-        latLng: "50.442218,30.779838",
-        zoom:   9
-    };
-    $scope.redFilters = {
-        propertyType:   localStorage.propertyType   || "houses",
-        propertyTypeUa: localStorage.propertyTypeUa || "Дома"
+        zoom: parseInt(9),
+        latLng: "50.442218,30.779838"
     };
 
     /**
@@ -34,7 +30,7 @@ app.controller('MapCtrl', function($scope, $location) {
          **/
         var mapOptions = {
             center: new google.maps.LatLng($scope.filters.latLng.split(",")[0], $scope.filters.latLng.split(",")[1]),
-            zoom: parseFloat($scope.filters.zoom),
+            zoom: parseInt($scope.filters.zoom),
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             mapTypeControl: false,
             streetViewControl: false
@@ -77,6 +73,7 @@ app.controller('MapCtrl', function($scope, $location) {
             }
         });
 
+        // Евент коли карта закінчила переміщення
         google.maps.event.addListenerOnce(map, 'idle', function() {
             // якщо урл при загрузці не пустий і має в собі параметр з містом
             // то центруємо карту по координатах в урлу і грузим дані
@@ -90,7 +87,7 @@ app.controller('MapCtrl', function($scope, $location) {
             }
         });
 
-        // Вибір елемента в автокомпліті
+        // Евент вибору елемента в автокомпліті
         google.maps.event.addListener(autocomplete, 'place_changed', function() {
             var place = autocomplete.getPlace();
 
@@ -103,12 +100,11 @@ app.controller('MapCtrl', function($scope, $location) {
                 map.fitBounds(place.geometry.viewport);
             } else {
                 map.panTo(place.geometry.location);
-                map.setZoom(17);  // Why 17? Because it looks good.
+                map.setZoom(17);
             }
 
             $scope.filters.city = cityInput.value;
 
-            console.log($scope.filters.city)
             if(!$scope.$$phase)
                 $scope.$apply();
         });
@@ -155,6 +151,9 @@ app.controller('MapCtrl', function($scope, $location) {
             }
         }
 
+        // частина урла яка додається до ссилок
+        $scope.urlFiltersPart = $location.url().replace("/search", "");
+
         console.log("Filters collection parsed");
     }
 
@@ -164,7 +163,7 @@ app.controller('MapCtrl', function($scope, $location) {
      **/
     function setMapParametersToUrl() {
         $location.search("latLng", $scope.filters.latLng);
-        $location.search("zoom", parseFloat($scope.filters.zoom));
+        $location.search("zoom", parseInt($scope.filters.zoom));
 
         if(!$scope.$$phase)
             $scope.$apply();
@@ -207,14 +206,14 @@ app.controller('MapCtrl', function($scope, $location) {
     /**
      * Слідкуємо за тим чи користувач закінчив екскурсію ))
      **/
-    var visitCount = 0;
-    $scope.$watch("visited", function(newValue, oldValue) {
-        visitCount++;
-        if (newValue == true && visitCount > 2) {
-            parseFiltersCollectionAndUpdateUrl();
-            returnMapPositionFromAddress();
-        }
-    });
+//    var visitCount = 0;
+//    $scope.$watch("visited", function(newValue, oldValue) {
+//        visitCount++;
+//        if (newValue == true && visitCount > 2) {
+//            parseFiltersCollectionAndUpdateUrl();
+//            returnMapPositionFromAddress();
+//        }
+//    });
 
 
     /**
@@ -222,6 +221,7 @@ app.controller('MapCtrl', function($scope, $location) {
      **/
     $scope.$watchCollection("filters", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl();
+
         console.log(newValue);
     });
 

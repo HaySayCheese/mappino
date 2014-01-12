@@ -31,8 +31,8 @@ app.controller('FirstEnterCtrl', function($scope, $rootScope, $location, $timeou
                     // Перенаправляємо його на сторінку пошуку
                     $location.path("/search");
 
-                    $scope.filters.propertyType   = propertyTypeSelect.find("option:selected").val();
-                    $scope.filters.propertyTypeUa = propertyTypeSelect.find("option:selected").text();
+                    $scope.mapFilters.propertyType   = propertyTypeSelect.find("option:selected").val();
+                    $scope.mapFilters.propertyTypeUa = propertyTypeSelect.find("option:selected").text();
 
                     // Міняємо дані про те що юзер відвідав сайт
                     $rootScope.visited = true;
@@ -51,7 +51,7 @@ app.controller('FirstEnterCtrl', function($scope, $rootScope, $location, $timeou
                 return;
             }
 
-            $scope.filters.city = cityInput.value;
+            $scope.mapFilters.city = cityInput.value;
 
             $timeout(function() {
 
