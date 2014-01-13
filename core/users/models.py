@@ -86,6 +86,10 @@ class Users(AbstractBaseUser):
 	REQUIRED_FIELDS = ['name', 'surname', 'email']
 
 
+	@classmethod
+	def is_email_free(cls, email):
+		return cls.objects.exists(email = email)
+
 
 
 class MobilePhonesChecks(models.Model):

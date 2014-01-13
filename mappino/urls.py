@@ -15,6 +15,10 @@ urlpatterns += patterns('apps.pages.main',
     url(r'^ajax/template/main/accounts/registration/$', 'accounts_ajax.registration_template'),
 )
 
+#-- angular API for main pages
+urlpatterns += patterns('apps',
+    url(r'^ajax/api/accounts/validate-email/$', 'accounts.accounts_ajax.validate_email_handler'),
+)
 
 
 #-- cabinet pages
