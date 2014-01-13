@@ -1,1 +1,66 @@
-<div></div>
+<div class="modal fade">
+    <div class="modal-dialog registration-dialog">
+        <div class="modal-content content-blue">
+            <div class="modal-header header-blue">
+                <img src="{{ static }}img/login/login-reg-logo.png" alt=""/>
+                <img class="close" src="{{ static }}img/login/login-reg-close.png" alt="" data-dismiss="modal"/>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-7 text-center">
+                        <h2>Регистрация</h2>
+
+                        <div class="col-sm-10 col-sm-offset-1">
+                            <div class="row form-group">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="Имя">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="Фамилия">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control" placeholder="Эл. почта">
+                                <span class="input-icon text-success">
+                                    <span class="glyphicon glyphicon-ok-sign"></span>
+                                </span>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" ui-mask="+38 (099) 99 - 99 - 999" ng-model="phoneNumber">
+                                <span class="input-icon text-success">
+                                    <span class="glyphicon glyphicon-ok-sign"></span>
+                                </span>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Пароль">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Еще разочек пароль">
+                            </div>
+
+                            <div class="form-group">
+                                <div class="btn btn-success btn-block">Зарегистрироватся</div>
+                            </div>
+                            <a ng-href="#!/account/login/[[ urlFiltersPart ]]">уже есть аккаунт?</a>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-5 text-center">
+                        <div class="login-picture">
+                            <img src="{{ static }}img/login/promo/login-favorites.png" alt=""/>
+                        </div>
+                        <p class="text-with-picture">
+                            После входа, избранные обьявления станут доступны на других устройствах.
+                            Это также касается контактов риелторов.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer footer-blue"></div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script>
+    $(".modal").modal();
+</script>

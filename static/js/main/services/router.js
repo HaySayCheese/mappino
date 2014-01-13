@@ -18,7 +18,14 @@ app.config(['$routeProvider', function($routeProvider) {
 
         .when('/account/login', {
             //controller: "MainCtrl"
-            templateUrl: "/ajax/template/home/search/",
+            templateUrl: "/ajax/template/main/accounts/login/",
+            view: "content-view",
+            reloadOnSearch: false
+        })
+
+        .when('/account/registration', {
+            controller: "RegistrationCtrl",
+            templateUrl: "/ajax/template/main/accounts/registration/",
             view: "content-view",
             reloadOnSearch: false
         })

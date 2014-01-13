@@ -1,0 +1,78 @@
+
+//
+// Load core variables and mixins
+// --------------------------------------------------
+
+@import "../../components/variables";
+@import "../../components/mixins";
+
+
+
+.login-dialog,
+.registration-dialog {
+
+    .top-margin {
+        margin-top: 55px;
+    }
+
+    .modal-body-wtp {
+        padding-top: 35px;
+    }
+
+    a {
+        color: #ffffff;
+        display: inline-block;
+        margin-top: 20px;
+
+        &:hover,
+        &:focus {
+            color: @gray-lighter;
+        }
+    }
+
+    .input-icon > .glyphicon {
+        border-left-color: #98c6e0;
+    }
+
+    .btn-success {
+        .button-variant(@btn-success-color; @green-30);
+    }
+
+    .form-control {
+        border-color: @blue-00;
+
+        .placeholder(#9da9b4);
+    }
+
+    .form-group {
+        margin-bottom: 7px;
+    }
+
+    .text-with-picture {
+        color: #d2e0e5;
+    }
+
+    .login-picture {
+        .size(100%, 215px);
+    }
+
+    .row {
+        .col-md-6:first-child {
+            padding-right: 3px;
+        }
+        .col-md-6:last-child {
+            padding-left: 4px;
+
+            .input-icon {
+                right: 17px;
+            }
+        }
+    }
+}
+
+.registration-dialog {
+    h2 {
+        margin-top: 0;
+    }
+}
+
