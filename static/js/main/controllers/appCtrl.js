@@ -5,6 +5,9 @@ app.controller('AppCtrl', function($scope, $rootScope, $location) {
 
     $(document).on('hidden.bs.modal', function (e) {
 
+        angular.element("body").removeClass("modal-open");
+        angular.element(".modal-backdrop").remove();
+
         $location.path("/search");
 
         if(!$scope.$$phase)
@@ -12,8 +15,9 @@ app.controller('AppCtrl', function($scope, $rootScope, $location) {
     });
 
     $scope.$on("$routeChangeSuccess", function() {
-        console.log("fsfs")
         $scope.urlFiltersPart = $location.url().replace("/search", "");
+
+        angular.element(".modal-backdrop").remove();
     });
 
 

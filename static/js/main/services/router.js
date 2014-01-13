@@ -24,7 +24,7 @@ app.config(['$routeProvider', function($routeProvider) {
         })
 
         .when('/account/registration', {
-            //controller: "MainCtrl"
+            controller: "RegistrationCtrl",
             templateUrl: "/ajax/template/main/accounts/registration/",
             view: "content-view",
             reloadOnSearch: false
