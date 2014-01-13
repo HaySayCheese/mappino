@@ -1,3 +1,6 @@
+import json
+
+
 def GET_parameter(request, parameter, required=True, may_be_empty=False):
 	if request.method == 'GET':
 		if parameter in request.GET:
@@ -36,6 +39,22 @@ def POST_parameter(request, parameter, required=True, may_be_empty=False):
 				raise ValueError('Required parameter '+str(parameter)+' is absent.')
 			else:
 				return None
+
+	else:
+		# request method is not POST
+		raise ValueError('Invalid request method type')
+
+
+def angular_post_parameters(request, required_parameters):
+	if request.method == 'POST':
+		parameters = json.loads(request.body)
+		for param in required_parameters:
+			if not param in parameters:
+				raise ValueError('Required parameter '+str(param)+' is absent.')
+
+			if parameters[param] == '':
+				raise ValueError('Parameter '+str(param)+' is empty.')
+		return parameters
 
 	else:
 		# request method is not POST

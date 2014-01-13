@@ -88,7 +88,7 @@ class Users(AbstractBaseUser):
 
 	@classmethod
 	def is_email_free(cls, email):
-		return cls.objects.exists(email = email)
+		return cls.objects.filter(email = email).count() == 0
 
 
 
@@ -103,7 +103,7 @@ class MobilePhonesChecks(models.Model):
 
 	@classmethod
 	def new(cls, user):
-		if cls.objects.exists(user = user):
+		if cls.objects.filter(user = user).count() == 0:
 			raise ObjectAlreadyExist()
 
 		return cls.objects.create(

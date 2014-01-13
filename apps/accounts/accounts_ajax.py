@@ -4,7 +4,7 @@ from django.core.validators import validate_email
 from django.http import HttpResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
-from collective.methods.request_data_getters import POST_parameter
+from collective.methods.request_data_getters import POST_parameter, angular_post_parameters
 from core.users.models import Users
 from mappino.wsgi import templates
 
@@ -25,7 +25,7 @@ def registration_template(request):
 @require_http_methods(['POST'])
 def validate_email_handler(request):
 	try:
-		email = POST_parameter(request, 'email')
+		email = angular_post_parameters(request, ['email'])['email']
 	except ValueError:
 		return HttpResponse('@email should be sent.', status=412)
 
