@@ -1,4 +1,4 @@
-var app = angular.module('Mappino', ['ngRoute', 'ui.mask']);
+var app = angular.module('Mappino', ['ngRoute', 'ngCookies', 'ui.mask']);
 
 app.config(function($interpolateProvider, $locationProvider) {
 
