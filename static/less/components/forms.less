@@ -166,14 +166,26 @@ output {
     padding: 0 8px 0 0;
     border-radius: 6px;
 
-    .glyphicon {
-        width: auto;
+    span[class^="input-icon-"], span[class*="input-icon-"] {
+        width: 16px;
         top: 3px;
 
-        padding-left: 8px;
+        padding-left: 21px;
+
         border-left-width: 1px;
         border-left-style: solid;
         border-left-color: @gray-lighter;
+
+        background-size: 16px;
+        background-position: right center;
+        background-repeat: no-repeat;
+    }
+
+    .input-icon-ok {
+        background-image: url("../../img/field-ok.png");
+    }
+    .input-icon-error {
+        background-image: url("../../img/field-error.png");
     }
 }
 

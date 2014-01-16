@@ -5,7 +5,7 @@ app.directive('allowOnlyNumber', function () {
 
         element.bind("keydown", function(event) {
 
-            if($.inArray(event.which,keyCode) == -1) {
+            if($.inArray(event.which, keyCode) == -1) {
                 scope.$apply(function(){
                     scope.$eval(attrs.onlyNum);
                     event.preventDefault();

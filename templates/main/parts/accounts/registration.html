@@ -10,42 +10,92 @@
                     <div class="col-sm-7 text-center">
                         <h2>Регистрация</h2>
 
-                        <form action="" name="registrationForm">
+                        <form action="" name="registrationForm" novalidate>
                             <div class="col-sm-10 col-sm-offset-1">
 
                                 <div class="row form-group">
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" placeholder="Имя" name="firstName" ng-model="user.firstName" required>
+                                        <input type="text" class="form-control" placeholder="Имя" name="firstName" ng-model="user.firstName" required maxlength="15">
+
+                                        <span class="input-icon">
+                                            <span class="input-icon-error" ng-show="registrationForm.firstName.$error.required"
+                                                  data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
+
+                                            <span class="input-icon-ok" ng-show="registrationForm.firstName.$valid"></span>
+                                        </span>
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" placeholder="Фамилия" name="lastName" ng-model="user.lastName">
+                                        <input type="text" class="form-control" placeholder="Фамилия" name="lastName" ng-model="user.lastName" required maxlength="20">
+
+                                        <span class="input-icon">
+                                            <span class="input-icon-error" ng-show="registrationForm.lastName.$error.required"
+                                                  data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
+
+                                            <span class="input-icon-ok" ng-show="registrationForm.lastName.$valid"></span>
+                                        </span>
                                     </div>
                                 </div>
 
+
                                 <div class="form-group">
-                                    <input type="email" class="form-control" placeholder="Эл. почта" name="email" ng-model="user.email" required>
-                                    <span class="input-icon text-success" ng-show="registrationForm.email.$valid" data-toggle="tooltip" data-placement="left" title="">
-                                        <span class="glyphicon glyphicon-ok-sign"></span>
+                                    <input type="text" class="form-control" placeholder="Эл. почта" name="email" ng-model="user.email" required>
+
+                                    <span class="input-icon">
+                                        <span class="input-icon-error" ng-show="registrationForm.email.$error.required"
+                                              data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
+
+                                        <span class="input-icon-error" ng-show="registrationForm.email.$error.email"
+                                              data-toggle="tooltip" data-placement="right" title="Невірно введено ел. пошту"></span>
+
+                                        <span class="input-icon-error" ng-show="showValidationEmail && registrationForm.email.$error.free"
+                                              data-toggle="tooltip" data-placement="right" title="Мило зайняте"></span>
+
+                                        <span class="input-icon-ok" ng-show="registrationForm.email.$valid"></span>
                                     </span>
                                 </div>
 
+
                                 <div class="form-group">
-                                    <input type="text" class="form-control" ui-mask="+38 (099) 99 - 99 - 999" ng-model="user.phoneNumber">
-                                    <span class="input-icon text-success">
-                                        <span class="glyphicon glyphicon-ok-sign"></span>
+                                    <input type="text" class="form-control" ui-mask="+38 (099) 99 - 99 - 999" name="phoneNumber" ng-model="user.phoneNumber" required>
+
+                                    <span class="input-icon">
+                                        <span class="input-icon-error" ng-show="registrationForm.phoneNumber.$error.required"
+                                              data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
+
+                                        <span class="input-icon-ok" ng-show="registrationForm.phoneNumber.$valid"></span>
                                     </span>
                                 </div>
 
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Пароль" ng-model="user.firstPassword">
-                                </div>
 
                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Еще разочек пароль" ng-model="user.lastPassword">
+                                    <input type="password" class="form-control" placeholder="Пароль" name="firstPassword" ng-model="user.firstPassword" required>
+
+                                    <span class="input-icon">
+                                        <span class="input-icon-error" ng-show="registrationForm.firstPassword.$error.required"
+                                              data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
+
+                                        <span class="input-icon-ok" ng-show="registrationForm.firstPassword.$valid"></span>
+                                    </span>
                                 </div>
 
+
                                 <div class="form-group">
-                                    <div class="btn btn-success btn-block" ng-click="submitRegistration()">Зарегистрироватся</div>
+                                    <input type="password" class="form-control" placeholder="Еще разочек пароль" name="lastPassword" ng-model="user.lastPassword" required>
+
+                                    <span class="input-icon">
+                                        <span class="input-icon-error" ng-show="registrationForm.lastPassword.$error.required"
+                                              data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
+
+                                        <span class="input-icon-error" ng-show="registrationForm.lastPassword.$error.match"
+                                              data-toggle="tooltip" data-placement="right" title="Паролі не співпадають"></span>
+
+                                        <span class="input-icon-ok" ng-show="registrationForm.lastPassword.$valid"></span>
+                                    </span>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <div class="btn btn-success btn-block" ng-disabled="registrationForm.$invalid" ng-click="submitRegistration()">Зарегистрироватся</div>
                                 </div>
                                 <a ng-href="#!/account/login/[[ urlFiltersPart ]]">Уже есть аккаунт?</a>
                             </div>
