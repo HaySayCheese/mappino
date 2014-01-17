@@ -61,10 +61,11 @@ def check_code(code, request, response):
 		response.delete_cookie(COOKIE_NAME)
 		raise KeyError('field @attempts is not in hash {0}.'.format(uid))
 
-	if int(attempts_count) >= MAX_ATTEMPTS_COUNT:
+	attempts_count = int(attempts_count)
+	if attempts_count >= MAX_ATTEMPTS_COUNT:
 		response.delete_cookie(COOKIE_NAME)
 		redis.delete(uid)
-		return False
+		return False, attempts_count
 
 	true_code = redis.hget(uid, CODE_FIELD)
 	if true_code is None:
@@ -74,7 +75,7 @@ def check_code(code, request, response):
 	
 	if code != true_code:
 		redis.hincrby(uid, ATTEMPTS_FIELD, 1)
-		return False
+		return False, attempts_count
 
 	redis.delete(uid)
 	response.delete_cookie(COOKIE_NAME)

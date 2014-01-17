@@ -129,9 +129,12 @@ def registration_handler(request):
 			return HttpResponseBadRequest('@code should be sent.')
 
 		response = HttpResponse(content_type='application/json')
-		if not check_code(code, request, response):
+		result, attempts_count = check_code(code, request, response)
+		if not result:
 			body = {
 				'code': 1,
+			    'attempts': attempts_count,
+			    'max_attempts': MAX_ATTEMPTS_COUNT,
 			    'message': 'invalid check code',
 			}
 			response.write(json.dumps(body))
@@ -227,7 +230,6 @@ def registration_handler(request):
 	body = {
 		'code': 0,
 	    'message': 'OK',
-	    'max_attempts': MAX_ATTEMPTS_COUNT,
 	}
 	response = HttpResponse(json.dumps(body), content_type='application/json')
 
