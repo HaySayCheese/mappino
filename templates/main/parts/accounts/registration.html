@@ -46,7 +46,7 @@
                                         <span class="input-icon-error" ng-show="showValidationEmail && registrationForm.email.$error.free"
                                               data-toggle="tooltip" data-placement="right" title="Мило зайняте"></span>
 
-                                        <span class="input-icon-ok" ng-show="registrationForm.email.$valid"></span>
+                                        <span class="input-icon-ok" ng-show="showValidationEmail && registrationForm.email.$valid"></span>
                                     </span>
                                 </div>
 
@@ -61,7 +61,7 @@
                                         <span class="input-icon-error" ng-show="showValidationPhone && registrationForm.phoneNumber.$error.free"
                                               data-toggle="tooltip" data-placement="right" title="Телефон зайнятий"></span>
 
-                                        <span class="input-icon-ok" ng-show="registrationForm.phoneNumber.$valid"></span>
+                                        <span class="input-icon-ok" ng-show="showValidationPhone && !registrationForm.phoneNumber.$error.free"></span>
                                     </span>
                                 </div>
 
