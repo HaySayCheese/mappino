@@ -15,7 +15,7 @@
 
                                 <div class="row form-group">
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" placeholder="Имя" name="firstName" ng-model="user.firstName" required maxlength="15">
+                                        <input type="text" class="form-control" placeholder="Имя" name="firstName" ng-model="user.firstName" required>
 
                                         <span class="input-icon">
                                             <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.firstName.$error.required"
@@ -23,7 +23,7 @@
                                         </span>
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" placeholder="Фамилия" name="lastName" ng-model="user.lastName" required maxlength="20">
+                                        <input type="text" class="form-control" placeholder="Фамилия" name="lastName" ng-model="user.lastName" required>
 
                                         <span class="input-icon">
                                             <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.lastName.$error.required"

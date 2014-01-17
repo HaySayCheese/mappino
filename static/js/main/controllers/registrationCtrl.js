@@ -81,7 +81,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
     $scope.submitRegistration = function() {
         $scope.showValidationMessages = true;
 
-        if ($scope.registrationForm.email.$valid)
+        if ($scope.registrationForm.$valid)
             $rootScope.registrationStatePart = "codeCheck"
     };
 
