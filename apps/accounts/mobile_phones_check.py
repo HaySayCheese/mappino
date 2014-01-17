@@ -40,7 +40,7 @@ def start_number_check(raw_number, http_response):
 	pipe.execute()
 
 	# save cookie
-	set_signed_cookie(http_response, COOKIE_NAME, uid, salt=COOKIE_SALT, days_expire=1)
+	set_signed_cookie(http_response, COOKIE_NAME, uid, salt=COOKIE_SALT, days_expire=1, http_only=False)
 
 	# send SMS
 	# todo: send sms here
@@ -65,7 +65,7 @@ def check_code(code, request, response):
 	if attempts_count >= MAX_ATTEMPTS_COUNT:
 		response.delete_cookie(COOKIE_NAME)
 		redis.delete(uid)
-		return False, attempts_count
+		return False, attempts_count+1
 
 	true_code = redis.hget(uid, CODE_FIELD)
 	if true_code is None:
@@ -75,8 +75,8 @@ def check_code(code, request, response):
 	
 	if code != true_code:
 		redis.hincrby(uid, ATTEMPTS_FIELD, 1)
-		return False, attempts_count
+		return False, attempts_count+1
 
 	redis.delete(uid)
 	response.delete_cookie(COOKIE_NAME)
-	return True
+	return True, attempts_count+1

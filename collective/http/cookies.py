@@ -20,7 +20,7 @@ def set_cookie(response, key, value, days_expire=7):
   )
 
 
-def set_signed_cookie(response, key, value, salt='', days_expire=7):
+def set_signed_cookie(response, key, value, salt='', days_expire=7, http_only=True):
   if days_expire is None:
     max_age = DEFAULT_COOKIE_AGE
   else:
@@ -32,5 +32,5 @@ def set_signed_cookie(response, key, value, salt='', days_expire=7):
 	  key, value, salt, max_age=max_age, expires=expires,
 	  domain=settings.SESSION_COOKIE_DOMAIN,
 	  secure=settings.SESSION_COOKIE_SECURE or None,
-      httponly=True
+      httponly=http_only
   )
