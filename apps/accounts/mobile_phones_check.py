@@ -13,7 +13,7 @@ COOKIE_SALT = 'JMH2FWWYa1ogCJR0gW4z'
 
 CODE_FIELD = 'code'
 ATTEMPTS_FIELD = 'attempts'
-MAX_ATTEMPTS_COUNT = 3
+MAX_ATTEMPTS_COUNT = 100 # fixme
 
 
 def is_number_check_started(request):
@@ -35,7 +35,7 @@ def start_number_check(raw_number, http_response):
 	# save user id in redis
 	pipe = redis.pipeline()
 	pipe.hset(uid, CODE_FIELD, int(''.join(random.choice(string.digits) for x in range(6))))
-	pipe.hset(uid, ATTEMPTS_FIELD, 0)
+	pipe.hset(uid, ATTEMPTS_FIELD, 1)
 	pipe.expire(uid, 60*60*3)
 	pipe.execute()
 
@@ -65,7 +65,7 @@ def check_code(code, request, response):
 	if attempts_count >= MAX_ATTEMPTS_COUNT:
 		response.delete_cookie(COOKIE_NAME)
 		redis.delete(uid)
-		return False, attempts_count+1
+		return False, attempts_count + 1
 
 	true_code = redis.hget(uid, CODE_FIELD)
 	if true_code is None:
@@ -75,8 +75,8 @@ def check_code(code, request, response):
 	
 	if code != true_code:
 		redis.hincrby(uid, ATTEMPTS_FIELD, 1)
-		return False, attempts_count+1
+		return False, attempts_count + 1
 
 	redis.delete(uid)
 	response.delete_cookie(COOKIE_NAME)
-	return True, attempts_count+1
+	return True, attempts_count + 1
