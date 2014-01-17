@@ -1,9 +1,12 @@
 #coding=utf-8
 import random
 import string
+from datetime import timedelta
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.tests.custom_user import CustomUserManager
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, transaction
+from django.utils.timezone import now
 from collective.exceptions import ObjectAlreadyExist
 
 
@@ -30,8 +33,6 @@ class UsersManager(CustomUserManager):
 			user = self.create_user(email, phone, password)
 			user.is_admin = True
 			user.is_active = True
-
-			MobilePhonesChecks.remove(user)
 			user.save()
 			return user
 
@@ -87,40 +88,30 @@ class Users(AbstractBaseUser):
 
 
 	@classmethod
+	def by_phone_number(cls, number):
+		try:
+			number = cls.objects.normalize_phone(number)
+			return cls.objects.get(raw_number = number)
+		except (ValueError, ObjectDoesNotExist):
+			return None
+
+
+	@classmethod
+	def by_email(cls, email):
+		try:
+			email = cls.objects.normalize_email(email)
+			return cls.objects.get(email = email)
+		except (ValueError, ObjectDoesNotExist):
+			return None
+
+
+	@classmethod
 	def is_email_free(cls, email):
+		# todo: додати перевірку серед додаткових емейлів
 		return cls.objects.filter(email = email).count() == 0
 
 
-
-class MobilePhonesChecks(models.Model):
-	class Meta:
-		db_table = "users_mobile_phones_checks"
-
-	CHECK_CODE_LENGTH = 6
-
-	user = models.ForeignKey(Users)
-	code = models.CharField(max_length=CHECK_CODE_LENGTH, unique=True)
-
 	@classmethod
-	def new(cls, user):
-		if cls.objects.filter(user = user).count() == 0:
-			raise ObjectAlreadyExist()
-
-		return cls.objects.create(
-			user = user,
-			code = cls.generate_code()
-		)
-
-	@classmethod
-	def remove(cls, user):
-		cls.objects.get(user = user).delete()
-
-	@classmethod
-	def generate_code(cls):
-		def generate():
-			return ''.join(random.choice(string.digits) for x in range(cls.CHECK_CODE_LENGTH))
-
-		code = generate()
-		while cls.objects.exists(code = code):
-			code = generate()
-		return code
+	def is_phone_number_free(cls, number):
+		# todo: додати перевірку серед додаткових телефонів
+		return cls.objects.filter(raw_number = number).count() == 0

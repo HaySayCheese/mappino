@@ -10,6 +10,9 @@ DEBUG = True
 if not DEBUG:
 	import production_settings
 else:
+	# pypy psycopg2cffi compatible hook
+	from psycopg2cffi import compat
+	compat.register()
 
 	# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 	import os
@@ -27,6 +30,14 @@ else:
 			'USER': 'mappino',
 			'PASSWORD': '123123',
 			'HOST': 'dev-server.binno.com.ua',
+		}
+	}
+	REDIS_DATABASES = {
+		# 0s database is used by sessions
+	    1: {
+	        # highest priority
+			'HOST': 'dev-server.binno.com.ua',
+		    'PORT': 6379,
 		}
 	}
 	INSTALLED_APPS = (
