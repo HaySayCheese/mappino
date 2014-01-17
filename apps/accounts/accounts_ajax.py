@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import transaction
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
 from apps.accounts.mobile_phones_check import start_number_check, MAX_ATTEMPTS_COUNT, is_number_check_started, check_code
@@ -33,7 +33,7 @@ def validate_email_handler(request):
 	try:
 		email = angular_post_parameters(request, ['email'])['email']
 	except ValueError:
-		return HttpResponse('@email should be sent.', status=412)
+		return HttpResponseBadRequest('@email should be sent.')
 
 	# is email valid?
 	try:
@@ -67,7 +67,7 @@ def validate_phone_number(request):
 	try:
 		number = angular_post_parameters(request, ['number'])['number']
 	except ValueError:
-		return HttpResponse('@number should be sent.', status=412)
+		return HttpResponseBadRequest('@number should be sent.')
 
 	# is number free?
 	try:
@@ -128,7 +128,7 @@ def registration_handler(request):
 		try:
 			code = angular_post_parameters(request, ['code'])['code']
 		except ValueError:
-			return HttpResponse('@code should be sent.', status=412)
+			return HttpResponseBadRequest('@code should be sent.')
 
 		response = HttpResponse(content_type='application/json')
 		if not check_code(code, request, response):
@@ -137,7 +137,6 @@ def registration_handler(request):
 			    'message': 'invalid check code',
 			}
 			response.write(json.dumps(body))
-			response.status_code = 412
 			return response
 
 		# seems to be ok
@@ -153,7 +152,7 @@ def registration_handler(request):
 		d = angular_post_parameters(request,
 		        ['name', 'surname', 'phone-number', 'email', 'password', 'password-repeat'])
 	except ValueError as e:
-		return HttpResponse(e.message, status=412)
+		return HttpResponseBadRequest(e.message)
 
 
 	#-- checks
@@ -163,7 +162,7 @@ def registration_handler(request):
 			'code': 1,
 		    'message': '@name can not be empty.',
 		}
-		return HttpResponse(json.dumps(body), status=412, content_type='application/json')
+		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
 
 	surname = d.get('surname', '')
 	if not surname:
@@ -171,7 +170,7 @@ def registration_handler(request):
 			'code': 2,
 		    'message': '@surname can not be empty.',
 		}
-		return HttpResponse(json.dumps(body), status=412, content_type='application/json')
+		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
 
 	phone_number = d.get('email', '')
 	if not phone_number:
@@ -179,7 +178,7 @@ def registration_handler(request):
 			'code': 3,
 		    'message': '@phone-number can not be empty.',
 		}
-		return HttpResponse(json.dumps(body), status=412, content_type='application/json')
+		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
 
 	email = d.get('email', '')
 	if not email:
@@ -187,7 +186,7 @@ def registration_handler(request):
 			'code': 4,
 		    'message': '@mail can not be empty.',
 		}
-		return HttpResponse(json.dumps(body), status=412, content_type='application/json')
+		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
 
 	password = d.get('password', '')
 	if not password:
@@ -195,7 +194,7 @@ def registration_handler(request):
 			'code': 5,
 		    'message': '@password can not be empty.',
 		}
-		return HttpResponse(json.dumps(body), status=412, content_type='application/json')
+		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
 
 	password_repeat = d.get('password-repeat', '')
 	if not password_repeat:
@@ -203,14 +202,14 @@ def registration_handler(request):
 			'code': 6,
 		    'message': '@password-repeat can not be empty.',
 		}
-		return HttpResponse(json.dumps(body), status=412, content_type='application/json')
+		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
 
 	if password != password_repeat:
 		body = {
 			'code': 7,
 		    'message': 'Passwords does not match.',
 		}
-		return HttpResponse(json.dumps(body), status=412, content_type='application/json')
+		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
 
 
 	#-- account creation
@@ -225,7 +224,7 @@ def registration_handler(request):
 			'code': 8,
 		    'message': 'Field parsing error: {0}'.format(e.message),
 		}
-		return HttpResponse(json.dumps(body), status=412, content_type='application/json')
+		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
 
 	body = {
 		'code': 0,
@@ -243,8 +242,8 @@ def registration_handler(request):
 def login_handler(request):
 	try:
 		d = angular_post_parameters(request, ['username', 'password'])
-	except ValueError as e:
-		return HttpResponse(e.message, status=412)
+	except ValueError:
+		return HttpResponseBadRequest('@username should be sent.')
 
 
 	#-- checks
@@ -254,7 +253,7 @@ def login_handler(request):
 			'code': 1,
 		    'message': '@username is empty or absent.',
 		}
-		return HttpResponse(json.dumps(body), status=412, content_type='application/json')
+		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
 
 	password = d.get('password', '')
 	if not username:
@@ -262,7 +261,7 @@ def login_handler(request):
 			'code': 2,
 		    'message': '@password is empty or absent.',
 		}
-		return HttpResponse(json.dumps(body), status=412, content_type='application/json')
+		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
 
 
 	# try to login
@@ -271,7 +270,7 @@ def login_handler(request):
 		user = Users.by_email(username)
 	if user is None:
 		body = {
-			'code': 1,
+			'code': 3,
 		    'message': 'Invalid login attempt.',
 		}
 		return HttpResponse(json.dumps(body), content_type='application/json')
@@ -282,14 +281,14 @@ def login_handler(request):
 	)
 	if user is None:
 		body = {
-			'code': 1,
+			'code': 3,
 		    'message': 'Invalid login attempt.',
 		}
 		return HttpResponse(json.dumps(body), content_type='application/json')
 
 	if not user.is_active:
 		body = {
-			'code': 2,
+			'code': 4,
 		    'message': 'Account disabled.',
 		}
 		return HttpResponse(json.dumps(body), content_type='application/json')
