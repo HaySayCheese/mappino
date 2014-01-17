@@ -21,7 +21,7 @@ class UsersManager(CustomUserManager):
 			user = self.model(
 				is_active = False,
 				email = self.normalize_email(email),
-				phone = self.normalize_phone(phone),
+				raw_phone = self.normalize_phone(phone),
 			)
 			user.set_password(password)
 			user.save(using=self._db)

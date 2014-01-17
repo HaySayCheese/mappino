@@ -1,14 +1,16 @@
 #coding=utf-8
 import random
 import string
-from collective.http.cookies import set_cookie
+from collective.http.cookies import set_cookie, set_signed_cookie
 from mappino.wsgi import redis_connections
 
 
 redis = redis_connections[1]
 
 
-COOKIE_NAME = 'mobile-check'
+COOKIE_NAME = 'mcheck'
+COOKIE_SALT = 'JMH2FWWYa1ogCJR0gW4z'
+
 CODE_FIELD = 'code'
 ATTEMPTS_FIELD = 'attempts'
 MAX_ATTEMPTS_COUNT = 3
@@ -25,20 +27,20 @@ def is_number_check_started(request):
 def start_number_check(raw_number, http_response):
 	# todo: test me
 	# generate user id avoiding duplicates
-	uid_length = 80
-	uid = ''.join(random.choice(string.printable) for x in range(uid_length))
-	while redis.exists(uid):
-		uid = ''.join(random.choice(string.printable) for x in range(uid_length))
+	uid_length = 32
+	uid = ''.join(random.choice(string.uppercase + string.lowercase + string.digits) for x in range(uid_length))
+	while redis.exists(uid): # todo: перевірити при умові, що такий код вже існує
+		uid = ''.join(random.choice(string.uppercase + string.lowercase + string.digits) for x in range(uid_length))
 
 	# save user id in redis
 	pipe = redis.pipeline()
-	pipe.set(uid, CODE_FIELD, ''.join(random.choice(string.digits) for x in range(6)))
-	pipe.set(uid, ATTEMPTS_FIELD, 0)
+	pipe.hset(uid, CODE_FIELD, int(''.join(random.choice(string.digits) for x in range(6))))
+	pipe.hset(uid, ATTEMPTS_FIELD, 0)
 	pipe.expire(uid, 60*60*3)
 	pipe.execute()
 
 	# save cookie
-	set_cookie(http_response, COOKIE_NAME, uid, days_expire=1)
+	set_signed_cookie(http_response, COOKIE_NAME, uid, salt=COOKIE_SALT, days_expire=1)
 
 	# send SMS
 	# todo: send sms here

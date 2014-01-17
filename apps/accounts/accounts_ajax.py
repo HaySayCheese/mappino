@@ -170,7 +170,7 @@ def registration_handler(request):
 		}
 		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
 
-	phone_number = d.get('email', '')
+	phone_number = d.get('phone-number', '')
 	if not phone_number:
 		body = {
 			'code': 3,
