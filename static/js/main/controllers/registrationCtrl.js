@@ -5,7 +5,10 @@ app.controller('RegistrationCtrl', function($scope, $rootScope, $timeout, $http,
     /**
      * Стан вікна реєстрації
      **/
-    $rootScope.registrationStatePart = "registration";
+    if ($cookies.mcheck != "")
+        $rootScope.registrationStatePart = "codeCheck";
+    else
+        $rootScope.registrationStatePart = "registration";
 
 });
 
@@ -26,15 +29,12 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
      * Колекція змінних полів
      **/
     $scope.user = {
-        firstName:  "",
-        lastName:   "",
-
+        name:  "",
+        surname:   "",
         email: "",
-
         phoneNumber: "",
-
-        firstPassword: "",
-        lastPassword:  ""
+        password:       "",
+        passwordRepeat: ""
     };
 
 
@@ -57,16 +57,16 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
     $scope.$watchCollection("user", function(newValue, oldValue) {
         validatePassword();
 
-//        if (newValue.email == "" || !newValue.email) {
-//            $scope.registrationForm.email.$setValidity("free", true);
-//            $scope.registrationForm.email.$setValidity("email", true);
-//        }
-//
-//        if (newValue.phoneNumber == "" || !newValue.phoneNumber) {
-//            $scope.registrationForm.phoneNumber.$setValidity("free", true);
-//            $scope.registrationForm.phoneNumber.$setValidity("phone", true);
-//            $scope.registrationForm.phoneNumber.$setValidity("code", true);
-//        }
+        if (newValue.email == "" || !newValue.email) {
+            $scope.registrationForm.email.$setValidity("free", true);
+            $scope.registrationForm.email.$setValidity("email", true);
+        }
+
+        if (newValue.phoneNumber == "" || !newValue.phoneNumber) {
+            $scope.registrationForm.phoneNumber.$setValidity("free", true);
+            $scope.registrationForm.phoneNumber.$setValidity("phone", true);
+            $scope.registrationForm.phoneNumber.$setValidity("code", true);
+        }
 
     });
 
@@ -132,10 +132,6 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
                 }
 
                 $scope.showValidationEmail = true;
-
-                console.log("free- " + $scope.registrationForm.email.$error.free)
-                console.log("email- " + $scope.registrationForm.email.$error.email)
-
             });
         } else {
             $scope.registrationForm.email.$setValidity("free", true);
@@ -181,7 +177,6 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
                 }
 
                 $scope.showValidationPhone = true;
-
             });
         else {
             $scope.registrationForm.phoneNumber.$setValidity("free", true);
@@ -194,10 +189,10 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
      * Валідація пароля
      **/
     function validatePassword() {
-        if ($scope.user.lastPassword != $scope.user.firstPassword && $scope.user.lastPassword.length)
-            $scope.registrationForm.lastPassword.$setValidity("match", false);
+        if ($scope.user.password != $scope.user.passwordRepeat && $scope.user.passwordRepeat.length)
+            $scope.registrationForm.passwordRepeat.$setValidity("match", false);
         else
-            $scope.registrationForm.lastPassword.$setValidity("match", true);
+            $scope.registrationForm.passwordRepeat.$setValidity("match", true);
     }
 
     function registerUser() {
@@ -208,17 +203,16 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
                 'X-CSRFToken': $cookies.csrftoken
             },
             data: {
-                'name':             $scope.user.firstName,
-                'surname':          $scope.user.lastName,
+                'name':             $scope.user.name,
+                'surname':          $scope.user.surname,
                 'phone-number':     $scope.user.phoneNumber,
                 'email':            $scope.user.email,
-                'password':         $scope.user.firstPassword,
-                'password-repeat':  $scope.user.lastPassword
+                'password':         $scope.user.password,
+                'password-repeat':  $scope.user.passwordRepeat
             }
         }).success(function() {
             $rootScope.registrationStatePart = "codeCheck";
         })
-
 
     }
 });
@@ -227,6 +221,29 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
 /**
  * Контроллер який відповідає за форму введення коду підтвердження
  **/
-app.controller("RegistrationUserCodeCheckCtrl", function($scope, $rootScope, $timeout, $http, $cookies) {
+app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies) {
+
+    $scope.attempts = 0;
+
+    $scope.checkPhoneCode = function() {
+        $scope.attempts++;
+
+        $http({
+            method: 'POST',
+            url: 'ajax/api/accounts/registration/',
+            headers: {
+                'X-CSRFToken': $cookies.csrftoken
+            },
+            data: {
+                code: $scope.codeCheck
+            }
+        }).success(function(data, status) {
+            $scope.max_attempts = data.max_attempts;
+
+            if (data.code == 1) {
+                $scope.incorrectCode = true;
+            }
+        });
+    }
 
 });
