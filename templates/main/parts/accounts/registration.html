@@ -37,10 +37,10 @@
                                     <input type="text" class="form-control" placeholder="Эл. почта" name="email" ng-model="user.email" required>
 
                                     <span class="input-icon">
-                                        <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.email.$error.required"
+                                        <span class="input-icon-error" ng-show="showValidationEmail && registrationForm.email.$error.required"
                                               data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
 
-                                        <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.email.$error.email"
+                                        <span class="input-icon-error" ng-show="showValidationEmail && registrationForm.email.$error.email"
                                               data-toggle="tooltip" data-placement="right" title="Невірно введено ел. пошту"></span>
 
                                         <span class="input-icon-error" ng-show="showValidationEmail && registrationForm.email.$error.free"
@@ -55,8 +55,11 @@
                                     <input type="text" class="form-control" ui-mask="+38 (099) 99 - 99 - 999" name="phoneNumber" ng-model="user.phoneNumber" required>
 
                                     <span class="input-icon">
-                                        <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.phoneNumber.$error.required"
+                                        <span class="input-icon-error" ng-show="showValidationPhone && registrationForm.phoneNumber.$error.required"
                                               data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
+
+                                        <span class="input-icon-error" ng-show="showValidationPhone && registrationForm.phoneNumber.$error.phone"
+                                              data-toggle="tooltip" data-placement="right" title="Телефон невалідний"></span>
 
                                         <span class="input-icon-error" ng-show="showValidationPhone && registrationForm.phoneNumber.$error.free"
                                               data-toggle="tooltip" data-placement="right" title="Телефон зайнятий"></span>
