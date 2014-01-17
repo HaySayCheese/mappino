@@ -6,8 +6,8 @@
                 <img class="close" src="{{ static }}img/login/login-reg-close.png" alt="" data-dismiss="modal"/>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-sm-7 text-center">
+                <div class="row" ng-switch on="registrationStatePart">
+                    <div class="col-sm-7 text-center" ng-switch-when="registration" ng-controller="RegistrationUserCtrl">
                         <h2>Регистрация</h2>
 
                         <form action="" name="registrationForm" novalidate>
@@ -18,20 +18,16 @@
                                         <input type="text" class="form-control" placeholder="Имя" name="firstName" ng-model="user.firstName" required maxlength="15">
 
                                         <span class="input-icon">
-                                            <span class="input-icon-error" ng-show="registrationForm.firstName.$error.required"
+                                            <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.firstName.$error.required"
                                                   data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
-
-                                            <span class="input-icon-ok" ng-show="registrationForm.firstName.$valid"></span>
                                         </span>
                                     </div>
                                     <div class="col-md-6">
                                         <input type="text" class="form-control" placeholder="Фамилия" name="lastName" ng-model="user.lastName" required maxlength="20">
 
                                         <span class="input-icon">
-                                            <span class="input-icon-error" ng-show="registrationForm.lastName.$error.required"
+                                            <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.lastName.$error.required"
                                                   data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
-
-                                            <span class="input-icon-ok" ng-show="registrationForm.lastName.$valid"></span>
                                         </span>
                                     </div>
                                 </div>
@@ -41,10 +37,10 @@
                                     <input type="text" class="form-control" placeholder="Эл. почта" name="email" ng-model="user.email" required>
 
                                     <span class="input-icon">
-                                        <span class="input-icon-error" ng-show="registrationForm.email.$error.required"
+                                        <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.email.$error.required"
                                               data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
 
-                                        <span class="input-icon-error" ng-show="registrationForm.email.$error.email"
+                                        <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.email.$error.email"
                                               data-toggle="tooltip" data-placement="right" title="Невірно введено ел. пошту"></span>
 
                                         <span class="input-icon-error" ng-show="showValidationEmail && registrationForm.email.$error.free"
@@ -59,8 +55,11 @@
                                     <input type="text" class="form-control" ui-mask="+38 (099) 99 - 99 - 999" name="phoneNumber" ng-model="user.phoneNumber" required>
 
                                     <span class="input-icon">
-                                        <span class="input-icon-error" ng-show="registrationForm.phoneNumber.$error.required"
+                                        <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.phoneNumber.$error.required"
                                               data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
+
+                                        <span class="input-icon-error" ng-show="showValidationPhone && registrationForm.phoneNumber.$error.free"
+                                              data-toggle="tooltip" data-placement="right" title="Телефон зайнятий"></span>
 
                                         <span class="input-icon-ok" ng-show="registrationForm.phoneNumber.$valid"></span>
                                     </span>
@@ -71,10 +70,8 @@
                                     <input type="password" class="form-control" placeholder="Пароль" name="firstPassword" ng-model="user.firstPassword" required>
 
                                     <span class="input-icon">
-                                        <span class="input-icon-error" ng-show="registrationForm.firstPassword.$error.required"
+                                        <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.firstPassword.$error.required"
                                               data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
-
-                                        <span class="input-icon-ok" ng-show="registrationForm.firstPassword.$valid"></span>
                                     </span>
                                 </div>
 
@@ -83,10 +80,10 @@
                                     <input type="password" class="form-control" placeholder="Еще разочек пароль" name="lastPassword" ng-model="user.lastPassword" required>
 
                                     <span class="input-icon">
-                                        <span class="input-icon-error" ng-show="registrationForm.lastPassword.$error.required"
+                                        <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.lastPassword.$error.required"
                                               data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
 
-                                        <span class="input-icon-error" ng-show="registrationForm.lastPassword.$error.match"
+                                        <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.lastPassword.$error.match"
                                               data-toggle="tooltip" data-placement="right" title="Паролі не співпадають"></span>
 
                                         <span class="input-icon-ok" ng-show="registrationForm.lastPassword.$valid"></span>
@@ -95,13 +92,33 @@
 
 
                                 <div class="form-group">
-                                    <div class="btn btn-success btn-block" ng-disabled="registrationForm.$invalid" ng-click="submitRegistration()">Зарегистрироватся</div>
+                                    <div class="btn btn-success btn-block" ng-click="submitRegistration()">Зарегистрироватся</div>
                                 </div>
                                 <a ng-href="#!/account/login/[[ urlFiltersPart ]]">Уже есть аккаунт?</a>
                             </div>
                         </form>
 
                     </div>
+
+                    <div class="col-sm-7 text-center" ng-switch-when="codeCheck" ng-controller="RegistrationUserCodeCheckCtrl">
+                        <div class="code-check-picture">
+                            <img src="{{ static }}img/login/phone-sms.png" alt=""/>
+                        </div>
+                        <p>
+                            На указанный Вами номер телефона отправлено SMS с кодом
+                            подтверждения. Пожалуйста, укажите его в поле нижу.
+                        </p>
+                        <div class="col-sm-10 col-sm-offset-1">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Код подтверждения" name="codeCheck" ng-model="codeCheck" required>
+                            </div>
+                            <div class="form-group">
+                                <div class="btn btn-success btn-block">Принять</div>
+                            </div>
+                            <a ng-href="#!/account/login/[[ urlFiltersPart ]]">Не пришло смс?</a>
+                        </div>
+                    </div>
+
                     <div class="col-sm-5 text-center">
                         <div class="login-picture">
                             <img src="{{ static }}img/login/promo/login-favorites.png" alt=""/>
@@ -114,9 +131,9 @@
                 </div>
             </div>
             <div class="modal-footer footer-blue"></div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+    </div>
+</div>
 
 <script>
     $(".modal").modal();
