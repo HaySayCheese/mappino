@@ -1,15 +1,14 @@
 'use strict';
 
-app.controller('RegistrationCtrl', function($scope, $rootScope, $timeout, $http, $cookies) {
+app.controller('RegistrationCtrl', function($scope, $rootScope, $timeout, $http, $cookieStore) {
 
     /**
      * Стан вікна реєстрації
      **/
-    if ($cookies.mcheck != "")
+    if ($cookieStore.get("mcheck"))
         $rootScope.registrationStatePart = "codeCheck";
     else
         $rootScope.registrationStatePart = "registration";
-
 });
 
 
@@ -218,32 +217,71 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
 });
 
 
+
+
 /**
  * Контроллер який відповідає за форму введення коду підтвердження
  **/
-app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies) {
+app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies, $timeout, $rootScope) {
 
-    $scope.attempts = 0;
+    $scope.codeCheck = "";
+
+    var attempt, max_attempts;
+
+    /**
+     * Фокус першого поля
+     **/
+    $timeout(function() {
+        angular.element("input")[0].focus();
+    }, 300);
 
     $scope.checkPhoneCode = function() {
-        $scope.attempts++;
 
-        $http({
-            method: 'POST',
-            url: 'ajax/api/accounts/registration/',
-            headers: {
-                'X-CSRFToken': $cookies.csrftoken
-            },
-            data: {
-                code: $scope.codeCheck
-            }
-        }).success(function(data, status) {
-            $scope.max_attempts = data.max_attempts;
+        if (attempt && (attempt == max_attempts))
+            $rootScope.registrationStatePart = "registration";
 
-            if (data.code == 1) {
-                $scope.incorrectCode = true;
-            }
-        });
+        if ($scope.codeCheck && $scope.codeCheck != "") {
+            $http({
+                method: 'POST',
+                url: 'ajax/api/accounts/registration/',
+                headers: {
+                    'X-CSRFToken': $cookies.csrftoken
+                },
+                data: {
+                    code: $scope.codeCheck
+                }
+            }).success(function(data, status) {
+                    attempt = data.attempts;
+                    max_attempts = data.max_attempts;
+
+                    var tooltip = $("[data-toggle='tooltip']");
+
+                    tooltip.tooltip('destroy');
+                    tooltip.tooltip({
+                        container: '.registration-dialog',
+                        animation: false,
+                        title: "Некоректний код. Попитка " +  data.attempts + " из " +  data.max_attempts + "."
+                    });
+
+                if (data.code == 0) {
+                    $('.registration-dialog').parent().modal('hide');
+                }
+                if (data.code == 1) {
+                    $scope.incorrectCode = true;
+                }
+            });
+        } else {
+            var tooltip = $("[data-toggle='tooltip']");
+
+            tooltip.tooltip('destroy');
+            tooltip.tooltip({
+                container: '.registration-dialog',
+                animation: false,
+                title: "Обовязкове поле."
+            });
+
+            $scope.incorrectCode = true;
+        }
     }
 
 });
