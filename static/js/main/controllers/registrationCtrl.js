@@ -94,11 +94,12 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
         $scope.showValidationEmail      = true;
         $scope.showValidationPhone      = true;
 
-        if ($scope.registrationForm.$valid)
-            $rootScope.registrationStatePart = "codeCheck";
-
         validateEmail();
         validatePhoneNumber();
+
+        if ($scope.registrationForm.$valid)
+            registerUser();
+
     };
 
     /**
@@ -197,6 +198,28 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
             $scope.registrationForm.lastPassword.$setValidity("match", false);
         else
             $scope.registrationForm.lastPassword.$setValidity("match", true);
+    }
+
+    function registerUser() {
+        $http({
+            method: 'POST',
+            url: 'ajax/api/accounts/registration/',
+            headers: {
+                'X-CSRFToken': $cookies.csrftoken
+            },
+            data: {
+                'name':             $scope.user.firstName,
+                'surname':          $scope.user.lastName,
+                'phone-number':     $scope.user.phoneNumber,
+                'email':            $scope.user.email,
+                'password':         $scope.user.firstPassword,
+                'password-repeat':  $scope.user.lastPassword
+            }
+        }).success(function() {
+            $rootScope.registrationStatePart = "codeCheck";
+        })
+
+
     }
 });
 
