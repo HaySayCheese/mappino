@@ -57,15 +57,16 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
     $scope.$watchCollection("user", function(newValue, oldValue) {
         validatePassword();
 
-        if (newValue.email == "" || !newValue.email) {
-            $scope.registrationForm.email.$setValidity("free", true);
-            $scope.registrationForm.email.$setValidity("email", true);
-        }
-
-        if (newValue.phoneNumber == "" || !newValue.phoneNumber) {
-            $scope.registrationForm.phoneNumber.$setValidity("free", true);
-            $scope.registrationForm.phoneNumber.$setValidity("phoneNumber", true);
-        }
+//        if (newValue.email == "" || !newValue.email) {
+//            $scope.registrationForm.email.$setValidity("free", true);
+//            $scope.registrationForm.email.$setValidity("email", true);
+//        }
+//
+//        if (newValue.phoneNumber == "" || !newValue.phoneNumber) {
+//            $scope.registrationForm.phoneNumber.$setValidity("free", true);
+//            $scope.registrationForm.phoneNumber.$setValidity("phone", true);
+//            $scope.registrationForm.phoneNumber.$setValidity("code", true);
+//        }
 
     });
 
@@ -105,7 +106,6 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
      **/
     function validateEmail() {
         if ($scope.user.email && $scope.user.email != "") {
-            console.log($scope.user.email)
             $http({
                 method: 'POST',
                 url: 'ajax/api/accounts/validate-email/',
@@ -131,6 +131,9 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
                 }
 
                 $scope.showValidationEmail = true;
+
+                console.log("free- " + $scope.registrationForm.email.$error.free)
+                console.log("email- " + $scope.registrationForm.email.$error.email)
 
             });
         } else {
@@ -158,14 +161,22 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
                 if (data.code == 0) {
                     $scope.registrationForm.phoneNumber.$setValidity("free", true);
                     $scope.registrationForm.phoneNumber.$setValidity("phone", true);
+                    $scope.registrationForm.phoneNumber.$setValidity("code", true);
                 }
                 if (data.code == 1) {
                     $scope.registrationForm.phoneNumber.$setValidity("free", true);
                     $scope.registrationForm.phoneNumber.$setValidity("phone", false);
+                    $scope.registrationForm.phoneNumber.$setValidity("code", true);
+                }
+                if (data.code == 2) {
+                    $scope.registrationForm.phoneNumber.$setValidity("code", false);
+                    $scope.registrationForm.phoneNumber.$setValidity("free", true);
+                    $scope.registrationForm.phoneNumber.$setValidity("phone", true);
                 }
                 if (data.code == 3) {
                     $scope.registrationForm.phoneNumber.$setValidity("free", false);
                     $scope.registrationForm.phoneNumber.$setValidity("phone", true);
+                    $scope.registrationForm.phoneNumber.$setValidity("code", true);
                 }
 
                 $scope.showValidationPhone = true;
@@ -174,6 +185,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
         else {
             $scope.registrationForm.phoneNumber.$setValidity("free", true);
             $scope.registrationForm.phoneNumber.$setValidity("phone", true);
+            $scope.registrationForm.phoneNumber.$setValidity("code", true);
         }
     }
 
