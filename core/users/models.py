@@ -114,4 +114,4 @@ class Users(AbstractBaseUser):
 	@classmethod
 	def is_phone_number_free(cls, number):
 		# todo: додати перевірку серед додаткових телефонів
-		return cls.objects.filter(raw_number = number).count() == 0
+		return cls.objects.filter(raw_phone = number).count() == 0
