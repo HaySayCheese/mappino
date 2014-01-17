@@ -51,7 +51,7 @@ def start_number_check(raw_number, http_response):
 
 def check_code(code, request, response):
 	# todo: test me
-	uid = request.COOKIES[COOKIE_NAME]
+	uid = request.get_signed_cookie(COOKIE_NAME, salt=COOKIE_SALT)
 	if not redis.exists(uid):
 		response.delete_cookie(COOKIE_NAME)
 		raise KeyError('{0} is not in redis database.'.format(uid))
@@ -61,7 +61,7 @@ def check_code(code, request, response):
 		response.delete_cookie(COOKIE_NAME)
 		raise KeyError('field @attempts is not in hash {0}.'.format(uid))
 
-	if attempts_count >= MAX_ATTEMPTS_COUNT:
+	if int(attempts_count) >= MAX_ATTEMPTS_COUNT:
 		response.delete_cookie(COOKIE_NAME)
 		redis.delete(uid)
 		return False
