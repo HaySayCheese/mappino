@@ -47,7 +47,8 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
         angular.element("input")[0].focus();
 
         $("[data-toggle='tooltip']").tooltip({
-            container: '.registration-dialog'
+            container: '.registration-dialog',
+            animation: false
         })
     }, 300);
 
