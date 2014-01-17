@@ -24,6 +24,7 @@ urlpatterns += patterns('apps.pages.main',
 #-- angular API for main pages
 urlpatterns += patterns('apps',
     url(r'^ajax/api/accounts/validate-email/$', 'accounts.accounts_ajax.validate_email_handler'),
+    url(r'^ajax/api/accounts/validate-phone-number/$', 'accounts.accounts_ajax.validate_phone_handler'),
 )
 
 

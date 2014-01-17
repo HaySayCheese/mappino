@@ -62,7 +62,7 @@ def validate_email_handler(request):
 
 
 @require_http_methods(['POST'])
-def validate_phone_number(request):
+def validate_phone_handler(request):
 	# todo: test me
 	try:
 		number = angular_post_parameters(request, ['number'])['number']
