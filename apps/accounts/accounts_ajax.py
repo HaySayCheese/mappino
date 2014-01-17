@@ -123,17 +123,13 @@ def validate_phone_handler(request):
 def registration_handler(request):
 	# todo: test me
 	if is_number_check_started(request):
-		try:
-			code = angular_post_parameters(request, ['code'])['code']
-		except ValueError:
-			return HttpResponseBadRequest('@code should be sent.')
-
+		code = angular_post_parameters(request, []).get('code', 0)
 		response = HttpResponse(content_type='application/json')
-		result, attempts_count = check_code(code, request, response)
+		result, user_data = check_code(code, request, response)
 		if not result:
 			body = {
 				'code': 1,
-			    'attempts': attempts_count,
+			    'attempts': user_data['attempts'],
 			    'max_attempts': MAX_ATTEMPTS_COUNT,
 			    'message': 'invalid check code',
 			}
@@ -141,8 +137,13 @@ def registration_handler(request):
 			return response
 
 		# seems to be ok
+		ok, user = __login(user_data['phone'], user_data['password'], request)
+		if not ok:
+			raise Exception('Can not login user after registration on redis-stored data.')
+
 		body = {
 			'code': 0,
+		    'user': __on_login_user_info(user),
 		    'message': 'OK',
 		}
 		response.write(json.dumps(body))
@@ -154,7 +155,6 @@ def registration_handler(request):
 		        ['name', 'surname', 'phone-number', 'email', 'password', 'password-repeat'])
 	except ValueError as e:
 		return HttpResponseBadRequest(e.message)
-
 
 	#-- checks
 	name = d.get('name', '')
@@ -234,7 +234,7 @@ def registration_handler(request):
 	response = HttpResponse(json.dumps(body), content_type='application/json')
 
 	# mobile check
-	start_number_check(phone_number, response)
+	start_number_check(phone_number, password, response)
 	return response
 
 
@@ -265,42 +265,46 @@ def login_handler(request):
 
 
 	# try to login
-	user = Users.by_phone_number(username)
-	if user is None:
-		user = Users.by_email(username)
-	if user is None:
+	ok, user =  __login(username, password, request)
+	if not ok:
 		body = {
 			'code': 3,
 		    'message': 'Invalid login attempt.',
 		}
 		return HttpResponse(json.dumps(body), content_type='application/json')
+
+	else:
+		body = {
+			'code': 0,
+		    'message': 'OK',
+			'user': __on_login_user_info(user),
+		}
+		return HttpResponse(json.dumps(body), content_type='application/json')
+
+
+
+#-- system
+def __login(username, password, request):
+	user = Users.by_phone_number(username)
+	if user is None:
+		user = Users.by_email(username)
+	if user is None:
+		return False, None
 
 	user = authenticate(
 		username = user.raw_phone,
 		password = password
 	)
-	if user is None:
-		body = {
-			'code': 3,
-		    'message': 'Invalid login attempt.',
-		}
-		return HttpResponse(json.dumps(body), content_type='application/json')
-
-	if not user.is_active:
-		body = {
-			'code': 4,
-		    'message': 'Account disabled.',
-		}
-		return HttpResponse(json.dumps(body), content_type='application/json')
-
+	if user is None or not user.is_active:
+		return False, None
 
 	login(request, user)
-	body = {
-		'code': 0,
-	    'message': 'OK',
-		'user': {
-			'name': user.name,
-		    'surname': user.surname,
-		}
+	return True, user
+
+
+def __on_login_user_info(user):
+	return {
+		'name': user.name,
+	    'surname': user.surname,
 	}
-	return HttpResponse(json.dumps(body), content_type='application/json')
+
