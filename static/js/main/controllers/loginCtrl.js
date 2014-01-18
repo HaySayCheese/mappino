@@ -1,6 +1,8 @@
 'use strict';
 
-app.controller('LoginCtrl', function($scope, $rootScope, $timeout, $http, $cookies) {
+app.controller('LoginCtrl', function($scope, $http, $timeout, $cookies) {
+
+    $scope.showValidationMessages = false;
 
     $scope.user = {
         name: "",
@@ -8,7 +10,35 @@ app.controller('LoginCtrl', function($scope, $rootScope, $timeout, $http, $cooki
     };
 
 
+    /**
+     * Фокус першого поля і ініціалізація тултіпів
+     **/
+    $timeout(function() {
+        angular.element("input")[0].focus();
+
+        $("[data-toggle='tooltip']").tooltip({
+            container: '.login-dialog',
+            animation: false
+        });
+    }, 300);
+
+
+    $scope.$watchCollection("user", function(newValue, oldValue) {
+        $scope.loginForm.password.$setValidity("login", true);
+    });
+
+
     $scope.submitLogin = function() {
+
+        $scope.showValidationMessages = true;
+
+        var loginBtn = $(".login-dialog .btn-success");
+
+        if ((!$scope.user.name || $scope.user.name === "") || (!$scope.user.password || $scope.user.password === ""))
+            return;
+
+        loginBtn.button("loading");
+
         $http({
             method: 'POST',
             url: 'ajax/api/accounts/login/',
@@ -20,8 +50,23 @@ app.controller('LoginCtrl', function($scope, $rootScope, $timeout, $http, $cooki
                 password: $scope.user.password
             }
         }).success(function(data, status) {
-                if (data.code == 0)
-                    $('.login-dialog').parent().modal('hide');
+
+            loginBtn.button("reset");
+
+            validateLoginForm(data.code);
         });
+    };
+
+
+    function validateLoginForm() {
+
+        if (arguments[0])
+            var code = arguments[0];
+
+        if (code === 0)
+            $('.login-dialog').parent().modal('hide');
+
+        if (code === 3)
+            $scope.loginForm.password.$setValidity("login", false);
     }
 });
