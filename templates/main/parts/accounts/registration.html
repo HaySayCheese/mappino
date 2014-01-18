@@ -19,7 +19,7 @@
 
                                         <span class="input-icon">
                                             <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.name.$error.required"
-                                                  data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
+                                                  data-toggle="tooltip" data-placement="right" title="Обязательное поле"></span>
                                         </span>
                                     </div>
                                     <div class="col-md-6">
@@ -27,7 +27,7 @@
 
                                         <span class="input-icon">
                                             <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.surname.$error.required"
-                                                  data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
+                                                  data-toggle="tooltip" data-placement="right" title="Обязательное поле"></span>
                                         </span>
                                     </div>
                                 </div>
@@ -38,13 +38,13 @@
 
                                     <span class="input-icon">
                                         <span class="input-icon-error" ng-show="showValidationEmail && registrationForm.email.$error.required"
-                                              data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
+                                              data-toggle="tooltip" data-placement="right" title="Обязательное поле"></span>
 
                                         <span class="input-icon-error" ng-show="showValidationEmail && registrationForm.email.$error.email"
-                                              data-toggle="tooltip" data-placement="right" title="Невірно введено ел. пошту"></span>
+                                              data-toggle="tooltip" data-placement="right" title="Некоректная эл. почта"></span>
 
                                         <span class="input-icon-error" ng-show="showValidationEmail && registrationForm.email.$error.free"
-                                              data-toggle="tooltip" data-placement="right" title="Мило зайняте"></span>
+                                              data-toggle="tooltip" data-placement="right" title="Указанная эл. почта уже используется"></span>
 
                                         <span class="input-icon-ok" ng-show="showValidationEmail && registrationForm.email.$valid"></span>
                                     </span>
@@ -56,16 +56,16 @@
 
                                     <span class="input-icon">
                                         <span class="input-icon-error" ng-show="showValidationPhone && registrationForm.phoneNumber.$error.required"
-                                              data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
+                                              data-toggle="tooltip" data-placement="right" title="Обязательное поле"></span>
 
                                         <span class="input-icon-error" ng-show="showValidationPhone && registrationForm.phoneNumber.$error.phone"
-                                              data-toggle="tooltip" data-placement="right" title="Телефон невалідний"></span>
+                                              data-toggle="tooltip" data-placement="right" title="Некоректный номер"></span>
 
                                         <span class="input-icon-error" ng-show="showValidationPhone && registrationForm.phoneNumber.$error.free"
-                                              data-toggle="tooltip" data-placement="right" title="Телефон зайнятий"></span>
+                                              data-toggle="tooltip" data-placement="right" title="Указанный номер уже используется"></span>
 
                                         <span class="input-icon-error" ng-show="showValidationPhone && registrationForm.phoneNumber.$error.code"
-                                              data-toggle="tooltip" data-placement="right" title="Невірний код"></span>
+                                              data-toggle="tooltip" data-placement="right" title="Некоректный код"></span>
 
                                         <span class="input-icon-ok" ng-show="registrationForm.phoneNumber.$valid"></span>
                                     </span>
@@ -77,7 +77,7 @@
 
                                     <span class="input-icon">
                                         <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.password.$error.required"
-                                              data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
+                                              data-toggle="tooltip" data-placement="right" title="Обязательное поле"></span>
                                     </span>
                                 </div>
 
@@ -87,10 +87,10 @@
 
                                     <span class="input-icon">
                                         <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.passwordRepeat.$error.required"
-                                              data-toggle="tooltip" data-placement="right" title="Це обовязкове поле"></span>
+                                              data-toggle="tooltip" data-placement="right" title="Обязательное поле"></span>
 
                                         <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.passwordRepeat.$error.match"
-                                              data-toggle="tooltip" data-placement="right" title="Паролі не співпадають"></span>
+                                              data-toggle="tooltip" data-placement="right" title="Пароли не совпадают"></span>
 
                                         <span class="input-icon-ok" ng-show="registrationForm.passwordRepeat.$valid"></span>
                                     </span>
