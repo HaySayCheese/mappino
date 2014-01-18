@@ -54,18 +54,20 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
      * Валідація при вводі даних в поле
      **/
     $scope.$watchCollection("user", function(newValue, oldValue) {
-        validatePassword();
+//        validatePassword();
+//
+//        if (newValue.email == "" || !newValue.email) {
+//            $scope.registrationForm.email.$setValidity("free", true);
+//            $scope.registrationForm.email.$setValidity("email", true);
+//        }
+//
+//        if (newValue.phoneNumber == "" || !newValue.phoneNumber) {
+//            $scope.registrationForm.phoneNumber.$setValidity("free", true);
+//            $scope.registrationForm.phoneNumber.$setValidity("phone", true);
+//            $scope.registrationForm.phoneNumber.$setValidity("code", true);
+//        }
 
-        if (newValue.email == "" || !newValue.email) {
-            $scope.registrationForm.email.$setValidity("free", true);
-            $scope.registrationForm.email.$setValidity("email", true);
-        }
-
-        if (newValue.phoneNumber == "" || !newValue.phoneNumber) {
-            $scope.registrationForm.phoneNumber.$setValidity("free", true);
-            $scope.registrationForm.phoneNumber.$setValidity("phone", true);
-            $scope.registrationForm.phoneNumber.$setValidity("code", true);
-        }
+        validateEmail();
 
     });
 
@@ -74,7 +76,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
      * Валідація пошти при втраті фокуса з поля
      **/
     angular.element("input[name='email']").bind("focusout", function() {
-        validateEmail();
+        sendEmailToValidate();
     });
 
     /**
@@ -89,15 +91,15 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
      * Клік по кнопці реєстрації
      **/
     $scope.submitRegistration = function() {
-        $scope.showValidationMessages   = true;
-        $scope.showValidationEmail      = true;
-        $scope.showValidationPhone      = true;
-
-        validateEmail();
-        validatePhoneNumber();
-
-        if ($scope.registrationForm.$valid)
-            registerUser();
+//        $scope.showValidationMessages   = true;
+//        $scope.showValidationEmail      = true;
+//        $scope.showValidationPhone      = true;
+//
+//        validateEmail();
+//        validatePhoneNumber();
+//
+//        if ($scope.registrationForm.$valid)
+//            registerUser();
 
     };
 
@@ -105,37 +107,56 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
      * Логіка валідації пошти
      **/
     function validateEmail() {
-        if ($scope.user.email && $scope.user.email != "") {
-            $http({
-                method: 'POST',
-                url: 'ajax/api/accounts/validate-email/',
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                },
-                data: {
-                    email: $scope.user.email
-                }
-            }).success(function(data, status) {
 
-                if (data.code == 0) {
-                    $scope.registrationForm.email.$setValidity("free", true);
-                    $scope.registrationForm.email.$setValidity("email", true);
-                }
-                if (data.code == 1) {
-                    $scope.registrationForm.email.$setValidity("free", true);
-                    $scope.registrationForm.email.$setValidity("email", false);
-                }
-                if (data.code == 2) {
-                    $scope.registrationForm.email.$setValidity("free", false);
-                    $scope.registrationForm.email.$setValidity("email", true);
-                }
+        if (arguments[0])
+            var code = arguments[0];
 
-                $scope.showValidationEmail = true;
-            });
-        } else {
+        if (!$scope.user.email && $scope.user.email === "")
+            return;
+
+        $scope.registrationForm.email.$setValidity("free", true);
+        $scope.registrationForm.email.$setValidity("email", true);
+
+        $scope.registrationForm.email.$setValidity("isOk", false);
+
+        if (code === 0)
             $scope.registrationForm.email.$setValidity("free", true);
-            $scope.registrationForm.email.$setValidity("email", true);
-        }
+
+
+        if (code === 1)
+            $scope.registrationForm.email.$setValidity("email", false);
+
+
+        if (code === 2)
+            $scope.registrationForm.email.$setValidity("free", false);
+
+
+        $scope.showValidationEmail = true;
+    }
+
+
+    function sendEmailToValidate() {
+
+        if (!$scope.user.email || $scope.user.email === "")
+            return;
+
+        $http({
+            method: 'POST',
+            url: 'ajax/api/accounts/validate-email/',
+            headers: {
+                'X-CSRFToken': $cookies.csrftoken
+            },
+            data: {
+                email: $scope.user.email
+            }
+        }).success(function(data, status) {
+
+            validateEmail(data.code);
+
+            if (data.code === 0)
+                $scope.registrationForm.email.$setValidity("isOk", true);
+        });
+
     }
 
     /**

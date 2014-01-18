@@ -16,10 +16,6 @@ else:
 #	from psycopg2cffi import compat
 #	compat.register()
 
-	# pypy psycopg2cffi compatible hook
-	from psycopg2cffi import compat
-	compat.register()
-
 	# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 	import os
 	BASE_DIR = os.path.dirname(os.path.dirname(__file__))
