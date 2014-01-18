@@ -11,6 +11,7 @@ redis = redis_connections[1]
 COOKIE_NAME = 'mcheck'
 COOKIE_SALT = 'JMH2FWWYa1ogCJR0gW4z'
 
+REDIS_HASH_PREFIX = 'mcheck_'
 CODE_FIELD = 'code'
 ATTEMPTS_FIELD = 'attempts'
 PHONE_FIELD = 'phone'
@@ -28,22 +29,23 @@ def is_number_check_started(request):
 		return False
 
 
-def start_number_check(phone, password, http_response):
+def start_number_check(phone, password, response):
 	# generate uid avoiding duplicates
 	uid_length = 32
 	uid = ''.join(random.choice(string.uppercase + string.lowercase + string.digits) for x in range(uid_length))
 	while redis.exists(uid):
 		uid = ''.join(random.choice(string.uppercase + string.lowercase + string.digits) for x in range(uid_length))
+	key = REDIS_HASH_PREFIX + uid
 
 	pipe = redis.pipeline()
-	pipe.hset(uid, CODE_FIELD, int(''.join(random.choice(string.digits) for x in range(6))))
-	pipe.hset(uid, ATTEMPTS_FIELD, 1)
-	pipe.hset(uid, PHONE_FIELD, phone)
-	pipe.hset(uid, PASSWORD_FIELD, password)
-	pipe.expire(uid, CODE_TTL)
+	pipe.hset(key, CODE_FIELD, int(''.join(random.choice(string.digits) for x in range(6))))
+	pipe.hset(key, ATTEMPTS_FIELD, 1)
+	pipe.hset(key, PHONE_FIELD, phone)
+	pipe.hset(key, PASSWORD_FIELD, password)
+	pipe.expire(key, CODE_TTL)
 	pipe.execute()
 
-	set_signed_cookie(http_response, COOKIE_NAME, uid, salt=COOKIE_SALT, days_expire=1, http_only=False)
+	set_signed_cookie(response, COOKIE_NAME, uid, salt=COOKIE_SALT, days_expire=1, http_only=False)
 
 	# send SMS
 	# todo: send sms here
@@ -54,36 +56,38 @@ def start_number_check(phone, password, http_response):
 
 def check_code(code, request, response):
 	uid = request.get_signed_cookie(COOKIE_NAME, salt=COOKIE_SALT)
-	if not redis.exists(uid):
-		response.delete_cookie(COOKIE_NAME)
-		raise KeyError('{0} is not in redis database.'.format(uid))
+	key = REDIS_HASH_PREFIX + uid
 
-	attempts_count = redis.hget(uid, ATTEMPTS_FIELD)
+	if not redis.exists(key):
+		response.delete_cookie(COOKIE_NAME)
+		raise KeyError('{0} is not in redis database.'.format(key))
+
+	attempts_count = redis.hget(key, ATTEMPTS_FIELD)
 	if attempts_count is None:
 		response.delete_cookie(COOKIE_NAME)
-		raise KeyError('field @attempts is not in hash {0}.'.format(uid))
+		raise KeyError('field @attempts is not in hash {0}.'.format(key))
 
 	attempts_count = int(attempts_count)
 	if attempts_count >= MAX_ATTEMPTS_COUNT:
 		response.delete_cookie(COOKIE_NAME)
-		redis.delete(uid)
+		redis.delete(key)
 		return False, {'attempts': attempts_count + 1}
 
-	true_code = redis.hget(uid, CODE_FIELD)
+	true_code = redis.hget(key, CODE_FIELD)
 	if true_code is None:
 		response.delete_cookie(COOKIE_NAME)
-		redis.delete(uid)
-		raise KeyError('field @code is not in hash {0}.'.format(uid))
+		redis.delete(key)
+		raise KeyError('field @code is not in hash {0}.'.format(key))
 	
 	if code != true_code:
-		redis.hincrby(uid, ATTEMPTS_FIELD, 1)
+		redis.hincrby(key, ATTEMPTS_FIELD, 1)
 		return False, {'attempts': attempts_count + 1}
 
 
 	user_data = {
-		'phone': redis.hget(uid, PHONE_FIELD),
-	    'password': redis.hget(uid, PASSWORD_FIELD),
+		'phone': redis.hget(key, PHONE_FIELD),
+	    'password': redis.hget(key, PASSWORD_FIELD),
 	}
-	redis.delete(uid)
+	redis.delete(key)
 	response.delete_cookie(COOKIE_NAME)
 	return True, user_data
