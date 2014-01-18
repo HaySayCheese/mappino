@@ -1,8 +1,12 @@
 'use strict';
 
-app.controller('AppCtrl', function($scope, $rootScope, $location) {
+app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
     $rootScope.visited = true;
 
+
+    /**
+     * При закритті діалога додає параметри пошука в урл
+     **/
     $(document).on('hidden.bs.modal', function (e) {
 
         angular.element("body").removeClass("modal-open");
@@ -14,10 +18,34 @@ app.controller('AppCtrl', function($scope, $rootScope, $location) {
             $scope.$apply();
     });
 
+
+    /**
+     * Логіка підставлення в урл параметрів пошука
+     **/
     $scope.$on("$routeChangeSuccess", function() {
         $scope.urlFiltersPart = $location.url().replace("/search", "");
 
         angular.element(".modal-backdrop").remove();
+    });
+
+
+    /**
+     * Логіка унеможливлення переходу до реєстрації або логіну
+     * якщо юзер уже залогінений
+     **/
+    $scope.$on("$locationChangeStart", function(event, next, current) {
+
+        if (!$cookies.sessionid)
+            return;
+
+        if (next.indexOf("/account/registration") != -1 || next.indexOf("/account/login") != -1) {
+            event.preventDefault();
+
+            $location.path("/search");
+
+            if(!$scope.$$phase)
+                $scope.$apply();
+        }
     });
 
 

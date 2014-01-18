@@ -63,7 +63,7 @@ app.controller('LoginCtrl', function($scope, $http, $timeout, $cookies) {
 
             loginBtn.button("reset");
 
-            validateLoginForm(data.code);
+            validateLoginForm(data);
         });
     };
 
@@ -74,10 +74,14 @@ app.controller('LoginCtrl', function($scope, $http, $timeout, $cookies) {
     function validateLoginForm() {
 
         if (arguments[0])
-            var code = arguments[0];
+            var code = arguments[0].code,
+                user = arguments[0].user;
 
-        if (code === 0)
+        if (code === 0) {
+            $cookies.userName = user.name + " " + user.surname;
+
             $('.login-dialog').parent().modal('hide');
+        }
 
         if (code === 3)
             $scope.loginForm.password.$setValidity("login", false);
