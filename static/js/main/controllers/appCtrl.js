@@ -39,8 +39,6 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
             return;
 
         if (next.indexOf("/account/registration") != -1 || next.indexOf("/account/login") != -1) {
-            event.preventDefault();
-
             $location.path("/search");
 
             if(!$scope.$$phase)
