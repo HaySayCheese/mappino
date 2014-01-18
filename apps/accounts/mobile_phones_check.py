@@ -28,14 +28,13 @@ def is_number_check_started(request):
 
 
 def start_number_check(phone, password, http_response):
-	# todo: test me
 	# generate user id avoiding duplicates
 	uid_length = 32
 	uid = ''.join(random.choice(string.uppercase + string.lowercase + string.digits) for x in range(uid_length))
 	while redis.exists(uid): # todo: перевірити при умові, що такий код вже існує
 		uid = ''.join(random.choice(string.uppercase + string.lowercase + string.digits) for x in range(uid_length))
 
-	# save user id in redis
+	# save user's data in redis
 	pipe = redis.pipeline()
 	pipe.hset(uid, CODE_FIELD, int(''.join(random.choice(string.digits) for x in range(6))))
 	pipe.hset(uid, ATTEMPTS_FIELD, 1)
@@ -55,7 +54,6 @@ def start_number_check(phone, password, http_response):
 
 
 def check_code(code, request, response):
-	# todo: test me
 	uid = request.get_signed_cookie(COOKIE_NAME, salt=COOKIE_SALT)
 	if not redis.exists(uid):
 		response.delete_cookie(COOKIE_NAME)

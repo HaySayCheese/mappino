@@ -83,7 +83,7 @@ class Users(AbstractBaseUser):
 	objects = UsersManager()
 
 	#-- django constraints
-	USERNAME_FIELD = 'phone'
+	USERNAME_FIELD = 'raw_phone'
 	REQUIRED_FIELDS = ['name', 'surname', 'email']
 
 
@@ -91,7 +91,7 @@ class Users(AbstractBaseUser):
 	def by_phone_number(cls, number):
 		try:
 			number = cls.objects.normalize_phone(number)
-			return cls.objects.get(raw_number = number)
+			return cls.objects.get(raw_phone = number)
 		except (ValueError, ObjectDoesNotExist):
 			return None
 

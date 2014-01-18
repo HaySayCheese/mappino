@@ -137,6 +137,10 @@ def registration_handler(request):
 			return response
 
 		# seems to be ok
+		user = Users.by_phone_number(user_data['phone'])
+		user.is_active = True
+		user.save()
+
 		ok, user = __login(user_data['phone'], user_data['password'], request)
 		if not ok:
 			raise Exception('Can not login user after registration on redis-stored data.')
@@ -288,8 +292,8 @@ def __login(username, password, request):
 	user = Users.by_phone_number(username)
 	if user is None:
 		user = Users.by_email(username)
-	if user is None:
-		return False, None
+		if user is None:
+			return False, None
 
 	user = authenticate(
 		username = user.raw_phone,
