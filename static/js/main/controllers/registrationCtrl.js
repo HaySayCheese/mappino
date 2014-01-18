@@ -294,9 +294,9 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies
 
     $scope.codeCheck = "";
 
-    var attempt, max_attempts;
-
-    var registrationBtn = $(".registration-dialog .btn-success");
+    var attempt,
+        max_attempts,
+        registrationBtn = $(".registration-dialog .btn-success");
 
     /**
      * Фокус першого поля
@@ -315,7 +315,6 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies
             var tooltip = $("[data-toggle='tooltip']");
 
             tooltip.tooltip('destroy');
-
             tooltip.tooltip({
                 container: '.registration-dialog',
                 animation: false,
@@ -329,6 +328,13 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies
 
         registrationBtn.button('loading');
 
+        sendCodeToValidate();
+    };
+
+    /**
+     * Відправка кода на валідацію
+     **/
+    function sendCodeToValidate() {
         $http({
             method: 'POST',
             url: 'ajax/api/accounts/registration/',
@@ -340,31 +346,42 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies
             }
         }).success(function(data, status) {
 
-            registrationBtn.button('reset');
+           registrationBtn.button('reset');
 
-            attempt = data.attempts;
-            max_attempts = data.max_attempts;
+           attempt = data.attempts;
+           max_attempts = data.max_attempts;
 
-            if (attempt && (attempt - 1 === max_attempts))
-                $rootScope.registrationStatePart = "registration";
-
-            var tooltip = $("[data-toggle='tooltip']");
-
-            tooltip.tooltip('destroy');
-            tooltip.tooltip({
-                container: '.registration-dialog',
-                animation: false,
-                title: "Некоректний код. Попитка " +  data.attempts + " из " +  data.max_attempts + "."
-            });
-
-            if (data.code == 0) {
-                $('.registration-dialog').parent().modal('hide');
-            }
-
-            if (data.code == 1) {
-                $scope.incorrectCode = true;
-           }
+           validateAttempts(data.code);
         });
+    }
+
+    /**
+     * Валідація спроб вводу кода
+     **/
+    function validateAttempts() {
+
+        if (arguments[0])
+            var code = arguments[0];
+
+        if (attempt && (attempt - 1 === max_attempts))
+            $rootScope.registrationStatePart = "registration";
+
+        var tooltip = $("[data-toggle='tooltip']");
+
+        tooltip.tooltip('destroy');
+        tooltip.tooltip({
+            container: '.registration-dialog',
+            animation: false,
+            title: "Некоректний код. Попитка " +  attempt + " из " +  max_attempts + "."
+        });
+
+        if (code == 0) {
+            $('.registration-dialog').parent().modal('hide');
+        }
+
+        if (code == 1) {
+            $scope.incorrectCode = true;
+        }
     }
 
 });
