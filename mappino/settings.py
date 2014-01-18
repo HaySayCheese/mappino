@@ -1,3 +1,4 @@
+#coding=utf-8
 """
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
@@ -10,6 +11,14 @@ DEBUG = True
 if not DEBUG:
 	import production_settings
 else:
+#   МЕГА ПАТЧ
+#	# pypy psycopg2cffi compatible hook
+#	from psycopg2cffi import compat
+#	compat.register()
+
+	# pypy psycopg2cffi compatible hook
+	from psycopg2cffi import compat
+	compat.register()
 
 	# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 	import os
@@ -56,6 +65,8 @@ else:
 	ROOT_URLCONF = 'mappino.urls'
 	WSGI_APPLICATION = 'mappino.wsgi.application'
 
+	AUTH_USER_MODEL = 'users.Users'
+	SESSION_COOKIE_HTTPONLY = False
 
 	# Internationalization
 	# https://docs.djangoproject.com/en/1.6/topics/i18n/

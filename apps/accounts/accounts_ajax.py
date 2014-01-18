@@ -121,12 +121,11 @@ def validate_phone_handler(request):
 #-- handlers
 @require_http_methods('POST')
 def registration_handler(request):
-	# todo: test me
 	if is_number_check_started(request):
 		code = angular_post_parameters(request, []).get('code', 0)
 		response = HttpResponse(content_type='application/json')
-		result, user_data = check_code(code, request, response)
-		if not result:
+		check_ok, user_data = check_code(code, request, response)
+		if not check_ok:
 			body = {
 				'code': 1,
 			    'attempts': user_data['attempts'],
@@ -141,13 +140,13 @@ def registration_handler(request):
 		user.is_active = True
 		user.save()
 
-		ok, user = __login(user_data['phone'], user_data['password'], request)
-		if not ok:
+		logged, user = __login(user_data['phone'], user_data['password'], request)
+		if not logged:
 			raise Exception('Can not login user after registration on redis-stored data.')
 
 		body = {
 			'code': 0,
-		    'user': __on_login_user_info(user),
+		    'user': __on_login_user_data(user),
 		    'message': 'OK',
 		}
 		response.write(json.dumps(body))
@@ -236,8 +235,6 @@ def registration_handler(request):
 	    'message': 'OK',
 	}
 	response = HttpResponse(json.dumps(body), content_type='application/json')
-
-	# mobile check
 	start_number_check(phone_number, password, response)
 	return response
 
@@ -281,7 +278,7 @@ def login_handler(request):
 		body = {
 			'code': 0,
 		    'message': 'OK',
-			'user': __on_login_user_info(user),
+			'user': __on_login_user_data(user),
 		}
 		return HttpResponse(json.dumps(body), content_type='application/json')
 
@@ -306,7 +303,7 @@ def __login(username, password, request):
 	return True, user
 
 
-def __on_login_user_info(user):
+def __on_login_user_data(user):
 	return {
 		'name': user.name,
 	    'surname': user.surname,

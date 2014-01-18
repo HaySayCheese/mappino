@@ -16,7 +16,8 @@ ATTEMPTS_FIELD = 'attempts'
 PHONE_FIELD = 'phone'
 PASSWORD_FIELD = 'pass'
 
-MAX_ATTEMPTS_COUNT = 100 # fixme
+MAX_ATTEMPTS_COUNT = 3
+CODE_TTL = 60*60*2 # 2 hours
 
 
 def is_number_check_started(request):
@@ -28,22 +29,20 @@ def is_number_check_started(request):
 
 
 def start_number_check(phone, password, http_response):
-	# generate user id avoiding duplicates
+	# generate uid avoiding duplicates
 	uid_length = 32
 	uid = ''.join(random.choice(string.uppercase + string.lowercase + string.digits) for x in range(uid_length))
-	while redis.exists(uid): # todo: перевірити при умові, що такий код вже існує
+	while redis.exists(uid):
 		uid = ''.join(random.choice(string.uppercase + string.lowercase + string.digits) for x in range(uid_length))
 
-	# save user's data in redis
 	pipe = redis.pipeline()
 	pipe.hset(uid, CODE_FIELD, int(''.join(random.choice(string.digits) for x in range(6))))
 	pipe.hset(uid, ATTEMPTS_FIELD, 1)
 	pipe.hset(uid, PHONE_FIELD, phone)
 	pipe.hset(uid, PASSWORD_FIELD, password)
-	pipe.expire(uid, 60*60*3)
+	pipe.expire(uid, CODE_TTL)
 	pipe.execute()
 
-	# save cookie
 	set_signed_cookie(http_response, COOKIE_NAME, uid, salt=COOKIE_SALT, days_expire=1, http_only=False)
 
 	# send SMS
@@ -81,10 +80,10 @@ def check_code(code, request, response):
 		return False, {'attempts': attempts_count + 1}
 
 
-	userdata = {
+	user_data = {
 		'phone': redis.hget(uid, PHONE_FIELD),
 	    'password': redis.hget(uid, PASSWORD_FIELD),
 	}
 	redis.delete(uid)
 	response.delete_cookie(COOKIE_NAME)
-	return True, userdata
+	return True, user_data
