@@ -2,6 +2,9 @@
 
 app.controller('LoginCtrl', function($scope, $http, $timeout, $cookies) {
 
+    /**
+     * Змінні
+     **/
     $scope.showValidationMessages = false;
 
     $scope.user = {
@@ -23,11 +26,18 @@ app.controller('LoginCtrl', function($scope, $http, $timeout, $cookies) {
     }, 300);
 
 
+    /**
+     * Якщо в полях є дані і юзер змфнює їх
+     * то забирати повідомлення про помилку
+     **/
     $scope.$watchCollection("user", function(newValue, oldValue) {
         $scope.loginForm.password.$setValidity("login", true);
     });
 
 
+    /**
+     * Клік по кнопці входу
+     **/
     $scope.submitLogin = function() {
 
         $scope.showValidationMessages = true;
@@ -58,6 +68,9 @@ app.controller('LoginCtrl', function($scope, $http, $timeout, $cookies) {
     };
 
 
+    /**
+     * Логіка валідаці форми логіну
+     **/
     function validateLoginForm() {
 
         if (arguments[0])
