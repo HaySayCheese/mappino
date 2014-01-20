@@ -7,14 +7,14 @@ from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
-from apps.accounts.mobile_phones_check import start_number_check, MAX_ATTEMPTS_COUNT, is_number_check_started, check_code
-from apps.accounts.sys import AccessRestoreHandler, TokenDoesNotExists, NoUserWithSuchUsername
+from apps.accounts.sys import AccessRestoreHandler, TokenDoesNotExists, NoUserWithSuchUsername, MobilePhonesChecker
 from collective.methods.request_data_getters import angular_post_parameters
 from core.users.models import Users
 from mappino.wsgi import templates
 
 
 ACCESS_RESTORE_HANDLER = AccessRestoreHandler()
+MOBILE_PHONES_CHECKER = MobilePhonesChecker()
 
 
 #-- templates
@@ -179,14 +179,16 @@ def registration_handler(request):
 		return HttpResponseBadRequest(
 			json.dumps(RH_RESPONSES['anonymous_only']), content_type='application/json')
 
-	if is_number_check_started(request):
-		code = angular_post_parameters(request, []).get('code', 0)
+	if MOBILE_PHONES_CHECKER.number_check_is_started(request):
+		d =  angular_post_parameters(request, [])
+		code = d.get('code', 0)
 		response = HttpResponse(content_type='application/json')
-		check_ok, user_data = check_code(code, request, response)
-		if not check_ok:
+
+		ok, user_data = MOBILE_PHONES_CHECKER.check_code(code, request, response)
+		if not ok:
 			body = RH_RESPONSES['invalid_check_codes']
 			body['attempts'] = user_data['attempts']
-			body['max_attempts'] =  MAX_ATTEMPTS_COUNT
+			body['max_attempts'] =  MOBILE_PHONES_CHECKER.max_attempts_count
 			response.write(json.dumps(body))
 			return response
 
@@ -260,7 +262,7 @@ def registration_handler(request):
 
 	response = HttpResponse(
 		json.dumps(RH_RESPONSES['OK']), content_type='application/json')
-	start_number_check(phone_number, password, request, response)
+	MOBILE_PHONES_CHECKER.begin_number_check(phone_number, password, request, response)
 	return response
 
 
@@ -365,7 +367,8 @@ PR_RESPONSES = {
 }
 
 @require_http_methods(['POST'])
-def password_reset_handler(request):
+def password_reset_handler(request, bad_request=HttpResponseBadRequest(json.dumps(PR_RESPONSES['passwords_not_match']),
+                                                                       content_type='application/json')):
 	if request.user.is_aunthenticated():
 		return HttpResponseBadRequest(
 			json.dumps(PR_RESPONSES['anonymous_only']), content_type='application/json')
@@ -388,8 +391,7 @@ def password_reset_handler(request):
 				json.dumps(PR_RESPONSES['password_repeat_empty']), content_type='application/json')
 
 		if password != password_repeat:
-			return HttpResponseBadRequest(
-				json.dumps(PR_RESPONSES['passwords_not_match']), content_type='application/json')
+			return bad_request
 
 		try:
 			ACCESS_RESTORE_HANDLER.finish_restoring(token, password)
