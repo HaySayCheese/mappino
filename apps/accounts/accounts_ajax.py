@@ -8,9 +8,13 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
 from apps.accounts.mobile_phones_check import start_number_check, MAX_ATTEMPTS_COUNT, is_number_check_started, check_code
+from apps.accounts.sys import AccessRestoreHandler, TokenDoesNotExists, NoUserWithSuchUsername
 from collective.methods.request_data_getters import angular_post_parameters
 from core.users.models import Users
 from mappino.wsgi import templates
+
+
+ACCESS_RESTORE_HANDLER = AccessRestoreHandler()
 
 
 #-- templates
@@ -250,7 +254,7 @@ def registration_handler(request):
 			user.name = name
 			user.surname = surname
 			user.save()
-	except ValueError as e:
+	except ValueError:
 		return HttpResponseBadRequest(
 			json.dumps(RH_RESPONSES['field_parsing_error']), content_type='application/json')
 
@@ -319,6 +323,106 @@ def login_handler(request):
 	else:
 		body = LH_RESPONSES['OK']
 		body['user'] = __on_login_user_data(user)
+		return HttpResponse(json.dumps(body), content_type='application/json')
+
+
+
+PR_RESPONSES = {
+	'anonymous_only': {
+		'code': 1,
+	    'message': 'Anonymous users only.'
+	},
+
+	'username_empty': {
+		'code': 2,
+		'message': '@username can not be empty.',
+	},
+	'invalid_username': {
+		'code': 3,
+		'message': '@username is invalid.',
+	},
+    'password_empty': {
+	    'code': 4,
+		'message': '@password can not be empty.',
+    },
+    'password_repeat_empty': {
+	    'code': 5,
+		'message': '@password-repeat can not be empty.',
+    },
+    'passwords_not_match': {
+	    'code': 6,
+		'message': 'Passwords do not match.',
+    },
+    'invalid_token': {
+	    'code': 7,
+		'message': 'Invalid @token.',
+    },
+
+	'OK': {
+	    'code': 0,
+	    'message': 'OK',
+    },
+}
+
+@require_http_methods(['POST'])
+def password_reset_handler(request):
+	if request.user.is_aunthenticated():
+		return HttpResponseBadRequest(
+			json.dumps(PR_RESPONSES['anonymous_only']), content_type='application/json')
+
+	d = angular_post_parameters(request, [])
+	token = d.get('token', '')
+	if token:
+		if not ACCESS_RESTORE_HANDLER.token_is_present(token):
+			return HttpResponseBadRequest(
+				json.dumps(PR_RESPONSES['invalid_token']), content_type='application/json')
+
+		password = d.get('password', '')
+		if not password:
+			return HttpResponseBadRequest(
+				json.dumps(PR_RESPONSES['password_empty']), content_type='application/json')
+
+		password_repeat = d.get('password-repeat', '')
+		if not password_repeat:
+			return HttpResponseBadRequest(
+				json.dumps(PR_RESPONSES['password_repeat_empty']), content_type='application/json')
+
+		if password != password_repeat:
+			return HttpResponseBadRequest(
+				json.dumps(PR_RESPONSES['passwords_not_match']), content_type='application/json')
+
+		try:
+			ACCESS_RESTORE_HANDLER.finish_restoring(token, password)
+		except ValueError:
+			raise Exception('RUNTIME ERROR: @password passed checks but was rejected by further logic.')
+		except TokenDoesNotExists:
+			return HttpResponseBadRequest(
+				json.dumps(PR_RESPONSES['invalid_token']), content_type='application/json')
+
+		# seems to be ok
+		return HttpResponse(json.dumps(PR_RESPONSES['OK']), content_type='application/json')
+
+	else:
+		# token is absent.
+		# iy seems that this is an attempt for token generation
+		username = d.get('username', '')
+		if not username:
+			return HttpResponseBadRequest(
+				json.dumps(PR_RESPONSES['username_empty']), content_type='application/json')
+
+		try:
+			token = ACCESS_RESTORE_HANDLER.begin_restoring(username)
+		except ValueError:
+			raise Exception('RUNTIME ERROR: @username passed checks but was rejected by further logic.')
+		except NoUserWithSuchUsername:
+			return HttpResponseBadRequest(
+				json.dumps(PR_RESPONSES['invalid_username']), content_type='application/json')
+
+		# seems to be ok
+		# todo: send email here
+
+		body = PR_RESPONSES['OK']
+		body['token'] = token
 		return HttpResponse(json.dumps(body), content_type='application/json')
 
 

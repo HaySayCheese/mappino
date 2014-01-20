@@ -1,7 +1,7 @@
 #coding=utf-8
 import random
 import string
-from apps.accounts.sms_sender import SMSSender
+from apps.accounts.sys import SMSSender
 from collective.http.cookies import set_signed_cookie
 from mappino.wsgi import redis_connections
 
