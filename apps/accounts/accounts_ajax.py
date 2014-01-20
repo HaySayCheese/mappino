@@ -119,19 +119,70 @@ def validate_phone_handler(request):
 
 
 #-- handlers
+RH_RESPONSES = {
+	'anonymous_only': {
+		'code': 9,
+	    'message': 'anonymous users only.',
+	},
+    'invalid_check_codes': {
+	    'code': 10,
+	    'message': 'invalid check code',
+    },
+
+    'name_empty': {
+	    'code': 1,
+		'message': '@name can not be empty.',
+    },
+    'surname_empty': {
+	    'code': 2,
+		'message': '@surname can not be empty.',
+    },
+    'phone_empty': {
+	    'code': 3,
+		'message': '@phone-number can not be empty.',
+    },
+    'email_empty': {
+	    'code': 4,
+		'message': '@email can not be empty.',
+    },
+    'password_empty': {
+	    'code': 5,
+		'message': '@password can not be empty.',
+    },
+    'password_repeat_empty': {
+	    'code': 6,
+		'message': '@password-repeat can not be empty.',
+    },
+    'passwords_not_match': {
+	    'code': 7,
+		'message': 'Passwords do not match.',
+    },
+    'field_parsing_error': {
+	    'code': 8,
+		'message': 'Unknown fields parsing error',
+    },
+
+    'OK': {
+	    'code': 0,
+	    'message': 'OK',
+    },
+
+}
+
 @require_http_methods('POST')
 def registration_handler(request):
+	if request.user.is_aunthenticated():
+		return HttpResponseBadRequest(
+			json.dumps(RH_RESPONSES['anonymous_only']), content_type='application/json')
+
 	if is_number_check_started(request):
 		code = angular_post_parameters(request, []).get('code', 0)
 		response = HttpResponse(content_type='application/json')
 		check_ok, user_data = check_code(code, request, response)
 		if not check_ok:
-			body = {
-				'code': 1,
-			    'attempts': user_data['attempts'],
-			    'max_attempts': MAX_ATTEMPTS_COUNT,
-			    'message': 'invalid check code',
-			}
+			body = RH_RESPONSES['invalid_check_codes']
+			body['attempts'] = user_data['attempts']
+			body['max_attempts'] =  MAX_ATTEMPTS_COUNT
 			response.write(json.dumps(body))
 			return response
 
@@ -144,11 +195,8 @@ def registration_handler(request):
 		if not logged:
 			raise Exception('Can not login user after registration on redis-stored data.')
 
-		body = {
-			'code': 0,
-		    'user': __on_login_user_data(user),
-		    'message': 'OK',
-		}
+		body = RH_RESPONSES['OK']
+		body['user'] = __on_login_user_data(user),
 		response.write(json.dumps(body))
 		return response
 
@@ -162,58 +210,37 @@ def registration_handler(request):
 	#-- checks
 	name = d.get('name', '')
 	if not name:
-		body = {
-			'code': 1,
-		    'message': '@name can not be empty.',
-		}
-		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
+		return HttpResponseBadRequest(
+			json.dumps(RH_RESPONSES['name_empty']), content_type='application/json')
 
 	surname = d.get('surname', '')
 	if not surname:
-		body = {
-			'code': 2,
-		    'message': '@surname can not be empty.',
-		}
-		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
+		return HttpResponseBadRequest(
+			json.dumps(RH_RESPONSES['surname_empty']), content_type='application/json')
 
 	phone_number = d.get('phone-number', '')
 	if not phone_number:
-		body = {
-			'code': 3,
-		    'message': '@phone-number can not be empty.',
-		}
-		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
+		return HttpResponseBadRequest(
+			json.dumps(RH_RESPONSES['phone_empty']), content_type='application/json')
 
 	email = d.get('email', '')
 	if not email:
-		body = {
-			'code': 4,
-		    'message': '@mail can not be empty.',
-		}
-		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
+		return HttpResponseBadRequest(
+			json.dumps(RH_RESPONSES['email_empty']), content_type='application/json')
 
 	password = d.get('password', '')
 	if not password:
-		body = {
-			'code': 5,
-		    'message': '@password can not be empty.',
-		}
-		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
+		return HttpResponseBadRequest(
+			json.dumps(RH_RESPONSES['password_empty']), content_type='application/json')
 
 	password_repeat = d.get('password-repeat', '')
 	if not password_repeat:
-		body = {
-			'code': 6,
-		    'message': '@password-repeat can not be empty.',
-		}
-		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
+		return HttpResponseBadRequest(
+			json.dumps(RH_RESPONSES['password_repeat_empty']), content_type='application/json')
 
 	if password != password_repeat:
-		body = {
-			'code': 7,
-		    'message': 'Passwords does not match.',
-		}
-		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
+		return HttpResponseBadRequest(
+			json.dumps(RH_RESPONSES['passwords_not_match']), content_type='application/json')
 
 
 	#-- account creation
@@ -224,23 +251,47 @@ def registration_handler(request):
 			user.surname = surname
 			user.save()
 	except ValueError as e:
-		body = {
-			'code': 8,
-		    'message': 'Field parsing error: {0}'.format(e.message),
-		}
-		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
+		return HttpResponseBadRequest(
+			json.dumps(RH_RESPONSES['field_parsing_error']), content_type='application/json')
 
-	body = {
-		'code': 0,
-	    'message': 'OK',
-	}
-	response = HttpResponse(json.dumps(body), content_type='application/json')
+	response = HttpResponse(
+		json.dumps(RH_RESPONSES['OK']), content_type='application/json')
 	start_number_check(phone_number, password, request, response)
 	return response
 
 
+
+LH_RESPONSES = {
+	'username_empty': {
+		'code': 1,
+	    'message': '@username is empty or absent.',
+	},
+    'password_empty': {
+	    'code': 2,
+	    'message': '@password is empty or absent.',
+    },
+    'invalid_attempt': {
+	    'code': 3,
+	    'message': 'Invalid login attempt.',
+    },
+
+    'anonymous_only': {
+	    'code': '4',
+        'message': 'Anonymous users only.',
+    },
+
+    'OK': {
+	    'code': 0,
+	    'message': 'OK',
+    },
+}
+
 @require_http_methods(['POST'])
 def login_handler(request):
+	if request.user.is_aunthenticated():
+		return HttpResponseBadRequest(
+			json.dumps(LH_RESPONSES['anonymous_only']), content_type='application/json')
+
 	try:
 		d = angular_post_parameters(request, ['username', 'password'])
 	except ValueError:
@@ -250,36 +301,24 @@ def login_handler(request):
 	#-- checks
 	username = d.get('username', '')
 	if not username:
-		body = {
-			'code': 1,
-		    'message': '@username is empty or absent.',
-		}
-		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
+		return HttpResponseBadRequest(
+			json.dumps(LH_RESPONSES['username_empty']), content_type='application/json')
 
 	password = d.get('password', '')
 	if not username:
-		body = {
-			'code': 2,
-		    'message': '@password is empty or absent.',
-		}
-		return HttpResponseBadRequest(json.dumps(body), content_type='application/json')
+		return HttpResponseBadRequest(
+			json.dumps(LH_RESPONSES['password_empty']), content_type='application/json')
 
 
 	# try to login
 	ok, user =  __login(username, password, request)
 	if not ok:
-		body = {
-			'code': 3,
-		    'message': 'Invalid login attempt.',
-		}
-		return HttpResponse(json.dumps(body), content_type='application/json')
+		return HttpResponse(
+			json.dumps(LH_RESPONSES['invalid_attempt']), content_type='application/json')
 
 	else:
-		body = {
-			'code': 0,
-		    'message': 'OK',
-			'user': __on_login_user_data(user),
-		}
+		body = LH_RESPONSES['OK']
+		body['user'] = __on_login_user_data(user)
 		return HttpResponse(json.dumps(body), content_type='application/json')
 
 
