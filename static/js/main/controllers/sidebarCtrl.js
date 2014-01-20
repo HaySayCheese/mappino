@@ -14,10 +14,13 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies) {
 
     }, function(newValue, oldValue) {
 
-        if ($cookies.userName)
-            $scope.userName = $cookies.userName;
+        if (sessionStorage.userName)
+            $scope.userName = sessionStorage.userName;
         else
-            $scope.userName = "";
+            // запросити з сервера
+
+        if (!$cookies.sessionid)
+            delete sessionStorage.userName;
     });
 
 
@@ -27,11 +30,11 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies) {
      **/
     $scope.$watch(function() {
 
-        return $cookies.userName;
+        return sessionStorage.userName;
 
     }, function(newValue, oldValue) {
 
-        if (!$cookies.userName)
-            delete $cookies.sessionid;
+        //if (!sessionStorage.userName)
+            // запросити сесійну куку
     });
 });

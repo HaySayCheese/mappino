@@ -351,7 +351,7 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies
            attempt = data.attempts;
            max_attempts = data.max_attempts;
 
-           validateAttempts(data.code);
+           validateAttempts(data);
         });
     }
 
@@ -361,7 +361,8 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies
     function validateAttempts() {
 
         if (arguments[0])
-            var code = arguments[0];
+            var code = arguments[0].code,
+                user = arguments[0].user;
 
         if (attempt && (attempt - 1 === max_attempts))
             $rootScope.registrationStatePart = "registration";
@@ -376,6 +377,7 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies
         });
 
         if (code == 0) {
+            sessionStorage.userName = user.name + " " + user.surname;
             $('.registration-dialog').parent().modal('hide');
         }
 

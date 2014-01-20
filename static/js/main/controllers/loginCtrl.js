@@ -78,7 +78,7 @@ app.controller('LoginCtrl', function($scope, $http, $timeout, $cookies) {
                 user = arguments[0].user;
 
         if (code === 0) {
-            $cookies.userName = user.name + " " + user.surname;
+            sessionStorage.userName = user.name + " " + user.surname;
 
             $('.login-dialog').parent().modal('hide');
         }
