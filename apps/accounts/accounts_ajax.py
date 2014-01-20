@@ -235,7 +235,7 @@ def registration_handler(request):
 	    'message': 'OK',
 	}
 	response = HttpResponse(json.dumps(body), content_type='application/json')
-	start_number_check(phone_number, password, response)
+	start_number_check(phone_number, password, request, response)
 	return response
 
 

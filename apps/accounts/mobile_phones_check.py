@@ -1,11 +1,13 @@
 #coding=utf-8
 import random
 import string
+from apps.accounts.sms_sender import SMSSender
 from collective.http.cookies import set_signed_cookie
 from mappino.wsgi import redis_connections
 
 
 redis = redis_connections[1]
+sms_sender = SMSSender()
 
 
 COOKIE_NAME = 'mcheck'
@@ -29,7 +31,7 @@ def is_number_check_started(request):
 		return False
 
 
-def start_number_check(phone, password, response):
+def start_number_check(phone, password, request, response):
 	# generate uid avoiding duplicates
 	uid_length = 32
 	uid = ''.join(random.choice(string.uppercase + string.lowercase + string.digits) for x in range(uid_length))
@@ -46,12 +48,8 @@ def start_number_check(phone, password, response):
 	pipe.execute()
 
 	set_signed_cookie(response, COOKIE_NAME, uid, salt=COOKIE_SALT, days_expire=1, http_only=False)
+	sms_sender.send(phone, request)
 
-	# send SMS
-	# todo: send sms here
-	# todo: додати перевірку на дотримання часового інтервалу до повторної SMS
-	# todo: додати обмеження на к-сть SMS в день
-	# todo: додати обмеження на к-сть SMS на одну ip-адресу.
 
 
 def check_code(code, request, response):
