@@ -24,6 +24,11 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
     $scope.showValidationEmail      = false;
     $scope.showValidationPhone      = false;
 
+    $scope.validated = {
+        email: false,
+        phone: false
+    };
+
     /**
      * Колекція змінних полів
      **/
@@ -35,7 +40,6 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
         password:       "",
         passwordRepeat: ""
     };
-
 
     /**
      * Фокус першого поля і ініціалізація тултіпів
@@ -49,28 +53,25 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
         })
     }, 300);
 
-
-    /**
-     * Валідація при вводі даних в поле
-     **/
-    $scope.$watchCollection("user", function(newValue, oldValue) {
-//        validatePassword();
-//
-//        if (newValue.email == "" || !newValue.email) {
-//            $scope.registrationForm.email.$setValidity("free", true);
-//            $scope.registrationForm.email.$setValidity("email", true);
-//        }
-//
-//        if (newValue.phoneNumber == "" || !newValue.phoneNumber) {
-//            $scope.registrationForm.phoneNumber.$setValidity("free", true);
-//            $scope.registrationForm.phoneNumber.$setValidity("phone", true);
-//            $scope.registrationForm.phoneNumber.$setValidity("code", true);
-//        }
-
-        validateEmail();
-
+    $scope.$watchCollection("user", function() {
+        validatePassword();
     });
 
+    /**
+     * Валідація пошти при вводі даних в поле
+     **/
+    $scope.$watch("user.email", function(newValue, oldValue) {
+        if (oldValue !== newValue)
+            validateEmail();
+    });
+
+    /**
+     * Валідація телефона при вводі даних в поле
+     **/
+    $scope.$watch("user.phoneNumber", function(newValue, oldValue) {
+        if (oldValue !== newValue)
+            validatePhone();
+    });
 
     /**
      * Валідація пошти при втраті фокуса з поля
@@ -83,7 +84,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
      * Валідація телефона при втраті фокуса з поля
      **/
     angular.element("input[name='phoneNumber']").bind("focusout", function() {
-        validatePhoneNumber();
+        sendPhoneToValidate();
     });
 
 
@@ -91,16 +92,18 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
      * Клік по кнопці реєстрації
      **/
     $scope.submitRegistration = function() {
-//        $scope.showValidationMessages   = true;
-//        $scope.showValidationEmail      = true;
-//        $scope.showValidationPhone      = true;
-//
-//        validateEmail();
-//        validatePhoneNumber();
-//
-//        if ($scope.registrationForm.$valid)
-//            registerUser();
+        $scope.showValidationMessages   = true;
+        $scope.showValidationEmail      = true;
+        $scope.showValidationPhone      = true;
 
+        if (!$scope.validated.email)
+            sendEmailToValidate();
+
+        if (!$scope.validated.phone)
+            sendPhoneToValidate();
+
+        if ($scope.registrationForm.$valid)
+            registerUser();
     };
 
     /**
@@ -108,16 +111,17 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
      **/
     function validateEmail() {
 
+        $scope.registrationForm.email.$setValidity("free", true);
+        $scope.registrationForm.email.$setValidity("email", true);
+
+        $scope.registrationForm.email.$setValidity("isOk", false);
+
         if (arguments[0])
             var code = arguments[0];
 
         if (!$scope.user.email && $scope.user.email === "")
             return;
 
-        $scope.registrationForm.email.$setValidity("free", true);
-        $scope.registrationForm.email.$setValidity("email", true);
-
-        $scope.registrationForm.email.$setValidity("isOk", false);
 
         if (code === 0)
             $scope.registrationForm.email.$setValidity("free", true);
@@ -134,11 +138,17 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
         $scope.showValidationEmail = true;
     }
 
-
+    /**
+     * Відправка пошти на валідацію
+     **/
     function sendEmailToValidate() {
+
+        $scope.registrationForm.email.$setValidity("isOk", false);
 
         if (!$scope.user.email || $scope.user.email === "")
             return;
+
+        $scope.validated.email = false;
 
         $http({
             method: 'POST',
@@ -153,56 +163,83 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
 
             validateEmail(data.code);
 
-            if (data.code === 0)
+            if (data.code === 0) {
                 $scope.registrationForm.email.$setValidity("isOk", true);
+
+                $scope.validated.email = true;
+            }
         });
 
     }
 
     /**
-     * Валідація телефона
+     * Логіка валідація телефона
      **/
-    function validatePhoneNumber() {
-        if ($scope.registrationForm.phoneNumber.$valid)
-            $http({
-                method: 'POST',
-                url: 'ajax/api/accounts/validate-phone-number/',
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                },
-                data: {
-                    number: $scope.user.phoneNumber
-                }
-            }).success(function(data, status) {
+    function validatePhone() {
 
-                if (data.code == 0) {
-                    $scope.registrationForm.phoneNumber.$setValidity("free", true);
-                    $scope.registrationForm.phoneNumber.$setValidity("phone", true);
-                    $scope.registrationForm.phoneNumber.$setValidity("code", true);
-                }
-                if (data.code == 1) {
-                    $scope.registrationForm.phoneNumber.$setValidity("free", true);
-                    $scope.registrationForm.phoneNumber.$setValidity("phone", false);
-                    $scope.registrationForm.phoneNumber.$setValidity("code", true);
-                }
-                if (data.code == 2) {
-                    $scope.registrationForm.phoneNumber.$setValidity("code", false);
-                    $scope.registrationForm.phoneNumber.$setValidity("free", true);
-                    $scope.registrationForm.phoneNumber.$setValidity("phone", true);
-                }
-                if (data.code == 3) {
-                    $scope.registrationForm.phoneNumber.$setValidity("free", false);
-                    $scope.registrationForm.phoneNumber.$setValidity("phone", true);
-                    $scope.registrationForm.phoneNumber.$setValidity("code", true);
-                }
+        $scope.registrationForm.phoneNumber.$setValidity("free", true);
+        $scope.registrationForm.phoneNumber.$setValidity("phone", true);
+        $scope.registrationForm.phoneNumber.$setValidity("code", true);
 
-                $scope.showValidationPhone = true;
-            });
-        else {
+        $scope.registrationForm.phoneNumber.$setValidity("isOk", false);
+
+        if (arguments[0])
+            var code = arguments[0];
+
+        if (!$scope.user.phoneNumber && $scope.user.phoneNumber === "")
+            return;
+
+
+        if (code === 0)
             $scope.registrationForm.phoneNumber.$setValidity("free", true);
-            $scope.registrationForm.phoneNumber.$setValidity("phone", true);
-            $scope.registrationForm.phoneNumber.$setValidity("code", true);
-        }
+
+
+        if (code === 1)
+            $scope.registrationForm.phoneNumber.$setValidity("phone", false);
+
+
+        if (code === 2)
+            $scope.registrationForm.phoneNumber.$setValidity("code", false);
+
+
+        if (code === 3)
+            $scope.registrationForm.phoneNumber.$setValidity("free", false);
+
+
+        $scope.showValidationPhone = true;
+    }
+
+    /**
+     * Відправка телефона на валідацію
+     **/
+    function sendPhoneToValidate() {
+
+        $scope.registrationForm.phoneNumber.$setValidity("isOk", false);
+
+        if (!$scope.user.phoneNumber || $scope.user.phoneNumber === "")
+            return;
+
+        $scope.validated.phone = false;
+
+        $http({
+            method: 'POST',
+            url: 'ajax/api/accounts/validate-phone-number/',
+            headers: {
+                'X-CSRFToken': $cookies.csrftoken
+            },
+            data: {
+                number: $scope.user.phoneNumber
+            }
+        }).success(function(data, status) {
+
+            validatePhone(data.code);
+
+            if (data.code === 0) {
+                $scope.registrationForm.phoneNumber.$setValidity("isOk", true);
+
+                $scope.validated.phone = true;
+            }
+        });
     }
 
     /**
@@ -215,7 +252,16 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
             $scope.registrationForm.passwordRepeat.$setValidity("match", true);
     }
 
+
+    /**
+     * Функція відправки введених даних
+     **/
     function registerUser() {
+
+        var registrationBtn = $(".registration-dialog .btn-success");
+
+        registrationBtn.button('loading');
+
         $http({
             method: 'POST',
             url: 'ajax/api/accounts/registration/',
@@ -231,9 +277,10 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
                 'password-repeat':  $scope.user.passwordRepeat
             }
         }).success(function() {
-            $rootScope.registrationStatePart = "codeCheck";
-        })
+            registrationBtn.button('reset');
 
+            $rootScope.registrationStatePart = "codeCheck";
+        });
     }
 });
 
@@ -247,7 +294,9 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies
 
     $scope.codeCheck = "";
 
-    var attempt, max_attempts;
+    var attempt,
+        max_attempts,
+        registrationBtn = $(".registration-dialog .btn-success");
 
     /**
      * Фокус першого поля
@@ -256,51 +305,83 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies
         angular.element("input")[0].focus();
     }, 300);
 
+
+    /**
+     * Функція відправки кода на перевірку
+     **/
     $scope.checkPhoneCode = function() {
 
-        if (attempt && (attempt == max_attempts))
-            $rootScope.registrationStatePart = "registration";
-
-        if ($scope.codeCheck && $scope.codeCheck != "") {
-            $http({
-                method: 'POST',
-                url: 'ajax/api/accounts/registration/',
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                },
-                data: {
-                    code: $scope.codeCheck
-                }
-            }).success(function(data, status) {
-                    attempt = data.attempts;
-                    max_attempts = data.max_attempts;
-
-                    var tooltip = $("[data-toggle='tooltip']");
-
-                    tooltip.tooltip('destroy');
-                    tooltip.tooltip({
-                        container: '.registration-dialog',
-                        animation: false,
-                        title: "Некоректний код. Попитка " +  data.attempts + " из " +  data.max_attempts + "."
-                    });
-
-                if (data.code == 0) {
-                    $('.registration-dialog').parent().modal('hide');
-                }
-                if (data.code == 1) {
-                    $scope.incorrectCode = true;
-                }
-            });
-        } else {
+        if (!$scope.codeCheck || $scope.codeCheck === "") {
             var tooltip = $("[data-toggle='tooltip']");
 
             tooltip.tooltip('destroy');
             tooltip.tooltip({
                 container: '.registration-dialog',
                 animation: false,
-                title: "Обовязкове поле."
+                title: "Обязательное поле"
             });
 
+            $scope.incorrectCode = true;
+
+            return;
+        }
+
+        registrationBtn.button('loading');
+
+        sendCodeToValidate();
+    };
+
+    /**
+     * Відправка кода на валідацію
+     **/
+    function sendCodeToValidate() {
+        $http({
+            method: 'POST',
+            url: 'ajax/api/accounts/registration/',
+            headers: {
+                'X-CSRFToken': $cookies.csrftoken
+            },
+            data: {
+                code: $scope.codeCheck
+            }
+        }).success(function(data, status) {
+
+           registrationBtn.button('reset');
+
+           attempt = data.attempts;
+           max_attempts = data.max_attempts;
+
+           validateAttempts(data);
+        });
+    }
+
+    /**
+     * Валідація спроб вводу кода
+     **/
+    function validateAttempts() {
+
+        if (arguments[0])
+            var code = arguments[0].code,
+                user = arguments[0].user;
+
+        if (attempt && (attempt - 1 === max_attempts))
+            $rootScope.registrationStatePart = "registration";
+
+        var tooltip = $("[data-toggle='tooltip']");
+
+        tooltip.tooltip('destroy');
+        tooltip.tooltip({
+            container: '.registration-dialog',
+            animation: false,
+            title: "Некоректний код. Попитка " +  attempt + " из " +  max_attempts + "."
+        });
+
+        if (code == 0) {
+            sessionStorage.userName = user.name + " " + user.surname;
+            $('.registration-dialog').parent().modal('hide');
+        }
+
+        if (code == 1) {
             $scope.incorrectCode = true;
         }
     }

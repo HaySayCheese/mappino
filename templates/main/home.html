@@ -38,6 +38,7 @@
 
     <script type="text/javascript" src="{{ static }}js/main/controllers/appCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/controllers/mapCtrl.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/controllers/sidebarCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/controllers/firstEnterCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/controllers/loginCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/controllers/registrationCtrl.js"></script>
@@ -54,15 +55,21 @@
 
         </div>
 
-        <div class="bwb sidebar" ng-show="visited">
+        <div class="bwb sidebar" ng-show="visited" ng-controller="SidebarCtrl">
             <div class="sidebar-header">
-                <div class="bwb-header text-right">
+
+                <div class="bwb-header text-right" ng-show="!userName || userName === ''">
                     <a ng-href="#!/account/new/[[ urlFiltersPart ]]">Подать обьявление</a>
                     <span class="text-muted">&#8226;</span>
                     <a ng-href="#!/account/registration/[[ urlFiltersPart ]]">Регистрация</a>
                     <span class="text-muted">&#8226;</span>
                     <a ng-href="#!/account/login/[[ urlFiltersPart ]]">Войти</a>
                 </div>
+
+                <div class="bwb-header text-right" ng-show="userName && userName !== ''">
+                    <a ng-href="/cabinet">[[ userName ]]</a>
+                </div>
+
                 <div class="sidebar-header-city-search">
                     <input id="sidebar-city-input" type="text" placeholder="" value="" class="form-control sidebar-city-input input-lg text-center" select-on-click ng-model="filters.city">
                 </div>
