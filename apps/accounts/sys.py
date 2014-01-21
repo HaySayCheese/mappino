@@ -2,6 +2,7 @@
 import hashlib
 import random
 import string
+from __builtin__ import unicode
 from collective.exceptions import AlreadyExist, RecordAlreadyExists
 from collective.http.cookies import set_signed_cookie
 from core.users.models import Users
@@ -32,15 +33,15 @@ class AccessRestoreHandler(object):
 			if user is None:
 				raise NoUserWithSuchUsername('Login: {0}'.format(username))
 
-		token = self.__add_token(user)
+		token = self.__add_token(user.id)
 		return token
 
 
 	def token_is_present(self, token=None, user_id=None):
 		if token:
-			return self.redis.exist(self.token_prefix + token)
+			return self.redis.exists(self.token_prefix + token)
 		elif user_id:
-			return self.redis.exist(self.token_prefix + self.__generate_token(user_id))
+			return self.redis.exists(self.token_prefix + self.__generate_token(user_id))
 		raise ValueError('No one parameter is specified.')
 
 
@@ -83,7 +84,7 @@ class AccessRestoreHandler(object):
 	def __generate_token(user_id):
 		h = hashlib.sha512()
 		h.update('LdKBhKjmm1dei9mj71eT') # salt
-		h.update(user_id)
+		h.update(unicode(user_id))
 		return h.hexdigest()
 
 
