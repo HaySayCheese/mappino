@@ -383,7 +383,7 @@ def password_reset_handler(request):
 	token = d.get('token', '')
 	if token:
 		if not ACCESS_RESTORE_HANDLER.token_is_present(token):
-			return HttpResponseBadRequest(
+			return HttpResponse(
 				json.dumps(PR_RESPONSES['invalid_token']), content_type='application/json')
 
 		password = d.get('password', '')
@@ -405,7 +405,7 @@ def password_reset_handler(request):
 		except ValueError:
 			raise Exception('RUNTIME ERROR: @password passed checks but was rejected by further logic.')
 		except TokenDoesNotExists:
-			return HttpResponseBadRequest(
+			return HttpResponse(
 				json.dumps(PR_RESPONSES['invalid_token']), content_type='application/json')
 
 		# seems to be ok
@@ -416,7 +416,7 @@ def password_reset_handler(request):
 		# iy seems that this is an attempt for token generation
 		username = d.get('username', '')
 		if not username:
-			return HttpResponseBadRequest(
+			return HttpResponse(
 				json.dumps(PR_RESPONSES['username_empty']), content_type='application/json')
 
 		try:
@@ -424,7 +424,7 @@ def password_reset_handler(request):
 		except ValueError:
 			raise Exception('RUNTIME ERROR: @username passed checks but was rejected by further logic.')
 		except NoUserWithSuchUsername:
-			return HttpResponseBadRequest(
+			return HttpResponse(
 				json.dumps(PR_RESPONSES['invalid_username']), content_type='application/json')
 
 		# seems to be ok
