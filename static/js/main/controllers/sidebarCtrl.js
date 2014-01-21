@@ -1,8 +1,11 @@
 'use strict';
 
-app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $http) {
+app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, authorizationQueries) {
 
     $scope.userName = "";
+
+    if ($cookies.sessionid && !sessionStorage.userName)
+        getUserName();
 
     /**
      * Дивимся за кукою сесії, якщо вона є то
@@ -16,10 +19,8 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $http) {
 
         if (sessionStorage.userName)
             $scope.userName = sessionStorage.userName;
-        else
-            getUserName();
 
-        if (!newValue)
+        if (!$cookies.sessionid)
             delete sessionStorage.userName;
     });
 
@@ -34,19 +35,17 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $http) {
 
     }, function(newValue, oldValue) {
 
-        if (!newValue)
-            getUserName();
+        if (newValue)
+            $scope.userName = sessionStorage.userName;
+        else
+            $scope.userName = "";
     });
 
+
+
     function getUserName() {
-        $http({
-            method: 'GET',
-            url: 'ajax/api/accounts/on-login-info/',
-            headers: {
-                'X-CSRFToken': $cookies.csrftoken
-            }
-        }).success(function(data, status) {
-            sessionStorage.userName = data;
+        authorizationQueries.getUserName().success(function(data) {
+            sessionStorage.userName = data.user.name + " " + data.user.surname;
         });
     }
 });

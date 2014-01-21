@@ -31,14 +31,14 @@ else:
 			'NAME': '(dev)mappino',
 			'USER': 'mappino',
 			'PASSWORD': '123123',
-			'HOST': 'dev-server.binno.com.ua',
+			'HOST': '185.14.186.102',
 		}
 	}
 	REDIS_DATABASES = {
 		# 0s database is used by sessions
 	    1: {
 	        # highest priority
-			'HOST': 'dev-server.binno.com.ua',
+			'HOST': '185.14.186.102',
 		    'PORT': 6379,
 		}
 	}

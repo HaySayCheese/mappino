@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('RegistrationCtrl', function($scope, $rootScope, $timeout, $http, $cookieStore) {
+app.controller('RegistrationCtrl', function($scope, $rootScope, $cookieStore) {
 
     /**
      * Стан вікна реєстрації
@@ -15,7 +15,7 @@ app.controller('RegistrationCtrl', function($scope, $rootScope, $timeout, $http,
 /**
  * Контроллер який відповідає за форму реєстрації
  **/
-app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $http, $cookies) {
+app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $cookies, authorizationQueries) {
 
     /**
      * Зміннні які відповідають за показ повідомлень при валідації
@@ -150,17 +150,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
 
         $scope.validated.email = false;
 
-        $http({
-            method: 'POST',
-            url: 'ajax/api/accounts/validate-email/',
-            headers: {
-                'X-CSRFToken': $cookies.csrftoken
-            },
-            data: {
-                email: $scope.user.email
-            }
-        }).success(function(data, status) {
-
+        authorizationQueries.validateEmail($scope.user.email).success(function(data) {
             validateEmail(data.code);
 
             if (data.code === 0) {
@@ -168,7 +158,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
 
                 $scope.validated.email = true;
             }
-        });
+        })
 
     }
 
@@ -221,17 +211,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
 
         $scope.validated.phone = false;
 
-        $http({
-            method: 'POST',
-            url: 'ajax/api/accounts/validate-phone-number/',
-            headers: {
-                'X-CSRFToken': $cookies.csrftoken
-            },
-            data: {
-                number: $scope.user.phoneNumber
-            }
-        }).success(function(data, status) {
-
+        authorizationQueries.validatePhone($scope.user.phoneNumber).success(function(data) {
             validatePhone(data.code);
 
             if (data.code === 0) {
@@ -262,21 +242,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
 
         registrationBtn.button('loading');
 
-        $http({
-            method: 'POST',
-            url: 'ajax/api/accounts/registration/',
-            headers: {
-                'X-CSRFToken': $cookies.csrftoken
-            },
-            data: {
-                'name':             $scope.user.name,
-                'surname':          $scope.user.surname,
-                'phone-number':     $scope.user.phoneNumber,
-                'email':            $scope.user.email,
-                'password':         $scope.user.password,
-                'password-repeat':  $scope.user.passwordRepeat
-            }
-        }).success(function() {
+        authorizationQueries.registerUser($scope.user).success(function(data) {
             registrationBtn.button('reset');
 
             $rootScope.registrationStatePart = "codeCheck";
@@ -290,7 +256,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $h
 /**
  * Контроллер який відповідає за форму введення коду підтвердження
  **/
-app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies, $timeout, $rootScope) {
+app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $timeout, $rootScope, authorizationQueries) {
 
     $scope.codeCheck = "";
 
@@ -312,6 +278,7 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies
     $scope.checkPhoneCode = function() {
 
         if (!$scope.codeCheck || $scope.codeCheck === "") {
+
             var tooltip = $("[data-toggle='tooltip']");
 
             tooltip.tooltip('destroy');
@@ -326,8 +293,6 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies
             return;
         }
 
-        registrationBtn.button('loading');
-
         sendCodeToValidate();
     };
 
@@ -335,24 +300,25 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies
      * Відправка кода на валідацію
      **/
     function sendCodeToValidate() {
-        $http({
-            method: 'POST',
-            url: 'ajax/api/accounts/registration/',
-            headers: {
-                'X-CSRFToken': $cookies.csrftoken
-            },
-            data: {
-                code: $scope.codeCheck
-            }
-        }).success(function(data, status) {
 
-           registrationBtn.button('reset');
+        if (attempt && (attempt  === max_attempts)) {
+            $rootScope.registrationStatePart = "registration";
 
-           attempt = data.attempts;
-           max_attempts = data.max_attempts;
+            return;
+        }
 
-           validateAttempts(data);
+        registrationBtn.button('loading');
+
+        authorizationQueries.validatePhoneCode($scope.codeCheck).success(function(data) {
+            registrationBtn.button('reset');
+
+            attempt = data.attempts;
+            max_attempts = data.max_attempts;
+
+            validateAttempts(data);
+
         });
+
     }
 
     /**
@@ -362,12 +328,9 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies
 
         if (arguments[0])
             var code = arguments[0].code,
-                user = arguments[0].user;
+                user = arguments[0].user,
+                tooltip = $("[data-toggle='tooltip']");
 
-        if (attempt && (attempt - 1 === max_attempts))
-            $rootScope.registrationStatePart = "registration";
-
-        var tooltip = $("[data-toggle='tooltip']");
 
         tooltip.tooltip('destroy');
         tooltip.tooltip({
@@ -381,9 +344,7 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies
             $('.registration-dialog').parent().modal('hide');
         }
 
-        if (code == 1) {
-            $scope.incorrectCode = true;
-        }
+        $scope.incorrectCode = true;
     }
 
 });

@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('LoginCtrl', function($scope, $http, $timeout, $cookies) {
+app.controller('LoginCtrl', function($scope, $timeout, $cookies, authorizationQueries) {
 
     /**
      * Змінні
@@ -49,22 +49,11 @@ app.controller('LoginCtrl', function($scope, $http, $timeout, $cookies) {
 
         loginBtn.button("loading");
 
-        $http({
-            method: 'POST',
-            url: 'ajax/api/accounts/login/',
-            headers: {
-                'X-CSRFToken': $cookies.csrftoken
-            },
-            data: {
-                username: $scope.user.name,
-                password: $scope.user.password
-            }
-        }).success(function(data, status) {
-
+        authorizationQueries.loginUser($scope.user).success(function(data) {
             loginBtn.button("reset");
 
             validateLoginForm(data);
-        });
+        })
     };
 
 

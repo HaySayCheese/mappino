@@ -38,7 +38,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
         if (!$cookies.sessionid)
             return;
 
-        if (next.indexOf("/account/registration") != -1 || next.indexOf("/account/login") != -1) {
+        if (next.indexOf("/account/registration") != -1 || next.indexOf("/account/login") != -1 || next.indexOf("/account/restore-access") != -1) {
             $location.path("/search");
 
             if(!$scope.$$phase)

@@ -28,7 +28,7 @@ app.config(['$routeProvider', function($routeProvider) {
         })
 
         .when('/account/restore-access', {
-            templateUrl: "/ajax/api/accounts/access-restore/",
+            templateUrl: "/ajax/template/main/accounts/access-restore/",
             view: "content-view",
             reloadOnSearch: false
         })

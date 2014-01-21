@@ -9,10 +9,11 @@
 
 
 .login-dialog,
-.registration-dialog {
+.registration-dialog,
+.restore-access-dialog {
 
     .top-margin {
-        margin-top: 55px;
+        margin-top: 35px;
     }
 
     .modal-body-wtp {
@@ -22,11 +23,14 @@
     a {
         color: #ffffff;
         display: inline-block;
-        margin-top: 20px;
 
         &:hover,
         &:focus {
             color: @gray-lighter;
+        }
+
+        &:first-of-type {
+            margin-top: 20px;
         }
     }
 

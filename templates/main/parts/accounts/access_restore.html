@@ -1,39 +1,68 @@
 <div class="modal fade" ng-controller="RestoreAccessCtrl">
-    <div class="modal-dialog login-dialog">
+    <div class="modal-dialog restore-access-dialog">
         <div class="modal-content content-blue">
             <div class="modal-header header-blue">
                 <img src="{{ static }}img/login/login-reg-logo.png" alt=""/>
                 <img class="close" src="{{ static }}img/login/login-reg-close.png" alt="" data-dismiss="modal"/>
             </div>
             <div class="modal-body modal-body-wtp">
-                <div class="row">
-                    <div class="col-sm-7 text-center">
-                        <h2>Добро пожаловать!</h2>
-                        <h5>Войдите используя аккаунт mappino.</h5>
+                <div class="row" ng-switch on="restoreAccessStatePart">
 
-                        <form action="" name="loginForm" novalidate>
-                            <div class="col-sm-10 col-sm-offset-1 top-margin">
+                    <div class="col-sm-12 text-center" ng-switch-when="sendEmail" ng-controller="RestoreAccessSendMailCtrl">
+                        <p class="col-sm-8 col-sm-offset-2 text-justify">
+                            Пожалуйста, введите номер моб. телефона или адрес эл. почты,
+                            которыми Вы ранее пользовались для входа в учетную запись. <br/><br/>
+                            После нажатия кнопки "Восстановить доступ" на эл. почту, указанную в Вашей учетной записи,
+                            будет выслано письмо с инструкциями по сбросу пароля.
+                        </p>
+
+                        <form action="" name="restoreAccessForm" novalidate>
+                            <div class="col-sm-6 col-sm-offset-3 top-margin">
                                 <div class="form-group">
-                                    <input type="text" class="form-control" name="name" placeholder="Моб. телефон или эл. почта" ng-model="user.name" required>
+                                    <input type="text" class="form-control" name="login" placeholder="Моб телефон или Email" ng-model="user.login" required>
 
                                     <span class="input-icon">
-                                        <span class="input-icon-error" ng-show="showValidationMessages && loginForm.name.$error.required"
+                                        <span class="input-icon-error" ng-show="showValidationMessages && restoreAccessForm.login.$error.required"
                                               data-toggle="tooltip" data-placement="right" title="Обязательное поле"></span>
                                     </span>
                                 </div>
+                                <div class="form-group">
+                                    <div class="btn btn-success btn-block" data-loading-text="Отправка данных..." ng-click="submitSendEmail()">Восстановить доступ</div>
+                                </div>
+                                <a ng-href="http://habrahabr.ru/posts/collective/">habrahabr</a>
+                            </div>
+                        </form>
+
+                    </div>
+
+
+                    <div class="col-sm-12 text-center" ng-switch-when="changePassword" ng-controller="RestoreAccessChangePasswordCtrl">
+                        <h2>Восстановление пароля</h2>
+                        <h5>Войдите используя аккаунт mappino.</h5>
+
+                        <form action="" name="restoreAccessForm" novalidate>
+                            <div class="col-sm-6 col-sm-offset-3 top-margin">
                                 <div class="form-group">
                                     <input type="password" class="form-control" name="password" placeholder="Пароль" ng-model="user.password" required>
 
                                     <span class="input-icon">
-                                        <span class="input-icon-error" ng-show="showValidationMessages && loginForm.password.$error.required"
+                                        <span class="input-icon-error" ng-show="showValidationMessages && restoreAccessForm.password.$error.required"
                                               data-toggle="tooltip" data-placement="right" title="Обязательное поле"></span>
-
-                                        <span class="input-icon-error" ng-show="showValidationMessages && loginForm.password.$error.login"
-                                              data-toggle="tooltip" data-placement="right" title="Неверная пара логин - пароль"></span>
                                     </span>
                                 </div>
                                 <div class="form-group">
-                                    <div class="btn btn-success btn-block" data-loading-text="Отправка данных..." ng-click="submitLogin()">Войти</div>
+                                    <input type="password" class="form-control" name="passwordRepeat" placeholder="Еще разочек пароль" ng-model="user.passwordRepeat" required>
+
+                                    <span class="input-icon">
+                                        <span class="input-icon-error" ng-show="showValidationMessages && restoreAccessForm.passwordRepeat.$error.required"
+                                              data-toggle="tooltip" data-placement="right" title="Обязательное поле"></span>
+
+                                        <span class="input-icon-error" ng-show="showValidationMessages && restoreAccessForm.passwordRepeat.$error.passwords"
+                                              data-toggle="tooltip" data-placement="right" title="Пароли не совпадают"></span>
+                                    </span>
+                                </div>
+                                <div class="form-group">
+                                    <div class="btn btn-success btn-block" data-loading-text="Отправка данных..." ng-click="submitRestoreAccess()">Подтвердить</div>
                                 </div>
                                 <a ng-href="#!/account/registration/[[ urlFiltersPart ]]">Создать аккаунт</a>
                             </div>
@@ -41,15 +70,6 @@
 
                     </div>
 
-                    <div class="col-sm-5 text-center">
-                        <div class="login-picture">
-                            <img src="{{ static }}img/login/promo/login-favorites.png" alt=""/>
-                        </div>
-                        <p class="text-with-picture">
-                            После входа, избранные обьявления станут доступны на других устройствах.
-                            Это также касается контактов риелторов.
-                        </p>
-                    </div>
                 </div>
             </div>
             <div class="modal-footer footer-blue"></div>
