@@ -231,4 +231,4 @@ class MobilePhonesChecker(object):
 
 	@staticmethod
 	def __generate_check_code():
-		return int(''.join(random.choice(string.digits) for x in range(6)))
+		return ''.join(random.choice(string.digits) for x in range(6))
