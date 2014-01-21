@@ -7,7 +7,7 @@ from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
-from apps.accounts.sys import AccessRestoreHandler, TokenDoesNotExists, NoUserWithSuchUsername, MobilePhonesChecker
+from apps.accounts.sys import AccessRestoreHandler, TokenDoesNotExists, NoUserWithSuchUsername, MobilePhonesChecker, TokenAlreadyExists
 from collective.methods.request_data_getters import angular_post_parameters
 from core.users.models import Users
 from mappino.wsgi import templates
@@ -366,6 +366,10 @@ PR_RESPONSES = {
 	    'code': 7,
 		'message': 'Invalid @token.',
     },
+    'token_already_exists': {
+	    'code': 8,
+		'message': '@token for this account already exists',
+    },
 
 	'OK': {
 	    'code': 0,
@@ -407,6 +411,9 @@ def password_reset_handler(request):
 		except TokenDoesNotExists:
 			return HttpResponse(
 				json.dumps(PR_RESPONSES['invalid_token']), content_type='application/json')
+		except TokenAlreadyExists:
+			return HttpResponse(
+				json.dumps(PR_RESPONSES['token_already_exists']), content_type='application/json')
 
 		# seems to be ok
 		return HttpResponse(json.dumps(PR_RESPONSES['OK']), content_type='application/json')
