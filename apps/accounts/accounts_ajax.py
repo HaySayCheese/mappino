@@ -182,7 +182,7 @@ RH_RESPONSES = {
 
 @require_http_methods('POST')
 def registration_handler(request):
-	if request.user.is_aunthenticated():
+	if request.user.is_authenticated():
 		return HttpResponseBadRequest(
 			json.dumps(RH_RESPONSES['anonymous_only']), content_type='application/json')
 
@@ -301,7 +301,7 @@ LH_RESPONSES = {
 
 @require_http_methods(['POST'])
 def login_handler(request):
-	if request.user.is_aunthenticated():
+	if request.user.is_authenticated():
 		return HttpResponseBadRequest(
 			json.dumps(LH_RESPONSES['anonymous_only']), content_type='application/json')
 
@@ -375,7 +375,7 @@ PR_RESPONSES = {
 
 @require_http_methods(['POST'])
 def password_reset_handler(request):
-	if request.user.is_aunthenticated():
+	if request.user.is_authenticated():
 		return HttpResponseBadRequest(
 			json.dumps(PR_RESPONSES['anonymous_only']), content_type='application/json')
 
