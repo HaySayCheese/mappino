@@ -411,9 +411,6 @@ def password_reset_handler(request):
 		except TokenDoesNotExists:
 			return HttpResponse(
 				json.dumps(PR_RESPONSES['invalid_token']), content_type='application/json')
-		except TokenAlreadyExists:
-			return HttpResponse(
-				json.dumps(PR_RESPONSES['token_already_exists']), content_type='application/json')
 
 		# seems to be ok
 		return HttpResponse(json.dumps(PR_RESPONSES['OK']), content_type='application/json')
@@ -433,6 +430,9 @@ def password_reset_handler(request):
 		except NoUserWithSuchUsername:
 			return HttpResponse(
 				json.dumps(PR_RESPONSES['invalid_username']), content_type='application/json')
+		except TokenAlreadyExists:
+			return HttpResponse(
+				json.dumps(PR_RESPONSES['token_already_exists']), content_type='application/json')
 
 		# seems to be ok
 		# todo: send email here
