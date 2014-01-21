@@ -12,6 +12,7 @@ urlpatterns = patterns('apps.pages.main',
 urlpatterns += patterns('apps.accounts',
     url(r'^ajax/template/main/accounts/login/$', 'accounts_ajax.login_template'),
     url(r'^ajax/template/main/accounts/registration/$', 'accounts_ajax.registration_template'),
+    url(r'^ajax/template/main/accounts/access-restore/$', 'accounts_ajax.access_restore_template'),
 )
 
 #-- angular templates for cabinet pages
@@ -26,7 +27,6 @@ urlpatterns += patterns('apps',
     # login and registration
 	url(r'^ajax/api/accounts/registration/$', 'accounts.accounts_ajax.registration_handler'),
 	url(r'^ajax/api/accounts/login/$', 'accounts.accounts_ajax.login_handler'),
-	url(r'^ajax/api/accounts/access-restore/$', 'accounts.accounts_ajax.access_restore_template'),
 
         # validators
 	    url(r'^ajax/api/accounts/validate-email/$', 'accounts.accounts_ajax.validate_email_handler'),
@@ -34,7 +34,6 @@ urlpatterns += patterns('apps',
 
 		# data getters
         url(r'^ajax/api/accounts/on-login-info/$', 'accounts.accounts_ajax.on_login_info_handler'),
-
 )
 
 
