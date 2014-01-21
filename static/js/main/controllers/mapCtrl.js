@@ -155,6 +155,7 @@ app.controller('MapCtrl', function($scope, $location) {
         $scope.urlFiltersPart = $location.url()
                                     .replace("/search", "")
                                     .replace("/account/registration", "")
+                                    .replace("/account/restore-access", "")
                                     .replace("/account/login", "");
 
         console.log("Filters collection parsed");

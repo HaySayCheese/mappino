@@ -16,7 +16,7 @@ app.controller('RestoreAccessCtrl', function($scope, $rootScope, $location) {
 
 
 
-app.controller('RestoreAccessSendMailCtrl', function($scope, $timeout, $http, authorizationQueries) {
+app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, $timeout, $http, authorizationQueries) {
 
     /**
      * Змінні
@@ -42,20 +42,69 @@ app.controller('RestoreAccessSendMailCtrl', function($scope, $timeout, $http, au
 
 
     /**
+     * Валідація логіна при вводі даних в поле
+     **/
+    $scope.$watch("user.login", function(newValue, oldValue) {
+        if (oldValue !== newValue)
+            validateLogin();
+    });
+
+
+    /**
      * Клік по кнопці відправки пошти
      **/
     $scope.submitSendEmail = function() {
         $scope.showValidationMessages = true;
 
-        var sendBtn = $(".restore-access-dialog .btn-success");
+        if (!$scope.user.login || $scope.user.login === "")
+            return;
 
+        var sendBtn = $(".restore-access-dialog .btn-success");
         sendBtn.button('loading');
 
         authorizationQueries.restoreAccessSendEmail($scope.user.login).success(function(data) {
             console.log(data);
             sendBtn.button('reset');
+
+            validateLogin(data.code)
         });
     };
+
+
+    function validateLogin() {
+
+        if (arguments[0])
+            var code = arguments[0];
+
+        if (!$scope.user.login && $scope.user.login === "")
+            return;
+
+        $scope.restoreAccessForm.login.$setValidity("login", true);
+        $scope.restoreAccessForm.login.$setValidity("tokenInvalid", true);
+        $scope.restoreAccessForm.login.$setValidity("token", true);
+
+
+        if (code === 0) {
+            $rootScope.restoreAccessStatePart = "emailSendMessage";
+        }
+
+        if (code === 3) {
+            $scope.restoreAccessForm.login.$setValidity("login", false);
+            $scope.restoreAccessForm.login.$setValidity("tokenInvalid", true);
+            $scope.restoreAccessForm.login.$setValidity("token", true);
+        }
+
+        if (code === 7) {
+            $rootScope.restoreAccessStatePart = "invalidToken";
+        }
+
+        if (code === 8) {
+            $scope.restoreAccessForm.login.$setValidity("login", true);
+            $scope.restoreAccessForm.login.$setValidity("tokenInvalid", true);
+            $scope.restoreAccessForm.login.$setValidity("token", false);
+        }
+
+    }
 
 });
 

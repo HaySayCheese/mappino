@@ -24,6 +24,12 @@
                                     <span class="input-icon">
                                         <span class="input-icon-error" ng-show="showValidationMessages && restoreAccessForm.login.$error.required"
                                               data-toggle="tooltip" data-placement="right" title="Обязательное поле"></span>
+
+                                        <span class="input-icon-error" ng-show="showValidationMessages && restoreAccessForm.login.$error.login"
+                                              data-toggle="tooltip" data-placement="right" title="Пользователя с такими данными нету"></span>
+
+                                        <span class="input-icon-error" ng-show="showValidationMessages && restoreAccessForm.login.$error.token"
+                                              data-toggle="tooltip" data-placement="right" title="Запрос уже в очереди. Сообщение на почту отправлено повторно."></span>
                                     </span>
                                 </div>
                                 <div class="form-group">
