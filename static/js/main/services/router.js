@@ -10,22 +10,25 @@ app.config(['$routeProvider', function($routeProvider) {
         })
 
         .when('/search', {
-            //controller: "MainCtrl"
             templateUrl: "/ajax/template/main/search/",
             view: "content-view",
             reloadOnSearch: false
         })
 
         .when('/account/login', {
-            //controller: "MainCtrl"
             templateUrl: "/ajax/template/main/accounts/login/",
             view: "content-view",
             reloadOnSearch: false
         })
 
         .when('/account/registration', {
-            //controller: "RegistrationCtrl",
             templateUrl: "/ajax/template/main/accounts/registration/",
+            view: "content-view",
+            reloadOnSearch: false
+        })
+
+        .when('/account/restore-access', {
+            templateUrl: "/ajax/api/accounts/access-restore/",
             view: "content-view",
             reloadOnSearch: false
         })

@@ -373,7 +373,7 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $http, $cookies
         tooltip.tooltip({
             container: '.registration-dialog',
             animation: false,
-            title: "Некоректний код. Попитка " +  attempt + " из " +  max_attempts + "."
+            title: "Некорректный код. Попытка " +  attempt + " из " +  max_attempts + "."
         });
 
         if (code == 0) {

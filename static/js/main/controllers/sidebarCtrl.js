@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarCtrl', function($scope, $rootScope, $cookies) {
+app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $http) {
 
     $scope.userName = "";
 
@@ -17,9 +17,9 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies) {
         if (sessionStorage.userName)
             $scope.userName = sessionStorage.userName;
         else
-            // запросити з сервера
+            getUserName();
 
-        if (!$cookies.sessionid)
+        if (!newValue)
             delete sessionStorage.userName;
     });
 
@@ -34,7 +34,19 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies) {
 
     }, function(newValue, oldValue) {
 
-        //if (!sessionStorage.userName)
-            // запросити сесійну куку
+        if (!newValue)
+            getUserName();
     });
+
+    function getUserName() {
+        $http({
+            method: 'GET',
+            url: 'ajax/api/accounts/on-login-info/',
+            headers: {
+                'X-CSRFToken': $cookies.csrftoken
+            }
+        }).success(function(data, status) {
+            sessionStorage.userName = data;
+        });
+    }
 });
