@@ -374,8 +374,7 @@ PR_RESPONSES = {
 }
 
 @require_http_methods(['POST'])
-def password_reset_handler(request, bad_request=HttpResponseBadRequest(json.dumps(PR_RESPONSES['passwords_not_match']),
-                                                                       content_type='application/json')):
+def password_reset_handler(request):
 	if request.user.is_aunthenticated():
 		return HttpResponseBadRequest(
 			json.dumps(PR_RESPONSES['anonymous_only']), content_type='application/json')
@@ -398,7 +397,8 @@ def password_reset_handler(request, bad_request=HttpResponseBadRequest(json.dump
 				json.dumps(PR_RESPONSES['password_repeat_empty']), content_type='application/json')
 
 		if password != password_repeat:
-			return bad_request
+			return HttpResponseBadRequest(
+				json.dumps(PR_RESPONSES['passwords_not_match']),content_type='application/json')
 
 		try:
 			ACCESS_RESTORE_HANDLER.finish_restoring(token, password)
@@ -433,6 +433,30 @@ def password_reset_handler(request, bad_request=HttpResponseBadRequest(json.dump
 		body = PR_RESPONSES['OK']
 		body['token'] = token
 		return HttpResponse(json.dumps(body), content_type='application/json')
+
+
+
+OLI_RESPONSES = {
+	'authenticated_only': {
+		'code': 1,
+	    'message': 'Authenticated users only.'
+	},
+
+	'OK': {
+	    'code': 0,
+	    'message': 'OK',
+    },
+}
+
+@require_http_methods(['GET'])
+def on_login_info_handler(request):
+	if not request.user.is_aunthenticated():
+		return HttpResponseBadRequest(
+			json.dumps(OLI_RESPONSES['authenticated_only']), content_type='application/json')
+
+	body = OLI_RESPONSES['OK']
+	body['user'] = __on_login_user_data(request.user)
+	return HttpResponse(json.dumps(body), content_type='application/json')
 
 
 
