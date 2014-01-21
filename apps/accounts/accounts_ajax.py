@@ -450,7 +450,7 @@ OLI_RESPONSES = {
 
 @require_http_methods(['GET'])
 def on_login_info_handler(request):
-	if not request.user.is_aunthenticated():
+	if not request.user.is_authenticated():
 		return HttpResponseBadRequest(
 			json.dumps(OLI_RESPONSES['authenticated_only']), content_type='application/json')
 
