@@ -30,6 +30,13 @@ def registration_template(request):
 	return HttpResponse(content=t.render())
 
 
+@ensure_csrf_cookie
+def access_restore_template(request):
+	t =  templates.get_template('main/parts/accounts/access_restore.html')
+	return HttpResponse(content=t.render())
+
+
+
 #-- validators
 @require_http_methods(['POST'])
 def validate_email_handler(request):
