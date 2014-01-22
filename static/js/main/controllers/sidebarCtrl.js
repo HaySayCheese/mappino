@@ -59,7 +59,7 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, authorizati
      **/
     $scope.logoutUser = function() {
         authorizationQueries.logoutUser().success(function(data) {
-
+            delete $cookies.sessionid;
         });
     }
 });

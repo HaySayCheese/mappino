@@ -2,6 +2,8 @@
 
 app.controller('RestoreAccessCtrl', function($scope, $rootScope, $location) {
 
+    $(".restore-access-modal").modal();
+
     /**
      * Стан вікна восстановлення пароля
      **/
@@ -13,10 +15,13 @@ app.controller('RestoreAccessCtrl', function($scope, $rootScope, $location) {
 });
 
 
+
+
+
 /**
  * Контроллер який відповідає відправку мила юзеру
  **/
-app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, $timeout, authorizationQueries) {
+app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, authorizationQueries) {
 
     /**
      * Змінні
@@ -27,18 +32,20 @@ app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, $timeou
         login: ""
     };
 
+    var restoreAccessModal = $(".restore-access-modal"),
+        restoreAccessBtn   = restoreAccessModal.find(".btn-success"),
+        tooltip            = restoreAccessModal.find("[data-toggle='tooltip']");
+
 
     /**
-     * Фокус першого поля і ініціалізація тултіпів
+     * Ініціалізація тултіпів
      **/
-    $timeout(function() {
-        angular.element("input")[0].focus();
-
-        $("[data-toggle='tooltip']").tooltip({
-            container: '.restore-access-dialog',
+    restoreAccessModal.on("shown.bs.modal", function() {
+        tooltip.tooltip({
+            container: restoreAccessModal.find(".modal-dialog"),
             animation: false
         });
-    }, 300);
+    });
 
 
     /**
@@ -54,19 +61,20 @@ app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, $timeou
      * Клік по кнопці відправки пошти
      **/
     $scope.submitSendEmail = function() {
+
         $scope.showValidationMessages = true;
 
         if (!$scope.user.login || $scope.user.login === "")
             return;
 
-        var sendBtn = $(".restore-access-dialog .btn-success");
-        sendBtn.button('loading');
+        restoreAccessBtn.button('loading');
 
         authorizationQueries.restoreAccessSendEmail($scope.user.login).success(function(data) {
-            sendBtn.button('reset');
+            restoreAccessBtn.button('reset');
 
             if (data.code === 0) {
                 $rootScope.restoreAccessStatePart = "emailSendMessage";
+
                 return
             }
 
@@ -75,6 +83,9 @@ app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, $timeou
     };
 
 
+    /**
+     * Логіка валідації логіна
+     **/
     function validateLogin() {
 
         if (arguments[0])
@@ -87,33 +98,32 @@ app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, $timeou
         $scope.restoreAccessForm.login.$setValidity("tokenInvalid", true);
         $scope.restoreAccessForm.login.$setValidity("token", true);
 
-
         if (code === 3) {
             $scope.restoreAccessForm.login.$setValidity("login", false);
             $scope.restoreAccessForm.login.$setValidity("tokenInvalid", true);
             $scope.restoreAccessForm.login.$setValidity("token", true);
         }
 
-        if (code === 7) {
+        if (code === 7)
             $rootScope.restoreAccessStatePart = "invalidTokenMessage";
-        }
 
         if (code === 8) {
             $scope.restoreAccessForm.login.$setValidity("login", true);
             $scope.restoreAccessForm.login.$setValidity("tokenInvalid", true);
             $scope.restoreAccessForm.login.$setValidity("token", false);
         }
-
     }
 
 });
 
 
 
+
+
 /**
  * Контроллер який відповідає за зміну пароля
  **/
-app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $timeout, $location, authorizationQueries) {
+app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $location, authorizationQueries) {
 
     /**
      * Змінні
@@ -126,6 +136,10 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
         token: $location.search().token
     };
 
+    var restoreAccessModal = $(".restore-access-modal"),
+        restoreAccessBtn   = restoreAccessModal.find(".btn-success"),
+        tooltip            = restoreAccessModal.find("[data-toggle='tooltip']");
+
 
     /**
      * Провірка токена
@@ -137,17 +151,14 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
 
 
     /**
-     * Фокус першого поля і ініціалізація тултіпів
+     * Ініціалізація тултіпів
      **/
-    $timeout(function() {
-        if ($rootScope.restoreAccessStatePart == "changePassword")
-            angular.element(".restore-access-dialog input")[0].focus();
-
-        $("[data-toggle='tooltip']").tooltip({
-            container: '.restore-access-dialog',
+    restoreAccessModal.on("shown.bs.modal", function() {
+        tooltip.tooltip({
+            container: restoreAccessModal.find(".modal-dialog"),
             animation: false
         });
-    }, 300);
+    });
 
 
     /**
@@ -158,11 +169,11 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
     });
 
 
-
     /**
      * Клік по кнопці зміни пароля
      **/
     $scope.submitChangePassword = function() {
+
         $scope.showValidationMessages = true;
 
         validatePasswords();
@@ -170,15 +181,13 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
         if ($scope.restoreAccessForm.$invalid)
             return;
 
-        var sendBtn = $(".restore-access-dialog .btn-success");
-        sendBtn.button('loading');
+        restoreAccessBtn.button('loading');
 
         authorizationQueries.restoreAccessSendPasswords($scope.user).success(function(data) {
-            sendBtn.button('reset');
+            restoreAccessBtn.button('reset');
 
-            if (data.code === 0) {
+            if (data.code === 0)
                 sessionStorage.userName = data.user.name + " " + data.user.surname;
-            }
 
             $location.search("token", null);
         });
@@ -194,12 +203,10 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
         if (!$scope.user.passwordRepeat || $scope.user.passwordRepeat === "")
             return;
 
-        if ($scope.user.password !== $scope.user.passwordRepeat) {
-            $scope.restoreAccessForm.passwordRepeat.$setValidity("passwords", false)
-        } else {
-            $scope.restoreAccessForm.passwordRepeat.$setValidity("passwords", true)
-        }
-
+        if ($scope.user.password !== $scope.user.passwordRepeat)
+            $scope.restoreAccessForm.passwordRepeat.$setValidity("passwords", false);
+        else
+            $scope.restoreAccessForm.passwordRepeat.$setValidity("passwords", true);
     }
 
 });

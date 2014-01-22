@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('LoginCtrl', function($scope, $timeout, $cookies, authorizationQueries) {
+app.controller('LoginCtrl', function($scope, $timeout, authorizationQueries) {
 
     /**
      * Змінні
@@ -12,18 +12,22 @@ app.controller('LoginCtrl', function($scope, $timeout, $cookies, authorizationQu
         password: ""
     };
 
+    var loginModal = $(".login-modal"),
+        loginBtn   = loginModal.find(".btn-success"),
+        tooltip    = loginModal.find("[data-toggle='tooltip']");
+
+    loginModal.modal();
+
 
     /**
-     * Фокус першого поля і ініціалізація тултіпів
+     * Ініціалізація тултіпів
      **/
-    $timeout(function() {
-        angular.element(".login-dialog input")[0].focus();
-
-        $("[data-toggle='tooltip']").tooltip({
-            container: '.login-dialog',
+    loginModal.on("shown.bs.modal", function() {
+        tooltip.tooltip({
+            container: loginModal.find(".modal-dialog"),
             animation: false
         });
-    }, 300);
+    });
 
 
     /**
@@ -42,8 +46,6 @@ app.controller('LoginCtrl', function($scope, $timeout, $cookies, authorizationQu
 
         $scope.showValidationMessages = true;
 
-        var loginBtn = $(".login-dialog .btn-success");
-
         if ((!$scope.user.name || $scope.user.name === "") || (!$scope.user.password || $scope.user.password === ""))
             return;
 
@@ -53,7 +55,7 @@ app.controller('LoginCtrl', function($scope, $timeout, $cookies, authorizationQu
             loginBtn.button("reset");
 
             validateLoginForm(data);
-        })
+        });
     };
 
 
@@ -69,7 +71,7 @@ app.controller('LoginCtrl', function($scope, $timeout, $cookies, authorizationQu
         if (code === 0) {
             sessionStorage.userName = user.name + " " + user.surname;
 
-            $('.login-dialog').parent().modal('hide');
+            loginModal.modal('hide');
         }
 
         if (code === 3)
