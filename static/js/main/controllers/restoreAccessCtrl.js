@@ -177,10 +177,10 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
             sendBtn.button('reset');
 
             if (data.code === 0) {
-                $location.search("token", null);
-                $rootScope.restoreAccessStatePart = "passwordChangeSuccessMessage";
+                sessionStorage.userName = data.user.name + " " + data.user.surname;
             }
 
+            $location.search("token", null);
         });
 
     };

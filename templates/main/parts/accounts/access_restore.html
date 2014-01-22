@@ -59,23 +59,13 @@
                     </div>
 
 
-                    <div class="col-sm-12 text-center" ng-switch-when="passwordChangeSuccessMessage">
-                        <img src="{{ static }}img/login/ok.png" alt=""/>
-                        <p class="col-sm-8 col-sm-offset-2 text-justify">
-                            пароль змінено
-                        </p>
-                    </div>
-
-
-
                     <div class="col-sm-12 text-center" ng-switch-when="changePassword" ng-controller="RestoreAccessChangePasswordCtrl">
                         <h2>Восстановление пароля</h2>
-                        <h5>Войдите используя аккаунт mappino.</h5>
 
                         <form action="" name="restoreAccessForm" novalidate>
                             <div class="col-sm-6 col-sm-offset-3 top-margin">
                                 <div class="form-group">
-                                    <input type="password" class="form-control" name="password" placeholder="Пароль" ng-model="user.password" required>
+                                    <input type="password" class="form-control" name="password" placeholder="Новый пароль" ng-model="user.password" required>
 
                                     <span class="input-icon">
                                         <span class="input-icon-error" ng-show="showValidationMessages && restoreAccessForm.password.$error.required"
@@ -96,7 +86,9 @@
                                 <div class="form-group">
                                     <div class="btn btn-success btn-block" data-loading-text="Отправка данных..." ng-click="submitChangePassword()">Подтвердить</div>
                                 </div>
-                                <a ng-href="#!/account/registration/[[ urlFiltersPart ]]">Создать аккаунт</a>
+                                <p class="top-margin">
+                                    * после смены пароля сразу будет произведен автоматический вход.
+                                </p>
                             </div>
                         </form>
 

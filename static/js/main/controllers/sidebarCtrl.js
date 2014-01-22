@@ -43,9 +43,23 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, authorizati
 
 
 
+    /**
+     * Отримання імені користувача по кукі
+     **/
     function getUserName() {
         authorizationQueries.getUserName().success(function(data) {
             sessionStorage.userName = data.user.name + " " + data.user.surname;
+        });
+    }
+
+
+
+    /**
+     * Логаут юзера
+     **/
+    $scope.logoutUser = function() {
+        authorizationQueries.logoutUser().success(function(data) {
+
         });
     }
 });

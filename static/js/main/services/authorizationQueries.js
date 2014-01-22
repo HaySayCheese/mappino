@@ -19,6 +19,20 @@ app.factory('authorizationQueries', function($http, $cookies) {
             });
         },
 
+
+        // Запит на вихід користувача
+        logoutUser: function() {
+            return $http({
+                url: 'ajax/api/accounts/logout/',
+                method: "POST",
+                headers: {
+                    'X-CSRFToken': $cookies.csrftoken
+                }
+            });
+        },
+
+
+        // Запит на реєстрацію користувача
         registerUser: function(user) {
             return $http({
                 method: 'POST',
