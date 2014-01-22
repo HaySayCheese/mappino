@@ -155,7 +155,7 @@ class MobilePhonesChecker(object):
 
 		pipe = self.redis.pipeline()
 		pipe.hset(key, self.code_field_name, self.__generate_check_code())
-		pipe.hset(key, self.attempts_field_name, 1) # not zero!
+		pipe.hset(key, self.attempts_field_name, 0)
 		pipe.hset(key, self.name_field_name, name)
 		pipe.hset(key, self.surname_field_name, surname)
 		pipe.hset(key, self.email_field_name, email)
