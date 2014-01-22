@@ -3,6 +3,7 @@ import hashlib
 import random
 import string
 from __builtin__ import unicode
+from django.db import transaction
 from collective.exceptions import AlreadyExist, RecordAlreadyExists
 from collective.http.cookies import set_signed_cookie
 from core.users.models import Users
@@ -46,7 +47,7 @@ class AccessRestoreHandler(object):
 
 
 	def finish_restoring(self, token, password):
-		if not self.token_is_present(self.token_prefix + token):
+		if not self.token_is_present(token):
 			raise TokenDoesNotExists()
 		if not password:
 			raise ValueError("@password can't be empty.")
@@ -56,10 +57,12 @@ class AccessRestoreHandler(object):
 			# token was deleted moment ago
 			raise TokenDoesNotExists()
 
-		user = Users.objects.filter(id = user_id).only('id')
+		self.__remove_token(token)
+		user = Users.objects.filter(id = user_id).only('id')[0]
 		user.set_password(password)
 		user.save()
-		self.__remove_token(token)
+		return user
+
 
 
 	def __add_token(self, user_id):
@@ -75,7 +78,7 @@ class AccessRestoreHandler(object):
 
 
 	def __remove_token(self, record_id):
-		if not self.token_is_present(self.token_prefix + record_id):
+		if not self.token_is_present(record_id):
 			raise TokenDoesNotExists()
 		self.redis.delete(self.token_prefix + record_id)
 
@@ -118,6 +121,9 @@ class MobilePhonesChecker(object):
 		self.record_prefix = 'mob_check_'
 		self.code_field_name = 'code'
 		self.attempts_field_name = 'attempts'
+		self.name_field_name =  'name'
+		self.surname_field_name = 'surname'
+		self.email_field_name = 'email'
 		self.phone_number_field_name = 'number'
 		self.password_field = 'pass'
 
@@ -134,7 +140,7 @@ class MobilePhonesChecker(object):
 		return self.cookie_name in request.COOKIES
 
 
-	def begin_number_check(self, phone, user_password, request, response):
+	def begin_number_check(self, name, surname, email, phone, user_password, request, response):
 		if not phone:
 			raise ValueError('Empty or absent @phone')
 		if not user_password:
@@ -150,6 +156,9 @@ class MobilePhonesChecker(object):
 		pipe = self.redis.pipeline()
 		pipe.hset(key, self.code_field_name, self.__generate_check_code())
 		pipe.hset(key, self.attempts_field_name, 1) # not zero!
+		pipe.hset(key, self.name_field_name, name)
+		pipe.hset(key, self.surname_field_name, surname)
+		pipe.hset(key, self.email_field_name, email)
 		pipe.hset(key, self.phone_number_field_name, phone)
 		pipe.hset(key, self.password_field, user_password)
 		pipe.expire(key, self.record_ttl)
@@ -176,7 +185,6 @@ class MobilePhonesChecker(object):
 		attempts_count = self.redis.hget(key, self.attempts_field_name)
 		if attempts_count is None:
 			# key was deleted moment ago
-			self.redis.delete(key)
 			response.delete_cookie(self.cookie_name)
 			return False, {'attempts': self.max_attempts_count}
 
@@ -189,7 +197,6 @@ class MobilePhonesChecker(object):
 		true_code = self.redis.hget(key, self.code_field_name)
 		if true_code is None:
 			# key was deleted moment ago
-			self.redis.delete(key)
 			response.delete_cookie(self.cookie_name)
 			return False, {'attempts': self.max_attempts_count}
 
@@ -197,22 +204,29 @@ class MobilePhonesChecker(object):
 			self.redis.hincrby(key, self.attempts_field_name, 1)
 			return False, {'attempts': attempts_count + 1}
 
+		name = self.redis.hget(key, self.name_field_name)
+		surname = self.redis.hget(key, self.surname_field_name)
+		email = self.redis.hget(key, self.email_field_name)
+		phone = self.redis.hget(key, self.phone_number_field_name)
+		password = self.redis.hget(key, self.password_field)
+		self.redis.delete(key)
 
-		pipe = self.redis.pipeline()
-		phone = pipe.hget(key, self.phone_number_field_name),
-		password = pipe.hget(key, self.password_field),
-		pipe.delete(key)
-		pipe.execute()
-
-		if not phone or not  password:
+		if (not name) or (not surname) or (not phone) or (not password):
 			# key was deleted moment ago
-			self.redis.delete(key)
 			response.delete_cookie(self.cookie_name)
 			return False, {'attempts': self.max_attempts_count}
 
+		# account creation
+		with transaction.atomic():
+			user = Users.objects.create_user(email, phone, password)
+			user.name = name
+			user.surname = surname
+			user.is_active = True
+			user.save()
+
 		user_data = {
 			'phone': phone,
-		    'password': password
+		    'password': password,
 		}
 		response.delete_cookie(self.cookie_name)
 		return True, user_data
