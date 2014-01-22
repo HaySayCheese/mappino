@@ -3,17 +3,21 @@ import hashlib
 import random
 import string
 from __builtin__ import unicode
+from django.conf import settings
+from django.core.mail import send_mail
 from django.db import transaction
 from collective.exceptions import AlreadyExist, RecordAlreadyExists
 from collective.http.cookies import set_signed_cookie
 from core.users.models import Users
-from mappino.wsgi import redis_connections
-
+from mappino.wsgi import redis_connections, templates
 
 
 class NoUserWithSuchUsername(Exception): pass
-class TokenAlreadyExists(AlreadyExist): pass
 class TokenDoesNotExists(Exception): pass
+class TokenAlreadyExists(AlreadyExist):
+	def __init__(self, message, token):
+		Exception.__init__(self, message)
+		self.token = token
 
 class AccessRestoreHandler(object):
 	def __init__(self):
@@ -34,8 +38,23 @@ class AccessRestoreHandler(object):
 			if user is None:
 				raise NoUserWithSuchUsername('Login: {0}'.format(username))
 
-		# todo: відправляти емейл навіть, якщо токен в черзі
-		token = self.__add_token(user.id)
+		# todo: додати тротлінг
+		# Повторне повідомлення надсилається навіть тоді, коли token вже пристуній.
+		try:
+			token = self.__add_token(user.id)
+		except TokenAlreadyExists as e:
+			token = e.token
+
+		# todo: реалізуй мене
+		#send_mail(
+		#	subject = 'mappino: восстановление пароля',
+		#    message = templates.get_templat('email/access_restore/index.html').render({
+		#	    'domain': settings.DOMAIN,
+		#	    'token': token,
+		#    }),
+		#	from_email = settings.ROBOT_MAIL_ACCOUNT,
+		#    recipient_list=[user.email]
+		#)
 
 
 	def token_is_present(self, token=None, user_id=None):
@@ -68,7 +87,7 @@ class AccessRestoreHandler(object):
 	def __add_token(self, user_id):
 		token = self.__generate_token(user_id)
 		if self.token_is_present(token):
-			raise TokenAlreadyExists('uid: {0}'.format(user_id))
+			raise TokenAlreadyExists('uid: {0}'.format(user_id), token)
 
 		pipe = self.redis.pipeline()
 		pipe.hset(self.token_prefix + token, self.uid_field_name, user_id)
@@ -189,7 +208,7 @@ class MobilePhonesChecker(object):
 			return False, {'attempts': self.max_attempts_count}
 
 		attempts_count = int(attempts_count)
-		if attempts_count >= self.max_attempts_count:
+		if attempts_count >= self.max_attempts_count - 1:
 			self.redis.delete(key)
 			response.delete_cookie(self.cookie_name)
 			return False, {'attempts': self.max_attempts_count}
