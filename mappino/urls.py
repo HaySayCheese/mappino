@@ -28,6 +28,7 @@ urlpatterns += patterns('apps',
 	url(r'^ajax/api/accounts/registration/$', 'accounts.accounts_ajax.registration_handler'),
 	url(r'^ajax/api/accounts/login/$', 'accounts.accounts_ajax.login_handler'),
 	url(r'^ajax/api/accounts/password-reset/$', 'accounts.accounts_ajax.password_reset_handler'),
+    url(r'^ajax/api/accounts/password-reset/check$', 'accounts.accounts_ajax.check_token_handler'),
 
         # validators
 	    url(r'^ajax/api/accounts/validate-email/$', 'accounts.accounts_ajax.validate_email_handler'),

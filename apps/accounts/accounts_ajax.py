@@ -386,6 +386,7 @@ def password_reset_handler(request):
 	d = angular_post_parameters(request, [])
 	token = d.get('token', '')
 	if token:
+		# todo: додати тротлінг, щоб уберегтись від перебору токенів.
 		if not ACCESS_RESTORE_HANDLER.token_is_present(token):
 			return HttpResponse(
 				json.dumps(PR_RESPONSES['invalid_token']), content_type='application/json')
@@ -436,10 +437,50 @@ def password_reset_handler(request):
 
 		# seems to be ok
 		# todo: send email here
+		return HttpResponse(json.dumps(PR_RESPONSES['OK']), content_type='application/json')
 
-		body = PR_RESPONSES['OK']
-		body['token'] = token
-		return HttpResponse(json.dumps(body), content_type='application/json')
+
+
+CT_RESPONSES = {
+	'anonymous_only': {
+		'code': 1,
+	    'message': 'Anonymous users only.'
+	},
+
+    'invalid_token': {
+	    'code': 7,
+		'message': 'Invalid @token.',
+    },
+	'OK': {
+	    'code': 0,
+	    'message': 'OK',
+    },
+}
+
+@require_http_methods(['POST'])
+def check_token_handler(request):
+	# todo: додати тротлінг, щоб уберегтись від перебору токенів.
+	if request.user.is_authenticated():
+		return HttpResponseBadRequest(
+			json.dumps(CT_RESPONSES['anonymous_only']), content_type='application/json')
+
+	try:
+		d = angular_post_parameters(request, ['token'])
+	except ValueError:
+		return HttpResponseBadRequest(
+			json.dumps(CT_RESPONSES['invalid_token']), content_type='application/json')
+
+	token = d.get('token', '')
+	if not token:
+		return HttpResponseBadRequest(
+			json.dumps(CT_RESPONSES['invalid_token']), content_type='application/json')
+
+	if not ACCESS_RESTORE_HANDLER.token_is_present(token):
+		return HttpResponse(
+			json.dumps(PR_RESPONSES['invalid_token']), content_type='application/json')
+
+	# seems to be ok
+	return HttpResponse(json.dumps(CT_RESPONSES['OK']), content_type='application/json')
 
 
 

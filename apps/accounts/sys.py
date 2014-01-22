@@ -33,8 +33,8 @@ class AccessRestoreHandler(object):
 			if user is None:
 				raise NoUserWithSuchUsername('Login: {0}'.format(username))
 
+		# todo: відправляти емейл навіть, якщо токен в черзі
 		token = self.__add_token(user.id)
-		return token
 
 
 	def token_is_present(self, token=None, user_id=None):
