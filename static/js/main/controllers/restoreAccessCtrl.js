@@ -5,18 +5,18 @@ app.controller('RestoreAccessCtrl', function($scope, $rootScope, $location) {
     /**
      * Стан вікна восстановлення пароля
      **/
-    //$rootScope.restoreAccessStatePart = "sendEmail";
+    $rootScope.restoreAccessStatePart = "sendEmail";
 
     if ($location.search().token)
         $rootScope.restoreAccessStatePart = "changePassword";
-    else
-        $rootScope.restoreAccessStatePart = "sendEmail";
 
 });
 
 
-
-app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, $timeout, $http, authorizationQueries) {
+/**
+ * Контроллер який відповідає відправку мила юзеру
+ **/
+app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, $timeout, authorizationQueries) {
 
     /**
      * Змінні
@@ -63,10 +63,14 @@ app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, $timeou
         sendBtn.button('loading');
 
         authorizationQueries.restoreAccessSendEmail($scope.user.login).success(function(data) {
-            console.log(data);
             sendBtn.button('reset');
 
-            validateLogin(data.code)
+            if (data.code === 0) {
+                $rootScope.restoreAccessStatePart = "emailSendMessage";
+                return
+            }
+
+            validateLogin(data.code);
         });
     };
 
@@ -83,10 +87,6 @@ app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, $timeou
         $scope.restoreAccessForm.login.$setValidity("tokenInvalid", true);
         $scope.restoreAccessForm.login.$setValidity("token", true);
 
-
-        if (code === 0) {
-            $rootScope.restoreAccessStatePart = "emailSendMessage";
-        }
 
         if (code === 3) {
             $scope.restoreAccessForm.login.$setValidity("login", false);
@@ -110,7 +110,10 @@ app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, $timeou
 
 
 
-app.controller('RestoreAccessChangePasswordCtrl', function($scope, $timeout, $http) {
+/**
+ * Контроллер який відповідає за зміну пароля
+ **/
+app.controller('RestoreAccessChangePasswordCtrl', function($scope, $timeout, $location, authorizationQueries) {
 
     /**
      * Змінні
@@ -121,6 +124,14 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $timeout, $ht
         password: "",
         passwordRepeat: ""
     };
+
+
+    /**
+     * Провірка токена
+     **/
+    authorizationQueries.checkToken($location.search().token).success(function(data) {
+        console.log(data);
+    });
 
 
     /**
@@ -152,6 +163,13 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $timeout, $ht
         $scope.showValidationMessages = true;
 
         validatePasswords();
+
+        if ($scope.restoreAccessForm.$invalid)
+            return;
+
+//        var sendBtn = $(".restore-access-dialog .btn-success");
+//        sendBtn.button('loading');
+
     };
 
 

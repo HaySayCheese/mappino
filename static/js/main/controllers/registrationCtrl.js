@@ -301,12 +301,6 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $time
      **/
     function sendCodeToValidate() {
 
-        if (attempt && (attempt  === max_attempts)) {
-            $rootScope.registrationStatePart = "registration";
-
-            return;
-        }
-
         registrationBtn.button('loading');
 
         authorizationQueries.validatePhoneCode($scope.codeCheck).success(function(data) {
@@ -316,7 +310,6 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $time
             max_attempts = data.max_attempts;
 
             validateAttempts(data);
-
         });
 
     }
@@ -325,6 +318,12 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $time
      * Валідація спроб вводу кода
      **/
     function validateAttempts() {
+
+        if (attempt && (attempt === max_attempts)) {
+            $rootScope.registrationStatePart = "registration";
+
+            return;
+        }
 
         if (arguments[0])
             var code = arguments[0].code,

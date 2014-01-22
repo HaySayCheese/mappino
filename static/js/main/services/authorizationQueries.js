@@ -95,6 +95,7 @@ app.factory('authorizationQueries', function($http, $cookies) {
         },
 
 
+        // Відправка запита на відправку мила юзеру
         restoreAccessSendEmail: function(username) {
             return $http({
                 method: 'POST',
@@ -104,6 +105,21 @@ app.factory('authorizationQueries', function($http, $cookies) {
                 },
                 data: {
                     username: username
+                }
+            })
+        },
+
+
+        // Перевірка токена
+        checkToken: function(token) {
+            return $http({
+                method: 'POST',
+                url: 'ajax/api/accounts/password-reset/',
+                headers: {
+                    'X-CSRFToken': $cookies.csrftoken
+                },
+                data: {
+                    token: token
                 }
             })
         }
