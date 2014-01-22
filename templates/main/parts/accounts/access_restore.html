@@ -1,5 +1,5 @@
-<div class="modal fade" ng-controller="RestoreAccessCtrl">
-    <div class="modal-dialog restore-access-dialog">
+<div class="modal restore-access-modal fade" ng-controller="RestoreAccessCtrl">
+    <div class="modal-dialog">
         <div class="modal-content content-blue">
             <div class="modal-header header-blue">
                 <img src="{{ static }}img/login/login-reg-logo.png" alt=""/>
@@ -19,7 +19,7 @@
                         <form action="" name="restoreAccessForm" novalidate>
                             <div class="col-sm-6 col-sm-offset-3 top-margin">
                                 <div class="form-group">
-                                    <input type="text" class="form-control" name="login" placeholder="Моб телефон или Email" ng-model="user.login" required>
+                                    <input type="text" class="form-control" name="login" placeholder="Моб телефон или Email" ng-model="user.login" focus-on-load required>
 
                                     <span class="input-icon">
                                         <span class="input-icon-error" ng-show="showValidationMessages && restoreAccessForm.login.$error.required"
@@ -40,7 +40,6 @@
                         </form>
 
                     </div>
-
 
 
                     <div class="col-sm-12 text-center" ng-switch-when="emailSendMessage">
@@ -65,7 +64,7 @@
                         <form action="" name="restoreAccessForm" novalidate>
                             <div class="col-sm-6 col-sm-offset-3 top-margin">
                                 <div class="form-group">
-                                    <input type="password" class="form-control" name="password" placeholder="Новый пароль" ng-model="user.password" required>
+                                    <input type="password" class="form-control" name="password" placeholder="Новый пароль" ng-model="user.password" focus-on-load required>
 
                                     <span class="input-icon">
                                         <span class="input-icon-error" ng-show="showValidationMessages && restoreAccessForm.password.$error.required"
@@ -100,7 +99,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    $(".modal").modal();
-</script>

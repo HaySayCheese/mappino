@@ -2,6 +2,8 @@
 
 app.controller('RegistrationCtrl', function($scope, $rootScope, $cookieStore) {
 
+    $(".registration-modal").modal();
+
     /**
      * Стан вікна реєстрації
      **/
@@ -12,10 +14,13 @@ app.controller('RegistrationCtrl', function($scope, $rootScope, $cookieStore) {
 });
 
 
+
+
+
 /**
  * Контроллер який відповідає за форму реєстрації
  **/
-app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $cookies, authorizationQueries) {
+app.controller('RegistrationUserCtrl', function($scope, $rootScope, $cookies, authorizationQueries) {
 
     /**
      * Зміннні які відповідають за показ повідомлень при валідації
@@ -29,6 +34,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $c
         phone: false
     };
 
+
     /**
      * Колекція змінних полів
      **/
@@ -41,21 +47,35 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $c
         passwordRepeat: ""
     };
 
-    /**
-     * Фокус першого поля і ініціалізація тултіпів
-     **/
-    $timeout(function() {
-        angular.element(".registration-dialog input")[0].focus();
 
-        $("[data-toggle='tooltip']").tooltip({
-            container: '.registration-dialog',
+    /**
+     * Змінні
+     **/
+    var registrationModal = $(".registration-modal"),
+        registrationBtn   = registrationModal.find(".btn-success"),
+        tooltip           = registrationModal.find("[data-toggle='tooltip']"),
+        emailInput        = registrationModal.find("input[name='email']"),
+        phoneInput        = registrationModal.find("input[name='phoneNumber']");
+
+
+    /**
+     * Ініціалізація тултіпів
+     **/
+    registrationModal.on("shown.bs.modal", function() {
+        tooltip.tooltip({
+            container: registrationModal.find(".modal-dialog"),
             animation: false
         })
-    }, 300);
+    });
 
+
+    /**
+     * Валідація даних при вводі
+     **/
     $scope.$watchCollection("user", function() {
         validatePassword();
     });
+
 
     /**
      * Валідація пошти при вводі даних в поле
@@ -65,6 +85,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $c
             validateEmail();
     });
 
+
     /**
      * Валідація телефона при вводі даних в поле
      **/
@@ -73,17 +94,19 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $c
             validatePhone();
     });
 
+
     /**
      * Валідація пошти при втраті фокуса з поля
      **/
-    angular.element("input[name='email']").bind("focusout", function() {
+    emailInput.bind("focusout", function() {
         sendEmailToValidate();
     });
+
 
     /**
      * Валідація телефона при втраті фокуса з поля
      **/
-    angular.element("input[name='phoneNumber']").bind("focusout", function() {
+    phoneInput.bind("focusout", function() {
         sendPhoneToValidate();
     });
 
@@ -92,6 +115,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $c
      * Клік по кнопці реєстрації
      **/
     $scope.submitRegistration = function() {
+
         $scope.showValidationMessages   = true;
         $scope.showValidationEmail      = true;
         $scope.showValidationPhone      = true;
@@ -105,6 +129,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $c
         if ($scope.registrationForm.$valid)
             registerUser();
     };
+
 
     /**
      * Логіка валідації пошти
@@ -122,21 +147,18 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $c
         if (!$scope.user.email && $scope.user.email === "")
             return;
 
-
         if (code === 0)
             $scope.registrationForm.email.$setValidity("free", true);
-
 
         if (code === 1)
             $scope.registrationForm.email.$setValidity("email", false);
 
-
         if (code === 2)
             $scope.registrationForm.email.$setValidity("free", false);
 
-
         $scope.showValidationEmail = true;
     }
+
 
     /**
      * Відправка пошти на валідацію
@@ -158,9 +180,9 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $c
 
                 $scope.validated.email = true;
             }
-        })
-
+        });
     }
+
 
     /**
      * Логіка валідація телефона
@@ -179,25 +201,21 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $c
         if (!$scope.user.phoneNumber && $scope.user.phoneNumber === "")
             return;
 
-
         if (code === 0)
             $scope.registrationForm.phoneNumber.$setValidity("free", true);
-
 
         if (code === 1)
             $scope.registrationForm.phoneNumber.$setValidity("phone", false);
 
-
         if (code === 2)
             $scope.registrationForm.phoneNumber.$setValidity("code", false);
-
 
         if (code === 3)
             $scope.registrationForm.phoneNumber.$setValidity("free", false);
 
-
         $scope.showValidationPhone = true;
     }
+
 
     /**
      * Відправка телефона на валідацію
@@ -222,6 +240,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $c
         });
     }
 
+
     /**
      * Валідація пароля
      **/
@@ -238,8 +257,6 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $c
      **/
     function registerUser() {
 
-        var registrationBtn = $(".registration-dialog .btn-success");
-
         registrationBtn.button('loading');
 
         authorizationQueries.registerUser($scope.user).success(function(data) {
@@ -253,23 +270,22 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $c
 
 
 
+
 /**
  * Контроллер який відповідає за форму введення коду підтвердження
  **/
-app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $timeout, $rootScope, authorizationQueries) {
-
-    $scope.codeCheck = "";
-
-    var attempt,
-        max_attempts,
-        registrationBtn = $(".registration-dialog .btn-success");
+app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $rootScope, authorizationQueries) {
 
     /**
-     * Фокус першого поля
+     * Змінні
      **/
-    $timeout(function() {
-        angular.element("input")[0].focus();
-    }, 300);
+    $scope.codeCheck = "";
+
+    var registrationModal = $(".registration-modal"),
+        registrationBtn   = registrationModal.find(".btn-success"),
+        tooltip           = registrationModal.find("[data-toggle='tooltip']"),
+        attempt,
+        max_attempts;
 
 
     /**
@@ -279,11 +295,9 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $time
 
         if (!$scope.codeCheck || $scope.codeCheck === "") {
 
-            var tooltip = $("[data-toggle='tooltip']");
-
             tooltip.tooltip('destroy');
             tooltip.tooltip({
-                container: '.registration-dialog',
+                container: registrationModal.find(".modal-dialog"),
                 animation: false,
                 title: "Обязательное поле"
             });
@@ -295,6 +309,7 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $time
 
         sendCodeToValidate();
     };
+
 
     /**
      * Відправка кода на валідацію
@@ -314,6 +329,7 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $time
 
     }
 
+
     /**
      * Валідація спроб вводу кода
      **/
@@ -327,20 +343,18 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $time
 
         if (arguments[0])
             var code = arguments[0].code,
-                user = arguments[0].user,
-                tooltip = $("[data-toggle='tooltip']");
-
+                user = arguments[0].user;
 
         tooltip.tooltip('destroy');
         tooltip.tooltip({
-            container: '.registration-dialog',
+            container: registrationModal.find(".modal-dialog"),
             animation: false,
             title: "Некорректный код. Попытка " +  attempt + " из " +  max_attempts + "."
         });
 
         if (code == 0) {
             sessionStorage.userName = user.name + " " + user.surname;
-            $('.registration-dialog').parent().modal('hide');
+            registrationModal.modal('hide');
         }
 
         $scope.incorrectCode = true;
