@@ -363,6 +363,10 @@ PR_RESPONSES = {
 	    'code': 0,
 	    'message': 'OK',
     },
+    'unknown_error': {
+	    'code': -1,
+        'message': 'unknown error',
+    }
 }
 
 @require_http_methods(['POST'])
@@ -401,10 +405,14 @@ def password_reset_handler(request):
 			return HttpResponse(
 				json.dumps(PR_RESPONSES['invalid_token']), content_type='application/json')
 
-
-		# seems to be ok
-		__login(user.email, password, request)
-		return HttpResponse(json.dumps(PR_RESPONSES['OK']), content_type='application/json')
+		ok, user = __login(user.email, password, request)
+		if ok:
+			body = copy.deepcopy(PR_RESPONSES['OK'])
+			body['user'] = __on_login_user_data(user)
+			return HttpResponse(json.dumps(body), content_type='application/json')
+		else:
+			return HttpResponse(
+				json.dumps(PR_RESPONSES['unknown_error']), content_type='application/json')
 
 	else:
 		# token is absent.
