@@ -113,7 +113,7 @@ app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, $timeou
 /**
  * Контроллер який відповідає за зміну пароля
  **/
-app.controller('RestoreAccessChangePasswordCtrl', function($scope, $timeout, $location, authorizationQueries) {
+app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $timeout, $location, authorizationQueries) {
 
     /**
      * Змінні
@@ -130,7 +130,8 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $timeout, $lo
      * Провірка токена
      **/
     authorizationQueries.checkToken($location.search().token).success(function(data) {
-        console.log(data);
+        if (data.code !== 0)
+            $rootScope.restoreAccessStatePart = "invalidToken";
     });
 
 

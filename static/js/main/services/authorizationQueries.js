@@ -114,7 +114,7 @@ app.factory('authorizationQueries', function($http, $cookies) {
         checkToken: function(token) {
             return $http({
                 method: 'POST',
-                url: 'ajax/api/accounts/password-reset/',
+                url: 'ajax/api/accounts/password-reset/check/',
                 headers: {
                     'X-CSRFToken': $cookies.csrftoken
                 },
