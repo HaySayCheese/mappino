@@ -20,6 +20,9 @@ else:
 	import os
 	BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+	#DOMAIN = 'http://binno.com.ua' # todo: change me to real
+	#ROBOT_MAIL_ACCOUNT = 'no-reply@binno.com.ua' # todo: change me to real
+
 	SECRET_KEY = '*m9ye0^!5otq35^(rb1^5mau92$6xen5!y69c$9e20yr0etexi'
 	TEMPLATE_DEBUG = True
 	ALLOWED_HOSTS = []
