@@ -1,7 +1,7 @@
 #coding=utf-8
 import copy
 import json
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import transaction
@@ -322,6 +322,27 @@ def login_handler(request):
 		body['user'] = __on_login_user_data(user)
 		return HttpResponse(json.dumps(body), content_type='application/json')
 
+
+LO_RESPONSES = {
+	'authenticated_only': {
+		'code': 1,
+	    'message': 'Authenticated users only.'
+	},
+
+	'OK': {
+	    'code': 0,
+	    'message': 'OK',
+    },
+}
+
+@require_http_methods(['GET'])
+def logout_handler(request):
+	if not request.user.is_authenticated():
+		return HttpResponseBadRequest(
+			json.dumps(LO_RESPONSES['authenticated_only']), content_type='application/json')
+
+	logout(request)
+	return HttpResponse(json.dumps(LO_RESPONSES['OK']), content_type='application/json')
 
 
 PR_RESPONSES = {
