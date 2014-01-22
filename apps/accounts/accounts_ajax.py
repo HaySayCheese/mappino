@@ -1,4 +1,5 @@
 #coding=utf-8
+import copy
 import json
 from django.contrib.auth import authenticate, login
 from django.core.exceptions import ValidationError
@@ -193,23 +194,20 @@ def registration_handler(request):
 
 		ok, user_data = MOBILE_PHONES_CHECKER.check_code(code, request, response)
 		if not ok:
-			body = RH_RESPONSES['invalid_check_codes']
+			# WARNING: deep copy is needed here
+			body = copy.deepcopy(RH_RESPONSES['invalid_check_codes'])
 			body['attempts'] = user_data['attempts']
 			body['max_attempts'] =  MOBILE_PHONES_CHECKER.max_attempts_count
 			response.write(json.dumps(body))
 			return response
 
-		# seems to be ok
-		user = Users.by_phone_number(user_data['phone'])
-		user.is_active = True
-		user.save()
-
 		logged, user = __login(user_data['phone'], user_data['password'], request)
 		if not logged:
 			raise Exception('Can not login user after registration on redis-stored data.')
 
-		body = RH_RESPONSES['OK']
-		body['user'] = __on_login_user_data(user),
+		# WARNING: deep copy is needed here
+		body = copy.deepcopy(RH_RESPONSES['OK'])
+		body['user'] = __on_login_user_data(user)
 		response.write(json.dumps(body))
 		return response
 
@@ -255,21 +253,10 @@ def registration_handler(request):
 		return HttpResponseBadRequest(
 			json.dumps(RH_RESPONSES['passwords_not_match']), content_type='application/json')
 
-
-	#-- account creation
-	try:
-		with transaction.atomic():
-			user = Users.objects.create_user(email, phone_number, password)
-			user.name = name
-			user.surname = surname
-			user.save()
-	except ValueError:
-		return HttpResponseBadRequest(
-			json.dumps(RH_RESPONSES['field_parsing_error']), content_type='application/json')
-
 	response = HttpResponse(
 		json.dumps(RH_RESPONSES['OK']), content_type='application/json')
-	MOBILE_PHONES_CHECKER.begin_number_check(phone_number, password, request, response)
+	MOBILE_PHONES_CHECKER.begin_number_check(
+		name, surname, email, phone_number, password, request, response)
 	return response
 
 
@@ -330,7 +317,8 @@ def login_handler(request):
 			json.dumps(LH_RESPONSES['invalid_attempt']), content_type='application/json')
 
 	else:
-		body = LH_RESPONSES['OK']
+		# WARNING: deep copy is needed here
+		body = copy.deepcopy(LH_RESPONSES['OK'])
 		body['user'] = __on_login_user_data(user)
 		return HttpResponse(json.dumps(body), content_type='application/json')
 
@@ -406,14 +394,16 @@ def password_reset_handler(request):
 				json.dumps(PR_RESPONSES['passwords_not_match']),content_type='application/json')
 
 		try:
-			ACCESS_RESTORE_HANDLER.finish_restoring(token, password)
+			user = ACCESS_RESTORE_HANDLER.finish_restoring(token, password)
 		except ValueError:
 			raise Exception('RUNTIME ERROR: @password passed checks but was rejected by further logic.')
 		except TokenDoesNotExists:
 			return HttpResponse(
 				json.dumps(PR_RESPONSES['invalid_token']), content_type='application/json')
 
+
 		# seems to be ok
+		__login(user.email, password, request)
 		return HttpResponse(json.dumps(PR_RESPONSES['OK']), content_type='application/json')
 
 	else:
@@ -502,7 +492,8 @@ def on_login_info_handler(request):
 		return HttpResponseBadRequest(
 			json.dumps(OLI_RESPONSES['authenticated_only']), content_type='application/json')
 
-	body = OLI_RESPONSES['OK']
+	# WARNING: deep copy is needed here
+	body = copy.deepcopy(OLI_RESPONSES['OK'])
 	body['user'] = __on_login_user_data(request.user)
 	return HttpResponse(json.dumps(body), content_type='application/json')
 
