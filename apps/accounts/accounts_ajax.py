@@ -335,7 +335,7 @@ LO_RESPONSES = {
     },
 }
 
-@require_http_methods(['GET'])
+@require_http_methods(['POST'])
 def logout_handler(request):
 	if not request.user.is_authenticated():
 		return HttpResponseBadRequest(
