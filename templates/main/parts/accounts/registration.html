@@ -10,7 +10,7 @@
                     <div class="col-sm-7 text-center" ng-switch-when="registration" ng-controller="RegistrationUserCtrl">
                         <h2>Регистрация</h2>
 
-                        <form action="" name="registrationForm" novalidate>
+                        <form name="registrationForm" novalidate>
                             <div class="col-sm-10 col-sm-offset-1">
 
                                 <div class="row form-group">
@@ -100,7 +100,7 @@
                                 <div class="form-group">
                                     <div class="btn btn-success btn-block" data-loading-text="Отправка данных..." ng-click="submitRegistration()">Зарегистрироватся</div>
                                 </div>
-                                <a ng-href="#!/account/login/[[ urlFiltersPart ]]">Уже есть аккаунт?</a>
+                                <a ng-href="#!/account/login[[ urlFiltersPart ]]">Уже есть аккаунт?</a>
                             </div>
                         </form>
 
