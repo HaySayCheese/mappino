@@ -44,18 +44,26 @@
 
 
                     <div class="col-sm-12 text-center" ng-switch-when="emailSendMessage">
-                        <p class="col-sm-8 col-sm-offset-2 text-justify">
-                            письмо отправлено
+                        <img src="{{ static }}img/login/email-sent.png" alt=""/>
+                        <p class="col-sm-8 col-sm-offset-2 top-margin">
+                            Сообщение с дальнейшими инструкциями успешно отправлено. Через несколько мгновений оно должно оказаться в Вашем ящике.
                         </p>
-
                     </div>
 
 
-                    <div class="col-sm-12 text-center" ng-switch-when="invalidToken">
-                        <p class="col-sm-8 col-sm-offset-2 text-justify">
-                            інвалідний токен
+                    <div class="col-sm-12 text-center" ng-switch-when="invalidTokenMessage">
+                        <img src="{{ static }}img/login/no-data.png" alt=""/>
+                        <p class="col-sm-8 col-sm-offset-2 top-margin">
+                            Похоже, что запроса на восстановление пароля с такими данными не было или его срок уже истек.
                         </p>
+                    </div>
 
+
+                    <div class="col-sm-12 text-center" ng-switch-when="passwordChangeSuccessMessage">
+                        <img src="{{ static }}img/login/ok.png" alt=""/>
+                        <p class="col-sm-8 col-sm-offset-2 text-justify">
+                            пароль змінено
+                        </p>
                     </div>
 
 

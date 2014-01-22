@@ -17,7 +17,7 @@ app.controller('LoginCtrl', function($scope, $timeout, $cookies, authorizationQu
      * Фокус першого поля і ініціалізація тултіпів
      **/
     $timeout(function() {
-        angular.element("input")[0].focus();
+        angular.element(".login-dialog input")[0].focus();
 
         $("[data-toggle='tooltip']").tooltip({
             container: '.login-dialog',

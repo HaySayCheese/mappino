@@ -45,7 +45,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $timeout, $c
      * Фокус першого поля і ініціалізація тултіпів
      **/
     $timeout(function() {
-        angular.element("input")[0].focus();
+        angular.element(".registration-dialog input")[0].focus();
 
         $("[data-toggle='tooltip']").tooltip({
             container: '.registration-dialog',

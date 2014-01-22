@@ -110,6 +110,23 @@ app.factory('authorizationQueries', function($http, $cookies) {
         },
 
 
+        // Відправка нових паролів серверу
+        restoreAccessSendPasswords: function(user) {
+            return $http({
+                method: 'POST',
+                url: 'ajax/api/accounts/password-reset/',
+                headers: {
+                    'X-CSRFToken': $cookies.csrftoken
+                },
+                data: {
+                    'token': user.token,
+                    'password': user.password,
+                    'password-repeat': user.passwordRepeat
+                }
+            })
+        },
+
+
         // Перевірка токена
         checkToken: function(token) {
             return $http({

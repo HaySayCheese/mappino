@@ -95,7 +95,7 @@ app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, $timeou
         }
 
         if (code === 7) {
-            $rootScope.restoreAccessStatePart = "invalidToken";
+            $rootScope.restoreAccessStatePart = "invalidTokenMessage";
         }
 
         if (code === 8) {
@@ -122,7 +122,8 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
 
     $scope.user = {
         password: "",
-        passwordRepeat: ""
+        passwordRepeat: "",
+        token: $location.search().token
     };
 
 
@@ -131,7 +132,7 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
      **/
     authorizationQueries.checkToken($location.search().token).success(function(data) {
         if (data.code !== 0)
-            $rootScope.restoreAccessStatePart = "invalidToken";
+            $rootScope.restoreAccessStatePart = "invalidTokenMessage";
     });
 
 
@@ -139,7 +140,8 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
      * Фокус першого поля і ініціалізація тултіпів
      **/
     $timeout(function() {
-        angular.element("input")[0].focus();
+        if ($rootScope.restoreAccessStatePart == "changePassword")
+            angular.element(".restore-access-dialog input")[0].focus();
 
         $("[data-toggle='tooltip']").tooltip({
             container: '.restore-access-dialog',
@@ -168,8 +170,18 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
         if ($scope.restoreAccessForm.$invalid)
             return;
 
-//        var sendBtn = $(".restore-access-dialog .btn-success");
-//        sendBtn.button('loading');
+        var sendBtn = $(".restore-access-dialog .btn-success");
+        sendBtn.button('loading');
+
+        authorizationQueries.restoreAccessSendPasswords($scope.user).success(function(data) {
+            sendBtn.button('reset');
+
+            if (data.code === 0) {
+                $location.search("token", null);
+                $rootScope.restoreAccessStatePart = "passwordChangeSuccessMessage";
+            }
+
+        });
 
     };
 
