@@ -14,14 +14,12 @@
 
     float: left;
 
-    background: #ecebe9;
-
     .sidebar-item-list-header {
         .size(100%, 65px);
 
         padding: 15px;
 
-        background: #c7c1b3;
+        background: @blue-50;
 
         .input-group {
             border-bottom: 3px solid #ffffff;
@@ -45,6 +43,8 @@
     .sidebar-item-list-body {
         .size(100%, calc(~"100% - 65px"));
         overflow: auto;
+
+        background: @blue-30;
 
         &::-webkit-scrollbar {
             width: 10px;
@@ -74,20 +74,15 @@
 
     &:hover,
     &:focus {
-        background: #f8f8f8;
+        background: @blue-40;
     }
     &:active,
     .active {
         background: #d8ddd4;
     }
 
-    .sidebar-item-list-item-checkbox {
-        .size(40px, 100%);
-        float: left;
-    }
-
     .sidebar-item-list-item-info {
-        .size(calc(~"100% - 40px"), 100%);
+        .square(100%);
         float: left;
     }
 

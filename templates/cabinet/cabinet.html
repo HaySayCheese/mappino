@@ -6,14 +6,35 @@
     <link rel="stylesheet/less" href="{{ static }}less/cabinet/base.less"/>
     <link rel="stylesheet" href="{{ static }}css/bootstrap-select.css"/>
 
+    <!-- Libs include -->
     <script type="text/javascript" src="{{ static }}js/libs/jquery-2.0.3.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/less-1.6.0.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/bootstrap.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select.js"></script>
+
+    <script type="text/javascript" src="{{ static }}js/libs/angular-1.2.6.min.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/angular-route-1.2.6.min.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/angular-cookies-1.2.6.min.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/angular-ui-mask.js"></script>
+
+
+    <!-- Logic files include -->
+    <script type="text/javascript" src="{{ static }}js/cabinet/app.js"></script>
+
+    <script type="text/javascript" src="{{ static }}js/cabinet/services/router.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/services/authorizationQueries.js"></script>
+
+    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/appCtrl.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarMenuCtrl.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/publicationsCtrl.js"></script>
+
+    <script type="text/javascript" src="{{ static }}js/cabinet/directives/selectOnClick.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/directives/focusOnLoad.js"></script>
 </head>
-<body>
+<body ng-app="MappinoCabinet">
     <div class="wrapper">
-        <div class="sidebar-menu">
+
+        <div class="sidebar-menu" ng-controller="SidebarMenuCtrl">
             <div class="btn btn-danger btn-xlg btn-block">
                 <span class="glyphicon glyphicon-plus-sign"></span>
                 Добавить обьявление
@@ -23,9 +44,9 @@
                 <div class="sidebar-menu-block">
                     <div class="sidebar-menu-block-header">Обьявления</div>
                     <ul class="sidebar-menu-block-list">
-                        <li><a href="#"><span class="glyphicon glyphicon-th-large"></span>Все</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-check"></span>Опубликование</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-unchecked"></span>Не опубликование</a></li>
+                        <li><a href="#"><span class="menu-icon icon-all-pubs"></span>Все</a></li>
+                        <li><a href="#"><span class="menu-icon icon-published-pubs"></span>Опубликование</a></li>
+                        <li><a href="#"><span class="menu-icon icon-unpublished-pubs"></span></span>Не опубликование</a></li>
                     </ul>
                 </div>
 
@@ -33,31 +54,31 @@
                     <div class="sidebar-menu-block-header">Ярлыки</div>
                     <ul class="sidebar-menu-block-list">
                         <li><a href="#">
-                            <span class="glyphicon glyphicon-tag"></span>
+                            <span class="menu-icon icon-yellow-tag"></span>
                             Моя папка 1
                             <div class="sidebar-menu-block-list-controls pull-right">
-                                <span class="glyphicon glyphicon-edit"></span>
-                                <span class="glyphicon glyphicon-trash"></span>
+                                <span class="menu-icon icon-edit"></span>
+                                <span class="menu-icon icon-delete"></span>
                             </div>
                         </a></li>
                         <li><a href="#">
-                            <span class="glyphicon glyphicon-tag"></span>
+                            <span class="menu-icon icon-green-tag"></span>
                             Моя папка 2
                             <div class="sidebar-menu-block-list-controls pull-right">
-                                <span class="glyphicon glyphicon-edit"></span>
-                                <span class="glyphicon glyphicon-trash"></span>
+                                <span class="menu-icon icon-edit"></span>
+                                <span class="menu-icon icon-delete"></span>
                             </div>
                         </a></li>
                         <li><a href="#">
-                            <span class="glyphicon glyphicon-tag"></span>
+                            <span class="menu-icon icon-red-tag"></span>
                             Моя папка 3
                             <div class="sidebar-menu-block-list-controls pull-right">
-                                <span class="glyphicon glyphicon-edit"></span>
-                                <span class="glyphicon glyphicon-trash"></span>
+                                <span class="menu-icon icon-edit"></span>
+                                <span class="menu-icon icon-delete"></span>
                             </div>
                         </a></li>
                         <li><a href="#" class="text-center">
-                            <span class="glyphicon glyphicon-plus-sign"></span>
+                            <span class="menu-icon icon-add"></span>
                         </a></li>
                     </ul>
                 </div>
@@ -65,83 +86,16 @@
                 <div class="sidebar-menu-block">
                     <div class="sidebar-menu-block-header">Учетная запись</div>
                     <ul class="sidebar-menu-block-list">
-                        <li><a href="#"><span class="glyphicon glyphicon-info-sign"></span>Онлайн поддержка</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-tasks"></span>История платежей</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-cog"></span>Параметры</a></li>
+                        <li><a href="#"><span class="menu-icon icon-support"></span>Онлайн поддержка</a></li>
+                        <li><a href="#"><span class="menu-icon icon-settings"></span>Параметры</a></li>
                     </ul>
                 </div>
             </div>
 
         </div>
 
-        <div class="sidebar-item-list">
-            <div class="sidebar-item-list-header">
-                <div class="input-group input-group-md">
-                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-                    <input type="text" class="form-control" placeholder="Поиск...">
-                </div>
-            </div>
+        <div ng-view="content-view"></div>
 
-            <div class="sidebar-item-list-body">
-                <!-- Item -->
-                <div class="sidebar-item-list-item">
-                    <div class="sidebar-item-list-item-checkbox">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox">
-                            </label>
-                        </div>
-                    </div>
-                    <div class="sidebar-item-list-item-info">
-                        <div class="sidebar-item-list-item-type">Дома ></div>
-                        <div class="sidebar-item-list-item-title">Продається квартира</div>
-                        <div class="sidebar-item-list-item-date">
-                            <span class="glyphicon glyphicon-calendar"></span> 12.12.12 - 14.14.14
-                        </div>
-                        <div class="sidebar-item-list-item-labels">
-                            <span class="label label-success">Моя папка</span>
-                            <span class="label label-success">Моя папка</span>
-                            <span class="label label-success">Моя папка</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Item -->
-                <div class="sidebar-item-list-item">
-                    <div class="sidebar-item-list-item-checkbox">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox">
-                            </label>
-                        </div>
-                    </div>
-                    <div class="sidebar-item-list-item-info">
-                        <div class="sidebar-item-list-item-type">Дома ></div>
-                        <div class="sidebar-item-list-item-title">Продається квартира</div>
-                        <div class="sidebar-item-list-item-date">
-                            <span class="glyphicon glyphicon-eye-close"></span> Неопубликовано
-                        </div>
-                        <div class="sidebar-item-list-item-labels">
-                            <span class="label label-success">Моя папка</span>
-                            <span class="label label-success">Моя папка</span>
-                            <span class="label label-success">Моя папка</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="sidebar-item-detailed">
-            <div class="sidebar-item-detailed-header">
-                <a class="btn btn-link btn-xlg"><span class="glyphicon glyphicon-link"></span>&nbsp;Навигация</a>
-                <a class="btn btn-link btn-xlg">Описание</a>
-                <div class="btn btn-info btn-xlg pull-right"><span class="glyphicon glyphicon-log-out"></span></div>
-            </div>
-            <div class="sidebar-item-detailed-body">
-
-            </div>
-        </div>
     </div>
 </body>
 </html>
