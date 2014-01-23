@@ -3,9 +3,9 @@ from django.conf.urls import patterns, include, url
 
 #-- angular templates for main pages
 urlpatterns = patterns('apps.pages.main',
-    url(r'^ajax/template/main/first-enter/$', 'home_ajax.first_enter_template'),
-    url(r'^ajax/template/main/search/$', 'home_ajax.search_template'),
-    url(r'^ajax/template/main/detailed/$', 'home_ajax.search_template'),
+    url(r'^ajax/template/main/first-enter/$', 'apps.pages.main.templates_ajax.first_enter_template'),
+    url(r'^ajax/template/main/search/$', 'apps.pages.main.templates_ajax.search_template'),
+    url(r'^ajax/template/main/detailed/$', 'apps.pages.main.templates_ajax.search_template'),
 )
 
 #-- angular templates for accounts
@@ -17,7 +17,7 @@ urlpatterns += patterns('apps.accounts',
 
 #-- angular templates for cabinet pages
 urlpatterns += patterns('apps.pages.cabinet',
-    url(r'^ajax/template/cabinet/publications/$', 'cabinet_ajax.publications_template'),
+    url(r'^ajax/template/cabinet/publications/$', 'apps.pages.cabinet.templates_ajax.publications_template'),
 )
 
 

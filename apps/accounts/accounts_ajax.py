@@ -5,36 +5,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
-from apps.accounts.sys import AccessRestoreHandler, TokenDoesNotExists, NoUserWithSuchUsername, MobilePhonesChecker, TokenAlreadyExists, InvalidCheckCode
+from apps.accounts.utils import AccessRestoreHandler, TokenDoesNotExists, NoUserWithSuchUsername, MobilePhonesChecker, TokenAlreadyExists, InvalidCheckCode
 from collective.methods.request_data_getters import angular_post_parameters
 from core.users.models import Users
-from mappino.wsgi import templates
 
 
 ACCESS_RESTORE_HANDLER = AccessRestoreHandler()
 MOBILE_PHONES_CHECKER = MobilePhonesChecker()
-
-
-#-- templates
-@ensure_csrf_cookie
-def login_template(request):
-	t =  templates.get_template('main/parts/accounts/login.html')
-	return HttpResponse(content=t.render())
-
-
-@ensure_csrf_cookie
-def registration_template(request):
-	t =  templates.get_template('main/parts/accounts/registration.html')
-	return HttpResponse(content=t.render())
-
-
-@ensure_csrf_cookie
-def access_restore_template(request):
-	t =  templates.get_template('main/parts/accounts/access_restore.html')
-	return HttpResponse(content=t.render())
-
 
 
 #-- validators

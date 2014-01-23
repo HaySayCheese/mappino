@@ -45,15 +45,16 @@ def POST_parameter(request, parameter, required=True, may_be_empty=False):
 		raise ValueError('Invalid request method type')
 
 
-def angular_post_parameters(request, required_parameters):
+def angular_post_parameters(request, required_parameters=None):
 	if request.method == 'POST':
 		parameters = json.loads(request.body)
-		for param in required_parameters:
-			if not param in parameters:
-				raise ValueError('Required parameter '+str(param)+' is absent.')
+		if required_parameters:
+			for param in required_parameters:
+				if not param in parameters:
+					raise ValueError('Required parameter '+str(param)+' is absent.')
 
-			if parameters[param] == '':
-				raise ValueError('Parameter '+str(param)+' is empty.')
+				if parameters[param] == '':
+					raise ValueError('Parameter '+str(param)+' is empty.')
 		return parameters
 
 	else:
