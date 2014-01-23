@@ -27,7 +27,7 @@ urlpatterns += patterns('apps',
     # login and registration
 	url(r'^ajax/api/accounts/registration/$', 'accounts.accounts_ajax.registration_handler'),
     url(r'^ajax/api/accounts/registration/cancel/$', 'accounts.accounts_ajax.registration_cancel_handler'),
-    url(r'^ajax/api/accounts/registration/resend-sms/$', 'accounts.accounts_ajax.registration_handler'),
+    url(r'^ajax/api/accounts/registration/resend-sms/$', 'accounts.accounts_ajax.resend_sms_handler'),
 	url(r'^ajax/api/accounts/login/$', 'accounts.accounts_ajax.login_handler'),
 	url(r'^ajax/api/accounts/logout/$', 'accounts.accounts_ajax.logout_handler'),
 	url(r'^ajax/api/accounts/password-reset/$', 'accounts.accounts_ajax.password_reset_handler'),

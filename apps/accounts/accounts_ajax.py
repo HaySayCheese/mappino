@@ -294,6 +294,41 @@ def registration_cancel_handler(request):
 	return response
 
 
+RS_RESPONSES = {
+	'anonymous_only': {
+		'code': 1,
+	    'message': 'anonymous users only.',
+	},
+    'invalid_check_code': {
+	    'code': 2,
+	    'message': 'invalid check code',
+    },
+
+    'OK': {
+	    'code': 0,
+	    'message': 'OK',
+    },
+
+}
+
+@require_http_methods('POST')
+def resend_sms_handler(request):
+	if request.user.is_authenticated():
+		return HttpResponseBadRequest(
+			json.dumps(RS_RESPONSES['anonymous_only']), content_type='application/json')
+
+	response = HttpResponse(content_type='application/json')
+	try:
+		MOBILE_PHONES_CHECKER.resend_sms(request, response)
+	except InvalidCheckCode:
+		response.status_code = 400
+		response.write(json.dumps(RS_RESPONSES['invalid_check_code']))
+		return response
+
+	response.write(json.dumps(RC_RESPONSES['OK']))
+	return response
+
+
 LH_RESPONSES = {
 	'username_empty': {
 		'code': 1,

@@ -123,7 +123,7 @@ class SMSSender(object):
 	def __init__(self):
 		self.redis = redis_connections[1]
 
-	def send(self, number, request):
+	def send(self, number, message, request):
 		# todo: send sms here
 		# todo: додати перевірку на дотримання часового інтервалу до повторної SMS
 		# todo: додати обмеження на к-сть SMS в день
@@ -172,9 +172,10 @@ class MobilePhonesChecker(object):
 
 		uid = self.__generate_record_id(phone)
 		key = self.record_prefix + uid
+		code = self.__generate_check_code()
 
 		pipe = self.redis.pipeline()
-		pipe.hset(key, self.code_field_name, self.__generate_check_code())
+		pipe.hset(key, self.code_field_name, code)
 		pipe.hset(key, self.attempts_field_name, 0)
 		pipe.hset(key, self.name_field_name, name)
 		pipe.hset(key, self.surname_field_name, surname)
@@ -189,7 +190,7 @@ class MobilePhonesChecker(object):
 
 		# hint: send throttling implemented in SMSSender
 		# no need to do it here
-		self.sms_sender.send(phone, request)
+		self.sms_sender.send(phone, code, request)
 
 
 	def cancel_number_check(self, request, response):
@@ -259,6 +260,29 @@ class MobilePhonesChecker(object):
 		}
 		response.delete_cookie(self.cookie_name)
 		return True, user_data
+
+
+	def resend_sms(self, request, response):
+		uid = request.get_signed_cookie(self.cookie_name, salt=self.cookie_salt)
+		key = self.record_prefix + uid
+		if not self.redis.exists(key):
+			raise InvalidCheckCode()
+
+		code = self.__generate_check_code()
+
+		pipe = self.redis.pipeline()
+		pipe.hset(key, self.code_field_name, code)
+		pipe.hset(key, self.attempts_field_name, 0)
+		pipe.expire(key, self.record_ttl)
+		pipe.execute()
+
+		set_signed_cookie(response, self.cookie_name, uid, salt=self.cookie_salt,
+		                  days_expire=1, http_only=False)
+
+		# hint: send throttling implemented in SMSSender
+		# no need to do it here
+		phone = self.redis.hget(key, self.phone_number_field_name)
+		self.sms_sender.send(phone, code, request)
 
 
 	def __phone_in_check_queue(self, phone):
