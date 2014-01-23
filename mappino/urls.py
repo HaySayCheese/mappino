@@ -16,8 +16,8 @@ urlpatterns += patterns('apps.accounts',
 )
 
 #-- angular templates for cabinet pages
-urlpatterns += patterns('apps.pages.main',
-    # ...
+urlpatterns += patterns('apps.pages.cabinet',
+    url(r'^ajax/template/cabinet/publications/$', 'cabinet_ajax.publications_template'),
 )
 
 
