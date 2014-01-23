@@ -49,7 +49,7 @@ DT_PUT_RESPONSES = {
 
 @require_http_methods(['GET', 'POST', 'PUT', 'DELETE'])
 @login_required_or_forbidden
-def dirtags_handler(request):
+def dirtags_handler(request, dirtag_id=None):
 	if request.method == 'GET':
 		tags = DirTags.by_user_id(request.user)
 		response = copy.deepcopy(DT_GET_RESPONSES['OK']) # Note: deepcopy here
@@ -73,18 +73,12 @@ def dirtags_handler(request):
 
 	elif request.method == 'PUT':
 		try:
-			d = angular_post_parameters(request, ['id'])
-		except ValueError as e:
-			response = copy.deepcopy(DT_PUT_RESPONSES['invalid_params']) # Note: deepcopy here
-			response['message'] = e.message
-			return HttpResponseBadRequest(json.dumps(response), content_type='application/json')
-
-		try:
-			dirtag = DirTags.by_id(d['id'])
+			dirtag = DirTags.by_id(dirtag_id)
 		except ObjectDoesNotExist:
 			return HttpResponseBadRequest(
 				json.dumps(DT_PUT_RESPONSES['invalid_id']), content_type='application/json')
 
+		d = angular_post_parameters(request)
 		title = d.get('title', '')
 		if title:
 			dirtag.title = title

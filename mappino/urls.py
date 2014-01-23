@@ -41,6 +41,13 @@ urlpatterns += patterns('apps',
         url(r'^ajax/api/accounts/on-login-info/$', 'accounts.accounts_ajax.on_login_info_handler'),
 )
 
+#-- angular API for cabinet
+urlpatterns += patterns('apps.pages.cabinet',
+    # dirtags
+	url(r'^ajax/api/cabinet/dirtags/$', 'dirtags_ajax.dirtags_handler'),
+    url(r'^ajax/api/cabinet/dirtags/(\d)$', 'dirtags_ajax.dirtags_handler'),
+)
+
 
 
 #-- main pages
