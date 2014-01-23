@@ -22,7 +22,7 @@
     <script type="text/javascript" src="{{ static }}js/cabinet/app.js"></script>
 
     <script type="text/javascript" src="{{ static }}js/cabinet/services/router.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/services/authorizationQueries.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/services/tagQueries.js"></script>
 
     <script type="text/javascript" src="{{ static }}js/cabinet/controllers/appCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarMenuCtrl.js"></script>
@@ -44,41 +44,45 @@
                 <div class="sidebar-menu-block">
                     <div class="sidebar-menu-block-header">Обьявления</div>
                     <ul class="sidebar-menu-block-list">
-                        <li><a href="#"><span class="menu-icon icon-all-pubs"></span>Все</a></li>
-                        <li><a href="#"><span class="menu-icon icon-published-pubs"></span>Опубликование</a></li>
-                        <li><a href="#"><span class="menu-icon icon-unpublished-pubs"></span></span>Не опубликование</a></li>
+                        <li>
+                            <a href="#!/publications/all" ng-class="{ active: section == 'all' }">
+                                <span class="menu-icon icon-all-pubs"></span>
+                                Все
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#!/publications/published" ng-class="{ active: section == 'published' }">
+                                <span class="menu-icon icon-published-pubs"></span>
+                                Опубликование
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#!/publications/unpublished" ng-class="{ active: section == 'unpublished' }">
+                                <span class="menu-icon icon-unpublished-pubs"></span>
+                                Не опубликование
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
                 <div class="sidebar-menu-block">
                     <div class="sidebar-menu-block-header">Ярлыки</div>
                     <ul class="sidebar-menu-block-list">
-                        <li><a href="#">
-                            <span class="menu-icon icon-yellow-tag"></span>
-                            Моя папка 1
-                            <div class="sidebar-menu-block-list-controls pull-right">
-                                <span class="menu-icon icon-edit"></span>
-                                <span class="menu-icon icon-delete"></span>
+
+                        <li ng-repeat="tag in tags">
+                            <a href="#">
+                                <span class="menu-icon icon-yellow-tag"></span>
+                                [[ tag.name ]]
+                            </a>
+                            <div class="sidebar-menu-block-list-controls">
+                                <span class="menu-icon icon-edit" ng-click="editTag(tag)"></span>
+                                <span class="menu-icon icon-delete" ng-click="removeTag(tag)"></span>
                             </div>
-                        </a></li>
-                        <li><a href="#">
-                            <span class="menu-icon icon-green-tag"></span>
-                            Моя папка 2
-                            <div class="sidebar-menu-block-list-controls pull-right">
-                                <span class="menu-icon icon-edit"></span>
-                                <span class="menu-icon icon-delete"></span>
-                            </div>
-                        </a></li>
-                        <li><a href="#">
-                            <span class="menu-icon icon-red-tag"></span>
-                            Моя папка 3
-                            <div class="sidebar-menu-block-list-controls pull-right">
-                                <span class="menu-icon icon-edit"></span>
-                                <span class="menu-icon icon-delete"></span>
-                            </div>
-                        </a></li>
+                        </li>
+
+
                         <li class="add-tag-btn">
-                            <a href="#" class="text-center" ng-hide="creatingTag" ng-click="creatingTag = true">
+                            <a href class="text-center" ng-hide="creatingTag" ng-click="creatingTag = true">
                                 <span class="menu-icon icon-add"></span>
                             </a>
                             <div class="add-tag-block" ng-show="creatingTag">
@@ -88,14 +92,10 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <input type="text" class="form-control"
-                                           ng-model="newTag.tagName"
-                                           focus-on-load
-                                           select-on-click
-                                           required>
+                                    <input type="text" class="form-control" ng-model="newTag.tagName" select-on-click required>
                                 </div>
 
-                                <div class="select-color-box">
+                                <div class="select-color-box text-center">
                                     <div class="select-color-box-item"
                                          ng-repeat="color in newTag.colors"
                                          ng-click="newTag.selectedColor = color"
@@ -104,7 +104,7 @@
 
                                 <div class="btn-group btn-group-justified">
                                     <div class="btn btn-cancel btn-block" ng-click="closeCreateTagDialog()">Отмена</div>
-                                    <div class="btn btn-success btn-block">Создать</div>
+                                    <div class="btn btn-success btn-block btn-creating" data-loading-text="Создание..." ng-click="createTag()">Создать</div>
                                 </div>
                             </div>
                         </li>
@@ -122,7 +122,7 @@
 
         </div>
 
-        <!--<div class="view" ng-view="content-view"></div>-->
+        <div class="view" ng-view="content-view"></div>
 
     </div>
 </body>
