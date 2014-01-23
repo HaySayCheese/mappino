@@ -74,6 +74,40 @@
         }
     }
 
+    .add-tag-btn a {
+        padding-left: 7px;
+    }
+
+    .add-tag-block {
+        padding: 15px;
+        background: #dddbcb;
+    }
+
+    .select-color-box {
+        display: block;
+        margin-bottom: 5px;
+        .clearfix();
+    }
+    .select-color-box-item {
+        .square(25px);
+        margin-bottom: 10px;
+        float: left;
+
+        text-align: center;
+        cursor: pointer;
+
+        color: #ffffff;
+        background: #daad11;
+
+        border: 1px solid @gray;
+        border-radius: @border-radius-small;
+        .box-shadow(~"inset 0 0 0 1px #ffffff");
+
+        &:not(:last-child) {
+            margin-right: 10px;
+        }
+    }
+
     a {
         display: block;
         padding: 7px 7px 7px 30px;
