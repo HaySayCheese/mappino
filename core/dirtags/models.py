@@ -1,8 +1,7 @@
 #coding=utf-8
 from django.db import models, IntegrityError
-from djorm_expressions.models import ExpressionManager
 from collective.exceptions import AlreadyExist, RecordAlreadyExists, RecordDoesNotExists
-from core.constants import HEAD_MODELS, OBJECTS_TYPES
+from core.publications.constants import HEAD_MODELS, OBJECTS_TYPES
 from core.dirtags.constants import DIR_TAGS_COLORS
 from core.users.models import Users
 
@@ -15,8 +14,6 @@ class DirTags(models.Model):
 	title = models.TextField(db_index=True)
 	color_id = models.SmallIntegerField()
 	pubs = models.TextField(db_index=True)
-
-	objects = ExpressionManager()
 
 	class Meta:
 		db_table = 'dir_tags'
