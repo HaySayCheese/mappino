@@ -312,6 +312,29 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $root
 
 
     /**
+     * Функція повторної реєстрації
+     **/
+    $scope.repeatRegistration = function() {
+        authorizationQueries.repeatRegistration();
+
+        $rootScope.registrationStatePart = "registration";
+    };
+
+
+    /**
+     * Функція повторної відправки кода
+     **/
+    $scope.repeatSendCode = function(e) {
+        authorizationQueries.repeatSendCode().success(function(data) {
+            if (data.code === 0)
+                $scope.codeSend = true;
+            else
+                $scope.codeSendBefore = true;
+        });
+    };
+
+
+    /**
      * Відправка кода на валідацію
      **/
     function sendCodeToValidate() {

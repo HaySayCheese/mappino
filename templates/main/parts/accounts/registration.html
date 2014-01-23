@@ -125,7 +125,10 @@
                             <div class="form-group">
                                 <div class="btn btn-success btn-block" data-loading-text="Отправка данных..." ng-click="checkPhoneCode()">Подтвердить</div>
                             </div>
-                            <a ng-href="#!/account/login/[[ urlFiltersPart ]]">Не пришло SMS?</a>
+                            <a href ng-click="repeatRegistration()">Указать данные повторно</a>
+                            <a href ng-hide="codeSend || codeSendBefore" ng-click="repeatSendCode($event)">Не пришло SMS?</a><br/>
+                            <span ng-show="codeSend">Вам отправлена повторная SMS</span>
+                            <span ng-show="codeSendBefore">Вам уже была отправлена повторная SMS</span>
                         </div>
                     </div>
 

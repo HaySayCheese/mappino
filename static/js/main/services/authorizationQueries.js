@@ -52,6 +52,30 @@ app.factory('authorizationQueries', function($http, $cookies) {
         },
 
 
+        // Запит на повторну реєстрацію користувача
+        repeatRegistration: function() {
+            return $http({
+                method: 'POST',
+                url: 'ajax/api/accounts/registration/cancel/',
+                headers: {
+                    'X-CSRFToken': $cookies.csrftoken
+                }
+            });
+        },
+
+
+        // Запит на повторну відправку кода на телефон
+        repeatSendCode: function() {
+            return $http({
+                method: 'POST',
+                url: 'ajax/api/accounts/registration/resend-sms/',
+                headers: {
+                    'X-CSRFToken': $cookies.csrftoken
+                }
+            });
+        },
+
+
         // Відправка пошти на валідацію
         validateEmail: function(email) {
             return $http({
