@@ -96,7 +96,7 @@ def dirtags_handler(request, dirtag_id=None):
 
 		color_id = d.get('color', '')
 		if color_id:
-			if color_id not in DIR_TAGS_COLORS.values():
+			if color_id not in DIR_TAGS_COLORS.keys():
 				return HttpResponseBadRequest(
 					json.dumps(DT_PUT_RESPONSES['invalid_color_id']), content_type='application/json')
 			dirtag.color_id = color_id
