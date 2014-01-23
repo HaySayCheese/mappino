@@ -6,6 +6,13 @@ class DirtagsColors(AbstractConstant):
 	def __init__(self):
 		super(DirtagsColors, self).__init__()
 		self.set_ids({
-			# todo here
+			'0': '',
+			'1': '',
+			'2': '',
+			'3': '',
+			'4': '',
+			'5': '',
+			'6': '',
+			'7': '',
 		})
 DIR_TAGS_COLORS = DirtagsColors()
