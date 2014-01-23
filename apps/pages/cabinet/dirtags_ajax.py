@@ -9,6 +9,7 @@ from core.dirtags.constants import DIR_TAGS_COLORS
 from core.dirtags.models import DirTags
 
 
+
 DT_GET_RESPONSES = {
     'OK': {
 	    'code': 0,
@@ -21,7 +22,6 @@ DT_POST_RESPONSES = {
 		'code': '1',
         'message': None
     },
-
     'OK': {
 	    'code': 0,
 	    'message': 'OK',
@@ -40,7 +40,16 @@ DT_PUT_RESPONSES = {
 		'code': '3',
         'message': 'invalid dirtag color_id.'
     },
-
+    'OK': {
+	    'code': 0,
+	    'message': 'OK',
+    },
+}
+DT_DELETE_RESPONSES = {
+    'invalid_id': {
+		'code': '2',
+        'message': 'invalid dirtag id.'
+    },
     'OK': {
 	    'code': 0,
 	    'message': 'OK',
@@ -60,6 +69,7 @@ def dirtags_handler(request, dirtag_id=None):
 		} for tag in tags]
 		return HttpResponse(json.dumps(response), content_type='application/json')
 
+
 	elif request.method == 'POST':
 		try:
 			d = angular_post_parameters(request, ['title', 'color'])
@@ -70,6 +80,7 @@ def dirtags_handler(request, dirtag_id=None):
 
 		DirTags.new(request.user.id, d['title'], d['color'])
 		return HttpResponse(json.dumps(DT_POST_RESPONSES['OK']), content_type='application/json')
+
 
 	elif request.method == 'PUT':
 		try:
@@ -92,6 +103,18 @@ def dirtags_handler(request, dirtag_id=None):
 
 		dirtag.save()
 		return HttpResponse(json.dumps(DT_PUT_RESPONSES['OK']), content_type='application/json')
+
+
+	elif request.method == 'DELETE':
+		try:
+			dirtag = DirTags.by_id(dirtag_id)
+		except ObjectDoesNotExist:
+			return HttpResponseBadRequest(
+				json.dumps(DT_PUT_RESPONSES['invalid_id']), content_type='application/json')
+
+		dirtag.delete()
+		return HttpResponse(json.dumps(DT_DELETE_RESPONSES['OK']), content_type='application/json')
+
 
 	else:
 		return HttpResponseBadRequest('invalid request type')
