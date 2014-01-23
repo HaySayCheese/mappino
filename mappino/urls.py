@@ -3,21 +3,21 @@ from django.conf.urls import patterns, include, url
 
 #-- angular templates for main pages
 urlpatterns = patterns('apps.pages.main',
-    url(r'^ajax/template/main/first-enter/$', 'apps.pages.main.templates_ajax.first_enter_template'),
-    url(r'^ajax/template/main/search/$', 'apps.pages.main.templates_ajax.search_template'),
-    url(r'^ajax/template/main/detailed/$', 'apps.pages.main.templates_ajax.search_template'),
+    url(r'^ajax/template/main/first-enter/$', 'templates_ajax.first_enter_template'),
+    url(r'^ajax/template/main/search/$', 'templates_ajax.search_template'),
+    url(r'^ajax/template/main/detailed/$', 'templates_ajax.search_template'),
 )
 
 #-- angular templates for accounts
 urlpatterns += patterns('apps.accounts',
-    url(r'^ajax/template/main/accounts/login/$', 'accounts_ajax.login_template'),
-    url(r'^ajax/template/main/accounts/registration/$', 'accounts_ajax.registration_template'),
-    url(r'^ajax/template/main/accounts/access-restore/$', 'accounts_ajax.access_restore_template'),
+    url(r'^ajax/template/main/accounts/login/$', 'templates_ajax.login_template'),
+    url(r'^ajax/template/main/accounts/registration/$', 'templates_ajax.registration_template'),
+    url(r'^ajax/template/main/accounts/access-restore/$', 'templates_ajax.access_restore_template'),
 )
 
 #-- angular templates for cabinet pages
 urlpatterns += patterns('apps.pages.cabinet',
-    url(r'^ajax/template/cabinet/publications/$', 'apps.pages.cabinet.templates_ajax.publications_template'),
+    url(r'^ajax/template/cabinet/publications/$', 'templates_ajax.publications_template'),
 )
 
 
