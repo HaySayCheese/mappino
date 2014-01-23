@@ -7,7 +7,7 @@ from django.core.validators import validate_email
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
-from apps.accounts.sys import AccessRestoreHandler, TokenDoesNotExists, NoUserWithSuchUsername, MobilePhonesChecker, TokenAlreadyExists
+from apps.accounts.sys import AccessRestoreHandler, TokenDoesNotExists, NoUserWithSuchUsername, MobilePhonesChecker, TokenAlreadyExists, InvalidCheckCode
 from collective.methods.request_data_getters import angular_post_parameters
 from core.users.models import Users
 from mappino.wsgi import templates
@@ -258,6 +258,40 @@ def registration_handler(request):
 		name, surname, email, phone_number, password, request, response)
 	return response
 
+
+RC_RESPONSES = {
+	'anonymous_only': {
+		'code': 1,
+	    'message': 'anonymous users only.',
+	},
+    'invalid_check_code': {
+	    'code': 2,
+	    'message': 'invalid check code',
+    },
+
+    'OK': {
+	    'code': 0,
+	    'message': 'OK',
+    },
+
+}
+
+@require_http_methods('POST')
+def registration_cancel_handler(request):
+	if request.user.is_authenticated():
+		return HttpResponseBadRequest(
+			json.dumps(RC_RESPONSES['anonymous_only']), content_type='application/json')
+
+	response = HttpResponse(content_type='application/json')
+	try:
+		MOBILE_PHONES_CHECKER.cancel_number_check(request, response)
+	except InvalidCheckCode:
+		response.status_code = 400
+		response.write(json.dumps(RC_RESPONSES['invalid_check_code']))
+		return response
+
+	response.write(json.dumps(RC_RESPONSES['OK']))
+	return response
 
 
 LH_RESPONSES = {

@@ -133,6 +133,7 @@ class SMSSender(object):
 
 
 class PhoneAlreadyInQueue(RecordAlreadyExists): pass
+class InvalidCheckCode(ValueError): pass
 
 class MobilePhonesChecker(object):
 	def __init__(self):
@@ -189,6 +190,15 @@ class MobilePhonesChecker(object):
 		# hint: send throttling implemented in SMSSender
 		# no need to do it here
 		self.sms_sender.send(phone, request)
+
+
+	def cancel_number_check(self, request, response):
+		key = self.record_prefix + request.get_signed_cookie(self.cookie_name, salt=self.cookie_salt)
+		if not self.redis.exists(key):
+			raise InvalidCheckCode()
+
+		self.redis.delete(key)
+		response.delete_cookie(self.cookie_name)
 
 
 	def check_code(self, code, request, response):
