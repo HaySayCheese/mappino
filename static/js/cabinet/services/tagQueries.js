@@ -35,7 +35,7 @@ app.factory('tagQueries', function($http, $cookies) {
         // Запит на видалення тега
         removeTag: function(id) {
             return $http({
-                url: '/ajax/api/cabinet/dirtags/' + id,
+                url: '/ajax/api/cabinet/dirtags/' + id + "/",
                 method: "DELETE",
                 headers: {
                     'X-CSRFToken': $cookies.csrftoken
