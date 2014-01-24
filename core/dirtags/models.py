@@ -29,7 +29,7 @@ class DirTags(models.Model):
 		if not title:
 			raise ValueError('Title contains only spaces.')
 
-		if color_id not in DIR_TAGS_COLORS.values():
+		if color_id not in DIR_TAGS_COLORS.keys():
 			raise ValueError('Invalid @color_id')
 
 		try:

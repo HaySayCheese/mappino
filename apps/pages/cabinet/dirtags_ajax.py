@@ -14,7 +14,7 @@ DT_GET_RESPONSES = {
     'OK': {
 	    'code': 0,
 	    'message': 'OK',
-        'tags': None
+        'dirtags': None
     },
 }
 DT_POST_RESPONSES = {
@@ -65,7 +65,7 @@ def dirtags_handler(request, dirtag_id=None):
 		response['dirtags'] = [{
 			'id': tag.id,
 		    'title': tag.title,
-		    'color': tag.color,
+		    'color_id': tag.color_id,
 		} for tag in tags]
 		return HttpResponse(json.dumps(response), content_type='application/json')
 
@@ -96,7 +96,7 @@ def dirtags_handler(request, dirtag_id=None):
 
 		color_id = d.get('color', '')
 		if color_id:
-			if color_id not in DIR_TAGS_COLORS.keys():
+			if color_id not in DIR_TAGS_COLORS.values():
 				return HttpResponseBadRequest(
 					json.dumps(DT_PUT_RESPONSES['invalid_color_id']), content_type='application/json')
 			dirtag.color_id = color_id

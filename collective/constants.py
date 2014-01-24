@@ -1,15 +1,6 @@
 class AbstractConstant(object):
 	def __init__(self):
-		self.ids = {
-			'0': '',
-			'1': '',
-			'2': '',
-			'3': '',
-			'4': '',
-			'5': '',
-			'6': '',
-			'7': '',
-		}
+		self.ids = {}
 
 	def set_ids(self, ids_dict):
 		if len(set(ids_dict.values())) < len(ids_dict.values()):
