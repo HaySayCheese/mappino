@@ -30,6 +30,7 @@ DT_POST_RESPONSES = {
     'OK': {
 	    'code': 0,
 	    'message': 'OK',
+        'id': None,
     },
 }
 DT_PUT_RESPONSES = {
@@ -84,11 +85,14 @@ def dirtags_handler(request, dirtag_id=None):
 			return HttpResponseBadRequest(json.dumps(response), content_type='application/json')
 
 		try:
-			DirTags.new(request.user.id, d['title'], d['color'])
+			dirtag = DirTags.new(request.user.id, d['title'], d['color'])
 		except RecordAlreadyExists:
 			return HttpResponse(json.dumps(
 				DT_POST_RESPONSES['duplicated_title']), content_type='application/json')
-		return HttpResponse(json.dumps(DT_POST_RESPONSES['OK']), content_type='application/json')
+
+		response = copy.deepcopy(DT_POST_RESPONSES['OK'])
+		response['id'] = dirtag.id
+		return HttpResponse(json.dumps(response), content_type='application/json')
 
 
 	elif request.method == 'PUT':
