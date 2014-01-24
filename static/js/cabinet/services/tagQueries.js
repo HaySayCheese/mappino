@@ -25,7 +25,7 @@ app.factory('tagQueries', function($http, $cookies) {
                     'X-CSRFToken': $cookies.csrftoken
                 },
                 data: {
-                    title: tag.tagName,
+                    title: tag.title,
                     color: tag.colors.indexOf(tag.selectedColor)
                 }
             });
@@ -33,16 +33,12 @@ app.factory('tagQueries', function($http, $cookies) {
 
 
         // Запит на видалення тега
-        removeTag: function(tag) {
+        removeTag: function(id) {
             return $http({
-                url: 'ajax/api/accounts/login/',
-                method: "POST",
+                url: '/ajax/api/cabinet/dirtags/' + id,
+                method: "DELETE",
                 headers: {
                     'X-CSRFToken': $cookies.csrftoken
-                },
-                data: {
-                    tagName: tag.name,
-                    tagColor: tag.color
                 }
             });
         },

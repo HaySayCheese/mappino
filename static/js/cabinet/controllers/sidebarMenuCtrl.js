@@ -8,14 +8,16 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, tag
      * Змінні створення тега
      **/
     $scope.newTag = {
-        colors:         ["#33CCFF", "#33FFCC", "#FF6633", "#FF3366", "#3366FF", "#FF33CC", "#FFCC33", "#66FF33"],
+        colors:         ["#971a93", "#cf1d4f", "#daad11", "#06b358", "#399b8a", "#1d69cf", "#FFCC33", "#66FF33"],
 
         defaultTagName: "Название",
-        tagName:        "Название",
+        title:          "Название",
 
-        defaultColor:   "#33CCFF",
-        selectedColor:  "#33CCFF"
+        defaultColor:   "#971a93",
+        selectedColor:  "#971a93"
     };
+
+    $scope.tags = [];
 
 
     /**
@@ -23,11 +25,16 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, tag
      * пункту меню
      **/
     $scope.$on("$routeChangeSuccess", function() {
-        if ($routeParams.section)
+        if ($routeParams.section) {
             $scope.section = $routeParams.section;
+            $scope.tagId = "";
+        }
 
-        if ($routeParams.id)
-            $scope.id = $routeParams.id;
+
+        if ($routeParams.id) {
+            $scope.tagId = $routeParams.id;
+            $scope.section = "";
+        }
     });
 
 
@@ -36,7 +43,13 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, tag
      **/
     function loadTags() {
         tagQueries.loadTags().success(function(data) {
-            $scope.tags = data.dirtags;
+            for (var i = 0; i <= data.dirtags.length - 1; i++) {
+                $scope.tags.push({
+                    id: data.dirtags[i].id,
+                    title: data.dirtags[i].title,
+                    color_id: data.dirtags[i].color_id
+                })
+            }
         });
     }
 
@@ -50,8 +63,14 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, tag
 
         var btn = $(".btn-creating").button("loading");
 
-        tagQueries.createTag($scope.newTag).success(function() {
+        tagQueries.createTag($scope.newTag).success(function(data) {
             btn.button("reset");
+
+            $scope.tags.push({
+                id: data.id,
+                title: $scope.newTag.title,
+                color_id: $scope.tags.indexOf($scope.newTag.selectedColor)
+            });
 
             $scope.closeCreateTagDialog();
         })
@@ -73,7 +92,9 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, tag
      * Логіка видалення тега
      **/
     $scope.removeTag = function(tag) {
-        tagQueries.removeTag(tag);
+        tagQueries.removeTag(tag.id).success(function() {
+            $scope.tags.splice($scope.tags.indexOf(tag), 1);
+        });
     };
 
 

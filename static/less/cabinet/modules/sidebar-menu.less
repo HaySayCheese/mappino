@@ -114,9 +114,14 @@
 
         &:hover,
         &:focus {
+            background: #232b30;
             .sidebar-menu-block-list-controls .menu-icon {
                 .opacity(0.7);
             }
+        }
+        &:active,
+        &.active {
+            background: #343b40;
         }
     }
 
@@ -128,15 +133,6 @@
         font-size: 16px;
 
         text-decoration: none;
-
-        &:hover,
-        &:focus {
-            background: #232b30;
-        }
-        &:active,
-        &.active {
-            background: #343b40;
-        }
     }
 
     .menu-icon {

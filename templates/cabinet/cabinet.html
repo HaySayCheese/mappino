@@ -44,20 +44,20 @@
                 <div class="sidebar-menu-block">
                     <div class="sidebar-menu-block-header">Обьявления</div>
                     <ul class="sidebar-menu-block-list">
-                        <li>
-                            <a href="#!/publications/all" ng-class="{ active: section == 'all' }">
+                        <li ng-class="{ active: section == 'all' }">
+                            <a href="#!/publications/all">
                                 <span class="menu-icon icon-all-pubs"></span>
                                 Все
                             </a>
                         </li>
-                        <li>
-                            <a href="#!/publications/published" ng-class="{ active: section == 'published' }">
+                        <li ng-class="{ active: section == 'published' }">
+                            <a href="#!/publications/published">
                                 <span class="menu-icon icon-published-pubs"></span>
                                 Опубликование
                             </a>
                         </li>
-                        <li>
-                            <a href="#!/publications/unpublished" ng-class="{ active: section == 'unpublished' }">
+                        <li ng-class="{ active: section == 'unpublished' }">
+                            <a href="#!/publications/unpublished">
                                 <span class="menu-icon icon-unpublished-pubs"></span>
                                 Не опубликование
                             </a>
@@ -69,10 +69,10 @@
                     <div class="sidebar-menu-block-header">Ярлыки</div>
                     <ul class="sidebar-menu-block-list">
 
-                        <li ng-repeat="tag in tags">
-                            <a href="#">
+                        <li ng-class="{ 'active': tag.id == tagId }" ng-repeat="tag in tags">
+                            <a href="#!/tags/[[ tag.id ]]">
                                 <span class="menu-icon icon-yellow-tag"></span>
-                                [[ tag.name ]]
+                                [[ tag.title ]]
                             </a>
                             <div class="sidebar-menu-block-list-controls">
                                 <span class="menu-icon icon-edit" ng-click="editTag(tag)"></span>
@@ -88,11 +88,11 @@
                             <div class="add-tag-block" ng-show="creatingTag">
                                 <div class="form-group">
                                     <span>Пример: </span>
-                                    <span class="label" style="background-color: [[ newTag.selectedColor ]]">[[ newTag.tagName ]]</span>
+                                    <span class="label" style="background-color: [[ newTag.selectedColor ]]">[[ newTag.title ]]</span>
                                 </div>
 
                                 <div class="form-group">
-                                    <input type="text" class="form-control" ng-model="newTag.tagName" select-on-click required>
+                                    <input type="text" class="form-control" ng-model="newTag.title" select-on-click required>
                                 </div>
 
                                 <div class="select-color-box text-center">
