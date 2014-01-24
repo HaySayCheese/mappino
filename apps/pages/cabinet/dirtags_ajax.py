@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 from collective.decorators.views import login_required_or_forbidden
+from collective.exceptions import RecordAlreadyExists
 from collective.methods.request_data_getters import angular_post_parameters
 from core.dirtags.constants import DIR_TAGS_COLORS
 from core.dirtags.models import DirTags
@@ -21,6 +22,10 @@ DT_POST_RESPONSES = {
     'invalid_params': {
 		'code': '1',
         'message': None
+    },
+    'duplicated_title': {
+		'code': '1',
+        'message': '@title is duplicated.'
     },
     'OK': {
 	    'code': 0,
@@ -78,7 +83,11 @@ def dirtags_handler(request, dirtag_id=None):
 			response['message'] = e.message
 			return HttpResponseBadRequest(json.dumps(response), content_type='application/json')
 
-		DirTags.new(request.user.id, d['title'], d['color'])
+		try:
+			DirTags.new(request.user.id, d['title'], d['color'])
+		except RecordAlreadyExists:
+			return HttpResponse(json.dumps(
+				DT_POST_RESPONSES['duplicated_title']), content_type='application/json')
 		return HttpResponse(json.dumps(DT_POST_RESPONSES['OK']), content_type='application/json')
 
 
