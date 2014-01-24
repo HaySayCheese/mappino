@@ -45,7 +45,7 @@ urlpatterns += patterns('apps',
 urlpatterns += patterns('apps.pages.cabinet',
     # dirtags
 	url(r'^ajax/api/cabinet/dirtags/$', 'dirtags_ajax.dirtags_handler'),
-    url(r'^ajax/api/cabinet/dirtags/(\d)/$', 'dirtags_ajax.dirtags_handler'),
+    url(r'^ajax/api/cabinet/dirtags/(\d+)/$', 'dirtags_ajax.dirtags_handler'),
 )
 
 
