@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, tagQueries) {
+app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $timeout, $compile, tagQueries) {
 
     loadTags();
 
@@ -47,7 +47,8 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, tag
                 $scope.tags.push({
                     id: data.dirtags[i].id,
                     title: data.dirtags[i].title,
-                    color_id: data.dirtags[i].color_id
+                    color_id: data.dirtags[i].color_id,
+                    color: $scope.newTag.colors[data.dirtags[i].color_id]
                 })
             }
         });
@@ -83,8 +84,37 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, tag
     /**
      * Логіка редагування тега
      **/
-    $scope.editTag = function(tag) {
-        tagQueries.editTag(tag);
+    $scope.editTag = function(e, tag) {
+
+        $scope.editableTag = tag;
+
+        var popover = $(e.currentTarget),
+            menuItem = $(e.currentTarget).parents("li"),
+            menuItemLink = menuItem.find("a"),
+            popovers = $("[data-toggle='popover']"),
+            htmlText = "<div class='add-tag-block'>" +
+                            "<div class='form-group'>" +
+                                "<span>Пример: </span>" +
+                                "<span class='label' style='background-color: [[ newTag.selectedColor ]]'>[[ editableTag.title ]]</span>" +
+                            "</div>" +
+                            "<div class='form-group'>" +
+                                "<input type='text' class='form-control' ng-model='editableTag.title' select-on-click required>" +
+                            "</div>" +
+                            "<div class='select-color-box text-center'>" +
+                                "<div class='select-color-box-item' ng-repeat='color in newTag.colors' ng-click='editableTag.selectedColor = color' style='background-color: [[ color ]]'></div>" +
+                            "</div>" +
+                            "<div class='btn-group btn-group-justified'>" +
+                                "<div class='btn btn-cancel btn-block' ng-click='closeCreateTagDialog()'>Отмена</div>" +
+                                "<div class='btn btn-success btn-block btn-creating' data-loading-text='Создание...' ng-click='createTag()'>Создать</div>" +
+                            "</div>" +
+                        "</div>",
+            template = angular.element($compile(htmlText)($scope));
+
+
+        menuItemLink.hide();
+        menuItem.append(template);
+
+        //tagQueries.editTag(tag);
     };
 
 

@@ -6,52 +6,92 @@
 @import "../../components/variables";
 @import "../../components/mixins.less";
 
-/**
-* Sidebar-menu styles
-**/
-.sidebar-menu {
-    .size(300px, 100%);
 
+@font-face {
+    font-family: open-sans;
+    src: url(../../fonts/ClearSans-Regular-webfont.ttf);
+}
+
+// блок меню
+.sidebar-menu {
+    .size(280px, 100%);
     float: left;
 
+    font-family: open-sans;
 
     .sidebar-menu-body {
         .size(100%, calc(~"100% - 65px"));
         overflow: auto;
 
-        background: #11191f;
+        background: #3a3f4f;
 
         &::-webkit-scrollbar {
             width: 10px;
         }
 
         &::-webkit-scrollbar-thumb {
-            background: lighten(#11191f, 15%);
+            background: @gray-lighter;
         }
     }
-
 }
 
 
-/**
-* Sidebar-menu-block styles
-**/
-.sidebar-menu-block {
-    display: block;
-    margin-top: 30px;
-
-}
-
-.sidebar-menu-block-header {
+// блок меню з заголовком і списком пунктів
+.menu-block {
     display: block;
 
-    padding: 0 0 10px 15px;
+    &:not(:first-child) {
+        margin-top: 30px;
+    }
+}
+// заголовок меню
+.menu-block-header {
+    display: block;
+    position: relative;
 
-    color: #3c404d;
-    font-weight: bold;
+    padding: 15px 35px 15px 80px;
+    margin-bottom: 20px;
+
+    color: rgba(255, 255, 255, 0.4);
+    background: #4a5060;
+
+    font-size: @font-size-large;
+
+    &:after {
+        content: " ";
+
+        position: absolute;
+        top: 100%;
+        left: 35px;
+
+        width: 0;
+        height: 0;
+
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 8px solid #4a5060;
+    }
+
+    &.icon-pubs,
+    &.icon-tags,
+    &.icon-user {
+        background-position: 28px center;
+        background-repeat: no-repeat;
+    }
+    &.icon-pubs {
+
+        background-image: url("../../img/cabinet/sidebar-menu/pubs.png");
+    }
+    &.icon-tags {
+        background-image: url("../../img/cabinet/sidebar-menu/tags.png");
+    }
+    &.icon-user {
+        background-image: url("../../img/cabinet/sidebar-menu/user.png");
+    }
 }
 
-.sidebar-menu-block-list {
+// список пунктів меню
+.menu-block-list {
     display: block;
 
     margin: 0;
@@ -59,12 +99,12 @@
 
     list-style: none;
 
-    .sidebar-menu-block-list-controls {
+    .menu-block-list-controls {
         position: absolute;
         top: calc(~"50% - (16px / 2)");
         right: 10px;
     }
-    .sidebar-menu-block-list-controls .menu-icon {
+    .menu-block-list-controls .menu-icon {
         height: 16px;
         margin-right: 5px;
         cursor: pointer;
@@ -76,58 +116,32 @@
         }
     }
 
+
+    // кнопка додання тега
     .add-tag-btn a {
         padding-left: 7px;
     }
 
-    .add-tag-block {
-        padding: 15px;
-        background: #dddbcb;
-    }
-
-    .select-color-box {
-        display: block;
-        margin-bottom: 5px;
-    }
-    .select-color-box-item {
-        .square(20px);
-        margin-bottom: 10px;
-        display: inline-block;
-
-        text-align: center;
-        cursor: pointer;
-
-        color: #ffffff;
-        background: #daad11;
-
-        border: 1px solid #ccc;
-        border-radius: @border-radius-small;
-        .box-shadow(~"inset 0 0 0 1px #ffffff");
-
-        &:not(:last-child) {
-            margin-right: 10px;
-        }
-    }
-
     li {
         position: relative;
+        .opacity(0.5);
 
         &:hover,
         &:focus {
-            background: #232b30;
-            .sidebar-menu-block-list-controls .menu-icon {
-                .opacity(0.7);
+            .opacity(0.8);
+
+            .menu-block-list-controls .menu-icon {
+                .opacity(0.8);
             }
         }
-        &:active,
         &.active {
-            background: #343b40;
+            .opacity(1);
         }
     }
 
     a {
         display: block;
-        padding: 7px 7px 7px 30px;
+        padding: 7px 7px 7px 35px;
 
         color: #ffffff;
         font-size: 16px;
@@ -139,7 +153,7 @@
         .square(16px);
 
         display: inline-block;
-        margin-bottom: -2px;
+        margin-bottom: -3px;
         margin-right: 10px;
 
         background-size: 16px;
@@ -160,16 +174,6 @@
         }
 
 
-        &.icon-yellow-tag {
-            background-image: url("../../img/cabinet/sidebar-menu/tag-yellow.png");
-        }
-        &.icon-green-tag {
-            background-image: url("../../img/cabinet/sidebar-menu/tag-green.png");
-        }
-        &.icon-red-tag {
-            background-image: url("../../img/cabinet/sidebar-menu/tag-red.png");
-        }
-
         &.icon-support {
             background-image: url("../../img/cabinet/sidebar-menu/support.png");
         }
@@ -184,5 +188,16 @@
             background-image: url("../../img/cabinet/sidebar-menu/del.png");
         }
     }
-}
 
+    .tag-icon {
+        .square(16px);
+        display: inline-block;
+
+        margin-bottom: -3px;
+        margin-right: 10px;
+
+        border: 3px solid #4a5060;
+        border-radius: 50%;
+        background: transparent;
+    }
+}
