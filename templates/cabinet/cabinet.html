@@ -35,15 +35,12 @@
     <div class="wrapper">
 
         <div class="sidebar-menu" ng-controller="SidebarMenuCtrl">
-            <div class="btn btn-danger btn-xlg btn-block">
-                <span class="glyphicon glyphicon-plus-sign"></span>
-                Добавить обьявление
-            </div>
+            <div class="btn btn-danger btn-xlg btn-block">Добавить обьявление</div>
 
             <div class="sidebar-menu-body">
-                <div class="sidebar-menu-block">
-                    <div class="sidebar-menu-block-header">Обьявления</div>
-                    <ul class="sidebar-menu-block-list">
+                <div class="menu-block">
+                    <div class="menu-block-header icon-pubs">Обьявления</div>
+                    <ul class="menu-block-list">
                         <li ng-class="{ active: section == 'all' }">
                             <a href="#!/publications/all">
                                 <span class="menu-icon icon-all-pubs"></span>
@@ -65,55 +62,29 @@
                     </ul>
                 </div>
 
-                <div class="sidebar-menu-block">
-                    <div class="sidebar-menu-block-header">Ярлыки</div>
-                    <ul class="sidebar-menu-block-list">
-
+                <div class="menu-block">
+                    <div class="menu-block-header icon-tags">
+                        Ярлыки
+                        <div class="edit-tag-btn">управление</div>
+                    </div>
+                    <ul class="menu-block-list">
                         <li ng-class="{ 'active': tag.id == tagId }" ng-repeat="tag in tags">
                             <a href="#!/tags/[[ tag.id ]]">
-                                <span class="menu-icon icon-yellow-tag"></span>
+                                <span class="tag-icon" style="background: [[ tag.color ]]"></span>
                                 [[ tag.title ]]
                             </a>
-                            <div class="sidebar-menu-block-list-controls">
-                                <span class="menu-icon icon-edit" ng-click="editTag(tag)"></span>
+                            <div class="menu-block-list-controls">
+                                <span class="menu-icon icon-edit" ng-click="editTag($event, tag)"></span>
                                 <span class="menu-icon icon-delete" ng-click="removeTag(tag)"></span>
                             </div>
                         </li>
-
-
-                        <li class="add-tag-btn">
-                            <a href class="text-center" ng-hide="creatingTag" ng-click="creatingTag = true">
-                                <span class="menu-icon icon-add"></span>
-                            </a>
-                            <div class="add-tag-block" ng-show="creatingTag">
-                                <div class="form-group">
-                                    <span>Пример: </span>
-                                    <span class="label" style="background-color: [[ newTag.selectedColor ]]">[[ newTag.title ]]</span>
-                                </div>
-
-                                <div class="form-group">
-                                    <input type="text" class="form-control" ng-model="newTag.title" select-on-click required>
-                                </div>
-
-                                <div class="select-color-box text-center">
-                                    <div class="select-color-box-item"
-                                         ng-repeat="color in newTag.colors"
-                                         ng-click="newTag.selectedColor = color"
-                                         style="background-color: [[ color ]]"></div>
-                                </div>
-
-                                <div class="btn-group btn-group-justified">
-                                    <div class="btn btn-cancel btn-block" ng-click="closeCreateTagDialog()">Отмена</div>
-                                    <div class="btn btn-success btn-block btn-creating" data-loading-text="Создание..." ng-click="createTag()">Создать</div>
-                                </div>
-                            </div>
-                        </li>
                     </ul>
+                    <div class="tags-loader" ng-show="loadingLabels"></div>
                 </div>
 
-                <div class="sidebar-menu-block">
-                    <div class="sidebar-menu-block-header">Учетная запись</div>
-                    <ul class="sidebar-menu-block-list">
+                <div class="menu-block">
+                    <div class="menu-block-header icon-user">Учетная запись</div>
+                    <ul class="menu-block-list">
                         <li><a href="#"><span class="menu-icon icon-support"></span>Онлайн поддержка</a></li>
                         <li><a href="#"><span class="menu-icon icon-settings"></span>Параметры</a></li>
                     </ul>
