@@ -63,9 +63,11 @@
                 </div>
 
                 <div class="menu-block">
-                    <div class="menu-block-header icon-tags">Ярлыки</div>
+                    <div class="menu-block-header icon-tags">
+                        Ярлыки
+                        <div class="edit-tag-btn">управление</div>
+                    </div>
                     <ul class="menu-block-list">
-
                         <li ng-class="{ 'active': tag.id == tagId }" ng-repeat="tag in tags">
                             <a href="#!/tags/[[ tag.id ]]">
                                 <span class="tag-icon" style="background: [[ tag.color ]]"></span>
@@ -76,14 +78,8 @@
                                 <span class="menu-icon icon-delete" ng-click="removeTag(tag)"></span>
                             </div>
                         </li>
-
-
-                        <li class="add-tag-btn">
-                            <a href class="text-center" ng-hide="creatingTag" ng-click="creatingTag = true">
-                                <span class="menu-icon icon-add"></span>
-                            </a>
-                        </li>
                     </ul>
+                    <div class="tags-loader" ng-show="loadingLabels"></div>
                 </div>
 
                 <div class="menu-block">

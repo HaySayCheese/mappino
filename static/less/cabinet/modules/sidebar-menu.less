@@ -43,6 +43,13 @@
     &:not(:first-child) {
         margin-top: 30px;
     }
+
+    .tags-loader {
+        .size(100%, 12px);
+        display: block;
+
+        background: url("../../img/cabinet/sidebar-menu/ajax-loader.gif") center center no-repeat;
+    }
 }
 // заголовок меню
 .menu-block-header {
@@ -52,7 +59,7 @@
     padding: 15px 35px 15px 80px;
     margin-bottom: 20px;
 
-    color: rgba(255, 255, 255, 0.4);
+    color: #9095a2;
     background: #4a5060;
 
     font-size: @font-size-large;
@@ -88,6 +95,30 @@
     &.icon-user {
         background-image: url("../../img/cabinet/sidebar-menu/user.png");
     }
+
+    .edit-tag-btn {
+        position: absolute;
+        top: 17px;
+        right: 17px;
+
+        padding: 2px 7px;
+        margin-top: -2px;
+
+        cursor: pointer;
+        font-size: @font-size-small;
+
+        border-color: #585e6e;
+        border-width: 2px;
+        border-style: solid;
+        background: #3a3f4f;
+        border-radius: @border-radius-large;
+        .transition(~"border-color 0.1s ease");
+
+        &:hover,
+        &:focus {
+            border-color: #606677;
+        }
+    }
 }
 
 // список пунктів меню
@@ -116,15 +147,10 @@
         }
     }
 
-
-    // кнопка додання тега
-    .add-tag-btn a {
-        padding-left: 7px;
-    }
-
     li {
         position: relative;
-        .opacity(0.5);
+        .opacity(0.6);
+        .transition(~"opacity 0.1s ease");
 
         &:hover,
         &:focus {
@@ -143,7 +169,7 @@
         display: block;
         padding: 7px 7px 7px 35px;
 
-        color: #ffffff;
+        color: #c3c6ce;
         font-size: 16px;
 
         text-decoration: none;
@@ -196,7 +222,7 @@
         margin-bottom: -3px;
         margin-right: 10px;
 
-        border: 3px solid #4a5060;
+        border: 3px solid #585e6e;
         border-radius: 50%;
         background: transparent;
     }
