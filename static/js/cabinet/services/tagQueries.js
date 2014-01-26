@@ -47,13 +47,12 @@ app.factory('tagQueries', function($http, $cookies) {
         // Запит на перейменування тега
         editTag: function(tag) {
             return $http({
-                url: '/ajax/api/cabinet/dirtags/',
+                url: '/ajax/api/cabinet/dirtags/' + tag.id,
                 method: "PUT",
                 headers: {
                     'X-CSRFToken': $cookies.csrftoken
                 },
                 data: {
-                    dirtag_id: tag.id,
                     color_id: tag.color_id,
                     title: tag.title
                 }
