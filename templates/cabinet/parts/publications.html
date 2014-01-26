@@ -1,11 +1,11 @@
 <div class="sidebar-item-list" ng-controller="SidebarItemListCtrl">
     <div class="sidebar-item-list-header">
-        <input type="text" class="form-control" placeholder="Поиск...">
+        <input type="text" class="form-control" placeholder="Поиск..." ng-model="searchItem">
     </div>
 
     <div class="sidebar-item-list-body">
         <!-- Item -->
-        <div class="sidebar-item-list-item">
+        <div class="sidebar-item-list-item" ng-class="{ active: publicationId == 20 }" ng-click="selectItem(20)">
             <div class="sidebar-item-list-item-img">
                 <div class="item-notifer"></div>
                 <img src="{{ static }}img/cabinet/house.png" alt=""/>
@@ -15,15 +15,10 @@
             <div class="sidebar-item-list-item-date">
                 <span class="glyphicon glyphicon-calendar"></span> 12.12.12 - 14.14.14
             </div>
-            <!--<div class="sidebar-item-list-item-labels">-->
-                <!--<span class="label label-success">Моя папка</span>-->
-                <!--<span class="label label-success">Моя папка</span>-->
-                <!--<span class="label label-success">Моя папка</span>-->
-            <!--</div>-->
         </div>
 
         <!-- Item -->
-        <div class="sidebar-item-list-item">
+        <div class="sidebar-item-list-item" ng-class="{ active: publicationId == 30 }" ng-click="selectItem(30)">
             <div class="sidebar-item-list-item-img">
                 <div class="item-notifer"></div>
                 <img src="{{ static }}img/cabinet/house.png" alt=""/>
@@ -33,11 +28,6 @@
             <div class="sidebar-item-list-item-date">
                 <span class="glyphicon glyphicon-calendar"></span> 12.12.12 - 14.14.14
             </div>
-            <!--<div class="sidebar-item-list-item-labels">-->
-                <!--<span class="label label-success">Моя папка</span>-->
-                <!--<span class="label label-success">Моя папка</span>-->
-                <!--<span class="label label-success">Моя папка</span>-->
-            <!--</div>-->
         </div>
 
     </div>

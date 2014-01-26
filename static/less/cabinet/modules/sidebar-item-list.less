@@ -47,6 +47,7 @@
     position: relative;
     padding: 15px 0px 15px 15px;
     cursor: pointer;
+    .transition(~"background 0.1s ease");
 
     &:hover,
     &:focus,
@@ -74,6 +75,7 @@
 
             background: #e8cea6;
             border-radius: 25px;
+            .transition(~"border-color 0.1s ease");
         }
 
         img {
@@ -100,10 +102,5 @@
         padding-left: 15px;
         font-size: @font-size-small;
         .opacity(0.5);
-    }
-
-    .sidebar-item-list-item-labels {
-        display: block;
-        padding-left: 15px;
     }
 }

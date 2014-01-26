@@ -33,7 +33,7 @@
     <script type="text/javascript" src="{{ static }}js/cabinet/directives/selectOnClick.js"></script>
     <script type="text/javascript" src="{{ static }}js/cabinet/directives/focusOnLoad.js"></script>
 </head>
-<body ng-app="MappinoCabinet">
+<body ng-app="MappinoCabinet" ng-controller="AppCtrl">
     <div class="wrapper">
 
         <div class="sidebar-menu" ng-controller="SidebarMenuCtrl">
@@ -43,19 +43,19 @@
                 <div class="menu-block">
                     <div class="menu-block-header icon-pubs">Обьявления</div>
                     <ul class="menu-block-list">
-                        <li ng-class="{ active: section == 'all' }">
+                        <li ng-class="{ active: routeSection == 'all' }">
                             <a href="#!/publications/all">
                                 <span class="menu-icon icon-all-pubs"></span>
                                 Все
                             </a>
                         </li>
-                        <li ng-class="{ active: section == 'published' }">
+                        <li ng-class="{ active: routeSection == 'published' }">
                             <a href="#!/publications/published">
                                 <span class="menu-icon icon-published-pubs"></span>
                                 Опубликование
                             </a>
                         </li>
-                        <li ng-class="{ active: section == 'unpublished' }">
+                        <li ng-class="{ active: routeSection == 'unpublished' }">
                             <a href="#!/publications/unpublished">
                                 <span class="menu-icon icon-unpublished-pubs"></span>
                                 Не опубликование
@@ -84,9 +84,10 @@
                             <div class='btn btn-success btn-block btn-creating' data-loading-text='Создание...' ng-click='createTag()'>Создать</div>
                         </div>
                     </div>
+
                     <ul class="menu-block-list">
-                        <li ng-class="{ 'active': tag.id == tagId }" ng-repeat="tag in tags">
-                            <a href="#!/tags/[[ tag.id ]]">
+                        <li ng-class="{ 'active': routeSection == tag.id }" ng-repeat="tag in tags">
+                            <a href="#!/publications/[[ tag.id ]]">
                                 <span class="tag-icon" style="background: [[ tag.color ]]"></span>
                                 [[ tag.title ]]
                             </a>
@@ -110,7 +111,7 @@
 
         </div>
 
-        <div class="view" ng-view="content-view"></div>
+        <div class="view" ng-view></div>
 
     </div>
 </body>

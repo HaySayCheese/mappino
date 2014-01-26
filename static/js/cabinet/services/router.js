@@ -5,14 +5,12 @@ app.config(['$routeProvider', function($routeProvider) {
 
         .when('/publications/:section', {
             controller: "PublicationsCtrl",
-            templateUrl: "/ajax/template/cabinet/publications/",
-            view: "content-view"
+            templateUrl: "/ajax/template/cabinet/publications/"
         })
 
-        .when('/tags/:id', {
+        .when('/publications/:section/:pubId', {
             controller: "PublicationsCtrl",
-            templateUrl: "/ajax/template/cabinet/publications/",
-            view: "content-view"
+            templateUrl: "/ajax/template/cabinet/publications/"
         })
 
         .otherwise({

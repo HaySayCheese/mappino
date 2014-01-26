@@ -27,23 +27,6 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
 
 
     /**
-     * Перегляд за зміною урла для встановлення активного
-     * пункту меню
-     **/
-    $scope.$on("$routeChangeSuccess", function() {
-        if ($routeParams.section) {
-            $scope.section = $routeParams.section;
-            $scope.tagId = "";
-        }
-
-        if ($routeParams.id) {
-            $scope.tagId = $routeParams.id;
-            $scope.section = "";
-        }
-    });
-
-
-    /**
      * Логіка загрузки тегів
      **/
     function loadTags() {
@@ -108,6 +91,9 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
 
         tagQueries.createTag($scope.newTag).success(function(data) {
             btn.button("reset");
+
+            if (data.code === 1)
+                return;
 
             $scope.tags.push({
                 id: data.id,
