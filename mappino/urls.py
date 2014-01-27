@@ -20,6 +20,11 @@ urlpatterns += patterns('apps.pages.cabinet',
     url(r'^ajax/template/cabinet/publications/$', 'templates_ajax.publications_template'),
 )
 
+#-- angular templates publications
+urlpatterns += patterns('apps.pages.cabinet',
+    url(r'^ajax/template/cabinet/publications/houses/$', 'templates_ajax.house_template'),
+)
+
 
 
 #-- angular API for main pages

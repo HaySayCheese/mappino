@@ -8,4 +8,11 @@ from mappino.wsgi import templates
 @ensure_csrf_cookie
 def publications_template(request):
 	t =  templates.get_template('cabinet/parts/publications.html')
-	return HttpResponse(content=t.render())
+	return HttpResponse(t.render())
+
+
+#-- publications templates
+@ensure_csrf_cookie
+def house_template(request):
+	t =  templates.get_template('cabinet/parts/pubs/house.html')
+	return HttpResponse(t.render())
