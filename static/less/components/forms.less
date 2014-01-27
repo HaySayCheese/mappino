@@ -28,7 +28,7 @@ legend {
 label {
   display: inline-block;
   margin-bottom: 5px;
-  font-weight: bold;
+  //font-weight: bold;
 }
 
 
@@ -405,4 +405,65 @@ input[type="checkbox"],
       text-align: right;
     }
   }
+}
+
+
+/* checkboxes */
+input[type="checkbox"] {
+    display: none;
+
+    &[disabled],
+    fieldset[disabled] & {
+        + label {
+            cursor: default;
+            .opacity(.6);
+        }
+
+    }
+}
+input[type="checkbox"] + label,
+input[type="checkbox"]:checked + label {
+    position: relative;
+
+    padding-left: 22px;
+    margin-left: -15px;
+
+    &:before, &:after {
+        content: " ";
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        width: 17px;
+        height: 17px;
+
+        .transition(max-width 0.3s);
+    }
+
+    &:after {
+        max-width: 0;
+    }
+
+
+}
+
+input[type="checkbox"] + label {
+
+    // unchecked
+    &:before {
+        background-image: url("../../img/elegant.png");
+    }
+
+    // checked
+    &:after {
+        background-image: url("../../img/elegant.png");
+        background-position: 0 -17px;
+    }
+}
+
+input[type="checkbox"]:checked + label {
+
+    &:after {
+        max-width: 17px;
+    }
 }

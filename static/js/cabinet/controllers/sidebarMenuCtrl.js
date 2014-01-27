@@ -8,16 +8,24 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
      * Змінні створення тега
      **/
     $scope.newTag = {
-        colors:         ["#971a93", "#cf1d4f", "#daad11", "#06b358", "#399b8a", "#1d69cf", "#FFCC33", "#66FF33"],
+        colors:         ["#9861dd", "#465eec", "#60b4cf", "#54b198", "#7cc768", "#dfb833", "#f38a23", "#f32363"],
 
         defaultTagName: "Название",
         title:          "Название",
 
-        defaultColor:   "#971a93",
-        selectedColor:  "#971a93"
+        defaultColor:   "#9861dd",
+        selectedColor:  "#9861dd"
     };
 
     $scope.tags = [];
+
+
+    /**
+     * Ініціалізація дропдауна
+     **/
+    angular.element("select[name='typeSelect']").selectpicker({
+        style: 'btn-primary btn-md'
+    });
 
 
     /**
