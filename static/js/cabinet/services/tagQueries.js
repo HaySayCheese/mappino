@@ -26,7 +26,7 @@ app.factory('tagQueries', function($http, $cookies) {
                 },
                 data: {
                     title: tag.title,
-                    color: tag.colors.indexOf(tag.selectedColor)
+                    color_id: tag.colors.indexOf(tag.selectedColor)
                 }
             });
         },
@@ -47,7 +47,7 @@ app.factory('tagQueries', function($http, $cookies) {
         // Запит на перейменування тега
         editTag: function(tag) {
             return $http({
-                url: '/ajax/api/cabinet/dirtags/' + tag.id,
+                url: '/ajax/api/cabinet/dirtags/' + tag.id + "/",
                 method: "PUT",
                 headers: {
                     'X-CSRFToken': $cookies.csrftoken

@@ -63,7 +63,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
                                 "<span>Пример: </span>" +
                                 "<span class='label' style='background-color: [[ editingTag.color ]]'>[[ editingTag.title ]]</span>" +
                                 "<div class='form-group'>" +
-                                    "<input type='text' class='form-control' ng-model='editingTag.title' select-on-click required>" +
+                                    "<input type='text' class='form-control' ng-model='editingTag.title' required>" +
                                 "</div>" +
                                 "<div class='pick-color-box text-center'>" +
                                     "<div class='color-item' ng-repeat='color in newTag.colors' ng-click='editingTag.color = color' style='background-color: [[ color ]]'></div>" +

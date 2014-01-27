@@ -66,7 +66,7 @@ DT_DELETE_RESPONSES = {
 @login_required_or_forbidden
 def dirtags_handler(request, dirtag_id=None):
 	if request.method == 'GET':
-		tags = DirTags.by_user_id(request.user)
+		tags = DirTags.by_user_id(request.user.id)
 		response = copy.deepcopy(DT_GET_RESPONSES['OK']) # Note: deepcopy here
 		response['dirtags'] = [{
 			'id': tag.id,
