@@ -29,12 +29,12 @@ def update_dacha(prefix, value, head_id=None, body_id=None, rent_id=None):
 		# bool
 		if prefix == 'for_sale':
 			if value == 'true':
-				h = DachasHeads.by_id(head_id, only='for_sale')
+				h = DachasHeads.by_id(head_id, head_id='for_sale')
 				h.for_sale = True
 				h.save(force_update=True)
 
 			elif value == 'false':
-				h = DachasHeads.by_id(head_id, only='for_sale')
+				h = DachasHeads.by_id(head_id, head_id='for_sale')
 				h.for_sale = False
 				h.save(force_update=True)
 
@@ -45,12 +45,12 @@ def update_dacha(prefix, value, head_id=None, body_id=None, rent_id=None):
 		# bool
 		elif prefix == 'for_rent':
 			if value == 'true':
-				h = DachasHeads.by_id(head_id, only='for_rent')
+				h = DachasHeads.by_id(head_id, head_id='for_rent')
 				h.for_rent = True
 				h.save(force_update=True)
 
 			elif value == 'false':
-				h = DachasHeads.by_id(head_id, only='for_rent')
+				h = DachasHeads.by_id(head_id, head_id='for_rent')
 				h.for_rent = False
 				h.save(force_update=True)
 
@@ -306,7 +306,7 @@ def update_dacha(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 		# text
 		elif prefix == 'title':
-			h = DachasHeads.by_id(head_id, only='title')
+			h = DachasHeads.by_id(head_id, head_id='title')
 			if not value:
 				h.title = None
 				h.save(force_update=True)
@@ -320,7 +320,7 @@ def update_dacha(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 		# text
 		elif prefix == 'description':
-			h = DachasHeads.by_id(head_id, only='descr')
+			h = DachasHeads.by_id(head_id, head_id='descr')
 			if not value:
 				h.descr = None
 				h.save(force_update=True)

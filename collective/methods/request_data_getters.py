@@ -119,5 +119,17 @@ def angular_put_parameters(request, required_parameters=None):
 		return parameters
 
 	else:
-		# request method is not POST
+		# request method is not PUT
 		raise ValueError('Invalid request method type')
+
+
+def angular_parameters(request, required_parameters=None):
+	parameters = json.loads(request.body)
+	if required_parameters:
+		for param in required_parameters:
+			if not param in parameters:
+				raise ValueError('Required parameter '+str(param)+' is absent.')
+
+			if parameters[param] == '':
+				raise ValueError('Parameter '+str(param)+' is empty.')
+	return parameters

@@ -51,6 +51,15 @@ urlpatterns += patterns('apps.pages.cabinet',
     # dirtags
 	url(r'^ajax/api/cabinet/dirtags/$', 'dirtags_ajax.dirtags_handler'),
     url(r'^ajax/api/cabinet/dirtags/(\d+)/$', 'dirtags_ajax.dirtags_handler'),
+
+    # publications
+    url(r'^ajax/api/cabinet/publications/$', 'publication_ajax.create'),
+    url(r'^ajax/api/cabinet/publications/briefs/all/$',
+        'publication_ajax.briefs_of_section', {'section': 'all'}),
+    url(r'^ajax/api/cabinet/publications/briefs/published/$',
+        'publication_ajax.briefs_of_section', {'section': 'published'}),
+    url(r'^ajax/api/cabinet/publications/briefs/unpublished/$',
+        'publication_ajax.briefs_of_section', {'section': 'unpublished'}),
 )
 
 

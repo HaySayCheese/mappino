@@ -319,21 +319,24 @@ RED_LINE_VALUES = RedLineValues()
 
 
 
+from core.publications.models import FlatsHeads, ApartmentsHeads, HousesHeads, DachasHeads, \
+	CottagesHeads, RoomsHeads, TradesHeads, OfficesHeads, WarehousesHeads, BusinessesHeads, \
+	CateringsHeads, GaragesHeads, LandsHeads
 HEAD_MODELS = {
-    #OBJECTS_TYPES.flat():       FlatsHeads,
-    #OBJECTS_TYPES.apartments(): ApartmentsHeads,
-    #OBJECTS_TYPES.house():      HousesHeads,
-    #OBJECTS_TYPES.dacha():      DachasHeads,
-    #OBJECTS_TYPES.cottage():    CottagesHeads,
-    #OBJECTS_TYPES.room():       RoomsHeads,
-    #
-    #OBJECTS_TYPES.trade():      TradesHeads,
-    #OBJECTS_TYPES.office():     OfficesHeads,
-    #OBJECTS_TYPES.warehouse():  WarehousesHeads,
-    #OBJECTS_TYPES.business():   BusinessesHeads,
-    #OBJECTS_TYPES.catering():   CateringsHeads,
-    #
-    #OBJECTS_TYPES.garage():     GaragesHeads,
-    #OBJECTS_TYPES.land():       LandsHeads,
+    OBJECTS_TYPES.flat():       FlatsHeads,
+    OBJECTS_TYPES.apartments(): ApartmentsHeads,
+    OBJECTS_TYPES.house():      HousesHeads,
+    OBJECTS_TYPES.dacha():      DachasHeads,
+    OBJECTS_TYPES.cottage():    CottagesHeads,
+    OBJECTS_TYPES.room():       RoomsHeads,
+
+    OBJECTS_TYPES.trade():      TradesHeads,
+    OBJECTS_TYPES.office():     OfficesHeads,
+    OBJECTS_TYPES.warehouse():  WarehousesHeads,
+    OBJECTS_TYPES.business():   BusinessesHeads,
+    OBJECTS_TYPES.catering():   CateringsHeads,
+
+    OBJECTS_TYPES.garage():     GaragesHeads,
+    OBJECTS_TYPES.land():       LandsHeads,
 }
 

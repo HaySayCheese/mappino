@@ -27,12 +27,12 @@ def update_warehouse(prefix, value, head_id=None, body_id=None, rent_id=None):
 		# bool
 		if prefix == 'for_sale':
 			if value == 'true':
-				h = WarehousesHeads.by_id(head_id, only='for_sale')
+				h = WarehousesHeads.by_id(head_id, head_id='for_sale')
 				h.for_sale = True
 				h.save(force_update=True)
 
 			elif value == 'false':
-				h = WarehousesHeads.by_id(head_id, only='for_sale')
+				h = WarehousesHeads.by_id(head_id, head_id='for_sale')
 				h.for_sale = False
 				h.save(force_update=True)
 
@@ -43,12 +43,12 @@ def update_warehouse(prefix, value, head_id=None, body_id=None, rent_id=None):
 		# bool
 		elif prefix == 'for_rent':
 			if value == 'true':
-				h = WarehousesHeads.by_id(head_id, only='for_rent')
+				h = WarehousesHeads.by_id(head_id, head_id='for_rent')
 				h.for_rent = True
 				h.save(force_update=True)
 
 			elif value == 'false':
-				h = WarehousesHeads.by_id(head_id, only='for_rent')
+				h = WarehousesHeads.by_id(head_id, head_id='for_rent')
 				h.for_rent = False
 				h.save(force_update=True)
 
@@ -62,7 +62,7 @@ def update_warehouse(prefix, value, head_id=None, body_id=None, rent_id=None):
 			if value not in RED_LINE_VALUES.values():
 				raise ValueError()
 
-			b = WarehousesHeads.by_id(body_id, only='red_line')
+			b = WarehousesHeads.by_id(body_id, head_id='red_line')
 			b.red_line = value
 			b.save(force_update=True)
 
@@ -223,7 +223,7 @@ def update_warehouse(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 		# text
 		elif prefix == 'title':
-			h = WarehousesHeads.by_id(head_id, only='title')
+			h = WarehousesHeads.by_id(head_id, head_id='title')
 			if not value:
 				h.title = None
 				h.save(force_update=True)
@@ -237,7 +237,7 @@ def update_warehouse(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 		# text
 		elif prefix == 'description':
-			h = WarehousesHeads.by_id(head_id, only='descr')
+			h = WarehousesHeads.by_id(head_id, head_id='descr')
 			if not value:
 				h.descr = None
 				h.save(force_update=True)

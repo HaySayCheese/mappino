@@ -31,10 +31,10 @@ class LivingHeadModel(models.Model):
 		abstract = True
 
 	#-- override
-	body_model = None
-	sale_terms_model = None
-	rent_terms_model = None
-	photos_model = None
+	body_model = ''
+	sale_terms_model = ''
+	rent_terms_model = ''
+	photos_model = ''
 
 
 	#-- fields
@@ -54,16 +54,14 @@ class LivingHeadModel(models.Model):
 
 
 	@classmethod
-	def new(cls, owner, for_sale=False, for_rent=False):
-		body_model = cls._meta.get_field('body').rel.to
-		rent_model = cls._meta.get_field('rent').rel.to
-
+	def new(cls, owner_id, for_sale=False, for_rent=False):
 		with transaction.atomic():
 			return cls.objects.create(
-				body_id = body_model.new().id,
-				rent_id = rent_model.new().id,
+				body_id = cls.body_model.new().id,
+				sale_terms_id = cls.sale_terms_model.new().id,
+				rent_terms_id = cls.rent_terms_model.new().id,
 
-				owner = owner,
+				owner_id = owner_id,
 				for_sale = for_sale,
 				for_rent = for_rent,
 				state_sid = OBJECT_STATES.unpublished(),
@@ -71,28 +69,34 @@ class LivingHeadModel(models.Model):
 
 
 	@classmethod
-	def by_id(cls, head_id, select_sale=False, select_rent=False):
+	def by_id(cls, head_id, select_body=False, select_sale=False, select_rent=False, select_owner=False):
 		try:
 			query = cls.objects.filter(id = head_id).only('id')
-			if select_sale:
+			if select_body:
 				query = query.select_related('body')
+			if select_sale:
+				query = query.select_related('sale_terms')
 			if select_rent:
-				query = query.select_related('rent')
+				query = query.select_related('rent_terms')
+			if select_owner:
+				query = query.select_related('owner')
 			return query[:1][0]
 		except IndexError:
 			raise ObjectDoesNotExist()
 
 
 	@classmethod
-	def by_user_id(cls, user_id, select_sale=False, select_rent=False, select_owner=False):
+	def by_user_id(cls, user_id, select_body=False, select_sale=False, select_rent=False, select_owner=False):
 		query = cls.all().filter(owner_id = user_id).only('id')
-		if select_sale:
+		if select_body:
 			query = query.select_related('body')
+		if select_sale:
+			query = query.select_related('sale_terms')
 		if select_rent:
-			query = query.select_related('rent')
+			query = query.select_related('rent_terms')
 		if select_owner:
 			query = query.select_related('owner')
-		return query.order_by('created')
+		return query
 
 
 
