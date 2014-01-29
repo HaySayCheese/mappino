@@ -1,8 +1,16 @@
 'use strict';
 
-app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $location, $routeParams) {
+app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $compile, $routeParams) {
 
     initScrollbar();
+
+    $scope.publication = {
+        title: "ffsf"
+    };
+
+    $scope.$watch("publication.title", function(nv) {
+        console.log(nv)
+    })
 
 
     /**
@@ -12,17 +20,16 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         angular.element(".selectpicker").selectpicker({
             style: 'btn-default btn-md'
         });
-    }, 300);
+    }, 15);
 
 
-
+    /**
+     * При зміні урла генерить урл для темплейта
+     **/
     $scope.$on("$routeChangeSuccess", function() {
         $scope.publicationLoaded = true;
         $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/houses/";
-
     });
-
-
 
 
     /**

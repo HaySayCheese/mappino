@@ -16,91 +16,66 @@
 
     .sidebar-item-list-header {
         .size(100%, 65px);
-
-        padding: 15px;
-
-        background: #e8cea6;
-
-        .form-control {
-            border-color: #ccbc83;
-
-            .form-control-focus(#b3a77e)
-        }
+        padding: 14px 15px;
+        border-right: 1px solid @gray-lighter;
+        border-bottom: 1px solid @gray-lighter;
+        background: #ffffff;
     }
 
     .sidebar-item-list-body {
         .size(100%, calc(~"100% - 65px"));
         position: relative;
         overflow: hidden;
-        background: #f5f3ef;
+
+        border-right: 1px solid @gray-lighter;
+        background: #ffffff;
     }
 
 }
 
 
 
-/**
-* sidebar-item-list-item styles
-**/
+//sidebar-item-list-item styles
 .sidebar-item-list-item {
     .size(100%, auto);
     position: relative;
-    padding: 15px 0px 15px 15px;
+    padding: 15px;
     cursor: pointer;
+    background: #ffffff;
     .transition(~"background 0.1s ease");
+    .clearfix();
 
     &:hover,
     &:focus,
     &.active {
-        background: #ffffff;
-
-        .item-notifer {
-            border-color: #ffffff !important;
-        }
+        background: #fafafa;
     }
 
     .sidebar-item-list-item-img {
-        .size(100%, 200px);
-
-        .item-notifer {
-            .square(50px);
-
-            position: absolute;
-            top: 0;
-            left: 0;
-
-            border-width: 5px;
-            border-style: solid;
-            border-color: #f5f3ef;
-
-            background: #e8cea6;
-            border-radius: 25px;
-            .transition(~"border-color 0.1s ease");
-        }
+        .square(50px);
+        float: left;
 
         img {
-            .square(100%)
+            .square(100%);
+            border-radius: 50%;
         }
+    }
+
+    .sidebar-item-list-item-detail {
+        float: left;
+        padding-left: 15px;
     }
 
     .sidebar-item-list-item-title {
         display: block;
-        padding: 10px 0 5px;
-        color: @gray;
         font-size: 16px;
         font-weight: bold;
     }
 
     .sidebar-item-list-item-type {
         display: block;
-        padding-left: 15px;
+        padding-top: 8px;
         .opacity(0.5);
     }
 
-    .sidebar-item-list-item-date {
-        display: block;
-        padding-left: 15px;
-        font-size: @font-size-small;
-        .opacity(0.5);
-    }
 }

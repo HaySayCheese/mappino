@@ -7,9 +7,29 @@
 @import "../components/mixins";
 
 
-html, body, .wrapper {
+html, body {
     .square(100%);
+    min-height: 100%;
     min-width: 1000px;
+}
+
+body {
+    @media (min-width: 1400px) {
+        background: url("../../img/cabinet/bg.jpg");
+    }
+}
+
+.wrapper {
+    .square(100%);
+    min-height: 768px;
+
+    @media (min-width: 1400px) {
+        width: 90%;
+        height: 100%;
+        padding-top: 50px;
+        padding-bottom: 50px;
+        .center-block();
+    }
 }
 
 .view {

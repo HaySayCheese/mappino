@@ -3,7 +3,7 @@
     <form class="form-horizontal" role="form">
 
         <div class="row">
-            <h4>Новое обьявление</h4>
+            <h3>Новое обьявление</h3>
             <div class="col-lg-12">
                 <div class="checkbox">
                     <input id="sale" type="checkbox">
@@ -18,11 +18,11 @@
 
 
         <div class="row">
-            <h4>Описание обьекта</h4>
+            <h3>Описание обьекта</h3>
             <div class="col-lg-12">
                 <div class="form-group">
                     <label>Заголовок обьявления</label>
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" ng-model="publication.title">
                 </div>
 
                 <div class="form-group">
@@ -33,7 +33,7 @@
                 <div class="row">
                     <div class="form-group">
                         <label class="col-lg-4 control-label">Тип рынка:</label>
-                        <div class="col-lg-8">
+                        <div class="col-lg-6">
                             <select name="tre" class="selectpicker" data-width="100%">
                                 <option value="other">Вторичный рынок</option>
                             </select>
@@ -44,7 +44,7 @@
                 <div class="row">
                     <div class="form-group">
                         <label class="col-lg-4 control-label">Общее состояние:</label>
-                        <div class="col-lg-8">
+                        <div class="col-lg-6">
                             <select name="tre" class="selectpicker" data-width="100%">
                                 <option value="other">Жилое / советское</option>
                             </select>
@@ -147,7 +147,7 @@
 
 
         <div class="row">
-            <h4>Удобства</h4>
+            <h3>Удобства</h3>
             <div class="col-lg-4 form-group">
                 <div class="checkbox">
                     <input id="electricity" type="checkbox">
@@ -192,7 +192,7 @@
 
 
         <div class="row">
-            <h4>Коммуникации</h4>
+            <h3>Коммуникации</h3>
             <div class="col-lg-4 form-group">
                 <div class="checkbox">
                     <input id="phone" type="checkbox">
@@ -217,7 +217,7 @@
 
 
         <div class="row">
-            <h4>Коммуникации</h4>
+            <h3>Дополнительные постройки</h3>
             <div class="col-lg-4 form-group">
                 <div class="checkbox">
                     <input id="garage-parking" type="checkbox">
@@ -268,5 +268,205 @@
             </div>
         </div>
 
+
+        <div class="row">
+            <h3>Рядом находиться</h3>
+            <div class="col-lg-6 form-group">
+                <div class="checkbox">
+                    <input id="kindergarten" type="checkbox">
+                    <label for="kindergarten">Детсад</label>
+                </div>
+                <div class="checkbox">
+                    <input id="school" type="checkbox">
+                    <label for="school">Школа</label>
+                </div>
+                <div class="checkbox">
+                    <input id="market" type="checkbox">
+                    <label for="market">Рынок / супераркет</label>
+                </div>
+                <div class="checkbox">
+                    <input id="stopping-society-transport" type="checkbox">
+                    <label for="stopping-society-transport">Остановка общ. транспорта</label>
+                </div>
+                <div class="checkbox">
+                    <input id="entertainment" type="checkbox">
+                    <label for="entertainment">Развлекательные заведения</label>
+                </div>
+            </div>
+            <div class="col-lg-6 form-group">
+                <div class="checkbox">
+                    <input id="fitness-centre" type="checkbox">
+                    <label for="fitness-centre">Спортивно-оздоровительный центр</label>
+                </div>
+                <div class="checkbox">
+                    <input id="park" type="checkbox">
+                    <label for="park">Парк / сквер</label>
+                </div>
+                <div class="checkbox">
+                    <input id="river" type="checkbox">
+                    <label for="river">Речка / озеро</label>
+                </div>
+                <div class="checkbox">
+                    <input id="forest" type="checkbox">
+                    <label for="forest">Лес</label>
+                </div>
+                <div class="checkbox">
+                    <input id="sea" type="checkbox">
+                    <label for="sea">Море</label>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Другие достопримечательности, уточнения</label>
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <h3>Условия продажи</h3>
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">Продаеться:</label>
+                        <div class="col-lg-7">
+                            <select name="prod" class="selectpicker" data-width="100%">
+                                <option value="other">Весь дом</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">Цена:</label>
+                        <div class="col-lg-4">
+                            <input class="form-control" type="text" name="price"/>
+                        </div>
+                        <div class="col-lg-3">
+                            <select name="priceType" class="selectpicker" data-width="100%">
+                                <option value="other">Дол. США</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-lg-4 col-lg-offset-4">
+                            <div class="checkbox">
+                                <input id="dogovornaya" type="checkbox">
+                                <label for="dogovornaya">Договорная</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <select name="priceType" class="selectpicker" data-width="100%">
+                                <option value="other">За все</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Дополнительные условия, уточнения</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <h3>Условия аренды</h3>
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">Сдаеться:</label>
+                        <div class="col-lg-7">
+                            <select name="prod" class="selectpicker" data-width="100%">
+                                <option value="other">Весь дом</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">Срок:</label>
+                        <div class="col-lg-7">
+                            <select name="prod" class="selectpicker" data-width="100%">
+                                <option value="other">Помесячно</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">Количество мест:</label>
+                        <div class="col-lg-7">
+                            <div class="input-group">
+                                <input type="text" class="form-control">
+                                <span class="input-group-addon">чел.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">Цена:</label>
+                        <div class="col-lg-4">
+                            <input class="form-control" type="text" name="price"/>
+                        </div>
+                        <div class="col-lg-3">
+                            <select name="priceType" class="selectpicker" data-width="100%">
+                                <option value="other">Дол. США</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-lg-4 col-lg-offset-4">
+                            <div class="checkbox">
+                                <input id="dogovornay" type="checkbox">
+                                <label for="dogovornay">Договорная</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 form-group">
+                        <div class="checkbox">
+                            <input id="podhodit" type="checkbox">
+                            <label for="podhodit">Подходит для семей с детьми</label>
+                        </div>
+                        <div class="checkbox">
+                            <input id="hostrabaiter" type="checkbox">
+                            <label for="hostrabaiter">Размещение иностранцев</label>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 form-group">
+                        <div class="checkbox">
+                            <input id="smoking" type="checkbox">
+                            <label for="smoking">Можно курить</label>
+                        </div>
+                        <div class="checkbox">
+                            <input id="pets" type="checkbox">
+                            <label for="pets">Питомцы разрешены</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Дополнительные условия, уточнения</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
 </div>

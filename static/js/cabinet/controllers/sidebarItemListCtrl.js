@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $routeParams) {
+app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location) {
 
     initScrollbar();
 
@@ -16,9 +16,9 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $r
 
         angular.element(".sidebar-item-list-item-title").each(function(index, element) {
             if (angular.element(element).text().toLowerCase().indexOf(newValue.toLowerCase()) != -1 && (!newValue || isNaN(newValue)))
-                angular.element(element).parent().show();
+                angular.element(element).parents(".sidebar-item-list-item").show();
             else
-                angular.element(element).parent().hide();
+                angular.element(element).parents(".sidebar-item-list-item").hide();
         })
     });
 
