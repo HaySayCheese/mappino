@@ -11,7 +11,7 @@
     <script type="text/javascript" src="{{ static }}js/libs/less-1.6.0.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/bootstrap.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/perfect-scrollbar-0.4.8.min.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/scrollbar.min.js"></script>
 
     <script type="text/javascript" src="{{ static }}js/libs/angular-1.2.6.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/angular-route-1.2.6.min.js"></script>
@@ -38,7 +38,10 @@
     <div class="wrapper">
 
         <div class="sidebar-menu" ng-controller="SidebarMenuCtrl">
-            <div class="btn btn-danger btn-xlg btn-block">Добавить обьявление</div>
+            <div class="sidebar-menu-header">
+                <div class="btn btn-primary btn-xlg logo-btn pull-left">m</div>
+                <div class="btn btn-success btn-xlg pull-right">Новое обьявление</div>
+            </div>
 
             <div class="sidebar-menu-body">
 
@@ -120,7 +123,7 @@
                     <ul class="menu-block-list">
                         <li ng-class="{ 'active': routeSection == tag.id }" ng-repeat="tag in tags">
                             <a href="#!/publications/[[ tag.id ]]">
-                                <span class="tag-icon" style="background: [[ tag.color ]]"></span>
+                                <span class="tag-icon" style="border-color: [[ tag.color ]]"></span>
                                 [[ tag.title ]]
                             </a>
                             <div class="menu-block-list-controls">

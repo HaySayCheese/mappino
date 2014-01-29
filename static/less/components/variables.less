@@ -18,11 +18,15 @@
 // Brand colors
 // -------------------------
 
+// green
+@nice-green:    #54c6a7;
 @green-10:      #71c187;
 @green-20:      #49bb7f;
 @green-30:      #23c563;
 @green-40:      #06b358;
 
+// blues
+@nice-blue:     #3db1d7;
 @blue-00:       #98c6e0;
 @blue-10:       #54adeb;
 @blue-20:       #4996cc;
@@ -32,17 +36,25 @@
 
 @pink-10:       #4faaa5;
 
+// red
+@nice-red:      #f98a97;
 @red-10:        #fb6262;
 @red-20:        #ff4757;
 @red-30:        #cf1d4f;
 
+// yellow
+@nice-yellow:   #ffdc84;
 @yellow-10:     #ffc63e;
 @yellow-20:     #dcb323;
 
-@brand-primary:         @blue-20;
-@brand-success:         @green-20;
-@brand-warning:         @yellow-20;
-@brand-danger:          @red-20;
+// violets
+@nice-violet:   #b18ccb;
+
+// brands
+@brand-primary:         @nice-blue;
+@brand-success:         @nice-green;
+@brand-warning:         @nice-yellow;
+@brand-danger:          @nice-red;
 @brand-info:            @pink-10;
 
 
@@ -50,7 +62,7 @@
 // -------------------------
 
 @body-bg:               #fff;
-@text-color:            @gray-dark;
+@text-color:            @gray;
 
 // Links
 // -------------------------
@@ -145,7 +157,7 @@
 @btn-font-weight:                normal;
 
 @btn-default-color:              @gray;
-@btn-default-bg:                 #fff;
+@btn-default-bg:                 #fafafa;
 
 @btn-primary-color:              #fff;
 @btn-primary-bg:                 @brand-primary;
@@ -177,7 +189,7 @@
 @input-color:                    @gray;
 @input-border:                   #ccc;
 @input-border-radius:            @border-radius-base;
-@input-border-focus:             #66afe9;
+@input-border-focus:             @nice-blue;
 
 @input-color-placeholder:        @gray-light;
 
@@ -188,7 +200,7 @@
 @legend-color:                   @gray-dark;
 @legend-border-color:            #e5e5e5;
 
-@input-group-addon-bg:           @gray-lighter;
+@input-group-addon-bg:           #fafafa;
 @input-group-addon-border-color: @input-border;
 
 

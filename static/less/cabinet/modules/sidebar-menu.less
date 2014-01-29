@@ -12,11 +12,25 @@
     .size(280px, 100%);
     float: left;
 
+    .sidebar-menu-header {
+        .size(100%, 65px);
+        background: @nice-blue;
+
+        .logo-btn {
+            width: 65px;
+            border-right-color: darken(@nice-blue, 5%);
+        }
+
+        .btn-success {
+            width: 215px;
+        }
+    }
+
     .sidebar-menu-body {
         .size(100%, calc(~"100% - 65px"));
         position: relative;
         overflow: hidden;
-        background: #3a3f4f;
+        background: #2e3b42;
     }
 
     .new-pub-panel {
@@ -113,8 +127,8 @@
     padding: 15px 35px 15px 80px;
     margin-bottom: 20px;
 
-    color: #9095a2;
-    background: #4a5060;
+    color: @gray-light;
+    background: #29343a;
 
     font-size: @font-size-large;
 
@@ -130,7 +144,7 @@
 
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
-        border-top: 8px solid #4a5060;
+        border-top: 8px solid #29343a;
     }
 
     &.icon-pubs,
@@ -154,22 +168,19 @@
         top: 17px;
         right: 17px;
 
-        padding: 2px 7px;
+        padding: 4px 9px;
         margin-top: -2px;
 
         cursor: pointer;
         font-size: @font-size-small;
 
-        border-color: #585e6e;
-        border-width: 2px;
-        border-style: solid;
-        background: #3a3f4f;
+        background: #2e3b42;
         border-radius: @border-radius-large;
-        .transition(~"border-color 0.1s ease");
+        .transition(~"background 0.1s ease");
 
         &:hover,
         &:focus {
-            border-color: #606677;
+            background: darken(#2e3b42, 2%);
         }
     }
 }
@@ -222,8 +233,9 @@
         display: block;
         padding: 7px 7px 7px 35px;
 
-        color: #c3c6ce;
+        color: #babec1;
         font-size: 16px;
+        //font-weight: bold;
 
         text-decoration: none;
     }
@@ -275,7 +287,10 @@
         margin-bottom: -2px;
         margin-right: 10px;
 
-        border: 3px solid #585e6e;
+        border-width: 3px;
+        border-style: solid;
+        border-color: transparent;
+
         border-radius: 50%;
         background: transparent;
     }

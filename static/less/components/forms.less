@@ -126,7 +126,7 @@ output {
   vertical-align: middle;
   background-color: @input-bg;
   background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
-  border: 2px solid @input-border;
+  border: 1px solid @input-border;
   border-radius: @input-border-radius;
   .transition(~"border-color ease-in-out .15s");
 
@@ -425,17 +425,17 @@ input[type="checkbox"] + label,
 input[type="checkbox"]:checked + label {
     position: relative;
 
-    padding-left: 22px;
-    margin-left: -15px;
+    padding-left: 25px;
+    margin-left: -18px;
 
     &:before, &:after {
         content: " ";
         position: absolute;
-        top: 0;
+        top: -1px;
         left: 0;
 
-        width: 17px;
-        height: 17px;
+        width: 18px;
+        height: 18px;
 
         .transition(max-width 0.3s);
     }
@@ -451,19 +451,19 @@ input[type="checkbox"] + label {
 
     // unchecked
     &:before {
-        background-image: url("../../img/elegant.png");
+        background-image: url("../../img/nice-checkbox.png");
     }
 
     // checked
     &:after {
-        background-image: url("../../img/elegant.png");
-        background-position: 0 -17px;
+        background-image: url("../../img/nice-checkbox.png");
+        background-position: 0 -18px;
     }
 }
 
 input[type="checkbox"]:checked + label {
 
     &:after {
-        max-width: 17px;
+        max-width: 18px;
     }
 }
