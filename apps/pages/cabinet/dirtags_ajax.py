@@ -69,10 +69,10 @@ def dirtags_handler(request, dirtag_id=None):
 		tags = DirTags.by_user_id(request.user.id)
 		response = copy.deepcopy(DT_GET_RESPONSES['OK']) # Note: deepcopy here
 		response['dirtags'] = [{
-			'id': tag.id,
-		    'title': tag.title,
-		    'color_id': tag.color_id,
-		} for tag in tags]
+				'id': tag.id,
+			    'title': tag.title,
+			    'color_id': tag.color_id,
+			} for tag in tags]
 		return HttpResponse(json.dumps(response), content_type='application/json')
 
 
