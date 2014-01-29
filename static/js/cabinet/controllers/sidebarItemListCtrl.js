@@ -5,6 +5,10 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location) {
     initScrollbar();
 
 
+//    if (angular.element(".sidebar-item-list-item").eq(0).length)
+//        angular.element(".sidebar-item-list-item").eq(0).click();
+
+
     $scope.selectItem = function(c) {
         $location.path("publications/" + $rootScope.routeSection + "/" + c)
     };
