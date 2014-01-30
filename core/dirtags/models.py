@@ -56,6 +56,9 @@ class DirTags(models.Model):
 
 	@classmethod
 	def contains_publications(cls, tid, publications_ids):
+		if not publications_ids:
+			return cls.objects.none()
+
 		return cls.objects.filter(reduce(operator.or_, (Q(
 			pubs__contains=cls.__to_record_format(tid, hid)) for hid in publications_ids)))
 

@@ -82,7 +82,7 @@ class LivingHeadModel(models.Model):
 
 	@classmethod
 	def by_user_id(cls, user_id, select_body=False, select_sale=False, select_rent=False, select_owner=False):
-		query = cls.all().filter(owner_id = user_id).only('id')
+		query = cls.objects.filter(owner_id = user_id).only('id')
 		if select_body:
 			query = query.select_related('body')
 		if select_sale:

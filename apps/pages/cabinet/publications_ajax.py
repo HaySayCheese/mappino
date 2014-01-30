@@ -74,22 +74,23 @@ def briefs_of_section(request, section):
 			publications_ids.append(publication.id)
 		tags = DirTags.contains_publications(tid, publications_ids).filter(user_id = request.user.id)
 
-		pubs[tid] = [{
-			'id': publication.id,
-		    'title': publication.body.title,
-		    'for_sale': publication.for_sale,
-		    'for_rent': publication.for_rent,
-		    #'tags': [{
-				#'title': tag.title,
-			 #   'color_id': tag.color_id
-				#} for tag in ifilter(lambda t: t.contains(tid, publication.id), tags)],
-		    'photo_url': STATIC_URL + 'temp_here' # fixme
+		if query:
+			pubs[tid] = [{
+				'id': publication.id,
+			    'title': publication.body.title,
+			    'for_sale': publication.for_sale,
+			    'for_rent': publication.for_rent,
+			    #'tags': [{
+					#'title': tag.title,
+				 #   'color_id': tag.color_id
+					#} for tag in ifilter(lambda t: t.contains(tid, publication.id), tags)],
+			    'photo_url': STATIC_URL + 'temp_here' # fixme
 
-		    # ...
-		    # other fields here
-		    # ...
+			    # ...
+			    # other fields here
+			    # ...
 
-		} for publication in query]
+			} for publication in query]
 	return HttpResponse(json.dumps(pubs), content_type='application/json')
 
 
