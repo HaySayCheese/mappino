@@ -7,7 +7,7 @@ ROOMS_BUILDINGS_TYPES = FLAT_BUILDING_TYPES
 
 class RoomsRoomsPlaningTypes(AbstractConstant):
 	def __init__(self):
-		super(RoomsRoomsPlaningTypes).__init__()
+		super(RoomsRoomsPlaningTypes, self).__init__()
 		self.set_ids({
 			'adjacent': 0,
 			'separate': 1,
@@ -27,7 +27,7 @@ ROOMS_ROOMS_PLANING_TYPES  = RoomsRoomsPlaningTypes()
 
 class RoomsWCLocation(AbstractConstant):
 	def __init__(self):
-		super(RoomsWCLocation).__init__()
+		super(RoomsWCLocation, self).__init__()
 		self.set_ids({
 			'on_the_floor': 0,
 		    'inside': 1,

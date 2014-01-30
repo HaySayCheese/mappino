@@ -4,7 +4,7 @@ from collective.constants import AbstractConstant
 
 class WCLocation(AbstractConstant):
 	def __init__(self):
-		super(WCLocation).__init__()
+		super(WCLocation, self).__init__()
 		self.set_ids({
 			'outside': 0,
 			'inside': 1,

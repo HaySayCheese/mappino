@@ -3,7 +3,7 @@ from collective.constants import AbstractConstant
 
 class FlatBuildingsTypes(AbstractConstant):
 	def __init__(self):
-		super(FlatBuildingsTypes).__init__()
+		super(FlatBuildingsTypes, self).__init__()
 		self.set_ids({
 			'panel': 1,
 		    'brick': 2,
@@ -55,7 +55,7 @@ FLAT_BUILDING_TYPES = FlatBuildingsTypes()
 
 class FlatTypes(AbstractConstant):
 	def __init__(self):
-		super(FlatTypes).__init__()
+		super(FlatTypes, self).__init__()
 		self.set_ids({
 			'custom': 0,
 			'small_family': 1,
@@ -87,7 +87,7 @@ FLAT_TYPES = FlatTypes()
 
 class FlatRoomsPlanningTypes(AbstractConstant):
 	def __init__(self):
-		super(FlatRoomsPlanningTypes).__init__()
+		super(FlatRoomsPlanningTypes, self).__init__()
 		self.set_ids({
 			'adjacent': 0,
 			'separate': 1,
