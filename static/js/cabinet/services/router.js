@@ -5,14 +5,13 @@ app.config(['$routeProvider', function($routeProvider) {
 
         .when('/publications/:section', {
             controller: "PublicationsCtrl",
-            templateUrl: "/ajax/template/cabinet/publications/",
-            reloadOnSearch: false
+            templateUrl: "/ajax/template/cabinet/publications/"
+
         })
 
         .when('/publications/:section/:pubId', {
             controller: "PublicationsCtrl",
-            templateUrl: "/ajax/template/cabinet/publications/",
-            reloadOnSearch: false
+            templateUrl: "/ajax/template/cabinet/publications/"
         })
 
         .otherwise({

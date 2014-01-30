@@ -1,12 +1,9 @@
 'use strict';
 
-app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $routeParams, briefQueries) {
+app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $timeout, $routeParams, briefQueries) {
 
     $scope.searchItem = "";
     $scope.briefs = "";
-
-
-    initScrollbar();
 
 
     $scope.$on("$routeChangeSuccess", function(event, current, previous) {
@@ -41,6 +38,8 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $r
         $scope.briefs = [];
         $scope.briefLoading = true;
 
+        initScrollbar();
+
         briefQueries.loadBriefs($rootScope.routeSection).success(function(data) {
 
             for (var i = 0; i < data.length; i++) {
@@ -57,6 +56,11 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $r
 
             $scope.briefs = data;
             $scope.briefLoading = false;
+
+            $timeout(function() {
+                initScrollbar();
+            }, 100);
+
         });
     }
 
@@ -67,9 +71,12 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $r
     function initScrollbar() {
         var sidebar = angular.element(".sidebar-item-list-body");
 
+        sidebar.perfectScrollbar("destroy");
+
         sidebar.perfectScrollbar({
             wheelSpeed: 20
         });
+        sidebar.scrollTop(0);
 
         angular.element(window).resize(function() {
             sidebar.perfectScrollbar("update");

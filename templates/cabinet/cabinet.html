@@ -154,11 +154,10 @@
             <div class="sidebar-item-list-body">
 
                 <!-- Item -->
-                <div id="[[ brief.id ]]"
-                     class="sidebar-item-list-item"
-                     ng-class="{ active: publicationId == brief.id }"
+                <div class="sidebar-item-list-item"
+                     ng-class="{ active: publicationId == brief.tid + ':' + brief.id }"
                      ng-repeat="brief in briefs"
-                     ng-click="selectBrief(brief.id)">
+                     ng-click="selectBrief(brief.tid + ':' + brief.id)">
 
                     <div class="sidebar-item-list-item-img">
                         <img ng-src="[[ brief.photo_url ]]"/>
@@ -169,14 +168,17 @@
                             <span class="text-muted" ng-show="!brief.title">Новое объявление</span>
                         </div>
                         <div class="sidebar-item-list-item-type">Дома.
-                            <span ng-show="brief.for_sale">Продажа.</span>
-                            <span ng-show="brief.for_rent">Аренда.</span>
+                            <span ng-show="brief.for_sale && !brief.for_rent">Продажа.</span>
+                            <span ng-show="brief.for_rent && !brief.for_sale">Аренда.</span>
+                            <span ng-show="brief.for_sale && brief.for_rent">Продажа и аренда</span>
                         </div>
                         <div class="sidebar-item-list-item-tags" ng-show="brief.tags.length">
                             <span class="label" style="background-color: [[ tag.color ]]" ng-repeat="tag in brief.tags">[[ tag.title ]]</span>
                         </div>
                     </div>
                 </div>
+
+                <div class="item-loader"></div>
 
             </div>
         </div>
