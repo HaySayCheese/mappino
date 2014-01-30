@@ -23,15 +23,28 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
 
     $rootScope.$watchCollection("tags", function(newValue) {
 
-        for (var i = 0; i < $scope.briefs.length; i++) {
-            for (var j = 0; j < $scope.briefs[i].tags.length; j++) {
-                for (var k = 0; k < newValue.length; k++) {
-                    if ($scope.briefs[i].tags[j].id === newValue[k].id)
-                        $scope.briefs[i].tags[j] = newValue[k];
+//        for (var i = 0; i < $scope.briefs.length; i++) {
+//            for (var j = 0; j < $scope.briefs[i].tags.length; j++) {
+//                for (var k = 0; k < newValue.length; k++) {
+//                    if ($scope.briefs[i].tags[j].id === newValue[k].id)
+//                        $scope.briefs[i].tags[j] = newValue[k];
+//                }
+//            }
+//        }
+        updateBriefTags($scope.briefs, $rootScope.tags);
+    });
+
+
+    function updateBriefTags(briefs, tags) {
+        for (var i = 0; i < briefs.length; i++) {
+            for (var j = 0; j < briefs[i].tags.length; j++) {
+                for (var k = 0; k < tags.length; k++) {
+                    if (briefs[i].tags[j].id === tags[k].id)
+                        briefs[i].tags[j] = tags[k];
                 }
             }
         }
-    });
+    }
 
 
     /**
