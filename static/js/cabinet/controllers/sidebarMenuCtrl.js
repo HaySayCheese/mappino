@@ -32,7 +32,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
      **/
     $timeout(function() {
         angular.element("select[name='typeSelect']").selectpicker({
-            style: 'btn-danger btn-md'
+            style: 'btn-success btn-md'
         });
     }, 50);
 

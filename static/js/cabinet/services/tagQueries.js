@@ -59,6 +59,8 @@ app.factory('tagQueries', function($http, $cookies) {
 
         // Запит на створення оголошення
         createPublication: function(publication) {
+            publication.tid = parseInt(publication.tid);
+
             return $http({
                 url: '/ajax/api/cabinet/publications/',
                 method: "POST",
