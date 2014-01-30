@@ -5,7 +5,7 @@ from core.publications.objects_constants.rooms import ROOMS_WC_LOCATION
 
 class TradeBuildingTypes(AbstractConstant):
 	def __init__(self):
-		super(TradeBuildingTypes).__init__()
+		super(TradeBuildingTypes, self).__init__()
 		self.set_ids({
 			'residential': 0, # житлова будівля
 		    'entertainment': 1,
