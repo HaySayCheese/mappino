@@ -12,6 +12,8 @@ from core.users.models import Users
 class PublicationAlreadyExists(AlreadyExist): pass
 
 class DirTags(models.Model):
+	separator = ','
+
 	user = models.ForeignKey(Users)
 	title = models.TextField(db_index=True)
 	color_id = models.SmallIntegerField()
@@ -84,7 +86,7 @@ class DirTags(models.Model):
 			return dict()
 
 		results = {}
-		for pub in self.pubs.split(','):
+		for pub in self.pubs.split(self.separator):
 			tid, hid = self.__to_tid_and_hid(pub)
 			if tid in results:
 				results[tid].append(hid)
@@ -114,7 +116,7 @@ class DirTags(models.Model):
 		else:
 			record = self.__to_record_format(tid, hid)
 			if record not in self.pubs:
-				self.pubs += (',' + record)
+				self.pubs += (self.separator + record)
 				self.save(force_update=True)
 			else:
 				raise PublicationAlreadyExists('@hid already exists in tag.')
@@ -131,10 +133,10 @@ class DirTags(models.Model):
 
 		self.pubs = self.pubs.replace(record, '')
 		if self.pubs:
-			if self.pubs[-1] == ',':
+			if self.pubs[-1] == self.separator:
 				self.pubs = self.pubs[:-1]
 			else:
-				self.pubs = self.pubs.replace(',,', ',')
+				self.pubs = self.pubs.replace(self.separator + self.separator, self.separator)
 		self.save(force_update=True)
 
 

@@ -68,13 +68,13 @@ class LivingHeadModel(models.Model):
 		try:
 			query = cls.objects.filter(id = head_id).only('id')
 			if select_body:
-				query = query.select_related('body')
+				query = query.only('id', 'body').select_related('body')
 			if select_sale:
-				query = query.select_related('sale_terms')
+				query = query.only('id', 'sale_terms').select_related('sale_terms')
 			if select_rent:
-				query = query.select_related('rent_terms')
+				query = query.only('id', 'rent_terms').select_related('rent_terms')
 			if select_owner:
-				query = query.select_related('owner')
+				query = query.only('id', 'owner').select_related('owner')
 			return query[:1][0]
 		except IndexError:
 			raise ObjectDoesNotExist()

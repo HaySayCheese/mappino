@@ -73,7 +73,8 @@ def briefs_of_section(request, section):
 		publications_ids = []
 		for publication in query:
 			publications_ids.append(publication.id)
-		tags = DirTags.contains_publications(tid, publications_ids).filter(user_id = request.user.id)
+		tags = DirTags.contains_publications(tid, publications_ids).filter(
+			user_id = request.user.id).only('id', 'pubs')
 
 		if query:
 			pubs.extend([{
@@ -82,10 +83,7 @@ def briefs_of_section(request, section):
 			    'title': publication.body.title,
 			    'for_sale': publication.for_sale,
 			    'for_rent': publication.for_rent,
-			    #'tags': [{
-					#'title': tag.title,
-				 #   'color_id': tag.color_id
-					#} for tag in ifilter(lambda t: t.contains(tid, publication.id), tags)],
+			    'tags': [tag.id for tag in ifilter(lambda t: t.contains(tid, publication.id), tags)],
 			    'photo_url': 'http://localhost/mappino_static/img/cabinet/house.png' # fixme
 
 			    # ...
@@ -168,5 +166,21 @@ def house_data(hid):
 	except ObjectDoesNotExist:
 		raise InvalidHID('hid: {0}'.format(hid))
 
-	data = serializers.serialize('json', record)
+	data = '{{head: {{ {0} }}, body: {1}, sale_terms: {2}, rent_terms: {3} }}'.format(
+		serializers.serialize(
+			'json', [record], fields=('created', 'actual', 'for_rent', 'for_sale', 'state_sid')),
+
+
+	    #serializers.serialize('json', [record.body])
+	)
+
+	#data = {
+	#	'head': serializers.serialize(
+	#		'json', [record], fields=('created', 'actual', 'for_rent', 'for_sale', 'state_sid')),
+	#    'body': serializers.serialize('json', [record.body]),
+	#    'sale_terms': serializers.serialize('json', [record.sale_terms]),
+	#    'rent_terms': serializers.serialize('json', [record.rent_terms]),
+	#}
+
+
 	return HttpResponse(data, content_type='application/json')
