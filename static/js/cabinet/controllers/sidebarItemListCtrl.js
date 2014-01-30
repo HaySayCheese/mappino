@@ -22,29 +22,8 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
 
 
     $rootScope.$watchCollection("tags", function(newValue) {
-
-//        for (var i = 0; i < $scope.briefs.length; i++) {
-//            for (var j = 0; j < $scope.briefs[i].tags.length; j++) {
-//                for (var k = 0; k < newValue.length; k++) {
-//                    if ($scope.briefs[i].tags[j].id === newValue[k].id)
-//                        $scope.briefs[i].tags[j] = newValue[k];
-//                }
-//            }
-//        }
-        updateBriefTags($scope.briefs, $rootScope.tags);
+        updateBriefTags($scope.briefs, newValue);
     });
-
-
-    function updateBriefTags(briefs, tags) {
-        for (var i = 0; i < briefs.length; i++) {
-            for (var j = 0; j < briefs[i].tags.length; j++) {
-                for (var k = 0; k < tags.length; k++) {
-                    if (briefs[i].tags[j].id === tags[k].id)
-                        briefs[i].tags[j] = tags[k];
-                }
-            }
-        }
-    }
 
 
     /**
@@ -57,27 +36,48 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
         initScrollbar();
 
         briefQueries.loadBriefs($rootScope.routeSection).success(function(data) {
-
-            for (var i = 0; i < data.length; i++) {
-                $scope.briefs.push(data[i]);
-
-                for (var j = 0; j < data[i].tags.length; j++) {
-                    for (var k = 0; k < $rootScope.tags.length; k++) {
-                        if (data[i].tags[j] === $rootScope.tags[k].id) {
-                            data[i].tags[j] = $rootScope.tags[k];
-                        }
-                    }
-                }
-            }
-
             $scope.briefs = data;
+
+            updateBriefType(data, $rootScope.publicationTypes);
+            updateBriefTags(data, $rootScope.tags);
+
             $scope.briefLoading = false;
 
             $timeout(function() {
                 initScrollbar();
             }, 100);
-
         });
+    }
+
+
+    /**
+     * Оновлення тегів в бріфах
+     **/
+    function updateBriefTags(briefs, tags) {
+        for (var i = 0; i < briefs.length; i++) {
+            for (var j = 0; j < briefs[i].tags.length; j++) {
+                for (var k = 0; k < tags.length; k++) {
+                    if (briefs[i].tags[j].id && (briefs[i].tags[j].id === tags[k].id))
+                        briefs[i].tags[j] = tags[k];
+
+                    if (!briefs[i].tags[j].id && (briefs[i].tags[j] === tags[k].id))
+                        briefs[i].tags[j] = tags[k];
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Оновлення типу оголошення
+     **/
+    function updateBriefType(briefs, types) {
+        for (var i = 0; i < briefs.length; i++) {
+            for (var j = 0; j < types.length; j++) {
+                if (briefs[i].tid === types[j].id)
+                    briefs[i].type = types[j].title;
+            }
+        }
     }
 
 
