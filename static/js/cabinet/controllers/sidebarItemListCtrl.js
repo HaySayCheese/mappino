@@ -38,7 +38,8 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
         briefQueries.loadBriefs($rootScope.routeSection).success(function(data) {
             $scope.briefs = data;
 
-            updateBriefTags($scope.briefs, $rootScope.tags);
+            updateBriefType(data, $rootScope.publicationTypes);
+            updateBriefTags(data, $rootScope.tags);
 
             $scope.briefLoading = false;
 
@@ -62,6 +63,19 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
                     if (!briefs[i].tags[j].id && (briefs[i].tags[j] === tags[k].id))
                         briefs[i].tags[j] = tags[k];
                 }
+            }
+        }
+    }
+
+
+    /**
+     * Оновлення типу оголошення
+     **/
+    function updateBriefType(briefs, types) {
+        for (var i = 0; i < briefs.length; i++) {
+            for (var j = 0; j < types.length; j++) {
+                if (briefs[i].tid === types[j].id)
+                    briefs[i].type = types[j].title;
             }
         }
     }

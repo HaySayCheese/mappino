@@ -167,11 +167,13 @@
                         <div class="sidebar-item-list-item-title">[[ brief.title ]]
                             <span class="text-muted" ng-show="!brief.title">Новое объявление</span>
                         </div>
-                        <div class="sidebar-item-list-item-type">Дома.
-                            <span ng-show="brief.for_sale && !brief.for_rent">Продажа.</span>
-                            <span ng-show="brief.for_rent && !brief.for_sale">Аренда.</span>
+                        <div class="sidebar-item-list-item-type">
+                            <span ng-show="brief.for_sale && !brief.for_rent">Продажа</span>
+                            <span ng-show="brief.for_rent && !brief.for_sale">Аренда</span>
                             <span ng-show="brief.for_sale && brief.for_rent">Продажа и аренда</span>
+                            [[ brief.type ]]
                         </div>
+
                         <div class="sidebar-item-list-item-tags" ng-show="brief.tags.length">
                             <span class="label" style="background-color: [[ tag.color ]]" ng-repeat="tag in brief.tags">[[ tag.title ]]</span>
                         </div>
