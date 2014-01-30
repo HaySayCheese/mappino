@@ -9,8 +9,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     };
 
     $scope.$watch("publication.title", function(nv) {
-        console.log(nv)
-    })
+        //console.log(nv)
+    });
 
 
     /**

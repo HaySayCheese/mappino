@@ -52,10 +52,7 @@ app.factory('tagQueries', function($http, $cookies) {
                 headers: {
                     'X-CSRFToken': $cookies.csrftoken
                 },
-                data: {
-                    color_id: tag.color_id,
-                    title: tag.title
-                }
+                data: tag
             });
         },
 
@@ -68,11 +65,7 @@ app.factory('tagQueries', function($http, $cookies) {
                 headers: {
                     'X-CSRFToken': $cookies.csrftoken
                 },
-                data: {
-                    tid: publication.id,
-                    for_sale: publication.sale,
-                    for_rent: publication.rent
-                }
+                data: publication
             });
         }
     }

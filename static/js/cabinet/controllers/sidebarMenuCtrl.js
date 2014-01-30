@@ -20,10 +20,10 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
     $scope.tags = [];
 
 
-    $scope.publication = {
-        type: $rootScope.publicationTypes[0].id,
-        sale: true,
-        rent: false
+    $scope.newPublication = {
+        tid: $rootScope.publicationTypes[0].id,
+        for_sale: true,
+        for_rent: false
     };
 
 
@@ -32,10 +32,9 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
      **/
     $timeout(function() {
         angular.element("select[name='typeSelect']").selectpicker({
-            style: 'btn-primary btn-md'
+            style: 'btn-danger btn-md'
         });
     }, 50);
-
 
 
     /**
@@ -48,7 +47,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
      * Створення нового оголошенн
      **/
     $scope.createPublication = function() {
-        tagQueries.createPublication($scope.publication)
+        tagQueries.createPublication($scope.newPublication)
     };
 
 
