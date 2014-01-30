@@ -47,26 +47,29 @@
 
                 <div class="new-pub-panel" ng-show="creatingPublication">
                     <div class="form-group">
-                        <select name="typeSelect" data-width="100%" ng-model="newPublication.tid">
-                            <option value="[[ type.id ]]" ng-repeat="type in publicationTypes">[[ type.title ]]</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <div class="row">
                             <div class="checkbox pull-left">
                                 <input type="checkbox" id="for_sale" value="sale" ng-model="newPublication.for_sale">
-                                <label for="for_sale">Продажа</label>
+                                <label for="for_sale">О продаже</label>
                             </div>
 
                             <div class="checkbox pull-left">
                                 <input type="checkbox" id="for_rent" value="rent" ng-model="newPublication.for_rent">
-                                <label for="for_rent">Аренда</label>
+                                <label for="for_rent">Об аренде</label>
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <select name="typeSelect" data-width="100%" ng-model="newPublication.tid">
+                            <option value="[[ type.id ]]" ng-repeat="type in publicationTypes">[[ type.title ]]</option>
+                        </select>
+                    </div>
                     <div class='btn-group btn-group-justified'>
                         <div class='btn btn-cancel btn-block' ng-click='creatingPublication = false'>Отмена</div>
-                        <div class='btn btn-success btn-block btn-creating' data-loading-text='Создание...' ng-click='createPublication()'>Создать</div>
+                        <div class='btn btn-success btn-block btn-creating'
+                             ng-disabled="!newPublication.for_sale && !newPublication.for_rent"
+                             data-loading-text='Создание...'
+                             ng-click='createPublication()'>Создать</div>
                     </div>
                 </div>
 
