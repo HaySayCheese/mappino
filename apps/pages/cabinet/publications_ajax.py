@@ -86,7 +86,7 @@ def briefs_of_section(request, section):
 					#'title': tag.title,
 				 #   'color_id': tag.color_id
 					#} for tag in ifilter(lambda t: t.contains(tid, publication.id), tags)],
-			    'photo_url': STATIC_URL + 'temp_here' # fixme
+			    'photo_url': 'http://localhost/mappino_static/img/cabinet/house.png' # fixme
 
 			    # ...
 			    # other fields here
@@ -111,6 +111,9 @@ RU_GET_Responses = {
 @login_required_or_forbidden
 @require_http_methods(['GET', 'PATCH'])
 def read_and_update(request, tid, hid):
+	tid = int(tid)
+	hid = int(hid)
+
 	if request.method == 'GET':
 		try:
 			# жилая недвижимость
