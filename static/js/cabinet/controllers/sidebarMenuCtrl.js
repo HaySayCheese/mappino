@@ -133,7 +133,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
                 id: data.id,
                 title: $scope.newTag.title,
                 color: $scope.newTag.selectedColor,
-                color_id: $rootScope.tags.indexOf($scope.newTag.selectedColor)
+                color_id: $scope.newTag.colors.indexOf($scope.newTag.selectedColor)
             });
 
             $scope.closeTagDialog();
@@ -163,7 +163,8 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
      **/
     $scope.removeTag = function(tag) {
         tagQueries.removeTag(tag.id).success(function() {
-            $scope.tags.splice($scope.tags.indexOf(tag), 1);
+            $rootScope.tags.splice($rootScope.tags.indexOf(tag), 1);
+            $rootScope.lastRemovedTag = tag;
         });
     };
 

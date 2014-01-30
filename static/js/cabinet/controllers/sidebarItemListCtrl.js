@@ -21,7 +21,7 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     };
 
 
-    $rootScope.$watchCollection("tags", function(newValue) {
+    $rootScope.$watchCollection("tags", function(newValue, oldValue) {
         updateBriefTags($scope.briefs, newValue);
     });
 
@@ -62,6 +62,9 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
 
                     if (!briefs[i].tags[j].id && (briefs[i].tags[j] === tags[k].id))
                         briefs[i].tags[j] = tags[k];
+
+                    if ((briefs[i].tags[j].id && $rootScope.lastRemovedTag) && (briefs[i].tags[j].id === $rootScope.lastRemovedTag.id))
+                        delete briefs[i].tags[j];
                 }
             }
         }
@@ -87,12 +90,12 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     function initScrollbar() {
         var sidebar = angular.element(".sidebar-item-list-body");
 
-        sidebar.perfectScrollbar("destroy");
+        sidebar.scrollTop(0);
+        sidebar.perfectScrollbar("update");
 
         sidebar.perfectScrollbar({
             wheelSpeed: 20
         });
-        sidebar.scrollTop(0);
 
         angular.element(window).resize(function() {
             sidebar.perfectScrollbar("update");

@@ -173,15 +173,17 @@
                             <span ng-show="brief.for_sale && brief.for_rent">Продажа и аренда</span>
                             [[ brief.type ]]
                         </div>
-
                         <div class="sidebar-item-list-item-tags" ng-show="brief.tags.length">
                             <span class="label" style="background-color: [[ tag.color ]]" ng-repeat="tag in brief.tags">[[ tag.title ]]</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="item-loader" ng-show="briefLoading"></div>
+                <div class="briefs-empty text-muted" ng-show="!briefLoading && !briefs.length">
+                    <span>В данной категории нет обьявлений</span>
+                </div>
 
+                <div class="item-loader" ng-show="briefLoading"></div>
             </div>
         </div>
 
