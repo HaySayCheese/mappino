@@ -56,27 +56,31 @@ def create(request):
 	return HttpResponse(json.dumps(response), content_type='application/json')
 
 
+B_Responses = {
+	'invalid_tag_id': {
+		'code': 1,
+	    'message': 'invalid tag id.'
+	},
+}
 
 @login_required_or_forbidden
 @require_http_methods('GET')
-def briefs_of_section(request, section):
-	pubs = []
-	for tid in OBJECTS_TYPES.values():
-		query = HEAD_MODELS[tid].by_user_id(request.user.id, select_body=True).only(
-			'id', 'for_sale', 'for_rent', 'body__title') # todo: перевірити SQL
+def briefs(request, tag=None, section=None):
+	if tag is not None:
+		try:
+			tag = DirTags.by_id(int(tag))
+		except ObjectDoesNotExist:
+			return HttpResponseBadRequest(
+				json.dumps(B_Responses['invalid_tag_id']), content_type='application/json')
 
-		if section == 'published':
-			query = query.filter(state_sid = OBJECT_STATES.published())
-		elif section == 'unpublished':
-			query = query.filter(state_sid = OBJECT_STATES.unpublished())
+		pubs = []
+		queries = tag.publications()
+		for tid in queries.keys():
+			query = queries[tid].only('id', 'for_sale', 'for_rent', 'body__title')
+			pub_ids = [publication.id for publication in query]
+			tags = DirTags.contains_publications(tid, pub_ids).filter(
+				user_id = request.user.id).only('id', 'pubs')
 
-		publications_ids = []
-		for publication in query:
-			publications_ids.append(publication.id)
-		tags = DirTags.contains_publications(tid, publications_ids).filter(
-			user_id = request.user.id).only('id', 'pubs')
-
-		if query:
 			pubs.extend([{
 				'tid': tid,
 				'id': publication.id,
@@ -89,9 +93,42 @@ def briefs_of_section(request, section):
 			    # ...
 			    # other fields here
 			    # ...
+			} for publication in queries[tid]])
+		return HttpResponse(json.dumps(pubs), content_type='application/json')
 
-			} for publication in query])
-	return HttpResponse(json.dumps(pubs), content_type='application/json')
+
+	else:
+		# sections
+		pubs = []
+		for tid in OBJECTS_TYPES.values():
+			query = HEAD_MODELS[tid].by_user_id(request.user.id, select_body=True).only(
+				'id', 'for_sale', 'for_rent', 'body__title')
+
+			if section == 'published':
+				query = query.filter(state_sid = OBJECT_STATES.published())
+			elif section == 'unpublished':
+				query = query.filter(state_sid = OBJECT_STATES.unpublished())
+
+			pub_ids = [publication.id for publication in query]
+			tags = DirTags.contains_publications(tid, pub_ids).filter(
+				user_id = request.user.id).only('id', 'pubs')
+
+			if query:
+				pubs.extend([{
+					'tid': tid,
+					'id': publication.id,
+				    'title': publication.body.title,
+				    'for_sale': publication.for_sale,
+				    'for_rent': publication.for_rent,
+				    'tags': [tag.id for tag in ifilter(lambda t: t.contains(tid, publication.id), tags)],
+				    'photo_url': 'http://localhost/mappino_static/img/cabinet/house.png' # fixme
+
+				    # ...
+				    # other fields here
+				    # ...
+
+				} for publication in query])
+		return HttpResponse(json.dumps(pubs), content_type='application/json')
 
 
 
