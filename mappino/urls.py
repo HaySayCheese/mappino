@@ -55,11 +55,15 @@ urlpatterns += patterns('apps.pages.cabinet',
     # publications
     url(r'^ajax/api/cabinet/publications/$', 'publications_ajax.create'),
     url(r'^ajax/api/cabinet/publications/briefs/all/$',
-        'publications_ajax.briefs_of_section', {'section': 'all'}),
+        'publications_ajax.briefs', {'section': 'all'}),
     url(r'^ajax/api/cabinet/publications/briefs/published/$',
-        'publications_ajax.briefs_of_section', {'section': 'published'}),
+        'publications_ajax.briefs', {'section': 'published'}),
     url(r'^ajax/api/cabinet/publications/briefs/unpublished/$',
-        'publications_ajax.briefs_of_section', {'section': 'unpublished'}),
+        'publications_ajax.briefs', {'section': 'unpublished'}),
+    url(r'^ajax/api/cabinet/publications/briefs/(\d+)/$',
+        'publications_ajax.briefs', {'section': 'tag'}),
+
+	url(r'^ajax/api/cabinet/publications/(\d+)/(\d+)/$', 'publications_ajax.read_and_update'),
 )
 
 
