@@ -2,6 +2,7 @@
 import copy
 from itertools import ifilter
 import json
+from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
@@ -59,7 +60,7 @@ def create(request):
 @login_required_or_forbidden
 @require_http_methods('GET')
 def briefs_of_section(request, section):
-	pubs = {}
+	pubs = []
 	for tid in OBJECTS_TYPES.values():
 		query = HEAD_MODELS[tid].by_user_id(request.user.id, select_body=True).only(
 			'id', 'for_sale', 'for_rent', 'body__title') # todo: перевірити SQL
@@ -75,7 +76,8 @@ def briefs_of_section(request, section):
 		tags = DirTags.contains_publications(tid, publications_ids).filter(user_id = request.user.id)
 
 		if query:
-			pubs[tid] = [{
+			pubs.extend([{
+				'tid': tid,
 				'id': publication.id,
 			    'title': publication.body.title,
 			    'for_sale': publication.for_sale,
@@ -90,7 +92,7 @@ def briefs_of_section(request, section):
 			    # other fields here
 			    # ...
 
-			} for publication in query]
+			} for publication in query])
 	return HttpResponse(json.dumps(pubs), content_type='application/json')
 
 
@@ -113,7 +115,8 @@ def read_and_update(request, tid, hid):
 		try:
 			# жилая недвижимость
 			if tid == OBJECTS_TYPES.house():
-				pass
+				return house_data(hid)
+
 			elif tid == OBJECTS_TYPES.flat():
 				pass
 			elif tid == OBJECTS_TYPES.apartments():
@@ -155,19 +158,12 @@ def read_and_update(request, tid, hid):
 		pass
 
 
-###-- utils
-#def house_data(hid):
-#	try:
-#		record = HousesHeads.by_id(hid, select_body=True, select_sale=False, select_rent=False)
-#	except ObjectDoesNotExist:
-#		raise InvalidHID('hid: {0}'.format(hid))
-#
-#	response = {
-#		'title': record.body.title,
-#	    'description': record.body.description,
-#	    'market_type_sid': record.body.market_type_sid,
-#
-#	}
-#
-#	#if record.for_sale:
-#	#	record.
+#-- utils
+def house_data(hid):
+	try:
+		record = HousesHeads.by_id(hid, select_body=True, select_sale=False, select_rent=False)
+	except ObjectDoesNotExist:
+		raise InvalidHID('hid: {0}'.format(hid))
+
+	data = serializers.serialize('json', record)
+	return HttpResponse(data, content_type='application/json')
