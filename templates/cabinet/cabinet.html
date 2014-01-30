@@ -40,40 +40,35 @@
         <div class="sidebar-menu" ng-controller="SidebarMenuCtrl">
             <div class="sidebar-menu-header">
                 <div class="btn btn-primary btn-xlg logo-btn pull-left">m</div>
-                <div class="btn btn-success btn-xlg pull-right">Новое обьявление</div>
+                <div class="btn btn-success btn-xlg pull-right" ng-click="creatingPublication = true">Новое обьявление</div>
             </div>
 
             <div class="sidebar-menu-body">
 
-                <!--<div class="new-pub-panel" ng-show="creatingPublications">-->
-                    <!--<div class="form-group">-->
-                        <!--<select name="typeSelect" class="selectpicker" data-width="100%">-->
-                            <!--<option value="flat">Квартиры</option>-->
-                            <!--<option value="apartments">Аппартаменты</option>-->
-                            <!--<option value="house">Дома</option>-->
-                            <!--<option value="dacha">Дачи</option>-->
-                            <!--<option value="cottage">Коттеджы</option>-->
-                            <!--<option value="room">Комнаты</option>-->
-                            <!--<option value="trade">Торговые помещения</option>-->
-                            <!--<option value="office">Офисы</option>-->
-                            <!--<option value="warehouse">Склады</option>-->
-                            <!--<option value="business">Готовый бизнес</option>-->
-                            <!--<option value="catering">Обьекты общепита</option>-->
-                            <!--<option value="garage">Гаражы</option>-->
-                            <!--<option value="land">Земельные участки</option>-->
-                        <!--</select>-->
-                    <!--</div>-->
-                    <!--<div class="form-group">-->
-                        <!--<label class="checkbox-inline">-->
-                            <!--<input type="checkbox" id="inlineCheckbox1" value="option1"> Продажа-->
-                        <!--</label>-->
-                        <!--<label class="checkbox-inline">-->
-                            <!--<input type="checkbox" id="inlineCheckbox2" value="option2"> Оренда-->
-                        <!--</label>-->
-                    <!--</div>-->
-                    <!--<div class="btn btn-success btn-block">Создать</div>-->
+                <div class="new-pub-panel" ng-show="creatingPublication">
+                    <div class="form-group">
+                        <select name="typeSelect" data-width="100%" ng-model="publication.type">
+                            <option value="[[ type.id ]]" ng-repeat="type in publicationTypes">[[ type.title ]]</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="checkbox pull-left">
+                                <input type="checkbox" id="sale" value="sale" ng-model="publication.sale">
+                                <label for="sale">Продажа</label>
+                            </div>
 
-                <!--</div>-->
+                            <div class="checkbox pull-left">
+                                <input type="checkbox" id="rent" value="rent" ng-model="publication.rent">
+                                <label for="rent">Аренда</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='btn-group btn-group-justified'>
+                        <div class='btn btn-cancel btn-block' ng-click='creatingPublication = false'>Отмена</div>
+                        <div class='btn btn-success btn-block btn-creating' data-loading-text='Создание...' ng-click='createPublication()'>Создать</div>
+                    </div>
+                </div>
 
                 <div class="menu-block">
                     <div class="menu-block-header icon-pubs">Обьявления</div>

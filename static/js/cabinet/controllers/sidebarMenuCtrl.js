@@ -20,18 +20,36 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
     $scope.tags = [];
 
 
+    $scope.publication = {
+        type: $rootScope.publicationTypes[0].id,
+        sale: true,
+        rent: false
+    };
+
+
     /**
      * Ініціалізація дропдауна
      **/
-    angular.element("select[name='typeSelect']").selectpicker({
-        style: 'btn-primary btn-md'
-    });
+    $timeout(function() {
+        angular.element("select[name='typeSelect']").selectpicker({
+            style: 'btn-primary btn-md'
+        });
+    }, 50);
+
 
 
     /**
      * Ініціалізкація скролбара
      **/
     initScrollbar();
+
+
+    /**
+     * Створення нового оголошенн
+     **/
+    $scope.createPublication = function() {
+        tagQueries.createPublication($scope.publication)
+    };
 
 
     /**

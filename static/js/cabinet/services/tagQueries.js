@@ -57,6 +57,23 @@ app.factory('tagQueries', function($http, $cookies) {
                     title: tag.title
                 }
             });
+        },
+
+
+        // Запит на створення оголошення
+        createPublication: function(publication) {
+            return $http({
+                url: '/ajax/api/cabinet/publications/',
+                method: "POST",
+                headers: {
+                    'X-CSRFToken': $cookies.csrftoken
+                },
+                data: {
+                    tid: publication.id,
+                    for_sale: publication.sale,
+                    for_rent: publication.rent
+                }
+            });
         }
     }
 });
