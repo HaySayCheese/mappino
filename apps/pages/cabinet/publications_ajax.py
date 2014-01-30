@@ -79,10 +79,10 @@ def briefs_of_section(request, section):
 		    'title': publication.body.title,
 		    'for_sale': publication.for_sale,
 		    'for_rent': publication.for_rent,
-		    'tags': [{
-				'title': tag.title,
-			    'color_id': tag.color_id
-				} for tag in ifilter(lambda t: t.contains(tid, publication.id), tags)],
+		    #'tags': [{
+				#'title': tag.title,
+			 #   'color_id': tag.color_id
+				#} for tag in ifilter(lambda t: t.contains(tid, publication.id), tags)],
 		    'photo_url': STATIC_URL + 'temp_here' # fixme
 
 		    # ...
@@ -154,12 +154,19 @@ def read_and_update(request, tid, hid):
 		pass
 
 
-##-- utils
+###-- utils
 #def house_data(hid):
 #	try:
 #		record = HousesHeads.by_id(hid, select_body=True, select_sale=False, select_rent=False)
 #	except ObjectDoesNotExist:
 #		raise InvalidHID('hid: {0}'.format(hid))
 #
-#	if record.for_sale:
-#		record.
+#	response = {
+#		'title': record.body.title,
+#	    'description': record.body.description,
+#	    'market_type_sid': record.body.market_type_sid,
+#
+#	}
+#
+#	#if record.for_sale:
+#	#	record.
