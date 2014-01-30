@@ -3,10 +3,13 @@
 app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $timeout, $routeParams, briefQueries) {
 
     $scope.searchItem = "";
-    $scope.briefs = "";
+    $rootScope.briefs = "";
 
 
     $scope.$on("$routeChangeSuccess", function(event, current, previous) {
+
+        initScrollbar();
+
         if (previous && previous.params) {
             if (previous.params.section != current.params.section)
                 loadBriefsInit();
@@ -16,13 +19,19 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     });
 
 
+    /**
+     * Клік по бріфу в списку
+     **/
     $scope.selectBrief = function(c) {
         $location.path("publications/" + $rootScope.routeSection + "/" + c)
     };
 
 
+    /**
+     * Якщо міняються теги то оновлюємо їх в брифах
+     **/
     $rootScope.$watchCollection("tags", function(newValue, oldValue) {
-        updateBriefTags($scope.briefs, newValue);
+        updateBriefTags($rootScope.briefs, newValue);
     });
 
 
@@ -30,13 +39,11 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
      * Ініціалізація загрузки брифів
      **/
     function loadBriefsInit() {
-        $scope.briefs = [];
+        $rootScope.briefs = [];
         $scope.briefLoading = true;
 
-        initScrollbar();
-
         briefQueries.loadBriefs($rootScope.routeSection).success(function(data) {
-            $scope.briefs = data;
+            $rootScope.briefs = data;
 
             updateBriefType(data, $rootScope.publicationTypes);
             updateBriefTags(data, $rootScope.tags);
@@ -91,8 +98,8 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
         var sidebar = angular.element(".sidebar-item-list-body");
 
         sidebar.scrollTop(0);
-        sidebar.perfectScrollbar("update");
 
+        sidebar.perfectScrollbar("update");
         sidebar.perfectScrollbar({
             wheelSpeed: 20
         });
