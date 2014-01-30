@@ -3,16 +3,14 @@ import copy
 from itertools import ifilter
 import json
 from django.core import serializers
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
-from apps.pages.cabinet.publications_exceptions import InvalidHID
 from collective.decorators.views import login_required_or_forbidden
-from collective.methods.request_data_getters import angular_post_parameters, angular_parameters
+from collective.methods.request_data_getters import angular_post_parameters
 from core.dirtags.models import DirTags
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, OBJECT_STATES
-from core.publications.models import HousesHeads
-from mappino.settings import STATIC_URL
+from core.publications.models import HousesHeads, FlatsHeads, ApartmentsHeads, DachasHeads, CottagesHeads, RoomsHeads, TradesHeads, OfficesHeads, WarehousesHeads, BusinessesHeads, CateringsHeads, GaragesHeads, LandsHeads
 
 
 CH_Responses = {
@@ -140,84 +138,100 @@ RU_GET_Responses = {
     'invalid_hid': {
 		'code': 2,
 	    'message': 'invalid @hid.'
-	}
+	},
 }
 
 @login_required_or_forbidden
 @require_http_methods(['GET', 'PATCH'])
-def read_and_update(request, tid, hid):
+def read_and_update(request, tid_and_hid):
+	tid, hid = tid_and_hid.split(':')
 	tid = int(tid)
 	hid = int(hid)
 
 	if request.method == 'GET':
 		try:
-			# жилая недвижимость
+			# Жилая недвижимость
 			if tid == OBJECTS_TYPES.house():
-				return house_data(hid)
-
+				record = HousesHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.flat():
-				pass
+				record = FlatsHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.apartments():
-				pass
+				record = ApartmentsHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.dacha():
-				pass
+				record = DachasHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.cottage():
-				pass
+				record = CottagesHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.room():
-				pass
+				record = RoomsHeads.by_id(hid, select_body=True)
 
-			# коммерческая недвижимость
+			# Коммерческая недвижимость
 			elif tid == OBJECTS_TYPES.trade():
-				pass
+				record = TradesHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.office():
-				pass
+				record = OfficesHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.warehouse():
-				pass
+				record = WarehousesHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.business():
-				pass
+				record = BusinessesHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.catering():
-				pass
+				record = CateringsHeads.by_id(hid, select_body=True)
 
 			# Другая недвижимость
 			elif tid == OBJECTS_TYPES.garage():
-				pass
+				record = GaragesHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.land():
-				pass
+				record = LandsHeads.by_id(hid, select_body=True)
+
 			else:
 				return HttpResponseBadRequest(
 					json.dumps(RU_GET_Responses['invalid_tid']), content_type='application/json')
 
-		except InvalidHID:
+		except ObjectDoesNotExist:
 			return HttpResponseBadRequest(
 				json.dumps(RU_GET_Responses['invalid_hid']), content_type='application/json')
 
+		if record.owner.id != request.user.id:
+			raise PermissionDenied()
+		return HttpResponse(
+			json.dumps(publication_data(record)), content_type='application/json')
 
 	else:
+		# todo:
 		pass
 
 
-#-- utils
-def house_data(hid):
-	try:
-		record = HousesHeads.by_id(hid, select_body=True, select_sale=False, select_rent=False)
-	except ObjectDoesNotExist:
-		raise InvalidHID('hid: {0}'.format(hid))
 
-	data = '{{head: {{ {0} }}, body: {1}, sale_terms: {2}, rent_terms: {3} }}'.format(
-		serializers.serialize(
-			'json', [record], fields=('created', 'actual', 'for_rent', 'for_sale', 'state_sid')),
+def publication_data(record):
+	#-- head
+	head = serializers.serialize('python', [record], fields=(
+		'created', 'actual', 'for_rent', 'for_sale', 'state_sid'))[0]['fields']
 
+	created_dt = head['created']
+	if created_dt is not None:
+		head['created'] = created_dt.isoformat()
 
-	    #serializers.serialize('json', [record.body])
-	)
+	actual_dt = head['actual']
+	if actual_dt is not None:
+		head['actual'] = actual_dt.isoformat()
 
-	#data = {
-	#	'head': serializers.serialize(
-	#		'json', [record], fields=('created', 'actual', 'for_rent', 'for_sale', 'state_sid')),
-	#    'body': serializers.serialize('json', [record.body]),
-	#    'sale_terms': serializers.serialize('json', [record.sale_terms]),
-	#    'rent_terms': serializers.serialize('json', [record.rent_terms]),
-	#}
+	#-- body
+	body = serializers.serialize('python', [record.body])[0]['fields']
 
+	#-- for sale
+	if record.for_sale:
+		sale_terms = serializers.serialize('python', [record.sale_terms])[0]['fields']
+	else:
+		sale_terms = None
 
-	return HttpResponse(data, content_type='application/json')
+	#-- for sale
+	if record.for_sale:
+		rent_terms = serializers.serialize('python', [record.rent_terms])[0]['fields']
+	else:
+		rent_terms = None
+
+	return {
+		'head': head,
+		'body': body,
+		'sale_terms': sale_terms,
+		'rent_terms': rent_terms,
+	}
