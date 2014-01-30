@@ -52,7 +52,10 @@ app.factory('tagQueries', function($http, $cookies) {
                 headers: {
                     'X-CSRFToken': $cookies.csrftoken
                 },
-                data: tag
+                data: {
+                    color_id: tag.color_id,
+                    title: tag.title
+                }
             });
         },
 

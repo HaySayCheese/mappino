@@ -47,7 +47,9 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
      * Створення нового оголошенн
      **/
     $scope.createPublication = function() {
-        tagQueries.createPublication($scope.newPublication)
+        tagQueries.createPublication($scope.newPublication).success(function() {
+            $scope.creatingPublication = false;
+        })
     };
 
 
@@ -99,6 +101,10 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
                                 "</div>" +
                             "</div>",
             template = angular.element($compile(htmlText)($scope));
+
+            $scope.$watch("editingTag.color", function(newColor) {
+                $scope.editingTag.color_id = $scope.newTag.colors.indexOf(newColor);
+            });
 
             angular.element(e.target.parentNode.parentNode).after(template);
         }
