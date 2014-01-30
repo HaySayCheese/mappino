@@ -55,7 +55,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
      * Логіка загрузки тегів
      **/
     function loadTags() {
-        $scope.loadingLabels = true;
+        $scope.loadingTags = true;
 
         tagQueries.loadTags().success(function(data) {
             for (var i = 0; i <= data.dirtags.length - 1; i++) {
@@ -67,7 +67,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
                 })
             }
 
-            $scope.loadingLabels = false;
+            $scope.loadingTags = false;
         });
     }
 

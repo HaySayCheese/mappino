@@ -9,17 +9,17 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams) {
     $rootScope.publicationTypes = [
         { name: "house",     id: 0,  title: "Дома" },
         { name: "flat",      id: 1,  title: "Квартиры" },
-        { name: "apartments",id: 3,  title: "Аппартаменты" },
-        { name: "dacha",     id: 4,  title: "Дачи" },
-        { name: "cottage",   id: 5,  title: "Коттеджы" },
-        { name: "room",      id: 6,  title: "Комнаты" },
-        { name: "trade",     id: 7,  title: "Торговые помещения" },
-        { name: "office",    id: 8,  title: "Офисы" },
-        { name: "warehouse", id: 9,  title: "Склады" },
-        { name: "business",  id: 10, title: "Готовый бизнес" },
-        { name: "catering",  id: 11, title: "Обьекты общепита" },
-        { name: "garage",    id: 12, title: "Гаражы" },
-        { name: "land",      id: 13, title: "Земельные участки" }
+        { name: "apartments",id: 2,  title: "Аппартаменты" },
+        { name: "dacha",     id: 3,  title: "Дачи" },
+        { name: "cottage",   id: 4,  title: "Коттеджы" },
+        { name: "room",      id: 5,  title: "Комнаты" },
+        { name: "trade",     id: 6,  title: "Торговые помещения" },
+        { name: "office",    id: 7,  title: "Офисы" },
+        { name: "warehouse", id: 8,  title: "Склады" },
+        { name: "business",  id: 9,  title: "Готовый бизнес" },
+        { name: "catering",  id: 10, title: "Обьекты общепита" },
+        { name: "garage",    id: 11, title: "Гаражы" },
+        { name: "land",      id: 12, title: "Земельные участки" }
     ];
 
     /**
