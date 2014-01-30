@@ -1,20 +1,18 @@
 'use strict';
 
-app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location) {
+app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, briefQueries) {
 
+    $scope.searchItem = "";
+    $scope.briefs = "";
+
+    loadBriefsInit();
     initScrollbar();
-
-
-//    if (angular.element(".sidebar-item-list-item").eq(0).length)
-//        angular.element(".sidebar-item-list-item").eq(0).click();
 
 
     $scope.selectItem = function(c) {
         $location.path("publications/" + $rootScope.routeSection + "/" + c)
     };
 
-
-    $scope.searchItem = "";
 
     $scope.$watch("searchItem", function(newValue) {
 
@@ -25,6 +23,17 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location) {
                 angular.element(element).parents(".sidebar-item-list-item").hide();
         })
     });
+
+
+    /**
+     * Ініціалізація загрузки брифів
+     **/
+    function loadBriefsInit() {
+        briefQueries.loadBriefs($rootScope.routeSection).success(function(data) {
+            $scope.briefs = data;
+            console.log(data);
+        })
+    }
 
 
     /**
