@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $timeout, $compile, tagQueries) {
+app.controller('SidebarMenuCtrl', function($scope, $rootScope, $route, $routeParams, $timeout, $location, $compile, tagQueries) {
 
     loadTags();
 
@@ -49,9 +49,23 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
     $scope.createPublication = function() {
         var btn = angular.element(".new-pub-panel .btn-group-justified > .btn-success").button("loading");
 
-        tagQueries.createPublication($scope.newPublication).success(function() {
+        tagQueries.createPublication($scope.newPublication).success(function(data) {
             $scope.creatingPublication = false;
             btn.button("reset");
+
+            $rootScope.briefs.unshift({
+                id: data.id,
+                for_rent: $scope.newPublication.for_rent,
+                for_sale: $scope.newPublication.for_sale,
+                photo_url: "",
+                tags: "",
+                title: "",
+                tid: $scope.newPublication.tid
+            });
+
+            $location.path("/publications/unpublished/" + $scope.newPublication.tid + ":" + data.id);
+            if (!$scope.$$phase)
+                $scope.$apply();
         })
     };
 
@@ -133,7 +147,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
                 id: data.id,
                 title: $scope.newTag.title,
                 color: $scope.newTag.selectedColor,
-                color_id: $rootScope.tags.indexOf($scope.newTag.selectedColor)
+                color_id: $scope.newTag.colors.indexOf($scope.newTag.selectedColor)
             });
 
             $scope.closeTagDialog();
@@ -163,7 +177,8 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
      **/
     $scope.removeTag = function(tag) {
         tagQueries.removeTag(tag.id).success(function() {
-            $scope.tags.splice($scope.tags.indexOf(tag), 1);
+            $rootScope.tags.splice($rootScope.tags.indexOf(tag), 1);
+            $rootScope.lastRemovedTag = tag;
         });
     };
 
