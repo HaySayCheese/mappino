@@ -145,6 +145,43 @@
 
         </div>
 
+
+        <div class="sidebar-item-list" ng-controller="SidebarItemListCtrl">
+            <div class="sidebar-item-list-header">
+                <input type="text" class="form-control" placeholder="Поиск..." ng-model="searchItem">
+            </div>
+
+            <div class="sidebar-item-list-body">
+
+                <!-- Item -->
+                <div id="[[ brief.id ]]"
+                     class="sidebar-item-list-item"
+                     ng-class="{ active: publicationId == brief.id }"
+                     ng-repeat="brief in briefs"
+                     ng-click="selectBrief(brief.id)">
+
+                    <div class="sidebar-item-list-item-img">
+                        <img ng-src="[[ brief.photo_url ]]"/>
+                        <img src="{{ static }}img/cabinet/house.png" ng-show="!brief.photo_url"/>
+                    </div>
+                    <div class="sidebar-item-list-item-detail">
+                        <div class="sidebar-item-list-item-title">[[ brief.title ]]
+                            <span class="text-muted" ng-show="!brief.title">Новое объявление</span>
+                        </div>
+                        <div class="sidebar-item-list-item-type">Дома.
+                            <span ng-show="brief.for_sale">Продажа.</span>
+                            <span ng-show="brief.for_rent">Аренда.</span>
+                        </div>
+                        <div class="sidebar-item-list-item-tags" ng-show="brief.tags.length">
+                            <span class="label" style="background-color: [[ tag.color ]]" ng-repeat="tag in brief.tags">[[ tag.title ]]</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
         <div class="view" ng-view></div>
 
     </div>

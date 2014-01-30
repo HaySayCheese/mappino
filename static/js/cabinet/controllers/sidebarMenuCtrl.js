@@ -17,7 +17,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
         selectedColor:  "#9861dd"
     };
 
-    $scope.tags = [];
+    $rootScope.tags = [];
 
 
     $scope.newPublication = {
@@ -47,8 +47,11 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
      * Створення нового оголошенн
      **/
     $scope.createPublication = function() {
+        var btn = angular.element(".new-pub-panel .btn-group-justified > .btn-success").button("loading");
+
         tagQueries.createPublication($scope.newPublication).success(function() {
             $scope.creatingPublication = false;
+            btn.button("reset");
         })
     };
 
@@ -126,11 +129,11 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
             if (data.code === 1)
                 return;
 
-            $scope.tags.push({
+            $rootScope.tags.push({
                 id: data.id,
                 title: $scope.newTag.title,
                 color: $scope.newTag.selectedColor,
-                color_id: $scope.tags.indexOf($scope.newTag.selectedColor)
+                color_id: $rootScope.tags.indexOf($scope.newTag.selectedColor)
             });
 
             $scope.closeTagDialog();
@@ -145,9 +148,9 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $routeParams, $ti
         var btn = $(".btn-creating").button("loading");
 
         tagQueries.editTag(tag).success(function() {
-            for (var i = 0; i <= $scope.tags.length - 1; i++) {
-                if ($scope.tags[i].id == tag.id)
-                    $scope.tags[i] = tag;
+            for (var i = 0; i <= $rootScope.tags.length - 1; i++) {
+                if ($rootScope.tags[i].id == tag.id)
+                    $rootScope.tags[i] = tag;
             }
 
             btn.button("reset");
