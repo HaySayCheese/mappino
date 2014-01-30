@@ -21,13 +21,16 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     };
 
 
-    $scope.$watch("searchItem", function(newValue) {
-        angular.element(".sidebar-item-list-item-title").each(function(index, element) {
-            if (angular.element(element).text().toLowerCase().indexOf(newValue.toLowerCase()) != -1 && (!newValue || isNaN(newValue)))
-                angular.element(element).parents(".sidebar-item-list-item").show();
-            else
-                angular.element(element).parents(".sidebar-item-list-item").hide();
-        })
+    $rootScope.$watchCollection("tags", function(newValue) {
+
+        for (var i = 0; i < $scope.briefs.length; i++) {
+            for (var j = 0; j < $scope.briefs[i].tags.length; j++) {
+                for (var k = 0; k < newValue.length; k++) {
+                    if ($scope.briefs[i].tags[j].id === newValue[k].id)
+                        $scope.briefs[i].tags[j] = newValue[k];
+                }
+            }
+        }
     });
 
 
