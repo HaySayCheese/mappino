@@ -1,5 +1,7 @@
 #coding=utf-8
 from django.db import models, IntegrityError
+from django.db.models import Q
+import operator
 from collective.exceptions import AlreadyExist, RecordAlreadyExists, RecordDoesNotExists
 from core.publications.constants import HEAD_MODELS, OBJECTS_TYPES
 from core.dirtags.constants import DIR_TAGS_COLORS
@@ -54,7 +56,8 @@ class DirTags(models.Model):
 
 	@classmethod
 	def contains_publications(cls, tid, publications_ids):
-		return cls.objects.filter(pubs__contains=cls.__to_record_format(tid))
+		return cls.objects.filter(reduce(operator.or_, (Q(
+			pubs__contains=cls.__to_record_format(tid, hid)) for hid in publications_ids)))
 
 
 	@staticmethod
@@ -138,6 +141,10 @@ class DirTags(models.Model):
 		"""
 		self.pubs = ''
 		self.save()
+
+
+	def contains(self, tid, hid):
+		return self.__to_record_format(tid, hid) in self.pubs
 
 
 	@staticmethod

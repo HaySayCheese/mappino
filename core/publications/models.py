@@ -103,10 +103,11 @@ class FlatsHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_flats_heads'
 
-	body_model = FlatsBodies
-	sale_terms_model = FlatsSaleTerms
-	rent_terms_model = FlatsRentTerms
 	photos_model = FlatsPhotos
+
+	body = models.ForeignKey(FlatsBodies)
+	sale_terms = models.OneToOneField(FlatsSaleTerms)
+	rent_terms = models.OneToOneField(FlatsRentTerms)
 
 
 class ApartmentsPhotos(PhotosModel):
@@ -211,10 +212,11 @@ class ApartmentsHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_apartments_heads'
 
-	body_model = ApartmentsBodies
-	sale_terms_model = ApartmentsSaleTerms
-	rent_terms_model = ApartmentsRentTerms
 	photos_model = ApartmentsPhotos
+
+	body = models.ForeignKey(ApartmentsBodies)
+	sale_terms = models.OneToOneField(ApartmentsSaleTerms)
+	rent_terms = models.OneToOneField(ApartmentsRentTerms)
 
 
 class HousesPhotos(PhotosModel):
@@ -320,10 +322,11 @@ class HousesHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_houses_heads'
 
-	body_model = HousesBodies
-	sale_terms_model = HousesSaleTerms
-	rent_terms_model = HousesRentTerms
 	photos_model = HousesPhotos
+
+	body = models.ForeignKey(HousesBodies)
+	sale_terms = models.OneToOneField(HousesSaleTerms)
+	rent_terms = models.OneToOneField(HousesRentTerms)
 
 
 class DachasPhotos(PhotosModel):
@@ -373,7 +376,7 @@ class DachasBodies(BodyModel):
 
 
 	# vc
-	vc_sid = models.BooleanField(null=True, default=None)
+	vc_sid = models.NullBooleanField(default=None)
 	vc_loc_sid = models.SmallIntegerField(default=DACHA_WC_LOCATIONS.inside())
 
 	# Опалення
@@ -431,10 +434,11 @@ class DachasHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_dachas_heads'
 
-	body_model = DachasBodies
-	sale_terms_model = SaleTermsModel
-	rent_terms_model = DachasRentTerms
 	photos_model = DachasPhotos
+
+	body = models.ForeignKey(DachasBodies)
+	sale_terms = models.OneToOneField(DachasSaleTerms)
+	rent_terms = models.OneToOneField(DachasRentTerms)
 
 
 class CottagesPhotos(PhotosModel):
@@ -537,10 +541,11 @@ class CottagesHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_cottages_heads'
 
-	body_model = CottagesBodies
-	sale_terms_model = CottagesSaleTerms
-	rent_terms_model = CottagesRentTerms
 	photos_model = CottagesPhotos
+
+	body = models.ForeignKey(CottagesBodies)
+	sale_terms = models.OneToOneField(CottagesSaleTerms)
+	rent_terms = models.OneToOneField(CottagesRentTerms)
 
 
 class RoomsPhotos(PhotosModel):
@@ -638,10 +643,11 @@ class RoomsHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_rooms_heads'
 
-	body_model = RoomsBodies
-	sale_terms_model = RoomsSaleTerms
-	rent_terms_model = RoomsRentTerms
 	photos_model = RoomsPhotos
+
+	body = models.ForeignKey(RoomsBodies)
+	sale_terms = models.OneToOneField(RoomsSaleTerms)
+	rent_terms = models.OneToOneField(RoomsRentTerms)
 
 
 class TradesSaleTerms(SaleTermsModel):
@@ -736,10 +742,11 @@ class TradesHeads(CommercialHeadModel):
 	class Meta:
 		db_table = 'o_trades_heads'
 
-	body_model = TradesBodies
-	sale_sale_terms = TradesSaleTerms
-	rent_sale_terms = TradesRentTerms
 	photos_model = TradesPhotos
+
+	body = models.ForeignKey(TradesBodies)
+	sale_terms = models.OneToOneField(TradesSaleTerms)
+	rent_terms = models.OneToOneField(TradesRentTerms)
 
 
 class OfficesSaleTerms(SaleTermsModel):
@@ -831,10 +838,11 @@ class OfficesHeads(CommercialHeadModel):
 	class Meta:
 		db_table = 'o_offices_heads'
 
-	body_model = OfficesBodies
-	sale_terms_model = OfficesSaleTerms
-	rent_terms_model = OfficesRentTerms
 	photos_model = OfficesPhotos
+
+	body = models.ForeignKey(OfficesBodies)
+	sale_terms = models.OneToOneField(OfficesSaleTerms)
+	rent_terms = models.OneToOneField(OfficesRentTerms)
 
 
 class WarehousesSaleTerms(SaleTermsModel):
@@ -929,10 +937,11 @@ class WarehousesHeads(CommercialHeadModel):
 	class Meta:
 		db_table = 'o_warehouses_heads'
 
-	body_models = WarehousesBodies
-	sale_terms_model = WarehousesSaleTerms
-	rent_terms_model = WarehousesRentTerms
 	photos_model = WarehousesPhotos
+
+	body = models.ForeignKey(WarehousesBodies)
+	sale_terms = models.OneToOneField(WarehousesSaleTerms)
+	rent_terms = models.OneToOneField(WarehousesRentTerms)
 
 
 class BusinessesSaleTerms(SaleTermsModel):
@@ -1036,10 +1045,11 @@ class BusinessesHeads(CommercialHeadModel):
 	class Meta:
 		db_table = 'o_business_heads'
 
-	body_model = BusinessesBodies
-	sale_terms_model = BusinessesSaleTerms
-	rent_terms_model = BusinessesRentTerms
 	photos_model = BusinessesPhotos
+
+	body = models.ForeignKey(BusinessesBodies)
+	sale_terms = models.OneToOneField(BusinessesSaleTerms)
+	rent_terms = models.OneToOneField(BusinessesRentTerms)
 
 
 class CateringsSaleTerms(SaleTermsModel):
@@ -1133,10 +1143,11 @@ class CateringsHeads(CommercialHeadModel):
 	class Meta:
 		db_table = 'o_caterings_heads'
 
-	body_model = CateringsBodies
-	sale_terms_model = CateringsSaleTerms
-	rent_terms_model = CateringsRentTerms
 	photos_model = CateringsPhotos
+
+	body = models.ForeignKey(CateringsBodies)
+	sale_terms = models.OneToOneField(CateringsSaleTerms)
+	rent_terms = models.OneToOneField(CateringsRentTerms)
 
 
 class GaragesSaleTerms(CommercialRentTermsModel):
@@ -1185,10 +1196,11 @@ class GaragesHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_garages_heads'
 
-	body_model = GaragesBodies
-	sale_terms_model = GaragesSaleTerms
-	rent_terms_model = GaragesRentTerms
 	photos_model = GaragesPhotos
+
+	body = models.ForeignKey(GaragesBodies)
+	sale_terms = models.OneToOneField(GaragesSaleTerms)
+	rent_terms = models.OneToOneField(GaragesRentTerms)
 
 
 class LandsSaleTerms(SaleTermsModel):
@@ -1243,7 +1255,8 @@ class LandsHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_lands_heads'
 
-	body_model = LandsBodies
-	sale_terms_model = LandsSaleTerms
-	rent_terms_model = LandsRentTerms
 	photos_model = LandsPhotos
+
+	body = models.ForeignKey(LandsBodies)
+	sale_terms = models.OneToOneField(LandsSaleTerms)
+	rent_terms = models.OneToOneField(LandsRentTerms)

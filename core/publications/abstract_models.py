@@ -31,17 +31,12 @@ class LivingHeadModel(models.Model):
 		abstract = True
 
 	#-- override
-	body_model = ''
-	sale_terms_model = ''
-	rent_terms_model = ''
-	photos_model = ''
-
+	body = None
+	sale_terms = None
+	rent_terms = None
+	photos = None
 
 	#-- fields
-	body = models.ForeignKey(body_model)
-	sale_terms = models.OneToOneField(sale_terms_model)
-	rent_terms = models.OneToOneField(rent_terms_model)
-	photos = models.ForeignKey(photos_model)
 	owner = models.ForeignKey(Users)
 
 	state_sid = models.SmallIntegerField(default=OBJECT_STATES.unpublished())
@@ -57,9 +52,9 @@ class LivingHeadModel(models.Model):
 	def new(cls, owner_id, for_sale=False, for_rent=False):
 		with transaction.atomic():
 			return cls.objects.create(
-				body_id = cls.body_model.new().id,
-				sale_terms_id = cls.sale_terms_model.new().id,
-				rent_terms_id = cls.rent_terms_model.new().id,
+				body_id = cls._meta.get_field_by_name('body')[0].rel.to.new().id,
+				sale_terms_id = cls._meta.get_field_by_name('sale_terms')[0].rel.to.new().id,
+				rent_terms_id = cls._meta.get_field_by_name('rent_terms')[0].rel.to.new().id,
 
 				owner_id = owner_id,
 				for_sale = for_sale,
@@ -104,7 +99,7 @@ class CommercialHeadModel(LivingHeadModel):
 	class Meta:
 		abstract = True
 
-	red_line_sid = models.BooleanField(null=True)
+	red_line_sid = models.NullBooleanField()
 
 
 
