@@ -65,14 +65,17 @@ class DirTags(models.Model):
 			pubs__contains=cls.__to_record_format(tid, hid)) for hid in publications_ids)))
 
 
-	@staticmethod
-	def rm_all_publication_occurrences(tid, hid):
+	@classmethod
+	def rm_all_publication_occurrences(cls, tid, hid):
 		"""
 		Видалить всі входження оголошення з id=hid та типом=tid з тегів всіх користувачів.
 		Даний метод викликаєтсья при фізичному видаленні оголошення з БД
 		для забезпечення цілісності системи.
 		"""
-		for tag in DirTags.objects.filter(pubs__contains = DirTags.__to_record_format(tid, hid)):
+		tags = DirTags.objects.filter(
+			pubs__contains = cls.__to_record_format(tid, hid)).only('id', 'pubs')
+
+		for tag in tags:
 			tag.rm_publication(tid, hid)
 
 
