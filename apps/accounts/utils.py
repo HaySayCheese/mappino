@@ -3,13 +3,12 @@ import hashlib
 import random
 import string
 from __builtin__ import unicode
-from django.conf import settings
-from django.core.mail import send_mail
 from django.db import transaction
 from collective.exceptions import AlreadyExist, RecordAlreadyExists
 from collective.http.cookies import set_signed_cookie
+from core.sms_dispatcher.utils import send_mobile_check_code_sms, resend_mobile_check_code_sms
 from core.users.models import Users
-from mappino.wsgi import redis_connections, templates
+from mappino.wsgi import redis_connections
 
 
 class NoUserWithSuchUsername(Exception): pass
@@ -21,7 +20,7 @@ class TokenAlreadyExists(AlreadyExist):
 
 class AccessRestoreHandler(object):
 	def __init__(self):
-		self.redis = redis_connections[1]
+		self.redis = redis_connections['steady']
 		self.token_prefix = 'access_restore_handler_'
 		self.token_ttl = 60*60*24 # 24 hours
 		self.uid_field_name = 'uid'
@@ -111,33 +110,12 @@ class AccessRestoreHandler(object):
 
 
 
-# fixme: please
-class SMSSender(object):
-	REDIS_PREFIX = 'send_sms_throttle'
-
-	# todo: imply checks
-	MAX_COUNT_PER_USER = 3
-	MAX_COUNT_PER_IP = 10
-	MAX_COUNT_PER_DAY = 200
-
-	def __init__(self):
-		self.redis = redis_connections[1]
-
-	def send(self, number, message, request):
-		# todo: send sms here
-		# todo: додати перевірку на дотримання часового інтервалу до повторної SMS
-		# todo: додати обмеження на к-сть SMS в день
-		# todo: додати обмеження на к-сть SMS на одну ip-адресу.
-		pass
-
-
-
 class PhoneAlreadyInQueue(RecordAlreadyExists): pass
 class InvalidCheckCode(ValueError): pass
 
 class MobilePhonesChecker(object):
 	def __init__(self):
-		self.redis = redis_connections[1]
+		self.redis = redis_connections['steady']
 		self.record_prefix = 'mob_check_'
 		self.code_field_name = 'code'
 		self.attempts_field_name = 'attempts'
@@ -152,8 +130,6 @@ class MobilePhonesChecker(object):
 
 		self.cookie_name = 'mcheck'
 		self.cookie_salt = 'JMH2FWWYa1ogCJR0gW4z'
-
-		self.sms_sender = SMSSender()
 
 
 	def number_check_is_started(self, request):
@@ -190,7 +166,7 @@ class MobilePhonesChecker(object):
 
 		# hint: send throttling implemented in SMSSender
 		# no need to do it here
-		self.sms_sender.send(phone, code, request)
+		send_mobile_check_code_sms(phone, code, request)
 
 
 	def cancel_number_check(self, request, response):
@@ -266,6 +242,7 @@ class MobilePhonesChecker(object):
 		uid = request.get_signed_cookie(self.cookie_name, salt=self.cookie_salt)
 		key = self.record_prefix + uid
 		if not self.redis.exists(key):
+			response.delete_cookie(self.cookie_name)
 			raise InvalidCheckCode()
 
 		code = self.__generate_check_code()
@@ -282,7 +259,7 @@ class MobilePhonesChecker(object):
 		# hint: send throttling implemented in SMSSender
 		# no need to do it here
 		phone = self.redis.hget(key, self.phone_number_field_name)
-		self.sms_sender.send(phone, code, request)
+		resend_mobile_check_code_sms(phone, code, request)
 
 
 	def __phone_in_check_queue(self, phone):

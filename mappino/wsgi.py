@@ -29,5 +29,5 @@ templates.globals.update({
 
 # redis databases initialisation
 redis_connections = {}
-for db_number, db in settings.REDIS_DATABASES.iteritems():
-	redis_connections[db_number] = redis.StrictRedis(db['HOST'], db['PORT'], db_number)
+for name, params in settings.REDIS_DATABASES.iteritems():
+	redis_connections[name] = redis.StrictRedis(params['HOST'], params['PORT'], 0)

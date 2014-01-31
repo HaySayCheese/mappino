@@ -8,6 +8,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 from apps.accounts.utils import AccessRestoreHandler, TokenDoesNotExists, NoUserWithSuchUsername, MobilePhonesChecker, TokenAlreadyExists, InvalidCheckCode
 from collective.methods.request_data_getters import angular_post_parameters
+from core.sms_dispatcher.exceptions import SMSLimitException
 from core.users.models import Users
 
 
@@ -281,6 +282,10 @@ RS_RESPONSES = {
 	    'code': 2,
 	    'message': 'invalid check code',
     },
+    'limit_reached': {
+	    'code': 3,
+	    'message': 'limit reached',
+    },
 
     'OK': {
 	    'code': 0,
@@ -288,7 +293,6 @@ RS_RESPONSES = {
     },
 
 }
-
 @require_http_methods('POST')
 def resend_sms_handler(request):
 	if request.user.is_authenticated():
@@ -302,6 +306,11 @@ def resend_sms_handler(request):
 		response.status_code = 400
 		response.write(json.dumps(RS_RESPONSES['invalid_check_code']))
 		return response
+	except SMSLimitException:
+		response.status_code = 400
+		response.write(json.dumps(RS_RESPONSES['limit_reached']))
+		return response
+
 
 	response.write(json.dumps(RC_RESPONSES['OK']))
 	return response

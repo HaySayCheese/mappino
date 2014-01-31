@@ -6,6 +6,7 @@ https://docs.djangoproject.com/en/1.6/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
+from mappino import passwords
 
 DEBUG = True
 if not DEBUG:
@@ -27,6 +28,9 @@ else:
 	TEMPLATE_DEBUG = True
 	ALLOWED_HOSTS = []
 
+	SMS_GATE_LOGIN = passwords.SMS_GATE_LOGIN
+	SMS_GATE_PASSWORD = passwords.SMS_GATE_PASSWORD
+
 
 	DATABASES = {
 		'default': {
@@ -38,12 +42,18 @@ else:
 		}
 	}
 	REDIS_DATABASES = {
-		# 0s database is used by sessions
-	    1: {
-	        # highest priority
-			'HOST': '185.14.186.102',
+	    'steady': {
+		    'HOST': '185.14.186.102',
 		    'PORT': 6379,
-		}
+	    },
+	    'cache': {
+		    'HOST': '185.14.186.102',
+		    'PORT': 6379,
+	    },
+	    'sessions': {
+		    'HOST': '185.14.186.102',
+		    'PORT': 6379,
+	    }
 	}
 	INSTALLED_APPS = (
 		'django.contrib.auth',
@@ -52,6 +62,8 @@ else:
 	    'south',
 
 	    'core.users',
+	    'core.dirtags',
+	    'core.publications'
 	)
 	MIDDLEWARE_CLASSES = (
 		'django.contrib.sessions.middleware.SessionMiddleware',
@@ -81,3 +93,48 @@ else:
 	# Static files (CSS, JavaScript, Images)
 	# https://docs.djangoproject.com/en/1.6/howto/static-files/
 	STATIC_URL = 'http://localhost/mappino_static/'
+
+	LOGGING = {
+		'version': 1,
+		'disable_existing_loggers': True,
+		'formatters': {
+			'simple': {
+				'format': '%(levelname)s: %(asctime)s - %(message)s',
+			    'datefmt': '%Y-%m-%d %H:%M:%S'
+				},
+			},
+		'handlers': {
+			'mail_admins': {
+				'level': 'WARNING',
+				'class': 'django.utils.log.AdminEmailHandler',
+			},
+		    'sms_dispatcher_limits_file': {
+				'level': 'INFO',
+		        'class': 'logging.handlers.TimedRotatingFileHandler',
+		        'filename': 'logs/sms_dispatcher/limits.log',
+		        'when': 'W6',
+		        'backupCount': 24,
+		        'formatter': 'simple'
+		    },
+		    'sms_dispatcher_sender_file': {
+				'level': 'INFO',
+		        'class': 'logging.handlers.TimedRotatingFileHandler',
+		        'filename': 'logs/sms_dispatcher/sended.log',
+		        'when': 'D',
+		        'backupCount': 60,
+		        'formatter': 'simple'
+		    },
+		},
+		'loggers': {
+			'mappino.sms_dispatcher.limits': {
+				'handlers': ['sms_dispatcher_limits_file', 'mail_admins'],
+				'level': 'INFO',
+			    'propagate': False,
+			},
+		    'mappino.sms_dispatcher.sender': {
+				'handlers': ['sms_dispatcher_sender_file', 'mail_admins'],
+				'level': 'INFO',
+			    'propagate': False,
+			},
+		}
+	}

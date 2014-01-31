@@ -2,5 +2,7 @@
 .venv/*
 
 mappino/settings.py
+mappino/passwords.py
 
 *.pyc
+*.log
