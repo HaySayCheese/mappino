@@ -53,6 +53,8 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $route, $routePar
             $scope.creatingPublication = false;
             btn.button("reset");
 
+            $location.path("/publications/unpublished/" + $scope.newPublication.tid + ":" + data.id);
+
             $rootScope.briefs.unshift({
                 id: data.id,
                 for_rent: $scope.newPublication.for_rent,
@@ -63,7 +65,6 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $route, $routePar
                 tid: $scope.newPublication.tid
             });
 
-            $location.path("/publications/unpublished/" + $scope.newPublication.tid + ":" + data.id);
             if (!$scope.$$phase)
                 $scope.$apply();
         })
