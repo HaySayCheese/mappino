@@ -35,7 +35,7 @@ def __send_sms(number, message):
 	    'charset': 'utf-8'
 	})
 	response = urllib.urlopen("http://smsc.ru/sys/send.php", params).read()
-	log_record = 'SENDED WELL. number: {number}, message: {message}, response: {response}'.format(
+	log_record = 'number: {number}, message: {message}, response: {response}'.format(
 		number = number, message = message, response = response)
 
 	if 'OK' in response:
