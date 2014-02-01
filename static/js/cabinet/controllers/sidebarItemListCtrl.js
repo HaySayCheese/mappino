@@ -1,14 +1,14 @@
 'use strict';
 
-app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $timeout, $routeParams, briefQueries) {
+app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, Briefs) {
 
     $scope.searchItem = "";
-    $rootScope.briefs = "";
+    $scope.briefs = [];
 
 
     $scope.$on("$routeChangeSuccess", function(event, current, previous) {
 
-        initScrollbar();
+        initScrollBar();
 
         if (previous && previous.params) {
             if (previous.params.section != current.params.section)
@@ -30,8 +30,8 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     /**
      * Якщо міняються теги то оновлюємо їх в брифах
      **/
-    $rootScope.$watchCollection("tags", function(newValue, oldValue) {
-        updateBriefTags($rootScope.briefs, newValue);
+    $rootScope.$watchCollection("tags", function() {
+        Briefs.updateTags();
     });
 
 
@@ -39,62 +39,20 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
      * Ініціалізація загрузки брифів
      **/
     function loadBriefsInit() {
-        $rootScope.briefs = [];
-        $scope.briefLoading = true;
+        $scope.briefs = [];
 
-        briefQueries.loadBriefs($rootScope.routeSection).success(function(data) {
-            $rootScope.briefs = data;
+        Briefs.load($rootScope.routeSection, function(data) {
+            $scope.briefs = data;
 
-            updateBriefType(data, $rootScope.publicationTypes);
-            updateBriefTags(data, $rootScope.tags);
-
-            $scope.briefLoading = false;
-
-            $timeout(function() {
-                initScrollbar();
-            }, 100);
+            initScrollBar();
         });
-    }
-
-
-    /**
-     * Оновлення тегів в бріфах
-     **/
-    function updateBriefTags(briefs, tags) {
-        for (var i = 0; i < briefs.length; i++) {
-            for (var j = 0; j < briefs[i].tags.length; j++) {
-                for (var k = 0; k < tags.length; k++) {
-                    if (briefs[i].tags[j].id && (briefs[i].tags[j].id === tags[k].id))
-                        briefs[i].tags[j] = tags[k];
-
-                    if (!briefs[i].tags[j].id && (briefs[i].tags[j] === tags[k].id))
-                        briefs[i].tags[j] = tags[k];
-
-                    if ((briefs[i].tags[j].id && $rootScope.lastRemovedTag) && (briefs[i].tags[j].id === $rootScope.lastRemovedTag.id))
-                        delete briefs[i].tags[j];
-                }
-            }
-        }
-    }
-
-
-    /**
-     * Оновлення типу оголошення
-     **/
-    function updateBriefType(briefs, types) {
-        for (var i = 0; i < briefs.length; i++) {
-            for (var j = 0; j < types.length; j++) {
-                if (briefs[i].tid === types[j].id)
-                    briefs[i].type = types[j].title;
-            }
-        }
     }
 
 
     /**
      * Функція скролбара
      **/
-    function initScrollbar() {
+    function initScrollBar() {
         var sidebar = angular.element(".sidebar-item-list-body");
 
         sidebar.scrollTop(0);
@@ -108,5 +66,4 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
             sidebar.perfectScrollbar("update");
         });
     }
-
 });

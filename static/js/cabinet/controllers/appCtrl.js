@@ -22,6 +22,16 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams) {
         { name: "land",      id: 12, title: "Земельного участка" }
     ];
 
+
+    /**
+     * Лоадери
+     **/
+    $rootScope.loadings = {
+        tags: false,
+        briefs: false
+    };
+
+
     /**
      * Перегляд за зміною урла для встановлення активного
      * пункту меню

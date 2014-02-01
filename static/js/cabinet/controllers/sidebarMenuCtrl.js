@@ -1,25 +1,14 @@
 'use strict';
 
-app.controller('SidebarMenuCtrl', function($scope, $rootScope, $route, $routeParams, $timeout, $location, $compile, tagQueries) {
+app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $location, $compile, tagQueries, Briefs, Tags) {
 
     loadTags();
 
     /**
      * Змінні створення тега
      **/
-    $scope.newTag = {
-        colors:         ["#9861dd", "#465eec", "#60b4cf", "#54b198", "#7cc768", "#dfb833", "#f38a23", "#f32363"],
-
-        defaultTagName: "Название",
-        title:          "Название",
-
-        defaultColor:   "#9861dd",
-        selectedColor:  "#9861dd"
-    };
-
-    $rootScope.tags = [];
-
-
+    $scope.newTag = Tags.getParameters();
+    $scope.tags = [];
     $scope.newPublication = {
         tid: $rootScope.publicationTypes[0].id,
         for_sale: true,
@@ -40,7 +29,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $route, $routePar
     /**
      * Ініціалізкація скролбара
      **/
-    initScrollbar();
+    initScrollBar();
 
 
     /**
@@ -55,7 +44,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $route, $routePar
 
             $location.path("/publications/unpublished/" + $scope.newPublication.tid + ":" + data.id);
 
-            $rootScope.briefs.unshift({
+            Briefs.add({
                 id: data.id,
                 for_rent: $scope.newPublication.for_rent,
                 for_sale: $scope.newPublication.for_sale,
@@ -75,19 +64,10 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $route, $routePar
      * Логіка загрузки тегів
      **/
     function loadTags() {
-        $scope.loadingTags = true;
+        $scope.tags = [];
 
-        tagQueries.loadTags().success(function(data) {
-            for (var i = 0; i <= data.dirtags.length - 1; i++) {
-                $scope.tags.push({
-                    id: data.dirtags[i].id,
-                    title: data.dirtags[i].title,
-                    color_id: data.dirtags[i].color_id,
-                    color: $scope.newTag.colors[data.dirtags[i].color_id]
-                })
-            }
-
-            $scope.loadingTags = false;
+        Tags.load(function(data) {
+            $scope.tags = data;
         });
     }
 
@@ -144,7 +124,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $route, $routePar
             if (data.code === 1)
                 return;
 
-            $rootScope.tags.push({
+            Tags.add({
                 id: data.id,
                 title: $scope.newTag.title,
                 color: $scope.newTag.selectedColor,
@@ -162,12 +142,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $route, $routePar
     $scope.editTag = function(tag) {
         var btn = $(".btn-creating").button("loading");
 
-        tagQueries.editTag(tag).success(function() {
-            for (var i = 0; i <= $rootScope.tags.length - 1; i++) {
-                if ($rootScope.tags[i].id == tag.id)
-                    $rootScope.tags[i] = tag;
-            }
-
+        Tags.update(tag, function() {
             btn.button("reset");
         });
     };
@@ -177,10 +152,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $route, $routePar
      * Логіка видалення тега
      **/
     $scope.removeTag = function(tag) {
-        tagQueries.removeTag(tag.id).success(function() {
-            $rootScope.tags.splice($rootScope.tags.indexOf(tag), 1);
-            $rootScope.lastRemovedTag = tag;
-        });
+        Tags.remove(tag);
     };
 
 
@@ -189,19 +161,16 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $route, $routePar
      * після закриття діалога створення тега
      **/
     $scope.closeTagDialog = function() {
-        $scope.newTag.selectedColor = $scope.newTag.defaultColor;
-        $scope.newTag.title         = $scope.newTag.defaultTagName;
-
+        $scope.newTag = angular.copy(Tags.getParameters());
         $scope.creatingTag = false;
-
         angular.element(".tag-edit-panel.state-edit").remove();
-    }
+    };
 
 
     /**
      * Функція скролбара
      **/
-    function initScrollbar() {
+    function initScrollBar() {
         var sidebar = angular.element(".sidebar-menu-body");
 
         sidebar.perfectScrollbar({

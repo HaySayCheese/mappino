@@ -26,6 +26,10 @@
     <script type="text/javascript" src="{{ static }}js/cabinet/services/tagQueries.js"></script>
     <script type="text/javascript" src="{{ static }}js/cabinet/services/briefQueries.js"></script>
 
+    <script type="text/javascript" src="{{ static }}js/cabinet/factories/tagsFactory.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/factories/briefsFactory.js"></script>
+
+
     <script type="text/javascript" src="{{ static }}js/cabinet/controllers/appCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarMenuCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarItemListCtrl.js"></script>
@@ -131,7 +135,7 @@
                             </div>
                         </li>
                     </ul>
-                    <div class="tags-loader" ng-show="loadingTags"></div>
+                    <div class="tags-loader" ng-show="loadings.tags"></div>
                 </div>
 
                 <div class="menu-block">
@@ -179,11 +183,11 @@
                     </div>
                 </div>
 
-                <div class="briefs-empty text-muted" ng-show="!briefLoading && !briefs.length">
+                <div class="briefs-empty text-muted" ng-show="!loadings.briefs && !briefs.length">
                     <span>В данной категории нет обьявлений</span>
                 </div>
 
-                <div class="item-loader" ng-show="briefLoading"></div>
+                <div class="item-loader" ng-show="loadings.briefs"></div>
             </div>
         </div>
 
