@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $location, $compile, tagQueries, Briefs, Tags) {
+app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $location, $compile, publicationQueries, Briefs, Tags) {
 
     loadTags();
 
@@ -38,7 +38,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     $scope.createPublication = function() {
         var btn = angular.element(".new-pub-panel .btn-group-justified > .btn-success").button("loading");
 
-        tagQueries.createPublication($scope.newPublication).success(function(data) {
+        publicationQueries.createPublication($scope.newPublication).success(function(data) {
             $scope.creatingPublication = false;
             btn.button("reset");
 
