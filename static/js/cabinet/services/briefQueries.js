@@ -7,7 +7,7 @@ app.factory('briefQueries', function($http, $cookies) {
         // Загрузка всіх брифів
         loadBriefs: function(category) {
             return $http({
-                url: '/ajax/api/cabinet/publications/briefs/' + category + "/",
+                url: '/ajax/api/cabinet/publications/briefs/' + category,
                 method: "GET",
                 headers: {
                     'X-CSRFToken': $cookies.csrftoken
