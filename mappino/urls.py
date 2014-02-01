@@ -22,7 +22,7 @@ urlpatterns += patterns('apps.pages.cabinet',
 
 #-- angular templates publications
 urlpatterns += patterns('apps.pages.cabinet',
-    url(r'^ajax/template/cabinet/publications/houses/$', 'templates_ajax.house_template'),
+    url(r'^ajax/template/cabinet/publications/(\d+)/$', 'templates_ajax.publication_form_template'),
 )
 
 
