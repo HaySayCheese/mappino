@@ -32,8 +32,8 @@ app.factory('publicationQueries', function($http, $cookies) {
 
         checkInputs: function(type, tid, hid, data) {
             return $http({
-                url: '/ajax/api/cabinet/publications/' + type + '/' + tid + ":" + hid,
-                method: "POST",
+                url: '/ajax/api/cabinet/publications/' + type + '/' + tid + ":" + hid + '/',
+                method: "PATCH",
                 headers: {
                     'X-CSRFToken': $cookies.csrftoken
                 },
