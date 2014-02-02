@@ -44,15 +44,16 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
             $location.path("/publications/unpublished/" + $scope.newPublication.tid + ":" + data.id);
 
-            Briefs.add({
-                id: data.id,
-                for_rent: $scope.newPublication.for_rent,
-                for_sale: $scope.newPublication.for_sale,
-                photo_url: "",
-                tags: "",
-                title: "",
-                tid: $scope.newPublication.tid
-            });
+            if ($rootScope.routeSection === "unpublished")
+                Briefs.add({
+                    id: data.id,
+                    for_rent: $scope.newPublication.for_rent,
+                    for_sale: $scope.newPublication.for_sale,
+                    photo_url: "",
+                    tags: "",
+                    title: "",
+                    tid: $scope.newPublication.tid
+                });
 
             if (!$scope.$$phase)
                 $scope.$apply();

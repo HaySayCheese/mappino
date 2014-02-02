@@ -28,7 +28,8 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams) {
      **/
     $rootScope.loadings = {
         tags: false,
-        briefs: false
+        briefs: false,
+        detailed: false
     };
 
 

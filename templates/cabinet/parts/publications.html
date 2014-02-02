@@ -1,12 +1,16 @@
-<div class="sidebar-item-detailed"  ng-controller="SidebarItemDetailedCtrl">
+<div class="sidebar-item-detailed" ng-controller="SidebarItemDetailedCtrl">
     <div class="sidebar-item-detailed-header">
         <a class="btn btn-link btn-xlg"><span class="glyphicon glyphicon-link"></span>&nbsp;Навигация</a>
         <a class="btn btn-link btn-xlg">Описание</a>
         <div class="btn btn-info btn-xlg pull-right"><span class="glyphicon glyphicon-log-out"></span></div>
     </div>
     <div class="sidebar-item-detailed-body">
-        <div ng-if='publicationLoaded'>
+        <div ng-if='publicationLoaded && !loadings.detailed'>
             <div ng-include="publicationTemplateUrl"></div>
+        </div>
+        <div class="load-detailed" ng-show="loadings.detailed"></div>
+        <div class="detailed-empty" ng-show="!publicationLoaded && !loadings.detailed">
+            <span>Выберите объявления на панели слева</span>
         </div>
     </div>
 </div>

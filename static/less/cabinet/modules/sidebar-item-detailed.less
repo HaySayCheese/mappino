@@ -53,4 +53,32 @@
         margin-left: 0;
         margin-right: 0;
     }
+
+    .load-detailed {
+        .size(100%, 12px);
+        display: block;
+        margin-top: 50px;
+        background: url("../../img/cabinet/sidebar-item-list/briefs-ajax-loader.gif") center center no-repeat;
+    }
+
+    .detailed-empty {
+        .size(250px, 150px);
+        position: relative;
+        margin-top: 50px;
+
+        text-align: center;
+        font-size: @font-size-base;
+
+        border: 2px dashed @gray-lighter;
+        border-radius: 15px;
+        .center-block();
+
+        span {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            .translate(0, -50%);
+        }
+    }
 }

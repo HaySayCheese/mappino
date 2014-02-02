@@ -12,6 +12,7 @@ app.factory('Briefs', function($rootScope, briefQueries) {
         load: function(category, callback) {
             var that = this;
             $rootScope.loadings.briefs = true;
+            $rootScope.briefsLoaded = false;
 
             briefQueries.loadBriefs(category).success(function(data) {
                 briefs = data;
@@ -20,6 +21,7 @@ app.factory('Briefs', function($rootScope, briefQueries) {
                 that.updateTags();
 
                 $rootScope.loadings.briefs = false;
+                $rootScope.briefsLoaded = true;
 
                 callback(that.getAll());
             });
@@ -30,6 +32,8 @@ app.factory('Briefs', function($rootScope, briefQueries) {
          **/
         add: function(brief) {
             briefs.unshift(brief);
+            this.updateType();
+            this.updateTags();
         },
 
         getAll: function() {
@@ -64,6 +68,15 @@ app.factory('Briefs', function($rootScope, briefQueries) {
                     }
                 }
             }
+        },
+
+        isUnpublished: function(id) {
+            var trues = false;
+            for (var i = 0; i < briefs.length; i++) {
+                if (briefs[i].id === parseInt(id) && briefs[i].title == "")
+                    trues = true;
+            }
+            return trues;
         }
     }
 

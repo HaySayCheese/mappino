@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $compile, $routeParams, publicationQueries) {
+app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $compile, $routeParams, publicationQueries, Briefs) {
 
     initScrollBar();
 
@@ -28,26 +28,35 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * При зміні урла генерить урл для темплейта
      **/
     $scope.$on("$routeChangeSuccess", function() {
-
-        if ($rootScope.routeSection === "unpublished" && $rootScope.publicationId) {
-
-            publicationQueries.loadPublication($rootScope.routeSection, $rootScope.publicationId.split(":")[0], $rootScope.publicationId.split(":")[1]).success(function(data) {
-                //console.log(data);
-
-                $scope.publication = data;
-
-                $scope.publicationLoaded = true;
-                $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/" + $rootScope.publicationId.split(":")[0] + "/";
-
-                $timeout(function() {
-                    angular.element("select").selectpicker({
-                        style: 'btn-default btn-md'
-                    });
-                }, 200);
-            });
-        }
-
+        if (Briefs.isUnpublished($rootScope.publicationId.split(":")[1]) && $rootScope.publicationId)
+            loadPublicationData();
     });
+    $rootScope.$watch("briefsLoaded", function(loaded) {
+        if (loaded && $rootScope.publicationId)
+            loadPublicationData();
+    });
+
+
+    /**
+     * Функція загрузки даних по оголошенню
+     **/
+    function loadPublicationData() {
+        $rootScope.loadings.detailed = true;
+
+        publicationQueries.loadPublication($rootScope.routeSection, $rootScope.publicationId.split(":")[0], $rootScope.publicationId.split(":")[1]).success(function(data) {
+            $scope.publication = data;
+
+            $scope.publicationLoaded = true;
+            $rootScope.loadings.detailed = false;
+            $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/" + $rootScope.publicationId.split(":")[0] + "/";
+
+            $timeout(function() {
+                angular.element("select").selectpicker({
+                    style: 'btn-default btn-md'
+                });
+            }, 200);
+        });
+    }
 
 
     /**
