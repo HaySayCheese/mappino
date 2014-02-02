@@ -6,22 +6,22 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
     $scope.publication = "";
 
-    $scope.$watchCollection("publication.head", function(v) {
-        if (v)
-            console.log(v)
-    });
-    $scope.$watchCollection("publication.body", function(v) {
-        if (v)
-            console.log(v)
-    });
-    $scope.$watchCollection("publication.rent_terms", function(v) {
-        if (v)
-            console.log(v)
-    });
-    $scope.$watchCollection("publication.sale_terms", function(v) {
-        if (v)
-            console.log(v)
-    });
+//    $scope.$watchCollection("publication.head", function(v) {
+//        if (v)
+//            console.log(v)
+//    });
+//    $scope.$watchCollection("publication.body", function(v) {
+//        if (v)
+//            console.log(v)
+//    });
+//    $scope.$watchCollection("publication.rent_terms", function(v) {
+//        if (v)
+//            console.log(v)
+//    });
+//    $scope.$watchCollection("publication.sale_terms", function(v) {
+//        if (v)
+//            console.log(v)
+//    });
 
 
     /**
@@ -54,8 +54,54 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 angular.element("select").selectpicker({
                     style: 'btn-default btn-md'
                 });
+                inputChangeInit();
             }, 200);
         });
+    }
+
+
+    function inputChangeInit() {
+        angular.element("input, textarea").bind("focusout", function(e) {
+            var name = e.currentTarget.name.replace("h_", ""),
+                value =  e.currentTarget.value;
+
+            if (!value || value === "")
+                return;
+
+            sendToServerInputData(name, value);
+        });
+        angular.element("input[type='checkbox']").bind("change", function(e) {
+            var name = e.currentTarget.name.replace("h_", ""),
+                value =  e.currentTarget.checked;
+
+            sendToServerInputData(name, value);
+        });
+        angular.element("select").bind("change", function(e) {
+            var name = e.currentTarget.name.replace("h_", ""),
+                value =  e.currentTarget.value;
+
+            sendToServerInputData(name, value);
+        });
+    }
+
+
+    /**
+     * Відправка даних полів на сервер
+     **/
+    function sendToServerInputData(name, value) {
+        var type = $rootScope.routeSection,
+            tid = $rootScope.publicationId.split(":")[0],
+            hid = $rootScope.publicationId.split(":")[1];
+
+        console.log(name + " - " + value)
+
+        publicationQueries.checkInputs(type, tid, hid, { f: name, v: value })
+        .success(function(data) {
+            console.log(data)
+
+//            if (data.value)
+//                arguments[2](data.value);
+        })
     }
 
 
