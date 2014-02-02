@@ -4,10 +4,11 @@ from itertools import ifilter
 import json
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.http.response import HttpResponse, HttpResponseBadRequest
+from django.db.backends.dummy.base import DatabaseError
+from django.http.response import HttpResponse, HttpResponseBadRequest, Http404
 from django.views.decorators.http import require_http_methods
 from collective.decorators.views import login_required_or_forbidden
-from collective.methods.request_data_getters import angular_post_parameters
+from collective.methods.request_data_getters import angular_post_parameters, angular_parameters
 from core.dirtags.models import DirTags
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, OBJECT_STATES
 from core.publications.models import HousesHeads, FlatsHeads, ApartmentsHeads, DachasHeads, CottagesHeads, RoomsHeads, TradesHeads, OfficesHeads, WarehousesHeads, BusinessesHeads, CateringsHeads, GaragesHeads, LandsHeads
@@ -140,6 +141,24 @@ RU_GET_Responses = {
 	    'message': 'invalid @hid.'
 	},
 }
+RU_PATCH_Responses = {
+	'invalid_params': {
+		'code': 1,
+	    'message': None,
+	},
+    'invalid_hid': {
+	    'code': 2,
+        'message': 'invalid hid.'
+    },
+    'update_error':{
+	    'code': 3,
+        'message': 'update error occurred. it is possible that value is invalid.'
+    },
+    'OK': {
+	    'code': 0,
+		'message': 'OK',
+    }
+}
 
 @login_required_or_forbidden
 @require_http_methods(['GET', 'PATCH'])
@@ -190,18 +209,148 @@ def read_and_update(request, tid_and_hid):
 			return HttpResponseBadRequest(
 				json.dumps(RU_GET_Responses['invalid_hid']), content_type='application/json')
 
+		# check owner
 		if record.owner.id != request.user.id:
 			raise PermissionDenied()
 		return HttpResponse(
-			json.dumps(publication_data(record)), content_type='application/json')
+			json.dumps(__publication_data(record)), content_type='application/json')
 
 	else:
-		# todo:
-		pass
+		try:
+			d = angular_parameters(request, ['f, v'])
+		except ValueError as e:
+			response = copy.deepcopy(RU_PATCH_Responses['invalid_params']) # note: deep copy here
+			response['message'] = e.message
+			return HttpResponseBadRequest(json.dumps(response), content_type='application/json')
+		field = d['f']
+		value = d['v']
+
+		try:
+			# Жилая недвижимость
+			if tid == OBJECTS_TYPES.house():
+				head = HousesHeads.objects.filter(id=hid).only('id', 'owner')
+			elif tid == OBJECTS_TYPES.flat():
+				pass
+			elif tid == OBJECTS_TYPES.apartments():
+				pass
+			elif tid == OBJECTS_TYPES.dacha():
+				pass
+			elif tid == OBJECTS_TYPES.cottage():
+				pass
+			elif tid == OBJECTS_TYPES.room():
+				pass
+
+			# Коммерческая недвижимость
+			elif tid == OBJECTS_TYPES.trade():
+				pass
+			elif tid == OBJECTS_TYPES.office():
+				pass
+			elif tid == OBJECTS_TYPES.warehouse():
+				pass
+			elif tid == OBJECTS_TYPES.business():
+				pass
+			elif tid == OBJECTS_TYPES.catering():
+				pass
+
+			# Другая недвижимость
+			elif tid == OBJECTS_TYPES.garage():
+				pass
+			elif tid == OBJECTS_TYPES.land():
+				pass
+		except ObjectDoesNotExist:
+			return HttpResponseBadRequest(
+				json.dumps(RU_PATCH_Responses['invalid_hid']), content_type='application/json')
+
+		# check owner
+		if head.owner.id != request.user.id:
+			raise PermissionDenied()
+
+
+		# Жилая недвижимость
+		try:
+			if tid == OBJECTS_TYPES.house():
+				updated_value = __update_house(head, field, value)
+			elif tid == OBJECTS_TYPES.flat():
+				pass
+			elif tid == OBJECTS_TYPES.apartments():
+				pass
+			elif tid == OBJECTS_TYPES.dacha():
+				pass
+			elif tid == OBJECTS_TYPES.cottage():
+				pass
+			elif tid == OBJECTS_TYPES.room():
+				pass
+
+			# Коммерческая недвижимость
+			elif tid == OBJECTS_TYPES.trade():
+				pass
+			elif tid == OBJECTS_TYPES.office():
+				pass
+			elif tid == OBJECTS_TYPES.warehouse():
+				pass
+			elif tid == OBJECTS_TYPES.business():
+				pass
+			elif tid == OBJECTS_TYPES.catering():
+				pass
+
+			# Другая недвижимость
+			elif tid == OBJECTS_TYPES.garage():
+				pass
+			elif tid == OBJECTS_TYPES.land():
+				pass
+		except ValueError:
+			return HttpResponseBadRequest(
+				json.dumps(RU_PATCH_Responses['update_error']), content_type='application/json')
+
+
+		if updated_value is not None:
+			response = copy.deepcopy(RU_PATCH_Responses['OK'])
+			response.update({
+				'field': field,
+			    'value': updated_value,
+			})
+			return HttpResponse(json.dumps(response), content_type='application/json')
+		else:
+			return HttpResponse(
+				json.dumps(RU_PATCH_Responses['OK']), content_type='application/json')
 
 
 
-def publication_data(record):
+def __update_house(h, field, value):
+	# bool
+	if field == 'for_sale':
+		if value is True:
+			h.for_sale = True
+			h.save(force_update=True)
+			return
+		elif value is False:
+			h.for_sale = False
+			h.save(force_update=True)
+			return
+		else:
+			raise ValueError()
+
+	# # bool
+	# elif prefix == 'for_rent':
+	# 	if value == 'true':
+	# 		h = HousesHeads.by_id(head_id, head_id='for_rent')
+	# 		h.for_rent = True
+	# 		h.save(force_update=True)
+	#
+	# 	elif value == 'false':
+	# 		h = HousesHeads.by_id(head_id, head_id='for_rent')
+	# 		h.for_rent = False
+	# 		h.save(force_update=True)
+	#
+	# 	else:
+	# 		raise ValueError
+
+
+	return None
+
+
+
+def __publication_data(record):
 	#-- head
 	head = serializers.serialize('python', [record], fields=(
 		'created', 'actual', 'for_rent', 'for_sale', 'state_sid'))[0]['fields']
