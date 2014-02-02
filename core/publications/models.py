@@ -231,6 +231,8 @@ class HousesSaleTerms(SaleTermsModel):
 	class Meta:
 		db_table = 'o_houses_sale_terms'
 
+	sale_type_sid = models.SmallIntegerField(default=HOUSE_SALE_TYPES.all_house())
+
 
 class HousesRentTerms(LivingRentTermsModel):
 	class Meta:
@@ -452,6 +454,8 @@ class CottagesPhotos(PhotosModel):
 class CottagesSaleTerms(SaleTermsModel):
 	class Meta:
 		db_table = 'o_cottages_sale_terms'
+
+	sale_type_sid = models.SmallIntegerField(default=COTTAGE_SALE_TYPES.all_house())
 
 
 class CottagesRentTerms(LivingRentTermsModel):
