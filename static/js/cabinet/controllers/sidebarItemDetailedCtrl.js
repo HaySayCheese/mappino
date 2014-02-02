@@ -6,8 +6,21 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
     $scope.publication = "";
 
-    $scope.$watchCollection("publication", function(v) {
-        console.log(v)
+    $scope.$watchCollection("publication.head", function(v) {
+        if (v)
+            console.log(v)
+    });
+    $scope.$watchCollection("publication.body", function(v) {
+        if (v)
+            console.log(v)
+    });
+    $scope.$watchCollection("publication.rent_terms", function(v) {
+        if (v)
+            console.log(v)
+    });
+    $scope.$watchCollection("publication.sale_terms", function(v) {
+        if (v)
+            console.log(v)
     });
 
 

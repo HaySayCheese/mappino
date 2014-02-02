@@ -8,6 +8,9 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, Br
 
     $scope.$on("$routeChangeSuccess", function(event, current, previous) {
 
+        if (!$rootScope.routeSection)
+            return;
+
         initScrollBar();
 
         if (previous && previous.params) {
@@ -45,6 +48,7 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, Br
             $scope.briefs = data;
 
             initScrollBar();
+            console.log(data)
         });
     }
 
