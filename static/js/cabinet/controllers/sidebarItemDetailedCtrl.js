@@ -41,9 +41,13 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * Функція загрузки даних по оголошенню
      **/
     function loadPublicationData() {
+        var type = $rootScope.routeSection,
+            tid = $rootScope.publicationId.split(":")[0],
+            hid = $rootScope.publicationId.split(":")[1];
+
         $rootScope.loadings.detailed = true;
 
-        publicationQueries.loadPublication($rootScope.routeSection, $rootScope.publicationId.split(":")[0], $rootScope.publicationId.split(":")[1]).success(function(data) {
+        publicationQueries.loadPublication(type, tid, hid).success(function(data) {
             $scope.publication = data;
 
             $scope.publicationLoaded = true;
@@ -68,14 +72,19 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             if (!value || value === "")
                 return;
 
-            sendToServerInputData(name, value);
+            sendToServerInputData(name, value, function(newValue) {
+                if (newValue)
+                    e.currentTarget.value = newValue
+            });
         });
+
         angular.element("input[type='checkbox']").bind("change", function(e) {
             var name = e.currentTarget.name.replace("h_", ""),
                 value =  e.currentTarget.checked;
 
             sendToServerInputData(name, value);
         });
+
         angular.element("select").bind("change", function(e) {
             var name = e.currentTarget.name.replace("h_", ""),
                 value =  e.currentTarget.value;
@@ -88,20 +97,20 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     /**
      * Відправка даних полів на сервер
      **/
-    function sendToServerInputData(name, value) {
+    function sendToServerInputData(name, value, callback) {
         var type = $rootScope.routeSection,
             tid = $rootScope.publicationId.split(":")[0],
             hid = $rootScope.publicationId.split(":")[1];
 
-        console.log(name + " - " + value)
+        console.log(name + " - " + value);
 
         publicationQueries.checkInputs(type, tid, hid, { f: name, v: value })
         .success(function(data) {
-            console.log(data)
+            console.log(data);
 
-//            if (data.value)
-//                arguments[2](data.value);
-        })
+            if (data.value)
+                callback(data.value);
+        });
     }
 
 
