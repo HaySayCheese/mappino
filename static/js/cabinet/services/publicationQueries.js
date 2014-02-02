@@ -21,7 +21,7 @@ app.factory('publicationQueries', function($http, $cookies) {
         // Запит на отримання оголошення
         loadPublication: function(type, tid, hid) {
             return $http({
-                url: '/ajax/api/cabinet/publications/' + type + '/' + tid + ":" + hid,
+                url: '/ajax/api/cabinet/publications/' + type + '/' + tid + ":" + hid + '/',
                 method: "GET",
                 headers: {
                     'X-CSRFToken': $cookies.csrftoken

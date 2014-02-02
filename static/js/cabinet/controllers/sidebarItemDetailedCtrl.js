@@ -69,9 +69,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             var name = e.currentTarget.name.replace("h_", ""),
                 value =  e.currentTarget.value;
 
-            if (!value || value === "")
-                return;
-
             sendToServerInputData(name, value, function(newValue) {
                 if (newValue)
                     e.currentTarget.value = newValue
