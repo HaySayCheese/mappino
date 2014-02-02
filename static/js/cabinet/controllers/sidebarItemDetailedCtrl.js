@@ -1,41 +1,46 @@
 'use strict';
 
-app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $compile, $routeParams) {
+app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $compile, $routeParams, publicationQueries) {
 
-    initScrollbar();
+    initScrollBar();
 
-    $scope.publication = {
-        title: "ffsf"
-    };
+    $scope.publication = "";
 
-    $scope.$watch("publication.title", function(nv) {
-        //console.log(nv)
+    $scope.$watchCollection("publication", function(v) {
+        console.log(v)
     });
-
-
-    /**
-     * Ініціалізація дропдауна
-     **/
-    $timeout(function() {
-        angular.element(".selectpicker").selectpicker({
-            style: 'btn-default btn-md'
-        });
-    }, 15);
 
 
     /**
      * При зміні урла генерить урл для темплейта
      **/
     $scope.$on("$routeChangeSuccess", function() {
-        $scope.publicationLoaded = true;
-        $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/houses/";
+
+        if ($rootScope.routeSection === "unpublished" && $rootScope.publicationId) {
+
+            publicationQueries.loadPublication($rootScope.routeSection, $rootScope.publicationId.split(":")[0], $rootScope.publicationId.split(":")[1]).success(function(data) {
+                //console.log(data);
+
+                $scope.publication = data;
+
+                $scope.publicationLoaded = true;
+                $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/" + $rootScope.publicationId.split(":")[0] + "/";
+
+                $timeout(function() {
+                    angular.element("select").selectpicker({
+                        style: 'btn-default btn-md'
+                    });
+                }, 200);
+            });
+        }
+
     });
 
 
     /**
      * Функція скролбара
      **/
-    function initScrollbar() {
+    function initScrollBar() {
         var sidebar = angular.element(".sidebar-item-detailed-body");
 
         sidebar.perfectScrollbar({

@@ -137,6 +137,10 @@
                         </li>
                     </ul>
                     <div class="tags-loader" ng-show="loadings.tags"></div>
+
+                    <div class="tags-empty" ng-show="!tags.length && !loadings.tags && !creatingTag">
+                        <span>У вас пока нет ярлыков</span>
+                    </div>
                 </div>
 
                 <div class="menu-block">

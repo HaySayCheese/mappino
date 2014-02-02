@@ -128,6 +128,28 @@
             margin-top: 20px;
         }
     }
+
+    .tags-empty {
+        .size(calc(~"100% - 70px"), 100px);
+        position: relative;
+
+        margin: 35px;
+
+        text-align: center;
+        font-size: @font-size-base;
+
+        color: @gray-light;
+        border: 2px dashed @gray-light;
+        border-radius: 15px;
+
+        span {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            .translate(0, -50%);
+        }
+    }
 }
 // заголовок меню
 .menu-block-header {
