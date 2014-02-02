@@ -48,7 +48,6 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, Br
             $scope.briefs = data;
 
             initScrollBar();
-            console.log(data)
         });
     }
 
