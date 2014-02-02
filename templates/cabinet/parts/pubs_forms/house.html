@@ -1,5 +1,4 @@
 <div class="col-lg-8 col-lg-offset-1">
-
     <form class="form-horizontal" role="form">
 
         <div class="row">
@@ -12,6 +11,160 @@
                 <div class="checkbox">
                     <input id="h_for_rent" type="checkbox" name="h_for_rent" ng-model="publication.head.for_rent">
                     <label for="h_for_rent">Об аранде</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" ng-show="publication.head.for_sale">
+            <h3>Условия продажи</h3>
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">Продаеться:</label>
+                        <div class="col-lg-8">
+                            <select name="h_sale_type_sid" data-width="100%" ng-model="publication.sale_terms.sale_type_sid">
+                                <option value="0">Часть дома</option>
+                                <option value="1">Весь дом</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">Цена:</label>
+                        <div class="col-lg-4">
+                            <input class="form-control" type="text" name="h_price" ng-model="publication.sale_terms.price"/>
+                        </div>
+                        <div class="col-lg-4">
+                            <select name="h_sale_currency_sid" data-width="100%" ng-model="publication.sale_terms.currency_sid">
+                                <option value="0">Гривен (₴)</option>
+                                <option value="1">Дол. США ($)</option>
+                                <option value="2">Евро (€)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-lg-4 col-lg-offset-4">
+                            <div class="checkbox">
+                                <input id="h_sale_is_contract" type="checkbox" name="h_is_contract" ng-model="publication.sale_terms.is_contract">
+                                <label for="h_sale_is_contract">Договорная</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <select name="h_sale_transaction_sid" data-width="100%" ng-model="publication.sale_terms.transaction_sid">
+                                <option value="0">За м²</option>
+                                <option value="1">За все</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Дополнительные условия, уточнения</label>
+                            <input type="text" class="form-control" name="h_sale_add_terms" ng-model="publication.sale_terms.add_terms">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" ng-show="publication.head.for_rent">
+            <h3>Условия аренды</h3>
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">Сдаеться:</label>
+                        <div class="col-lg-8">
+                            <select name="h_rent_type_sid" data-width="100%" ng-model="publication.rent_terms.rent_type_sid">
+                                <option value="0">Часть дома</option>
+                                <option value="1">Весь дом</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">Срок:</label>
+                        <div class="col-lg-8">
+                            <select name="h_period_sid" data-width="100%" ng-model="publication.rent_terms.period_sid">
+                                <option value="0">Посуточно</option>
+                                <option value="1">Помесячно</option>
+                                <option value="2">Долгосрочная оренда</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">Количество мест:</label>
+                        <div class="col-lg-8">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="h_persons_count" ng-model="publication.rent_terms.persons_count">
+                                <span class="input-group-addon">чел.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-lg-4 control-label">Цена:</label>
+                        <div class="col-lg-4">
+                            <input class="form-control" type="text" name="h_rent_price" ng-model="publication.rent_terms.price"/>
+                        </div>
+                        <div class="col-lg-4">
+                            <select name="h_rent_currency_sid" data-width="100%" ng-model="publication.rent_terms.currency_sid">
+                                <option value="0">Гривен (₴)</option>
+                                <option value="1">Дол. США ($)</option>
+                                <option value="2">Евро (€)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-lg-4 col-lg-offset-4">
+                            <div class="checkbox">
+                                <input id="h_rent_is_contract" name="h_rent_is_contract" type="checkbox" ng-model="publication.rent_terms.is_contract">
+                                <label for="h_rent_is_contract">Договорная</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 form-group">
+                        <div class="checkbox">
+                            <input id="h_rent_family" type="checkbox" name="h_rent_family" ng-model="publication.rent_terms.family">
+                            <label for="h_rent_family">Подходит для семей с детьми</label>
+                        </div>
+                        <div class="checkbox">
+                            <input id="h_rent_foreigners" type="checkbox" name="h_rent_foreigners" ng-model="publication.rent_terms.foreigners">
+                            <label for="h_rent_foreigners">Размещение иностранцев</label>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 form-group">
+                        <div class="checkbox">
+                            <input id="h_rent_smoking" type="checkbox" name="h_rent_smoking" ng-model="publication.rent_terms.smoking">
+                            <label for="h_rent_smoking">Можно курить</label>
+                        </div>
+                        <div class="checkbox">
+                            <input id="h_rent_pets" type="checkbox" name="h_rent_pets" ng-model="publication.rent_terms.pets">
+                            <label for="h_rent_pets">Питомцы разрешены</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Дополнительные условия, уточнения</label>
+                            <input type="text" class="form-control" name="h_rent_add_terms" ng-model="publication.rent_terms.add_terms">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -65,7 +218,7 @@
                         <div class="col-lg-6">
                             <div class="input-group">
                                 <input type="text" class="form-control" name="h_total_area" ng-model="publication.body.total_area">
-                                <span class="input-group-addon">м2</span>
+                                <span class="input-group-addon">м<sup>2</sup></span>
                             </div>
                         </div>
                     </div>
@@ -77,7 +230,7 @@
                         <div class="col-lg-6">
                             <div class="input-group">
                                 <input type="text" class="form-control" name="h_living_area" ng-model="publication.body.living_area">
-                                <span class="input-group-addon">м2</span>
+                                <span class="input-group-addon">м<sup>2</sup></span>
                             </div>
                         </div>
                     </div>
@@ -89,7 +242,7 @@
                         <div class="col-lg-6">
                             <div class="input-group">
                                 <input type="text" class="form-control" name="h_kitchen_area" ng-model="publication.body.kitchen_area">
-                                <span class="input-group-addon">м2</span>
+                                <span class="input-group-addon">м<sup>2</sup></span>
                             </div>
                         </div>
                     </div>
@@ -408,161 +561,6 @@
                 <div class="form-group">
                     <label>Другие достопримечательности, уточнения</label>
                     <input type="text" class="form-control" name="h_add_showplaces" ng-model="publication.body.add_showplaces">
-                </div>
-            </div>
-        </div>
-
-
-        <div class="row" ng-show="publication.head.for_sale">
-            <h3>Условия продажи</h3>
-            <div class="col-lg-12">
-                <div class="row">
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label">Продаеться:</label>
-                        <div class="col-lg-8">
-                            <select name="h_sale_type_sid" data-width="100%" ng-model="publication.sale_terms.sale_type_sid">
-                                <option value="0">Часть дома</option>
-                                <option value="1">Весь дом</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label">Цена:</label>
-                        <div class="col-lg-4">
-                            <input class="form-control" type="text" name="h_price" ng-model="publication.sale_terms.price"/>
-                        </div>
-                        <div class="col-lg-4">
-                            <select name="h_sale_currency_sid" data-width="100%" ng-model="publication.sale_terms.currency_sid">
-                                <option value="0">Гривен (₴)</option>
-                                <option value="1">Дол. США ($)</option>
-                                <option value="2">Евро (€)</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="form-group">
-                        <div class="col-lg-4 col-lg-offset-4">
-                            <div class="checkbox">
-                                <input id="h_sale_is_contract" type="checkbox" name="h_is_contract" ng-model="publication.sale_terms.is_contract">
-                                <label for="h_sale_is_contract">Договорная</label>
-                            </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <select name="h_sale_transaction_sid" data-width="100%" ng-model="publication.sale_terms.transaction_sid">
-                                <option value="0">За м²</option>
-                                <option value="1">За все</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="form-group">
-                            <label>Дополнительные условия, уточнения</label>
-                            <input type="text" class="form-control" name="h_sale_add_terms" ng-model="publication.sale_terms.add_terms">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row" ng-show="publication.head.for_rent">
-            <h3>Условия аренды</h3>
-            <div class="col-lg-12">
-                <div class="row">
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label">Сдаеться:</label>
-                        <div class="col-lg-8">
-                            <select name="h_rent_type_sid" data-width="100%" ng-model="publication.rent_terms.rent_type_sid">
-                                <option value="0">Часть дома</option>
-                                <option value="1">Весь дом</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label">Срок:</label>
-                        <div class="col-lg-8">
-                            <select name="h_period_sid" data-width="100%" ng-model="publication.rent_terms.period_sid">
-                                <option value="0">Посуточно</option>
-                                <option value="1">Помесячно</option>
-                                <option value="2">Долгосрочная оренда</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label">Количество мест:</label>
-                        <div class="col-lg-8">
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="h_persons_count" ng-model="publication.rent_terms.persons_count">
-                                <span class="input-group-addon">чел.</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label">Цена:</label>
-                        <div class="col-lg-4">
-                            <input class="form-control" type="text" name="h_rent_price" ng-model="publication.rent_terms.price"/>
-                        </div>
-                        <div class="col-lg-4">
-                            <select name="h_rent_currency_sid" data-width="100%" ng-model="publication.rent_terms.currency_sid">
-                                <option value="0">Гривен (₴)</option>
-                                <option value="1">Дол. США ($)</option>
-                                <option value="2">Евро (€)</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group">
-                        <div class="col-lg-4 col-lg-offset-4">
-                            <div class="checkbox">
-                                <input id="h_rent_is_contract" name="h_rent_is_contract" type="checkbox" ng-model="publication.rent_terms.is_contract">
-                                <label for="h_rent_is_contract">Договорная</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-6 form-group">
-                        <div class="checkbox">
-                            <input id="h_rent_family" type="checkbox" name="h_rent_family" ng-model="publication.rent_terms.family">
-                            <label for="h_rent_family">Подходит для семей с детьми</label>
-                        </div>
-                        <div class="checkbox">
-                            <input id="h_rent_foreigners" type="checkbox" name="h_rent_foreigners" ng-model="publication.rent_terms.foreigners">
-                            <label for="h_rent_foreigners">Размещение иностранцев</label>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 form-group">
-                        <div class="checkbox">
-                            <input id="h_rent_smoking" type="checkbox" name="h_rent_smoking" ng-model="publication.rent_terms.smoking">
-                            <label for="h_rent_smoking">Можно курить</label>
-                        </div>
-                        <div class="checkbox">
-                            <input id="h_rent_pets" type="checkbox" name="h_rent_pets" ng-model="publication.rent_terms.pets">
-                            <label for="h_rent_pets">Питомцы разрешены</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="form-group">
-                            <label>Дополнительные условия, уточнения</label>
-                            <input type="text" class="form-control" name="h_rent_add_terms" ng-model="publication.rent_terms.add_terms">
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
