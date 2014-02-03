@@ -1,14 +1,17 @@
 #coding=utf-8
-from django.db import DatabaseError, IntegrityError
 from collective.methods.formatters import format_text, format_title
-from core.publications.constants import INDIVIDUAL_HEATING_TYPES, HEATING_TYPES, OBJECT_CONDITIONS, MARKET_TYPES, CURRENCIES, LIVING_RENT_PERIODS, SALE_TRANSACTION_TYPES
-from core.publications.models import HousesHeads, HousesBodies, HousesRentTerms
+from core.publications.constants import SALE_TRANSACTION_TYPES, CURRENCIES, LIVING_RENT_PERIODS, MARKET_TYPES, \
+	OBJECT_CONDITIONS, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES
+from core.publications.models import HousesSaleTerms, HousesRentTerms, HousesBodies
 from core.publications.objects_constants.houses import HOUSE_SALE_TYPES, HOUSE_RENT_TYPES
+from django.db import DatabaseError
+
+
 
 # Оновлює інформацію про будинок.
 #
-# Поле для оновлення відшукується за префіксом @prefix.
-# Значення, що онволюється (@value) перевіряється лише на коректність з точки зору БД та системи:
+# Поле для оновлення відшукується за префіксом @field.
+# Значення, що оноволюється (@value) перевіряється лише на коректність з точки зору БД та системи:
 # (недопустимі, умисно некоректні значення, такі, що можуть призвести до збоїв системи)
 #
 # Жодних перевірок щодо правдивості та консистентності введеного значення не здійснюється,
@@ -21,362 +24,329 @@ from core.publications.objects_constants.houses import HOUSE_SALE_TYPES, HOUSE_R
 # тоді як перевірка певних полів може залежати від значень інших, пропущених полів.
 #
 # Перевірку консистентності даних слід виконувати на етапі підготовки оголошення до публікації.
-
-def update_house(prefix, value, head_id=None, body_id=None, rent_id=None):
+#
+#
+def update_house(h, field, value):
 	try:
 		# bool
-		if prefix == 'for_sale':
-			if value == 'true':
-				h = HousesHeads.by_id(head_id, head_id='for_sale')
-				h.for_sale = True
+		if field == 'for_sale':
+			if (value is True) or (value is False):
+				h.for_sale = value
 				h.save(force_update=True)
-
-			elif value == 'false':
-				h = HousesHeads.by_id(head_id, head_id='for_sale')
-				h.for_sale = False
-				h.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
-
-
-		# bool
-		elif prefix == 'for_rent':
-			if value == 'true':
-				h = HousesHeads.by_id(head_id, head_id='for_rent')
-				h.for_rent = True
-				h.save(force_update=True)
-
-			elif value == 'false':
-				h = HousesHeads.by_id(head_id, head_id='for_rent')
-				h.for_rent = False
-				h.save(force_update=True)
-
-			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# sid
-		elif prefix == 'sale_type':
+		elif field == 'sale_type_sid':
 			value = int(value)
 			if value not in HOUSE_SALE_TYPES.values():
-				raise ValueError
+				raise ValueError()
 
-			b = HousesBodies.by_id(body_id, only='sale_type_sid')
-			b.sale_type_sid = value
-			b.save(force_update=True)
+			st = HousesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+			st.sale_type_sid = value
+			st.save(force_update=True)
+			return
 
 
 		# blank or decimal
-		elif prefix == 'price':
+		elif field == 'sale_price':
 			if not value:
-				b = HousesBodies.by_id(body_id, only='price')
-				b.price = None
-				b.save(force_update=True)
-
+				st = HousesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+				st.price = None
+				st.save(force_update=True)
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
 					raise ValueError
 
-				b = HousesBodies.by_id(body_id, only='price')
-				b.price = value
-				b.save(force_update=True)
-
-				if int(value) == float(value):
-					# Якщо після коми лише нулі - повернути ціле значення
-					return "%.0f" % value
-				else:
-					# Інакше - округлити до 2х знаків після коми
-					return "%.2f" % value
-
-
-		# sid
-		elif prefix == 'transaction_type':
-			value = int(value)
-			if value not in SALE_TRANSACTION_TYPES.values():
-				raise ValueError
-
-			b = HousesBodies.by_id(body_id, only='transaction_type_sid')
-			b.transaction_type_sid = value
-			b.save(force_update=True)
-
-
-		# sid
-		elif prefix == 'currency':
-			value = int(value)
-			if value not in CURRENCIES.values():
-				raise ValueError
-
-			b = HousesBodies.by_id(body_id, only='currency_sid')
-			b.currency_sid = value
-			b.save(force_update=True)
-
-
-		# bool
-		elif prefix == 'price_contract':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='price_is_contract')
-				b.price_is_contract = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='price_is_contract')
-				b.price_is_contract = False
-				b.save(force_update=True)
-
-			else:
-				raise ValueError
-
-
-		# text
-		elif prefix == 'sale_add_terms':
-			b = HousesBodies.by_id(body_id, only='add_terms')
-			if not value:
-				b.add_terms = None
-				b.save(force_update=True)
-
-			else:
-				value = format_text(value)
-				b.add_terms = value
-				b.save(force_update=True)
-				return value
-
-
-		# sid
-		elif prefix == 'rent_type':
-			value = int(value)
-			if value not in HOUSE_RENT_TYPES.values():
-				raise ValueError
-
-			r = HousesRentTerms.by_id(rent_id, only='rent_type_sid')
-			r.rent_type_sid = value
-			r.save(force_update=True)
-
-
-		# sid
-		elif prefix == 'rent_period':
-			value = int(value)
-			if value not in LIVING_RENT_PERIODS.values():
-				raise ValueError
-
-			r = HousesRentTerms.by_id(rent_id, only='period_sid')
-			r.period_sid = value
-			r.save(force_update=True)
-
-
-		# blank or int
-		elif prefix == 'rent_persons_count':
-			if not value:
-				r = HousesRentTerms.by_id(rent_id, only='persons_count')
-				r.persons_count = None
-				r.save(force_update=True)
-
-			else:
-				value = int(value)
-				if value <= 0:
-					raise ValueError
-
-				r = HousesRentTerms.by_id(rent_id, only='persons_count')
-				r.persons_count = int(value)
-				r.save(force_update=True)
-
-
-		# blank or decimal
-		elif prefix == 'rent_price':
-			if not value:
-				r = HousesRentTerms.by_id(rent_id, only='price')
-				r.price = None
-				r.save(force_update=True)
-
-			else:
-				value = round(float(value.replace(',','.')), 2)
-				if value <= 0:
-					raise ValueError
-
-				r = HousesRentTerms.by_id(rent_id, only='price')
-				r.price = value
-				r.save(force_update=True)
+				st = HousesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+				st.price = value
+				st.save(force_update=True)
 
 				if int(value) == value:
 					# Якщо після коми лише нулі - повернути ціле значення
 					return "%.0f" % value
-
 				else:
 					# Інакше - округлити до 2х знаків після коми
 					return "%.2f" % value
 
 
 		# sid
-		elif prefix == 'rent_currency':
+		elif field == 'sale_transaction_type_sid':
+			value = int(value)
+			if value not in SALE_TRANSACTION_TYPES.values():
+				raise ValueError()
+
+			st = HousesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+			st.transaction_sid = value
+			st.save(force_update=True)
+			return
+
+
+		# sid
+		elif field == 'sale_currency_sid':
 			value = int(value)
 			if value not in CURRENCIES.values():
 				raise ValueError
 
-			r = HousesRentTerms.by_id(rent_id, only='currency_sid')
-			r.currency_sid = value
-			r.save(force_update=True)
+			st = HousesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+			st.currency_sid = value
+			st.save(force_update=True)
 			return
 
 
-		# boolean
-		elif prefix == 'rent_price_contract':
-			if value == 'true':
-				r = HousesRentTerms.by_id(rent_id, only='price_is_contract')
-				r.price_is_contract = True
-				r.save(force_update=True)
-
-			elif value == 'false':
-				r = HousesRentTerms.by_id(rent_id, only='price_is_contract')
-				r.price_is_contract = False
-				r.save(force_update=True)
-
+		# bool
+		elif field == 'sale_is_contract':
+			if (value is True) or (value is False):
+				st = HousesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+				st.price_is_contract = value
+				st.save(force_update=True)
+				return
 			else:
-				raise ValueError
-
-
-		# boolean
-		elif prefix == 'rent_for_family':
-			if value == 'true':
-				r = HousesRentTerms.by_id(rent_id, only='family')
-				r.family = True
-				r.save(force_update=True)
-
-			elif value == 'false':
-				r = HousesRentTerms.by_id(rent_id, only='family')
-				r.family = False
-				r.save(force_update=True)
-
-			else:
-				raise ValueError
-
-
-		# boolean
-		elif prefix == 'rent_smoking':
-			if value == 'true':
-				r = HousesRentTerms.by_id(rent_id, only='smoking')
-				r.smoking = True
-				r.save(force_update=True)
-
-			elif value == 'false':
-				r = HousesRentTerms.by_id(rent_id, only='smoking')
-				r.smoking = False
-				r.save(force_update=True)
-
-			else:
-				raise ValueError
-
-
-		# boolean
-		elif prefix == 'rent_foreigners':
-			if value == 'true':
-				r = HousesRentTerms.by_id(rent_id, only='foreigners')
-				r.foreigners = True
-				r.save(force_update=True)
-
-			elif value == 'false':
-				r = HousesRentTerms.by_id(rent_id, only='foreigners')
-				r.foreigners = False
-				r.save(force_update=True)
-
-			else:
-				raise ValueError
-
-
-		# boolean
-		elif prefix == 'rent_pets':
-			if value == 'true':
-				r = HousesRentTerms.by_id(rent_id, only='pets')
-				r.pets = True
-				r.save(force_update=True)
-
-			elif value == 'false':
-				r = HousesRentTerms.by_id(rent_id, only='pets')
-				r.pets = False
-				r.save(force_update=True)
-
-			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# text
-		elif prefix == 'rent_add_terms':
-			r = HousesRentTerms.by_id(rent_id, only='add_terms')
+		elif field == 'sale_add_terms':
+			st = HousesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 			if not value:
-				r.add_terms = None
-				r.save(force_update=True)
-
-			else:
-				value = format_text(value)
-				r.add_terms = value
-				r.save(force_update=True)
-				return value
-
-
-		# text
-		elif prefix == 'title':
-			h = HousesHeads.by_id(head_id, head_id='title')
-			if not value:
-				h.title = None
-				h.save(force_update=True)
-
-			else:
-				value = format_title(value)
-				h.title = value
-				h.save(force_update=True)
-				return value
-
-
-		# text
-		elif prefix == 'description':
-			h = HousesHeads.by_id(head_id, head_id='descr')
-			if not value:
-				h.descr = None
-				h.save(force_update=True)
+				st.add_terms = None
+				st.save(force_update=True)
 				return
 
 			else:
 				value = format_text(value)
-				h.descr = value
+				st.add_terms = value
+				st.save(force_update=True)
+				return value
+
+
+		# bool
+		elif field == 'for_rent':
+			if (value is True) or (value is False):
+				h.for_rent = value
 				h.save(force_update=True)
+				return
+			else:
+				raise ValueError()
+
+
+		# sid
+		elif field == 'rent_type_sid':
+			value = int(value)
+			if value not in HOUSE_RENT_TYPES.values():
+				raise ValueError()
+
+			rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+			rt.rent_type_sid = value
+			rt.save(force_update=True)
+			return
+
+
+		# sid
+		elif field == 'rent_period_sid':
+			value = int(value)
+			if value not in LIVING_RENT_PERIODS.values():
+				raise ValueError()
+
+			rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+			rt.period_sid = value
+			rt.save(force_update=True)
+			return
+
+
+		# blank or int
+		elif field == 'rent_persons_count':
+			if not value:
+				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.persons_count = None
+				rt.save(force_update=True)
+				return
+
+			else:
+				value = int(value)
+				if value <= 0:
+					raise ValueError()
+
+				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.persons_count = value
+				rt.save(force_update=True)
+				return
+
+
+		# blank or decimal
+		elif field == 'rent_price':
+			if not value:
+				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.price = None
+				rt.save(force_update=True)
+
+			else:
+				value = round(float(value.replace(',','.')), 2)
+				if value <= 0:
+					raise ValueError()
+
+				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.price = value
+				rt.save(force_update=True)
+
+				if int(value) == value:
+					# Якщо після коми лише нулі - повернути ціле значення
+					return "%.0f" % value
+				else:
+					# Інакше - округлити до 2х знаків після коми
+					return "%.2f" % value
+
+
+		# sid
+		elif field == 'rent_currency_sid':
+			value = int(value)
+			if value not in CURRENCIES.values():
+				raise ValueError()
+
+			rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+			rt.currency_sid = value
+			rt.save(force_update=True)
+			return
+
+
+		# boolean
+		elif field == 'rent_is_contract':
+			if (value is True) or (value is False):
+				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.price_is_contract = value
+				rt.save(force_update=True)
+				return
+			else:
+				raise ValueError()
+
+
+		# boolean
+		elif field == 'rent_for_family':
+			if (value is True) or (value is False):
+				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.family = value
+				rt.save(force_update=True)
+				return
+			else:
+				raise ValueError()
+
+
+		# boolean
+		elif field == 'rent_smoking':
+			if (value is True) or (value is False):
+				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.smoking = value
+				rt.save(force_update=True)
+				return
+			else:
+				raise ValueError()
+
+
+		# boolean
+		elif field == 'rent_foreigners':
+			if (value is True) or (value is False):
+				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.foreigners = value
+				rt.save(force_update=True)
+				return
+			else:
+				raise ValueError()
+
+
+		# boolean
+		elif field == 'rent_pets':
+			if (value is True) or (value is False):
+				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.pets = value
+				rt.save(force_update=True)
+				return
+			else:
+				raise ValueError()
+
+
+		# text
+		elif field == 'rent_add_terms':
+			rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+			if not value:
+				rt.add_terms = None
+				rt.save(force_update=True)
+				return
+			else:
+				value = format_text(value)
+				rt.add_terms = value
+				rt.save(force_update=True)
+				return value
+
+
+		# text
+		elif field == 'title':
+			b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+			if not value:
+				b.title = None
+				b.save(force_update=True)
+				return
+			else:
+				value = format_title(value)
+				b.title = value
+				b.save(force_update=True)
+				return value
+
+
+		# text
+		elif field == 'description':
+			b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+			if not value:
+				b.description = None
+				b.save(force_update=True)
+				return
+			else:
+				value = format_text(value)
+				b.description = value
+				b.save(force_update=True)
 				return value
 
 
 		# sid
-		elif prefix == 'market_type':
+		elif field == 'market_type_sid':
 			value = int(value)
 			if value not in MARKET_TYPES.values():
-				raise ValueError
+				raise ValueError()
 
-			b = HousesBodies.by_id(body_id, only='market_type_sid')
+			b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 			b.market_type_sid = value
 			b.save(force_update=True)
+			return
 
 
 		# sid
-		elif prefix == 'condition':
+		elif field == 'condition_sid':
 			value = int(value)
 			if value not in OBJECT_CONDITIONS.values():
-				raise ValueError
+				raise ValueError()
 
-			b = HousesBodies.by_id(body_id, only='condition_sid')
+			b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 			b.condition_sid = value
 			b.save(force_update=True)
+			return
 
 
 		# blank or float
-		elif prefix == 'total_area':
+		elif field == 'total_area':
 			if not value:
-				b = HousesBodies.by_id(body_id, only='total_area')
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.total_area = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
-					raise ValueError
+					raise ValueError()
 
-				b = HousesBodies.by_id(body_id, only='total_area')
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.total_area = value
 				b.save(force_update=True)
 
@@ -389,18 +359,18 @@ def update_house(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# blank or float
-		elif prefix == 'living_area':
+		elif field == 'living_area':
 			if not value:
-				b = HousesBodies.by_id(body_id, only='living_area')
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.living_area = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
-					raise ValueError
+					raise ValueError()
 
-				b = HousesBodies.by_id(body_id, only='living_area')
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.living_area = value
 				b.save(force_update=True)
 
@@ -413,18 +383,18 @@ def update_house(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# blank or float
-		elif prefix == 'kitchen_area':
+		elif field == 'kitchen_area':
 			if not value:
-				b = HousesBodies.by_id(body_id, only='kitchen_area')
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.kitchen_area = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
-					raise ValueError
+					raise ValueError()
 
-				b = HousesBodies.by_id(body_id, only='kitchen_area')
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.kitchen_area = value
 				b.save(force_update=True)
 
@@ -437,139 +407,126 @@ def update_house(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# blank or int
-		elif prefix == 'floors_count':
+		elif field == 'floors_count':
 			if not value:
-				b = HousesBodies.by_id(body_id, only='floors_count')
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.floors_count = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = int(value)
 				if value < 0:
-					raise ValueError
+					raise ValueError()
 
-				b = HousesBodies.by_id(body_id, only='floors_count')
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.floors_count = value
 				b.save(force_update=True)
+				return
 
 
 		# boolean
-		elif prefix == 'mansard':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='mansard')
-				b.mansard = True
+		elif field == 'mansard':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.mansard = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='mansard')
-				b.mansard = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'ground':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='ground')
-				b.ground = True
+		elif field == 'ground':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.ground = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='ground')
-				b.ground = False
-				b.save(force_update=True)
-
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'lower_floor':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='lower_floor')
-				b.lower_floor = True
+		elif field == 'lower_floor':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.lower_floor = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='lower_floor')
-				b.lower_floor = False
-				b.save(force_update=True)
-
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# blank or int
-		elif prefix == 'rooms_count':
+		elif field == 'rooms_count':
 			if not value:
-				b = HousesBodies.by_id(body_id, only='rooms_count')
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.rooms_count = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = int(value)
 				if value < 0:
-					raise ValueError
+					raise ValueError()
 
-				b = HousesBodies.by_id(body_id, only='rooms_count')
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.rooms_count = value
 				b.save(force_update=True)
+				return
 
 
 		# blank or int
-		elif prefix == 'bedrooms_count':
+		elif field == 'bedrooms_count':
 			if not value:
-				b = HousesBodies.by_id(body_id, only='bedrooms_count')
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.bedrooms_count = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = int(value)
 				if value < 0:
-					raise ValueError
+					raise ValueError()
 
-				b = HousesBodies.by_id(body_id, only='bedrooms_count')
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.bedrooms_count = value
 				b.save(force_update=True)
+				return
 
 
 		# blank or int
-		elif prefix == 'vcs_count':
+		elif field == 'vcs_count':
 			if not value:
-				b = HousesBodies.by_id(body_id, only='vcs_count')
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.vcs_count = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = int(value)
 				if value < 0:
-					raise ValueError
+					raise ValueError()
 
-				b = HousesBodies.by_id(body_id, only='vcs_count')
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.vcs_count = value
 				b.save(force_update=True)
+				return
 
 
 		# sid
-		elif prefix == 'heating_type':
+		elif field == 'heating_type_sid':
 			value = int(value)
 			if value not in HEATING_TYPES.values():
-				raise ValueError
+				raise ValueError()
 
-			b = HousesBodies.by_id(body_id, only='heating_type_sid')
+			b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 			b.heating_type_sid = value
 			b.save(force_update=True)
 
 
 		# text
-		elif prefix == 'custom_heating_type':
-			b = HousesBodies.by_id(body_id, only='custom_heating_type')
+		elif field == 'custom_heating_type_sid':
+			b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
 				b.custom_heating_type = None
 				b.save(force_update=True)
-
+				return
 			else:
 				# fixme: додати форматування
 				b.custom_heating_type = value
@@ -578,23 +535,24 @@ def update_house(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# sid
-		elif prefix == 'ind_heating_type':
+		elif field == 'ind_heating_type_sid':
 			value = int(value)
 			if value not in INDIVIDUAL_HEATING_TYPES.values():
-				raise ValueError
+				raise ValueError()
 
-			b = HousesBodies.by_id(body_id, only='ind_heating_type_sid')
+			b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 			b.ind_heating_type_sid = value
 			b.save(force_update=True)
+			return
 
 
 		# text
-		elif prefix == 'custom_ind_heating_type':
-			b = HousesBodies.by_id(body_id, only='custom_ind_heating_type')
+		elif field == 'custom_ind_heating_type_sid':
+			b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
 				b.custom_ind_heating_type = None
 				b.save(force_update=True)
-
+				return
 			else:
 				# fixme: додати форматування
 				b.custom_ind_heating_type = value
@@ -603,220 +561,153 @@ def update_house(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# boolean
-		elif prefix == 'electricity':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='electricity')
-				b.electricity = True
+		elif field == 'electricity':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.electricity = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='electricity')
-				b.electricity = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'gas':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='gas')
-				b.gas = True
+		elif field == 'gas':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.gas = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='gas')
-				b.gas = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'sewerage':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='sewerage')
-				b.sewerage = True
+		elif field == 'sewerage':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.sewerage = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='sewerage')
-				b.sewerage = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'hot_water':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='hot_water')
-				b.hot_water = True
+		elif field == 'hot_water':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.hot_water = value
 				b.save(force_update=True)
+			else:
+				raise ValueError()
 
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='hot_water')
-				b.hot_water = False
+
+		# boolean
+		elif field == 'cold_water':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.cold_water = value
 				b.save(force_update=True)
-
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'cold_water':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='cold_water')
-				b.cold_water = True
+		elif field == 'security_alarm':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.security_alarm = value
 				b.save(force_update=True)
+				return
+			else:
+				raise ValueError()
 
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='cold_water')
-				b.cold_water = False
+
+		# boolean
+		elif field == 'fire_alarm':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.fire_alarm = value
 				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'security_alarm':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='security_alarm')
-				b.security_alarm = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='security_alarm')
-				b.security_alarm = False
-				b.save(force_update=True)
-
+		elif field == 'furniture':
+			if (value is True) or (value is False):
+				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.furniture = value
+				rt.save(force_update=True)
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'fire_alarm':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='fire_alarm')
-				b.fire_alarm = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='fire_alarm')
-				b.fire_alarm = False
-				b.save(force_update=True)
-
+		elif field == 'washing_machine':
+			if (value is True) or (value is False):
+				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.washing_machine = value
+				rt.save(force_update=True)
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'furniture':
-			if value == 'true':
-				r = HousesRentTerms.by_id(rent_id, only='furniture')
-				r.furniture = True
-				r.save(force_update=True)
-
-			elif value == 'false':
-				r = HousesRentTerms.by_id(rent_id, only='furniture')
-				r.furniture = False
-				r.save(force_update=True)
-
+		elif field == 'refrigerator':
+			if (value is True) or (value is False):
+				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.refrigerator = value
+				rt.save(force_update=True)
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'washing_machine':
-			if value == 'true':
-				r = HousesRentTerms.by_id(rent_id, only='washing_machine')
-				r.washing_machine = True
-				r.save(force_update=True)
-
-			elif value == 'false':
-				r = HousesRentTerms.by_id(rent_id, only='washing_machine')
-				r.washing_machine = False
-				r.save(force_update=True)
-
+		elif field == 'conditioner':
+			if (value is True) or (value is False):
+				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.conditioner = value
+				rt.save(force_update=True)
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'refrigerator':
-			if value == 'true':
-				r = HousesRentTerms.by_id(rent_id, only='refrigerator')
-				r.refrigerator = True
-				r.save(force_update=True)
-
-			elif value == 'false':
-				r = HousesRentTerms.by_id(rent_id, only='refrigerator')
-				r.refrigerator = False
-				r.save(force_update=True)
-
+		elif field == 'tv':
+			if (value is True) or (value is False):
+				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.tv = value
+				rt.save(force_update=True)
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'conditioner':
-			if value == 'true':
-				r = HousesRentTerms.by_id(rent_id, only='conditioner')
-				r.conditioner = True
-				r.save(force_update=True)
-
-			elif value == 'false':
-				r = HousesRentTerms.by_id(rent_id, only='conditioner')
-				r.conditioner = False
-				r.save(force_update=True)
-
+		elif field == 'home_theater':
+			if (value is True) or (value is False):
+				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.home_theater = value
+				rt.save(force_update=True)
+				return
 			else:
-				raise ValueError
-
-
-		# boolean
-		elif prefix == 'tv':
-			if value == 'true':
-				r = HousesRentTerms.by_id(rent_id, only='tv')
-				r.tv = True
-				r.save(force_update=True)
-
-			elif value == 'false':
-				r = HousesRentTerms.by_id(rent_id, only='tv')
-				r.tv = False
-				r.save(force_update=True)
-
-			else:
-				raise ValueError
-
-
-		# boolean
-		elif prefix == 'home_theater':
-			if value == 'true':
-				r = HousesRentTerms.by_id(rent_id, only='home_theater')
-				r.home_theater = True
-				r.save(force_update=True)
-
-			elif value == 'false':
-				r = HousesRentTerms.by_id(rent_id, only='home_theater')
-				r.home_theater = False
-				r.save(force_update=True)
-
-			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# text
-		elif prefix == 'add_facilities':
-			b = HousesBodies.by_id(body_id, only='add_facilities')
+		elif field == 'add_facilities':
+			b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
 				b.add_facilities = None
 				b.save(force_update=True)
-
+				return
 			else:
 				# fixme: додати форматування
 				b.add_facilities = value
@@ -825,220 +716,155 @@ def update_house(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# boolean
-		elif prefix == 'phone':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='phone')
-				b.phone = True
+		elif field == 'phone':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.phone = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='phone')
-				b.phone = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'mobile_coverage':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='mobile_coverage')
-				b.mobile_coverage = True
+		elif field == 'mobile_coverage':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.mobile_coverage = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='mobile_coverage')
-				b.mobile_coverage = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'internet':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='internet')
-				b.internet = True
+		elif field == 'internet':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.internet = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='internet')
-				b.internet = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'cab_tv':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='cable_tv')
-				b.cable_tv = True
+		elif field == 'cab_tv':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.cable_tv = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='cable_tv')
-				b.cable_tv = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'garage':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='garage')
-				b.garage = True
+		elif field == 'garage':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.garage = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='garage')
-				b.garage = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'well':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='well')
-				b.well = True
+		elif field == 'well':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.well = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='well')
-				b.well = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'alcove':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='alcove')
-				b.alcove = True
+		elif field == 'alcove':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.alcove = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='alcove')
-				b.alcove = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'fence':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='fence')
-				b.fence = True
+		elif field == 'fence':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.fence = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='fence')
-				b.fence = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'kaleyard':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='kaleyard')
-				b.kaleyard = True
+		elif field == 'kaleyard':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.kaleyard = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='kaleyard')
-				b.kaleyard = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'garden':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='garden')
-				b.garden = True
+		elif field == 'garden':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.garden = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='garden')
-				b.garden = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'terrace':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='terrace')
-				b.terrace = True
+		elif field == 'terrace':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.terrace = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='terrace')
-				b.terrace = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'pool':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='pool')
-				b.pool = True
+		elif field == 'pool':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.pool = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='pool')
-				b.pool = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'cellar':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='cellar')
-				b.cellar = True
+		elif field == 'cellar':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.cellar = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='cellar')
-				b.cellar = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# text
-		elif prefix == 'add_buildings':
-			b = HousesBodies.by_id(body_id, only='add_buildings')
+		elif field == 'add_buildings':
+			b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
 				b.add_buildings= None
 				b.save(force_update=True)
-
+				return
 			else:
 				# fixme: додати форматування
 				b.add_buildings = value
@@ -1047,186 +873,101 @@ def update_house(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# boolean
-		elif prefix == 'kindergarten':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='kindergarten')
-				b.kindergarten = True
+		elif field == 'kindergarten':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.kindergarten = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='kindergarten')
-				b.kindergarten = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'school':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='school')
-				b.school = True
+		elif field == 'school':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.school = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='school')
-				b.school = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'market':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='market')
-				b.market = True
+		elif field == 'market':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.market = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='market')
-				b.market = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'transport_stop':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='transport_stop')
-				b.transport_stop = True
+		elif field == 'transport_stop':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.transport_stop = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='transport_stop')
-				b.transport_stop = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'entertainment':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='entertainment')
-				b.entertainment = True
+		elif field == 'entertainment':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.entertainment = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='entertainment')
-				b.entertainment = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'sport_center':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='sport_center')
-				b.sport_center = True
+		elif field == 'sport_center':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.sport_center = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='sport_center')
-				b.sport_center = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'park':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='park')
-				b.park = True
+		elif field == 'park':
+			if (value is True) or (value is False):
+				b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.park = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='park')
-				b.park = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
-
-		# boolean
-		elif prefix == 'water':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='water')
-				b.water = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='water')
-				b.water = False
-				b.save(force_update=True)
-
-			else:
-				raise ValueError
-
-
-		# boolean
-		elif prefix == 'wood':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='wood')
-				b.wood = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='wood')
-				b.wood = False
-				b.save(force_update=True)
-
-			else:
-				raise ValueError
-
-
-		# boolean
-		elif prefix == 'sea':
-			if value == 'true':
-				b = HousesBodies.by_id(body_id, only='sea')
-				b.sea = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = HousesBodies.by_id(body_id, only='sea')
-				b.sea = False
-				b.save(force_update=True)
-
-			else:
-				raise ValueError
 
 
 		# text
-		elif prefix == 'add_showplaces':
-			b = HousesBodies.by_id(body_id, only='add_showplaces')
+		elif field == 'add_showplaces':
+			b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
 				b.add_showplaces= None
 				b.save(force_update=True)
-
+				return
 			else:
 				# fixme: додати форматування
 				b.add_showplaces = value
 				b.save(force_update=True)
-				return value
+				return
 
-		# ...
-		# other fields here
-		# ...
 
 		else:
-			raise ValueError('invalid @prefix')
+			raise ValueError()
 
-	except (DatabaseError, IntegrityError, ValueError):
-		raise ValueError('Object type: apartments. Prefix: {prefix}. Value = {value}'.format(
-			prefix = unicode(prefix), value = unicode(value)
+	except (DatabaseError, ValueError):
+		raise ValueError('Object type: apartments. Prefix: {0}. Value = {1}'.format(
+			unicode(field), unicode(value)
 		))

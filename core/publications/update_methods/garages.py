@@ -1,13 +1,15 @@
 #coding=utf-8
 from django.db import DatabaseError, IntegrityError
+
 from collective.methods.formatters import format_text, format_title
 from core.publications.constants import CURRENCIES, MARKET_TYPES, COMMERCIAL_RENT_PERIODS, SALE_TRANSACTION_TYPES
-from core.publications.models import GaragesHeads, GaragesBodies, GaragesRentTerms
+from core.publications.models import GaragesBodies, GaragesRentTerms, GaragesSaleTerms
 from core.publications.objects_constants.garages import GARAGE_DRIVE_WAYS
+
 
 # Оновлює інформацію про гараж.
 #
-# Поле для оновлення відшукується за префіксом @prefix.
+# Поле для оновлення відшукується за префіксом @field.
 # Значення, що онволюється (@value) перевіряється лише на коректність з точки зору БД та системи:
 # (недопустимі, умисно некоректні значення, такі, що можуть призвести до збоїв системи)
 #
@@ -22,57 +24,35 @@ from core.publications.objects_constants.garages import GARAGE_DRIVE_WAYS
 #
 # Перевірку консистентності даних слід виконувати на етапі підготовки оголошення до публікації.
 
-def update_garage(prefix, value, head_id=None, body_id=None, rent_id=None):
+def update_garage(h, field, value):
 	try:
 		# bool
-		if prefix == 'for_sale':
-			if value == 'true':
-				h = GaragesHeads.by_id(head_id, head_id='for_sale')
-				h.for_sale = True
+		if field == 'for_sale':
+			if (value is True) or (value is False):
+				h.for_sale = value
 				h.save(force_update=True)
-
-			elif value == 'false':
-				h = GaragesHeads.by_id(head_id, head_id='for_sale')
-				h.for_sale = False
-				h.save(force_update=True)
-
+				return
 			else:
-				raise ValueError('Invalid @for_sale value.')
-
-
-		# bool
-		elif prefix == 'for_rent':
-			if value == 'true':
-				h = GaragesHeads.by_id(head_id, head_id='for_rent')
-				h.for_rent = True
-				h.save(force_update=True)
-
-			elif value == 'false':
-				h = GaragesHeads.by_id(head_id, head_id='for_rent')
-				h.for_rent = False
-				h.save(force_update=True)
-
-			else:
-				raise ValueError('Invalid @for_rent value.')
+				raise ValueError()
 
 
 		# blank or decimal
-		elif prefix == 'price':
+		elif field == 'sale_price':
 			if not value:
-				b = GaragesBodies.by_id(body_id, only='price')
-				b.price = None
-				b.save(force_update=True)
-
+				st = GaragesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+				st.price = None
+				st.save(force_update=True)
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
-					raise ValueError('Invalid price')
+					raise ValueError()
 
-				b = GaragesBodies.by_id(body_id, only='price')
-				b.price = value
-				b.save(force_update=True)
+				st = GaragesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+				st.price = value
+				st.save(force_update=True)
 
-				if int(value) == float(value):
+				if int(value) == value:
 					# Якщо після коми лише нулі - повернути ціле значення
 					return "%.0f" % value
 				else:
@@ -81,188 +61,189 @@ def update_garage(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# sid
-		elif prefix == 'transaction_type':
+		elif field == 'sale_transaction_type_sid':
 			value = int(value)
 			if value not in SALE_TRANSACTION_TYPES.values():
-				raise ValueError('Invalid transaction type sid')
+				raise ValueError()
 
-			b = GaragesBodies.by_id(body_id, only='transaction_type_sid')
-			b.transaction_type_sid = value
-			b.save(force_update=True)
+			st = GaragesSaleTerms.objectts.filter(id=h.sale_terms_id).only('id')[0]
+			st.transaction_sid = value
+			st.save(force_update=True)
+			return
 
 
 		# sid
-		elif prefix == 'currency':
+		elif field == 'sale_currency_sid':
 			value = int(value)
 			if value not in CURRENCIES.values():
-				raise ValueError('Invalid currency sid')
+				raise ValueError()
 
-			b = GaragesBodies.by_id(body_id, only='currency_sid')
-			b.currency_sid = value
-			b.save(force_update=True)
+			st = GaragesSaleTerms.objectts.filter(id=h.sale_terms_id).only('id')[0]
+			st.currency_sid = value
+			st.save(force_update=True)
+			return
 
 
 		# bool
-		elif prefix == 'price_contract':
-			if value == 'true':
-				b = GaragesBodies.by_id(body_id, only='price_is_contract')
-				b.price_is_contract = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = GaragesBodies.by_id(body_id, only='price_is_contract')
-				b.price_is_contract = False
-				b.save(force_update=True)
-
+		elif field == 'sale_is_contract':
+			if (value is True) or (value is False):
+				st = GaragesSaleTerms.objectts.filter(id=h.sale_terms_id).only('id')[0]
+				st.price_is_contract = value
+				st.save(force_update=True)
+				return
 			else:
-				raise ValueError('Invalid @price_is_contract value.')
+				raise ValueError()
 
 
 		# text
-		elif prefix == 'sale_add_terms':
-			b = GaragesBodies.by_id(body_id, only='add_terms')
+		elif field == 'sale_add_terms':
+			st = GaragesSaleTerms.objectts.filter(id=h.sale_terms_id).only('id')[0]
 			if not value:
-				b.add_terms = None
-				b.save(force_update=True)
-
+				st.add_terms = None
+				st.save(force_update=True)
+				return
 			else:
 				value = format_text(value)
-				b.add_terms = value
-				b.save(force_update=True)
+				st.add_terms = value
+				st.save(force_update=True)
 				return value
 
 
+		# bool
+		elif field == 'for_rent':
+			if (value is True) or (value is False):
+				h.for_rent = value
+				h.save(force_update=True)
+				return
+			else:
+				raise ValueError()
+
+
 		# sid
-		elif prefix == 'rent_period':
+		elif field == 'rent_period_sid':
 			value = int(value)
 			if value not in COMMERCIAL_RENT_PERIODS.values():
-				raise ValueError('Invalid rent period value.')
+				raise ValueError()
 
-			r = GaragesRentTerms.by_id(rent_id, only='period_sid')
-			r.period_sid = value
-			r.save(force_update=True)
+			rt = GaragesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+			rt.period_sid = value
+			rt.save(force_update=True)
 
 
 		# blank or decimal
-		elif prefix == 'rent_price':
+		elif field == 'rent_price':
 			if not value:
-				r = GaragesRentTerms.by_id(rent_id, only='price')
-				r.price = None
-				r.save(force_update=True)
+				rt = GaragesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.price = None
+				rt.save(force_update=True)
 
 			else:
-				value = round(float(value.replace(',', '.')), 2)
+				value = round(float(value.replace(',','.')), 2)
 				if value <= 0:
-					raise ValueError('Invalid rent price')
+					raise ValueError()
 
-				r = GaragesRentTerms.by_id(rent_id, only='price')
-				r.price = value
-				r.save(force_update=True)
+				rt = GaragesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.price = value
+				rt.save(force_update=True)
 
 				if int(value) == value:
 					# Якщо після коми лише нулі - повернути ціле значення
 					return "%.0f" % value
-
 				else:
 					# Інакше - округлити до 2х знаків після коми
-					return "%.2f" % float(value)
+					return "%.2f" % value
 
 
 		# sid
-		elif prefix == 'rent_currency':
+		elif field == 'rent_currency_sid':
 			value = int(value)
 			if value not in CURRENCIES.values():
-				raise ValueError('Invalid rent currency')
+				raise ValueError()
 
-			r = GaragesRentTerms.by_id(rent_id, only='currency_sid')
-			r.currency_sid = value
-			r.save(force_update=True)
+			rt = GaragesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+			rt.currency_sid = value
+			rt.save(force_update=True)
 			return
 
 
 		# boolean
-		elif prefix == 'rent_price_contract':
-			if value == 'true':
-				r = GaragesRentTerms.by_id(rent_id, only='price_is_contract')
-				r.price_is_contract = True
-				r.save(force_update=True)
-
-			elif value == 'false':
-				r = GaragesRentTerms.by_id(rent_id, only='price_is_contract')
-				r.price_is_contract = False
-				r.save(force_update=True)
-
+		elif field == 'rent_is_contract':
+			if (value is True) or (value is False):
+				rt = GaragesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.price_is_contract = value
+				rt.save(force_update=True)
+				return
 			else:
-				raise ValueError('Invalid rent @price_is_contract')
+				raise ValueError()
 
 
 		# text
-		elif prefix == 'rent_add_terms':
-			r = GaragesRentTerms.by_id(rent_id, only='add_terms')
+		elif field == 'rent_add_terms':
+			rt = GaragesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
 			if not value:
-				r.add_terms = None
-				r.save(force_update=True)
-
+				rt.add_terms = None
+				rt.save(force_update=True)
+				return
 			else:
 				value = format_text(value)
-				r.add_terms = value
-				r.save(force_update=True)
+				rt.add_terms = value
+				rt.save(force_update=True)
 				return value
 
 
 		# text
-		elif prefix == 'title':
-			h = GaragesHeads.by_id(head_id, head_id='title')
+		elif field == 'title':
+			b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				h.title = None
-				h.save(force_update=True)
-
+				b.title = None
+				b.save(force_update=True)
+				return
 			else:
 				value = format_title(value)
-				h.title = value
-				h.save(force_update=True)
+				b.title = value
+				b.save(force_update=True)
 				return value
 
 
 		# text
-		elif prefix == 'description':
-			h = GaragesHeads.by_id(head_id, head_id='descr')
+		elif field == 'description':
+			b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				h.descr = None
-				h.save(force_update=True)
+				b.description = None
+				b.save(force_update=True)
 				return
-
 			else:
 				value = format_text(value)
-				h.descr = value
-				h.save(force_update=True)
+				b.description = value
+				b.save(force_update=True)
 				return value
 
 
 		# sid
-		elif prefix == 'market_type':
+		elif field == 'market_type_sid':
 			value = int(value)
 			if value not in MARKET_TYPES.values():
-				raise ValueError('Invalid market type sid')
+				raise ValueError()
 
-			b = GaragesBodies.by_id(body_id, only='market_type_sid')
+			b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
 			b.market_type_sid = value
 			b.save(force_update=True)
+			return
 
 
 		# blank or float
-		elif prefix == 'area':
+		elif field == 'area':
 			if not value:
-				b = GaragesBodies.by_id(body_id, only='area')
+				b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.area = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
-					raise ValueError('Invalid halls area value.')
+					raise ValueError()
 
-				b = GaragesBodies.by_id(body_id, only='area')
+				b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.area = value
 				b.save(force_update=True)
 
@@ -275,18 +256,18 @@ def update_garage(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# blank or float
-		elif prefix == 'ceiling_height':
+		elif field == 'ceiling_height':
 			if not value:
-				b = GaragesBodies.by_id(body_id, only='ceiling_height')
+				b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.ceiling_height = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
-					raise ValueError('Invalid ceiling height value.')
+					raise ValueError()
 
-				b = GaragesBodies.by_id(body_id, only='ceiling_height')
+				b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.ceiling_height = value
 				b.save(force_update=True)
 
@@ -299,181 +280,138 @@ def update_garage(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# boolean
-		elif prefix == 'pit':
-			if value == 'true':
-				b = GaragesBodies.by_id(body_id, only='pit')
-				b.pit = True
+		elif field == 'pit':
+			if (value is True) or (value is False):
+				b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.pit = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = GaragesBodies.by_id(body_id, only='pit')
-				b.pit = False
-				b.save(force_update=True)
-
+				return
 			else:
 				raise ValueError('Invalid pit value.')
 
 
 		# sid
-		elif prefix == 'driveways':
+		elif field == 'driveways_sid':
 			value = int(value)
 			if value not in GARAGE_DRIVE_WAYS.values():
 				raise ValueError('Invalid driveways sid')
 
-			b = GaragesBodies.by_id(body_id, only='driveways_sid')
+			b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
 			b.driveways_sid = value
 			b.save(force_update=True)
+			return
 
 
 		# boolean
-		elif prefix == 'electricity':
-			if value == 'true':
-				b = GaragesBodies.by_id(body_id, only='electricity')
-				b.electricity = True
+		elif field == 'electricity':
+			if (value is True) or (value is False):
+				b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.electricity = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = GaragesBodies.by_id(body_id, only='electricity')
-				b.electricity = False
-				b.save(force_update=True)
-
+				return
 			else:
 				raise ValueError('Invalid electricity value.')
 
 
 		# boolean
-		elif prefix == 'gas':
-			if value == 'true':
-				b = GaragesBodies.by_id(body_id, only='gas')
-				b.gas = True
+		elif field == 'gas':
+			if (value is True) or (value is False):
+				b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.gas = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = GaragesBodies.by_id(body_id, only='gas')
-				b.gas = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError('Invalid gas value.')
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'security_alarm':
-			if value == 'true':
-				b = GaragesBodies.by_id(body_id, only='security_alarm')
-				b.security_alarm = True
+		elif field == 'security_alarm':
+			if (value is True) or (value is False):
+				b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.security_alarm = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = GaragesBodies.by_id(body_id, only='security_alarm')
-				b.security_alarm = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError('Invalid security alarm value.')
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'fire_alarm':
-			if value == 'true':
-				b = GaragesBodies.by_id(body_id, only='fire_alarm')
-				b.fire_alarm = True
+		elif field == 'fire_alarm':
+			if (value is True) or (value is False):
+				b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.fire_alarm = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = GaragesBodies.by_id(body_id, only='fire_alarm')
-				b.fire_alarm = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError('Invalid fire alarm value.')
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'hot_water':
-			if value == 'true':
-				b = GaragesBodies.by_id(body_id, only='hot_water')
-				b.hot_water = True
+		elif field == 'hot_water':
+			if (value is True) or (value is False):
+				b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.hot_water = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = GaragesBodies.by_id(body_id, only='hot_water')
-				b.hot_water = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError('Invalid fire alarm value.')
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'cold_water':
-			if value == 'true':
-				b = GaragesBodies.by_id(body_id, only='cold_water')
-				b.cold_water = True
+		elif field == 'cold_water':
+			if (value is True) or (value is False):
+				b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.cold_water = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = GaragesBodies.by_id(body_id, only='cold_water')
-				b.cold_water = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError('Invalid cold water value.')
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'ventilation':
-			if value == 'true':
-				b = GaragesBodies.by_id(body_id, only='ventilation')
-				b.ventilation = True
+		elif field == 'ventilation':
+			if (value is True) or (value is False):
+				b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.ventilation = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = GaragesBodies.by_id(body_id, only='ventilation')
-				b.ventilation = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError('Invalid ventilation value.')
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'security':
-			if value == 'true':
-				b = GaragesBodies.by_id(body_id, only='security')
-				b.security = True
+		elif field == 'security':
+			if (value is True) or (value is False):
+				b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.security = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = GaragesBodies.by_id(body_id, only='security')
-				b.security = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError('Invalid security value.')
+				raise ValueError()
+
 
 
 		# text
-		elif prefix == 'add_facilities':
-			b = GaragesBodies.by_id(body_id, only='add_facilities')
+		elif field == 'add_facilities':
+			b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
 				b.add_facilities = None
 				b.save(force_update=True)
-
+				return
 			else:
 				# fixme: додати форматування
 				b.add_facilities = value
 				b.save(force_update=True)
-				return value
+				return
 
 		# ...
 		# other fields here
 		# ...
 
 		else:
-			raise ValueError('invalid @prefix')
+			raise ValueError('invalid @field')
 
 	except (DatabaseError, IntegrityError), e:
-		raise ValueError('Object type: flat. Message: {0} Prefix: {1}. Value = {2}'.format(
-			unicode(e), unicode(prefix), unicode(value))
+		raise ValueError('Object type: flat. Message: {0} field: {1}. Value = {2}'.format(
+			unicode(e), unicode(field), unicode(value))
 		)

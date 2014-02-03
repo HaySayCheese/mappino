@@ -2,11 +2,25 @@
 import copy
 from itertools import ifilter
 import json
-from django.core import serializers
+
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.db.backends.dummy.base import DatabaseError
-from django.http.response import HttpResponse, HttpResponseBadRequest, Http404
+from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
+
+from core.publications.update_methods.dachas import update_dacha
+from core.publications.update_methods.flats import update_flat
+from core.publications.update_methods.apartments import update_apartments
+from core.publications.update_methods.houses import update_house
+from core.publications.update_methods.cottages import update_cottage
+from core.publications.update_methods.offices import update_office
+from core.publications.update_methods.rooms import update_room
+from core.publications.update_methods.trades import update_trade
+from core.publications.update_methods.warehouses import update_warehouse
+from core.publications.update_methods.business import update_business
+from core.publications.update_methods.caterings import update_catering
+from core.publications.update_methods.garages import update_garage
+from core.publications.update_methods.lands import update_land
+from core.publications.utils import publication_data
 from collective.decorators.views import login_required_or_forbidden
 from collective.methods.request_data_getters import angular_post_parameters, angular_parameters
 from core.dirtags.models import DirTags
@@ -161,7 +175,7 @@ RU_PATCH_Responses = {
 }
 
 @login_required_or_forbidden
-@require_http_methods(['GET', 'PATCH'])
+@require_http_methods(['GET', 'POST'])
 def read_and_update(request, tid_and_hid):
 	tid, hid = tid_and_hid.split(':')
 	tid = int(tid)
@@ -212,12 +226,12 @@ def read_and_update(request, tid_and_hid):
 		# check owner
 		if record.owner.id != request.user.id:
 			raise PermissionDenied()
-		return HttpResponse(
-			json.dumps(__publication_data(record)), content_type='application/json')
+		return HttpResponse(json.dumps(
+			publication_data(record)), content_type='application/json')
 
 	else:
 		try:
-			d = angular_parameters(request, ['f, v'])
+			d = angular_parameters(request, ['f', 'v'])
 		except ValueError as e:
 			response = copy.deepcopy(RU_PATCH_Responses['invalid_params']) # note: deep copy here
 			response['message'] = e.message
@@ -228,7 +242,7 @@ def read_and_update(request, tid_and_hid):
 		try:
 			# Жилая недвижимость
 			if tid == OBJECTS_TYPES.house():
-				head = HousesHeads.objects.filter(id=hid).only('id', 'owner')
+				head = HousesHeads.objects.filter(id=hid).only('id', 'owner')[0]
 			elif tid == OBJECTS_TYPES.flat():
 				pass
 			elif tid == OBJECTS_TYPES.apartments():
@@ -257,7 +271,7 @@ def read_and_update(request, tid_and_hid):
 				pass
 			elif tid == OBJECTS_TYPES.land():
 				pass
-		except ObjectDoesNotExist:
+		except IndexError:
 			return HttpResponseBadRequest(
 				json.dumps(RU_PATCH_Responses['invalid_hid']), content_type='application/json')
 
@@ -269,35 +283,35 @@ def read_and_update(request, tid_and_hid):
 		# Жилая недвижимость
 		try:
 			if tid == OBJECTS_TYPES.house():
-				updated_value = __update_house(head, field, value)
+				updated_value = update_house(head, field, value)
 			elif tid == OBJECTS_TYPES.flat():
-				pass
+				updated_value = update_flat(head, field, value)
 			elif tid == OBJECTS_TYPES.apartments():
-				pass
+				updated_value = update_apartments(head, field, value)
 			elif tid == OBJECTS_TYPES.dacha():
-				pass
+				updated_value = update_dacha(head, field, value)
 			elif tid == OBJECTS_TYPES.cottage():
-				pass
+				updated_value = update_cottage(head, field, value)
 			elif tid == OBJECTS_TYPES.room():
-				pass
+				updated_value = update_room(head, field, value)
 
 			# Коммерческая недвижимость
 			elif tid == OBJECTS_TYPES.trade():
-				pass
+				updated_value = update_trade(head, field, value)
 			elif tid == OBJECTS_TYPES.office():
-				pass
+				updated_value = update_office(head, field, value)
 			elif tid == OBJECTS_TYPES.warehouse():
-				pass
+				updated_value = update_warehouse(head, field, value)
 			elif tid == OBJECTS_TYPES.business():
-				pass
+				updated_value = update_business(head, field, value)
 			elif tid == OBJECTS_TYPES.catering():
-				pass
+				updated_value = update_catering(head, field, value)
 
 			# Другая недвижимость
 			elif tid == OBJECTS_TYPES.garage():
-				pass
+				updated_value = update_garage(head, field, value)
 			elif tid == OBJECTS_TYPES.land():
-				pass
+				updated_value = update_land(head, field, value)
 		except ValueError:
 			return HttpResponseBadRequest(
 				json.dumps(RU_PATCH_Responses['update_error']), content_type='application/json')
@@ -305,82 +319,8 @@ def read_and_update(request, tid_and_hid):
 
 		if updated_value is not None:
 			response = copy.deepcopy(RU_PATCH_Responses['OK'])
-			response.update({
-				'field': field,
-			    'value': updated_value,
-			})
+			response['value'] = updated_value
 			return HttpResponse(json.dumps(response), content_type='application/json')
 		else:
 			return HttpResponse(
 				json.dumps(RU_PATCH_Responses['OK']), content_type='application/json')
-
-
-
-def __update_house(h, field, value):
-	# bool
-	if field == 'for_sale':
-		if value is True:
-			h.for_sale = True
-			h.save(force_update=True)
-			return
-		elif value is False:
-			h.for_sale = False
-			h.save(force_update=True)
-			return
-		else:
-			raise ValueError()
-
-	# # bool
-	# elif prefix == 'for_rent':
-	# 	if value == 'true':
-	# 		h = HousesHeads.by_id(head_id, head_id='for_rent')
-	# 		h.for_rent = True
-	# 		h.save(force_update=True)
-	#
-	# 	elif value == 'false':
-	# 		h = HousesHeads.by_id(head_id, head_id='for_rent')
-	# 		h.for_rent = False
-	# 		h.save(force_update=True)
-	#
-	# 	else:
-	# 		raise ValueError
-
-
-	return None
-
-
-
-def __publication_data(record):
-	#-- head
-	head = serializers.serialize('python', [record], fields=(
-		'created', 'actual', 'for_rent', 'for_sale', 'state_sid'))[0]['fields']
-
-	created_dt = head['created']
-	if created_dt is not None:
-		head['created'] = created_dt.isoformat()
-
-	actual_dt = head['actual']
-	if actual_dt is not None:
-		head['actual'] = actual_dt.isoformat()
-
-	#-- body
-	body = serializers.serialize('python', [record.body])[0]['fields']
-
-	#-- for sale
-	if record.for_sale:
-		sale_terms = serializers.serialize('python', [record.sale_terms])[0]['fields']
-	else:
-		sale_terms = None
-
-	#-- for sale
-	if record.for_sale:
-		rent_terms = serializers.serialize('python', [record.rent_terms])[0]['fields']
-	else:
-		rent_terms = None
-
-	return {
-		'head': head,
-		'body': body,
-		'sale_terms': sale_terms,
-		'rent_terms': rent_terms,
-	}
