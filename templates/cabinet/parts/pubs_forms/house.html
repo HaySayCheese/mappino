@@ -34,7 +34,7 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">Цена:</label>
                         <div class="col-lg-4">
-                            <input class="form-control" type="text" name="h_price" ng-model="publication.sale_terms.price"/>
+                            <input class="form-control" type="text" name="h_sale_price" ng-model="publication.sale_terms.price"/>
                         </div>
                         <div class="col-lg-4">
                             <select name="h_sale_currency_sid" data-width="100%" ng-model="publication.sale_terms.currency_sid">
@@ -50,7 +50,7 @@
                     <div class="form-group">
                         <div class="col-lg-4 col-lg-offset-4">
                             <div class="checkbox">
-                                <input id="h_sale_is_contract" type="checkbox" name="h_is_contract" ng-model="publication.sale_terms.is_contract">
+                                <input id="h_sale_is_contract" type="checkbox" name="h_sale_is_contract" ng-model="publication.sale_terms.is_contract">
                                 <label for="h_sale_is_contract">Договорная</label>
                             </div>
                         </div>
@@ -92,7 +92,7 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">Срок:</label>
                         <div class="col-lg-8">
-                            <select name="h_period_sid" data-width="100%" ng-model="publication.rent_terms.period_sid">
+                            <select name="h_rent_period_sid" data-width="100%" ng-model="publication.rent_terms.period_sid">
                                 <option value="0">Посуточно</option>
                                 <option value="1">Помесячно</option>
                                 <option value="2">Долгосрочная оренда</option>
@@ -105,7 +105,7 @@
                         <label class="col-lg-4 control-label">Количество мест:</label>
                         <div class="col-lg-8">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="h_persons_count" ng-model="publication.rent_terms.persons_count">
+                                <input type="text" class="form-control" name="h_rent_persons_count" ng-model="publication.rent_terms.persons_count">
                                 <span class="input-group-addon">чел.</span>
                             </div>
                         </div>
