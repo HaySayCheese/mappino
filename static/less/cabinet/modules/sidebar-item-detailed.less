@@ -18,6 +18,20 @@
         .size(100%, 65px);
         background: #ffffff;
         border-bottom: 1px solid @gray-lighter;
+
+        .publication-controls {
+            display: inline-block;
+            position: relative;
+            padding: 14px 15px;
+        }
+
+        .bootstrap-select {
+            margin: 0;
+        }
+        .btn-group > .btn-group:first-child .selectpicker {
+            .border-left-radius(3px);
+            .border-right-radius(0);
+        }
     }
 
     .sidebar-item-detailed-body {
@@ -79,5 +93,16 @@
             right: 0;
             .translate(0, -50%);
         }
+    }
+
+    .required-star {
+        color: @nice-red;
+        margin-right: 5px;
+    }
+
+    #publication-map {
+        .size(100%, 400px);
+        display: block;
+        border: 1px solid @gray-lighter;
     }
 }

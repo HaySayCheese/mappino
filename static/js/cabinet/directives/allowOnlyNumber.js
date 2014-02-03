@@ -5,14 +5,8 @@ app.directive('allowOnlyNumber', function () {
 
         element.bind("keydown", function(event) {
 
-            if($.inArray(event.which, keyCode) == -1) {
-                scope.$apply(function(){
-                    scope.$eval(attrs.onlyNum);
-                    event.preventDefault();
-                });
-
+            if($.inArray(event.which, keyCode) == -1)
                 event.preventDefault();
-            }
 
         });
     };

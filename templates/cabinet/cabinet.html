@@ -6,6 +6,10 @@
     <link rel="stylesheet/less" href="{{ static }}less/cabinet/base.less"/>
     <link rel="stylesheet" href="{{ static }}css/bootstrap-select.css"/>
 
+    <script type="text/javascript"
+            src="http://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places">
+    </script>
+
     <!-- Libs include -->
     <script type="text/javascript" src="{{ static }}js/libs/jquery-2.0.3.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/less-1.6.0.min.js"></script>
@@ -39,6 +43,7 @@
 
     <script type="text/javascript" src="{{ static }}js/cabinet/directives/selectOnClick.js"></script>
     <script type="text/javascript" src="{{ static }}js/cabinet/directives/focusOnLoad.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/directives/allowOnlyNumber.js"></script>
 </head>
 <body ng-app="MappinoCabinet" ng-controller="AppCtrl">
     <div class="wrapper">

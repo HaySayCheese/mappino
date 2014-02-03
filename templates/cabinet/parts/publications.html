@@ -1,13 +1,31 @@
 <div class="sidebar-item-detailed" ng-controller="SidebarItemDetailedCtrl">
     <div class="sidebar-item-detailed-header">
-        <a class="btn btn-link btn-xlg"><span class="glyphicon glyphicon-link"></span>&nbsp;Навигация</a>
-        <a class="btn btn-link btn-xlg">Описание</a>
+        <div class="publication-controls" ng-show="showPublication">
+            <div class="btn-group">
+                <div class="btn-group">
+                    <select name="publication-section" data-width="150px" title='Перейти к...'>
+                        <option>Новое обьявление</option>
+                        <option>Новое обьявление</option>
+                        <option>Новое обьявление</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <select name="tags-select" data-width="150px" ng-disabled="!tags.length" title='Выберите теги' multiple>
+                        <option value="tag.id" ng-repeat="tag in tags">[[ tag.title ]]</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
         <div class="btn btn-info btn-xlg pull-right"><span class="glyphicon glyphicon-log-out"></span></div>
     </div>
     <div class="sidebar-item-detailed-body">
-        <div ng-if='publicationLoaded && !loadings.detailed'>
-            <div ng-include="publicationTemplateUrl"></div>
+        <div ng-show="showPublication">
+            <div ng-if='publicationLoaded'>
+                <div ng-include="publicationTemplateUrl"></div>
+            </div>
         </div>
+
         <div class="load-detailed" ng-show="loadings.detailed"></div>
         <div class="detailed-empty text-muted" ng-show="!publicationLoaded && !loadings.detailed">
             <span>Выберите объявление на панели слева</span>

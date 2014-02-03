@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $location, $compile, publicationQueries, Briefs, Tags) {
+app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $location, $compile, publicationQueries, tagQueries, Briefs, Tags) {
 
     loadTags();
 

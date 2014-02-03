@@ -15,12 +15,13 @@
             </div>
         </div>
 
+
         <div class="row" ng-show="publication.head.for_sale">
             <h3>Условия продажи</h3>
             <div class="col-lg-12">
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Продаеться:</label>
+                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Продаеться:</label>
                         <div class="col-lg-8">
                             <select name="h_sale_type_sid" data-width="100%" ng-model="publication.sale_terms.sale_type_sid">
                                 <option value="0">Часть дома</option>
@@ -32,9 +33,9 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Цена:</label>
+                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Цена:</label>
                         <div class="col-lg-4">
-                            <input class="form-control" type="text" name="h_sale_price" ng-model="publication.sale_terms.price"/>
+                            <input class="form-control" type="text" name="h_sale_price" ng-model="publication.sale_terms.price" allow-only-number required/>
                         </div>
                         <div class="col-lg-4">
                             <select name="h_sale_currency_sid" data-width="100%" ng-model="publication.sale_terms.currency_sid">
@@ -74,12 +75,13 @@
             </div>
         </div>
 
+
         <div class="row" ng-show="publication.head.for_rent">
             <h3>Условия аренды</h3>
             <div class="col-lg-12">
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Сдаеться:</label>
+                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Сдаеться:</label>
                         <div class="col-lg-8">
                             <select name="h_rent_type_sid" data-width="100%" ng-model="publication.rent_terms.rent_type_sid">
                                 <option value="0">Часть дома</option>
@@ -90,7 +92,7 @@
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Срок:</label>
+                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Срок:</label>
                         <div class="col-lg-8">
                             <select name="h_rent_period_sid" data-width="100%" ng-model="publication.rent_terms.period_sid">
                                 <option value="0">Посуточно</option>
@@ -105,7 +107,7 @@
                         <label class="col-lg-4 control-label">Количество мест:</label>
                         <div class="col-lg-8">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="h_rent_persons_count" ng-model="publication.rent_terms.persons_count">
+                                <input type="text" class="form-control" name="h_rent_persons_count" ng-model="publication.rent_terms.persons_count" allow-only-number/>
                                 <span class="input-group-addon">чел.</span>
                             </div>
                         </div>
@@ -113,9 +115,9 @@
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Цена:</label>
+                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Цена:</label>
                         <div class="col-lg-4">
-                            <input class="form-control" type="text" name="h_rent_price" ng-model="publication.rent_terms.price"/>
+                            <input class="form-control" type="text" name="h_rent_price" ng-model="publication.rent_terms.price" allow-only-number required/>
                         </div>
                         <div class="col-lg-4">
                             <select name="h_rent_currency_sid" data-width="100%" ng-model="publication.rent_terms.currency_sid">
@@ -174,18 +176,18 @@
             <h3>Описание обьекта</h3>
             <div class="col-lg-12">
                 <div class="form-group">
-                    <label>Заголовок обьявления</label>
+                    <label><span class="required-star">*</span>Заголовок обьявления</label>
                     <input type="text" class="form-control" name="h_title" ng-model="publication.body.title">
                 </div>
 
                 <div class="form-group">
-                    <label>Рекламний текст</label>
+                    <label><span class="required-star">*</span>Рекламний текст</label>
                     <textarea class="form-control" rows="3" name="h_description" ng-model="publication.body.description"></textarea>
                 </div>
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Тип рынка:</label>
+                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Тип рынка:</label>
                         <div class="col-lg-6">
                             <select name="h_market_type_sid" data-width="100%" ng-model="publication.body.market_type_sid">
                                 <option value="0">Новостройка</option>
@@ -197,7 +199,7 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Общее состояние:</label>
+                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Общее состояние:</label>
                         <div class="col-lg-6">
                             <select name="h_condition_sid" data-width="100%" ng-model="publication.body.condition_sid">
                                 <option value="0">Косметический ремонт</option>
@@ -214,10 +216,10 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Общая площадь:</label>
+                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Общая площадь:</label>
                         <div class="col-lg-6">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="h_total_area" ng-model="publication.body.total_area">
+                                <input type="text" class="form-control" name="h_total_area" ng-model="publication.body.total_area" allow-only-number required>
                                 <span class="input-group-addon">м<sup>2</sup></span>
                             </div>
                         </div>
@@ -226,10 +228,10 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Жилая площадь:</label>
+                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Жилая площадь:</label>
                         <div class="col-lg-6">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="h_living_area" ng-model="publication.body.living_area">
+                                <input type="text" class="form-control" name="h_living_area" ng-model="publication.body.living_area" allow-only-number required>
                                 <span class="input-group-addon">м<sup>2</sup></span>
                             </div>
                         </div>
@@ -241,7 +243,7 @@
                         <label class="col-lg-4 control-label">Площадь кухни:</label>
                         <div class="col-lg-6">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="h_kitchen_area" ng-model="publication.body.kitchen_area">
+                                <input type="text" class="form-control" name="h_kitchen_area" ng-model="publication.body.kitchen_area" allow-only-number>
                                 <span class="input-group-addon">м<sup>2</sup></span>
                             </div>
                         </div>
@@ -250,9 +252,9 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Кол-во этажей:</label>
+                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Кол-во этажей:</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="h_floors_count" ng-model="publication.body.floors_count">
+                            <input type="text" class="form-control" name="h_floors_count" ng-model="publication.body.floors_count" allow-only-number required>
                         </div>
                     </div>
                 </div>
@@ -278,9 +280,9 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Кол-во комнат:</label>
+                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Кол-во комнат:</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="h_rooms_count" ng-model="publication.body.rooms_count">
+                            <input type="text" class="form-control" name="h_rooms_count" ng-model="publication.body.rooms_count" allow-only-number required>
                         </div>
                     </div>
                 </div>
@@ -289,7 +291,7 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">Кол-во спален:</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="h_bedrooms_count" ng-model="publication.body.bedrooms_count">
+                            <input type="text" class="form-control" name="h_bedrooms_count" ng-model="publication.body.bedrooms_count" allow-only-number>
                         </div>
                     </div>
                 </div>
@@ -298,7 +300,7 @@
                     <div class="form-group">
                         <label class="col-lg-4 control-label">Кол-во сан. узлов:</label>
                         <div class="col-lg-6">
-                            <input type="text" class="form-control" name="h_vcs_count" ng-model="publication.body.vcs_count">
+                            <input type="text" class="form-control" name="h_vcs_count" ng-model="publication.body.vcs_count" allow-only-number>
                         </div>
                     </div>
                 </div>
@@ -311,7 +313,7 @@
             <div class="col-lg-12">
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Отопление:</label>
+                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Отопление:</label>
                         <div class="col-lg-6">
                             <select name="h_heating_type_sid" data-width="100%" ng-model="publication.body.heating_type_sid">
                                 <option value="0">Индивидуальное</option>
@@ -332,7 +334,7 @@
                 </div>
                 <div class="row" ng-show="publication.body.heating_type_sid == 0">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Тип отопления:</label>
+                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Тип отопления:</label>
                         <div class="col-lg-6">
                             <select name="h_ind_heating_type_sid" data-width="100%" ng-model="publication.body.ind_heating_type_sid">
                                 <option value="0">Электричество</option>
@@ -564,5 +566,13 @@
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <h3>Местоположение</h3>
+            <div class="col-lg-12">
+                <ng-include src="'/ajax/template/cabinet/publications/map/'"></ng-include>
+            </div>
+        </div>
+
     </form>
 </div>
