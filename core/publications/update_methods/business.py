@@ -1,14 +1,16 @@
 #coding=utf-8
 from django.db import DatabaseError, IntegrityError
+
 from collective.methods.formatters import format_text, format_title
 from core.publications.constants import CURRENCIES, OBJECT_CONDITIONS, FLOOR_TYPES, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, COMMERCIAL_RENT_PERIODS, SALE_TRANSACTION_TYPES, RED_LINE_VALUES
-from core.publications.models import BusinessesHeads, BusinessesRentTerms, BusinessesBodies
+from core.publications.models import BusinessesRentTerms, BusinessesBodies, BusinessesSaleTerms
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
+
 
 
 # Оновлює інформацію про готовий бізнес.
 #
-# Поле для оновлення відшукується за префіксом @prefix.
+# Поле для оновлення відшукується за префіксом @field.
 # Значення, що онволюється (@value) перевіряється лише на коректність з точки зору БД та системи:
 # (недопустимі, умисно некоректні значення, такі, що можуть призвести до збоїв системи)
 #
@@ -23,68 +25,34 @@ from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
 #
 # Перевірку консистентності даних слід виконувати на етапі підготовки оголошення до публікації.
 
-def update_business(prefix, value, head_id=None, body_id=None, rent_id=None):
+def update_business(h, field, value):
 	try:
 		# bool
-		if prefix == 'for_sale':
-			if value == 'true':
-				h = BusinessesHeads.by_id(head_id, head_id='for_sale')
-				h.for_sale = True
+		if field == 'for_sale':
+			if (value is True) or (value is False):
+				h.for_sale = value
 				h.save(force_update=True)
-
-			elif value == 'false':
-				h = BusinessesHeads.by_id(head_id, head_id='for_sale')
-				h.for_sale = False
-				h.save(force_update=True)
-
 			else:
-				raise ValueError
-
-
-		# bool
-		elif prefix == 'for_rent':
-			if value == 'true':
-				h = BusinessesHeads.by_id(head_id, head_id='for_rent')
-				h.for_rent = True
-				h.save(force_update=True)
-
-			elif value == 'false':
-				h = BusinessesHeads.by_id(head_id, head_id='for_rent')
-				h.for_rent = False
-				h.save(force_update=True)
-
-			else:
-				raise ValueError
-
-
-		# sid
-		elif prefix == 'red_line':
-			value = int(value)
-			if value not in RED_LINE_VALUES.values():
-				raise ValueError
-
-			b = BusinessesHeads.by_id(body_id, head_id='red_line')
-			b.red_line = value
-			b.save(force_update=True)
+				raise ValueError()
 
 
 		# blank or decimal
-		elif prefix == 'price':
+		elif field == 'sale_price':
 			if not value:
-				b = BusinessesBodies.by_id(body_id, only='price')
-				b.price = None
-				b.save(force_update=True)
-
+				st = BusinessesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+				st.price = None
+				st.save(force_update=True)
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
-					raise ValueError
+					raise ValueError()
 
-				b = BusinessesBodies.by_id(body_id, only='price')
-				b.price = value
-				b.save(force_update=True)
+				st = BusinessesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+				st.price = value
+				st.save(force_update=True)
 
-				if int(value) == float(value):
+				if int(value) == value:
 					# Якщо після коми лише нулі - повернути ціле значення
 					return "%.0f" % value
 				else:
@@ -93,215 +61,225 @@ def update_business(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# sid
-		elif prefix == 'transaction_type':
+		elif field == 'sale_transaction_type_sid':
 			value = int(value)
 			if value not in SALE_TRANSACTION_TYPES.values():
-				raise ValueError
+				raise ValueError()
 
-			b = BusinessesBodies.by_id(body_id, only='transaction_type_sid')
-			b.transaction_type_sid = value
-			b.save(force_update=True)
+			st = BusinessesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+			st.transaction_sid = value
+			st.save(force_update=True)
+			return
 
 
 		# sid
-		elif prefix == 'currency':
+		elif field == 'sale_currency_sid':
 			value = int(value)
 			if value not in CURRENCIES.values():
-				raise ValueError
+				raise ValueError()
 
-			b = BusinessesBodies.by_id(body_id, only='currency_sid')
-			b.currency_sid = value
-			b.save(force_update=True)
+			st = BusinessesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+			st.currency_sid = value
+			st.save(force_update=True)
+			return
 
 
 		# bool
-		elif prefix == 'price_contract':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='price_is_contract')
-				b.price_is_contract = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='price_is_contract')
-				b.price_is_contract = False
-				b.save(force_update=True)
-
+		elif field == 'sale_is_contract':
+			if (value is True) or (value is False):
+				st = BusinessesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+				st.price_is_contract = value
+				st.save(force_update=True)
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# text
-		elif prefix == 'sale_add_terms':
-			b = BusinessesBodies.by_id(body_id, only='add_terms')
+		elif field == 'sale_add_terms':
+			st = BusinessesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 			if not value:
-				b.add_terms = None
-				b.save(force_update=True)
-
+				st.add_terms = None
+				st.save(force_update=True)
+				return
 			else:
 				value = format_text(value)
-				b.add_terms = value
-				b.save(force_update=True)
+				st.add_terms = value
+				st.save(force_update=True)
 				return value
 
 
+		# bool
+		elif field == 'for_rent':
+			if (value is True) or (value is False):
+				h.for_rent = value
+				h.save(force_update=True)
+				return
+			else:
+				raise ValueError()
+
+
 		# sid
-		elif prefix == 'rent_period':
+		elif field == 'rent_period_sid':
 			value = int(value)
 			if value not in COMMERCIAL_RENT_PERIODS.values():
-				raise ValueError
+				raise ValueError()
 
-			r = BusinessesRentTerms.by_id(rent_id, only='period_sid')
-			r.period_sid = value
-			r.save(force_update=True)
+			rt = BusinessesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+			rt.period_sid = value
+			rt.save(force_update=True)
 
 
 		# blank or decimal
-		elif prefix == 'rent_price':
+		elif field == 'rent_price':
 			if not value:
-				r = BusinessesRentTerms.by_id(rent_id, only='price')
-				r.price = None
-				r.save(force_update=True)
-
+				rt = BusinessesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.price = None
+				rt.save(force_update=True)
+				return
 			else:
-				value = round(float(value.replace(',', '.')), 2)
+				value = round(float(value.replace(',','.')), 2)
 				if value <= 0:
-					raise ValueError
+					raise ValueError()
 
-				r = BusinessesRentTerms.by_id(rent_id, only='price')
-				r.price = value
-				r.save(force_update=True)
+				rt = BusinessesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.price = value
+				rt.save(force_update=True)
 
 				if int(value) == value:
 					# Якщо після коми лише нулі - повернути ціле значення
 					return "%.0f" % value
-
 				else:
 					# Інакше - округлити до 2х знаків після коми
-					return "%.2f" % float(value)
+					return "%.2f" % value
 
 
 		# sid
-		elif prefix == 'rent_currency':
+		elif field == 'rent_currency_sid':
 			value = int(value)
 			if value not in CURRENCIES.values():
-				raise ValueError
+				raise ValueError()
 
-			r = BusinessesRentTerms.by_id(rent_id, only='currency_sid')
-			r.currency_sid = value
-			r.save(force_update=True)
+			rt = BusinessesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+			rt.currency_sid = value
+			rt.save(force_update=True)
 			return
 
 
 		# boolean
-		elif prefix == 'rent_price_contract':
-			if value == 'true':
-				r = BusinessesRentTerms.by_id(rent_id, only='price_is_contract')
-				r.price_is_contract = True
-				r.save(force_update=True)
-
-			elif value == 'false':
-				r = BusinessesRentTerms.by_id(rent_id, only='price_is_contract')
-				r.price_is_contract = False
-				r.save(force_update=True)
-
+		elif field == 'rent_is_contract':
+			if (value is True) or (value is False):
+				rt = BusinessesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.price_is_contract = value
+				rt.save(force_update=True)
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# text
-		elif prefix == 'rent_add_terms':
-			r = BusinessesRentTerms.by_id(rent_id, only='add_terms')
+		elif field == 'rent_add_terms':
+			rt = BusinessesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
 			if not value:
-				r.add_terms = None
-				r.save(force_update=True)
-
+				rt.add_terms = None
+				rt.save(force_update=True)
+				return
 			else:
 				value = format_text(value)
-				r.add_terms = value
-				r.save(force_update=True)
+				rt.add_terms = value
+				rt.save(force_update=True)
 				return value
 
 
-		# text
-		elif prefix == 'title':
-			h = BusinessesHeads.by_id(head_id, head_id='title')
-			if not value:
-				h.title = None
-				h.save(force_update=True)
+		# sid
+		elif field == 'red_line_sid':
+			value = int(value)
+			if value not in RED_LINE_VALUES.values():
+				raise ValueError()
 
+			b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+			b.red_line = value
+			b.save(force_update=True)
+			return
+
+
+		# text
+		elif field == 'title':
+			b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+			if not value:
+				b.title = None
+				b.save(force_update=True)
+				return
 			else:
 				value = format_title(value)
-				h.title = value
-				h.save(force_update=True)
+				b.title = value
+				b.save(force_update=True)
 				return value
 
 
 		# text
-		elif prefix == 'description':
-			h = BusinessesHeads.by_id(head_id, head_id='descr')
+		elif field == 'description':
+			b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				h.descr = None
-				h.save(force_update=True)
+				b.description = None
+				b.save(force_update=True)
 				return
-
 			else:
 				value = format_text(value)
-				h.descr = value
-				h.save(force_update=True)
+				b.description = value
+				b.save(force_update=True)
 				return value
 
 
 		# blank or float
-		elif prefix == 'age':
+		elif field == 'age':
 			if not value:
-				b = BusinessesBodies.by_id(body_id, only='age')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.age = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
 					raise ValueError
 
-				b = BusinessesBodies.by_id(body_id, only='age')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.age = value
 				b.save(force_update=True)
 
 				if int(value) == value:
 					# Відсікти дробову частину, якщо після коми нулі
 					return "%.0f" % value
-				else:
-					# Скоротити / розширити до 2х цифр після коми
-					return "%.2f" % value
 
 
 		# blank or int
-		elif prefix == 'workers_count':
+		elif field == 'workers_count':
 			if not value:
-				b = BusinessesBodies.by_id(body_id, only='workers_count')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.workers_count = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = int(value)
-				b = BusinessesBodies.by_id(body_id, only='workers_count')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.workers_count = value
 				b.save(force_update=True)
+				return
 
 
 		# blank or decimal
-		elif prefix == 'monthly_costs':
+		elif field == 'monthly_costs':
 			if not value:
-				b = BusinessesBodies.by_id(body_id, only='monthly_costs')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.monthly_costs = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
 					raise ValueError
 
-				b = BusinessesBodies.by_id(body_id, only='monthly_costs')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.monthly_costs = value
 				b.save(force_update=True)
 
@@ -314,30 +292,30 @@ def update_business(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# sid
-		elif prefix == 'mc_currency':
+		elif field == 'mc_currency_sid':
 			value = int(value)
 			if value not in CURRENCIES.values():
 				raise ValueError
 
-			b = BusinessesBodies.by_id(body_id, only='mc_currency_sid')
+			b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 			b.mc_currency_sid = value
 			b.save(force_update=True)
 			return
 
 
 		# blank or decimal
-		elif prefix == 'annual_receipts':
+		elif field == 'annual_receipts':
 			if not value:
-				b = BusinessesBodies.by_id(body_id, only='annual_receipts')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.annual_receipts = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
 					raise ValueError
 
-				b = BusinessesBodies.by_id(body_id, only='annual_receipts')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.annual_receipts = value
 				b.save(force_update=True)
 
@@ -350,24 +328,24 @@ def update_business(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# sid
-		elif prefix == 'ar_currency':
+		elif field == 'ar_currency_sid':
 			value = int(value)
 			if value not in CURRENCIES.values():
 				raise ValueError
 
-			b = BusinessesBodies.by_id(body_id, only='ar_currency_sid')
+			b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 			b.ar_currency_sid = value
 			b.save(force_update=True)
 			return
 
 
 		# blank or decimal
-		elif prefix == 'share':
+		elif field == 'share':
 			if not value:
-				b = BusinessesBodies.by_id(body_id, only='share')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.share = None
 				b.save(force_update=True)
-
+				return
 			else:
 				# процент від бізнесу не можна округляти,
 				# оскільки не відомо наскільки точною є градація акції в конкретному бізнесі
@@ -377,74 +355,76 @@ def update_business(prefix, value, head_id=None, body_id=None, rent_id=None):
 				if value > 100:
 					value = 100
 
-				b = BusinessesBodies.by_id(body_id, only='share')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.share = value
 				b.save(force_update=True)
 
-				if int(value) == float(value):
+				if int(value) == value:
 					# Якщо після коми лише нулі - повернути ціле значення
 					return "%.0f" % value
-				return value
 
 
 		# sid
-		elif prefix == 'building_type':
+		elif field == 'building_type_sid':
 			value = int(value)
 			if value not in TRADE_BUILDING_TYPES.values():
 				raise ValueError
 
-			b = BusinessesBodies.by_id(body_id, only='building_type_sid')
+			b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 			b.building_type_sid = value
 			b.save(force_update=True)
 			return
 
 
 		# blank or int
-		elif prefix == 'build_year':
+		elif field == 'build_year':
 			if not value:
-				b = BusinessesBodies.by_id(body_id, only='build_year')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.build_year = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = int(value)
-				b = BusinessesBodies.by_id(body_id, only='build_year')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.build_year = value
 				b.save(force_update=True)
+				return
 
 
 		# sid
-		elif prefix == 'condition':
+		elif field == 'condition_sid':
 			value = int(value)
 			if value not in OBJECT_CONDITIONS.values():
 				raise ValueError
 
-			b = BusinessesBodies.by_id(body_id, only='condition_sid')
+			b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 			b.condition_sid = value
 			b.save(force_update=True)
+			return
 
 
 		# blank or int
-		elif prefix == 'floor':
+		elif field == 'floor':
 			if not value:
-				b = BusinessesBodies.by_id(body_id, only='floor')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.floor = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = int(value)
-				b = BusinessesBodies.by_id(body_id, only='floor')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.floor = value
 				b.save(force_update=True)
+				return
 
 
 		# sid
-		elif prefix == 'floor_type':
+		elif field == 'floor_type_sid':
 			value = int(value)
 			if value not in FLOOR_TYPES.values():
 				raise ValueError
 
-			b = BusinessesBodies.by_id(body_id, only='floor_type_sid')
+			b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 			b.floor_type_sid = value
 
 			# Якщо тип поверху "мансарда" або "цоколь", то ітак зрозуміло,
@@ -454,87 +434,71 @@ def update_business(prefix, value, head_id=None, body_id=None, rent_id=None):
 				b.floor = None
 
 			b.save(force_update=True)
+			return
 
 
 		# blank or int
-		elif prefix == 'floors_count':
+		elif field == 'floors_count':
 			if not value:
-				b = BusinessesBodies.by_id(body_id, only='floors_count')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.floors_count = None
 				b.save(force_update=True)
 				return
-
 			else:
 				value = int(value)
 				if value <= 0:
 					raise ValueError
 
-				b = BusinessesBodies.by_id(body_id, only='floors_count')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.floors_count = int(value)
 				b.save(force_update=True)
+				return
 
 
 		# boolean
-		elif prefix == 'mansard':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='mansard')
-				b.mansard = True
+		elif field == 'mansard':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.mansard = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='mansard')
-				b.mansard = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'ground':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='ground')
-				b.ground = True
+		elif field == 'ground':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.ground = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='ground')
-				b.ground = False
-				b.save(force_update=True)
-
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'lower_floor':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='lower_floor')
-				b.lower_floor = True
+		elif field == 'lower_floor':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.lower_floor = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='lower_floor')
-				b.lower_floor = False
-				b.save(force_update=True)
-
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# blank or float
-		elif prefix == 'halls_area':
+		elif field == 'halls_area':
 			if not value:
-				b = BusinessesBodies.by_id(body_id, only='halls_area')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.halls_area = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
 					raise ValueError
 
-				b = BusinessesBodies.by_id(body_id, only='halls_area')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.halls_area = value
 				b.save(force_update=True)
 
@@ -547,9 +511,9 @@ def update_business(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# blank or float
-		elif prefix == 'total_area':
+		elif field == 'total_area':
 			if not value:
-				b = BusinessesBodies.by_id(body_id, only='total_area')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.total_area = None
 				b.save(force_update=True)
 
@@ -558,7 +522,7 @@ def update_business(prefix, value, head_id=None, body_id=None, rent_id=None):
 				if value <= 0:
 					raise ValueError
 
-				b = BusinessesBodies.by_id(body_id, only='total_area')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.total_area = value
 				b.save(force_update=True)
 
@@ -571,34 +535,29 @@ def update_business(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# boolean
-		elif prefix == 'closed_area':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='closed_area')
-				b.closed_area = True
+		elif field == 'closed_area':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.closed_area = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='closed_area')
-				b.closed_area = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# blank or float
-		elif prefix == 'plot_area':
+		elif field == 'plot_area':
 			if not value:
-				b = BusinessesBodies.by_id(body_id, only='plot_area')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.plot_area = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
 					raise ValueError
 
-				b = BusinessesBodies.by_id(body_id, only='plot_area')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.plot_area = value
 				b.save(force_update=True)
 
@@ -611,35 +570,36 @@ def update_business(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# blank or int
-		elif prefix == 'vcs_count':
+		elif field == 'vcs_count':
 			if not value:
-				b = BusinessesBodies.by_id(body_id, only='vcs_count')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.vcs_count = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = int(value)
 				if value < 0:
 					raise ValueError
 
-				b = BusinessesBodies.by_id(body_id, only='vcs_count')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.vcs_count = value
 				b.save(force_update=True)
+				return
 
 
 		# blank or float
-		elif prefix == 'ceiling_height':
+		elif field == 'ceiling_height':
 			if not value:
-				b = BusinessesBodies.by_id(body_id, only='ceiling_height')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.ceiling_height = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
 					raise ValueError
 
-				b = BusinessesBodies.by_id(body_id, only='ceiling_height')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.ceiling_height = value
 				b.save(force_update=True)
 
@@ -652,48 +612,50 @@ def update_business(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# sid
-		elif prefix == 'heating_type':
+		elif field == 'heating_type_sid':
 			value = int(value)
 			if value not in HEATING_TYPES.values():
 				raise ValueError
 
-			b = BusinessesBodies.by_id(body_id, only='heating_type_sid')
+			b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 			b.heating_type_sid = value
 			b.save(force_update=True)
+			return
 
 
 		# text
-		elif prefix == 'custom_heating_type':
-			b = BusinessesBodies.by_id(body_id, only='custom_heating_type')
+		elif field == 'custom_heating_type':
+			b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
 				b.custom_heating_type = None
 				b.save(force_update=True)
-
+				return
 			else:
 				# fixme: додати форматування
 				b.custom_heating_type = value
 				b.save(force_update=True)
-				return value
+				return
 
 
 		# sid
-		elif prefix == 'ind_heating_type':
+		elif field == 'ind_heating_type_sid':
 			value = int(value)
 			if value not in INDIVIDUAL_HEATING_TYPES.values():
-				raise ValueError
+				raise ValueError()
 
-			b = BusinessesBodies.by_id(body_id, only='ind_heating_type_sid')
+			b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 			b.ind_heating_type_sid = value
 			b.save(force_update=True)
+			return
 
 
 		# text
-		elif prefix == 'custom_ind_heating_type':
-			b = BusinessesBodies.by_id(body_id, only='custom_ind_heating_type')
+		elif field == 'custom_ind_heating_type':
+			b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
 				b.custom_ind_heating_type = None
 				b.save(force_update=True)
-
+				return
 			else:
 				# fixme: додати форматування
 				b.custom_ind_heating_type = value
@@ -702,299 +664,219 @@ def update_business(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# boolean
-		elif prefix == 'electricity':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='electricity')
-				b.electricity = True
+		elif field == 'electricity':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.electricity = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='electricity')
-				b.electricity = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'gas':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='gas')
-				b.gas = True
+		elif field == 'gas':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.gas = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='gas')
-				b.gas = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'security_alarm':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='security_alarm')
-				b.security_alarm = True
+		elif field == 'security_alarm':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.security_alarm = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='security_alarm')
-				b.security_alarm = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'fire_alarm':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='fire_alarm')
-				b.fire_alarm = True
+		elif field == 'fire_alarm':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.fire_alarm = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='fire_alarm')
-				b.fire_alarm = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'hot_water':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='hot_water')
-				b.hot_water = True
+		elif field == 'hot_water':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.hot_water = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='hot_water')
-				b.hot_water = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'cold_water':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='cold_water')
-				b.cold_water = True
+		elif field == 'cold_water':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.cold_water = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='cold_water')
-				b.cold_water = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'canalisation':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='canalisation')
-				b.canalisation = True
+		elif field == 'canalisation':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.canalisation = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='canalisation')
-				b.canalisation = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'ventilation':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='ventilation')
-				b.ventilation = True
+		elif field == 'ventilation':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.ventilation = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='ventilation')
-				b.ventilation = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'security':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='security')
-				b.security = True
+		elif field == 'security':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.security = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='security')
-				b.security = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# text
-		elif prefix == 'add_facilities':
-			b = BusinessesBodies.by_id(body_id, only='add_facilities')
+		elif field == 'add_facilities':
+			b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
 				b.add_facilities = None
 				b.save(force_update=True)
-
+				return
 			else:
 				# fixme: додати форматування
 				b.add_facilities = value
 				b.save(force_update=True)
-				return value
+				return
 
 
 		# boolean
-		elif prefix == 'phone':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='phone')
-				b.phone = True
+		elif field == 'phone':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.phone = value
 				b.save(force_update=True)
+				return
+			else:
+				raise ValueError()
 
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='phone')
-				b.phone = False
+
+		# boolean
+		elif field == 'mobile_coverage':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.mobile_coverage = value
 				b.save(force_update=True)
+				return
+			else:
+				raise ValueError()
 
+
+		# boolean
+		elif field == 'internet':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.internet = value
+				b.save(force_update=True)
+				return
+			else:
+				raise ValueError()
+
+
+		# boolean
+		elif field == 'cab_tv':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.cable_tv = value
+				b.save(force_update=True)
+				return
 			else:
 				raise ValueError
 
 
 		# boolean
-		elif prefix == 'mobile_coverage':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='mobile_coverage')
-				b.mobile_coverage = True
+		elif field == 'lan':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.lan = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='mobile_coverage')
-				b.mobile_coverage = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
-
-
-		# boolean
-		elif prefix == 'internet':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='internet')
-				b.internet = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='internet')
-				b.internet = False
-				b.save(force_update=True)
-
-			else:
-				raise ValueError
-
-
-		# boolean
-		elif prefix == 'cab_tv':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='cable_tv')
-				b.cable_tv = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='cable_tv')
-				b.cable_tv = False
-				b.save(force_update=True)
-
-			else:
-				raise ValueError
-
-
-		# boolean
-		elif prefix == 'lan':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='lan')
-				b.lan = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='lan')
-				b.lan = False
-				b.save(force_update=True)
-
-			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# blank or int
-		elif prefix == 'tel_lines_count':
+		elif field == 'tel_lines_count':
 			if not value:
-				b = BusinessesBodies.by_id(body_id, only='phone_lines_count')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.phone_lines_count = None
 				b.save(force_update=True)
 				return
-
 			else:
 				value = int(value)
 				if value <= 0:
-					raise ValueError
+					raise ValueError()
 
-				b = BusinessesBodies.by_id(body_id, only='phone_lines_count')
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.phone_lines_count = int(value)
 				b.save(force_update=True)
+				return
 
 
 		# boolean
-		elif prefix == 'parking':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='parking')
-				b.parking = True
+		elif field == 'parking':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.parking = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='parking')
-				b.parking = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'open_air':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='open_air')
-				b.open_air = True
+		elif field == 'open_air':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.open_air = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='open_air')
-				b.open_air = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
-		elif prefix == 'add_buildings':
-			b = BusinessesBodies.by_id(body_id, only='add_buildings')
+		elif field == 'add_buildings':
+			b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.add_buildings= None
+				b.add_buildings = None
 				b.save(force_update=True)
-
+				return
 			else:
 				# fixme: додати форматування
 				b.add_buildings = value
@@ -1003,122 +885,92 @@ def update_business(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# boolean
-		elif prefix == 'transport_stop':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='transport_stop')
-				b.transport_stop = True
+		elif field == 'transport_stop':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.transport_stop = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='transport_stop')
-				b.transport_stop = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'bank':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='bank')
-				b.bank = True
+		elif field == 'bank':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.bank = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='bank')
-				b.bank = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'market':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='market')
-				b.market = True
+		elif field == 'market':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.market = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='market')
-				b.market = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'cash_machine':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='cash_machine')
-				b.cash_machine = True
+		elif field == 'cash_machine':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.cash_machine = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='cash_machine')
-				b.cash_machine = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'cafe':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='cafe')
-				b.cafe = True
+		elif field == 'cafe':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.cafe = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='cafe')
-				b.cafe = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'entertainment':
-			if value == 'true':
-				b = BusinessesBodies.by_id(body_id, only='entertainment')
-				b.entertainment = True
+		elif field == 'entertainment':
+			if (value is True) or (value is False):
+				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.entertainment = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = BusinessesBodies.by_id(body_id, only='entertainment')
-				b.entertainment = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError
+				raise ValueError()
 
 
 		# text
-		elif prefix == 'add_showplaces':
-			b = BusinessesBodies.by_id(body_id, only='add_showplaces')
+		elif field == 'add_showplaces':
+			b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
 				b.add_showplaces= None
 				b.save(force_update=True)
-
+				return
 			else:
 				# fixme: додати форматування
 				b.add_showplaces = value
 				b.save(force_update=True)
-				return value
+				return
 
 		# ...
 		# other fields here
 		# ...
 
 		else:
-			raise ValueError('invalid @prefix')
+			raise ValueError('invalid @field')
 
 	except (DatabaseError, IntegrityError, ValueError):
-		raise ValueError('Object type: apartments. Prefix: {prefix}. Value = {value}'.format(
-			prefix = unicode(prefix), value = unicode(value)
+		raise ValueError('Object type: apartments. Prefix: {field}. Value = {value}'.format(
+			field = unicode(field), value = unicode(value)
 		))

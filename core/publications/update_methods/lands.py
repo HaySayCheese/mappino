@@ -1,13 +1,15 @@
 #coding=utf-8
 from django.db import DatabaseError, IntegrityError
+
 from collective.methods.formatters import format_text, format_title
-from core.publications.constants import CURRENCIES, COMMERCIAL_RENT_PERIODS, SALE_TRANSACTION_TYPES
-from core.publications.models import LandsHeads, LandsBodies, LandsRentTerms
+from core.publications.constants import CURRENCIES, COMMERCIAL_RENT_PERIODS, SALE_TRANSACTION_TYPES, RED_LINE_VALUES
+from core.publications.models import LandsBodies, LandsRentTerms, LandsSaleTerms
 from core.publications.objects_constants.lands import LAND_DRIVEWAYS
+
 
 # Оновлює інформацію про зем. ділянку.
 #
-# Поле для оновлення відшукується за префіксом @prefix.
+# Поле для оновлення відшукується за префіксом @field.
 # Значення, що онволюється (@value) перевіряється лише на коректність з точки зору БД та системи:
 # (недопустимі, умисно некоректні значення, такі, що можуть призвести до збоїв системи)
 #
@@ -22,55 +24,33 @@ from core.publications.objects_constants.lands import LAND_DRIVEWAYS
 #
 # Перевірку консистентності даних слід виконувати на етапі підготовки оголошення до публікації.
 
-def update_land(prefix, value, head_id=None, body_id=None, rent_id=None):
+def update_land(h, field, value):
 	try:
 		# bool
-		if prefix == 'for_sale':
-			if value == 'true':
-				h = LandsHeads.by_id(head_id, head_id='for_sale')
-				h.for_sale = True
+		if field == 'for_sale':
+			if (value is True) or (value is False):
+				h.for_sale = value
 				h.save(force_update=True)
-
-			elif value == 'false':
-				h = LandsHeads.by_id(head_id, head_id='for_sale')
-				h.for_sale = False
-				h.save(force_update=True)
-
+				return
 			else:
-				raise ValueError('Invalid @for_sale value.')
-
-
-		# bool
-		elif prefix == 'for_rent':
-			if value == 'true':
-				h = LandsHeads.by_id(head_id, head_id='for_rent')
-				h.for_rent = True
-				h.save(force_update=True)
-
-			elif value == 'false':
-				h = LandsHeads.by_id(head_id, head_id='for_rent')
-				h.for_rent = False
-				h.save(force_update=True)
-
-			else:
-				raise ValueError('Invalid @for_rent value.')
+				raise ValueError()
 
 
 		# blank or decimal
-		elif prefix == 'price':
+		elif field == 'sale_price':
 			if not value:
-				b = LandsBodies.by_id(body_id, only='price')
-				b.price = None
-				b.save(force_update=True)
-
+				st = LandsSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+				st.price = None
+				st.save(force_update=True)
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
-					raise ValueError('Invalid price')
+					raise ValueError()
 
-				b = LandsBodies.by_id(body_id, only='price')
-				b.price = value
-				b.save(force_update=True)
+				st = LandsSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+				st.price = value
+				st.save(force_update=True)
 
 				if int(value) == value:
 					# Якщо після коми лише нулі - повернути ціле значення
@@ -81,83 +61,90 @@ def update_land(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# sid
-		elif prefix == 'transaction_type':
+		elif field == 'sale_transaction_type_sid':
 			value = int(value)
 			if value not in SALE_TRANSACTION_TYPES.values():
-				raise ValueError('Invalid transaction type sid')
+				raise ValueError()
 
-			b = LandsBodies.by_id(body_id, only='transaction_type_sid')
-			b.transaction_type_sid = value
-			b.save(force_update=True)
+			st = LandsSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+			st.transaction_sid = value
+			st.save(force_update=True)
+			return
 
 
 		# sid
-		elif prefix == 'currency':
+		elif field == 'sale_currency_sid':
 			value = int(value)
 			if value not in CURRENCIES.values():
-				raise ValueError('Invalid currency sid')
+				raise ValueError()
 
-			b = LandsBodies.by_id(body_id, only='currency_sid')
-			b.currency_sid = value
-			b.save(force_update=True)
+			st = LandsSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+			st.currency_sid = value
+			st.save(force_update=True)
+			return
 
 
 		# bool
-		elif prefix == 'price_contract':
-			if value == 'true':
-				b = LandsBodies.by_id(body_id, only='price_is_contract')
-				b.price_is_contract = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = LandsBodies.by_id(body_id, only='price_is_contract')
-				b.price_is_contract = False
-				b.save(force_update=True)
-
+		elif field == 'sale_is_contract':
+			if (value is True) or (value is False):
+				st = LandsSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
+				st.price_is_contract = value
+				st.save(force_update=True)
+				return
 			else:
-				raise ValueError('Invalid @price_is_contract value.')
+				raise ValueError()
 
 
 		# text
-		elif prefix == 'sale_add_terms':
-			b = LandsBodies.by_id(body_id, only='add_terms')
+		elif field == 'sale_add_terms':
+			st = LandsSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 			if not value:
-				b.add_terms = None
-				b.save(force_update=True)
-
+				st.add_terms = None
+				st.save(force_update=True)
+				return
 			else:
 				value = format_text(value)
-				b.add_terms = value
-				b.save(force_update=True)
+				st.add_terms = value
+				st.save(force_update=True)
 				return value
 
 
+		# bool
+		elif field == 'for_rent':
+			if (value is True) or (value is False):
+				h.for_rent = value
+				h.save(force_update=True)
+				return
+			else:
+				raise ValueError()
+
+
 		# sid
-		elif prefix == 'rent_period':
+		elif field == 'rent_period_sid':
 			value = int(value)
 			if value not in COMMERCIAL_RENT_PERIODS.values():
-				raise ValueError('Invalid rent period value.')
+				raise ValueError()
 
-			r = LandsRentTerms.by_id(rent_id, only='period_sid')
-			r.period_sid = value
-			r.save(force_update=True)
+			rt = LandsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+			rt.period_sid = value
+			rt.save(force_update=True)
 
 
 		# blank or decimal
-		elif prefix == 'rent_price':
+		elif field == 'rent_price':
 			if not value:
-				r = LandsRentTerms.by_id(rent_id, only='price')
-				r.price = None
-				r.save(force_update=True)
+				rt = LandsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.price = None
+				rt.save(force_update=True)
 
 			else:
-				value = round(float(value.replace(',', '.')), 2)
+				value = round(float(value.replace(',','.')), 2)
 				if value <= 0:
-					raise ValueError('Invalid rent price')
+					raise ValueError()
 
-				r = LandsRentTerms.by_id(rent_id, only='price')
-				r.price = value
-				r.save(force_update=True)
+				rt = LandsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.price = value
+				rt.save(force_update=True)
 
 				if int(value) == value:
 					# Якщо після коми лише нулі - повернути ціле значення
@@ -168,89 +155,94 @@ def update_land(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# sid
-		elif prefix == 'rent_currency':
+		elif field == 'rent_currency':
 			value = int(value)
 			if value not in CURRENCIES.values():
-				raise ValueError('Invalid rent currency')
+				raise ValueError()
 
-			r = LandsRentTerms.by_id(rent_id, only='currency_sid')
-			r.currency_sid = value
-			r.save(force_update=True)
+			rt = LandsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+			rt.currency_sid = value
+			rt.save(force_update=True)
 			return
 
 
 		# boolean
-		elif prefix == 'rent_price_contract':
-			if value == 'true':
-				r = LandsRentTerms.by_id(rent_id, only='price_is_contract')
-				r.price_is_contract = True
-				r.save(force_update=True)
-
-			elif value == 'false':
-				r = LandsRentTerms.by_id(rent_id, only='price_is_contract')
-				r.price_is_contract = False
-				r.save(force_update=True)
-
+		elif field == 'rent_is_contract':
+			if (value is True) or (value is False):
+				rt = LandsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt.price_is_contract = True
+				rt.save(force_update=True)
+				return
 			else:
-				raise ValueError('Invalid rent @price_is_contract')
+				raise ValueError()
 
 
 		# text
-		elif prefix == 'rent_add_terms':
-			r = LandsRentTerms.by_id(rent_id, only='add_terms')
+		elif field == 'rent_add_terms':
+			rt = LandsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
 			if not value:
-				r.add_terms = None
-				r.save(force_update=True)
-
+				rt.add_terms = None
+				rt.save(force_update=True)
+				return
 			else:
 				value = format_text(value)
-				r.add_terms = value
-				r.save(force_update=True)
+				rt.add_terms = value
+				rt.save(force_update=True)
 				return value
 
 
-		# text
-		elif prefix == 'title':
-			h = LandsHeads.by_id(head_id, head_id='title')
-			if not value:
-				h.title = None
-				h.save(force_update=True)
+		# sid
+		elif field == 'red_line':
+			value = int(value)
+			if value not in RED_LINE_VALUES.values():
+				raise ValueError()
 
+			b = LandsBodies.by_id(h.body_id).only('id')
+			b.red_line = value
+			b.save(force_update=True)
+
+
+		# text
+		elif field == 'title':
+			b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
+			if not value:
+				b.title = None
+				b.save(force_update=True)
+				return
 			else:
 				value = format_title(value)
-				h.title = value
-				h.save(force_update=True)
+				b.title = value
+				b.save(force_update=True)
 				return value
 
 
 		# text
-		elif prefix == 'description':
-			h = LandsHeads.by_id(head_id, head_id='descr')
+		elif field == 'description':
+			b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				h.descr = None
-				h.save(force_update=True)
+				b.description = None
+				b.save(force_update=True)
 				return
-
 			else:
 				value = format_text(value)
-				h.descr = value
-				h.save(force_update=True)
+				b.description = value
+				b.save(force_update=True)
 				return value
 
 
 		# blank or float
-		elif prefix == 'area':
+		elif field == 'area':
 			if not value:
-				b = LandsBodies.by_id(body_id, only='area')
+				b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.area = None
 				b.save(force_update=True)
-
+				return
 			else:
 				value = round(float(value.replace(',', '.')), 2)
 				if value <= 0:
 					raise ValueError('Invalid halls area value.')
 
-				b = LandsBodies.by_id(body_id, only='area')
+				b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.area = value
 				b.save(force_update=True)
 
@@ -263,238 +255,114 @@ def update_land(prefix, value, head_id=None, body_id=None, rent_id=None):
 
 
 		# boolean
-		elif prefix == 'closed_area':
-			if value == 'true':
-				b = LandsBodies.by_id(body_id, only='closed_area')
-				b.closed_area = True
+		elif field == 'closed_area':
+			if (value is True) or (value is False):
+				b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.closed_area = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = LandsBodies.by_id(body_id, only='closed_area')
-				b.closed_area = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError('Invalid closed_area value.')
+				raise ValueError()
 
 
 		# sid
-		elif prefix == 'driveways':
+		elif field == 'driveways_sid':
 			value = int(value)
 			if value not in LAND_DRIVEWAYS.values():
 				raise ValueError('Invalid driveways sid')
 
-			b = LandsBodies.by_id(body_id, only='driveways_sid')
+			b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
 			b.driveways_sid = value
 			b.save(force_update=True)
+			return
 
 
 		# boolean
-		elif prefix == 'electricity':
-			if value == 'true':
-				b = LandsBodies.by_id(body_id, only='electricity')
-				b.electricity = True
+		elif field == 'electricity':
+			if (value is True) or (value is False):
+				b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.electricity = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = LandsBodies.by_id(body_id, only='electricity')
-				b.electricity = False
-				b.save(force_update=True)
-
+				return
 			else:
 				raise ValueError('Invalid electricity value.')
 
 
 		# boolean
-		elif prefix == 'gas':
-			if value == 'true':
-				b = LandsBodies.by_id(body_id, only='gas')
-				b.gas = True
+		elif field == 'gas':
+			if (value is True) or (value is False):
+				b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.gas = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = LandsBodies.by_id(body_id, only='gas')
-				b.gas = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError('Invalid gas value.')
+				raise ValueError()
 
 
 		# boolean
-		elif prefix == 'water':
-			if value == 'true':
-				b = LandsBodies.by_id(body_id, only='water')
-				b.water = True
+		elif field == 'water':
+			if (value is True) or (value is False):
+				b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.water = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = LandsBodies.by_id(body_id, only='water')
-				b.water = False
-				b.save(force_update=True)
-
+				return
 			else:
 				raise ValueError('Invalid water value.')
 
 
 		# boolean
-		elif prefix == 'canalisation':
-			if value == 'true':
-				b = LandsBodies.by_id(body_id, only='canalisation')
-				b.canalisation = True
+		elif field == 'canalisation':
+			if (value is True) or (value is False):
+				b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.canalisation = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = LandsBodies.by_id(body_id, only='canalisation')
-				b.canalisation = False
-				b.save(force_update=True)
-
+				return
 			else:
 				raise ValueError('Invalid canalisation value.')
 
 
 		# text
-		elif prefix == 'add_facilities':
-			b = LandsBodies.by_id(body_id, only='add_facilities')
+		elif field == 'add_facilities':
+			b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
 				b.add_facilities = None
 				b.save(force_update=True)
-
+				return
 			else:
 				# fixme: додати форматування
 				b.add_facilities = value
 				b.save(force_update=True)
-				return value
+				return
 
 
 		# boolean
-		elif prefix == 'well':
-			if value == 'true':
-				b = LandsBodies.by_id(body_id, only='well')
-				b.well = True
+		elif field == 'well':
+			if (value is True) or (value is False):
+				b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.well = value
 				b.save(force_update=True)
-
-			elif value == 'false':
-				b = LandsBodies.by_id(body_id, only='well')
-				b.well = False
-				b.save(force_update=True)
-
+				return
 			else:
-				raise ValueError('Invalid well value.')
+				raise ValueError()
 
 			
-		elif prefix == 'add_buildings':
-			b = LandsBodies.by_id(body_id, only='add_buildings')
+		# text
+		elif field == 'add_buildings':
+			b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
 				b.add_buildings= None
 				b.save(force_update=True)
-
+				return
 			else:
 				# fixme: додати форматування
 				b.add_buildings = value
 				b.save(force_update=True)
-				return value
-
-
-		# boolean
-		elif prefix == 'transport_stop':
-			if value == 'true':
-				b = LandsBodies.by_id(body_id, only='transport_stop')
-				b.transport_stop = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = LandsBodies.by_id(body_id, only='transport_stop')
-				b.transport_stop = False
-				b.save(force_update=True)
-
-			else:
-				raise ValueError('Invalid transport_stop value.')
-
-
-		# boolean
-		elif prefix == 'bank':
-			if value == 'true':
-				b = LandsBodies.by_id(body_id, only='bank')
-				b.bank = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = LandsBodies.by_id(body_id, only='bank')
-				b.bank = False
-				b.save(force_update=True)
-
-			else:
-				raise ValueError('Invalid bank value.')
-
-
-		# boolean
-		elif prefix == 'market':
-			if value == 'true':
-				b = LandsBodies.by_id(body_id, only='market')
-				b.market = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = LandsBodies.by_id(body_id, only='market')
-				b.market = False
-				b.save(force_update=True)
-
-			else:
-				raise ValueError('Invalid market value.')
-
-
-		# boolean
-		elif prefix == 'cash_machine':
-			if value == 'true':
-				b = LandsBodies.by_id(body_id, only='cash_machine')
-				b.cash_machine = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = LandsBodies.by_id(body_id, only='cash_machine')
-				b.cash_machine = False
-				b.save(force_update=True)
-
-			else:
-				raise ValueError('Invalid cash machine value.')
-
-
-		# boolean
-		elif prefix == 'cafe':
-			if value == 'true':
-				b = LandsBodies.by_id(body_id, only='cafe')
-				b.cafe = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = LandsBodies.by_id(body_id, only='cafe')
-				b.cafe = False
-				b.save(force_update=True)
-
-			else:
-				raise ValueError('Invalid cafe value.')
-
-
-		# boolean
-		elif prefix == 'entertainment':
-			if value == 'true':
-				b = LandsBodies.by_id(body_id, only='entertainment')
-				b.entertainment = True
-				b.save(force_update=True)
-
-			elif value == 'false':
-				b = LandsBodies.by_id(body_id, only='entertainment')
-				b.entertainment = False
-				b.save(force_update=True)
-
-			else:
-				raise ValueError('Invalid entertainment value.')
+				return
 
 
 		# text
-		elif prefix == 'add_showplaces':
-			b = LandsBodies.by_id(body_id, only='add_showplaces')
+		elif field == 'add_showplaces':
+			b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
 				b.add_showplaces= None
 				b.save(force_update=True)
@@ -503,16 +371,16 @@ def update_land(prefix, value, head_id=None, body_id=None, rent_id=None):
 				# fixme: додати форматування
 				b.add_showplaces = value
 				b.save(force_update=True)
-				return value
+				return
 
 		# ...
 		# other fields here
 		# ...
 
 		else:
-			raise ValueError('invalid @prefix')
+			raise ValueError('invalid @field')
 
 	except (DatabaseError, IntegrityError), e:
-		raise ValueError('Object type: flat. Message: {0} Prefix: {1}. Value = {2}'.format(
-			unicode(e), unicode(prefix), unicode(value))
+		raise ValueError('Object type: flat. Message: {0} field: {1}. Value = {2}'.format(
+			unicode(e), unicode(field), unicode(value))
 		)
