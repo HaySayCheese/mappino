@@ -12,6 +12,12 @@ def publications_template(request):
 	return HttpResponse(t.render())
 
 
+@ensure_csrf_cookie
+def map_template(request):
+	t =  templates.get_template('cabinet/parts/pubs_forms/parts/map.html')
+	return HttpResponse(t.render())
+
+
 #-- publications templates
 @ensure_csrf_cookie
 def publication_form_template(request, tid):
