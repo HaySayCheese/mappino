@@ -198,7 +198,7 @@ def update_flat(h, field, value):
 
 
 		# boolean
-		elif field == 'rent_for_family':
+		elif field == 'rent_family':
 			if (value is True) or (value is False):
 				rt = FlatsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
 				rt.family = value
@@ -866,7 +866,7 @@ def update_flat(h, field, value):
 
 
 		# boolean
-		elif field == 'cab_tv':
+		elif field == 'cable_tv':
 			if (value is True) or (value is False):
 				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.cable_tv = value

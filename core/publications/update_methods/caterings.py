@@ -683,7 +683,7 @@ def update_catering(h, field, value):
 
 
 		# boolean
-		elif field == 'cab_tv':
+		elif field == 'cable_tv':
 			if (value is True) or (value is False):
 				b = CateringsBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.cable_tv = value
