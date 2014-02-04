@@ -97,6 +97,7 @@ def briefs(request, tag=None, section=None):
 			pubs.extend([{
 				'tid': tid,
 				'id': publication.id,
+			    'state_sid': publication.state_sid,
 			    'title': publication.body.title,
 			    'for_sale': publication.for_sale,
 			    'for_rent': publication.for_rent,
