@@ -1,13 +1,19 @@
 app.directive('allowOnlyNumber', function () {
-    return function(scope, element, attrs) {
+    return {
+        require: 'ngModel',
+        link: function(scope, element, attrs, modelCtrl) {
+            modelCtrl.$parsers.push(function (inputValue) {
+                if (inputValue == undefined)
+                    return '';
+                var transformedInput = inputValue.replace(/[^0-9,.]/g, '');
 
-        var keyCode = [8,9,37,39,48,49,50,51,52,53,54,55,56,57,96,97,98,99,100,101,102,103,104,105,110];
+                if (transformedInput!=inputValue) {
+                    modelCtrl.$setViewValue(transformedInput);
+                    modelCtrl.$render();
+                }
 
-        element.bind("keydown", function(event) {
-
-            if($.inArray(event.which, keyCode) == -1)
-                event.preventDefault();
-
-        });
+                return transformedInput;
+            });
+        }
     };
 });
