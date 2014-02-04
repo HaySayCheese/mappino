@@ -1,4 +1,5 @@
 #coding=utf-8
+from django.db.utils import IntegrityError
 from collective.methods.formatters import format_text, format_title
 from core.publications.constants import SALE_TRANSACTION_TYPES, CURRENCIES, LIVING_RENT_PERIODS, MARKET_TYPES, \
 	OBJECT_CONDITIONS, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES
@@ -75,7 +76,7 @@ def update_house(h, field, value):
 
 
 		# sid
-		elif field == 'sale_transaction_type_sid':
+		elif field == 'sale_transaction_sid':
 			value = int(value)
 			if value not in SALE_TRANSACTION_TYPES.values():
 				raise ValueError()
@@ -102,7 +103,7 @@ def update_house(h, field, value):
 		elif field == 'sale_is_contract':
 			if (value is True) or (value is False):
 				st = HousesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
-				st.price_is_contract = value
+				st.is_contract = value
 				st.save(force_update=True)
 				return
 			else:
@@ -217,7 +218,7 @@ def update_house(h, field, value):
 		elif field == 'rent_is_contract':
 			if (value is True) or (value is False):
 				rt = HousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-				rt.price_is_contract = value
+				rt.is_contract = value
 				rt.save(force_update=True)
 				return
 			else:
@@ -967,7 +968,7 @@ def update_house(h, field, value):
 		else:
 			raise ValueError()
 
-	except (DatabaseError, ValueError):
+	except (DatabaseError, IntegrityError, ValueError):
 		raise ValueError('Object type: apartments. Prefix: {0}. Value = {1}'.format(
 			unicode(field), unicode(value)
 		))

@@ -156,16 +156,20 @@ RU_GET_Responses = {
 	},
 }
 RU_PATCH_Responses = {
-	'invalid_params': {
+	'invalid_param_field': {
 		'code': 1,
-	    'message': None,
+	    'message': '@field is empty or absent.',
+	},
+	'invalid_param_value': {
+		'code': 2,
+	    'message': '@value is empty or absent.',
 	},
     'invalid_hid': {
-	    'code': 2,
+	    'code': 3,
         'message': 'invalid hid.'
     },
     'update_error':{
-	    'code': 3,
+	    'code': 4,
         'message': 'update error occurred. it is possible that value is invalid.'
     },
     'OK': {
@@ -230,14 +234,17 @@ def read_and_update(request, tid_and_hid):
 			publication_data(record)), content_type='application/json')
 
 	else:
-		try:
-			d = angular_parameters(request, ['f', 'v'])
-		except ValueError as e:
-			response = copy.deepcopy(RU_PATCH_Responses['invalid_params']) # note: deep copy here
-			response['message'] = e.message
-			return HttpResponseBadRequest(json.dumps(response), content_type='application/json')
-		field = d['f']
-		value = d['v']
+		d = angular_parameters(request)
+		field = d.get('f', None)
+		if not field:
+			return HttpResponseBadRequest(
+				json.dumps(RU_PATCH_Responses['invalid_param_field']), content_type='application/json')
+
+		value = d.get('v', None)
+		if value is None:
+			# note: пустий value допустимий
+			return HttpResponseBadRequest(
+				json.dumps(RU_PATCH_Responses['invalid_param_value']), content_type='application/json')
 
 		try:
 			# Жилая недвижимость

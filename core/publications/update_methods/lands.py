@@ -61,7 +61,7 @@ def update_land(h, field, value):
 
 
 		# sid
-		elif field == 'sale_transaction_type_sid':
+		elif field == 'sale_transaction_sid':
 			value = int(value)
 			if value not in SALE_TRANSACTION_TYPES.values():
 				raise ValueError()
@@ -88,7 +88,7 @@ def update_land(h, field, value):
 		elif field == 'sale_is_contract':
 			if (value is True) or (value is False):
 				st = LandsSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
-				st.price_is_contract = value
+				st.is_contract = value
 				st.save(force_update=True)
 				return
 			else:
@@ -380,7 +380,7 @@ def update_land(h, field, value):
 		else:
 			raise ValueError('invalid @field')
 
-	except (DatabaseError, IntegrityError), e:
+	except (DatabaseError, IntegrityError, ValueError), e:
 		raise ValueError('Object type: flat. Message: {0} field: {1}. Value = {2}'.format(
 			unicode(e), unicode(field), unicode(value))
 		)

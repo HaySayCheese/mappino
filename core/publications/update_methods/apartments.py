@@ -64,7 +64,7 @@ def update_apartments(h, field, value):
 
 
 		# sid
-		elif field == 'sale_transaction_type_sid':
+		elif field == 'sale_transaction_sid':
 			value = int(value)
 			if value not in SALE_TRANSACTION_TYPES.values():
 				raise ValueError()
@@ -91,7 +91,7 @@ def update_apartments(h, field, value):
 		elif field == 'sale_is_contract':
 			if (value is True) or (value is False):
 				st = ApartmentsSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
-				st.price_is_contract = value
+				st.is_contract = value
 				st.save(force_update=True)
 				return
 			else:
@@ -192,7 +192,7 @@ def update_apartments(h, field, value):
 		elif field == 'rent_is_contract':
 			if (value is True) or (value is False):
 				rt = ApartmentsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-				rt.price_is_contract = value
+				rt.is_contract = value
 				rt.save(force_update=True)
 				return
 			else:
