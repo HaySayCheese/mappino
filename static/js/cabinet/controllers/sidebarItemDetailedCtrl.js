@@ -30,6 +30,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             tid = $rootScope.publicationId.split(":")[0],
             hid = $rootScope.publicationId.split(":")[1];
 
+        $scope.publication = "";
+
         $rootScope.loadings.detailed = true;
 
         publicationQueries.loadPublication(type, tid, hid).success(function(data) {
@@ -58,7 +60,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * викликати запит на відправку на сервер
      **/
     function inputChangeInit() {
-        angular.element(".sidebar-item-detailed-body input[type='text'], textarea").bind("focusout", function(e) {
+        angular.element(".sidebar-item-detailed-body input[type='text'], textarea").unbind('focusout').bind("focusout", function(e) {
             var name = e.currentTarget.name.replace("h_", ""),
                 value =  e.currentTarget.value;
 
@@ -68,16 +70,18 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             });
         });
 
-        angular.element(".sidebar-item-detailed-body input[type='checkbox']").bind("change", function(e) {
+        angular.element(".sidebar-item-detailed-body input[type='checkbox']").unbind('change').bind("change", function(e) {
             var name = e.currentTarget.name.replace("h_", ""),
                 value =  e.currentTarget.checked;
 
             sendToServerInputData(name, value);
         });
 
-        angular.element(".sidebar-item-detailed-body select").bind("change", function(e) {
+        angular.element(".sidebar-item-detailed-body select").unbind('change').bind("change", function(e) {
             var name = e.currentTarget.name.replace("h_", ""),
                 value =  e.currentTarget.value;
+
+            console.log(name + ' - ' + value);
 
             sendToServerInputData(name, value);
         });
