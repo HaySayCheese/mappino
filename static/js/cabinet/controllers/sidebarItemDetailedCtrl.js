@@ -11,7 +11,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
     /**
      * При зміні урла грузить дані оголошення
-     **/
+     */
     $scope.$on("$routeChangeSuccess", function() {
         tid = $rootScope.publicationId.split(":")[0];
         hid = $rootScope.publicationId.split(":")[1];
@@ -30,7 +30,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
     /**
      * Функція загрузки даних по неопублікованому оголошенню
-     **/
+     */
     function loadUnpublishedPublicationData() {
         var type = $rootScope.routeSection;
 
@@ -63,7 +63,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     /**
      * При втраті фокуса з інпута
      * викликати запит на відправку на сервер
-     **/
+     */
     function inputChangeInit() {
         angular.element(".sidebar-item-detailed-body input[type='text'], textarea").bind("focusout", function(e) {
             var name = e.currentTarget.name.replace("h_", ""),
@@ -99,7 +99,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
     /**
      * Відправка даних полів на сервер
-     **/
+     */
     function sendToServerInputData(name, value, callback) {
         var type = $rootScope.routeSection;
 
@@ -112,7 +112,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
     /**
      * Ініціалізація карти
-     **/
+     */
     function mapInit() {
         var cityInput = document.getElementById("publication-map-input"),
             center = new google.maps.LatLng(50.448159, 30.524654),
@@ -169,7 +169,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
     /**
      * Ставить в інпут адрес з координат
-     **/
+     */
     function setAddressFromLatLng(latLng, input) {
         var geocoder = new google.maps.Geocoder();
 
@@ -182,7 +182,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
     /**
      * Ініціалізація області загрузки зображень
-     **/
+     */
     $scope.multipleSelect = function() {
         $timeout(function() {
             angular.element(".image-upload-block input[type='file']").click();
@@ -202,7 +202,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
     /**
      * Функція скролбара
-     **/
+     */
     function initScrollBar() {
         var sidebar = angular.element(".sidebar-item-detailed-body");
 

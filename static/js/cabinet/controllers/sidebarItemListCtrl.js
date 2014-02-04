@@ -24,7 +24,7 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, Br
 
     /**
      * Клік по бріфу в списку
-     **/
+     */
     $scope.selectBrief = function(c) {
         $location.path("publications/" + $rootScope.routeSection + "/" + c)
     };
@@ -32,7 +32,7 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, Br
 
     /**
      * Ініціалізація загрузки брифів
-     **/
+     */
     function loadBriefsInit() {
         $scope.briefs = [];
 
@@ -48,7 +48,7 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, Br
 
     /**
      * Функція скролбара
-     **/
+     */
     function initScrollBar() {
         var sidebar = angular.element(".sidebar-item-list-body");
 

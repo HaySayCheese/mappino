@@ -6,7 +6,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
     /**
      * Змінні створення тега
-     **/
+     */
     $scope.newTag = Tags.getParameters();
     $scope.tags = [];
     $scope.newPublication = {
@@ -18,7 +18,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
     /**
      * Ініціалізація дропдауна
-     **/
+     */
     $timeout(function() {
         angular.element("select[name='typeSelect']").selectpicker({
             style: 'btn-success btn-md'
@@ -28,7 +28,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
     /**
      * Ініціалізкація скролбара
-     **/
+     */
     initScrollBar();
 
 
@@ -63,7 +63,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
     /**
      * Логіка загрузки тегів
-     **/
+     */
     function loadTags() {
         $scope.tags = [];
 
@@ -75,7 +75,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
     /**
      * Створення діалога редагування
-     **/
+     */
     $scope.createEditTagDialog = function() {
         $scope.closeTagDialog();
 
@@ -112,7 +112,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
     /**
      * Логіка створення тега
-     **/
+     */
     $scope.createTag = function() {
         if (!$scope.newTag.tagName && $scope.newTag.tagName === "")
             return;
@@ -139,7 +139,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
     /**
      * Логіка редагування тега
-     **/
+     */
     $scope.editTag = function(tag) {
         var btn = $(".btn-creating").button("loading");
 
@@ -151,7 +151,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
     /**
      * Логіка видалення тега
-     **/
+     */
     $scope.removeTag = function(tag) {
         Tags.remove(tag);
     };
@@ -160,7 +160,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     /**
      * Повернення змінних на базові значеня
      * після закриття діалога створення тега
-     **/
+     */
     $scope.closeTagDialog = function() {
         $scope.newTag = angular.copy(Tags.getParameters());
         $scope.creatingTag = false;
@@ -170,7 +170,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
     /**
      * Функція скролбара
-     **/
+     */
     function initScrollBar() {
         var sidebar = angular.element(".sidebar-menu-body");
 
