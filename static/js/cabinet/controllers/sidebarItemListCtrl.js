@@ -31,14 +31,6 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, Br
 
 
     /**
-     * Якщо міняються теги то оновлюємо їх в брифах
-     **/
-    $rootScope.$watchCollection("tags", function() {
-        Briefs.updateTags();
-    });
-
-
-    /**
      * Ініціалізація загрузки брифів
      **/
     function loadBriefsInit() {

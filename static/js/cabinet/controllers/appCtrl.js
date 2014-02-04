@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('AppCtrl', function($scope, $rootScope, $routeParams) {
+app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) {
 
 
     /**
@@ -38,8 +38,12 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams) {
      * пункту меню
      **/
     $scope.$on("$routeChangeSuccess", function() {
+        $rootScope.routeBase     = "";
         $rootScope.routeSection  = "";
         $rootScope.publicationId = "";
+
+        if ($location.path().replace("/", ""))
+            $rootScope.routeBase = $location.path().replace("/", "");
 
         if ($routeParams.section)
             $rootScope.routeSection = $routeParams.section;

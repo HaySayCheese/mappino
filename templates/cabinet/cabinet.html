@@ -151,8 +151,8 @@
                 <div class="menu-block">
                     <div class="menu-block-header icon-user">Учетная запись</div>
                     <ul class="menu-block-list">
-                        <li><a href="#"><span class="menu-icon icon-support"></span>Онлайн поддержка</a></li>
-                        <li><a href="#"><span class="menu-icon icon-settings"></span>Параметры</a></li>
+                        <li ng-class="{ 'active': routeBase == 'help-me' }"><a href="#!/help-me"><span class="menu-icon icon-support"></span>Онлайн поддержка</a></li>
+                        <li ng-class="{ 'active': routeBase == 'settings' }"><a href="#!/settings"><span class="menu-icon icon-settings"></span>Параметры</a></li>
                     </ul>
                 </div>
             </div>
@@ -160,7 +160,7 @@
         </div>
 
 
-        <div class="sidebar-item-list" ng-controller="SidebarItemListCtrl">
+        <div class="sidebar-item-list" ng-controller="SidebarItemListCtrl" ng-hide="routeBase == 'settings'">
             <div class="sidebar-item-list-header">
                 <input type="text" class="form-control" placeholder="Поиск..." ng-model="searchItem">
             </div>

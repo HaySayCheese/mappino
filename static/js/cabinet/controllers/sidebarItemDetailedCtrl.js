@@ -9,10 +9,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
 
 
-
-
     /**
-     * При зміні урла генерить урл для темплейта
+     * При зміні урла грузить дані оголошення
      **/
     $scope.$on("$routeChangeSuccess", function() {
         if (Briefs.isUnpublished($rootScope.publicationId.split(":")[1]) && $rootScope.publicationId)
@@ -60,7 +58,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * викликати запит на відправку на сервер
      **/
     function inputChangeInit() {
-        angular.element(".sidebar-item-detailed-body input, textarea").bind("focusout", function(e) {
+        angular.element(".sidebar-item-detailed-body input[type='text'], textarea").bind("focusout", function(e) {
             var name = e.currentTarget.name.replace("h_", ""),
                 value =  e.currentTarget.value;
 
@@ -94,12 +92,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             tid = $rootScope.publicationId.split(":")[0],
             hid = $rootScope.publicationId.split(":")[1];
 
-        console.log(name + " - " + value);
-
         publicationQueries.checkInputs(type, tid, hid, { f: name, v: value })
         .success(function(data) {
-            console.log(data);
-
             if (data.value)
                 callback(data.value);
         });
@@ -182,10 +176,10 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     function initScrollBar() {
         var sidebar = angular.element(".sidebar-item-detailed-body");
 
+        sidebar.perfectScrollbar("update");
         sidebar.perfectScrollbar({
             wheelSpeed: 40
         });
-
         angular.element(window).resize(function() {
             sidebar.perfectScrollbar("update");
         });
