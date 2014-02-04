@@ -174,6 +174,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     function initScrollBar() {
         var sidebar = angular.element(".sidebar-menu-body");
 
+        sidebar.perfectScrollbar("destroy");
         sidebar.perfectScrollbar({
             wheelSpeed: 20
         });

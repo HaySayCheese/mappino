@@ -36,6 +36,8 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, Br
     function loadBriefsInit() {
         $scope.briefs = [];
 
+        initScrollBar();
+
         Briefs.load($rootScope.routeSection, function(data) {
             $scope.briefs = data;
 
@@ -52,7 +54,7 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, Br
 
         sidebar.scrollTop(0);
 
-        sidebar.perfectScrollbar("update");
+        sidebar.perfectScrollbar("destroy");
         sidebar.perfectScrollbar({
             wheelSpeed: 20
         });
