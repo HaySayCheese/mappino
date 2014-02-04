@@ -6,9 +6,11 @@ app.factory('Briefs', function($rootScope, briefQueries) {
     return {
 
         /**
-         * @category {String, Number}
-         * @callback {Function}
-         **/
+         * Загружає брифи оголошень
+         *
+         * @param {string, number}  category    Категорія ('all', 'published', 'unpublished', ...)
+         * @param {Function}        callback    Вертає масив брифів при успішній загрузці
+         */
         load: function(category, callback) {
             var that = this;
             $rootScope.loadings.briefs = true;
@@ -27,19 +29,32 @@ app.factory('Briefs', function($rootScope, briefQueries) {
             });
         },
 
+
         /**
-         * @brief {Object}
-         **/
+         * Додає бриф
+         *
+         * @param {object} brief Обєкт брифа
+         */
         add: function(brief) {
             briefs.unshift(brief);
             this.updateType();
             this.updateTags();
         },
 
+
+        /**
+         * Вертає масив брифів
+         *
+         * @return {Array} Масив брифік
+         */
         getAll: function() {
             return briefs;
         },
 
+
+        /**
+         * Оновлює тип брифа з ідентифікатора типа
+         */
         updateType: function() {
             var types = $rootScope.publicationTypes;
 
@@ -51,6 +66,10 @@ app.factory('Briefs', function($rootScope, briefQueries) {
             }
         },
 
+
+        /**
+         * Оновлює ттеги брифа з масива тегів
+         */
         updateTags: function() {
             var tags = $rootScope.tags;
 
@@ -70,6 +89,15 @@ app.factory('Briefs', function($rootScope, briefQueries) {
             }
         },
 
+
+        /**
+         * Оновлює параметр брифа
+         *
+         * @param {number} tid              Ідентифікатор типу оголошення
+         * @param {number} id               Ідентифікатор оголошення
+         * @param {object} key              Параметр який потрібно обновити
+         * @param {string, number} value    Значення параметра який потрібно обновити
+         */
         updateBriefOfPublication: function(tid, id, key, value) {
             for (var i = 0; i < briefs.length; i++) {
                 if (briefs[i].tid == tid && briefs[i].id == id) {
@@ -78,10 +106,18 @@ app.factory('Briefs', function($rootScope, briefQueries) {
             }
         },
 
+
+        /**
+         * Визначає чи оголошення по даному брифу опубліковане
+         *
+         * @param {object} id   Ідентифікатор брифа
+         * @return {boolean}    true / false
+         */
         isUnpublished: function(id) {
             var trues = false;
+
             for (var i = 0; i < briefs.length; i++) {
-                if (briefs[i].id === parseInt(id) && briefs[i].title == "")
+                if (briefs[i].id === parseInt(id) && briefs[i].state_sid === 1)
                     trues = true;
             }
             return trues;

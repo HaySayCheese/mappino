@@ -575,5 +575,24 @@
             </div>
         </div>
 
+        <div class="row">
+            <h3>Изображения</h3>
+            <div class="col-lg-12">
+                <div class="image-upload-block"
+                        ng-file-drop="onFileSelect($files)"
+                        ng-file-drag-over-class="hover"
+                        ng-file-drop-available="dropSupported=true"
+                        ng-show="dropSupported"
+                        ng-click="multipleSelect()">
+
+                    <input type="file" ng-file-select="onFileSelect($files)" multiple/>
+                    <span class="drop-zone-title text-muted text-center" ng-show="!publication.head.photos.length">Перетащите сюда файли</span>
+
+                    <div class="photos">
+                        <div class="photo" ng-repeat="photo in publication.head.photos">[[ photo.name ]]</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
 </div>

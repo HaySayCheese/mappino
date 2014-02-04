@@ -1,4 +1,4 @@
-var app = angular.module('MappinoCabinet', ['ngRoute', 'ngCookies']);
+var app = angular.module('MappinoCabinet', ['ngRoute', 'ngCookies', 'angularFileUpload']);
 
 app.config(function($interpolateProvider, $locationProvider) {
 
@@ -8,4 +8,8 @@ app.config(function($interpolateProvider, $locationProvider) {
 
     // Настройка роутера
     $locationProvider.hashPrefix('!');
+});
+
+app.run(function($http, $cookies) {
+    $http.defaults.headers.common['X-CSRFToken'] = $cookies.csrftoken;
 });

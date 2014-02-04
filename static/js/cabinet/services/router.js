@@ -1,6 +1,6 @@
 'use strict';
 
-app.config(['$routeProvider', function($routeProvider) {
+app.config(function($routeProvider) {
     $routeProvider
 
         .when('/publications/:section', {
@@ -19,4 +19,4 @@ app.config(['$routeProvider', function($routeProvider) {
         .otherwise({
             redirectTo: '/publications/all'
         });
-}]);
+});

@@ -1,17 +1,16 @@
 'use strict';
 
-app.factory('briefQueries', function($http, $cookies) {
+app.factory('briefQueries', function($http) {
 
     return {
 
-        // Загрузка всіх брифів
+        /**
+         * @param {string, number} category Категорія ('all', 'published', 'unpublished', ...)
+         */
         loadBriefs: function(category) {
             return $http({
-                url: '/ajax/api/cabinet/publications/briefs/' + category,
-                method: "GET",
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                }
+                url: '/ajax/api/cabinet/publications/briefs/' + category + '/',
+                method: "GET"
             });
         }
 

@@ -1,29 +1,29 @@
 'use strict';
 
-app.factory('tagQueries', function($http, $cookies) {
+app.factory('tagQueries', function($http) {
 
     return {
 
-        // Запит на творення тега
+        /**
+         * Запит на загрузку тегів
+         */
         loadTags: function() {
             return $http({
                 url: '/ajax/api/cabinet/dirtags/',
-                method: "GET",
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                }
+                method: "GET"
             });
         },
 
 
-        // Запит на творення тега
+        /**
+         * Запит на створення тега
+         *
+         * @param {Object} tag Обєкт тега
+         */
         createTag: function(tag) {
             return $http({
                 url: '/ajax/api/cabinet/dirtags/',
                 method: "POST",
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                },
                 data: {
                     title: tag.title,
                     color_id: tag.colors.indexOf(tag.selectedColor)
@@ -32,26 +32,28 @@ app.factory('tagQueries', function($http, $cookies) {
         },
 
 
-        // Запит на видалення тега
+        /**
+         * Запит на видалення тега
+         *
+         * @param {number} id Ідентифікатор тега
+         */
         removeTag: function(id) {
             return $http({
                 url: '/ajax/api/cabinet/dirtags/' + id + "/",
-                method: "DELETE",
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                }
+                method: "DELETE"
             });
         },
 
 
-        // Запит на перейменування тега
+        /**
+         * Запит на перейменування тега
+         *
+         * @param {object} tag Обєкт тега
+         */
         editTag: function(tag) {
             return $http({
                 url: '/ajax/api/cabinet/dirtags/' + tag.id + "/",
                 method: "PUT",
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                },
                 data: {
                     color_id: tag.color_id,
                     title: tag.title

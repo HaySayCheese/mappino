@@ -14,6 +14,9 @@ app.factory('Tags', function($rootScope, tagQueries, Briefs) {
 
     return {
 
+        /**
+         * @param {function} callback
+         */
         load: function(callback) {
             var that = this;
             $rootScope.loadings.tags = true;
@@ -30,14 +33,21 @@ app.factory('Tags', function($rootScope, tagQueries, Briefs) {
 
                 $rootScope.loadings.tags = false;
 
-                callback(that.getTags());
+                callback(that.getAll());
             });
         },
 
+        /**
+         * @param {Object} tag
+         */
         add: function(tag) {
             tags.push(tag);
         },
 
+        /**
+         * @param {Object} tag
+         * @param {function} callback
+         */
         update: function(tag, callback) {
             tagQueries.editTag(tag).success(function() {
                 for (var i = 0; i <= tags.length - 1; i++)
@@ -49,6 +59,9 @@ app.factory('Tags', function($rootScope, tagQueries, Briefs) {
             });
         },
 
+        /**
+         * @param {Object} tag
+         */
         remove: function(tag) {
             tagQueries.removeTag(tag.id).success(function() {
                 tags.splice(tags.indexOf(tag), 1);
@@ -58,10 +71,16 @@ app.factory('Tags', function($rootScope, tagQueries, Briefs) {
             });
         },
 
-        getTags: function() {
+        /**
+         * @return {Array}
+         */
+        getAll: function() {
             return tags;
         },
 
+        /**
+         * @return {Object}
+         */
         getParameters: function() {
             return tagParameters;
         }

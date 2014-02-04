@@ -1,34 +1,38 @@
 'use strict';
 
-app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $compile, $routeParams, publicationQueries, Briefs, Tags) {
+app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $compile, $routeParams, publicationQueries, Briefs, Tags, $upload) {
 
     initScrollBar();
 
     $scope.publication = "";
-    $scope.tags = Tags.getTags();
+    $scope.tags = Tags.getAll();
 
-
+    var tid, hid;
 
     /**
      * При зміні урла грузить дані оголошення
      **/
     $scope.$on("$routeChangeSuccess", function() {
+        tid = $rootScope.publicationId.split(":")[0];
+        hid = $rootScope.publicationId.split(":")[1];
+
         if (Briefs.isUnpublished($rootScope.publicationId.split(":")[1]) && $rootScope.publicationId)
-            loadPublicationData();
+            loadUnpublishedPublicationData();
     });
     $rootScope.$watch("briefsLoaded", function(loaded) {
-        if (loaded && $rootScope.publicationId)
-            loadPublicationData();
+        tid = $rootScope.publicationId.split(":")[0];
+        hid = $rootScope.publicationId.split(":")[1];
+
+        if (loaded && $rootScope.publicationId && Briefs.isUnpublished($rootScope.publicationId.split(":")[1]))
+            loadUnpublishedPublicationData();
     });
 
 
     /**
-     * Функція загрузки даних по оголошенню
+     * Функція загрузки даних по неопублікованому оголошенню
      **/
-    function loadPublicationData() {
-        var type = $rootScope.routeSection,
-            tid = $rootScope.publicationId.split(":")[0],
-            hid = $rootScope.publicationId.split(":")[1];
+    function loadUnpublishedPublicationData() {
+        var type = $rootScope.routeSection;
 
         $scope.publication = "";
         $rootScope.loadings.detailed = true;
@@ -63,9 +67,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     function inputChangeInit() {
         angular.element(".sidebar-item-detailed-body input[type='text'], textarea").bind("focusout", function(e) {
             var name = e.currentTarget.name.replace("h_", ""),
-                value =  e.currentTarget.value,
-                tid = $rootScope.publicationId.split(":")[0],
-                hid = $rootScope.publicationId.split(":")[1];
+                value =  e.currentTarget.value;
 
             sendToServerInputData(name, value, function(newValue) {
                 if (newValue)
@@ -78,9 +80,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
         angular.element(".sidebar-item-detailed-body input[type='checkbox']").bind("change", function(e) {
             var name = e.currentTarget.name.replace("h_", ""),
-                value =  e.currentTarget.checked,
-                tid = $rootScope.publicationId.split(":")[0],
-                hid = $rootScope.publicationId.split(":")[1];
+                value =  e.currentTarget.checked;
 
             if (name == "for_rent" || name == "for_sale")
                 Briefs.updateBriefOfPublication(tid, hid, name, value);
@@ -92,8 +92,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             var name = e.currentTarget.name.replace("h_", ""),
                 value =  e.currentTarget.value;
 
-            console.log(name + ' - ' + value);
-
             sendToServerInputData(name, value);
         });
     }
@@ -103,12 +101,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * Відправка даних полів на сервер
      **/
     function sendToServerInputData(name, value, callback) {
-        var type = $rootScope.routeSection,
-            tid = $rootScope.publicationId.split(":")[0],
-            hid = $rootScope.publicationId.split(":")[1];
+        var type = $rootScope.routeSection;
 
-        publicationQueries.checkInputs(type, tid, hid, { f: name, v: value })
-        .success(function(data) {
+        publicationQueries.checkInputs(type, tid, hid, { f: name, v: value }).success(function(data) {
             if (data.value)
                 callback(data.value);
         });
@@ -183,6 +178,26 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 input.value = results[0].formatted_address;
         });
     }
+
+
+    /**
+     * Ініціалізація області загрузки зображень
+     **/
+    $scope.multipleSelect = function() {
+        $timeout(function() {
+            angular.element(".image-upload-block input[type='file']").click();
+        }, 0);
+
+    };
+    $scope.onFileSelect = function(files) {
+        $scope.publication.head.photos = [];
+
+        for (var i = 0; i < files.length; i++) {
+            $scope.publication.head.photos.push(files[i]);
+
+            console.log($scope.publication.head.photos)
+        }
+    };
 
 
     /**
