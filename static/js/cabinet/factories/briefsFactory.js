@@ -70,6 +70,14 @@ app.factory('Briefs', function($rootScope, briefQueries) {
             }
         },
 
+        updateBriefOfPublication: function(tid, id, key, value) {
+            for (var i = 0; i < briefs.length; i++) {
+                if (briefs[i].tid == tid && briefs[i].id == id) {
+                    briefs[i][key] = value;
+                }
+            }
+        },
+
         isUnpublished: function(id) {
             var trues = false;
             for (var i = 0; i < briefs.length; i++) {

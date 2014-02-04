@@ -31,8 +31,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             hid = $rootScope.publicationId.split(":")[1];
 
         $scope.publication = "";
-
         $rootScope.loadings.detailed = true;
+
 
         publicationQueries.loadPublication(type, tid, hid).success(function(data) {
             $scope.publication = data;
@@ -41,6 +41,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/" + $rootScope.publicationId.split(":")[0] + "/";
 
             $timeout(function() {
+                inputChangeInit();
+
                 angular.element("select").selectpicker({
                     style: 'btn-default btn-md'
                 });
@@ -48,7 +50,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 $rootScope.loadings.detailed = false;
                 $scope.showPublication = true;
 
-                inputChangeInit();
                 mapInit();
             }, 200);
         });
@@ -60,24 +61,34 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * викликати запит на відправку на сервер
      **/
     function inputChangeInit() {
-        angular.element(".sidebar-item-detailed-body input[type='text'], textarea").unbind('focusout').bind("focusout", function(e) {
+        angular.element(".sidebar-item-detailed-body input[type='text'], textarea").bind("focusout", function(e) {
             var name = e.currentTarget.name.replace("h_", ""),
-                value =  e.currentTarget.value;
+                value =  e.currentTarget.value,
+                tid = $rootScope.publicationId.split(":")[0],
+                hid = $rootScope.publicationId.split(":")[1];
 
             sendToServerInputData(name, value, function(newValue) {
                 if (newValue)
-                    e.currentTarget.value = newValue
+                    e.currentTarget.value = newValue;
+
+                if (name == "title")
+                    Briefs.updateBriefOfPublication(tid, hid, name, newValue ? newValue : value);
             });
         });
 
-        angular.element(".sidebar-item-detailed-body input[type='checkbox']").unbind('change').bind("change", function(e) {
+        angular.element(".sidebar-item-detailed-body input[type='checkbox']").bind("change", function(e) {
             var name = e.currentTarget.name.replace("h_", ""),
-                value =  e.currentTarget.checked;
+                value =  e.currentTarget.checked,
+                tid = $rootScope.publicationId.split(":")[0],
+                hid = $rootScope.publicationId.split(":")[1];
+
+            if (name == "for_rent" || name == "for_sale")
+                Briefs.updateBriefOfPublication(tid, hid, name, value);
 
             sendToServerInputData(name, value);
         });
 
-        angular.element(".sidebar-item-detailed-body select").unbind('change').bind("change", function(e) {
+        angular.element(".sidebar-item-detailed-body select").bind('change',function(e) {
             var name = e.currentTarget.name.replace("h_", ""),
                 value =  e.currentTarget.value;
 
@@ -182,7 +193,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
         sidebar.perfectScrollbar("update");
         sidebar.perfectScrollbar({
-            wheelSpeed: 40
+            wheelSpeed: 40,
+            useKeyboard: false
         });
         angular.element(window).resize(function() {
             sidebar.perfectScrollbar("update");

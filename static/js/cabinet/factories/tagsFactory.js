@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Tags', function($rootScope, tagQueries) {
+app.factory('Tags', function($rootScope, tagQueries, Briefs) {
     var tags = [],
         tagParameters = {
             colors:         ["#9861dd", "#465eec", "#60b4cf", "#54b198", "#7cc768", "#dfb833", "#f38a23", "#f32363"],
@@ -44,6 +44,7 @@ app.factory('Tags', function($rootScope, tagQueries) {
                     if (tags[i].id == tag.id)
                         tags[i] = tag;
 
+                Briefs.updateTags();
                 callback();
             });
         },
@@ -52,6 +53,8 @@ app.factory('Tags', function($rootScope, tagQueries) {
             tagQueries.removeTag(tag.id).success(function() {
                 tags.splice(tags.indexOf(tag), 1);
                 $rootScope.lastRemovedTag = tag;
+
+                Briefs.updateTags();
             });
         },
 
