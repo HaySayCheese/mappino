@@ -149,6 +149,9 @@ output {
     cursor: not-allowed;
     background-color: @input-bg-disabled;
   }
+  &[required] {
+      box-shadow: none;
+  }
 
   // Reset height for `textarea`s
   textarea& {
