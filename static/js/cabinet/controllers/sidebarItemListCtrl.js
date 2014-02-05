@@ -6,6 +6,9 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, Br
     $scope.briefs = [];
 
 
+    /**
+     * Ініціалізація загрузки оголошеня при зміні урла
+     */
     $scope.$on("$routeChangeSuccess", function(event, current, previous) {
 
         if (!$rootScope.routeSection)

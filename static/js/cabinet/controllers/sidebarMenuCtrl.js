@@ -29,7 +29,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
     /**
      * Створення нового оголошенн
-     **/
+     */
     $scope.createPublication = function() {
         var btn = angular.element(".new-pub-panel .btn-group-justified > .btn-success").button("loading");
 
