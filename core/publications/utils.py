@@ -5,7 +5,9 @@ from django.core import serializers
 def publication_data(record):
 	#-- head
 	head = serializers.serialize('python', [record], fields=(
-		'created', 'actual', 'for_rent', 'for_sale', 'state_sid'))[0]['fields']
+		'created', 'actual', 'for_rent', 'for_sale', 'state_sid',
+		'degree_lat', 'degree_lng', 'segment_lat', 'segment_lng', 'pos_lat', 'pos_lng',
+		'address'))[0]['fields']
 
 	created_dt = head['created']
 	if created_dt is not None:
