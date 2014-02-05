@@ -83,6 +83,7 @@ class ObjectStates(AbstractConstant):
 		self.set_ids({
 			'published': 0,
 		    'unpublished': 1,
+		    'deleted': 2,
 
 			# todo: розібратись із цим
 		    #'in_verification_queue': 100,
@@ -99,6 +100,9 @@ class ObjectStates(AbstractConstant):
 
 	def unpublished(self):
 		return self.ids['unpublished']
+
+	def deleted(self):
+		return self.ids['deleted']
 OBJECT_STATES = ObjectStates()
 
 

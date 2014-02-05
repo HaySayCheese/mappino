@@ -1,3 +1,4 @@
+#coding=utf-8
 from itertools import ifilter
 import json
 from django.core.exceptions import ObjectDoesNotExist
@@ -15,11 +16,11 @@ __pb_responses = {
 	    'message': 'invalid tag id.'
 	},
 }
-
 @login_required_or_forbidden
 @require_http_methods('GET')
 def briefs(request, tag=None, section=None):
 	if tag is not None:
+		# Видача для розділу-тегу
 		try:
 			tag = DirTags.by_id(int(tag))
 		except ObjectDoesNotExist:
@@ -37,7 +38,6 @@ def briefs(request, tag=None, section=None):
 			pubs.extend([{
 				'tid': tid,
 				'id': publication.id,
-			    'state_sid': publication.state_sid,
 			    'title': publication.body.title,
 			    'for_sale': publication.for_sale,
 			    'for_rent': publication.for_rent,
@@ -62,6 +62,8 @@ def briefs(request, tag=None, section=None):
 				query = query.filter(state_sid = OBJECT_STATES.published())
 			elif section == 'unpublished':
 				query = query.filter(state_sid = OBJECT_STATES.unpublished())
+			elif section == 'deleted':
+				query = query.filter(state_sid = OBJECT_STATES.deleted())
 
 			pub_ids = [publication.id for publication in query]
 			tags = DirTags.contains_publications(tid, pub_ids).filter(
