@@ -24,6 +24,7 @@ urlpatterns += patterns('apps.pages.cabinet',
 urlpatterns += patterns('apps.pages.cabinet',
     url(r'^ajax/template/cabinet/publications/(\d+)/$', 'templates_ajax.publication_form_template'),
     url(r'^ajax/template/cabinet/publications/map/$', 'templates_ajax.map_template'),
+    url(r'^ajax/template/cabinet/publications/photos/$', 'templates_ajax.photos_template'),
 )
 
 
