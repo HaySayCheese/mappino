@@ -45,10 +45,13 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                     // Послідовність має значення
                     initInputsChange();
                     initDropdowns();
-                    initMap();
 
                     $rootScope.loadings.detailed = false;
                     $scope.showPublication = true;
+
+                    $timeout(function() {
+                        initMap();
+                    }, 50);
                 }, 200);
             } else {
                 console.log("actual")
@@ -114,7 +117,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             // Маркер
             marker = new google.maps.Marker({
                 map: map,
-                draggable: true
+                draggable: true,
+                position: center
             });
 
         autocomplete.bindTo('bounds', map);
