@@ -46,7 +46,7 @@ app.factory('publicationQueries', function($http) {
         checkInputs: function(category, tid, hid, data) {
             return $http({
                 url: '/ajax/api/cabinet/publications/' + category + '/' + tid + ":" + hid + '/',
-                method: "POST",
+                method: "UPDATE",
                 data: data
             });
         }
