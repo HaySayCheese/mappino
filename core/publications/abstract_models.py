@@ -39,13 +39,24 @@ class LivingHeadModel(models.Model):
 	#-- fields
 	owner = models.ForeignKey(Users)
 
-	state_sid = models.SmallIntegerField(default=OBJECT_STATES.unpublished())
-	for_sale = models.BooleanField(default=False)
-	for_rent = models.BooleanField(default=False)
-	created = models.DateTimeField(auto_now_add=True, db_index=True)
-	modified = models.DateTimeField(auto_now=True, db_index=True)
-	actual = models.DateTimeField(null=True, db_index=True)
-	deleted = models.DateTimeField(null=True, db_index=True)
+	state_sid = models.SmallIntegerField(default=OBJECT_STATES.unpublished(), db_index=True)
+	for_sale = models.BooleanField(default=False, db_index=True)
+	for_rent = models.BooleanField(default=False, db_index=True)
+	created = models.DateTimeField(auto_now_add=True)
+	modified = models.DateTimeField(auto_now=True)
+	actual = models.DateTimeField(null=True)
+	deleted = models.DateTimeField(null=True)
+
+	#-- map coordinates
+	degree_lat = models.SmallIntegerField(null=True, db_index=True)
+	degree_lng = models.SmallIntegerField(null=True, db_index=True)
+
+	segment_lat = models.SmallIntegerField(null=True, db_index=True)
+	segment_lng = models.SmallIntegerField(null=True, db_index=True)
+
+	pos_lat = models.SmallIntegerField(null=True, db_index=True)
+	pos_lng = models.SmallIntegerField(null=True, db_index=True)
+	address = models.TextField(null=True)
 
 
 	@classmethod
