@@ -163,15 +163,15 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      */
     $scope.multipleSelect = function() {
         $timeout(function() {
-            angular.element(".image-upload-block input[type='file']").click();
+            angular.element("input[type='file']").trigger("click");
         }, 0);
 
     };
-    $scope.onFileSelect = function(files) {
+    $scope.onFileSelect = function($files) {
         $scope.publication.head.photos = [];
 
-        for (var i = 0; i < files.length; i++) {
-            $scope.publication.head.photos.push(files[i]);
+        for (var i = 0; i < $files.length; i++) {
+            $scope.publication.head.photos.push($files[i]);
 
             console.log($scope.publication.head.photos)
         }
