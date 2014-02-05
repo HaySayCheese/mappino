@@ -40,6 +40,50 @@ def publication_data(record):
 
 
 def __format_output_data(data):
+	# maps coordinates
+	head = data.get('head')
+	if head is None:
+		raise ValueError('@head can not be None.')
+
+	degree_lat = head.get('degree_lat')
+	degree_lng = head.get('degree_lng')
+	if (degree_lat is None) or (degree_lng is None):
+		coordinates = {
+			'lat': None,
+		    'lng': None,
+		}
+	else:
+		segment_lat = head.get('segment_lat')
+		segment_lng = head.get('segment_lng')
+		if (segment_lat is None) or (segment_lng is None):
+			coordinates = {
+				'lat': None,
+			    'lng': None,
+			}
+		else:
+			pos_lat = head.get('pos_lat')
+			pos_lng = head.get('pos_lng')
+			if (pos_lat is None) or (pos_lng is None):
+				coordinates = {
+					'lat': None,
+				    'lng': None,
+				}
+			else:
+				coordinates = {
+					'lat': str(degree_lat) + '.' + str(segment_lat) + str(pos_lat),
+				    'lng': str(degree_lng) + '.' + str(segment_lng) + str(pos_lng),
+				}
+
+	del data['head']['degree_lat']
+	del data['head']['degree_lng']
+	del data['head']['segment_lat']
+	del data['head']['segment_lng']
+	del data['head']['pos_lat']
+	del data['head']['pos_lng']
+	data['head'].update(coordinates)
+
+
+
 	# sale terms
 	s_terms = data.get('sale_terms')
 	if s_terms:
