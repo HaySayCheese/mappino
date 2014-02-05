@@ -39,13 +39,24 @@ class LivingHeadModel(models.Model):
 	#-- fields
 	owner = models.ForeignKey(Users)
 
-	state_sid = models.SmallIntegerField(default=OBJECT_STATES.unpublished())
-	for_sale = models.BooleanField(default=False)
-	for_rent = models.BooleanField(default=False)
-	created = models.DateTimeField(auto_now_add=True, db_index=True)
-	modified = models.DateTimeField(auto_now=True, db_index=True)
-	actual = models.DateTimeField(null=True, db_index=True)
-	deleted = models.DateTimeField(null=True, db_index=True)
+	state_sid = models.SmallIntegerField(default=OBJECT_STATES.unpublished(), db_index=True)
+	for_sale = models.BooleanField(default=False, db_index=True)
+	for_rent = models.BooleanField(default=False, db_index=True)
+	created = models.DateTimeField(auto_now_add=True)
+	modified = models.DateTimeField(auto_now=True)
+	actual = models.DateTimeField(null=True)
+	deleted = models.DateTimeField(null=True)
+
+	#-- map coordinates
+	degree_lat = models.SmallIntegerField(null=True, db_index=True)
+	degree_lng = models.SmallIntegerField(null=True, db_index=True)
+
+	segment_lat = models.SmallIntegerField(null=True, db_index=True)
+	segment_lng = models.SmallIntegerField(null=True, db_index=True)
+
+	pos_lat = models.SmallIntegerField(null=True, db_index=True)
+	pos_lng = models.SmallIntegerField(null=True, db_index=True)
+	address = models.TextField(null=True)
 
 
 	@classmethod
@@ -92,6 +103,56 @@ class LivingHeadModel(models.Model):
 		if select_owner:
 			query = query.select_related('owner')
 		return query
+
+
+	def set_lat_lang(self, lat_lang):
+		if not lat_lang:
+			self.degree_lat = None
+			self.degree_lng = None
+			self.segment_lat = None
+			self.segment_lng = None
+			self.pos_lat = None
+			self.pos_lng = None
+			self.save(force_update=True)
+			return
+
+
+		if not ';' in lat_lang:
+			raise ValueError()
+		lat, lng = lat_lang.split(';')
+		if (not lat) or (not lng):
+			raise ValueError()
+
+		if len(lat) <= 6:
+			raise ValueError()
+		if len(lng) <= 6:
+			raise ValueError()
+
+		lat = lat.replace(',', '.')
+		lng = lng.replace(',', '.')
+		degree_lat, pos_part_lat = lat.split('.')
+		degree_lng, pos_part_lng = lng.split('.')
+
+		degree_lat = int(degree_lat)
+		if abs(degree_lat > 90):
+			raise ValueError()
+
+		degree_lng = int(degree_lng)
+		if abs(degree_lng > 180):
+			raise ValueError()
+
+		segment_lat = int(pos_part_lat[:2])
+		segment_lng = int(pos_part_lng[:2])
+		pos_lat = int(pos_part_lat[2:])
+		pos_lng = int(pos_part_lng[2:])
+
+		self.degree_lat = degree_lat
+		self.degree_lng = degree_lng
+		self.segment_lat = segment_lat
+		self.segment_lng = segment_lng
+		self.pos_lat = pos_lat
+		self.pos_lng = pos_lng
+		self.save(force_update=True)
 
 
 
