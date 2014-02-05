@@ -14,7 +14,10 @@ app.factory('Tags', function($rootScope, tagQueries, Briefs) {
 
     return {
 
+
         /**
+         * Завантаження тегів
+         *
          * @param {function} callback
          */
         load: function(callback) {
@@ -37,15 +40,46 @@ app.factory('Tags', function($rootScope, tagQueries, Briefs) {
             });
         },
 
+
         /**
-         * @param {Object} tag
+         * Додання тега
+         *
+         * @param {object} tag Обєкт тега
          */
         add: function(tag) {
             tags.push(tag);
         },
 
+
         /**
-         * @param {Object} tag
+         * Створення тега
+         *
+         * @param {object} tag Обєкт тега
+         * @param {function} callback
+         */
+        create: function(tag, callback) {
+            var that = this;
+            tagQueries.createTag(tag).success(function(data) {
+
+                if (data.code === 1)
+                    return;
+
+                that.add({
+                    id: data.id,
+                    title: tag.title,
+                    color: tag.selectedColor,
+                    color_id: tag.colors.indexOf(tag.selectedColor)
+                });
+
+                callback();
+            });
+        },
+
+
+        /**
+         * Онолвення значень тега
+         *
+         * @param {object} tag          Обєкт тега
          * @param {function} callback
          */
         update: function(tag, callback) {
@@ -59,8 +93,11 @@ app.factory('Tags', function($rootScope, tagQueries, Briefs) {
             });
         },
 
+
         /**
-         * @param {Object} tag
+         * Видалення тега
+         *
+         * @param {object} tag Обєкт тега
          */
         remove: function(tag) {
             tagQueries.removeTag(tag.id).success(function() {
@@ -71,15 +108,21 @@ app.factory('Tags', function($rootScope, tagQueries, Briefs) {
             });
         },
 
+
         /**
-         * @return {Array}
+         * Повернення обєкта з тегами
+         *
+         * @return {Array} Вертає масив тегів
          */
         getAll: function() {
             return tags;
         },
 
+
         /**
-         * @return {Object}
+         * Повернення обєкта з базовими параметрами тега
+         *
+         * @return {object} Вертає обєкт з параметрами
          */
         getParameters: function() {
             return tagParameters;

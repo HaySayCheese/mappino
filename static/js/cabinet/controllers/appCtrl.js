@@ -27,9 +27,9 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
      * Лоадери
      */
     $rootScope.loadings = {
-        tags: false,
-        briefs: false,
-        detailed: false
+        tags:       false,
+        briefs:     false,
+        detailed:   false
     };
 
 

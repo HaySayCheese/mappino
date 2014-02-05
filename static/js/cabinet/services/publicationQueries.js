@@ -22,7 +22,7 @@ app.factory('publicationQueries', function($http) {
         /**
          * Запит на створення оголошення
          *
-         * @param {Object} publication Обєкт оголошення
+         * @param {object} publication Обєкт оголошення
          */
         createPublication: function(publication) {
             publication.tid = parseInt(publication.tid);

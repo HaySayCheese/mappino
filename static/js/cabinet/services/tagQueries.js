@@ -18,7 +18,7 @@ app.factory('tagQueries', function($http) {
         /**
          * Запит на створення тега
          *
-         * @param {Object} tag Обєкт тега
+         * @param {object} tag Обєкт тега
          */
         createTag: function(tag) {
             return $http({

@@ -1,7 +1,17 @@
 'use strict';
 
-app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $location, $compile, publicationQueries, tagQueries, Briefs, Tags) {
+app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $location, $compile, Briefs, Tags, Publication) {
 
+    /**
+     * Ініціалізкація компонентів
+     */
+    initScrollBar();
+    initDropDown();
+
+
+    /**
+     * Ініціалізкація загрузки тегів
+     */
     loadTags();
 
     /**
@@ -16,21 +26,6 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     };
 
 
-    /**
-     * Ініціалізація дропдауна
-     */
-    $timeout(function() {
-        angular.element("select[name='typeSelect']").selectpicker({
-            style: 'btn-success btn-md'
-        });
-    }, 50);
-
-
-    /**
-     * Ініціалізкація скролбара
-     */
-    initScrollBar();
-
 
     /**
      * Створення нового оголошенн
@@ -38,22 +33,11 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     $scope.createPublication = function() {
         var btn = angular.element(".new-pub-panel .btn-group-justified > .btn-success").button("loading");
 
-        publicationQueries.createPublication($scope.newPublication).success(function(data) {
+        Publication.create($scope.newPublication, function(data) {
             $scope.creatingPublication = false;
             btn.button("reset");
 
             $location.path("/publications/unpublished/" + $scope.newPublication.tid + ":" + data.id);
-
-            if ($rootScope.routeSection === "unpublished")
-                Briefs.add({
-                    id: data.id,
-                    for_rent: $scope.newPublication.for_rent,
-                    for_sale: $scope.newPublication.for_sale,
-                    photo_url: "",
-                    tags: "",
-                    title: "",
-                    tid: $scope.newPublication.tid
-                });
 
             if (!$scope.$$phase)
                 $scope.$apply();
@@ -117,20 +101,10 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
         if (!$scope.newTag.tagName && $scope.newTag.tagName === "")
             return;
 
-        var btn = $(".btn-creating").button("loading");
+        var btn = angular.element(".btn-creating").button("loading");
 
-        tagQueries.createTag($scope.newTag).success(function(data) {
+        Tags.create($scope.newTag, function() {
             btn.button("reset");
-
-            if (data.code === 1)
-                return;
-
-            Tags.add({
-                id: data.id,
-                title: $scope.newTag.title,
-                color: $scope.newTag.selectedColor,
-                color_id: $scope.newTag.colors.indexOf($scope.newTag.selectedColor)
-            });
 
             $scope.closeTagDialog();
         });
@@ -141,7 +115,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
      * Логіка редагування тега
      */
     $scope.editTag = function(tag) {
-        var btn = $(".btn-creating").button("loading");
+        var btn = angular.element(".btn-creating").button("loading");
 
         Tags.update(tag, function() {
             btn.button("reset");
@@ -169,7 +143,18 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
 
     /**
-     * Функція скролбара
+     * Ініціалізація дропдауна
+     */
+    function initDropDown() {
+        $timeout(function() {
+            angular.element("select[name='typeSelect']").selectpicker({
+                style: 'btn-success btn-md'
+            });
+        }, 0);
+    }
+
+    /**
+     * Ініціалізація скролбара
      */
     function initScrollBar() {
         var sidebar = angular.element(".sidebar-menu-body");

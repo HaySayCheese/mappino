@@ -9,7 +9,7 @@ app.factory('Briefs', function($rootScope, briefQueries) {
          * Загружає брифи оголошень
          *
          * @param {string, number}  category    Категорія ('all', 'published', 'unpublished', ...)
-         * @param {Function}        callback    Вертає масив брифів при успішній загрузці
+         * @param {function}        callback    Вертає масив брифів при успішній загрузці
          */
         load: function(category, callback) {
             var that = this;
@@ -68,7 +68,7 @@ app.factory('Briefs', function($rootScope, briefQueries) {
 
 
         /**
-         * Оновлює ттеги брифа з масива тегів
+         * Оновлює теги брифа з масива тегів
          */
         updateTags: function() {
             var tags = $rootScope.tags;
@@ -104,23 +104,6 @@ app.factory('Briefs', function($rootScope, briefQueries) {
                     briefs[i][key] = value;
                 }
             }
-        },
-
-
-        /**
-         * Визначає чи оголошення по даному брифу опубліковане
-         *
-         * @param {object} id   Ідентифікатор брифа
-         * @return {boolean}    true / false
-         */
-        isUnpublished: function(id) {
-            var trues = false;
-
-            for (var i = 0; i < briefs.length; i++) {
-                if (briefs[i].id === parseInt(id) && briefs[i].state_sid === 1)
-                    trues = true;
-            }
-            return trues;
         }
     }
 
