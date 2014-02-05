@@ -93,7 +93,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      */
     function initMap() {
         var cityInput = document.getElementById("publication-map-input"),
-            center = new google.maps.LatLng(50.448159, 30.524654),
+            center = new google.maps.LatLng($scope.publication.head.lat || 50.448159, $scope.publication.head.lng || 30.524654),
             // Опції карти
             mapOptions = {
                 center: center,
@@ -114,8 +114,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             // Маркер
             marker = new google.maps.Marker({
                 map: map,
-                draggable: true,
-                position: center
+                draggable: true
             });
 
         autocomplete.bindTo('bounds', map);
@@ -154,6 +153,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         geocoder.geocode({ 'latLng': latLng }, function(results, status) {
             if(status == google.maps.GeocoderStatus.OK)
                 input.value = results[0].formatted_address;
+
+            Publication.checkInputs(type, tid, hid, { f: "address", v: input.value });
+            Publication.checkInputs(type, tid, hid, { f: "lat_lng", v: latLng.d + ";" + latLng.e });
         });
     }
 
