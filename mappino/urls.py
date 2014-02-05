@@ -64,7 +64,7 @@ urlpatterns += patterns('apps.pages.cabinet',
     url(r'^ajax/api/cabinet/publications/briefs/(\d+)/$',
         'publications_ajax.briefs', {'section': 'tag'}),
 
-	url(r'^ajax/api/cabinet/publications/\w+/(\d+:\d+)/$', 'publications_ajax.read_and_update'),
+	url(r'^ajax/api/cabinet/publications/\w+/(\d+:\d+)/$', 'publications_ajax.rud'),
 )
 
 

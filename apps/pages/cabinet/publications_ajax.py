@@ -5,6 +5,7 @@ import json
 
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.http.response import HttpResponse, HttpResponseBadRequest
+from django.utils.timezone import now
 from django.views.decorators.http import require_http_methods
 
 from core.publications.update_methods.dachas import update_dacha
@@ -157,7 +158,7 @@ RU_GET_Responses = {
 	    'message': 'invalid @hid.'
 	},
 }
-RU_PATCH_Responses = {
+RU_POST_Responses = {
 	'invalid_param_field': {
 		'code': 1,
 	    'message': '@field is empty or absent.',
@@ -179,10 +180,20 @@ RU_PATCH_Responses = {
 		'message': 'OK',
     }
 }
+RU_DELETE_Responses = {
+    'invalid_hid': {
+	    'code': 1,
+        'message': 'invalid hid.'
+    },
+    'OK': {
+	    'code': 0,
+		'message': 'OK',
+    }
+}
 
 @login_required_or_forbidden
-@require_http_methods(['GET', 'POST'])
-def read_and_update(request, tid_and_hid):
+@require_http_methods(['GET', 'POST', 'DELETE'])
+def rud(request, tid_and_hid):
 	tid, hid = tid_and_hid.split(':')
 	tid = int(tid)
 	hid = int(hid)
@@ -191,35 +202,35 @@ def read_and_update(request, tid_and_hid):
 		try:
 			# Жилая недвижимость
 			if tid == OBJECTS_TYPES.house():
-				record = HousesHeads.by_id(hid, select_body=True)
+				head = HousesHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.flat():
-				record = FlatsHeads.by_id(hid, select_body=True)
+				head = FlatsHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.apartments():
-				record = ApartmentsHeads.by_id(hid, select_body=True)
+				head = ApartmentsHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.dacha():
-				record = DachasHeads.by_id(hid, select_body=True)
+				head = DachasHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.cottage():
-				record = CottagesHeads.by_id(hid, select_body=True)
+				head = CottagesHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.room():
-				record = RoomsHeads.by_id(hid, select_body=True)
+				head = RoomsHeads.by_id(hid, select_body=True)
 
 			# Коммерческая недвижимость
 			elif tid == OBJECTS_TYPES.trade():
-				record = TradesHeads.by_id(hid, select_body=True)
+				head = TradesHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.office():
-				record = OfficesHeads.by_id(hid, select_body=True)
+				head = OfficesHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.warehouse():
-				record = WarehousesHeads.by_id(hid, select_body=True)
+				head = WarehousesHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.business():
-				record = BusinessesHeads.by_id(hid, select_body=True)
+				head = BusinessesHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.catering():
-				record = CateringsHeads.by_id(hid, select_body=True)
+				head = CateringsHeads.by_id(hid, select_body=True)
 
 			# Другая недвижимость
 			elif tid == OBJECTS_TYPES.garage():
-				record = GaragesHeads.by_id(hid, select_body=True)
+				head = GaragesHeads.by_id(hid, select_body=True)
 			elif tid == OBJECTS_TYPES.land():
-				record = LandsHeads.by_id(hid, select_body=True)
+				head = LandsHeads.by_id(hid, select_body=True)
 
 			else:
 				return HttpResponseBadRequest(
@@ -230,67 +241,70 @@ def read_and_update(request, tid_and_hid):
 				json.dumps(RU_GET_Responses['invalid_hid']), content_type='application/json')
 
 		# check owner
-		if record.owner.id != request.user.id:
+		if head.owner.id != request.user.id:
 			raise PermissionDenied()
 		return HttpResponse(json.dumps(
-			publication_data(record)), content_type='application/json')
+			publication_data(head)), content_type='application/json')
 
-	else:
+
+
+	elif request.method == 'POST':
 		d = angular_parameters(request)
 		field = d.get('f', None)
 		if not field:
 			return HttpResponseBadRequest(
-				json.dumps(RU_PATCH_Responses['invalid_param_field']), content_type='application/json')
+				json.dumps(RU_POST_Responses['invalid_param_field']), content_type='application/json')
 
 		value = d.get('v', None)
 		if value is None:
 			# note: пустий value допустимий
 			return HttpResponseBadRequest(
-				json.dumps(RU_PATCH_Responses['invalid_param_value']), content_type='application/json')
+				json.dumps(RU_POST_Responses['invalid_param_value']), content_type='application/json')
 
+		head = None
 		try:
 			# Жилая недвижимость
 			if tid == OBJECTS_TYPES.house():
 				head = HousesHeads.objects.filter(id=hid).only('id', 'owner')[0]
 			elif tid == OBJECTS_TYPES.flat():
-				pass
+				head = FlatsHeads.objects.filter(id=hid).only('id', 'owner')[0]
 			elif tid == OBJECTS_TYPES.apartments():
-				pass
+				head = ApartmentsHeads.objects.filter(id=hid).only('id', 'owner')[0]
 			elif tid == OBJECTS_TYPES.dacha():
-				pass
+				head = DachasHeads.objects.filter(id=hid).only('id', 'owner')[0]
 			elif tid == OBJECTS_TYPES.cottage():
-				pass
+				head = CottagesHeads.objects.filter(id=hid).only('id', 'owner')[0]
 			elif tid == OBJECTS_TYPES.room():
 				pass
 
 			# Коммерческая недвижимость
 			elif tid == OBJECTS_TYPES.trade():
-				pass
+				head = TradesHeads.objects.filter(id=hid).only('id', 'owner')[0]
 			elif tid == OBJECTS_TYPES.office():
-				pass
+				head = OfficesHeads.objects.filter(id=hid).only('id', 'owner')[0]
 			elif tid == OBJECTS_TYPES.warehouse():
-				pass
+				head = WarehousesHeads.objects.filter(id=hid).only('id', 'owner')[0]
 			elif tid == OBJECTS_TYPES.business():
-				pass
+				head = BusinessesHeads.objects.filter(id=hid).only('id', 'owner')[0]
 			elif tid == OBJECTS_TYPES.catering():
-				pass
+				head = CateringsHeads.objects.filter(id=hid).only('id', 'owner')[0]
 
 			# Другая недвижимость
 			elif tid == OBJECTS_TYPES.garage():
-				pass
+				head = GaragesHeads.objects.filter(id=hid).only('id', 'owner')[0]
 			elif tid == OBJECTS_TYPES.land():
-				pass
+				head = LandsHeads.objects.filter(id=hid).only('id', 'owner')[0]
 		except IndexError:
 			return HttpResponseBadRequest(
-				json.dumps(RU_PATCH_Responses['invalid_hid']), content_type='application/json')
+				json.dumps(RU_POST_Responses['invalid_hid']), content_type='application/json')
 
 		# check owner
-		if head.owner.id != request.user.id:
+		if (head is not None) and (head.owner.id != request.user.id):
 			raise PermissionDenied()
 
-
-		# Жилая недвижимость
+		updated_value = None
 		try:
+			# Жилая недвижимость
 			if tid == OBJECTS_TYPES.house():
 				updated_value = update_house(head, field, value)
 			elif tid == OBJECTS_TYPES.flat():
@@ -323,13 +337,64 @@ def read_and_update(request, tid_and_hid):
 				updated_value = update_land(head, field, value)
 		except ValueError:
 			return HttpResponseBadRequest(
-				json.dumps(RU_PATCH_Responses['update_error']), content_type='application/json')
+				json.dumps(RU_POST_Responses['update_error']), content_type='application/json')
 
 
 		if updated_value is not None:
-			response = copy.deepcopy(RU_PATCH_Responses['OK'])
+			response = copy.deepcopy(RU_POST_Responses['OK'])
 			response['value'] = updated_value
 			return HttpResponse(json.dumps(response), content_type='application/json')
 		else:
 			return HttpResponse(
-				json.dumps(RU_PATCH_Responses['OK']), content_type='application/json')
+				json.dumps(RU_POST_Responses['OK']), content_type='application/json')
+
+
+	elif request.method == 'DELETE':
+		head = None
+		try:
+			# Жилая недвижимость
+			if tid == OBJECTS_TYPES.house():
+				head = HousesHeads.objects.filter(id=hid).only('id', 'owner')[0]
+			elif tid == OBJECTS_TYPES.flat():
+				head = FlatsHeads.objects.filter(id=hid).only('id', 'owner')[0]
+			elif tid == OBJECTS_TYPES.apartments():
+				head = ApartmentsHeads.objects.filter(id=hid).only('id', 'owner')[0]
+			elif tid == OBJECTS_TYPES.dacha():
+				head = DachasHeads.objects.filter(id=hid).only('id', 'owner')[0]
+			elif tid == OBJECTS_TYPES.cottage():
+				head = CottagesHeads.objects.filter(id=hid).only('id', 'owner')[0]
+			elif tid == OBJECTS_TYPES.room():
+				pass
+
+			# Коммерческая недвижимость
+			elif tid == OBJECTS_TYPES.trade():
+				head = TradesHeads.objects.filter(id=hid).only('id', 'owner')[0]
+			elif tid == OBJECTS_TYPES.office():
+				head = OfficesHeads.objects.filter(id=hid).only('id', 'owner')[0]
+			elif tid == OBJECTS_TYPES.warehouse():
+				head = WarehousesHeads.objects.filter(id=hid).only('id', 'owner')[0]
+			elif tid == OBJECTS_TYPES.business():
+				head = BusinessesHeads.objects.filter(id=hid).only('id', 'owner')[0]
+			elif tid == OBJECTS_TYPES.catering():
+				head = CateringsHeads.objects.filter(id=hid).only('id', 'owner')[0]
+
+			# Другая недвижимость
+			elif tid == OBJECTS_TYPES.garage():
+				head = GaragesHeads.objects.filter(id=hid).only('id', 'owner')[0]
+			elif tid == OBJECTS_TYPES.land():
+				head = LandsHeads.objects.filter(id=hid).only('id', 'owner')[0]
+		except IndexError:
+			return HttpResponseBadRequest(
+				json.dumps(RU_DELETE_Responses['invalid_hid']), content_type='application/json')
+
+		# check owner
+		if (head is not None) and (head.owner.id != request.user.id):
+			raise PermissionDenied()
+
+		# seems to be ok
+		head.state_sid = OBJECT_STATES.unpublished()
+		head.actual = None
+		head.deleted = now()
+		head.save()
+		return HttpResponseBadRequest(
+			json.dumps(RU_DELETE_Responses['OK']), content_type='application/json')
