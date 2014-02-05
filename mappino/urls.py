@@ -54,17 +54,19 @@ urlpatterns += patterns('apps.pages.cabinet',
     url(r'^ajax/api/cabinet/dirtags/(\d+)/$', 'dirtags_ajax.dirtags_handler'),
 
     # publications
-    url(r'^ajax/api/cabinet/publications/$', 'publications_ajax.create'),
+    url(r'^ajax/api/cabinet/publications/$', 'publications_ajax.create_view'),
     url(r'^ajax/api/cabinet/publications/briefs/all/$',
-        'publications_ajax.briefs', {'section': 'all'}),
+        'publications_briefs_ajax.briefs', {'section': 'all'}),
     url(r'^ajax/api/cabinet/publications/briefs/published/$',
-        'publications_ajax.briefs', {'section': 'published'}),
+        'publications_briefs_ajax.briefs', {'section': 'published'}),
     url(r'^ajax/api/cabinet/publications/briefs/unpublished/$',
-        'publications_ajax.briefs', {'section': 'unpublished'}),
+        'publications_briefs_ajax.briefs', {'section': 'unpublished'}),
     url(r'^ajax/api/cabinet/publications/briefs/(\d+)/$',
-        'publications_ajax.briefs', {'section': 'tag'}),
+        'publications_briefs_ajax.briefs', {'section': 'tag'}),
 
-	url(r'^ajax/api/cabinet/publications/\w+/(\d+:\d+)/$', 'publications_ajax.rud'),
+	url(r'^ajax/api/cabinet/publications/\w+/(\d+:\d+)/$', 'publications_ajax.rud_switch'),
+    url(r'^ajax/api/cabinet/publications/\w+/(\d+:\d+)/publish/$', 'publications_ajax.publish_view'),
+    url(r'^ajax/api/cabinet/publications/\w+/(\d+:\d+)/unpublish/$', 'publications_ajax.unpublish_view'),
 )
 
 

@@ -1,9 +1,11 @@
 #coding=utf-8
-from django.core.exceptions import ObjectDoesNotExist
+import datetime
+from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.db import models, transaction
+from django.utils.timezone import now
+
 from core.publications.constants import OBJECT_STATES, CURRENCIES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.users.models import Users
-
 
 
 class AbstractModel(models.Model):
@@ -44,6 +46,7 @@ class LivingHeadModel(models.Model):
 	for_rent = models.BooleanField(default=False, db_index=True)
 	created = models.DateTimeField(auto_now_add=True)
 	modified = models.DateTimeField(auto_now=True)
+	published = models.DateTimeField(null=True)
 	actual = models.DateTimeField(null=True)
 	deleted = models.DateTimeField(null=True)
 
@@ -153,6 +156,47 @@ class LivingHeadModel(models.Model):
 		self.pos_lat = pos_lat
 		self.pos_lng = pos_lng
 		self.save(force_update=True)
+
+
+	def publish(self):
+		if self.deleted is not None:
+			raise SuspiciousOperation('Attempt to publish deleted publication.')
+
+		self.state_sid = OBJECT_STATES.published()
+		self.published = now()
+		self.prolong() # Немає необхідності викликати save. prolong() його викличе.
+
+
+	def unpublish(self):
+		if self.deleted is not None:
+			raise SuspiciousOperation('Attempt to process deleted publication.')
+
+		self.state_sid = OBJECT_STATES.unpublished()
+		self.published = None
+		self.actual = None
+		self.save(force_update=True)
+
+
+	def prolong(self, days=14):
+		"""
+		Подовжує дію оголошення на @days днів (за замовчуванням).
+		Використовується для автоматичної пролонгації оголошення при вході.
+		"""
+		self.actual += datetime.timedelta(days=days)
+		self.save(force_update=True)
+
+
+	def mark_as_deleted(self):
+		"""
+		Знімає оголошення з публікації та помічає його як видалене.
+		"""
+		if self.deleted is not None:
+			raise SuspiciousOperation('Attempt to delete already deleted publication.')
+
+		self.state_sid = OBJECT_STATES.unpublished()
+		self.published = None
+		self.actual = None
+		self.deleted = now()
 
 
 
