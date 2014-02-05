@@ -57,8 +57,8 @@ class LivingHeadModel(models.Model):
 	segment_lat = models.SmallIntegerField(null=True, db_index=True)
 	segment_lng = models.SmallIntegerField(null=True, db_index=True)
 
-	pos_lat = models.SmallIntegerField(null=True, db_index=True)
-	pos_lng = models.SmallIntegerField(null=True, db_index=True)
+	pos_lat = models.BigIntegerField(null=True, db_index=True)
+	pos_lng = models.BigIntegerField(null=True, db_index=True)
 	address = models.TextField(null=True)
 
 
@@ -108,8 +108,8 @@ class LivingHeadModel(models.Model):
 		return query
 
 
-	def set_lat_lang(self, lat_lang):
-		if not lat_lang:
+	def set_lat_lng(self, lat_lng):
+		if not lat_lng:
 			self.degree_lat = None
 			self.degree_lng = None
 			self.segment_lat = None
@@ -120,9 +120,9 @@ class LivingHeadModel(models.Model):
 			return
 
 
-		if not ';' in lat_lang:
+		if not ';' in lat_lng:
 			raise ValueError()
-		lat, lng = lat_lang.split(';')
+		lat, lng = lat_lng.split(';')
 		if (not lat) or (not lng):
 			raise ValueError()
 
@@ -193,7 +193,7 @@ class LivingHeadModel(models.Model):
 		if self.deleted is not None:
 			raise SuspiciousOperation('Attempt to delete already deleted publication.')
 
-		self.state_sid = OBJECT_STATES.unpublished()
+		self.state_sid = OBJECT_STATES.deleted()
 		self.published = None
 		self.actual = None
 		self.deleted = now()

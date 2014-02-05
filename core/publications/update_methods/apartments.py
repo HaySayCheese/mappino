@@ -1036,7 +1036,7 @@ def update_apartments(h, field, value):
 
 
 		# text
-		elif field == 'lat_lang':
+		elif field == 'lat_lng':
 			h.set_lat_lng(value)
 			return
 

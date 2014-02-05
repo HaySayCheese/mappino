@@ -966,7 +966,7 @@ def update_house(h, field, value):
 
 
 		# text
-		elif field == 'lat_lang':
+		elif field == 'lat_lng':
 			h.set_lat_lng(value)
 			return
 
@@ -989,6 +989,7 @@ def update_house(h, field, value):
 			raise ValueError()
 
 	except (DatabaseError, IntegrityError, ValueError):
+		# todo: додати лог всіх помилок тут для їх оперативного дебага
 		raise ValueError('Object type: apartments. Prefix: {0}. Value = {1}'.format(
 			unicode(field), unicode(value)
 		))
