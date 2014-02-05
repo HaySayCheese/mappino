@@ -105,6 +105,56 @@ class LivingHeadModel(models.Model):
 		return query
 
 
+	def set_lat_lang(self, lat_lang):
+		if not lat_lang:
+			self.degree_lat = None
+			self.degree_lng = None
+			self.segment_lat = None
+			self.segment_lng = None
+			self.pos_lat = None
+			self.pos_lng = None
+			self.save(force_update=True)
+			return
+
+
+		if not ';' in lat_lang:
+			raise ValueError()
+		lat, lng = lat_lang.split(';')
+		if (not lat) or (not lng):
+			raise ValueError()
+
+		if len(lat) <= 6:
+			raise ValueError()
+		if len(lng) <= 6:
+			raise ValueError()
+
+		lat = lat.replace(',', '.')
+		lng = lng.replace(',', '.')
+		degree_lat, pos_part_lat = lat.split('.')
+		degree_lng, pos_part_lng = lng.split('.')
+
+		degree_lat = int(degree_lat)
+		if abs(degree_lat > 90):
+			raise ValueError()
+
+		degree_lng = int(degree_lng)
+		if abs(degree_lng > 180):
+			raise ValueError()
+
+		segment_lat = int(pos_part_lat[:2])
+		segment_lng = int(pos_part_lng[:2])
+		pos_lat = int(pos_part_lat[2:])
+		pos_lng = int(pos_part_lng[2:])
+
+		self.degree_lat = degree_lat
+		self.degree_lng = degree_lng
+		self.segment_lat = segment_lat
+		self.segment_lng = segment_lng
+		self.pos_lat = pos_lat
+		self.pos_lng = pos_lng
+		self.save(force_update=True)
+
+
 
 class CommercialHeadModel(LivingHeadModel):
 	class Meta:

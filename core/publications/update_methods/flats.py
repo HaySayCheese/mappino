@@ -1035,6 +1035,27 @@ def update_flat(h, field, value):
 				b.save(force_update=True)
 				return value
 
+
+		# text
+		elif field == 'lat_lang':
+			h.set_lat_lng(value)
+			return
+
+
+		# text
+		elif field == 'address':
+			if not value:
+				h.address = None
+				h.save(force_update=True)
+				return
+			else:
+				# note: адреса не форматується, оскільки не можливо передбачити,
+				# як саме користувач її введе.
+				h.address = value
+				h.save(force_update=True)
+				return
+
+
 		# ...
 		# other fields here
 		# ...
