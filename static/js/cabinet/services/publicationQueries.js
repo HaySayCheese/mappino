@@ -1,42 +1,52 @@
 'use strict';
 
-app.factory('publicationQueries', function($http, $cookies) {
+app.factory('publicationQueries', function($http) {
 
     return {
 
-        // Запит на створення оголошення
+        /**
+         * Запит на загрузку оголошень
+         *
+         * @param {string} category Категорія ('all', 'published', 'unpublished', ...)
+         * @param {number} tid      Ідентифікатор типу оголошення
+         * @param {number} hid      Ідентифікатор оголошення
+         */
+        loadPublication: function(category, tid, hid) {
+            return $http({
+                url: '/ajax/api/cabinet/publications/' + category + '/' + tid + ":" + hid + '/',
+                method: "GET"
+            });
+        },
+
+
+        /**
+         * Запит на створення оголошення
+         *
+         * @param {object} publication Обєкт оголошення
+         */
         createPublication: function(publication) {
             publication.tid = parseInt(publication.tid);
 
             return $http({
                 url: '/ajax/api/cabinet/publications/',
                 method: "POST",
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                },
                 data: publication
             });
         },
 
-        // Запит на отримання оголошення
-        loadPublication: function(type, tid, hid) {
-            return $http({
-                url: '/ajax/api/cabinet/publications/' + type + '/' + tid + ":" + hid + '/',
-                method: "GET",
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                }
-            });
-        },
 
-
-        checkInputs: function(type, tid, hid, data) {
+        /**
+         * Запит на перевірку полів при доданні оголошення
+         *
+         * @param {string} category Категорія ('all', 'published', 'unpublished', ...)
+         * @param {number} tid      Ідентифікатор типу оголошення
+         * @param {number} hid      Ідентифікатор оголошення
+         * @param {object} data     Обєкт з назвою інпута та його значенням
+         */
+        checkInputs: function(category, tid, hid, data) {
             return $http({
-                url: '/ajax/api/cabinet/publications/' + type + '/' + tid + ":" + hid + '/',
+                url: '/ajax/api/cabinet/publications/' + category + '/' + tid + ":" + hid + '/',
                 method: "POST",
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                },
                 data: data
             });
         }

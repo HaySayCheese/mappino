@@ -1,57 +1,58 @@
 'use strict';
 
-app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $compile, $routeParams, publicationQueries, Briefs, Tags) {
+app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $compile, $routeParams, Publication, Briefs, Tags, $upload) {
 
     initScrollBar();
 
-    $scope.publication = "";
-    $scope.tags = Tags.getTags();
+    $scope.publication = [];
+    $scope.tags = Tags.getAll();
 
-
+    var type, tid, hid;
 
     /**
      * При зміні урла грузить дані оголошення
-     **/
+     */
     $scope.$on("$routeChangeSuccess", function() {
-        if (Briefs.isUnpublished($rootScope.publicationId.split(":")[1]) && $rootScope.publicationId)
-            loadPublicationData();
-    });
-    $rootScope.$watch("briefsLoaded", function(loaded) {
-        if (loaded && $rootScope.publicationId)
-            loadPublicationData();
+        type    = $rootScope.routeSection;
+        tid     = $rootScope.publicationId.split(":")[0];
+        hid     = $rootScope.publicationId.split(":")[1];
+
+        loadPublicationData();
     });
 
 
     /**
-     * Функція загрузки даних по оголошенню
-     **/
+     * Функція загрузки даних по неопублікованому оголошенню
+     */
     function loadPublicationData() {
-        var type = $rootScope.routeSection,
-            tid = $rootScope.publicationId.split(":")[0],
-            hid = $rootScope.publicationId.split(":")[1];
+        if (!$rootScope.publicationId)
+            return;
 
-        $scope.publication = "";
+        $scope.publication = [];
         $rootScope.loadings.detailed = true;
 
 
-        publicationQueries.loadPublication(type, tid, hid).success(function(data) {
+        Publication.load(type, tid, hid, function(data) {
             $scope.publication = data;
 
             $scope.publicationLoaded = true;
-            $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/" + $rootScope.publicationId.split(":")[0] + "/";
 
-            $timeout(function() {
-                inputChangeInit();
+            // якщо оголошення неопубліковане
+            if (!data.head.actual) {
+                $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/" + tid + "/";
 
-                angular.element("select").selectpicker({
-                    style: 'btn-default btn-md'
-                });
+                $timeout(function() {
+                    // Послідовність має значення
+                    initInputsChange();
+                    initDropdowns();
+                    initMap();
 
-                $rootScope.loadings.detailed = false;
-                $scope.showPublication = true;
-
-                mapInit();
-            }, 200);
+                    $rootScope.loadings.detailed = false;
+                    $scope.showPublication = true;
+                }, 200);
+            } else {
+                console.log("actual")
+            }
         });
     }
 
@@ -59,66 +60,38 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     /**
      * При втраті фокуса з інпута
      * викликати запит на відправку на сервер
-     **/
-    function inputChangeInit() {
+     */
+    function initInputsChange() {
         angular.element(".sidebar-item-detailed-body input[type='text'], textarea").bind("focusout", function(e) {
             var name = e.currentTarget.name.replace("h_", ""),
-                value =  e.currentTarget.value,
-                tid = $rootScope.publicationId.split(":")[0],
-                hid = $rootScope.publicationId.split(":")[1];
+                value =  e.currentTarget.value;
 
-            sendToServerInputData(name, value, function(newValue) {
+            Publication.checkInputs(type, tid, hid, { f: name, v: value }, function(newValue) {
                 if (newValue)
                     e.currentTarget.value = newValue;
-
-                if (name == "title")
-                    Briefs.updateBriefOfPublication(tid, hid, name, newValue ? newValue : value);
             });
         });
 
         angular.element(".sidebar-item-detailed-body input[type='checkbox']").bind("change", function(e) {
             var name = e.currentTarget.name.replace("h_", ""),
-                value =  e.currentTarget.checked,
-                tid = $rootScope.publicationId.split(":")[0],
-                hid = $rootScope.publicationId.split(":")[1];
+                value =  e.currentTarget.checked;
 
-            if (name == "for_rent" || name == "for_sale")
-                Briefs.updateBriefOfPublication(tid, hid, name, value);
-
-            sendToServerInputData(name, value);
+            Publication.checkInputs(type, tid, hid, { f: name, v: value });
         });
 
         angular.element(".sidebar-item-detailed-body select").bind('change',function(e) {
             var name = e.currentTarget.name.replace("h_", ""),
                 value =  e.currentTarget.value;
 
-            console.log(name + ' - ' + value);
-
-            sendToServerInputData(name, value);
-        });
-    }
-
-
-    /**
-     * Відправка даних полів на сервер
-     **/
-    function sendToServerInputData(name, value, callback) {
-        var type = $rootScope.routeSection,
-            tid = $rootScope.publicationId.split(":")[0],
-            hid = $rootScope.publicationId.split(":")[1];
-
-        publicationQueries.checkInputs(type, tid, hid, { f: name, v: value })
-        .success(function(data) {
-            if (data.value)
-                callback(data.value);
+            Publication.checkInputs(type, tid, hid, { f: name, v: value });
         });
     }
 
 
     /**
      * Ініціалізація карти
-     **/
-    function mapInit() {
+     */
+    function initMap() {
         var cityInput = document.getElementById("publication-map-input"),
             center = new google.maps.LatLng(50.448159, 30.524654),
             // Опції карти
@@ -174,7 +147,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
     /**
      * Ставить в інпут адрес з координат
-     **/
+     */
     function setAddressFromLatLng(latLng, input) {
         var geocoder = new google.maps.Geocoder();
 
@@ -186,8 +159,38 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
 
     /**
+     * Ініціалізація області загрузки зображень
+     */
+    $scope.multipleSelect = function() {
+        $timeout(function() {
+            angular.element(".image-upload-block input[type='file']").click();
+        }, 0);
+
+    };
+    $scope.onFileSelect = function(files) {
+        $scope.publication.head.photos = [];
+
+        for (var i = 0; i < files.length; i++) {
+            $scope.publication.head.photos.push(files[i]);
+
+            console.log($scope.publication.head.photos)
+        }
+    };
+
+
+    /**
+     * Ініціалізація дропдауна
+     */
+    function initDropdowns() {
+        angular.element("select").selectpicker({
+            style: 'btn-default btn-md'
+        });
+    }
+
+
+    /**
      * Функція скролбара
-     **/
+     */
     function initScrollBar() {
         var sidebar = angular.element(".sidebar-item-detailed-body");
 

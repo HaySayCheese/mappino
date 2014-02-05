@@ -5,7 +5,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
 
     /**
      * Колекція типів оголошення
-     **/
+     */
     $rootScope.publicationTypes = [
         { name: "house",     id: 0,  title: "Дома" },
         { name: "flat",      id: 1,  title: "Квартиры" },
@@ -25,18 +25,18 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
 
     /**
      * Лоадери
-     **/
+     */
     $rootScope.loadings = {
-        tags: false,
-        briefs: false,
-        detailed: false
+        tags:       false,
+        briefs:     false,
+        detailed:   false
     };
 
 
     /**
      * Перегляд за зміною урла для встановлення активного
      * пункту меню
-     **/
+     */
     $scope.$on("$routeChangeSuccess", function() {
         $rootScope.routeBase     = "";
         $rootScope.routeSection  = "";

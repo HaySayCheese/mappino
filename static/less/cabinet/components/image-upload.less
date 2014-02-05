@@ -1,0 +1,55 @@
+
+//
+// Load core variables and mixins
+// --------------------------------------------------
+
+@import "../../components/variables";
+@import "../../components/mixins.less";
+
+
+.image-upload-block {
+    display: block;
+    position: relative;
+    min-height: 300px;
+
+    cursor: pointer;
+
+    border: 2px dashed @gray-lighter;
+    border-radius: 10px;
+    .transition(~"border-color 0.2s ease");
+
+    &:hover,
+    &.hover {
+        border-color: @nice-violet;
+    }
+
+    .drop-zone-title {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        .translate(0, -50%);
+
+        font-size: 20px;
+    }
+
+    input[type='file'] {
+        visibility: hidden;
+        position: absolute;
+        left: -9999;
+    }
+
+    .photos {
+        display: block;
+        padding: 10px;
+        position: relative;
+
+        > .photo {
+            .size(200px, 200px);
+            margin-right: 20px;
+            float: left;
+
+            border: 1px solid @gray;
+        }
+    }
+}
