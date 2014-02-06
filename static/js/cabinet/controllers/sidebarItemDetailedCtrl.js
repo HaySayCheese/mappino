@@ -4,6 +4,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
     initScrollBar();
 
+    $scope.publicationSections = [];
     $scope.publication = [];
     $scope.tags = Tags.getAll();
 
@@ -185,6 +186,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     };
 
 
+    $scope.scrollToHeader = function(href) {
+        document.getElementById(href).scrollIntoView();
+    };
+
+
     /**
      * Ініціалізація дропдауна
      */
@@ -192,6 +198,15 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         angular.element("select").selectpicker({
             style: 'btn-default btn-md'
         });
+
+        angular.element("h3").each(function(i, e) {
+            var header = angular.element(e).context;
+            console.log(header)
+            $scope.publicationSections.push({
+                href: header.id,
+                title: header.innerText
+            })
+        })
     }
 
 
@@ -204,7 +219,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         sidebar.perfectScrollbar("destroy");
         sidebar.perfectScrollbar({
             wheelSpeed: 40,
-            useKeyboard: false
+            useKeyboard: false,
+            suppressScrollX: true
         });
         angular.element(window).resize(function() {
             sidebar.perfectScrollbar("update");

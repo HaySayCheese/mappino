@@ -1,6 +1,6 @@
 <input type="file" ng-file-select="onFileSelect($files)" multiple/>
 <div class="row">
-    <div class="col-lg-8">
+    <div class="col-sm-12">
         <div class="image-upload-block"
              ng-file-drop="onFileSelect($files)"
              ng-file-drag-over-class="hover"
@@ -8,7 +8,7 @@
              ng-show="dropSupported"
              ng-click="multipleSelect()">
 
-            <span class="drop-zone-title text-muted text-center">Перетащите сюда файли</span>
+            <span class="drop-zone-title text-muted text-center">Перенесите сюда файлы или нажмите мышкой для выбора файлов</span>
         </div>
     </div>
     <!--<div class="col-lg-4" ng-repeat="photo in publication.head.photos">-->
@@ -17,7 +17,13 @@
 </div>
 <div class="row">
     <div class="col-sm-6 col-lg-4" ng-repeat="photo in publication.head.photos">
-        <div class="uploaded-photo">[[ photo.name ]]</div>
+        <div class="uploaded-photo">
+            <img src="{{ static }}img/cabinet/house.png"/>
+            <div class="uploaded-photo-controls">
+                <div class="btn btn-warning set-main-photo">m</div>
+                <div class="btn btn-danger remove-photo">r</div>
+            </div>
+        </div>
     </div>
 </div>
 
