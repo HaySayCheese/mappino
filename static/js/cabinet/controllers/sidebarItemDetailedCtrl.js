@@ -23,6 +23,14 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
 
     /**
+     * При загрузці тегів оновлює їх масив для дд
+     */
+    $rootScope.$watch("loadings.tags", function() {
+        $scope.tags = Tags.getAll();
+    });
+
+
+    /**
      * Функція загрузки даних по неопублікованому оголошенню
      */
     function loadPublicationData() {
