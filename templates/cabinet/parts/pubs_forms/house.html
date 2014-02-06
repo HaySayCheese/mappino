@@ -40,7 +40,7 @@
                         <div class="col-sm-4 col-lg-4">
                             <select name="h_sale_currency_sid" data-width="100%" ng-model="publication.sale_terms.currency_sid">
                                 <option value="2">Гривен (₴)</option>
-                                <option value="0">Дол. США ($)</option>
+                                <option value="0">Дол. ($)</option>
                                 <option value="1">Евро (€)</option>
                             </select>
                         </div>
@@ -122,7 +122,7 @@
                         <div class="col-sm-4">
                             <select name="h_rent_currency_sid" data-width="100%" ng-model="publication.rent_terms.currency_sid">
                                 <option value="2">Гривен (₴)</option>
-                                <option value="0">Дол. США ($)</option>
+                                <option value="0">Дол. ($)</option>
                                 <option value="1">Евро (€)</option>
                             </select>
                         </div>
@@ -310,11 +310,11 @@
 
         <div class="row">
             <h3>Удобства</h3>
-            <div class="col-lg-12">
+            <div class="col-sm-12">
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Отопление:</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Отопление:</label>
+                        <div class="col-sm-6">
                             <select name="h_heating_type_sid" data-width="100%" ng-model="publication.body.heating_type_sid">
                                 <option value="1">Индивидуальное</option>
                                 <option value="2">Центральное</option>
@@ -326,7 +326,7 @@
                     </div>
                 </div>
                 <div class="row" ng-show="publication.body.heating_type_sid == 0">
-                    <div class="col-lg-12">
+                    <div class="col-sm-12">
                         <div class="form-group">
                             <label>Укажите, пожалуйста, тип отопления в поле ниже</label>
                             <input type="text" class="form-control" name="h_custom_heating_type" ng-model="publication.body.custom_heating_type">
@@ -335,8 +335,8 @@
                 </div>
                 <div class="row" ng-show="publication.body.heating_type_sid == 1">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Тип отопления:</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Тип отопления:</label>
+                        <div class="col-sm-6">
                             <select name="h_ind_heating_type_sid" data-width="100%" ng-model="publication.body.ind_heating_type_sid">
                                 <option value="1">Электричество</option>
                                 <option value="2">Газ</option>
@@ -347,7 +347,7 @@
                     </div>
                 </div>
                 <div class="row" ng-show="publication.body.ind_heating_type_sid == 0">
-                    <div class="col-lg-12">
+                    <div class="col-sm-12">
                         <div class="form-group">
                             <label>Укажите, пожалуйста, тип отопления в поле ниже</label>
                             <input type="text" class="form-control" name="h_custom_ind_heating_type" ng-model="publication.body.custom_ind_heating_type">
@@ -356,7 +356,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-sm-12">
                     <div class="col-sm-6 col-lg-4 form-group">
                         <div class="checkbox">
                             <input id="h_electricity" type="checkbox" name="h_electricity" ng-model="publication.body.electricity">
@@ -396,8 +396,8 @@
             </div>
 
             <div class="row" ng-show="publication.head.for_rent">
-                <div class="col-lg-12">
-                    <div class="col-lg-4 form-group">
+                <div class="col-sm-12">
+                    <div class="col-sm-6 col-lg-4 form-group">
                         <div class="checkbox">
                             <input id="h_furniture" type="checkbox" name="h_furniture" ng-model="publication.rent_terms.furniture">
                             <label for="h_furniture">Мебель</label>
@@ -411,7 +411,7 @@
                             <label for="h_tv">Телевизор</label>
                         </div>
                     </div>
-                    <div class="col-lg-4 form-group">
+                    <div class="col-sm-6 col-lg-4 form-group">
                         <div class="checkbox">
                             <input id="h_washing_machine" type="checkbox" name="h_washing_machine" ng-model="publication.rent_terms.washing_machine">
                             <label for="h_washing_machine">Стиральная машина</label>
@@ -427,7 +427,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-12">
+            <div class="col-sm-12">
                 <div class="form-group">
                     <label>Другие удобства, уточнения</label>
                     <input type="text" class="form-control" name="h_add_facilities" ng-model="publication.body.add_facilities">
@@ -438,7 +438,7 @@
 
         <div class="row">
             <h3>Коммуникации</h3>
-            <div class="col-lg-4 form-group">
+            <div class="col-sm-4 col-lg-4 form-group">
                 <div class="checkbox">
                     <input id="h_phone" type="checkbox" name="h_phone" ng-model="publication.body.phone">
                     <label for="h_phone">Телефон</label>
@@ -448,7 +448,7 @@
                     <label for="h_internet">Интернет</label>
                 </div>
             </div>
-            <div class="col-lg-6 form-group">
+            <div class="col-sm-8 col-lg-6 form-group">
                 <div class="checkbox">
                     <input id="h_mobile_coverage" type="checkbox" name="h_mobile_coverage" ng-model="publication.body.mobile_coverage">
                     <label for="h_mobile_coverage">Покрытие моб. операторов</label>
@@ -505,7 +505,7 @@
                     <label for="h_cellar">Погреб</label>
                 </div>
             </div>
-            <div class="col-sm-12 col-lg-12">
+            <div class="col-sm-12">
                 <div class="form-group">
                     <label>Другие постройки, уточнения</label>
                     <input type="text" class="form-control" name="h_add_buildings" ng-model="publication.body.add_buildings">
@@ -560,7 +560,7 @@
                     <label for="h_sea">Море</label>
                 </div>
             </div>
-            <div class="col-lg-12">
+            <div class="col-sm-12">
                 <div class="form-group">
                     <label>Другие достопримечательности, уточнения</label>
                     <input type="text" class="form-control" name="h_add_showplaces" ng-model="publication.body.add_showplaces">
