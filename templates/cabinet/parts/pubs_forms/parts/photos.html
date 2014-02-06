@@ -9,15 +9,14 @@
              ng-click="multipleSelect()">
 
             <span class="drop-zone-title text-muted text-center">Перетащите сюда файли</span>
-
-            <!--<div class="photos">-->
-                <!--<div class="photo" ng-repeat="photo in publication.head.photos">[[ photo.name ]]</div>-->
-            <!--</div>-->
         </div>
     </div>
+    <!--<div class="col-lg-4" ng-repeat="photo in publication.head.photos">-->
+        <!--<div class="uploaded-photo">[[ photo.name ]]</div>-->
+    <!--</div>-->
 </div>
 <div class="row">
-    <div class="col-md-4" ng-repeat="photo in publication.head.photos">
+    <div class="col-sm-6 col-lg-4" ng-repeat="photo in publication.head.photos">
         <div class="uploaded-photo">[[ photo.name ]]</div>
     </div>
 </div>

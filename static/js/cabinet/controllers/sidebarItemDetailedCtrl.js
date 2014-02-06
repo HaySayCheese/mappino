@@ -51,6 +51,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
                     $timeout(function() {
                         initMap();
+                        initScrollBar();
                     }, 50);
                 }, 200);
             } else {
@@ -198,9 +199,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * Функція скролбара
      */
     function initScrollBar() {
-        var sidebar = angular.element(".sidebar-item-detailed-body");
+        var sidebar = angular.element(".sidebar-item-detailed-body .detailed-container");
 
-        sidebar.perfectScrollbar("update");
+        sidebar.perfectScrollbar("destroy");
         sidebar.perfectScrollbar({
             wheelSpeed: 40,
             useKeyboard: false

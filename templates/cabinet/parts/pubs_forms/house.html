@@ -21,8 +21,8 @@
             <div class="col-lg-12">
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Продаеться:</label>
-                        <div class="col-lg-8">
+                        <label class="col-sm-4 control-label"><span class="required-star">*</span>Продаеться:</label>
+                        <div class="col-sm-8">
                             <select name="h_sale_type_sid" data-width="100%" ng-model="publication.sale_terms.sale_type_sid">
                                 <option value="1">Часть дома</option>
                                 <option value="0">Весь дом</option>
@@ -33,11 +33,11 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Цена:</label>
-                        <div class="col-lg-4">
+                        <label class="col-sm-4 control-label"><span class="required-star">*</span>Цена:</label>
+                        <div class="col-sm-4">
                             <input class="form-control" type="text" name="h_sale_price" ng-model="publication.sale_terms.price" allow-only-number required/>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-sm-4 col-lg-4">
                             <select name="h_sale_currency_sid" data-width="100%" ng-model="publication.sale_terms.currency_sid">
                                 <option value="2">Гривен (₴)</option>
                                 <option value="0">Дол. США ($)</option>
@@ -49,13 +49,13 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <div class="col-lg-4 col-lg-offset-4">
+                        <div class="col-sm-4 col-sm-offset-4">
                             <div class="checkbox">
                                 <input id="h_sale_is_contract" type="checkbox" name="h_sale_is_contract" ng-model="publication.sale_terms.is_contract">
                                 <label for="h_sale_is_contract">Договорная</label>
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-sm-4">
                             <select name="h_sale_transaction_sid" data-width="100%" ng-model="publication.sale_terms.transaction_sid">
                                 <option value="1">За м²</option>
                                 <option value="0">За все</option>
@@ -65,7 +65,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-sm-12">
                         <div class="form-group">
                             <label>Дополнительные условия, уточнения</label>
                             <input type="text" class="form-control" name="h_sale_add_terms" ng-model="publication.sale_terms.add_terms">
@@ -78,11 +78,11 @@
 
         <div class="row" ng-show="publication.head.for_rent">
             <h3>Условия аренды</h3>
-            <div class="col-lg-12">
+            <div class="col-sm-12">
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Сдаеться:</label>
-                        <div class="col-lg-8">
+                        <label class="col-sm-4 control-label"><span class="required-star">*</span>Сдаеться:</label>
+                        <div class="col-sm-8">
                             <select name="h_rent_type_sid" data-width="100%" ng-model="publication.rent_terms.rent_type_sid">
                                 <option value="1">Часть дома</option>
                                 <option value="0">Весь дом</option>
@@ -92,8 +92,8 @@
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Срок:</label>
-                        <div class="col-lg-8">
+                        <label class="col-sm-4 control-label"><span class="required-star">*</span>Срок:</label>
+                        <div class="col-sm-8">
                             <select name="h_rent_period_sid" data-width="100%" ng-model="publication.rent_terms.period_sid">
                                 <option value="0">Посуточно</option>
                                 <option value="1">Помесячно</option>
@@ -104,8 +104,8 @@
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Количество мест:</label>
-                        <div class="col-lg-8">
+                        <label class="col-sm-4 control-label">Количество мест:</label>
+                        <div class="col-sm-8">
                             <div class="input-group">
                                 <input type="text" class="form-control" name="h_rent_persons_count" ng-model="publication.rent_terms.persons_count" allow-only-number/>
                                 <span class="input-group-addon">чел.</span>
@@ -115,11 +115,11 @@
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Цена:</label>
-                        <div class="col-lg-4">
+                        <label class="col-sm-4 control-label"><span class="required-star">*</span>Цена:</label>
+                        <div class="col-sm-4">
                             <input class="form-control" type="text" name="h_rent_price" ng-model="publication.rent_terms.price" allow-only-number required/>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-sm-4">
                             <select name="h_rent_currency_sid" data-width="100%" ng-model="publication.rent_terms.currency_sid">
                                 <option value="2">Гривен (₴)</option>
                                 <option value="0">Дол. США ($)</option>
@@ -130,7 +130,7 @@
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <div class="col-lg-4 col-lg-offset-4">
+                        <div class="col-sm-4 col-sm-offset-4">
                             <div class="checkbox">
                                 <input id="h_rent_is_contract" name="h_rent_is_contract" type="checkbox" ng-model="publication.rent_terms.is_contract">
                                 <label for="h_rent_is_contract">Договорная</label>
@@ -174,7 +174,7 @@
 
         <div class="row">
             <h3>Описание обьекта</h3>
-            <div class="col-lg-12">
+            <div class="col-sm-12">
                 <div class="form-group">
                     <label><span class="required-star">*</span>Заголовок обьявления</label>
                     <input type="text" class="form-control" name="h_title" ng-model="publication.body.title">
@@ -187,8 +187,8 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Тип рынка:</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Тип рынка:</label>
+                        <div class="col-sm-6">
                             <select name="h_market_type_sid" data-width="100%" ng-model="publication.body.market_type_sid">
                                 <option value="0">Новостройка</option>
                                 <option value="1">Вторичный рынок</option>
@@ -199,8 +199,8 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Общее состояние:</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Общее состояние:</label>
+                        <div class="col-sm-6">
                             <select name="h_condition_sid" data-width="100%" ng-model="publication.body.condition_sid">
                                 <option value="0">Косметический ремонт</option>
                                 <option value="1">Жилое / советское</option>
@@ -216,8 +216,8 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Общая площадь:</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Общая площадь:</label>
+                        <div class="col-sm-6">
                             <div class="input-group">
                                 <input type="text" class="form-control" name="h_total_area" ng-model="publication.body.total_area" allow-only-number required>
                                 <span class="input-group-addon">м<sup>2</sup></span>
@@ -228,8 +228,8 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Жилая площадь:</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Жилая площадь:</label>
+                        <div class="col-sm-6">
                             <div class="input-group">
                                 <input type="text" class="form-control" name="h_living_area" ng-model="publication.body.living_area" allow-only-number required>
                                 <span class="input-group-addon">м<sup>2</sup></span>
@@ -240,8 +240,8 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Площадь кухни:</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-6 col-lg-4 control-label">Площадь кухни:</label>
+                        <div class="col-sm-6">
                             <div class="input-group">
                                 <input type="text" class="form-control" name="h_kitchen_area" ng-model="publication.body.kitchen_area" allow-only-number>
                                 <span class="input-group-addon">м<sup>2</sup></span>
@@ -252,8 +252,8 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Кол-во этажей:</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Кол-во этажей:</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="h_floors_count" ng-model="publication.body.floors_count" allow-only-number required>
                         </div>
                     </div>
@@ -261,7 +261,7 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <div class="col-lg-6 col-lg-offset-4">
+                        <div class="col-sm-6 col-lg-4 col-sm-offset-6 col-lg-offset-4">
                             <div class="checkbox">
                                 <input id="h_mansard" type="checkbox" name="h_mansard" ng-model="publication.body.mansard">
                                 <label for="h_mansard">Есть мансарда</label>
@@ -280,8 +280,8 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label"><span class="required-star">*</span>Кол-во комнат:</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Кол-во комнат:</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="h_rooms_count" ng-model="publication.body.rooms_count" allow-only-number required>
                         </div>
                     </div>
@@ -289,8 +289,8 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Кол-во спален:</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-6 col-lg-4 control-label">Кол-во спален:</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="h_bedrooms_count" ng-model="publication.body.bedrooms_count" allow-only-number>
                         </div>
                     </div>
@@ -298,8 +298,8 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-lg-4 control-label">Кол-во сан. узлов:</label>
-                        <div class="col-lg-6">
+                        <label class="col-sm-6 col-lg-4 control-label">Кол-во сан. узлов:</label>
+                        <div class="col-sm-6">
                             <input type="text" class="form-control" name="h_vcs_count" ng-model="publication.body.vcs_count" allow-only-number>
                         </div>
                     </div>
@@ -357,7 +357,7 @@
             </div>
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="col-lg-4 form-group">
+                    <div class="col-sm-6 col-lg-4 form-group">
                         <div class="checkbox">
                             <input id="h_electricity" type="checkbox" name="h_electricity" ng-model="publication.body.electricity">
                             <label for="h_electricity">Электричество</label>
@@ -371,7 +371,7 @@
                             <label for="h_sewerage">Канализация</label>
                         </div>
                     </div>
-                    <div class="col-lg-4 form-group">
+                    <div class="col-sm-6 col-lg-4 form-group">
                         <div class="checkbox">
                             <input id="h_hot_water" type="checkbox" name="h_hot_water" ng-model="publication.body.hot_water">
                             <label for="h_hot_water">Горячая вода</label>
@@ -381,7 +381,7 @@
                             <label for="h_cold_water">Холодная вода</label>
                         </div>
                     </div>
-                    <div class="col-lg-4 form-group">
+                    <div class="col-sm-12 col-lg-4 form-group">
                         <div class="checkbox">
                             <input id="h_security_alarm" type="checkbox" name="h_security_alarm" ng-model="publication.body.security_alarm">
                             <label for="h_security_alarm">Охранная сигнализация</label>
@@ -463,7 +463,7 @@
 
         <div class="row">
             <h3>Дополнительные постройки</h3>
-            <div class="col-lg-4 form-group">
+            <div class="col-sm-6 col-lg-4 form-group">
                 <div class="checkbox">
                     <input id="h_garage" type="checkbox" name="h_garage" ng-model="publication.body.garage">
                     <label for="h_garage">Гараж / паркместо</label>
@@ -477,7 +477,7 @@
                     <label for="h_terrace">Терраса</label>
                 </div>
             </div>
-            <div class="col-lg-4 form-group">
+            <div class="col-sm-6 col-lg-4 form-group">
                 <div class="checkbox">
                     <input id="h_well" type="checkbox" name="h_well" ng-model="publication.body.well">
                     <label for="h_well">Колодец</label>
@@ -491,7 +491,7 @@
                     <label for="h_pool">Бассейн</label>
                 </div>
             </div>
-            <div class="col-lg-4 form-group">
+            <div class="col-sm-6 col-lg-4 form-group">
                 <div class="checkbox">
                     <input id="h_alcove" type="checkbox" name="h_alcove" ng-model="publication.body.alcove">
                     <label for="h_alcove">Беседка</label>
@@ -505,7 +505,7 @@
                     <label for="h_cellar">Погреб</label>
                 </div>
             </div>
-            <div class="col-lg-12">
+            <div class="col-sm-12 col-lg-12">
                 <div class="form-group">
                     <label>Другие постройки, уточнения</label>
                     <input type="text" class="form-control" name="h_add_buildings" ng-model="publication.body.add_buildings">
