@@ -201,7 +201,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
         angular.element("h3").each(function(i, e) {
             var header = angular.element(e).context;
-            console.log(header)
             $scope.publicationSections.push({
                 href: header.id,
                 title: header.innerText
