@@ -10,7 +10,7 @@
 .image-upload-block {
     display: block;
     position: relative;
-    min-height: 300px;
+    min-height: 200px;
 
     cursor: pointer;
 
@@ -33,19 +33,13 @@
         font-size: 20px;
     }
 
-    .photos {
-        display: block;
-        padding: 10px;
-        position: relative;
 
-        > .photo {
-            .size(200px, 200px);
-            margin-right: 20px;
-            float: left;
+}
 
-            border: 1px solid @gray;
-        }
-    }
+.uploaded-photo {
+    .size(100%, 200px);
+
+    border: 1px solid @gray;
 }
 
 input[type='file'] {
