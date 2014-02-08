@@ -1,8 +1,8 @@
-<div class="col-lg-10 col-lg-offset-1">
+<div class="col-sm-12 col-lg-10 col-lg-offset-1">
     <form class="form-horizontal" role="form">
 
         <div class="row">
-            <h3>Новое обьявление</h3>
+            <h3 id="new-pub-section">Новое обьявление</h3>
             <div class="col-lg-12">
                 <div class="checkbox">
                     <input id="h_for_sale" type="checkbox" name="h_for_sale" ng-model="publication.head.for_sale">
@@ -17,7 +17,7 @@
 
 
         <div class="row" ng-show="publication.head.for_sale">
-            <h3>Условия продажи</h3>
+            <h3 id="for-sale-section">Условия продажи</h3>
             <div class="col-lg-12">
                 <div class="row">
                     <div class="form-group">
@@ -77,7 +77,7 @@
 
 
         <div class="row" ng-show="publication.head.for_rent">
-            <h3>Условия аренды</h3>
+            <h3 id="for-rent-section">Условия аренды</h3>
             <div class="col-sm-12">
                 <div class="row">
                     <div class="form-group">
@@ -173,7 +173,7 @@
 
 
         <div class="row">
-            <h3>Описание обьекта</h3>
+            <h3 id="pub-desc-section">Описание обьекта</h3>
             <div class="col-sm-12">
                 <div class="form-group">
                     <label><span class="required-star">*</span>Заголовок обьявления</label>
@@ -309,7 +309,7 @@
 
 
         <div class="row">
-            <h3>Удобства</h3>
+            <h3 id="pub-fac-section">Удобства</h3>
             <div class="col-sm-12">
                 <div class="row">
                     <div class="form-group">
@@ -437,7 +437,7 @@
 
 
         <div class="row">
-            <h3>Коммуникации</h3>
+            <h3 id="pub-com-section">Коммуникации</h3>
             <div class="col-sm-4 col-lg-4 form-group">
                 <div class="checkbox">
                     <input id="h_phone" type="checkbox" name="h_phone" ng-model="publication.body.phone">
@@ -462,7 +462,7 @@
 
 
         <div class="row">
-            <h3>Дополнительные постройки</h3>
+            <h3 id="pub-outb-section">Дополнительные постройки</h3>
             <div class="col-sm-6 col-lg-4 form-group">
                 <div class="checkbox">
                     <input id="h_garage" type="checkbox" name="h_garage" ng-model="publication.body.garage">
@@ -515,7 +515,7 @@
 
 
         <div class="row">
-            <h3>Рядом находиться</h3>
+            <h3 id="pub-near-sections">Рядом находиться</h3>
             <div class="col-lg-6 form-group">
                 <div class="checkbox">
                     <input id="h_kindergarten" type="checkbox" name="h_kindergarten" ng-model="publication.body.kindergarten">
@@ -569,14 +569,14 @@
         </div>
 
         <div class="row">
-            <h3>Местоположение</h3>
+            <h3 id="pub-place-section">Местоположение</h3>
             <div class="col-lg-12">
                 <ng-include src="'/ajax/template/cabinet/publications/map/'"></ng-include>
             </div>
         </div>
 
         <div class="row">
-            <h3>Изображения</h3>
+            <h3 id="pub-photo-section">Изображения</h3>
             <div class="col-lg-12">
                 <ng-include src="'/ajax/template/cabinet/publications/photos/'"></ng-include>
             </div>
