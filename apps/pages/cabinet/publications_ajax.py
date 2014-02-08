@@ -302,7 +302,7 @@ __uph_responses = {
 }
 @login_required_or_forbidden
 @require_http_methods('POST')
-def __upload_photo_view(request, tid, hid):
+def upload_photo_view(request, tid, hid):
 	head = __head_minimal(tid, hid)
 	if not head:
 		return HttpResponseBadRequest(
