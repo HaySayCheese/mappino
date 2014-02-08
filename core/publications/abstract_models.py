@@ -317,16 +317,21 @@ class PhotosModel(AbstractModel):
 
 
 	@classmethod
-	def handle_uploaded(cls, request, hid):
+	def handle_uploaded(cls, request, head):
 		# Перевірка чи існує папка для завантаження фото
 		destination_dir = settings.MEDIA_ROOT + cls.__dir + cls.destination_dir_name
 		if not os.path.exists(destination_dir):
 			os.makedirs(destination_dir)
 
 		# Перевірка на пустий запит
-		file = request.FILES.get('photo')
+		file = request.FILES.get('file') # fixme
 		if (file is None) or (not file):
 			raise cls.NoFileInRequest()
+
+		# Перевірка на максимально-допустимий розмір
+		if file._size > 1024 * 1024 * 3:
+			file.close()
+			raise cls.UploadProcessingFailed('Image is too large.')
 
 		# Перевірка по mime-type чи отриманий файл дійсно є зображенням
 		if 'image/' not in file.content_type:
@@ -341,14 +346,14 @@ class PhotosModel(AbstractModel):
 
 
 		# Збереження оригіналу
-		uid = unicode(hid) + unicode(uuid.uuid4())
+		uid = unicode(head.id) + unicode(uuid.uuid4())
 		original_ext = os.path.splitext(file.name)[1]
 		original_name = uid + cls.__original_suffix + original_ext
 		original_path = os.path.join(destination_dir, original_name)
 
-		with open(original_path, 'wb+') as image:
+		with open(original_path, 'wb+') as i:
 			for chunk in file.chunks():
-					image.write(chunk)
+				i.write(chunk)
 
 		try:
 			image = Image.open(original_path)
@@ -378,7 +383,7 @@ class PhotosModel(AbstractModel):
 			# небажаного розширення.
 			image.thumbnail(image.size, Image.ANTIALIAS)
 
-		image.save(image_path, 'JPEG', quality=95)
+		image.save(image_path, 'JPEG', quality=99)
 
 
 		# ...
@@ -402,12 +407,12 @@ class PhotosModel(AbstractModel):
 			image.thumbnail(image.size, Image.ANTIALIAS)
 
 		# Прев’ю можна стиснути з втратами якості, всеодно є повнорозмірна копія.
-		image.save(thumb_path, 'JPEG', quality=85)
+		image.save(thumb_path, 'JPEG', quality=90)
 
 
 		# Збереження в БД
 		record = cls.objects.create(
-			hid = hid,
+			hid = head,
 		    uid = uid,
 		    original_extension = original_ext
 		)

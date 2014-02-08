@@ -302,7 +302,11 @@ __uph_responses = {
 }
 @login_required_or_forbidden
 @require_http_methods('POST')
-def upload_photo_view(request, tid, hid):
+def upload_photo_view(request, tid_hid):
+	tid, hid = tid_hid.split(':')
+	tid = int(tid)
+	hid = int(hid)
+
 	head = __head_minimal(tid, hid)
 	if not head:
 		return HttpResponseBadRequest(
@@ -320,7 +324,7 @@ def upload_photo_view(request, tid, hid):
 
 
 	try:
-		image_data = photos_model.handle_uploaded(request, hid)
+		image_data = photos_model.handle_uploaded(request, head)
 	except PhotosModel.NoFileInRequest:
 		return HttpResponseBadRequest(
 			json.dumps(__uph_responses['empty_request']), content_type='application/json')
