@@ -191,7 +191,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         for (var i = 0; i < files.length; i++) {
             $scope.publication.head.photos.push(files[i]);
 
-            Publication.uploadPhotos(tid, hid, files, function(data) {
+            Publication.uploadPhotos(tid, hid, files[i], function(data) {
                 console.log(data);
             });
         }
