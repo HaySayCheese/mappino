@@ -427,7 +427,7 @@ class PhotosModel(AbstractModel):
 
 	@classmethod
 	def url(cls):
-		return settings.MEDIA_URL + cls.__dir
+		return settings.MEDIA_URL + cls.__dir + cls.destination_dir_name
 
 
 	def original_image_name(self):
