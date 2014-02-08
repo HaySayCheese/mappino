@@ -65,9 +65,9 @@ urlpatterns += patterns('apps.pages.cabinet',
     url(r'^ajax/api/cabinet/publications/briefs/(\d+)/$',
         'publications_briefs_ajax.briefs', {'section': 'tag'}),
 
-	url(r'^ajax/api/cabinet/publications/\w+/(\d+:\d+)/$', 'publications_ajax.rud_switch'),
-    url(r'^ajax/api/cabinet/publications/\w+/(\d+:\d+)/publish/$', 'publications_ajax.publish_view'),
-    url(r'^ajax/api/cabinet/publications/\w+/(\d+:\d+)/unpublish/$', 'publications_ajax.unpublish_view'),
+	url(r'^ajax/api/cabinet/publications/(\d+:\d+)/$', 'publications_ajax.rud_switch'),
+    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/publish/$', 'publications_ajax.publish_view'),
+    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/unpublish/$', 'publications_ajax.unpublish_view'),
 
     # photos
     url(r'^ajax/api/cabinet/publications/(\d+:\d+)/upload-photo/$', 'publications_ajax.upload_photo_view'),
