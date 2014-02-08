@@ -471,11 +471,17 @@ def __publication_data(record):
 	else:
 		rent_terms = None
 
+	# Фото
+	photos = [photo.dump() for photo in record.photos_model.objects.filter(hid = record.id)]
+	if not photos:
+		photos = None
+
 	data = {
 		'head': head,
 		'body': body,
 		'sale_terms': sale_terms,
 		'rent_terms': rent_terms,
+	    'photos': photos,
 	}
 	return __format_output_data(data)
 

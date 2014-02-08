@@ -40,7 +40,7 @@ class LivingHeadModel(models.Model):
 	body = None
 	sale_terms = None
 	rent_terms = None
-	photos = None
+	photos_model = None
 
 	#-- fields
 	owner = models.ForeignKey(Users)
@@ -416,13 +416,7 @@ class PhotosModel(AbstractModel):
 		    uid = uid,
 		    original_extension = original_ext
 		)
-
-		return {
-			'original': cls.url() + record.original_image_name(),
-		    'thumbnail': cls.url() + record.thumbnail_name(),
-		    'image': cls.url() + record.image_name(),
-		    # todo: watermark
-		}
+		return record.dump()
 
 
 	@classmethod
@@ -441,6 +435,14 @@ class PhotosModel(AbstractModel):
 
 	def thumbnail_name(self):
 		return self.uid + self.__thumbnail_suffix + self.__extension
+
+	def dump(self):
+		return {
+			'original': self.url() + self.original_image_name(),
+		    'thumbnail': self.url() + self.thumbnail_name(),
+		    'image': self.url() + self.image_name(),
+		    # todo: watermark
+		}
 
 
 
