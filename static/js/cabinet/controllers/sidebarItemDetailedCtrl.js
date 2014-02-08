@@ -44,6 +44,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         Publication.load(type, tid, hid, function(data) {
             $scope.publication = data;
 
+            console.log(data);
+
             $scope.publicationLoaded = true;
 
             // якщо оголошення неопубліковане
@@ -59,7 +61,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                     $scope.showPublication = true;
 
                     $timeout(function() {
-                        initMap();
+                        //initMap();
                         initScrollBar();
                     }, 50);
                 }, 200);
@@ -183,14 +185,18 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         }, 0);
 
     };
-    $scope.onFileSelect = function($files) {
+    $scope.onFileSelect = function(files) {
         $scope.publication.head.photos = [];
 
-        for (var i = 0; i < $files.length; i++) {
-            $scope.publication.head.photos.push($files[i]);
+        for (var i = 0; i < files.length; i++) {
+            $scope.publication.head.photos.push(files[i]);
 
-            console.log($scope.publication.head.photos)
+            Publication.uploadPhotos(tid, hid, files, function(data) {
+                console.log(data);
+            });
         }
+
+        console.log($scope.publication.head.photos)
     };
 
 

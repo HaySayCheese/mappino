@@ -75,6 +75,13 @@ app.factory('Publication', function($rootScope, publicationQueries, Briefs) {
         },
 
 
+        uploadPhotos: function(tid, hid, data, callback) {
+            publicationQueries.uploadPhotos(tid, hid, data).success(function(data) {
+                callback(data);
+            });
+        },
+
+
         /**
          * Вертає масив з параметрами оголошення
          *
