@@ -200,6 +200,13 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     };
 
 
+    $scope.publishPublication = function() {
+        Publication.publish(type, tid, hid, function(data) {
+            console.log(data);
+        })
+    };
+
+
     $scope.scrollToHeader = function(href) {
         document.getElementById(href).scrollIntoView();
     };

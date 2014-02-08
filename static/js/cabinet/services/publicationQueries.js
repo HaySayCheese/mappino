@@ -36,6 +36,36 @@ app.factory('publicationQueries', function($http, $upload) {
 
 
         /**
+         * Запит на публікацію оголошення
+         *
+         * @param {string} category Категорія ('all', 'published', 'unpublished', ...)
+         * @param {number} tid      Ідентифікатор типу оголошення
+         * @param {number} hid      Ідентифікатор оголошення
+         */
+        publish: function(category, tid, hid) {
+            return $http({
+                url: '/ajax/api/cabinet/publications/' + category + '/' + tid + ":" + hid + '/publish/',
+                method: "UPDATE"
+            });
+        },
+
+
+        /**
+         * Запит на перенесення оголошення в чорновики
+         *
+         * @param {string} category Категорія ('all', 'published', 'unpublished', ...)
+         * @param {number} tid      Ідентифікатор типу оголошення
+         * @param {number} hid      Ідентифікатор оголошення
+         */
+        unpublish: function(category, tid, hid) {
+            return $http({
+                url: '/ajax/api/cabinet/publications/' + category + '/' + tid + ":" + hid + '/unpublish/',
+                method: "UPDATE"
+            });
+        },
+
+
+        /**
          * Запит на перевірку полів при доданні оголошення
          *
          * @param {string} category Категорія ('all', 'published', 'unpublished', ...)
@@ -52,6 +82,13 @@ app.factory('publicationQueries', function($http, $upload) {
         },
 
 
+        /**
+         * Запит на загрузку фоток на сервер
+         *
+         * @param {number} tid      Ідентифікатор типу оголошення
+         * @param {number} hid      Ідентифікатор оголошення
+         * @param {object} photos   Обєкт з фотками
+         */
         uploadPhotos: function(tid, hid, photos) {
             return $upload.upload({
                 url: '/ajax/api/cabinet/publications/' + tid + ':' + hid + '/upload-photo/',

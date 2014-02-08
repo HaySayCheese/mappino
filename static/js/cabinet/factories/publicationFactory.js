@@ -52,6 +52,36 @@ app.factory('Publication', function($rootScope, publicationQueries, Briefs) {
 
 
         /**
+         * Публікація оголошення
+         *
+         * @param {string} category         Категорія ('all', 'published', 'unpublished', ...)
+         * @param {number} tid              Ідентифікатор типу оголошення
+         * @param {number} id               Ідентифікатор оголошення
+         * @param {function} callback
+         */
+        publish: function(category, tid, id, callback) {
+            publicationQueries.publish(category, tid, id).success(function(data) {
+                callback(data);
+            });
+        },
+
+
+        /**
+         * Перенесення оголошення в чорновики
+         *
+         * @param {string} category         Категорія ('all', 'published', 'unpublished', ...)
+         * @param {number} tid              Ідентифікатор типу оголошення
+         * @param {number} id               Ідентифікатор оголошення
+         * @param {function} callback
+         */
+        unpublish: function(category, tid, id, callback) {
+            publicationQueries.unpublish(category, tid, id).success(function(data) {
+                callback(data);
+            });
+        },
+
+
+        /**
          * Відправка полів вводу на сервер для перевірки
          *
          * @param {string} category         Категорія ('all', 'published', 'unpublished', ...)
