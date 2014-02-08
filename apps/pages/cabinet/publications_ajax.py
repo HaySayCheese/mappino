@@ -5,8 +5,8 @@ import json
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.http.response import HttpResponse, HttpResponseBadRequest
-from django.utils.timezone import now
 from django.views.decorators.http import require_http_methods
+from core.publications.abstract_models import PhotosModel
 
 from core.publications.update_methods.dachas import update_dacha
 from core.publications.update_methods.flats import update_flat
@@ -23,8 +23,9 @@ from core.publications.update_methods.garages import update_garage
 from core.publications.update_methods.lands import update_land
 from collective.decorators.views import login_required_or_forbidden
 from collective.methods.request_data_getters import angular_post_parameters, angular_parameters
-from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, OBJECT_STATES
+from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS
 from core.publications.models import HousesHeads, FlatsHeads, ApartmentsHeads, DachasHeads, CottagesHeads, RoomsHeads, TradesHeads, OfficesHeads, WarehousesHeads, BusinessesHeads, CateringsHeads, GaragesHeads, LandsHeads
+
 
 
 
@@ -269,6 +270,71 @@ def __delete_publication(request, tid, hid):
 
 	head.mark_as_deleted()
 	return HttpResponse(json.dumps(__dp_responses['OK']), content_type='application/json')
+
+
+
+__uph_responses = {
+	'OK': {
+	    'code': 0,
+		'message': 'OK',
+	    'image': None,
+    },
+    'invalid_tid': {
+	    'code': 1,
+        'message': 'invalid @tid.'
+    },
+    'invalid_hid': {
+	    'code': 2,
+        'message': 'invalid @hid.'
+    },
+    'empty_request': {
+	    'code': 3,
+        'message': 'empty request.'
+    },
+    'unsupported_type': {
+	    'code': 4,
+        'message': 'unsupported type.'
+    },
+    'unknown_error': {
+	    'code': 5,
+        'message': 'unknown error.'
+    },
+}
+@login_required_or_forbidden
+@require_http_methods('POST')
+def __upload_photo_view(request, tid, hid):
+	head = __head_minimal(tid, hid)
+	if not head:
+		return HttpResponseBadRequest(
+			json.dumps(__uph_responses['invalid_hid']), content_type='application/json')
+
+	# check owner
+	if head.owner.id != request.user.id:
+		raise PermissionDenied()
+
+	photos_model = PHOTOS_MODELS.get(tid)
+	if photos_model is None:
+		# todo: додати повідомлення адміну про, можливо, пропущений tid
+		return HttpResponseBadRequest(
+			json.dumps(__uph_responses['invalid_tid']), content_type='application/json')
+
+
+	try:
+		image_data = photos_model.handle_uploaded(request, hid)
+	except PhotosModel.NoFileInRequest:
+		return HttpResponseBadRequest(
+			json.dumps(__uph_responses['empty_request']), content_type='application/json')
+	except PhotosModel.UnsupportedImageType:
+		return HttpResponseBadRequest(
+			json.dumps(__uph_responses['unsupported_type']), content_type='application/json')
+	except PhotosModel.UploadProcessingFailed:
+		return HttpResponseBadRequest(
+			json.dumps(__uph_responses['unknown_error']), content_type='application/json')
+
+	# seems ok
+	response = copy.deepcopy(__uph_responses['OK'])
+	response['image'] = image_data
+	return HttpResponse(json.dumps(response), content_type='application/json')
 
 
 

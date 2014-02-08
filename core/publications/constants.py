@@ -325,7 +325,11 @@ RED_LINE_VALUES = RedLineValues()
 
 from core.publications.models import FlatsHeads, ApartmentsHeads, HousesHeads, DachasHeads, \
 	CottagesHeads, RoomsHeads, TradesHeads, OfficesHeads, WarehousesHeads, BusinessesHeads, \
-	CateringsHeads, GaragesHeads, LandsHeads
+	CateringsHeads, GaragesHeads, LandsHeads, \
+	FlatsPhotos, ApartmentsPhotos, HousesPhotos, DachasPhotos, CottagesPhotos, RoomsPhotos, \
+	TradesPhotos, OfficesPhotos, WarehousesPhotos, BusinessesPhotos, CateringsPhotos, \
+	GaragesPhotos, LandsPhotos
+
 HEAD_MODELS = {
     OBJECTS_TYPES.flat():       FlatsHeads,
     OBJECTS_TYPES.apartments(): ApartmentsHeads,
@@ -342,5 +346,22 @@ HEAD_MODELS = {
 
     OBJECTS_TYPES.garage():     GaragesHeads,
     OBJECTS_TYPES.land():       LandsHeads,
+}
+PHOTOS_MODELS = {
+	OBJECTS_TYPES.flat():       FlatsPhotos,
+    OBJECTS_TYPES.apartments(): ApartmentsPhotos,
+    OBJECTS_TYPES.house():      HousesPhotos,
+    OBJECTS_TYPES.dacha():      DachasPhotos,
+    OBJECTS_TYPES.cottage():    CottagesPhotos,
+    OBJECTS_TYPES.room():       RoomsPhotos,
+
+    OBJECTS_TYPES.trade():      TradesPhotos,
+    OBJECTS_TYPES.office():     OfficesPhotos,
+    OBJECTS_TYPES.warehouse():  WarehousesPhotos,
+    OBJECTS_TYPES.business():   BusinessesPhotos,
+    OBJECTS_TYPES.catering():   CateringsPhotos,
+
+    OBJECTS_TYPES.garage():     GaragesPhotos,
+    OBJECTS_TYPES.land():       LandsPhotos,
 }
 

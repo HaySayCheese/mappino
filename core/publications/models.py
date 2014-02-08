@@ -17,8 +17,8 @@ class FlatsPhotos(PhotosModel):
 	class Meta:
 		db_table = 'img_flats_photos'
 
-	destination_destination_dir_name = 'flats/photos/'
-	head = models.ForeignKey('FlatsHeads')
+	destination_dir_name = 'flats/photos/'
+	hid = models.ForeignKey('FlatsHeads')
 
 
 class FlatsSaleTerms(SaleTermsModel):
@@ -114,8 +114,8 @@ class ApartmentsPhotos(PhotosModel):
 	class Meta:
 		db_table = 'img_apartments_photos'
 
-	destination_destination_dir_name = 'apartments/photos/'
-	head = models.ForeignKey('ApartmentsHeads')
+	destination_dir_name = 'apartments/photos/'
+	hid = models.ForeignKey('ApartmentsHeads')
 
 
 class ApartmentsSaleTerms(SaleTermsModel):
@@ -223,8 +223,8 @@ class HousesPhotos(PhotosModel):
 	class Meta:
 		db_table = 'img_houses_photos'
 
-	destination_destination_dir_name = 'houses/photos/'
-	head = models.ForeignKey('HousesHeads')
+	destination_dir_name = 'houses/photos/'
+	hid = models.ForeignKey('HousesHeads')
 
 
 class HousesSaleTerms(SaleTermsModel):
@@ -335,8 +335,8 @@ class DachasPhotos(PhotosModel):
 	class Meta:
 		db_table = 'img_dachas_photos'
 
-	destination_destination_dir_name = 'dachas/photos/'
-	head = models.ForeignKey('DachasHeads')
+	destination_dir_name = 'dachas/photos/'
+	hid = models.ForeignKey('DachasHeads')
 
 
 class DachasSaleTerms(SaleTermsModel):
@@ -447,8 +447,8 @@ class CottagesPhotos(PhotosModel):
 	class Meta:
 		db_table = 'img_cottages_photos'
 
-	destination_destination_dir_name = 'cottages/photos/'
-	head = models.ForeignKey('CottagesHeads')
+	destination_dir_name = 'cottages/photos/'
+	hid = models.ForeignKey('CottagesHeads')
 
 
 class CottagesSaleTerms(SaleTermsModel):
@@ -557,7 +557,7 @@ class RoomsPhotos(PhotosModel):
 		db_table = 'img_rooms_photos'
 
 	destination_dir_name = 'rooms/photos/'
-	head = models.ForeignKey('RoomsHeads')
+	hid = models.ForeignKey('RoomsHeads')
 
 
 class RoomsSaleTerms(SaleTermsModel):
@@ -669,7 +669,7 @@ class TradesPhotos(PhotosModel):
 		db_table = 'img_trades_photos'
 
 	destination_dir_name = 'trades/photos/'
-	head = models.ForeignKey('TradesHeads')
+	hid = models.ForeignKey('TradesHeads')
 
 
 class TradesBodies(BodyModel):
@@ -771,7 +771,7 @@ class OfficesPhotos(PhotosModel):
 		db_table = 'img_offices_photos'
 
 	destination_dir_name = 'offices/photos/'
-	head = models.ForeignKey('OfficesHeads')
+	hid = models.ForeignKey('OfficesHeads')
 
 
 class OfficesBodies(BodyModel):
@@ -867,7 +867,7 @@ class WarehousesPhotos(PhotosModel):
 		db_table = 'img_warehouses_photos'
 
 	destination_dir_name = 'warehouses/photos/'
-	head = models.ForeignKey('WarehousesHeads')
+	hid = models.ForeignKey('WarehousesHeads')
 
 
 class WarehousesBodies(BodyModel):
@@ -963,7 +963,7 @@ class BusinessesPhotos(PhotosModel):
 		db_table = 'img_business_photos'
 
 	destination_dir_name = 'businesses/photos/'
-	head = models.ForeignKey('BusinessesHeads')
+	hid = models.ForeignKey('BusinessesHeads')
 
 
 class BusinessesBodies(BodyModel):
@@ -1071,7 +1071,7 @@ class CateringsPhotos(PhotosModel):
 		db_table = 'img_caterings_photos'
 
 	destination_dir_name = 'caterings/photos/'
-	head = models.ForeignKey('CateringsHeads')
+	hid = models.ForeignKey('CateringsHeads')
 
 
 class CateringsBodies(BodyModel):
@@ -1169,7 +1169,7 @@ class GaragesPhotos(PhotosModel):
 		db_table = 'img_garages_photos'
 
 	destination_dir_name = 'garages/photos/'
-	head = models.ForeignKey('GaragesHeads')
+	hid = models.ForeignKey('GaragesHeads')
 
 
 class GaragesBodies(BodyModel):
@@ -1222,7 +1222,7 @@ class LandsPhotos(PhotosModel):
 		db_table = 'img_lands_photos'
 
 	destination_dir_name = 'lands/photos/'
-	head = models.ForeignKey('LandsHeads')
+	hid = models.ForeignKey('LandsHeads')
 
 
 class LandsBodies(BodyModel):

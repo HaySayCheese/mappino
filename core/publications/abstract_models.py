@@ -1,8 +1,12 @@
 #coding=utf-8
+import uuid
+from PIL import Image
 import datetime
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.db import models, transaction
 from django.utils.timezone import now
+import os
 
 from core.publications.constants import OBJECT_STATES, CURRENCIES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.users.models import Users
@@ -281,16 +285,158 @@ class CommercialRentTermsModel(AbstractModel):
 
 
 
+
+
 class PhotosModel(AbstractModel):
+	class NoFileInRequest(Exception): pass
+	class UnsupportedImageType(Exception): pass
+	class UploadProcessingFailed(Exception): pass
+
 	class Meta:
 		abstract = True
 
 	#-- constraints
-	destination_dir_name = ''
+	destination_dir_name = '' # @override
 
-	#-- override
-	head = None
+	__original_suffix  = 'or'
+	__full_size_suffix = 'fs'
+	__watermark_suffix = 'wt'
+	__thumbnail_suffix = 'th'
+	__extension = '.jpg'
+
+	__dir = 'models/photos/'
+
 
 	#-- fields
-	name = models.TextField()
-	description = models.TextField(default='')
+	hid = None # @override FK()
+	uid = models.TextField()
+	# Розширення оригіналу зберігається,
+	# оскільки неможливо передбачити формат зображення,
+	# яке буде завантажене користувачем.
+	original_extension = models.CharField(max_length=5)
+
+
+	@classmethod
+	def handle_uploaded(cls, request, hid):
+		# Перевірка чи існує папка для завантаження фото
+		destination_dir = settings.MEDIA_ROOT + cls.__dir + cls.destination_dir_name
+		if not os.path.exists(destination_dir):
+			os.makedirs(destination_dir)
+
+		# Перевірка на пустий запит
+		file = request.FILES.get('photo')
+		if (file is None) or (not file):
+			raise cls.NoFileInRequest()
+
+		# Перевірка по mime-type чи отриманий файл дійсно є зображенням
+		if 'image/' not in file.content_type:
+			file.close()
+			raise cls.UnsupportedImageType()
+
+		# Перевірка чи це не .gif
+		# PIL деколи помиляється на .gif, генеруючи пусті прев’ю
+		if 'gif' in file.content_type:
+			file.close()
+			raise cls.UnsupportedImageType()
+
+
+		# Збереження оригіналу
+		uid = unicode(hid) + unicode(uuid.uuid4())
+		original_ext = os.path.splitext(file.name)[1]
+		original_name = uid + cls.__original_suffix + original_ext
+		original_path = os.path.join(destination_dir, original_name)
+
+		with open(original_path, 'wb+') as image:
+			for chunk in file.chunks():
+					image.write(chunk)
+
+		try:
+			image = Image.open(original_path)
+			if image.mode != "RGB":
+				image = image.convert("RGB")
+			width, height = image.size
+		except IOError:
+			# Видалити оригінальне зображення
+			if os.path.exists(original_path):
+				os.remove(original_path)
+			raise cls.UploadProcessingFailed()
+
+
+		# Стиснене велике зображення
+		image_name = uid + cls.__full_size_suffix + cls.__extension
+		image_path = os.path.join(destination_dir, image_name)
+		min_image_size = [250, 200]
+		if width < min_image_size[0] or height < min_image_size[1]:
+			raise cls.UploadProcessingFailed('Image is too small.')
+
+		max_image_size = [900, 900]
+		if width > max_image_size[0] or height > max_image_size[1]:
+			image.thumbnail(max_image_size, Image.ANTIALIAS)
+		else:
+			# Всеодно виконати операцію над зображенням, інакше PIL не збереже файл.
+			# Розміри зображення при цьому слід залишити без змін, щоб уникнути
+			# небажаного розширення.
+			image.thumbnail(image.size, Image.ANTIALIAS)
+
+		image.save(image_path, 'JPEG', quality=95)
+
+
+		# ...
+		# watermark_name = original_uid + 'wm.jpg'
+		# watermark_path = os.path.join(destination_dir, watermark_name)
+		# todo: генерація зображення з водяним знаком
+		# ...
+
+		# Прев’ю
+		thumb_name = uid + cls.__thumbnail_suffix + cls.__extension
+		thumb_path = os.path.join(destination_dir, thumb_name)
+		min_thumb_size = (150, 150)
+		if width < min_thumb_size[0] or height < min_thumb_size[1]:
+			raise cls.UploadProcessingFailed('Image is too small.')
+
+		max_thumb_size = (300, 300)
+		if width > max_thumb_size[0] or height > max_thumb_size[1]:
+			image.thumbnail(max_thumb_size, Image.ANTIALIAS)
+		else:
+			# Всеодно виконати операцію над зображенням, інакше PIL не збереже файл.
+			image.thumbnail(image.size, Image.ANTIALIAS)
+
+		# Прев’ю можна стиснути з втратами якості, всеодно є повнорозмірна копія.
+		image.save(thumb_path, 'JPEG', quality=85)
+
+
+		# Збереження в БД
+		record = cls.objects.create(
+			hid = hid,
+		    uid = uid,
+		    original_extension = original_ext
+		)
+
+		return {
+			'original': cls.url() + record.original_image_name(),
+		    'thumbnail': cls.url() + record.thumbnail_name(),
+		    'image': cls.url() + record.image_name(),
+		    # todo: watermark
+		}
+
+
+	@classmethod
+	def url(cls):
+		return settings.MEDIA_URL + cls.__dir
+
+
+	def original_image_name(self):
+		return self.uid + self.__original_suffix + self.original_extension
+
+	def image_name(self):
+		return self.uid + self.__full_size_suffix + self.__extension
+
+	def watermark_name(self):
+		return self.uid + self.__watermark_suffix + self.__extension
+
+	def thumbnail_name(self):
+		return self.uid + self.__thumbnail_suffix + self.__extension
+
+
+
+
