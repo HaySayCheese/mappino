@@ -7,13 +7,12 @@ app.factory('publicationQueries', function($http, $upload) {
         /**
          * Запит на загрузку оголошень
          *
-         * @param {string} category Категорія ('all', 'published', 'unpublished', ...)
          * @param {number} tid      Ідентифікатор типу оголошення
          * @param {number} hid      Ідентифікатор оголошення
          */
-        loadPublication: function(category, tid, hid) {
+        loadPublication: function(tid, hid) {
             return $http({
-                url: '/ajax/api/cabinet/publications/' + category + '/' + tid + ":" + hid + '/',
+                url: '/ajax/api/cabinet/publications/' + tid + ":" + hid + '/',
                 method: "GET"
             });
         },
@@ -38,13 +37,12 @@ app.factory('publicationQueries', function($http, $upload) {
         /**
          * Запит на публікацію оголошення
          *
-         * @param {string} category Категорія ('all', 'published', 'unpublished', ...)
          * @param {number} tid      Ідентифікатор типу оголошення
          * @param {number} hid      Ідентифікатор оголошення
          */
-        publish: function(category, tid, hid) {
+        publish: function(tid, hid) {
             return $http({
-                url: '/ajax/api/cabinet/publications/' + category + '/' + tid + ":" + hid + '/publish/',
+                url: '/ajax/api/cabinet/publications/' + tid + ":" + hid + '/publish/',
                 method: "UPDATE"
             });
         },
@@ -53,13 +51,12 @@ app.factory('publicationQueries', function($http, $upload) {
         /**
          * Запит на перенесення оголошення в чорновики
          *
-         * @param {string} category Категорія ('all', 'published', 'unpublished', ...)
          * @param {number} tid      Ідентифікатор типу оголошення
          * @param {number} hid      Ідентифікатор оголошення
          */
-        unpublish: function(category, tid, hid) {
+        unpublish: function(tid, hid) {
             return $http({
-                url: '/ajax/api/cabinet/publications/' + category + '/' + tid + ":" + hid + '/unpublish/',
+                url: '/ajax/api/cabinet/publications/' + tid + ":" + hid + '/unpublish/',
                 method: "UPDATE"
             });
         },
@@ -68,14 +65,13 @@ app.factory('publicationQueries', function($http, $upload) {
         /**
          * Запит на перевірку полів при доданні оголошення
          *
-         * @param {string} category Категорія ('all', 'published', 'unpublished', ...)
          * @param {number} tid      Ідентифікатор типу оголошення
          * @param {number} hid      Ідентифікатор оголошення
          * @param {object} data     Обєкт з назвою інпута та його значенням
          */
-        checkInputs: function(category, tid, hid, data) {
+        checkInputs: function(tid, hid, data) {
             return $http({
-                url: '/ajax/api/cabinet/publications/' + category + '/' + tid + ":" + hid + '/',
+                url: '/ajax/api/cabinet/publications/' + tid + ":" + hid + '/',
                 method: "UPDATE",
                 data: data
             });

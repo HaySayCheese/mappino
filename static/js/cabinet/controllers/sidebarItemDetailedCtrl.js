@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $compile, $routeParams, Publication, Briefs, Tags, $upload) {
+app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $compile, $routeParams, Publication, Briefs, Tags) {
 
     initScrollBar();
 
@@ -8,13 +8,12 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     $scope.publication = [];
     $scope.tags = Tags.getAll();
 
-    var type, tid, hid;
+    var tid, hid;
 
     /**
      * При зміні урла грузить дані оголошення
      */
     $scope.$on("$routeChangeSuccess", function() {
-        type    = $rootScope.routeSection;
         tid     = $rootScope.publicationId.split(":")[0];
         hid     = $rootScope.publicationId.split(":")[1];
 
@@ -41,7 +40,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         $rootScope.loadings.detailed = true;
 
 
-        Publication.load(type, tid, hid, function(data) {
+        Publication.load(tid, hid, function(data) {
             $scope.publication = data;
 
             console.log(data);
@@ -61,7 +60,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                     $scope.showPublication = true;
 
                     $timeout(function() {
-                        //initMap();
+                        initMap();
                         initScrollBar();
                     }, 50);
                 }, 200);
@@ -78,27 +77,27 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      */
     function initInputsChange() {
         angular.element(".sidebar-item-detailed-body input[type='text'], textarea").bind("focusout", function(e) {
-            var name = e.currentTarget.name.replace("h_", ""),
+            var name = e.currentTarget.name,
                 value =  e.currentTarget.value;
 
-            Publication.checkInputs(type, tid, hid, { f: name, v: value }, function(newValue) {
+            Publication.checkInputs(tid, hid, { f: name, v: value }, function(newValue) {
                 if (newValue)
                     e.currentTarget.value = newValue;
             });
         });
 
         angular.element(".sidebar-item-detailed-body input[type='checkbox']").bind("change", function(e) {
-            var name = e.currentTarget.name.replace("h_", ""),
+            var name = e.currentTarget.name,
                 value =  e.currentTarget.checked;
 
-            Publication.checkInputs(type, tid, hid, { f: name, v: value });
+            Publication.checkInputs(tid, hid, { f: name, v: value });
         });
 
         angular.element(".sidebar-item-detailed-body select").bind('change',function(e) {
-            var name = e.currentTarget.name.replace("h_", ""),
+            var name = e.currentTarget.name,
                 value =  e.currentTarget.value;
 
-            Publication.checkInputs(type, tid, hid, { f: name, v: value });
+            Publication.checkInputs(tid, hid, { f: name, v: value });
         });
     }
 
@@ -170,8 +169,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             if(status == google.maps.GeocoderStatus.OK)
                 input.value = results[0].formatted_address;
 
-            Publication.checkInputs(type, tid, hid, { f: "address", v: input.value });
-            Publication.checkInputs(type, tid, hid, { f: "lat_lng", v: latLng.d + ";" + latLng.e });
+            Publication.checkInputs(tid, hid, { f: "address", v: input.value });
+            Publication.checkInputs(tid, hid, { f: "lat_lng", v: latLng.d + ";" + latLng.e });
         });
     }
 
@@ -186,22 +185,21 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
     };
     $scope.onFileSelect = function(files) {
-        $scope.publication.head.photos = [];
+
+        !$scope.publication.photos && ($scope.publication.photos = []);
 
         for (var i = 0; i < files.length; i++) {
-            $scope.publication.head.photos.push(files[i]);
-
             Publication.uploadPhotos(tid, hid, files[i], function(data) {
-                console.log(data);
+                $scope.publication.photos.push(data.image);
             });
         }
 
-        console.log($scope.publication.head.photos)
+        console.log($scope.publication.photos)
     };
 
 
     $scope.publishPublication = function() {
-        Publication.publish(type, tid, hid, function(data) {
+        Publication.publish(tid, hid, function(data) {
             console.log(data);
         })
     };

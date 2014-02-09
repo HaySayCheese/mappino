@@ -10,15 +10,14 @@ app.factory('Publication', function($rootScope, publicationQueries, Briefs) {
         /**
          * Загружає оголошення
          *
-         * @param {string} category         Категорія ('all', 'published', 'unpublished', ...)
          * @param {number} tid              Ідентифікатор типу оголошення
          * @param {number} id               Ідентифікатор оголошення
          * @param {function} callback
          */
-        load: function(category, tid, id, callback) {
+        load: function(tid, id, callback) {
             var that = this;
 
-            publicationQueries.loadPublication(category, tid, id).success(function(data) {
+            publicationQueries.loadPublication(tid, id).success(function(data) {
                 publication = data;
 
                 callback(that.getAll());
@@ -54,13 +53,12 @@ app.factory('Publication', function($rootScope, publicationQueries, Briefs) {
         /**
          * Публікація оголошення
          *
-         * @param {string} category         Категорія ('all', 'published', 'unpublished', ...)
          * @param {number} tid              Ідентифікатор типу оголошення
          * @param {number} id               Ідентифікатор оголошення
          * @param {function} callback
          */
-        publish: function(category, tid, id, callback) {
-            publicationQueries.publish(category, tid, id).success(function(data) {
+        publish: function(tid, id, callback) {
+            publicationQueries.publish(tid, id).success(function(data) {
                 callback(data);
             });
         },
@@ -69,13 +67,12 @@ app.factory('Publication', function($rootScope, publicationQueries, Briefs) {
         /**
          * Перенесення оголошення в чорновики
          *
-         * @param {string} category         Категорія ('all', 'published', 'unpublished', ...)
          * @param {number} tid              Ідентифікатор типу оголошення
          * @param {number} id               Ідентифікатор оголошення
          * @param {function} callback
          */
-        unpublish: function(category, tid, id, callback) {
-            publicationQueries.unpublish(category, tid, id).success(function(data) {
+        unpublish: function(tid, id, callback) {
+            publicationQueries.unpublish(tid, id).success(function(data) {
                 callback(data);
             });
         },
@@ -84,17 +81,16 @@ app.factory('Publication', function($rootScope, publicationQueries, Briefs) {
         /**
          * Відправка полів вводу на сервер для перевірки
          *
-         * @param {string} category         Категорія ('all', 'published', 'unpublished', ...)
          * @param {number} tid              Ідентифікатор типу оголошення
          * @param {number} id               Ідентифікатор оголошення
          * @param {object} data             Обєкт з іменем поля вводу та його значенням
          * @param {function} callback
          */
-        checkInputs: function(category, tid, id, data, callback) {
+        checkInputs: function(tid, id, data, callback) {
             var inputName   = data.f,
                 inputValue  = data.v;
 
-            publicationQueries.checkInputs(category, tid, id, data).success(function(data) {
+            publicationQueries.checkInputs(tid, id, data).success(function(data) {
 
                 if (data.value)
                     callback(data.value);
