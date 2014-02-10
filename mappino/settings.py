@@ -13,9 +13,9 @@ if not DEBUG:
 	import production_settings
 else:
 #   МЕГА ПАТЧ
-	#pypy psycopg2cffi compatible hook
-	#from psycopg2cffi import compat
-	#compat.register()
+# #	pypy psycopg2cffi compatible hook
+# 	from psycopg2cffi import compat
+# 	compat.register()
 
 	# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 	import os
@@ -59,11 +59,13 @@ else:
 		'django.contrib.auth',
 		'django.contrib.contenttypes',
 		'django.contrib.sessions',
-	    'south',
 
 	    'core.users',
 	    'core.dirtags',
-	    'core.publications'
+	    'core.publications',
+	    'core.markers_servers',
+
+		'south',
 	)
 	MIDDLEWARE_CLASSES = (
 		'django.contrib.sessions.middleware.SessionMiddleware',
