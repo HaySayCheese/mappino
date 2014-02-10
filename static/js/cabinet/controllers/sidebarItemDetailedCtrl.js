@@ -205,7 +205,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * Видалення зображень
      */
     $scope.removePhoto = function(photo) {
-        Publication.removePhoto(photo.pid, function(data) {
+        Publication.removePhoto(tid, hid, photo.id, function(data) {
             console.log(data)
         })
     };

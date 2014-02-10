@@ -126,6 +126,12 @@ app.factory('Publication', function($rootScope, publicationQueries, Briefs) {
          */
         removePhoto: function(tid, hid, pid, callback) {
             publicationQueries.removePhoto(tid, hid, pid).success(function(data) {
+
+                for (var i = 0; i < publication.photos.length; i++) {
+                    if (publication.photos[i].id === pid)
+                        publication.photos.splice(i, 1);
+                }
+
                 callback(data);
             });
         },
