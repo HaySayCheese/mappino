@@ -1,14 +1,17 @@
 #coding=utf-8
 import uuid
-from PIL import Image
+
+import os
 import datetime
+from PIL import Image
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.db import models, transaction
 from django.utils.timezone import now
-import os
 
+from core.publications import models_signals
 from core.publications.constants import OBJECT_STATES, CURRENCIES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
+from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, EmptyRentPrice
 from core.users.models import Users
 
 
@@ -61,8 +64,8 @@ class LivingHeadModel(models.Model):
 	segment_lat = models.SmallIntegerField(null=True, db_index=True)
 	segment_lng = models.SmallIntegerField(null=True, db_index=True)
 
-	pos_lat = models.BigIntegerField(null=True, db_index=True)
-	pos_lng = models.BigIntegerField(null=True, db_index=True)
+	pos_lat = models.TextField(null=True)
+	pos_lng = models.TextField(null=True)
 	address = models.TextField(null=True)
 
 
@@ -166,9 +169,17 @@ class LivingHeadModel(models.Model):
 		if self.deleted is not None:
 			raise SuspiciousOperation('Attempt to publish deleted publication.')
 
-		self.state_sid = OBJECT_STATES.published()
-		self.published = now()
-		self.prolong() # Немає необхідності викликати save. prolong() його викличе.
+		self.check_required_fields()
+		self.check_extended_required_fields()
+
+		with transaction.atomic():
+			self.state_sid = OBJECT_STATES.published()
+			self.published = now()
+			self.prolong() # Немає необхідності викликати save. prolong() його викличе.
+
+			# sender=None для того, щоб django-orm не витягував автоматично дані з БД,
+			# які, швидше за все, не знадобляться в подільшій обробці.
+			models_signals.house_published.send(sender=None, id=self.id)
 
 
 	def unpublish(self):
@@ -186,7 +197,10 @@ class LivingHeadModel(models.Model):
 		Подовжує дію оголошення на @days днів (за замовчуванням).
 		Використовується для автоматичної пролонгації оголошення при вході.
 		"""
-		self.actual += datetime.timedelta(days=days)
+		if not self.actual:
+			self.actual = now() + datetime.timedelta(days=days)
+		else:
+			self.actual += datetime.timedelta(days=days)
 		self.save(force_update=True)
 
 
@@ -201,6 +215,33 @@ class LivingHeadModel(models.Model):
 		self.published = None
 		self.actual = None
 		self.deleted = now()
+
+
+	def check_required_fields(self):
+		"""
+		Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
+		Не перевіряє інформацію в полях на коректність, оскільки передбачається,
+		що некоректні дані не можуть потрапити в БД через обробники зміни даних.
+		"""
+
+		#-- lat lng
+		if (self.degree_lng is None) or (self.degree_lat is None):
+			raise EmptyCoordinates('@degree is None')
+		if (self.segment_lat is None) or (self.segment_lng is None):
+			raise EmptyCoordinates('@segment is None')
+		if (self.pos_lng is None) or (self.pos_lat is None):
+			raise EmptyCoordinates('@pos is None')
+
+		#-- sale terms
+		if self.for_sale:
+			self.sale_terms.check_required_fields()
+
+		#-- rent terms
+		if self.for_rent:
+			self.rent_terms.check_required_fields()
+
+		#-- body
+		self.body.check_required_fields()
 
 
 
@@ -224,6 +265,27 @@ class BodyModel(AbstractModel):
 	description = models.TextField(default='')
 
 
+	def check_required_fields(self):
+		"""
+		Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
+		Не перевіряє інформацію в полях на коректність, оскільки передбачається,
+		що некоректні дані не можуть потрапити в БД через обробники зміни даних.
+		"""
+		if (self.title is None) or (not self.title):
+			raise EmptyTitle('Title is empty')
+		if (self.description is None) or (not self.description):
+			raise EmptyDescription('Description is empty')
+		self.check_extended_fields()
+
+
+	def check_extended_fields(self):
+		"""
+		Abstract.
+		Призначений для валідації моделей, унаслідуваних від поточної.
+		"""
+		return
+
+
 
 class SaleTermsModel(AbstractModel):
 	class Meta:
@@ -239,6 +301,16 @@ class SaleTermsModel(AbstractModel):
 	is_contract = models.BooleanField(default=False)
 	transaction_sid = models.SmallIntegerField(default=SALE_TRANSACTION_TYPES.for_all())
 	add_terms = models.TextField(default='')
+
+
+	def check_required_fields(self):
+		"""
+		Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
+		Не перевіряє інформацію в полях на коректність, оскільки передбачається,
+		що некоректні дані не можуть потрапити в БД через обробники зміни даних.
+		"""
+		if self.price is None:
+			raise EmptySalePrice('Sale price is None.')
 
 
 
@@ -264,6 +336,16 @@ class LivingRentTermsModel(AbstractModel):
 	add_terms = models.TextField(default='')
 
 
+	def check_required_fields(self):
+		"""
+		Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
+		Не перевіряє інформацію в полях на коректність, оскільки передбачається,
+		що некоректні дані не можуть потрапити в БД через обробники зміни даних.
+		"""
+		if self.price is None:
+			raise EmptyRentPrice('Rent price is None.')
+
+
 
 class CommercialRentTermsModel(AbstractModel):
 	class Meta:
@@ -284,6 +366,14 @@ class CommercialRentTermsModel(AbstractModel):
 	add_terms = models.TextField(default='')
 
 
+	def check_required_fields(self):
+		"""
+		Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
+		Не перевіряє інформацію в полях на коректність, оскільки передбачається,
+		що некоректні дані не можуть потрапити в БД через обробники зміни даних.
+		"""
+		if self.price is None:
+			raise EmptyRentPrice('Rent price is None.')
 
 
 

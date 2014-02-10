@@ -1,7 +1,10 @@
 #coding=utf-8
 from django.db import models
+
 from core.publications.abstract_models import LivingHeadModel, BodyModel, LivingRentTermsModel, CommercialRentTermsModel, PhotosModel, SaleTermsModel, CommercialHeadModel, AbstractModel
 from core.publications.constants import MARKET_TYPES, OBJECT_CONDITIONS, FLOOR_TYPES, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, CURRENCIES
+from core.publications.exceptions import EmptyFloor, EmptyTotalArea, EmptyLivingArea, EmptyRoomsCount, EmptyFloorsCount, \
+	EmptyHallsArea, EmptyHallsCount, EmptyCabinetsCount
 from core.publications.objects_constants.apartments import APARTMENTS_BUILDINGS_TYPES, APARTMENTS_FLAT_TYPES, APARTMENTS_ROOMS_PLANING_TYPES
 from core.publications.objects_constants.cottages import COTTAGE_RENT_TYPES, COTTAGE_SALE_TYPES
 from core.publications.objects_constants.dachas import DACHA_WC_LOCATIONS
@@ -97,6 +100,16 @@ class FlatsBodies(BodyModel):
 	garage = models.BooleanField(default=False) # гараж / паркомісце
 	playground = models.BooleanField(default=False)
 	add_buildings = models.TextField(null=True)
+
+	def check_extended_fields(self):
+		if self.floor is None:
+			raise EmptyFloor('Floor is None.')
+		if self.total_area is None:
+			raise EmptyTotalArea('Total area is None.')
+		if self.living_area is None:
+			raise EmptyLivingArea('Living area is None.')
+		if self.rooms_count is None:
+			raise EmptyRoomsCount('Rooms count is None.')
 
 
 class FlatsHeads(LivingHeadModel):
@@ -206,6 +219,18 @@ class ApartmentsBodies(BodyModel):
 	wood = models.BooleanField(default=False)
 	sea = models.BooleanField(default=False)
 	add_showplaces = models.TextField(null=True)
+
+
+	def check_extended_fields(self):
+		if self.floor is None:
+			raise EmptyFloor('Floor is None.')
+		if self.total_area is None:
+			raise EmptyTotalArea('Total area is None.')
+		if self.living_area is None:
+			raise EmptyLivingArea('Living area is None.')
+		if self.rooms_count is None:
+			raise EmptyRoomsCount('Rooms count is None.')
+
 
 
 class ApartmentsHeads(LivingHeadModel):
@@ -320,6 +345,18 @@ class HousesBodies(BodyModel):
 	add_showplaces = models.TextField(null=True)
 
 
+	def check_extended_fields(self):
+		if self.total_area is None:
+			raise EmptyTotalArea('Total area is None.')
+		if self.living_area is None:
+			raise EmptyLivingArea('Living area is None.')
+		if self.floors_count is None:
+			raise EmptyFloorsCount('Floors count is None.')
+		if self.rooms_count is None:
+			raise EmptyRoomsCount('Rooms count is None.')
+
+
+
 class HousesHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_houses_heads'
@@ -432,6 +469,18 @@ class DachasBodies(BodyModel):
 	add_showplaces = models.TextField(null=True)
 
 
+	def check_extended_fields(self):
+		if self.total_area is None:
+			raise EmptyTotalArea('Total area is None.')
+		if self.living_area is None:
+			raise EmptyLivingArea('Living area is None.')
+		if self.floors_count is None:
+			raise EmptyFloorsCount('Floors count is None.')
+		if self.rooms_count is None:
+			raise EmptyRoomsCount('Rooms count is None.')
+
+
+
 class DachasHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_dachas_heads'
@@ -540,6 +589,17 @@ class CottagesBodies(BodyModel):
 	sea = models.BooleanField(default=False)
 	add_showplaces = models.TextField(null=True)
 
+	def check_extended_fields(self):
+		if self.total_area is None:
+			raise EmptyTotalArea('Total area is None.')
+		if self.living_area is None:
+			raise EmptyLivingArea('Living area is None.')
+		if self.floors_count is None:
+			raise EmptyFloorsCount('Floors count is None.')
+		if self.rooms_count is None:
+			raise EmptyRoomsCount('Rooms count is None.')
+
+
 
 class CottagesHeads(LivingHeadModel):
 	class Meta:
@@ -642,6 +702,17 @@ class RoomsBodies(BodyModel):
 	sea = models.BooleanField(default=False)
 	add_showplaces = models.TextField(null=True)
 
+	def check_extended_fields(self):
+		if self.floor is None:
+			raise EmptyFloor('Floor count is None.')
+		if self.rooms_count is None:
+			raise EmptyRoomsCount('Rooms count is None.')
+		if self.total_area is None:
+			raise EmptyTotalArea('Total area is None.')
+		if self.living_area is None:
+			raise EmptyLivingArea('Living area is None.')
+
+
 
 class RoomsHeads(LivingHeadModel):
 	class Meta:
@@ -742,6 +813,16 @@ class TradesBodies(BodyModel):
 	add_showplaces = models.TextField(null=True)
 
 
+	def check_extended_fields(self):
+		if self.floor is None:
+			raise EmptyFloor('Floor is None.')
+		if self.halls_count is None:
+			raise EmptyHallsCount('Halls count is None.')
+		if self.halls_area is None:
+			raise EmptyHallsArea('Halls area is None.')
+
+
+
 class TradesHeads(CommercialHeadModel):
 	class Meta:
 		db_table = 'o_trades_heads'
@@ -836,6 +917,14 @@ class OfficesBodies(BodyModel):
 	cash_machine = models.BooleanField(default=False)
 	entertainment = models.BooleanField(default=False) # розважальні установи
 	add_showplaces = models.TextField(null=True)
+
+
+	def check_extended_fields(self):
+		if self.floor is None:
+			raise EmptyFloor('Floor is None.')
+		if self.cabinets_count is None:
+			raise EmptyCabinetsCount('Cabinets count is None.')
+
 
 
 class OfficesHeads(CommercialHeadModel):
@@ -1044,6 +1133,13 @@ class BusinessesBodies(BodyModel):
 	add_showplaces = models.TextField(null=True)
 
 
+	def check_extended_fields(self):
+		if self.floor is None:
+			raise EmptyFloor('Floor is None.')
+		if self.total_area is None:
+			raise EmptyTotalArea('Total area count is None.')
+
+
 
 class BusinessesHeads(CommercialHeadModel):
 	class Meta:
@@ -1143,6 +1239,16 @@ class CateringsBodies(BodyModel):
 	add_showplaces = models.TextField(null=True)
 
 
+	def check_extended_fields(self):
+		if self.floor is None:
+			raise EmptyFloor('Floor is None.')
+		if self.halls_count is None:
+			raise EmptyHallsCount('Halls count is None.')
+		if self.halls_area is None:
+			raise EmptyHallsArea('Halls area is None.')
+
+
+
 class CateringsHeads(CommercialHeadModel):
 	class Meta:
 		db_table = 'o_caterings_heads'
@@ -1194,6 +1300,12 @@ class GaragesBodies(BodyModel):
 	fire_alarm = models.BooleanField(default=False)
 	security = models.BooleanField(default=False)
 	add_facilities = models.TextField(null=True) # дод. відомості про зручності
+
+
+	def check_extended_fields(self):
+		if self.area is None:
+			raise EmptyTotalArea('Total area is None.')
+
 
 
 class GaragesHeads(LivingHeadModel):
@@ -1253,6 +1365,12 @@ class LandsBodies(BodyModel):
 	cash_machine = models.BooleanField(default=False)
 	entertainment = models.BooleanField(default=False) # розважальні установи
 	add_showplaces = models.TextField(null=True)
+
+
+	def check_extended_fields(self):
+		if self.area is None:
+			raise EmptyTotalArea('Total area is None.')
+
 
 
 class LandsHeads(LivingHeadModel):

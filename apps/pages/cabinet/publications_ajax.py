@@ -6,8 +6,11 @@ from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
-from core.publications.abstract_models import PhotosModel
 
+from core.publications.abstract_models import PhotosModel
+from core.publications.exceptions import EmptyCoordinates, EmptySalePrice, EmptyRentPrice, EmptyTitle, EmptyDescription, \
+	EmptyFloor, EmptyTotalArea, EmptyLivingArea, EmptyRoomsCount, EmptyFloorsCount, EmptyHallsArea, EmptyHallsCount, \
+	EmptyCabinetsArea, EmptyCabinetsCount
 from core.publications.update_methods.dachas import update_dacha
 from core.publications.update_methods.flats import update_flat
 from core.publications.update_methods.apartments import update_apartments
@@ -25,6 +28,7 @@ from collective.decorators.views import login_required_or_forbidden
 from collective.methods.request_data_getters import angular_post_parameters, angular_parameters
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS
 from core.publications.models import HousesHeads, FlatsHeads, ApartmentsHeads, DachasHeads, CottagesHeads, RoomsHeads, TradesHeads, OfficesHeads, WarehousesHeads, BusinessesHeads, CateringsHeads, GaragesHeads, LandsHeads
+
 
 
 
@@ -343,6 +347,7 @@ def upload_photo_view(request, tid_hid):
 
 
 __pp_responses = {
+	# todo: check codes
 	'OK': {
 	    'code': 0,
 		'message': 'OK',
@@ -351,10 +356,58 @@ __pp_responses = {
 	    'code': 1,
         'message': 'invalid @hid.'
     },
+    'empty_coordinates': {
+	    'code': 2,
+        'message': 'coordinates of publication are absent or incomplete.'
+    },
+    'empty_sale_price': {
+	    'code': 3,
+        'message': 'empty sale price.'
+    },
+    'empty_rent_price': {
+	    'code': 4,
+        'message': 'empty rent price.'
+    },
+    'empty_title': {
+	    'code': 5,
+    },
+    'empty_description': {
+	    'code': 6,
+    },
+    'empty_floor': {
+	    'code': 7,
+    },
+    'empty_total_area': {
+	    'code': 8,
+    },
+    'empty_living_area': {
+	    'code': 9,
+    },
+    'empty_rooms_count': {
+	    'code': 10,
+    },
+    'empty_floors_count': {
+	    'code': 11,
+    },
+    'empty_halls_area': {
+	    'code': 12,
+    },
+    'empty_halls_count': {
+	    'code': 13,
+    },
+    'empty_cabinets_area': {
+	    'code': 14,
+    },
+    'empty_cabinets_count': {
+	    'code': 15,
+    },
 }
 @login_required_or_forbidden
 @require_http_methods('UPDATE')
-def publish_view(request, tid, hid):
+def publish_view(request, tid_hid):
+	tid, hid = tid_hid.split(':')
+	tid = int(tid)
+	hid = int(hid)
 	head = __head_minimal(tid, hid)
 	if head is None:
 		return HttpResponseBadRequest(
@@ -364,7 +417,65 @@ def publish_view(request, tid, hid):
 	if head.owner.id != request.user.id:
 		raise PermissionDenied()
 
-	head.publish()
+	try:
+		head.publish()
+	except EmptyCoordinates:
+		return HttpResponseBadRequest(
+			json.dumps(__pp_responses['empty_coordinates']), content_type='application/json')
+
+	except EmptySalePrice:
+		return HttpResponseBadRequest(
+			json.dumps(__pp_responses['empty_sale_price']), content_type='application/json')
+
+	except EmptyRentPrice:
+		return HttpResponseBadRequest(
+			json.dumps(__pp_responses['empty_rent_price']), content_type='application/json')
+
+	except EmptyTitle:
+		return HttpResponseBadRequest(
+			json.dumps(__pp_responses['empty_title']), content_type='application/json')
+
+	except EmptyDescription:
+		return HttpResponseBadRequest(
+			json.dumps(__pp_responses['empty_description']), content_type='application/json')
+
+	except EmptyFloor:
+		return HttpResponseBadRequest(
+			json.dumps(__pp_responses['empty_floor']), content_type='application/json')
+
+	except EmptyTotalArea:
+		return HttpResponseBadRequest(
+			json.dumps(__pp_responses['empty_total_area']), content_type='application/json')
+
+	except EmptyLivingArea:
+		return HttpResponseBadRequest(
+			json.dumps(__pp_responses['empty_living_area']), content_type='application/json')
+
+	except EmptyRoomsCount:
+		return HttpResponseBadRequest(
+			json.dumps(__pp_responses['empty_rooms_count']), content_type='application/json')
+
+	except EmptyFloorsCount:
+		return HttpResponseBadRequest(
+			json.dumps(__pp_responses['empty_floors_count']), content_type='application/json')
+
+	except EmptyHallsArea:
+		return HttpResponseBadRequest(
+			json.dumps(__pp_responses['empty_halls_area']), content_type='application/json')
+
+	except EmptyHallsCount:
+		return HttpResponseBadRequest(
+			json.dumps(__pp_responses['empty_halls_count']), content_type='application/json')
+
+	except EmptyCabinetsArea:
+		return HttpResponseBadRequest(
+			json.dumps(__pp_responses['empty_cabinets_area']), content_type='application/json')
+
+	except EmptyCabinetsCount:
+		return HttpResponseBadRequest(
+			json.dumps(__pp_responses['empty_cabinets_count']), content_type='application/json')
+
+
 	return HttpResponse(json.dumps(__pp_responses['OK']), content_type='application/json')
 
 
