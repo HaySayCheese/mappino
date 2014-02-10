@@ -101,8 +101,31 @@ app.factory('Publication', function($rootScope, publicationQueries, Briefs) {
         },
 
 
+        /**
+         * Загрузка фотографій
+         *
+         * @param {number} tid              Ідентифікатор типу оголошення
+         * @param {number} hid              Ідентифікатор оголошення
+         * @param {object} data             Обєкт з іменем поля вводу та його значенням
+         * @param {function} callback
+         */
         uploadPhotos: function(tid, hid, data, callback) {
             publicationQueries.uploadPhotos(tid, hid, data).success(function(data) {
+                callback(data);
+            });
+        },
+
+
+        /**
+         * Видалення фотографії
+         *
+         * @param {number} tid              Ідентифікатор типу оголошення
+         * @param {number} hid              Ідентифікатор оголошення
+         * @param {object} pid              Ідентифікатор фотографії
+         * @param {function} callback
+         */
+        removePhoto: function(tid, hid, pid, callback) {
+            publicationQueries.removePhoto(tid, hid, pid).success(function(data) {
                 callback(data);
             });
         },

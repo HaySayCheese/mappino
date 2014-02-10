@@ -87,13 +87,24 @@ app.factory('publicationQueries', function($http, $upload) {
          */
         uploadPhotos: function(tid, hid, photos) {
             return $upload.upload({
-                url: '/ajax/api/cabinet/publications/' + tid + ':' + hid + '/upload-photo/',
+                url: '/ajax/api/cabinet/publications/' + tid + ':' + hid + '/photos/',
                 method: "POST",
                 file: photos
-            }).progress(function(evt) {
-                console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
-            }).success(function(data, status, headers, config) {
-                console.log(data);
+            });
+        },
+
+
+        /**
+         * Запит на видалення фотографії
+         *
+         * @param {number} tid      Ідентифікатор типу оголошення
+         * @param {number} hid      Ідентифікатор оголошення
+         * @param {number} pid      Ідентифікатор фотографії
+         */
+        removePhoto: function(tid, hid, pid) {
+            return $http({
+                url: '/ajax/api/cabinet/publications/' + tid + ':' + hid + '/photos/' + pid + '/',
+                method: "DELETE"
             });
         }
 

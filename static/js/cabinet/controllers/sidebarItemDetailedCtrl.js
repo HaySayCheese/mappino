@@ -184,6 +184,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         }, 0);
 
     };
+
+
+    /**
+     * Логіка загрузки зображень
+     */
     $scope.onFileSelect = function(files) {
 
         !$scope.publication.photos && ($scope.publication.photos = []);
@@ -193,11 +198,22 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 $scope.publication.photos.push(data.image);
             });
         }
-
-        console.log($scope.publication.photos)
     };
 
 
+    /**
+     * Видалення зображень
+     */
+    $scope.removePhoto = function(photo) {
+        Publication.removePhoto(photo.pid, function(data) {
+            console.log(data)
+        })
+    };
+
+
+    /**
+     * Публікація оголошення
+     */
     $scope.publishPublication = function() {
         Publication.publish(tid, hid, function(data) {
             console.log(data);
@@ -205,6 +221,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     };
 
 
+    /**
+     * Скрол до розділа
+     */
     $scope.scrollToHeader = function(href) {
         document.getElementById(href).scrollIntoView();
     };
