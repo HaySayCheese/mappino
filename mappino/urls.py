@@ -51,8 +51,8 @@ urlpatterns += patterns('apps',
 #-- angular API for cabinet
 urlpatterns += patterns('apps.pages.cabinet',
     # dirtags
-	url(r'^ajax/api/cabinet/dirtags/$', 'dirtags_ajax.dirtags_handler'),
-    url(r'^ajax/api/cabinet/dirtags/(\d+)/$', 'dirtags_ajax.dirtags_handler'),
+	url(r'^ajax/api/cabinet/dirtags/$', 'dirtags.ajax.dirtags_handler'),
+    url(r'^ajax/api/cabinet/dirtags/(\d+)/$', 'dirtags.ajax.dirtags_handler'),
 
     # publications
     url(r'^ajax/api/cabinet/publications/briefs/all/$',

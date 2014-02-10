@@ -10,7 +10,7 @@ from core.dirtags.constants import DIR_TAGS_COLORS
 from core.dirtags.models import DirTags
 
 
-
+# todo: refactor
 DT_GET_RESPONSES = {
     'OK': {
 	    'code': 0,
