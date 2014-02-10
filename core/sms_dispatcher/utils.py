@@ -1,5 +1,6 @@
 #coding=utf8
 import urllib
+from django.conf import settings
 from core.sms_dispatcher import LIMITERS, SEND_LOGGER
 from core.sms_dispatcher.exceptions import SMSSendingError
 from mappino.settings import SMS_GATE_LOGIN, SMS_GATE_PASSWORD
@@ -22,6 +23,9 @@ def resend_mobile_check_code_sms(number, code, request):
 
 
 def __send_sms(number, message):
+	if not settings.DEBUG:
+		return
+
 	if not number:
 		raise ValueError('invalid number')
 	if not message:
