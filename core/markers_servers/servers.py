@@ -49,7 +49,7 @@ class AbstractMarkersServer(object):
 
 	def add_publication(self, hid):
 		record = self.record_queryset(hid).only(
-			'degree_lng, degree_lat, segment_lng, segment_lat, pos_lng, pos_lat')[0]
+			'degree_lng', 'degree_lat', 'segment_lng', 'segment_lat', 'pos_lng', 'pos_lat')[0]
 
 		degree = DegreePoint(record.degree_lat, record.degree_lng)
 		segment = SegmentPoint(record.segment_lat, record.segment_lng)
