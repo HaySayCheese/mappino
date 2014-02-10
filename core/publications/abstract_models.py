@@ -546,7 +546,7 @@ class PhotosModel(AbstractModel):
 			os.remove(os.path.join(destination_dir, self.thumbnail_name()))
 			os.remove(os.path.join(destination_dir, self.image_name()))
 			# os.remove(os.path.join(destination_dir, self.watermark_name())) # todo: check this
-		except IOError:
+		except Exception:
 			pass
 
 		self.delete()
