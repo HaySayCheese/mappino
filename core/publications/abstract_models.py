@@ -170,7 +170,7 @@ class LivingHeadModel(models.Model):
 			raise SuspiciousOperation('Attempt to publish deleted publication.')
 
 		self.check_required_fields()
-		self.check_extended_required_fields()
+		self.body.check_required_fields()
 
 		with transaction.atomic():
 			self.state_sid = OBJECT_STATES.published()
