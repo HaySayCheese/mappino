@@ -1,31 +1,32 @@
 #coding=utf-8
 from itertools import ifilter
 import json
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
+
 from collective.decorators.views import login_required_or_forbidden
 from core.dirtags import DirTags
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, OBJECT_STATES
 
 
 
-__pb_responses = {
+get_codes = {
 	'invalid_tag_id': {
 		'code': 1,
-	    'message': 'invalid tag id.'
 	},
 }
 @login_required_or_forbidden
 @require_http_methods('GET')
-def briefs(request, tag=None, section=None):
+def get(request, tag=None, section=None):
 	if tag is not None:
-		# Видача для розділу-тегу
+		# Видача всіх оголошень, помаркованих тегом
 		try:
 			tag = DirTags.by_id(int(tag))
 		except ObjectDoesNotExist:
 			return HttpResponseBadRequest(
-				json.dumps(__pb_responses['invalid_tag_id']), content_type='application/json')
+				json.dumps(get_codes['invalid_tag_id']), content_type='application/json')
 
 		pubs = []
 		queries = tag.publications()
@@ -52,7 +53,7 @@ def briefs(request, tag=None, section=None):
 
 
 	else:
-		# sections
+		# Видача оголошень з розділів
 		pubs = []
 		for tid in OBJECTS_TYPES.values():
 			query = HEAD_MODELS[tid].by_user_id(request.user.id, select_body=True).only(

@@ -55,22 +55,26 @@ urlpatterns += patterns('apps.pages.cabinet',
     url(r'^ajax/api/cabinet/dirtags/(\d+)/$', 'dirtags_ajax.dirtags_handler'),
 
     # publications
-    url(r'^ajax/api/cabinet/publications/$', 'publications_ajax.create_view'),
     url(r'^ajax/api/cabinet/publications/briefs/all/$',
-        'publications_briefs_ajax.briefs', {'section': 'all'}),
+        'briefs.ajax.get', {'section': 'all'}),
     url(r'^ajax/api/cabinet/publications/briefs/published/$',
-        'publications_briefs_ajax.briefs', {'section': 'published'}),
+        'briefs.ajax.get', {'section': 'published'}),
     url(r'^ajax/api/cabinet/publications/briefs/unpublished/$',
-        'publications_briefs_ajax.briefs', {'section': 'unpublished'}),
+        'briefs.ajax.get', {'section': 'unpublished'}),
+    url(r'^ajax/api/cabinet/publications/briefs/deleted/$',
+        'briefs.ajax.get', {'section': 'deleted'}),
     url(r'^ajax/api/cabinet/publications/briefs/(\d+)/$',
-        'publications_briefs_ajax.briefs', {'section': 'tag'}),
+        'briefs.ajax.get', {'section': 'tag'}),
 
-	url(r'^ajax/api/cabinet/publications/(\d+:\d+)/$', 'publications_ajax.rud_switch'),
-    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/publish/$', 'publications_ajax.publish_view'),
-    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/unpublish/$', 'publications_ajax.unpublish_view'),
+	url(r'^ajax/api/cabinet/publications/$', 'publications.ajax.create'),
+	url(r'^ajax/api/cabinet/publications/(\d+:\d+)/$', 'publications.ajax.rud_switch'),
+    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/publish/$', 'publications.ajax.publish'),
+    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/unpublish/$', 'publications.ajax.unpublish'),
 
     # photos
-    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/upload-photo/$', 'publications_ajax.upload_photo_view'),
+    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/$', 'publications.photos_ajax.upload'),
+    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/(\d+)/$', 'publications.photos_ajax.rud_switch'),
+
 )
 
 

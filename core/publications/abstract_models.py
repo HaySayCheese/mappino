@@ -473,7 +473,7 @@ class PhotosModel(AbstractModel):
 			# небажаного розширення.
 			image.thumbnail(image.size, Image.ANTIALIAS)
 
-		image.save(image_path, 'JPEG', quality=99)
+		image.save(image_path, 'JPEG', quality=100)
 
 
 		# ...
@@ -497,7 +497,7 @@ class PhotosModel(AbstractModel):
 			image.thumbnail(image.size, Image.ANTIALIAS)
 
 		# Прев’ю можна стиснути з втратами якості, всеодно є повнорозмірна копія.
-		image.save(thumb_path, 'JPEG', quality=90)
+		image.save(thumb_path, 'JPEG', quality=95)
 
 
 		# Збереження в БД
@@ -539,5 +539,15 @@ class PhotosModel(AbstractModel):
 		}
 
 
+	def remove(self):
+		destination_dir = settings.MEDIA_ROOT + self.__dir + self.destination_dir_name
+		try:
+			os.remove(os.path.join(destination_dir, self.original_image_name()))
+			os.remove(os.path.join(destination_dir, self.thumbnail_name()))
+			os.remove(os.path.join(destination_dir, self.image_name()))
+			# os.remove(os.path.join(destination_dir, self.watermark_name())) # todo: check this
+		except IOError:
+			pass
 
+		self.delete()
 
