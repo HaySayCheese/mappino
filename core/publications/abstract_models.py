@@ -517,18 +517,22 @@ class PhotosModel(AbstractModel):
 	def original_image_name(self):
 		return self.uid + self.__original_suffix + self.original_extension
 
+
 	def image_name(self):
 		return self.uid + self.__full_size_suffix + self.__extension
+
 
 	def watermark_name(self):
 		return self.uid + self.__watermark_suffix + self.__extension
 
+
 	def thumbnail_name(self):
 		return self.uid + self.__thumbnail_suffix + self.__extension
 
+
 	def dump(self):
 		return {
-			'original': self.url() + self.original_image_name(),
+			'id': self.id,
 		    'thumbnail': self.url() + self.thumbnail_name(),
 		    'image': self.url() + self.image_name(),
 		    # todo: watermark
