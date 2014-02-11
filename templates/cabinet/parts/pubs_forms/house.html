@@ -12,6 +12,7 @@
                     <input id="p_for_rent" type="checkbox" name="for_rent" ng-model="publication.head.for_rent" ng-required="!publication.head.for_sale">
                     <label for="p_for_rent">Об аранде</label>
                 </div>
+                <span class="text-danger" ng-show="PublicationForm.for_sale.$invalid || PublicationForm.for_rent.$invalid">Укажите, пожалуйста, тип сделки.</span>
             </div>
         </div>
 
@@ -254,7 +255,7 @@
                     <div class="form-group">
                         <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Кол-во этажей:</label>
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="floors_count" ng-model="publication.body.floors_count" allow-only-number required>
+                            <input type="text" class="form-control" name="floors_count" ng-model="publication.body.floors_count" allow-only-number-without-dot required>
                         </div>
                     </div>
                 </div>
@@ -282,7 +283,7 @@
                     <div class="form-group">
                         <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Кол-во комнат:</label>
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="rooms_count" ng-model="publication.body.rooms_count" allow-only-number required>
+                            <input type="text" class="form-control" name="rooms_count" ng-model="publication.body.rooms_count" allow-only-number-without-dot required>
                         </div>
                     </div>
                 </div>
@@ -291,7 +292,7 @@
                     <div class="form-group">
                         <label class="col-sm-6 col-lg-4 control-label">Кол-во спален:</label>
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="bedrooms_count" ng-model="publication.body.bedrooms_count" allow-only-number>
+                            <input type="text" class="form-control" name="bedrooms_count" ng-model="publication.body.bedrooms_count" allow-only-number-without-dot>
                         </div>
                     </div>
                 </div>
@@ -300,7 +301,7 @@
                     <div class="form-group">
                         <label class="col-sm-6 col-lg-4 control-label">Кол-во сан. узлов:</label>
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="vcs_count" ng-model="publication.body.vcs_count" allow-only-number>
+                            <input type="text" class="form-control" name="vcs_count" ng-model="publication.body.vcs_count" allow-only-number-without-dot>
                         </div>
                     </div>
                 </div>
