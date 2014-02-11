@@ -51,8 +51,16 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     function loadTags() {
         $scope.tags = [];
 
+        $timeout(function() {
+            initScrollBar();
+        }, 50);
+
         Tags.load(function(data) {
             $scope.tags = data;
+
+            $timeout(function() {
+                initScrollBar();
+            }, 50);
         });
     }
 

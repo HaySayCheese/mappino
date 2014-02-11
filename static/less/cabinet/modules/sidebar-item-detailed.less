@@ -29,7 +29,12 @@
             margin: 0;
         }
         .btn-group .dropdown-toggle {
-            border: 1px solid @gray-lighter;
+            border: 1px solid #cccccc;
+        }
+        .selectpicker {
+            a {
+                padding-right: 35px;
+            }
         }
     }
 
@@ -44,6 +49,10 @@
             .square(100%);
             position: relative;
             overflow: hidden;
+
+            @media (min-width: 1920px) {
+                padding: 0 100px;
+            }
         }
     }
 
@@ -67,8 +76,8 @@
         padding: 0 25px 0 25px;
     }
 
-    .selectpicker {
-        border: 1px solid #cccccc;
+    .dropdown-toggle.selectpicker {
+        border: 1px solid #cccccc !important;
     }
 
     .form-horizontal .form-group {
@@ -115,7 +124,7 @@
         border: 1px solid @gray-lighter;
     }
 
-    .row:last-child {
+    form > .row:last-child {
         margin-bottom: 50px;
     }
 }

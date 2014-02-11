@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, Briefs) {
+app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $timeout, Briefs) {
 
     $scope.searchItem = "";
     $scope.briefs = [];
@@ -39,12 +39,16 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, Br
     function loadBriefsInit() {
         $scope.briefs = [];
 
-        initScrollBar();
+        $timeout(function() {
+            initScrollBar();
+        }, 50);
 
         Briefs.load($rootScope.routeSection, function(data) {
             $scope.briefs = data;
 
-            initScrollBar();
+            $timeout(function() {
+                initScrollBar();
+            }, 50);
         });
     }
 

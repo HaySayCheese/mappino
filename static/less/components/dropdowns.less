@@ -35,14 +35,14 @@
   float: left;
   min-width: 160px;
   padding: 5px 0;
-  margin: 2px 0 0; // override default ul
+  margin: -1px 0 0; // override default ul
   list-style: none;
   font-size: @font-size-base;
   background-color: @dropdown-bg;
   border: 1px solid @dropdown-fallback-border; // IE8 fallback
   border: 1px solid @dropdown-border;
-  border-radius: @border-radius-base;
-  .box-shadow(0 6px 12px rgba(0,0,0,.175));
+  .border-bottom-radius(@border-radius-base);
+  .box-shadow(0 2px 3px rgba(0,0,0,.2));
   background-clip: padding-box;
 
   // Aligns the dropdown menu to right
@@ -65,7 +65,7 @@
     line-height: @line-height-base;
     color: @dropdown-link-color;
     white-space: nowrap; // prevent links from randomly breaking onto new lines
-      text-decoration: none;
+    text-decoration: none;
   }
 }
 
@@ -76,7 +76,7 @@
     text-decoration: none;
     color: @dropdown-link-hover-color;
     background-color: @dropdown-link-hover-bg;
-      outline: none;
+    outline: none;
   }
 }
 
@@ -121,6 +121,9 @@
   > .dropdown-menu {
     display: block;
   }
+    > .dropdown-toggle {
+        .border-bottom-radius(0)
+    }
 
   // Remove the outline when :focus is triggered
   > a {

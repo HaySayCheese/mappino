@@ -12,7 +12,6 @@ app.config(function($routeProvider) {
         })
 
         .when('/settings', {
-            controller: "PublicationsCtrl",
             templateUrl: "/ajax/template/cabinet/publications/"
         })
 

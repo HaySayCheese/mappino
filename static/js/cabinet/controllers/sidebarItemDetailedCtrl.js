@@ -14,8 +14,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * При зміні урла грузить дані оголошення
      */
     $scope.$on("$routeChangeSuccess", function() {
-        tid     = $rootScope.publicationId.split(":")[0];
-        hid     = $rootScope.publicationId.split(":")[1];
+        tid = $rootScope.publicationId.split(":")[0];
+        hid = $rootScope.publicationId.split(":")[1];
 
         loadPublicationData();
     });
@@ -76,6 +76,12 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * викликати запит на відправку на сервер
      */
     function initInputsChange() {
+        angular.element(".sidebar-item-detailed-header select[name='tags-select']").bind('change',function(e) {
+            var name = e.currentTarget.name;
+
+            Publication.checkInputs(tid, hid, { f: name, v: $scope.publication.tags });
+        });
+
         angular.element(".sidebar-item-detailed-body input[type='text'], textarea").bind("focusout", function(e) {
             var name = e.currentTarget.name,
                 value =  e.currentTarget.value;

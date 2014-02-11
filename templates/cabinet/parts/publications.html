@@ -2,20 +2,16 @@
     <div class="sidebar-item-detailed-header">
         <div class="publication-controls" ng-show="showPublication">
             <div class="btn-group">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                        Перейти к... <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li ng-repeat="section in publicationSections"><a href ng-click="scrollToHeader(section.href)">[[ section.title ]]</a></li>
-                    </ul>
-                </div>
-                <div class="btn-group">
-                    <select name="tags-select" data-width="150px" ng-disabled="!tags.length" title='Выберите теги' multiple>
-                        <option value="tag.id" ng-repeat="tag in tags">[[ tag.title ]]</option>
-                    </select>
-                </div>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    Разделы <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li ng-repeat="section in publicationSections"><a href ng-click="scrollToHeader(section.href)">[[ section.title ]]</a></li>
+                </ul>
             </div>
+            <select name="tags-select" data-width="150px" ng-disabled="!tags.length" title='Ярлыки' multiple ng-model="publication.tags">
+                <option value="[[ tag.id ]]" ng-repeat="tag in tags" data-content="<span class='label' style='background-color: [[ tag.color ]]'>[[ tag.title ]]</span>">[[ tag.title ]]</option>
+            </select>
         </div>
 
         <div class="btn btn-info btn-xlg pull-right"><span class="glyphicon glyphicon-log-out"></span></div>
