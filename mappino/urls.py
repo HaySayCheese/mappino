@@ -22,9 +22,13 @@ urlpatterns += patterns('apps.pages.cabinet',
 
 #-- angular templates publications
 urlpatterns += patterns('apps.pages.cabinet',
+	# unpublished
     url(r'^ajax/template/cabinet/publications/(\d+)/$', 'templates_ajax.publication_form_template'),
     url(r'^ajax/template/cabinet/publications/map/$', 'templates_ajax.map_template'),
     url(r'^ajax/template/cabinet/publications/photos/$', 'templates_ajax.photos_template'),
+
+	# published
+    url(r'^ajax/template/cabinet/published/(\d+)/$', 'templates_ajax.published_publication_form_template'),
 )
 
 
@@ -53,6 +57,8 @@ urlpatterns += patterns('apps.pages.cabinet',
     # dirtags
 	url(r'^ajax/api/cabinet/dirtags/$', 'dirtags.ajax.dirtags_handler'),
     url(r'^ajax/api/cabinet/dirtags/(\d+)/$', 'dirtags.ajax.dirtags_handler'),
+    url(r'^ajax/api/cabinet/dirtags/(\d+)/add-publication/(\d+:\d+)$', 'dirtags.ajax.dirtags_handler'),
+
 
     # publications
     url(r'^ajax/api/cabinet/publications/briefs/all/$',
