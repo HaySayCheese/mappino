@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Briefs', function($rootScope, briefQueries) {
+app.factory('Briefs', function($rootScope, briefQueries, Tags) {
     var briefs = [];
 
     return {
@@ -71,7 +71,7 @@ app.factory('Briefs', function($rootScope, briefQueries) {
          * Оновлює теги брифа з масива тегів
          */
         updateTags: function() {
-            var tags = $rootScope.tags;
+            var tags = Tags.getAll();
 
             for (var i = 0; i < briefs.length; i++) {
                 for (var j = 0; j < briefs[i].tags.length; j++) {

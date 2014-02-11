@@ -26,6 +26,14 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
 
 
     /**
+     * Ловим евент зміни тегів
+     */
+    $scope.$on("tagsUpdated", function() {
+        Briefs.updateTags();
+    });
+
+
+    /**
      * Клік по бріфу в списку
      */
     $scope.selectBrief = function(c) {

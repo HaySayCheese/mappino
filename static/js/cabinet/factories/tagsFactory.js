@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Tags', function($rootScope, tagQueries, Briefs) {
+app.factory('Tags', function($rootScope, tagQueries) {
     var tags = [],
         tagParameters = {
             colors:         ["#9861dd", "#465eec", "#60b4cf", "#54b198", "#7cc768", "#dfb833", "#f38a23", "#f32363"],
@@ -35,6 +35,7 @@ app.factory('Tags', function($rootScope, tagQueries, Briefs) {
                 }
 
                 $rootScope.loadings.tags = false;
+                $rootScope.$broadcast('tagsUpdated');
 
                 callback(that.getAll());
             });
@@ -48,6 +49,8 @@ app.factory('Tags', function($rootScope, tagQueries, Briefs) {
          */
         add: function(tag) {
             tags.push(tag);
+
+            $rootScope.$broadcast('tagsUpdated');
         },
 
 
@@ -71,6 +74,8 @@ app.factory('Tags', function($rootScope, tagQueries, Briefs) {
                     color_id: tag.colors.indexOf(tag.selectedColor)
                 });
 
+                $rootScope.$broadcast('tagsUpdated');
+
                 callback();
             });
         },
@@ -88,7 +93,8 @@ app.factory('Tags', function($rootScope, tagQueries, Briefs) {
                     if (tags[i].id == tag.id)
                         tags[i] = tag;
 
-                Briefs.updateTags();
+                $rootScope.$broadcast('tagsUpdated');
+
                 callback();
             });
         },
@@ -104,7 +110,7 @@ app.factory('Tags', function($rootScope, tagQueries, Briefs) {
                 tags.splice(tags.indexOf(tag), 1);
                 $rootScope.lastRemovedTag = tag;
 
-                Briefs.updateTags();
+                $rootScope.$broadcast('tagsUpdated');
             });
         },
 

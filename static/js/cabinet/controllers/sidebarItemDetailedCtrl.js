@@ -22,9 +22,10 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
 
     /**
-     * При загрузці тегів оновлює їх масив для дд
+     * Ловим евент зміни тегів
      */
-    $rootScope.$watch("loadings.tags", function() {
+    $scope.$on("tagsUpdated", function() {
+        $scope.tags = [];
         $scope.tags = Tags.getAll();
     });
 
