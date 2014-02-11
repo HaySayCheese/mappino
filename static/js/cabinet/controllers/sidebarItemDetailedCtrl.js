@@ -154,6 +154,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 map.panTo(place.geometry.location);
                 marker.setPosition(place.geometry.location);
                 map.setZoom(17);
+                setAddressFromLatLng(place.geometry.location, cityInput);
             }
         });
     }
@@ -168,6 +169,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         geocoder.geocode({ 'latLng': latLng }, function(results, status) {
             if(status == google.maps.GeocoderStatus.OK)
                 input.value = results[0].formatted_address;
+
+            angular.element(input).trigger("input");
 
             Publication.checkInputs(tid, hid, { f: "address", v: input.value });
             Publication.checkInputs(tid, hid, { f: "lat_lng", v: latLng.d + ";" + latLng.e });
