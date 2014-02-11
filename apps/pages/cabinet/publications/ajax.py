@@ -107,7 +107,7 @@ def get(request, tid, hid):
 
 	# seems to be ok
 	return HttpResponse(
-		json.dumps(publication_data(head)), content_type='application/json')
+		json.dumps(publication_data(tid, head)), content_type='application/json')
 
 
 

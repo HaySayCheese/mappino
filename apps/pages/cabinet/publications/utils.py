@@ -1,8 +1,9 @@
 #coding=utf-8
 from django.core import serializers
+from core.dirtags.models import DirTags
 
 
-def publication_data(record):
+def publication_data(tid, record):
 	head = serializers.serialize(
 		'python', [record], fields=('created', 'actual', 'for_rent', 'for_sale', 'state_sid',
 		                            'degree_lat', 'degree_lng', 'segment_lat', 'segment_lng',
@@ -41,12 +42,16 @@ def publication_data(record):
 	if not photos:
 		photos = None
 
+	# Перелік тегів, якими позначене оголошення.
+	tags = [tag.id for tag in DirTags.contains_publications(tid, [record.id])]
+
 	data = {
 		'head': head,
 		'body': body,
 		'sale_terms': sale_terms,
 		'rent_terms': rent_terms,
 	    'photos': photos,
+	    'tags': tags,
 	}
 	return format_output_data(data)
 
