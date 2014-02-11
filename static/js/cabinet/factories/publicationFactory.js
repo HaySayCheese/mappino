@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Publication', function($rootScope, publicationQueries, Briefs) {
+app.factory('Publication', function($rootScope, publicationQueries, $location, Briefs) {
 
     var publication = [];
 
@@ -59,6 +59,15 @@ app.factory('Publication', function($rootScope, publicationQueries, Briefs) {
          */
         publish: function(tid, id, callback) {
             publicationQueries.publish(tid, id).success(function(data) {
+                var briefs = Briefs.getAll();
+
+                for (var i = 0; i < briefs.length; i++) {
+                    if (briefs[i].id == id) {
+                        $location.path("/publications/published/" + tid + ":" + id);
+                        briefs.splice(i, 1);
+                    }
+                }
+
                 callback(data);
             });
         },

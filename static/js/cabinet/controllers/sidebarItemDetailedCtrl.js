@@ -218,8 +218,10 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * Публікація оголошення
      */
     $scope.publishPublication = function() {
+        var btn = angular.element(".sidebar-item-detailed-body .btn-success").button("loading");
+
         Publication.publish(tid, hid, function(data) {
-            console.log(data);
+            btn.button("reset");
         })
     };
 
