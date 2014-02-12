@@ -79,7 +79,7 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
 
                     for (var k = 0; k < tags.length; k++) {
                         if ((briefs[i].tags[j].id && $rootScope.lastRemovedTag) && (briefs[i].tags[j].id === $rootScope.lastRemovedTag.id)) {
-                            delete briefs[i].tags[j];
+                            briefs[i].tags.splice(briefs[i].tags.indexOf($rootScope.lastRemovedTag), 1);
                             return;
                         }
 
