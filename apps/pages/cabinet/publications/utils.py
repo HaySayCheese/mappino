@@ -43,7 +43,9 @@ def publication_data(tid, record):
 		photos = None
 
 	# Перелік тегів, якими позначене оголошення.
-	tags = [{tag.id: True} for tag in DirTags.contains_publications(tid, [record.id])]
+	tags = {
+		tag.id: True for tag in DirTags.contains_publications(tid, [record.id])
+	}
 
 	data = {
 		'head': head,
