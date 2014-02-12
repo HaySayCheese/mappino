@@ -26,7 +26,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * Ловим евент зміни тегів
      */
     $scope.$on("tagsUpdated", function() {
-        $scope.tags = [];
         $scope.tags = Tags.getAll();
     });
 
@@ -128,8 +127,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 if (newValue)
                     e.currentTarget.value = newValue;
 
-                $scope.PublicationForm[name].$setValidity("incorrect", code === 0);
+                //e.currentTarget.validity.incorrect = false;
             });
+            //$scope.PublicationForm.sale_price.$setValidity("incorrect", false);
         });
 
         // Чекбокси кроме чекбоксів тегів
@@ -140,15 +140,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             Publication.checkInputs(tid, hid, { f: name, v: value });
         });
 
-        // Чекбокси тегів
-        angular.element(".sidebar-item-detailed-body input[type='checkbox'][name='tag']").bind("change", function(e) {
-            var id    = e.currentTarget.id,
-                name  = e.currentTarget.name,
-                value = e.currentTarget.checked;
-
-            Publication.checkInputs(tid, hid, { f: name, v: id + "," + value });
-        });
-
         // Дропдауни
         angular.element(".sidebar-item-detailed-body select").bind('change',function(e) {
             var name  = e.currentTarget.name,
@@ -157,6 +148,18 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             Publication.checkInputs(tid, hid, { f: name, v: value });
         });
     }
+
+
+    /**
+     * Клік по чекбоксу тега
+     */
+    $scope.tagCheckboxChange = function(e) {
+        var id    = e.currentTarget.id,
+            name  = e.currentTarget.name,
+            value = e.currentTarget.checked;
+
+        Publication.checkInputs(tid, hid, { f: name, v: id + "," + value });
+    };
 
 
     /**

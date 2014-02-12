@@ -50,6 +50,8 @@ app.factory('Tags', function($rootScope, tagQueries) {
         add: function(tag) {
             tags.push(tag);
 
+            console.log(tags)
+
             $rootScope.$broadcast('tagsUpdated');
         },
 
@@ -76,7 +78,7 @@ app.factory('Tags', function($rootScope, tagQueries) {
 
                 $rootScope.$broadcast('tagsUpdated');
 
-                callback();
+                typeof callback === 'function' && callback();
             });
         },
 
@@ -95,7 +97,7 @@ app.factory('Tags', function($rootScope, tagQueries) {
 
                 $rootScope.$broadcast('tagsUpdated');
 
-                callback();
+                typeof callback === 'function' && callback();
             });
         },
 
@@ -112,6 +114,18 @@ app.factory('Tags', function($rootScope, tagQueries) {
 
                 $rootScope.$broadcast('tagsUpdated');
             });
+        },
+
+
+        getTagById: function(id) {
+            var returnedTag = {};
+
+            for (var i = 0; i < tags.length; i++) {
+                if (tags[i].id === parseInt(id))
+                    returnedTag = tags[i];
+            }
+
+            return returnedTag;
         },
 
 

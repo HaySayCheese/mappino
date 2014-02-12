@@ -1,5 +1,5 @@
 <div class="col-sm-12 col-lg-10 col-lg-offset-1">
-    <form class="form-horizontal" role="form" name="PublicationForm">
+    <form class="form-horizontal" name="PublicationForm" novalidate>
 
         <div class="row">
             <h3 id="new-pub-section">Новое обьявление</h3>
@@ -37,7 +37,7 @@
                         <label class="col-sm-4 control-label"><span class="required-star">*</span>Цена:</label>
                         <div class="col-sm-4">
                             <input class="form-control" type="text" name="sale_price" ng-model="publication.sale_terms.price" allow-only-number ng-required="publication.head.for_sale"/>
-                            <span class="input-has-error" ng-show="PublicationForm.sale_price.$incorrect">Укажите, пожалуйста, цену.</span>
+                            <span class="input-has-error" ng-show="PublicationForm.sale_price.$invalid">Укажите, пожалуйста, цену.</span>
                         </div>
                         <div class="col-sm-4 col-lg-4">
                             <select name="sale_currency_sid" data-width="100%" ng-model="publication.sale_terms.currency_sid">
@@ -591,13 +591,13 @@
             <h3>Ярлыки</h3>
             <div class="col-sm-6 col-lg-4 form-group">
                 <div class="checkbox" ng-repeat="tag in tags" ng-if="$even">
-                    <input id="[[ tag.id ]]" type="checkbox" name="tag" ng-model="publication.tags[tag.id]">
+                    <input id="[[ tag.id ]]" type="checkbox" name="tag" ng-model="publication.tags[tag.id]" ng-click="tagCheckboxChange($event)">
                     <label for="[[ tag.id ]]">[[ tag.title ]]</label>
                 </div>
             </div>
             <div class="col-sm-6 col-lg-4 form-group">
                 <div class="checkbox" ng-repeat="tag in tags" ng-if="$odd">
-                    <input id="[[ tag.id ]]" type="checkbox" name="tag" ng-model="publication.tags[tag.id]">
+                    <input id="[[ tag.id ]]" type="checkbox" name="tag" ng-model="publication.tags[tag.id]" ng-click="tagCheckboxChange($event)">
                     <label for="[[ tag.id ]]">[[ tag.title ]]</label>
                 </div>
             </div>

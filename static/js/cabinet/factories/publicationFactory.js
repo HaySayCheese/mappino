@@ -20,7 +20,7 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, B
             publicationQueries.loadPublication(tid, id).success(function(data) {
                 publication = data;
 
-                callback(that.getAll());
+                typeof callback === 'function' && callback(that.getAll());
             });
         },
 
@@ -45,7 +45,7 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, B
                         tid: publication.tid
                     });
 
-                callback(data);
+                typeof callback === 'function' && callback(data);
             });
         },
 
@@ -68,7 +68,7 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, B
                     }
                 }
 
-                callback(data);
+                typeof callback === 'function' && callback(data);
             });
         },
 
@@ -82,7 +82,7 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, B
          */
         unpublish: function(tid, id, callback) {
             publicationQueries.unpublish(tid, id).success(function(data) {
-                callback(data);
+                typeof callback === 'function' && callback(data);
             });
         },
 
@@ -101,10 +101,10 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, B
 
             publicationQueries.checkInputs(tid, id, data).success(function(data) {
 
-                if (inputName == "title" || inputName == "for_sale" || inputName == "for_rent")
+                if (inputName == "title" || inputName == "for_sale" || inputName == "for_rent" || inputName == "tag")
                     Briefs.updateBriefOfPublication(tid, id, inputName, data.value ? data.value : inputValue);
 
-                callback(data.value, data.code);
+                typeof callback === 'function' && callback(data.value ? data.value : inputValue, data.code);
             });
         },
 
@@ -119,7 +119,7 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, B
          */
         uploadPhotos: function(tid, hid, data, callback) {
             publicationQueries.uploadPhotos(tid, hid, data).success(function(data) {
-                callback(data);
+                typeof callback === 'function' && callback(data);
             });
         },
 
@@ -140,7 +140,7 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, B
                         publication.photos.splice(i, 1);
                 }
 
-                callback(data);
+                typeof callback === 'function' && callback(data);
             });
         },
 

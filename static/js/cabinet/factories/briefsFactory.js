@@ -23,7 +23,7 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
 
                 $rootScope.loadings.briefs = false;
 
-                callback(that.getAll());
+                typeof callback === 'function' && callback(that.getAll());
             });
         },
 
@@ -74,15 +74,20 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
 
             for (var i = 0; i < briefs.length; i++) {
                 for (var j = 0; j < briefs[i].tags.length; j++) {
+                    if (!tags.length)
+                        briefs[i].tags = [];
+
                     for (var k = 0; k < tags.length; k++) {
+                        if ((briefs[i].tags[j].id && $rootScope.lastRemovedTag) && (briefs[i].tags[j].id === $rootScope.lastRemovedTag.id)) {
+                            delete briefs[i].tags[j];
+                            return;
+                        }
+
                         if (briefs[i].tags[j].id && (briefs[i].tags[j].id === tags[k].id))
                             briefs[i].tags[j] = tags[k];
 
                         if (!briefs[i].tags[j].id && (briefs[i].tags[j] === tags[k].id))
                             briefs[i].tags[j] = tags[k];
-
-                        if ((briefs[i].tags[j].id && $rootScope.lastRemovedTag) && (briefs[i].tags[j].id === $rootScope.lastRemovedTag.id))
-                            delete briefs[i].tags[j];
                     }
                 }
             }
@@ -98,7 +103,20 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
          * @param {string, number} value    Значення параметра який потрібно обновити
          */
         updateBriefOfPublication: function(tid, id, key, value) {
+
             for (var i = 0; i < briefs.length; i++) {
+
+                if (briefs[i].tid == tid && briefs[i].id == id && key == "tag") {
+                    var tagId = value.split(",")[0],
+                        tagState = value.split(",")[1];
+
+                    if (tagState === true || tagState === "true")
+                        briefs[i].tags.push(Tags.getTagById(tagId));
+
+                    if (tagState === false || tagState === "false")
+                        briefs[i].tags.splice(briefs[i].tags.indexOf(Tags.getTagById(tagId), 1));
+                }
+
                 if (briefs[i].tid == tid && briefs[i].id == id) {
                     briefs[i][key] = value;
                 }
