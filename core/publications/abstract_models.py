@@ -261,8 +261,8 @@ class BodyModel(AbstractModel):
 	max_title_length = 80 # todo: визначити довжину
 
 	#-- fields
-	title = models.TextField(default='', max_length=max_title_length)
-	description = models.TextField(default='')
+	title = models.TextField(null=True, max_length=max_title_length)
+	description = models.TextField(null=True)
 
 
 	def check_required_fields(self):
