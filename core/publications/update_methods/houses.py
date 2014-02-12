@@ -1,6 +1,8 @@
 #coding=utf-8
 from django.db.utils import IntegrityError
+from collective.exceptions import RecordDoesNotExists
 from collective.methods.formatters import format_text, format_title
+from core.dirtags.models import DirTags, PublicationAlreadyExists
 from core.publications.constants import SALE_TRANSACTION_TYPES, CURRENCIES, LIVING_RENT_PERIODS, MARKET_TYPES, \
 	OBJECT_CONDITIONS, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES
 from core.publications.models import HousesSaleTerms, HousesRentTerms, HousesBodies
@@ -27,7 +29,7 @@ from django.db import DatabaseError
 # Перевірку консистентності даних слід виконувати на етапі підготовки оголошення до публікації.
 #
 #
-def update_house(h, field, value):
+def update_house(h, field, value, tid):
 	try:
 		# bool
 		if field == 'for_sale':
@@ -983,6 +985,35 @@ def update_house(h, field, value):
 				h.address = value
 				h.save(force_update=True)
 				return
+
+
+		# text
+		elif field == 'tag':
+			if not value or ',' not in value:
+				raise ValueError()
+
+			tag_id, state = value.split(',')
+			try:
+				dirtag = DirTags.objects.filter(id=tag_id).only('id', 'pubs')[0]
+			except IndexError:
+				raise ValueError()
+
+			if state == 'true':
+				try:
+					dirtag.add_publication(tid, h.id)
+					return
+				except PublicationAlreadyExists:
+					raise ValueError()
+			else:
+				try:
+					dirtag.rm_publication(tid, h.id)
+					return
+				except RecordDoesNotExists:
+					raise ValueError()
+
+
+
+
 
 
 		else:
