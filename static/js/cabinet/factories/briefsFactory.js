@@ -107,19 +107,19 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
             for (var i = 0; i < briefs.length; i++) {
 
                 if (briefs[i].tid == tid && briefs[i].id == id && key == "tag") {
-                    var tagId = value.split(",")[0],
-                        tagState = value.split(",")[1];
+                    var tag = value.split(","),
+                        tagId = tag[0],
+                        tagState = tag[1];
 
-                    if (tagState === true || tagState === "true")
+                    if (tagState === "true" || tagState === true)
                         briefs[i].tags.push(Tags.getTagById(tagId));
 
-                    if (tagState === false || tagState === "false")
+                    if (tagState === "false" || tagState === false)
                         briefs[i].tags.splice(briefs[i].tags.indexOf(Tags.getTagById(tagId)), 1);
                 }
 
-                if (briefs[i].tid == tid && briefs[i].id == id) {
+                if (briefs[i].tid == tid && briefs[i].id == id)
                     briefs[i][key] = value;
-                }
             }
         }
     }
