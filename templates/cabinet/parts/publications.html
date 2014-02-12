@@ -9,9 +9,6 @@
                     <li ng-repeat="section in publicationSections"><a href ng-click="scrollToHeader(section.href)">[[ section.title ]]</a></li>
                 </ul>
             </div>
-            <select name="tags-select" data-width="150px" ng-disabled="!tags.length" title='Ярлыки' multiple ng-model="publication.tags">
-                <option value="[[ tag.id ]]" ng-repeat="tag in tags" data-content="<span class='label' style='background-color: [[ tag.color ]]'>[[ tag.title ]]</span>">[[ tag.title ]]</option>
-            </select>
         </div>
 
         <div class="btn btn-info btn-xlg pull-right"><span class="glyphicon glyphicon-log-out"></span></div>

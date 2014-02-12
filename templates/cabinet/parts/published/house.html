@@ -587,6 +587,23 @@
 
 
         <div class="row">
+            <h3>Ярлыки</h3>
+            <div class="col-sm-6 form-group">
+                <div class="checkbox" ng-repeat="tag in tags" ng-if="$odd">
+                    <input id="[[ tag.id ]]" type="checkbox" name="tag" ng-model="publication.tags[tag.id]">
+                    <label for="[[ tag.id ]]">[[ tag.title ]]</label>
+                </div>
+            </div>
+            <div class="col-sm-6 form-group">
+                <div class="checkbox" ng-repeat="tag in tags" ng-if="$even">
+                    <input id="[[ tag.id ]]" type="checkbox" name="tag" ng-model="publication.tags[tag.id]">
+                    <label for="[[ tag.id ]]">[[ tag.title ]]</label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
             <h3 id="pub-publish-section">Публикация</h3>
             <div class="col-lg-12 form-group">
                 <span class="text-danger" ng-show="PublicationForm.$invalid" ng-hide="PublicationForm.for_sale.$invalid || PublicationForm.for_rent.$invalid">Заполните все обязательные поля.</span>

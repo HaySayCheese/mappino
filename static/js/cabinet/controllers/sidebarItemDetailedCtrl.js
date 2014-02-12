@@ -10,6 +10,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
     var tid, hid;
 
+
     /**
      * При зміні урла грузить дані оголошення
      */
@@ -46,6 +47,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
             console.log(data);
 
+            checkSaleOrRentObject();
+
             $scope.publicationLoaded = true;
 
             // якщо оголошення неопубліковане
@@ -66,9 +69,48 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                     }, 50);
                 }, 200);
             } else {
-                console.log("actual")
+                $scope.publicationTemplateUrl = "/ajax/template/cabinet/published/" + tid + "/";
             }
         });
+    }
+
+
+    /**
+     * Встановлення параметрів для пустих обєктів
+     */
+    function checkSaleOrRentObject() {
+        if (!$scope.publication.sale_terms) {
+            $scope.publication.sale_terms = {
+                add_terms:      "",
+                currency_sid:   0,
+                is_contract:    false,
+                price:          null,
+                sale_type_sid:  0,
+                transaction_sid: 0
+            }
+        }
+
+        if (!$scope.publication.rent_terms) {
+            $scope.publication.rent_terms = {
+                add_terms:      "",
+                conditioner:    false,
+                currency_sid:   0,
+                family:         false,
+                foreigners:     false,
+                furniture:      false,
+                home_theater:   false,
+                is_contract:    false,
+                period_sid:     1,
+                persons_count:  null,
+                pets:           false,
+                price:          null,
+                refrigerator:   false,
+                rent_type_sid:  0,
+                smoking:        false,
+                tv:             false,
+                washing_machine: false
+            }
+        }
     }
 
 
@@ -77,32 +119,40 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * викликати запит на відправку на сервер
      */
     function initInputsChange() {
-        angular.element(".sidebar-item-detailed-header select[name='tags-select']").bind('change',function(e) {
-            var name = e.currentTarget.name;
-
-            Publication.checkInputs(tid, hid, { f: name, v: $scope.publication.tags });
-        });
-
+        // Інпути і текстові поля
         angular.element(".sidebar-item-detailed-body input[type='text'], textarea").bind("focusout", function(e) {
-            var name = e.currentTarget.name,
-                value =  e.currentTarget.value;
+            var name  = e.currentTarget.name,
+                value = e.currentTarget.value;
 
-            Publication.checkInputs(tid, hid, { f: name, v: value }, function(newValue) {
+            Publication.checkInputs(tid, hid, { f: name, v: value }, function(newValue, code) {
                 if (newValue)
                     e.currentTarget.value = newValue;
+
+                $scope.PublicationForm[name].$setValidity("incorrect", code === 0);
             });
         });
 
-        angular.element(".sidebar-item-detailed-body input[type='checkbox']").bind("change", function(e) {
-            var name = e.currentTarget.name,
-                value =  e.currentTarget.checked;
+        // Чекбокси кроме чекбоксів тегів
+        angular.element(".sidebar-item-detailed-body input[type='checkbox'][name!='tag']").bind("change", function(e) {
+            var name  = e.currentTarget.name,
+                value = e.currentTarget.checked;
 
             Publication.checkInputs(tid, hid, { f: name, v: value });
         });
 
+        // Чекбокси тегів
+        angular.element(".sidebar-item-detailed-body input[type='checkbox'][name='tag']").bind("change", function(e) {
+            var id    = e.currentTarget.id,
+                name  = e.currentTarget.name,
+                value = e.currentTarget.checked;
+
+            Publication.checkInputs(tid, hid, { f: name, v: id + "," + value });
+        });
+
+        // Дропдауни
         angular.element(".sidebar-item-detailed-body select").bind('change',function(e) {
-            var name = e.currentTarget.name,
-                value =  e.currentTarget.value;
+            var name  = e.currentTarget.name,
+                value = e.currentTarget.value;
 
             Publication.checkInputs(tid, hid, { f: name, v: value });
         });
@@ -242,7 +292,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
 
     /**
-     * Ініціалізація дропдауна
+     * Ініціалізація дропдаунів
      */
     function initDropdowns() {
         angular.element("select").selectpicker({
