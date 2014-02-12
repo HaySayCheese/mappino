@@ -50,8 +50,6 @@ app.factory('Tags', function($rootScope, tagQueries) {
         add: function(tag) {
             tags.push(tag);
 
-            console.log(tags)
-
             $rootScope.$broadcast('tagsUpdated');
         },
 

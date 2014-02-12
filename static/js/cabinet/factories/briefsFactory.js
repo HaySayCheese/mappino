@@ -114,7 +114,7 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
                         briefs[i].tags.push(Tags.getTagById(tagId));
 
                     if (tagState === false || tagState === "false")
-                        briefs[i].tags.splice(briefs[i].tags.indexOf(Tags.getTagById(tagId), 1));
+                        briefs[i].tags.splice(briefs[i].tags.indexOf(Tags.getTagById(tagId)), 1);
                 }
 
                 if (briefs[i].tid == tid && briefs[i].id == id) {
