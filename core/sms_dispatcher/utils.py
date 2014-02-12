@@ -23,7 +23,7 @@ def resend_mobile_check_code_sms(number, code, request):
 
 
 def __send_sms(number, message):
-	if not settings.DEBUG:
+	if settings.DEBUG:
 		return
 
 	if not number:
