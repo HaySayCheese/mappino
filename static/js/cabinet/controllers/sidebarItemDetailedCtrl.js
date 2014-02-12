@@ -66,7 +66,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                     }, 50);
                 }, 200);
             } else {
-                console.log("actual")
+                $scope.publicationTemplateUrl = "/ajax/template/cabinet/published/" + tid + "/";
             }
         });
     }
@@ -77,15 +77,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * викликати запит на відправку на сервер
      */
     function initInputsChange() {
-        angular.element(".sidebar-item-detailed-header select[name='tags-select']").bind('change',function(e) {
-            var name = e.currentTarget.name;
-
-            Publication.checkInputs(tid, hid, { f: name, v: $scope.publication.tags });
-        });
-
         angular.element(".sidebar-item-detailed-body input[type='text'], textarea").bind("focusout", function(e) {
-            var name = e.currentTarget.name,
-                value =  e.currentTarget.value;
+            var name  = e.currentTarget.name,
+                value = e.currentTarget.value;
 
             Publication.checkInputs(tid, hid, { f: name, v: value }, function(newValue) {
                 if (newValue)
@@ -93,16 +87,24 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             });
         });
 
-        angular.element(".sidebar-item-detailed-body input[type='checkbox']").bind("change", function(e) {
-            var name = e.currentTarget.name,
-                value =  e.currentTarget.checked;
+        angular.element(".sidebar-item-detailed-body input[type='checkbox'][name!='tag']").bind("change", function(e) {
+            var name  = e.currentTarget.name,
+                value = e.currentTarget.checked;
 
             Publication.checkInputs(tid, hid, { f: name, v: value });
         });
 
+        angular.element(".sidebar-item-detailed-body input[type='checkbox'][name='tag']").bind("change", function(e) {
+            var id    = e.currentTarget.id,
+                name  = e.currentTarget.name,
+                value = e.currentTarget.checked;
+
+            Publication.checkInputs(tid, hid, { f: name, v: id + "," + value });
+        });
+
         angular.element(".sidebar-item-detailed-body select").bind('change',function(e) {
-            var name = e.currentTarget.name,
-                value =  e.currentTarget.value;
+            var name  = e.currentTarget.name,
+                value = e.currentTarget.value;
 
             Publication.checkInputs(tid, hid, { f: name, v: value });
         });
