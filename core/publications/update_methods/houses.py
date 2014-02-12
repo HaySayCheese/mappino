@@ -995,25 +995,18 @@ def update_house(h, field, value, tid):
 			tag_id, state = value.split(',')
 			try:
 				dirtag = DirTags.objects.filter(id=tag_id).only('id', 'pubs')[0]
-			except IndexError:
+			except (DatabaseError, IndexError):
 				raise ValueError()
 
-			if state == 'true':
-				try:
+			try:
+				if state == 'true':
 					dirtag.add_publication(tid, h.id)
 					return
-				except PublicationAlreadyExists:
-					raise ValueError()
-			else:
-				try:
+				else:
 					dirtag.rm_publication(tid, h.id)
 					return
-				except RecordDoesNotExists:
-					raise ValueError()
-
-
-
-
+			except (PublicationAlreadyExists, RecordDoesNotExists):
+				raise ValueError()
 
 
 		else:

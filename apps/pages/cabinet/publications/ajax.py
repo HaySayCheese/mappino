@@ -160,11 +160,11 @@ def update_publication(request, tid, hid):
 	try:
 		# Жилая недвижимость
 		if tid == OBJECTS_TYPES.house():
-			return_value = update_house(head, field, value)
+			return_value = update_house(head, field, value, tid)
 		elif tid == OBJECTS_TYPES.flat():
 			return_value = update_flat(head, field, value)
 		elif tid == OBJECTS_TYPES.apartments():
-			return_value = update_apartments(head, field, value)
+			return_value = update_apartments(head, field, value, tid)
 		elif tid == OBJECTS_TYPES.dacha():
 			return_value = update_dacha(head, field, value)
 		elif tid == OBJECTS_TYPES.cottage():
