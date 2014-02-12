@@ -101,11 +101,10 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, B
 
             publicationQueries.checkInputs(tid, id, data).success(function(data) {
 
-                if (data.value)
-                    callback(data.value);
-
                 if (inputName == "title" || inputName == "for_sale" || inputName == "for_rent")
                     Briefs.updateBriefOfPublication(tid, id, inputName, data.value ? data.value : inputValue);
+
+                callback(data.value, data.code);
             });
         },
 

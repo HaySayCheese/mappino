@@ -35,6 +35,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
         Publication.create($scope.newPublication, function(data) {
             $scope.creatingPublication = false;
+
             btn.button("reset");
 
             $location.path("/publications/unpublished/" + $scope.newPublication.tid + ":" + data.id);
@@ -51,16 +52,12 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     function loadTags() {
         $scope.tags = [];
 
-        $timeout(function() {
-            initScrollBar();
-        }, 50);
+        initScrollBar();
 
         Tags.load(function(data) {
             $scope.tags = data;
 
-            $timeout(function() {
-                initScrollBar();
-            }, 50);
+            initScrollBar();
         });
     }
 
@@ -165,15 +162,17 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
      * Ініціалізація скролбара
      */
     function initScrollBar() {
-        var sidebar = angular.element(".sidebar-menu-body");
+        $timeout(function() {
 
-        sidebar.perfectScrollbar("destroy");
-        sidebar.perfectScrollbar({
-            wheelSpeed: 20
-        });
+            var sidebar = angular.element(".sidebar-menu-body");
 
-        angular.element(window).resize(function() {
-            sidebar.perfectScrollbar("update");
-        });
+            sidebar.perfectScrollbar("destroy");
+            sidebar.perfectScrollbar({
+                wheelSpeed: 20
+            });
+
+            angular.element(window).resize(sidebar.perfectScrollbar("update"));
+
+        }, 50);
     }
 });

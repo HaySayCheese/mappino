@@ -14,7 +14,6 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
         load: function(category, callback) {
             var that = this;
             $rootScope.loadings.briefs = true;
-            $rootScope.briefsLoaded = false;
 
             briefQueries.loadBriefs(category).success(function(data) {
                 briefs = data;
@@ -23,7 +22,6 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
                 that.updateTags();
 
                 $rootScope.loadings.briefs = false;
-                $rootScope.briefsLoaded = true;
 
                 callback(that.getAll());
             });
@@ -37,6 +35,7 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
          */
         add: function(brief) {
             briefs.unshift(brief);
+
             this.updateType();
             this.updateTags();
         },

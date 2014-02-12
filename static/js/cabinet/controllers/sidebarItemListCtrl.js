@@ -28,16 +28,19 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     /**
      * Ловим евент зміни тегів
      */
-    $scope.$on("tagsUpdated", function() {
-        Briefs.updateTags();
-    });
+    $scope.$on("tagsUpdated", Briefs.updateTags());
 
 
     /**
      * Клік по бріфу в списку
      */
-    $scope.selectBrief = function(c) {
-        $location.path("publications/" + $rootScope.routeSection + "/" + c)
+    $scope.selectBrief = function(brief) {
+        var path = "publications/$routeSection/$tid:$id"
+            .replace("$routeSection", $rootScope.routeSection)
+            .replace("$tid", brief.tid)
+            .replace("$id", brief.id);
+
+        $location.path(path);
     };
 
 
@@ -47,16 +50,12 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     function loadBriefsInit() {
         $scope.briefs = [];
 
-        $timeout(function() {
-            initScrollBar();
-        }, 50);
+        initScrollBar();
 
         Briefs.load($rootScope.routeSection, function(data) {
             $scope.briefs = data;
 
-            $timeout(function() {
-                initScrollBar();
-            }, 50);
+            initScrollBar();
         });
     }
 
@@ -65,17 +64,19 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
      * Функція скролбара
      */
     function initScrollBar() {
-        var sidebar = angular.element(".sidebar-item-list-body");
+        $timeout(function() {
 
-        sidebar.scrollTop(0);
+            var sidebar = angular.element(".sidebar-item-list-body");
 
-        sidebar.perfectScrollbar("destroy");
-        sidebar.perfectScrollbar({
-            wheelSpeed: 20
-        });
+            sidebar.scrollTop(0);
 
-        angular.element(window).resize(function() {
-            sidebar.perfectScrollbar("update");
-        });
+            sidebar.perfectScrollbar("destroy");
+            sidebar.perfectScrollbar({
+                wheelSpeed: 20
+            });
+
+            angular.element(window).resize(sidebar.perfectScrollbar("update"));
+
+        }, 50);
     }
 });
