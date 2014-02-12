@@ -190,7 +190,7 @@ def update_publication(request, tid, hid):
 		elif tid == OBJECTS_TYPES.land():
 			return_value = update_land(head, field, value)
 	except ValueError:
-		return HttpResponseBadRequest(
+		return HttpResponse(
 			json.dumps(update_codes['update_error']), content_type='application/json')
 
 
