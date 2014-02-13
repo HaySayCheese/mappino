@@ -40,19 +40,23 @@
     .size(100%, 200px);
     position: relative;
     margin-top: 15px;
+    padding: 5px;
 
-    border: 2px solid @gray-lighter;
+    background: #f5f3f4;
+    border: 1px solid @gray-lighter;
+    border-radius: @border-radius-small;
 
     .uploaded-photo-controls {
-        .square(100%);
+        .size(calc(~"100% - 9px"), calc(~"100% - 10px"));
         position: absolute;
-        top: 0;
+        top: 5px;
+        left: 5px;
         text-align: center;
         .opacity(0);
         .transition(~"background-color 0.2s ease, opacity 0.2s ease");
 
         &:hover {
-            background-color: rgba(0,0,0,0.3);
+            background-color: rgba(0,0,0,0.2);
             .opacity(1);
         }
 

@@ -11,26 +11,24 @@
 **/
 .sidebar-item-detailed {
     .size(calc(~"100% - 580px"), 100%);
-
     float: left;
 
     .sidebar-item-detailed-header {
         .size(100%, 65px);
-        background: #f2f2f4;
+        background: #ffffff;
         border-bottom: 1px solid @gray-lighter;
 
         .publication-controls {
             display: inline-block;
             position: relative;
-            background-color: #c1af8e;
 
             .btn:not(:first-child) {
                 margin-left: -4px;
             }
-            .btn:nth-child(2) {
-                border-left-color: darken(@nice-green, 15%);
+            .btn-primary {
+                border-right-color: darken(@nice-blue, 5%);
             }
-            .btn:nth-child(3) {
+            .btn-info {
                 border-left-color: darken(@pink-10, 5%);
             }
         }
