@@ -2,16 +2,25 @@
     <div class="sidebar-item-detailed-header">
         <div class="publication-controls" ng-show="showPublication">
             <div class="btn-group">
-                <button type="button" class="btn btn-link btn-xlg dropdown-toggle btn-icon-sections" data-toggle="dropdown"></button>
+                <button type="button" class="btn btn-link btn-xlg dropdown-toggle" data-toggle="dropdown">
+                    <span class="btn-icon-sections"></span>
+                </button>
                 <ul class="dropdown-menu" role="menu">
                     <li ng-repeat="section in publicationSections"><a href ng-click="scrollToHeader(section.href)">[[ section.title ]]</a></li>
                 </ul>
             </div>
-            <div class="btn btn-xlg btn-link btn-icon-publish" data-loading-text="Отправка данных..." ng-click="publishPublication()">Опубликовать</div>
-            <div class="btn btn-xlg btn-link btn-icon-remove"></div>
+            <div class="btn btn-xlg btn-link" data-loading-text="Отправка данных..." ng-click="publishPublication()">
+                <span class="btn-icon-publish"></span>
+                Опубликовать
+            </div>
+            <div class="btn btn-xlg btn-link">
+                <span class="btn-icon-remove"></span>
+            </div>
         </div>
 
-        <div class="btn btn-link btn-xlg pull-right btn-icon-exit"></div>
+        <div class="btn btn-link btn-xlg pull-right">
+            <span class="btn-icon-exit"></span>
+        </div>
     </div>
     <div class="sidebar-item-detailed-body">
         <div ng-show="showPublication" class="detailed-container">
