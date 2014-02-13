@@ -152,11 +152,18 @@
     }
     .btn-icon-sections {
         background-image:  url("../../img/cabinet/sidebar-item-detailed/sections.png");
+        &:hover {
+            background-image:  url("../../img/cabinet/sidebar-item-detailed/sections-h.png");
+        }
     }
     .btn-icon-publish {
         background-position: 10px center;
         background-repeat: no-repeat;
         background-image:  url("../../img/cabinet/sidebar-item-detailed/publish.png");
+        &:hover {
+            color: @nice-green;
+            background-image:  url("../../img/cabinet/sidebar-item-detailed/publish-h.png");
+        }
     }
     .btn-icon-exit {
         border-left: 1px solid @gray-lighter;
@@ -164,5 +171,9 @@
     }
     .btn-icon-remove {
         background-image: url("../../img/cabinet/sidebar-item-detailed/trash.png");
+        &:hover {
+            color: @nice-green;
+            background-image:  url("../../img/cabinet/sidebar-item-detailed/trash-h.png");
+        }
     }
 }
