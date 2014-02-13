@@ -167,12 +167,13 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * Ініціалізація карти
      */
     function initMap() {
+
         var cityInput = document.getElementById("publication-map-input"),
             center = new google.maps.LatLng($scope.publication.head.lat || 50.448159, $scope.publication.head.lng || 30.524654),
             // Опції карти
             mapOptions = {
                 center: center,
-                zoom: 8,
+                zoom: $scope.publication.head.lat ? 17 : 8,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 mapTypeControl: false,
                 streetViewControl: false
@@ -194,6 +195,18 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             });
 
         autocomplete.bindTo('bounds', map);
+
+        // Спроба взяти координати з геолокації користувача
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var pos = new google.maps.LatLng(position.coords.latitude,
+                    position.coords.longitude);
+
+                map.setCenter(pos);
+                marker.setPosition(pos);
+                setAddressFromLatLng(pos, cityInput);
+            });
+        }
 
         // Евенти
         google.maps.event.addListener(map, 'click', function(e) {

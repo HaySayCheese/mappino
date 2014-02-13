@@ -61,7 +61,6 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
                 for (var j = 0; j < types.length; j++) {
                     if (briefs[i].tid === types[j].id) {
                         briefs[i].type = types[j].title;
-                        return;
                     }
                 }
             }
