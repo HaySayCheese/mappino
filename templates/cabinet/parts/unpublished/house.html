@@ -1,5 +1,5 @@
 <div class="col-sm-12 col-lg-10 col-lg-offset-1">
-    <form class="form-horizontal" name="PublicationForm" novalidate>
+    <form class="form-horizontal" name="form.publication" novalidate>
 
         <div class="row">
             <h3 id="new-pub-section">Новое обьявление</h3>
@@ -12,7 +12,7 @@
                     <input id="p_for_rent" type="checkbox" name="for_rent" ng-model="publication.head.for_rent" ng-required="!publication.head.for_sale">
                     <label for="p_for_rent">Об аранде</label>
                 </div>
-                <span class="input-has-error" ng-show="PublicationForm.for_sale.$invalid || PublicationForm.for_rent.$invalid">Укажите, пожалуйста, тип сделки.</span>
+                <span class="input-has-error" ng-show="form.publication.for_sale.$invalid || form.publication.for_rent.$invalid">Укажите, пожалуйста, тип сделки.</span>
             </div>
         </div>
 
@@ -37,7 +37,8 @@
                         <label class="col-sm-4 control-label"><span class="required-star">*</span>Цена:</label>
                         <div class="col-sm-4">
                             <input class="form-control" type="text" name="sale_price" ng-model="publication.sale_terms.price" allow-only-number ng-required="publication.head.for_sale"/>
-                            <span class="input-has-error" ng-show="PublicationForm.sale_price.$invalid">Укажите, пожалуйста, цену.</span>
+                            <span class="input-has-error" ng-show="form.publication.sale_price.$error.required && showValidationMessages">Укажите, пожалуйста, цену.</span>
+                            <span class="input-has-error" ng-show="form.publication.sale_price.$error.incorrect">Цена указана неверно.</span>
                         </div>
                         <div class="col-sm-4 col-lg-4">
                             <select name="sale_currency_sid" data-width="100%" ng-model="publication.sale_terms.currency_sid">
@@ -120,6 +121,8 @@
                         <label class="col-sm-4 control-label"><span class="required-star">*</span>Цена:</label>
                         <div class="col-sm-4">
                             <input class="form-control" type="text" name="rent_price" ng-model="publication.rent_terms.price" allow-only-number ng-required="publication.head.for_rent"/>
+                            <span class="input-has-error" ng-show="form.publication.rent_price.$error.required && showValidationMessages">Укажите, пожалуйста, цену.</span>
+                            <span class="input-has-error" ng-show="form.publication.rent_price.$error.incorrect">Цена указана неверно.</span>
                         </div>
                         <div class="col-sm-4">
                             <select name="rent_currency_sid" data-width="100%" ng-model="publication.rent_terms.currency_sid">
@@ -179,12 +182,16 @@
             <div class="col-sm-12">
                 <div class="form-group">
                     <label><span class="required-star">*</span>Заголовок обьявления</label>
-                    <input type="text" class="form-control" name="title" ng-model="publication.body.title">
+                    <input type="text" class="form-control" name="title" ng-model="publication.body.title" required>
+                    <span class="input-has-error" ng-show="form.publication.title.$error.required && showValidationMessages">Укажите, пожалуйста, заголовок.</span>
+                    <span class="input-has-error" ng-show="form.publication.title.$error.incorrect">Заголовок указан неверно.</span>
                 </div>
 
                 <div class="form-group">
                     <label><span class="required-star">*</span>Рекламний текст</label>
-                    <textarea class="form-control" rows="3" name="description" ng-model="publication.body.description"></textarea>
+                    <textarea class="form-control" rows="3" name="description" ng-model="publication.body.description" required></textarea>
+                    <span class="input-has-error" ng-show="form.publication.description.$error.required && showValidationMessages">Укажите, пожалуйста, рекламний текст.</span>
+                    <span class="input-has-error" ng-show="form.publication.description.$error.incorrect">Рекламний текст указан неверно.</span>
                 </div>
 
                 <div class="row">
@@ -224,6 +231,8 @@
                                 <input type="text" class="form-control" name="total_area" ng-model="publication.body.total_area" allow-only-number required>
                                 <span class="input-group-addon">м<sup>2</sup></span>
                             </div>
+                            <span class="input-has-error" ng-show="form.publication.total_area.$error.required && showValidationMessages">Укажите, пожалуйста, общую площадь.</span>
+                            <span class="input-has-error" ng-show="form.publication.total_area.$error.incorrect">Общая площадь указана неверно.</span>
                         </div>
                     </div>
                 </div>
@@ -236,6 +245,8 @@
                                 <input type="text" class="form-control" name="living_area" ng-model="publication.body.living_area" allow-only-number required>
                                 <span class="input-group-addon">м<sup>2</sup></span>
                             </div>
+                            <span class="input-has-error" ng-show="form.publication.living_area.$error.required && showValidationMessages">Укажите, пожалуйста, жилую площадь.</span>
+                            <span class="input-has-error" ng-show="form.publication.living_area.$error.incorrect">Жилая площадь указана неверно.</span>
                         </div>
                     </div>
                 </div>
@@ -257,6 +268,8 @@
                         <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Кол-во этажей:</label>
                         <div class="col-sm-6">
                             <input type="text" class="form-control" name="floors_count" ng-model="publication.body.floors_count" allow-only-number-without-dot required>
+                            <span class="input-has-error" ng-show="form.publication.floors_count.$error.required && showValidationMessages">Укажите, пожалуйста, количество этажей.</span>
+                            <span class="input-has-error" ng-show="form.publication.floors_count.$error.incorrect">Количество этажей указано неверно.</span>
                         </div>
                     </div>
                 </div>
@@ -285,6 +298,8 @@
                         <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Кол-во комнат:</label>
                         <div class="col-sm-6">
                             <input type="text" class="form-control" name="rooms_count" ng-model="publication.body.rooms_count" allow-only-number-without-dot required>
+                            <span class="input-has-error" ng-show="form.publication.rooms_count.$error.required && showValidationMessages">Укажите, пожалуйста, количество комнат.</span>
+                            <span class="input-has-error" ng-show="form.publication.rooms_count.$error.incorrect">Количество комнат указано неверно.</span>
                         </div>
                     </div>
                 </div>
@@ -606,12 +621,8 @@
 
         <div class="row">
             <h3 id="pub-publish-section">Публикация</h3>
-            <div class="col-lg-12 form-group">
-                <span class="text-danger" ng-show="PublicationForm.$invalid" ng-hide="PublicationForm.for_sale.$invalid || PublicationForm.for_rent.$invalid">Заполните все обязательные поля.</span>
-                <span class="text-danger" ng-show="PublicationForm.for_sale.$invalid || PublicationForm.for_rent.$invalid">Укажите, пожалуйста, тип сделки.</span>
-            </div>
             <div class="col-lg-12">
-                <div class="btn btn-success" data-loading-text="Отправка данных..." ng-click="publishPublication()" ng-disabled="PublicationForm.$invalid">Опубликовать объявление</div>
+                <div class="btn btn-success" data-loading-text="Отправка данных..." ng-click="publishPublication()">Опубликовать объявление</div>
             </div>
         </div>
     </form>

@@ -7,6 +7,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     $scope.publicationSections = [];
     $scope.publication = [];
     $scope.tags = Tags.getAll();
+    $scope.form = {};
 
     var tid, hid;
 
@@ -127,9 +128,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 if (newValue)
                     e.currentTarget.value = newValue;
 
-                //e.currentTarget.validity.incorrect = false;
+                $scope.form.publication[name].$setValidity("incorrect", code === 0);
             });
-            //$scope.PublicationForm.sale_price.$setValidity("incorrect", false);
+
         });
 
         // Чекбокси кроме чекбоксів тегів
@@ -278,6 +279,21 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * Публікація оголошення
      */
     $scope.publishPublication = function() {
+        $scope.showValidationMessages = true;
+
+        if ($scope.form.publication.$invalid) {
+            var checkboxElement = angular.element("input[type='checkbox'].ng-invalid")[0],
+                inputElement    = angular.element("textarea.ng-invalid, input.ng-invalid")[0];
+
+
+            if (checkboxElement)
+                checkboxElement.parentNode.scrollIntoView(true);
+            else
+                inputElement.scrollIntoView(true);
+
+            return;
+        }
+
         var btn = angular.element(".sidebar-item-detailed-body .btn-success").button("loading");
 
         Publication.publish(tid, hid, function(data) {
