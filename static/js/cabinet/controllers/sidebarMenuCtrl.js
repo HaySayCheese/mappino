@@ -171,7 +171,9 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
                 wheelSpeed: 20
             });
 
-            angular.element(window).resize(sidebar.perfectScrollbar("update"));
+            angular.element(window).resize(function() {
+                sidebar.perfectScrollbar("update")
+            });
 
         }, 50);
     }

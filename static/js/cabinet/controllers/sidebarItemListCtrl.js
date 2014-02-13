@@ -75,7 +75,9 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
                 wheelSpeed: 20
             });
 
-            angular.element(window).resize(sidebar.perfectScrollbar("update"));
+            angular.element(window).resize(function() {
+                sidebar.perfectScrollbar("update")
+            });
 
         }, 50);
     }

@@ -289,8 +289,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     /**
      * Скрол до розділа
      */
-    $scope.scrollToHeader = function(href) {
-        document.getElementById(href).scrollIntoView();
+    $scope.scrollToHeader = function(id) {
+        document.getElementById(id).scrollIntoView(true);
     };
 
 
@@ -319,11 +319,13 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         var sidebar = angular.element(".sidebar-item-detailed-body .detailed-container");
 
         sidebar.perfectScrollbar("destroy");
+
         sidebar.perfectScrollbar({
             wheelSpeed: 40,
             useKeyboard: false,
             suppressScrollX: true
         });
+
         angular.element(window).resize(function() {
             sidebar.perfectScrollbar("update");
         });
