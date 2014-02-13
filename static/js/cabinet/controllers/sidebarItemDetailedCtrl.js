@@ -362,11 +362,12 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         });
 
         for (var i = 0; i < $scope.publicationSections.length; i++) {
-            if (($scope.publicationSections[i].href === 'for-sale-section' && !$scope.publication.head.for_sale) ||
-                ($scope.publicationSections[i].href === 'for-rent-section' && !$scope.publication.head.for_rent)) {
-
+            if ($scope.publicationSections[i].href === 'for-sale-section' && !$scope.publication.head.for_sale) {
                 $scope.publicationSections.splice(i, 1);
-                return;
+            }
+
+            if ($scope.publicationSections[i].href === 'for-rent-section' && !$scope.publication.head.for_rent) {
+                $scope.publicationSections.splice(i, 1);
             }
         }
     }

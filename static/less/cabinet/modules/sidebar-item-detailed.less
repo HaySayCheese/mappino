@@ -25,19 +25,20 @@
             .btn:not(:first-child) {
                 margin-left: -4px;
             }
-            .btn:nth-child(2) {
-                padding-left: 30px;
-            }
         }
 
         .btn-link {
-            color: #c2c2c2;
-            border-right: 1px solid @gray-lighter;
-            .opacity(0.7);
-
-            &:hover,
-            &:active {
-                .opacity(1)
+            &:hover {
+                color: @nice-green !important;
+                > * {
+                    &:after {
+                        .opacity(1);
+                    }
+                }
+            }
+            &:not(.btn-icon-exit) {
+                color: #c2c2c2;
+                border-right: 1px solid @gray-lighter;
             }
         }
 
@@ -144,36 +145,51 @@
 
 
     .btn-icon-sections,
+    .btn-icon-publish,
     .btn-icon-exit,
     .btn-icon-remove {
-        width: 65px;
-        background-position: center center;
+        .square(16px);
+        position: relative;
+        display: inline-block;
         background-repeat: no-repeat;
+        background-position: center top;
+
+        &:after {
+            content: " ";
+            .square(16px;);
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            background-repeat: no-repeat;
+            background-position: center -16px;
+
+            .opacity(0);
+            .transition(~"opacity 0.2s ease");
+        }
     }
     .btn-icon-sections {
-        background-image:  url("../../img/cabinet/sidebar-item-detailed/sections.png");
-        &:hover {
-            background-image:  url("../../img/cabinet/sidebar-item-detailed/sections-h.png");
+        background-image: url("../../img/cabinet/sidebar-item-detailed/sections.png");
+        &:after {
+            background-image: url("../../img/cabinet/sidebar-item-detailed/sections.png");
         }
     }
     .btn-icon-publish {
-        background-position: 10px center;
-        background-repeat: no-repeat;
-        background-image:  url("../../img/cabinet/sidebar-item-detailed/publish.png");
-        &:hover {
-            color: @nice-green;
-            background-image:  url("../../img/cabinet/sidebar-item-detailed/publish-h.png");
+        background-image: url("../../img/cabinet/sidebar-item-detailed/publish.png");
+        &:after {
+            background-image: url("../../img/cabinet/sidebar-item-detailed/publish.png");
         }
     }
     .btn-icon-exit {
-        border-left: 1px solid @gray-lighter;
         background-image: url("../../img/cabinet/sidebar-item-detailed/exit.png");
+        &:after {
+            background-image: url("../../img/cabinet/sidebar-item-detailed/exit.png");
+        }
     }
     .btn-icon-remove {
         background-image: url("../../img/cabinet/sidebar-item-detailed/trash.png");
-        &:hover {
-            color: @nice-green;
-            background-image:  url("../../img/cabinet/sidebar-item-detailed/trash-h.png");
+        &:after {
+            background-image: url("../../img/cabinet/sidebar-item-detailed/trash.png");
         }
     }
 }
