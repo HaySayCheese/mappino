@@ -12,7 +12,7 @@
                     <input id="p_for_rent" type="checkbox" name="for_rent" ng-model="publication.head.for_rent" ng-required="!publication.head.for_sale">
                     <label for="p_for_rent">Об аранде</label>
                 </div>
-                <span class="input-has-error" ng-show="form.publication.for_sale.$invalid || form.publication.for_rent.$invalid">Укажите, пожалуйста, тип сделки.</span>
+                <span class="input-has-error" ng-show="(form.publication.for_sale.$invalid || form.publication.for_rent.$invalid) && showValidationMessages">Укажите, пожалуйста, тип сделки.</span>
             </div>
         </div>
 

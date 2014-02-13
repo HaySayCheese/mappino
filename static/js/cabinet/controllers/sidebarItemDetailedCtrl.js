@@ -137,6 +137,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             var name  = e.currentTarget.name,
                 value = e.currentTarget.value;
 
+            if (!$scope.form.publication[name].$dirty)
+                return;
+
             Publication.checkInputs(tid, hid, { f: name, v: value }, function(newValue, code) {
                 if (newValue)
                     e.currentTarget.value = newValue;
