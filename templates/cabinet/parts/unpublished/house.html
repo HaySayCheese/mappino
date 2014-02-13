@@ -588,7 +588,7 @@
 
 
         <div class="row">
-            <h3>Ярлыки</h3>
+            <h3 id="pub-tags-section">Ярлыки</h3>
             <div class="col-sm-6 col-lg-4 form-group">
                 <div class="checkbox" ng-repeat="tag in tags" ng-if="$even">
                     <input id="[[ tag.id ]]" type="checkbox" name="tag" ng-model="publication.tags[tag.id]" ng-click="tagCheckboxChange($event)">

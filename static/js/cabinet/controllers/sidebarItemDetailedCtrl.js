@@ -303,12 +303,13 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         });
 
         angular.element("h3").each(function(i, e) {
-            var header = angular.element(e).context;
+            var header = angular.element(e)[0];
+
             $scope.publicationSections.push({
                 href: header.id,
-                title: header.innerText
-            })
-        })
+                title: header.textContent
+            });
+        });
     }
 
 
