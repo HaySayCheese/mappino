@@ -113,6 +113,7 @@
                                 <input type="text" class="form-control" name="rent_persons_count" ng-model="publication.rent_terms.persons_count" allow-only-number/>
                                 <span class="input-group-addon">чел.</span>
                             </div>
+                            <span class="input-has-error" ng-show="form.publication.rent_persons_count.$error.incorrect">Количество мест указано неверно.</span>
                         </div>
                     </div>
                 </div>
@@ -212,12 +213,12 @@
                         <div class="col-sm-6">
                             <select name="condition_sid" data-width="100%" ng-model="publication.body.condition_sid">
                                 <option value="0">Косметический ремонт</option>
-                                <option value="1">Жилое / советское</option>
                                 <option value="2">Евроремонт</option>
                                 <option value="3">Дизайнерский ремонт</option>
                                 <option value="4">Требуется косметический ремонт</option>
                                 <option value="5">Неоконченный ремонт</option>
                                 <option value="6">Под чистовую отделку</option>
+                                <option value="1">Жилое / советское</option>
                             </select>
                         </div>
                     </div>
@@ -259,6 +260,7 @@
                                 <input type="text" class="form-control" name="kitchen_area" ng-model="publication.body.kitchen_area" allow-only-number>
                                 <span class="input-group-addon">м<sup>2</sup></span>
                             </div>
+                            <span class="input-has-error" ng-show="form.publication.kitchen_area.$error.incorrect">Площадь кухни указана неверно.</span>
                         </div>
                     </div>
                 </div>
@@ -309,6 +311,7 @@
                         <label class="col-sm-6 col-lg-4 control-label">Кол-во спален:</label>
                         <div class="col-sm-6">
                             <input type="text" class="form-control" name="bedrooms_count" ng-model="publication.body.bedrooms_count" allow-only-number-without-dot>
+                            <span class="input-has-error" ng-show="form.publication.bedrooms_count.$error.incorrect">Количество спален указано неверно.</span>
                         </div>
                     </div>
                 </div>
@@ -318,6 +321,7 @@
                         <label class="col-sm-6 col-lg-4 control-label">Кол-во сан. узлов:</label>
                         <div class="col-sm-6">
                             <input type="text" class="form-control" name="vcs_count" ng-model="publication.body.vcs_count" allow-only-number-without-dot>
+                            <span class="input-has-error" ng-show="form.publication.vcs_count.$error.incorrect">Количество сан. узлов указано неверно.</span>
                         </div>
                     </div>
                 </div>
