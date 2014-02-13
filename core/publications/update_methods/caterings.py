@@ -1,7 +1,10 @@
 #coding=utf-8
 from django.db import DatabaseError, IntegrityError
+from collective.exceptions import RecordDoesNotExists
 
 from collective.methods.formatters import format_text, format_title
+from core.dirtags import DirTags
+from core.dirtags.models import PublicationAlreadyExists
 from core.publications.constants import HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, FLOOR_TYPES, OBJECT_CONDITIONS, MARKET_TYPES, CURRENCIES, COMMERCIAL_RENT_PERIODS, SALE_TRANSACTION_TYPES, RED_LINE_VALUES
 from core.publications.models import CateringsBodies, CateringsRentTerms, CateringsSaleTerms
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
@@ -24,7 +27,7 @@ from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
 #
 # Перевірку консистентності даних слід виконувати на етапі підготовки оголошення до публікації.
 
-def update_catering(h, field, value):
+def update_catering(h, field, value, tid):
 	try:
 		# bool
 		if field == 'for_sale':
@@ -856,6 +859,28 @@ def update_catering(h, field, value):
 				h.address = value
 				h.save(force_update=True)
 				return
+
+
+		# text
+		elif field == 'tag':
+			if not value or ',' not in value:
+				raise ValueError()
+
+			tag_id, state = value.split(',')
+			try:
+				dirtag = DirTags.objects.filter(id=tag_id).only('id', 'pubs')[0]
+			except (DatabaseError, IndexError):
+				raise ValueError()
+
+			try:
+				if state == 'true':
+					dirtag.add_publication(tid, h.id)
+					return
+				else:
+					dirtag.rm_publication(tid, h.id)
+					return
+			except (PublicationAlreadyExists, RecordDoesNotExists):
+				raise ValueError()
 
 
 		# ...
