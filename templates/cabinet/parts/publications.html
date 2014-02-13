@@ -9,6 +9,7 @@
                     <li ng-repeat="section in publicationSections"><a href ng-click="scrollToHeader(section.href)">[[ section.title ]]</a></li>
                 </ul>
             </div>
+            <div class="btn btn-success" data-loading-text="Отправка данных..." ng-click="publishPublication()">Опубликовать объявление</div>
         </div>
 
         <div class="btn btn-info btn-xlg pull-right"><span class="glyphicon glyphicon-log-out"></span></div>
