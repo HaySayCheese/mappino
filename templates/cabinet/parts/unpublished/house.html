@@ -70,7 +70,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="form-group">
-                            <label>Дополнительные условия, уточнения</label>
+                            <label>Дополнительные условия, уточнения:</label>
                             <input type="text" class="form-control" name="sale_add_terms" ng-model="publication.sale_terms.add_terms">
                         </div>
                     </div>
@@ -169,7 +169,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="form-group">
-                            <label>Дополнительные условия, уточнения</label>
+                            <label>Дополнительные условия, уточнения:</label>
                             <input type="text" class="form-control" name="rent_add_terms" ng-model="publication.rent_terms.add_terms">
                         </div>
                     </div>
@@ -182,14 +182,14 @@
             <h3 id="pub-desc-section">Описание обьекта</h3>
             <div class="col-sm-12">
                 <div class="form-group">
-                    <label><span class="required-star">*</span>Заголовок обьявления</label>
+                    <label><span class="required-star">*</span>Заголовок обьявления:</label>
                     <input type="text" class="form-control" name="title" ng-model="publication.body.title" required>
                     <span class="input-has-error" ng-show="form.publication.title.$error.required && showValidationMessages">Укажите, пожалуйста, заголовок.</span>
                     <span class="input-has-error" ng-show="form.publication.title.$error.incorrect">Заголовок указан неверно.</span>
                 </div>
 
                 <div class="form-group">
-                    <label><span class="required-star">*</span>Рекламний текст</label>
+                    <label><span class="required-star">*</span>Рекламний текст:</label>
                     <textarea class="form-control" rows="3" name="description" ng-model="publication.body.description" required></textarea>
                     <span class="input-has-error" ng-show="form.publication.description.$error.required && showValidationMessages">Укажите, пожалуйста, рекламний текст.</span>
                     <span class="input-has-error" ng-show="form.publication.description.$error.incorrect">Рекламний текст указан неверно.</span>
@@ -349,7 +349,7 @@
                 <div class="row" ng-show="publication.body.heating_type_sid == 0">
                     <div class="col-sm-12">
                         <div class="form-group">
-                            <label>Укажите, пожалуйста, тип отопления в поле ниже</label>
+                            <label>Укажите, пожалуйста, тип отопления в поле ниже:</label>
                             <input type="text" class="form-control" name="custom_heating_type" ng-model="publication.body.custom_heating_type">
                         </div>
                     </div>
@@ -370,7 +370,7 @@
                 <div class="row" ng-show="publication.body.ind_heating_type_sid == 0">
                     <div class="col-sm-12">
                         <div class="form-group">
-                            <label>Укажите, пожалуйста, тип отопления в поле ниже</label>
+                            <label>Укажите, пожалуйста, тип отопления в поле ниже:</label>
                             <input type="text" class="form-control" name="custom_ind_heating_type" ng-model="publication.body.custom_ind_heating_type">
                         </div>
                     </div>
@@ -450,7 +450,7 @@
             </div>
             <div class="col-sm-12">
                 <div class="form-group">
-                    <label>Другие удобства, уточнения</label>
+                    <label>Другие удобства, уточнения:</label>
                     <input type="text" class="form-control" name="add_facilities" ng-model="publication.body.add_facilities">
                 </div>
             </div>
@@ -528,7 +528,7 @@
             </div>
             <div class="col-sm-12">
                 <div class="form-group">
-                    <label>Другие постройки, уточнения</label>
+                    <label>Другие постройки, уточнения:</label>
                     <input type="text" class="form-control" name="add_buildings" ng-model="publication.body.add_buildings">
                 </div>
             </div>
@@ -583,7 +583,7 @@
             </div>
             <div class="col-sm-12">
                 <div class="form-group">
-                    <label>Другие достопримечательности, уточнения</label>
+                    <label>Другие достопримечательности, уточнения:</label>
                     <input type="text" class="form-control" name="add_showplaces" ng-model="publication.body.add_showplaces">
                 </div>
             </div>
