@@ -162,33 +162,33 @@ def update_publication(request, tid, hid):
 		if tid == OBJECTS_TYPES.house():
 			return_value = update_house(head, field, value, tid)
 		elif tid == OBJECTS_TYPES.flat():
-			return_value = update_flat(head, field, value)
+			return_value = update_flat(head, field, value, tid)
 		elif tid == OBJECTS_TYPES.apartments():
 			return_value = update_apartments(head, field, value, tid)
 		elif tid == OBJECTS_TYPES.dacha():
-			return_value = update_dacha(head, field, value)
+			return_value = update_dacha(head, field, value, tid)
 		elif tid == OBJECTS_TYPES.cottage():
-			return_value = update_cottage(head, field, value)
+			return_value = update_cottage(head, field, value, tid)
 		elif tid == OBJECTS_TYPES.room():
-			return_value = update_room(head, field, value)
+			return_value = update_room(head, field, value, tid)
 
 		# Коммерческая недвижимость
 		elif tid == OBJECTS_TYPES.trade():
-			return_value = update_trade(head, field, value)
+			return_value = update_trade(head, field, value, tid)
 		elif tid == OBJECTS_TYPES.office():
-			return_value = update_office(head, field, value)
+			return_value = update_office(head, field, value, tid)
 		elif tid == OBJECTS_TYPES.warehouse():
-			return_value = update_warehouse(head, field, value)
+			return_value = update_warehouse(head, field, value, tid)
 		elif tid == OBJECTS_TYPES.business():
-			return_value = update_business(head, field, value)
+			return_value = update_business(head, field, value, tid)
 		elif tid == OBJECTS_TYPES.catering():
-			return_value = update_catering(head, field, value)
+			return_value = update_catering(head, field, value, tid)
 
 		# Другая недвижимость
 		elif tid == OBJECTS_TYPES.garage():
-			return_value = update_garage(head, field, value)
+			return_value = update_garage(head, field, value, tid)
 		elif tid == OBJECTS_TYPES.land():
-			return_value = update_land(head, field, value)
+			return_value = update_land(head, field, value, tid)
 	except ValueError:
 		return HttpResponse(
 			json.dumps(update_codes['update_error']), content_type='application/json')
