@@ -90,8 +90,10 @@ app.factory('Tags', function($rootScope, tagQueries) {
         update: function(tag, callback) {
             tagQueries.editTag(tag).success(function() {
                 for (var i = 0; i <= tags.length - 1; i++)
-                    if (tags[i].id == tag.id)
+                    if (tags[i].id == tag.id) {
                         tags[i] = tag;
+                        break;
+                    }
 
                 $rootScope.$broadcast('tagsUpdated');
 
@@ -119,8 +121,10 @@ app.factory('Tags', function($rootScope, tagQueries) {
             var returnedTag = {};
 
             for (var i = 0; i < tags.length; i++) {
-                if (tags[i].id === parseInt(id))
+                if (tags[i].id === parseInt(id)) {
                     returnedTag = tags[i];
+                    break;
+                }
             }
 
             return returnedTag;

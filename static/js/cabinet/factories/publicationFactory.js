@@ -65,6 +65,7 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, B
                     if (briefs[i].id == id) {
                         $location.path("/publications/published/" + tid + ":" + id);
                         briefs.splice(i, 1);
+                        break;
                     }
                 }
 
@@ -136,8 +137,10 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, B
             publicationQueries.removePhoto(tid, hid, pid).success(function(data) {
 
                 for (var i = 0; i < publication.photos.length; i++) {
-                    if (publication.photos[i].id === pid)
+                    if (publication.photos[i].id === pid) {
                         publication.photos.splice(i, 1);
+                        break;
+                    }
                 }
 
                 typeof callback === 'function' && callback(data);

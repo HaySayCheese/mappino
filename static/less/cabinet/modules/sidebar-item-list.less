@@ -112,8 +112,15 @@
         display: block;
         margin-top: 5px;
 
-        .label + .label {
-            margin-left: 5px;
+        .label {
+            display: inline-block;
+            line-height: normal;
+            margin: 2px 0;
+
+            + .label,
+            &:first-child {
+                margin-right: 5px;
+            }
         }
     }
 

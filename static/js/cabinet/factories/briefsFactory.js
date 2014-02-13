@@ -59,8 +59,10 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
 
             for (var i = 0; i < briefs.length; i++) {
                 for (var j = 0; j < types.length; j++) {
-                    if (briefs[i].tid === types[j].id)
+                    if (briefs[i].tid === types[j].id) {
                         briefs[i].type = types[j].title;
+                        return;
+                    }
                 }
             }
         },
@@ -74,20 +76,27 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
 
             for (var i = 0; i < briefs.length; i++) {
                 for (var j = 0; j < briefs[i].tags.length; j++) {
-                    if (!tags.length)
+
+                    if (!tags.length) {
                         briefs[i].tags = [];
+                        return;
+                    }
 
                     for (var k = 0; k < tags.length; k++) {
+
                         if ((briefs[i].tags[j].id && $rootScope.lastRemovedTag) && (briefs[i].tags[j].id === $rootScope.lastRemovedTag.id)) {
                             briefs[i].tags.splice(briefs[i].tags.indexOf($rootScope.lastRemovedTag), 1);
                             return;
                         }
 
-                        if (briefs[i].tags[j].id && (briefs[i].tags[j].id === tags[k].id))
+                        if (briefs[i].tags[j].id && (briefs[i].tags[j].id === tags[k].id)) {
                             briefs[i].tags[j] = tags[k];
+                        }
 
-                        if (!briefs[i].tags[j].id && (briefs[i].tags[j] === tags[k].id))
+
+                        if (!briefs[i].tags[j].id && (briefs[i].tags[j] === tags[k].id)) {
                             briefs[i].tags[j] = tags[k];
+                        }
                     }
                 }
             }
@@ -105,21 +114,29 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
         updateBriefOfPublication: function(tid, id, key, value) {
 
             for (var i = 0; i < briefs.length; i++) {
-
                 if (briefs[i].tid == tid && briefs[i].id == id && key == "tag") {
                     var tag = value.split(","),
                         tagId = tag[0],
                         tagState = tag[1];
 
-                    if (tagState === "true" || tagState === true)
+                    if (tagState === "true" || tagState === true) {
                         briefs[i].tags.push(Tags.getTagById(tagId));
+                        return;
+                    }
 
-                    if (tagState === "false" || tagState === false)
+
+                    if (tagState === "false" || tagState === false) {
                         briefs[i].tags.splice(briefs[i].tags.indexOf(Tags.getTagById(tagId)), 1);
+                        return;
+                    }
+
+                    return;
                 }
 
-                if (briefs[i].tid == tid && briefs[i].id == id)
+                if (briefs[i].tid == tid && briefs[i].id == id) {
                     briefs[i][key] = value;
+                    return;
+                }
             }
         }
     }
