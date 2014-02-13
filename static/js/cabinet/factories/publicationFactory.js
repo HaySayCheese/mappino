@@ -40,7 +40,7 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, B
                         for_rent: publication.for_rent,
                         for_sale: publication.for_sale,
                         photo_url: "",
-                        tags: "",
+                        tags: [],
                         title: "",
                         tid: publication.tid
                     });

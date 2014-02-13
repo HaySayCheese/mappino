@@ -20,7 +20,7 @@
 
     &:hover,
     &.hover {
-        border-color: @nice-violet;
+        border-color: darken(@gray-lighter, 10%);
     }
 
     .drop-zone-title {
@@ -28,9 +28,9 @@
         top: 50%;
         left: 0;
         right: 0;
-        .translate(0, -50%);
 
         font-size: 20px;
+        .translate(0, -50%);
     }
 
 
@@ -40,17 +40,17 @@
     .size(100%, 200px);
     position: relative;
     margin-top: 15px;
-    padding: 5px;
+    padding: 7px;
 
     background: #f5f3f4;
     border: 1px solid @gray-lighter;
     border-radius: @border-radius-small;
 
     .uploaded-photo-controls {
-        .size(calc(~"100% - 9px"), calc(~"100% - 10px"));
+        .size(calc(~"100% - 13px"), calc(~"100% - 14px"));
         position: absolute;
-        top: 5px;
-        left: 5px;
+        top: 7px;
+        left: 7px;
         text-align: center;
         .opacity(0);
         .transition(~"background-color 0.2s ease, opacity 0.2s ease");
