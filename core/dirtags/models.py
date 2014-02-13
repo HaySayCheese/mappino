@@ -90,6 +90,9 @@ class DirTags(models.Model):
 
 		results = {}
 		for pub in self.pubs.split(self.separator):
+			if not pub:
+				continue
+
 			tid, hid = self.__to_tid_and_hid(pub)
 			if tid in results:
 				results[tid].append(hid)
@@ -138,7 +141,9 @@ class DirTags(models.Model):
 		if self.pubs:
 			if self.pubs[-1] == self.separator:
 				self.pubs = self.pubs[:-1]
-			else:
+			elif self[0] == self.separator:
+				self.pubs = self.pubs[1:]
+			elif (self.separator + self.separator) in self.pubs:
 				self.pubs = self.pubs.replace(self.separator + self.separator, self.separator)
 		self.save(force_update=True)
 
