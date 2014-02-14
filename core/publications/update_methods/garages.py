@@ -1,4 +1,5 @@
 #coding=utf-8
+from decimal import InvalidOperation
 from django.db import DatabaseError, IntegrityError
 from collective.exceptions import RecordDoesNotExists
 
@@ -457,7 +458,7 @@ def update_garage(h, field, value, tid):
 		else:
 			raise ValueError('invalid @field')
 
-	except (DatabaseError, IntegrityError, ValueError), e:
+	except (DatabaseError, IntegrityError, InvalidOperation, ValueError), e:
 		raise ValueError('Object type: flat. Message: {0} field: {1}. Value = {2}'.format(
 			unicode(e), unicode(field), unicode(value))
 		)

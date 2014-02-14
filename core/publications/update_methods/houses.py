@@ -1,4 +1,5 @@
 #coding=utf-8
+from decimal import InvalidOperation
 from django.db.utils import IntegrityError
 from collective.exceptions import RecordDoesNotExists
 from collective.methods.formatters import format_text, format_title
@@ -1012,7 +1013,7 @@ def update_house(h, field, value, tid):
 		else:
 			raise ValueError()
 
-	except (DatabaseError, IntegrityError, ValueError):
+	except (DatabaseError, IntegrityError, InvalidOperation, ValueError):
 		# todo: додати лог всіх помилок тут для їх оперативного дебага
 		raise ValueError('Object type: apartments. Prefix: {0}. Value = {1}'.format(
 			unicode(field), unicode(value)

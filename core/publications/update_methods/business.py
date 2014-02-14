@@ -1,4 +1,5 @@
 #coding=utf-8
+from decimal import InvalidOperation
 from django.db import DatabaseError, IntegrityError
 from collective.exceptions import RecordDoesNotExists
 
@@ -1016,7 +1017,7 @@ def update_business(h, field, value, tid):
 		else:
 			raise ValueError('invalid @field')
 
-	except (DatabaseError, IntegrityError, ValueError):
+	except (DatabaseError, IntegrityError, InvalidOperation, ValueError):
 		raise ValueError('Object type: apartments. Prefix: {field}. Value = {value}'.format(
 			field = unicode(field), value = unicode(value)
 		))

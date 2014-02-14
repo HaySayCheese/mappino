@@ -1,5 +1,7 @@
 #coding=utf-8
+from decimal import InvalidOperation
 from django.db import DatabaseError, IntegrityError
+from django.db.utils import OperationalError
 from collective.exceptions import RecordDoesNotExists
 from core.dirtags import DirTags
 from core.dirtags.models import PublicationAlreadyExists
@@ -1087,7 +1089,7 @@ def update_apartments(h, field, value, tid):
 		else:
 			raise ValueError()
 
-	except (DatabaseError, IntegrityError, ValueError):
+	except (DatabaseError, IntegrityError, InvalidOperation, ValueError):
 		raise ValueError('Object type: apartments. field: {field}. Value = {value}'.format(
 			field = unicode(field), value = unicode(value)
 		))
