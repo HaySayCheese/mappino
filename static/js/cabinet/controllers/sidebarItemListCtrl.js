@@ -68,7 +68,7 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
 
             var sidebar = angular.element(".sidebar-item-list-body");
 
-            sidebar.scrollTop(0);
+            //sidebar.scrollTop(0);
 
             sidebar.perfectScrollbar("destroy");
             sidebar.perfectScrollbar({
