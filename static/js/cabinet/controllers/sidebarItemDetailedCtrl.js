@@ -184,6 +184,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      */
     function initMap() {
 
+        if (!document.getElementById("publication-map"))
+            return;
+
         var cityInput = document.getElementById("publication-map-input"),
             center = new google.maps.LatLng($scope.publication.head.lat || 50.448159, $scope.publication.head.lng || 30.524654),
             // Опції карти
