@@ -521,6 +521,13 @@
                     <label for="cable_tv">Кабельное / спутниковое телевидение</label>
                 </div>
             </div>
+            <div class="col-sm-12 form-group" ng-show="publication.body.phone">
+                <label class="col-sm-6 col-lg-4 control-label">Количество линий:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" name="phone_lines_count" ng-model="publication.body.phone_lines_count" allow-only-number-without-dot>
+                    <span class="input-has-error" ng-show="form.publication.phone_lines_count.$error.incorrect">Количество линий указано неверно.</span>
+                </div>
+            </div>
         </div>
 
 
