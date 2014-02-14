@@ -7,6 +7,7 @@ from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 
 from apps.pages.cabinet.publications.utils import publication_data
+from core.publications.models_signals import updated as model_updated
 
 from core.publications.update_methods.dachas import update_dacha
 from core.publications.update_methods.flats import update_flat
@@ -193,6 +194,10 @@ def update_publication(request, tid, hid):
 		return HttpResponse(
 			json.dumps(update_codes['update_error']), content_type='application/json')
 
+	# Відправити сигнал про зміну моделі.
+	# Кастомний сигнал відправляєтсья, оскільки стандартний post-save
+	# не містить необхідної інформації (tid).
+	model_updated.send(None, tid=tid, hid=hid)
 
 	if return_value is not None:
 		response = copy.deepcopy(update_codes['OK']) # note: deep copy here
