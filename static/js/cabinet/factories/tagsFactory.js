@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Tags', function($rootScope, tagQueries) {
+app.factory('Tags', function($rootScope, lrNotifier, tagQueries) {
     var tags = [],
         tagParameters = {
             colors:         ["#9861dd", "#465eec", "#60b4cf", "#54b198", "#7cc768", "#dfb833", "#f38a23", "#f32363"],
@@ -10,7 +10,8 @@ app.factory('Tags', function($rootScope, tagQueries) {
 
             defaultColor:   "#9861dd",
             selectedColor:  "#9861dd"
-        };
+        },
+        channel = lrNotifier('mainChannel');
 
     return {
 
@@ -64,8 +65,11 @@ app.factory('Tags', function($rootScope, tagQueries) {
             var that = this;
             tagQueries.createTag(tag).success(function(data) {
 
-                if (data.code === 1)
+                if (data.code !== 0) {
+                    channel.warn("Тег с таким именем уже существует");
+                    typeof callback === 'function' && callback("error");
                     return;
+                }
 
                 that.add({
                     id: data.id,

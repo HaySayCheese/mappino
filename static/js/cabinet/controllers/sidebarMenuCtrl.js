@@ -108,8 +108,11 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
         var btn = angular.element(".btn-creating").button("loading");
 
-        Tags.create($scope.newTag, function() {
+        Tags.create($scope.newTag, function(status) {
             btn.button("reset");
+
+            if (status === "error")
+                return;
 
             $scope.closeTagDialog();
         });

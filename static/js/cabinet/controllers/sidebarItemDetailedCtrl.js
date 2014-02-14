@@ -317,13 +317,16 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
             if (checkboxElement)
                 checkboxElement.parentNode.scrollIntoView(true);
-            else
+            else {
                 inputElement.scrollIntoView(true);
+                inputElement.focus();
+            }
+
 
             return;
         }
 
-        var btn = angular.element(".sidebar-item-detailed-body .btn-success").button("loading");
+        var btn = angular.element(".publish-btn").button("loading");
 
         Publication.publish(tid, hid, function(data) {
             btn.button("reset");
