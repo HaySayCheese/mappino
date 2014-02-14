@@ -12,6 +12,17 @@ app.factory('briefQueries', function($http) {
                 url: '/ajax/api/cabinet/publications/briefs/' + category + '/',
                 method: "GET"
             });
+        },
+
+
+        /**
+         * @param {string} value Строка пошука
+         */
+        searchInBriefs: function(value) {
+            return $http({
+                url: '/ajax/api/cabinet/search?q=' + value + '/',
+                method: "GET"
+            });
         }
 
     }

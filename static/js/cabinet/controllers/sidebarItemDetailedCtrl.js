@@ -135,7 +135,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         // Інпути і текстові поля
         angular.element(".sidebar-item-detailed-body input[type='text'], textarea").bind("focusout", function(e) {
             var name  = e.currentTarget.name,
-                value = e.currentTarget.value.replace(/\s/g, "");
+                value = e.currentTarget.value.replace(/\s+/g, " ");
 
             if (!$scope.form.publication[name].$dirty)
                 return;

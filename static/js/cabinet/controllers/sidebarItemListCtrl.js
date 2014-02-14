@@ -32,6 +32,19 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
 
 
     /**
+     * Пошук по брифах
+     */
+    $scope.$watch("searchItem", function(newValue) {
+        if (!newValue)
+            return;
+
+        Briefs.search(newValue, function(data) {
+            $scope.briefs = data;
+        });
+    });
+
+
+    /**
      * Клік по бріфу в списку
      */
     $scope.selectBrief = function(brief) {
