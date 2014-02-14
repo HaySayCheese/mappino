@@ -24,6 +24,7 @@
 
     <script type="text/javascript" src="{{ static }}js/libs/angular-ui-mask.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/angular-file-upload.min.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/angular-notifier.js"></script>
 
 
     <!-- Logic files include -->
@@ -214,6 +215,10 @@
 
         <div class="view" ng-view></div>
 
+
+        <div lr-notification-stack-container="mainChannel">
+            [[ notification.message ]]
+        </div>
     </div>
 </body>
 </html>

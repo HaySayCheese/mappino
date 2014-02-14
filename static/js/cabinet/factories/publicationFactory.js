@@ -1,8 +1,9 @@
 'use strict';
 
-app.factory('Publication', function($rootScope, publicationQueries, $location, Briefs) {
+app.factory('Publication', function($rootScope, publicationQueries, $location, lrNotifier, Briefs) {
 
-    var publication = [];
+    var publication = [],
+        channel = lrNotifier('mainChannel');
 
     return {
 
@@ -68,6 +69,8 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, B
                         break;
                     }
                 }
+
+                channel.info("Объявление успешно опубликовано");
 
                 typeof callback === 'function' && callback(data);
             });

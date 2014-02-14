@@ -1,0 +1,30 @@
+
+.notification-collection {
+    position: absolute;
+    top: 35px;
+    right: 50%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    .translate(50%, 0);
+
+    .notification-item {
+        min-width: 250px;
+        padding: 10px 20px;
+
+        cursor: pointer;
+        color: @gray-lighter;
+
+        background: #2E3B42;
+        border-radius: @border-radius-base;
+        .box-shadow(~"0 0 3px @{gray}");
+        .transition(~"opacity 0.2s ease");
+
+        .opacity(0.9);
+
+        &:hover {
+            .opacity(1);
+        }
+    }
+}
