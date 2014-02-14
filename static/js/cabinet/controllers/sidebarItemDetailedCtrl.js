@@ -215,18 +215,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
         autocomplete.bindTo('bounds', map);
 
-        // Спроба взяти координати з геолокації користувача
-        if(navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var pos = new google.maps.LatLng(position.coords.latitude,
-                    position.coords.longitude);
-
-                map.setCenter(pos);
-                marker.setPosition(pos);
-                setAddressFromLatLng(pos, cityInput);
-            });
-        }
-
         // Евенти
         google.maps.event.addListener(map, 'click', function(e) {
             marker.setPosition(e.latLng);
