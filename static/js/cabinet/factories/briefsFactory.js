@@ -52,6 +52,19 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
 
 
         /**
+         * Пошук в брифах
+         *
+         * @param {string}      value       Строка пошука
+         * @param {function}    callback    Вертає масив брифів
+         */
+        search: function(value, callback) {
+            briefQueries.searchInBriefs(value).success(function(data) {
+                typeof callback === 'function' && callback(data);
+            });
+        },
+
+
+        /**
          * Оновлює тип брифа з ідентифікатора типа
          */
         updateType: function() {
