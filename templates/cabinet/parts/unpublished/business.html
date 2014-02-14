@@ -141,32 +141,6 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-sm-6 col-lg-4 control-label">Возраст бизнеса:</label>
-                        <div class="col-sm-6">
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="age" ng-model="publication.body.age" allow-only-number-without-dot>
-                                <span class="input-group-addon">г. / лет</span>
-                            </div>
-                            <span class="input-has-error" ng-show="form.publication.age.$error.incorrect">Возраст бизнеса указан неверно.</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="form-group">
-                        <label class="col-sm-6 col-lg-4 control-label">Количество работников:</label>
-                        <div class="col-sm-6">
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="workers_count" ng-model="publication.body.workers_count" allow-only-number-without-dot>
-                                <span class="input-group-addon">чел.</span>
-                            </div>
-                            <span class="input-has-error" ng-show="form.publication.workers_count.$error.incorrect">Количество работников указано неверно.</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="form-group">
                         <label class="col-sm-6 col-lg-4 control-label">Ежемесячные расходы:</label>
                         <div class="col-sm-6 col-lg-4">
                             <input class="form-control" type="text" name="monthly_costs" ng-model="publication.rent_terms.monthly_costs" allow-only-number/>
@@ -195,6 +169,32 @@
                                 <option value="0">Дол. ($)</option>
                                 <option value="1">Евро (€)</option>
                             </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-sm-6 col-lg-4 control-label">Возраст бизнеса:</label>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="age" ng-model="publication.body.age" allow-only-number-without-dot>
+                                <span class="input-group-addon">г. / лет</span>
+                            </div>
+                            <span class="input-has-error" ng-show="form.publication.age.$error.incorrect">Возраст бизнеса указан неверно.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-sm-6 col-lg-4 control-label">Количество работников:</label>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="workers_count" ng-model="publication.body.workers_count" allow-only-number-without-dot>
+                                <span class="input-group-addon">чел.</span>
+                            </div>
+                            <span class="input-has-error" ng-show="form.publication.workers_count.$error.incorrect">Количество работников указано неверно.</span>
                         </div>
                     </div>
                 </div>
