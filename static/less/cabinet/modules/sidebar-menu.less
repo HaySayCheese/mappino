@@ -243,6 +243,15 @@
         }
     }
 
+    &.tags-list li {
+        &:hover,
+        &:focus {
+            .badge {
+                .opacity(0)
+            }
+        }
+    }
+
     li {
         position: relative;
         .opacity(0.6);
@@ -263,13 +272,23 @@
 
     a {
         display: block;
-        padding: 7px 7px 7px 35px;
+        position: relative;
+        padding: 7px 50px 7px 35px;
 
         color: #babec1;
         font-size: 16px;
-        //font-weight: bold;
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
 
         text-decoration: none;
+
+        .badge {
+            position: absolute;
+            top: 8px;
+            right: 15px;
+        }
     }
 
     .menu-icon {
