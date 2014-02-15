@@ -42,7 +42,7 @@ class SphinxUpdateIndexTask(Task):
 
 		def execute():
 			cursor = self.connection.cursor()
-			cursor.execute("""
+			cursor.execute(u"""
 				REPLACE INTO publications_rt (
 					id, title, description, sale_terms, rent_terms, location, other, tid, hid, uid)
 				VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", [
