@@ -20,7 +20,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     $scope.newTag = Tags.getParameters();
     $scope.tags = [];
     $scope.newPublication = {
-        tid: $rootScope.publicationTypes[0].id,
+        tid: Publication.getTypes()[0].id,
         for_sale: true,
         for_rent: false
     };
@@ -103,7 +103,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
      * Логіка створення тега
      */
     $scope.createTag = function() {
-        if (!$scope.newTag.tagName && $scope.newTag.tagName === "")
+        if (!$scope.newTag.tagName && _.isEmpty($scope.newTag.tagName))
             return;
 
         var btn = angular.element(".btn-creating").button("loading");

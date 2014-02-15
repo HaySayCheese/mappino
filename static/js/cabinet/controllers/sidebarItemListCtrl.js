@@ -36,7 +36,7 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     /**
      * Пошук по брифах
      */
-    $scope.$watch("searchItem", function(newValue) {
+    $scope.$watch("searchItem", function(newValue, oldValue) {
         loadCount++;
         window.clearTimeout(timer);
 

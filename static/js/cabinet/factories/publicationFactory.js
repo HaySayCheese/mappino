@@ -3,7 +3,23 @@
 app.factory('Publication', function($rootScope, publicationQueries, $location, lrNotifier, Briefs) {
 
     var publication = [],
-        channel = lrNotifier('mainChannel');
+        channel = lrNotifier('mainChannel'),
+
+        publicationTypes = $rootScope.publicationTypes = [
+            { name: "house",     id: 0,  title: "Дома" },
+            { name: "flat",      id: 1,  title: "Квартиры" },
+            { name: "apartments",id: 2,  title: "Аппартаментов" },
+            { name: "dacha",     id: 3,  title: "Дачи" },
+            { name: "cottage",   id: 4,  title: "Коттеджа" },
+            { name: "room",      id: 5,  title: "Комнаты" },
+            { name: "trade",     id: 6,  title: "Торгового помещения" },
+            { name: "office",    id: 7,  title: "Офиса" },
+            { name: "warehouse", id: 8,  title: "Склада" },
+            { name: "business",  id: 9,  title: "Готового бизнеса" },
+            { name: "catering",  id: 10, title: "Обьекта общепита" },
+            { name: "garage",    id: 11, title: "Гаража" },
+            { name: "land",      id: 12, title: "Земельного участка" }
+        ];
 
     return {
 
@@ -157,6 +173,16 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
          */
         getAll: function() {
             return publication;
+        },
+
+
+        /**
+         * Вертає масив з типами оголошення
+         *
+         * @return {Array}
+         */
+        getTypes: function() {
+            return publicationTypes;
         }
 
     }

@@ -2,7 +2,7 @@
 
 app.factory('Briefs', function($rootScope, briefQueries, Tags) {
     var briefs = [],
-        publicationTypes = $rootScope.publicationTypes;
+        publicationTypes;
 
     return {
 
@@ -78,6 +78,8 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
          * Оновлює тип брифа з ідентифікатора типа
          */
         updateType: function() {
+            publicationTypes = $rootScope.publicationTypes;
+
             _.each(briefs, function(brief) {
                 brief.typeTitle = _.where(publicationTypes, { id: brief.tid })[0].title;
             });
