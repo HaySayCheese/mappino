@@ -2,7 +2,7 @@
 
 app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $timeout, Briefs) {
 
-    $scope.searchItem = "";
+    $scope.searchQuery = "";
     $scope.briefs = [];
 
     var loadCount = 0, timer;
@@ -20,7 +20,7 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
 
         if (previous && previous.params) {
             if (previous.params.section != current.params.section) {
-                $scope.searchItem = "";
+                $scope.searchQuery = "";
                 loadBriefsInit();
             }
         } else {
@@ -38,7 +38,7 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     /**
      * Пошук по брифах
      */
-    $scope.$watch("searchItem", function(newValue, oldValue) {
+    $scope.$watch("searchQuery", function(newValue, oldValue) {
         loadCount++;
         window.clearTimeout(timer);
 

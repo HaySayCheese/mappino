@@ -79,7 +79,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
         if (!arguments[0])
             $scope.creatingTag = true;
         else {
-            $scope.editingTag = angular.copy(arguments[0]);
+            $scope.editingTag = _.clone(arguments[0]);
 
             var e = arguments[1],
                 htmlText = "<div class='tag-edit-panel state-edit'>" +
@@ -135,6 +135,8 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
         Tags.update(tag, function() {
             btn.button("reset");
+
+            $scope.closeTagDialog();
         });
     };
 
