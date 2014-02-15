@@ -79,6 +79,17 @@ app.factory('publicationQueries', function($http, $upload) {
 
 
         /**
+         * Запит на отримання кількості оголошень
+         */
+        getPublicationsCount: function() {
+            return $http({
+                url: '/ajax/api/cabinet/publications/counts/',
+                method: "GET"
+            });
+        },
+
+
+        /**
          * Запит на загрузку фоток на сервер
          *
          * @param {number} tid      Ідентифікатор типу оголошення

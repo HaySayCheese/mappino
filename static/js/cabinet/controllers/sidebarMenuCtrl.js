@@ -14,6 +14,13 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
      */
     loadTags();
 
+
+    /**
+     * Ініціалізкація отримання кількості оголошень
+     */
+    Publication.getCounts();
+
+
     /**
      * Змінні створення тега
      */
@@ -24,6 +31,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
         for_sale: true,
         for_rent: false
     };
+    $scope.publicationCount = $rootScope.publicationsCount;
 
 
 
@@ -71,7 +79,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
         if (!arguments[0])
             $scope.creatingTag = true;
         else {
-            $scope.editingTag = angular.copy(arguments[0]);
+            $scope.editingTag = _.clone(arguments[0]);
 
             var e = arguments[1],
                 htmlText = "<div class='tag-edit-panel state-edit'>" +
@@ -103,7 +111,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
      * Логіка створення тега
      */
     $scope.createTag = function() {
-        if (!$scope.newTag.tagName && _.isEmpty($scope.newTag.tagName))
+        if (!$scope.newTag.tagName && _.isNull($scope.newTag.tagName))
             return;
 
         var btn = angular.element(".btn-creating").button("loading");
@@ -127,6 +135,8 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
         Tags.update(tag, function() {
             btn.button("reset");
+
+            $scope.closeTagDialog();
         });
     };
 
