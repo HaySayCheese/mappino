@@ -19,7 +19,7 @@ class SearchManager(object):
 		self.update_interval = 60 * 3 # secs
 
 		self.connections = Queue.Queue()
-		for i in xrange(4):
+		for i in xrange(settings.ESTIMATE_THREADS_COUNT):
 			self.connections.put(self.new_connection())
 
 		publication_model_updated.connect(self.update_models_index)
