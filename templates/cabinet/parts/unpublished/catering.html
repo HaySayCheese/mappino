@@ -199,7 +199,8 @@
                     <div class="form-group">
                         <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Этаж:</label>
                         <div class="col-sm-6 col-lg-4">
-                            <input class="form-control" type="text" name="floor" ng-model="publication.body.floor" allow-only-number-without-dot required/>
+                            <input class="form-control" type="text" name="floor" ng-model="publication.body.floor"
+                                   ng-disabled="publication.body.floor_type_sid == 1 || publication.body.floor_type_sid == 2" allow-only-number-without-dot required/>
                             <span class="input-has-error" ng-show="form.publication.floor.$error.required && showValidationMessages">Укажите, пожалуйста, этаж.</span>
                             <span class="input-has-error" ng-show="form.publication.floor.$error.incorrect">Этаж указан неверно.</span>
                         </div>
@@ -226,11 +227,11 @@
                 <div class="row">
                     <div class="form-group">
                         <div class="col-sm-6 col-lg-6 col-sm-offset-6 col-lg-offset-4">
-                            <div class="checkbox">
+                            <div class="checkbox" ng-hide="publication.body.floor_type_sid == 1">
                                 <input id="mansard" type="checkbox" name="mansard" ng-model="publication.body.mansard">
                                 <label for="mansard">Есть мансарда</label>
                             </div>
-                            <div class="checkbox">
+                            <div class="checkbox" ng-hide="publication.body.floor_type_sid == 2">
                                 <input id="ground" type="checkbox" name="ground" ng-model="publication.body.ground">
                                 <label for="ground">Есть цокольний этаж</label>
                             </div>
@@ -336,9 +337,8 @@
                     </div>
                 </div>
                 <div class="row" ng-show="publication.body.heating_type_sid == 0">
-                    <div class="col-sm-12">
+                    <div class="col-sm-6 col-sm-offset-4">
                         <div class="form-group">
-                            <label>Укажите, пожалуйста, тип отопления в поле ниже:</label>
                             <input type="text" class="form-control" name="custom_heating_type" ng-model="publication.body.custom_heating_type">
                         </div>
                     </div>
@@ -357,9 +357,8 @@
                     </div>
                 </div>
                 <div class="row" ng-show="publication.body.ind_heating_type_sid == 0">
-                    <div class="col-sm-12">
+                    <div class="col-sm-6 col-sm-offset-4">
                         <div class="form-group">
-                            <label>Укажите, пожалуйста, тип отопления в поле ниже:</label>
                             <input type="text" class="form-control" name="custom_ind_heating_type" ng-model="publication.body.custom_ind_heating_type">
                         </div>
                     </div>

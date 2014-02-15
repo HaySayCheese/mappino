@@ -216,11 +216,11 @@
                         <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Тип здания:</label>
                         <div class="col-sm-6">
                             <select name="building_type_sid" data-width="100%" ng-model="publication.body.building_type_sid">
-                                <option value="0">В жилом здании</option>
                                 <option value="1">В торгово-развлекательном центре</option>
-                                <option value="2">В бизнес-центре</option>
-                                <option value="3">В административном здании</option>
-                                <option value="4">В отдельном здании</option>
+                                <option value="3">В бизнес-центре</option>
+                                <option value="5">В отдельном здании</option>
+                                <option value="4">В административном здании</option>
+                                <option value="0">В жилом здании</option>
                             </select>
                         </div>
                     </div>
@@ -287,11 +287,11 @@
                 <div class="row">
                     <div class="form-group">
                         <div class="col-sm-6 col-lg-6 col-sm-offset-6 col-lg-offset-4">
-                            <div class="checkbox" ng-hide="publication.body.floor_type_sid == 1 || publication.body.floor_type_sid == 2">
+                            <div class="checkbox" ng-hide="publication.body.floor_type_sid == 1">
                                 <input id="mansard" type="checkbox" name="mansard" ng-model="publication.body.mansard">
                                 <label for="mansard">Есть мансарда</label>
                             </div>
-                            <div class="checkbox" ng-hide="publication.body.floor_type_sid == 1 || publication.body.floor_type_sid == 2">
+                            <div class="checkbox" ng-hide="publication.body.floor_type_sid == 2">
                                 <input id="ground" type="checkbox" name="ground" ng-model="publication.body.ground">
                                 <label for="ground">Есть цокольний этаж</label>
                             </div>
@@ -376,9 +376,8 @@
                     </div>
                 </div>
                 <div class="row" ng-show="publication.body.heating_type_sid == 0">
-                    <div class="col-sm-12">
+                    <div class="col-sm-6 col-sm-offset-4">
                         <div class="form-group">
-                            <label>Укажите, пожалуйста, тип отопления в поле ниже:</label>
                             <input type="text" class="form-control" name="custom_heating_type" ng-model="publication.body.custom_heating_type">
                         </div>
                     </div>
@@ -397,9 +396,8 @@
                     </div>
                 </div>
                 <div class="row" ng-show="publication.body.ind_heating_type_sid == 0">
-                    <div class="col-sm-12">
+                    <div class="col-sm-6 col-sm-offset-4">
                         <div class="form-group">
-                            <label>Укажите, пожалуйста, тип отопления в поле ниже:</label>
                             <input type="text" class="form-control" name="custom_ind_heating_type" ng-model="publication.body.custom_ind_heating_type">
                         </div>
                     </div>
