@@ -146,7 +146,7 @@
                             <input class="form-control" type="text" name="monthly_costs" ng-model="publication.rent_terms.monthly_costs" allow-only-number/>
                             <span class="input-has-error" ng-show="form.publication.monthly_costs.$error.incorrect">Ежемесячные расходы указаны неверно.</span>
                         </div>
-                        <div class="col-sm-6 col-sm-offset-6 col-lg-4 col-lg-offset-0">
+                        <div class="col-sm-6 col-sm-offset-6 col-lg-4 col-lg-offset-0 row-margin-top-sm">
                             <select name="mc_currency_sid" data-width="100%" ng-model="publication.body.mc_currency_sid">
                                 <option value="2">Гривен (₴)</option>
                                 <option value="0">Дол. ($)</option>
@@ -163,7 +163,7 @@
                             <input class="form-control" type="text" name="annual_receipts" ng-model="publication.body.annual_receipts" allow-only-number/>
                             <span class="input-has-error" ng-show="form.publication.annual_receipts.$error.incorrect">Годовая выручка указана неверно.</span>
                         </div>
-                        <div class="col-sm-6 col-sm-offset-6 col-lg-4 col-lg-offset-0">
+                        <div class="col-sm-6 col-sm-offset-6 col-lg-4 col-lg-offset-0 row-margin-top-sm">
                             <select name="ar_currency_sid" data-width="100%" ng-model="publication.body.ar_currency_sid">
                                 <option value="2">Гривен (₴)</option>
                                 <option value="0">Дол. ($)</option>
@@ -265,7 +265,7 @@
                             <span class="input-has-error" ng-show="form.publication.floor.$error.required && showValidationMessages">Укажите, пожалуйста, этаж.</span>
                             <span class="input-has-error" ng-show="form.publication.floor.$error.incorrect">Этаж указан неверно.</span>
                         </div>
-                        <div class="col-sm-6 col-sm-offset-6 col-lg-4 col-lg-offset-0">
+                        <div class="col-sm-6 col-sm-offset-6 col-lg-4 col-lg-offset-0 row-margin-top-sm">
                             <select name="floor_type_sid" data-width="100%" ng-model="publication.body.floor_type_sid">
                                 <option value="0">Этаж</option>
                                 <option value="1">Мансарда</option>
