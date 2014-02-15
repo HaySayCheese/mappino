@@ -69,8 +69,8 @@ class SearchManager(object):
 
 			results = {}
 			for record in cursor.fetchall():
-				tid = record[2]
-				hid = record[3]
+				tid = record[0]
+				hid = record[1]
 
 				if tid in results:
 					results[tid].append(hid)
