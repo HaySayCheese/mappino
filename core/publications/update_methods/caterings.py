@@ -131,6 +131,7 @@ def update_catering(h, field, value, tid):
 			rt = CateringsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
 			rt.period_sid = value
 			rt.save(force_update=True)
+			return
 
 
 		# blank or decimal
@@ -709,7 +710,7 @@ def update_catering(h, field, value, tid):
 
 
 		# blank or int
-		elif field == 'tel_lines_count':
+		elif field == 'phone_lines_count':
 			if not value:
 				b = CateringsBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.phone_lines_count = None

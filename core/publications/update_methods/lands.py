@@ -132,6 +132,7 @@ def update_land(h, field, value, tid):
 			rt = LandsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
 			rt.period_sid = value
 			rt.save(force_update=True)
+			return
 
 
 		# blank or decimal
