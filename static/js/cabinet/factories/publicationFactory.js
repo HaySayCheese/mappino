@@ -35,7 +35,33 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
             var that = this;
 
             publicationQueries.loadPublication(tid, id).success(function(data) {
+
                 publication = data;
+
+                if (_.isNull(publication.sale_terms))
+                    publication.sale_terms = {};
+
+                _.defaults(publication.sale_terms, {
+                    add_terms:      "",
+                    currency_sid:   0,
+                    is_contract:    false,
+                    price:          null,
+                    sale_type_sid:  0,
+                    transaction_sid: 0
+                });
+
+                if (_.isNull(publication.rent_terms))
+                    publication.rent_terms = {};
+
+                _.defaults(publication.rent_terms, {
+                    add_terms:      "",
+                    currency_sid:   0,
+                    is_contract:    false,
+                    period_sid:     1,
+                    persons_count:  null,
+                    price:          null,
+                    rent_type_sid:  0
+                });
 
                 typeof callback === 'function' && callback(that.getAll());
             });

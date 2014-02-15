@@ -59,8 +59,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
             console.log(data);
 
-            checkSaleOrRentObject();
-
             $scope.publicationLoaded = true;
 
             // якщо оголошення неопубліковане
@@ -85,45 +83,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 $scope.publicationTemplateUrl = "/ajax/template/cabinet/published/" + tid + "/";
             }
         });
-    }
-
-
-    /**
-     * Встановлення параметрів для пустих обєктів
-     */
-    function checkSaleOrRentObject() {
-        if (!$scope.publication.sale_terms) {
-            $scope.publication.sale_terms = {
-                add_terms:      "",
-                currency_sid:   0,
-                is_contract:    false,
-                price:          null,
-                sale_type_sid:  0,
-                transaction_sid: 0
-            }
-        }
-
-        if (!$scope.publication.rent_terms) {
-            $scope.publication.rent_terms = {
-                add_terms:      "",
-                conditioner:    false,
-                currency_sid:   0,
-                family:         false,
-                foreigners:     false,
-                furniture:      false,
-                home_theater:   false,
-                is_contract:    false,
-                period_sid:     1,
-                persons_count:  null,
-                pets:           false,
-                price:          null,
-                refrigerator:   false,
-                rent_type_sid:  0,
-                smoking:        false,
-                tv:             false,
-                washing_machine: false
-            }
-        }
     }
 
 

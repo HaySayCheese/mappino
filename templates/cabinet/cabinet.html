@@ -97,24 +97,28 @@
                             <a href="#!/publications/all">
                                 <span class="menu-icon icon-all-pubs"></span>
                                 Все
+                                <span class="badge pull-right">42</span>
                             </a>
                         </li>
                         <li ng-class="{ active: routeSection == 'published' }">
                             <a href="#!/publications/published">
                                 <span class="menu-icon icon-published-pubs"></span>
                                 Опубликование
+                                <span class="badge pull-right">42</span>
                             </a>
                         </li>
                         <li ng-class="{ active: routeSection == 'unpublished' }">
                             <a href="#!/publications/unpublished">
                                 <span class="menu-icon icon-unpublished-pubs"></span>
                                 Не опубликование
+                                <span class="badge pull-right">42</span>
                             </a>
                         </li>
                         <li ng-class="{ active: routeSection == 'trash' }">
                             <a href="#!/publications/trash">
                                 <span class="menu-icon icon-deleted-pubs"></span>
                                 Корзина
+                                <span class="badge pull-right">42</span>
                             </a>
                         </li>
                     </ul>
@@ -141,11 +145,12 @@
                         </div>
                     </div>
 
-                    <ul class="menu-block-list">
+                    <ul class="menu-block-list tags-list">
                         <li ng-class="{ 'active': routeSection == tag.id }" ng-repeat="tag in tags">
                             <a href="#!/publications/[[ tag.id ]]">
                                 <span class="tag-icon" style="border-color: [[ tag.color ]]"></span>
                                 [[ tag.title ]]
+                                <span class="badge pull-right" style="color: [[ tag.color ]]">42</span>
                             </a>
                             <div class="menu-block-list-controls">
                                 <span class="menu-icon icon-edit" ng-click="createEditTagDialog(tag, $event)"></span>
