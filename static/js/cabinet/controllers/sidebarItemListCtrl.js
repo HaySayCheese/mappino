@@ -19,8 +19,10 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
         initScrollBar();
 
         if (previous && previous.params) {
-            if (previous.params.section != current.params.section)
+            if (previous.params.section != current.params.section) {
+                $scope.searchItem = "";
                 loadBriefsInit();
+            }
         } else {
             loadBriefsInit();
         }
@@ -54,7 +56,7 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
 
                     initScrollBar();
                 });
-            }, 700);
+            }, 0);
         }
     });
 
