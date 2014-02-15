@@ -6,6 +6,7 @@ class AbstractConstant(object):
 		if len(set(ids_dict.values())) < len(ids_dict.values()):
 			raise ValueError('Duplicate id detected.')
 		self.ids = ids_dict
+		self.count = len(self.ids.keys())
 
 	# system functions
 	def records(self):

@@ -81,6 +81,9 @@ urlpatterns += patterns('apps.pages.cabinet',
     url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/$', 'publications.photos_ajax.upload'),
     url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/(\d+)/$', 'publications.photos_ajax.rud_switch'),
 
+
+    # search
+	url(r'^ajax/api/cabinet/search/$', 'search.ajax.search'),
 )
 
 

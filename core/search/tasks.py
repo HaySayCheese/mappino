@@ -3,8 +3,8 @@ import MySQLdb
 from celery import Task
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from core.publications.constants import OBJECTS_TYPES
 
+from core.publications.constants import OBJECTS_TYPES
 from core.publications.models import HousesHeads
 from core.publications.objects_constants.houses import HOUSE_SALE_TYPES
 from core.search.utils import sale_terms_index_data, living_rent_terms_index_data
@@ -20,7 +20,10 @@ class SphinxUpdateIndexTask(Task):
 	ignore_result = True
 	max_retries = 1
 
-	connection = None
+	def __init__(self):
+		super(SphinxUpdateIndexTask, self).__init__()
+		self.connection = None
+		self.connect()
 
 
 	def connect(self):
@@ -29,16 +32,8 @@ class SphinxUpdateIndexTask(Task):
 			port = settings.SPHINX_SEARCH['PORT'],
 		)
 
-	@property
-	def cursor(self):
-		if self.connection is None:
-			self.connect()
-			return self.connection.cursor
-		else:
-			return self.connection.cursor
 
-
-	def update_index(self, tid, hid, title, description, sale_terms, rent_terms, location=None, other=None):
+	def update_index(self, tid, hid, uid, title, description, sale_terms, rent_terms, location=None, other=None):
 		if location is None:
 			location = ''
 		if other is None:
@@ -46,13 +41,14 @@ class SphinxUpdateIndexTask(Task):
 
 
 		def execute():
-			self.cursor().execute(u"""
+			cursor = self.connection.cursor()
+			cursor.execute("""
 				REPLACE INTO publications_rt (
-					id, title, description, sale_terms, rent_terms, location, other, tid, hid)
-				VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""", [
-				int(tid) * int(hid) + int(tid),
+					id, title, description, sale_terms, rent_terms, location, other, tid, hid, uid)
+				VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", [
+				((int(hid) * OBJECTS_TYPES.count) + int(tid)) + 1,
 				title, description, sale_terms,
-				rent_terms, location, other, tid, hid
+				rent_terms, location, other, tid, hid, uid
 			])
 
 		try:
@@ -100,14 +96,15 @@ def update_house_index(self, hid):
 		if head.rent_terms.home_theater:
 			rent_terms_idx += u'домашний кинотеатр'
 
-
 		self.update_index(
 			tid = OBJECTS_TYPES.house(),
 			hid = hid,
-			title = head.body.title,
-		    description = head.body.description,
+		    uid = head.owner.id,
+			title = head.body.title if head.body.title else u'',
+		    description = head.body.description if head.body.description else u'',
 		    sale_terms = sale_terms_idx,
 		    rent_terms = rent_terms_idx
 		)
+
 	except Exception as e:
 		self.retry(exc=e)

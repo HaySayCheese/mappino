@@ -1,4 +1,6 @@
 #coding=utf-8
+import MySQLdb
+from django.conf import settings
 from core.publications.constants import OBJECTS_TYPES
 from core.publications.models_signals import updated as publication_model_updated
 from core.search.tasks import update_house_index
@@ -11,9 +13,14 @@ class SearchManager(object):
 	def __init__(self):
 		self.redis = redis_connections['cache']
 		self.prefix = 'search_idx_task_'
-		self.update_interval = 60 * 3 # secs
+		# self.update_interval = 60 * 3 # secs
+		self.update_interval = 1 # secs
+
+		self.connection = None
+		self.__reconnect_to_sphinx()
 
 		publication_model_updated.connect(self.model_updated)
+
 
 
 	def model_updated(self, **kwargs):
@@ -51,3 +58,39 @@ class SearchManager(object):
 
 	def task_digest(self, tid, hid):
 		return self.prefix + unicode(tid) + ':' +  unicode(hid)
+
+
+	def process_search_query(self, query, user_id):
+		def execute():
+			cursor = self.connection.cursor()
+			cursor.execute(u"SELECT tid, hid FROM publications_rt "
+			                "WHERE MATCH('{query}') AND uid = {uid} LIMIT 50".format(
+				query = query, uid = user_id))
+
+			results = {}
+			for record in cursor.fetchall():
+				tid = record[2]
+				hid = record[3]
+
+				if tid in results:
+					results[tid].append(hid)
+				else:
+					results[tid] = [hid]
+			return results
+
+		try:
+			return execute()
+		except MySQLdb.OperationalError:
+			# Якщо втрачено з’єднання - спробувати повторно з’єднатись.
+			# OperationalError може свідчити і про інші помилки,
+			# тож не варто перехоплювати дану викл. ситуацію більше одного разу.
+			self.__reconnect_to_sphinx()
+			return execute()
+
+
+
+	def __reconnect_to_sphinx(self):
+		self.connection = MySQLdb.connect(
+			host = settings.SPHINX_SEARCH['HOST'],
+			port = settings.SPHINX_SEARCH['PORT'],
+		)

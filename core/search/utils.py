@@ -27,7 +27,7 @@ def sale_terms_index_data(head):
 	    currency = currency,
 	    transaction = transaction,
 	    is_contract = is_contract,
-	    add_terms = terms.add_terms
+	    add_terms = terms.add_terms if terms.add_terms is not None else u''
 	)
 	return index_data
 
@@ -70,6 +70,6 @@ def living_rent_terms_index_data(head):
 	    foreigners = u'размещение иностранцев иностранцы разрешены' if terms.foreigners else u'',
 	    smoking = u'курение разрешено курить курящих' if terms.smoking else u'',
 	    pets = u'пытомцы домашние животные' if terms.pets else u'',
-	    add_terms = terms.add_terms
+	    add_terms = terms.add_terms if terms.add_terms is not None else u''
 	)
 	return index_data
