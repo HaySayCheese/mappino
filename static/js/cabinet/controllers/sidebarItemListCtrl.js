@@ -54,7 +54,7 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
 
                     initScrollBar();
                 });
-            }, 1000);
+            }, 700);
         }
     });
 
