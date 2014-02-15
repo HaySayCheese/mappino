@@ -24,6 +24,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
         for_sale: true,
         for_rent: false
     };
+    $scope.publicationCount = $rootScope.publicationsCount;
 
 
 

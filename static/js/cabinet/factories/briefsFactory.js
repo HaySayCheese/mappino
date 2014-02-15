@@ -2,7 +2,8 @@
 
 app.factory('Briefs', function($rootScope, briefQueries, Tags) {
     var briefs = [],
-        publicationTypes;
+        publicationTypes,
+        publicationsCount = $rootScope.publicationsCount;
 
     return {
 
@@ -142,8 +143,10 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
 
                     if (_.include(["true", true], tagState)) {
                         list[index].tags.push(Tags.getTagById(tagId));
+                        publicationsCount[tagId] += 1;
                     } else {
                         list[index].tags.splice(list[index].tags.indexOf(Tags.getTagById(tagId)), 1);
+                        publicationsCount[tagId] -= 1;
                     }
                 }
 

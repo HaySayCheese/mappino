@@ -4,6 +4,7 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
 
     var publication = [],
         channel = lrNotifier('mainChannel'),
+        publicationsCount = $rootScope.publicationsCount,
 
         publicationTypes = $rootScope.publicationTypes = [
             { name: "house",     id: 0,  title: "Дома" },
@@ -38,30 +39,7 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
 
                 publication = data;
 
-                if (_.isNull(publication.sale_terms))
-                    publication.sale_terms = {};
-
-                _.defaults(publication.sale_terms, {
-                    add_terms:      "",
-                    currency_sid:   0,
-                    is_contract:    false,
-                    price:          null,
-                    sale_type_sid:  0,
-                    transaction_sid: 0
-                });
-
-                if (_.isNull(publication.rent_terms))
-                    publication.rent_terms = {};
-
-                _.defaults(publication.rent_terms, {
-                    add_terms:      "",
-                    currency_sid:   0,
-                    is_contract:    false,
-                    period_sid:     1,
-                    persons_count:  null,
-                    price:          null,
-                    rent_type_sid:  0
-                });
+                that.setDefaults();
 
                 typeof callback === 'function' && callback(that.getAll());
             });
@@ -88,6 +66,8 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
                         tid: publication.tid
                     });
 
+                publicationsCount['unpublished'] += 1;
+
                 typeof callback === 'function' && callback(data);
             });
         },
@@ -113,6 +93,9 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
 
                 channel.info("Объявление успешно опубликовано");
 
+                publicationsCount['unpublished'] -= 1;
+                publicationsCount['published']   += 1;
+
                 typeof callback === 'function' && callback(data);
             });
         },
@@ -127,6 +110,10 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
          */
         unpublish: function(tid, id, callback) {
             publicationQueries.unpublish(tid, id).success(function(data) {
+
+                publicationsCount['published'] -= 1;
+                publicationsCount['trash']     += 1;
+
                 typeof callback === 'function' && callback(data);
             });
         },
@@ -199,6 +186,39 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
          */
         getAll: function() {
             return publication;
+        },
+
+
+        /**
+         * Встановлення базових значень для полів
+         */
+        setDefaults: function() {
+            if (_.isNull(publication.sale_terms)) {
+                publication.sale_terms = {};
+
+                _.defaults(publication.sale_terms, {
+                    add_terms:      "",
+                    currency_sid:   0,
+                    is_contract:    false,
+                    price:          null,
+                    sale_type_sid:  0,
+                    transaction_sid: 0
+                });
+            }
+
+            if (_.isNull(publication.rent_terms)) {
+                publication.rent_terms = {};
+
+                _.defaults(publication.rent_terms, {
+                    add_terms:      "",
+                    currency_sid:   0,
+                    is_contract:    false,
+                    period_sid:     1,
+                    persons_count:  null,
+                    price:          null,
+                    rent_type_sid:  0
+                });
+            }
         },
 
 
