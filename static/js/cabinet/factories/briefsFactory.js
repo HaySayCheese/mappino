@@ -1,7 +1,8 @@
 'use strict';
 
 app.factory('Briefs', function($rootScope, briefQueries, Tags) {
-    var briefs = [];
+    var briefs = [],
+        publicationTypes = $rootScope.publicationTypes;
 
     return {
 
@@ -37,7 +38,6 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
             briefs.unshift(brief);
 
             this.updateType();
-            this.updateTags();
         },
 
 
@@ -78,15 +78,9 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
          * Оновлює тип брифа з ідентифікатора типа
          */
         updateType: function() {
-            var types = $rootScope.publicationTypes;
-
-            for (var i = 0; i < briefs.length; i++) {
-                for (var j = 0; j < types.length; j++) {
-                    if (briefs[i].tid === types[j].id) {
-                        briefs[i].type = types[j].title;
-                    }
-                }
-            }
+            _.each(briefs, function(brief) {
+                brief.typeTitle = _.where(publicationTypes, { id: brief.tid })[0].title;
+            });
         },
 
 
@@ -94,34 +88,28 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
          * Оновлює теги брифа з масива тегів
          */
         updateTags: function() {
-            var tags = Tags.getAll();
+            var tags = Tags.getAll(),
+                lastRemovedTag   = $rootScope.lastRemovedTag,
+                lastRemovedTagId = lastRemovedTag ? lastRemovedTag.id : null;
 
-            for (var i = 0; i < briefs.length; i++) {
-                for (var j = 0; j < briefs[i].tags.length; j++) {
+            _.each(briefs, function(brief, index) {
 
-                    if (!tags.length) {
-                        briefs[i].tags = [];
+                if (_.isNumber(_.first(brief.tags))) {
+                    _.each(brief.tags, function(id, index) {
+                        brief.tags[index] = { id: id }
+                    });
+                }
+
+                _.each(brief.tags, function(tag, index, list) {
+
+                    if (tag.id === lastRemovedTagId) {
+                        list.splice(index, 1);
                         return;
                     }
 
-                    for (var k = 0; k < tags.length; k++) {
-
-                        if ((briefs[i].tags[j].id && $rootScope.lastRemovedTag) && (briefs[i].tags[j].id === $rootScope.lastRemovedTag.id)) {
-                            briefs[i].tags.splice(briefs[i].tags.indexOf($rootScope.lastRemovedTag), 1);
-                            return;
-                        }
-
-                        if (briefs[i].tags[j].id && (briefs[i].tags[j].id === tags[k].id)) {
-                            briefs[i].tags[j] = tags[k];
-                        }
-
-
-                        if (!briefs[i].tags[j].id && (briefs[i].tags[j] === tags[k].id)) {
-                            briefs[i].tags[j] = tags[k];
-                        }
-                    }
-                }
-            }
+                    list[index] = _.first(_.where(tags, { id: tag.id }));
+                });
+            });
         },
 
 
@@ -130,36 +118,34 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
          *
          * @param {number} tid              Ідентифікатор типу оголошення
          * @param {number} id               Ідентифікатор оголошення
-         * @param {object} key              Параметр який потрібно обновити
+         * @param {string} key              Параметр який потрібно обновити
          * @param {string, number} value    Значення параметра який потрібно обновити
          */
         updateBriefOfPublication: function(tid, id, key, value) {
 
-            for (var i = 0; i < briefs.length; i++) {
-                if (briefs[i].tid == tid && briefs[i].id == id && key == "tag") {
-                    var tag = value.split(","),
-                        tagId = tag[0],
+            if (!_.contains(["title", "for_sale", "for_rent", "tag"], key))
+                return;
+
+            _.each(briefs, function(brief, index, list) {
+
+                if (brief.tid == tid && brief.id == id && key !== "tag") {
+                    list[index][key] = value;
+                    return;
+                }
+
+                if (brief.tid == tid && brief.id == id && key === "tag") {
+                    var tag      = value.split(","),
+                        tagId    = tag[0],
                         tagState = tag[1];
 
-                    if (tagState === "true" || tagState === true) {
-                        briefs[i].tags.push(Tags.getTagById(tagId));
-                        return;
+                    if (_.include(["true", true], tagState)) {
+                        list[index].tags.push(Tags.getTagById(tagId));
+                    } else {
+                        list[index].tags.splice(list[index].tags.indexOf(Tags.getTagById(tagId)), 1);
                     }
-
-
-                    if (tagState === "false" || tagState === false) {
-                        briefs[i].tags.splice(briefs[i].tags.indexOf(Tags.getTagById(tagId)), 1);
-                        return;
-                    }
-
-                    return;
                 }
 
-                if (briefs[i].tid == tid && briefs[i].id == id) {
-                    briefs[i][key] = value;
-                    return;
-                }
-            }
+            });
         }
     }
 

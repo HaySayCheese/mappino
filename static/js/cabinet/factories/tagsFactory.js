@@ -26,14 +26,14 @@ app.factory('Tags', function($rootScope, lrNotifier, tagQueries) {
             $rootScope.loadings.tags = true;
 
             tagQueries.loadTags().success(function(data) {
-                for (var i = 0; i <= data.dirtags.length - 1; i++) {
-                    tags.push({
-                        id: data.dirtags[i].id,
-                        title: data.dirtags[i].title,
-                        color_id: data.dirtags[i].color_id,
-                        color:tagParameters.colors[data.dirtags[i].color_id]
+                _.each(data.dirtags, function(tag, index) {
+                    that.add({
+                        id: tag.id,
+                        title: tag.title,
+                        color_id: tag.color_id,
+                        color: tagParameters.colors[tag.color_id]
                     });
-                }
+                });
 
                 $rootScope.loadings.tags = false;
                 $rootScope.$broadcast('tagsUpdated');
@@ -63,6 +63,7 @@ app.factory('Tags', function($rootScope, lrNotifier, tagQueries) {
          */
         create: function(tag, callback) {
             var that = this;
+
             tagQueries.createTag(tag).success(function(data) {
 
                 if (data.code !== 0) {
@@ -88,16 +89,22 @@ app.factory('Tags', function($rootScope, lrNotifier, tagQueries) {
         /**
          * Онолвення значень тега
          *
-         * @param {object} tag          Обєкт тега
+         * @param {object}   updatedTag Обєкт тега
          * @param {function} callback
          */
-        update: function(tag, callback) {
-            tagQueries.editTag(tag).success(function() {
-                for (var i = 0; i <= tags.length - 1; i++)
-                    if (tags[i].id == tag.id) {
-                        tags[i] = tag;
-                        break;
-                    }
+        update: function(updatedTag, callback) {
+            tagQueries.editTag(updatedTag).success(function(data) {
+
+                if (data.code !== 0) {
+                    channel.warn("Тег с таким именем уже существует");
+                    typeof callback === 'function' && callback("error");
+                    return;
+                }
+
+                _.each(tags, function(tag, index, list) {
+                    if (tag.id === updatedTag.id)
+                        list[index] = updatedTag;
+                });
 
                 $rootScope.$broadcast('tagsUpdated');
 
@@ -121,17 +128,16 @@ app.factory('Tags', function($rootScope, lrNotifier, tagQueries) {
         },
 
 
+        /**
+         * Вертає тег по ідентифікатору
+         *
+         * @param {number} id Ідентифікатор тега
+         * @return {object}   Обєкт тега
+         */
         getTagById: function(id) {
-            var returnedTag = {};
-
-            for (var i = 0; i < tags.length; i++) {
-                if (tags[i].id === parseInt(id)) {
-                    returnedTag = tags[i];
-                    break;
-                }
-            }
-
-            return returnedTag;
+            return _.first(_.filter(tags, function(tag) {
+                return tag.id == id;
+            }));
         },
 
 

@@ -14,8 +14,8 @@ if not DEBUG:
 else:
 #   МЕГА ПАТЧ
 #	pypy psycopg2cffi compatible hook
-	from psycopg2cffi import compat
-	compat.register()
+	#from psycopg2cffi import compat
+	#compat.register()
 
 	# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 	import os
@@ -116,7 +116,7 @@ else:
 	STATIC_URL = 'http://localhost/mappino_static/'
 
 	MEDIA_URL = 'http://localhost/mappino_media/'
-	MEDIA_ROOT = '/media/work/web-projects/mappino/media/'
+	MEDIA_ROOT = 'D:/Projects/mappino/media/'
 
 	LOGGING = {
 		'version': 1,
@@ -135,7 +135,7 @@ else:
 		    'sms_dispatcher_limits_file': {
 				'level': 'INFO',
 		        'class': 'logging.handlers.TimedRotatingFileHandler',
-		        'filename': 'logs/sms_dispatcher/limits.log',
+		        'filename': 'D:/Projects/mappino/logs/sms_dispatcher/limits.log',
 		        'when': 'W6',
 		        'backupCount': 24,
 		        'formatter': 'simple'
@@ -143,7 +143,7 @@ else:
 		    'sms_dispatcher_sender_file': {
 				'level': 'INFO',
 		        'class': 'logging.handlers.TimedRotatingFileHandler',
-		        'filename': 'logs/sms_dispatcher/sended.log',
+		        'filename': 'D:/Projects/mappino/logs/sms_dispatcher/sended.log',
 		        'when': 'D',
 		        'backupCount': 60,
 		        'formatter': 'simple'

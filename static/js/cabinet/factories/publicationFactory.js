@@ -62,13 +62,12 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
             publicationQueries.publish(tid, id).success(function(data) {
                 var briefs = Briefs.getAll();
 
-                for (var i = 0; i < briefs.length; i++) {
-                    if (briefs[i].id == id) {
+                _.each(briefs, function(brief, index, list) {
+                    if (brief.id == id) {
                         $location.path("/publications/published/" + tid + ":" + id);
-                        briefs.splice(i, 1);
-                        break;
+                        list.splice(index, 1);
                     }
-                }
+                });
 
                 channel.info("Объявление успешно опубликовано");
 
@@ -105,8 +104,10 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
 
             publicationQueries.checkInputs(tid, id, data).success(function(data) {
 
-                if (inputName == "title" || inputName == "for_sale" || inputName == "for_rent" || inputName == "tag")
-                    Briefs.updateBriefOfPublication(tid, id, inputName, data.value ? data.value : inputValue);
+                if (!_.contains(["title", "for_sale", "for_rent", "tag"], inputName))
+                    return;
+
+                Briefs.updateBriefOfPublication(tid, id, inputName, data.value ? data.value : inputValue);
 
                 typeof callback === 'function' && callback(data.value ? data.value : inputValue, data.code);
             });
@@ -139,12 +140,10 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
         removePhoto: function(tid, hid, pid, callback) {
             publicationQueries.removePhoto(tid, hid, pid).success(function(data) {
 
-                for (var i = 0; i < publication.photos.length; i++) {
-                    if (publication.photos[i].id === pid) {
-                        publication.photos.splice(i, 1);
-                        break;
-                    }
-                }
+                _.each(publication.photos, function(photo, index, list) {
+                    if (photo.id === pid)
+                        list.splice(index, 1);
+                });
 
                 typeof callback === 'function' && callback(data);
             });

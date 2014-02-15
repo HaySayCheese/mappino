@@ -12,6 +12,7 @@
 
     <!-- Libs include -->
     <script type="text/javascript" src="{{ static }}js/libs/jquery-2.1.0.min.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/underscore-1.6.0.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/less-1.6.2.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/bootstrap.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select.js"></script>
@@ -196,7 +197,7 @@
                             <span ng-show="brief.for_sale && !brief.for_rent">Продажа</span>
                             <span ng-show="brief.for_rent && !brief.for_sale">Аренда</span>
                             <span ng-show="brief.for_sale && brief.for_rent">Продажа и аренда</span>
-                            [[ brief.type ]]
+                            [[ brief.typeTitle ]]
                         </div>
                         <div class="sidebar-item-list-item-tags" ng-show="brief.tags.length">
                             <span class="label" style="background-color: [[ tag.color ]]" ng-repeat="tag in brief.tags">[[ tag.title ]]</span>

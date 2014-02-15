@@ -5,6 +5,8 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     $scope.searchItem = "";
     $scope.briefs = [];
 
+    var loadCount = 0, timer;
+
 
     /**
      * Ініціалізація загрузки оголошеня при зміні урла
@@ -34,23 +36,25 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     /**
      * Пошук по брифах
      */
-    var loadCount = 0;
     $scope.$watch("searchItem", function(newValue) {
         loadCount++;
+        window.clearTimeout(timer);
 
         if (loadCount <= 1)
             return;
 
-        if (newValue == "") {
+        if (_.isEmpty(newValue)) {
             loadBriefsInit();
         } else {
             initScrollBar();
 
-            Briefs.search(newValue, function(data) {
-                $scope.briefs = data;
+            timer = setTimeout(function(){
+                Briefs.search(newValue, function(data) {
+                    $scope.briefs = data;
 
-                initScrollBar();
-            });
+                    initScrollBar();
+                });
+            }, 1000);
         }
     });
 
