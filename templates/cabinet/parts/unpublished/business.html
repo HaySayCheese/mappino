@@ -76,9 +76,8 @@
                         <label class="col-sm-4 control-label"><span class="required-star">*</span>Срок:</label>
                         <div class="col-sm-8">
                             <select name="rent_period_sid" data-width="100%" ng-model="publication.rent_terms.period_sid">
-                                <option value="0">Посуточно</option>
-                                <option value="1">Помесячно</option>
-                                <option value="2">Долгосрочная оренда</option>
+                                <option value="0">Помесячно</option>
+                                <option value="1">Долгосрочная оренда</option>
                             </select>
                         </div>
                     </div>
@@ -246,12 +245,11 @@
                         <div class="col-sm-6">
                             <select name="condition_sid" data-width="100%" ng-model="publication.body.condition_sid">
                                 <option value="0">Косметический ремонт</option>
-                                <option value="2">Евроремонт</option>
-                                <option value="3">Дизайнерский ремонт</option>
-                                <option value="4">Требуется косметический ремонт</option>
-                                <option value="5">Неоконченный ремонт</option>
-                                <option value="6">Под чистовую отделку</option>
-                                <option value="1">Жилое / советское</option>
+                                <option value="1">Евроремонт</option>
+                                <option value="2">Дизайнерский ремонт</option>
+                                <option value="3">Требуется косметический ремонт</option>
+                                <option value="4">Неоконченный ремонт</option>
+                                <option value="5">Под чистовую отделку</option>
                             </select>
                         </div>
                     </div>
@@ -261,7 +259,8 @@
                     <div class="form-group">
                         <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Этаж:</label>
                         <div class="col-sm-6 col-lg-4">
-                            <input class="form-control" type="text" name="floor" ng-model="publication.body.floor" allow-only-number-without-dot required/>
+                            <input class="form-control" type="text" name="floor" ng-model="publication.body.floor"
+                                   ng-disabled="publication.body.floor_type_sid == 1 || publication.body.floor_type_sid == 2" allow-only-number-without-dot required/>
                             <span class="input-has-error" ng-show="form.publication.floor.$error.required && showValidationMessages">Укажите, пожалуйста, этаж.</span>
                             <span class="input-has-error" ng-show="form.publication.floor.$error.incorrect">Этаж указан неверно.</span>
                         </div>
@@ -288,11 +287,11 @@
                 <div class="row">
                     <div class="form-group">
                         <div class="col-sm-6 col-lg-6 col-sm-offset-6 col-lg-offset-4">
-                            <div class="checkbox">
+                            <div class="checkbox" ng-hide="publication.body.floor_type_sid == 1 || publication.body.floor_type_sid == 2">
                                 <input id="mansard" type="checkbox" name="mansard" ng-model="publication.body.mansard">
                                 <label for="mansard">Есть мансарда</label>
                             </div>
-                            <div class="checkbox">
+                            <div class="checkbox" ng-hide="publication.body.floor_type_sid == 1 || publication.body.floor_type_sid == 2">
                                 <input id="ground" type="checkbox" name="ground" ng-model="publication.body.ground">
                                 <label for="ground">Есть цокольний этаж</label>
                             </div>
