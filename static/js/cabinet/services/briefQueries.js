@@ -20,7 +20,7 @@ app.factory('briefQueries', function($http) {
          */
         searchInBriefs: function(value) {
             return $http({
-                url: '/ajax/api/cabinet/search?/q=' + value,
+                url: '/ajax/api/cabinet/search/?q=' + value,
                 method: "GET"
             });
         }
