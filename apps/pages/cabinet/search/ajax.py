@@ -1,40 +1,29 @@
-from itertools import ifilter
 import json
+
 from django.http.response import HttpResponseBadRequest, HttpResponse
+from django.views.decorators.http import require_http_methods
+
+from apps.pages.cabinet.briefs.utils import briefs_of_publications
+from collective.decorators.views import login_required_or_forbidden
 from collective.methods.request_data_getters import GET_parameter
-from core.dirtags import DirTags
-from core.publications.constants import HEAD_MODELS
 from core.search import search_manager
 
 
+search_codes = {
+	'invalid_query': {
+		'code': 1,
+	},
+}
+@login_required_or_forbidden
+@require_http_methods('GET')
 def search(request):
-	query = GET_parameter(request, 'q')
+	try:
+		query = GET_parameter(request, 'q', may_be_empty=True)
+	except ValueError:
+		return HttpResponseBadRequest(
+			json.dumps(search_codes['invalid_query']), content_type='application/json')
 
+	found_ids = search_manager.process_search_query(query, request.user.id)
+	bries = briefs_of_publications(found_ids, request.user.id)
 
-	pubs = []
-	search_results = search_manager.process_search_query(query, request.user.id)
-	for tid in search_results.keys():
-		query = HEAD_MODELS[tid].by_user_id(request.user.id).filter(id__in=search_results[tid]).only(
-			'id', 'for_sale', 'for_rent', 'body__title')
-
-		pub_ids = [publication.id for publication in query]
-		tags = DirTags.contains_publications(tid, pub_ids).filter(
-			user_id = request.user.id).only('id', 'pubs')
-
-		if query:
-			pubs.extend([{
-				'tid': tid,
-				'id': publication.id,
-			    'state_sid': publication.state_sid,
-			    'title': publication.body.title,
-			    'for_sale': publication.for_sale,
-			    'for_rent': publication.for_rent,
-			    'tags': [tag.id for tag in ifilter(lambda t: t.contains(tid, publication.id), tags)],
-			    'photo_url': 'http://localhost/mappino_static/img/cabinet/house.png' # fixme
-
-			    # ...
-			    # other fields here
-			    # ...
-
-			} for publication in query])
-	return HttpResponse(json.dumps(pubs), content_type='application/json')
+	return HttpResponse(json.dumps(bries), content_type='application/json')
