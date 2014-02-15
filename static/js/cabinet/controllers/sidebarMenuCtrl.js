@@ -14,6 +14,13 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
      */
     loadTags();
 
+
+    /**
+     * Ініціалізкація отримання кількості оголошень
+     */
+    Publication.getCounts();
+
+
     /**
      * Змінні створення тега
      */
@@ -104,7 +111,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
      * Логіка створення тега
      */
     $scope.createTag = function() {
-        if (!$scope.newTag.tagName && _.isEmpty($scope.newTag.tagName))
+        if (!$scope.newTag.tagName && _.isNull($scope.newTag.tagName))
             return;
 
         var btn = angular.element(".btn-creating").button("loading");

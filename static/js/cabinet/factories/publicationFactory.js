@@ -190,6 +190,16 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
 
 
         /**
+         * Отримання кількості оголошень
+         */
+        getCounts: function() {
+            publicationQueries.getPublicationsCount().success(function(data) {
+                publicationsCount = data;
+            });
+        },
+
+
+        /**
          * Встановлення базових значень для полів
          */
         setDefaults: function() {
