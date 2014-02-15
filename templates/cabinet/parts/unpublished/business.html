@@ -334,7 +334,7 @@
                         <label class="col-sm-6 col-lg-4 control-label">Площадь участка:</label>
                         <div class="col-sm-6">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="plot_area" ng-model="publication.body.plot_area" allow-only-number required>
+                                <input type="text" class="form-control" name="plot_area" ng-model="publication.body.plot_area" allow-only-number>
                                 <span class="input-group-addon">м<sup>2</sup></span>
                             </div>
                             <span class="input-has-error" ng-show="form.publication.plot_area.$error.incorrect">Площадь участка указана неверно.</span>
@@ -347,7 +347,7 @@
                         <label class="col-sm-6 col-lg-4 control-label">Площадь помещений:</label>
                         <div class="col-sm-6">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="halls_area" ng-model="publication.body.halls_area" allow-only-number required>
+                                <input type="text" class="form-control" name="halls_area" ng-model="publication.body.halls_area" allow-only-number>
                                 <span class="input-group-addon">м<sup>2</sup></span>
                             </div>
                             <span class="input-has-error" ng-show="form.publication.halls_area.$error.incorrect">Площадь помещений указана неверно.</span>
@@ -454,38 +454,6 @@
 
             </div>
 
-            <div class="row" ng-show="publication.head.for_rent">
-                <div class="col-sm-12">
-                    <div class="col-sm-6 col-lg-4 form-group">
-                        <div class="checkbox">
-                            <input id="furniture" type="checkbox" name="furniture" ng-model="publication.rent_terms.furniture">
-                            <label for="furniture">Мебель</label>
-                        </div>
-                        <div class="checkbox">
-                            <input id="refrigerator" type="checkbox" name="refrigerator" ng-model="publication.rent_terms.refrigerator">
-                            <label for="refrigerator">Холодильник</label>
-                        </div>
-                        <div class="checkbox">
-                            <input id="tv" type="checkbox" name="tv" ng-model="publication.rent_terms.tv">
-                            <label for="tv">Телевизор</label>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-4 form-group">
-                        <div class="checkbox">
-                            <input id="washing_machine" type="checkbox" name="washing_machine" ng-model="publication.rent_terms.washing_machine">
-                            <label for="washing_machine">Стиральная машина</label>
-                        </div>
-                        <div class="checkbox">
-                            <input id="conditioner" type="checkbox" name="conditioner" ng-model="publication.rent_terms.conditioner">
-                            <label for="conditioner">Кондиционер</label>
-                        </div>
-                        <div class="checkbox">
-                            <input id="home_theater" type="checkbox" name="home_theater" ng-model="publication.rent_terms.home_theater">
-                            <label for="home_theater">Дом. кинотеатр</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="col-sm-12">
                 <div class="form-group">
                     <label>Другие удобства, уточнения:</label>
