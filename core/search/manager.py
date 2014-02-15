@@ -16,7 +16,7 @@ class SearchManager(object):
 		# self.update_interval = 60 * 3 # secs
 		self.update_interval = 1 # secs
 
-		self.connection = None
+		self.cursor = None
 		self.__reconnect_to_sphinx()
 
 		publication_model_updated.connect(self.model_updated)
@@ -62,13 +62,12 @@ class SearchManager(object):
 
 	def process_search_query(self, query, user_id):
 		def execute():
-			cursor = self.connection.cursor()
-			cursor.execute(u"SELECT tid, hid FROM publications_rt "
+			self.cursor.execute(u"SELECT tid, hid FROM publications_rt "
 			                "WHERE MATCH('{query}') AND uid = {uid} LIMIT 50".format(
 				query = query, uid = user_id))
 
 			results = {}
-			for record in cursor.fetchall():
+			for record in self.cursor.fetchall():
 				tid = record[0]
 				hid = record[1]
 
@@ -90,7 +89,7 @@ class SearchManager(object):
 
 
 	def __reconnect_to_sphinx(self):
-		self.connection = MySQLdb.connect(
+		self.cursor = MySQLdb.connect(
 			host = settings.SPHINX_SEARCH['HOST'],
 			port = settings.SPHINX_SEARCH['PORT'],
-		)
+		).cursor()
