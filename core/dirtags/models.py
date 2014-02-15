@@ -79,10 +79,10 @@ class DirTags(models.Model):
 			tag.rm_publication(tid, hid)
 
 
-	def publications(self):
+	def publications_hids(self):
 		"""
 		Якщо раніше було додано хочаб одне оголошення -
-		поверне словник формату "id типу: QuerySet head-записів даного типу".
+		поверне словник формату "id типу: id head-запису".
 		Якщо пов’язаних оголошень немає - поверне пустий словник.
 		"""
 		if not self.pubs:
@@ -98,9 +98,6 @@ class DirTags(models.Model):
 				results[tid].append(hid)
 			else:
 				results[tid] = [hid]
-
-		for tid, head_ids in results.items():
-			results[tid] = HEAD_MODELS[tid].objects.filter(id__in = head_ids)
 		return results
 
 

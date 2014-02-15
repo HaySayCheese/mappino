@@ -1,14 +1,14 @@
 #coding=utf-8
-from itertools import ifilter
 import json
 
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
 
+from apps.pages.cabinet.briefs.utils import briefs_of_tag, briefs_of_section
+
 from collective.decorators.views import login_required_or_forbidden
 from core.dirtags import DirTags
-from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, OBJECT_STATES
 
 
 
@@ -19,71 +19,20 @@ get_codes = {
 }
 @login_required_or_forbidden
 @require_http_methods('GET')
-def get(request, tag=None, section=None):
-	if tag is not None:
-		# Видача всіх оголошень, помаркованих тегом
+def get(request, tag_id=None, section=None):
+	if tag_id is not None:
 		try:
-			tag = DirTags.by_id(int(tag))
-		except ObjectDoesNotExist:
+			tag = DirTags.objects.filter(id = tag_id).only('id', 'pubs', 'user')[0]
+		except IndexError:
 			return HttpResponseBadRequest(
 				json.dumps(get_codes['invalid_tag_id']), content_type='application/json')
 
-		pubs = []
-		queries = tag.publications()
-		for tid in queries.keys():
-			query = queries[tid].only('id', 'for_sale', 'for_rent', 'body__title')
-			pub_ids = [publication.id for publication in query]
-			tags = DirTags.contains_publications(tid, pub_ids).filter(
-				user_id = request.user.id).only('id', 'pubs')
-
-			pubs.extend([{
-				'tid': tid,
-				'id': publication.id,
-			    'title': publication.body.title,
-			    'for_sale': publication.for_sale,
-			    'for_rent': publication.for_rent,
-			    'tags': [tag.id for tag in ifilter(lambda t: t.contains(tid, publication.id), tags)],
-			    'photo_url': 'http://localhost/mappino_static/img/cabinet/house.png' # fixme
-
-			    # ...
-			    # other fields here
-			    # ...
-			} for publication in queries[tid]])
-		return HttpResponse(json.dumps(pubs), content_type='application/json')
+		# check owner
+		if tag.user_id != request.user.id:
+			raise PermissionDenied()
+		return HttpResponse(json.dumps(briefs_of_tag(tag)), content_type='application/json')
 
 
 	else:
-		# Видача оголошень з розділів
-		pubs = []
-		for tid in OBJECTS_TYPES.values():
-			query = HEAD_MODELS[tid].by_user_id(request.user.id, select_body=True).only(
-				'id', 'for_sale', 'for_rent', 'body__title')
-
-			if section == 'published':
-				query = query.filter(state_sid = OBJECT_STATES.published())
-			elif section == 'unpublished':
-				query = query.filter(state_sid = OBJECT_STATES.unpublished())
-			elif section == 'deleted':
-				query = query.filter(state_sid = OBJECT_STATES.deleted())
-
-			pub_ids = [publication.id for publication in query]
-			tags = DirTags.contains_publications(tid, pub_ids).filter(
-				user_id = request.user.id).only('id', 'pubs')
-
-			if query:
-				pubs.extend([{
-					'tid': tid,
-					'id': publication.id,
-				    'state_sid': publication.state_sid,
-				    'title': publication.body.title,
-				    'for_sale': publication.for_sale,
-				    'for_rent': publication.for_rent,
-				    'tags': [tag.id for tag in ifilter(lambda t: t.contains(tid, publication.id), tags)],
-				    'photo_url': 'http://localhost/mappino_static/img/cabinet/house.png' # fixme
-
-				    # ...
-				    # other fields here
-				    # ...
-
-				} for publication in query])
-		return HttpResponse(json.dumps(pubs), content_type='application/json')
+		return HttpResponse(json.dumps(
+			briefs_of_section(section, request.user.id)), content_type='application/json')
