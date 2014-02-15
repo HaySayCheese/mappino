@@ -226,11 +226,11 @@
                 <div class="row">
                     <div class="form-group">
                         <div class="col-sm-6 col-lg-6 col-sm-offset-6 col-lg-offset-4">
-                            <div class="checkbox">
+                            <div class="checkbox" ng-hide="publication.body.floor_type_sid == 1">
                                 <input id="mansard" type="checkbox" name="mansard" ng-model="publication.body.mansard">
                                 <label for="mansard">Есть мансарда</label>
                             </div>
-                            <div class="checkbox">
+                            <div class="checkbox" ng-hide="publication.body.floor_type_sid == 2">
                                 <input id="ground" type="checkbox" name="ground" ng-model="publication.body.ground">
                                 <label for="ground">Есть цокольний этаж</label>
                             </div>
