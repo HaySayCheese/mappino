@@ -199,7 +199,8 @@
                     <div class="form-group">
                         <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Этаж:</label>
                         <div class="col-sm-6 col-lg-4">
-                            <input class="form-control" type="text" name="floor" ng-model="publication.body.floor" allow-only-number-without-dot required/>
+                            <input class="form-control" type="text" name="floor" ng-model="publication.body.floor"
+                                   ng-disabled="publication.body.floor_type_sid == 1 || publication.body.floor_type_sid == 2" allow-only-number-without-dot required/>
                             <span class="input-has-error" ng-show="form.publication.floor.$error.required && showValidationMessages">Укажите, пожалуйста, этаж.</span>
                             <span class="input-has-error" ng-show="form.publication.floor.$error.incorrect">Этаж указан неверно.</span>
                         </div>
