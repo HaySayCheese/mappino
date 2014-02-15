@@ -133,10 +133,8 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
 
             publicationQueries.checkInputs(tid, id, data).success(function(data) {
 
-                if (!_.contains(["title", "for_sale", "for_rent", "tag"], inputName))
-                    return;
-
-                Briefs.updateBriefOfPublication(tid, id, inputName, data.value ? data.value : inputValue);
+                if (_.contains(["title", "for_sale", "for_rent", "tag"], inputName))
+                    Briefs.updateBriefOfPublication(tid, id, inputName, data.value ? data.value : inputValue);
 
                 typeof callback === 'function' && callback(data.value ? data.value : inputValue, data.code);
             });
