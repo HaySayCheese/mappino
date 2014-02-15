@@ -1,5 +1,5 @@
-#todo: перевірити помилки в словах, які формують індекс
 #coding=utf-8
+#todo: перевірити помилки в словах, які формують індекс
 from core.publications.constants import CURRENCIES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS
 
 
