@@ -231,7 +231,7 @@ class CommercialRentPeriods(AbstractConstant):
 
 	def long_period(self):
 		return self.ids['long_period']
-COMMERCIAL_RENT_PERIODS = LivingRentPeriods()
+COMMERCIAL_RENT_PERIODS = CommercialRentPeriods()
 
 
 class MarketType(AbstractConstant):
