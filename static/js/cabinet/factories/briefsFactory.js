@@ -58,8 +58,18 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
          * @param {function}    callback    Вертає масив брифів
          */
         search: function(value, callback) {
+            var that = this;
+            $rootScope.loadings.briefs = true;
+
             briefQueries.searchInBriefs(value).success(function(data) {
-                typeof callback === 'function' && callback(data);
+                briefs = data;
+
+                that.updateType();
+                that.updateTags();
+
+                $rootScope.loadings.briefs = false;
+
+                typeof callback === 'function' && callback(that.getAll());
             });
         },
 

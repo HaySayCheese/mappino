@@ -34,13 +34,24 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     /**
      * Пошук по брифах
      */
+    var loadCount = 0;
     $scope.$watch("searchItem", function(newValue) {
-        if (!newValue)
+        loadCount++;
+
+        if (loadCount <= 1)
             return;
 
-        Briefs.search(newValue, function(data) {
-            $scope.briefs = data;
-        });
+        if (newValue == "") {
+            loadBriefsInit();
+        } else {
+            initScrollBar();
+
+            Briefs.search(newValue, function(data) {
+                $scope.briefs = data;
+
+                initScrollBar();
+            });
+        }
     });
 
 
