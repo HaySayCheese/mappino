@@ -97,28 +97,28 @@
                             <a href="#!/publications/all">
                                 <span class="menu-icon icon-all-pubs"></span>
                                 Все
-                                <span class="badge pull-right">[[ publicationsCount['all'] ]]</span>
+                                <span class="badge pull-right" ng-hide="publicationsCount['all'] == 0">[[ publicationsCount['all'] ]]</span>
                             </a>
                         </li>
                         <li ng-class="{ active: routeSection == 'published' }">
                             <a href="#!/publications/published">
                                 <span class="menu-icon icon-published-pubs"></span>
                                 Опубликование
-                                <span class="badge pull-right">[[ publicationsCount['published'] ]]</span>
+                                <span class="badge pull-right" ng-hide="publicationsCount['published'] == 0">[[ publicationsCount['published'] ]]</span>
                             </a>
                         </li>
                         <li ng-class="{ active: routeSection == 'unpublished' }">
                             <a href="#!/publications/unpublished">
                                 <span class="menu-icon icon-unpublished-pubs"></span>
                                 Не опубликование
-                                <span class="badge pull-right">[[ publicationsCount['unpublished'] ]]</span>
+                                <span class="badge pull-right" ng-hide="publicationsCount['unpublished'] == 0">[[ publicationsCount['unpublished'] ]]</span>
                             </a>
                         </li>
                         <li ng-class="{ active: routeSection == 'trash' }">
                             <a href="#!/publications/trash">
                                 <span class="menu-icon icon-deleted-pubs"></span>
                                 Корзина
-                                <span class="badge pull-right">[[ publicationsCount['trash'] ]]</span>
+                                <span class="badge pull-right" ng-hide="publicationsCount['trash'] == 0">[[ publicationsCount['trash'] ]]</span>
                             </a>
                         </li>
                     </ul>
@@ -150,7 +150,7 @@
                             <a href="#!/publications/[[ tag.id ]]">
                                 <span class="tag-icon" style="border-color: [[ tag.color ]]"></span>
                                 [[ tag.title ]]
-                                <span class="badge pull-right" style="color: [[ tag.color ]]">[[ publicationsCount[tag.id] ]]</span>
+                                <span class="badge pull-right" style="color: [[ tag.color ]]" ng-hide="publicationsCount[tag.id] == 0">[[ publicationsCount[tag.id] ]]</span>
                             </a>
                             <div class="menu-block-list-controls">
                                 <span class="menu-icon icon-edit" ng-click="createEditTagDialog(tag, $event)"></span>

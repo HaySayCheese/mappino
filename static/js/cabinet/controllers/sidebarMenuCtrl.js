@@ -18,7 +18,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     /**
      * Ініціалізкація отримання кількості оголошень
      */
-    //Publication.getCounts();
+    Publication.getCounts();
 
 
     /**

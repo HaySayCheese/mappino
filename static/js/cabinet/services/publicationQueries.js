@@ -83,7 +83,7 @@ app.factory('publicationQueries', function($http, $upload) {
          */
         getPublicationsCount: function() {
             return $http({
-                url: '/ajax/api/cabinet/publications/counts/',
+                url: '/ajax/api/cabinet/publications/counters/',
                 method: "GET"
             });
         },
