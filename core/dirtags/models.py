@@ -13,6 +13,7 @@ class PublicationAlreadyExists(AlreadyExist): pass
 
 class DirTags(models.Model):
 	separator = ','
+	record_separator = ':'
 
 	user = models.ForeignKey(Users)
 	title = models.TextField(db_index=True)
@@ -157,12 +158,16 @@ class DirTags(models.Model):
 		return self.__to_record_format(tid, hid) in self.pubs
 
 
-	@staticmethod
-	def __to_record_format(tid, hid):
+	def publications_count(self):
+		return self.pubs.count(self.record_separator)
+
+
+	@classmethod
+	def __to_record_format(cls, tid, hid):
 		"""
 		Поверне запис, під яким слід зберегти посилання на оголошення.
 		"""
-		return str(tid) + ':' + str(hid)
+		return str(tid) + cls.record_separator + str(hid)
 
 
 	@staticmethod

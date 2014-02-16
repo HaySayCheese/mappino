@@ -61,6 +61,7 @@ urlpatterns += patterns('apps.pages.cabinet',
 
 
     # publications
+    url(r'^ajax/api/cabinet/publications/counters/$', 'briefs.ajax.get_counters'),
     url(r'^ajax/api/cabinet/publications/briefs/all/$',
         'briefs.ajax.get', {'section': 'all'}),
     url(r'^ajax/api/cabinet/publications/briefs/published/$',
