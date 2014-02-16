@@ -143,10 +143,22 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
 
                     if (_.include(["true", true], tagState)) {
                         list[index].tags.push(Tags.getTagById(tagId));
-                        publicationsCount[tagId] += 1;
+
+                        if (_.isUndefined(publicationsCount[tagId])) {
+                            publicationsCount[tagId] = 0;
+                            publicationsCount[tagId] += 1;
+                        } else {
+                            publicationsCount[tagId] += 1;
+                        }
                     } else {
                         list[index].tags.splice(list[index].tags.indexOf(Tags.getTagById(tagId)), 1);
-                        publicationsCount[tagId] -= 1;
+
+                        if (_.isUndefined(publicationsCount[tagId])) {
+                            publicationsCount[tagId] = 0;
+                            publicationsCount[tagId] -= 1;
+                        } else {
+                            publicationsCount[tagId] -= 1;
+                        }
                     }
                 }
 
