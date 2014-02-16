@@ -139,7 +139,8 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
                 if (brief.tid == tid && brief.id == id && key === "tag") {
                     var tag      = value.split(","),
                         tagId    = tag[0],
-                        tagState = tag[1];
+                        tagState = tag[1],
+                        publicationsCount = $rootScope.publicationsCount;
 
                     if (_.include(["true", true], tagState)) {
                         list[index].tags.push(Tags.getTagById(tagId));
