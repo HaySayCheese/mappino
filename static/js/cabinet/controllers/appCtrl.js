@@ -9,13 +9,10 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
     });
 
     $rootScope.publicationsCount = {
-        all: 23,
-        published: 4,
-        unpublished: 17,
-        trash: 0,
-        64: 1,
-        86: 5,
-        87: 9
+        all: 0,
+        published: 0,
+        unpublished: 0,
+        trash: 0
     };
 
     /**

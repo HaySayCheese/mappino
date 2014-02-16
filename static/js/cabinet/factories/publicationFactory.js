@@ -192,7 +192,7 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
          */
         getCounts: function() {
             publicationQueries.getPublicationsCount().success(function(data) {
-                publicationsCount = data;
+                publicationsCount = $rootScope.publicationsCount = data;
             });
         },
 
