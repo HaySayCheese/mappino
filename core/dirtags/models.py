@@ -138,7 +138,7 @@ class DirTags(models.Model):
 		if self.pubs:
 			if self.pubs[-1] == self.separator:
 				self.pubs = self.pubs[:-1]
-			elif self[0] == self.separator:
+			elif self.pubs[0] == self.separator:
 				self.pubs = self.pubs[1:]
 			elif (self.separator + self.separator) in self.pubs:
 				self.pubs = self.pubs.replace(self.separator + self.separator, self.separator)
