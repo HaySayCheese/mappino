@@ -21,6 +21,8 @@ else:
 	import os
 	BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+	ESTIMATE_THREADS_COUNT = 4
+
 	#DOMAIN = 'http://binno.com.ua' # todo: change me to real
 	#ROBOT_MAIL_ACCOUNT = 'no-reply@binno.com.ua' # todo: change me to real
 
