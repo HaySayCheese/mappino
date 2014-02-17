@@ -26,7 +26,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     /**
      * Ловим евент зміни тегів
      */
-    $scope.$on("tagsUpdated", function() {
+    $rootScope.$on("tagsUpdated", function() {
         $scope.tags = Tags.getAll();
     });
 

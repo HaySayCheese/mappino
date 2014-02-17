@@ -36,7 +36,7 @@ app.factory('Tags', function($rootScope, lrNotifier, tagQueries) {
                 });
 
                 $rootScope.loadings.tags = false;
-                $rootScope.$broadcast('tagsUpdated');
+                $rootScope.$emit('tagsUpdated');
 
                 callback(that.getAll());
             });
@@ -51,7 +51,7 @@ app.factory('Tags', function($rootScope, lrNotifier, tagQueries) {
         add: function(tag) {
             tags.push(tag);
 
-            $rootScope.$broadcast('tagsUpdated');
+            $rootScope.$emit('tagsUpdated');
         },
 
 
@@ -79,7 +79,7 @@ app.factory('Tags', function($rootScope, lrNotifier, tagQueries) {
                     color_id: tag.colors.indexOf(tag.selectedColor)
                 });
 
-                $rootScope.$broadcast('tagsUpdated');
+                $rootScope.$emit('tagsUpdated');
 
                 typeof callback === 'function' && callback();
             });
@@ -106,7 +106,7 @@ app.factory('Tags', function($rootScope, lrNotifier, tagQueries) {
                         list[index] = updatedTag;
                 });
 
-                $rootScope.$broadcast('tagsUpdated');
+                $rootScope.$emit('tagsUpdated');
 
                 typeof callback === 'function' && callback();
             });
@@ -123,7 +123,7 @@ app.factory('Tags', function($rootScope, lrNotifier, tagQueries) {
                 tags.splice(tags.indexOf(tag), 1);
                 $rootScope.lastRemovedTag = tag;
 
-                $rootScope.$broadcast('tagsUpdated');
+                $rootScope.$emit('tagsUpdated');
             });
         },
 

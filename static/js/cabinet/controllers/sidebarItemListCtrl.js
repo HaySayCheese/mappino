@@ -32,7 +32,7 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     /**
      * Ловим евент зміни тегів
      */
-    $scope.$on("tagsUpdated", Briefs.updateTags);
+    $rootScope.$on("tagsUpdated", Briefs.updateTags);
 
 
     /**
