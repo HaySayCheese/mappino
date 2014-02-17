@@ -76,7 +76,7 @@ def rud_switch(request, tid_and_hid):
 
 	if request.method == 'GET':
 		return get(request, tid, hid)
-	elif request.method == 'UPDATE':
+	elif request.method == 'PUT':
 		return update_publication(request, tid, hid)
 	elif request.method == 'DELETE':
 		return delete_publication(request, tid, hid)
@@ -130,7 +130,7 @@ update_codes = {
     },
 }
 @login_required_or_forbidden
-@require_http_methods('UPDATE')
+@require_http_methods('PUT')
 def update_publication(request, tid, hid):
 	try:
 		p = angular_parameters(request)
@@ -246,7 +246,7 @@ publish_codes = {
     },
 }
 @login_required_or_forbidden
-@require_http_methods('UPDATE')
+@require_http_methods('PUT')
 def publish(request, tid_hid):
 	tid, hid = tid_hid.split(':')
 	tid = int(tid)
@@ -281,7 +281,7 @@ unpublish_codes = {
     },
 }
 @login_required_or_forbidden
-@require_http_methods('UPDATE')
+@require_http_methods('PUT')
 def unpublish(request, tid, hid):
 	try:
 		head = HEAD_MODELS[tid].objects.filter(id=hid).only('id', 'owner')[0]
