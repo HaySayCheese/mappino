@@ -335,6 +335,13 @@ class LivingRentTermsModel(AbstractModel):
 	pets = models.BooleanField(default=False)
 	add_terms = models.TextField(default='')
 
+	furniture = models.BooleanField(default=False)
+	refrigerator = models.BooleanField(default=False)
+	tv = models.BooleanField(default=False)
+	washing_machine = models.BooleanField(default=False)
+	conditioner = models.BooleanField(default=False)
+	home_theater = models.BooleanField(default=False)
+
 
 	def check_required_fields(self):
 		"""

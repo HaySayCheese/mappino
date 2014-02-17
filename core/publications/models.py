@@ -7,7 +7,7 @@ from core.publications.exceptions import EmptyFloor, EmptyTotalArea, EmptyLiving
 	EmptyHallsArea, EmptyHallsCount, EmptyCabinetsCount
 from core.publications.objects_constants.apartments import APARTMENTS_BUILDINGS_TYPES, APARTMENTS_FLAT_TYPES, APARTMENTS_ROOMS_PLANING_TYPES
 from core.publications.objects_constants.cottages import COTTAGE_RENT_TYPES, COTTAGE_SALE_TYPES
-from core.publications.objects_constants.dachas import DACHA_WC_LOCATIONS
+from core.publications.objects_constants.dachas import DACHA_WC_LOCATIONS, DACHA_WC
 from core.publications.objects_constants.flats import FLAT_BUILDING_TYPES, FLAT_TYPES, FLAT_ROOMS_PLANNINGS
 from core.publications.objects_constants.garages import GARAGE_DRIVE_WAYS
 from core.publications.objects_constants.houses import HOUSE_RENT_TYPES, HOUSE_SALE_TYPES
@@ -32,14 +32,6 @@ class FlatsSaleTerms(SaleTermsModel):
 class FlatsRentTerms(LivingRentTermsModel):
 	class Meta:
 		db_table = 'o_flats_rent_terms'
-
-	furniture = models.BooleanField(default=False) # меблі
-	refrigerator = models.BooleanField(default=False)
-	tv = models.BooleanField(default=False)
-	washing_machine = models.BooleanField(default=False)
-	conditioner = models.BooleanField(default=False)
-	home_theater = models.BooleanField(default=False)
-	other = models.TextField(default='') # todo: використати це поле
 
 
 class FlatsBodies(BodyModel):
@@ -140,13 +132,6 @@ class ApartmentsRentTerms(LivingRentTermsModel):
 	class Meta:
 		db_table = 'o_apartments_rent_terms'
 
-	furniture = models.BooleanField(default=False)
-	refrigerator = models.BooleanField(default=False)
-	tv = models.BooleanField(default=False)
-	washing_machine = models.BooleanField(default=False)
-	conditioner = models.BooleanField(default=False)
-	home_theater = models.BooleanField(default=False)
-
 
 class ApartmentsBodies(BodyModel):
 	class Meta:
@@ -215,9 +200,6 @@ class ApartmentsBodies(BodyModel):
 	entertainment = models.BooleanField(default=False) # розважальні установи
 	sport_center = models.BooleanField(default=False)
 	park = models.BooleanField(default=False)
-	water = models.BooleanField(default=False) # річка, озеро, водойма
-	wood = models.BooleanField(default=False)
-	sea = models.BooleanField(default=False)
 	add_showplaces = models.TextField(null=True)
 
 
@@ -265,19 +247,11 @@ class HousesRentTerms(LivingRentTermsModel):
 
 	rent_type_sid = models.SmallIntegerField(default=HOUSE_RENT_TYPES.all_house())
 
-	furniture = models.BooleanField(default=False)
-	refrigerator = models.BooleanField(default=False)
-	tv = models.BooleanField(default=False)
-	washing_machine = models.BooleanField(default=False)
-	conditioner = models.BooleanField(default=False)
-	home_theater = models.BooleanField(default=False)
-
 
 class HousesBodies(BodyModel):
 	class Meta:
 		db_table = 'o_houses_bodies'
 
-	sale_type_sid = models.SmallIntegerField(default=HOUSE_SALE_TYPES.all_house())
 	market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
 
 	condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
@@ -339,9 +313,6 @@ class HousesBodies(BodyModel):
 	entertainment = models.BooleanField(default=False) # розважальні установи
 	sport_center = models.BooleanField(default=False)
 	park = models.BooleanField(default=False)
-	water = models.BooleanField(default=False) # річка, озеро, водойма
-	wood = models.BooleanField(default=False)
-	sea = models.BooleanField(default=False)
 	add_showplaces = models.TextField(null=True)
 
 
@@ -385,13 +356,6 @@ class DachasRentTerms(LivingRentTermsModel):
 	class Meta:
 		db_table = 'o_dachas_rent_terms'
 
-	furniture = models.BooleanField(default=False) # меблі
-	refrigerator = models.BooleanField(default=False)
-	tv = models.BooleanField(default=False)
-	washing_machine = models.BooleanField(default=False)
-	conditioner = models.BooleanField(default=False)
-	home_theater = models.BooleanField(default=False)
-
 
 class DachasBodies(BodyModel):
 	class Meta:
@@ -411,11 +375,9 @@ class DachasBodies(BodyModel):
 	floors_count = models.SmallIntegerField(null=True)
 	rooms_count = models.PositiveSmallIntegerField(null=True)
 	bedrooms_count = models.PositiveSmallIntegerField(null=True)
-	vcs_count = models.SmallIntegerField(null=True)
-
 
 	# vc
-	vc_sid = models.NullBooleanField(default=None)
+	vc_sid = models.SmallIntegerField(default=DACHA_WC.present())
 	vc_loc_sid = models.SmallIntegerField(default=DACHA_WC_LOCATIONS.inside())
 
 	# Опалення
@@ -463,9 +425,6 @@ class DachasBodies(BodyModel):
 	entertainment = models.BooleanField(default=False) # розважальні установи
 	sport_center = models.BooleanField(default=False)
 	park = models.BooleanField(default=False)
-	water = models.BooleanField(default=False) # річка, озеро, водойма
-	wood = models.BooleanField(default=False)
-	sea = models.BooleanField(default=False)
 	add_showplaces = models.TextField(null=True)
 
 
@@ -512,13 +471,6 @@ class CottagesRentTerms(LivingRentTermsModel):
 		db_table = 'o_cottages_rent_terms'
 
 	rent_type_sid = models.SmallIntegerField(default=COTTAGE_RENT_TYPES.all_house())
-
-	furniture = models.BooleanField(default=False) # меблі
-	refrigerator = models.BooleanField(default=False)
-	tv = models.BooleanField(default=False)
-	washing_machine = models.BooleanField(default=False)
-	conditioner = models.BooleanField(default=False)
-	home_theater = models.BooleanField(default=False)
 
 
 class CottagesBodies(BodyModel):
@@ -584,9 +536,6 @@ class CottagesBodies(BodyModel):
 	entertainment = models.BooleanField(default=False) # розважальні установи
 	sport_center = models.BooleanField(default=False)
 	park = models.BooleanField(default=False)
-	water = models.BooleanField(default=False) # річка, озеро, водойма
-	wood = models.BooleanField(default=False)
-	sea = models.BooleanField(default=False)
 	add_showplaces = models.TextField(null=True)
 
 	def check_extended_fields(self):
@@ -628,13 +577,6 @@ class RoomsSaleTerms(SaleTermsModel):
 class RoomsRentTerms(LivingRentTermsModel):
 	class Meta:
 		db_table = 'o_rooms_rent_terms'
-
-	furniture = models.BooleanField(default=False) # меблі
-	refrigerator = models.BooleanField(default=False)
-	tv = models.BooleanField(default=False)
-	washing_machine = models.BooleanField(default=False)
-	conditioner = models.BooleanField(default=False)
-	home_theater = models.BooleanField(default=False)
 
 
 class RoomsBodies(BodyModel):
@@ -697,9 +639,6 @@ class RoomsBodies(BodyModel):
 	entertainment = models.BooleanField(default=False) # розважальні установи
 	sport_center = models.BooleanField(default=False)
 	park = models.BooleanField(default=False)
-	water = models.BooleanField(default=False) # річка, озеро, водойма
-	wood = models.BooleanField(default=False)
-	sea = models.BooleanField(default=False)
 	add_showplaces = models.TextField(null=True)
 
 	def check_extended_fields(self):
