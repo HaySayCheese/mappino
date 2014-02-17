@@ -180,7 +180,8 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
             sidebar.perfectScrollbar("destroy");
             sidebar.perfectScrollbar({
-                wheelSpeed: 20
+                wheelSpeed: 20,
+                useKeyboard: false
             });
 
             angular.element(window).resize(function() {
