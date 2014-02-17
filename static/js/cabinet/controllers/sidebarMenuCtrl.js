@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $location, $compile, Briefs, Tags, Publication) {
+app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $location, $compile, Tags, Publication) {
 
     /**
      * Ініціалізкація компонентів
@@ -24,8 +24,16 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     /**
      * Змінні створення тега
      */
-    $scope.newTag = Tags.getParameters();
+    $scope.newTag = {};
     $scope.tags = [];
+    $scope.tagParameters = Tags.getParameters();
+
+    initBaseTagParameters();
+
+
+    /**
+     * Змінні створення оголошення
+     */
     $scope.newPublication = {
         tid: Publication.getTypes()[0].id,
         for_sale: true,
@@ -44,12 +52,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
             $scope.creatingPublication = false;
 
             btn.button("reset");
-
-            $location.path("/publications/unpublished/" + $scope.newPublication.tid + ":" + data.id);
-
-            if (!$scope.$$phase)
-                $scope.$apply();
-        })
+        });
     };
 
 
@@ -57,8 +60,6 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
      * Логіка загрузки тегів
      */
     function loadTags() {
-        $scope.tags = [];
-
         initScrollBar();
 
         Tags.load(function(data) {
@@ -86,7 +87,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
                                     "<input type='text' class='form-control' ng-model='editingTag.title' required>" +
                                 "</div>" +
                                 "<div class='pick-color-box text-center'>" +
-                                    "<div class='color-item' ng-repeat='color in newTag.colors' ng-click='editingTag.color = color' style='background-color: [[ color ]]'></div>" +
+                                    "<div class='color-item' ng-repeat='color in tagParameters.colors' ng-click='editingTag.color = color' style='background-color: [[ color ]]'></div>" +
                                 "</div>" +
                                 "<span>Пример: </span>" +
                                 "<span class='label' style='background-color: [[ editingTag.color ]]'>[[ editingTag.title ]]</span>" +
@@ -98,7 +99,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
             template = angular.element($compile(htmlText)($scope));
 
             $scope.$watch("editingTag.color", function(newColor) {
-                $scope.editingTag.color_id = $scope.newTag.colors.indexOf(newColor);
+                $scope.editingTag.color_id = $scope.tagParameters.colors.indexOf(newColor);
             });
 
             angular.element(e.target.parentNode.parentNode).after(template);
@@ -110,16 +111,18 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
      * Логіка створення тега
      */
     $scope.createTag = function() {
-        if (!$scope.newTag.tagName && _.isNull($scope.newTag.tagName))
+        if (_.isEmpty($scope.newTag.title))
             return;
 
         var btn = angular.element(".btn-creating").button("loading");
 
-        Tags.create($scope.newTag, function(status) {
+        Tags.create($scope.newTag, function(data) {
             btn.button("reset");
 
-            if (status === "error")
+            if (data === "error")
                 return;
+
+            $scope.tags = data;
 
             $scope.closeTagDialog();
         });
@@ -132,8 +135,10 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     $scope.editTag = function(tag) {
         var btn = angular.element(".btn-creating").button("loading");
 
-        Tags.update(tag, function() {
+        Tags.update(tag, function(data) {
             btn.button("reset");
+
+            $scope.tags = data;
 
             $scope.closeTagDialog();
         });
@@ -144,7 +149,9 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
      * Логіка видалення тега
      */
     $scope.removeTag = function(tag) {
-        Tags.remove(tag);
+        Tags.remove(tag, function(data) {
+            $scope.tags = data;
+        });
     };
 
 
@@ -153,10 +160,22 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
      * після закриття діалога створення тега
      */
     $scope.closeTagDialog = function() {
-        $scope.newTag = angular.copy(Tags.getParameters());
+        initBaseTagParameters();
+
         $scope.creatingTag = false;
         angular.element(".tag-edit-panel.state-edit").remove();
     };
+
+
+    /**
+     * Базові параметри тега
+     */
+    function initBaseTagParameters() {
+        $scope.newTag = {
+            title: $scope.tagParameters.default_title,
+            selected_color: $scope.tagParameters.default_color
+        };
+    }
 
 
     /**

@@ -43,4 +43,12 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
         if ($routeParams.pubId)
             $rootScope.publicationId = $routeParams.pubId;
     });
+
+
+    angular.element(document).ready(function() {
+        setTimeout(function() {
+            angular.element(".wrapper").addClass("fadeInDown")
+        }, 100)
+
+    })
 });

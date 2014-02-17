@@ -25,7 +25,7 @@
     <div class="sidebar-item-detailed-body">
         <div ng-show="showPublication" class="detailed-container">
             <div ng-if='publicationLoaded'>
-                <div ng-include="publicationTemplateUrl"></div>
+                <div ng-include="publicationTemplateUrl" class="animated fadeInDown" ng-init="initLoadFormScripts()"></div>
             </div>
         </div>
 

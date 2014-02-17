@@ -64,26 +64,35 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             // якщо оголошення неопубліковане
             if (!data.head.actual) {
                 $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/" + tid + "/";
-
-                $timeout(function() {
-                    // Послідовність має значення
-                    initInputsChange();
-                    initDropdowns();
-                    initSectionDropdown();
-
-                    $rootScope.loadings.detailed = false;
-                    $scope.showPublication = true;
-
-                    $timeout(function() {
-                        initMap();
-                        initScrollBar();
-                    }, 50);
-                }, 200);
             } else {
                 $scope.publicationTemplateUrl = "/ajax/template/cabinet/published/" + tid + "/";
             }
         });
     }
+
+
+    /**
+     * Ініціюється при інклуді хтмл файла
+     */
+    $scope.initLoadFormScripts = function() {
+        $timeout(function() {
+            // Послідовність має значення
+            initInputsChange();
+            initDropdowns();
+            initSectionDropdown();
+
+            $rootScope.loadings.detailed = false;
+            $scope.showPublication = true;
+
+            $timeout(function() {
+                initMap();
+                initScrollBar();
+            }, 100);
+        }, 500);
+    };
+
+
+
 
 
     /**
@@ -134,7 +143,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             name  = e.currentTarget.name,
             value = e.currentTarget.checked;
 
-        Publication.checkInputs(tid, hid, { f: name, v: id + "," + value });
+        Publication.checkInputs(tid, hid, { f: name, v: id + "," + value }, null);
     };
 
 
@@ -142,9 +151,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * Ініціалізація карти
      */
     function initMap() {
-
-        if (!document.getElementById("publication-map"))
-            return;
 
         var cityInput = document.getElementById("publication-map-input"),
             center = new google.maps.LatLng($scope.publication.head.lat || 50.448159, $scope.publication.head.lng || 30.524654),
@@ -212,8 +218,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
             angular.element(input).trigger("input");
 
-            Publication.checkInputs(tid, hid, { f: "address", v: input.value });
-            Publication.checkInputs(tid, hid, { f: "lat_lng", v: latLng.d + ";" + latLng.e });
+            Publication.checkInputs(tid, hid, { f: "address", v: input.value }, null);
+            Publication.checkInputs(tid, hid, { f: "lat_lng", v: latLng.d + ";" + latLng.e }, null);
         });
     }
 

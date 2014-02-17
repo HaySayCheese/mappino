@@ -28,31 +28,11 @@
     <script type="text/javascript" src="{{ static }}js/libs/angular-notifier.js"></script>
 
 
-    <!-- Logic files include -->
+    <!-- Init angular file -->
     <script type="text/javascript" src="{{ static }}js/cabinet/app.js"></script>
-
-    <script type="text/javascript" src="{{ static }}js/cabinet/services/router.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/services/tagQueries.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/services/briefQueries.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/services/publicationQueries.js"></script>
-
-    <script type="text/javascript" src="{{ static }}js/cabinet/factories/tagsFactory.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/factories/briefsFactory.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/factories/publicationFactory.js"></script>
-
-
-    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/appCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarMenuCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarItemListCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarItemDetailedCtrl.js"></script>
-
-    <script type="text/javascript" src="{{ static }}js/cabinet/directives/selectOnClick.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/directives/focusOnLoad.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/directives/allowOnlyNumber.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/directives/allowOnlyNumberWithoutDot.js"></script>
 </head>
 <body ng-app="MappinoCabinet" ng-controller="AppCtrl">
-    <div class="wrapper">
+    <div class="wrapper animated">
 
         <div class="sidebar-menu" ng-controller="SidebarMenuCtrl">
             <div class="sidebar-menu-header">
@@ -135,10 +115,10 @@
                             <input type='text' class='form-control' ng-model='newTag.title' select-on-click required>
                         </div>
                         <div class='pick-color-box text-center'>
-                            <div class='color-item' ng-repeat='color in newTag.colors' ng-click='newTag.selectedColor = color' style='background-color: [[ color ]]'></div>
+                            <div class='color-item' ng-repeat='color in tagParameters.colors' ng-click='newTag.selected_color = color' style='background-color: [[ color ]]'></div>
                         </div>
                         <span>Пример: </span>
-                        <span class='label' style='background-color: [[ newTag.selectedColor ]]'>[[ newTag.title ]]</span>
+                        <span class='label' style='background-color: [[ newTag.selected_color ]]'>[[ newTag.title ]]</span>
                         <div class='btn-group btn-group-justified'>
                             <div class='btn btn-cancel btn-block' ng-click='closeTagDialog()'>Отмена</div>
                             <div class='btn btn-success btn-block btn-creating' data-loading-text='Создание...' ng-click='createTag()'>Создать</div>
@@ -150,7 +130,11 @@
                             <a href="#!/publications/[[ tag.id ]]">
                                 <span class="tag-icon" style="border-color: [[ tag.color ]]"></span>
                                 [[ tag.title ]]
-                                <span class="badge pull-right" style="color: [[ tag.color ]]" ng-hide="publicationsCount[tag.id] == 0">[[ publicationsCount[tag.id] ]]</span>
+                                <span class="badge pull-right animated" style="color: [[ tag.color ]]"
+                                      ng-class="{ bounceIn: publicationsCount[tag.id] != 0, bounceOut: publicationsCount[tag.id] == 0 }"
+                                      ng-hide="publicationsCount[tag.id] == 0">
+                                    [[ publicationsCount[tag.id] ]]
+                                </span>
                             </a>
                             <div class="menu-block-list-controls">
                                 <span class="menu-icon icon-edit" ng-click="createEditTagDialog(tag, $event)"></span>
@@ -185,8 +169,8 @@
             <div class="sidebar-item-list-body">
 
                 <!-- Item -->
-                <div class="sidebar-item-list-item"
-                     ng-class="{ active: publicationId == brief.tid + ':' + brief.id }"
+                <div class="sidebar-item-list-item animated"
+                     ng-class="{ active: publicationId == brief.tid + ':' + brief.id, flipInX: itemTimerTick >= $index }"
                      ng-repeat="brief in briefs"
                      ng-click="selectBrief(brief)">
 
@@ -226,5 +210,24 @@
             [[ notification.message ]]
         </div>
     </div>
+
+
+    <script type="text/javascript" src="{{ static }}js/cabinet/services/router.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/services/queries.js"></script>
+
+    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/appCtrl.js"></script>
+
+    <script type="text/javascript" src="{{ static }}js/cabinet/factories/tagsFactory.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/factories/briefsFactory.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/factories/publicationFactory.js"></script>
+
+    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarMenuCtrl.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarItemListCtrl.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarItemDetailedCtrl.js"></script>
+
+    <script type="text/javascript" src="{{ static }}js/cabinet/directives/selectOnClick.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/directives/focusOnLoad.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/directives/allowOnlyNumber.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/directives/allowOnlyNumberWithoutDot.js"></script>
 </body>
 </html>

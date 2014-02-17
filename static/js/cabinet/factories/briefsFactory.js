@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Briefs', function($rootScope, briefQueries, Tags) {
+app.factory('Briefs', function($rootScope, Queries, Tags) {
     var briefs = [],
         publicationTypes,
         publicationsCount = $rootScope.publicationsCount;
@@ -17,7 +17,7 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
             var that = this;
             $rootScope.loadings.briefs = true;
 
-            briefQueries.loadBriefs(category).success(function(data) {
+            Queries.Briefs.load(category, function(data) {
                 briefs = data;
 
                 that.updateType();
@@ -25,7 +25,7 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
 
                 $rootScope.loadings.briefs = false;
 
-                typeof callback === 'function' && callback(that.getAll());
+                _.isFunction(callback) && callback(data);
             });
         },
 
@@ -43,16 +43,6 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
 
 
         /**
-         * Вертає масив брифів
-         *
-         * @return {Array} Масив брифік
-         */
-        getAll: function() {
-            return briefs;
-        },
-
-
-        /**
          * Пошук в брифах
          *
          * @param {string}      value       Строка пошука
@@ -62,7 +52,7 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
             var that = this;
             $rootScope.loadings.briefs = true;
 
-            briefQueries.searchInBriefs(value).success(function(data) {
+            Queries.Briefs.search(value, function(data) {
                 briefs = data;
 
                 that.updateType();
@@ -70,7 +60,7 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
 
                 $rootScope.loadings.briefs = false;
 
-                typeof callback === 'function' && callback(that.getAll());
+                _.isFunction(callback) && callback(data);
             });
         },
 
@@ -97,20 +87,20 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
 
             _.each(briefs, function(brief, index) {
 
-                if (_.isNumber(_.first(brief.tags))) {
-                    _.each(brief.tags, function(id, index) {
-                        brief.tags[index] = { id: id }
+                if (_.isNumber(_.first(brief.tags))) {              // Якщо елемент в масиві - число
+                    _.each(brief.tags, function(id, index) {        // пробігаємось по них
+                        brief.tags[index] = { id: id }              // і формуємо обєкти
                     });
                 }
 
                 _.each(brief.tags, function(tag, index, list) {
 
-                    if (tag.id === lastRemovedTagId) {
-                        list.splice(index, 1);
-                        return;
+                    if (tag.id === lastRemovedTagId) {              // Якщо 'id' тега співпадає з останнім видаленим
+                        list.splice(index, 1);                      // то видаляємо його з тегів брифа
+                        return;                                     // ну і капут
                     }
-
-                    list[index] = _.first(_.where(tags, { id: tag.id }));
+                                                                          // Ну а якшо 'id' не співпадає з останнім видаленим
+                    list[index] = _.first(_.where(tags, { id: tag.id })); // то оновлюємо теги брифа
                 });
             });
         },
@@ -131,33 +121,43 @@ app.factory('Briefs', function($rootScope, briefQueries, Tags) {
 
             _.each(briefs, function(brief, index, list) {
 
-                if (brief.tid == tid && brief.id == id && key !== "tag") {
-                    list[index][key] = value;
-                    return;
+                if (brief.tid == tid && brief.id == id && key !== "tag") {          // Якщо 'tid' і 'id' спіпадають а ключ не 'tag'
+                    list[index][key] = value;                                       // то оновлюємо параметр який передали в 'key'
+                    return;                                                         // ну і капут
                 }
 
-                if (brief.tid == tid && brief.id == id && key === "tag") {
-                    var tag      = value.split(","),
+                if (brief.tid == tid && brief.id == id && key === "tag") {          // А вот якщо ключ таки 'tag' то:
+                    var tag      = value.split(","),                                // змінні...
                         tagId    = tag[0],
                         tagState = tag[1],
                         publicationsCount = $rootScope.publicationsCount;
 
-                    if (_.include(["true", true], tagState)) {
-                        list[index].tags.push(Tags.getTagById(tagId));
+                    if (_.include(["true", true], tagState)) {                      // якщо тег був доданий
+                        list[index].tags.push(Tags.getTagById(tagId));              // то додаємо його в теги брифа
 
-                        !publicationsCount[tagId]
+                        !publicationsCount[tagId]                                   // це оновлення лічильника в меню на сайті
                             ? (publicationsCount[tagId] = 0, publicationsCount[tagId] += 1)
                             : publicationsCount[tagId] +=1;
-                    } else {
-                        list[index].tags.splice(list[index].tags.indexOf(Tags.getTagById(tagId)), 1);
+                    } else {                                                        // но якшо тег був видалений
+                        list[index].tags.splice(list[index].tags.indexOf(Tags.getTagById(tagId)), 1); // видаляємо з тегів брифа
 
-                        (!publicationsCount[tagId] || publicationsCount[tagId] < 0)
+                        (!publicationsCount[tagId] || publicationsCount[tagId] < 0) // ну і о5 оновлюємо лічильник в меню на сайті
                             ? publicationsCount[tagId] = 0
                             : publicationsCount[tagId] -=1;
                     }
                 }
 
             });
+        },
+
+
+        /**
+         * Вертає масив брифів
+         *
+         * @return {Array} Масив брифік
+         */
+        getAll: function() {
+            return briefs;
         }
     }
 

@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Publication', function($rootScope, publicationQueries, $location, lrNotifier, Briefs) {
+app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, Briefs) {
 
     var publication = [],
         channel = lrNotifier('mainChannel'),
@@ -35,13 +35,12 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
         load: function(tid, id, callback) {
             var that = this;
 
-            publicationQueries.loadPublication(tid, id).success(function(data) {
-
+            Queries.Publications.load(tid, id, function(data) {
                 publication = data;
 
                 that.setDefaults();
 
-                typeof callback === 'function' && callback(that.getAll());
+                _.isFunction(callback) && callback(that.getAll());
             });
         },
 
@@ -53,7 +52,9 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
          * @param {function} callback
          */
         create: function(publication, callback) {
-            publicationQueries.createPublication(publication).success(function(data) {
+            publication.tid = parseInt(publication.tid);
+
+            Queries.Publications.create(publication, function(data) {
 
                 if ($rootScope.routeSection === "unpublished")
                     Briefs.add({
@@ -66,9 +67,12 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
                         tid: publication.tid
                     });
 
+                $location.path("/publications/unpublished/" + publication.tid + ":" + data.id);
+
+                publicationsCount['published']   += 1;
                 publicationsCount['unpublished'] += 1;
 
-                typeof callback === 'function' && callback(data);
+                _.isFunction(callback) && callback(data);
             });
         },
 
@@ -81,7 +85,7 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
          * @param {function} callback
          */
         publish: function(tid, id, callback) {
-            publicationQueries.publish(tid, id).success(function(data) {
+            Queries.Publications.publish(tid, id, function(data) {
                 var briefs = Briefs.getAll();
 
                 _.each(briefs, function(brief, index, list) {
@@ -96,7 +100,7 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
                 publicationsCount['unpublished'] -= 1;
                 publicationsCount['published']   += 1;
 
-                typeof callback === 'function' && callback(data);
+                _.isFunction(callback) && callback(data);
             });
         },
 
@@ -131,12 +135,12 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
             var inputName   = data.f,
                 inputValue  = data.v;
 
-            publicationQueries.checkInputs(tid, id, data).success(function(data) {
+            Queries.Publications.check(tid, id, data, function(data) {
 
                 if (_.contains(["title", "for_sale", "for_rent", "tag"], inputName))
                     Briefs.updateBriefOfPublication(tid, id, inputName, data.value ? data.value : inputValue);
 
-                typeof callback === 'function' && callback(data.value ? data.value : inputValue, data.code);
+                _.isFunction(callback) && callback(data.value ? data.value : inputValue, data.code);
             });
         },
 
@@ -150,8 +154,8 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
          * @param {function} callback
          */
         uploadPhotos: function(tid, hid, data, callback) {
-            publicationQueries.uploadPhotos(tid, hid, data).success(function(data) {
-                typeof callback === 'function' && callback(data);
+            Queries.Publications.uploadPhotos(tid, hid, data, function(data) {
+                _.isFunction(callback) && callback(data);
             });
         },
 
@@ -165,14 +169,14 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
          * @param {function} callback
          */
         removePhoto: function(tid, hid, pid, callback) {
-            publicationQueries.removePhoto(tid, hid, pid).success(function(data) {
+            Queries.Publications.removePhoto(tid, hid, pid, function(data) {
 
                 _.each(publication.photos, function(photo, index, list) {
                     if (photo.id === pid)
                         list.splice(index, 1);
                 });
 
-                typeof callback === 'function' && callback(data);
+                _.isFunction(callback) && callback(data);
             });
         },
 
@@ -191,7 +195,7 @@ app.factory('Publication', function($rootScope, publicationQueries, $location, l
          * Отримання кількості оголошень
          */
         getCounts: function() {
-            publicationQueries.getPublicationsCount().success(function(data) {
+            Queries.Publications.counts(function(data) {
                 publicationsCount = $rootScope.publicationsCount = data;
             });
         },

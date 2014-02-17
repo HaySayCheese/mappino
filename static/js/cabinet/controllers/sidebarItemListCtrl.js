@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $timeout, Briefs) {
+app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $timeout, $interval, Briefs) {
 
     $scope.searchQuery = "";
     $scope.briefs = [];
@@ -61,6 +61,8 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     });
 
 
+    $scope.itemTimerTick = 0;
+
     /**
      * Клік по бріфу в списку
      */
@@ -79,11 +81,19 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
      */
     function loadBriefsInit() {
         $scope.briefs = [];
+        $scope.itemTimerTick = 0;
+        var interval = null;
 
         initScrollBar();
 
         Briefs.load($rootScope.routeSection, function(data) {
             $scope.briefs = data;
+
+            interval = $interval(function() {
+                $scope.itemTimerTick += 1;
+                if ($scope.itemTimerTick >= data.length)
+                    $interval.cancel(interval)
+            }, 100);
 
             initScrollBar();
         });
