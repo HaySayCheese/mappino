@@ -14,8 +14,8 @@ if not DEBUG:
 else:
 #   МЕГА ПАТЧ
 #	pypy psycopg2cffi compatible hook
-	#from psycopg2cffi import compat
-	#compat.register()
+	from psycopg2cffi import compat
+	compat.register()
 
 	# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 	import os
@@ -27,8 +27,8 @@ else:
 	#ROBOT_MAIL_ACCOUNT = 'no-reply@binno.com.ua' # todo: change me to real
 
 	SECRET_KEY = '*m9ye0^!5otq35^(rb1^5mau92$6xen5!y69c$9e20yr0etexi'
-	TEMPLATE_DEBUG = True
-	ALLOWED_HOSTS = []
+	TEMPLATE_DEBUG = DEBUG
+	ALLOWED_HOSTS = ['127.0.0.1']
 
 	SMS_GATE_LOGIN = passwords.SMS_GATE_LOGIN
 	SMS_GATE_PASSWORD = passwords.SMS_GATE_PASSWORD
@@ -66,6 +66,9 @@ else:
 	    'PORT': 9306
 	}
 
+	SESSION_COOKIE_AGE = 1209600
+	SESSION_SAVE_EVERY_REQUEST = True
+
 	# celery config
 	CELERY_REDIS_HOST = REDIS_DATABASES['celery']['HOST']
 	CELERY_REDIS_PORT = REDIS_DATABASES['celery']['PORT']
@@ -73,6 +76,12 @@ else:
 	BROKER_URL = 'redis://' + str(CELERY_REDIS_HOST) + ':' + str(CELERY_REDIS_PORT) + '/0'
 	BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 60*60*4}
 	CELERY_RESULT_BACKEND = BROKER_URL
+
+	SESSION_ENGINE = 'redis_sessions.session'
+	SESSION_REDIS_HOST = REDIS_DATABASES['sessions']['HOST']
+	SESSION_REDIS_PORT = REDIS_DATABASES['sessions']['PORT']
+	SESSION_REDIS_DB = 0
+	SESSION_REDIS_PREFIX = 'ses'
 
 
 	INSTALLED_APPS = (
@@ -118,7 +127,7 @@ else:
 	STATIC_URL = 'http://localhost/mappino_static/'
 
 	MEDIA_URL = 'http://localhost/mappino_media/'
-	MEDIA_ROOT = 'D:/Projects/mappino/media/'
+	MEDIA_ROOT = '/media/work/web-projects/mappino/media/'
 
 	LOGGING = {
 		'version': 1,
@@ -137,7 +146,7 @@ else:
 		    'sms_dispatcher_limits_file': {
 				'level': 'INFO',
 		        'class': 'logging.handlers.TimedRotatingFileHandler',
-		        'filename': 'D:/Projects/mappino/logs/sms_dispatcher/limits.log',
+		        'filename': 'logs/sms_dispatcher/limits.log',
 		        'when': 'W6',
 		        'backupCount': 24,
 		        'formatter': 'simple'
@@ -145,7 +154,7 @@ else:
 		    'sms_dispatcher_sender_file': {
 				'level': 'INFO',
 		        'class': 'logging.handlers.TimedRotatingFileHandler',
-		        'filename': 'D:/Projects/mappino/logs/sms_dispatcher/sended.log',
+		        'filename': 'logs/sms_dispatcher/sended.log',
 		        'when': 'D',
 		        'backupCount': 60,
 		        'formatter': 'simple'
