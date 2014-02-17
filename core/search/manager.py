@@ -75,7 +75,7 @@ class SearchManager(object):
 			pipe = self.redis.pipeline()
 			pipe.set(key, task.id)
 			pipe.expire(key, self.update_interval)
-			pipe.__execute_query()
+			pipe.execute()
 		except Exception as e:
 			# Всі виключні ситуації подавляються умисно.
 			# Таким чином, навіть якщо celery чи sphinx відпадуть — це ніяк не вплине на роботу інших,
