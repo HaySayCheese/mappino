@@ -1,6 +1,5 @@
 #coding=utf-8
 from collective.constants import AbstractConstant
-from core.publications.objects_constants.rooms import ROOMS_WC_LOCATION
 
 
 class TradeBuildingTypes(AbstractConstant):

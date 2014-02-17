@@ -2,6 +2,26 @@
 from collective.constants import AbstractConstant
 
 
+class DachaWC(AbstractConstant):
+	def __init__(self):
+		super(DachaWC, self).__init__()
+		self.set_ids({
+			'present': 0,
+			'absent': 1,
+			'unknown': 2,
+		})
+
+	def present(self):
+		return self.ids['present']
+
+	def absent(self):
+		return self.ids['absent']
+
+	def unknown(self):
+		return self.ids['unknown']
+DACHA_WC = DachaWC()
+
+
 class WCLocation(AbstractConstant):
 	def __init__(self):
 		super(WCLocation, self).__init__()
