@@ -23,7 +23,7 @@
     }
 
     .sidebar-item-list-body {
-        .size(100%, calc(~"100% - 65px"));
+        .size(100%, ~"calc(100% - 65px)");
         position: relative;
         overflow: hidden;
 
@@ -38,7 +38,7 @@
         }
 
         .briefs-empty {
-            .size(calc(~"100% - 70px"), 150px);
+            .size(~"calc(100% - 70px)", 150px);
             position: relative;
 
             margin: 35px;
@@ -73,7 +73,6 @@
     border-bottom: 1px dashed @gray-lighter;
     .transition(~"background 0.1s ease");
     .clearfix();
-    .opacity(0);
 
     &:hover,
     &:focus,

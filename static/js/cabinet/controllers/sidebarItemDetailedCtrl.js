@@ -87,7 +87,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $timeout(function() {
                 initMap();
                 initScrollBar();
-            }, 100);
+            }, 300);
         }, 500);
     };
 
