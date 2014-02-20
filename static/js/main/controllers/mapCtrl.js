@@ -185,7 +185,7 @@ app.controller('MapCtrl', function($scope, $location, $http) {
             swLat = $scope.filters.viewport.ta.b,
             swLng = $scope.filters.viewport.ta.d,
 
-            viewport = "&ne=" + neLat + ";" + neLng + "&sw=" + swLat + ";" + swLng;
+            viewport = "&ne=" + neLat + ":" + neLng + "&sw=" + swLat + ":" + swLng;
 
         $http({
             url: "ajax/api/markers/?tids=1;2;3" + viewport,
