@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('MapCtrl', function($scope, $location) {
+app.controller('MapCtrl', function($scope, $location, $http) {
 
     /**
      * Змінні
@@ -62,6 +62,7 @@ app.controller('MapCtrl', function($scope, $location) {
         // 'idle' - евент карти який спрацьову при загрузці всіх тайлів і промальовці карти
         google.maps.event.addListener(map, 'idle', function() {
             mapIdleCount++;
+            $scope.filters.viewport = map.getBounds();
             if (mapIdleCount > 1) {
                 $scope.filters.latLng   = map.getCenter().toUrlValue();
                 $scope.filters.zoom     = map.getZoom();
@@ -70,6 +71,7 @@ app.controller('MapCtrl', function($scope, $location) {
                     $scope.$apply();
 
                 setMapParametersToUrl();
+                loadData();
             }
         });
 
@@ -146,7 +148,7 @@ app.controller('MapCtrl', function($scope, $location) {
                 if (filters[key] != "" && filters[key] != false)
                     $location.search(key, filters[key]);
 
-                if (filters[key] === false || filters[key] == "")
+                if (filters[key] === false || filters[key] == "" || key == "viewport")
                     $location.search(key, null);
             }
         }
@@ -178,10 +180,16 @@ app.controller('MapCtrl', function($scope, $location) {
      * Функція яка ініціює загрузку даних
      * */
     function loadData() {
-        propertyQuery.getPropertysByFilters($scope.filters).success(function() {
-            setTimeout(function() {
-                console.log("Loaded");
-            }, 2000);
+        var neLat = $scope.filters.viewport.ga.b,
+            neLng = $scope.filters.viewport.ga.d,
+            swLat = $scope.filters.viewport.ta.b,
+            swLng = $scope.filters.viewport.ta.d,
+
+            viewport = "&ne=" + neLat + ";" + neLng + "&sw=" + swLat + ";" + swLng;
+
+        $http({
+            url: "ajax/api/markers/?tids=1;2;3" + viewport,
+            method: "GET"
         });
     }
 
