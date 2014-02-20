@@ -186,7 +186,7 @@ app.controller('MapCtrl', function($scope, $location, $http) {
      * */
     function loadData() {
         var neLat = $scope.filters.viewport.neLat,
-            neLng = $scope.filters.viewport.neLat,
+            neLng = $scope.filters.viewport.neLng,
             swLat = $scope.filters.viewport.swLat,
             swLng = $scope.filters.viewport.swLng,
 
