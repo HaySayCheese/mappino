@@ -188,7 +188,7 @@ app.controller('MapCtrl', function($scope, $location, $http) {
             viewport = "&ne=" + neLat + ":" + neLng + "&sw=" + swLat + ":" + swLng;
 
         $http({
-            url: "ajax/api/markers/?tids=1;2;3" + viewport,
+            url: "ajax/api/markers/?tid=0" + viewport,
             method: "GET",
             headers: {
                 'X-CSRFToken': "fat32tsg4363"
