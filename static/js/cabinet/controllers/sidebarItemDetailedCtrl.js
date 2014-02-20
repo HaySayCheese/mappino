@@ -264,10 +264,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     $scope.publishPublication = function() {
         $scope.showValidationMessages = true;
 
-        if ($scope.form.publication.$invalid) {
+        if (!$scope.form.publication.$valid) {
             var checkboxElement = angular.element("input[type='checkbox'].ng-invalid")[0],
                 inputElement    = angular.element("textarea.ng-invalid, input.ng-invalid")[0];
-
 
             if (checkboxElement)
                 checkboxElement.parentNode.scrollIntoView(true);
@@ -275,7 +274,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 inputElement.scrollIntoView(true);
                 inputElement.focus();
             }
-
 
             return;
         }
