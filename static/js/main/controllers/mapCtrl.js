@@ -189,7 +189,10 @@ app.controller('MapCtrl', function($scope, $location, $http) {
 
         $http({
             url: "ajax/api/markers/?tids=1;2;3" + viewport,
-            method: "GET"
+            method: "GET",
+            headers: {
+                'X-CSRFToken': "fat32tsg4363"
+            }
         });
     }
 
