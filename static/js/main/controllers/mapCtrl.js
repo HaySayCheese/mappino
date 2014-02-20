@@ -62,7 +62,12 @@ app.controller('MapCtrl', function($scope, $location, $http) {
         // 'idle' - евент карти який спрацьову при загрузці всіх тайлів і промальовці карти
         google.maps.event.addListener(map, 'idle', function() {
             mapIdleCount++;
-            $scope.filters.viewport = map.getBounds();
+            $scope.filters.viewport = {
+                neLat: map.getBounds().getNorthEast().lat(),
+                neLng: map.getBounds().getNorthEast().lng(),
+                swLat: map.getBounds().getSouthWest().lat(),
+                swLng: map.getBounds().getSouthWest().lng()
+            };
             if (mapIdleCount > 1) {
                 $scope.filters.latLng   = map.getCenter().toUrlValue();
                 $scope.filters.zoom     = map.getZoom();
@@ -180,10 +185,10 @@ app.controller('MapCtrl', function($scope, $location, $http) {
      * Функція яка ініціює загрузку даних
      * */
     function loadData() {
-        var neLat = $scope.filters.viewport.ga.b,
-            neLng = $scope.filters.viewport.ga.d,
-            swLat = $scope.filters.viewport.ta.b,
-            swLng = $scope.filters.viewport.ta.d,
+        var neLat = $scope.filters.viewport.neLat,
+            neLng = $scope.filters.viewport.neLat,
+            swLat = $scope.filters.viewport.swLat,
+            swLng = $scope.filters.viewport.swLng,
 
             viewport = "&ne=" + neLat + ":" + neLng + "&sw=" + swLat + ":" + swLng;
 
