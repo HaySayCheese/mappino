@@ -1,12 +1,14 @@
 #coding=utf-8
+import copy
+
 import abc
 from django.core.exceptions import SuspiciousOperation
 
 from core.markers_servers.exceptions import TooBigTransaction, SerializationError, DeserializationError
 from core.markers_servers.utils import DegreeSegmentPoint, Point, SegmentPoint, DegreePoint
-from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, MARKET_TYPES, CURRENCIES, HEATING_TYPES, \
-	LIVING_RENT_PERIODS
+from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 from mappino.wsgi import redis_connections
+
 
 
 class BaseMarkersServer(object):
@@ -24,29 +26,37 @@ class BaseMarkersServer(object):
 
 
 	def markers(self, ne, sw, condition):
-		current = DegreeSegmentPoint(ne.lat, ne.lng)
+		start = DegreeSegmentPoint(ne.lat, ne.lng)
 		stop = DegreeSegmentPoint(sw.lat, sw.lng)
 
-		if current.degree.lng > stop.degree.lng:
-			current.degree.lng, stop.degree.lng = stop.degree.lng, current.degree.lng
-		elif current.segment.lng > stop.segment.lng:
-			current.segment.lng, stop.segment.lng = stop.segment.lng, current.segment.lng
+		# Мапи google деколи повертають координати так, що stop опиняється перед start,
+		# і тоді алгоритм починає пробіг по всьому глобусу і падає на перевірці розміру транзакції.
+		# Дані перетворення видозмінюють координати так, щоб start завжди був перед stop,
+		# неважливо в якому порядку вони прийдуть.
+		if start.degree.lng > stop.degree.lng:
+			start.degree.lng, stop.degree.lng = stop.degree.lng, start.degree.lng
+		elif start.segment.lng > stop.segment.lng:
+			start.segment.lng, stop.segment.lng = stop.segment.lng, start.segment.lng
 
-		if current.degree.lat < stop.degree.lat:
-			current.degree.lat, stop.degree.lat = stop.degree.lat, current.degree.lat
-		elif current.segment.lat < stop.segment.lat:
-			current.segment.lat, stop.segment.lat = stop.segment.lat, current.segment.lat
+		if start.degree.lat < stop.degree.lat:
+			start.degree.lat, stop.degree.lat = stop.degree.lat, start.degree.lat
+		elif start.segment.lat < stop.segment.lat:
+			start.segment.lat, stop.segment.lat = stop.segment.lat, start.segment.lat
 
 
-		digests = []
+		segments_digests = []
+		current = copy.deepcopy(start)
 		while True:
+			current.degree.lng = start.degree.lng
+			current.segment.lng = start.segment.lng
+
 			while True:
-				digests.append(self.__segment_digest(current.degree, current.segment))
+				segments_digests.append(self.__segment_digest(current.degree, current.segment))
 
 				# Заборонити одночасну вибірку маркерів з великої к-сті сегментів.
 				# Таким чином можна уберегтись від занадто великих транзакцій і накопичування
 				# великої к-сті запитів від інших користувачів в черзі на обробку.
-				if len(digests) > 5*5:
+				if len(segments_digests) > 5*5:
 					raise TooBigTransaction()
 
 				if (current.degree.lng == stop.degree.lng) and (current.segment.lng == stop.segment.lng):
@@ -58,26 +68,25 @@ class BaseMarkersServer(object):
 			current.dec_segment_lat()
 
 
-		results = {}
-		for digest in digests:
-			records_ids = self.redis.hkeys(digest)
+		data = {}
+		for digest in segments_digests:
+			degree = self.__degree_from_digest(digest)
 
+			coordinates = self.redis.hkeys(digest)
 			pipe = self.redis.pipeline()
-			for rid in records_ids:
-				pipe.hget(digest, rid)
+			for c in coordinates:
+				pipe.hget(digest, c)
 
-			degrees = self.__degrees_from_digest(digest)
-			records = pipe.execute()
-			if records:
-				results[degrees] = {}
+			markers = pipe.execute()
+			if markers:
+				data[degree] = {}
 
-			for record in zip(records_ids, records):
+			for record in zip(coordinates, markers):
 				coordinates = record[0]
-				data = record[1]
+				item = record[1]
 
-				results[degrees][coordinates] = data
-
-		return results
+				data[degree][coordinates] = self.deserialize_publication_record(item, brief=True)
+		return data
 
 
 
@@ -105,7 +114,7 @@ class BaseMarkersServer(object):
 		        str(segment.lng)
 
 
-	def __degrees_from_digest(self, digest):
+	def __degree_from_digest(self, digest):
 		index = digest.find(self.digest_separator)
 		if index == -1:
 			raise DeserializationError()
@@ -123,8 +132,9 @@ class BaseMarkersServer(object):
 	def serialize_publication_record(self, record):
 		return
 
+
 	@abc.abstractmethod
-	def deserialize_publication_record(self, record):
+	def deserialize_publication_record(self, record, brief=False):
 		return
 
 
@@ -159,7 +169,7 @@ class FlatsMarkersServer(BaseMarkersServer):
 		return ''
 
 
-	def deserialize_publication_record(self, record):
+	def deserialize_publication_record(self, record, brief=True):
 		return ''
 
 
@@ -188,7 +198,7 @@ class ApartmentsMarkersServer(BaseMarkersServer):
 		return ''
 
 
-	def deserialize_publication_record(self, record):
+	def deserialize_publication_record(self, record, brief=True):
 		return ''
 
 
@@ -214,123 +224,131 @@ class HousesMarkersServer(BaseMarkersServer):
 
 
 	def serialize_publication_record(self, record):
-		"""
-		format: int - hid,
-				separator,
-				bitmask:
-					0 | 1 - record is for sale
-					0 | 1 - record is for rent
-		"""
-
-		sale_data = ''
-		sale_bitmask = ''
-		if record.for_sale:
-			sale_currency = record.sale_terms.currency_sid
-			if CURRENCIES.dol() == sale_currency:
-				sale_bitmask += '00'
-			elif CURRENCIES.uah() == sale_currency:
-				sale_bitmask += '01'
-			elif CURRENCIES.eur() == sale_currency:
-				sale_bitmask += '10'
-			else:
-				raise SerializationError('invalid sale currency_sid.')
-
-			# next fields can be None
-			if record.sale_terms.price is not None:
-				sale_data += str(record.sale_terms.price) + self.separator
-			else:
-				raise SerializationError('None-value can not be serialized.')
-
-
-
-		rent_data = ''
-		rent_bitmask = ''
-		if record.for_rent:
-			rent_period = record.rent_terms.period_sid
-			if LIVING_RENT_PERIODS.daily() == rent_period:
-				rent_bitmask += '00'
-			elif LIVING_RENT_PERIODS.monthly() == rent_period:
-				rent_bitmask += '01'
-			elif LIVING_RENT_PERIODS.long_period() == rent_period:
-				rent_bitmask += '10'
-			else:
-				raise SerializationError('invalid rent period_sid.')
-
-			rent_currency = record.rent_terms.currency_sid
-			if CURRENCIES.dol() == rent_currency:
-				rent_bitmask += '00'
-			elif CURRENCIES.uah() == rent_currency:
-				rent_bitmask += '01'
-			elif CURRENCIES.eur() == rent_currency:
-				rent_bitmask += '10'
-			else:
-				raise SerializationError('invalid rent currency_sid.')
-
-			rent_bitmask += '1' if record.rent_terms.family else '0'
-			rent_bitmask += '1' if record.rent_terms.foreigners else '0'
-
-			# next fields can be None
-			if record.rent_terms.price is not  None:
-				rent_data += str(record.rent_terms.price) + self.separator
-			else:
-				raise SerializationError('None-value can not be serialized.')
-
-			# Не обов’язкове поле
-			if record.rent_terms.persons_count is not None:
-				rent_data += str(record.rent_terms.persons_count) + self.separator
-			else:
-				rent_data += self.separator
-
-
 		# common terms
-		common_data = ''
-		common_bitmask = ''
-
-		common_bitmask += '1' if record.for_sale else '0'
-		common_bitmask += '1' if record.for_rent else '0'
-
-		common_bitmask += '1' if record.body.electricity else '0'
-		common_bitmask += '1' if record.body.gas else '0'
-		common_bitmask += '1' if record.body.sewerage else '0'
-		common_bitmask += '1' if record.body.hot_water else '0'
-		common_bitmask += '1' if record.body.cold_water else '0'
-
-		market_type = record.body.market_type_sid
-		if MARKET_TYPES.new_building() == market_type:
-			common_bitmask += '0'
-		elif MARKET_TYPES.secondary_market() == market_type:
-			common_bitmask += '1'
-		else:
-			raise SerializationError('invalid market_type_sid.')
-
-		heating = record.body.heating_type_sid
-		if HEATING_TYPES.individual() == heating:
-			common_bitmask += '00'
-		elif HEATING_TYPES.central() == heating:
-			common_bitmask += '01'
-		elif HEATING_TYPES.other() == heating:
-			common_bitmask += '10'
-		elif HEATING_TYPES.none() == heating:
-			common_bitmask += '11'
-		else:
-			raise SerializationError('invalid heating_type_sid.')
-
-		# next fields can be None
-		common_data += str(record.body.rooms_count) + self.separator
-		common_data += str(record.body.floors_count) + self.separator
+		#-- bitmask
+		bitmask = ''
+		bitmask += '1' if record.for_sale else '0'
+		bitmask += '1' if record.for_rent else '0'
+		bitmask += '1' if record.body.electricity else '0'
+		bitmask += '1' if record.body.gas else '0'
+		bitmask += '1' if record.body.sewerage else '0'
+		bitmask += '1' if record.body.hot_water else '0'
+		bitmask += '1' if record.body.cold_water else '0'
+		bitmask += bin(record.body.market_type_sid)[2:] # 1 bit
+		bitmask += bin(record.body.heating_type_sid)[2:] # 2 bits
+		if len(bitmask) != 10:
+			raise SerializationError('Bitmask corruption. Potential deserialization error.')
 
 
-		bitmask = common_bitmask + sale_bitmask + rent_bitmask
-		data = common_data + sale_data + rent_data
+		#-- data
+		data = ''
+		data += str(record.id) + self.separator
 
-		record_data = str(int(bitmask, 2)) + self.separator + data
+		# WARNING: next fields can be None
+		if record.body.rooms_count is not None:
+			data += str(record.body.rooms_count) + self.separator
+		else: data += self.separator
+
+		if record.body.floors_count is not None:
+			data += str(record.body.floors_count) + self.separator
+		else: data += self.separator
+
+
+		#-- sale terms
+		if record.for_sale:
+			bitmask += bin(record.sale_terms.currency_sid)[2:] # 2 bits
+			if len(bitmask) != 12:
+				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+
+			# REQUIRED field
+			if record.sale_terms.price is not None:
+				data += str(record.sale_terms.price) + self.separator
+			else:
+				raise SerializationError('Sale price is required.')
+
+
+		#-- rent terms
+		if record.for_rent:
+			bitmask += bin(record.rent_terms.period_sid)[2:] # 2 bits
+			bitmask += bin(record.rent_terms.currency_sid)[2:] # 2 bits
+			bitmask += '1' if record.rent_terms.family else '0'
+			bitmask += '1' if record.rent_terms.foreigners else '0'
+			if len(bitmask) not in (18, 16):
+				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+
+			# REQUIRED field
+			if record.rent_terms.price is not  None:
+				data += str(record.rent_terms.price) + self.separator
+			else:
+				raise SerializationError('Rent price is required.')
+
+			# WARNING: next fields can be None
+			if record.rent_terms.persons_count is not None:
+				data += str(record.rent_terms.persons_count) + self.separator
+			else:
+				data += self.separator
+
+
+		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
+		# Це пов’язано із тим, що при десериалізації старші біти, втрачаються, якщо вони нулі.
+		# Доповнити маску неможливо, оскільки для доповнення слід знати точну к-сть біт маски,
+		# а це залежить від того чи продаєтсья об’єкт, чи здаєтсья в оренду, чи і те і інше.
+		bitmask = bitmask[::-1]
+
+		record_data = data + self.separator +  str(int(bitmask, 2))
 		if record_data[-1] == self.separator:
 			record_data = record_data[:-1]
 		return record_data
 
 
-	def deserialize_publication_record(self, record):
-		return ''
+	def deserialize_publication_record(self, record_data, brief=False):
+		parts = record_data.split(self.separator)
+		if brief:
+			# Подати коротку форму для передачі разом із маркером на клієнт.
+			return {
+				'id': parts[0],
+			    # todo: додати сюди відомості про об’єкт в залежності від фільтрів
+			}
+
+		bitmask = bin(int(parts[-1]))[:2]
+		data = {
+			'id': parts[0],
+			'rooms_count':  parts[1] if parts[1] != '' else None,
+			'floors_count': parts[2] if parts[2] != '' else None,
+
+		    'electricity': (bitmask[-3] == '1'),
+			'gas':         (bitmask[-4] == '1'),
+			'sewerage':    (bitmask[-5] == '1'),
+			'hot_water':   (bitmask[-6] == '1'),
+			'cold_water':  (bitmask[-7] == '1'),
+		}
+
+		if bitmask[-1] == '1':
+			# sale terms
+			data.update({
+				'for_sale': True,
+			    'sale_price': parts[3],
+			})
+
+			# check for rent terms
+			if bitmask[-2] == '1':
+				data.update({
+					'for_rent': True,
+					'rent_price': parts[4],
+				    'persons_count': parts[5] if parts[5] != '' else None
+				})
+
+		else:
+			if bitmask[-2] == '1':
+				# rent terms
+				data.update({
+					'for_rent': True,
+					'rent_price': parts[4],
+				    'persons_count': parts[5] if parts[5] != '' else None
+				})
+		return data
+
+
 
 	def record_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
@@ -380,7 +398,7 @@ class CottagesMarkersServer(BaseMarkersServer):
 		return data
 
 
-	def deserialize_publication_record(self, record):
+	def deserialize_publication_record(self, record, brief=True):
 		return ''
 
 	def record_queryset(self, hid):
@@ -408,7 +426,7 @@ class DachasMarkersServer(BaseMarkersServer):
 		return ''
 
 
-	def deserialize_publication_record(self, record):
+	def deserialize_publication_record(self, record, brief=True):
 		return ''
 
 
@@ -437,7 +455,7 @@ class RoomsMarkersServer(BaseMarkersServer):
 		return ''
 
 
-	def deserialize_publication_record(self, record):
+	def deserialize_publication_record(self, record, brief=True):
 		return ''
 
 
@@ -466,7 +484,7 @@ class TradesMarkersServer(BaseMarkersServer):
 		return ''
 
 
-	def deserialize_publication_record(self, record):
+	def deserialize_publication_record(self, record, brief=True):
 		return ''
 
 
@@ -495,7 +513,7 @@ class OfficesMarkersServer(BaseMarkersServer):
 		return ''
 
 
-	def deserialize_publication_record(self, record):
+	def deserialize_publication_record(self, record, brief=True):
 		return ''
 
 
@@ -524,7 +542,7 @@ class WarehousesMarkersServer(BaseMarkersServer):
 		return ''
 
 
-	def deserialize_publication_record(self, record):
+	def deserialize_publication_record(self, record, brief=True):
 		return ''
 
 
@@ -553,7 +571,7 @@ class BusinessesMarkersServer(BaseMarkersServer):
 		return ''
 
 
-	def deserialize_publication_record(self, record):
+	def deserialize_publication_record(self, record, brief=True):
 		return ''
 
 
@@ -582,7 +600,7 @@ class CateringsMarkersServer(BaseMarkersServer):
 		return ''
 
 
-	def deserialize_publication_record(self, record):
+	def deserialize_publication_record(self, record, brief=True):
 		return ''
 
 
@@ -611,7 +629,7 @@ class GaragesMarkersServer(BaseMarkersServer):
 		return ''
 
 
-	def deserialize_publication_record(self, record):
+	def deserialize_publication_record(self, record, brief=True):
 		return ''
 
 
@@ -640,7 +658,7 @@ class LandsMarkersServer(BaseMarkersServer):
 		return ''
 
 
-	def deserialize_publication_record(self, record):
+	def deserialize_publication_record(self, record, brief=True):
 		return ''
 
 
