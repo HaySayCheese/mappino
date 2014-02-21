@@ -7,6 +7,9 @@ class Point(object):
 	Не проводить жодних конвертацій типів даних
 	"""
 	def __init__(self, lat, lng):
+		if not lat: raise ValueError('Empty @lat.')
+		if not lng: raise ValueError('Empty @lng.')
+
 		self.lat = lat
 		self.lng = lng
 
@@ -78,7 +81,7 @@ class SegmentPoint(object):
 	min = 0
 
 
-	def __init__(self, lat, lng):
+	def __init__(self, lat, lng, adjust_to_sector=True):
 		try:
 			self.lat = int(lat)
 			self.lng = int(lng)
@@ -90,10 +93,11 @@ class SegmentPoint(object):
 		if not (self.min <= self.lng <= self.max):
 			raise ValueError('Invalid parameters.')
 
-		while self.lat % self.step != 0:
-			self.lat -= 1
-		while self.lng % self.step != 0:
-			self.lng -= 1
+		if adjust_to_sector:
+			while self.lat % self.step != 0:
+				self.lat -= 1
+			while self.lng % self.step != 0:
+				self.lng -= 1
 
 
 	def inc_lat(self):

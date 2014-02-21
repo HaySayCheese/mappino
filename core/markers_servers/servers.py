@@ -1,13 +1,12 @@
 #coding=utf-8
 import abc
 from django.core.exceptions import SuspiciousOperation
-from core.markers_servers.exceptions import TooBigTransaction, SerializationError, DeserializationError
 
-from core.markers_servers.utils import DegreeSegmentPoint, DegreePoint, SegmentPoint, LatLngPoint
+from core.markers_servers.exceptions import TooBigTransaction, SerializationError, DeserializationError
+from core.markers_servers.utils import DegreeSegmentPoint, Point, SegmentPoint, DegreePoint
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, MARKET_TYPES, CURRENCIES, HEATING_TYPES, \
 	LIVING_RENT_PERIODS
 from mappino.wsgi import redis_connections
-
 
 
 class BaseMarkersServer(object):
@@ -40,8 +39,14 @@ class BaseMarkersServer(object):
 
 
 		digests = []
-		while (current.degree.lat != stop.degree.lat) or (current.segment.lat != stop.segment.lat):
-			while (current.degree.lng != stop.degree.lng) or (current.segment.lng != stop.segment.lng):
+		while True:
+			if (current.degree.lat == stop.degree.lat) and (current.segment.lat == stop.segment.lat):
+				break
+
+			while True:
+				if (current.degree.lng == stop.degree.lng) and (current.segment.lng == stop.segment.lng):
+					break
+
 				digests.append(self.__segment_digest(current.degree, current.segment))
 
 				# Заборонити одночасну вибірку маркерів з великої к-сті сегментів.
@@ -49,8 +54,8 @@ class BaseMarkersServer(object):
 				# великої к-сті запитів від інших користувачів в черзі на обробку.
 				if len(digests) > 5*5:
 					raise TooBigTransaction()
-
 				current.inc_segment_lng()
+
 			current.dec_segment_lat()
 
 
@@ -62,16 +67,16 @@ class BaseMarkersServer(object):
 			for rid in records_ids:
 				pipe.hget(digest, rid)
 
-			coordinates_digest = self.__coordinates_digest(digest)
+			degrees = self.__degrees_from_digest(digest)
 			records = pipe.execute()
 			if records:
-				results[coordinates_digest] = {}
+				results[degrees] = {}
 
 			for record in zip(records_ids, records):
 				coordinates = record[0]
 				data = record[1]
 
-				results[coordinates_digest][coordinates] = data
+				results[degrees][coordinates] = data
 
 		return results
 
@@ -83,12 +88,13 @@ class BaseMarkersServer(object):
 
 		degree = DegreePoint(record.degree_lat, record.degree_lng)
 		segment = SegmentPoint(record.segment_lat, record.segment_lng)
-		position = LatLngPoint(record.pos_lat, record.pos_lng)
-
 		seg_digest = self.__segment_digest(degree, segment)
-		pos_digest = self.__position_digest(position)
-		data = self.serialize_publication_record(record)
 
+		sector = Point(record.segment_lat, record.segment_lng)
+		position = Point(record.pos_lat, record.pos_lng)
+		pos_digest = self.__position_digest(sector, position)
+
+		data = self.serialize_publication_record(record)
 		self.redis.hset(seg_digest, pos_digest, data)
 
 
@@ -100,21 +106,18 @@ class BaseMarkersServer(object):
 		        str(segment.lng)
 
 
-	def __coordinates_digest(self, digest):
+	def __degrees_from_digest(self, digest):
 		index = digest.find(self.digest_separator)
 		if index == -1:
 			raise DeserializationError()
 
 		coordinates = digest[index+1:].split(self.digest_separator)
-		return coordinates[0] + '.' + \
-		       coordinates[2] + ';' + \
-		       coordinates[1] + '.' + \
-		       coordinates[3]
+		return coordinates[0] + ';' + coordinates[1]
 
 
-	@staticmethod
-	def __position_digest(pos):
-		return str(pos.lat) + ':' + str(pos.lng)
+	def __position_digest(self, segment, position):
+		return  str(segment.lat) + str(position.lat) + self.digest_separator + \
+		        str(segment.lng) + str(position.lng)
 
 
 	@abc.abstractmethod
