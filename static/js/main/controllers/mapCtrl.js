@@ -206,10 +206,8 @@ app.controller('MapCtrl', function($scope, $location, $http) {
 
                 for (var item in data[tid]) {
                     for (var itemPart in data[tid][item]) {
-                        itemLat = item.split(";")[0] + itemPart.split(":")[0];
-                        itemLng = item.split(";")[1] + itemPart.split(":")[1];
-
-                        console.log(itemLat + "," + itemLng);
+                        itemLat = item.split(";")[0] + "." + itemPart.split(":")[0];
+                        itemLng = item.split(";")[1] + "." + itemPart.split(":")[1];
 
                         markers.push(new google.maps.Marker({
                             position: new google.maps.LatLng(itemLat, itemLng)
