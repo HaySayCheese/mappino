@@ -199,6 +199,8 @@ app.controller('MapCtrl', function($scope, $location, $http) {
                 'X-CSRFToken': "fat32tsg4363"
             }
         }).success(function(data) {
+            clearMarkers();
+
             for (var tid in data) {
                 for (var item in data[tid]) {
                     var itemLat = item.split(";")[0],
@@ -208,6 +210,8 @@ app.controller('MapCtrl', function($scope, $location, $http) {
                     for (var itemPart in data[tid][item]) {
                         itemLat += itemPart.split(":")[0];
                         itemLng += itemPart.split(":")[1];
+
+                        console.log(itemPart)
 
                         markers.push(new google.maps.Marker({
                             position: new google.maps.LatLng(itemLat, itemLng)
@@ -226,6 +230,12 @@ app.controller('MapCtrl', function($scope, $location, $http) {
         for (var i = 0; i < markers.length; i++) {
             markers[i].setMap(map);
         }
+    }
+    function clearMarkers() {
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
+        }
+        markers.length = 0;
     }
 
 
