@@ -306,15 +306,15 @@ class HousesMarkersServer(BaseMarkersServer):
 		if brief:
 			# Подати коротку форму для передачі разом із маркером на клієнт.
 			return {
-				'id': parts[0],
+				'id': int(parts[0]),
 			    # todo: додати сюди відомості про об’єкт в залежності від фільтрів
 			}
 
 		bitmask = bin(int(parts[-1]))[:2]
 		data = {
-			'id': parts[0],
-			'rooms_count':  parts[1] if parts[1] != '' else None,
-			'floors_count': parts[2] if parts[2] != '' else None,
+			'id': int(parts[0]),
+			'rooms_count':  int(parts[1]) if parts[1] != '' else None,
+			'floors_count': int(parts[2]) if parts[2] != '' else None,
 
 		    'electricity': (bitmask[-3] == '1'),
 			'gas':         (bitmask[-4] == '1'),
@@ -327,15 +327,15 @@ class HousesMarkersServer(BaseMarkersServer):
 			# sale terms
 			data.update({
 				'for_sale': True,
-			    'sale_price': parts[3],
+			    'sale_price': float(parts[3]),
 			})
 
 			# check for rent terms
 			if bitmask[-2] == '1':
 				data.update({
 					'for_rent': True,
-					'rent_price': parts[4],
-				    'persons_count': parts[5] if parts[5] != '' else None
+					'rent_price': float(parts[4]),
+				    'persons_count': int(parts[5]) if parts[5] != '' else None
 				})
 
 		else:
@@ -343,8 +343,8 @@ class HousesMarkersServer(BaseMarkersServer):
 				# rent terms
 				data.update({
 					'for_rent': True,
-					'rent_price': parts[4],
-				    'persons_count': parts[5] if parts[5] != '' else None
+					'rent_price': float(parts[4]),
+				    'persons_count': int(parts[5]) if parts[5] != '' else None
 				})
 		return data
 
