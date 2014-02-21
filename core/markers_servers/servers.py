@@ -40,13 +40,7 @@ class BaseMarkersServer(object):
 
 		digests = []
 		while True:
-			if (current.degree.lat == stop.degree.lat) and (current.segment.lat == stop.segment.lat):
-				break
-
 			while True:
-				if (current.degree.lng == stop.degree.lng) and (current.segment.lng == stop.segment.lng):
-					break
-
 				digests.append(self.__segment_digest(current.degree, current.segment))
 
 				# Заборонити одночасну вибірку маркерів з великої к-сті сегментів.
@@ -54,8 +48,13 @@ class BaseMarkersServer(object):
 				# великої к-сті запитів від інших користувачів в черзі на обробку.
 				if len(digests) > 5*5:
 					raise TooBigTransaction()
+
+				if (current.degree.lng == stop.degree.lng) and (current.segment.lng == stop.segment.lng):
+					break
 				current.inc_segment_lng()
 
+			if (current.degree.lat == stop.degree.lat) and (current.segment.lat == stop.segment.lat):
+				break
 			current.dec_segment_lat()
 
 
