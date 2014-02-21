@@ -58,11 +58,11 @@ class LivingHeadModel(models.Model):
 	deleted = models.DateTimeField(null=True)
 
 	#-- map coordinates
-	degree_lat = models.SmallIntegerField(null=True, db_index=True)
-	degree_lng = models.SmallIntegerField(null=True, db_index=True)
+	degree_lat = models.TextField(null=True)
+	degree_lng = models.TextField(null=True)
 
-	segment_lat = models.SmallIntegerField(null=True, db_index=True)
-	segment_lng = models.SmallIntegerField(null=True, db_index=True)
+	segment_lat = models.TextField(null=True)
+	segment_lng = models.TextField(null=True)
 
 	pos_lat = models.TextField(null=True)
 	pos_lng = models.TextField(null=True)
@@ -143,18 +143,24 @@ class LivingHeadModel(models.Model):
 		degree_lat, pos_part_lat = lat.split('.')
 		degree_lng, pos_part_lng = lng.split('.')
 
-		degree_lat = int(degree_lat)
-		if abs(degree_lat > 90):
+		if abs(int(degree_lat) > 90):
+			raise ValueError()
+		if abs(int(degree_lng) > 180):
 			raise ValueError()
 
-		degree_lng = int(degree_lng)
-		if abs(degree_lng > 180):
-			raise ValueError()
+		segment_lat = pos_part_lat[:2]
+		segment_lng = pos_part_lng[:2]
+		pos_lat = pos_part_lat[2:]
+		pos_lng = pos_part_lng[2:]
 
-		segment_lat = int(pos_part_lat[:2])
-		segment_lng = int(pos_part_lng[:2])
-		pos_lat = int(pos_part_lat[2:])
-		pos_lng = int(pos_part_lng[2:])
+		# check for int
+		try:
+			int(segment_lat)
+			int(segment_lng)
+			int(pos_lat)
+			int(pos_lng)
+		except:
+			raise ValueError()
 
 		self.degree_lat = degree_lat
 		self.degree_lng = degree_lng
