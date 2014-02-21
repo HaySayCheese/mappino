@@ -211,7 +211,7 @@ app.controller('MapCtrl', function($scope, $location, $http) {
                         itemLat += itemPart.split(":")[0];
                         itemLng += itemPart.split(":")[1];
 
-                        console.log(itemPart)
+                        console.log(itemLat + "," + itemLng)
 
                         markers.push(new google.maps.Marker({
                             position: new google.maps.LatLng(itemLat, itemLng)
