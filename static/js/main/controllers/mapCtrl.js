@@ -202,16 +202,14 @@ app.controller('MapCtrl', function($scope, $location, $http) {
             clearMarkers();
 
             for (var tid in data) {
+                var itemLat = "", itemLng = "";
+
                 for (var item in data[tid]) {
-                    var itemLat = item.split(";")[0],
-                        itemLng = item.split(";")[1];
-
-                    //console.log(data[tid][item])
                     for (var itemPart in data[tid][item]) {
-                        itemLat += itemPart.split(":")[0];
-                        itemLng += itemPart.split(":")[1];
+                        itemLat = item.split(";")[0] + itemPart.split(":")[0];
+                        itemLng = item.split(";")[1] + itemPart.split(":")[1];
 
-                        console.log(itemLat + "," + itemLng)
+                        console.log(itemLat + "," + itemLng);
 
                         markers.push(new google.maps.Marker({
                             position: new google.maps.LatLng(itemLat, itemLng)
