@@ -50,6 +50,10 @@ urlpatterns += patterns('apps',
 
 		# data getters
         url(r'^ajax/api/accounts/on-login-info/$', 'accounts.accounts_ajax.on_login_info_handler'),
+
+
+    # markers
+    url(r'^ajax/api/markers/$', 'pages.main.markers.ajax.get_markers'),
 )
 
 #-- angular API for cabinet

@@ -1,6 +1,17 @@
 #coding=utf-8
 
 
+class Point(object):
+	"""
+	2D-точка. Використовується для зручної передачі координат, наприклад як рядків.
+	Не проводить жодних конвертацій типів даних
+	"""
+	def __init__(self, lat, lng):
+		self.lat = lat
+		self.lng = lng
+
+
+
 class LatLngPoint(object):
 	def __init__(self, lat, lng):
 		if not lat: raise ValueError('Empty @lat.')
@@ -15,6 +26,7 @@ class DegreePoint(object):
 	min_lat = -89
 	max_lng =  179
 	min_lng = -179
+
 
 	def __init__(self, lat, lng):
 		try:
