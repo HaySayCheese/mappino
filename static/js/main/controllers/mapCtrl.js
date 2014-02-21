@@ -198,7 +198,34 @@ app.controller('MapCtrl', function($scope, $location, $http) {
             headers: {
                 'X-CSRFToken': "fat32tsg4363"
             }
+        }).success(function(data) {
+            for (var tid in data) {
+                for (var item in data[tid]) {
+                    var itemLat = item.split(";")[0],
+                        itemLng = item.split(";")[1];
+
+                    //console.log(data[tid][item])
+                    for (var itemPart in data[tid][item]) {
+                        itemLat += itemPart.split(":")[0];
+                        itemLng += itemPart.split(":")[1];
+
+                        markers.push(new google.maps.Marker({
+                            position: new google.maps.LatLng(itemLat, itemLng)
+                        }));
+                    }
+
+                }
+            }
+
+            placeMarkers();
         });
+    }
+
+
+    function placeMarkers() {
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(map);
+        }
     }
 
 
