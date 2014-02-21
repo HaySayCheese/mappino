@@ -234,8 +234,8 @@ class HousesMarkersServer(BaseMarkersServer):
 		bitmask += '1' if record.body.sewerage else '0'
 		bitmask += '1' if record.body.hot_water else '0'
 		bitmask += '1' if record.body.cold_water else '0'
-		bitmask += bin(record.body.market_type_sid)[2:] # 1 bit
-		bitmask += bin(record.body.heating_type_sid)[2:] # 2 bits
+		bitmask += '{0:01b}'.format(record.body.market_type_sid)  # 1 bit
+		bitmask += '{0:02b}'.format(record.body.heating_type_sid) # 2 bits
 		if len(bitmask) != 10:
 			raise SerializationError('Bitmask corruption. Potential deserialization error.')
 
@@ -256,7 +256,7 @@ class HousesMarkersServer(BaseMarkersServer):
 
 		#-- sale terms
 		if record.for_sale:
-			bitmask += bin(record.sale_terms.currency_sid)[2:] # 2 bits
+			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
 			if len(bitmask) != 12:
 				raise SerializationError('Bitmask corruption. Potential deserialization error.')
 
@@ -269,8 +269,8 @@ class HousesMarkersServer(BaseMarkersServer):
 
 		#-- rent terms
 		if record.for_rent:
-			bitmask += bin(record.rent_terms.period_sid)[2:] # 2 bits
-			bitmask += bin(record.rent_terms.currency_sid)[2:] # 2 bits
+			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
+			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
 			bitmask += '1' if record.rent_terms.family else '0'
 			bitmask += '1' if record.rent_terms.foreigners else '0'
 			if len(bitmask) not in (18, 16):
