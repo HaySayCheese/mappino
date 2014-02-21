@@ -53,6 +53,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
          */
         create: function(publication, callback) {
             publication.tid = parseInt(publication.tid);
+            publicationsCount = $rootScope.publicationsCount;
 
             Queries.Publications.create(publication, function(data) {
 
@@ -67,10 +68,10 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
                         tid: publication.tid
                     });
 
-                $location.path("/publications/unpublished/" + publication.tid + ":" + data.id);
-
-                publicationsCount['published']   += 1;
+                publicationsCount['all']         += 1;
                 publicationsCount['unpublished'] += 1;
+
+                $location.path("/publications/unpublished/" + publication.tid + ":" + data.id);
 
                 _.isFunction(callback) && callback(data);
             });
