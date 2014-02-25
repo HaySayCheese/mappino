@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('MapCtrl', function($scope, $location, $http) {
+app.controller('MapCtrl', function($scope, $location, $http, $timeout, Markers) {
 
     /**
      * Змінні
@@ -17,8 +17,24 @@ app.controller('MapCtrl', function($scope, $location, $http) {
     $scope.filters = {
         city: "",
         zoom: parseInt(9),
-        latLng: "50.442218,30.779838"
+        latLng: "50.442218,30.779838",
+
+        r_type_id: "0",
+        r_price_min: "",
+        r_price_max: "",
+        r_currency_id: 0
     };
+
+
+    /**
+     * Слідкуємо за зміною фільттрів. Динамічно оновлюємо урл
+     **/
+    $scope.$watchCollection("filters", function(newValue, oldValue) {
+        parseFiltersCollectionAndUpdateUrl();
+
+        console.log(newValue);
+    });
+
 
     /**
      * Код карти
@@ -52,7 +68,7 @@ app.controller('MapCtrl', function($scope, $location, $http) {
         /**
          * Інші екземпляри
          **/
-        markerClusterer = new MarkerClusterer(map);
+        markerClusterer = new MarkerClusterer(map, markers);
 
         /**
          * Евенти карти
@@ -132,7 +148,11 @@ app.controller('MapCtrl', function($scope, $location, $http) {
         }
 
         initializeMap();
-        initPlugins();
+
+        $timeout(function() {
+            initPlugins();
+        }, 0);
+
 
         console.log("Filters are parsed");
     };
@@ -149,6 +169,9 @@ app.controller('MapCtrl', function($scope, $location, $http) {
             if (filters.hasOwnProperty(key)) {
                 if (key == "city")
                     $location.search(key, encodeURI(filters[key]));
+
+                if (filters[key] == "0")
+                    $location.search(key, filters[key]);
 
                 if (filters[key] != "" && filters[key] != false)
                     $location.search(key, filters[key]);
@@ -185,53 +208,26 @@ app.controller('MapCtrl', function($scope, $location, $http) {
      * Функція яка ініціює загрузку даних
      * */
     function loadData() {
-        var neLat = $scope.filters.viewport.neLat,
-            neLng = $scope.filters.viewport.neLng,
-            swLat = $scope.filters.viewport.swLat,
-            swLng = $scope.filters.viewport.swLng,
-
+        var neLat = $scope.filters.viewport.neLat.toString().slice(0, 5),
+            neLng = $scope.filters.viewport.neLng.toString().slice(0, 5),
+            swLat = $scope.filters.viewport.swLat.toString().slice(0, 5),
+            swLng = $scope.filters.viewport.swLng.toString().slice(0, 5),
             viewport = "&ne=" + neLat + ":" + neLng + "&sw=" + swLat + ":" + swLng;
 
-        $http({
-            url: "ajax/api/markers/?tids=0" + viewport,
-            method: "GET",
-            headers: {
-                'X-CSRFToken': "fat32tsg4363"
-            }
-        }).success(function(data) {
-            clearMarkers();
-
-            for (var tid in data) {
-                var itemLat = "", itemLng = "";
-
-                for (var item in data[tid]) {
-                    for (var itemPart in data[tid][item]) {
-                        itemLat = item.split(";")[0] + "." + itemPart.split(":")[0];
-                        itemLng = item.split(";")[1] + "." + itemPart.split(":")[1];
-
-                        markers.push(new google.maps.Marker({
-                            position: new google.maps.LatLng(itemLat, itemLng)
-                        }));
-                    }
-
-                }
-            }
-
+        Markers.load(viewport, function(data) {
+            markers = data;
             placeMarkers();
         });
     }
 
 
     function placeMarkers() {
+        markerClusterer.clearMarkers();
+
         for (var i = 0; i < markers.length; i++) {
             markers[i].setMap(map);
+            markerClusterer.addMarker(markers[i]);
         }
-    }
-    function clearMarkers() {
-        for (var i = 0; i < markers.length; i++) {
-            markers[i].setMap(null);
-        }
-        markers.length = 0;
     }
 
 
@@ -257,42 +253,17 @@ app.controller('MapCtrl', function($scope, $location, $http) {
 
 
     /**
-     * Слідкуємо за тим чи користувач закінчив екскурсію ))
-     **/
-//    var visitCount = 0;
-//    $scope.$watch("visited", function(newValue, oldValue) {
-//        visitCount++;
-//        if (newValue == true && visitCount > 2) {
-//            parseFiltersCollectionAndUpdateUrl();
-//            returnMapPositionFromAddress();
-//        }
-//    });
-
-
-    /**
-     * Слідкуємо за зміною фільттрів. Динамічно оновлюємо урл
-     **/
-    $scope.$watchCollection("filters", function(newValue, oldValue) {
-        parseFiltersCollectionAndUpdateUrl();
-
-        console.log(newValue);
-    });
-
-
-    /**
      * Ініціалізація бутстраповських плагінів
      **/
     function initPlugins() {
-        var propertyTypeSelect = $("#sidebar-property-type-select");
-        propertyTypeSelect.selectpicker({
-            style: 'btn btn-lg btn-default',
-            menuStyle: 'dropdown-inverse'
+        angular.element("select").selectpicker({
+            style: 'btn-default btn-md'
         });
 
-        var sidebarRedCurrencyTypeSelect = $("#sidebar-red-currency-type-select");
-        sidebarRedCurrencyTypeSelect.selectpicker({
-            style: 'btn btn-lg btn-default',
-            menuStyle: 'dropdown-inverse'
-        });
+//        var sidebarRedCurrencyTypeSelect = $("#sidebar-red-currency-type-select");
+//        sidebarRedCurrencyTypeSelect.selectpicker({
+//            style: 'btn btn-lg btn-default',
+//            menuStyle: 'dropdown-inverse'
+//        });
     }
 });

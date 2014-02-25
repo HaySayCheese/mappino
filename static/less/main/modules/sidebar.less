@@ -45,7 +45,7 @@
 
 .sidebar-body {
     display: block;
-    height: calc(~"100% - 165px");
+    height: ~"calc(100% - 165px)";
     //overflow: auto;
 
     position: relative;
@@ -120,5 +120,14 @@
 
     .panel {
         margin-right: -8px;
+    }
+
+    [class*='col-lg-'] {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .dropdown-toggle.selectpicker {
+        border: 1px solid #cccccc !important;
     }
 }

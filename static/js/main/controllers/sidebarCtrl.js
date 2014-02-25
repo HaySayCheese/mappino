@@ -4,8 +4,11 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, authorizati
 
     $scope.userName = "";
 
-    if ($cookies.sessionid && !sessionStorage.userName)
+    if ($cookies.sessionid && !sessionStorage.userName) {
+        console.log("fsfsfsaf523525")
         getUserName();
+    }
+
 
     /**
      * Дивимся за кукою сесії, якщо вона є то
@@ -48,6 +51,7 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, authorizati
      **/
     function getUserName() {
         authorizationQueries.getUserName().success(function(data) {
+            console.log("1111111111")
             sessionStorage.userName = data.user.name + " " + data.user.surname;
         });
     }

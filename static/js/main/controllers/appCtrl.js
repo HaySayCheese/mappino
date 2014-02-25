@@ -1,13 +1,28 @@
 'use strict';
 
 app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
-    $rootScope.visited = true;
+
+    $rootScope.publicationTypes = [
+        { name: "house",     id: 0,  title: "Дома" },
+        { name: "flat",      id: 1,  title: "Квартиры" },
+        { name: "apartments",id: 2,  title: "Аппартаментов" },
+        { name: "dacha",     id: 3,  title: "Дачи" },
+        { name: "cottage",   id: 4,  title: "Коттеджа" },
+        { name: "room",      id: 5,  title: "Комнаты" },
+        { name: "trade",     id: 6,  title: "Торгового помещения" },
+        { name: "office",    id: 7,  title: "Офиса" },
+        { name: "warehouse", id: 8,  title: "Склада" },
+        { name: "business",  id: 9,  title: "Готового бизнеса" },
+        { name: "catering",  id: 10, title: "Обьекта общепита" },
+        { name: "garage",    id: 11, title: "Гаража" },
+        { name: "land",      id: 12, title: "Земельного участка" }
+    ];
 
 
     /**
      * При закритті діалога додає параметри пошука в урл
      **/
-    $(document).on('hidden.bs.modal', function (e) {
+    angular.element(document).on('hidden.bs.modal', function (e) {
 
         angular.element("body").removeClass("modal-open");
         angular.element(".modal-backdrop").remove();
@@ -49,39 +64,6 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
 
     $scope.firstEnterInit = function() {
 
-//        if (localStorage.visited != "true") {
-//
-//            if (Object.keys($location.search()).length < 2) {
-//                $location.path("/first-enter");
-//
-//                if (!localStorage.visited)
-//                    localStorage.visited = "true";
-//
-//                $rootScope.visited = false;
-//            }
-//        }
-//
-//        if (localStorage.visited != "true" || Object.keys($location.search()).length > 2) {
-//            if (!$rootScope.visited)
-//                $rootScope.visited = true;
-//
-//            if (!localStorage.visited)
-//                localStorage.visited = "true";
-//
-//            if(!$scope.$$phase)
-//                $scope.$apply();
-//        }
-//
-//        if (localStorage.visited == "true") {
-//            if (!$rootScope.visited)
-//                $rootScope.visited = true;
-//
-//            if (!localStorage.visited)
-//                localStorage.visited = "true";
-//
-//            if(!$scope.$$phase)
-//                $scope.$apply();
-//        }
     }
 
 
