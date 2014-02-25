@@ -3,19 +3,18 @@ import copy
 import mmh3
 
 import abc
-from django.core.exceptions import SuspiciousOperation
+from django.core.exceptions import SuspiciousOperation, ObjectDoesNotExist
 
-from core.markers_servers.exceptions import TooBigTransaction, SerializationError, DeserializationError
+from core.markers_servers.exceptions import TooBigTransaction, SerializationError
 from core.markers_servers.utils import DegreeSegmentPoint, Point, SegmentPoint, DegreePoint
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 from mappino.wsgi import redis_connections
 
 
-
 class BaseMarkersManager(object):
 	"""
 	Передбачено, що кожному типу об’єктів відповідатиме власний менеджер маркерів.
-	Але, оскільки деякий функціонал у всіх менеждереів спільний — його виненсено в даний клас.
+	Але, оскільки деякий функціонал у всіх менеждереів спільний, — його винесено в даний клас.
 	"""
 	__metaclass__ = abc.ABCMeta
 
@@ -25,14 +24,33 @@ class BaseMarkersManager(object):
 			raise ValueError('invalid @tid.')
 		self.tid = tid
 		self.model = HEAD_MODELS[tid]
+
 		self.redis = redis_connections['steady']
-		self.redis_hashes_container_prefix = 'segments_hashes'
+		self.redis_segments_hashes_prefix = 'segments_hashes'
 		self.separator = ';'
 		self.digest_separator = ':'
 
 
 	def markers(self, ne, sw, condition=None):
-		data = {}
+		# ToDo: описати condition в коментарі
+		"""
+		Args:
+			ne: (North East) Point з координатами північно-західного кута в’юпорта.
+			sw: (South West) Point з координатами південно-східного кута в’юпорта.
+
+		Повертає набір маркерів для в’юпорта з координатами ne та sw у форматі:
+		>> lat;lng градуса:
+		>>   lat;lng маркера:
+		>>     дані маркера (id, ...)
+
+		В деяких випадках може повернути маркери суміжних сегментів із тими, які були запитані.
+		"""
+
+		if (ne is None) or (sw is None):
+			raise ValueError('Invalid coordinates.')
+		# todo: додати перевірку для condition
+
+		result = {}
 		for digest in self.__segments_digests(ne, sw):
 			degree = self.__degree_from_digest(digest)
 
@@ -43,22 +61,31 @@ class BaseMarkersManager(object):
 
 			markers = pipe.execute()
 			if markers:
-				data[degree] = {}
+				result[degree] = {}
 
 			for record in zip(coordinates, markers):
 				coordinates = record[0]
 				item = record[1]
 
-				data[degree][coordinates] = self.deserialize_publication_record(item, brief=True)
-		return data
+				result[degree][coordinates] = self.deserialize_publication_record(item, brief=True)
+		return result
 
 
 	def viewport_hash(self, ne, sw):
+		"""
+		Args:
+			ne: (North East) Point з координатами північно-західного кута в’юпорта.
+			sw: (South West) Point з координатами південно-східного кута в’юпорта.
+
+		Повертає хеш всіх сегментів, які потрапляють у в’юпорт з координатами ne та sw.
+		Хеш вираховується як hash(хеш 1-го сегменту + хеш 2-го сегменту + ... + хеш N-го сегменту).
+		Для підрахунку хешу використовується MurmurHash. (див. док. __update_segment_hash)
+		"""
 		digests = self.__segments_digests(ne, sw)
 
 		pipe = self.redis.pipeline()
 		for digest in digests:
-			pipe.hget(self.redis_hashes_container_prefix, digest)
+			pipe.hget(self.redis_segments_hashes_prefix, digest)
 
 		key = ''
 		for h in pipe.execute():
@@ -68,8 +95,22 @@ class BaseMarkersManager(object):
 
 
 	def add_publication(self, hid):
-		record = self.record_queryset(hid).only(
-			'degree_lng', 'degree_lat', 'segment_lng', 'segment_lat', 'pos_lng', 'pos_lat')[0]
+		"""
+		Args:
+			hid: id head-запису оголошення.
+
+		Сериалізує дані оголошення у формат для зберігання в індексі маркерів і
+		оновить сегмент, в який потрапляє маркер даного оголошення.
+		Оновленню в тому числі підлягатиме хеш сегменту.
+		"""
+		if hid is None:
+			raise ValueError('Invalid hid.')
+
+		try:
+			record = self.record_queryset(hid).only(
+				'degree_lng', 'degree_lat', 'segment_lng', 'segment_lat', 'pos_lng', 'pos_lat')[0]
+		except IndexError:
+			raise ObjectDoesNotExist('Invalid hid. Object with such hid does not exist.')
 
 		degree = DegreePoint(record.degree_lat, record.degree_lng)
 		segment = SegmentPoint(record.segment_lat, record.segment_lng)
@@ -85,6 +126,14 @@ class BaseMarkersManager(object):
 
 
 	def __segments_digests(self, ne, sw):
+		"""
+		Args:
+			ne: (North East) Point з координатами північно-західного кута в’юпорта.
+			sw: (South West) Point з координатами південно-східного кута в’юпорта.
+
+		Повертає список всіх дайджестів сегментів, які потрапляють у в’юпорт.
+		"""
+
 		start = DegreeSegmentPoint(ne.lat, ne.lng)
 		stop = DegreeSegmentPoint(sw.lat, sw.lng)
 
@@ -128,6 +177,9 @@ class BaseMarkersManager(object):
 
 
 	def __segment_digest(self, degree, segment):
+		"""
+		Повертає digest сегмента (для формату див. код.)
+		"""
 		return  str(self.tid) + self.digest_separator + \
 		        str(degree.lat) + self.digest_separator + \
 		        str(degree.lng) + self.digest_separator + \
@@ -135,27 +187,48 @@ class BaseMarkersManager(object):
 		        str(segment.lng)
 
 
+	def __position_digest(self, segment, position):
+		"""
+		Повертає digest координат маркера (для формату див. код.)
+		"""
+		return  str(segment.lat) + str(position.lat) + self.digest_separator + \
+		        str(segment.lng) + str(position.lng)
+
+
+	def __degree_from_digest(self, digest):
+		"""
+		Поверне градус сегмента у форматі "lat;lng".
+		Відомості про градус беруться з дайджеста сегмента.
+		"""
+		index = digest.find(self.digest_separator)
+		if index < 0:
+			raise RuntimeError('Invalid digest.')
+
+		coordinates = digest[index+1:].split(self.digest_separator)
+		if ('' in coordinates) or (None in coordinates):
+			raise RuntimeError('Invalid digest.')
+
+		return coordinates[0] + ';' + coordinates[1]
+
+
 	def __update_segment_hash(self, digest, record_id):
-		current_hash = self.redis.hget(self.redis_hashes_container_prefix, digest)
+		"""
+		Кожен сегмент маркерів має власний хеш.
+		Він використовується, наприклад, як etag для запитів на отримання маркерів.
+		Даний метод оновить хеш для сегменту з дайджестом digest.
+
+		Для хешування використовується MurmurHash,
+		оскільки він дуже швидкий і видає короткі дайджести,
+		а криптостійкість в даному випадку не важлива.
+
+		Новий хеш вираховується за формулою h = hash(попередній хеш + record_id)
+		"""
+		current_hash = self.redis.hget(self.redis_segments_hashes_prefix, digest)
 		if current_hash is None:
 			current_hash = ''
 
 		segment_hash = mmh3.hash(current_hash + str(record_id))
-		self.redis.hset(self.redis_hashes_container_prefix, digest, segment_hash)
-
-
-	def __degree_from_digest(self, digest):
-		index = digest.find(self.digest_separator)
-		if index == -1:
-			raise DeserializationError()
-
-		coordinates = digest[index+1:].split(self.digest_separator)
-		return coordinates[0] + ';' + coordinates[1]
-
-
-	def __position_digest(self, segment, position):
-		return  str(segment.lat) + str(position.lat) + self.digest_separator + \
-		        str(segment.lng) + str(position.lng)
+		self.redis.hset(self.redis_segments_hashes_prefix, digest, segment_hash)
 
 
 	@abc.abstractmethod
