@@ -114,18 +114,17 @@ class BaseMarkersManager(object):
 		except IndexError:
 			raise ObjectDoesNotExist('Invalid hid. Object with such hid does not exist.')
 
-		for i in xrange(100):
-			degree = DegreePoint(record.degree_lat, record.degree_lng)
-			segment = SegmentPoint(record.segment_lat, record.segment_lng)
-			seg_digest = self.__segment_digest(degree, segment)
+		degree = DegreePoint(record.degree_lat, record.degree_lng)
+		segment = SegmentPoint(record.segment_lat, record.segment_lng)
+		seg_digest = self.__segment_digest(degree, segment)
 
-			sector = Point(record.segment_lat, record.segment_lng)
-			position = Point(int(record.pos_lat)+1, int(record.pos_lng)+1)
-			pos_digest = self.__position_digest(sector, position)
+		sector = Point(record.segment_lat, record.segment_lng)
+		position = Point(record.pos_lat, record.pos_lng)
+		pos_digest = self.__position_digest(sector, position)
 
-			data = self.serialize_publication_record(record)
-			self.redis.hset(seg_digest, pos_digest, data)
-			self.__update_segment_hash(seg_digest, hid+i)
+		data = self.serialize_publication_record(record)
+		self.redis.hset(seg_digest, pos_digest, data)
+		self.__update_segment_hash(seg_digest, hid)
 
 
 	def __segments_digests(self, ne, sw):
@@ -328,7 +327,15 @@ class HousesMarkersManager(BaseMarkersManager):
 
 	def record_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
-			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+			'for_sale', 'for_rent',
+			'sale_terms__price', 'sale_terms__currency_sid',
+
+			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
+		    'rent_terms__persons_count', 'rent_terms__family', 'rent_terms__foreigners',
+
+			'body__electricity', 'body__gas', 'body__sewerage', 'body__hot_water', 'body__cold_water',
+			'body__market_type_sid', 'body__heating_type_sid',
+			'body__rooms_count', 'body__floors_count')
 
 
 	def serialize_publication_record(self, record):
