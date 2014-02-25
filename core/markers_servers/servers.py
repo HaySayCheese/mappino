@@ -1888,19 +1888,174 @@ class WarehousesMarkersManager(BaseMarkersManager):
 
 	def record_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
-			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+			'for_sale', 'for_rent',
+			'sale_terms__price', 'sale_terms__currency_sid',
+
+			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
+
+			'body__electricity', 'body__gas', 'body__hot_water', 'body__cold_water',
+		    'body__security_alarm', 'body__fire_alarm',
+			'body__halls_area',)
 
 
 	def serialize_publication_record(self, record):
-		return ''
+		# common terms
+		#-- bitmask
+		bitmask = ''
+		bitmask += '1' if record.for_sale else '0'
+		bitmask += '1' if record.for_rent else '0'
+		bitmask += '1' if record.body.electricity else '0'
+		bitmask += '1' if record.body.gas else '0'
+		bitmask += '1' if record.body.hot_water else '0'
+		bitmask += '1' if record.body.cold_water else '0'
+		bitmask += '1' if record.body.security_alarm else '0'
+		bitmask += '1' if record.body.fire_alarm else '0'
+		if len(bitmask) != 8:
+			raise SerializationError('Bitmask corruption. Potential deserialization error.')
 
 
-	def deserialize_publication_record(self, record, brief=True):
-		return ''
+		#-- data
+		data = ''
+		data += str(record.id) + self.separator
+
+		# REQUIRED
+		if record.body.halls_area is not None:
+			data += str(record.body.halls_area) + self.separator
+		else: data += self.separator
+
+
+		#-- sale terms
+		if record.for_sale:
+			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
+			if len(bitmask) != 13:
+				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+
+			# REQUIRED field
+			if record.sale_terms.price is not None:
+				data += str(record.sale_terms.price) + self.separator
+				data += str(record.sale_terms.currency_sid) + self.separator
+			else:
+				raise SerializationError('Sale price is required.')
+
+
+		#-- rent terms
+		if record.for_rent:
+			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
+			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
+			if len(bitmask) not in (17, 19):
+				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+
+			# REQUIRED field
+			if record.rent_terms.price is not None:
+				data += str(record.rent_terms.price) + self.separator
+				data += str(record.rent_terms.currency_sid) + self.separator # todo окрему перевірку
+			else:
+				raise SerializationError('Rent price is required.')
+
+
+		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
+		# Це пов’язано із тим, що при десериалізації старші біти, втрачаються, якщо вони нулі.
+		# Доповнити маску неможливо, оскільки для доповнення слід знати точну к-сть біт маски,
+		# а це залежить від того чи продаєтсья об’єкт, чи здаєтсья в оренду, чи і те і інше.
+		bitmask = bitmask[::-1]
+
+		record_data = data + self.separator +  str(int(bitmask, 2))
+		if record_data[-1] == self.separator:
+			record_data = record_data[:-1]
+		return record_data
+
+
+	def deserialize_publication_record(self, record_data):
+		parts = record_data.split(self.separator)
+		bitmask = bin(int(parts[-1]))[2:]
+		data = {
+			'id': int(parts[0]),
+			'halls_area':   int(parts[1]) if parts[1] != '' else None,
+
+		    'electricity':      (bitmask[-3] == '1'),
+			'gas':              (bitmask[-4] == '1'),
+			'hot_water':        (bitmask[-5] == '1'),
+			'cold_water':       (bitmask[-6] == '1'),
+		    'security_alarm':   (bitmask[-5] == '1'),
+			'fire_alarm':       (bitmask[-6] == '1'),
+		}
+
+		if bitmask[-1] == '1':
+			# sale terms
+			data.update({
+				'for_sale': True,
+			    'sale_price': float(parts[5]),
+			    'sale_currency_sid': int(parts[6]),
+			})
+
+			# check for rent terms
+			if bitmask[-2] == '1':
+				data.update({
+					'for_rent': True,
+					'rent_price': float(parts[7]),
+				    'rent_currency_sid': int(parts[8]),
+				})
+
+		else:
+			if bitmask[-2] == '1':
+				# rent terms
+				# todo: check indexes
+				data.update({
+					'for_rent': True,
+					'rent_price': float(parts[5]),
+					'rent_currency_sid': float(parts[6]),
+				})
+		return data
 
 
 	def marker_brief(self, data, condition=None):
-		return ''
+		if condition is None:
+			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
+			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
+				return {
+					'id': data['id'],
+					'd0': u'Продажа: ' + self.__format_price(
+						data['sale_price'],
+						data['sale_currency_sid'],
+						CURRENCIES.uah()
+					) + u' грн.',
+
+					'd1': u'Аренда: ' + self.__format_price(
+						data['rent_price'],
+						data['rent_currency_sid'],
+						CURRENCIES.uah()
+					) + u' грн.',
+				}
+
+			elif data.get('for_sale', False):
+				return {
+					'id': data['id'],
+					'd0': u'Площадь: ' + str(data['halls_area']) + u' м²',
+					'd1': self.__format_price(
+						data['sale_price'],
+						data['sale_currency_sid'],
+						CURRENCIES.uah()
+					) + u' грн.',
+				}
+
+			elif data.get('for_rent', False):
+				return{
+					'id': data['id'],
+					'd0': u'Площадь: ' + str(data['halls_area']) + u' м²',
+					'd1': self.__format_price(
+						data['rent_price'],
+						data['rent_currency_sid'],
+						CURRENCIES.uah()
+					) + u' грн.',
+				}
+
+			else:
+				raise DeserializationError()
+
+		else:
+			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
+			# todo: додати конввертацію валют в залженост від фільтрів
+			pass
 
 
 	@staticmethod
