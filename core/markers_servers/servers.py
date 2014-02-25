@@ -1607,8 +1607,9 @@ class TradesMarkersManager(BaseMarkersManager):
 			'sewerage':             (bitmask[-5] == '1'),
 			'hot_water':            (bitmask[-6] == '1'),
 			'cold_water':           (bitmask[-7] == '1'),
-			'market_type_sid':      (bitmask[-8] == '1'),
-			'building_type_sid':    (bitmask[-9] == '1'),
+
+			'market_type_sid':      int('' + bitmask[-8]  + bitmask[-9]),
+			'building_type_sid':    int('' + bitmask[-10] + bitmask[-11] + bitmask[-12]),
 		}
 
 		if bitmask[-1] == '1':
@@ -1794,7 +1795,8 @@ class OfficesMarkersManager(BaseMarkersManager):
 			'kitchen':              (bitmask[-5] == '1'),
 			'hot_water':            (bitmask[-6] == '1'),
 			'cold_water':           (bitmask[-7] == '1'),
-			'building_type_sid':    (bitmask[-9] == '1'),
+
+			'building_type_sid':    int('' + bitmask[-9] + bitmask[-10] + bitmask[-11]),
 		}
 
 		if bitmask[-1] == '1':
@@ -2154,7 +2156,7 @@ class BusinessesMarkersManager(BaseMarkersManager):
 			'halls_area': int(parts[1]) if parts[1] != '' else None,
 			'total_area': int(parts[2]) if parts[2] != '' else None,
 
-			'building_type_sid': str(bitmask[-1] + bitmask[-2] + bitmask[-3]),
+			'building_type_sid': int('' + bitmask[-1] + bitmask[-2] + bitmask[-3]),
 		}
 
 		if bitmask[-1] == '1':
@@ -2347,7 +2349,7 @@ class CateringsMarkersManager(BaseMarkersManager):
 			'hot_water':            (bitmask[-5] == '1'),
 			'cold_water':           (bitmask[-6] == '1'),
 
-			'building_type_sid':    str(bitmask[-7] + bitmask[-8] + bitmask[-9]),
+			'building_type_sid':    int('' + bitmask[-7] + bitmask[-8] + bitmask[-9]),
 		}
 
 		if bitmask[-1] == '1':
