@@ -290,7 +290,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 		    'rent_terms__persons_count', 'rent_terms__family', 'rent_terms__foreigners',
 
 			'body__electricity', 'body__gas', 'body__hot_water', 'body__cold_water', 'body__lift',
-			'body__market_type_sid', 'body__heating_type_sid', 'body__ind_heating_type_sid',
+			'body__market_type_sid', 'body__heating_type_sid', 'body__rooms_planning_sid',
 			'body__rooms_count', 'body__total_area', 'body__floor_count')
 
 
@@ -511,7 +511,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 		    'rent_terms__persons_count', 'rent_terms__family', 'rent_terms__foreigners',
 
 			'body__electricity', 'body__gas', 'body__hot_water', 'body__cold_water', 'body__lift',
-			'body__market_type_sid', 'body__heating_type_sid', 'body__ind_heating_type_sid',
+			'body__market_type_sid', 'body__heating_type_sid', 'body__rooms_planning_sid',
 			'body__rooms_count', 'body__total_area', 'body__floor_count')
 
 
@@ -1157,7 +1157,7 @@ class DachasMarkersManager(BaseMarkersManager):
 
 			'body__electricity', 'body__gas', 'body__sewerage', 'body__hot_water', 'body__cold_water',
 			'body__market_type_sid', 'body__heating_type_sid',
-			'body__rooms_count', 'body__floors_count', 'body__total_area')
+			'body__rooms_count', 'body__total_area', 'body__floors_count')
 
 
 	def serialize_publication_record(self, record):
@@ -1375,8 +1375,8 @@ class RoomsMarkersManager(BaseMarkersManager):
 		    'rent_terms__persons_count', 'rent_terms__family', 'rent_terms__foreigners',
 
 			'body__electricity', 'body__gas', 'body__hot_water', 'body__cold_water', 'body__lift',
-			'body__market_type_sid', 'body__heating_type_sid', 'body__ind_heating_type_sid',
-			'body__rooms_count', 'body__total_area', 'body__floor_count')
+			'body__market_type_sid', 'body__heating_type_sid', 'body__rooms_planning_sid',
+			'body__rooms_count', 'body__total_area', 'body__floor')
 
 
 	def serialize_publication_record(self, record):
@@ -1595,7 +1595,7 @@ class TradesMarkersManager(BaseMarkersManager):
 			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
 
 			'body__electricity', 'body__gas', 'body__sewerage', 'body__hot_water', 'body__cold_water',
-			'body__market_type_sid',
+			'body__market_type_sid', 'body__building_type_sid',
 			'body__halls_area', 'body__total_area', 'body__floor',)
 
 
@@ -1803,6 +1803,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
 
 			'body__security', 'body__kitchen', 'body__hot_water', 'body__cold_water',
+		    'body__building_type_sid',
 			'body__cabinets_count', 'body__total_area')
 
 
@@ -2380,7 +2381,8 @@ class CateringsMarkersManager(BaseMarkersManager):
 			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
 
 			'body__electricity', 'body__gas', 'body__hot_water', 'body__cold_water',
-			'body__building_type_sid', 'body__halls_area', 'body__total_area',)
+			'body__building_type_sid',
+			'body__halls_count', 'body__halls_area', 'body__total_area',)
 
 
 	def serialize_publication_record(self, record):
