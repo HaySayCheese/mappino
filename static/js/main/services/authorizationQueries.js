@@ -1,183 +1,102 @@
 'use strict';
 
-app.factory('authorizationQueries', function($http, $cookies) {
+app.factory('authorizationQueries', function($http) {
 
     return {
 
         // Запит на авторизацію користувача
         loginUser: function(user) {
-            return $http({
-                url: 'ajax/api/accounts/login/',
-                method: "POST",
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                },
-                data: {
+            return $http.post('ajax/api/accounts/login/', {
                     username: user.name,
                     password: user.password
-                }
-            });
+                });
         },
 
 
         // Запит на вихід користувача
         logoutUser: function() {
-            return $http({
-                url: 'ajax/api/accounts/logout/',
-                method: "POST",
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                }
-            });
+            return $http.post('ajax/api/accounts/logout/');
         },
 
 
         // Запит на реєстрацію користувача
         registerUser: function(user) {
-            return $http({
-                method: 'POST',
-                url: 'ajax/api/accounts/registration/',
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                },
-                data: {
+            return $http.post('ajax/api/accounts/registration/', {
                     'name':             user.name,
                     'surname':          user.surname,
                     'phone-number':     user.phoneNumber,
                     'email':            user.email,
                     'password':         user.password,
                     'password-repeat':  user.passwordRepeat
-                }
-            });
+                });
         },
 
 
         // Запит на повторну реєстрацію користувача
         repeatRegistration: function() {
-            return $http({
-                method: 'POST',
-                url: 'ajax/api/accounts/registration/cancel/',
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                }
-            });
+            return $http.post('ajax/api/accounts/registration/cancel/');
         },
 
 
         // Запит на повторну відправку кода на телефон
         repeatSendCode: function() {
-            return $http({
-                method: 'POST',
-                url: 'ajax/api/accounts/registration/resend-sms/',
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                }
-            });
+            return $http.post('ajax/api/accounts/registration/resend-sms/');
         },
 
 
         // Відправка пошти на валідацію
         validateEmail: function(email) {
-            return $http({
-                method: 'POST',
-                url: 'ajax/api/accounts/validate-email/',
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                },
-                data: {
+            return $http.post('ajax/api/accounts/validate-email/', {
                     email: email
-                }
-            });
+                });
         },
 
 
         // Відправка телефона на валідацію
         validatePhone: function(phone) {
-            return $http({
-                method: 'POST',
-                url: 'ajax/api/accounts/validate-phone-number/',
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                },
-                data: {
+            return $http.post('ajax/api/accounts/validate-phone-number/', {
                     number: phone
-                }
-            });
+                });
         },
 
 
         // Відправка кода телефона на валідацію
         validatePhoneCode: function(code) {
-            return $http({
-                method: 'POST',
-                url: 'ajax/api/accounts/registration/',
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                },
-                data: {
+            return $http.post('ajax/api/accounts/registration/', {
                     code: code
-                }
-            });
+                });
         },
 
 
         // Відправка запита на отримання імені користувача
         getUserName: function() {
-            return $http({
-                method: 'GET',
-                url: 'ajax/api/accounts/on-login-info/',
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                }
-            });
+            return $http.get('ajax/api/accounts/on-login-info/');
         },
 
 
         // Відправка запита на відправку мила юзеру
         restoreAccessSendEmail: function(username) {
-            return $http({
-                method: 'POST',
-                url: 'ajax/api/accounts/password-reset/',
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                },
-                data: {
+            return $http.post('ajax/api/accounts/password-reset/', {
                     username: username
-                }
-            })
+                });
         },
 
 
         // Відправка нових паролів серверу
         restoreAccessSendPasswords: function(user) {
-            return $http({
-                method: 'POST',
-                url: 'ajax/api/accounts/password-reset/',
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                },
-                data: {
+            return $http.post('ajax/api/accounts/password-reset/', {
                     'token': user.token,
                     'password': user.password,
                     'password-repeat': user.passwordRepeat
-                }
-            })
+                });
         },
 
 
         // Перевірка токена
         checkToken: function(token) {
-            return $http({
-                method: 'POST',
-                url: 'ajax/api/accounts/password-reset/check/',
-                headers: {
-                    'X-CSRFToken': $cookies.csrftoken
-                },
-                data: {
+            return $http.post('ajax/api/accounts/password-reset/check/', {
                     token: token
-                }
-            })
+                });
         }
-
     }
 });

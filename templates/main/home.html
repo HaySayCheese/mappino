@@ -17,10 +17,12 @@
             src="http://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places">
     </script>
     <script type="text/javascript" src="{{ static }}js/libs/markerclusterer.min.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/markerwithlabel-1.1.9.min.js"></script>
 
 
     <!-- Libs include -->
     <script type="text/javascript" src="{{ static }}js/libs/jquery-2.1.0.min.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/underscore-1.6.0.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/less-1.6.2.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/bootstrap.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select.js"></script>
@@ -36,17 +38,21 @@
 
     <script type="text/javascript" src="{{ static }}js/main/services/router.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/services/authorizationQueries.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/services/mapQueries.js"></script>
+
+    <script type="text/javascript" src="{{ static }}js/main/factories/markersFactory.js"></script>
 
     <script type="text/javascript" src="{{ static }}js/main/controllers/appCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/controllers/mapCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/controllers/sidebarCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/controllers/firstEnterCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/controllers/loginCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/controllers/registrationCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/controllers/restoreAccessCtrl.js"></script>
 
     <script type="text/javascript" src="{{ static }}js/main/directives/selectOnClick.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/directives/focusOnLoad.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/directives/allowOnlyNumber.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/directives/allowOnlyNumberWithoutDot.js"></script>
 </head>
 <body ng-app="Mappino" ng-controller="AppCtrl" ng-init="firstEnterInit()">
 
@@ -58,7 +64,7 @@
 
         </div>
 
-        <div class="bwb sidebar" ng-show="visited" ng-controller="SidebarCtrl">
+        <div class="bwb sidebar" ng-controller="SidebarCtrl">
             <div class="sidebar-header">
 
                 <div class="bwb-header text-right" ng-show="!userName || userName === ''">
@@ -86,12 +92,54 @@
                     <div class="panel panel-danger">
                         <div class="panel-heading red-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#redMarkersPanel">
                             <h4 class="panel-title">
-                                <b>Дома,</b> <small>(30 000 - 50 000)</small>
+                                <b>[[ publicationTypes[filters.r_type_id].title ]],</b> <small>([[ filters.r_price_min ]] - [[ filters.r_price_max ]])</small>
                             </h4>
                         </div>
                         <div id="redMarkersPanel" class="panel-collapse collapse in">
                             <div class="panel-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                <form class="form-horizontal" novalidate>
+                                    <div class="row">
+                                        <div class="col-lg-12 form-group">
+                                            <label class="col-lg-3 control-label">Тип:</label>
+                                            <div class="col-lg-9">
+                                                <select name="r_type_id" data-width="100%" ng-model="filters.r_type_id">
+                                                    <option value="[[ type.id ]]" ng-repeat="type in publicationTypes">[[ type.title ]]</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-12 form-group">
+                                            <label class="col-lg-3 control-label">Цена:</label>
+                                            <div class="col-lg-3">
+                                                <input class="form-control" type="text" name="r_price_min" placeholder="От" ng-model="filters.r_price_min" allow-only-number/>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <input class="form-control" type="text" name="r_price_max" placeholder="До" ng-model="filters.r_price_max" allow-only-number/>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <select name="r_currency_id" data-width="100%" ng-model="filters.r_currency_id">
+                                                    <option value="2">Гривен (₴)</option>
+                                                    <option value="0">Дол. ($)</option>
+                                                    <option value="1">Евро (€)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-12 form-group">
+                                            <label class="col-lg-3 control-label">Комнат:</label>
+                                            <div class="col-lg-3">
+                                                <input class="form-control" type="text" name="r_rooms_min" placeholder="От" ng-model="filters.r_rooms_min" allow-only-number-without-dot/>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <input class="form-control" type="text" name="r_rooms_max" placeholder="До" ng-model="filters.r_rooms_max" allow-only-number-without-dot/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
