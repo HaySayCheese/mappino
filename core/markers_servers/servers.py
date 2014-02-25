@@ -1,5 +1,6 @@
 #coding=utf-8
 import copy
+import mmh3
 
 import abc
 from django.core.exceptions import SuspiciousOperation
@@ -11,7 +12,11 @@ from mappino.wsgi import redis_connections
 
 
 
-class BaseMarkersServer(object):
+class BaseMarkersManager(object):
+	"""
+	Передбачено, що кожному типу об’єктів відповідатиме власний менеджер маркерів.
+	Але, оскільки деякий функціонал у всіх менеждереів спільний — його виненсено в даний клас.
+	"""
 	__metaclass__ = abc.ABCMeta
 
 
@@ -21,55 +26,14 @@ class BaseMarkersServer(object):
 		self.tid = tid
 		self.model = HEAD_MODELS[tid]
 		self.redis = redis_connections['steady']
+		self.redis_hashes_container_prefix = 'segments_hashes'
 		self.separator = ';'
 		self.digest_separator = ':'
 
 
-	def markers(self, ne, sw, condition):
-		start = DegreeSegmentPoint(ne.lat, ne.lng)
-		stop = DegreeSegmentPoint(sw.lat, sw.lng)
-
-		# Мапи google деколи повертають координати так, що stop опиняється перед start,
-		# і тоді алгоритм починає пробіг по всьому глобусу і падає на перевірці розміру транзакції.
-		# Дані перетворення видозмінюють координати так, щоб start завжди був перед stop,
-		# неважливо в якому порядку вони прийдуть.
-		if start.degree.lng > stop.degree.lng:
-			start.degree.lng, stop.degree.lng = stop.degree.lng, start.degree.lng
-		elif start.segment.lng > stop.segment.lng:
-			start.segment.lng, stop.segment.lng = stop.segment.lng, start.segment.lng
-
-		if start.degree.lat < stop.degree.lat:
-			start.degree.lat, stop.degree.lat = stop.degree.lat, start.degree.lat
-		elif start.segment.lat < stop.segment.lat:
-			start.segment.lat, stop.segment.lat = stop.segment.lat, start.segment.lat
-
-
-		segments_digests = []
-		current = copy.deepcopy(start)
-		while True:
-			current.degree.lng = start.degree.lng
-			current.segment.lng = start.segment.lng
-
-			while True:
-				segments_digests.append(self.__segment_digest(current.degree, current.segment))
-
-				# Заборонити одночасну вибірку маркерів з великої к-сті сегментів.
-				# Таким чином можна уберегтись від занадто великих транзакцій і накопичування
-				# великої к-сті запитів від інших користувачів в черзі на обробку.
-				if len(segments_digests) > 5*5:
-					raise TooBigTransaction()
-
-				if (current.degree.lng == stop.degree.lng) and (current.segment.lng == stop.segment.lng):
-					break
-				current.inc_segment_lng()
-
-			if (current.degree.lat == stop.degree.lat) and (current.segment.lat == stop.segment.lat):
-				break
-			current.dec_segment_lat()
-
-
+	def markers(self, ne, sw, condition=None):
 		data = {}
-		for digest in segments_digests:
+		for digest in self.__segments_digests(ne, sw):
 			degree = self.__degree_from_digest(digest)
 
 			coordinates = self.redis.hkeys(digest)
@@ -89,6 +53,19 @@ class BaseMarkersServer(object):
 		return data
 
 
+	def viewport_hash(self, ne, sw):
+		digests = self.__segments_digests(ne, sw)
+
+		pipe = self.redis.pipeline()
+		for digest in digests:
+			pipe.hget(self.redis_hashes_container_prefix, digest)
+
+		key = ''
+		for h in pipe.execute():
+			if h is not None:
+				key += h
+		return str(mmh3.hash(key))
+
 
 	def add_publication(self, hid):
 		record = self.record_queryset(hid).only(
@@ -104,6 +81,50 @@ class BaseMarkersServer(object):
 
 		data = self.serialize_publication_record(record)
 		self.redis.hset(seg_digest, pos_digest, data)
+		self.__update_segment_hash(seg_digest, hid)
+
+
+	def __segments_digests(self, ne, sw):
+		start = DegreeSegmentPoint(ne.lat, ne.lng)
+		stop = DegreeSegmentPoint(sw.lat, sw.lng)
+
+		# Мапи google деколи повертають координати так, що stop опиняється перед start,
+		# і тоді алгоритм починає пробіг по всьому глобусу і падає на перевірці розміру транзакції.
+		# Дані перетворення видозмінюють координати так, щоб start завжди був перед stop,
+		# неважливо в якому порядку вони прийдуть.
+		if start.degree.lng > stop.degree.lng:
+			start.degree.lng, stop.degree.lng = stop.degree.lng, start.degree.lng
+		elif start.segment.lng > stop.segment.lng:
+			start.segment.lng, stop.segment.lng = stop.segment.lng, start.segment.lng
+
+		if start.degree.lat < stop.degree.lat:
+			start.degree.lat, stop.degree.lat = stop.degree.lat, start.degree.lat
+		elif start.segment.lat < stop.segment.lat:
+			start.segment.lat, stop.segment.lat = stop.segment.lat, start.segment.lat
+
+		digests = []
+		current = copy.deepcopy(start)
+		while True:
+			current.degree.lng = start.degree.lng
+			current.segment.lng = start.segment.lng
+
+			while True:
+				digests.append(self.__segment_digest(current.degree, current.segment))
+
+				# Заборонити одночасну вибірку маркерів з великої к-сті сегментів.
+				# Таким чином можна уберегтись від занадто великих транзакцій і накопичування
+				# великої к-сті запитів від інших користувачів в черзі на обробку.
+				if len(digests) > 5*5:
+					raise TooBigTransaction()
+
+				if (current.degree.lng == stop.degree.lng) and (current.segment.lng == stop.segment.lng):
+					break
+				current.inc_segment_lng()
+
+			if (current.degree.lat == stop.degree.lat) and (current.segment.lat == stop.segment.lat):
+				break
+			current.dec_segment_lat()
+		return digests
 
 
 	def __segment_digest(self, degree, segment):
@@ -112,6 +133,15 @@ class BaseMarkersServer(object):
 		        str(degree.lng) + self.digest_separator + \
 		        str(segment.lat) + self.digest_separator + \
 		        str(segment.lng)
+
+
+	def __update_segment_hash(self, digest, record_id):
+		current_hash = self.redis.hget(self.redis_hashes_container_prefix, digest)
+		if current_hash is None:
+			current_hash = ''
+
+		segment_hash = mmh3.hash(current_hash + str(record_id))
+		self.redis.hset(self.redis_hashes_container_prefix, digest, segment_hash)
 
 
 	def __degree_from_digest(self, digest):
@@ -160,9 +190,9 @@ class BaseMarkersServer(object):
 
 
 
-class FlatsMarkersServer(BaseMarkersServer):
+class FlatsMarkersManager(BaseMarkersManager):
 	def __init__(self):
-		super(FlatsMarkersServer, self).__init__(OBJECTS_TYPES.flat())
+		super(FlatsMarkersManager, self).__init__(OBJECTS_TYPES.flat())
 
 
 	def serialize_publication_record(self, record):
@@ -189,9 +219,9 @@ class FlatsMarkersServer(BaseMarkersServer):
 
 
 
-class ApartmentsMarkersServer(BaseMarkersServer):
+class ApartmentsMarkersManager(BaseMarkersManager):
 	def __init__(self):
-		super(ApartmentsMarkersServer, self).__init__(OBJECTS_TYPES.apartments())
+		super(ApartmentsMarkersManager, self).__init__(OBJECTS_TYPES.apartments())
 
 
 	def serialize_publication_record(self, record):
@@ -218,9 +248,9 @@ class ApartmentsMarkersServer(BaseMarkersServer):
 
 
 
-class HousesMarkersServer(BaseMarkersServer):
+class HousesMarkersManager(BaseMarkersManager):
 	def __init__(self):
-		super(HousesMarkersServer, self).__init__(OBJECTS_TYPES.house())
+		super(HousesMarkersManager, self).__init__(OBJECTS_TYPES.house())
 
 
 	def serialize_publication_record(self, record):
@@ -366,9 +396,9 @@ class HousesMarkersServer(BaseMarkersServer):
 
 
 
-class CottagesMarkersServer(BaseMarkersServer):
+class CottagesMarkersManager(BaseMarkersManager):
 	def __init__(self):
-		super(CottagesMarkersServer, self).__init__(OBJECTS_TYPES.cottage())
+		super(CottagesMarkersManager, self).__init__(OBJECTS_TYPES.cottage())
 
 
 	def serialize_publication_record(self, record):
@@ -417,9 +447,9 @@ class CottagesMarkersServer(BaseMarkersServer):
 
 
 
-class DachasMarkersServer(BaseMarkersServer):
+class DachasMarkersManager(BaseMarkersManager):
 	def __init__(self):
-		super(DachasMarkersServer, self).__init__(OBJECTS_TYPES.dacha())
+		super(DachasMarkersManager, self).__init__(OBJECTS_TYPES.dacha())
 
 
 	def serialize_publication_record(self, record):
@@ -446,9 +476,9 @@ class DachasMarkersServer(BaseMarkersServer):
 
 
 
-class RoomsMarkersServer(BaseMarkersServer):
+class RoomsMarkersManager(BaseMarkersManager):
 	def __init__(self):
-		super(RoomsMarkersServer, self).__init__(OBJECTS_TYPES.room())
+		super(RoomsMarkersManager, self).__init__(OBJECTS_TYPES.room())
 
 
 	def serialize_publication_record(self, record):
@@ -475,9 +505,9 @@ class RoomsMarkersServer(BaseMarkersServer):
 
 
 
-class TradesMarkersServer(BaseMarkersServer):
+class TradesMarkersManager(BaseMarkersManager):
 	def __init__(self):
-		super(TradesMarkersServer, self).__init__(OBJECTS_TYPES.trade())
+		super(TradesMarkersManager, self).__init__(OBJECTS_TYPES.trade())
 
 
 	def serialize_publication_record(self, record):
@@ -504,9 +534,9 @@ class TradesMarkersServer(BaseMarkersServer):
 
 
 
-class OfficesMarkersServer(BaseMarkersServer):
+class OfficesMarkersManager(BaseMarkersManager):
 	def __init__(self):
-		super(OfficesMarkersServer, self).__init__(OBJECTS_TYPES.office())
+		super(OfficesMarkersManager, self).__init__(OBJECTS_TYPES.office())
 
 
 	def serialize_publication_record(self, record):
@@ -533,9 +563,9 @@ class OfficesMarkersServer(BaseMarkersServer):
 
 
 
-class WarehousesMarkersServer(BaseMarkersServer):
+class WarehousesMarkersManager(BaseMarkersManager):
 	def __init__(self):
-		super(WarehousesMarkersServer, self).__init__(OBJECTS_TYPES.warehouse())
+		super(WarehousesMarkersManager, self).__init__(OBJECTS_TYPES.warehouse())
 
 
 	def serialize_publication_record(self, record):
@@ -562,9 +592,9 @@ class WarehousesMarkersServer(BaseMarkersServer):
 
 
 
-class BusinessesMarkersServer(BaseMarkersServer):
+class BusinessesMarkersManager(BaseMarkersManager):
 	def __init__(self):
-		super(BusinessesMarkersServer, self).__init__(OBJECTS_TYPES.business())
+		super(BusinessesMarkersManager, self).__init__(OBJECTS_TYPES.business())
 
 
 	def serialize_publication_record(self, record):
@@ -591,9 +621,9 @@ class BusinessesMarkersServer(BaseMarkersServer):
 
 
 
-class CateringsMarkersServer(BaseMarkersServer):
+class CateringsMarkersManager(BaseMarkersManager):
 	def __init__(self):
-		super(CateringsMarkersServer, self).__init__(OBJECTS_TYPES.catering())
+		super(CateringsMarkersManager, self).__init__(OBJECTS_TYPES.catering())
 
 
 	def serialize_publication_record(self, record):
@@ -620,9 +650,9 @@ class CateringsMarkersServer(BaseMarkersServer):
 
 
 
-class GaragesMarkersServer(BaseMarkersServer):
+class GaragesMarkersManager(BaseMarkersManager):
 	def __init__(self):
-		super(GaragesMarkersServer, self).__init__(OBJECTS_TYPES.garage())
+		super(GaragesMarkersManager, self).__init__(OBJECTS_TYPES.garage())
 
 
 	def serialize_publication_record(self, record):
@@ -649,9 +679,9 @@ class GaragesMarkersServer(BaseMarkersServer):
 
 
 
-class LandsMarkersServer(BaseMarkersServer):
+class LandsMarkersManager(BaseMarkersManager):
 	def __init__(self):
-		super(LandsMarkersServer, self).__init__(OBJECTS_TYPES.land())
+		super(LandsMarkersManager, self).__init__(OBJECTS_TYPES.land())
 
 
 	def serialize_publication_record(self, record):

@@ -2,7 +2,8 @@
 from django.db import models
 
 from core.publications.abstract_models import LivingHeadModel, BodyModel, LivingRentTermsModel, CommercialRentTermsModel, PhotosModel, SaleTermsModel, CommercialHeadModel, AbstractModel
-from core.publications.constants import MARKET_TYPES, OBJECT_CONDITIONS, FLOOR_TYPES, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, CURRENCIES
+from core.publications.constants import MARKET_TYPES, OBJECT_CONDITIONS, FLOOR_TYPES, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, CURRENCIES, \
+	OBJECTS_TYPES
 from core.publications.exceptions import EmptyFloor, EmptyTotalArea, EmptyLivingArea, EmptyRoomsCount, EmptyFloorsCount, \
 	EmptyHallsArea, EmptyHallsCount, EmptyCabinetsCount
 from core.publications.objects_constants.apartments import APARTMENTS_BUILDINGS_TYPES, APARTMENTS_FLAT_TYPES, APARTMENTS_ROOMS_PLANING_TYPES
@@ -108,6 +109,7 @@ class FlatsHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_flats_heads'
 
+	tid = OBJECTS_TYPES.flat()
 	photos_model = FlatsPhotos
 
 	body = models.ForeignKey(FlatsBodies)
@@ -219,6 +221,7 @@ class ApartmentsHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_apartments_heads'
 
+	tid = OBJECTS_TYPES.apartments()
 	photos_model = ApartmentsPhotos
 
 	body = models.ForeignKey(ApartmentsBodies)
@@ -332,6 +335,7 @@ class HousesHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_houses_heads'
 
+	tid = OBJECTS_TYPES.house()
 	photos_model = HousesPhotos
 
 	body = models.ForeignKey(HousesBodies)
@@ -444,6 +448,7 @@ class DachasHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_dachas_heads'
 
+	tid = OBJECTS_TYPES.dacha()
 	photos_model = DachasPhotos
 
 	body = models.ForeignKey(DachasBodies)
@@ -554,6 +559,7 @@ class CottagesHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_cottages_heads'
 
+	tid = OBJECTS_TYPES.cottage()
 	photos_model = CottagesPhotos
 
 	body = models.ForeignKey(CottagesBodies)
@@ -657,6 +663,7 @@ class RoomsHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_rooms_heads'
 
+	tid = OBJECTS_TYPES.room()
 	photos_model = RoomsPhotos
 
 	body = models.ForeignKey(RoomsBodies)
@@ -766,6 +773,7 @@ class TradesHeads(CommercialHeadModel):
 	class Meta:
 		db_table = 'o_trades_heads'
 
+	tid = OBJECTS_TYPES.trade()
 	photos_model = TradesPhotos
 
 	body = models.ForeignKey(TradesBodies)
@@ -870,6 +878,7 @@ class OfficesHeads(CommercialHeadModel):
 	class Meta:
 		db_table = 'o_offices_heads'
 
+	tid = OBJECTS_TYPES.office()
 	photos_model = OfficesPhotos
 
 	body = models.ForeignKey(OfficesBodies)
@@ -969,6 +978,7 @@ class WarehousesHeads(CommercialHeadModel):
 	class Meta:
 		db_table = 'o_warehouses_heads'
 
+	tid = OBJECTS_TYPES.warehouse()
 	photos_model = WarehousesPhotos
 
 	body = models.ForeignKey(WarehousesBodies)
@@ -1084,6 +1094,7 @@ class BusinessesHeads(CommercialHeadModel):
 	class Meta:
 		db_table = 'o_business_heads'
 
+	tid = OBJECTS_TYPES.business()
 	photos_model = BusinessesPhotos
 
 	body = models.ForeignKey(BusinessesBodies)
@@ -1192,6 +1203,7 @@ class CateringsHeads(CommercialHeadModel):
 	class Meta:
 		db_table = 'o_caterings_heads'
 
+	tid = OBJECTS_TYPES.catering()
 	photos_model = CateringsPhotos
 
 	body = models.ForeignKey(CateringsBodies)
@@ -1251,6 +1263,7 @@ class GaragesHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_garages_heads'
 
+	tid = OBJECTS_TYPES.garage()
 	photos_model = GaragesPhotos
 
 	body = models.ForeignKey(GaragesBodies)
@@ -1316,6 +1329,7 @@ class LandsHeads(LivingHeadModel):
 	class Meta:
 		db_table = 'o_lands_heads'
 
+	tid = OBJECTS_TYPES.land()
 	photos_model = LandsPhotos
 
 	body = models.ForeignKey(LandsBodies)

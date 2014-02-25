@@ -40,6 +40,7 @@ class LivingHeadModel(models.Model):
 		abstract = True
 
 	#-- override
+	tid = None
 	body = None
 	sale_terms = None
 	rent_terms = None
@@ -183,9 +184,9 @@ class LivingHeadModel(models.Model):
 			self.published = now()
 			self.prolong() # Немає необхідності викликати save. prolong() його викличе.
 
-			# sender=None для того, щоб django-orm не витягував автоматично дані з БД,
-			# які, швидше за все, не знадобляться в подільшій обробці.
-			models_signals.house_published.send(sender=None, id=self.id)
+		# sender=None для того, щоб django-orm не витягував автоматично дані з БД,
+		# які, швидше за все, не знадобляться в подальшій обробці.
+		models_signals.record_published.send(sender=None, tid=self.tid, hid=self.id)
 
 
 	def unpublish(self):

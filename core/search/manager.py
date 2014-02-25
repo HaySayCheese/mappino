@@ -5,7 +5,7 @@ import MySQLdb
 from django.conf import settings
 
 from core.publications.constants import OBJECTS_TYPES
-from core.publications.models_signals import updated as publication_model_updated
+from core.publications.models_signals import record_updated
 from core.search.tasks import update_house_index, update_flat_index, update_apartments_index, update_dacha_index, \
 	update_cottage_index, update_room_index, update_trade_index, update_office_index, update_warehouse_index, \
 	update_business_index, update_catering_index, update_garage_index, update_land_index
@@ -17,17 +17,17 @@ from mappino.wsgi import redis_connections
 class SearchManager(object):
 	def __init__(self):
 		self.redis = redis_connections['cache']
-		self.prefix = 'search_idx_task_'
-		self.update_interval = 60 * 3 # in seconds
+		self.prefix = 'search_upd_idx_task_'
+		self.update_interval = 60 * 2 # in seconds
 
 		self.connections = Queue.Queue()
 		for i in xrange(settings.ESTIMATE_THREADS_COUNT):
 			self.connections.put(self.__new_connection())
 
-		publication_model_updated.connect(self.update_models_index)
+		record_updated.connect(self.update_record_index)
 
 
-	def update_models_index(self, **kwargs):
+	def update_record_index(self, **kwargs):
 		try:
 			tid = kwargs['tid']
 			hid = kwargs['hid']
