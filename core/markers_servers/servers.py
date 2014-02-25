@@ -463,7 +463,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 			elif data.get('for_sale', False):
 				return {
 					'id': data['id'],
-					'd0': u'Комнат: ' + str(data['rooms_count']),
+					'd0': u'Комнат: ' + str(data['rooms_count']), # required
 					'd1': self.__format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
@@ -474,7 +474,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 			elif data.get('for_rent', False):
 				return{
 					'id': data['id'],
-					'd0': u'Мест: ' + str(data['persons_count']),
+					'd0': u'Мест: ' + str(data['persons_count']), # required
 					'd1': self.__format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
@@ -684,7 +684,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 			elif data.get('for_sale', False):
 				return {
 					'id': data['id'],
-					'd0': u'Комнат: ' + str(data['rooms_count']),
+					'd0': u'Комнат: ' + str(data['rooms_count']), # required
 					'd1': self.__format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
@@ -693,9 +693,9 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 				}
 
 			elif data.get('for_rent', False):
-				return{
+				return {
 					'id': data['id'],
-					'd0': u'Мест: ' + str(data['persons_count']),
+					'd0': u'Мест: ' + str(data['persons_count']), # required
 					'd1': self.__format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
@@ -896,7 +896,7 @@ class HousesMarkersManager(BaseMarkersManager):
 			elif data.get('for_sale', False):
 				return {
 					'id': data['id'],
-					'd0': u'Комнат: ' + str(data['rooms_count']),
+					'd0': u'Комнат: ' + str(data['rooms_count']) if data['rooms_count'] else '',
 					'd1': self.__format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
@@ -1108,7 +1108,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 			elif data.get('for_sale', False):
 				return {
 					'id': data['id'],
-					'd0': u'Комнат: ' + str(data['rooms_count']),
+					'd0': u'Комнат: ' + str(data['rooms_count']) if data['rooms_count'] else '',
 					'd1': self.__format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
@@ -1327,7 +1327,7 @@ class DachasMarkersManager(BaseMarkersManager):
 			elif data.get('for_sale', False):
 				return {
 					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['total_area']) + u' м²',
+					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
 					'd1': self.__format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
@@ -1338,7 +1338,7 @@ class DachasMarkersManager(BaseMarkersManager):
 			elif data.get('for_rent', False):
 				return{
 					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['total_area']) + u' м²',
+					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
 					'd1': self.__format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
@@ -1548,7 +1548,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 			elif data.get('for_sale', False):
 				return {
 					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['total_area']) + u' м²',
+					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
 					'd1': self.__format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
@@ -1756,7 +1756,7 @@ class TradesMarkersManager(BaseMarkersManager):
 			elif data.get('for_sale', False):
 				return {
 					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['total_area']) + u' м²',
+					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
 					'd1': self.__format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
@@ -1767,7 +1767,7 @@ class TradesMarkersManager(BaseMarkersManager):
 			elif data.get('for_rent', False):
 				return{
 					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['total_area']) + u' м²',
+					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
 					'd1': self.__format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
@@ -1954,7 +1954,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 			elif data.get('for_sale', False):
 				return {
 					'id': data['id'],
-					'd0': u'Кабинетов: ' + str(data['cabinets_count']),
+					'd0': u'Кабинетов: ' + str(data['cabinets_count']) if data['cabinets_count'] else '',
 					'd1': self.__format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
@@ -1965,7 +1965,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 			elif data.get('for_rent', False):
 				return{
 					'id': data['id'],
-					'd0': u'Кабинетов: ' + str(data['cabinets_count']),
+					'd0': u'Кабинетов: ' + str(data['cabinets_count']) if data['cabinets_count'] else '',
 					'd1': self.__format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
@@ -2147,7 +2147,7 @@ class WarehousesMarkersManager(BaseMarkersManager):
 			elif data.get('for_sale', False):
 				return {
 					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['halls_area']) + u' м²',
+					'd0': u'Площадь: ' + str(data['halls_area']) + u' м²' if data['halls_area'] else '',
 					'd1': self.__format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
@@ -2158,7 +2158,7 @@ class WarehousesMarkersManager(BaseMarkersManager):
 			elif data.get('for_rent', False):
 				return{
 					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['halls_area']) + u' м²',
+					'd0': u'Площадь: ' + str(data['halls_area']) + u' м²' if data['halls_area'] else '',
 					'd1': self.__format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
@@ -2538,7 +2538,7 @@ class CateringsMarkersManager(BaseMarkersManager):
 			elif data.get('for_sale', False):
 				return {
 					'id': data['id'],
-					'd0': u'Пл. залов: ' + str(data['halls_area']) + u' м²',
+					'd0': u'Пл. залов: ' + str(data['halls_area']) + u' м²' if data['halls_area'] else '',
 					'd1': self.__format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
@@ -2549,7 +2549,7 @@ class CateringsMarkersManager(BaseMarkersManager):
 			elif data.get('for_rent', False):
 				return{
 					'id': data['id'],
-					'd0': u'Пл. залов: ' + str(data['halls_area']) + u' м²',
+					'd0': u'Пл. залов: ' + str(data['halls_area']) + u' м²' if data['halls_area'] else '',
 					'd1': self.__format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
@@ -2725,7 +2725,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 			elif data.get('for_sale', False):
 				return {
 					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['total_area']) + u' м²',
+					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
 					'd1': self.__format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
@@ -2736,7 +2736,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 			elif data.get('for_rent', False):
 				return{
 					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['total_area']) + u' м²',
+					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
 					'd1': self.__format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
@@ -2919,7 +2919,7 @@ class LandsMarkersManager(BaseMarkersManager):
 			elif data.get('for_sale', False):
 				return {
 					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['area'])  + u' м²',
+					'd0': u'Площадь: ' + str(data['area'])  + u' м²' if data['area'] else '',
 					'd1': self.__format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
@@ -2930,7 +2930,7 @@ class LandsMarkersManager(BaseMarkersManager):
 			elif data.get('for_rent', False):
 				return{
 					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['area'])  + u' м²',
+					'd0': u'Площадь: ' + str(data['area'])  + u' м²' if data['area'] else '',
 					'd1': self.__format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
