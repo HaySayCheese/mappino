@@ -356,8 +356,19 @@ class FlatsMarkersManager(BaseMarkersManager):
 				raise SerializationError('Bitmask corruption. Potential deserialization error.')
 
 			# REQUIRED field
-			if record.rent_terms.price is not  None:
+			if record.rent_terms.price is not None:
 				data += str(record.rent_terms.price) + self.separator
+			else:
+				raise SerializationError('Rent price is required.')
+
+			# REQUIRED field
+			if record.rent_terms.currency_sid is not None:
+				data += str(record.rent_terms.currency_sid) + self.separator
+			else:
+				raise SerializationError('Rent price is required.')
+
+			# REQUIRED field
+			if record.rent_terms.currency_sid is not None:
 				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
@@ -386,15 +397,19 @@ class FlatsMarkersManager(BaseMarkersManager):
 		bitmask = bin(int(parts[-1]))[2:]
 		data = {
 			'id': int(parts[0]),
-			'rooms_count':  int(parts[1]) if parts[1] != '' else None,
+			'rooms_count':  int(parts[1])   if parts[1] != '' else None,
 			'total_area':   float(parts[2]) if parts[2] != '' else None,
-			'floor':        int(parts[3]) if parts[3] != '' else None,
+			'floor':        int(parts[3])   if parts[3] != '' else None,
 
 		    'electricity':  (bitmask[-3] == '1'),
 			'gas':          (bitmask[-4] == '1'),
 			'hot_water':    (bitmask[-5] == '1'),
 			'cold_water':   (bitmask[-6] == '1'),
 			'lift':         (bitmask[-7] == '1'),
+
+		    'market_type_sid':      int('' + bitmask[-8]),
+		    'heating_type_sid':     int('' + bitmask[-9]  + bitmask[-10]),
+		    'rooms_planning_sid':   int('' + bitmask[-11] + bitmask[-12])
 		}
 
 		if bitmask[-1] == '1':
@@ -551,6 +566,12 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 			else:
 				raise SerializationError('Sale price is required.')
 
+			# REQUIRED field
+			if record.sale_terms.currency_sid is not None:
+				data += str(record.sale_terms.currency_sid) + self.separator
+			else:
+				raise SerializationError('Sale price is required.')
+
 
 		#-- rent terms
 		if record.for_rent:
@@ -564,6 +585,11 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.rent_terms.price is not  None:
 				data += str(record.rent_terms.price) + self.separator
+			else:
+				raise SerializationError('Rent price is required.')
+
+			# REQUIRED field
+			if record.rent_terms.currency_sid is not None:
 				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
@@ -592,15 +618,19 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 		bitmask = bin(int(parts[-1]))[2:]
 		data = {
 			'id': int(parts[0]),
-			'rooms_count':  int(parts[1]) if parts[1] != '' else None,
+			'rooms_count':  int(parts[1])   if parts[1] != '' else None,
 			'total_area':   float(parts[2]) if parts[2] != '' else None,
-			'floor':        int(parts[3]) if parts[3] != '' else None,
+			'floor':        int(parts[3])   if parts[3] != '' else None,
 
 		    'electricity':  (bitmask[-3] == '1'),
 			'gas':          (bitmask[-4] == '1'),
 			'hot_water':    (bitmask[-5] == '1'),
 			'cold_water':   (bitmask[-6] == '1'),
 			'lift':         (bitmask[-7] == '1'),
+
+		    'market_type_sid':      int('' + bitmask[-8]),
+		    'heating_type_sid':     int('' + bitmask[-9]  + bitmask[-10]),
+		    'rooms_planning_sid':   int('' + bitmask[-11] + bitmask[-12])
 		}
 
 		if bitmask[-1] == '1':
@@ -746,6 +776,11 @@ class HousesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.sale_terms.price is not None:
 				data += str(record.sale_terms.price) + self.separator
+			else:
+				raise SerializationError('Sale price is required.')
+
+			# REQUIRED field
+			if record.sale_terms.currency_sid is not None:
 				data += str(record.sale_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Sale price is required.')
@@ -763,6 +798,11 @@ class HousesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.rent_terms.price is not  None:
 				data += str(record.rent_terms.price) + self.separator
+			else:
+				raise SerializationError('Rent price is required.')
+
+			# REQUIRED field
+			if record.rent_terms.currency_sid is not None:
 				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
@@ -799,6 +839,9 @@ class HousesMarkersManager(BaseMarkersManager):
 			'sewerage':    (bitmask[-5] == '1'),
 			'hot_water':   (bitmask[-6] == '1'),
 			'cold_water':  (bitmask[-7] == '1'),
+
+		    'market_type_sid':  int('' + bitmask[-8]),
+		    'heating_type_sid': int('' + bitmask[-9] + bitmask[-10]),
 		}
 
 		if bitmask[-1] == '1':
@@ -945,6 +988,11 @@ class CottagesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.sale_terms.price is not None:
 				data += str(record.sale_terms.price) + self.separator
+			else:
+				raise SerializationError('Sale price is required.')
+
+			# REQUIRED field
+			if record.sale_terms.currency_sid is not None:
 				data += str(record.sale_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Sale price is required.')
@@ -962,6 +1010,11 @@ class CottagesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.rent_terms.price is not  None:
 				data += str(record.rent_terms.price) + self.separator
+			else:
+				raise SerializationError('Rent price is required.')
+
+			# REQUIRED field
+			if record.rent_terms.currency_sid is not None:
 				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
@@ -998,6 +1051,9 @@ class CottagesMarkersManager(BaseMarkersManager):
 			'sewerage':    (bitmask[-5] == '1'),
 			'hot_water':   (bitmask[-6] == '1'),
 			'cold_water':  (bitmask[-7] == '1'),
+
+		    'market_type_sid':  int('' + bitmask[-8]),
+		    'heating_type_sid': int('' + bitmask[-9] + bitmask[-10]),
 		}
 
 		if bitmask[-1] == '1':
@@ -1150,6 +1206,11 @@ class DachasMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.sale_terms.price is not None:
 				data += str(record.sale_terms.price) + self.separator
+			else:
+				raise SerializationError('Sale price is required.')
+
+			# REQUIRED field
+			if record.sale_terms.currency_sid is not None:
 				data += str(record.sale_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Sale price is required.')
@@ -1167,6 +1228,11 @@ class DachasMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.rent_terms.price is not  None:
 				data += str(record.rent_terms.price) + self.separator
+			else:
+				raise SerializationError('Rent price is required.')
+
+			# REQUIRED field
+			if record.rent_terms.currency_sid is not None:
 				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
@@ -1204,6 +1270,9 @@ class DachasMarkersManager(BaseMarkersManager):
 			'sewerage':    (bitmask[-5] == '1'),
 			'hot_water':   (bitmask[-6] == '1'),
 			'cold_water':  (bitmask[-7] == '1'),
+
+		    'market_type_sid':  int('' + bitmask[-8]),
+		    'heating_type_sid': int('' + bitmask[-9] + bitmask[-10]),
 		}
 
 		if bitmask[-1] == '1':
@@ -1374,9 +1443,20 @@ class RoomsMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.rent_terms.price is not  None:
 				data += str(record.rent_terms.price) + self.separator
+			else:
+				raise SerializationError('Rent price is required.')
+
+			# REQUIRED field
+			if record.rent_terms.currency_sid is not None:
 				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
+
+			# REQUIRED field
+			if record.sale_terms.currency_sid is not None:
+				data += str(record.sale_terms.currency_sid) + self.separator
+			else:
+				raise SerializationError('Sale price is required.')
 
 			# WARNING: next fields can be None
 			if record.rent_terms.persons_count is not None:
@@ -1411,6 +1491,10 @@ class RoomsMarkersManager(BaseMarkersManager):
 			'hot_water':    (bitmask[-5] == '1'),
 			'cold_water':   (bitmask[-6] == '1'),
 			'lift':         (bitmask[-7] == '1'),
+
+		    'market_type_sid':    int('' + bitmask[-8]),
+		    'heating_type_sid':   int('' + bitmask[-9]  + bitmask[-10]),
+		    'rooms_planning_sid': int('' + bitmask[-11] + bitmask[-12]),
 		}
 
 		if bitmask[-1] == '1':
@@ -1561,6 +1645,11 @@ class TradesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.sale_terms.price is not None:
 				data += str(record.sale_terms.price) + self.separator
+			else:
+				raise SerializationError('Sale price is required.')
+
+			# REQUIRED field
+			if record.sale_terms.currency_sid is not None:
 				data += str(record.sale_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Sale price is required.')
@@ -1576,7 +1665,12 @@ class TradesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.rent_terms.price is not None:
 				data += str(record.rent_terms.price) + self.separator
-				data += str(record.rent_terms.currency_sid) + self.separator # todo окрему перевірку
+			else:
+				raise SerializationError('Rent price is required.')
+
+			# REQUIRED field
+			if record.rent_terms.currency_sid is not None:
+				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
 
@@ -1708,7 +1802,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 
 			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
 
-			'body__kitchen', 'body__hot_water', 'body__cold_water',
+			'body__security', 'body__kitchen', 'body__hot_water', 'body__cold_water',
 			'body__cabinets_count', 'body__total_area')
 
 
@@ -1718,6 +1812,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 		bitmask = ''
 		bitmask += '1' if record.for_sale else '0'
 		bitmask += '1' if record.for_rent else '0'
+		bitmask += '1' if record.body.security else '0'
 		bitmask += '1' if record.body.kitchen else '0'
 		bitmask += '1' if record.body.hot_water else '0'
 		bitmask += '1' if record.body.cold_water else '0'
@@ -1750,6 +1845,11 @@ class OfficesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.sale_terms.price is not None:
 				data += str(record.sale_terms.price) + self.separator
+			else:
+				raise SerializationError('Sale price is required.')
+
+			# REQUIRED field
+			if record.sale_terms.currency_sid is not None:
 				data += str(record.sale_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Sale price is required.')
@@ -1765,7 +1865,12 @@ class OfficesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.rent_terms.price is not None:
 				data += str(record.rent_terms.price) + self.separator
-				data += str(record.rent_terms.currency_sid) + self.separator # todo окрему перевірку
+			else:
+				raise SerializationError('Rent price is required.')
+
+			# REQUIRED field
+			if record.rent_terms.currency_sid is not None:
+				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
 
@@ -1790,13 +1895,12 @@ class OfficesMarkersManager(BaseMarkersManager):
 			'cabinets_count':   int(parts[1]) if parts[1] != '' else None,
 			'total_area':       int(parts[2]) if parts[2] != '' else None,
 
-		    'electricity':          (bitmask[-3] == '1'),
-			'gas':                  (bitmask[-4] == '1'),
-			'kitchen':              (bitmask[-5] == '1'),
-			'hot_water':            (bitmask[-6] == '1'),
-			'cold_water':           (bitmask[-7] == '1'),
+			'security':     (bitmask[-3] == '1'),
+			'kitchen':      (bitmask[-4] == '1'),
+			'hot_water':    (bitmask[-5] == '1'),
+			'cold_water':   (bitmask[-6] == '1'),
 
-			'building_type_sid':    int('' + bitmask[-9] + bitmask[-10] + bitmask[-11]),
+			'building_type_sid':    int('' + bitmask[-7] + bitmask[-8] + bitmask[-9]),
 		}
 
 		if bitmask[-1] == '1':
@@ -1935,6 +2039,11 @@ class WarehousesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.sale_terms.price is not None:
 				data += str(record.sale_terms.price) + self.separator
+			else:
+				raise SerializationError('Sale price is required.')
+
+			# REQUIRED field
+			if record.sale_terms.currency_sid is not None:
 				data += str(record.sale_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Sale price is required.')
@@ -1950,7 +2059,12 @@ class WarehousesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.rent_terms.price is not None:
 				data += str(record.rent_terms.price) + self.separator
-				data += str(record.rent_terms.currency_sid) + self.separator # todo окрему перевірку
+			else:
+				raise SerializationError('Rent price is required.')
+
+			# REQUIRED field
+			if record.rent_terms.currency_sid is not None:
+				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
 
@@ -2116,6 +2230,11 @@ class BusinessesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.sale_terms.price is not None:
 				data += str(record.sale_terms.price) + self.separator
+			else:
+				raise SerializationError('Sale price is required.')
+
+			# REQUIRED field
+			if record.sale_terms.currency_sid is not None:
 				data += str(record.sale_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Sale price is required.')
@@ -2131,7 +2250,12 @@ class BusinessesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.rent_terms.price is not None:
 				data += str(record.rent_terms.price) + self.separator
-				data += str(record.rent_terms.currency_sid) + self.separator # todo окрему перевірку
+			else:
+				raise SerializationError('Rent price is required.')
+
+			# REQUIRED field
+			if record.rent_terms.currency_sid is not None:
+				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
 
@@ -2156,7 +2280,7 @@ class BusinessesMarkersManager(BaseMarkersManager):
 			'halls_area': int(parts[1]) if parts[1] != '' else None,
 			'total_area': int(parts[2]) if parts[2] != '' else None,
 
-			'building_type_sid': int('' + bitmask[-1] + bitmask[-2] + bitmask[-3]),
+			'building_type_sid': int('' + bitmask[-3] + bitmask[-4] + bitmask[-5]),
 		}
 
 		if bitmask[-1] == '1':
@@ -2303,6 +2427,11 @@ class CateringsMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.sale_terms.price is not None:
 				data += str(record.sale_terms.price) + self.separator
+			else:
+				raise SerializationError('Sale price is required.')
+
+			# REQUIRED field
+			if record.sale_terms.currency_sid is not None:
 				data += str(record.sale_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Sale price is required.')
@@ -2318,7 +2447,12 @@ class CateringsMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.rent_terms.price is not None:
 				data += str(record.rent_terms.price) + self.separator
-				data += str(record.rent_terms.currency_sid) + self.separator # todo окрему перевірку
+			else:
+				raise SerializationError('Rent price is required.')
+
+			# REQUIRED field
+			if record.rent_terms.currency_sid is not None:
+				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
 
@@ -2340,16 +2474,16 @@ class CateringsMarkersManager(BaseMarkersManager):
 		bitmask = bin(int(parts[-1]))[2:]
 		data = {
 			'id': int(parts[0]),
-		    'halls_count':  int(parts[1]), # required
-			'halls_area':   int(parts[2]), # required
-			'total_area':   int(parts[3]) if parts[3] != '' else None,
+		    'halls_count': int(parts[1]), # required
+			'halls_area':  int(parts[2]), # required
+			'total_area':  int(parts[3]) if parts[3] != '' else None,
 
-		    'electricity':          (bitmask[-3] == '1'),
-			'gas':                  (bitmask[-4] == '1'),
-			'hot_water':            (bitmask[-5] == '1'),
-			'cold_water':           (bitmask[-6] == '1'),
+		    'electricity': (bitmask[-3] == '1'),
+			'gas':         (bitmask[-4] == '1'),
+			'hot_water':   (bitmask[-5] == '1'),
+			'cold_water':  (bitmask[-6] == '1'),
 
-			'building_type_sid':    int('' + bitmask[-7] + bitmask[-8] + bitmask[-9]),
+			'building_type_sid': int('' + bitmask[-7] + bitmask[-8] + bitmask[-9]),
 		}
 
 		if bitmask[-1] == '1':
@@ -2486,6 +2620,11 @@ class GaragesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.sale_terms.price is not None:
 				data += str(record.sale_terms.price) + self.separator
+			else:
+				raise SerializationError('Sale price is required.')
+
+			# REQUIRED field
+			if record.sale_terms.currency_sid is not None:
 				data += str(record.sale_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Sale price is required.')
@@ -2501,7 +2640,12 @@ class GaragesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.rent_terms.price is not None:
 				data += str(record.rent_terms.price) + self.separator
-				data += str(record.rent_terms.currency_sid) + self.separator # todo окрему перевірку
+			else:
+				raise SerializationError('Rent price is required.')
+
+			# REQUIRED field
+			if record.rent_terms.currency_sid is not None:
+				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
 
@@ -2662,6 +2806,11 @@ class LandsMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.sale_terms.price is not None:
 				data += str(record.sale_terms.price) + self.separator
+			else:
+				raise SerializationError('Sale price is required.')
+
+			# REQUIRED field
+			if record.sale_terms.currency_sid is not None:
 				data += str(record.sale_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Sale price is required.')
@@ -2677,6 +2826,11 @@ class LandsMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.rent_terms.price is not  None:
 				data += str(record.rent_terms.price) + self.separator
+			else:
+				raise SerializationError('Rent price is required.')
+
+			# REQUIRED field
+			if record.rent_terms.currency_sid is not None:
 				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
