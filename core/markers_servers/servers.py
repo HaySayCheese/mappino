@@ -3,11 +3,12 @@ import copy
 import mmh3
 
 import abc
-from django.core.exceptions import SuspiciousOperation, ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist
 
-from core.markers_servers.exceptions import TooBigTransaction, SerializationError
+from core.currencies.currencies_manager import convert as convert_currency
+from core.markers_servers.exceptions import TooBigTransaction, SerializationError, DeserializationError
 from core.markers_servers.utils import DegreeSegmentPoint, Point, SegmentPoint, DegreePoint
-from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
+from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, CURRENCIES
 from mappino.wsgi import redis_connections
 
 
@@ -67,7 +68,8 @@ class BaseMarkersManager(object):
 				coordinates = record[0]
 				item = record[1]
 
-				result[degree][coordinates] = self.deserialize_publication_record(item, brief=True)
+				marker_data = self.deserialize_publication_record(item)
+				result[degree][coordinates] = self.marker_brief(marker_data, condition)
 		return result
 
 
@@ -112,17 +114,18 @@ class BaseMarkersManager(object):
 		except IndexError:
 			raise ObjectDoesNotExist('Invalid hid. Object with such hid does not exist.')
 
-		degree = DegreePoint(record.degree_lat, record.degree_lng)
-		segment = SegmentPoint(record.segment_lat, record.segment_lng)
-		seg_digest = self.__segment_digest(degree, segment)
+		for i in xrange(100):
+			degree = DegreePoint(record.degree_lat, record.degree_lng)
+			segment = SegmentPoint(record.segment_lat, record.segment_lng)
+			seg_digest = self.__segment_digest(degree, segment)
 
-		sector = Point(record.segment_lat, record.segment_lng)
-		position = Point(record.pos_lat, record.pos_lng)
-		pos_digest = self.__position_digest(sector, position)
+			sector = Point(record.segment_lat, record.segment_lng)
+			position = Point(int(record.pos_lat)+1, int(record.pos_lng)+1)
+			pos_digest = self.__position_digest(sector, position)
 
-		data = self.serialize_publication_record(record)
-		self.redis.hset(seg_digest, pos_digest, data)
-		self.__update_segment_hash(seg_digest, hid)
+			data = self.serialize_publication_record(record)
+			self.redis.hset(seg_digest, pos_digest, data)
+			self.__update_segment_hash(seg_digest, hid+i)
 
 
 	def __segments_digests(self, ne, sw):
@@ -237,8 +240,13 @@ class BaseMarkersManager(object):
 
 
 	@abc.abstractmethod
-	def deserialize_publication_record(self, record, brief=False):
+	def deserialize_publication_record(self, record):
 		return
+
+
+	@abc.abstractmethod
+	def marker_brief(self, data, condition=None):
+		pass
 
 
 	@abc.abstractmethod
@@ -256,16 +264,15 @@ class BaseMarkersManager(object):
 		return
 
 
-	@staticmethod
-	@abc.abstractmethod
-	def format(publications):
-		return
-
-
 
 class FlatsMarkersManager(BaseMarkersManager):
 	def __init__(self):
 		super(FlatsMarkersManager, self).__init__(OBJECTS_TYPES.flat())
+
+
+	def record_queryset(self, hid):
+		return self.model.objects.filter(id=hid).only(
+			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
 
 
 	def serialize_publication_record(self, record):
@@ -276,18 +283,12 @@ class FlatsMarkersManager(BaseMarkersManager):
 		return ''
 
 
-	def record_queryset(self, hid):
-		return self.model.objects.filter(id=hid).only(
-			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+	def marker_brief(self, data, condition=None):
+		return ''
 
 
 	@staticmethod
 	def filter(publications, conditions):
-		return
-
-
-	@staticmethod
-	def format(publications):
 		return
 
 
@@ -297,6 +298,11 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 		super(ApartmentsMarkersManager, self).__init__(OBJECTS_TYPES.apartments())
 
 
+	def record_queryset(self, hid):
+		return self.model.objects.filter(id=hid).only(
+			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+
+
 	def serialize_publication_record(self, record):
 		return ''
 
@@ -305,9 +311,8 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 		return ''
 
 
-	def record_queryset(self, hid):
-		return self.model.objects.filter(id=hid).only(
-			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+	def marker_brief(self, data, condition=None):
+		return ''
 
 
 	@staticmethod
@@ -315,15 +320,15 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 		return
 
 
-	@staticmethod
-	def format(publications):
-		return
-
-
 
 class HousesMarkersManager(BaseMarkersManager):
 	def __init__(self):
 		super(HousesMarkersManager, self).__init__(OBJECTS_TYPES.house())
+
+
+	def record_queryset(self, hid):
+		return self.model.objects.filter(id=hid).only(
+			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
 
 
 	def serialize_publication_record(self, record):
@@ -366,6 +371,7 @@ class HousesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.sale_terms.price is not None:
 				data += str(record.sale_terms.price) + self.separator
+				data += str(record.sale_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Sale price is required.')
 
@@ -382,6 +388,7 @@ class HousesMarkersManager(BaseMarkersManager):
 			# REQUIRED field
 			if record.rent_terms.price is not  None:
 				data += str(record.rent_terms.price) + self.separator
+				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
 
@@ -404,16 +411,9 @@ class HousesMarkersManager(BaseMarkersManager):
 		return record_data
 
 
-	def deserialize_publication_record(self, record_data, brief=False):
+	def deserialize_publication_record(self, record_data):
 		parts = record_data.split(self.separator)
-		if brief:
-			# Подати коротку форму для передачі разом із маркером на клієнт.
-			return {
-				'id': int(parts[0]),
-			    # todo: додати сюди відомості про об’єкт в залежності від фільтрів
-			}
-
-		bitmask = bin(int(parts[-1]))[:2]
+		bitmask = bin(int(parts[-1]))[2:]
 		data = {
 			'id': int(parts[0]),
 			'rooms_count':  int(parts[1]) if parts[1] != '' else None,
@@ -431,14 +431,16 @@ class HousesMarkersManager(BaseMarkersManager):
 			data.update({
 				'for_sale': True,
 			    'sale_price': float(parts[3]),
+			    'sale_currency_sid': int(parts[4]),
 			})
 
 			# check for rent terms
 			if bitmask[-2] == '1':
 				data.update({
 					'for_rent': True,
-					'rent_price': float(parts[4]),
-				    'persons_count': int(parts[5]) if parts[5] != '' else None
+					'rent_price': float(parts[5]),
+				    'rent_currency_sid': int(parts[6]),
+				    'persons_count': int(parts[7]) if parts[7] != '' else None
 				})
 
 		else:
@@ -447,24 +449,61 @@ class HousesMarkersManager(BaseMarkersManager):
 				data.update({
 					'for_rent': True,
 					'rent_price': float(parts[4]),
-				    'persons_count': int(parts[5]) if parts[5] != '' else None
+					'rent_currency_sid': float(parts[5]),
+				    'persons_count': int(parts[6]) if parts[6] != '' else None
 				})
 		return data
 
 
+	def marker_brief(self, data, condition=None):
+		def format_price(price, base_currency, destination_currency):
+			result = u''
+			if base_currency != destination_currency:
+				result += u'≈'
 
-	def record_queryset(self, hid):
-		return self.model.objects.filter(id=hid).only(
-			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+			converted_price = convert_currency(price, base_currency, destination_currency)
+			if int(converted_price) == converted_price:
+				return result + u'{:0,.0f}'.format(converted_price)
+			return result + u'{:0,.2f}'.format(converted_price)
+
+
+		if condition is None:
+			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
+			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
+				return {
+					'id': data['id'],
+					'd0': u'Продажа: ' + format_price(
+						data['sale_price'], data['sale_currency_sid'], CURRENCIES.uah()) + u' грн.',
+
+					'd1': u'Аренда: ' + format_price(
+						data['rent_price'], data['rent_currency_sid'], CURRENCIES.uah()) + u' грн.',
+				}
+
+			elif data.get('for_sale', False):
+				return {
+					'id': data['id'],
+					'd0': u'Комнат: ' + str(data['rooms_count']),
+					'd1': format_price(data['sale_price'], data['sale_currency_sid'], CURRENCIES.uah()) + u' грн.',
+				}
+
+			elif data.get('for_rent', False):
+				return{
+					'id': data['id'],
+					'd0': u'Мест: ' + str(data['persons_count']),
+					'd1': format_price(data['rent_price'], data['rent_currency_sid'], CURRENCIES.uah()) + u' грн.',
+				}
+
+			else:
+				raise DeserializationError()
+
+		else:
+			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
+			# todo: додати конввертацію валют в залженост від фільтрів
+			pass
 
 
 	@staticmethod
 	def filter(publications, conditions):
-		return
-
-
-	@staticmethod
-	def format(publications):
 		return
 
 
@@ -474,48 +513,25 @@ class CottagesMarkersManager(BaseMarkersManager):
 		super(CottagesMarkersManager, self).__init__(OBJECTS_TYPES.cottage())
 
 
-	def serialize_publication_record(self, record):
-		"""
-		format: int - hid,
-				separator,
-				bitmask:
-					0 | 1 - record is for sale
-					0 | 1 - record is for rent
-		"""
-
-		bitmask =  '1' if record.for_sale else '0'
-		bitmask += '1' if record.for_rent else '0'
-
-		data = str(record.id) + self.separator + \
-		       str(int(bitmask, 2)) + self.separator
-
-		if record.for_sale:
-			if record.sale_terms.price is None:
-				raise SuspiciousOperation('Attempt to publish record with empty sale-price.')
-			data += str(record.sale_terms.price)
-
-		if record.for_rent:
-			if record.rent_terms.price is None:
-				raise SuspiciousOperation('Attempt to publish record with empty rent-price.')
-			data += str(record.rent_terms.price)
-		return data
-
-
-	def deserialize_publication_record(self, record, brief=True):
-		return ''
-
 	def record_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
 
 
+	def serialize_publication_record(self, record):
+		return ''
+
+
+	def deserialize_publication_record(self, record, brief=True):
+		return ''
+
+
+	def marker_brief(self, data, condition=None):
+		return ''
+
+
 	@staticmethod
 	def filter(publications, conditions):
-		return
-
-
-	@staticmethod
-	def format(publications):
 		return
 
 
@@ -525,6 +541,11 @@ class DachasMarkersManager(BaseMarkersManager):
 		super(DachasMarkersManager, self).__init__(OBJECTS_TYPES.dacha())
 
 
+	def record_queryset(self, hid):
+		return self.model.objects.filter(id=hid).only(
+			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+
+
 	def serialize_publication_record(self, record):
 		return ''
 
@@ -533,18 +554,12 @@ class DachasMarkersManager(BaseMarkersManager):
 		return ''
 
 
-	def record_queryset(self, hid):
-		return self.model.objects.filter(id=hid).only(
-			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+	def marker_brief(self, data, condition=None):
+		return ''
 
 
 	@staticmethod
 	def filter(publications, conditions):
-		return
-
-
-	@staticmethod
-	def format(publications):
 		return
 
 
@@ -554,6 +569,11 @@ class RoomsMarkersManager(BaseMarkersManager):
 		super(RoomsMarkersManager, self).__init__(OBJECTS_TYPES.room())
 
 
+	def record_queryset(self, hid):
+		return self.model.objects.filter(id=hid).only(
+			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+
+
 	def serialize_publication_record(self, record):
 		return ''
 
@@ -562,18 +582,12 @@ class RoomsMarkersManager(BaseMarkersManager):
 		return ''
 
 
-	def record_queryset(self, hid):
-		return self.model.objects.filter(id=hid).only(
-			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+	def marker_brief(self, data, condition=None):
+		return ''
 
 
 	@staticmethod
 	def filter(publications, conditions):
-		return
-
-
-	@staticmethod
-	def format(publications):
 		return
 
 
@@ -583,6 +597,11 @@ class TradesMarkersManager(BaseMarkersManager):
 		super(TradesMarkersManager, self).__init__(OBJECTS_TYPES.trade())
 
 
+	def record_queryset(self, hid):
+		return self.model.objects.filter(id=hid).only(
+			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+
+
 	def serialize_publication_record(self, record):
 		return ''
 
@@ -591,18 +610,12 @@ class TradesMarkersManager(BaseMarkersManager):
 		return ''
 
 
-	def record_queryset(self, hid):
-		return self.model.objects.filter(id=hid).only(
-			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+	def marker_brief(self, data, condition=None):
+		return ''
 
 
 	@staticmethod
 	def filter(publications, conditions):
-		return
-
-
-	@staticmethod
-	def format(publications):
 		return
 
 
@@ -612,6 +625,11 @@ class OfficesMarkersManager(BaseMarkersManager):
 		super(OfficesMarkersManager, self).__init__(OBJECTS_TYPES.office())
 
 
+	def record_queryset(self, hid):
+		return self.model.objects.filter(id=hid).only(
+			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+
+
 	def serialize_publication_record(self, record):
 		return ''
 
@@ -620,18 +638,12 @@ class OfficesMarkersManager(BaseMarkersManager):
 		return ''
 
 
-	def record_queryset(self, hid):
-		return self.model.objects.filter(id=hid).only(
-			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+	def marker_brief(self, data, condition=None):
+		return ''
 
 
 	@staticmethod
 	def filter(publications, conditions):
-		return
-
-
-	@staticmethod
-	def format(publications):
 		return
 
 
@@ -641,6 +653,11 @@ class WarehousesMarkersManager(BaseMarkersManager):
 		super(WarehousesMarkersManager, self).__init__(OBJECTS_TYPES.warehouse())
 
 
+	def record_queryset(self, hid):
+		return self.model.objects.filter(id=hid).only(
+			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+
+
 	def serialize_publication_record(self, record):
 		return ''
 
@@ -649,18 +666,12 @@ class WarehousesMarkersManager(BaseMarkersManager):
 		return ''
 
 
-	def record_queryset(self, hid):
-		return self.model.objects.filter(id=hid).only(
-			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+	def marker_brief(self, data, condition=None):
+		return ''
 
 
 	@staticmethod
 	def filter(publications, conditions):
-		return
-
-
-	@staticmethod
-	def format(publications):
 		return
 
 
@@ -670,6 +681,11 @@ class BusinessesMarkersManager(BaseMarkersManager):
 		super(BusinessesMarkersManager, self).__init__(OBJECTS_TYPES.business())
 
 
+	def record_queryset(self, hid):
+		return self.model.objects.filter(id=hid).only(
+			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+
+
 	def serialize_publication_record(self, record):
 		return ''
 
@@ -678,18 +694,12 @@ class BusinessesMarkersManager(BaseMarkersManager):
 		return ''
 
 
-	def record_queryset(self, hid):
-		return self.model.objects.filter(id=hid).only(
-			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+	def marker_brief(self, data, condition=None):
+		return ''
 
 
 	@staticmethod
 	def filter(publications, conditions):
-		return
-
-
-	@staticmethod
-	def format(publications):
 		return
 
 
@@ -699,6 +709,11 @@ class CateringsMarkersManager(BaseMarkersManager):
 		super(CateringsMarkersManager, self).__init__(OBJECTS_TYPES.catering())
 
 
+	def record_queryset(self, hid):
+		return self.model.objects.filter(id=hid).only(
+			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+
+
 	def serialize_publication_record(self, record):
 		return ''
 
@@ -707,18 +722,12 @@ class CateringsMarkersManager(BaseMarkersManager):
 		return ''
 
 
-	def record_queryset(self, hid):
-		return self.model.objects.filter(id=hid).only(
-			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+	def marker_brief(self, data, condition=None):
+		return ''
 
 
 	@staticmethod
 	def filter(publications, conditions):
-		return
-
-
-	@staticmethod
-	def format(publications):
 		return
 
 
@@ -728,6 +737,11 @@ class GaragesMarkersManager(BaseMarkersManager):
 		super(GaragesMarkersManager, self).__init__(OBJECTS_TYPES.garage())
 
 
+	def record_queryset(self, hid):
+		return self.model.objects.filter(id=hid).only(
+			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+
+
 	def serialize_publication_record(self, record):
 		return ''
 
@@ -736,18 +750,12 @@ class GaragesMarkersManager(BaseMarkersManager):
 		return ''
 
 
-	def record_queryset(self, hid):
-		return self.model.objects.filter(id=hid).only(
-			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+	def marker_brief(self, data, condition=None):
+		return ''
 
 
 	@staticmethod
 	def filter(publications, conditions):
-		return
-
-
-	@staticmethod
-	def format(publications):
 		return
 
 
@@ -757,6 +765,11 @@ class LandsMarkersManager(BaseMarkersManager):
 		super(LandsMarkersManager, self).__init__(OBJECTS_TYPES.land())
 
 
+	def record_queryset(self, hid):
+		return self.model.objects.filter(id=hid).only(
+			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+
+
 	def serialize_publication_record(self, record):
 		return ''
 
@@ -765,16 +778,10 @@ class LandsMarkersManager(BaseMarkersManager):
 		return ''
 
 
-	def record_queryset(self, hid):
-		return self.model.objects.filter(id=hid).only(
-			'for_sale', 'for_rent', 'sale_terms__price', 'rent_terms__price')
+	def marker_brief(self, data, condition=None):
+		return ''
 
 
 	@staticmethod
 	def filter(publications, conditions):
-		return
-
-
-	@staticmethod
-	def format(publications):
 		return
