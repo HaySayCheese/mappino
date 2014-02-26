@@ -1,6 +1,6 @@
 #coding=utf-8
 import copy
-import mmh3
+#import mmh3 # todo: enable me back
 
 import abc
 from django.core.exceptions import ObjectDoesNotExist
@@ -74,26 +74,30 @@ class BaseMarkersManager(object):
 
 
 	def viewport_hash(self, ne, sw):
-		"""
-		Args:
-			ne: (North East) Point з координатами північно-західного кута в’юпорта.
-			sw: (South West) Point з координатами південно-східного кута в’юпорта.
+		# todo enable me
+		# """
+		# Args:
+		# 	ne: (North East) Point з координатами північно-західного кута в’юпорта.
+		# 	sw: (South West) Point з координатами південно-східного кута в’юпорта.
+		#
+		# Повертає хеш всіх сегментів, які потрапляють у в’юпорт з координатами ne та sw.
+		# Хеш вираховується як hash(хеш 1-го сегменту + хеш 2-го сегменту + ... + хеш N-го сегменту).
+		# Для підрахунку хешу використовується MurmurHash. (див. док. __update_segment_hash)
+		# """
+		# digests = self.__segments_digests(ne, sw)
+		#
+		# pipe = self.redis.pipeline()
+		# for digest in digests:
+		# 	pipe.hget(self.redis_segments_hashes_prefix, digest)
+		#
+		# key = ''
+		# for h in pipe.execute():
+		# 	if h is not None:
+		# 		key += h
+		# return str(mmh3.hash(key))
 
-		Повертає хеш всіх сегментів, які потрапляють у в’юпорт з координатами ne та sw.
-		Хеш вираховується як hash(хеш 1-го сегменту + хеш 2-го сегменту + ... + хеш N-го сегменту).
-		Для підрахунку хешу використовується MurmurHash. (див. док. __update_segment_hash)
-		"""
-		digests = self.__segments_digests(ne, sw)
-
-		pipe = self.redis.pipeline()
-		for digest in digests:
-			pipe.hget(self.redis_segments_hashes_prefix, digest)
-
-		key = ''
-		for h in pipe.execute():
-			if h is not None:
-				key += h
-		return str(mmh3.hash(key))
+		# todo: disable me
+		return None
 
 
 	def add_publication(self, hid):
@@ -214,27 +218,31 @@ class BaseMarkersManager(object):
 
 
 	def __update_segment_hash(self, digest, record_id):
-		"""
-		Кожен сегмент маркерів має власний хеш.
-		Він використовується, наприклад, як etag для запитів на отримання маркерів.
-		Даний метод оновить хеш для сегменту з дайджестом digest.
+		# todo: enable me
+		# """
+		# Кожен сегмент маркерів має власний хеш.
+		# Він використовується, наприклад, як etag для запитів на отримання маркерів.
+		# Даний метод оновить хеш для сегменту з дайджестом digest.
+		#
+		# Для хешування використовується MurmurHash,
+		# оскільки він дуже швидкий і видає короткі дайджести,
+		# а криптостійкість в даному випадку не важлива.
+		#
+		# Новий хеш вираховується за формулою h = hash(попередній хеш + record_id)
+		# """
+		# current_hash = self.redis.hget(self.redis_segments_hashes_prefix, digest)
+		# if current_hash is None:
+		# 	current_hash = ''
+		#
+		# segment_hash = mmh3.hash(current_hash + str(record_id))
+		# self.redis.hset(self.redis_segments_hashes_prefix, digest, segment_hash)
 
-		Для хешування використовується MurmurHash,
-		оскільки він дуже швидкий і видає короткі дайджести,
-		а криптостійкість в даному випадку не важлива.
-
-		Новий хеш вираховується за формулою h = hash(попередній хеш + record_id)
-		"""
-		current_hash = self.redis.hget(self.redis_segments_hashes_prefix, digest)
-		if current_hash is None:
-			current_hash = ''
-
-		segment_hash = mmh3.hash(current_hash + str(record_id))
-		self.redis.hset(self.redis_segments_hashes_prefix, digest, segment_hash)
+		# todo: disable me
+		pass
 
 
 	@staticmethod
-	def __format_price(price, base_currency, destination_currency):
+	def format_price(price, base_currency, destination_currency):
 		result = u''
 		if base_currency != destination_currency:
 			result += u'≈'
@@ -447,13 +455,13 @@ class FlatsMarkersManager(BaseMarkersManager):
 			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
 				return {
 					'id': data['id'],
-					'd0': u'Продажа: ' + self.__format_price(
+					'd0': u'Продажа: ' + self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 
-					'd1': u'Аренда: ' + self.__format_price(
+					'd1': u'Аренда: ' + self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -464,7 +472,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 				return {
 					'id': data['id'],
 					'd0': u'Комнат: ' + str(data['rooms_count']), # required
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
@@ -475,7 +483,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 				return{
 					'id': data['id'],
 					'd0': u'Мест: ' + str(data['persons_count']), # required
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -668,13 +676,13 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
 				return {
 					'id': data['id'],
-					'd0': u'Продажа: ' + self.__format_price(
+					'd0': u'Продажа: ' + self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 
-					'd1': u'Аренда: ' + self.__format_price(
+					'd1': u'Аренда: ' + self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -685,7 +693,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 				return {
 					'id': data['id'],
 					'd0': u'Комнат: ' + str(data['rooms_count']), # required
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
@@ -696,7 +704,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 				return {
 					'id': data['id'],
 					'd0': u'Мест: ' + str(data['persons_count']), # required
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -880,13 +888,13 @@ class HousesMarkersManager(BaseMarkersManager):
 			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
 				return {
 					'id': data['id'],
-					'd0': u'Продажа: ' + self.__format_price(
+					'd0': u'Продажа: ' + self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 
-					'd1': u'Аренда: ' + self.__format_price(
+					'd1': u'Аренда: ' + self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -897,7 +905,7 @@ class HousesMarkersManager(BaseMarkersManager):
 				return {
 					'id': data['id'],
 					'd0': u'Комнат: ' + str(data['rooms_count']) if data['rooms_count'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
@@ -908,7 +916,7 @@ class HousesMarkersManager(BaseMarkersManager):
 				return{
 					'id': data['id'],
 					'd0': u'Мест: ' + str(data['persons_count']),
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -1092,13 +1100,13 @@ class CottagesMarkersManager(BaseMarkersManager):
 			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
 				return {
 					'id': data['id'],
-					'd0': u'Продажа: ' + self.__format_price(
+					'd0': u'Продажа: ' + self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 
-					'd1': u'Аренда: ' + self.__format_price(
+					'd1': u'Аренда: ' + self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -1109,7 +1117,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 				return {
 					'id': data['id'],
 					'd0': u'Комнат: ' + str(data['rooms_count']) if data['rooms_count'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
@@ -1120,7 +1128,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 				return{
 					'id': data['id'],
 					'd0': u'Мест: ' + str(data['persons_count']),
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -1311,13 +1319,13 @@ class DachasMarkersManager(BaseMarkersManager):
 			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
 				return {
 					'id': data['id'],
-					'd0': u'Продажа: ' + self.__format_price(
+					'd0': u'Продажа: ' + self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 
-					'd1': u'Аренда: ' + self.__format_price(
+					'd1': u'Аренда: ' + self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -1328,7 +1336,7 @@ class DachasMarkersManager(BaseMarkersManager):
 				return {
 					'id': data['id'],
 					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
@@ -1339,7 +1347,7 @@ class DachasMarkersManager(BaseMarkersManager):
 				return{
 					'id': data['id'],
 					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -1532,13 +1540,13 @@ class RoomsMarkersManager(BaseMarkersManager):
 			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
 				return {
 					'id': data['id'],
-					'd0': u'Продажа: ' + self.__format_price(
+					'd0': u'Продажа: ' + self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 
-					'd1': u'Аренда: ' + self.__format_price(
+					'd1': u'Аренда: ' + self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -1549,7 +1557,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 				return {
 					'id': data['id'],
 					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
@@ -1560,7 +1568,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 				return{
 					'id': data['id'],
 					'd0': u'Мест: ' + str(data['persons_count']) + u' м²',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -1740,13 +1748,13 @@ class TradesMarkersManager(BaseMarkersManager):
 			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
 				return {
 					'id': data['id'],
-					'd0': u'Продажа: ' + self.__format_price(
+					'd0': u'Продажа: ' + self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 
-					'd1': u'Аренда: ' + self.__format_price(
+					'd1': u'Аренда: ' + self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -1757,7 +1765,7 @@ class TradesMarkersManager(BaseMarkersManager):
 				return {
 					'id': data['id'],
 					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
@@ -1768,7 +1776,7 @@ class TradesMarkersManager(BaseMarkersManager):
 				return{
 					'id': data['id'],
 					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -1938,13 +1946,13 @@ class OfficesMarkersManager(BaseMarkersManager):
 			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
 				return {
 					'id': data['id'],
-					'd0': u'Продажа: ' + self.__format_price(
+					'd0': u'Продажа: ' + self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 
-					'd1': u'Аренда: ' + self.__format_price(
+					'd1': u'Аренда: ' + self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -1955,7 +1963,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 				return {
 					'id': data['id'],
 					'd0': u'Кабинетов: ' + str(data['cabinets_count']) if data['cabinets_count'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
@@ -1966,7 +1974,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 				return{
 					'id': data['id'],
 					'd0': u'Кабинетов: ' + str(data['cabinets_count']) if data['cabinets_count'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -2131,13 +2139,13 @@ class WarehousesMarkersManager(BaseMarkersManager):
 			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
 				return {
 					'id': data['id'],
-					'd0': u'Продажа: ' + self.__format_price(
+					'd0': u'Продажа: ' + self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 
-					'd1': u'Аренда: ' + self.__format_price(
+					'd1': u'Аренда: ' + self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -2148,7 +2156,7 @@ class WarehousesMarkersManager(BaseMarkersManager):
 				return {
 					'id': data['id'],
 					'd0': u'Площадь: ' + str(data['halls_area']) + u' м²' if data['halls_area'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
@@ -2159,7 +2167,7 @@ class WarehousesMarkersManager(BaseMarkersManager):
 				return{
 					'id': data['id'],
 					'd0': u'Площадь: ' + str(data['halls_area']) + u' м²' if data['halls_area'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -2318,13 +2326,13 @@ class BusinessesMarkersManager(BaseMarkersManager):
 			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
 				return {
 					'id': data['id'],
-					'd0': u'Продажа: ' + self.__format_price(
+					'd0': u'Продажа: ' + self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 
-					'd1': u'Аренда: ' + self.__format_price(
+					'd1': u'Аренда: ' + self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -2334,7 +2342,7 @@ class BusinessesMarkersManager(BaseMarkersManager):
 			elif data.get('for_sale', False):
 				return {
 					'id': data['id'],
-					'd0': self.__format_price(
+					'd0': self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
@@ -2345,7 +2353,7 @@ class BusinessesMarkersManager(BaseMarkersManager):
 			elif data.get('for_rent', False):
 				return{
 					'id': data['id'],
-					'd0': self.__format_price(
+					'd0': self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -2522,13 +2530,13 @@ class CateringsMarkersManager(BaseMarkersManager):
 			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
 				return {
 					'id': data['id'],
-					'd0': u'Продажа: ' + self.__format_price(
+					'd0': u'Продажа: ' + self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 
-					'd1': u'Аренда: ' + self.__format_price(
+					'd1': u'Аренда: ' + self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -2539,7 +2547,7 @@ class CateringsMarkersManager(BaseMarkersManager):
 				return {
 					'id': data['id'],
 					'd0': u'Пл. залов: ' + str(data['halls_area']) + u' м²' if data['halls_area'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
@@ -2550,7 +2558,7 @@ class CateringsMarkersManager(BaseMarkersManager):
 				return{
 					'id': data['id'],
 					'd0': u'Пл. залов: ' + str(data['halls_area']) + u' м²' if data['halls_area'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -2709,13 +2717,13 @@ class GaragesMarkersManager(BaseMarkersManager):
 			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
 				return {
 					'id': data['id'],
-					'd0': u'Продажа: ' + self.__format_price(
+					'd0': u'Продажа: ' + self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 
-					'd1': u'Аренда: ' + self.__format_price(
+					'd1': u'Аренда: ' + self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -2726,7 +2734,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 				return {
 					'id': data['id'],
 					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
@@ -2737,7 +2745,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 				return{
 					'id': data['id'],
 					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -2903,13 +2911,13 @@ class LandsMarkersManager(BaseMarkersManager):
 			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
 				return {
 					'id': data['id'],
-					'd0': u'Продажа: ' + self.__format_price(
+					'd0': u'Продажа: ' + self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 
-					'd1': u'Аренда: ' + self.__format_price(
+					'd1': u'Аренда: ' + self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
@@ -2920,7 +2928,7 @@ class LandsMarkersManager(BaseMarkersManager):
 				return {
 					'id': data['id'],
 					'd0': u'Площадь: ' + str(data['area'])  + u' м²' if data['area'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['sale_price'],
 						data['sale_currency_sid'],
 						CURRENCIES.uah()
@@ -2931,7 +2939,7 @@ class LandsMarkersManager(BaseMarkersManager):
 				return{
 					'id': data['id'],
 					'd0': u'Площадь: ' + str(data['area'])  + u' м²' if data['area'] else '',
-					'd1': self.__format_price(
+					'd1': self.format_price(
 						data['rent_price'],
 						data['rent_currency_sid'],
 						CURRENCIES.uah()
