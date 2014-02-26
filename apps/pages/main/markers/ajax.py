@@ -46,7 +46,7 @@ get_codes = {
 	},
 }
 @require_http_methods('GET')
-@condition(etag_func=get_markers_etag)
+# @condition(etag_func=get_markers_etag) # todo: enable me back
 def get_markers(request):
 	try:
 		tid = int(GET_parameter(request, 'tid'))
