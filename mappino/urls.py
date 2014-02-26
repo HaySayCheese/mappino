@@ -6,6 +6,9 @@ urlpatterns = patterns('apps.pages.main',
     url(r'^ajax/template/main/first-enter/$', 'templates_ajax.first_enter_template'),
     url(r'^ajax/template/main/search/$', 'templates_ajax.search_template'),
     url(r'^ajax/template/main/detailed/$', 'templates_ajax.search_template'),
+
+    # filters
+    url(r'^ajax/template/main/filters/(\d+)/$', 'templates_ajax.filter_form_template'),
 )
 
 #-- angular templates for accounts
