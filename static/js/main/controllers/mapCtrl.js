@@ -19,10 +19,16 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, Markers) 
         zoom: parseInt(9),
         latLng: "50.442218,30.779838",
 
-        r_type_id: "0",
+        r_type_sid: 0,
+        r_operation_sid: 0,
         r_price_min: "",
         r_price_max: "",
-        r_currency_id: 0
+        r_currency_sid: 0,
+
+        // Тільки для оренди
+        r_period_sid: 0,
+        r_rent_family: false,
+        r_rent_foreigners: false
     };
 
 
