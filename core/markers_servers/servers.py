@@ -940,6 +940,9 @@ class HousesMarkersManager(BaseMarkersManager):
 		# WARNING:
 		# дана функція для економії часу виконання не виконує deepcopy над publications
 
+		if filters is None:
+			return publications
+
 		operation_sid = filters.get('operation_sid')
 		if operation_sid is None:
 			raise ValueError('Invalid conditions. Operation_sid is absent.')
