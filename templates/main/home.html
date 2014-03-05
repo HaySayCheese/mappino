@@ -106,13 +106,13 @@
                     <div class="panel panel-primary">
                         <div class="panel-heading blue-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#blueMarkersPanel">
                             <h4 class="panel-title">
-                                <b>Дома,</b> <small>(30 000 - 50 000)</small>
+                                <b>[[ publicationTypes[filters.blue.b_type_sid].title ]],</b> <small>([[ filters.blue.b_price_min ]] - [[ filters.blue.b_price_max ]])</small>
                             </h4>
                         </div>
                         <div id="blueMarkersPanel" class="panel-collapse collapse">
                             <div class="panel-body">
                                 <div ng-if="filtersParsed">
-                                    <div ng-include="'ajax/template/main/filters/blue/' + [[ filters.blue.b_type_sid ]]" ng-init="initDropdown()"></div>
+                                    <div ng-include="'ajax/template/main/filters/blue/' + [[ filters.blue.b_type_sid ]]"></div>
                                 </div>
                             </div>
                         </div>
@@ -125,9 +125,9 @@
                         </div>
                         <div id="greenMarkersPanel" class="panel-collapse collapse">
                             <div class="panel-body">
-                                <div ng-if="filtersParsed">
-                                    <div ng-include="'ajax/template/main/filters/green/' + [[ filters.blue.g_type_sid ]]" ng-init="initDropdown()"></div>
-                                </div>
+                                <!--<div ng-if="filtersParsed">-->
+                                    <!--<div ng-include="'ajax/template/main/filters/green/' + [[ filters.blue.g_type_sid ]]" ng-init="initDropdown()"></div>-->
+                                <!--</div>-->
                             </div>
                         </div>
                     </div>
@@ -139,9 +139,9 @@
                         </div>
                         <div id="yellowMarkersPanel" class="panel-collapse collapse">
                             <div class="panel-body">
-                                <div ng-if="filtersParsed">
-                                    <div ng-include="'ajax/template/main/filters/yellow/' + [[ filters.blue.y_type_sid ]]" ng-init="initDropdown()"></div>
-                                </div>
+                                <!--<div ng-if="filtersParsed">-->
+                                    <!--<div ng-include="'ajax/template/main/filters/yellow/' + [[ filters.blue.y_type_sid ]]" ng-init="initDropdown()"></div>-->
+                                <!--</div>-->
                             </div>
                         </div>
                     </div>

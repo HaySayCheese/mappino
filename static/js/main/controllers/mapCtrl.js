@@ -55,9 +55,11 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Слідкуємо за зміною фільттрів. Динамічно оновлюємо урл
      **/
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
+        console.log(newValue)
         parseFiltersCollectionAndUpdateUrl(newValue);
     });
     $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
+        console.log(newValue)
         parseFiltersCollectionAndUpdateUrl(newValue);
     });
 
@@ -169,28 +171,22 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
         for (var key in searchParameters) {
             if (searchParameters.hasOwnProperty(key)) {
-                if (key.toString().indexOf("_sid") !== -1)
-                    searchParameters[key] = parseInt(searchParameters[key]);
 
-                if (key.toString().indexOf("r_") !== -1) {
+                if (/^r_/.test(key.toString()))
                     $scope.filters.red[key] = searchParameters[key];
-                    continue;
-                }
 
-                if (key.toString().indexOf("b_") !== -1) {
+
+                if (/^b_/.test(key.toString()))
                     $scope.filters.blue[key] = searchParameters[key];
-                    continue;
-                }
 
-                if (key.toString().indexOf("g_") !== -1) {
+
+                if (/^g_/.test(key.toString()))
                     $scope.filters.green[key] = searchParameters[key];
-                    continue;
-                }
 
-                if (key.toString().indexOf("y_") !== -1) {
+
+                if (/^y_/.test(key.toString()))
                     $scope.filters.yellow[key] = searchParameters[key];
-                    continue;
-                }
+
 
                 if (key == "city" || key == "zoom" || key == "latLng")
                     $scope.filters.map[key] = searchParameters[key];
@@ -212,6 +208,11 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     function parseFiltersCollectionAndUpdateUrl(filters) {
         for (var key in filters) {
             if (filters.hasOwnProperty(key)) {
+
+                if (filters[key] === "0" || filters[key] === 0) {
+                    $location.search(key, filters[key]);
+                }
+
                 if (filters[key] == "" || filters[key] === false || filters[key] == "false" || key == "viewport")
                     $location.search(key, null);
                 else
