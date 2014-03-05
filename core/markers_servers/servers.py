@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from core.currencies.currencies_manager import convert as convert_currency
 from core.markers_servers.exceptions import TooBigTransaction, SerializationError, DeserializationError
 from core.markers_servers.utils import DegreeSegmentPoint, Point, SegmentPoint, DegreePoint
-from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, CURRENCIES
+from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, CURRENCIES, MARKET_TYPES
 from mappino.wsgi import redis_connections
 
 
@@ -60,16 +60,23 @@ class BaseMarkersManager(object):
 			for c in coordinates:
 				pipe.hget(digest, c)
 
-			markers = pipe.execute()
-			if markers:
+			raw_markers_data = pipe.execute()
+			if raw_markers_data:
 				result[degree] = {}
+			else:
+				break
 
-			for record in zip(coordinates, markers):
+			# Десериалізація всіх маркерів
+			markers = [self.deserialize_publication_record(record) for record in raw_markers_data]
+
+			# Зводимо маркери з координатами
+			markers = zip(coordinates, markers)
+
+			# Фільтри і упаковка
+			for record in self.filter(markers, condition):
 				coordinates = record[0]
-				item = record[1]
-
-				marker_data = self.deserialize_publication_record(item)
-				result[degree][coordinates] = self.marker_brief(marker_data, condition)
+				data = record[1]
+				result[degree][coordinates] = self.marker_brief(data, condition)
 		return result
 
 
@@ -277,10 +284,9 @@ class BaseMarkersManager(object):
 		return self.model.objects(id=hid)
 
 
-	@staticmethod
 	@abc.abstractmethod
-	def filter(publications, conditions):
-		return
+	def filter(self, publications, conditions):
+		return publications
 
 
 
@@ -499,8 +505,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 			pass
 
 
-	@staticmethod
-	def filter(publications, conditions):
+	def filter(self, publications, conditions):
 		return
 
 
@@ -720,8 +725,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 			pass
 
 
-	@staticmethod
-	def filter(publications, conditions):
+	def filter(self, publications, conditions):
 		return
 
 
@@ -932,9 +936,278 @@ class HousesMarkersManager(BaseMarkersManager):
 			pass
 
 
+	def filter(self, publications, filters):
+		# WARNING:
+		# дана функція для економії часу виконання не виконує deepcopy над publications
+
+		operation_sid = filters.get('operation_sid')
+		if operation_sid is None:
+			raise ValueError('Invalid conditions. Operation_sid is absent.')
+
+
+		# Для відбору елементів зі списку publications, використовується список statuses.
+		# Кість елементів цього списку відповідає к-сті елементів publications.
+		# На початку фільтрування всі елементи statuses встановлені в True.
+		# Під час фільтрування деякі з них будуть встановлені в False.
+		# На завершальному етапі зі списку publications будуть відібрані лише ті елементи,
+		# відповідний елемент в statuses яких встановлений в True.
+		#
+		# Додатковий список використовується для підвищення швидкодії фільтрування,
+		# оскільки зміна True/False відбуваєтсья в рази швидше, ніж вилучення елементів зі списку
+		# з повторною його перебудовою на кожній перевірці та ітерації.
+		statuses = [True] * len(publications)
+
+
+		#-- sale filters
+		if operation_sid == 0:
+			for i in range(len(statuses)):
+				# Якщо даний запис вже позначений як виключений — не аналізувати його.
+				if not statuses[i]:
+					continue
+
+				marker = publications[i][1]
+
+				#-- sale price
+				price_currency_sid = filters.get('price_currency_sid')
+				if price_currency_sid is not None:
+					# Перевіряти фільтри цін має зміст лише тоді, коли задана валюта фільтру,
+					# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення,
+					# а без цього порівняння некоректне.
+					#
+					price_max = filters.get('price_max')
+					price_min = filters.get('price_min')
+					if price_max is not None:
+						price_max = convert_currency(price_max, price_currency_sid, marker['sale_currency_sid'])
+					if price_min is not None:
+						price_min = convert_currency(price_min, price_currency_sid, marker['sale_currency_sid'])
+
+					if (price_max is not None) and (price_min is not None):
+						if not price_min <= marker['sale_price'] <= price_max:
+							statuses[i] = False
+							continue
+
+					elif price_min is not None:
+						if not price_min <= marker['sale_price']:
+							statuses[i] = False
+							continue
+
+					elif price_max is not None:
+						if not marker['sale_price'] <= price_max:
+							statuses[i] = False
+							continue
+
+
+				#-- market type group
+				# В даному випадку два поля з фільтрів указують на одне поле об’єкта,
+				# і якщо хочаб одна умова справджується — оголошення повинно потрапити у вибірку.
+				market_type_group = False
+				if filters.get('new_buildings'):
+					market_type_group = (marker['market_type_sid'] == MARKET_TYPES.new_building())
+
+				if not market_type_group:
+					# Якщо на попередньому етапі даний запис вже був помічений, як підходящий —
+					# немає змісту перевіряти його знову.
+					#
+					if filters.get('secondary_market'):
+						market_type_group = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
+
+				if not market_type_group:
+					# Якщо жодна з умов групи не виконалась — відхилити запис.
+					statuses[i] = False
+					continue
+
+
+				#-- rooms count
+				rooms_count_min = filters.get('rooms_count_min')
+				rooms_count_max = filters.get('rooms_count_max')
+				rooms_count = marker.get('rooms_count')
+				if (rooms_count is None) \
+						and (rooms_count_min is not None) or (rooms_count_max is not None):
+					# Поле "к-сть кімнат" може бути не обов’язковим.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі —
+					# запис відхиляється через неможливість аналізу.
+					statuses[i] = False
+					continue
+
+				if (rooms_count_min is not None) and (rooms_count_max is not None):
+					if not rooms_count_min <= rooms_count <= rooms_count_max:
+						statuses[i] = False
+						continue
+
+				elif rooms_count_min is not None:
+					if not rooms_count_min <= rooms_count:
+						statuses[i] = False
+						continue
+
+				elif rooms_count_max is not None:
+					if not rooms_count <= rooms_count_max:
+						statuses[i] = False
+						continue
+
+
+				#-- floors count
+				floors_count_min = filters.get('floors_count_min')
+				floors_count_max = filters.get('floors_count_max')
+				floors_count = marker.get('floors_count')
+				if (floors_count is None) \
+						and (floors_count_min is not None) or (floors_count_max is not None):
+					# Поле "к-сть поверхів" може бути не обов’язковим.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі —
+					# запис відхиляється через неможливість аналізу.
+					statuses[i] = False
+					continue
+
+				if (floors_count_min is not None) and (floors_count_max is not None):
+					if not floors_count_min <= floors_count <= floors_count_max:
+						statuses[i] = False
+						continue
+
+				elif floors_count_min is not None:
+					if not floors_count_min <= floors_count:
+						statuses[i] = False
+						continue
+
+				elif floors_count_max is not None:
+					if not floors_count <= floors_count_max:
+						statuses[i] = False
+						continue
+
+
+				#-- sewerage
+				if filters.get('sewerage'):
+					if (not 'sewerage' in marker) or (not marker['sewerage']):
+						statuses[i] = False
+						continue
+
+
+		#-- rent filters
+		elif operation_sid == 1:
+			for i in range(len(publications)):
+				# Якщо даний маркер вже позначений як виключений — не аналізувати його.
+				if not statuses[i]:
+					continue
+				marker = publications[i][1]
+
+
+				#-- rent price
+				price_currency_sid = filters.get('price_currency_sid')
+				if price_currency_sid is not None:
+					# Перевіряти фільтри цін має зміст лише тоді, коли задана валюта фільтру,
+					# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення,
+					# а без цього порівняння некоректне.
+					#
+					price_max = filters.get('price_max')
+					price_min = filters.get('price_min')
+					if price_max is not None:
+						price_max = convert_currency(price_max, price_currency_sid, marker['rent_currency_sid'])
+					if price_min is not None:
+						price_min = convert_currency(price_min, price_currency_sid, marker['rent_currency_sid'])
+
+					if (price_max is not None) and (price_min is not None):
+						if not price_min <= marker['rent_price'] <= price_max:
+							statuses[i] = False
+							continue
+
+					elif price_min is not None:
+						if not price_min <= marker['rent_price']:
+							statuses[i] = False
+							continue
+
+					elif price_max is not None:
+						if not marker['rent_price'] <= price_max:
+							statuses[i] = False
+							continue
+
+
+				#-- persons_count
+				persons_count_min = filters.get('persons_count_min')
+				persons_count_max = filters.get('persons_count_max')
+
+				persons_count = marker.get('persons_count')
+				if (persons_count is None) \
+						and (persons_count_min is not None) or (persons_count_max is not None):
+					# Поле "к-сть місць" може бути не обов’язковим.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі —
+					# запис відхиляється через неможливість аналізу.
+					statuses[i] = False
+					continue
+
+				if (persons_count_min is not None) and (persons_count_max is not None):
+					if not persons_count_min <= persons_count <= persons_count_max:
+						statuses[i] = False
+						continue
+
+				elif persons_count_min is not None:
+					if not persons_count_min <= persons_count:
+						statuses[i] = False
+						continue
+
+				elif persons_count_max is not None:
+					if not persons_count <= persons_count_max:
+						statuses[i] = False
+						continue
+
+				#-- for family
+				if filters.get('for_family'):
+					if (not 'for_family' in marker) or (not marker['for_family']):
+						statuses[i] = False
+						continue
+
+				#-- foreigners
+				if filters.get('foreigners'):
+					if (not 'foreigners' in marker) or (not marker['foreigners']):
+						statuses[i] = False
+						continue
+
+
+		#-- common filters
+		if operation_sid == 0 or operation_sid == 1:
+			for i in range(len(publications)):
+				# Якщо даний маркер вже позначений як виключений — не аналізувати його.
+				if not statuses[i]:
+					continue
+				marker = publications[i][1]
+
+				#-- electricity
+				if filters.get('electricity'):
+					if (not 'electricity' in marker) or (not marker['electricity']):
+						statuses[i] = False
+						continue
+
+				#-- gas
+				if filters.get('gas'):
+					if (not 'gas' in marker) or (not marker['gas']):
+						statuses[i] = False
+						continue
+
+				#-- hot water
+				if filters.get('hot_water'):
+					if (not 'hot_water' in marker) or (not marker['hot_water']):
+						statuses[i] = False
+						continue
+
+				#-- cold water
+				if filters.get('cold_water'):
+					if (not 'cold_water' in marker) or (not marker['cold_water']):
+						statuses[i] = False
+						continue
+
+
+
+		else:
+			raise ValueError('Invalid conditions. Operation_sid is unexpected.')
+
+
+		return publications
+
+
 	@staticmethod
-	def filter(publications, conditions):
-		return
+	def sale_price_between(marker, min_price, max_price):
+		price = marker.get('sale_price')
+		if price is None:
+			return False
+		return min_price <= price <= max_price
+
 
 
 
@@ -1144,8 +1417,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 			pass
 
 
-	@staticmethod
-	def filter(publications, conditions):
+	def filter(self, publications, conditions):
 		return
 
 
@@ -1363,8 +1635,7 @@ class DachasMarkersManager(BaseMarkersManager):
 			pass
 
 
-	@staticmethod
-	def filter(publications, conditions):
+	def filter(self, publications, conditions):
 		return
 
 
@@ -1584,8 +1855,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 			pass
 
 
-	@staticmethod
-	def filter(publications, conditions):
+	def filter(self, publications, conditions):
 		return
 
 
@@ -1792,8 +2062,7 @@ class TradesMarkersManager(BaseMarkersManager):
 			pass
 
 
-	@staticmethod
-	def filter(publications, conditions):
+	def filter(self, publications, conditions):
 		return
 
 
@@ -1990,8 +2259,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 			pass
 
 
-	@staticmethod
-	def filter(publications, conditions):
+	def filter(self, publications, conditions):
 		return
 
 
@@ -2183,8 +2451,7 @@ class WarehousesMarkersManager(BaseMarkersManager):
 			pass
 
 
-	@staticmethod
-	def filter(publications, conditions):
+	def filter(self, publications, conditions):
 		return
 
 
@@ -2370,8 +2637,7 @@ class BusinessesMarkersManager(BaseMarkersManager):
 			pass
 
 
-	@staticmethod
-	def filter(publications, conditions):
+	def filter(self, publications, conditions):
 		return
 
 
@@ -2574,8 +2840,7 @@ class CateringsMarkersManager(BaseMarkersManager):
 			pass
 
 
-	@staticmethod
-	def filter(publications, conditions):
+	def filter(self, publications, conditions):
 		return
 
 
@@ -2761,8 +3026,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 			pass
 
 
-	@staticmethod
-	def filter(publications, conditions):
+	def filter(self, publications, conditions):
 		return
 
 
@@ -2955,6 +3219,5 @@ class LandsMarkersManager(BaseMarkersManager):
 			pass
 
 
-	@staticmethod
-	def filter(publications, conditions):
+	def filter(self, publications, conditions):
 		return
