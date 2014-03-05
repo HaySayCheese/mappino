@@ -10,7 +10,7 @@ urlpatterns = patterns('apps.pages.main',
 
 
     #-- filters forms
-    url(r'^ajax/template/main/filters/(\d+)/$', 'templates_ajax.filter_form_template'),
+    url(r'^ajax/template/main/filters/(\w+)/(\d+)/$', 'templates_ajax.filter_form_template'),
 )
 
 #-- angular templates for accounts
