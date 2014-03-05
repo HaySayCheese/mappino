@@ -12,13 +12,14 @@ app.factory('Markers', function(mapQueries) {
          * Загрузка маркерів
          *
          * @param {string}      viewport Вюпорт карти
+         * @param {number}      tid      Тип обєкта
          * @param {function}    callback
          */
-        load: function(viewport, callback) {
+        load: function(viewport, tid, callback) {
             var that = this;
 
-            mapQueries.getMarkers(viewport).success(function(data) {
-                that.add(data, function() {
+            mapQueries.getMarkers(viewport, tid).success(function(data) {
+                that.add(data, tid, function() {
                     _.isFunction(callback) && callback(markers);
                 });
             });
@@ -29,36 +30,33 @@ app.factory('Markers', function(mapQueries) {
          * Додання маркерів в масив
          *
          * @param {Array}      data Масив який вертає сервер
+         * @param {number}     tid      Тип обєкта
          * @param {function}   callback
          */
-        add: function(data, callback) {
+        add: function(data, tid, callback) {
             this.clear();
 
-            _.each(data, function(_tid, key) {
-                var markerTid  = key,
-                    markerLat  = "",
-                    markerLng  = "",
-                    markerIcon = "";
+            _.map(data, function(_markers, mkey) {
+                var markerLat  = "",
+                    markerLng  = "";
 
-                _.map(_tid, function(_markers, mkey) {
-                    _.each(_markers, function(_marker, key) {
-                        markerLat = _.first(mkey.split(";")) + "." + _.first(key.split(":"));
-                        markerLng = _.last(mkey.split(";")) + "." + _.last(key.split(":"));
+                _.each(_markers, function(_marker, key) {
+                    markerLat = _.first(mkey.split(";")) + "." + _.first(key.split(":"));
+                    markerLng = _.last(mkey.split(";")) + "." + _.last(key.split(":"));
 
-                        markers.push(new MarkerWithLabel({
-                            position: new google.maps.LatLng(markerLat, markerLng),
+                    markers.push(new MarkerWithLabel({
+                        position: new google.maps.LatLng(markerLat, markerLng),
 
-                            tid: markerTid,
-                            id: _marker.id,
+                        tid: tid,
+                        id: _marker.id,
 
-                            labelInBackground: true,
-                            labelContent: "4 комн. </br> 25 000 грн.",
-                            labelAnchor: new google.maps.Point(0, 40),
-                            labelClass: "marker-label"
-                        }));
-                    })
+                        labelInBackground: true,
+                        labelContent: _marker.d0 + "</br>" + _marker.d1,
+                        labelAnchor: new google.maps.Point(0, 40),
+                        labelClass: "marker-label"
+                    }));
+                })
 
-                });
             });
 
             _.isFunction(callback) && callback();

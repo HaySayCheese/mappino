@@ -84,7 +84,7 @@
                 </div>
 
                 <div class="sidebar-header-city-search">
-                    <input id="sidebar-city-input" type="text" placeholder="" value="" class="form-control sidebar-city-input input-lg text-center" select-on-click ng-model="filters.city">
+                    <input id="sidebar-city-input" type="text" placeholder="" value="" class="form-control sidebar-city-input input-lg text-center" select-on-click ng-model="filters.map.city">
                 </div>
             </div>
             <div class="bwb-body sidebar-body">
@@ -92,82 +92,14 @@
                     <div class="panel panel-danger">
                         <div class="panel-heading red-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#redMarkersPanel">
                             <h4 class="panel-title">
-                                <b>[[ publicationTypes[filters.r_type_sid].title ]],</b> <small>([[ filters.r_price_min ]] - [[ filters.r_price_max ]])</small>
+                                <b>[[ publicationTypes[filters.red.r_type_sid].title ]],</b> <small>([[ filters.red.r_price_min ]] - [[ filters.red.r_price_max ]])</small>
                             </h4>
                         </div>
                         <div id="redMarkersPanel" class="panel-collapse collapse in">
                             <div class="panel-body">
-                                <form class="form-horizontal" novalidate>
-                                    <div class="row form-group">
-                                        <div class="col-sm-12">
-                                            <label class="col-sm-3 control-label">Тип:</label>
-                                            <div class="col-sm-9">
-                                                <select name="r_type_sid" data-width="100%" ng-model="filters.r_type_sid">
-                                                    <option value="[[ type.id ]]" ng-repeat="type in publicationTypes">[[ type.title ]]</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row form-group">
-                                        <div class="col-sm-12">
-                                            <label class="col-sm-3 control-label">Операция:</label>
-                                            <div class="col-sm-9">
-                                                <select name="r_operation_sid" data-width="100%" ng-model="filters.r_operation_sid">
-                                                    <option value="0">Продаж</option>
-                                                    <option value="1">Аренда</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row form-group" ng-show="filters.r_operation_sid == 1">
-                                        <div class="col-sm-12">
-                                            <label class="col-sm-3 control-label">Срок:</label>
-                                            <div class="col-sm-9">
-                                                <select name="r_period_sid" data-width="100%" ng-model="filters.r_period_sid">
-                                                    <option value="0">Посуточно</option>
-                                                    <option value="1">Помесячно</option>
-                                                    <option value="2">Долгосрочная оренда</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row form-group without-margin-bottom">
-                                        <div class="col-sm-12">
-                                            <label class="col-sm-3 control-label">Цена:</label>
-                                            <div class="col-sm-3">
-                                                <input class="form-control" type="text" name="r_price_min" placeholder="От" ng-model="filters.r_price_min" allow-only-number/>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <input class="form-control" type="text" name="r_price_max" placeholder="До" ng-model="filters.r_price_max" allow-only-number/>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <select name="r_currency_sid" data-width="100%" ng-model="filters.r_currency_sid">
-                                                    <option value="2">Грн.</option>
-                                                    <option value="0">Дол.</option>
-                                                    <option value="1">Евро</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row form-group" ng-show="filters.r_operation_sid == 1">
-                                        <div class="col-sm-9 col-sm-offset-3">
-                                            <div class="checkbox">
-                                                <input id="r_rent_family" type="checkbox" name="r_rent_family" ng-model="filters.r_rent_family">
-                                                <label for="r_rent_family">Подходит для семей с детьми</label>
-                                            </div>
-                                            <div class="checkbox">
-                                                <input id="r_rent_foreigners" type="checkbox" name="r_rent_foreigners" ng-model="filters.r_rent_foreigners">
-                                                <label for="r_rent_foreigners">Размещение иностранцев</label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div ng-include="'ajax/template/main/filters/' + [[ filters.r_type_id ]]"></div>
-                                </form>
+                                <div ng-if="filtersParsed">
+                                    <div ng-include="'ajax/template/main/filters/red/' + [[ filters.red.r_type_sid ]]" ng-init="initDropdown()"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -179,7 +111,9 @@
                         </div>
                         <div id="blueMarkersPanel" class="panel-collapse collapse">
                             <div class="panel-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                <div ng-if="filtersParsed">
+                                    <div ng-include="'ajax/template/main/filters/blue/' + [[ filters.blue.b_type_sid ]]" ng-init="initDropdown()"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -191,7 +125,9 @@
                         </div>
                         <div id="greenMarkersPanel" class="panel-collapse collapse">
                             <div class="panel-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                <div ng-if="filtersParsed">
+                                    <div ng-include="'ajax/template/main/filters/green/' + [[ filters.blue.g_type_sid ]]" ng-init="initDropdown()"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -203,7 +139,9 @@
                         </div>
                         <div id="yellowMarkersPanel" class="panel-collapse collapse">
                             <div class="panel-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                <div ng-if="filtersParsed">
+                                    <div ng-include="'ajax/template/main/filters/yellow/' + [[ filters.blue.y_type_sid ]]" ng-init="initDropdown()"></div>
+                                </div>
                             </div>
                         </div>
                     </div>

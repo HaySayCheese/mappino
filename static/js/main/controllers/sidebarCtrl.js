@@ -5,7 +5,6 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, authorizati
     $scope.userName = "";
 
     if ($cookies.sessionid && !sessionStorage.userName) {
-        console.log("fsfsfsaf523525")
         getUserName();
     }
 
@@ -65,5 +64,5 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, authorizati
         authorizationQueries.logoutUser().success(function(data) {
             delete $cookies.sessionid;
         });
-    }
+    };
 });

@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('MapCtrl', function($scope, $location, $http, $timeout, Markers) {
+app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile, Markers) {
 
     /**
      * Змінні
@@ -15,30 +15,50 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, Markers) 
      * Фільтри
      **/
     $scope.filters = {
-        city: "",
-        zoom: parseInt(9),
-        latLng: "50.442218,30.779838",
 
-        r_type_sid: 0,
-        r_operation_sid: 0,
-        r_price_min: "",
-        r_price_max: "",
-        r_currency_sid: 0,
+        map: {
+            city: "",
+            zoom: parseInt(9),
+            latLng: "50.442218,30.779838"
+        },
 
-        // Тільки для оренди
-        r_period_sid: 0,
-        r_rent_family: false,
-        r_rent_foreigners: false
+        red: {
+            r_type_sid: 0,
+            r_operation_sid: 0,
+            r_price_min: "",
+            r_price_max: "",
+            r_currency_sid: 0,
+
+            // Тільки для оренди
+            r_period_sid: 0,
+            r_rent_family: false,
+            r_rent_foreigners: false
+        },
+
+        blue: {
+            b_type_sid: 0,
+            b_operation_sid: 0,
+            b_price_min: "",
+            b_price_max: "",
+            b_currency_sid: 0,
+
+            // Тільки для оренди
+            b_period_sid: 0,
+            b_rent_family: false,
+            b_rent_foreigners: false
+        }
     };
+    $scope.filtersParsed = false;
 
 
     /**
      * Слідкуємо за зміною фільттрів. Динамічно оновлюємо урл
      **/
-    $scope.$watchCollection("filters", function(newValue, oldValue) {
-        parseFiltersCollectionAndUpdateUrl();
-
-        console.log(newValue);
+    $scope.$watchCollection("filters.red", function(newValue, oldValue) {
+        parseFiltersCollectionAndUpdateUrl(newValue);
+    });
+    $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
+        parseFiltersCollectionAndUpdateUrl(newValue);
     });
 
 
@@ -51,8 +71,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, Markers) 
          * Карта
          **/
         var mapOptions = {
-            center: new google.maps.LatLng($scope.filters.latLng.split(",")[0], $scope.filters.latLng.split(",")[1]),
-            zoom: parseInt($scope.filters.zoom),
+            center: new google.maps.LatLng($scope.filters.map.latLng.split(",")[0], $scope.filters.map.latLng.split(",")[1]),
+            zoom: parseInt($scope.filters.map.zoom),
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             mapTypeControl: false,
             streetViewControl: false
@@ -84,20 +104,20 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, Markers) 
         // 'idle' - евент карти який спрацьову при загрузці всіх тайлів і промальовці карти
         google.maps.event.addListener(map, 'idle', function() {
             mapIdleCount++;
-            $scope.filters.viewport = {
+            $scope.filters.map.viewport = {
                 neLat: map.getBounds().getNorthEast().lat(),
                 neLng: map.getBounds().getNorthEast().lng(),
                 swLat: map.getBounds().getSouthWest().lat(),
                 swLng: map.getBounds().getSouthWest().lng()
             };
             if (mapIdleCount > 1) {
-                $scope.filters.latLng   = map.getCenter().toUrlValue();
-                $scope.filters.zoom     = map.getZoom();
+                $scope.filters.map.latLng   = map.getCenter().toUrlValue();
+                $scope.filters.map.zoom     = map.getZoom();
 
                 if(!$scope.$$phase)
                     $scope.$apply();
 
-                setMapParametersToUrl();
+                parseFiltersCollectionAndUpdateUrl($scope.filters.map);
                 loadData();
             }
         });
@@ -106,13 +126,13 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, Markers) 
         google.maps.event.addListenerOnce(map, 'idle', function() {
             // якщо урл при загрузці не пустий і має в собі параметр з містом
             // то центруємо карту по координатах в урлу і грузим дані
-            if (Object.keys($location.search()).length && $location.search().city) {
-                setMapParametersToUrl();
-                //loadData();
+            if (Object.keys($location.search()).length && Object.keys($location.search()).length > 2) {
+                //parseFiltersCollectionAndUpdateUrl($scope.filters.map);
+                loadData();
                 // якшо пустий то просто ставим карту на Україну
                 // і додаєм параметри в урл
             } else {
-                setMapParametersToUrl();
+                parseFiltersCollectionAndUpdateUrl($scope.filters.map);
             }
         });
 
@@ -132,7 +152,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, Markers) 
                 map.setZoom(17);
             }
 
-            $scope.filters.city = cityInput.value;
+            $scope.filters.map.city = cityInput.value;
 
             if(!$scope.$$phase)
                 $scope.$apply();
@@ -149,16 +169,37 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, Markers) 
 
         for (var key in searchParameters) {
             if (searchParameters.hasOwnProperty(key)) {
-                $scope.filters[key] = searchParameters[key];
+                if (key.toString().indexOf("_sid") !== -1)
+                    searchParameters[key] = parseInt(searchParameters[key]);
+
+                if (key.toString().indexOf("r_") !== -1) {
+                    $scope.filters.red[key] = searchParameters[key];
+                    continue;
+                }
+
+                if (key.toString().indexOf("b_") !== -1) {
+                    $scope.filters.blue[key] = searchParameters[key];
+                    continue;
+                }
+
+                if (key.toString().indexOf("g_") !== -1) {
+                    $scope.filters.green[key] = searchParameters[key];
+                    continue;
+                }
+
+                if (key.toString().indexOf("y_") !== -1) {
+                    $scope.filters.yellow[key] = searchParameters[key];
+                    continue;
+                }
+
+                if (key == "city" || key == "zoom" || key == "latLng")
+                    $scope.filters.map[key] = searchParameters[key];
             }
         }
+        $scope.filtersParsed = true;
+
 
         initializeMap();
-
-        $timeout(function() {
-            initPlugins();
-        }, 0);
-
 
         console.log("Filters are parsed");
     };
@@ -168,44 +209,24 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, Markers) 
      * Парсимо колекцію з фільтрами '$scope.filters'
      * Оновлюємо строку пошука все шо після '?')
      **/
-    function parseFiltersCollectionAndUpdateUrl() {
-        var filters = $scope.filters;
-
+    function parseFiltersCollectionAndUpdateUrl(filters) {
         for (var key in filters) {
             if (filters.hasOwnProperty(key)) {
-                if (key == "city")
-                    $location.search(key, encodeURI(filters[key]));
-
-                if (filters[key] == "0")
-                    $location.search(key, filters[key]);
-
-                if (filters[key] != "" && filters[key] != false)
-                    $location.search(key, filters[key]);
-
-                if (filters[key] === false || filters[key] == "" || key == "viewport")
+                if (filters[key] == "" || filters[key] === false || filters[key] == "false" || key == "viewport")
                     $location.search(key, null);
+                else
+                    $location.search(key, filters[key]);
             }
         }
 
         // частина урла яка додається до ссилок
         $scope.urlFiltersPart = $location.url()
-                                    .replace("/search", "")
-                                    .replace("/account/registration", "")
-                                    .replace("/account/restore-access", "")
-                                    .replace("/account/login", "");
+            .replace("/search", "")
+            .replace("/account/registration", "")
+            .replace("/account/restore-access", "")
+            .replace("/account/login", "");
 
-        console.log("Filters collection parsed");
-    }
-
-
-    /**
-     * Обновляє параметри карти в строці пошука
-     **/
-    function setMapParametersToUrl() {
-        $location.search("latLng", $scope.filters.latLng);
-        $location.search("zoom", parseInt($scope.filters.zoom));
-
-        if(!$scope.$$phase)
+        if (!$scope.$$phase)
             $scope.$apply();
     }
 
@@ -214,13 +235,18 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, Markers) 
      * Функція яка ініціює загрузку даних
      * */
     function loadData() {
-        var neLat = $scope.filters.viewport.neLat.toString().slice(0, 5),
-            neLng = $scope.filters.viewport.neLng.toString().slice(0, 5),
-            swLat = $scope.filters.viewport.swLat.toString().slice(0, 5),
-            swLng = $scope.filters.viewport.swLng.toString().slice(0, 5),
+        var sneLat = $scope.filters.map.viewport.neLat.toString(),
+            sneLng = $scope.filters.map.viewport.neLng.toString(),
+            sswLat = $scope.filters.map.viewport.swLat.toString(),
+            sswLng = $scope.filters.map.viewport.swLng.toString();
+
+        var neLat = sneLat.replace(sneLat.substring(sneLat.indexOf(".") + 3, sneLat.length), ""),
+            neLng = sneLng.replace(sneLng.substring(sneLng.indexOf(".") + 3, sneLng.length), ""),
+            swLat = sswLat.replace(sswLat.substring(sswLat.indexOf(".") + 3, sswLat.length), ""),
+            swLng = sswLng.replace(sswLng.substring(sswLng.indexOf(".") + 3, sswLng.length), ""),
             viewport = "&ne=" + neLat + ":" + neLng + "&sw=" + swLat + ":" + swLng;
 
-        Markers.load(viewport, function(data) {
+        Markers.load(viewport, 0, function(data) {
             markers = data;
             placeMarkers();
         });
@@ -261,15 +287,11 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, Markers) 
     /**
      * Ініціалізація бутстраповських плагінів
      **/
-    function initPlugins() {
-        angular.element("select").selectpicker({
-            style: 'btn-default btn-md'
-        });
-
-//        var sidebarRedCurrencyTypeSelect = $("#sidebar-red-currency-type-select");
-//        sidebarRedCurrencyTypeSelect.selectpicker({
-//            style: 'btn btn-lg btn-default',
-//            menuStyle: 'dropdown-inverse'
-//        });
+    $scope.initDropdown = function() {
+        $timeout(function() {
+            angular.element(".sidebar-body select").selectpicker({
+                style: 'btn-default btn-md'
+            });
+        }, 500);
     }
 });
