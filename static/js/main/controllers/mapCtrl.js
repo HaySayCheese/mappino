@@ -23,29 +23,35 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         },
 
         red: {
+            // Загальні
             r_type_sid: 0,
             r_operation_sid: 0,
-            r_price_min: "",
-            r_price_max: "",
-            r_currency_sid: 0,
 
-            // Тільки для оренди
-            r_period_sid: 0,
-            r_rent_family: false,
-            r_rent_foreigners: false
-        },
+            // Дропдауни
+            r_currency_sid:     0,
+            r_heating_type_sid: 0,
+            r_period_sid:       0,
 
-        blue: {
-            b_type_sid: 0,
-            b_operation_sid: 0,
-            b_price_min: "",
-            b_price_max: "",
-            b_currency_sid: 0,
+            // Поля вводу
+            r_price_from:           "",
+            r_price_to:             "",
+            r_rooms_count_from:     "",
+            r_rooms_count_to:       "",
+            r_floors_count_from:    "",
+            r_floors_count_to:      "",
+            r_persons_count_from:   "",
+            r_persons_count_to:     "",
 
-            // Тільки для оренди
-            b_period_sid: 0,
-            b_rent_family: false,
-            b_rent_foreigners: false
+            // Чекбокси
+            r_new_buildings:        true,
+            r_secondary_market:     true,
+            r_family:               false,
+            r_foreigners:           false,
+            r_electricity:          false,
+            r_gas:                  false,
+            r_hot_water:            false,
+            r_cold_water:           false,
+            r_sewerage:             false
         }
     };
     $scope.filtersParsed = false;
@@ -55,11 +61,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Слідкуємо за зміною фільттрів. Динамічно оновлюємо урл
      **/
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
-        console.log(newValue)
         parseFiltersCollectionAndUpdateUrl(newValue);
     });
     $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
-        console.log(newValue)
         parseFiltersCollectionAndUpdateUrl(newValue);
     });
 
@@ -288,11 +292,33 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     /**
      * Ініціалізація бутстраповських плагінів
      **/
-    $scope.initDropdown = function() {
+    $scope.initPlugins = function() {
+        initDropdown();
+        initScrollBar();
+    };
+
+    function initDropdown() {
         $timeout(function() {
             angular.element(".sidebar-body select").selectpicker({
                 style: 'btn-default btn-md'
             });
-        }, 500);
+        }, 200);
+    }
+    function initScrollBar() {
+        $timeout(function() {
+
+            var sidebar = angular.element(".panel-body");
+
+            sidebar.perfectScrollbar("destroy");
+            sidebar.perfectScrollbar({
+                wheelSpeed: 20,
+                useKeyboard: false
+            });
+
+            angular.element(window).resize(function() {
+                sidebar.perfectScrollbar("update")
+            });
+
+        }, 200);
     }
 });

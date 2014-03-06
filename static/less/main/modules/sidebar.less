@@ -46,7 +46,6 @@
 .sidebar-body {
     display: block;
     height: ~"calc(100% - 165px)";
-    //overflow: auto;
 
     position: relative;
 
@@ -122,8 +121,22 @@
         margin-right: -8px;
 
         .panel-body {
+            height: 400px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            position: relative;
+            overflow-y: hidden;
             padding-right: 23px;
+
+            .ps-scrollbar-y-rail {
+                right: 10px;
+            }
         }
+    }
+
+    .section-header {
+        padding-bottom: 5px;
+        border-bottom: 1px solid @gray-lighter;
     }
 
     .form-group {

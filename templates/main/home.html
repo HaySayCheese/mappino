@@ -26,6 +26,7 @@
     <script type="text/javascript" src="{{ static }}js/libs/less-1.6.2.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/bootstrap.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/scrollbar.min.js"></script>
 
     <script type="text/javascript" src="{{ static }}js/libs/angular-1.2.11.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/angular-route-1.2.11.min.js"></script>
@@ -98,7 +99,7 @@
                         <div id="redMarkersPanel" class="panel-collapse collapse in">
                             <div class="panel-body">
                                 <div ng-if="filtersParsed">
-                                    <div ng-include="'ajax/template/main/filters/red/' + [[ filters.red.r_type_sid ]]" ng-init="initDropdown()"></div>
+                                    <div ng-include="'ajax/template/main/filters/red/' + [[ filters.red.r_type_sid ]]"></div>
                                 </div>
                             </div>
                         </div>
@@ -111,9 +112,9 @@
                         </div>
                         <div id="blueMarkersPanel" class="panel-collapse collapse">
                             <div class="panel-body">
-                                <div ng-if="filtersParsed">
-                                    <div ng-include="'ajax/template/main/filters/blue/' + [[ filters.blue.b_type_sid ]]"></div>
-                                </div>
+                                <!--<div ng-if="filtersParsed">-->
+                                    <!--<div ng-include="'ajax/template/main/filters/blue/' + [[ filters.blue.b_type_sid ]]"></div>-->
+                                <!--</div>-->
                             </div>
                         </div>
                     </div>
