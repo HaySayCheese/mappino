@@ -84,28 +84,28 @@
         background-image: url("../../img/red-panel-marker.png");
 
         &:after {
-            border-top-color: #c14949;
+            border-top-color: darken(@panel-danger-heading-bg, 25%);
         }
     }
     .blue-markers-panel-icon {
         background-image: url("../../img/blue-panel-marker.png");
 
         &:after {
-            border-top-color: #c14949;
+            border-top-color: darken(@panel-primary-heading-bg, 25%);
         }
     }
     .green-markers-panel-icon {
         background-image: url("../../img/green-panel-marker.png");
 
         &:after {
-            border-top-color: #c14949;
+            border-top-color: darken(@panel-success-heading-bg, 25%);
         }
     }
     .yellow-markers-panel-icon {
         background-image: url("../../img/yellow-panel-marker.png");
 
         &:after {
-            border-top-color: #c14949;
+            border-top-color: darken(@panel-warning-heading-bg, 25%);
         }
     }
     .favorites-markers-panel-icon {
@@ -121,12 +121,45 @@
         margin-right: -8px;
 
         .panel-body {
-            height: 400px;
             padding-top: 0px;
             padding-bottom: 0px;
             position: relative;
             overflow-y: hidden;
             padding-right: 23px;
+
+            @media (min-height: 500px) and (max-height: 550px) {
+                max-height: 100px;
+            }
+            @media (min-height: 550px) and (max-height: 600px) {
+                max-height: 150px;
+            }
+            @media (min-height: 600px) and (max-height: 650px) {
+                max-height: 200px;
+            }
+            @media (min-height: 650px) and (max-height: 700px) {
+                max-height: 250px;
+            }
+            @media (min-height: 700px) and (max-height: 750px) {
+                max-height: 300px;
+            }
+            @media (min-height: 750px) and (max-height: 800px) {
+                max-height: 350px;
+            }
+            @media (min-height: 800px) and (max-height: 850px) {
+                max-height: 400px;
+            }
+            @media (min-height: 850px) and (max-height: 900px) {
+                max-height: 450px;
+            }
+            @media (min-height: 900px) and (max-height: 950px) {
+                max-height: 500px;
+            }
+            @media (min-height: 950px) and (max-height: 1000px) {
+                max-height: 550px;
+            }
+            @media (min-height: 1000px) and (max-height: 1050px) {
+                max-height: 600px;
+            }
 
             .ps-scrollbar-y-rail {
                 right: 10px;
@@ -146,6 +179,13 @@
 
     .without-margin-bottom {
         margin-bottom: 0;
+    }
+
+    .sidebar-loader {
+        .size(100%, 64px);
+        display: block;
+
+        background: url("../../img/ajax-loader.gif") center center no-repeat;
     }
 
     [class*='col-sm-'] {

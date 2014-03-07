@@ -176,6 +176,10 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         for (var key in searchParameters) {
             if (searchParameters.hasOwnProperty(key)) {
 
+                if (key.toString().indexOf("_sid") != -1)
+                    searchParameters[key] = parseInt(searchParameters[key]);
+
+
                 if (/^r_/.test(key.toString()))
                     $scope.filters.red[key] = searchParameters[key];
 
@@ -196,7 +200,12 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                     $scope.filters.map[key] = searchParameters[key];
             }
         }
+
         $scope.filtersParsed = true;
+
+        $timeout(function() {
+            $scope.templateLoaded = true;
+        }, 1000);
 
 
         initializeMap();
@@ -215,12 +224,14 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
                 if (filters[key] === "0" || filters[key] === 0) {
                     $location.search(key, filters[key]);
+                    continue;
                 }
 
-                if (filters[key] == "" || filters[key] === false || filters[key] == "false" || key == "viewport")
+                if (filters[key] == "" || filters[key] === false || filters[key] == "false" || key == "viewport") {
                     $location.search(key, null);
-                else
+                } else {
                     $location.search(key, filters[key]);
+                }
             }
         }
 
@@ -272,7 +283,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Вертає центр карти на місто введене в автокомпліті
      **/
     function returnMapPositionFromAddress() {
-        var address = $scope.filters.city;
+        var address = $scope.filters.map.city;
 
         geocoder = new google.maps.Geocoder();
 
@@ -299,10 +310,11 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
     function initDropdown() {
         $timeout(function() {
-            angular.element(".sidebar-body select").selectpicker({
-                style: 'btn-default btn-md'
+            angular.element(".sidebar-body select:not(.type-selectpicker)").selectpicker({
+                style: 'btn-default btn-md',
+                container: angular.element("body")
             });
-        }, 200);
+        }, 0);
     }
     function initScrollBar() {
         $timeout(function() {
@@ -318,7 +330,35 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             angular.element(window).resize(function() {
                 sidebar.perfectScrollbar("update")
             });
+            $scope.$watch("filters.red.r_type_sid", function() {
+                $timeout(function() {
+                    sidebar.scrollTop(0);
+                    sidebar.perfectScrollbar("update");
+                    sidebar.perfectScrollbar("update");
+                }, 500);
+            });
+            $scope.$watch("filters.blue.b_type_sid", function() {
+                $timeout(function() {
+                    sidebar.scrollTop(0);
+                    sidebar.perfectScrollbar("update");
+                    sidebar.perfectScrollbar("update");
+                }, 500);
+            });
+            $scope.$watch("filters.green.g_type_sid", function() {
+                $timeout(function() {
+                    sidebar.scrollTop(0);
+                    sidebar.perfectScrollbar("update");
+                    sidebar.perfectScrollbar("update");
+                }, 500);
+            });
+            $scope.$watch("filters.yellow.y_type_sid", function() {
+                $timeout(function() {
+                    sidebar.scrollTop(0);
+                    sidebar.perfectScrollbar("update");
+                    sidebar.perfectScrollbar("update");
+                }, 500);
+            });
 
-        }, 200);
+        }, 1000);
     }
 });

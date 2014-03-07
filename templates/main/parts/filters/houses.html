@@ -1,31 +1,5 @@
 <form class="form-horizontal" novalidate ng-init="initPlugins()">
 
-    <h4 class="section-header">Основное</h4>
-
-    <div class="row form-group">
-        <div class="col-sm-12">
-            <label class="col-sm-3 control-label">Тип:</label>
-            <div class="col-sm-9">
-                <select name="{{ current_panel_prefix }}_type_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_type_sid">
-                    <option value="0">Дом</option>
-                    <option value="1">Квартира</option>
-                    <option value="2">Аппартаменты</option>
-                    <option value="3">Дача</option>
-                    <option value="4">Коттедж</option>
-                    <option value="5">Комната</option>
-                    <option value="6">Торговое помещение</option>
-                    <option value="7">Офис</option>
-                    <option value="8">Склад</option>
-                    <option value="9">Готовий бизнес</option>
-                    <option value="10">Обьект общепита</option>
-                    <option value="11">Гараж</option>
-                    <option value="12">Земельный участок</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
-
     <div class="row form-group">
         <div class="col-sm-12">
             <label class="col-sm-3 control-label">Операция:</label>

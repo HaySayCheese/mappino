@@ -99,7 +99,22 @@
                         <div id="redMarkersPanel" class="panel-collapse collapse in">
                             <div class="panel-body">
                                 <div ng-if="filtersParsed">
-                                    <div ng-include="'ajax/template/main/filters/red/' + [[ filters.red.r_type_sid ]]"></div>
+                                    <h4 class="section-header">Основное</h4>
+                                    <form class="form-horizontal" novalidate ng-show="templateLoaded">
+                                        <div class="row form-group">
+                                            <div class="col-sm-12">
+                                                <label class="col-sm-3 control-label">Тип:</label>
+                                                <div class="col-sm-9">
+                                                    <select class="type-selectpicker" name="r_type_sid" data-width="100%"
+                                                            ng-model="filters.red.r_type_sid"
+                                                            ng-options="type.id as type.title for type in publicationTypes">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div ng-include="'ajax/template/main/filters/red/' + [[ filters.red.r_type_sid ]]" ng-show="templateLoaded"></div>
+                                    <div class="sidebar-loader" ng-hide="templateLoaded"></div>
                                 </div>
                             </div>
                         </div>

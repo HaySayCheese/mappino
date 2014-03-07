@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, authorizationQueries) {
+app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, authorizationQueries) {
 
     $scope.userName = "";
 
@@ -50,7 +50,6 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, authorizati
      **/
     function getUserName() {
         authorizationQueries.getUserName().success(function(data) {
-            console.log("1111111111")
             sessionStorage.userName = data.user.name + " " + data.user.surname;
         });
     }
@@ -65,4 +64,12 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, authorizati
             delete $cookies.sessionid;
         });
     };
+
+    $timeout(function() {
+        angular.element(".type-selectpicker").selectpicker({
+            style: 'btn-default btn-md',
+            container: angular.element("body")
+        });
+    }, 50);
+
 });
