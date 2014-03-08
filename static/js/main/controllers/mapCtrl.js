@@ -16,8 +16,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         markerClusterer,
         geocoder;
 
-    $scope.templateLoaded = false;
-
     /**
      * Фільтри
      **/
@@ -37,31 +35,37 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             currency_sid:     0,
             heating_type_sid: 0,
             period_sid:       0,
+            planing_sid:      0,
 
             // Поля вводу
-            price_from:           "",
-            price_to:             "",
-            rooms_count_from:     "",
-            rooms_count_to:       "",
-            floors_count_from:    "",
-            floors_count_to:      "",
-            persons_count_from:   "",
-            persons_count_to:     "",
+            price_from:         "",
+            price_to:           "",
+            rooms_count_from:   "",
+            rooms_count_to:     "",
+            floors_count_from:  "",
+            floors_count_to:    "",
+            persons_count_from: "",
+            persons_count_to:   "",
+            total_area_from:    "",
+            total_area_to:      "",
+            floor_from:         "",
+            floor_to:           "",
 
             // Чекбокси
-            new_buildings:        true,
-            secondary_market:     true,
-            family:               false,
-            foreigners:           false,
-            electricity:          false,
-            gas:                  false,
-            hot_water:            false,
-            cold_water:           false,
-            sewerage:             false
+            new_buildings:      true,
+            secondary_market:   true,
+            family:             false,
+            foreigners:         false,
+            electricity:        false,
+            gas:                false,
+            hot_water:          false,
+            cold_water:         false,
+            sewerage:           false,
+            lift:               false
         },
 
         red: {
-            r_type_sid: null
+            r_type_sid: 0
         },
 
         blue: {
@@ -98,7 +102,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     /**
      * Функція створення обєкта з фільтрами
      */
-    function createFilters(panel, tid, clear) {
+    function createFiltersForPanels(panel, tid, clear) {
         var baseFilters = $scope.filters.base,
             filters     = $scope.filters[panel],
             types       = $rootScope.publicationTypes,
@@ -169,41 +173,21 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         /**
          * Евенти карти
          **/
-        // Лічильник тому що 'idle' спрацьовує при першій загрузці також
-        var mapIdleCount = 0;
-        // 'idle' - евент карти який спрацьову при загрузці всіх тайлів і промальовці карти
         google.maps.event.addListener(map, 'idle', function() {
-            mapIdleCount++;
             $scope.filters.map.viewport = {
                 neLat: map.getBounds().getNorthEast().lat(),
                 neLng: map.getBounds().getNorthEast().lng(),
                 swLat: map.getBounds().getSouthWest().lat(),
                 swLng: map.getBounds().getSouthWest().lng()
             };
-            if (mapIdleCount > 1) {
-                $scope.filters.map.latLng   = map.getCenter().toUrlValue();
-                $scope.filters.map.zoom     = map.getZoom();
+            $scope.filters.map.latLng   = map.getCenter().toUrlValue();
+            $scope.filters.map.zoom     = map.getZoom();
 
-                if(!$scope.$$phase)
-                    $scope.$apply();
+            if(!$scope.$$phase)
+                $scope.$apply();
 
-                parseFiltersCollectionAndUpdateUrl($scope.filters.map);
-                loadData();
-            }
-        });
-
-        // Евент коли карта закінчила переміщення
-        google.maps.event.addListenerOnce(map, 'idle', function() {
-            // якщо урл при загрузці не пустий і має в собі параметр з містом
-            // то центруємо карту по координатах в урлу і грузим дані
-            if (Object.keys($location.search()).length && Object.keys($location.search()).length > 2) {
-                //parseFiltersCollectionAndUpdateUrl($scope.filters.map);
-                loadData();
-                // якшо пустий то просто ставим карту на Україну
-                // і додаєм параметри в урл
-            } else {
-                parseFiltersCollectionAndUpdateUrl($scope.filters.map);
-            }
+            parseFiltersCollectionAndUpdateUrl($scope.filters.map);
+            loadData();
         });
 
         // Евент вибору елемента в автокомпліті
@@ -266,7 +250,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         }
 
         if ($scope.filters.blue.b_type_sid == null || $scope.filters.green.g_type_sid == null || $scope.filters.yellow.y_type_sid == null)
-            createFilters("red", 0, false);
+            createFiltersForPanels("red", 0, false);
 
         $scope.filtersParsed = true;
 
@@ -338,6 +322,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     }
 
 
+    /**
+     * Функція яка розставляє маркери
+     */
     function placeMarkers() {
         markerClusterer.clearMarkers();
 
@@ -440,7 +427,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 $scope.templateLoaded = true;
             }, 1000);
 
-            createFilters(panel, value, true);
+            createFiltersForPanels(panel, value, true);
         });
 
     }

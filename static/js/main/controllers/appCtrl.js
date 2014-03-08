@@ -3,7 +3,7 @@
 app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
 
     $rootScope.publicationTypes = [
-        { name: "house",     id: 0,  title: "Дома",
+        { name: "house", id: 0, title: "Дома",
             filters: [
                 "operation_sid",    // Загальні
                 "period_sid",       // Тільки в оренді
@@ -20,7 +20,26 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
                 "sewerage",         // Тільки в продажі
                 "heating_type_sid"
             ]},
-        { name: "flat",      id: 1,  title: "Квартиры" },
+        { name: "flat", id: 1, title: "Квартиры",
+            filters: [
+                "operation_sid",    // Загальні
+                "period_sid",       // Тільки в оренді
+                "price_from", "price_to", "currency_sid", // Загальні
+                "persons_count_from", "persons_count_to", // Тільки в оренді
+                "new_buildings",    // Тільки в продажі
+                "secondary_market",
+                "family",           // Тільки в оренді
+                "foreigners",
+                "rooms_count_from", "rooms_count_to",     // Тільки в продажі
+                "total_area_from", "total_area_to",
+                "floor_from", "floor_to",
+                "planing_sid",
+                "lift", "electricity", //**
+                "hot_water", "cold_water",
+                "gas",
+                "heating_type_sid"  // Тільки в продажі
+            ]
+        },
         { name: "apartments",id: 2,  title: "Аппартаментов" },
         { name: "dacha",     id: 3,  title: "Дачи" },
         { name: "cottage",   id: 4,  title: "Коттеджа" },

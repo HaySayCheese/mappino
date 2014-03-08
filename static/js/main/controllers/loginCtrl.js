@@ -12,7 +12,7 @@ app.controller('LoginCtrl', function($scope, $timeout, authorizationQueries) {
         password: ""
     };
 
-    var loginModal = $(".login-modal"),
+    var loginModal = angular.element(".login-modal"),
         loginBtn   = loginModal.find(".btn-success"),
         tooltip    = loginModal.find("[data-toggle='tooltip']");
 

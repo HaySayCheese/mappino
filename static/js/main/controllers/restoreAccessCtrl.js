@@ -2,7 +2,7 @@
 
 app.controller('RestoreAccessCtrl', function($scope, $rootScope, $location) {
 
-    $(".restore-access-modal").modal();
+    angular.element(".restore-access-modal").modal();
 
     /**
      * Стан вікна восстановлення пароля
@@ -32,7 +32,7 @@ app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, authori
         login: ""
     };
 
-    var restoreAccessModal = $(".restore-access-modal"),
+    var restoreAccessModal = angular.element(".restore-access-modal"),
         restoreAccessBtn   = restoreAccessModal.find(".btn-success"),
         tooltip            = restoreAccessModal.find("[data-toggle='tooltip']");
 
@@ -136,7 +136,7 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
         token: $location.search().token
     };
 
-    var restoreAccessModal = $(".restore-access-modal"),
+    var restoreAccessModal = angular.element(".restore-access-modal"),
         restoreAccessBtn   = restoreAccessModal.find(".btn-success"),
         tooltip            = restoreAccessModal.find("[data-toggle='tooltip']");
 

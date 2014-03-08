@@ -2,7 +2,7 @@
 
 app.controller('RegistrationCtrl', function($scope, $rootScope, $cookieStore) {
 
-    $(".registration-modal").modal();
+    angular.element(".registration-modal").modal();
 
     /**
      * Стан вікна реєстрації
@@ -51,7 +51,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $cookies, au
     /**
      * Змінні
      **/
-    var registrationModal = $(".registration-modal"),
+    var registrationModal = angular.element(".registration-modal"),
         registrationBtn   = registrationModal.find(".btn-success"),
         tooltip           = registrationModal.find("[data-toggle='tooltip']"),
         emailInput        = registrationModal.find("input[name='email']"),
@@ -281,7 +281,7 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $root
      **/
     $scope.codeCheck = "";
 
-    var registrationModal = $(".registration-modal"),
+    var registrationModal = angular.element(".registration-modal"),
         registrationBtn   = registrationModal.find(".btn-success"),
         tooltip           = registrationModal.find("[data-toggle='tooltip']"),
         attempt,
