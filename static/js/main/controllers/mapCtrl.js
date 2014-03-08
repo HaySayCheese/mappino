@@ -1,6 +1,11 @@
 'use strict';
 
-app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile, Markers) {
+/*
+ * ПЛІЗ НЕ МІНЯЙТЕ НІЧО В ЦЬОМУ ФАЙЛІ
+ * СПЛОШНА МАГІЯ, МІСТІКА І ЇМ ПОДІБНЕ
+ */
+
+app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile, $rootScope, Markers) {
 
     /**
      * Змінні
@@ -10,6 +15,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         cityInput = document.getElementById('sidebar-city-input'),
         markerClusterer,
         geocoder;
+
+    $scope.templateLoaded = false;
 
     /**
      * Фільтри
@@ -22,55 +29,112 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             latLng: "50.442218,30.779838"
         },
 
-        red: {
+        base: {
             // Загальні
-            r_type_sid: 0,
-            r_operation_sid: 0,
+            operation_sid: 0,
 
             // Дропдауни
-            r_currency_sid:     0,
-            r_heating_type_sid: 0,
-            r_period_sid:       0,
+            currency_sid:     0,
+            heating_type_sid: 0,
+            period_sid:       0,
 
             // Поля вводу
-            r_price_from:           "",
-            r_price_to:             "",
-            r_rooms_count_from:     "",
-            r_rooms_count_to:       "",
-            r_floors_count_from:    "",
-            r_floors_count_to:      "",
-            r_persons_count_from:   "",
-            r_persons_count_to:     "",
+            price_from:           "",
+            price_to:             "",
+            rooms_count_from:     "",
+            rooms_count_to:       "",
+            floors_count_from:    "",
+            floors_count_to:      "",
+            persons_count_from:   "",
+            persons_count_to:     "",
 
             // Чекбокси
-            r_new_buildings:        true,
-            r_secondary_market:     true,
-            r_family:               false,
-            r_foreigners:           false,
-            r_electricity:          false,
-            r_gas:                  false,
-            r_hot_water:            false,
-            r_cold_water:           false,
-            r_sewerage:             false
+            new_buildings:        true,
+            secondary_market:     true,
+            family:               false,
+            foreigners:           false,
+            electricity:          false,
+            gas:                  false,
+            hot_water:            false,
+            cold_water:           false,
+            sewerage:             false
+        },
+
+        red: {
+            r_type_sid: null
+        },
+
+        blue: {
+            b_type_sid: null
+        },
+
+        green: {
+            g_type_sid: null
+        },
+
+        yellow: {
+            y_type_sid: null
         }
     };
-    $scope.filtersParsed = false;
 
 
     /**
      * Слідкуємо за зміною фільттрів. Динамічно оновлюємо урл
-     **/
+     */
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
     });
     $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
     });
+    $scope.$watchCollection("filters.green", function(newValue, oldValue) {
+        parseFiltersCollectionAndUpdateUrl(newValue);
+    });
+    $scope.$watchCollection("filters.yellow", function(newValue, oldValue) {
+        parseFiltersCollectionAndUpdateUrl(newValue);
+    });
+
+
+    /**
+     * Функція створення обєкта з фільтрами
+     */
+    function createFilters(panel, tid, clear) {
+        var baseFilters = $scope.filters.base,
+            filters     = $scope.filters[panel],
+            types       = $rootScope.publicationTypes,
+            prefix      = panel.toString().substring(0, 1) + "_";
+
+        if (clear) {
+            for (var key in filters) {
+                if (filters.hasOwnProperty(key) && key != (prefix + "type_sid"))
+                    delete filters[key];
+            }
+            var searchParameters = $location.search();
+
+            for (var s_key in searchParameters) {
+                if (searchParameters.hasOwnProperty(s_key))
+                    if (s_key.match(new RegExp('^' + prefix, 'm')))
+                        $location.search(s_key, null)
+            }
+            parseFiltersCollectionAndUpdateUrl(filters);
+            parseFiltersCollectionAndUpdateUrl($scope.filters.map);
+        }
+
+        if (filters[prefix + "type_sid"] === null)
+            return;
+
+        for (var i = 0; i < types[tid].filters.length; i++) {
+            if (!filters[[prefix + types[tid].filters[i]]])
+                filters[prefix + types[tid].filters[i]] = baseFilters[types[tid].filters[i]];
+        }
+
+
+    }
 
 
     /**
      * Код карти
-     **/
+     */
     function initializeMap() {
 
         /**
@@ -169,7 +233,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     /**
      * Парсимо строку пошука (все шо після '?')
      * Оновлюємо колекцію фільтрів '$scope.filters'
-     **/
+     */
     $scope.parseSearchParametersFromUrl = function() {
         var searchParameters = $location.search();
 
@@ -201,12 +265,14 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             }
         }
 
+        if ($scope.filters.blue.b_type_sid == null || $scope.filters.green.g_type_sid == null || $scope.filters.yellow.y_type_sid == null)
+            createFilters("red", 0, false);
+
         $scope.filtersParsed = true;
 
         $timeout(function() {
             $scope.templateLoaded = true;
         }, 1000);
-
 
         initializeMap();
 
@@ -217,10 +283,13 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     /**
      * Парсимо колекцію з фільтрами '$scope.filters'
      * Оновлюємо строку пошука все шо після '?')
-     **/
+     */
     function parseFiltersCollectionAndUpdateUrl(filters) {
         for (var key in filters) {
             if (filters.hasOwnProperty(key)) {
+
+                if (key.indexOf("type_sid") != -1 && filters[key] === null)
+                    return;
 
                 if (filters[key] === "0" || filters[key] === 0) {
                     $location.search(key, filters[key]);
@@ -249,7 +318,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
     /**
      * Функція яка ініціює загрузку даних
-     * */
+     */
     function loadData() {
         var sneLat = $scope.filters.map.viewport.neLat.toString(),
             sneLng = $scope.filters.map.viewport.neLng.toString(),
@@ -281,7 +350,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
     /**
      * Вертає центр карти на місто введене в автокомпліті
-     **/
+     */
     function returnMapPositionFromAddress() {
         var address = $scope.filters.map.city;
 
@@ -302,19 +371,19 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
     /**
      * Ініціалізація бутстраповських плагінів
-     **/
+     */
     $scope.initPlugins = function() {
         initDropdown();
         initScrollBar();
+        initHandlerCreateFilters();
     };
-
     function initDropdown() {
         $timeout(function() {
             angular.element(".sidebar-body select:not(.type-selectpicker)").selectpicker({
                 style: 'btn-default btn-md',
                 container: angular.element("body")
             });
-        }, 0);
+        }, 500);
     }
     function initScrollBar() {
         $timeout(function() {
@@ -360,5 +429,19 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             });
 
         }, 1000);
+    }
+    function initHandlerCreateFilters() {
+        angular.element(".type-selectpicker").bind('change',function(e) {
+            var panel = angular.element(e.currentTarget).attr("data-panel"),
+                value = e.currentTarget.value;
+
+            $scope.templateLoaded = false;
+            $timeout(function() {
+                $scope.templateLoaded = true;
+            }, 1000);
+
+            createFilters(panel, value, true);
+        });
+
     }
 });

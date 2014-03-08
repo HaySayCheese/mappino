@@ -14,9 +14,7 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, a
      * берем куку з іменем юзера якщо і вона є
      **/
     $scope.$watch(function() {
-
         return $cookies.sessionid;
-
     }, function(newValue, oldValue) {
 
         if (sessionStorage.userName)
@@ -32,9 +30,7 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, a
      * то видаляєм куку сесії
      **/
     $scope.$watch(function() {
-
         return sessionStorage.userName;
-
     }, function(newValue, oldValue) {
 
         if (newValue)

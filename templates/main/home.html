@@ -92,8 +92,11 @@
                 <div class="panel-group" id="markers-accordion">
                     <div class="panel panel-danger">
                         <div class="panel-heading red-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#redMarkersPanel">
-                            <h4 class="panel-title">
+                            <h4 class="panel-title" ng-hide="filters.red.r_type_sid == null">
                                 <b>[[ publicationTypes[filters.red.r_type_sid].title ]],</b> <small>([[ filters.red.r_price_min ]] - [[ filters.red.r_price_max ]])</small>
+                            </h4>
+                            <h4 class="panel-title" ng-show="filters.red.r_type_sid == null">
+                                <b>Виберите тип</b>
                             </h4>
                         </div>
                         <div id="redMarkersPanel" class="panel-collapse collapse in">
@@ -105,15 +108,16 @@
                                             <div class="col-sm-12">
                                                 <label class="col-sm-3 control-label">Тип:</label>
                                                 <div class="col-sm-9">
-                                                    <select class="type-selectpicker" name="r_type_sid" data-width="100%"
+                                                    <select class="type-selectpicker" name="r_type_sid" data-width="100%" data-panel="red"
                                                             ng-model="filters.red.r_type_sid"
                                                             ng-options="type.id as type.title for type in publicationTypes">
+                                                        <option value="">Виберите тип</option>
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
                                     </form>
-                                    <div ng-include="'ajax/template/main/filters/red/' + [[ filters.red.r_type_sid ]]" ng-show="templateLoaded"></div>
+                                    <div ng-include="'ajax/template/main/filters/red/' + [[ filters.red.r_type_sid ]] + '/'" ng-show="templateLoaded"></div>
                                     <div class="sidebar-loader" ng-hide="templateLoaded"></div>
                                 </div>
                             </div>
@@ -121,43 +125,100 @@
                     </div>
                     <div class="panel panel-primary">
                         <div class="panel-heading blue-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#blueMarkersPanel">
-                            <h4 class="panel-title">
+                            <h4 class="panel-title" ng-hide="filters.blue.b_type_sid == null">
                                 <b>[[ publicationTypes[filters.blue.b_type_sid].title ]],</b> <small>([[ filters.blue.b_price_min ]] - [[ filters.blue.b_price_max ]])</small>
+                            </h4>
+                            <h4 class="panel-title" ng-show="filters.blue.b_type_sid == null">
+                                <b>Виберите тип</b>
                             </h4>
                         </div>
                         <div id="blueMarkersPanel" class="panel-collapse collapse">
                             <div class="panel-body">
-                                <!--<div ng-if="filtersParsed">-->
-                                    <!--<div ng-include="'ajax/template/main/filters/blue/' + [[ filters.blue.b_type_sid ]]"></div>-->
-                                <!--</div>-->
+                                <div ng-if="filtersParsed">
+                                    <form class="form-horizontal" novalidate ng-show="templateLoaded">
+                                        <h4 class="section-header">Основное</h4>
+                                        <div class="row form-group">
+                                            <div class="col-sm-12">
+                                                <label class="col-sm-3 control-label">Тип:</label>
+                                                <div class="col-sm-9">
+                                                    <select class="type-selectpicker" name="b_type_sid" data-width="100%" data-panel="blue"
+                                                            ng-model="filters.blue.b_type_sid"
+                                                            ng-options="type.id as type.title for type in publicationTypes">
+                                                        <option value="">Виберите тип</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div ng-include="'ajax/template/main/filters/blue/' + [[ filters.blue.b_type_sid ]] + '/'" ng-show="templateLoaded"></div>
+                                    <div class="sidebar-loader" ng-hide="templateLoaded"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="panel panel-success">
                         <div class="panel-heading green-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#greenMarkersPanel">
-                            <h4 class="panel-title">
-                                <b>Дома,</b> <small>(30 000 - 50 000)</small>
+                            <h4 class="panel-title" ng-hide="filters.green.g_type_sid == null">
+                                <b>[[ publicationTypes[filters.green.g_type_sid].title ]],</b> <small>([[ filters.green.g_price_min ]] - [[ filters.green.g_price_max ]])</small>
+                            </h4>
+                            <h4 class="panel-title" ng-show="filters.green.g_type_sid == null">
+                                <b>Виберите тип</b>
                             </h4>
                         </div>
                         <div id="greenMarkersPanel" class="panel-collapse collapse">
                             <div class="panel-body">
-                                <!--<div ng-if="filtersParsed">-->
-                                    <!--<div ng-include="'ajax/template/main/filters/green/' + [[ filters.blue.g_type_sid ]]" ng-init="initDropdown()"></div>-->
-                                <!--</div>-->
+                                <div ng-if="filtersParsed">
+                                    <form class="form-horizontal" novalidate ng-show="templateLoaded">
+                                        <h4 class="section-header">Основное</h4>
+                                        <div class="row form-group">
+                                            <div class="col-sm-12">
+                                                <label class="col-sm-3 control-label">Тип:</label>
+                                                <div class="col-sm-9">
+                                                    <select class="type-selectpicker" name="g_type_sid" data-width="100%" data-panel="green"
+                                                            ng-model="filters.green.g_type_sid"
+                                                            ng-options="type.id as type.title for type in publicationTypes">
+                                                        <option value="">Виберите тип</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div ng-include="'ajax/template/main/filters/green/' + [[ filters.green.g_type_sid ]] + '/'" ng-show="templateLoaded"></div>
+                                    <div class="sidebar-loader" ng-hide="templateLoaded"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="panel panel-warning">
                         <div class="panel-heading yellow-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#yellowMarkersPanel">
-                            <h4 class="panel-title">
-                                <b>Дома,</b> <small>(30 000 - 50 000)</small>
+                            <h4 class="panel-title" ng-hide="filters.yellow.y_type_sid == null">
+                                <b>[[ publicationTypes[filters.yellow.y_type_sid].title ]],</b> <small>([[ filters.yellow.y_price_min ]] - [[ filters.yellow.y_price_max ]])</small>
+                            </h4>
+                            <h4 class="panel-title" ng-show="filters.yellow.y_type_sid == null">
+                                <b>Виберите тип</b>
                             </h4>
                         </div>
                         <div id="yellowMarkersPanel" class="panel-collapse collapse">
                             <div class="panel-body">
-                                <!--<div ng-if="filtersParsed">-->
-                                    <!--<div ng-include="'ajax/template/main/filters/yellow/' + [[ filters.blue.y_type_sid ]]" ng-init="initDropdown()"></div>-->
-                                <!--</div>-->
+                                <div ng-if="filtersParsed">
+                                    <form class="form-horizontal" novalidate ng-show="templateLoaded">
+                                        <h4 class="section-header">Основное</h4>
+                                        <div class="row form-group">
+                                            <div class="col-sm-12">
+                                                <label class="col-sm-3 control-label">Тип:</label>
+                                                <div class="col-sm-9">
+                                                    <select class="type-selectpicker" name="y_type_sid" data-width="100%" data-panel="yellow"
+                                                            ng-model="filters.yellow.y_type_sid"
+                                                            ng-options="type.id as type.title for type in publicationTypes">
+                                                        <option value="">Виберите тип</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div ng-include="'ajax/template/main/filters/yellow/' + [[ filters.yellow.y_type_sid ]] + '/'" ng-show="templateLoaded"></div>
+                                    <div class="sidebar-loader" ng-hide="templateLoaded"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
