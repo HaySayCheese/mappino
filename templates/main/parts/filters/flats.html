@@ -99,9 +99,9 @@
     </div>
 
 
-    <div class="row form-group">
+    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid == 0">
         <div class="col-sm-12">
-            <label class="col-sm-3 control-label">Планировка:</label>
+            <label class="col-sm-3 control-label">Пл-ка:</label>
             <div class="col-sm-9">
                 <select name="{{ current_panel_prefix }}_planing_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_planing_sid">
                     <option value="0">Любая</option>

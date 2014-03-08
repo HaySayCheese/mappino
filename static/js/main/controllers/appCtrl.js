@@ -34,7 +34,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
                 "total_area_from", "total_area_to",
                 "floor_from", "floor_to",
                 "planing_sid",
-                "lift", "electricity", //**
+                "lift", "electricity",
                 "hot_water", "cold_water",
                 "gas",
                 "heating_type_sid"  // Тільки в продажі
