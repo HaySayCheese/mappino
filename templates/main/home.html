@@ -117,7 +117,7 @@
                                             </div>
                                         </div>
                                     </form>
-                                    <div ng-include="'ajax/template/main/filters/red/' + [[ filters.red.r_type_sid ]] + '/'" ng-show="templateLoaded"></div>
+                                    <div ng-include="'ajax/template/main/filters/red/' + [[ filters.red.r_type_sid ]] + '/'" ng-show="templateLoaded" ng-if="filters.red.r_type_sid != null"></div>
                                     <div class="sidebar-loader" ng-hide="templateLoaded"></div>
                                 </div>
                             </div>
@@ -150,7 +150,7 @@
                                             </div>
                                         </div>
                                     </form>
-                                    <div ng-include="'ajax/template/main/filters/blue/' + [[ filters.blue.b_type_sid ]] + '/'" ng-show="templateLoaded"></div>
+                                    <div ng-include="'ajax/template/main/filters/blue/' + [[ filters.blue.b_type_sid ]] + '/'" ng-show="templateLoaded" ng-if="filters.blue.b_type_sid != null"></div>
                                     <div class="sidebar-loader" ng-hide="templateLoaded"></div>
                                 </div>
                             </div>
@@ -183,7 +183,7 @@
                                             </div>
                                         </div>
                                     </form>
-                                    <div ng-include="'ajax/template/main/filters/green/' + [[ filters.green.g_type_sid ]] + '/'" ng-show="templateLoaded"></div>
+                                    <div ng-include="'ajax/template/main/filters/green/' + [[ filters.green.g_type_sid ]] + '/'" ng-show="templateLoaded" ng-if="filters.green.g_type_sid != null"></div>
                                     <div class="sidebar-loader" ng-hide="templateLoaded"></div>
                                 </div>
                             </div>
@@ -216,7 +216,7 @@
                                             </div>
                                         </div>
                                     </form>
-                                    <div ng-include="'ajax/template/main/filters/yellow/' + [[ filters.yellow.y_type_sid ]] + '/'" ng-show="templateLoaded"></div>
+                                    <div ng-include="'ajax/template/main/filters/yellow/' + [[ filters.yellow.y_type_sid ]] + '/'" ng-show="templateLoaded" ng-if="filters.yellow.y_type_sid != null"></div>
                                     <div class="sidebar-loader" ng-hide="templateLoaded"></div>
                                 </div>
                             </div>
