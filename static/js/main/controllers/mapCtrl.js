@@ -87,15 +87,31 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      */
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
+
+        $timeout(function() {
+            loadData(newValue)
+        }, 1000);
     });
     $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
+
+        $timeout(function() {
+            loadData(newValue)
+        }, 1000);
     });
     $scope.$watchCollection("filters.green", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
+
+        $timeout(function() {
+            loadData(newValue)
+        }, 1000);
     });
     $scope.$watchCollection("filters.yellow", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
+
+        $timeout(function() {
+            loadData(newValue)
+        }, 1000);
     });
 
 
@@ -315,10 +331,17 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             swLng = sswLng.replace(sswLng.substring(sswLng.indexOf(".") + 3, sswLng.length), ""),
             viewport = "&ne=" + neLat + ":" + neLng + "&sw=" + swLat + ":" + swLng;
 
-        Markers.load(viewport, 0, function(data) {
-            markers = data;
-            placeMarkers();
-        });
+        if (arguments[0]) {
+            Markers.load(arguments[0], viewport, 0, function(data) {
+                markers = data;
+                placeMarkers();
+            });
+        } else {
+            Markers.load(null, viewport, 0, function(data) {
+                markers = data;
+                placeMarkers();
+            });
+        }
     }
 
 

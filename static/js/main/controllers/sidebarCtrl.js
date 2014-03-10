@@ -47,6 +47,8 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, a
     function getUserName() {
         authorizationQueries.getUserName().success(function(data) {
             sessionStorage.userName = data.user.name + " " + data.user.surname;
+        }).error(function() {
+            delete $cookies.sessionid;
         });
     }
 

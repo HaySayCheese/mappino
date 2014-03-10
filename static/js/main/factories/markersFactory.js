@@ -11,18 +11,34 @@ app.factory('Markers', function(mapQueries) {
         /**
          * Загрузка маркерів
          *
+         * @param {object}      filters  Фільтри
          * @param {string}      viewport Вюпорт карти
          * @param {number}      tid      Тип обєкта
          * @param {function}    callback
          */
-        load: function(viewport, tid, callback) {
+        load: function(filters, viewport, tid, callback) {
             var that = this;
 
-            mapQueries.getMarkers(viewport, tid).success(function(data) {
-                that.add(data, tid, function() {
-                    _.isFunction(callback) && callback(markers);
+            if (filters) {
+                var stringFilters = "";
+
+                for (var key in filters) {
+                    if (filters.hasOwnProperty(key) )
+                        stringFilters += "&" + key.toString().substring(2) + "=" + filters[key];
+                }
+                console.log(stringFilters)
+                mapQueries.getMarkersOfFilters(stringFilters, viewport, tid).success(function(data) {
+                    that.add(data, tid, function() {
+                        _.isFunction(callback) && callback(markers);
+                    });
                 });
-            });
+            } else {
+                mapQueries.getMarkers(viewport, tid).success(function(data) {
+                    that.add(data, tid, function() {
+                        _.isFunction(callback) && callback(markers);
+                    });
+                });
+            }
         },
 
 
