@@ -13,32 +13,35 @@ app.factory('Markers', function(mapQueries) {
          *
          * @param {object}      filters  Фільтри
          * @param {string}      viewport Вюпорт карти
-         * @param {number}      tid      Тип обєкта
          * @param {function}    callback
          */
-        load: function(filters, viewport, tid, callback) {
-            var that = this;
+        load: function(filters, viewport, callback) {
+            var that = this,
+                tid = null,
+                stringFilters = "";
 
-            if (filters) {
-                var stringFilters = "";
+            for (var key in filters) {
+                if (filters.hasOwnProperty(key)) {
 
-                for (var key in filters) {
-                    if (filters.hasOwnProperty(key) )
+                    if (key.toString().substring(2) == "type_sid") {
+                        if (filters[key] == null || filters[key] == "undefined")
+                            return;
+
+                        tid = filters[key];
+                    }
+
+                    if (filters[key] != false && filters[key] != "false" && filters[key] != "" && filters[key] != null)
                         stringFilters += "&" + key.toString().substring(2) + "=" + filters[key];
                 }
-                console.log(stringFilters)
-                mapQueries.getMarkersOfFilters(stringFilters, viewport, tid).success(function(data) {
-                    that.add(data, tid, function() {
-                        _.isFunction(callback) && callback(markers);
-                    });
-                });
-            } else {
-                mapQueries.getMarkers(viewport, tid).success(function(data) {
-                    that.add(data, tid, function() {
-                        _.isFunction(callback) && callback(markers);
-                    });
-                });
             }
+
+
+
+            mapQueries.getMarkersOfFilters(stringFilters, viewport, tid).success(function(data) {
+                that.add(data, tid, function() {
+                    _.isFunction(callback) && callback(markers);
+                });
+            });
         },
 
 
