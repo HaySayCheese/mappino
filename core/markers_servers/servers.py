@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from core.currencies.currencies_manager import convert as convert_currency
 from core.markers_servers.exceptions import TooBigTransaction, SerializationError, DeserializationError
 from core.markers_servers.utils import DegreeSegmentPoint, Point, SegmentPoint, DegreePoint
-from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, CURRENCIES, MARKET_TYPES
+from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, CURRENCIES, MARKET_TYPES, LIVING_RENT_PERIODS
 from mappino.wsgi import redis_connections
 
 
@@ -256,7 +256,7 @@ class BaseMarkersManager(object):
 
 		converted_price = convert_currency(price, base_currency, destination_currency)
 		if int(converted_price) == converted_price:
-			return result + u'{:0,.0f}'.format(converted_price)
+			return result + u'{:0,.0f}'.format(converted_price) # відсікти дробову частину
 		return result + u'{:0,.2f}'.format(converted_price)
 
 
@@ -462,38 +462,37 @@ class FlatsMarkersManager(BaseMarkersManager):
 				return {
 					'id': data['id'],
 					'd0': u'Продажа: ' + self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-
+							data['sale_price'],
+							data['sale_currency_sid'],
+							CURRENCIES.uah()
+						) + u' грн.',
 					'd1': u'Аренда: ' + self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
+							data['rent_price'],
+							data['rent_currency_sid'],
+							CURRENCIES.uah()
+						) + u' грн.',
 				}
 
 			elif data.get('for_sale', False):
 				return {
 					'id': data['id'],
-					'd0': u'Комнат: ' + str(data['rooms_count']), # required
+					'd0': u'Комнат: ' + unicode(data['rooms_count']), # required
 					'd1': self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
+							data['sale_price'],
+							data['sale_currency_sid'],
+							CURRENCIES.uah()
+						) + u' грн.',
 				}
 
 			elif data.get('for_rent', False):
 				return{
 					'id': data['id'],
-					'd0': u'Мест: ' + str(data['persons_count']), # required
+					'd0': u'Мест: ' + unicode(data['persons_count']), # required
 					'd1': self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
+							data['rent_price'],
+							data['rent_currency_sid'],
+							CURRENCIES.uah()
+						) + u' грн.',
 				}
 
 			else:
@@ -501,7 +500,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 
 		else:
 			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
-			# todo: додати конввертацію валют в залженост від фільтрів
+			# todo: додати конвертацію валют в залженості від фільтрів
 			pass
 
 
@@ -948,12 +947,32 @@ class HousesMarkersManager(BaseMarkersManager):
 			raise ValueError('Invalid conditions. Operation_sid is absent.')
 
 
+		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
+		# На даному етапі виконується перевірка всіх обов’язкових полів filters.
+		# Дану перевірку винесено за цикл фільтрування щоб підвищити швидкодію,
+		# оскільки об’єкт filters не змінюється в ході фільтрування і достатньо перевіріити його лише раз.
+		currency_sid = filters.get('currency_sid')
+		if currency_sid is None:
+			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
+			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
+			# На фронтенді валюта повинна бути задана за замовчуванням.
+			raise ValueError('Sale currency is absent.')
+
+		if operation_sid == 1: # rent
+			rent_period_sid = filters.get('period_sid')
+			if rent_period_sid is None:
+				raise ValueError('Rent period sid is absent.')
+			else:
+				rent_period_sid = int(rent_period_sid)
+
+
+
 		# Для відбору елементів зі списку publications, використовується список statuses.
 		# Кість елементів цього списку відповідає к-сті елементів publications.
 		# На початку фільтрування всі елементи statuses встановлені в True.
 		# Під час фільтрування деякі з них будуть встановлені в False.
 		# На завершальному етапі зі списку publications будуть відібрані лише ті елементи,
-		# відповідний елемент в statuses яких встановлений в True.
+		# відповідний елемент statuses яких встановлений в True.
 		#
 		# Додатковий список використовується для підвищення швидкодії фільтрування,
 		# оскільки зміна True/False відбуваєтсья в рази швидше, ніж вилучення елементів зі списку
@@ -971,68 +990,57 @@ class HousesMarkersManager(BaseMarkersManager):
 				marker = publications[i][1]
 
 				#-- sale price
-				price_currency_sid = filters.get('price_currency_sid')
-				if price_currency_sid is not None:
-					# Перевіряти фільтри цін має зміст лише тоді, коли задана валюта фільтру,
-					# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення,
-					# а без цього порівняння некоректне.
-					#
-					price_max = filters.get('price_max')
-					price_min = filters.get('price_min')
-					if price_max is not None:
-						price_max = convert_currency(price_max, price_currency_sid, marker['sale_currency_sid'])
-					if price_min is not None:
-						price_min = convert_currency(price_min, price_currency_sid, marker['sale_currency_sid'])
-
-					if (price_max is not None) and (price_min is not None):
-						if not price_min <= marker['sale_price'] <= price_max:
-							statuses[i] = False
-							continue
-
-					elif price_min is not None:
-						if not price_min <= marker['sale_price']:
-							statuses[i] = False
-							continue
-
-					elif price_max is not None:
-						if not marker['sale_price'] <= price_max:
-							statuses[i] = False
-							continue
+				price_min = filters.get('price_from')
+				price_max = filters.get('price_to')
+				if price_min is not None:
+					price_min = convert_currency(price_min, currency_sid, marker['sale_currency_sid'])
+				if price_max is not None:
+					price_max = convert_currency(price_max, currency_sid, marker['sale_currency_sid'])
 
 
-				#-- market type group
-				# В даному випадку два поля з фільтрів указують на одне поле об’єкта,
-				# і якщо хочаб одна умова справджується — оголошення повинно потрапити у вибірку.
-				market_type_group = False
-				if filters.get('new_buildings'):
-					market_type_group = (marker['market_type_sid'] == MARKET_TYPES.new_building())
+				if (price_max is not None) and (price_min is not None):
+					if not price_min <= marker['sale_price'] <= price_max:
+						statuses[i] = False
+						continue
 
-				if not market_type_group:
-					# Якщо на попередньому етапі даний запис вже був помічений, як підходящий —
-					# немає змісту перевіряти його знову.
-					#
-					if filters.get('secondary_market'):
-						market_type_group = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
+				elif price_min is not None:
+					if not price_min <= marker['sale_price']:
+						statuses[i] = False
+						continue
 
-				if not market_type_group:
-					# Якщо жодна з умов групи не виконалась — відхилити запис.
-					statuses[i] = False
-					continue
+				elif price_max is not None:
+					if not marker['sale_price'] <= price_max:
+						statuses[i] = False
+						continue
+
+
+				#-- market type
+				if ('new_buildings' in filters) and ('secondary_market' in filters):
+					# Немає змісту фільтрувати.
+					# Під дані умови потрапляють всі об’єкти.
+					pass
+
+				elif 'new_buildings' in filters:
+					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
+				elif 'new_buildings' in filters:
+					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
 
 
 				#-- rooms count
-				rooms_count_min = filters.get('rooms_count_min')
-				rooms_count_max = filters.get('rooms_count_max')
+				rooms_count_min = filters.get('rooms_count_from')
+				rooms_count_max = filters.get('rooms_count_to')
 				rooms_count = marker.get('rooms_count')
-				if (rooms_count is None) \
-						and (rooms_count_min is not None) or (rooms_count_max is not None):
-					# Поле "к-сть кімнат" може бути не обов’язковим.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі —
-					# запис відхиляється через неможливість аналізу.
-					statuses[i] = False
-					continue
 
-				if (rooms_count_min is not None) and (rooms_count_max is not None):
+				if (rooms_count_max is not None) or (rooms_count_min is not None):
+					# Поле "к-сть кімнат" не обов’язкове.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+					# відхилити запис через неможливість аналізу.
+					if rooms_count is None:
+						statuses[i] = False
+						continue
+
+
+				if (rooms_count_max is not None) and (rooms_count_min is not None):
 					if not rooms_count_min <= rooms_count <= rooms_count_max:
 						statuses[i] = False
 						continue
@@ -1052,13 +1060,15 @@ class HousesMarkersManager(BaseMarkersManager):
 				floors_count_min = filters.get('floors_count_min')
 				floors_count_max = filters.get('floors_count_max')
 				floors_count = marker.get('floors_count')
-				if (floors_count is None) \
-						and (floors_count_min is not None) or (floors_count_max is not None):
-					# Поле "к-сть поверхів" може бути не обов’язковим.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі —
-					# запис відхиляється через неможливість аналізу.
-					statuses[i] = False
-					continue
+
+				if (floors_count_max is not None) or (floors_count_max is not None):
+					# Поле "к-сть поверхів" не обов’язкове.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+					# відхилити запис через неможливість аналізу.
+					if floors_count is None:
+						statuses[i] = False
+						continue
+
 
 				if (floors_count_min is not None) and (floors_count_max is not None):
 					if not floors_count_min <= floors_count <= floors_count_max:
@@ -1076,8 +1086,32 @@ class HousesMarkersManager(BaseMarkersManager):
 						continue
 
 
+				#-- electricity
+				if 'electricity' in filters:
+					if (not 'electricity' in marker) or (not marker['electricity']):
+						statuses[i] = False
+						continue
+
+				#-- gas
+				if  'gas' in filters:
+					if (not 'gas' in marker) or (not marker['gas']):
+						statuses[i] = False
+						continue
+
+				#-- hot water
+				if 'jot_water' in filters:
+					if (not 'hot_water' in marker) or (not marker['hot_water']):
+						statuses[i] = False
+						continue
+
+				#-- cold water
+				if  'cold_water' in filters:
+					if (not 'cold_water' in marker) or (not marker['cold_water']):
+						statuses[i] = False
+						continue
+
 				#-- sewerage
-				if filters.get('sewerage'):
+				if 'sewerage' in filters:
 					if (not 'sewerage' in marker) or (not marker['sewerage']):
 						statuses[i] = False
 						continue
@@ -1089,51 +1123,67 @@ class HousesMarkersManager(BaseMarkersManager):
 				# Якщо даний маркер вже позначений як виключений — не аналізувати його.
 				if not statuses[i]:
 					continue
+
 				marker = publications[i][1]
 
 
 				#-- rent price
-				price_currency_sid = filters.get('price_currency_sid')
-				if price_currency_sid is not None:
-					# Перевіряти фільтри цін має зміст лише тоді, коли задана валюта фільтру,
-					# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення,
-					# а без цього порівняння некоректне.
-					#
-					price_max = filters.get('price_max')
-					price_min = filters.get('price_min')
-					if price_max is not None:
-						price_max = convert_currency(price_max, price_currency_sid, marker['rent_currency_sid'])
-					if price_min is not None:
-						price_min = convert_currency(price_min, price_currency_sid, marker['rent_currency_sid'])
+				price_min = filters.get('price_from')
+				price_max = filters.get('price_to')
+				if price_min is not None:
+					price_min = convert_currency(price_min, currency_sid, marker['rent_currency_sid'])
+				if price_max is not None:
+					price_max = convert_currency(price_max, currency_sid, marker['rent_currency_sid'])
 
-					if (price_max is not None) and (price_min is not None):
-						if not price_min <= marker['rent_price'] <= price_max:
-							statuses[i] = False
-							continue
 
-					elif price_min is not None:
-						if not price_min <= marker['rent_price']:
-							statuses[i] = False
-							continue
+				if (price_max is not None) and (price_min is not None):
+					if not price_min <= marker['rent_price'] <= price_max:
+						statuses[i] = False
+						continue
 
-					elif price_max is not None:
-						if not marker['rent_price'] <= price_max:
-							statuses[i] = False
-							continue
+				elif price_min is not None:
+					if not price_min <= marker['rent_price']:
+						statuses[i] = False
+						continue
+
+				elif price_max is not None:
+					if not marker['rent_price'] <= price_max:
+						statuses[i] = False
+						continue
+
+
+				#-- rent period
+				if not 'rent_period_sid' in marker:
+					statuses[i] = False
+					continue
+
+				if rent_period_sid == 1:
+					# посуточно
+					if marker['rent_period_sid'] != LIVING_RENT_PERIODS.daily():
+						statuses[i] = False
+						continue
+
+				elif rent_period_sid == 2:
+					# помісячно і довгострокова оренда
+					if (marker['rent_period_sid'] != LIVING_RENT_PERIODS.monthly()) or \
+							(marker['rent_period_sid'] != LIVING_RENT_PERIODS.long_period()):
+						statuses[i] = False
+						continue
 
 
 				#-- persons_count
-				persons_count_min = filters.get('persons_count_min')
-				persons_count_max = filters.get('persons_count_max')
-
+				persons_count_min = filters.get('persons_count_from')
+				persons_count_max = filters.get('persons_count_to')
 				persons_count = marker.get('persons_count')
-				if (persons_count is None) \
-						and (persons_count_min is not None) or (persons_count_max is not None):
-					# Поле "к-сть місць" може бути не обов’язковим.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі —
-					# запис відхиляється через неможливість аналізу.
-					statuses[i] = False
-					continue
+
+				if (persons_count_min is not None) or (persons_count_max is not None):
+					# Поле "к-сть місць"може бути не обов’язковим.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+					# відхилити запис через неможливість аналізу.
+					if persons_count is None:
+						statuses[i] = False
+						continue
+
 
 				if (persons_count_min is not None) and (persons_count_max is not None):
 					if not persons_count_min <= persons_count <= persons_count_max:
@@ -1150,56 +1200,45 @@ class HousesMarkersManager(BaseMarkersManager):
 						statuses[i] = False
 						continue
 
+
 				#-- for family
-				if filters.get('for_family'):
+				if 'family' in filters:
 					if (not 'for_family' in marker) or (not marker['for_family']):
 						statuses[i] = False
 						continue
 
 				#-- foreigners
-				if filters.get('foreigners'):
+				if 'foreigners' in filters:
 					if (not 'foreigners' in marker) or (not marker['foreigners']):
 						statuses[i] = False
 						continue
 
-
-		#-- common filters
-		if operation_sid == 0 or operation_sid == 1:
-			for i in range(len(publications)):
-				# Якщо даний маркер вже позначений як виключений — не аналізувати його.
-				if not statuses[i]:
-					continue
-				marker = publications[i][1]
-
 				#-- electricity
-				if filters.get('electricity'):
+				if 'electricity' in filters:
 					if (not 'electricity' in marker) or (not marker['electricity']):
 						statuses[i] = False
 						continue
 
 				#-- gas
-				if filters.get('gas'):
+				if  'gas' in filters:
 					if (not 'gas' in marker) or (not marker['gas']):
 						statuses[i] = False
 						continue
 
 				#-- hot water
-				if filters.get('hot_water'):
+				if 'jot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
 
 				#-- cold water
-				if filters.get('cold_water'):
+				if  'cold_water' in filters:
 					if (not 'cold_water' in marker) or (not marker['cold_water']):
 						statuses[i] = False
 						continue
 
-
-
 		else:
 			raise ValueError('Invalid conditions. Operation_sid is unexpected.')
-
 
 		return publications
 
@@ -1454,9 +1493,10 @@ class DachasMarkersManager(BaseMarkersManager):
 		bitmask += '1' if record.body.sewerage else '0'
 		bitmask += '1' if record.body.hot_water else '0'
 		bitmask += '1' if record.body.cold_water else '0'
+		bitmask += '1' if record.body.irrigation_water else '0'
 		bitmask += '{0:01b}'.format(record.body.market_type_sid)  # 1 bit
 		bitmask += '{0:02b}'.format(record.body.heating_type_sid) # 2 bits
-		if len(bitmask) != 10:
+		if len(bitmask) != 11:
 			raise SerializationError('Bitmask corruption. Potential deserialization error.')
 
 
@@ -1483,7 +1523,7 @@ class DachasMarkersManager(BaseMarkersManager):
 		#-- sale terms
 		if record.for_sale:
 			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 12:
+			if len(bitmask) != 13:
 				raise SerializationError('Bitmask corruption. Potential deserialization error.')
 
 			# REQUIRED field
@@ -1505,7 +1545,7 @@ class DachasMarkersManager(BaseMarkersManager):
 			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
 			bitmask += '1' if record.rent_terms.family else '0'
 			bitmask += '1' if record.rent_terms.foreigners else '0'
-			if len(bitmask) not in (18, 16):
+			if len(bitmask) not in (19, 17):
 				raise SerializationError('Bitmask corruption. Potential deserialization error.')
 
 			# REQUIRED field
@@ -1548,14 +1588,15 @@ class DachasMarkersManager(BaseMarkersManager):
 		    'total_area':   int(parts[2]) if parts[2] != '' else None,
 			'floors_count': int(parts[3]) if parts[2] != '' else None,
 
-		    'electricity': (bitmask[-3] == '1'),
-			'gas':         (bitmask[-4] == '1'),
-			'sewerage':    (bitmask[-5] == '1'),
-			'hot_water':   (bitmask[-6] == '1'),
-			'cold_water':  (bitmask[-7] == '1'),
+		    'electricity':      (bitmask[-3] == '1'),
+			'gas':              (bitmask[-4] == '1'),
+			'sewerage':         (bitmask[-5] == '1'),
+			'hot_water':        (bitmask[-6] == '1'),
+			'cold_water':       (bitmask[-7] == '1'),
+			'irrigation_water': (bitmask[-8] == '1'),
 
-		    'market_type_sid':  int('' + bitmask[-8]),
-		    'heating_type_sid': int('' + bitmask[-9] + bitmask[-10]),
+		    'market_type_sid':  int('' + bitmask[-9]),
+		    'heating_type_sid': int('' + bitmask[-10] + bitmask[-11]),
 		}
 
 		if bitmask[-1] == '1':
@@ -1733,12 +1774,6 @@ class RoomsMarkersManager(BaseMarkersManager):
 				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
-
-			# REQUIRED field
-			if record.sale_terms.currency_sid is not None:
-				data += str(record.sale_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
 
 			# WARNING: next fields can be None
 			if record.rent_terms.persons_count is not None:
@@ -3111,12 +3146,6 @@ class LandsMarkersManager(BaseMarkersManager):
 				data += str(record.rent_terms.currency_sid) + self.separator
 			else:
 				raise SerializationError('Rent price is required.')
-
-			# WARNING: next fields can be None
-			if record.rent_terms.persons_count is not None:
-				data += str(record.rent_terms.persons_count) + self.separator
-			else:
-				data += self.separator
 
 
 		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
