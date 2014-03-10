@@ -30,15 +30,19 @@ app.factory('Markers', function(mapQueries) {
                         tid = filters[key];
                     }
 
-                    if (filters[key] != false && filters[key] != "false" && filters[key] != "" && filters[key] != null)
-                        stringFilters += "&" + key.toString().substring(2) + "=" + filters[key];
+                    if (filters[key] !== false && filters[key] !== "false" && filters[key] !== "" && filters[key] !== null) {
+                        var param = "&" + key.toString().substring(2),
+                            value = "=" + filters[key];
+
+                        stringFilters += param + value;
+                    }
                 }
             }
 
 
 
-            mapQueries.getMarkersOfFilters(stringFilters, viewport, tid).success(function(data) {
-                that.add(data, tid, function() {
+            mapQueries.getMarkers(tid, stringFilters, viewport).success(function(data) {
+                that.add(tid, data, function() {
                     _.isFunction(callback) && callback(markers);
                 });
             });
@@ -52,7 +56,7 @@ app.factory('Markers', function(mapQueries) {
          * @param {number}     tid      Тип обєкта
          * @param {function}   callback
          */
-        add: function(data, tid, callback) {
+        add: function(tid, data, callback) {
             this.clear();
 
             _.map(data, function(_markers, mkey) {

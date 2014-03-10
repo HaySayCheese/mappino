@@ -3,12 +3,7 @@
 app.factory('mapQueries', function($http) {
 
     return {
-
-        getMarkers: function(viewport, tid) {
-            return $http.get('ajax/api/markers/?tid=' + tid + viewport)
-        },
-
-        getMarkersOfFilters: function(filters, viewport, tid) {
+        getMarkers: function(tid, filters, viewport) {
             return $http.get('ajax/api/markers/?tid=' + tid + viewport + filters)
         }
 
