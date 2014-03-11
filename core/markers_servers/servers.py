@@ -8,7 +8,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from core.currencies.currencies_manager import convert as convert_currency
 from core.markers_servers.exceptions import TooBigTransaction, SerializationError, DeserializationError
 from core.markers_servers.utils import DegreeSegmentPoint, Point, SegmentPoint, DegreePoint
-from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, CURRENCIES, MARKET_TYPES, LIVING_RENT_PERIODS
+from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, CURRENCIES, MARKET_TYPES, LIVING_RENT_PERIODS, \
+	HEATING_TYPES
 from mappino.wsgi import redis_connections
 
 
@@ -258,6 +259,18 @@ class BaseMarkersManager(object):
 		if int(converted_price) == converted_price:
 			return result + u'{:0,.0f}'.format(converted_price) # відсікти дробову частину
 		return result + u'{:0,.2f}'.format(converted_price)
+
+
+	@staticmethod
+	def format_currency(price, currency):
+		if currency == CURRENCIES.dol():
+			return unicode(price) + u' дол.'
+		elif currency == CURRENCIES.uah():
+			return unicode(price) + u' грн.'
+		elif currency == CURRENCIES.eur():
+			return unicode(price) + u' евро'
+		else:
+			raise ValueError('Invalid currency')
 
 
 	@abc.abstractmethod
@@ -930,8 +943,58 @@ class HousesMarkersManager(BaseMarkersManager):
 				raise DeserializationError()
 
 		else:
-			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
+			currency_sid = condition.get('currency_sid')
+			if currency_sid is None:
+				currency_sid = CURRENCIES.uah()
+
+			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
+				return {
+					'id': data['id'],
+					'd0': u'Продажа: ' + self.format_currency(
+						self.format_price(
+							data['sale_price'],
+							data['sale_currency_sid'],
+							currency_sid
+						), currency_sid),
+
+					'd1': u'Аренда: ' + self.format_currency(
+						self.format_price(
+							data['rent_price'],
+							data['rent_currency_sid'],
+							currency_sid
+						), currency_sid),
+				}
+
+			elif data.get('for_sale', False):
+				return {
+					'id': data['id'],
+					'd0': u'Комнат: ' + str(data['rooms_count']) if data['rooms_count'] else '',
+					'd1': self.format_currency(
+							self.format_price(
+								data['sale_price'],
+								data['sale_currency_sid'],
+								currency_sid
+							), currency_sid),
+				}
+
+			elif data.get('for_rent', False):
+				return{
+					'id': data['id'],
+					'd0': u'Мест: ' + str(data['persons_count']),
+					'd1': self.format_currency(
+							self.format_price(
+								data['rent_price'],
+								data['rent_currency_sid'],
+								currency_sid
+							), currency_sid),
+				}
+
+			else:
+				raise DeserializationError()
+
 			# todo: додати конввертацію валют в залженост від фільтрів
+			# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
+			# ітак ясно, що їх буде не більше одної.
 			pass
 
 
@@ -956,7 +1019,9 @@ class HousesMarkersManager(BaseMarkersManager):
 			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
 			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
 			# На фронтенді валюта повинна бути задана за замовчуванням.
-			raise ValueError('Sale currency is absent.')
+			raise ValueError('sale_currency_sid is absent.')
+		elif currency_sid not in CURRENCIES.values():
+			raise ValueError('sale_currency_sid is invalid.')
 
 		if operation_sid == 1: # rent
 			rent_period_sid = filters.get('period_sid')
@@ -1117,6 +1182,29 @@ class HousesMarkersManager(BaseMarkersManager):
 						continue
 
 
+				#-- heating type
+				heating_type_sid = filters.get('heating_type_sid')
+				if heating_type_sid is not None:
+					# Поле "тип опалення" може бути не обов’язковим.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+					# відхилити запис через неможливість аналізу.
+					if 'heating_type_sid' not in marker:
+						statuses[i] = False
+						continue
+
+					if heating_type_sid == 1:
+						# пристунє
+						if marker['heating_type_sid'] not in [HEATING_TYPES.central(), HEATING_TYPES.individual()]:
+							statuses[i] = False
+							continue
+
+					elif heating_type_sid == 2:
+						# вісдутнє
+						if marker['heating_type_sid'] != HEATING_TYPES.none():
+							statuses[i] = False
+							continue
+
+
 		#-- rent filters
 		elif operation_sid == 1:
 			for i in range(len(publications)):
@@ -1240,7 +1328,11 @@ class HousesMarkersManager(BaseMarkersManager):
 		else:
 			raise ValueError('Invalid conditions. Operation_sid is unexpected.')
 
-		return publications
+		result = []
+		for i in range(len(statuses)):
+			if statuses[i]:
+				result.append(publications[i])
+		return result
 
 
 	@staticmethod
