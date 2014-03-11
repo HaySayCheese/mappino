@@ -16,7 +16,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         markerClusterer,
         geocoder,
         requestTimeout,
-        requestTimeoutTime = 3000;
+        requestTimeoutTime = 1500;
 
     /**
      * Фільтри
@@ -87,43 +87,25 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     /**
      * Слідкуємо за зміною фільттрів. Динамічно оновлюємо урл
      */
-    $scope.$watchCollection("filters.map", function(newValue, oldValue) {
-        parseFiltersCollectionAndUpdateUrl(newValue);
-
-        $timeout(function() {
-            loadData($scope.filters.red, false);
-            loadData($scope.filters.blue, false);
-            loadData($scope.filters.green, false);
-            loadData($scope.filters.yellow, false);
-        }, 1000);
-    });
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        $timeout(function() {
-            loadData(newValue, true)
-        }, 1000);
+        loadData(newValue, true)
     });
     $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        $timeout(function() {
-            loadData(newValue, true)
-        }, 1000);
+        loadData(newValue, true)
     });
     $scope.$watchCollection("filters.green", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        $timeout(function() {
-            loadData(newValue, true)
-        }, 1000);
+        loadData(newValue, true)
     });
     $scope.$watchCollection("filters.yellow", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        $timeout(function() {
-            loadData(newValue, true)
-        }, 1000);
+        loadData(newValue, true)
     });
 
 
@@ -211,14 +193,14 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             $scope.filters.map.latLng   = map.getCenter().toUrlValue();
             $scope.filters.map.zoom     = map.getZoom();
 
+            parseFiltersCollectionAndUpdateUrl($scope.filters.map);
+            loadData($scope.filters.red, false);
+            loadData($scope.filters.blue, false);
+            loadData($scope.filters.green, false);
+            loadData($scope.filters.yellow, false);
+
             if(!$scope.$$phase)
                 $scope.$apply();
-
-            parseFiltersCollectionAndUpdateUrl($scope.filters.map);
-//            loadData(0, $scope.filters.red);
-//            loadData(0, $scope.filters.blue);
-//            loadData(0, $scope.filters.green);
-//            loadData(0, $scope.filters.yellow);
         });
 
         // Евент вибору елемента в автокомпліті
@@ -335,31 +317,33 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Функція яка ініціює загрузку даних
      */
     function loadData(filters, timeout) {
-        var sneLat = $scope.filters.map.viewport.neLat.toString(),
-            sneLng = $scope.filters.map.viewport.neLng.toString(),
-            sswLat = $scope.filters.map.viewport.swLat.toString(),
-            sswLng = $scope.filters.map.viewport.swLng.toString();
+        $timeout(function() {
+            var sneLat = $scope.filters.map.viewport.neLat.toString(),
+                sneLng = $scope.filters.map.viewport.neLng.toString(),
+                sswLat = $scope.filters.map.viewport.swLat.toString(),
+                sswLng = $scope.filters.map.viewport.swLng.toString();
 
-        var neLat = sneLat.replace(sneLat.substring(sneLat.indexOf(".") + 3, sneLat.length), ""),
-            neLng = sneLng.replace(sneLng.substring(sneLng.indexOf(".") + 3, sneLng.length), ""),
-            swLat = sswLat.replace(sswLat.substring(sswLat.indexOf(".") + 3, sswLat.length), ""),
-            swLng = sswLng.replace(sswLng.substring(sswLng.indexOf(".") + 3, sswLng.length), ""),
-            viewport = "&ne=" + neLat + ":" + neLng + "&sw=" + swLat + ":" + swLng;
+            var neLat = sneLat.replace(sneLat.substring(sneLat.indexOf(".") + 3, sneLat.length), ""),
+                neLng = sneLng.replace(sneLng.substring(sneLng.indexOf(".") + 3, sneLng.length), ""),
+                swLat = sswLat.replace(sswLat.substring(sswLat.indexOf(".") + 3, sswLat.length), ""),
+                swLng = sswLng.replace(sswLng.substring(sswLng.indexOf(".") + 3, sswLng.length), ""),
+                viewport = "&ne=" + neLat + ":" + neLng + "&sw=" + swLat + ":" + swLng;
 
-        if (timeout) {
-            clearTimeout(requestTimeout);
-            requestTimeout = setTimeout(function() {
+            if (timeout) {
+                clearTimeout(requestTimeout);
+                requestTimeout = setTimeout(function() {
+                    Markers.load(filters, viewport, function(data) {
+                        markers = data;
+                        placeMarkers();
+                    });
+                }, requestTimeoutTime);
+            } else {
                 Markers.load(filters, viewport, function(data) {
                     markers = data;
                     placeMarkers();
                 });
-            }, requestTimeoutTime);
-        } else {
-            Markers.load(filters, viewport, function(data) {
-                markers = data;
-                placeMarkers();
-            });
-        }
+            }
+        }, 1000);
     }
 
 
