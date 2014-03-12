@@ -107,22 +107,22 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        loadData(newValue, true)
+        loadData(newValue, "red", true)
     });
     $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        loadData(newValue, true)
+        loadData(newValue, "blue", true)
     });
     $scope.$watchCollection("filters.green", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        loadData(newValue, true)
+        loadData(newValue, "green", true)
     });
     $scope.$watchCollection("filters.yellow", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        loadData(newValue, true)
+        loadData(newValue, "yellow", true)
     });
 
 
@@ -211,10 +211,10 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             $scope.filters.map.zoom     = map.getZoom();
 
             parseFiltersCollectionAndUpdateUrl($scope.filters.map);
-            loadData($scope.filters.red, false);
-            loadData($scope.filters.blue, false);
-            loadData($scope.filters.green, false);
-            loadData($scope.filters.yellow, false);
+            loadData($scope.filters.red, "red", false);
+            loadData($scope.filters.blue, "blue", false);
+            loadData($scope.filters.green, "green", false);
+            loadData($scope.filters.yellow, "yellow", false);
 
             if(!$scope.$$phase)
                 $scope.$apply();
@@ -333,7 +333,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     /**
      * Функція яка ініціює загрузку даних
      */
-    function loadData(filters, timeout) {
+    function loadData(filters, panel, timeout) {
         $timeout(function() {
             var sneLat = $scope.filters.map.viewport.neLat.toString(),
                 sneLng = $scope.filters.map.viewport.neLng.toString(),
@@ -349,13 +349,13 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             if (timeout) {
                 clearTimeout(requestTimeout);
                 requestTimeout = setTimeout(function() {
-                    Markers.load(filters, viewport, function(data) {
+                    Markers.load(filters, viewport, panel, function(data) {
                         markers = data;
                         placeMarkers();
                     });
                 }, requestTimeoutTime);
             } else {
-                Markers.load(filters, viewport, function(data) {
+                Markers.load(filters, viewport, panel, function(data) {
                     markers = data;
                     placeMarkers();
                 });
