@@ -41,7 +41,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
                 "heating_type_sid"  // Тільки в продажі
             ]
         },
-        { name: "apartments",id: 2,  title: "Аппартаменты",
+        { name: "apartments",id: 2, title: "Аппартаменты",
             filters: [
                 "operation_sid",    // Загальні
                 "period_sid",       // Тільки в оренді
@@ -61,8 +61,8 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
                 "heating_type_sid"  // Тільки в продажі
             ]
         },
-        { name: "dacha", id: 3,  title: "Дачи" },
-        { name: "cottage", id: 4,  title: "Коттеджы",
+        { name: "dacha", id: 3, title: "Дачи" },
+        { name: "cottage", id: 4, title: "Коттеджы",
             filters: [
                 "operation_sid",    // Загальні
                 "period_sid",       // Тільки в оренді
@@ -80,7 +80,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
                 "heating_type_sid"
             ]
         },
-        { name: "room", id: 5,  title: "Комнаты",
+        { name: "room", id: 5, title: "Комнаты",
             filters: [
                 "operation_sid",    // Загальні
                 "period_sid",       // Тільки в оренді
@@ -137,7 +137,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
                 "security_alarm", "fire_alarm"
             ]
         },
-        { name: "business", id: 9, title: "Готового бизнеса",
+        { name: "business", id: 9, title: "Готовый бизнес",
             filters: [
                 "operation_sid",
                 "price_from", "price_to", "currency_sid",
@@ -166,7 +166,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
                 "total_area_from", "total_area_to",
             ]
         },
-        { name: "land", id: 12, title: "Змельные участки",
+        { name: "land", id: 12, title: "Земельные участки",
             filters: [
                 "operation_sid",
                 "price_from", "price_to", "currency_sid",
