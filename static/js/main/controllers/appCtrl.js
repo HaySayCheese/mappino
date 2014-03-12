@@ -137,10 +137,44 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
                 "security_alarm", "fire_alarm"
             ]
         },
-        { name: "business",  id: 9,  title: "Готового бизнеса" },
-        { name: "catering",  id: 10, title: "Обьекта общепита" },
-        { name: "garage",    id: 11, title: "Гаража" },
-        { name: "land",      id: 12, title: "Земельного участка" }
+        { name: "business", id: 9, title: "Готового бизнеса",
+            filters: [
+                "operation_sid",
+                "price_from", "price_to", "currency_sid",
+                "new_buildings",
+                "secondary_market"
+            ]
+        },
+        { name: "catering", id: 10, title: "Обьекта общепита",
+            filters: [
+                "operation_sid",
+                "price_from", "price_to", "currency_sid",
+                "new_buildings",
+                "secondary_market",
+                "total_area_from", "total_area_to",
+                "halls_area_from", "halls_area_to",
+                "halls_count_from", "halls_count_to",
+                "building_type_sid",
+                "gas", "electricity",
+                "hot_water", "cold_water"
+            ]
+        },
+        { name: "garage", id: 11, title: "Гаража",
+            filters: [
+                "operation_sid",
+                "price_from", "price_to", "currency_sid",
+                "total_area_from", "total_area_to",
+            ]
+        },
+        { name: "land", id: 12, title: "Земельного участка",
+            filters: [
+                "operation_sid",
+                "price_from", "price_to", "currency_sid",
+                "area_from", "area_to",
+                "gas", "electricity",
+                "water", "sewerage"
+            ]
+        }
     ];
 
 

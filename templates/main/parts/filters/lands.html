@@ -1,0 +1,74 @@
+<form class="form-horizontal" novalidate ng-init="initPlugins()">
+    <h4 class="section-header">Основное</h4>
+
+    <div class="row form-group">
+        <div class="col-sm-12">
+            <label class="col-sm-3 control-label">Операция:</label>
+            <div class="col-sm-9">
+                <select name="{{ current_panel_prefix }}_operation_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid">
+                    <option value="0">Продажа</option>
+                    <option value="1">Аренда</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row form-group without-margin-bottom">
+        <div class="col-sm-12">
+            <label class="col-sm-3 control-label">Цена:</label>
+            <div class="col-sm-3">
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_price_from" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_price_from" allow-only-number/>
+            </div>
+            <div class="col-sm-3">
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_price_to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_price_to" allow-only-number/>
+            </div>
+            <div class="col-sm-3">
+                <select name="{{ current_panel_prefix }}_currency_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_currency_sid">
+                    <option value="2">Грн.</option>
+                    <option value="0">Дол.</option>
+                    <option value="1">Евро</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row form-group">
+        <div class="col-sm-12">
+            <label class="col-sm-6 control-label">Площадь:</label>
+            <div class="col-sm-3">
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_area_from" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_area_from" allow-only-number/>
+            </div>
+            <div class="col-sm-3">
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_area_to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_area_to" allow-only-number/>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row form-group">
+        <h4 class="section-header">Удобства</h4>
+        <div class="col-sm-6">
+            <div class="checkbox">
+                <input id="{{ current_panel_prefix }}_gas" type="checkbox" name="{{ current_panel_prefix }}_gas" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_gas">
+                <label for="{{ current_panel_prefix }}_gas">Газ</label>
+            </div>
+            <div class="checkbox">
+                <input id="{{ current_panel_prefix }}_water" type="checkbox" name="{{ current_panel_prefix }}_water" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_water">
+                <label for="{{ current_panel_prefix }}_water">Вода</label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="checkbox">
+                <input id="{{ current_panel_prefix }}_electricity" type="checkbox" name="{{ current_panel_prefix }}_electricity" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_electricity">
+                <label for="{{ current_panel_prefix }}_electricity">Электричество</label>
+            </div>
+            <div class="checkbox">
+                <input id="{{ current_panel_prefix }}_sewerage" type="checkbox" name="{{ current_panel_prefix }}_sewerage" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_sewerage">
+                <label for="{{ current_panel_prefix }}_sewerage">Канализация</label>
+            </div>
+        </div>
+    </div>
+
+</form>
