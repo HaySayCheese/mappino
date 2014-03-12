@@ -176,6 +176,19 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
             ]
         }
     ];
+    $rootScope.currencyTypes = [{
+        id: 0,
+        name: "usd",
+        title: "Дол."
+    }, {
+        id: 1,
+        name: "eur",
+        title: "Евро"
+    }, {
+        id: 2,
+        name: "grn",
+        title: "Грн."
+    }];
 
 
     /**
