@@ -19,7 +19,8 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
                 "gas", "cold_water",
                 "sewerage",         // Тільки в продажі
                 "heating_type_sid"
-            ]},
+            ]
+        },
         { name: "flat", id: 1, title: "Квартиры",
             filters: [
                 "operation_sid",    // Загальні
@@ -40,13 +41,102 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
                 "heating_type_sid"  // Тільки в продажі
             ]
         },
-        { name: "apartments",id: 2,  title: "Аппартаментов" },
-        { name: "dacha",     id: 3,  title: "Дачи" },
-        { name: "cottage",   id: 4,  title: "Коттеджа" },
-        { name: "room",      id: 5,  title: "Комнаты" },
-        { name: "trade",     id: 6,  title: "Торгового помещения" },
-        { name: "office",    id: 7,  title: "Офиса" },
-        { name: "warehouse", id: 8,  title: "Склада" },
+        { name: "apartments",id: 2,  title: "Аппартаментов",
+            filters: [
+                "operation_sid",    // Загальні
+                "period_sid",       // Тільки в оренді
+                "price_from", "price_to", "currency_sid", // Загальні
+                "persons_count_from", "persons_count_to", // Тільки в оренді
+                "new_buildings",    // Тільки в продажі
+                "secondary_market",
+                "family",           // Тільки в оренді
+                "foreigners",
+                "rooms_count_from", "rooms_count_to",     // Тільки в продажі
+                "total_area_from", "total_area_to",
+                "floor_from", "floor_to",
+                "planing_sid",
+                "lift", "electricity",
+                "hot_water", "cold_water",
+                "gas",
+                "heating_type_sid"  // Тільки в продажі
+            ]
+        },
+        { name: "dacha", id: 3,  title: "Дачи" },
+        { name: "cottage", id: 4,  title: "Коттеджа",
+            filters: [
+                "operation_sid",    // Загальні
+                "period_sid",       // Тільки в оренді
+                "price_from", "price_to", "currency_sid", // Загальні
+                "persons_count_from", "persons_count_to", // Тільки в оренді
+                "new_buildings",    // Тільки в продажі
+                "secondary_market",
+                "family",           // Тільки в оренді
+                "foreigners",
+                "rooms_count_from", "rooms_count_to",     // Тільки в продажі
+                "floors_count_from", "floors_count_to",
+                "electricity", "hot_water",
+                "gas", "cold_water",
+                "sewerage",         // Тільки в продажі
+                "heating_type_sid"
+            ]
+        },
+        { name: "room", id: 5,  title: "Комнаты",
+            filters: [
+                "operation_sid",    // Загальні
+                "period_sid",       // Тільки в оренді
+                "price_from", "price_to", "currency_sid", // Загальні
+                "persons_count_from", "persons_count_to", // Тільки в оренді
+                "new_buildings",    // Тільки в продажі
+                "secondary_market",
+                "family",           // Тільки в оренді
+                "foreigners",
+                "rooms_count_from", "rooms_count_to",     // Тільки в продажі
+                "total_area_from", "total_area_to",
+                "floor_from", "floor_to",
+                "lift", "electricity",
+                "hot_water", "cold_water",
+                "gas",
+                "heating_type_sid"  // Тільки в продажі
+            ]
+        },
+        { name: "trade", id: 6, title: "Торгового помещения",
+            filters: [
+                "operation_sid",
+                "price_from", "price_to", "currency_sid",
+                "new_buildings",
+                "secondary_market",
+                "halls_area_from", "halls_area_to",
+                "total_area_from", "total_area_to",
+                "building_type_sid",
+                "gas", "electricity",
+                "hot_water", "cold_water",
+                "sewerage"
+            ]
+        },
+        { name: "office", id: 7, title: "Офиса",
+            filters: [
+                "operation_sid",
+                "price_from", "price_to", "currency_sid",
+                "new_buildings",
+                "secondary_market",
+                "total_area_from", "total_area_to",
+                "cabinets_count_from", "cabinets_count_to",
+                "security", "kitchen",
+                "hot_water", "cold_water",
+            ]
+        },
+        { name: "warehouse", id: 8, title: "Склада",
+            filters: [
+                "operation_sid",
+                "price_from", "price_to", "currency_sid",
+                "new_buildings",
+                "secondary_market",
+                "halls_area_from", "halls_area_to",
+                "gas", "electricity",
+                "hot_water", "cold_water",
+                "security_alarm", "fire_alarm"
+            ]
+        },
         { name: "business",  id: 9,  title: "Готового бизнеса" },
         { name: "catering",  id: 10, title: "Обьекта общепита" },
         { name: "garage",    id: 11, title: "Гаража" },

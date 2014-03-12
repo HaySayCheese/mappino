@@ -38,6 +38,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             heating_type_sid: 0,
             period_sid:       0,
             planing_sid:      0,
+            building_type_sid:0,
 
             // Поля вводу
             price_from:         "",
@@ -52,6 +53,10 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             total_area_to:      "",
             floor_from:         "",
             floor_to:           "",
+            halls_area_from:    "",
+            halls_area_to:      "",
+            cabinets_count_from:"",
+            cabinets_count_to:  "",
 
             // Чекбокси
             new_buildings:      true,
@@ -63,7 +68,11 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             hot_water:          false,
             cold_water:         false,
             sewerage:           false,
-            lift:               false
+            lift:               false,
+            security:           false,
+            kitchen:            false,
+            security_alarm:     false,
+            fire_alarm:         false
         },
 
         red: {
