@@ -107,21 +107,25 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
+        Markers.clearPanelMarkers("red");
         loadData(newValue, "red", true)
     });
     $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
+        Markers.clearPanelMarkers("blue");
         loadData(newValue, "blue", true)
     });
     $scope.$watchCollection("filters.green", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
+        Markers.clearPanelMarkers("green");
         loadData(newValue, "green", true)
     });
     $scope.$watchCollection("filters.yellow", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
+        Markers.clearPanelMarkers("yellow");
         loadData(newValue, "yellow", true)
     });
 
@@ -368,11 +372,17 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Функція яка розставляє маркери
      */
     function placeMarkers() {
-        markerClusterer.clearMarkers();
 
-        for (var i = 0; i < markers.length; i++) {
-            markers[i].setMap(map);
-            markerClusterer.addMarker(markers[i]);
+        console.log(markers);
+
+        for (var panel in markers) {
+            if (markers.hasOwnProperty(panel)) {
+                for (var marker in markers[panel]) {
+                    if (markers[panel].hasOwnProperty(marker)) {
+                        markers[panel][marker].setMap(map);
+                    }
+                }
+            }
         }
     }
 

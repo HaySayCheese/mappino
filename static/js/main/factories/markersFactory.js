@@ -1,7 +1,12 @@
 'use strict';
 
 app.factory('Markers', function(mapQueries) {
-    var markers = [],
+    var markers = {
+            red: {},
+            blue: {},
+            green: {},
+            yellow: {}
+        },
         icons = {
             blue: ""
         };
@@ -13,9 +18,10 @@ app.factory('Markers', function(mapQueries) {
          *
          * @param {object}      filters  Фільтри
          * @param {string}      viewport Вюпорт карти
+         * @param {string}      panel    Колір панелі фільтрів
          * @param {function}    callback
          */
-        load: function(filters, viewport, callback) {
+        load: function(filters, viewport, panel, callback) {
             var that = this,
                 tid = null,
                 stringFilters = "";
@@ -39,10 +45,8 @@ app.factory('Markers', function(mapQueries) {
                 }
             }
 
-
-
             mapQueries.getMarkers(tid, stringFilters, viewport).success(function(data) {
-                that.add(tid, data, function() {
+                that.add(tid, panel, data, function() {
                     _.isFunction(callback) && callback(markers);
                 });
             });
@@ -52,48 +56,70 @@ app.factory('Markers', function(mapQueries) {
         /**
          * Додання маркерів в масив
          *
-         * @param {Array}      data Масив який вертає сервер
-         * @param {number}     tid      Тип обєкта
+         * @param {number}     tid    Тип обєкта
+         * @param {string}     panel  Колір панелі фільтрів
+         * @param {Array}      data   Масив який вертає сервер
          * @param {function}   callback
          */
-        add: function(tid, data, callback) {
-            this.clear();
+        add: function(tid, panel, data, callback) {
+            var that = this;
 
-            _.map(data, function(_markers, mkey) {
-                var markerLat  = "",
-                    markerLng  = "";
+            for (var d_key in data) {
+                var latLng = "";
 
-                _.each(_markers, function(_marker, key) {
-                    markerLat = _.first(mkey.split(";")) + "." + _.first(key.split(":"));
-                    markerLng = _.last(mkey.split(";")) + "." + _.last(key.split(":"));
+                if (data.hasOwnProperty(d_key)) {
 
-                    markers.push(new MarkerWithLabel({
-                        position: new google.maps.LatLng(markerLat, markerLng),
+                    if (!_.keys(data[d_key]).length)
+                        return;
 
-                        tid: tid,
-                        id: _marker.id,
+                    for (var c_key in data[d_key]) {
 
-                        labelInBackground: true,
-                        labelContent: _marker.d0 + "</br>" + _marker.d1,
-                        labelAnchor: new google.maps.Point(0, 40),
-                        labelClass: "marker-label"
-                    }));
-                })
+                        if (data[d_key].hasOwnProperty(c_key)) {
+                            latLng = d_key.split(";")[0] + "." + c_key.split(":")[0] + ";" + d_key.split(";")[1] + "." + c_key.split(":")[1];
 
-            });
+                            if (panel != "red" && markers["red"][latLng]) {
+                                return;
+                            } else if (panel != "blue" && markers["blue"][latLng]) {
+                                return;
+                            } else if (panel != "green" && markers["green"][latLng]) {
+                                return;
+                            } else if (panel != "yellow" && markers["yellow"][latLng]) {
+                                return;
+                            } else if(!markers[panel][latLng]) {
+                                that.createMarkerObject(data[d_key][c_key], tid, panel, latLng);
+                            } else {
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
 
             _.isFunction(callback) && callback();
         },
 
 
-        clear: function() {
-            for (var i = 0; i < markers.length; i++) {
-                markers[i].setMap(null);
+        createMarkerObject: function(data, tid, panel, latLng) {
+            markers[panel][latLng] = new MarkerWithLabel({
+                position: new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
+                tid: tid,
+                id: data.id,
+                icon: 'http://127.0.0.1/mappino_static/img/markers/' + panel + '-normal.png',
+                labelInBackground: true,
+                labelContent: data.d0 + "</br>" + data.d1,
+                labelAnchor: new google.maps.Point(0, 40),
+                labelClass: "marker-label"
+            });
+        },
+
+        clearPanelMarkers: function(panel) {
+            for (var marker in markers[panel]) {
+                if (markers[panel].hasOwnProperty(marker)) {
+                    markers[panel][marker].setMap(null);
+                    delete markers[panel][marker];
+                }
             }
-            markers.length = 0;
         }
-
     }
-
 
 });
