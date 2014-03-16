@@ -726,7 +726,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 						continue
 
 				#-- hot water
-				if 'jot_water' in filters:
+				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
@@ -879,7 +879,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 						continue
 
 				#-- hot water
-				if 'jot_water' in filters:
+				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
@@ -1329,7 +1329,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 						continue
 
 				#-- hot water
-				if 'jot_water' in filters:
+				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
@@ -1482,7 +1482,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 						continue
 
 				#-- hot water
-				if 'jot_water' in filters:
+				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
@@ -1932,7 +1932,7 @@ class HousesMarkersManager(BaseMarkersManager):
 						continue
 
 				#-- hot water
-				if 'jot_water' in filters:
+				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
@@ -2082,7 +2082,7 @@ class HousesMarkersManager(BaseMarkersManager):
 						continue
 
 				#-- hot water
-				if 'jot_water' in filters:
+				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
@@ -2485,7 +2485,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 						continue
 
 				#-- hot water
-				if 'jot_water' in filters:
+				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
@@ -2635,7 +2635,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 						continue
 
 				#-- hot water
-				if 'jot_water' in filters:
+				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
@@ -3280,7 +3280,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 						continue
 
 				#-- hot water
-				if 'jot_water' in filters:
+				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
@@ -3436,7 +3436,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 						continue
 
 				#-- hot water
-				if 'jot_water' in filters:
+				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
@@ -3840,7 +3840,7 @@ class TradesMarkersManager(BaseMarkersManager):
 					statuses[i] = False
 					continue
 
-			if 'jot_water' in filters:
+			if 'hot_water' in filters:
 				if (not 'hot_water' in marker) or (not marker['hot_water']):
 					statuses[i] = False
 					continue
@@ -4055,8 +4055,176 @@ class OfficesMarkersManager(BaseMarkersManager):
 			pass
 
 
-	def filter(self, publications, conditions):
-		return
+	def filter(self, publications, filters):
+		# WARNING:
+		#   дана функція для економії часу виконання не виконує deepcopy над publications
+
+		if filters is None:
+			return publications
+
+		operation_sid = filters.get('operation_sid')
+		if operation_sid is None:
+			raise ValueError('Invalid conditions. Operation_sid is absent.')
+
+
+		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
+		# На даному етапі виконується перевірка всіх обов’язкових полів filters.
+		# Дану перевірку винесено за цикл фільтрування щоб підвищити швидкодію,
+		# оскільки об’єкт filters не змінюється в ході фільтрування і достатньо перевіріити його лише раз.
+		currency_sid = filters.get('currency_sid')
+		if currency_sid is None:
+			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
+			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
+			# На фронтенді валюта повинна бути задана за замовчуванням.
+			raise ValueError('sale_currency_sid is absent.')
+		elif currency_sid not in CURRENCIES.values():
+			raise ValueError('currency_sid is invalid.')
+
+		if operation_sid not in [0, 1]:
+			raise ValueError('Invalid operation_sid.')
+
+
+		# Для відбору елементів зі списку publications, використовується список statuses.
+		# Кість елементів цього списку відповідає к-сті елементів publications.
+		# На початку фільтрування всі елементи statuses встановлені в True.
+		# Під час фільтрування деякі з них будуть встановлені в False.
+		# На завершальному етапі зі списку publications будуть відібрані лише ті елементи,
+		# відповідний елемент statuses яких встановлений в True.
+		#
+		# Додатковий список використовується для підвищення швидкодії фільтрування,
+		# оскільки зміна True/False відбуваєтсья в рази швидше, ніж вилучення елементів зі списку
+		# з повторною його перебудовою на кожній перевірці та ітерації.
+		statuses = [True] * len(publications)
+
+
+		for i in range(len(statuses)):
+			# Якщо даний запис вже позначений як виключений — не аналізувати його.
+			if not statuses[i]:
+				continue
+
+			marker = publications[i][1]
+
+			# price
+			price_min = filters.get('price_from')
+			price_max = filters.get('price_to')
+			if price_min is not None:
+				price_min = convert_currency(price_min, currency_sid, marker['sale_currency_sid'])
+			if price_max is not None:
+				price_max = convert_currency(price_max, currency_sid, marker['sale_currency_sid'])
+
+
+			if (price_max is not None) and (price_min is not None):
+				if not price_min <= marker['sale_price'] <= price_max:
+					statuses[i] = False
+					continue
+
+			elif price_min is not None:
+				if not price_min <= marker['sale_price']:
+					statuses[i] = False
+					continue
+
+			elif price_max is not None:
+				if not marker['sale_price'] <= price_max:
+					statuses[i] = False
+					continue
+
+
+			# market type
+			if ('new_buildings' in filters) and ('secondary_market' in filters):
+				# Немає змісту фільтрувати.
+				# Під дані умови потрапляють всі об’єкти.
+				pass
+
+			elif 'new_buildings' in filters:
+				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
+			elif 'new_buildings' in filters:
+				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
+
+
+			# total area
+			total_area_min = filters.get('total_area_from')
+			total_area_max = filters.get('total_area_to')
+			total_area = marker.get('total_area')
+
+			if (total_area_max is not None) or (total_area_min is not None):
+				# Поле "загальна площа" може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if total_area is None:
+					statuses[i] = False
+					continue
+
+
+			if (total_area_max is not None) and (total_area_min is not None):
+				if not total_area_min <= total_area <= total_area_max:
+					statuses[i] = False
+					continue
+
+			elif total_area_min is not None:
+				if not total_area_min <= total_area:
+					statuses[i] = False
+					continue
+
+			elif total_area_max is not None:
+				if not total_area <= total_area_max:
+					statuses[i] = False
+					continue
+
+
+			# cabinets count
+			cabinets_count_min = filters.get('cabinets_count_from')
+			cabinets_count_max = filters.get('cabinets_count_to')
+			cabinets_count = marker.get('cabinets_count')
+
+			if (cabinets_count_max is not None) or (cabinets_count_min is not None):
+				# Поле може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if cabinets_count is None:
+					statuses[i] = False
+					continue
+
+			if (cabinets_count_max is not None) and (cabinets_count_min is not None):
+				if not cabinets_count_min <= cabinets_count <= cabinets_count_max:
+					statuses[i] = False
+					continue
+
+			elif cabinets_count_min is not None:
+				if not cabinets_count_min <= cabinets_count:
+					statuses[i] = False
+					continue
+
+			elif cabinets_count_max is not None:
+				if not cabinets_count <= cabinets_count_max:
+					statuses[i] = False
+					continue
+
+
+			if 'security' in filters:
+				if (not 'security' in marker) or (not marker['security']):
+					statuses[i] = False
+					continue
+
+			if  'kitchen' in filters:
+				if (not 'kitchen' in marker) or (not marker['kitchen']):
+					statuses[i] = False
+					continue
+
+			if 'hot_water' in filters:
+				if (not 'hot_water' in marker) or (not marker['hot_water']):
+					statuses[i] = False
+					continue
+
+			if  'cold_water' in filters:
+				if (not 'cold_water' in marker) or (not marker['cold_water']):
+					statuses[i] = False
+					continue
+
+		result = []
+		for i in range(len(statuses)):
+			if statuses[i]:
+				result.append(publications[i])
+		return result
 
 
 
