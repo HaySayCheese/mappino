@@ -11,6 +11,7 @@ from core.markers_servers.utils import DegreeSegmentPoint, Point, SegmentPoint, 
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, CURRENCIES, MARKET_TYPES, LIVING_RENT_PERIODS, \
 	HEATING_TYPES
 from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
+from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
 from mappino.wsgi import redis_connections
 
 
@@ -3658,8 +3659,207 @@ class TradesMarkersManager(BaseMarkersManager):
 			pass
 
 
-	def filter(self, publications, conditions):
-		return
+	def filter(self, publications, filters):
+		# WARNING:
+		# дана функція для економії часу виконання не виконує deepcopy над publications
+
+		if filters is None:
+			return publications
+
+		operation_sid = filters.get('operation_sid')
+		if operation_sid is None:
+			raise ValueError('Invalid conditions. Operation_sid is absent.')
+
+
+		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
+		# На даному етапі виконується перевірка всіх обов’язкових полів filters.
+		# Дану перевірку винесено за цикл фільтрування щоб підвищити швидкодію,
+		# оскільки об’єкт filters не змінюється в ході фільтрування і достатньо перевіріити його лише раз.
+		currency_sid = filters.get('currency_sid')
+		if currency_sid is None:
+			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
+			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
+			# На фронтенді валюта повинна бути задана за замовчуванням.
+			raise ValueError('sale_currency_sid is absent.')
+		elif currency_sid not in CURRENCIES.values():
+			raise ValueError('currency_sid is invalid.')
+
+		if operation_sid not in [0, 1]:
+			raise ValueError('Invalid operation_sid.')
+
+
+		# Для відбору елементів зі списку publications, використовується список statuses.
+		# Кість елементів цього списку відповідає к-сті елементів publications.
+		# На початку фільтрування всі елементи statuses встановлені в True.
+		# Під час фільтрування деякі з них будуть встановлені в False.
+		# На завершальному етапі зі списку publications будуть відібрані лише ті елементи,
+		# відповідний елемент statuses яких встановлений в True.
+		#
+		# Додатковий список використовується для підвищення швидкодії фільтрування,
+		# оскільки зміна True/False відбуваєтсья в рази швидше, ніж вилучення елементів зі списку
+		# з повторною його перебудовою на кожній перевірці та ітерації.
+		statuses = [True] * len(publications)
+
+
+		for i in range(len(statuses)):
+			# Якщо даний запис вже позначений як виключений — не аналізувати його.
+			if not statuses[i]:
+				continue
+
+			marker = publications[i][1]
+
+			# price
+			price_min = filters.get('price_from')
+			price_max = filters.get('price_to')
+			if price_min is not None:
+				price_min = convert_currency(price_min, currency_sid, marker['sale_currency_sid'])
+			if price_max is not None:
+				price_max = convert_currency(price_max, currency_sid, marker['sale_currency_sid'])
+
+
+			if (price_max is not None) and (price_min is not None):
+				if not price_min <= marker['sale_price'] <= price_max:
+					statuses[i] = False
+					continue
+
+			elif price_min is not None:
+				if not price_min <= marker['sale_price']:
+					statuses[i] = False
+					continue
+
+			elif price_max is not None:
+				if not marker['sale_price'] <= price_max:
+					statuses[i] = False
+					continue
+
+
+			# market type
+			if ('new_buildings' in filters) and ('secondary_market' in filters):
+				# Немає змісту фільтрувати.
+				# Під дані умови потрапляють всі об’єкти.
+				pass
+
+			elif 'new_buildings' in filters:
+				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
+			elif 'new_buildings' in filters:
+				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
+
+
+			# halls area
+			halls_area_min = filters.get('halls_area_from')
+			halls_area_max = filters.get('halls_area_to')
+			halls_area = marker.get('halls_area')
+
+			if (halls_area_max is not None) or (halls_area_min is not None):
+				# Поле "площа залів" може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if halls_area is None:
+					statuses[i] = False
+					continue
+
+			if (halls_area_max is not None) and (halls_area_min is not None):
+				if not halls_area_min <= halls_area <= halls_area_max:
+					statuses[i] = False
+					continue
+
+			elif halls_area_min is not None:
+				if not halls_area_min <= halls_area:
+					statuses[i] = False
+					continue
+
+			elif halls_area_max is not None:
+				if not halls_area <= halls_area_max:
+					statuses[i] = False
+					continue
+
+
+			# total area
+			total_area_min = filters.get('total_area_from')
+			total_area_max = filters.get('total_area_to')
+			total_area = marker.get('total_area')
+
+			if (total_area_max is not None) or (total_area_min is not None):
+				# Поле "загальна площа" може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if total_area is None:
+					statuses[i] = False
+					continue
+
+
+			if (total_area_max is not None) and (total_area_min is not None):
+				if not total_area_min <= total_area <= total_area_max:
+					statuses[i] = False
+					continue
+
+			elif total_area_min is not None:
+				if not total_area_min <= total_area:
+					statuses[i] = False
+					continue
+
+			elif total_area_max is not None:
+				if not total_area <= total_area_max:
+					statuses[i] = False
+					continue
+
+
+			# building type
+			building_type_sid = filters.get('building_type_sid')
+			if building_type_sid is not None:
+				# Поле "тип будинку" може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if 'building_type_sid' not in marker:
+					statuses[i] = False
+					continue
+
+				if building_type_sid == 1: # ТРЦ
+					if marker['building_type_sid'] != TRADE_BUILDING_TYPES.entertainment():
+						statuses[i] = False
+						continue
+
+				elif building_type_sid == 2: # бізнес-центр
+					if marker['building_type_sid'] != TRADE_BUILDING_TYPES.business():
+						statuses[i] = False
+						continue
+
+				elif building_type_sid == 3: # окреме
+					if marker['building_type_sid'] != TRADE_BUILDING_TYPES.separate():
+						statuses[i] = False
+						continue
+
+
+			if 'electricity' in filters:
+				if (not 'electricity' in marker) or (not marker['electricity']):
+					statuses[i] = False
+					continue
+
+			if  'gas' in filters:
+				if (not 'gas' in marker) or (not marker['gas']):
+					statuses[i] = False
+					continue
+
+			if 'jot_water' in filters:
+				if (not 'hot_water' in marker) or (not marker['hot_water']):
+					statuses[i] = False
+					continue
+
+			if  'cold_water' in filters:
+				if (not 'cold_water' in marker) or (not marker['cold_water']):
+					statuses[i] = False
+					continue
+
+			if 'sewerage' in filters:
+				if (not 'sewerage' in marker) or (not marker['sewerage']):
+					statuses[i] = False
+					continue
+
+		result = []
+		for i in range(len(statuses)):
+			if statuses[i]:
+				result.append(publications[i])
+		return result
 
 
 
