@@ -553,10 +553,9 @@ def parse_trades_filters(request):
 		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
 		яка в даному випадку виступає інформаційним експертом.
 	"""
-
-	# Note: operation_sid не враховується,
-	#       оскільки і для продажу і для оренди фільтри співпадають
-	filters = {}
+	filters = {
+		'operation_sid': int(request.GET['operation_sid']) # required
+	}
 
 	if 'price_from' in request.GET:
 		filters['price_from'] = int(request.GET['price_from'])
@@ -612,10 +611,9 @@ def parse_offices_filters(request):
 		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
 		яка в даному випадку виступає інформаційним експертом.
 	"""
-
-	# Note: operation_sid не враховується,
-	#       оскільки і для продажу і для оренди фільтри співпадають
-	filters = {}
+	filters = {
+		'operation_sid': int(request.GET['operation_sid']) # required
+	}
 
 	if 'price_from' in request.GET:
 		filters['price_from'] = int(request.GET['price_from'])
@@ -662,10 +660,9 @@ def parse_warehouses_filters(request):
 		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
 		яка в даному випадку виступає інформаційним експертом.
 	"""
-
-	# Note: operation_sid не враховується,
-	#       оскільки і для продажу і для оренди фільтри співпадають
-	filters = {}
+	filters = {
+		'operation_sid': int(request.GET['operation_sid']) # required
+	}
 
 	if 'price_from' in request.GET:
 		filters['price_from'] = int(request.GET['price_from'])
@@ -715,10 +712,9 @@ def parse_businesses_filters(request):
 		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
 		яка в даному випадку виступає інформаційним експертом.
 	"""
-
-	# Note: operation_sid не враховується,
-	#       оскільки і для продажу і для оренди фільтри співпадають
-	filters = {}
+	filters = {
+		'operation_sid': int(request.GET['operation_sid']) # required
+	}
 
 	if 'price_from' in request.GET:
 		filters['price_from'] = int(request.GET['price_from'])
@@ -744,10 +740,9 @@ def parse_caterings_filters(request):
 		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
 		яка в даному випадку виступає інформаційним експертом.
 	"""
-
-	# Note: operation_sid не враховується,
-	#       оскільки і для продажу і для оренди фільтри співпадають
-	filters = {}
+	filters = {
+		'operation_sid': int(request.GET['operation_sid']) # required
+	}
 
 	if 'price_from' in request.GET:
 		filters['price_from'] = int(request.GET['price_from'])
@@ -805,10 +800,9 @@ def parse_garages_filters(request):
 		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
 		яка в даному випадку виступає інформаційним експертом.
 	"""
-
-	# Note: operation_sid не враховується,
-	#       оскільки і для продажу і для оренди фільтри співпадають
-	filters = {}
+	filters = {
+		'operation_sid': int(request.GET['operation_sid']) # required
+	}
 
 	if 'price_from' in request.GET:
 		filters['price_from'] = int(request.GET['price_from'])
@@ -844,10 +838,9 @@ def parse_lands_filters(request):
 		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
 		яка в даному випадку виступає інформаційним експертом.
 	"""
-
-	# Note: operation_sid не враховується,
-	#       оскільки і для продажу і для оренди фільтри співпадають
-	filters = {}
+	filters = {
+		'operation_sid': int(request.GET['operation_sid']) # required
+	}
 
 	if 'price_from' in request.GET:
 		filters['price_from'] = int(request.GET['price_from'])

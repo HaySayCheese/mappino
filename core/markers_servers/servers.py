@@ -2103,15 +2103,6 @@ class HousesMarkersManager(BaseMarkersManager):
 		return result
 
 
-	@staticmethod
-	def sale_price_between(marker, min_price, max_price):
-		price = marker.get('sale_price')
-		if price is None:
-			return False
-		return min_price <= price <= max_price
-
-
-
 
 class CottagesMarkersManager(BaseMarkersManager):
 	def __init__(self):

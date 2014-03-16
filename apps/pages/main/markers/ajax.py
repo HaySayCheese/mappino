@@ -21,7 +21,7 @@ FILTERS_PARSERS =  {
 	OBJECTS_TYPES.apartments(): parse_apartments_filters,
 	OBJECTS_TYPES.dacha(): parse_dachas_filters,
 	OBJECTS_TYPES.cottage(): parse_cottages_filters,
-	OBJECTS_TYPES.rooms(): parse_rooms_filters,
+	OBJECTS_TYPES.room(): parse_rooms_filters,
 	OBJECTS_TYPES.trade(): parse_trades_filters,
 	OBJECTS_TYPES.office(): parse_offices_filters,
 	OBJECTS_TYPES.warehouse(): parse_warehouses_filters,
