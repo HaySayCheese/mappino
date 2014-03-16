@@ -2318,8 +2318,341 @@ class CottagesMarkersManager(BaseMarkersManager):
 			pass
 
 
-	def filter(self, publications, conditions):
-		return
+	def filter(self, publications, filters):
+		# WARNING:
+		# дана функція для економії часу виконання не виконує deepcopy над publications
+
+		if filters is None:
+			return publications
+
+		operation_sid = filters.get('operation_sid')
+		if operation_sid is None:
+			raise ValueError('Invalid conditions. Operation_sid is absent.')
+
+
+		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
+		# На даному етапі виконується перевірка всіх обов’язкових полів filters.
+		# Дану перевірку винесено за цикл фільтрування щоб підвищити швидкодію,
+		# оскільки об’єкт filters не змінюється в ході фільтрування і достатньо перевіріити його лише раз.
+		currency_sid = filters.get('currency_sid')
+		if currency_sid is None:
+			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
+			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
+			# На фронтенді валюта повинна бути задана за замовчуванням.
+			raise ValueError('sale_currency_sid is absent.')
+		elif currency_sid not in CURRENCIES.values():
+			raise ValueError('sale_currency_sid is invalid.')
+
+		if operation_sid == 1: # rent
+			rent_period_sid = filters.get('period_sid')
+			if rent_period_sid is None:
+				raise ValueError('Rent period sid is absent.')
+			else:
+				rent_period_sid = int(rent_period_sid)
+
+
+
+		# Для відбору елементів зі списку publications, використовується список statuses.
+		# Кість елементів цього списку відповідає к-сті елементів publications.
+		# На початку фільтрування всі елементи statuses встановлені в True.
+		# Під час фільтрування деякі з них будуть встановлені в False.
+		# На завершальному етапі зі списку publications будуть відібрані лише ті елементи,
+		# відповідний елемент statuses яких встановлений в True.
+		#
+		# Додатковий список використовується для підвищення швидкодії фільтрування,
+		# оскільки зміна True/False відбуваєтсья в рази швидше, ніж вилучення елементів зі списку
+		# з повторною його перебудовою на кожній перевірці та ітерації.
+		statuses = [True] * len(publications)
+
+
+		#-- sale filters
+		if operation_sid == 0:
+			for i in range(len(statuses)):
+				# Якщо даний запис вже позначений як виключений — не аналізувати його.
+				if not statuses[i]:
+					continue
+
+				marker = publications[i][1]
+
+				#-- sale price
+				price_min = filters.get('price_from')
+				price_max = filters.get('price_to')
+				if price_min is not None:
+					price_min = convert_currency(price_min, currency_sid, marker['sale_currency_sid'])
+				if price_max is not None:
+					price_max = convert_currency(price_max, currency_sid, marker['sale_currency_sid'])
+
+
+				if (price_max is not None) and (price_min is not None):
+					if not price_min <= marker['sale_price'] <= price_max:
+						statuses[i] = False
+						continue
+
+				elif price_min is not None:
+					if not price_min <= marker['sale_price']:
+						statuses[i] = False
+						continue
+
+				elif price_max is not None:
+					if not marker['sale_price'] <= price_max:
+						statuses[i] = False
+						continue
+
+
+				#-- market type
+				if ('new_buildings' in filters) and ('secondary_market' in filters):
+					# Немає змісту фільтрувати.
+					# Під дані умови потрапляють всі об’єкти.
+					pass
+
+				elif 'new_buildings' in filters:
+					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
+				elif 'new_buildings' in filters:
+					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
+
+
+				#-- rooms count
+				rooms_count_min = filters.get('rooms_count_from')
+				rooms_count_max = filters.get('rooms_count_to')
+				rooms_count = marker.get('rooms_count')
+
+				if (rooms_count_max is not None) or (rooms_count_min is not None):
+					# Поле "к-сть кімнат" не обов’язкове.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+					# відхилити запис через неможливість аналізу.
+					if rooms_count is None:
+						statuses[i] = False
+						continue
+
+
+				if (rooms_count_max is not None) and (rooms_count_min is not None):
+					if not rooms_count_min <= rooms_count <= rooms_count_max:
+						statuses[i] = False
+						continue
+
+				elif rooms_count_min is not None:
+					if not rooms_count_min <= rooms_count:
+						statuses[i] = False
+						continue
+
+				elif rooms_count_max is not None:
+					if not rooms_count <= rooms_count_max:
+						statuses[i] = False
+						continue
+
+
+				#-- floors count
+				floors_count_min = filters.get('floors_count_from')
+				floors_count_max = filters.get('floors_count_to')
+				floors_count = marker.get('floors_count')
+
+				if (floors_count_max is not None) or (floors_count_max is not None):
+					# Поле "к-сть поверхів" не обов’язкове.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+					# відхилити запис через неможливість аналізу.
+					if floors_count is None:
+						statuses[i] = False
+						continue
+
+
+				if (floors_count_min is not None) and (floors_count_max is not None):
+					if not floors_count_min <= floors_count <= floors_count_max:
+						statuses[i] = False
+						continue
+
+				elif floors_count_min is not None:
+					if not floors_count_min <= floors_count:
+						statuses[i] = False
+						continue
+
+				elif floors_count_max is not None:
+					if not floors_count <= floors_count_max:
+						statuses[i] = False
+						continue
+
+
+				#-- electricity
+				if 'electricity' in filters:
+					if (not 'electricity' in marker) or (not marker['electricity']):
+						statuses[i] = False
+						continue
+
+				#-- gas
+				if  'gas' in filters:
+					if (not 'gas' in marker) or (not marker['gas']):
+						statuses[i] = False
+						continue
+
+				#-- hot water
+				if 'jot_water' in filters:
+					if (not 'hot_water' in marker) or (not marker['hot_water']):
+						statuses[i] = False
+						continue
+
+				#-- cold water
+				if  'cold_water' in filters:
+					if (not 'cold_water' in marker) or (not marker['cold_water']):
+						statuses[i] = False
+						continue
+
+				#-- sewerage
+				if 'sewerage' in filters:
+					if (not 'sewerage' in marker) or (not marker['sewerage']):
+						statuses[i] = False
+						continue
+
+
+				#-- heating type
+				heating_type_sid = filters.get('heating_type_sid')
+				if heating_type_sid is not None:
+					# Поле "тип опалення" може бути не обов’язковим.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+					# відхилити запис через неможливість аналізу.
+					if 'heating_type_sid' not in marker:
+						statuses[i] = False
+						continue
+
+					if heating_type_sid == 1:
+						# пристунє
+						if marker['heating_type_sid'] not in [HEATING_TYPES.central(), HEATING_TYPES.individual()]:
+							statuses[i] = False
+							continue
+
+					elif heating_type_sid == 2:
+						# вісдутнє
+						if marker['heating_type_sid'] != HEATING_TYPES.none():
+							statuses[i] = False
+							continue
+
+
+		#-- rent filters
+		elif operation_sid == 1:
+			for i in range(len(publications)):
+				# Якщо даний маркер вже позначений як виключений — не аналізувати його.
+				if not statuses[i]:
+					continue
+
+				marker = publications[i][1]
+
+
+				#-- rent price
+				price_min = filters.get('price_from')
+				price_max = filters.get('price_to')
+				if price_min is not None:
+					price_min = convert_currency(price_min, currency_sid, marker['rent_currency_sid'])
+				if price_max is not None:
+					price_max = convert_currency(price_max, currency_sid, marker['rent_currency_sid'])
+
+
+				if (price_max is not None) and (price_min is not None):
+					if not price_min <= marker['rent_price'] <= price_max:
+						statuses[i] = False
+						continue
+
+				elif price_min is not None:
+					if not price_min <= marker['rent_price']:
+						statuses[i] = False
+						continue
+
+				elif price_max is not None:
+					if not marker['rent_price'] <= price_max:
+						statuses[i] = False
+						continue
+
+
+				#-- rent period
+				if not 'rent_period_sid' in marker:
+					statuses[i] = False
+					continue
+
+				if rent_period_sid == 1:
+					# посуточно
+					if marker['rent_period_sid'] != LIVING_RENT_PERIODS.daily():
+						statuses[i] = False
+						continue
+
+				elif rent_period_sid == 2:
+					# помісячно і довгострокова оренда
+					if (marker['rent_period_sid'] != LIVING_RENT_PERIODS.monthly()) or \
+							(marker['rent_period_sid'] != LIVING_RENT_PERIODS.long_period()):
+						statuses[i] = False
+						continue
+
+
+				#-- persons_count
+				persons_count_min = filters.get('persons_count_from')
+				persons_count_max = filters.get('persons_count_to')
+				persons_count = marker.get('persons_count')
+
+				if (persons_count_min is not None) or (persons_count_max is not None):
+					# Поле "к-сть місць"може бути не обов’язковим.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+					# відхилити запис через неможливість аналізу.
+					if persons_count is None:
+						statuses[i] = False
+						continue
+
+
+				if (persons_count_min is not None) and (persons_count_max is not None):
+					if not persons_count_min <= persons_count <= persons_count_max:
+						statuses[i] = False
+						continue
+
+				elif persons_count_min is not None:
+					if not persons_count_min <= persons_count:
+						statuses[i] = False
+						continue
+
+				elif persons_count_max is not None:
+					if not persons_count <= persons_count_max:
+						statuses[i] = False
+						continue
+
+
+				#-- for family
+				if 'family' in filters:
+					if (not 'for_family' in marker) or (not marker['for_family']):
+						statuses[i] = False
+						continue
+
+				#-- foreigners
+				if 'foreigners' in filters:
+					if (not 'foreigners' in marker) or (not marker['foreigners']):
+						statuses[i] = False
+						continue
+
+				#-- electricity
+				if 'electricity' in filters:
+					if (not 'electricity' in marker) or (not marker['electricity']):
+						statuses[i] = False
+						continue
+
+				#-- gas
+				if  'gas' in filters:
+					if (not 'gas' in marker) or (not marker['gas']):
+						statuses[i] = False
+						continue
+
+				#-- hot water
+				if 'jot_water' in filters:
+					if (not 'hot_water' in marker) or (not marker['hot_water']):
+						statuses[i] = False
+						continue
+
+				#-- cold water
+				if  'cold_water' in filters:
+					if (not 'cold_water' in marker) or (not marker['cold_water']):
+						statuses[i] = False
+						continue
+
+		else:
+			raise ValueError('Invalid conditions. Operation_sid is unexpected.')
+
+		result = []
+		for i in range(len(statuses)):
+			if statuses[i]:
+				result.append(publications[i])
+		return result
 
 
 
