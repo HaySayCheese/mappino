@@ -5448,8 +5448,147 @@ class GaragesMarkersManager(BaseMarkersManager):
 			pass
 
 
-	def filter(self, publications, conditions):
-		return
+	def filter(self, publications, filters):
+		# WARNING:
+		#   дана функція для економії часу виконання не виконує deepcopy над publications
+
+		if filters is None:
+			return publications
+
+		operation_sid = filters.get('operation_sid')
+		if operation_sid is None:
+			raise ValueError('Invalid conditions. Operation_sid is absent.')
+
+
+		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
+		# На даному етапі виконується перевірка всіх обов’язкових полів filters.
+		# Дану перевірку винесено за цикл фільтрування щоб підвищити швидкодію,
+		# оскільки об’єкт filters не змінюється в ході фільтрування і достатньо перевіріити його лише раз.
+		currency_sid = filters.get('currency_sid')
+		if currency_sid is None:
+			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
+			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
+			# На фронтенді валюта повинна бути задана за замовчуванням.
+			raise ValueError('sale_currency_sid is absent.')
+		elif currency_sid not in CURRENCIES.values():
+			raise ValueError('currency_sid is invalid.')
+
+		if operation_sid not in [0, 1]:
+			raise ValueError('Invalid operation_sid.')
+
+
+		# Для відбору елементів зі списку publications, використовується список statuses.
+		# Кість елементів цього списку відповідає к-сті елементів publications.
+		# На початку фільтрування всі елементи statuses встановлені в True.
+		# Під час фільтрування деякі з них будуть встановлені в False.
+		# На завершальному етапі зі списку publications будуть відібрані лише ті елементи,
+		# відповідний елемент statuses яких встановлений в True.
+		#
+		# Додатковий список використовується для підвищення швидкодії фільтрування,
+		# оскільки зміна True/False відбуваєтсья в рази швидше, ніж вилучення елементів зі списку
+		# з повторною його перебудовою на кожній перевірці та ітерації.
+		statuses = [True] * len(publications)
+
+
+		for i in range(len(statuses)):
+			# Якщо даний запис вже позначений як виключений — не аналізувати його.
+			if not statuses[i]:
+				continue
+
+			marker = publications[i][1]
+
+			# price
+			price_min = filters.get('price_from')
+			price_max = filters.get('price_to')
+			if price_min is not None:
+				price_min = convert_currency(price_min, currency_sid, marker['sale_currency_sid'])
+			if price_max is not None:
+				price_max = convert_currency(price_max, currency_sid, marker['sale_currency_sid'])
+
+
+			if (price_max is not None) and (price_min is not None):
+				if not price_min <= marker['sale_price'] <= price_max:
+					statuses[i] = False
+					continue
+
+			elif price_min is not None:
+				if not price_min <= marker['sale_price']:
+					statuses[i] = False
+					continue
+
+			elif price_max is not None:
+				if not marker['sale_price'] <= price_max:
+					statuses[i] = False
+					continue
+
+			#-- total area
+			total_area_min = filters.get('total_area_from')
+			total_area_max = filters.get('total_area_to')
+			total_area = marker.get('total_area')
+
+			if (total_area_max is not None) or (total_area_min is not None):
+				# Поле може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if total_area is None:
+					statuses[i] = False
+					continue
+
+			if (total_area_max is not None) and (total_area_min is not None):
+				if not total_area_min <= total_area <= total_area_max:
+					statuses[i] = False
+					continue
+
+			elif total_area_min is not None:
+				if not total_area_min <= total_area:
+					statuses[i] = False
+					continue
+
+			elif total_area_max is not None:
+				if not total_area <= total_area_max:
+					statuses[i] = False
+					continue
+					
+					
+			#-- ceiling height
+			ceiling_height_min = filters.get('ceiling_height_from')
+			ceiling_height_max = filters.get('ceiling_height_to')
+			ceiling_height = marker.get('ceiling_height')
+
+			if (ceiling_height_max is not None) or (ceiling_height_min is not None):
+				# Поле може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if ceiling_height is None:
+					statuses[i] = False
+					continue
+
+			if (ceiling_height_max is not None) and (ceiling_height_min is not None):
+				if not ceiling_height_min <= ceiling_height <= ceiling_height_max:
+					statuses[i] = False
+					continue
+
+			elif ceiling_height_min is not None:
+				if not ceiling_height_min <= ceiling_height:
+					statuses[i] = False
+					continue
+
+			elif ceiling_height_max is not None:
+				if not ceiling_height <= ceiling_height_max:
+					statuses[i] = False
+					continue
+
+
+			if 'pit' in filters:
+				if (not 'pit' in marker) or (not marker['pit']):
+					statuses[i] = False
+					continue
+
+		result = []
+		for i in range(len(statuses)):
+			if statuses[i]:
+				result.append(publications[i])
+		return result
 
 
 
@@ -5635,5 +5774,131 @@ class LandsMarkersManager(BaseMarkersManager):
 			pass
 
 
-	def filter(self, publications, conditions):
-		return
+	def filter(self, publications, filters):
+		# WARNING:
+		#   дана функція для економії часу виконання не виконує deepcopy над publications
+
+		if filters is None:
+			return publications
+
+		operation_sid = filters.get('operation_sid')
+		if operation_sid is None:
+			raise ValueError('Invalid conditions. Operation_sid is absent.')
+
+
+		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
+		# На даному етапі виконується перевірка всіх обов’язкових полів filters.
+		# Дану перевірку винесено за цикл фільтрування щоб підвищити швидкодію,
+		# оскільки об’єкт filters не змінюється в ході фільтрування і достатньо перевіріити його лише раз.
+		currency_sid = filters.get('currency_sid')
+		if currency_sid is None:
+			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
+			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
+			# На фронтенді валюта повинна бути задана за замовчуванням.
+			raise ValueError('sale_currency_sid is absent.')
+		elif currency_sid not in CURRENCIES.values():
+			raise ValueError('currency_sid is invalid.')
+
+		if operation_sid not in [0, 1]:
+			raise ValueError('Invalid operation_sid.')
+
+
+		# Для відбору елементів зі списку publications, використовується список statuses.
+		# Кість елементів цього списку відповідає к-сті елементів publications.
+		# На початку фільтрування всі елементи statuses встановлені в True.
+		# Під час фільтрування деякі з них будуть встановлені в False.
+		# На завершальному етапі зі списку publications будуть відібрані лише ті елементи,
+		# відповідний елемент statuses яких встановлений в True.
+		#
+		# Додатковий список використовується для підвищення швидкодії фільтрування,
+		# оскільки зміна True/False відбуваєтсья в рази швидше, ніж вилучення елементів зі списку
+		# з повторною його перебудовою на кожній перевірці та ітерації.
+		statuses = [True] * len(publications)
+
+
+		for i in range(len(statuses)):
+			# Якщо даний запис вже позначений як виключений — не аналізувати його.
+			if not statuses[i]:
+				continue
+
+			marker = publications[i][1]
+
+			# price
+			price_min = filters.get('price_from')
+			price_max = filters.get('price_to')
+			if price_min is not None:
+				price_min = convert_currency(price_min, currency_sid, marker['sale_currency_sid'])
+			if price_max is not None:
+				price_max = convert_currency(price_max, currency_sid, marker['sale_currency_sid'])
+
+
+			if (price_max is not None) and (price_min is not None):
+				if not price_min <= marker['sale_price'] <= price_max:
+					statuses[i] = False
+					continue
+
+			elif price_min is not None:
+				if not price_min <= marker['sale_price']:
+					statuses[i] = False
+					continue
+
+			elif price_max is not None:
+				if not marker['sale_price'] <= price_max:
+					statuses[i] = False
+					continue
+
+
+			# area
+			area_min = filters.get('area_from')
+			area_max = filters.get('area_to')
+			area = marker.get('area')
+
+			if (area_max is not None) or (area_min is not None):
+				# Поле може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if area is None:
+					statuses[i] = False
+					continue
+
+			if (area_max is not None) and (area_min is not None):
+				if not area_min <= area <= area_max:
+					statuses[i] = False
+					continue
+
+			elif area_min is not None:
+				if not area_min <= area:
+					statuses[i] = False
+					continue
+
+			elif area_max is not None:
+				if not area <= area_max:
+					statuses[i] = False
+					continue
+
+
+			if 'electricity' in filters:
+				if (not 'electricity' in marker) or (not marker['electricity']):
+					statuses[i] = False
+					continue
+
+			if  'gas' in filters:
+				if (not 'gas' in marker) or (not marker['gas']):
+					statuses[i] = False
+					continue
+
+			if 'water' in filters:
+				if (not 'water' in marker) or (not marker['water']):
+					statuses[i] = False
+					continue
+
+			if  'sewerage' in filters:
+				if (not 'sewerage' in marker) or (not marker['sewerage']):
+					statuses[i] = False
+					continue
+
+		result = []
+		for i in range(len(statuses)):
+			if statuses[i]:
+				result.append(publications[i])
+		return result
