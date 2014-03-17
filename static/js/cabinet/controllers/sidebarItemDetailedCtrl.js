@@ -122,7 +122,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             var name  = e.currentTarget.name,
                 value = e.currentTarget.checked;
 
-            Publication.checkInputs(tid, hid, { f: name, v: value });
+            Publication.checkInputs(tid, hid, { f: name, v: value }, null);
         });
 
         // Дропдауни
@@ -130,7 +130,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             var name  = e.currentTarget.name,
                 value = e.currentTarget.value;
 
-            Publication.checkInputs(tid, hid, { f: name, v: value });
+            Publication.checkInputs(tid, hid, { f: name, v: value }, null);
         });
     }
 
@@ -218,8 +218,10 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
             angular.element(input).trigger("input");
 
+            console.log(latLng)
+
             Publication.checkInputs(tid, hid, { f: "address", v: input.value }, null);
-            Publication.checkInputs(tid, hid, { f: "lat_lng", v: latLng.d + ";" + latLng.e }, null);
+            Publication.checkInputs(tid, hid, { f: "lat_lng", v: latLng.lat() + ";" + latLng.lng() }, null);
         });
     }
 
