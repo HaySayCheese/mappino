@@ -6,9 +6,6 @@ app.factory('Markers', function(mapQueries) {
             blue: {},
             green: {},
             yellow: {}
-        },
-        icons = {
-            blue: ""
         };
 
     return {
