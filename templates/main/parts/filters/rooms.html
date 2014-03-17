@@ -139,16 +139,16 @@
                 <label for="{{ current_panel_prefix }}_hot_water">Гар. вода</label>
             </div>
             <div class="checkbox">
+                <input id="{{ current_panel_prefix }}_electricity" type="checkbox" name="{{ current_panel_prefix }}_electricity" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_electricity">
+                <label for="{{ current_panel_prefix }}_electricity">Электричество</label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="checkbox">
                 <input id="{{ current_panel_prefix }}_gas" type="checkbox" name="{{ current_panel_prefix }}_gas" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_gas">
                 <label for="{{ current_panel_prefix }}_gas">Газ</label>
             </div>
 
-        </div>
-        <div class="col-sm-6">
-            <div class="checkbox">
-                <input id="{{ current_panel_prefix }}_electricity" type="checkbox" name="{{ current_panel_prefix }}_electricity" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_electricity">
-                <label for="{{ current_panel_prefix }}_electricity">Электричество</label>
-            </div>
             <div class="checkbox">
                 <input id="{{ current_panel_prefix }}_cold_water" type="checkbox" name="{{ current_panel_prefix }}_cold_water" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_cold_water">
                 <label for="{{ current_panel_prefix }}_cold_water">Хол. вода</label>
