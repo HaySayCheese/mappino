@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Queries', function($http) {
+app.factory('Queries', function($http, $upload) {
 
     return {
 
@@ -61,7 +61,11 @@ app.factory('Queries', function($http) {
             },
 
             uploadPhotos: function(tid, hid, photos, callback) {
-                return $http.post('/ajax/api/cabinet/publications/' + tid + ':' + hid + '/photos/', { data: { file: photos }}).success(callback);
+                return $upload.upload({
+                    url: '/ajax/api/cabinet/publications/' + tid + ':' + hid + '/photos/',
+                    file: photos
+                })
+                .success(callback);
             },
 
             removePhoto: function(tid, hid, pid, callback) {
