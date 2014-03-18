@@ -26,9 +26,9 @@ __DETAILED_TEMPLATES_PATHS = {
 
 
 @ensure_csrf_cookie
-def detailed(request, tid):
+def detailed_content(request, tid):
 	"""
-	Повертає шаблон діалогу з детальним описом об’єкта відповідно до @tid.
+	Повертає шаблон розмітки для даних в діалозі детального опису відповідно до @tid.
 	"""
 	try:
 		tid = int(tid)
@@ -40,3 +40,12 @@ def detailed(request, tid):
 		return HttpResponseBadRequest('@tid is invalid')
 
 	return HttpResponse(templates.get_template(template_path).render())
+
+
+@ensure_csrf_cookie
+def detailed(request):
+	"""
+	Повертає шаблон діалогу з детальним описом об’єкта.
+	"""
+	return HttpResponse(
+		templates.get_template('main/parts/detailed/detailed.html').render())
