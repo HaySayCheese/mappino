@@ -1,7 +1,10 @@
 from django.conf.urls import patterns, url
+from core.correspondence.ajax.main import NewMessage, NewCallRequest
 
 
 #-- angular templates for main pages
+
+
 urlpatterns = patterns('apps.pages.main',
     #-- common
     url(r'^ajax/template/main/first-enter/$', 'templates_ajax.first_enter_template'),
@@ -61,6 +64,11 @@ urlpatterns += patterns('apps',
 
     #-- markers
     url(r'^ajax/api/markers/$', 'pages.main.markers.ajax.get_markers'),
+
+
+    #-- notifications
+    url(r'^ajax/api/notifications/send-message/(\d+:\d+)/$', NewMessage.as_view()),
+    url(r'^ajax/api/notifications/send-call-request/(\d+:\d+)/$', NewCallRequest.as_view()),
 )
 
 #-- angular API for cabinet

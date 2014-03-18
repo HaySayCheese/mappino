@@ -1,0 +1,24 @@
+{#
+    Даний шаблон відправляється рієлтору на пошту в разі надходження повідомлення
+    від зацікавленого клієнта з сайту.
+#}
+<div>
+    Здравствуйте.<br/>
+
+    {% if client_name %}
+        {{ client_name }} оставил(а) для Вас
+    {% else %}
+        Вам оставили
+    {% endif %}
+
+    сообщение касательно объявления
+    <a href="{{ domain }}/cabinet/#!/publications/published/{{ publication.tid }}:{{ publication.hid }}/">
+        {{ publication.title }}
+    </a>:
+
+    <br/><br/>
+    {{ message }}
+    <br/><br/>
+    С уважением и пожеланием успехов,<br>
+    команда mappino.
+</div>
