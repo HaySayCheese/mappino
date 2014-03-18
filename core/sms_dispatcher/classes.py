@@ -65,12 +65,12 @@ class RegistrationCheckCodesSender(BaseSMSSender):
 
 	def resend(self, number, code, request):
 		self.throttle(request)
-		return self.process_query(number, 'Добро пожаловать на mappino. Ваш код: {0}'.format(code))
+		return self.process_query(number, 'Ваш проверочный код mappino: {0}'.format(code))
 
 
 	def send(self, number, code, request):
 		self.throttle(request)
-		return self.process_query(number, 'Ваш проверочный код mappino: {0}'.format(code))
+		return self.process_query(number, 'Добро пожаловать на mappino. Ваш код: {0}'.format(code))
 
 
 	@staticmethod
