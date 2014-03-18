@@ -1,5 +1,7 @@
 #coding=utf-8
+from django.core.exceptions import SuspiciousOperation
 from django.db import models, transaction
+from collective.exceptions import InvalidArgument, RuntimeException
 from core.publications.constants import HEAD_MODELS
 
 from core.users.models import Users
@@ -7,12 +9,17 @@ from core.users.models import Users
 
 class Clients(models.Model):
 	"""
-	Даний клас описує клієнтів рієлторів.
-	Із даними клієнтами пов’язуються повідомлення та запити на зворотні дзвінки.
-	Всі поля за замовчуванням пусті. Передбачається що система по мірі надходження даних
-	сама заповнюватиме даний об’єкт відомостями про клієнтів, але така можливість є і в рієлтора.
+	Описує клієнтів сервісу.
+	З ними пов’язуються вхідні повідомлення щодо оголошень та запити на зворотні дзвінки.
+
+	Всі поля за замовчуванням пусті, оскільки наперед про клієнтів нічого не відомо,
+	а перелік обов’язкових даних різниться від операції до операції.
+	Наприклад, клієнт може залишити повідомлення і вказати при цьому ел. адресу та своє ім’я,
+	а може залишити запит на зворотній дзвінок і вказати імя і номер телефону.
+	Передбачається що система по мірі надходження даних заповнюватиме БД відомостями про клієнтів.
 	"""
 	# todo: (1.1) продумати і додати за потреби індексацію повідомлень в sphinx
+
 	name = models.TextField(null=True)
 	email = models.EmailField(null=True, unique=True)
 	phone_number = models.CharField(null=True, unique=True, max_length=15) # з запасом, для форматів інших країн, окрім України
@@ -96,20 +103,23 @@ class EventsThreads(models.Model):
 								На фронтенді воно не є обов’зковим, тому може прийти, а може і не прийти.
 								Якщо прийшло — автоматично додасться у відомості про клієнта.
 
+		Raises:
+			InvalidArgument
+
 		Метод позначено статичним оскільки саме клієнт ініціює потік подій.
 		Якщо повідомлення, яке слід додати в потік, виявиться першим, то спочатку слід
 		створити запис про клієнта в БД і запис про потік подій і лише тоді додавати повідомлення.
 		"""
 		if not message:
-			raise ValueError('Empty message.')
+			raise InvalidArgument('Empty message.')
 
 		model = HEAD_MODELS.get(publication_tid)
 		if model is None:
-			raise ValueError('Invalid publication tid.')
+			raise InvalidArgument('Invalid publication tid.')
 
 		publication = model.objects.filter(id = publication_hid).only('id', 'owner')[:0]
 		if not publication:
-			raise ValueError('Invalid publication hid.')
+			raise InvalidArgument('Invalid publication hid.')
 		publication = publication[0]
 
 		client_id = Clients.id_by_email(email)
@@ -170,6 +180,9 @@ class EventsThreads(models.Model):
 								На фронтенді воно не є обов’зковим, тому може прийти, а може і не прийти.
 								Якщо прийшло — автоматично додасться у відомості про клієнта.
 
+		Raises:
+			InvalidArgument
+
 		Додасть повідомлення від клієнта в потік.
 		Якщо потоку, пов’язаного з даним клієнтом і даним оголошенням не існуватиме - його буде створено.
 
@@ -178,15 +191,15 @@ class EventsThreads(models.Model):
 		створити запис про клієнта в БД і запис про потік подій і лише тоді додавати повідомлення.
 		"""
 		if not phone_number:
-			raise ValueError('Invalid phone number.')
+			raise InvalidArgument('Invalid phone number.')
 
 		model = HEAD_MODELS.get(publication_tid)
 		if model is None:
-			raise ValueError('Invalid publication tid.')
+			raise InvalidArgument('Invalid publication tid.')
 
 		publication = model.objects.filter(id = publication_hid).only('id', 'owner')[:0]
 		if not publication:
-			raise ValueError('Invalid publication hid.')
+			raise InvalidArgument('Invalid publication hid.')
 		publication = publication[0]
 
 		# todo: перевірити чи немає досі запитів на даний номер по даному оголошенню
@@ -246,31 +259,35 @@ class EventsThreads(models.Model):
 			realtor_id:         id рієлтора, зареєстрованого в системі.
 			message:            Повідомлення.
 
+		Raise:
+			InvalidArgument, RuntimeException, SuspiciousOperation
+
 		Додасть повідомлення від рієлтора в потік.
 		Якщо потоку, пов’язаного з даним рієлтором і даним оголошенням не існуватиме - буде викинуто викл. ситуацію.
 		(Оскільки, рієлтор не може виступати інціатором створення потоку повідомлень сам собі).
 		"""
 		if not message:
-			raise ValueError('Empty message.')
+			raise InvalidArgument('Empty message.')
 
 		model = HEAD_MODELS.get(publication_tid)
 		if model is None:
-			raise ValueError('Invalid publication tid.')
+			raise InvalidArgument('Invalid publication tid.')
 
 		publication = model.objects.filter(id = publication_hid).only('id', 'owner')[:0]
 		if not publication:
-			raise ValueError('Invalid publication hid.')
+			raise InvalidArgument('Invalid publication hid.')
 
-		realtor = Users.objects.filter(id = realtor_id).only('id')[:1]
-		if not realtor:
-			raise ValueError('Invalid realtor_id.')
+		# permission check
+		if publication.owner != realtor_id:
+			raise SuspiciousOperation('Attempt to modify event stream of other user.')
+
 
 		# Шукаємо відповідний потік.
 		# WARNING:
 		#   Якщо відповідного потоку немає — створювати не можна.
 		#   Рєілтор не повинен виступати ініціатором переписки.
 		thread = cls.objects.filter(
-			realtor_id = realtor.id,
+			realtor_id = realtor_id,
 
 		    # один клієнт може писати різним рієлторам і про різні оголошення
 			related_publication_id = cls.__publication_id(publication_tid, publication_hid),
@@ -278,7 +295,7 @@ class EventsThreads(models.Model):
 		if thread:
 			thread = thread[0]
 		else:
-			raise Exception('No such event thread.')
+			raise RuntimeException('No such event thread.')
 
 		with transaction.atomic(savepoint=False):
 			thread.__add_client_message(message) # немає необхідності викликати save().
@@ -363,7 +380,7 @@ class Messages(models.Model):
 		# Заборонити використання цього методу.
 		# Зв’язки між повідомленнями та потоком подій неявні і на рівні БД відслідковувані не будуть.
 		# Зроблено задля забезпечення цілісності системи.
-		raise Exception('Use appropriate method of Events Thread.')
+		raise RuntimeException('Use appropriate method of Events Thread.')
 
 
 
@@ -375,6 +392,6 @@ class CallRequests(models.Model):
 		# Заборонити використання цього методу.
 		# Зв’язки між запитами та потоком подій неявні і на рівні БД відслідковувані не будуть.
 		# Зроблено задля забезпечення цілісності системи.
-		raise Exception('Use appropriate method of Events Thread.')
+		raise RuntimeException('Use appropriate method of Events Thread.')
 
 

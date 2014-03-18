@@ -1,20 +1,36 @@
+#coding=utf-8
+class BaseCustomException(Exception):
+	"""
+	Використовується для скидання виключних ситуацій з кастомних методів.
+	Застосовується для уникнення співпадінь з системними виключними ситуаціями.
+	"""
+	pass
+
+class InvalidArgument(BaseCustomException): pass
+class RuntimeException(BaseCustomException): pass
+
+
+
 class AlreadyExist(Exception):
-    pass
+	pass
 
 class ObjectAlreadyExist(AlreadyExist):
-    pass
+	pass
 
 class RecordAlreadyExists(AlreadyExist):
-    pass
+	pass
 
 class RecordDoesNotExists(Exception):
-    pass
+	pass
 
 
 class ParseError(Exception):
-    pass
+	pass
 
 
 
 class IntervalError(Exception):
-    pass
+	pass
+
+
+
