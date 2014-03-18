@@ -1,4 +1,5 @@
-from core.sms_dispatcher.classes import RegistrationCheckCodesSender
+from core.sms_dispatcher.classes import RegistrationCheckCodesSender, NotificationsSender
 
 
-registration_check_codes_sender = RegistrationCheckCodesSender()
+check_codes_sms_sender = RegistrationCheckCodesSender()
+notifications_sms_sender = NotificationsSender()

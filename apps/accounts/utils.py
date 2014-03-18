@@ -8,7 +8,7 @@ from django.db import transaction
 
 from collective.exceptions import AlreadyExist, RecordAlreadyExists
 from collective.http.cookies import set_signed_cookie
-from core.sms_dispatcher import registration_check_codes_sender
+from core.sms_dispatcher import check_codes_sms_sender
 from core.users.models import Users
 from mappino.wsgi import redis_connections
 
@@ -165,7 +165,7 @@ class MobilePhonesChecker(object):
 
 		# hint: send throttling implemented in SMSSender
 		# no need to do it here
-		registration_check_codes_sender.send(phone, code, request)
+		check_codes_sms_sender.send(phone, code, request)
 
 
 	def cancel_number_check(self, request, response):
@@ -258,7 +258,7 @@ class MobilePhonesChecker(object):
 		# hint: send throttling implemented in SMSSender
 		# no need to do it here
 		phone = self.redis.hget(key, self.phone_number_field_name)
-		registration_check_codes_sender.resend(phone, code, request)
+		check_codes_sms_sender.resend(phone, code, request)
 
 
 	@staticmethod

@@ -45,7 +45,7 @@ class NewMessage(View):
 		client_name = params.get('name') # not required
 
 		try:
-			notifications_dispatcher.send_new_message_notification(tid, hid, message, client_email, client_name)
+			notifications_dispatcher.send_new_message_notification(request, tid, hid, message, client_email, client_name)
 		except InvalidArgument:
 			return HttpResponseBadRequest(json.dumps(
 				self.codes['invalid_parameters']), content_type='application/json')
@@ -84,10 +84,10 @@ class NewCallRequest(View):
 				self.codes['invalid_parameters']), content_type='application/json')
 
 		phone_number = params['phone_number']
-		client_name = params['name'] # not required
+		client_name = params.get('name') # not required
 
 		try:
-			notifications_dispatcher.send_new_call_request_notification(tid, hid, phone_number, client_name)
+			notifications_dispatcher.send_new_call_request_notification(request, tid, hid, phone_number, client_name)
 		except InvalidArgument:
 			return HttpResponseBadRequest(json.dumps(
 				self.codes['invalid_parameters']), content_type='application/json')

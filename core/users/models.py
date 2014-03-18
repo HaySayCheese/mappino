@@ -115,3 +115,7 @@ class Users(AbstractBaseUser):
 	def is_phone_number_free(cls, number):
 		# todo: додати перевірку серед додаткових телефонів
 		return cls.objects.filter(raw_phone = number).count() == 0
+
+
+	def mobile_phone(self):
+		return '+380' + self.raw_phone

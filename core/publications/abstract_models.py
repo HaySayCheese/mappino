@@ -186,7 +186,7 @@ class LivingHeadModel(models.Model):
 
 		# sender=None для того, щоб django-orm не витягував автоматично дані з БД,
 		# які, швидше за все, не знадобляться в подальшій обробці.
-		models_signals.record_published.send(sender=None, tid=self.tid, hid=self.id)
+		models_signals.record_published.incomming_message(sender=None, tid=self.tid, hid=self.id)
 
 
 	def unpublish(self):

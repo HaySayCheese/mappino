@@ -6,6 +6,7 @@ from django.conf import settings
 
 from collective.exceptions import InvalidArgument
 from core.publications.constants import HEAD_MODELS, OBJECT_STATES
+from core.sms_dispatcher import notifications_sms_sender
 from mappino.wsgi import templates
 
 
@@ -14,7 +15,7 @@ class NotificationsDispatcher(object):
 		self.__connect_to_mandrill()
 
 
-	def send_new_message_notification(self, pub_tid, pub_hid, message, client_email, client_name=None):
+	def send_new_message_notification(self, request, pub_tid, pub_hid, message, client_email, client_name=None):
 		if not message:
 			raise InvalidArgument('Message can not be empty.')
 
@@ -57,11 +58,13 @@ class NotificationsDispatcher(object):
 			},
 		}
 		self.__send_email(message)
-		# todo: додати насилання SMS
+
+		# Надішлем рієлтору щасливу sms
+		notifications_sms_sender.incoming_message(publication.owner.mobile_phone(), request)
 
 
-	def send_new_call_request_notification(self, pub_tid, pub_hid, phone_number, client_name=None):
-		if not phone_number:
+	def send_new_call_request_notification(self, request, pub_tid, pub_hid, client_number, client_name=None):
+		if not client_number:
 			raise InvalidArgument('Phone number can not be empty.')
 
 		model = HEAD_MODELS.get(pub_tid)
@@ -82,7 +85,7 @@ class NotificationsDispatcher(object):
 		html = templates.get_template('email/notifications/incoming_call_request.html').render({
 			'domain': settings.REDIRECT_DOMAIN,
 			'client_name': client_name,
-		    'phone_number': phone_number,
+		    'phone_number': client_number,
 		    'publication': {
 			    'tid': pub_tid,
 			    'hid': pub_hid,
@@ -96,11 +99,13 @@ class NotificationsDispatcher(object):
 				'type': 'to',
 				'email': publication.owner.email,
 			}],
-		    'subject': u'Запрос обратного звонка ('+ unicode(phone_number) + ')', # tr
+		    'subject': u'Запрос обратного звонка ('+ unicode(client_number) + ')', # tr
 			'html': html,
 		}
 		self.__send_email(message)
-		# todo: додати насилання SMS
+
+		# Надішлем рієлтору щасливу sms
+		notifications_sms_sender.incoming_call_request(publication.owner.mobile_phone(), client_number, request)
 
 
 	def __send_email(self, message):
