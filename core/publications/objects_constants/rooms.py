@@ -22,7 +22,7 @@ class RoomsRoomsPlaningTypes(AbstractConstant):
 
 	def separate_adjacent(self):
 		return self.ids['separate_adjacent']
-ROOMS_ROOMS_PLANING_TYPES  = RoomsRoomsPlaningTypes()
+ROOMS_ROOMS_PLANNING_TYPES  = RoomsRoomsPlaningTypes()
 
 
 class RoomsWCLocation(AbstractConstant):

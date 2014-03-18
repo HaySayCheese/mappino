@@ -6,14 +6,14 @@ from core.publications.constants import MARKET_TYPES, OBJECT_CONDITIONS, FLOOR_T
 	OBJECTS_TYPES
 from core.publications.exceptions import EmptyFloor, EmptyTotalArea, EmptyLivingArea, EmptyRoomsCount, EmptyFloorsCount, \
 	EmptyHallsArea, EmptyHallsCount, EmptyCabinetsCount
-from core.publications.objects_constants.apartments import APARTMENTS_BUILDINGS_TYPES, APARTMENTS_FLAT_TYPES, APARTMENTS_ROOMS_PLANING_TYPES
+from core.publications.objects_constants.apartments import APARTMENTS_BUILDINGS_TYPES, APARTMENTS_FLAT_TYPES, APARTMENTS_ROOMS_PLANNING_TYPES
 from core.publications.objects_constants.cottages import COTTAGE_RENT_TYPES, COTTAGE_SALE_TYPES
 from core.publications.objects_constants.dachas import DACHA_WC_LOCATIONS, DACHA_WC
 from core.publications.objects_constants.flats import FLAT_BUILDING_TYPES, FLAT_TYPES, FLAT_ROOMS_PLANNINGS
 from core.publications.objects_constants.garages import GARAGE_DRIVE_WAYS
 from core.publications.objects_constants.houses import HOUSE_RENT_TYPES, HOUSE_SALE_TYPES
 from core.publications.objects_constants.lands import LAND_DRIVEWAYS
-from core.publications.objects_constants.rooms import ROOMS_BUILDINGS_TYPES, ROOMS_ROOMS_PLANING_TYPES, ROOMS_WC_LOCATION
+from core.publications.objects_constants.rooms import ROOMS_BUILDINGS_TYPES, ROOMS_ROOMS_PLANNING_TYPES, ROOMS_WC_LOCATION
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
 
 
@@ -46,7 +46,7 @@ class FlatsBodies(BodyModel):
 	build_year = models.PositiveSmallIntegerField(null=True)
 	flat_type_sid = models.SmallIntegerField(default=FLAT_TYPES.separate()) # тип квартири
 	custom_flat_type = models.TextField(null=True)
-	rooms_planing_sid = models.SmallIntegerField(default=FLAT_ROOMS_PLANNINGS.separate()) # планування кімнат
+	rooms_planning_sid = models.SmallIntegerField(default=FLAT_ROOMS_PLANNINGS.separate()) # планування кімнат
 	condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
 
 	floor = models.SmallIntegerField(null=True) # номер поверху
@@ -146,7 +146,7 @@ class ApartmentsBodies(BodyModel):
 	build_year = models.PositiveSmallIntegerField(null=True)
 	flat_type_sid = models.SmallIntegerField(default=APARTMENTS_FLAT_TYPES.separate()) # тип квартири
 	custom_flat_type = models.TextField(null=True)
-	rooms_planing_sid = models.SmallIntegerField(default=APARTMENTS_ROOMS_PLANING_TYPES.separate()) # планування кімнат
+	rooms_planning_sid = models.SmallIntegerField(default=APARTMENTS_ROOMS_PLANNING_TYPES.separate()) # планування кімнат
 	condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
 
 	floor = models.SmallIntegerField(null=True) # номер поверху
@@ -598,7 +598,7 @@ class RoomsBodies(BodyModel):
 	floor = models.SmallIntegerField(null=True) # номер поверху
 	floor_type_sid = models.SmallIntegerField(default=FLOOR_TYPES.floor()) # тип поверху: мансарда, цоколь, звичайний поверх і т.д
 	floors_count = models.SmallIntegerField(null=True)
-	rooms_planing_sid = models.SmallIntegerField(default=ROOMS_ROOMS_PLANING_TYPES.separate()) # планування кімнат
+	rooms_planning_sid = models.SmallIntegerField(default=ROOMS_ROOMS_PLANNING_TYPES.separate()) # планування кімнат
 	condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
 
 	rooms_count = models.PositiveSmallIntegerField(null=True)

@@ -10,7 +10,7 @@ from core.publications.objects_constants.flats import FLAT_TYPES
 from collective.methods.formatters import format_text, format_title
 from core.publications.constants import FLOOR_TYPES, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, MARKET_TYPES, OBJECT_CONDITIONS, CURRENCIES, LIVING_RENT_PERIODS, SALE_TRANSACTION_TYPES
 from core.publications.models import ApartmentsBodies, ApartmentsRentTerms, ApartmentsSaleTerms
-from core.publications.objects_constants.apartments import APARTMENTS_BUILDINGS_TYPES, APARTMENTS_ROOMS_PLANING_TYPES
+from core.publications.objects_constants.apartments import APARTMENTS_BUILDINGS_TYPES, APARTMENTS_ROOMS_PLANNING_TYPES
 
 
 
@@ -375,7 +375,7 @@ def update_apartments(h, field, value, tid):
 		# sid
 		elif field == 'rooms_planing_sid':
 			value = int(value)
-			if value not in APARTMENTS_ROOMS_PLANING_TYPES.values():
+			if value not in APARTMENTS_ROOMS_PLANNING_TYPES.values():
 				raise ValueError()
 
 			b = ApartmentsBodies.objects.filter(id=h.body_id).only('id')[0]
