@@ -14,7 +14,7 @@ urlpatterns = patterns('apps.pages.main',
 
 
     #-- detailed forms
-	url(r'^ajax/template/main/filters/(\d+)/$', 'detailed.templates.detailed'),
+	url(r'^ajax/template/main/detailed/(\d+)/$', 'detailed.templates.detailed'),
 )
 
 #-- angular templates for accounts
