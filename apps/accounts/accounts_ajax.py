@@ -1,14 +1,16 @@
 #coding=utf-8
 import copy
 import json
+
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
+
 from apps.accounts.utils import AccessRestoreHandler, TokenDoesNotExists, NoUserWithSuchUsername, MobilePhonesChecker, TokenAlreadyExists, InvalidCheckCode
+from collective.exceptions import ResourceThrottled
 from collective.methods.request_data_getters import angular_post_parameters
-from core.sms_dispatcher.exceptions import SMSLimitException
 from core.users.models import Users
 
 
@@ -110,15 +112,10 @@ def validate_phone_handler(request):
 
 #-- handlers
 RH_RESPONSES = {
-	'anonymous_only': {
-		'code': 9,
-	    'message': 'anonymous users only.',
-	},
-    'invalid_check_codes': {
-	    'code': 10,
-	    'message': 'invalid check code',
+	'OK': {
+	    'code': 0,
+	    'message': 'OK',
     },
-
     'name_empty': {
 	    'code': 1,
 		'message': '@name can not be empty.',
@@ -151,14 +148,15 @@ RH_RESPONSES = {
 	    'code': 8,
 		'message': 'Unknown fields parsing error',
     },
-
-    'OK': {
-	    'code': 0,
-	    'message': 'OK',
+    'anonymous_only': {
+		'code': 9,
+	    'message': 'anonymous users only.',
+	},
+    'invalid_check_codes': {
+	    'code': 10,
+	    'message': 'invalid check code',
     },
-
 }
-
 @require_http_methods('POST')
 def registration_handler(request):
 	if request.user.is_authenticated():
@@ -233,8 +231,13 @@ def registration_handler(request):
 
 	response = HttpResponse(
 		json.dumps(RH_RESPONSES['OK']), content_type='application/json')
-	MOBILE_PHONES_CHECKER.begin_number_check(
-		name, surname, email, phone_number, password, request, response)
+
+	try:
+		MOBILE_PHONES_CHECKER.begin_number_check(
+			name, surname, email, phone_number, password, request, response)
+	except ResourceThrottled:
+		return HttpResponse(json.dumps(RH_RESPONSES['OK']), content_type='application/json')
+
 	return response
 
 
@@ -306,7 +309,7 @@ def resend_sms_handler(request):
 		response.status_code = 400
 		response.write(json.dumps(RS_RESPONSES['invalid_check_code']))
 		return response
-	except SMSLimitException:
+	except ResourceThrottled:
 		response.status_code = 400
 		response.write(json.dumps(RS_RESPONSES['limit_reached']))
 		return response

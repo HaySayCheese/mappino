@@ -1,4 +1,7 @@
 #coding=utf-8
+from django.core.exceptions import SuspiciousOperation
+
+
 class BaseCustomException(Exception):
 	"""
 	Використовується для скидання виключних ситуацій з кастомних методів.
@@ -8,6 +11,8 @@ class BaseCustomException(Exception):
 
 class InvalidArgument(BaseCustomException): pass
 class RuntimeException(BaseCustomException): pass
+
+class ResourceThrottled(SuspiciousOperation): pass
 
 
 

@@ -3,10 +3,12 @@ import hashlib
 import random
 import string
 from __builtin__ import unicode
+
 from django.db import transaction
+
 from collective.exceptions import AlreadyExist, RecordAlreadyExists
 from collective.http.cookies import set_signed_cookie
-from core.sms_dispatcher.utils import send_mobile_check_code_sms, resend_mobile_check_code_sms
+from core.sms_dispatcher import registration_check_codes_sender
 from core.users.models import Users
 from mappino.wsgi import redis_connections
 
@@ -142,9 +144,6 @@ class MobilePhonesChecker(object):
 		if not user_password:
 			raise ValueError('Empty or absent @user_password')
 
-		if self.__phone_in_check_queue(phone):
-			raise PhoneAlreadyInQueue()
-
 
 		uid = self.__generate_record_id(phone)
 		key = self.record_prefix + uid
@@ -166,7 +165,7 @@ class MobilePhonesChecker(object):
 
 		# hint: send throttling implemented in SMSSender
 		# no need to do it here
-		send_mobile_check_code_sms(phone, code, request)
+		registration_check_codes_sender.send(phone, code, request)
 
 
 	def cancel_number_check(self, request, response):
@@ -259,12 +258,7 @@ class MobilePhonesChecker(object):
 		# hint: send throttling implemented in SMSSender
 		# no need to do it here
 		phone = self.redis.hget(key, self.phone_number_field_name)
-		resend_mobile_check_code_sms(phone, code, request)
-
-
-	def __phone_in_check_queue(self, phone):
-		record_id = self.__generate_record_id(phone)
-		return self.redis.exists(self.record_prefix + record_id)
+		registration_check_codes_sender.resend(phone, code, request)
 
 
 	@staticmethod

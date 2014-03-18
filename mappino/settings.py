@@ -23,8 +23,11 @@ else:
 
 	ESTIMATE_THREADS_COUNT = 4
 
-	#DOMAIN = 'http://binno.com.ua' # todo: change me to real
-	#ROBOT_MAIL_ACCOUNT = 'no-reply@binno.com.ua' # todo: change me to real
+	# Визначає домен, який точно може забезпечити роботу всіх посилань.
+	# Як правило, це який-небудь міжнародний домен типу .com.
+	# Застосовується, між іншим, у формуванні посилань в шаблонах емейл-повідомлень.
+	REDIRECT_DOMAIN = 'http://127.0.0.1:8000' # todo: зміни мене повністю!
+
 
 	SECRET_KEY = '*m9ye0^!5otq35^(rb1^5mau92$6xen5!y69c$9e20yr0etexi'
 	TEMPLATE_DEBUG = DEBUG
@@ -32,6 +35,7 @@ else:
 
 	SMS_GATE_LOGIN = passwords.SMS_GATE_LOGIN
 	SMS_GATE_PASSWORD = passwords.SMS_GATE_PASSWORD
+	MANDRILL_API_KEY = passwords.MANDRILL_API_KEY
 
 
 	DATABASES = {
@@ -44,6 +48,10 @@ else:
 		}
 	}
 	REDIS_DATABASES = {
+		'throttle': {
+			'HOST': '185.14.186.102',
+		    'PORT': 6379,
+		},
 	    'steady': {
 		    'HOST': '185.14.186.102',
 		    'PORT': 6379,
@@ -94,13 +102,14 @@ else:
 	    'core.publications',
 	    'core.markers_servers',
 	    'core.search',
+	    'core.correspondence'
 
 		# 'south',
 	)
 	MIDDLEWARE_CLASSES = (
 		'django.contrib.sessions.middleware.SessionMiddleware',
 		'django.middleware.common.CommonMiddleware',
-		'django.middleware.csrf.CsrfViewMiddleware',
+		# 'django.middleware.csrf.CsrfViewMiddleware',
 		'django.contrib.auth.middleware.AuthenticationMiddleware',
 		'django.middleware.clickjacking.XFrameOptionsMiddleware',
 	)
