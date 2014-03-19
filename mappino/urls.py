@@ -1,5 +1,14 @@
 from django.conf.urls import patterns, url
-from core.correspondence.ajax.main import NewMessage, NewCallRequest
+
+from core.correspondence.ajax.main import \
+	NewMessage as correspondence_main_NewMessage, \
+	NewCallRequest as correspondence_main_NewCallRequest
+from core.support.ajax.cabinet import \
+	NewTicket as support_cabinet_NewTicket, \
+	NewMessage as support_cabinet_NewMessage
+from core.support.ajax.web_hooks import \
+	IncomingAnswerWebHook as support_hooks_IncomingAnswer
+
 
 
 #-- angular templates for main pages
@@ -17,8 +26,8 @@ urlpatterns = patterns('apps.pages.main',
 
 
     #-- detailed forms
-    url(r'^ajax/template/main/detailed/$', 'detailed.templates.detailed'),
-	url(r'^ajax/template/main/detailed/(\d+)/$', 'detailed.templates.detailed_content'),
+    url(r'^ajax/template/main/detailed-dialog/$', 'detailed.templates.detailed'),
+	url(r'^ajax/template/main/detailed-dialog/(\d+)/$', 'detailed.templates.detailed_content'),
 )
 
 #-- angular templates for accounts
@@ -67,9 +76,10 @@ urlpatterns += patterns('apps',
     url(r'^ajax/api/markers/$', 'pages.main.markers.ajax.get_markers'),
 
 
-    #-- notifications
-    url(r'^ajax/api/notifications/send-message/(\d+:\d+)/$', NewMessage.as_view()),
-    url(r'^ajax/api/notifications/send-call-request/(\d+:\d+)/$', NewCallRequest.as_view()),
+	#-- detailed
+	    #-- notifications
+	    url(r'^ajax/api/notifications/send-message/(\d+:\d+)/$', correspondence_main_NewMessage.as_view()),
+	    url(r'^ajax/api/notifications/send-call-request/(\d+:\d+)/$', correspondence_main_NewCallRequest.as_view()),
 )
 
 #-- angular API for cabinet
@@ -107,6 +117,15 @@ urlpatterns += patterns('apps.pages.cabinet',
 
     #-- search
 	url(r'^ajax/api/cabinet/search/$', 'search.ajax.search'),
+
+
+    #-- support
+	    #-- API
+		url(r'^ajax/api/cabinet/support/tickets/$', support_cabinet_NewTicket.as_view()),
+		url(r'^ajax/api/cabinet/support/tickets/(\d+)/messages/$', support_cabinet_NewMessage.as_view()),
+
+        #-- web hooks
+        url(r'^web-hooks/support/agents-answers/$', support_hooks_IncomingAnswer),
 )
 
 
