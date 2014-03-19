@@ -1,13 +1,10 @@
 #coding=utf-8
-import random
 import string
-from datetime import timedelta
+
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.tests.custom_user import CustomUserManager
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, transaction
-from django.utils.timezone import now
-from collective.exceptions import ObjectAlreadyExist
 
 
 class UsersManager(CustomUserManager):
@@ -119,3 +116,7 @@ class Users(AbstractBaseUser):
 
 	def mobile_phone(self):
 		return '+380' + self.raw_phone
+
+
+	def full_name(self):
+		return self.name + ' ' + self.surname

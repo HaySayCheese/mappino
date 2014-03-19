@@ -5,15 +5,14 @@ from core.correspondence.ajax.main import \
 	NewCallRequest as correspondence_main_NewCallRequest
 from core.support.ajax.cabinet import \
 	NewTicket as support_cabinet_NewTicket, \
-	NewMessage as support_cabinet_NewMessage
+	NewMessage as support_cabinet_NewMessage, \
+	CloseTicket as support_cabinet_CloseTicket
 from core.support.ajax.web_hooks import \
 	IncomingAnswerWebHook as support_hooks_IncomingAnswer
 
 
 
 #-- angular templates for main pages
-
-
 urlpatterns = patterns('apps.pages.main',
     #-- common
     url(r'^ajax/template/main/first-enter/$', 'templates_ajax.first_enter_template'),
@@ -122,6 +121,7 @@ urlpatterns += patterns('apps.pages.cabinet',
     #-- support
 	    #-- API
 		url(r'^ajax/api/cabinet/support/tickets/$', support_cabinet_NewTicket.as_view()),
+        url(r'^ajax/api/cabinet/support/tickets/(\d+)/close/$', support_cabinet_CloseTicket.as_view()),
 		url(r'^ajax/api/cabinet/support/tickets/(\d+)/messages/$', support_cabinet_NewMessage.as_view()),
 
         #-- web hooks
