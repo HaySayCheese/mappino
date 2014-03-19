@@ -1,3 +1,4 @@
+#coding=utf-8
 from collective.constants import AbstractConstant
 
 
@@ -22,8 +23,8 @@ class MessagesTypes(AbstractConstant):
 	def __init__(self):
 		super(MessagesTypes, self).__init__()
 		self.set_ids({
-			'clients_message': 0,
-		    'supports_message': 1,
+			'clients_message': 0, # повідомлення від клієнта
+		    'supports_message': 1, # повідомлення від агента підтримки
 		})
 
 	def clients_message(self):

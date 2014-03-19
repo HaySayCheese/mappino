@@ -109,12 +109,6 @@ class CloseTicket(View):
 		'ok': {
 			'code': 0
 		},
-	    'invalid_parameters': {
-		    'code': 1
-	    },
-	    'invalid_ticket_id': {
-		    'code': 2
-	    },
 	}
 
 	@method_decorator(login_required_or_forbidden)

@@ -9,7 +9,6 @@ from core.users.models import Users
 
 class Tickets(models.Model):
 	class ClosedTicket(Exception): pass
-
 	class Meta:
 		db_table = "support_tickets"
 

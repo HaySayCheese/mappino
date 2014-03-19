@@ -11,6 +11,9 @@ class SupportAgentsNotifier(object):
 
 
 	def send_notification(self, ticket, message):
+		"""
+		Надішле повідомлення, що надійшло від рієлтора на ящик підтримки.
+		"""
 		if not message:
 			raise InvalidArgument('Message can not be empty.')
 
@@ -25,6 +28,11 @@ class SupportAgentsNotifier(object):
 
 
 	def send_empty_answer_notification(self, ticket, html):
+		"""
+		Надішле повідомлення агенту підтримки про те,
+		що його попереднє повідомлення було відхилено системою обробки через відсутність тексту,
+		або неможливість його розпізнання.
+		"""
 		html = templates.get_template('email/support/auto_responses/empty_answer.html').render({
 		    'html': html
 		})
@@ -32,11 +40,21 @@ class SupportAgentsNotifier(object):
 
 
 	def send_closed_ticket_notification(self, ticket):
+		"""
+		Надішле повідомлення агенту підтримки про те,
+		що його попереднє повідомлення було відхилено системою обробки через те,
+		що клієнт закрив тікет.
+		"""
 		html = templates.get_template('email/support/auto_responses/closed_ticket.html').render()
 		self.__send_email(ticket, html)
 
 
 	def send_nonexistent_ticket_notification(self, ticket):
+		"""
+		Надішле повідомлення агенту підтримки про те,
+		що його попереднє повідомлення було відхилено системою обробки через відсутність тікета.
+		(наприклад, якшо тікет був фізично видалений)
+		"""
 		html = templates.get_template('email/support/auto_responses/nonexistent_ticket.html').render()
 		self.__send_email(ticket, html)
 
