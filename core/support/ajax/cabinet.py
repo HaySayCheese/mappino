@@ -14,7 +14,7 @@ from core.support import support_agents_notifier
 from core.support.models import Tickets
 
 
-class NewTicket(View):
+class TicketsView(View):
 	codes = {
 		'ok': {
 			'code': 0
@@ -27,7 +27,22 @@ class NewTicket(View):
 
 	@method_decorator(login_required_or_forbidden)
 	def dispatch(self, *args, **kwargs):
-		return super(NewTicket, self).dispatch(*args, **kwargs)
+		return super(TicketsView, self).dispatch(*args, **kwargs)
+
+
+	def get(self, request, *args):
+		"""
+		Віддає всі звернення до служби підтримки,
+		які належать користувачу, який згенерував запит.
+		"""
+		tickets = Tickets.by_owner(request.user.id)
+		result = [{
+			'id': t.id,
+		    'state_sid': t.state_sid,
+		    'created': t.created.strftime('%Y-%m-%dT%H:%M:%S'),
+		    'subject': t.subject
+		} for t in tickets]
+		return HttpResponse(json.dumps(result), content_type="application/json")
 
 
 	def post(self, request, *args):

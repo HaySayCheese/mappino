@@ -4,7 +4,7 @@ from core.correspondence.ajax.main import \
 	NewMessage as correspondence_main_NewMessage, \
 	NewCallRequest as correspondence_main_NewCallRequest
 from core.support.ajax.cabinet import \
-	NewTicket as support_cabinet_NewTicket, \
+	TicketsView as support_cabinet_Tickets, \
 	NewMessage as support_cabinet_NewMessage, \
 	CloseTicket as support_cabinet_CloseTicket
 from core.support.ajax.web_hooks import \
@@ -120,7 +120,7 @@ urlpatterns += patterns('apps.pages.cabinet',
 
     #-- support
 	    #-- API
-		url(r'^ajax/api/cabinet/support/tickets/$', support_cabinet_NewTicket.as_view()),
+		url(r'^ajax/api/cabinet/support/tickets/$', support_cabinet_Tickets.as_view()),
         url(r'^ajax/api/cabinet/support/tickets/(\d+)/close/$', support_cabinet_CloseTicket.as_view()),
 		url(r'^ajax/api/cabinet/support/tickets/(\d+)/messages/$', support_cabinet_NewMessage.as_view()),
 

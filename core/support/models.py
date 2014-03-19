@@ -17,6 +17,12 @@ class Tickets(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	subject = models.TextField()
 
+
+	@classmethod
+	def by_owner(cls, user_id):
+		return cls.objects.filter(owner_id=user_id).defer('owner')
+
+
 	@classmethod
 	def open(cls, owner, subject, message):
 		with transaction.atomic():
