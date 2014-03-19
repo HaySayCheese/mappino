@@ -19,6 +19,7 @@ class BaseSMSSender(object):
 			raise InvalidArgument('Number can not be empty.')
 		# todo: додати перевірку номеру на відповідність формату
 
+		# todo: забрати цю перевірку після перевірки рефакторингу моделі юзерів
 		number = str(number)
 		if '+380' != number[0:4]:
 			number = '+380' + str(number)

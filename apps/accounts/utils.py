@@ -35,7 +35,7 @@ class AccessRestoreHandler(object):
 		# try by email
 		user = Users.by_email(username)
 		if user is None:
-			user = Users.by_phone_number(username)
+			user = Users.by_main_mobile_phone(username)
 			if user is None:
 				raise NoUserWithSuchUsername('Login: {0}'.format(username))
 

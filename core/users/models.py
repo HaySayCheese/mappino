@@ -5,20 +5,21 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.tests.custom_user import CustomUserManager
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, transaction
+from collective.exceptions import InvalidArgument
 
 
 class UsersManager(CustomUserManager):
-	def create_user(self, email, phone, password=None):
+	def create_user(self, email, mobile_phone, password=None):
 		if not email:
 			raise ValueError('User must have an email.')
-		if not phone:
+		if not mobile_phone:
 			raise ValueError('User must have phone number.')
 
 		with transaction.atomic():
 			user = self.model(
 				is_active = False,
 				email = self.normalize_email(email),
-				raw_phone = self.normalize_phone(phone),
+				mobile_phone = self.normalize_phone_number(mobile_phone),
 			)
 			user.set_password(password)
 			user.save(using=self._db)
@@ -34,38 +35,28 @@ class UsersManager(CustomUserManager):
 			return user
 
 
-	def normalize_phone(self, phone):
-		# fixme: підтримується лише укр. формат номерів
+	@staticmethod
+	def normalize_phone_number(number):
+		if not number:
+			raise InvalidArgument('number can not be empty.')
 
+		# Відсікти всі не цифрові символи
 		phone_number = ''
-		for symbol in phone:
+		for symbol in number:
 			if symbol in string.digits:
 				phone_number += symbol
 
-		# Видаляємо цифри 380, якщо номер починається на ці цифри і його довжина складає 12 символів.
-		if len(phone_number) == 12 and phone_number[0:3] == '380':
-			return phone_number[3:]
-
-		# Видаляємо перший 0 у номерах типу 0ккХХХХХХХ,
-		# якщо довжина номера складає 10 символів.
-		elif len(phone_number) == 10 and phone_number[0] == '0':
-			return phone_number[1:]
-
-		# Можливо, передано валідний номер вже у форматі ккХХХХХХХ
-		elif len(phone_number) == 9:
-			try:
-				int(phone_number)
-				return phone_number
-			except ValueError:
-				raise ValueError("Invalid or unsupported format.")
-
-		raise ValueError("Invalid or unsupported format.")
-
+		# Додаємо плюсик
+		return  '+' + phone_number
 
 
 class Users(AbstractBaseUser):
 	class Meta:
 		db_table = "users"
+		unique_together = (
+			('mobile_phone', 'add_mobile_phone'),
+			('landline_phone', 'add_landline_phone'),
+		)
 
 	is_active = models.BooleanField(default=False)
 	is_admin = models.BooleanField(default=False)
@@ -74,21 +65,28 @@ class Users(AbstractBaseUser):
 	name = models.TextField(null=True)
 	surname = models.TextField(null=True)
 	email = models.EmailField(unique=True)
-	raw_phone = models.CharField(max_length=9, unique=True)
+
+	# contacts
+	mobile_phone = models.CharField(max_length=20, unique=True)
+	add_mobile_phone = models.CharField(max_length=20, unique=True, null=True)
+	landline_phone = models.CharField(max_length=20, unique=True, null=True) # стаціонарний телефон
+	add_landline_phone = models.CharField(max_length=20, unique=True, null=True)
+	skype = models.TextField()
+
 
 	#-- managers
 	objects = UsersManager()
 
 	#-- django constraints
-	USERNAME_FIELD = 'raw_phone'
+	USERNAME_FIELD = 'mobile_phone'
 	REQUIRED_FIELDS = ['name', 'surname', 'email']
 
 
 	@classmethod
-	def by_phone_number(cls, number):
+	def by_main_mobile_phone(cls, number):
 		try:
-			number = cls.objects.normalize_phone(number)
-			return cls.objects.get(raw_phone = number)
+			number = cls.objects.normalize_phone_number(number)
+			return cls.objects.get(mobile_phone = number)
 		except (ValueError, ObjectDoesNotExist):
 			return None
 
@@ -110,12 +108,9 @@ class Users(AbstractBaseUser):
 
 	@classmethod
 	def is_phone_number_free(cls, number):
-		# todo: додати перевірку серед додаткових телефонів
-		return cls.objects.filter(raw_phone = number).count() == 0
-
-
-	def mobile_phone(self):
-		return '+380' + self.raw_phone
+		number = cls.objects.normalize_phone_number(number)
+		return cls.objects.filter(mobile_phone = number).count() == 0 and \
+		       cls.objects.filter(add_mobile_phone = number).count() == 0
 
 
 	def full_name(self):

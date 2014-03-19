@@ -9,7 +9,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 
 from apps.accounts.utils import AccessRestoreHandler, TokenDoesNotExists, NoUserWithSuchUsername, MobilePhonesChecker, TokenAlreadyExists, InvalidCheckCode
-from collective.exceptions import ResourceThrottled
+from collective.exceptions import ResourceThrottled, InvalidArgument
 from collective.methods.request_data_getters import angular_post_parameters
 from core.users.models import Users
 
@@ -59,10 +59,10 @@ def validate_phone_handler(request):
 	except ValueError:
 		return HttpResponseBadRequest('@number should be sent.')
 
-	# is number free?
+	# is number correct?
 	try:
-		raw_number = Users.objects.normalize_phone(number)
-	except ValueError:
+		number = Users.objects.normalize_phone_number(number)
+	except InvalidArgument:
 		body = {
 			'code': 1,
 		    'message': 'invalid phone number',
@@ -70,6 +70,7 @@ def validate_phone_handler(request):
 		return HttpResponse(json.dumps(body), content_type='application/json')
 
 	# is this UA number?
+	# todo: зняти обмеження на номери. придумати як валідувати номери тих країн, в яких ми працюватимемо.
 	ua_phone_codes = [
 		'91', # Тримоб
 		'99', # MTC
@@ -87,15 +88,15 @@ def validate_phone_handler(request):
 	    '93', # life :)
 	    '63', # life :)
 	]
-	if raw_number[0:2] not in ua_phone_codes:
+	if number[1:3] not in ua_phone_codes:
 		body = {
 			'code': 2,
-		    'message': 'only UA phone codes are supported.',
+		    'message': 'only UA phone codes are supported currently.',
 		}
 		return HttpResponse(json.dumps(body), content_type='application/json')
 
 	# is number in use?
-	if not Users.is_phone_number_free(raw_number):
+	if not Users.is_phone_number_free(number):
 		body = {
 			'code': 3,
 		    'message': 'such number already in use.',
@@ -588,14 +589,14 @@ def on_login_info_handler(request):
 
 #-- system
 def __login(username, password, request):
-	user = Users.by_phone_number(username)
+	user = Users.by_main_mobile_phone(username)
 	if user is None:
 		user = Users.by_email(username)
 		if user is None:
 			return False, None
 
 	user = authenticate(
-		username = user.raw_phone,
+		username = user.mobile_phone,
 		password = password
 	)
 	if user is None or not user.is_active:

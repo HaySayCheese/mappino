@@ -60,7 +60,7 @@ class NotificationsDispatcher(object):
 		self.__send_email(message)
 
 		# Надішлем рієлтору щасливу sms
-		notifications_sms_sender.incoming_message(publication.owner.mobile_phone(), request)
+		notifications_sms_sender.incoming_message(publication.owner.mobile_phone, request)
 
 
 	def send_new_call_request_notification(self, request, pub_tid, pub_hid, client_number, client_name=None):
@@ -105,7 +105,7 @@ class NotificationsDispatcher(object):
 		self.__send_email(message)
 
 		# Надішлем рієлтору щасливу sms
-		notifications_sms_sender.incoming_call_request(publication.owner.mobile_phone(), client_number, request)
+		notifications_sms_sender.incoming_call_request(publication.owner.mobile_phone, client_number, request)
 
 
 	def __send_email(self, message):
