@@ -24,7 +24,7 @@ app.factory('authorizationQueries', function($http) {
             return $http.post('ajax/api/accounts/registration/', {
                     'name':             user.name,
                     'surname':          user.surname,
-                    'phone-number':     user.phoneNumber,
+                    'phone-number':     "+380" + user.phoneNumber,
                     'email':            user.email,
                     'password':         user.password,
                     'password-repeat':  user.passwordRepeat
