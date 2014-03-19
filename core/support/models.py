@@ -42,7 +42,7 @@ class Tickets(models.Model):
 
 		Messages.objects.create(
 			ticket = self,
-			type = TICKETS_MESSAGES_TYPES.clients_message(),
+			type_sid = TICKETS_MESSAGES_TYPES.clients_message(),
 			text = text
 		)
 
@@ -53,7 +53,7 @@ class Tickets(models.Model):
 
 		Messages.objects.create(
 			ticket = self,
-			type = TICKETS_MESSAGES_TYPES.supports_message(),
+			type_sid = TICKETS_MESSAGES_TYPES.supports_message(),
 			text = text
 		)
 
@@ -67,7 +67,7 @@ class Messages(models.Model):
 		db_table = "support_messages"
 
 	ticket = models.ForeignKey(Tickets)
-	type = models.SmallIntegerField()
+	type_sid = models.SmallIntegerField()
 	created = models.DateTimeField(auto_now_add=True)
 	text = models.TextField()
 
