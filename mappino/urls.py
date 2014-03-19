@@ -1,10 +1,18 @@
 from django.conf.urls import patterns, url
-from core.correspondence.ajax.main import NewMessage, NewCallRequest
+
+from core.correspondence.ajax.main import \
+	NewMessage as correspondence_main_NewMessage, \
+	NewCallRequest as correspondence_main_NewCallRequest
+from core.support.ajax.cabinet import \
+	TicketsView as support_cabinet_Tickets, \
+	MessagesView as support_cabinet_Messages, \
+	CloseTicket as support_cabinet_CloseTicket
+from core.support.ajax.web_hooks import \
+	IncomingAnswerWebHook as support_hooks_IncomingAnswer
+
 
 
 #-- angular templates for main pages
-
-
 urlpatterns = patterns('apps.pages.main',
     #-- common
     url(r'^ajax/template/main/first-enter/$', 'templates_ajax.first_enter_template'),
@@ -67,9 +75,10 @@ urlpatterns += patterns('apps',
     url(r'^ajax/api/markers/$', 'pages.main.markers.ajax.get_markers'),
 
 
-    #-- notifications
-    url(r'^ajax/api/notifications/send-message/(\d+:\d+)/$', NewMessage.as_view()),
-    url(r'^ajax/api/notifications/send-call-request/(\d+:\d+)/$', NewCallRequest.as_view()),
+	#-- detailed
+	    #-- notifications
+	    url(r'^ajax/api/notifications/send-message/(\d+:\d+)/$', correspondence_main_NewMessage.as_view()),
+	    url(r'^ajax/api/notifications/send-call-request/(\d+:\d+)/$', correspondence_main_NewCallRequest.as_view()),
 )
 
 #-- angular API for cabinet
@@ -107,6 +116,16 @@ urlpatterns += patterns('apps.pages.cabinet',
 
     #-- search
 	url(r'^ajax/api/cabinet/search/$', 'search.ajax.search'),
+
+
+    #-- support
+	    #-- API
+		url(r'^ajax/api/cabinet/support/tickets/$', support_cabinet_Tickets.as_view()),
+        url(r'^ajax/api/cabinet/support/tickets/(\d+)/close/$', support_cabinet_CloseTicket.as_view()),
+		url(r'^ajax/api/cabinet/support/tickets/(\d+)/messages/$', support_cabinet_Messages.as_view()),
+
+        #-- web hooks
+        url(r'^web-hooks/support/agents-answers/$', support_hooks_IncomingAnswer),
 )
 
 
