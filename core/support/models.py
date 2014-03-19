@@ -31,6 +31,11 @@ class Tickets(models.Model):
 		return new_ticket
 
 
+	def close(self):
+		self.state_sid = TICKETS_STATES.closed()
+		self.save()
+
+
 	def add_message(self, text):
 		if self.state_sid != TICKETS_STATES.open():
 			raise SuspiciousOperation('Attempt to add message into closed ticket.')
@@ -53,9 +58,8 @@ class Tickets(models.Model):
 		)
 
 
-	def close(self):
-		self.state_sid = TICKETS_STATES.closed()
-		self.save()
+	def messages(self):
+		return Messages.objects.filter(ticket=self).defer('ticket')
 
 
 class Messages(models.Model):

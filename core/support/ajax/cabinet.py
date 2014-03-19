@@ -99,11 +99,8 @@ class CloseTicket(View):
 		return HttpResponse(json.dumps(self.codes['ok']), content_type="application/json")
 
 
-class NewMessage(View):
+class MessagesView(View):
 	codes = {
-		'ok': {
-			'code': 0
-		},
 	    'invalid_parameters': {
 		    'code': 1
 	    },
@@ -114,7 +111,32 @@ class NewMessage(View):
 
 	@method_decorator(login_required_or_forbidden)
 	def dispatch(self, *args, **kwargs):
-		return super(NewMessage, self).dispatch(*args, **kwargs)
+		return super(MessagesView, self).dispatch(*args, **kwargs)
+
+
+	def get(self, request, *args):
+		"""
+		Віддає всі повідомлення одного тікета в json
+		"""
+		try:
+			ticket_id = args[0]
+		except IndexError:
+			return HttpResponseBadRequest(json.dumps(
+				self.codes['invalid_parameters']), content_type='application/json')
+
+		ticket = Tickets.objects.filter(id=ticket_id, owner=request.user).only('id')[:1]
+		if not ticket:
+			return HttpResponseBadRequest(json.dumps(
+				self.codes['invalid_ticket_id']), content_type='application/json')
+		ticket = ticket[0]
+
+		result = [{
+			'id': m.id,
+		    'type_sid': m.type,
+		    'created': m.created.strftime('%Y-%m-%dT%H:%M:%S'),
+		    'text': m.text,
+		} for m in ticket.messages()]
+		return HttpResponse(json.dumps(result), content_type="application/json")
 
 
 	def post(self, request, *args):
