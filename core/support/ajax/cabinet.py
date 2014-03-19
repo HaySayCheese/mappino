@@ -68,6 +68,37 @@ class TicketsView(View):
 		return HttpResponse(json.dumps(self.codes['ok']), content_type="application/json")
 
 
+class CloseTicket(View):
+	codes = {
+		'ok': {
+			'code': 0
+		},
+	}
+
+	@method_decorator(login_required_or_forbidden)
+	def dispatch(self, *args, **kwargs):
+		return super(CloseTicket, self).dispatch(*args, **kwargs)
+
+
+	def post(self, request, *args):
+		"""
+		Обробляє запит на закриття тікета
+		"""
+		try:
+			ticket_id = args[0]
+		except IndexError:
+			return HttpResponseBadRequest(json.dumps(
+				self.codes['invalid_parameters']), content_type='application/json')
+
+		ticket = Tickets.objects.filter(id=ticket_id, owner=request.user).only('id')[:1]
+		if not ticket:
+			return HttpResponseBadRequest(json.dumps(
+				self.codes['invalid_ticket_id']), content_type='application/json')
+		ticket = ticket[0]
+		ticket.close()
+		return HttpResponse(json.dumps(self.codes['ok']), content_type="application/json")
+
+
 class NewMessage(View):
 	codes = {
 		'ok': {
@@ -116,35 +147,4 @@ class NewMessage(View):
 		except InvalidArgument:
 			return HttpResponseBadRequest(json.dumps(
 				self.codes['invalid_parameters']), content_type='application/json')
-		return HttpResponse(json.dumps(self.codes['ok']), content_type="application/json")
-
-
-class CloseTicket(View):
-	codes = {
-		'ok': {
-			'code': 0
-		},
-	}
-
-	@method_decorator(login_required_or_forbidden)
-	def dispatch(self, *args, **kwargs):
-		return super(CloseTicket, self).dispatch(*args, **kwargs)
-
-
-	def post(self, request, *args):
-		"""
-		Обробляє запит на закриття тікета
-		"""
-		try:
-			ticket_id = args[0]
-		except IndexError:
-			return HttpResponseBadRequest(json.dumps(
-				self.codes['invalid_parameters']), content_type='application/json')
-
-		ticket = Tickets.objects.filter(id=ticket_id, owner=request.user).only('id')[:1]
-		if not ticket:
-			return HttpResponseBadRequest(json.dumps(
-				self.codes['invalid_ticket_id']), content_type='application/json')
-		ticket = ticket[0]
-		ticket.close()
 		return HttpResponse(json.dumps(self.codes['ok']), content_type="application/json")
