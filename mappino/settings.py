@@ -91,6 +91,7 @@ else:
 	SESSION_REDIS_DB = 0
 	SESSION_REDIS_PREFIX = 'ses'
 
+	SUPPORT_EMAIL = 'Dima.Chizhevsky@gmail.com'
 
 	INSTALLED_APPS = (
 		'django.contrib.auth',
@@ -102,7 +103,8 @@ else:
 	    'core.publications',
 	    'core.markers_servers',
 	    'core.search',
-	    'core.correspondence'
+	    'core.correspondence',
+	    'core.support',
 
 		# 'south',
 	)
