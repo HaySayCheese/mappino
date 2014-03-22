@@ -470,42 +470,42 @@ class FlatsMarkersManager(BaseMarkersManager):
 		return data
 
 
-	def marker_brief(self, data, condition=None):
-		if condition is None:
+	def marker_brief(self, marker, conditions=None):
+		if conditions is None:
 			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
-			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
+			if (marker.get('for_sale', False)) and (marker.get('for_rent', False)):
 				return {
-					'id': data['id'],
+					'id': marker['id'],
 					'd0': u'Продажа: ' + self.format_price(
-							data['sale_price'],
-							data['sale_currency_sid'],
+							marker['sale_price'],
+							marker['sale_currency_sid'],
 							CURRENCIES.uah()
 						) + u' грн.',
 					'd1': u'Аренда: ' + self.format_price(
-							data['rent_price'],
-							data['rent_currency_sid'],
+							marker['rent_price'],
+							marker['rent_currency_sid'],
 							CURRENCIES.uah()
 						) + u' грн.',
 				}
 
-			elif data.get('for_sale', False):
+			elif marker.get('for_sale', False):
 				return {
-					'id': data['id'],
-					'd0': u'Комнат: ' + unicode(data['rooms_count']), # required
+					'id': marker['id'],
+					'd0': u'Комнат: ' + unicode(marker['rooms_count']), # required
 					'd1': self.format_price(
-							data['sale_price'],
-							data['sale_currency_sid'],
+							marker['sale_price'],
+							marker['sale_currency_sid'],
 							CURRENCIES.uah()
 						) + u' грн.',
 				}
 
-			elif data.get('for_rent', False):
+			elif marker.get('for_rent', False):
 				return{
-					'id': data['id'],
-					'd0': u'Мест: ' + unicode(data['persons_count']), # required
+					'id': marker['id'],
+					'd0': u'Мест: ' + unicode(marker['persons_count']), # required
 					'd1': self.format_price(
-							data['rent_price'],
-							data['rent_currency_sid'],
+							marker['rent_price'],
+							marker['rent_currency_sid'],
 							CURRENCIES.uah()
 						) + u' грн.',
 				}
@@ -514,9 +514,58 @@ class FlatsMarkersManager(BaseMarkersManager):
 				raise DeserializationError()
 
 		else:
-			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
-			# todo: додати конвертацію валют в залженості від фільтрів
-			pass
+			currency = conditions.get('currency_sid', CURRENCIES.uah())
+			if marker.get('for_sale', False) and marker.get('for_rent', False):
+				return {
+					'id': marker['id'],
+					'd0': u'Продажа: ' + self.format_currency(
+						self.format_price(
+							marker['sale_price'],
+							marker['sale_currency_sid'],
+							currency
+						),
+						currency
+					),
+					'd1': u'Аренда: ' + self.format_currency(
+						self.format_price(
+							marker['rent_price'],
+							marker['rent_currency_sid'],
+							currency
+						),
+						currency
+					),
+				}
+
+			elif marker.get('for_sale', False):
+				return {
+					'id': marker['id'],
+					'd0': u'Комнат: ' + str(marker['rooms_count']) if marker['rooms_count'] else '',
+					'd1': self.format_currency(
+							self.format_price(
+								marker['sale_price'],
+								marker['sale_currency_sid'],
+								currency
+							), currency),
+				}
+
+			elif marker.get('for_rent', False):
+				return{
+					'id': marker['id'],
+					'd0': u'Мест: ' + str(marker['persons_count']),
+					'd1': self.format_currency(
+							self.format_price(
+								marker['rent_price'],
+								marker['rent_currency_sid'],
+								currency
+							), currency),
+				}
+
+			else:
+				raise DeserializationError()
+
+			# todo: додати конввертацію валют в залженост від фільтрів
+			# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
+			# ітак ясно, що їх буде не більше одної.
 
 
 	def filter(self, publications, filters):
@@ -1072,43 +1121,43 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 		return data
 
 
-	def marker_brief(self, data, condition=None):
-		if condition is None:
+	def marker_brief(self, marker, conditions=None):
+		if conditions is None:
 			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
-			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
+			if (marker.get('for_sale', False)) and (marker.get('for_rent', False)):
 				return {
-					'id': data['id'],
+					'id': marker['id'],
 					'd0': u'Продажа: ' + self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
+						marker['sale_price'],
+						marker['sale_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 
 					'd1': u'Аренда: ' + self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
+						marker['rent_price'],
+						marker['rent_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 				}
 
-			elif data.get('for_sale', False):
+			elif marker.get('for_sale', False):
 				return {
-					'id': data['id'],
-					'd0': u'Комнат: ' + str(data['rooms_count']), # required
+					'id': marker['id'],
+					'd0': u'Комнат: ' + str(marker['rooms_count']), # required
 					'd1': self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
+						marker['sale_price'],
+						marker['sale_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 				}
 
-			elif data.get('for_rent', False):
+			elif marker.get('for_rent', False):
 				return {
-					'id': data['id'],
-					'd0': u'Мест: ' + str(data['persons_count']), # required
+					'id': marker['id'],
+					'd0': u'Мест: ' + str(marker['persons_count']), # required
 					'd1': self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
+						marker['rent_price'],
+						marker['rent_currency_sid'],
 						CURRENCIES.uah()
 					) + u' грн.',
 				}
@@ -1117,9 +1166,58 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 				raise DeserializationError()
 
 		else:
-			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
+			currency = conditions.get('currency_sid', CURRENCIES.uah())
+			if marker.get('for_sale', False) and marker.get('for_rent', False):
+				return {
+					'id': marker['id'],
+					'd0': u'Продажа: ' + self.format_currency(
+						self.format_price(
+							marker['sale_price'],
+							marker['sale_currency_sid'],
+							currency
+						),
+						currency
+					),
+					'd1': u'Аренда: ' + self.format_currency(
+						self.format_price(
+							marker['rent_price'],
+							marker['rent_currency_sid'],
+							currency
+						),
+						currency
+					),
+				}
+
+			elif marker.get('for_sale', False):
+				return {
+					'id': marker['id'],
+					'd0': u'Комнат: ' + str(marker['rooms_count']) if marker['rooms_count'] else '',
+					'd1': self.format_currency(
+							self.format_price(
+								marker['sale_price'],
+								marker['sale_currency_sid'],
+								currency
+							), currency),
+				}
+
+			elif marker.get('for_rent', False):
+				return{
+					'id': marker['id'],
+					'd0': u'Мест: ' + str(marker['persons_count']),
+					'd1': self.format_currency(
+							self.format_price(
+								marker['rent_price'],
+								marker['rent_currency_sid'],
+								currency
+							), currency),
+				}
+
+			else:
+				raise DeserializationError()
+
 			# todo: додати конввертацію валют в залженост від фільтрів
-			pass
+			# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
+			# ітак ясно, що їх буде не більше одної.
 
 
 	def filter(self, publications, filters):
@@ -1763,7 +1861,6 @@ class HousesMarkersManager(BaseMarkersManager):
 			# todo: додати конввертацію валют в залженост від фільтрів
 			# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
 			# ітак ясно, що їх буде не більше одної.
-			pass
 
 
 	def filter(self, publications, filters):
