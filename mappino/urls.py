@@ -1,5 +1,7 @@
 from django.conf.urls import patterns, url
 
+from core.publications.ajax.main import \
+	DetailedView as publications_main_DetailedView
 from core.correspondence.ajax.main import \
 	NewMessage as correspondence_main_NewMessage, \
 	NewCallRequest as correspondence_main_NewCallRequest
@@ -76,6 +78,9 @@ urlpatterns += patterns('apps',
 
 
 	#-- detailed
+        # output
+        url(r'^ajax/api/detailed/publication/(\d+:\d+)/$', publications_main_DetailedView.as_view()),
+
 	    #-- notifications
 	    url(r'^ajax/api/notifications/send-message/(\d+:\d+)/$', correspondence_main_NewMessage.as_view()),
 	    url(r'^ajax/api/notifications/send-call-request/(\d+:\d+)/$', correspondence_main_NewCallRequest.as_view()),

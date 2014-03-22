@@ -9,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.db import models, transaction
 from django.utils.timezone import now
 
+from core.currencies import currencies_manager
 from core.publications import models_signals
 from core.publications.constants import OBJECT_STATES, CURRENCIES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, EmptyRentPrice
@@ -310,6 +311,7 @@ class SaleTermsModel(AbstractModel):
 	add_terms = models.TextField(default='')
 
 
+	#-- validation
 	def check_required_fields(self):
 		"""
 		Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
@@ -319,6 +321,37 @@ class SaleTermsModel(AbstractModel):
 		if self.price is None:
 			raise EmptySalePrice('Sale price is None.')
 
+
+	#-- output
+	def print_price(self, currency=CURRENCIES.uah()):
+		if self.price is None:
+			return u''
+
+		price = u'{:.2f}'.format(currencies_manager.convert(self.price, self.currency_sid, currency))
+		if price and price[-3:] == '.00':
+			price = price[:-3]
+
+		if self.currency_sid != currency:
+			price = u'≈' + price
+
+		if currency == CURRENCIES.dol():
+			price += u' дол. США'
+		elif currency == CURRENCIES.eur():
+			price += u' евро'
+		elif currency == CURRENCIES.uah():
+			price += u' грн.'
+		if self.transaction_sid == SALE_TRANSACTION_TYPES.for_square_meter():
+			price += u'/м<sup>2</sup>'
+
+		if self.is_contract:
+			price += u' (цена договорная)'
+		return price
+
+
+	def print_add_terms(self):
+		if self.add_terms is None:
+			return u''
+		return self.add_terms
 
 
 class LivingRentTermsModel(AbstractModel):
@@ -350,6 +383,7 @@ class LivingRentTermsModel(AbstractModel):
 	home_theater = models.BooleanField(default=False)
 
 
+	#-- validation
 	def check_required_fields(self):
 		"""
 		Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
@@ -359,6 +393,81 @@ class LivingRentTermsModel(AbstractModel):
 		if self.price is None:
 			raise EmptyRentPrice('Rent price is None.')
 
+
+	#-- output
+	def print_price(self, currency=CURRENCIES.uah()):
+		if self.price is None:
+			return u''
+
+		price = u'{:.2f}'.format(currencies_manager.convert(self.price, self.currency_sid, currency))
+		if price and price[-3:] == '.00':
+			price = price[:-3]
+
+		if self.currency_sid != currency:
+			price = u'≈' + price
+
+		if currency == CURRENCIES.dol():
+			price += u' дол. США'
+		elif currency == CURRENCIES.eur():
+			price += u' евро'
+		elif currency == CURRENCIES.uah():
+			price += u' грн.'
+
+		if self.is_contract:
+			price += u' (цена договорная)'
+		return price
+
+
+	def print_add_terms(self):
+		if self.add_terms is None:
+			return u''
+		return self.add_terms
+
+
+	def print_terms(self):
+		options = u''
+		if self.period_sid == LIVING_RENT_PERIODS.daily():
+			options += u', посуточно'
+		elif self.period_sid == LIVING_RENT_PERIODS.monthly():
+			options += u', помесячно'
+		elif self.period_sid == LIVING_RENT_PERIODS.long_period():
+			options += u', долгосрочная аренда'
+
+		if self.persons_count:
+			options += u', количество мест — ' + unicode(self.persons_count)
+
+		if self.family:
+			options += u', подходит для семей с детьми'
+		if self.pets:
+			options += u', питомцы разрешены'
+		if self.foreigners:
+			options += u', размещение иностранцев'
+		if self.smoking:
+			options += u', можно курить'
+
+		if options:
+			return options[2:]
+		return u''
+
+
+	def print_furniture(self):
+		furniture = u''
+		if self.furniture:
+			furniture += u', мебель'
+		if self.refrigerator:
+			furniture += u', холодильник'
+		if self.tv:
+			furniture += u', телевизор'
+		if self.washing_machine:
+			furniture += u', стиральная машина'
+		if self.conditioner:
+			furniture += u', кондиционер'
+		if self.home_theater:
+			furniture += u', домашний кинотеатр'
+
+		if furniture:
+			return furniture[2:]
+		return u''
 
 
 class CommercialRentTermsModel(AbstractModel):
@@ -380,6 +489,7 @@ class CommercialRentTermsModel(AbstractModel):
 	add_terms = models.TextField(default='')
 
 
+	#-- validation
 	def check_required_fields(self):
 		"""
 		Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
@@ -388,6 +498,48 @@ class CommercialRentTermsModel(AbstractModel):
 		"""
 		if self.price is None:
 			raise EmptyRentPrice('Rent price is None.')
+
+
+	#-- output
+	def print_price(self, currency=CURRENCIES.uah()):
+		if self.body.price is None:
+			return u''
+
+		price = u'{:.2f}'.format(currencies_manager.convert(self.price, self.currency_sid, currency))
+		if price and price[-3:] == '.00':
+			price = price[:-3]
+
+		if self.currency_sid != currency:
+			price = u'≈' + price
+
+		if currency == CURRENCIES.dol():
+			price += u' дол. США'
+		elif currency == CURRENCIES.eur():
+			price += u' евро'
+		elif currency == CURRENCIES.uah():
+			price += u' грн.'
+
+		if self.body.price_is_contract:
+			price += u' (цена договорная)'
+		return price
+
+
+	def print_add_terms(self):
+		if self.add_terms is None:
+			return u''
+		return self.add_terms
+
+
+	def print_terms(self):
+		options = u''
+		if self.rent.period_sid == COMMERCIAL_RENT_PERIODS.monthly():
+			options += u', помесячно'
+		elif self.rent.period_sid == COMMERCIAL_RENT_PERIODS.long_period():
+			options += u', долгосрочная аренда'
+
+		if options:
+			return options[2:]
+		return u''
 
 
 
