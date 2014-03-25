@@ -61,6 +61,19 @@
     </div>
 
 
+    <div class="row form-group">
+        <div class="col-sm-12">
+            <label class="col-sm-6 control-label">Общая площадь:</label>
+            <div class="col-sm-3">
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_total_area_from" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_total_area_from" allow-only-number/>
+            </div>
+            <div class="col-sm-3">
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_total_area_to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_total_area_to" allow-only-number/>
+            </div>
+        </div>
+    </div>
+
+
     <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid == 0">
         <div class="col-sm-12">
             <label class="col-sm-6 control-label">Количество комнат:</label>

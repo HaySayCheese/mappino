@@ -49,6 +49,7 @@
     <script type="text/javascript" src="{{ static }}js/main/controllers/loginCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/controllers/registrationCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/controllers/restoreAccessCtrl.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/controllers/PublicationViewCtrl.js"></script>
 
     <script type="text/javascript" src="{{ static }}js/main/directives/selectOnClick.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/directives/focusOnLoad.js"></script>
@@ -69,7 +70,7 @@
             <div class="sidebar-header">
 
                 <div class="bwb-header text-right" ng-show="!userName || userName === ''">
-                    <a ng-href="#!/account/new[[ urlFiltersPart ]]">Подать обьявление</a>
+                    <a ng-href="/cabinet">Подать обьявление</a>
                     <span class="text-muted">&#8226;</span>
                     <a ng-href="#!/account/registration[[ urlFiltersPart ]]">Регистрация</a>
                     <span class="text-muted">&#8226;</span>

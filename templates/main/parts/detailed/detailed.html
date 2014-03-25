@@ -1,0 +1,47 @@
+<div class="modal publication-view-modal fade" ng-controller="PublicationViewCtrl">
+    <div class="modal-dialog">
+        <div class="modal-content content-white">
+            <div class="publication-photo pull-left">
+                <img src="{{ static }}img/main/publication-view/temp-main-photo.png" alt=""/>
+                <div class="counter">
+                    Фото<br/> 1 / 10
+                </div>
+            </div>
+            <div class="publication-content pull-right">
+                <div class="publication-content-header">
+                    <span>[[ publicationDescription ]]</span>
+                    <img class="close" src="{{ static }}img/main/publication-view/detailed-close.png" alt="" data-dismiss="modal"/>
+                </div>
+                <div class="publication-content-body" ng-switch on="publicationViewStatePart">
+                    <div ng-switch-when="Contacts">
+                        <div class="user-photo">
+                            <img src="{{ static }}img/main/publication-view/mark.png" alt=""/>
+                        </div>
+                        <div class="user-name">
+                            Марк Цукерберг
+                        </div>
+                        <div class="user-phones">
+                            моб. телефон: (050) 82-42-618 <br/>
+                            роб. телефон: (050) 82-42-618
+                        </div>
+                        <div class="user-btns">
+                            <div class="btn btn-primary btn-block">Заказать обратный звонок</div>
+                            <div class="btn btn-default btn-block">Оставить сообщение</div>
+                        </div>
+                    </div>
+
+                    <div ng-switch-when="Description">
+                        [[ publicationViewStatePart ]]
+                    </div>
+                </div>
+                <div class="publication-content-footer">
+                    <div class="btn-group btn-group-justified">
+                        <a type="button" class="btn btn-success btn-xlg" ng-click="changeState()">Перейти к описанию</a>
+                        <a type="button" class="btn btn-warning btn-xlg">2</a>
+                        <a type="button" class="btn btn-primary btn-xlg">3</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
