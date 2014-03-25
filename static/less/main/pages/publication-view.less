@@ -1,0 +1,114 @@
+
+//
+// Load core variables and mixins
+// --------------------------------------------------
+
+@import "../../components/variables";
+@import "../../components/mixins";
+
+
+.publication-view-modal {
+
+    .content-white {
+        .size(800px, 500px);
+    }
+
+    .publication-photo {
+        .size(300px, 500px);
+
+        > .counter {
+            .square(60px);
+            padding: 10px;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+
+            text-align: center;
+
+            color: #ffffff;
+            background-color: rgba(79, 170, 160, 0.9);
+
+            &:before,
+            &:after {
+                content: " ";
+                .square(30px);
+                position: absolute;
+            }
+            &:before {
+                top: -30px;
+                left: 0;
+
+                background-color: rgba(79, 170, 160, 0.4);
+            }
+            &:after {
+                bottom: 0;
+                right: -30px;
+
+                background-color: rgba(79, 170, 160, 0.6);
+            }
+        }
+    }
+
+    .publication-content {
+        .size(500px, 500px);
+
+        .publication-content-header {
+            .size(100%, 50px);
+            padding: 10px;
+        }
+
+        .publication-content-body {
+            .size(100%, calc(~"100% - 115px"));
+            padding: 10px 0;
+            //text-align: center;
+
+            .user-photo,
+            .user-name,
+            .user-phones {
+                display: block;
+                text-align: center;
+            }
+
+            .user-photo {
+                img {
+                    .square(120px);
+                }
+            }
+            .user-name {
+                font-size: @font-size-h3;
+            }
+            .user-phones {
+                padding: 10px 0;
+                color: @gray-light;
+                font-size: @font-size-h5;
+            }
+            .user-btns {
+                width: 250px;
+                .center-block();
+
+                :last-child {
+                    border-bottom: 2px dashed @nice-violet;
+                }
+            }
+        }
+
+        .publication-content-footer {
+            .size(100%, 65px);
+
+            .btn {
+                text-decoration: none !important;
+                border-radius: 0;
+            }
+
+            .btn:nth-child(1) {
+                width: 370px;
+            }
+            .btn:nth-child(2) {
+                width: 65px;
+            }
+            .btn:nth-child(3) {
+                width: 65px;
+            }
+        }
+    }
+}
