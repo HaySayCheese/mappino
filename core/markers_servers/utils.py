@@ -1,4 +1,5 @@
 #coding=utf-8
+from collective.exceptions import InvalidArgument
 
 
 class Point(object):
@@ -17,8 +18,8 @@ class Point(object):
 
 class LatLngPoint(object):
 	def __init__(self, lat, lng):
-		if not lat: raise ValueError('Empty @lat.')
-		if not lng: raise ValueError('Empty @lng.')
+		if not lat: raise InvalidArgument('Empty @lat.')
+		if not lng: raise InvalidArgument('Empty @lng.')
 		self.lat = int(lat)
 		self.lng = int(lng)
 
@@ -36,12 +37,12 @@ class DegreePoint(object):
 			self.lat = int(lat)
 			self.lng = int(lng)
 		except ValueError:
-			raise ValueError('Invalid parameters. Conversion to int can not be done.')
+			raise InvalidArgument('Invalid parameters. Conversion to int can not be done.')
 
 		if abs(self.lat) > self.max_lat:
-			raise ValueError('Invalid latitude. Abs. value is greater than 90.')
+			raise InvalidArgument('Invalid latitude. Abs. value is greater than 90.')
 		if abs(self.lng) > self.max_lng:
-			raise ValueError('Invalid longitude. Abs. value is greater than 180.')
+			raise InvalidArgument('Invalid longitude. Abs. value is greater than 180.')
 
 
 	def add_lat(self, d):
@@ -86,12 +87,12 @@ class SegmentPoint(object):
 			self.lat = int(lat)
 			self.lng = int(lng)
 		except ValueError:
-			raise ValueError('Invalid parameters. Conversion to int can not be done.')
+			raise InvalidArgument('Invalid parameters. Conversion to int can not be done.')
 
 		if not (self.min <= self.lat <= self.max):
-			raise ValueError('Invalid parameters.')
+			raise InvalidArgument('Invalid parameters.')
 		if not (self.min <= self.lng <= self.max):
-			raise ValueError('Invalid parameters.')
+			raise InvalidArgument('Invalid parameters.')
 
 		if adjust_to_sector:
 			while self.lat % self.step != 0:
@@ -152,9 +153,9 @@ class SegmentPoint(object):
 class DegreeSegmentPoint(object):
 	def __init__(self, lat, lng):
 		if not '.' in lat:
-			raise ValueError('Invalid latitude. "." is absent.')
+			raise InvalidArgument('Invalid latitude. "." is absent.')
 		if not '.' in lng:
-			raise ValueError('Invalid longitude. "." is absent.')
+			raise InvalidArgument('Invalid longitude. "." is absent.')
 
 		degree_lat, segment_lat = lat.split('.')
 		degree_lng, segment_lng = lng.split('.')
@@ -162,9 +163,9 @@ class DegreeSegmentPoint(object):
 		self.degree = DegreePoint(degree_lat, degree_lng)
 
 		if len(segment_lat) < 2:
-			raise ValueError('Invalid latitude. (Shortest than 2)')
+			raise InvalidArgument('Invalid latitude. (Shortest than 2)')
 		if len(segment_lng) < 2:
-			raise ValueError('Invalid longitude. (Shortest than 2)')
+			raise InvalidArgument('Invalid longitude. (Shortest than 2)')
 		self.segment = SegmentPoint(segment_lat[:2], segment_lng[:2])
 
 

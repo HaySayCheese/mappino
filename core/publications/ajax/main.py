@@ -21,7 +21,8 @@ class DetailedView(View):
 		super(DetailedView, self).__init__()
 		self.description_generators = {
 			# жилая недвижимость
-			OBJECTS_TYPES.flat(): self.compose_flat_description
+			OBJECTS_TYPES.flat(): self.compose_flat_description,
+		    OBJECTS_TYPES.apartments(): self.compose_apartments_description,
 		    # OBJECTS_TYPES.apartments(): ApartmentsPhotos,
 		    # OBJECTS_TYPES.house():      HousesPhotos,
 		    # OBJECTS_TYPES.dacha():      DachasPhotos,
@@ -65,6 +66,68 @@ class DetailedView(View):
 
 	@staticmethod
 	def compose_flat_description(hid):
+		if hid is None:
+			raise None
+
+		try:
+			p = FlatsHeads.objects.filter(id=hid).only(
+				'for_sale', 'for_rent', 'body', 'sale_terms', 'rent_terms')[:1][0]
+		except IndexError:
+			return None
+
+		description = {
+			'market_type': p.body.print_market_type(),
+		    'building_type': p.body.print_building_type(),
+		    'build_year': p.body.print_build_year(),
+		    'flat_type': p.body.print_flat_type() or u'неизвестно',
+		    'rooms_planning': p.body.print_rooms_planning() or u'неивзестно',
+		    'condition': p.body.print_condition() or u'неизвестно',
+
+		    'floor': p.body.print_floor() + p.body.print_floor_type() \
+		        if p.body.print_floor() else p.body.print_floor_type(),
+			'floors_count': p.body.print_floors_count(),
+		    'ceiling_height': p.body.print_ceiling_height(),
+
+		    'total_area': p.body.print_total_area() or 'неизвестно',
+		    'living_area': p.body.print_living_area() or 'неизвестно',
+		    'kitchen_area': p.body.print_kitchen_area(),
+
+		    'rooms_count': (p.body.print_rooms_count()
+		        if p.body.rooms_planning_sid != FLAT_ROOMS_PLANNINGS.free() else '') or 'неизвестно',
+		    'bedrooms_count': p.body.print_bedrooms_count(),
+		    'vcs_count': p.body.print_vcs_count(),
+		    'balconies_count': p.body.print_balconies_count(),
+		    'loggias_count': p.body.print_loggias_count(),
+
+			'facilities': p.body.print_facilities(),
+		    'communications': p.body.print_communications(),
+		    'buildings': p.body.print_provided_add_buildings() + u'. ' + p.body.print_add_buildings() \
+			    if p.body.print_add_buildings() else p.body.print_provided_add_buildings(),
+		    'showplaces': p.body.print_showplaces() + p.body.print_add_facilities() \
+		        if p.body.print_add_facilities() else p.body.print_showplaces()
+		}
+
+		if p.for_sale:
+			description.update({
+				'sale_price_uah': p.sale_terms.print_price(CURRENCIES.uah()),
+				'sale_price_dol': p.sale_terms.print_price(CURRENCIES.dol()),
+				'sale_price_eur': p.sale_terms.print_price(CURRENCIES.eur()),
+			    'sale_terms': p.sale_terms.print_add_terms(),
+			})
+		if p.for_rent:
+			description.update({
+				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
+				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
+				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
+			    'rent_terms': p.rent_terms.print_terms() + '. ' + p.rent_terms.print_add_terms() \
+			        if p.rent_terms.print_add_terms() else p.rent_terms.print_terms(),
+			    'rent_facilities': p.rent_terms.print_furniture()
+			})
+		return description
+
+
+	@staticmethod
+	def compose_apartments_description(hid):
 		if hid is None:
 			raise None
 

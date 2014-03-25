@@ -46,7 +46,7 @@ class SearchManager(object):
 			elif tid == OBJECTS_TYPES.flat():
 				task = update_flat_index.apply_async([hid, ], countdown=self.update_interval)
 			elif tid == OBJECTS_TYPES.apartments():
-				task = update_apartments_index().apply_async([hid, ], countdown=self.update_interval)
+				task = update_apartments_index.apply_async([hid, ], countdown=self.update_interval)
 			elif tid == OBJECTS_TYPES.dacha():
 				task = update_dacha_index.apply_async([hid, ], countdown=self.update_interval)
 			elif tid == OBJECTS_TYPES.cottage():

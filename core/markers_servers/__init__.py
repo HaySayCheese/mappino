@@ -1,11 +1,13 @@
 #coding=utf-8
 from django.dispatch.dispatcher import receiver
 
-from core.markers_servers.servers import HousesMarkersManager, FlatsMarkersManager, ApartmentsMarkersManager, \
-	DachasMarkersManager, CottagesMarkersManager, RoomsMarkersManager, TradesMarkersManager, OfficesMarkersManager, \
-	WarehousesMarkersManager, BusinessesMarkersManager, CateringsMarkersManager, GaragesMarkersManager, LandsMarkersManager
+from core.markers_servers.servers import \
+	HousesMarkersManager, FlatsMarkersManager, ApartmentsMarkersManager, \
+	CottagesMarkersManager, RoomsMarkersManager, TradesMarkersManager, \
+	OfficesMarkersManager, WarehousesMarkersManager, BusinessesMarkersManager, \
+	CateringsMarkersManager, GaragesMarkersManager, LandsMarkersManager
 from core.publications.constants import OBJECTS_TYPES
-from core.publications.models_signals import record_published
+from core.publications.models_signals import before_publish
 
 
 
@@ -14,7 +16,6 @@ MARKERS_SERVERS = {
 	OBJECTS_TYPES.house():      HousesMarkersManager(),
 	OBJECTS_TYPES.flat():       FlatsMarkersManager(),
 	OBJECTS_TYPES.apartments(): ApartmentsMarkersManager(),
-	OBJECTS_TYPES.dacha():      DachasMarkersManager(),
 	OBJECTS_TYPES.cottage():    CottagesMarkersManager(),
 	OBJECTS_TYPES.room():       RoomsMarkersManager(),
 
@@ -31,6 +32,6 @@ MARKERS_SERVERS = {
 }
 
 
-@receiver(record_published)
+@receiver(before_publish)
 def add_publication_marker(sender, **kwargs):
 	MARKERS_SERVERS[kwargs['tid']].add_publication(kwargs['hid'])

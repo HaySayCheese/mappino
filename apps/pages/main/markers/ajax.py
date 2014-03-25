@@ -8,9 +8,10 @@ from apps.pages.main.markers.utils import parse_houses_filters, parse_flats_filt
 	parse_dachas_filters, parse_cottages_filters, parse_rooms_filters, parse_trades_filters, parse_offices_filters, \
 	parse_warehouses_filters, parse_businesses_filters, parse_caterings_filters, parse_garages_filters, \
 	parse_lands_filters
+from collective.exceptions import InvalidArgument
 from collective.methods.request_data_getters import GET_parameter
 from core.markers_servers import MARKERS_SERVERS
-from core.markers_servers.exceptions import TooBigTransaction
+from core.markers_servers.servers import BaseMarkersManager
 from core.markers_servers.utils import Point
 from core.publications.constants import OBJECTS_TYPES
 
@@ -107,9 +108,9 @@ def get_markers(request):
 		markers_briefs = server.markers(ne, sw, conditions)
 		return HttpResponse(json.dumps(markers_briefs), content_type='application/json')
 
-	except TooBigTransaction:
+	except BaseMarkersManager.TooBigTransaction:
 		return HttpResponseBadRequest(
 			json.dumps(get_codes['too_big_query']), content_type='application/json')
-	except ValueError:
+	except InvalidArgument:
 		return HttpResponseBadRequest(
 			json.dumps(get_codes['invalid_coordinates']), content_type='application/json')

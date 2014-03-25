@@ -8,6 +8,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.db import models, transaction
 from django.utils.timezone import now
+from collective.exceptions import InvalidArgument
 
 from core.currencies import currencies_manager
 from core.publications import models_signals
@@ -118,7 +119,7 @@ class LivingHeadModel(models.Model):
 
 
 	def set_lat_lng(self, lat_lng):
-		if not lat_lng:
+		if not lat_lng or lat_lng is None:
 			self.degree_lat = None
 			self.degree_lng = None
 			self.segment_lat = None
@@ -130,7 +131,7 @@ class LivingHeadModel(models.Model):
 
 
 		if not ';' in lat_lng:
-			raise ValueError()
+			raise InvalidArgument()
 		lat, lng = lat_lng.split(';')
 		if (not lat) or (not lng):
 			raise ValueError()
@@ -162,7 +163,7 @@ class LivingHeadModel(models.Model):
 			int(pos_lat)
 			int(pos_lng)
 		except:
-			raise ValueError()
+			raise InvalidArgument()
 
 		self.degree_lat = degree_lat
 		self.degree_lng = degree_lng
@@ -180,14 +181,14 @@ class LivingHeadModel(models.Model):
 		self.check_required_fields()
 		self.body.check_required_fields()
 
+		# sender=None для того, щоб django-orm не витягував автоматично дані з БД,
+		# які, швидше за все, не знадобляться в подальшій обробці.
+		models_signals.before_publish.send(sender=None, tid=self.tid, hid=self.id)
+
 		with transaction.atomic():
 			self.state_sid = OBJECT_STATES.published()
 			self.published = now()
 			self.prolong() # Немає необхідності викликати save. prolong() його викличе.
-
-		# sender=None для того, щоб django-orm не витягував автоматично дані з БД,
-		# які, швидше за все, не знадобляться в подальшій обробці.
-		models_signals.record_published.send(sender=None, tid=self.tid, hid=self.id)
 
 
 	def unpublish(self):
