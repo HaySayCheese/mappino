@@ -244,10 +244,9 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Количество залов:</label>
+                        <label class="col-sm-6 col-lg-4 control-label">Количество залов:</label>
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="halls_count" ng-model="publication.body.halls_count" allow-only-number-without-dot required>
-                            <span class="input-has-error" ng-show="form.publication.halls_count.$error.required && showValidationMessages">Укажите, пожалуйста, количество залов.</span>
+                            <input type="text" class="form-control" name="halls_count" ng-model="publication.body.halls_count" allow-only-number-without-dot>
                             <span class="input-has-error" ng-show="form.publication.halls_count.$error.incorrect">Количество залов указано неверно.</span>
                         </div>
                     </div>
@@ -269,12 +268,13 @@
 
                 <div class="row">
                     <div class="form-group without-margin-bottom">
-                        <label class="col-sm-6 col-lg-4 control-label">Общая площадь:</label>
+                        <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Общая площадь:</label>
                         <div class="col-sm-6">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="total_area" ng-model="publication.body.total_area" allow-only-number>
+                                <input type="text" class="form-control" name="total_area" ng-model="publication.body.total_area" allow-only-number required>
                                 <span class="input-group-addon">м<sup>2</sup></span>
                             </div>
+                            <span class="input-has-error" ng-show="form.publication.total_area.$error.required && showValidationMessages">Укажите, пожалуйста, общую площадь.</span>
                             <span class="input-has-error" ng-show="form.publication.total_area.$error.incorrect">Общая площадь указана неверно.</span>
                         </div>
                     </div>

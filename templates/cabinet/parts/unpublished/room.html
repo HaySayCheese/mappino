@@ -350,7 +350,7 @@
                     <div class="form-group">
                         <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Сан. узел:</label>
                         <div class="col-sm-6">
-                            <select name="vc_sid" data-width="100%" ng-model="publication.body.vc_sid">
+                            <select name="wc_sid" data-width="100%" ng-model="publication.body.wc_sid">
                                 <option value="0">На этаже</option>
                                 <option value="1">В комнате</option>
                                 <option value="2">Нет</option>
@@ -427,16 +427,6 @@
                             <label for="cold_water">Холодная вода</label>
                         </div>
                     </div>
-                    <div class="col-sm-12 col-lg-4 form-group">
-                        <div class="checkbox">
-                            <input id="security_alarm" type="checkbox" name="security_alarm" ng-model="publication.body.security_alarm">
-                            <label for="security_alarm">Охранная сигнализация</label>
-                        </div>
-                        <div class="checkbox">
-                            <input id="fire_alarm" type="checkbox" name="fire_alarm" ng-model="publication.body.fire_alarm">
-                            <label for="fire_alarm">Пожарная сигнализация</label>
-                        </div>
-                    </div>
                 </div>
 
             </div>
@@ -502,6 +492,17 @@
                 <div class="checkbox">
                     <input id="cable_tv" type="checkbox" name="cable_tv" ng-model="publication.body.cable_tv">
                     <label for="cable_tv">Кабельное / спутниковое телевидение</label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <h3 id="pub-outb-section">Дополнительные постройки</h3>
+            <div class="col-sm-6 col-lg-4 form-group">
+                <div class="checkbox">
+                    <input id="playground" type="checkbox" name="playground" ng-model="publication.body.playground">
+                    <label for="playground">Детская площадка</label>
                 </div>
             </div>
         </div>
