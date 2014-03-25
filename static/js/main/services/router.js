@@ -33,6 +33,12 @@ app.config(['$routeProvider', function($routeProvider) {
             reloadOnSearch: false
         })
 
+        .when('/publication/:id', {
+            templateUrl: "/ajax/template/main/detailed-dialog/",
+            view: "content-view",
+            reloadOnSearch: false
+        })
+
         .otherwise({
             redirectTo: '/search'
         });

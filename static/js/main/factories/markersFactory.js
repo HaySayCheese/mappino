@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Markers', function(mapQueries) {
+app.factory('Markers', function(mapQueries, $location) {
     var markers = {
             red: {},
             blue: {},

@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
+app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $routeParams) {
 
     $rootScope.publicationTypes = [
         { name: "house", id: 0, title: "Дома",
@@ -211,6 +211,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies) {
      **/
     $scope.$on("$routeChangeSuccess", function() {
         $scope.urlFiltersPart = $location.url().replace("/search", "");
+        $rootScope.publicationIdPart = $routeParams.id;
 
         angular.element(".modal-backdrop").remove();
     });

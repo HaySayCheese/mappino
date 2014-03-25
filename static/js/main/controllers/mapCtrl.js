@@ -327,7 +327,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             .replace("/search", "")
             .replace("/account/registration", "")
             .replace("/account/restore-access", "")
-            .replace("/account/login", "");
+            .replace("/account/login", "")
+            .replace("/publication/" + $scope.publicationIdPart, "");
 
         if (!$scope.$$phase)
             $scope.$apply();
@@ -380,6 +381,18 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 for (var marker in markers[panel]) {
                     if (markers[panel].hasOwnProperty(marker)) {
                         markers[panel][marker].setMap(map);
+
+                        (function() {
+                            var marker1 = markers[panel][marker];
+
+                            google.maps.event.addListener(marker1, 'click', function() {
+                                $location.path("/publication/" + marker1.tid + ":" + marker1.id);
+
+                                if (!$scope.$$phase)
+                                    $scope.$apply();
+                            });
+                        })();
+
                     }
                 }
             }
