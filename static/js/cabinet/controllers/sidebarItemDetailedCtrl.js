@@ -175,7 +175,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             marker = new google.maps.Marker({
                 map: map,
                 draggable: true,
-                position: center
+                position: center,
+                icon: 'http://127.0.0.1/mappino_static/img/markers/red-normal.png'
             });
 
         autocomplete.bindTo('bounds', map);
