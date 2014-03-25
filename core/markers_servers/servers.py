@@ -315,9 +315,6 @@ class BaseMarkersManager(object):
 
 	@abc.abstractmethod
 	def marker_brief(self, data, condition=None):
-		"""
-		Повертає словник
-		"""
 		return None
 
 
@@ -3391,12 +3388,9 @@ class TradesMarkersManager(BaseMarkersManager):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
-
-			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
-
+			'rent_terms__price', 'rent_terms__currency_sid',
 			'body__electricity', 'body__gas', 'body__sewerage', 'body__hot_water', 'body__cold_water',
-			'body__market_type_sid', 'body__building_type_sid',
-			'body__halls_area', 'body__total_area', 'body__floor',)
+			'body__building_type_sid', 'body__halls_area', 'body__total_area', 'body__floor',)
 
 
 	def serialize_publication(self, record):
@@ -3811,12 +3805,9 @@ class OfficesMarkersManager(BaseMarkersManager):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
-
-			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
-
+			'rent_terms__price', 'rent_terms__currency_sid',
 			'body__security', 'body__kitchen', 'body__hot_water', 'body__cold_water',
-		    'body__building_type_sid',
-			'body__cabinets_count', 'body__total_area')
+		    'body__building_type_sid', 'body__total_area', 'body__cabinets_count')
 
 
 	def serialize_publication(self, record):
@@ -4203,12 +4194,9 @@ class WarehousesMarkersManager(BaseMarkersManager):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
-
-			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
-
+			'rent_terms__price', 'rent_terms__currency_sid',
 			'body__electricity', 'body__gas', 'body__hot_water', 'body__cold_water',
-		    'body__security_alarm', 'body__fire_alarm',
-			'body__area',)
+		    'body__security_alarm', 'body__fire_alarm', 'body__area')
 
 
 	def serialize_publication(self, record):
@@ -4565,10 +4553,7 @@ class BusinessesMarkersManager(BaseMarkersManager):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
-
-			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
-
-			'body__building_type_sid', 'body__age', 'body__total_area',)
+			'rent_terms__price', 'rent_terms__currency_sid')
 
 
 	def serialize_publication(self, record):
@@ -4826,12 +4811,9 @@ class CateringsMarkersManager(BaseMarkersManager):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
-
-			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
-
+			'rent_terms__price', 'rent_terms__currency_sid',
 			'body__electricity', 'body__gas', 'body__hot_water', 'body__cold_water',
-			'body__building_type_sid',
-			'body__halls_count', 'body__halls_area', 'body__total_area',)
+			'body__building_type_sid', 'body__halls_count', 'body__halls_area', 'body__total_area',)
 
 
 	def serialize_publication(self, record):
@@ -5278,9 +5260,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
-
-			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
-
+			'rent_terms__price', 'rent_terms__currency_sid',
 			'body__pit', 'body__area', 'body__ceiling_height',)
 
 
@@ -5614,11 +5594,8 @@ class LandsMarkersManager(BaseMarkersManager):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
-
-			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
-
-			'body__electricity', 'body__gas', 'body__sewerage', 'body__water',
-			'body__area')
+			'rent_terms__price', 'rent_terms__currency_sid',
+			'body__electricity', 'body__gas', 'body__sewerage', 'body__water', 'body__area')
 
 
 	def serialize_publication(self, record):
