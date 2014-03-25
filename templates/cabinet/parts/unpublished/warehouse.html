@@ -202,7 +202,76 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
+
+        <div class="row">
+            <h3 id="pub-driveways-sections">Подъездные пути</h3>
+            <div class="col-lg-6 form-group">
+                <div class="checkbox">
+                    <input id="railway" type="checkbox" name="railway" ng-model="publication.body.railway">
+                    <label for="railway">Ж/Д ветка</label>
+                </div>
+                <div class="checkbox">
+                    <input id="asphalt" type="checkbox" name="asphalt" ng-model="publication.body.asphalt">
+                    <label for="asphalt">Асфальт</label>
+                </div>
+            </div>
+            <div class="col-lg-6 form-group">
+                <div class="checkbox">
+                    <input id="concrete" type="checkbox" name="concrete" ng-model="publication.body.concrete">
+                    <label for="concrete">Бетон</label>
+                </div>
+                <div class="checkbox">
+                    <input id="ground" type="checkbox" name="ground" ng-model="publication.body.ground">
+                    <label for="ground">Грунт</label>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label>Другие подъездные пути, уточнения:</label>
+                    <input type="text" class="form-control" name="add_driveways" ng-model="publication.body.add_driveways">
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <h3 id="pub-outb-sections">Дополнительные постройки</h3>
+            <div class="col-lg-6 form-group">
+                <div class="checkbox">
+                    <input id="parking" type="checkbox" name="parking" ng-model="publication.body.parking">
+                    <label for="parking">Парковка</label>
+                </div>
+                <div class="checkbox">
+                    <input id="ramp" type="checkbox" name="ramp" ng-model="publication.body.ramp">
+                    <label for="ramp">Авто-рампа</label>
+                </div>
+                <div class="checkbox">
+                    <input id="storeroom" type="checkbox" name="storeroom" ng-model="publication.body.storeroom">
+                    <label for="storeroom">Кладовая</label>
+                </div>
+            </div>
+            <div class="col-lg-6 form-group">
+                <div class="checkbox">
+                    <input id="offices" type="checkbox" name="offices" ng-model="publication.body.offices">
+                    <label for="offices">Офисные помещения</label>
+                </div>
+                <div class="checkbox">
+                    <input id="cathead" type="checkbox" name="ground" ng-model="publication.body.cathead">
+                    <label for="cathead">Кран-балка</label>
+                </div>
+                <div class="checkbox">
+                    <input id="vc" type="checkbox" name="vc" ng-model="publication.body.vc">
+                    <label for="vc">Уборная</label>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label>Другие постройки, уточнения:</label>
+                    <input type="text" class="form-control" name="add_buildings" ng-model="publication.body.add_buildings">
+                </div>
             </div>
         </div>
 
@@ -263,6 +332,10 @@
                             <input id="gas" type="checkbox" name="gas" ng-model="publication.body.gas">
                             <label for="gas">Газ</label>
                         </div>
+                        <div class="checkbox">
+                            <input id="sewerage" type="checkbox" name="sewerage" ng-model="publication.body.sewerage">
+                            <label for="sewerage">Канализация</label>
+                        </div>
                     </div>
                     <div class="col-sm-6 col-lg-4 form-group">
                         <div class="checkbox">
@@ -272,6 +345,10 @@
                         <div class="checkbox">
                             <input id="cold_water" type="checkbox" name="cold_water" ng-model="publication.body.cold_water">
                             <label for="cold_water">Холодная вода</label>
+                        </div>
+                        <div class="checkbox">
+                            <input id="ventilation" type="checkbox" name="ventilation" ng-model="publication.body.ventilation">
+                            <label for="ventilation">Вентиляция</label>
                         </div>
                     </div>
                     <div class="col-sm-12 col-lg-4 form-group">
@@ -283,43 +360,15 @@
                             <input id="fire_alarm" type="checkbox" name="fire_alarm" ng-model="publication.body.fire_alarm">
                             <label for="fire_alarm">Пожарная сигнализация</label>
                         </div>
+                        <div class="checkbox">
+                            <input id="security" type="checkbox" name="security" ng-model="publication.body.security">
+                            <label for="security">Охрана</label>
+                        </div>
                     </div>
                 </div>
 
             </div>
 
-            <div class="row" ng-show="publication.head.for_rent">
-                <div class="col-sm-12">
-                    <div class="col-sm-6 col-lg-4 form-group">
-                        <div class="checkbox">
-                            <input id="furniture" type="checkbox" name="furniture" ng-model="publication.rent_terms.furniture">
-                            <label for="furniture">Мебель</label>
-                        </div>
-                        <div class="checkbox">
-                            <input id="refrigerator" type="checkbox" name="refrigerator" ng-model="publication.rent_terms.refrigerator">
-                            <label for="refrigerator">Холодильник</label>
-                        </div>
-                        <div class="checkbox">
-                            <input id="tv" type="checkbox" name="tv" ng-model="publication.rent_terms.tv">
-                            <label for="tv">Телевизор</label>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-4 form-group">
-                        <div class="checkbox">
-                            <input id="washing_machine" type="checkbox" name="washing_machine" ng-model="publication.rent_terms.washing_machine">
-                            <label for="washing_machine">Стиральная машина</label>
-                        </div>
-                        <div class="checkbox">
-                            <input id="conditioner" type="checkbox" name="conditioner" ng-model="publication.rent_terms.conditioner">
-                            <label for="conditioner">Кондиционер</label>
-                        </div>
-                        <div class="checkbox">
-                            <input id="home_theater" type="checkbox" name="home_theater" ng-model="publication.rent_terms.home_theater">
-                            <label for="home_theater">Дом. кинотеатр</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="col-sm-12">
                 <div class="form-group">
                     <label>Другие удобства, уточнения:</label>
@@ -358,20 +407,20 @@
             <h3 id="pub-near-sections">Рядом находиться</h3>
             <div class="col-lg-6 form-group">
                 <div class="checkbox">
-                    <input id="kindergarten" type="checkbox" name="kindergarten" ng-model="publication.body.kindergarten">
-                    <label for="kindergarten">Детсад</label>
+                    <input id="cafe" type="checkbox" name="cafe" ng-model="publication.body.cafe">
+                    <label for="cafe">Кафе</label>
                 </div>
                 <div class="checkbox">
-                    <input id="school" type="checkbox" name="school" ng-model="publication.body.school">
-                    <label for="school">Школа</label>
+                    <input id="bank" type="checkbox" name="bank" ng-model="publication.body.bank">
+                    <label for="bank">Банк</label>
+                </div>
+                <div class="checkbox">
+                    <input id="cash_machine" type="checkbox" name="cash_machine" ng-model="publication.body.cash_machine">
+                    <label for="cash_machine">Банкомат</label>
                 </div>
                 <div class="checkbox">
                     <input id="market" type="checkbox" name="market" ng-model="publication.body.market">
                     <label for="market">Рынок / супераркет</label>
-                </div>
-                <div class="checkbox">
-                    <input id="park" type="checkbox" name="park" ng-model="publication.body.park">
-                    <label for="park">Парк / сквер</label>
                 </div>
             </div>
             <div class="col-lg-6 form-group">
@@ -384,8 +433,12 @@
                     <label for="entertainment">Развлекательные заведения</label>
                 </div>
                 <div class="checkbox">
-                    <input id="sport_center" type="checkbox" name="sport_center" ng-model="publication.body.sport_center">
-                    <label for="sport_center">Спортивно-оздоровительный центр</label>
+                    <input id="railway_station" type="checkbox" name="railway_station" ng-model="publication.body.railway_station">
+                    <label for="railway_station">Ж/Д станция</label>
+                </div>
+                <div class="checkbox">
+                    <input id="refueling" type="checkbox" name="refueling" ng-model="publication.body.refueling">
+                    <label for="refueling">Заправка</label>
                 </div>
             </div>
             <div class="col-sm-12">
