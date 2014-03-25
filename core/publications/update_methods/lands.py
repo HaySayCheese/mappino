@@ -316,14 +316,14 @@ def update_land(h, field, value, tid):
 
 
 		# boolean
-		elif field == 'canalisation':
+		elif field == 'sewerage':
 			if (value is True) or (value is False):
 				b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.canalisation = value
+				b.sewerage = value
 				b.save(force_update=True)
 				return
 			else:
-				raise ValueError('Invalid canalisation value.')
+				raise ValueError('Invalid sewerage value.')
 
 
 		# text

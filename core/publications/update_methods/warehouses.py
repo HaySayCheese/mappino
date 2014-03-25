@@ -42,7 +42,7 @@ def update_warehouse(h, field, value, tid):
 		# blank or decimal
 		elif field == 'sale_price':
 			if not value:
-				st = WarehousesSaleTerms.objects.filter(h.sale_terms_id).only('id')[0]
+				st = WarehousesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 				st.price = None
 				st.save(force_update=True)
 				return
@@ -51,7 +51,7 @@ def update_warehouse(h, field, value, tid):
 				if value <= 0:
 					raise ValueError()
 
-				st = WarehousesSaleTerms.objects.filter(h.sale_terms_id).only('id')[0]
+				st = WarehousesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 				st.price = value
 				st.save(force_update=True)
 
@@ -69,7 +69,7 @@ def update_warehouse(h, field, value, tid):
 			if value not in SALE_TRANSACTION_TYPES.values():
 				raise ValueError()
 
-			st = WarehousesSaleTerms.objects.filter(h.sale_terms_id).only('id')[0]
+			st = WarehousesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 			st.transaction_sid = value
 			st.save(force_update=True)
 			return
@@ -81,7 +81,7 @@ def update_warehouse(h, field, value, tid):
 			if value not in CURRENCIES.values():
 				raise ValueError()
 
-			st = WarehousesSaleTerms.objects.filter(h.sale_terms_id).only('id')[0]
+			st = WarehousesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 			st.currency_sid = value
 			st.save(force_update=True)
 			return
@@ -90,7 +90,7 @@ def update_warehouse(h, field, value, tid):
 		# bool
 		elif field == 'sale_is_contract':
 			if (value is True) or (value is False):
-				st = WarehousesSaleTerms.objects.filter(h.sale_terms_id).only('id')[0]
+				st = WarehousesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 				st.is_contract = value
 				st.save(force_update=True)
 				return
@@ -100,7 +100,7 @@ def update_warehouse(h, field, value, tid):
 
 		# text
 		elif field == 'sale_add_terms':
-			st = WarehousesSaleTerms.objects.filter(h.sale_terms_id).only('id')[0]
+			st = WarehousesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 			if not value:
 				st.add_terms = None
 				st.save(force_update=True)
@@ -436,10 +436,10 @@ def update_warehouse(h, field, value, tid):
 
 
 		# boolean
-		elif field == 'canalisation':
+		elif field == 'sewerage':
 			if (value is True) or (value is False):
 				b = WarehousesBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.canalisation = value
+				b.sewerage = value
 				b.save(force_update=True)
 				return
 			else:

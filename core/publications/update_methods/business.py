@@ -735,10 +735,10 @@ def update_business(h, field, value, tid):
 
 
 		# boolean
-		elif field == 'canalisation':
+		elif field == 'sewerage':
 			if (value is True) or (value is False):
 				b = BusinessesBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.canalisation = value
+				b.sewerage = value
 				b.save(force_update=True)
 				return
 			else:

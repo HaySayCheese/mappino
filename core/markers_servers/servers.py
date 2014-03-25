@@ -3,10 +3,10 @@ import copy
 #import mmh3 # todo: enable me back
 
 import abc
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import SuspiciousOperation
+from collective.exceptions import InvalidArgument, RuntimeException
 
 from core.currencies.currencies_manager import convert as convert_currency
-from core.markers_servers.exceptions import TooBigTransaction, SerializationError, DeserializationError
 from core.markers_servers.utils import DegreeSegmentPoint, Point, SegmentPoint, DegreePoint
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, CURRENCIES, MARKET_TYPES, LIVING_RENT_PERIODS, \
 	HEATING_TYPES
@@ -15,118 +15,53 @@ from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
 from mappino.wsgi import redis_connections
 
 
+
 class BaseMarkersManager(object):
 	"""
-	Передбачено, що кожному типу об’єктів відповідатиме власний менеджер маркерів.
-	Але, оскільки деякий функціонал у всіх менеждереів спільний, — його винесено в даний клас.
+	Відповідає за збереження та видачу інформації про маркери в redis.
+	Для ефективної вибірки на мапу умовно накладено координутну сітку, одна комірка якої зветься сегментом.
+	Припустімо є координати виду 20.1234567 та 40.1234567. Тут 20 та 40 — градуси,
+	1234567 — мінути в десятковому представленні.
+
+	Сегменти утворено шляхом поділу мінут градуса від 0 до 99 з кроком в 2.
+	Наприклад: 00;00, 02;00, 04;00 і т.д. Таким чином отримуємо 50*50 = 2500 сегментів в межах одного градуса.
+	Крок сегмента підібрано експерементально. Як правило, у вибірку потрапляє від 4х сегментів одночасно.
 	"""
+	class TooBigTransaction(SuspiciousOperation): pass
+	class SerializationError(BaseException): pass
+	class DeserializationError(BaseException): pass
+
+
 	__metaclass__ = abc.ABCMeta
-
-
 	def __init__(self, tid):
 		if tid not in OBJECTS_TYPES.values():
-			raise ValueError('invalid @tid.')
+			raise InvalidArgument('Incorrect tid.')
 		self.tid = tid
 		self.model = HEAD_MODELS[tid]
 
 		self.redis = redis_connections['steady']
-		self.redis_segments_hashes_prefix = 'segments_hashes'
+		self.segments_hashes_prefix = 'segments_hashes'
 		self.separator = ';'
 		self.digest_separator = ':'
 
 
-	def markers(self, ne, sw, condition=None):
-		# ToDo: описати condition в коментарі
-		"""
-		Args:
-			ne: (North East) Point з координатами північно-західного кута в’юпорта.
-			sw: (South West) Point з координатами південно-східного кута в’юпорта.
-
-		Повертає набір маркерів для в’юпорта з координатами ne та sw у форматі:
-		>> lat;lng градуса:
-		>>   lat;lng маркера:
-		>>     дані маркера (id, ...)
-
-		В деяких випадках може повернути маркери суміжних сегментів із тими, які були запитані.
-		"""
-
-		if (ne is None) or (sw is None):
-			raise ValueError('Invalid coordinates.')
-		# todo: додати перевірку для condition
-
-		result = {}
-		for digest in self.__segments_digests(ne, sw):
-			degree = self.__degree_from_digest(digest)
-
-			coordinates = self.redis.hkeys(digest)
-			pipe = self.redis.pipeline()
-			for c in coordinates:
-				pipe.hget(digest, c)
-
-			raw_markers_data = pipe.execute()
-			if raw_markers_data:
-				result[degree] = {}
-			else:
-				break
-
-			# Десериалізація всіх маркерів
-			markers = [self.deserialize_publication_record(record) for record in raw_markers_data]
-
-			# Зводимо маркери з координатами
-			markers = zip(coordinates, markers)
-
-			# Фільтри і упаковка
-			for record in self.filter(markers, condition):
-				coordinates = record[0]
-				data = record[1]
-				result[degree][coordinates] = self.marker_brief(data, condition)
-		return result
-
-
-	def viewport_hash(self, ne, sw):
-		# todo enable me
-		# """
-		# Args:
-		# 	ne: (North East) Point з координатами північно-західного кута в’юпорта.
-		# 	sw: (South West) Point з координатами південно-східного кута в’юпорта.
-		#
-		# Повертає хеш всіх сегментів, які потрапляють у в’юпорт з координатами ne та sw.
-		# Хеш вираховується як hash(хеш 1-го сегменту + хеш 2-го сегменту + ... + хеш N-го сегменту).
-		# Для підрахунку хешу використовується MurmurHash. (див. док. __update_segment_hash)
-		# """
-		# digests = self.__segments_digests(ne, sw)
-		#
-		# pipe = self.redis.pipeline()
-		# for digest in digests:
-		# 	pipe.hget(self.redis_segments_hashes_prefix, digest)
-		#
-		# key = ''
-		# for h in pipe.execute():
-		# 	if h is not None:
-		# 		key += h
-		# return str(mmh3.hash(key))
-
-		# todo: disable me
-		return None
-
-
 	def add_publication(self, hid):
 		"""
-		Args:
-			hid: id head-запису оголошення.
+		Запитає з БД оголошення з id=hid та мінімальним набором даних необхідних для формування маркера.
+		tid не передається, оскільки кожен клас прив’язаний до окремої моделі на рівні коду,
+		і передбачається за замовчуванням.
 
-		Сериалізує дані оголошення у формат для зберігання в індексі маркерів і
-		оновить сегмент, в який потрапляє маркер даного оголошення.
-		Оновленню в тому числі підлягатиме хеш сегменту.
+		Сериалізує отримані дані у формат для збереження в індексі redis та
+		оновить сегмент в який потрапляє маркер даного оголошення, в тому числі і хеш сегменту.
 		"""
 		if hid is None:
-			raise ValueError('Invalid hid.')
+			raise InvalidArgument('head id can not be None.')
 
 		try:
-			record = self.record_queryset(hid).only(
-				'degree_lng', 'degree_lat', 'segment_lng', 'segment_lat', 'pos_lng', 'pos_lat')[0]
+			queryset = self.record_min_queryset(hid)
+			record = queryset[0]
 		except IndexError:
-			raise ObjectDoesNotExist('Invalid hid. Object with such hid does not exist.')
+			raise InvalidArgument('Object with such hid does not exist.')
 
 		degree = DegreePoint(record.degree_lat, record.degree_lng)
 		segment = SegmentPoint(record.segment_lat, record.segment_lng)
@@ -135,28 +70,108 @@ class BaseMarkersManager(object):
 		sector = Point(record.segment_lat, record.segment_lng)
 		position = Point(record.pos_lat, record.pos_lng)
 		pos_digest = self.__position_digest(sector, position)
+		data = self.serialize_publication(record)
 
-		data = self.serialize_publication_record(record)
 		self.redis.hset(seg_digest, pos_digest, data)
 		self.__update_segment_hash(seg_digest, hid)
 
 
-	def __segments_digests(self, ne, sw):
+	def markers(self, ne, sw, conditions=None):
 		"""
+		Повертає список маркерів, що потрапляють у в’юпорт з координатами North East (ne) та South West (sw).
+		В деяких випадках у видачу можуть додтково потрапити маркери суміжніх сегментів.
+		Це пов’язано із особливістю будови внутршіньої сітки в пам’яті redis в якій розкладено макери.
+		Якщо переданий в’юпорт знаходиться на перехресті 4х або більше сегментів —
+		у видачу потраплять всі маркери з цих сегментів.
+
+		Якщо conditions не None — список маркерів буде попередньо профільтровано.
+
+		Для опису формату в якому зберігаються дані в redis — див. документацію до add_publication()
+
 		Args:
 			ne: (North East) Point з координатами північно-західного кута в’юпорта.
 			sw: (South West) Point з координатами південно-східного кута в’юпорта.
+			conditions: словник з інформаціює про фільтри, які слід застосувати до вибірки.
+		"""
+		if (ne is None) or (sw is None):
+			raise InvalidArgument('Invalid coordinates.')
 
-		Повертає список всіх дайджестів сегментів, які потрапляють у в’юпорт.
+
+		result = {}
+		for digest in self.__segments_digests(ne, sw):
+			degrees = self.__degrees_from_digest(digest)
+
+			pipe = self.redis.pipeline()
+			minutes = self.redis.hkeys(digest)
+			for minute in minutes:
+				pipe.hget(digest, minute)
+
+			raw_markers_data = pipe.execute()
+			if not raw_markers_data:
+				continue
+
+			if degrees not in result:
+				result[degrees] = {}
+
+			# Інформація в redis для економії пам’яті зберігається в стиснутому вигляді.
+			# Для аналізу і фільтрування даних їх слід десериалізувати.
+			markers_data = [self.deserialize_marker_data(marker) for marker in raw_markers_data]
+
+			# Зводимо маркери з координатами
+			markers_data = zip(minutes, markers_data)
+
+			# Фільтруємо і упаковуємо у формат для видачі
+			for marker in self.filter(markers_data, conditions):
+				minutes = marker[0]
+				data = marker[1]
+				brief = self.marker_brief(data, conditions)
+				result[degrees][minutes] = brief
+		return result
+
+
+	def viewport_hash(self, ne, sw):
+		"""
+		Підраховує та повертає хеш сегментів (див. док. __segment_digest),
+		які потрапляють у в’юпорт North East (ne) та South West (sw).
+		Загальний хеш вираховується як hash(хеш 1-го сегменту + хеш 2-го сегменту + ... + хеш N-го сегменту).
+
+		Для підрахунку хешу використовується MurmurHash3,
+		як один з найшвидших хеш-алгоритмів.(див. док. __update_segment_hash)
+		УВАГА: Даний алгоритм не є криптостійким!
+
+		Args:
+			ne: (North East) Point з координатами північно-західного кута в’юпорта.
+		 	sw: (South West) Point з координатами південно-східного кута в’юпорта.
 		"""
 
+		# todo: Розкоментувати (mmh3 не ставиться на вінді. закоментовано, щоб Сєрий мав можливість працювати).
+		# pipe = self.redis.pipeline()
+		# for digest in self.__segments_digests(ne, sw):
+		# 	pipe.hget(self.segments_hashes_prefix, digest)
+		#
+		# key = ''
+		# for segment_data in pipe.execute():
+		# 	if segment_data is not None:
+		# 		key += mmh3.hash(segment_data)
+		# return str(mmh3.hash(key))
+
+
+	def __segments_digests(self, ne, sw):
+		"""
+		Повертає список дайджестів сегментів (див. док. __segment_digest),
+		які потрапляють у в’юпорт North East (ne) та South West (sw).
+
+		Args:
+			ne: (North East) Point з координатами північно-західного кута в’юпорта.
+			sw: (South West) Point з координатами південно-східного кута в’юпорта.
+		"""
 		start = DegreeSegmentPoint(ne.lat, ne.lng)
 		stop = DegreeSegmentPoint(sw.lat, sw.lng)
 
 		# Мапи google деколи повертають координати так, що stop опиняється перед start,
 		# і тоді алгоритм починає пробіг по всьому глобусу і падає на перевірці розміру транзакції.
 		# Дані перетворення видозмінюють координати так, щоб start завжди був перед stop,
-		# неважливо в якому порядку вони прийдуть.
+		# і неважливо в якому порядку вони прийдуть.
 		if start.degree.lng > stop.degree.lng:
 			start.degree.lng, stop.degree.lng = stop.degree.lng, start.degree.lng
 		elif start.segment.lng > stop.segment.lng:
@@ -166,6 +181,14 @@ class BaseMarkersManager(object):
 			start.degree.lat, stop.degree.lat = stop.degree.lat, start.degree.lat
 		elif start.segment.lat < stop.segment.lat:
 			start.segment.lat, stop.segment.lat = stop.segment.lat, start.segment.lat
+
+
+		# Умисно розширити запит на 1 сегмент вліво і вгору, щоб прихопити також і ті оголошення,
+		# які, можливо, знаходяться поряд із в’юпортом, або навіть і в’юпорті, але не потрапляють
+		# у стартовий сегмент
+		start.inc_segment_lat()
+		start.dec_segment_lng()
+
 
 		digests = []
 		current = copy.deepcopy(start)
@@ -177,10 +200,11 @@ class BaseMarkersManager(object):
 				digests.append(self.__segment_digest(current.degree, current.segment))
 
 				# Заборонити одночасну вибірку маркерів з великої к-сті сегментів.
-				# Таким чином можна уберегтись від занадто великих транзакцій і накопичування
-				# великої к-сті запитів від інших користувачів в черзі на обробку.
-				if len(digests) > 5*5:
-					raise TooBigTransaction()
+				# Таким чином можна уберегтись від занадто великих транзакцій (ddos),
+				# накопичування занадто великих обсягів даних в пам’яті та
+				# занадто великої к-сті запитів від інших користувачів в черзі на обробку.
+				if len(digests) > 25:
+					raise self.TooBigTransaction()
 
 				if (current.degree.lng == stop.degree.lng) and (current.segment.lng == stop.segment.lng):
 					break
@@ -211,14 +235,14 @@ class BaseMarkersManager(object):
 		        str(segment.lng) + str(position.lng)
 
 
-	def __degree_from_digest(self, digest):
+	def __degrees_from_digest(self, digest):
 		"""
 		Поверне градус сегмента у форматі "lat;lng".
 		Відомості про градус беруться з дайджеста сегмента.
 		"""
 		index = digest.find(self.digest_separator)
 		if index < 0:
-			raise RuntimeError('Invalid digest.')
+			raise RuntimeException('Invalid digest.')
 
 		coordinates = digest[index+1:].split(self.digest_separator)
 		if ('' in coordinates) or (None in coordinates):
@@ -228,31 +252,35 @@ class BaseMarkersManager(object):
 
 
 	def __update_segment_hash(self, digest, record_id):
-		# todo: enable me
-		# """
-		# Кожен сегмент маркерів має власний хеш.
-		# Він використовується, наприклад, як etag для запитів на отримання маркерів.
-		# Даний метод оновить хеш для сегменту з дайджестом digest.
-		#
-		# Для хешування використовується MurmurHash,
-		# оскільки він дуже швидкий і видає короткі дайджести,
-		# а криптостійкість в даному випадку не важлива.
-		#
-		# Новий хеш вираховується за формулою h = hash(попередній хеш + record_id)
-		# """
+		"""
+		Кожен сегмент маркерів має власний хеш.
+		Він використовується, наприклад, як etag для запитів на отримання маркерів.
+		Даний метод оновить хеш для сегменту з дайджестом digest.
+
+		Для хешування використовується MurmurHash3,
+		оскільки він дуже швидкий і видає короткі дайджести,
+		а криптостійкість в даному випадку не важлива.
+
+		Новий хеш вираховується за формулою h = hash(попередній хеш + record_id)
+		"""
+
+		#  todo: Розкоментувати (mmh3 не ставиться на вінді. закоментовано, щоб Сєрий мав можливість працювати).
 		# current_hash = self.redis.hget(self.redis_segments_hashes_prefix, digest)
 		# if current_hash is None:
 		# 	current_hash = ''
 		#
 		# segment_hash = mmh3.hash(current_hash + str(record_id))
 		# self.redis.hset(self.redis_segments_hashes_prefix, digest, segment_hash)
-
-		# todo: disable me
 		pass
 
 
 	@staticmethod
 	def format_price(price, base_currency, destination_currency):
+		"""
+		Поверне рядок з ціною price сконвертованою з валюти base_currency у валюту destination_currency.
+		Якщо валюти base_currency та destination_currency відмінні — перед результатом буде додано "≈",
+		як індикатор того, що ціна в отриманій валюті приблизна.
+		"""
 		result = u''
 		if base_currency != destination_currency:
 			result += u'≈'
@@ -264,24 +292,24 @@ class BaseMarkersManager(object):
 
 
 	@staticmethod
-	def format_currency(price, currency):
+	def format_currency(currency):
 		if currency == CURRENCIES.dol():
-			return unicode(price) + u' дол.'
+			return u'дол.'
 		elif currency == CURRENCIES.uah():
-			return unicode(price) + u' грн.'
+			return u'грн.'
 		elif currency == CURRENCIES.eur():
-			return unicode(price) + u' евро'
+			return u'евро'
 		else:
-			raise ValueError('Invalid currency')
+			raise InvalidArgument('Invalid currency.')
 
 
 	@abc.abstractmethod
-	def serialize_publication_record(self, record):
+	def serialize_publication(self, record):
 		return None
 
 
 	@abc.abstractmethod
-	def deserialize_publication_record(self, record):
+	def deserialize_marker_data(self, record):
 		return None
 
 
@@ -291,7 +319,7 @@ class BaseMarkersManager(object):
 
 
 	@abc.abstractmethod
-	def record_queryset(self, hid):
+	def record_min_queryset(self, hid):
 		"""
 		Повертає head-запис лише з тими полями моделі,
 		які прийматимуть участь у формуванні брифу маркеру і фільтрів.
@@ -310,7 +338,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 		super(FlatsMarkersManager, self).__init__(OBJECTS_TYPES.flat())
 
 
-	def record_queryset(self, hid):
+	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
@@ -320,16 +348,18 @@ class FlatsMarkersManager(BaseMarkersManager):
 
 			'body__electricity', 'body__gas', 'body__hot_water', 'body__cold_water', 'body__lift',
 			'body__market_type_sid', 'body__heating_type_sid', 'body__rooms_planning_sid',
-			'body__rooms_count', 'body__total_area', 'body__floor_count')
+			'body__rooms_count', 'body__total_area', 'body__floors_count')
 
 
-	def serialize_publication_record(self, record):
+	def serialize_publication(self, record):
+		operation_bitmask =  '1' if record.for_sale else '0'
+		operation_bitmask += '1' if record.for_rent else '0'
+		if operation_bitmask == '00':
+			raise self.SerializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
 		# common terms
-		#-- bitmask
-		bitmask = ''
-		bitmask += '1' if record.for_sale else '0'
-		bitmask += '1' if record.for_rent else '0'
-		bitmask += '1' if record.body.electricity else '0'
+		bitmask =  '1' if record.body.electricity else '0'
 		bitmask += '1' if record.body.gas else '0'
 		bitmask += '1' if record.body.hot_water else '0'
 		bitmask += '1' if record.body.cold_water else '0'
@@ -337,70 +367,49 @@ class FlatsMarkersManager(BaseMarkersManager):
 		bitmask += '{0:01b}'.format(record.body.market_type_sid)  # 1 bit
 		bitmask += '{0:02b}'.format(record.body.heating_type_sid) # 2 bits
 		bitmask += '{0:02b}'.format(record.body.rooms_planning_sid) # 2 bits
-		if len(bitmask) != 12:
-			raise SerializationError('Bitmask corruption. Potential deserialization error.')
+		if len(bitmask) != 10:
+			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
 
-		#-- data
-		data = ''
-		data += str(record.id) + self.separator
+		# data
+		data = str(record.id) + self.separator
 
-		# WARNING: field can be None
-		if record.body.rooms_count is not None:
-			data += str(record.body.rooms_count) + self.separator
-		else: data += self.separator
+		if record.body.rooms_count is None:
+			raise self.SerializationError('rooms_count is required but absent.')
+		data += str(record.body.rooms_count) + self.separator
 
-		# WARNING: field can be None
-		if record.body.total_area is not None:
-			data += str(record.body.total_area) + self.separator
-		else: data += self.separator
+		if record.body.total_area is None:
+			raise self.SerializationError('total_area is required but absent.')
+		data += str(record.body.total_area) + self.separator
 
-		# WARNING: field can be None
-		if record.body.floor is not None:
-			data += str(record.body.floor) + self.separator
-		else: data += self.separator
+		if record.body.floor is None:
+			raise self.SerializationError('floor is required but absent.')
+		data += str(record.body.floor) + self.separator
 
 
-		#-- sale terms
+		# sale terms
 		if record.for_sale:
 			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 14:
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) != 12:
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.sale_terms.price is not None:
-				data += str(record.sale_terms.price) + self.separator
-				data += str(record.sale_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
+			if record.sale_terms.price is None:
+				raise self.SerializationError('sale_price is required but absent.')
+			data += str(record.sale_terms.price) + self.separator
 
 
-		#-- rent terms
+		# rent terms
 		if record.for_rent:
 			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
 			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
 			bitmask += '1' if record.rent_terms.family else '0'
 			bitmask += '1' if record.rent_terms.foreigners else '0'
-			if len(bitmask) not in (22, 20):
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) not in (16, 18):
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.rent_terms.price is not None:
-				data += str(record.rent_terms.price) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
-
-			# REQUIRED field
-			if record.rent_terms.currency_sid is not None:
-				data += str(record.rent_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
-
-			# REQUIRED field
-			if record.rent_terms.currency_sid is not None:
-				data += str(record.rent_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
+			if record.rent_terms.price is None:
+				raise self.SerializationError('rent_price is required but absent.')
+			data += str(record.rent_terms.price) + self.separator
 
 			# WARNING: next fields can be None
 			if record.rent_terms.persons_count is not None:
@@ -408,176 +417,168 @@ class FlatsMarkersManager(BaseMarkersManager):
 			else:
 				data += self.separator
 
-
-		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
-		# Це пов’язано із тим, що при десериалізації старші біти, втрачаються, якщо вони нулі.
-		# Доповнити маску неможливо, оскільки для доповнення слід знати точну к-сть біт маски,
-		# а це залежить від того чи продаєтсья об’єкт, чи здаєтсья в оренду, чи і те і інше.
-		bitmask = bitmask[::-1]
-
-		record_data = data + self.separator +  str(int(bitmask, 2))
+		record_data = str(int(operation_bitmask, 2)) + self.separator +\
+		              str(int(bitmask, 2)) + self.separator + \
+		              data
 		if record_data[-1] == self.separator:
 			record_data = record_data[:-1]
 		return record_data
 
 
-	def deserialize_publication_record(self, record_data):
+	def deserialize_marker_data(self, record_data):
 		parts = record_data.split(self.separator)
-		bitmask = bin(int(parts[-1]))[2:]
-		data = {
-			'id': int(parts[0]),
-			'rooms_count':  int(parts[1])   if parts[1] != '' else None,
-			'total_area':   float(parts[2]) if parts[2] != '' else None,
-			'floor':        int(parts[3])   if parts[3] != '' else None,
+		operations_bitmask = parts[0]
+		operations_bitmask = str(bin(int(operations_bitmask))[2:])
+		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
 
-		    'electricity':  (bitmask[-3] == '1'),
-			'gas':          (bitmask[-4] == '1'),
-			'hot_water':    (bitmask[-5] == '1'),
-			'cold_water':   (bitmask[-6] == '1'),
-			'lift':         (bitmask[-7] == '1'),
+		bitmask = parts[1]
+		bitmask = str(bin(int(bitmask))[2:])
 
-		    'market_type_sid':      int('' + bitmask[-8]),
-		    'heating_type_sid':     int('' + bitmask[-9]  + bitmask[-10]),
-		    'rooms_planning_sid':   int('' + bitmask[-11] + bitmask[-12])
+		data = parts[2:]
+
+
+		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
+			bitmask = '0' * (18 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'rooms_count':          int(data[1]),
+				'total_area':         float(data[2]),
+				'floor':                int(data[3]),
+			    'sale_price':         float(data[4]),
+			    'rent_price':         float(data[5]),
+			    'persons_count':        int(data[6]) if data[6] != '' else None,
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+				'lift':                     (bitmask[4] == '1'),
+			    'market_type_sid':       int(bitmask[5]),
+			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
+
+			    'sale_currency_sid':     int(bitmask[10] + bitmask[11]),
+
+			    'rent_period_sid':       int(bitmask[12] + bitmask[13]),
+			    'rent_currency_sid':     int(bitmask[14] + bitmask[15]),
+				'family':                   (bitmask[16] == '1'),
+				'foreigners':               (bitmask[17] == '1'),
+			}
+
+		elif operations_bitmask[0] == '1': # for sale
+			bitmask = '0' * (12 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'rooms_count':          int(data[1]),
+				'total_area':         float(data[2]),
+				'floor':                int(data[3]),
+			    'sale_price':         float(data[4]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+				'lift':                     (bitmask[4] == '1'),
+			    'market_type_sid':       int(bitmask[5]),
+			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
+			    'sale_currency_sid':     int(bitmask[10] + bitmask[11]),
+			}
+
+		elif operations_bitmask[1] == '1': # for rent
+			bitmask = '0' * (16 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'rooms_count':          int(data[1]),
+				'total_area':         float(data[2]),
+				'floor':                int(data[3]),
+			    'rent_price':         float(data[4]),
+			    'persons_count':        int(data[5]) if data[5] != '' else None,
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+				'lift':                     (bitmask[4] == '1'),
+			    'market_type_sid':       int(bitmask[5]),
+			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
+			    'rent_period_sid':       int(bitmask[10] + bitmask[11]),
+			    'rent_currency_sid':     int(bitmask[12] + bitmask[13]),
+				'family':                   (bitmask[14] == '1'),
+				'foreigners':               (bitmask[15] == '1'),
+			}
+		else:
+			raise self.DeserializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+
+	def marker_brief(self, marker, filters=None):
+		"""
+		Сформує бриф для маркеру на основі даних, переданих у фільтрі.
+		(В даний момент враховується лише валюта запиту)
+		"""
+
+		# todo: додати зміну видачі в залежності від фільтрів.
+		# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
+		# ітак ясно, що їх буде не більше одної.
+
+		result = {
+			'id': marker['id']
 		}
 
-		if bitmask[-1] == '1':
-			# sale terms
-			data.update({
-				'for_sale': True,
-			    'sale_price': float(parts[4]),
-			    'sale_currency_sid': int(parts[5]),
+		# Гривня як базова валюта обирається згідно з чинним законодавством,
+		# але якщо у фільтрі вказана інша - переформатувати бриф на неї.
+		if filters is None:
+			currency = CURRENCIES.uah()
+		else:
+			currency = filters.get('currency_sid', CURRENCIES.uah())
+
+
+		if marker.get('for_sale', False):
+			sale_price = self.format_price(marker['sale_price'], marker['sale_currency_sid'], currency)
+			result.update({
+				'd0': u'Комнат: {0}'.format(marker.get('rooms_count')) \
+						if marker.get('rooms_count') else 'Комнат: не указано',
+				'd1': u'{0} {1}'.format(sale_price, self.format_currency(currency)),
 			})
+			return result
 
-			# check for rent terms
-			if bitmask[-2] == '1':
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[6]),
-				    'rent_currency_sid': int(parts[7]),
-				    'persons_count': int(parts[8]) if parts[8] != '' else None
-				})
+		elif marker.get('for_rent', False):
+			rent_price = self.format_price(marker['rent_price'], marker['rent_currency_sid'], currency)
+			result.update({
+				'd0': u'Мест: {0}'.format(marker.get('persons_count')) \
+						if marker.get('persons_count') else u'Мест: не указано',
+				'd1': u'{0} {1}'.format(rent_price, self.format_currency(currency)),
+			})
+			return result
 
-		else:
-			if bitmask[-2] == '1':
-				# rent terms
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[4]),
-					'rent_currency_sid': float(parts[5]),
-				    'persons_count': int(parts[6]) if parts[6] != '' else None
-				})
-		return data
-
-
-	def marker_brief(self, marker, conditions=None):
-		if conditions is None:
-			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
-			if (marker.get('for_sale', False)) and (marker.get('for_rent', False)):
-				return {
-					'id': marker['id'],
-					'd0': u'Продажа: ' + self.format_price(
-							marker['sale_price'],
-							marker['sale_currency_sid'],
-							CURRENCIES.uah()
-						) + u' грн.',
-					'd1': u'Аренда: ' + self.format_price(
-							marker['rent_price'],
-							marker['rent_currency_sid'],
-							CURRENCIES.uah()
-						) + u' грн.',
-				}
-
-			elif marker.get('for_sale', False):
-				return {
-					'id': marker['id'],
-					'd0': u'Комнат: ' + unicode(marker['rooms_count']), # required
-					'd1': self.format_price(
-							marker['sale_price'],
-							marker['sale_currency_sid'],
-							CURRENCIES.uah()
-						) + u' грн.',
-				}
-
-			elif marker.get('for_rent', False):
-				return{
-					'id': marker['id'],
-					'd0': u'Мест: ' + unicode(marker['persons_count']), # required
-					'd1': self.format_price(
-							marker['rent_price'],
-							marker['rent_currency_sid'],
-							CURRENCIES.uah()
-						) + u' грн.',
-				}
-
-			else:
-				raise DeserializationError()
-
-		else:
-			currency = conditions.get('currency_sid', CURRENCIES.uah())
-			if marker.get('for_sale', False) and marker.get('for_rent', False):
-				return {
-					'id': marker['id'],
-					'd0': u'Продажа: ' + self.format_currency(
-						self.format_price(
-							marker['sale_price'],
-							marker['sale_currency_sid'],
-							currency
-						),
-						currency
-					),
-					'd1': u'Аренда: ' + self.format_currency(
-						self.format_price(
-							marker['rent_price'],
-							marker['rent_currency_sid'],
-							currency
-						),
-						currency
-					),
-				}
-
-			elif marker.get('for_sale', False):
-				return {
-					'id': marker['id'],
-					'd0': u'Комнат: ' + str(marker['rooms_count']) if marker['rooms_count'] else '',
-					'd1': self.format_currency(
-							self.format_price(
-								marker['sale_price'],
-								marker['sale_currency_sid'],
-								currency
-							), currency),
-				}
-
-			elif marker.get('for_rent', False):
-				return{
-					'id': marker['id'],
-					'd0': u'Мест: ' + str(marker['persons_count']),
-					'd1': self.format_currency(
-							self.format_price(
-								marker['rent_price'],
-								marker['rent_currency_sid'],
-								currency
-							), currency),
-				}
-
-			else:
-				raise DeserializationError()
-
-			# todo: додати конввертацію валют в залженост від фільтрів
-			# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
-			# ітак ясно, що їх буде не більше одної.
+		raise RuntimeException('Marker is not for sale and not for rent.')
 
 
 	def filter(self, publications, filters):
 		# WARNING:
-		# дана функція для економії часу виконання не виконує deepcopy над publications
+		#   дана функція для економії часу виконання не виконує deepcopy над publications
 
 		if filters is None:
 			return publications
 
 		operation_sid = filters.get('operation_sid')
 		if operation_sid is None:
-			raise ValueError('Invalid conditions. Operation_sid is absent.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is absent.')
 
 
 		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
@@ -589,14 +590,14 @@ class FlatsMarkersManager(BaseMarkersManager):
 			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
 			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
 			# На фронтенді валюта повинна бути задана за замовчуванням.
-			raise ValueError('sale_currency_sid is absent.')
+			raise InvalidArgument('sale_currency_sid is absent.')
 		elif currency_sid not in CURRENCIES.values():
-			raise ValueError('currency_sid is invalid.')
+			raise InvalidArgument('currency_sid is invalid.')
 
 		if operation_sid == 1: # rent
 			rent_period_sid = filters.get('period_sid')
 			if rent_period_sid is None:
-				raise ValueError('Rent period sid is absent.')
+				raise InvalidArgument('Rent period sid is absent.')
 
 
 		# Для відбору елементів зі списку publications, використовується список statuses.
@@ -612,7 +613,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 		statuses = [True] * len(publications)
 
 
-		#-- sale filters
+		# sale filters
 		if operation_sid == 0:
 			for i in range(len(statuses)):
 				# Якщо даний запис вже позначений як виключений — не аналізувати його.
@@ -621,7 +622,11 @@ class FlatsMarkersManager(BaseMarkersManager):
 
 				marker = publications[i][1]
 
-				#-- sale price
+				if not marker.get('for_sale', False):
+					statuses[i] = False
+					continue
+
+				# sale price
 				price_min = filters.get('price_from')
 				price_max = filters.get('price_to')
 				if price_min is not None:
@@ -646,7 +651,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- market type
+				# market type
 				if ('new_buildings' in filters) and ('secondary_market' in filters):
 					# Немає змісту фільтрувати.
 					# Під дані умови потрапляють всі об’єкти.
@@ -658,7 +663,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
 
 
-				#-- rooms count
+				# rooms count
 				rooms_count_min = filters.get('rooms_count_from')
 				rooms_count_max = filters.get('rooms_count_to')
 				rooms_count = marker.get('rooms_count')
@@ -688,7 +693,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- total area
+				# total area
 				total_area_min = filters.get('total_area_from')
 				total_area_max = filters.get('total_area_to')
 				total_area = marker.get('total_area')
@@ -718,7 +723,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- floor
+				# floor
 				floor_min = filters.get('floor_from')
 				floor_max = filters.get('floor_to')
 				floor = marker.get('floor')
@@ -748,7 +753,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- rooms planning
+				# rooms planning
 				rooms_planning_sid = filters.get('rooms_planning_sid')
 				if rooms_planning_sid is not None:
 					if rooms_planning_sid == 1: # свободная планировка
@@ -762,38 +767,38 @@ class FlatsMarkersManager(BaseMarkersManager):
 							continue
 
 
-				#-- electricity
+				# electricity
 				if 'electricity' in filters:
 					if (not 'electricity' in marker) or (not marker['electricity']):
 						statuses[i] = False
 						continue
 
-				#-- gas
+				# gas
 				if  'gas' in filters:
 					if (not 'gas' in marker) or (not marker['gas']):
 						statuses[i] = False
 						continue
 
-				#-- hot water
+				# hot water
 				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
 
-				#-- cold water
+				# cold water
 				if  'cold_water' in filters:
 					if (not 'cold_water' in marker) or (not marker['cold_water']):
 						statuses[i] = False
 						continue
 
-				#-- lift
+				# lift
 				if 'lift' in filters:
 					if (not 'lift' in marker) or (not marker['lift']):
 						statuses[i] = False
 						continue
 
 
-				#-- heating type
+				# heating type
 				heating_type_sid = filters.get('heating_type_sid')
 				if heating_type_sid is not None:
 					# Поле "тип опалення" може бути не обов’язковим.
@@ -819,7 +824,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 							continue
 
 
-		#-- rent filters
+		# rent filters
 		elif operation_sid == 1:
 			for i in range(len(publications)):
 				# Якщо даний маркер вже позначений як виключений — не аналізувати його.
@@ -828,8 +833,13 @@ class FlatsMarkersManager(BaseMarkersManager):
 
 				marker = publications[i][1]
 
+				# operation type
+				if not marker.get('for_rent', False):
+					statuses[i] = False
+					continue
 
-				#-- rent price
+
+				# rent price
 				price_min = filters.get('price_from')
 				price_max = filters.get('price_to')
 				if price_min is not None:
@@ -854,7 +864,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- rent period
+				# rent period
 				if not 'rent_period_sid' in marker:
 					statuses[i] = False
 					continue
@@ -873,7 +883,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- persons_count
+				# persons_count
 				persons_count_min = filters.get('persons_count_from')
 				persons_count_max = filters.get('persons_count_to')
 				persons_count = marker.get('persons_count')
@@ -903,50 +913,50 @@ class FlatsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- for family
+				# for family
 				if 'family' in filters:
 					if (not 'for_family' in marker) or (not marker['for_family']):
 						statuses[i] = False
 						continue
 
-				#-- foreigners
+				# foreigners
 				if 'foreigners' in filters:
 					if (not 'foreigners' in marker) or (not marker['foreigners']):
 						statuses[i] = False
 						continue
 
-				#-- electricity
+				# electricity
 				if 'electricity' in filters:
 					if (not 'electricity' in marker) or (not marker['electricity']):
 						statuses[i] = False
 						continue
 
-				#-- gas
+				# gas
 				if  'gas' in filters:
 					if (not 'gas' in marker) or (not marker['gas']):
 						statuses[i] = False
 						continue
 
-				#-- hot water
+				# hot water
 				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
 
-				#-- cold water
+				# cold water
 				if  'cold_water' in filters:
 					if (not 'cold_water' in marker) or (not marker['cold_water']):
 						statuses[i] = False
 						continue
 
-				#-- lift
+				# lift
 				if 'lift' in filters:
 					if (not 'lift' in marker) or (not marker['lift']):
 						statuses[i] = False
 						continue
 
 		else:
-			raise ValueError('Invalid conditions. Operation_sid is unexpected.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is unexpected.')
 
 		result = []
 		for i in range(len(statuses)):
@@ -961,7 +971,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 		super(ApartmentsMarkersManager, self).__init__(OBJECTS_TYPES.apartments())
 
 
-	def record_queryset(self, hid):
+	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
@@ -971,16 +981,18 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 
 			'body__electricity', 'body__gas', 'body__hot_water', 'body__cold_water', 'body__lift',
 			'body__market_type_sid', 'body__heating_type_sid', 'body__rooms_planning_sid',
-			'body__rooms_count', 'body__total_area', 'body__floor_count')
+			'body__rooms_count', 'body__total_area', 'body__floors_count')
 
 
-	def serialize_publication_record(self, record):
+	def serialize_publication(self, record):
+		operation_bitmask =  '1' if record.for_sale else '0'
+		operation_bitmask += '1' if record.for_rent else '0'
+		if operation_bitmask == '00':
+			raise self.SerializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
 		# common terms
-		#-- bitmask
-		bitmask = ''
-		bitmask += '1' if record.for_sale else '0'
-		bitmask += '1' if record.for_rent else '0'
-		bitmask += '1' if record.body.electricity else '0'
+		bitmask =  '1' if record.body.electricity else '0'
 		bitmask += '1' if record.body.gas else '0'
 		bitmask += '1' if record.body.hot_water else '0'
 		bitmask += '1' if record.body.cold_water else '0'
@@ -988,70 +1000,49 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 		bitmask += '{0:01b}'.format(record.body.market_type_sid)  # 1 bit
 		bitmask += '{0:02b}'.format(record.body.heating_type_sid) # 2 bits
 		bitmask += '{0:02b}'.format(record.body.rooms_planning_sid) # 2 bits
-		if len(bitmask) != 12:
-			raise SerializationError('Bitmask corruption. Potential deserialization error.')
+		if len(bitmask) != 10:
+			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
 
-		#-- data
-		data = ''
-		data += str(record.id) + self.separator
+		# data
+		data = str(record.id) + self.separator
 
-		# WARNING: field can be None
-		if record.body.rooms_count is not None:
-			data += str(record.body.rooms_count) + self.separator
-		else: data += self.separator
+		if record.body.rooms_count is None:
+			raise self.SerializationError('rooms_count is required but absent.')
+		data += str(record.body.rooms_count) + self.separator
 
-		# WARNING: field can be None
-		if record.body.total_area is not None:
-			data += str(record.body.total_area) + self.separator
-		else: data += self.separator
+		if record.body.total_area is None:
+			raise self.SerializationError('total_area is required but absent.')
+		data += str(record.body.total_area) + self.separator
 
-		# WARNING: field can be None
-		if record.body.floor is not None:
-			data += str(record.body.floor) + self.separator
-		else: data += self.separator
+		if record.body.floor is None:
+			raise self.SerializationError('floor is required but absent.')
+		data += str(record.body.floor) + self.separator
 
 
-		#-- sale terms
+		# sale terms
 		if record.for_sale:
 			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 14:
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) != 12:
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.sale_terms.price is not None:
-				data += str(record.sale_terms.price) + self.separator
-				data += str(record.sale_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
-
-			# REQUIRED field
-			if record.sale_terms.currency_sid is not None:
-				data += str(record.sale_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
+			if record.sale_terms.price is None:
+				raise self.SerializationError('sale_price is required but absent.')
+			data += str(record.sale_terms.price) + self.separator
 
 
-		#-- rent terms
+		# rent terms
 		if record.for_rent:
 			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
 			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
 			bitmask += '1' if record.rent_terms.family else '0'
 			bitmask += '1' if record.rent_terms.foreigners else '0'
-			if len(bitmask) not in (22, 20):
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) not in (16, 18):
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.rent_terms.price is not  None:
-				data += str(record.rent_terms.price) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
-
-			# REQUIRED field
-			if record.rent_terms.currency_sid is not None:
-				data += str(record.rent_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
+			if record.rent_terms.price is None:
+				raise self.SerializationError('rent_price is required but absent.')
+			data += str(record.rent_terms.price) + self.separator
 
 			# WARNING: next fields can be None
 			if record.rent_terms.persons_count is not None:
@@ -1059,165 +1050,156 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 			else:
 				data += self.separator
 
-
-		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
-		# Це пов’язано із тим, що при десериалізації старші біти, втрачаються, якщо вони нулі.
-		# Доповнити маску неможливо, оскільки для доповнення слід знати точну к-сть біт маски,
-		# а це залежить від того чи продаєтсья об’єкт, чи здаєтсья в оренду, чи і те і інше.
-		bitmask = bitmask[::-1]
-
-		record_data = data + self.separator +  str(int(bitmask, 2))
+		record_data = str(int(operation_bitmask, 2)) + self.separator +\
+		              str(int(bitmask, 2)) + self.separator + \
+		              data
 		if record_data[-1] == self.separator:
 			record_data = record_data[:-1]
 		return record_data
 
 
-	def deserialize_publication_record(self, record_data):
+	def deserialize_marker_data(self, record_data):
 		parts = record_data.split(self.separator)
-		bitmask = bin(int(parts[-1]))[2:]
-		data = {
-			'id': int(parts[0]),
-			'rooms_count':  int(parts[1])   if parts[1] != '' else None,
-			'total_area':   float(parts[2]) if parts[2] != '' else None,
-			'floor':        int(parts[3])   if parts[3] != '' else None,
+		operations_bitmask = parts[0]
+		operations_bitmask = str(bin(int(operations_bitmask))[2:])
+		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розмірку
 
-		    'electricity':  (bitmask[-3] == '1'),
-			'gas':          (bitmask[-4] == '1'),
-			'hot_water':    (bitmask[-5] == '1'),
-			'cold_water':   (bitmask[-6] == '1'),
-			'lift':         (bitmask[-7] == '1'),
+		bitmask = parts[1]
+		bitmask = str(bin(int(bitmask))[2:])
 
-		    'market_type_sid':      int('' + bitmask[-8]),
-		    'heating_type_sid':     int('' + bitmask[-9]  + bitmask[-10]),
-		    'rooms_planning_sid':   int('' + bitmask[-11] + bitmask[-12])
+		data = parts[2:]
+
+
+		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
+			bitmask = '0' * (18 - len(bitmask)) + bitmask # Доповнити до мін. розмірку
+			return {
+				'for_sale': True,
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'rooms_count':          int(data[1]),
+				'total_area':         float(data[2]),
+				'floor':                int(data[3]),
+			    'sale_price':         float(data[4]),
+			    'rent_price':         float(data[5]),
+			    'persons_count':        int(data[6]) if data[6] != '' else None,
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+				'lift':                     (bitmask[4] == '1'),
+			    'market_type_sid':       int(bitmask[5]),
+			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
+
+			    'sale_currency_sid':     int(bitmask[10] + bitmask[11]),
+
+			    'rent_period_sid':       int(bitmask[12] + bitmask[13]),
+			    'rent_currency_sid':     int(bitmask[14] + bitmask[15]),
+				'family':                   (bitmask[16] == '1'),
+				'foreigners':               (bitmask[17] == '1'),
+			}
+
+		elif operations_bitmask[0] == '1': # for sale
+			bitmask = '0' * (12 - len(bitmask)) + bitmask
+			return {
+				'for_sale': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'rooms_count':          int(data[1]),
+				'total_area':         float(data[2]),
+				'floor':                int(data[3]),
+			    'sale_price':         float(data[4]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+				'lift':                     (bitmask[4] == '1'),
+			    'market_type_sid':       int(bitmask[5]),
+			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
+			    'sale_currency_sid':     int(bitmask[10] + bitmask[11]),
+			}
+
+		elif operations_bitmask[1] == '1': # for rent
+			bitmask = '0' * (16 - len(bitmask)) + bitmask
+			return {
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'rooms_count':          int(data[1]),
+				'total_area':         float(data[2]),
+				'floor':                int(data[3]),
+			    'rent_price':         float(data[4]),
+			    'persons_count':        int(data[5]) if data[5] != '' else None,
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+				'lift':                     (bitmask[4] == '1'),
+			    'market_type_sid':       int(bitmask[5]),
+			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
+			    'rent_period_sid':       int(bitmask[10] + bitmask[11]),
+			    'rent_currency_sid':     int(bitmask[12] + bitmask[13]),
+				'family':                   (bitmask[14] == '1'),
+				'foreigners':               (bitmask[15] == '1'),
+			}
+		else:
+			raise self.DeserializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+
+	def marker_brief(self, marker, filters=None):
+		"""
+		Сформує бриф для маркеру на основі даних, переданих у фільтрі.
+		(В даний момент враховується лише валюта запиту)
+		"""
+
+		# todo: додати зміну видачі в залежності від фільтрів.
+		# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
+		# ітак ясно, що їх буде не більше одної.
+
+		result = {
+			'id': marker['id']
 		}
 
-		if bitmask[-1] == '1':
-			# sale terms
-			data.update({
-				'for_sale': True,
-			    'sale_price': float(parts[4]),
-			    'sale_currency_sid': int(parts[5]),
+		# Гривня як базова валюта обирається згідно з чинним законодавством,
+		# але якщо у фільтрі вказана інша - переформатувати бриф на неї.
+		if filters is None:
+			currency = CURRENCIES.uah()
+		else:
+			currency = filters.get('currency_sid', CURRENCIES.uah())
+
+
+		if marker.get('for_sale', False):
+			sale_price = self.format_price(marker['sale_price'], marker['sale_currency_sid'], currency)
+			result.update({
+				'd0': u'Комнат: {0}'.format(marker.get('rooms_count')) \
+						if marker.get('rooms_count') else 'Комнат: не указано',
+				'd1': u'{0} {1}'.format(sale_price, self.format_currency(currency)),
 			})
+			return result
 
-			# check for rent terms
-			if bitmask[-2] == '1':
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[6]),
-				    'rent_currency_sid': int(parts[7]),
-				    'persons_count': int(parts[8]) if parts[8] != '' else None
-				})
+		elif marker.get('for_rent', False):
+			rent_price = self.format_price(marker['rent_price'], marker['rent_currency_sid'], currency)
+			result.update({
+				'd0': u'Мест: {0}'.format(marker.get('persons_count')) \
+						if marker.get('persons_count') else u'Мест: не указано',
+				'd1': u'{0} {1}'.format(rent_price, self.format_currency(currency)),
+			})
+			return result
 
-		else:
-			if bitmask[-2] == '1':
-				# rent terms
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[4]),
-					'rent_currency_sid': float(parts[5]),
-				    'persons_count': int(parts[6]) if parts[6] != '' else None
-				})
-		return data
-
-
-	def marker_brief(self, marker, conditions=None):
-		if conditions is None:
-			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
-			if (marker.get('for_sale', False)) and (marker.get('for_rent', False)):
-				return {
-					'id': marker['id'],
-					'd0': u'Продажа: ' + self.format_price(
-						marker['sale_price'],
-						marker['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-
-					'd1': u'Аренда: ' + self.format_price(
-						marker['rent_price'],
-						marker['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif marker.get('for_sale', False):
-				return {
-					'id': marker['id'],
-					'd0': u'Комнат: ' + str(marker['rooms_count']), # required
-					'd1': self.format_price(
-						marker['sale_price'],
-						marker['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif marker.get('for_rent', False):
-				return {
-					'id': marker['id'],
-					'd0': u'Мест: ' + str(marker['persons_count']), # required
-					'd1': self.format_price(
-						marker['rent_price'],
-						marker['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			else:
-				raise DeserializationError()
-
-		else:
-			currency = conditions.get('currency_sid', CURRENCIES.uah())
-			if marker.get('for_sale', False) and marker.get('for_rent', False):
-				return {
-					'id': marker['id'],
-					'd0': u'Продажа: ' + self.format_currency(
-						self.format_price(
-							marker['sale_price'],
-							marker['sale_currency_sid'],
-							currency
-						),
-						currency
-					),
-					'd1': u'Аренда: ' + self.format_currency(
-						self.format_price(
-							marker['rent_price'],
-							marker['rent_currency_sid'],
-							currency
-						),
-						currency
-					),
-				}
-
-			elif marker.get('for_sale', False):
-				return {
-					'id': marker['id'],
-					'd0': u'Комнат: ' + str(marker['rooms_count']) if marker['rooms_count'] else '',
-					'd1': self.format_currency(
-							self.format_price(
-								marker['sale_price'],
-								marker['sale_currency_sid'],
-								currency
-							), currency),
-				}
-
-			elif marker.get('for_rent', False):
-				return{
-					'id': marker['id'],
-					'd0': u'Мест: ' + str(marker['persons_count']),
-					'd1': self.format_currency(
-							self.format_price(
-								marker['rent_price'],
-								marker['rent_currency_sid'],
-								currency
-							), currency),
-				}
-
-			else:
-				raise DeserializationError()
-
-			# todo: додати конввертацію валют в залженост від фільтрів
-			# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
-			# ітак ясно, що їх буде не більше одної.
+		raise RuntimeException('Marker is not for sale and not for rent.')
 
 
 	def filter(self, publications, filters):
@@ -1229,7 +1211,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 
 		operation_sid = filters.get('operation_sid')
 		if operation_sid is None:
-			raise ValueError('Invalid conditions. Operation_sid is absent.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is absent.')
 
 
 		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
@@ -1241,14 +1223,14 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
 			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
 			# На фронтенді валюта повинна бути задана за замовчуванням.
-			raise ValueError('sale_currency_sid is absent.')
+			raise InvalidArgument('sale_currency_sid is absent.')
 		elif currency_sid not in CURRENCIES.values():
-			raise ValueError('currency_sid is invalid.')
+			raise InvalidArgument('currency_sid is invalid.')
 
 		if operation_sid == 1: # rent
 			rent_period_sid = filters.get('period_sid')
 			if rent_period_sid is None:
-				raise ValueError('Rent period sid is absent.')
+				raise InvalidArgument('Rent period sid is absent.')
 
 
 		# Для відбору елементів зі списку publications, використовується список statuses.
@@ -1264,7 +1246,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 		statuses = [True] * len(publications)
 
 
-		#-- sale filters
+		# sale filters
 		if operation_sid == 0:
 			for i in range(len(statuses)):
 				# Якщо даний запис вже позначений як виключений — не аналізувати його.
@@ -1273,7 +1255,13 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 
 				marker = publications[i][1]
 
-				#-- sale price
+				# operation type
+				if not marker.get('for_sale', False):
+					statuses[i] = False
+					continue
+
+
+				# sale price
 				price_min = filters.get('price_from')
 				price_max = filters.get('price_to')
 				if price_min is not None:
@@ -1298,7 +1286,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- market type
+				# market type
 				if ('new_buildings' in filters) and ('secondary_market' in filters):
 					# Немає змісту фільтрувати.
 					# Під дані умови потрапляють всі об’єкти.
@@ -1310,7 +1298,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
 
 
-				#-- rooms count
+				# rooms count
 				rooms_count_min = filters.get('rooms_count_from')
 				rooms_count_max = filters.get('rooms_count_to')
 				rooms_count = marker.get('rooms_count')
@@ -1340,7 +1328,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- total area
+				# total area
 				total_area_min = filters.get('total_area_from')
 				total_area_max = filters.get('total_area_to')
 				total_area = marker.get('total_area')
@@ -1370,7 +1358,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- floor
+				# floor
 				floor_min = filters.get('floor_from')
 				floor_max = filters.get('floor_to')
 				floor = marker.get('floor')
@@ -1400,7 +1388,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- rooms planning
+				# rooms planning
 				rooms_planning_sid = filters.get('rooms_planning_sid')
 				if rooms_planning_sid is not None:
 					if rooms_planning_sid == 1: # свободная планировка
@@ -1414,38 +1402,38 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 							continue
 
 
-				#-- electricity
+				# electricity
 				if 'electricity' in filters:
 					if (not 'electricity' in marker) or (not marker['electricity']):
 						statuses[i] = False
 						continue
 
-				#-- gas
+				# gas
 				if  'gas' in filters:
 					if (not 'gas' in marker) or (not marker['gas']):
 						statuses[i] = False
 						continue
 
-				#-- hot water
+				# hot water
 				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
 
-				#-- cold water
+				# cold water
 				if  'cold_water' in filters:
 					if (not 'cold_water' in marker) or (not marker['cold_water']):
 						statuses[i] = False
 						continue
 
-				#-- lift
+				# lift
 				if 'lift' in filters:
 					if (not 'lift' in marker) or (not marker['lift']):
 						statuses[i] = False
 						continue
 
 
-				#-- heating type
+				# heating type
 				heating_type_sid = filters.get('heating_type_sid')
 				if heating_type_sid is not None:
 					# Поле "тип опалення" може бути не обов’язковим.
@@ -1471,7 +1459,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 							continue
 
 
-		#-- rent filters
+		# rent filters
 		elif operation_sid == 1:
 			for i in range(len(publications)):
 				# Якщо даний маркер вже позначений як виключений — не аналізувати його.
@@ -1481,7 +1469,13 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 				marker = publications[i][1]
 
 
-				#-- rent price
+				# operation type
+				if not marker.get('for_rent', False):
+					statuses[i] = False
+					continue
+
+
+				# rent price
 				price_min = filters.get('price_from')
 				price_max = filters.get('price_to')
 				if price_min is not None:
@@ -1506,7 +1500,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- rent period
+				# rent period
 				if not 'rent_period_sid' in marker:
 					statuses[i] = False
 					continue
@@ -1525,7 +1519,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- persons_count
+				# persons_count
 				persons_count_min = filters.get('persons_count_from')
 				persons_count_max = filters.get('persons_count_to')
 				persons_count = marker.get('persons_count')
@@ -1555,50 +1549,50 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- for family
+				# for family
 				if 'family' in filters:
 					if (not 'for_family' in marker) or (not marker['for_family']):
 						statuses[i] = False
 						continue
 
-				#-- foreigners
+				# foreigners
 				if 'foreigners' in filters:
 					if (not 'foreigners' in marker) or (not marker['foreigners']):
 						statuses[i] = False
 						continue
 
-				#-- electricity
+				# electricity
 				if 'electricity' in filters:
 					if (not 'electricity' in marker) or (not marker['electricity']):
 						statuses[i] = False
 						continue
 
-				#-- gas
+				# gas
 				if  'gas' in filters:
 					if (not 'gas' in marker) or (not marker['gas']):
 						statuses[i] = False
 						continue
 
-				#-- hot water
+				# hot water
 				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
 
-				#-- cold water
+				# cold water
 				if  'cold_water' in filters:
 					if (not 'cold_water' in marker) or (not marker['cold_water']):
 						statuses[i] = False
 						continue
 
-				#-- lift
+				# lift
 				if 'lift' in filters:
 					if (not 'lift' in marker) or (not marker['lift']):
 						statuses[i] = False
 						continue
 
 		else:
-			raise ValueError('Invalid conditions. Operation_sid is unexpected.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is unexpected.')
 
 		result = []
 		for i in range(len(statuses)):
@@ -1613,7 +1607,7 @@ class HousesMarkersManager(BaseMarkersManager):
 		super(HousesMarkersManager, self).__init__(OBJECTS_TYPES.house())
 
 
-	def record_queryset(self, hid):
+	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
@@ -1626,76 +1620,63 @@ class HousesMarkersManager(BaseMarkersManager):
 			'body__rooms_count', 'body__floors_count')
 
 
-	def serialize_publication_record(self, record):
+	def serialize_publication(self, record):
+		operation_bitmask =  '1' if record.for_sale else '0'
+		operation_bitmask += '1' if record.for_rent else '0'
+		if operation_bitmask == '00':
+			raise self.SerializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
 		# common terms
-		#-- bitmask
-		bitmask = ''
-		bitmask += '1' if record.for_sale else '0'
-		bitmask += '1' if record.for_rent else '0'
-		bitmask += '1' if record.body.electricity else '0'
+		bitmask = '1' if record.body.electricity else '0'
 		bitmask += '1' if record.body.gas else '0'
 		bitmask += '1' if record.body.sewerage else '0'
 		bitmask += '1' if record.body.hot_water else '0'
 		bitmask += '1' if record.body.cold_water else '0'
 		bitmask += '{0:01b}'.format(record.body.market_type_sid)  # 1 bit
 		bitmask += '{0:02b}'.format(record.body.heating_type_sid) # 2 bits
-		if len(bitmask) != 10:
-			raise SerializationError('Bitmask corruption. Potential deserialization error.')
+		if len(bitmask) != 8:
+			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
 
-		#-- data
-		data = ''
-		data += str(record.id) + self.separator
+		# data
+		data = str(record.id) + self.separator
 
-		# WARNING: next fields can be None
-		if record.body.rooms_count is not None:
-			data += str(record.body.rooms_count) + self.separator
-		else: data += self.separator
+		if record.body.rooms_count is None:
+			raise self.SerializationError('rooms_count is required but absent.')
+		data += str(record.body.rooms_count) + self.separator
 
-		if record.body.floors_count is not None:
-			data += str(record.body.floors_count) + self.separator
-		else: data += self.separator
+		if record.body.floors_count is None:
+			raise self.SerializationError('floors_count is required but absent.')
+		data += str(record.body.floors_count) + self.separator
 
+		if record.body.total_area is None:
+			raise self.SerializationError('total_area is required but absent.')
+		data += str(record.body.total_area) + self.separator
 
-		#-- sale terms
+		# sale terms
 		if record.for_sale:
 			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 12:
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) != 10:
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.sale_terms.price is not None:
-				data += str(record.sale_terms.price) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
-
-			# REQUIRED field
-			if record.sale_terms.currency_sid is not None:
-				data += str(record.sale_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
+			if record.sale_terms.price is None:
+				raise self.SerializationError('sale_price is required but absent.')
+			data += str(record.sale_terms.price) + self.separator
 
 
-		#-- rent terms
+		# rent terms
 		if record.for_rent:
 			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
 			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
 			bitmask += '1' if record.rent_terms.family else '0'
 			bitmask += '1' if record.rent_terms.foreigners else '0'
-			if len(bitmask) not in (18, 16):
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) not in (14, 16):
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.rent_terms.price is not  None:
-				data += str(record.rent_terms.price) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
-
-			# REQUIRED field
-			if record.rent_terms.currency_sid is not None:
-				data += str(record.rent_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
+			if record.rent_terms.price is None:
+				raise self.SerializationError('rent_price is required but absent.')
+			data += str(record.rent_terms.price) + self.separator
 
 			# WARNING: next fields can be None
 			if record.rent_terms.persons_count is not None:
@@ -1703,164 +1684,152 @@ class HousesMarkersManager(BaseMarkersManager):
 			else:
 				data += self.separator
 
-
-		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
-		# Це пов’язано із тим, що при десериалізації старші біти, втрачаються, якщо вони нулі.
-		# Доповнити маску неможливо, оскільки для доповнення слід знати точну к-сть біт маски,
-		# а це залежить від того чи продаєтсья об’єкт, чи здаєтсья в оренду, чи і те і інше.
-		bitmask = bitmask[::-1]
-
-		record_data = data + self.separator +  str(int(bitmask, 2))
+		record_data = str(int(operation_bitmask, 2)) + self.separator +\
+		              str(int(bitmask, 2)) + self.separator + \
+		              data
 		if record_data[-1] == self.separator:
 			record_data = record_data[:-1]
 		return record_data
 
 
-	def deserialize_publication_record(self, record_data):
+	def deserialize_marker_data(self, record_data):
 		parts = record_data.split(self.separator)
-		bitmask = bin(int(parts[-1]))[2:]
-		data = {
-			'id': int(parts[0]),
-			'rooms_count':  int(parts[1]) if parts[1] != '' else None,
-			'floors_count': int(parts[2]) if parts[2] != '' else None,
+		operations_bitmask = parts[0]
+		operations_bitmask = str(bin(int(operations_bitmask))[2:])
+		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
 
-		    'electricity': (bitmask[-3] == '1'),
-			'gas':         (bitmask[-4] == '1'),
-			'sewerage':    (bitmask[-5] == '1'),
-			'hot_water':   (bitmask[-6] == '1'),
-			'cold_water':  (bitmask[-7] == '1'),
+		bitmask = parts[1]
+		bitmask = str(bin(int(bitmask))[2:])
 
-		    'market_type_sid':  int('' + bitmask[-8]),
-		    'heating_type_sid': int('' + bitmask[-9] + bitmask[-10]),
+		data = parts[2:]
+
+
+		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
+			bitmask = '0' * (16 - len(bitmask)) + bitmask # Доповнити до мін. розмірку
+			return {
+				'for_sale': True,
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'rooms_count':          int(data[1]),
+				'floors_count':         int(data[2]),
+				'total_area':         float(data[3]),
+			    'sale_price':         float(data[4]),
+			    'rent_price':         float(data[5]),
+			    'persons_count':        int(data[6]) if data[6] != '' else None,
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'sewerage':                 (bitmask[2] == '1'),
+				'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+			    'market_type_sid':       int(bitmask[5]),
+			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+
+			    'sale_currency_sid':     int(bitmask[8] + bitmask[9]),
+			    'rent_period_sid':       int(bitmask[10] + bitmask[11]),
+			    'rent_currency_sid':     int(bitmask[12] + bitmask[13]),
+				'family':                   (bitmask[14] == '1'),
+				'foreigners':               (bitmask[15] == '1'),
+			}
+
+		elif operations_bitmask[0] == '1': # for sale
+			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'rooms_count':          int(data[1]),
+			    'floors_count':         int(data[2]),
+			    'total_area':         float(data[3]),
+			    'sale_price':         float(data[4]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'sewerage':                 (bitmask[2] == '1'),
+				'hot_water':                (bitmask[3] == '1'),
+				'cold_water':               (bitmask[4] == '1'),
+			    'market_type_sid':       int(bitmask[5]),
+			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+			    'sale_currency_sid':     int(bitmask[8] + bitmask[9]),
+			}
+
+		elif operations_bitmask[1] == '1': # for rent
+			bitmask = '0' * (14 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'rooms_count':          int(data[1]),
+				'floors_count':         int(data[2]),
+				'total_area':         float(data[3]),
+			    'rent_price':         float(data[4]),
+			    'persons_count':        int(data[5]) if data[5] != '' else None,
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+			    'sewerage':                 (bitmask[2] == '1'),
+				'hot_water':                (bitmask[3] == '1'),
+				'cold_water':               (bitmask[4] == '1'),
+			    'market_type_sid':       int(bitmask[5]),
+			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+			    'rent_period_sid':       int(bitmask[8] + bitmask[9]),
+			    'rent_currency_sid':     int(bitmask[10] + bitmask[11]),
+				'family':                   (bitmask[12] == '1'),
+				'foreigners':               (bitmask[13] == '1'),
+			}
+		else:
+			raise self.DeserializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+
+	def marker_brief(self, marker, filters=None):
+		"""
+		Сформує бриф для маркеру на основі даних, переданих у фільтрі.
+		(В даний момент враховується лише валюта запиту)
+		"""
+
+		# todo: додати зміну видачі в залежності від фільтрів.
+		# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
+		# ітак ясно, що їх буде не більше одної.
+
+		result = {
+			'id': marker['id']
 		}
 
-		if bitmask[-1] == '1':
-			# sale terms
-			data.update({
-				'for_sale': True,
-			    'sale_price': float(parts[3]),
-			    'sale_currency_sid': int(parts[4]),
+		# Гривня як базова валюта обирається згідно з чинним законодавством,
+		# але якщо у фільтрі вказана інша - переформатувати бриф на неї.
+		if filters is None:
+			currency = CURRENCIES.uah()
+		else:
+			currency = filters.get('currency_sid', CURRENCIES.uah())
+
+
+		if marker.get('for_sale', False):
+			sale_price = self.format_price(marker['sale_price'], marker['sale_currency_sid'], currency)
+			result.update({
+				'd0': u'Комнат: {0}'.format(marker.get('rooms_count')) \
+						if marker.get('rooms_count') else 'Комнат: не указано',
+				'd1': u'{0} {1}'.format(sale_price, self.format_currency(currency)),
 			})
+			return result
 
-			# check for rent terms
-			if bitmask[-2] == '1':
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[5]),
-				    'rent_currency_sid': int(parts[6]),
-				    'persons_count': int(parts[7]) if parts[7] != '' else None
-				})
+		elif marker.get('for_rent', False):
+			rent_price = self.format_price(marker['rent_price'], marker['rent_currency_sid'], currency)
+			result.update({
+				'd0': u'Мест: {0}'.format(marker.get('persons_count')) \
+						if marker.get('persons_count') else u'Мест: не указано',
+				'd1': u'{0} {1}'.format(rent_price, self.format_currency(currency)),
+			})
+			return result
 
-		else:
-			if bitmask[-2] == '1':
-				# rent terms
-				# todo: check indexes
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[3]),
-					'rent_currency_sid': float(parts[4]),
-				    'persons_count': int(parts[5]) if parts[5] != '' else None
-				})
-		return data
-
-
-	def marker_brief(self, data, condition=None):
-		if condition is None:
-			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
-			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
-				return {
-					'id': data['id'],
-					'd0': u'Продажа: ' + self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-
-					'd1': u'Аренда: ' + self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_sale', False):
-				return {
-					'id': data['id'],
-					'd0': u'Комнат: ' + str(data['rooms_count']) if data['rooms_count'] else '',
-					'd1': self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_rent', False):
-				return{
-					'id': data['id'],
-					'd0': u'Мест: ' + str(data['persons_count']),
-					'd1': self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			else:
-				raise DeserializationError()
-
-		else:
-			currency_sid = condition.get('currency_sid')
-			if currency_sid is None:
-				currency_sid = CURRENCIES.uah()
-
-			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
-				return {
-					'id': data['id'],
-					'd0': u'Продажа: ' + self.format_currency(
-						self.format_price(
-							data['sale_price'],
-							data['sale_currency_sid'],
-							currency_sid
-						), currency_sid),
-
-					'd1': u'Аренда: ' + self.format_currency(
-						self.format_price(
-							data['rent_price'],
-							data['rent_currency_sid'],
-							currency_sid
-						), currency_sid),
-				}
-
-			elif data.get('for_sale', False):
-				return {
-					'id': data['id'],
-					'd0': u'Комнат: ' + str(data['rooms_count']) if data['rooms_count'] else '',
-					'd1': self.format_currency(
-							self.format_price(
-								data['sale_price'],
-								data['sale_currency_sid'],
-								currency_sid
-							), currency_sid),
-				}
-
-			elif data.get('for_rent', False):
-				return{
-					'id': data['id'],
-					'd0': u'Мест: ' + str(data['persons_count']),
-					'd1': self.format_currency(
-							self.format_price(
-								data['rent_price'],
-								data['rent_currency_sid'],
-								currency_sid
-							), currency_sid),
-				}
-
-			else:
-				raise DeserializationError()
-
-			# todo: додати конввертацію валют в залженост від фільтрів
-			# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
-			# ітак ясно, що їх буде не більше одної.
+		raise RuntimeException('Marker is not for sale and not for rent.')
 
 
 	def filter(self, publications, filters):
@@ -1872,7 +1841,7 @@ class HousesMarkersManager(BaseMarkersManager):
 
 		operation_sid = filters.get('operation_sid')
 		if operation_sid is None:
-			raise ValueError('Invalid conditions. Operation_sid is absent.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is absent.')
 
 
 		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
@@ -1884,14 +1853,14 @@ class HousesMarkersManager(BaseMarkersManager):
 			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
 			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
 			# На фронтенді валюта повинна бути задана за замовчуванням.
-			raise ValueError('sale_currency_sid is absent.')
+			raise InvalidArgument('sale_currency_sid is absent.')
 		elif currency_sid not in CURRENCIES.values():
-			raise ValueError('currency_sid is invalid.')
+			raise InvalidArgument('currency_sid is invalid.')
 
 		if operation_sid == 1: # rent
 			rent_period_sid = filters.get('period_sid')
 			if rent_period_sid is None:
-				raise ValueError('Rent period sid is absent.')
+				raise InvalidArgument('Rent period sid is absent.')
 			else:
 				rent_period_sid = int(rent_period_sid)
 
@@ -1910,7 +1879,7 @@ class HousesMarkersManager(BaseMarkersManager):
 		statuses = [True] * len(publications)
 
 
-		#-- sale filters
+		# sale filters
 		if operation_sid == 0:
 			for i in range(len(statuses)):
 				# Якщо даний запис вже позначений як виключений — не аналізувати його.
@@ -1919,7 +1888,12 @@ class HousesMarkersManager(BaseMarkersManager):
 
 				marker = publications[i][1]
 
-				#-- sale price
+				# operation type
+				if not marker.get('for_sale', False):
+					statuses[i] = False
+					continue
+
+				# sale price
 				price_min = filters.get('price_from')
 				price_max = filters.get('price_to')
 				if price_min is not None:
@@ -1944,7 +1918,7 @@ class HousesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- market type
+				# market type
 				if ('new_buildings' in filters) and ('secondary_market' in filters):
 					# Немає змісту фільтрувати.
 					# Під дані умови потрапляють всі об’єкти.
@@ -1956,7 +1930,7 @@ class HousesMarkersManager(BaseMarkersManager):
 					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
 
 
-				#-- rooms count
+				# rooms count
 				rooms_count_min = filters.get('rooms_count_from')
 				rooms_count_max = filters.get('rooms_count_to')
 				rooms_count = marker.get('rooms_count')
@@ -1986,7 +1960,7 @@ class HousesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- floors count
+				# floors count
 				floors_count_min = filters.get('floors_count_from')
 				floors_count_max = filters.get('floors_count_to')
 				floors_count = marker.get('floors_count')
@@ -2016,38 +1990,38 @@ class HousesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- electricity
+				# electricity
 				if 'electricity' in filters:
 					if (not 'electricity' in marker) or (not marker['electricity']):
 						statuses[i] = False
 						continue
 
-				#-- gas
+				# gas
 				if  'gas' in filters:
 					if (not 'gas' in marker) or (not marker['gas']):
 						statuses[i] = False
 						continue
 
-				#-- hot water
+				# hot water
 				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
 
-				#-- cold water
+				# cold water
 				if  'cold_water' in filters:
 					if (not 'cold_water' in marker) or (not marker['cold_water']):
 						statuses[i] = False
 						continue
 
-				#-- sewerage
+				# sewerage
 				if 'sewerage' in filters:
 					if (not 'sewerage' in marker) or (not marker['sewerage']):
 						statuses[i] = False
 						continue
 
 
-				#-- heating type
+				# heating type
 				heating_type_sid = filters.get('heating_type_sid')
 				if heating_type_sid is not None:
 					# Поле "тип опалення" може бути не обов’язковим.
@@ -2070,7 +2044,7 @@ class HousesMarkersManager(BaseMarkersManager):
 							continue
 
 
-		#-- rent filters
+		# rent filters
 		elif operation_sid == 1:
 			for i in range(len(publications)):
 				# Якщо даний маркер вже позначений як виключений — не аналізувати його.
@@ -2080,7 +2054,13 @@ class HousesMarkersManager(BaseMarkersManager):
 				marker = publications[i][1]
 
 
-				#-- rent price
+				# operation type
+				if not marker.get('for_rent', False):
+					statuses[i] = False
+					continue
+
+
+				# rent price
 				price_min = filters.get('price_from')
 				price_max = filters.get('price_to')
 				if price_min is not None:
@@ -2105,7 +2085,7 @@ class HousesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- rent period
+				# rent period
 				if not 'rent_period_sid' in marker:
 					statuses[i] = False
 					continue
@@ -2124,7 +2104,7 @@ class HousesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- persons_count
+				# persons_count
 				persons_count_min = filters.get('persons_count_from')
 				persons_count_max = filters.get('persons_count_to')
 				persons_count = marker.get('persons_count')
@@ -2154,44 +2134,44 @@ class HousesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- for family
+				# for family
 				if 'family' in filters:
 					if (not 'for_family' in marker) or (not marker['for_family']):
 						statuses[i] = False
 						continue
 
-				#-- foreigners
+				# foreigners
 				if 'foreigners' in filters:
 					if (not 'foreigners' in marker) or (not marker['foreigners']):
 						statuses[i] = False
 						continue
 
-				#-- electricity
+				# electricity
 				if 'electricity' in filters:
 					if (not 'electricity' in marker) or (not marker['electricity']):
 						statuses[i] = False
 						continue
 
-				#-- gas
+				# gas
 				if  'gas' in filters:
 					if (not 'gas' in marker) or (not marker['gas']):
 						statuses[i] = False
 						continue
 
-				#-- hot water
+				# hot water
 				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
 
-				#-- cold water
+				# cold water
 				if  'cold_water' in filters:
 					if (not 'cold_water' in marker) or (not marker['cold_water']):
 						statuses[i] = False
 						continue
 
 		else:
-			raise ValueError('Invalid conditions. Operation_sid is unexpected.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is unexpected.')
 
 		result = []
 		for i in range(len(statuses)):
@@ -2206,7 +2186,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 		super(CottagesMarkersManager, self).__init__(OBJECTS_TYPES.cottage())
 
 
-	def record_queryset(self, hid):
+	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
@@ -2219,76 +2199,63 @@ class CottagesMarkersManager(BaseMarkersManager):
 			'body__rooms_count', 'body__floors_count')
 
 
-	def serialize_publication_record(self, record):
+	def serialize_publication(self, record):
+		operation_bitmask =  '1' if record.for_sale else '0'
+		operation_bitmask += '1' if record.for_rent else '0'
+		if operation_bitmask == '00':
+			raise self.SerializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
 		# common terms
-		#-- bitmask
-		bitmask = ''
-		bitmask += '1' if record.for_sale else '0'
-		bitmask += '1' if record.for_rent else '0'
-		bitmask += '1' if record.body.electricity else '0'
+		bitmask = '1' if record.body.electricity else '0'
 		bitmask += '1' if record.body.gas else '0'
 		bitmask += '1' if record.body.sewerage else '0'
 		bitmask += '1' if record.body.hot_water else '0'
 		bitmask += '1' if record.body.cold_water else '0'
 		bitmask += '{0:01b}'.format(record.body.market_type_sid)  # 1 bit
 		bitmask += '{0:02b}'.format(record.body.heating_type_sid) # 2 bits
-		if len(bitmask) != 10:
-			raise SerializationError('Bitmask corruption. Potential deserialization error.')
+		if len(bitmask) != 8:
+			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
 
-		#-- data
-		data = ''
-		data += str(record.id) + self.separator
+		# data
+		data = str(record.id) + self.separator
 
-		# WARNING: next fields can be None
-		if record.body.rooms_count is not None:
-			data += str(record.body.rooms_count) + self.separator
-		else: data += self.separator
+		if record.body.rooms_count is None:
+			raise self.SerializationError('rooms_count is required but absent.')
+		data += str(record.body.rooms_count) + self.separator
 
-		if record.body.floors_count is not None:
-			data += str(record.body.floors_count) + self.separator
-		else: data += self.separator
+		if record.body.floors_count is None:
+			raise self.SerializationError('floors_count is required but absent.')
+		data += str(record.body.floors_count) + self.separator
 
+		if record.body.total_area is None:
+			raise self.SerializationError('total_area is required but absent.')
+		data += str(record.body.total_area) + self.separator
 
-		#-- sale terms
+		# sale terms
 		if record.for_sale:
 			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 12:
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) != 10:
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.sale_terms.price is not None:
-				data += str(record.sale_terms.price) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
-
-			# REQUIRED field
-			if record.sale_terms.currency_sid is not None:
-				data += str(record.sale_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
+			if record.sale_terms.price is None:
+				raise self.SerializationError('sale_price is required but absent.')
+			data += str(record.sale_terms.price) + self.separator
 
 
-		#-- rent terms
+		# rent terms
 		if record.for_rent:
 			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
 			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
 			bitmask += '1' if record.rent_terms.family else '0'
 			bitmask += '1' if record.rent_terms.foreigners else '0'
-			if len(bitmask) not in (18, 16):
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) not in (14, 16):
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.rent_terms.price is not  None:
-				data += str(record.rent_terms.price) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
-
-			# REQUIRED field
-			if record.rent_terms.currency_sid is not None:
-				data += str(record.rent_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
+			if record.rent_terms.price is None:
+				raise self.SerializationError('rent_price is required but absent.')
+			data += str(record.rent_terms.price) + self.separator
 
 			# WARNING: next fields can be None
 			if record.rent_terms.persons_count is not None:
@@ -2296,115 +2263,152 @@ class CottagesMarkersManager(BaseMarkersManager):
 			else:
 				data += self.separator
 
-
-		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
-		# Це пов’язано із тим, що при десериалізації старші біти, втрачаються, якщо вони нулі.
-		# Доповнити маску неможливо, оскільки для доповнення слід знати точну к-сть біт маски,
-		# а це залежить від того чи продаєтсья об’єкт, чи здаєтсья в оренду, чи і те і інше.
-		bitmask = bitmask[::-1]
-
-		record_data = data + self.separator +  str(int(bitmask, 2))
+		record_data = str(int(operation_bitmask, 2)) + self.separator +\
+		              str(int(bitmask, 2)) + self.separator + \
+		              data
 		if record_data[-1] == self.separator:
 			record_data = record_data[:-1]
 		return record_data
 
 
-	def deserialize_publication_record(self, record_data):
+	def deserialize_marker_data(self, record_data):
 		parts = record_data.split(self.separator)
-		bitmask = bin(int(parts[-1]))[2:]
-		data = {
-			'id': int(parts[0]),
-			'rooms_count':  int(parts[1]) if parts[1] != '' else None,
-			'floors_count': int(parts[2]) if parts[2] != '' else None,
+		operations_bitmask = parts[0]
+		operations_bitmask = str(bin(int(operations_bitmask))[2:])
+		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
 
-		    'electricity': (bitmask[-3] == '1'),
-			'gas':         (bitmask[-4] == '1'),
-			'sewerage':    (bitmask[-5] == '1'),
-			'hot_water':   (bitmask[-6] == '1'),
-			'cold_water':  (bitmask[-7] == '1'),
+		bitmask = parts[1]
+		bitmask = str(bin(int(bitmask))[2:])
 
-		    'market_type_sid':  int('' + bitmask[-8]),
-		    'heating_type_sid': int('' + bitmask[-9] + bitmask[-10]),
+		data = parts[2:]
+
+
+		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
+			bitmask = '0' * (16 - len(bitmask)) + bitmask # Доповнити до мін. розмірку
+			return {
+				'for_sale': True,
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'rooms_count':          int(data[1]),
+				'floors_count':         int(data[2]),
+				'total_area':         float(data[3]),
+			    'sale_price':         float(data[4]),
+			    'rent_price':         float(data[5]),
+			    'persons_count':        int(data[6]) if data[6] != '' else None,
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'sewerage':                 (bitmask[2] == '1'),
+				'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+			    'market_type_sid':       int(bitmask[5]),
+			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+
+			    'sale_currency_sid':     int(bitmask[8] + bitmask[9]),
+			    'rent_period_sid':       int(bitmask[10] + bitmask[11]),
+			    'rent_currency_sid':     int(bitmask[12] + bitmask[13]),
+				'family':                   (bitmask[14] == '1'),
+				'foreigners':               (bitmask[15] == '1'),
+			}
+
+		elif operations_bitmask[0] == '1': # for sale
+			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'rooms_count':          int(data[1]),
+			    'floors_count':         int(data[2]),
+			    'total_area':         float(data[3]),
+			    'sale_price':         float(data[4]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'sewerage':                 (bitmask[2] == '1'),
+				'hot_water':                (bitmask[3] == '1'),
+				'cold_water':               (bitmask[4] == '1'),
+			    'market_type_sid':       int(bitmask[5]),
+			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+			    'sale_currency_sid':     int(bitmask[8] + bitmask[9]),
+			}
+
+		elif operations_bitmask[1] == '1': # for rent
+			bitmask = '0' * (14 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'rooms_count':          int(data[1]),
+				'floors_count':         int(data[2]),
+				'total_area':         float(data[3]),
+			    'rent_price':         float(data[4]),
+			    'persons_count':        int(data[5]) if data[5] != '' else None,
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+			    'sewerage':                 (bitmask[2] == '1'),
+				'hot_water':                (bitmask[3] == '1'),
+				'cold_water':               (bitmask[4] == '1'),
+			    'market_type_sid':       int(bitmask[5]),
+			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+			    'rent_period_sid':       int(bitmask[8] + bitmask[9]),
+			    'rent_currency_sid':     int(bitmask[10] + bitmask[11]),
+				'family':                   (bitmask[12] == '1'),
+				'foreigners':               (bitmask[13] == '1'),
+			}
+		else:
+			raise self.DeserializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+
+	def marker_brief(self, marker, filters=None):
+		"""
+		Сформує бриф для маркеру на основі даних, переданих у фільтрі.
+		(В даний момент враховується лише валюта запиту)
+		"""
+
+		# todo: додати зміну видачі в залежності від фільтрів.
+		# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
+		# ітак ясно, що їх буде не більше одної.
+
+		result = {
+			'id': marker['id']
 		}
 
-		if bitmask[-1] == '1':
-			# sale terms
-			data.update({
-				'for_sale': True,
-			    'sale_price': float(parts[3]),
-			    'sale_currency_sid': int(parts[4]),
+		# Гривня як базова валюта обирається згідно з чинним законодавством,
+		# але якщо у фільтрі вказана інша - переформатувати бриф на неї.
+		if filters is None:
+			currency = CURRENCIES.uah()
+		else:
+			currency = filters.get('currency_sid', CURRENCIES.uah())
+
+
+		if marker.get('for_sale', False):
+			sale_price = self.format_price(marker['sale_price'], marker['sale_currency_sid'], currency)
+			result.update({
+				'd0': u'Комнат: {0}'.format(marker.get('rooms_count')) \
+						if marker.get('rooms_count') else 'Комнат: не указано',
+				'd1': u'{0} {1}'.format(sale_price, self.format_currency(currency)),
 			})
+			return result
 
-			# check for rent terms
-			if bitmask[-2] == '1':
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[5]),
-				    'rent_currency_sid': int(parts[6]),
-				    'persons_count': int(parts[7]) if parts[7] != '' else None
-				})
+		elif marker.get('for_rent', False):
+			rent_price = self.format_price(marker['rent_price'], marker['rent_currency_sid'], currency)
+			result.update({
+				'd0': u'Мест: {0}'.format(marker.get('persons_count')) \
+						if marker.get('persons_count') else u'Мест: не указано',
+				'd1': u'{0} {1}'.format(rent_price, self.format_currency(currency)),
+			})
+			return result
 
-		else:
-			if bitmask[-2] == '1':
-				# rent terms
-				# todo: check indexes
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[3]),
-					'rent_currency_sid': float(parts[4]),
-				    'persons_count': int(parts[5]) if parts[5] != '' else None
-				})
-		return data
-
-
-	def marker_brief(self, data, condition=None):
-		if condition is None:
-			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
-			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
-				return {
-					'id': data['id'],
-					'd0': u'Продажа: ' + self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-
-					'd1': u'Аренда: ' + self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_sale', False):
-				return {
-					'id': data['id'],
-					'd0': u'Комнат: ' + str(data['rooms_count']) if data['rooms_count'] else '',
-					'd1': self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_rent', False):
-				return{
-					'id': data['id'],
-					'd0': u'Мест: ' + str(data['persons_count']),
-					'd1': self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			else:
-				raise DeserializationError()
-
-		else:
-			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
-			# todo: додати конввертацію валют в залженост від фільтрів
-			pass
+		raise RuntimeException('Marker is not for sale and not for rent.')
 
 
 	def filter(self, publications, filters):
@@ -2416,7 +2420,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 
 		operation_sid = filters.get('operation_sid')
 		if operation_sid is None:
-			raise ValueError('Invalid conditions. Operation_sid is absent.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is absent.')
 
 
 		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
@@ -2428,14 +2432,14 @@ class CottagesMarkersManager(BaseMarkersManager):
 			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
 			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
 			# На фронтенді валюта повинна бути задана за замовчуванням.
-			raise ValueError('sale_currency_sid is absent.')
+			raise InvalidArgument('sale_currency_sid is absent.')
 		elif currency_sid not in CURRENCIES.values():
-			raise ValueError('currency_sid is invalid.')
+			raise InvalidArgument('currency_sid is invalid.')
 
 		if operation_sid == 1: # rent
 			rent_period_sid = filters.get('period_sid')
 			if rent_period_sid is None:
-				raise ValueError('Rent period sid is absent.')
+				raise InvalidArgument('Rent period sid is absent.')
 			else:
 				rent_period_sid = int(rent_period_sid)
 
@@ -2454,7 +2458,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 		statuses = [True] * len(publications)
 
 
-		#-- sale filters
+		# sale filters
 		if operation_sid == 0:
 			for i in range(len(statuses)):
 				# Якщо даний запис вже позначений як виключений — не аналізувати його.
@@ -2463,7 +2467,13 @@ class CottagesMarkersManager(BaseMarkersManager):
 
 				marker = publications[i][1]
 
-				#-- sale price
+				# operation type
+				if not marker.get('for_sale', False):
+					statuses[i] = False
+					continue
+
+
+				# sale price
 				price_min = filters.get('price_from')
 				price_max = filters.get('price_to')
 				if price_min is not None:
@@ -2488,7 +2498,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- market type
+				# market type
 				if ('new_buildings' in filters) and ('secondary_market' in filters):
 					# Немає змісту фільтрувати.
 					# Під дані умови потрапляють всі об’єкти.
@@ -2500,7 +2510,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
 
 
-				#-- rooms count
+				# rooms count
 				rooms_count_min = filters.get('rooms_count_from')
 				rooms_count_max = filters.get('rooms_count_to')
 				rooms_count = marker.get('rooms_count')
@@ -2530,7 +2540,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- floors count
+				# floors count
 				floors_count_min = filters.get('floors_count_from')
 				floors_count_max = filters.get('floors_count_to')
 				floors_count = marker.get('floors_count')
@@ -2560,38 +2570,38 @@ class CottagesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- electricity
+				# electricity
 				if 'electricity' in filters:
 					if (not 'electricity' in marker) or (not marker['electricity']):
 						statuses[i] = False
 						continue
 
-				#-- gas
+				# gas
 				if  'gas' in filters:
 					if (not 'gas' in marker) or (not marker['gas']):
 						statuses[i] = False
 						continue
 
-				#-- hot water
+				# hot water
 				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
 
-				#-- cold water
+				# cold water
 				if  'cold_water' in filters:
 					if (not 'cold_water' in marker) or (not marker['cold_water']):
 						statuses[i] = False
 						continue
 
-				#-- sewerage
+				# sewerage
 				if 'sewerage' in filters:
 					if (not 'sewerage' in marker) or (not marker['sewerage']):
 						statuses[i] = False
 						continue
 
 
-				#-- heating type
+				# heating type
 				heating_type_sid = filters.get('heating_type_sid')
 				if heating_type_sid is not None:
 					# Поле "тип опалення" може бути не обов’язковим.
@@ -2614,7 +2624,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 							continue
 
 
-		#-- rent filters
+		# rent filters
 		elif operation_sid == 1:
 			for i in range(len(publications)):
 				# Якщо даний маркер вже позначений як виключений — не аналізувати його.
@@ -2624,7 +2634,13 @@ class CottagesMarkersManager(BaseMarkersManager):
 				marker = publications[i][1]
 
 
-				#-- rent price
+				# operation type
+				if not marker.get('for_rent', False):
+					statuses[i] = False
+					continue
+
+
+				# rent price
 				price_min = filters.get('price_from')
 				price_max = filters.get('price_to')
 				if price_min is not None:
@@ -2649,7 +2665,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- rent period
+				# rent period
 				if not 'rent_period_sid' in marker:
 					statuses[i] = False
 					continue
@@ -2668,7 +2684,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- persons_count
+				# persons_count
 				persons_count_min = filters.get('persons_count_from')
 				persons_count_max = filters.get('persons_count_to')
 				persons_count = marker.get('persons_count')
@@ -2698,44 +2714,44 @@ class CottagesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- for family
+				# for family
 				if 'family' in filters:
 					if (not 'for_family' in marker) or (not marker['for_family']):
 						statuses[i] = False
 						continue
 
-				#-- foreigners
+				# foreigners
 				if 'foreigners' in filters:
 					if (not 'foreigners' in marker) or (not marker['foreigners']):
 						statuses[i] = False
 						continue
 
-				#-- electricity
+				# electricity
 				if 'electricity' in filters:
 					if (not 'electricity' in marker) or (not marker['electricity']):
 						statuses[i] = False
 						continue
 
-				#-- gas
+				# gas
 				if  'gas' in filters:
 					if (not 'gas' in marker) or (not marker['gas']):
 						statuses[i] = False
 						continue
 
-				#-- hot water
+				# hot water
 				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
 
-				#-- cold water
+				# cold water
 				if  'cold_water' in filters:
 					if (not 'cold_water' in marker) or (not marker['cold_water']):
 						statuses[i] = False
 						continue
 
 		else:
-			raise ValueError('Invalid conditions. Operation_sid is unexpected.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is unexpected.')
 
 		result = []
 		for i in range(len(statuses)):
@@ -2745,233 +2761,12 @@ class CottagesMarkersManager(BaseMarkersManager):
 
 
 
-class DachasMarkersManager(BaseMarkersManager):
-	def __init__(self):
-		super(DachasMarkersManager, self).__init__(OBJECTS_TYPES.dacha())
-
-
-	def record_queryset(self, hid):
-		return self.model.objects.filter(id=hid).only(
-			'for_sale', 'for_rent',
-			'sale_terms__price', 'sale_terms__currency_sid',
-
-			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
-			'rent_terms__persons_count', 'rent_terms__family', 'rent_terms__foreigners',
-
-			'body__electricity', 'body__gas', 'body__sewerage', 'body__hot_water', 'body__cold_water',
-			'body__market_type_sid', 'body__heating_type_sid',
-			'body__rooms_count', 'body__total_area', 'body__floors_count')
-
-
-	def serialize_publication_record(self, record):
-		# common terms
-		#-- bitmask
-		bitmask = ''
-		bitmask += '1' if record.for_sale else '0'
-		bitmask += '1' if record.for_rent else '0'
-		bitmask += '1' if record.body.electricity else '0'
-		bitmask += '1' if record.body.gas else '0'
-		bitmask += '1' if record.body.sewerage else '0'
-		bitmask += '1' if record.body.hot_water else '0'
-		bitmask += '1' if record.body.cold_water else '0'
-		bitmask += '1' if record.body.irrigation_water else '0'
-		bitmask += '{0:01b}'.format(record.body.market_type_sid)  # 1 bit
-		bitmask += '{0:02b}'.format(record.body.heating_type_sid) # 2 bits
-		if len(bitmask) != 11:
-			raise SerializationError('Bitmask corruption. Potential deserialization error.')
-
-
-		#-- data
-		data = ''
-		data += str(record.id) + self.separator
-
-		# WARNING: field can be None
-		if record.body.rooms_count is not None:
-			data += str(record.body.rooms_count) + self.separator
-		else: data += self.separator
-
-		# WARNING: field can be None
-		if record.body.total_area is not None:
-			data += str(record.body.total_area) + self.separator
-		else: data += self.separator
-
-		# WARNING: field can be None
-		if record.body.floors_count is not None:
-			data += str(record.body.floors_count) + self.separator
-		else: data += self.separator
-
-
-		#-- sale terms
-		if record.for_sale:
-			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 13:
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
-
-			# REQUIRED field
-			if record.sale_terms.price is not None:
-				data += str(record.sale_terms.price) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
-
-			# REQUIRED field
-			if record.sale_terms.currency_sid is not None:
-				data += str(record.sale_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
-
-
-		#-- rent terms
-		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
-			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			bitmask += '1' if record.rent_terms.family else '0'
-			bitmask += '1' if record.rent_terms.foreigners else '0'
-			if len(bitmask) not in (19, 17):
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
-
-			# REQUIRED field
-			if record.rent_terms.price is not  None:
-				data += str(record.rent_terms.price) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
-
-			# REQUIRED field
-			if record.rent_terms.currency_sid is not None:
-				data += str(record.rent_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
-
-			# WARNING: next fields can be None
-			if record.rent_terms.persons_count is not None:
-				data += str(record.rent_terms.persons_count) + self.separator
-			else:
-				data += self.separator
-
-
-		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
-		# Це пов’язано із тим, що при десериалізації старші біти, втрачаються, якщо вони нулі.
-		# Доповнити маску неможливо, оскільки для доповнення слід знати точну к-сть біт маски,
-		# а це залежить від того чи продаєтсья об’єкт, чи здаєтсья в оренду, чи і те і інше.
-		bitmask = bitmask[::-1]
-
-		record_data = data + self.separator +  str(int(bitmask, 2))
-		if record_data[-1] == self.separator:
-			record_data = record_data[:-1]
-		return record_data
-
-
-	def deserialize_publication_record(self, record_data):
-		parts = record_data.split(self.separator)
-		bitmask = bin(int(parts[-1]))[2:]
-		data = {
-			'id': int(parts[0]),
-			'rooms_count':  int(parts[1]) if parts[1] != '' else None,
-		    'total_area':   int(parts[2]) if parts[2] != '' else None,
-			'floors_count': int(parts[3]) if parts[2] != '' else None,
-
-		    'electricity':      (bitmask[-3] == '1'),
-			'gas':              (bitmask[-4] == '1'),
-			'sewerage':         (bitmask[-5] == '1'),
-			'hot_water':        (bitmask[-6] == '1'),
-			'cold_water':       (bitmask[-7] == '1'),
-			'irrigation_water': (bitmask[-8] == '1'),
-
-		    'market_type_sid':  int('' + bitmask[-9]),
-		    'heating_type_sid': int('' + bitmask[-10] + bitmask[-11]),
-		}
-
-		if bitmask[-1] == '1':
-			# sale terms
-			data.update({
-				'for_sale': True,
-			    'sale_price': float(parts[4]),
-			    'sale_currency_sid': int(parts[5]),
-			})
-
-			# check for rent terms
-			if bitmask[-2] == '1':
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[6]),
-				    'rent_currency_sid': int(parts[7]),
-				    'persons_count': int(parts[8]) if parts[8] != '' else None
-				})
-
-		else:
-			if bitmask[-2] == '1':
-				# rent terms
-				# todo: check indexes
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[4]),
-					'rent_currency_sid': float(parts[5]),
-				    'persons_count': int(parts[6]) if parts[6] != '' else None
-				})
-		return data
-
-
-	def marker_brief(self, data, condition=None):
-		if condition is None:
-			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
-			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
-				return {
-					'id': data['id'],
-					'd0': u'Продажа: ' + self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-
-					'd1': u'Аренда: ' + self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_sale', False):
-				return {
-					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
-					'd1': self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_rent', False):
-				return{
-					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
-					'd1': self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			else:
-				raise DeserializationError()
-
-		else:
-			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
-			# todo: додати конввертацію валют в залженост від фільтрів
-			pass
-
-
-	def filter(self, publications, conditions):
-		# todo: розібратись із даним типом
-		return publications
-
-
-
 class RoomsMarkersManager(BaseMarkersManager):
 	def __init__(self):
 		super(RoomsMarkersManager, self).__init__(OBJECTS_TYPES.room())
 
 
-	def record_queryset(self, hid):
+	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
@@ -2984,13 +2779,15 @@ class RoomsMarkersManager(BaseMarkersManager):
 			'body__rooms_count', 'body__total_area', 'body__floor')
 
 
-	def serialize_publication_record(self, record):
+	def serialize_publication(self, record):
+		operation_bitmask =  '1' if record.for_sale else '0'
+		operation_bitmask += '1' if record.for_rent else '0'
+		if operation_bitmask == '00':
+			raise self.SerializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
 		# common terms
-		#-- bitmask
-		bitmask = ''
-		bitmask += '1' if record.for_sale else '0'
-		bitmask += '1' if record.for_rent else '0'
-		bitmask += '1' if record.body.electricity else '0'
+		bitmask =  '1' if record.body.electricity else '0'
 		bitmask += '1' if record.body.gas else '0'
 		bitmask += '1' if record.body.hot_water else '0'
 		bitmask += '1' if record.body.cold_water else '0'
@@ -2998,64 +2795,49 @@ class RoomsMarkersManager(BaseMarkersManager):
 		bitmask += '{0:01b}'.format(record.body.market_type_sid)  # 1 bit
 		bitmask += '{0:02b}'.format(record.body.heating_type_sid) # 2 bits
 		bitmask += '{0:02b}'.format(record.body.rooms_planning_sid) # 2 bits
-		if len(bitmask) != 12:
-			raise SerializationError('Bitmask corruption. Potential deserialization error.')
+		if len(bitmask) != 10:
+			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
 
-		#-- data
-		data = ''
-		data += str(record.id) + self.separator
+		# data
+		data = str(record.id) + self.separator
 
-		# WARNING: field can be None
-		if record.body.rooms_count is not None:
-			data += str(record.body.rooms_count) + self.separator
-		else: data += self.separator
+		if record.body.rooms_count is None:
+			raise self.SerializationError('rooms_count is required but absent.')
+		data += str(record.body.rooms_count) + self.separator
 
-		# WARNING: field can be None
-		if record.body.total_area is not None:
-			data += str(record.body.total_area) + self.separator
-		else: data += self.separator
+		if record.body.total_area is None:
+			raise self.SerializationError('total_area is required but absent.')
+		data += str(record.body.total_area) + self.separator
 
-		# WARNING: field can be None
-		if record.body.floor is not None:
-			data += str(record.body.floor) + self.separator
-		else: data += self.separator
+		if record.body.floor is None:
+			raise self.SerializationError('floor is required but absent.')
+		data += str(record.body.floor) + self.separator
 
 
-		#-- sale terms
+		# sale terms
 		if record.for_sale:
 			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 14:
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) != 12:
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.sale_terms.price is not None:
-				data += str(record.sale_terms.price) + self.separator
-				data += str(record.sale_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
+			if record.sale_terms.price is None:
+				raise self.SerializationError('sale_price is required but absent.')
+			data += str(record.sale_terms.price) + self.separator
 
 
-		#-- rent terms
+		# rent terms
 		if record.for_rent:
 			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
 			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
 			bitmask += '1' if record.rent_terms.family else '0'
 			bitmask += '1' if record.rent_terms.foreigners else '0'
-			if len(bitmask) not in (22, 20):
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) not in (16, 18):
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.rent_terms.price is not  None:
-				data += str(record.rent_terms.price) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
-
-			# REQUIRED field
-			if record.rent_terms.currency_sid is not None:
-				data += str(record.rent_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
+			if record.rent_terms.price is None:
+				raise self.SerializationError('rent_price is required but absent.')
+			data += str(record.rent_terms.price) + self.separator
 
 			# WARNING: next fields can be None
 			if record.rent_terms.persons_count is not None:
@@ -3063,116 +2845,158 @@ class RoomsMarkersManager(BaseMarkersManager):
 			else:
 				data += self.separator
 
-
-		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
-		# Це пов’язано із тим, що при десериалізації старші біти, втрачаються, якщо вони нулі.
-		# Доповнити маску неможливо, оскільки для доповнення слід знати точну к-сть біт маски,
-		# а це залежить від того чи продаєтсья об’єкт, чи здаєтсья в оренду, чи і те і інше.
-		bitmask = bitmask[::-1]
-
-		record_data = data + self.separator +  str(int(bitmask, 2))
+		record_data = str(int(operation_bitmask, 2)) + self.separator +\
+		              str(int(bitmask, 2)) + self.separator + \
+		              data
 		if record_data[-1] == self.separator:
 			record_data = record_data[:-1]
 		return record_data
 
 
-	def deserialize_publication_record(self, record_data):
+	def deserialize_marker_data(self, record_data):
 		parts = record_data.split(self.separator)
-		bitmask = bin(int(parts[-1]))[2:]
-		data = {
-			'id': int(parts[0]),
-			'rooms_count':  int(parts[1]) if parts[1] != '' else None,
-			'total_area':   float(parts[2]) if parts[2] != '' else None,
-			'floor':        int(parts[3]) if parts[3] != '' else None,
+		operations_bitmask = parts[0]
+		operations_bitmask = str(bin(int(operations_bitmask))[2:])
+		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
 
-		    'electricity':  (bitmask[-3] == '1'),
-			'gas':          (bitmask[-4] == '1'),
-			'hot_water':    (bitmask[-5] == '1'),
-			'cold_water':   (bitmask[-6] == '1'),
-			'lift':         (bitmask[-7] == '1'),
+		bitmask = parts[1]
+		bitmask = str(bin(int(bitmask))[2:])
 
-		    'market_type_sid':    int('' + bitmask[-8]),
-		    'heating_type_sid':   int('' + bitmask[-9]  + bitmask[-10]),
-		    'rooms_planning_sid': int('' + bitmask[-11] + bitmask[-12]),
+		data = parts[2:]
+
+
+		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
+			bitmask = '0' * (18 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'rooms_count':          int(data[1]),
+				'total_area':         float(data[2]),
+				'floor':                int(data[3]),
+			    'sale_price':         float(data[4]),
+			    'rent_price':         float(data[5]),
+			    'persons_count':        int(data[6]) if data[6] != '' else None,
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+				'lift':                     (bitmask[4] == '1'),
+			    'market_type_sid':       int(bitmask[5]),
+			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
+
+			    'sale_currency_sid':     int(bitmask[10] + bitmask[11]),
+
+			    'rent_period_sid':       int(bitmask[12] + bitmask[13]),
+			    'rent_currency_sid':     int(bitmask[14] + bitmask[15]),
+				'family':                   (bitmask[16] == '1'),
+				'foreigners':               (bitmask[17] == '1'),
+			}
+
+		elif operations_bitmask[0] == '1': # for sale
+			bitmask = '0' * (12 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'rooms_count':          int(data[1]),
+				'total_area':         float(data[2]),
+				'floor':                int(data[3]),
+			    'sale_price':         float(data[4]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+				'lift':                     (bitmask[4] == '1'),
+			    'market_type_sid':       int(bitmask[5]),
+			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
+			    'sale_currency_sid':     int(bitmask[10] + bitmask[11]),
+			}
+
+		elif operations_bitmask[1] == '1': # for rent
+			bitmask = '0' * (16 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'rooms_count':          int(data[1]),
+				'total_area':         float(data[2]),
+				'floor':                int(data[3]),
+			    'rent_price':         float(data[4]),
+			    'persons_count':        int(data[5]) if data[5] != '' else None,
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+				'lift':                     (bitmask[4] == '1'),
+			    'market_type_sid':       int(bitmask[5]),
+			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
+			    'rent_period_sid':       int(bitmask[10] + bitmask[11]),
+			    'rent_currency_sid':     int(bitmask[12] + bitmask[13]),
+				'family':                   (bitmask[14] == '1'),
+				'foreigners':               (bitmask[15] == '1'),
+			}
+		else:
+			raise self.DeserializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+
+	def marker_brief(self, marker, filters=None):
+		"""
+		Сформує бриф для маркеру на основі даних, переданих у фільтрі.
+		(В даний момент враховується лише валюта запиту)
+		"""
+
+		# todo: додати зміну видачі в залежності від фільтрів.
+		# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
+		# ітак ясно, що їх буде не більше одної.
+
+		result = {
+			'id': marker['id']
 		}
 
-		if bitmask[-1] == '1':
-			# sale terms
-			data.update({
-				'for_sale': True,
-			    'sale_price': float(parts[4]),
-			    'sale_currency_sid': int(parts[5]),
+		# Гривня як базова валюта обирається згідно з чинним законодавством,
+		# але якщо у фільтрі вказана інша - переформатувати бриф на неї.
+		if filters is None:
+			currency = CURRENCIES.uah()
+		else:
+			currency = filters.get('currency_sid', CURRENCIES.uah())
+
+
+		if marker.get('for_sale', False):
+			total_area = '{0:.2f}'.format(marker.get('total_area')).rstrip('0').rstrip('.') \
+				if marker.get('total_area') else None
+			sale_price = self.format_price(marker['sale_price'], marker['sale_currency_sid'], currency)
+			result.update({
+			'd0': u'Площадь: {0} м²'.format(total_area) if total_area else u'Площадь неизвестна',
+				'd1': u'{0} {1}'.format(sale_price, self.format_currency(currency)),
 			})
+			return result
 
-			# check for rent terms
-			if bitmask[-2] == '1':
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[6]),
-				    'rent_currency_sid': int(parts[7]),
-				    'persons_count': int(parts[8]) if parts[8] != '' else None
-				})
+		elif marker.get('for_rent', False):
+			total_area = '{0:.2f}'.format(marker.get('total_area')).rstrip('0').rstrip('.') \
+				if marker.get('total_area') else None
+			rent_price = self.format_price(marker['rent_price'], marker['rent_currency_sid'], currency)
+			result.update({
+				'd0': u'Площадь: {0} м²'.format(total_area) if total_area else u'Площадь неизвестна',
+				'd1': u'{0} {1}'.format(rent_price, self.format_currency(currency)),
+			})
+			return result
 
-		else:
-			if bitmask[-2] == '1':
-				# rent terms
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[4]),
-					'rent_currency_sid': float(parts[5]),
-				    'persons_count': int(parts[6]) if parts[6] != '' else None
-				})
-		return data
-
-
-	def marker_brief(self, data, condition=None):
-		if condition is None:
-			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
-			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
-				return {
-					'id': data['id'],
-					'd0': u'Продажа: ' + self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-
-					'd1': u'Аренда: ' + self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_sale', False):
-				return {
-					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
-					'd1': self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_rent', False):
-				return{
-					'id': data['id'],
-					'd0': u'Мест: ' + str(data['persons_count']) + u' м²',
-					'd1': self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			else:
-				raise DeserializationError()
-
-		else:
-			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
-			# todo: додати конввертацію валют в залженост від фільтрів
-			pass
+		raise RuntimeException('Marker is not for sale and not for rent.')
 
 
 	def filter(self, publications, filters):
@@ -3184,7 +3008,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 
 		operation_sid = filters.get('operation_sid')
 		if operation_sid is None:
-			raise ValueError('Invalid conditions. Operation_sid is absent.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is absent.')
 
 
 		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
@@ -3196,14 +3020,14 @@ class RoomsMarkersManager(BaseMarkersManager):
 			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
 			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
 			# На фронтенді валюта повинна бути задана за замовчуванням.
-			raise ValueError('sale_currency_sid is absent.')
+			raise InvalidArgument('sale_currency_sid is absent.')
 		elif currency_sid not in CURRENCIES.values():
-			raise ValueError('currency_sid is invalid.')
+			raise InvalidArgument('currency_sid is invalid.')
 
 		if operation_sid == 1: # rent
 			rent_period_sid = filters.get('period_sid')
 			if rent_period_sid is None:
-				raise ValueError('Rent period sid is absent.')
+				raise InvalidArgument('Rent period sid is absent.')
 
 
 		# Для відбору елементів зі списку publications, використовується список statuses.
@@ -3219,7 +3043,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 		statuses = [True] * len(publications)
 
 
-		#-- sale filters
+		# sale filters
 		if operation_sid == 0:
 			for i in range(len(statuses)):
 				# Якщо даний запис вже позначений як виключений — не аналізувати його.
@@ -3228,7 +3052,12 @@ class RoomsMarkersManager(BaseMarkersManager):
 
 				marker = publications[i][1]
 
-				#-- sale price
+				# operation type
+				if not marker.get('for_sale', False):
+					statuses[i] = False
+					continue
+
+				# sale price
 				price_min = filters.get('price_from')
 				price_max = filters.get('price_to')
 				if price_min is not None:
@@ -3253,7 +3082,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- market type
+				# market type
 				if ('new_buildings' in filters) and ('secondary_market' in filters):
 					# Немає змісту фільтрувати.
 					# Під дані умови потрапляють всі об’єкти.
@@ -3265,7 +3094,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
 
 
-				#-- rooms count
+				# rooms count
 				rooms_count_min = filters.get('rooms_count_from')
 				rooms_count_max = filters.get('rooms_count_to')
 				rooms_count = marker.get('rooms_count')
@@ -3295,7 +3124,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- total area
+				# total area
 				total_area_min = filters.get('total_area_from')
 				total_area_max = filters.get('total_area_to')
 				total_area = marker.get('total_area')
@@ -3325,7 +3154,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- floor
+				# floor
 				floor_min = filters.get('floor_from')
 				floor_max = filters.get('floor_to')
 				floor = marker.get('floor')
@@ -3355,38 +3184,38 @@ class RoomsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- electricity
+				# electricity
 				if 'electricity' in filters:
 					if (not 'electricity' in marker) or (not marker['electricity']):
 						statuses[i] = False
 						continue
 
-				#-- gas
+				# gas
 				if  'gas' in filters:
 					if (not 'gas' in marker) or (not marker['gas']):
 						statuses[i] = False
 						continue
 
-				#-- hot water
+				# hot water
 				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
 
-				#-- cold water
+				# cold water
 				if  'cold_water' in filters:
 					if (not 'cold_water' in marker) or (not marker['cold_water']):
 						statuses[i] = False
 						continue
 
-				#-- lift
+				# lift
 				if 'lift' in filters:
 					if (not 'lift' in marker) or (not marker['lift']):
 						statuses[i] = False
 						continue
 
 
-				#-- heating type
+				# heating type
 				heating_type_sid = filters.get('heating_type_sid')
 				if heating_type_sid is not None:
 					# Поле "тип опалення" може бути не обов’язковим.
@@ -3412,7 +3241,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 							continue
 
 
-		#-- rent filters
+		# rent filters
 		elif operation_sid == 1:
 			for i in range(len(publications)):
 				# Якщо даний маркер вже позначений як виключений — не аналізувати його.
@@ -3421,7 +3250,12 @@ class RoomsMarkersManager(BaseMarkersManager):
 
 				marker = publications[i][1]
 
-				#-- rent period
+				# operation type
+				if not marker.get('for_rent', False):
+					statuses[i] = False
+					continue
+
+				# rent period
 				if not 'rent_period_sid' in marker:
 					# Неможливо визначити, чи здається об’єкт в оренду.
 					# Виключаємо з видачі.
@@ -3439,7 +3273,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 						statuses[i] = False
 						continue
 
-				#-- rent price
+				# rent price
 				price_min = filters.get('price_from')
 				price_max = filters.get('price_to')
 				if price_min is not None:
@@ -3463,7 +3297,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 						statuses[i] = False
 						continue
 
-				#-- persons_count
+				# persons_count
 				persons_count_min = filters.get('persons_count_from')
 				persons_count_max = filters.get('persons_count_to')
 				persons_count = marker.get('persons_count')
@@ -3493,49 +3327,49 @@ class RoomsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				#-- for family
+				# for family
 				if 'family' in filters:
 					if (not 'for_family' in marker) or (not marker['for_family']):
 						statuses[i] = False
 						continue
 
-				#-- foreigners
+				# foreigners
 				if 'foreigners' in filters:
 					if (not 'foreigners' in marker) or (not marker['foreigners']):
 						statuses[i] = False
 						continue
 
-				#-- lift
+				# lift
 				if 'lift' in filters:
 					if (not 'lift' in marker) or (not marker['lift']):
 						statuses[i] = False
 						continue
 
-				#-- electricity
+				# electricity
 				if 'electricity' in filters:
 					if (not 'electricity' in marker) or (not marker['electricity']):
 						statuses[i] = False
 						continue
 
-				#-- gas
+				# gas
 				if  'gas' in filters:
 					if (not 'gas' in marker) or (not marker['gas']):
 						statuses[i] = False
 						continue
 
-				#-- hot water
+				# hot water
 				if 'hot_water' in filters:
 					if (not 'hot_water' in marker) or (not marker['hot_water']):
 						statuses[i] = False
 						continue
 
-				#-- cold water
+				# cold water
 				if  'cold_water' in filters:
 					if (not 'cold_water' in marker) or (not marker['cold_water']):
 						statuses[i] = False
 						continue
 		else:
-			raise ValueError('Invalid conditions. Operation_sid is unexpected.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is unexpected.')
 
 		result = []
 		for i in range(len(statuses)):
@@ -3550,201 +3384,200 @@ class TradesMarkersManager(BaseMarkersManager):
 		super(TradesMarkersManager, self).__init__(OBJECTS_TYPES.trade())
 
 
-	def record_queryset(self, hid):
+	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
-
-			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
-
+			'rent_terms__price', 'rent_terms__currency_sid',
 			'body__electricity', 'body__gas', 'body__sewerage', 'body__hot_water', 'body__cold_water',
-			'body__market_type_sid', 'body__building_type_sid',
-			'body__halls_area', 'body__total_area', 'body__floor',)
+			'body__building_type_sid', 'body__halls_area', 'body__total_area', 'body__floor',)
 
 
-	def serialize_publication_record(self, record):
+	def serialize_publication(self, record):
+		operation_bitmask =  '1' if record.for_sale else '0'
+		operation_bitmask += '1' if record.for_rent else '0'
+		if operation_bitmask == '00':
+			raise self.SerializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
 		# common terms
-		#-- bitmask
-		bitmask = ''
-		bitmask += '1' if record.for_sale else '0'
-		bitmask += '1' if record.for_rent else '0'
-		bitmask += '1' if record.body.electricity else '0'
+		bitmask =  '1' if record.body.electricity else '0'
 		bitmask += '1' if record.body.gas else '0'
 		bitmask += '1' if record.body.sewerage else '0'
 		bitmask += '1' if record.body.hot_water else '0'
 		bitmask += '1' if record.body.cold_water else '0'
-		bitmask += '{0:01b}'.format(record.body.market_type_sid)  # 1 bit
 		bitmask += '{0:03b}'.format(record.body.building_type_sid)  # 3 bits
-		if len(bitmask) != 11:
-			raise SerializationError('Bitmask corruption. Potential deserialization error.')
+		if len(bitmask) != 8:
+			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
+
+		# data
+		data = str(record.id) + self.separator
+
+		if record.body.halls_area is None:
+			raise self.SerializationError('halls_area is required but absent.')
+		data += str(record.body.halls_area) + self.separator
+
+		if record.body.total_area is None:
+			raise self.SerializationError('total_area is required but absent.')
+		data += str(record.body.total_area) + self.separator
 
 
-		#-- data
-		data = ''
-		data += str(record.id) + self.separator
-
-		# REQUIRED
-		if record.body.halls_area is not None:
-			data += str(record.body.halls_area) + self.separator
-		else: data += self.separator
-
-		# WARNING: this field can be None
-		if record.body.total_area is not None:
-			data += str(record.body.total_area) + self.separator
-		else: data += self.separator
-
-		# WARNING: this field can be None
-		if record.body.floor is not None:
-			data += str(record.body.floor) + self.separator
-		else: data += self.separator
-
-
-		#-- sale terms
+		# sale terms
 		if record.for_sale:
 			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 13:
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) != 10:
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.sale_terms.price is not None:
-				data += str(record.sale_terms.price) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
-
-			# REQUIRED field
-			if record.sale_terms.currency_sid is not None:
-				data += str(record.sale_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
+			if record.sale_terms.price is None:
+				raise self.SerializationError('sale_price is required but absent.')
+			data += str(record.sale_terms.price) + self.separator
 
 
-		#-- rent terms
+		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
 			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			if len(bitmask) not in (17, 19):
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) not in (10, 12):
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.rent_terms.price is not None:
-				data += str(record.rent_terms.price) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
+			if record.rent_terms.price is None:
+				raise self.SerializationError('rent_price is required but absent.')
+			data += str(record.rent_terms.price) + self.separator
 
-			# REQUIRED field
-			if record.rent_terms.currency_sid is not None:
-				data += str(record.rent_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
-
-
-		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
-		# Це пов’язано із тим, що при десериалізації старші біти, втрачаються, якщо вони нулі.
-		# Доповнити маску неможливо, оскільки для доповнення слід знати точну к-сть біт маски,
-		# а це залежить від того чи продаєтсья об’єкт, чи здаєтсья в оренду, чи і те і інше.
-		bitmask = bitmask[::-1]
-
-		record_data = data + self.separator +  str(int(bitmask, 2))
+		record_data = str(int(operation_bitmask, 2)) + self.separator +\
+		              str(int(bitmask, 2)) + self.separator + \
+		              data
 		if record_data[-1] == self.separator:
 			record_data = record_data[:-1]
 		return record_data
 
 
-	def deserialize_publication_record(self, record_data):
+	def deserialize_marker_data(self, record_data):
 		parts = record_data.split(self.separator)
-		bitmask = bin(int(parts[-1]))[2:]
-		data = {
-			'id': int(parts[0]),
-			'halls_area':   int(parts[1]) if parts[1] != '' else None,
-			'total_area':   int(parts[2]) if parts[2] != '' else None,
-			'floor':        int(parts[3]) if parts[3] != '' else None,
+		operations_bitmask = parts[0]
+		operations_bitmask = str(bin(int(operations_bitmask))[2:])
+		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
 
-		    'electricity':          (bitmask[-3] == '1'),
-			'gas':                  (bitmask[-4] == '1'),
-			'sewerage':             (bitmask[-5] == '1'),
-			'hot_water':            (bitmask[-6] == '1'),
-			'cold_water':           (bitmask[-7] == '1'),
+		bitmask = parts[1]
+		bitmask = str(bin(int(bitmask))[2:])
 
-			'market_type_sid':      int('' + bitmask[-8]  + bitmask[-9]),
-			'building_type_sid':    int('' + bitmask[-10] + bitmask[-11] + bitmask[-12]),
+		data = parts[2:]
+
+
+		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
+			bitmask = '0' * (12 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'halls_area':         float(data[1]),
+				'total_area':         float(data[2]),
+			    'sale_price':         float(data[3]),
+			    'rent_price':         float(data[4]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+			    'sewerage':                 (bitmask[2] == '1'),
+				'hot_water':                (bitmask[3] == '1'),
+				'cold_water':               (bitmask[4] == '1'),
+			    'building_type_sid':     int(bitmask[5]  + bitmask[6] + bitmask[7]),
+
+			    'sale_currency_sid':     int(bitmask[8]  + bitmask[9]),
+			    'rent_currency_sid':     int(bitmask[10] + bitmask[11]),
+			}
+
+		elif operations_bitmask[0] == '1': # for sale
+			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'halls_area':         float(data[1]),
+				'total_area':         float(data[2]),
+			    'sale_price':         float(data[3]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+			    'sewerage':                 (bitmask[2] == '1'),
+				'hot_water':                (bitmask[3] == '1'),
+				'cold_water':               (bitmask[4] == '1'),
+			    'building_type_sid':     int(bitmask[5] + bitmask[6] + bitmask[7]),
+			    'sale_currency_sid':     int(bitmask[8] + bitmask[9]),
+			}
+
+		elif operations_bitmask[1] == '1': # for rent
+			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'halls_area':         float(data[1]),
+				'total_area':         float(data[2]),
+			    'rent_price':         float(data[3]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+			    'sewerage':                 (bitmask[2] == '1'),
+				'hot_water':                (bitmask[3] == '1'),
+				'cold_water':               (bitmask[4] == '1'),
+			    'building_type_sid':     int(bitmask[5] + bitmask[6] + bitmask[7]),
+			    'rent_currency_sid':     int(bitmask[8] + bitmask[9]),
+			}
+		else:
+			raise self.DeserializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+
+	def marker_brief(self, marker, filters=None):
+		"""
+		Сформує бриф для маркеру на основі даних, переданих у фільтрі.
+		(В даний момент враховується лише валюта запиту)
+		"""
+
+		# todo: додати зміну видачі в залежності від фільтрів.
+		# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
+		# ітак ясно, що їх буде не більше одної.
+
+		result = {
+			'id': marker['id']
 		}
 
-		if bitmask[-1] == '1':
-			# sale terms
-			data.update({
-				'for_sale': True,
-			    'sale_price': float(parts[5]),
-			    'sale_currency_sid': int(parts[6]),
+		# Гривня як базова валюта обирається згідно з чинним законодавством,
+		# але якщо у фільтрі вказана інша - переформатувати бриф на неї.
+		if filters is None:
+			currency = CURRENCIES.uah()
+		else:
+			currency = filters.get('currency_sid', CURRENCIES.uah())
+
+
+		if marker.get('for_sale', False):
+			total_area = '{0:.2f}'.format(marker.get('total_area')).rstrip('0').rstrip('.') \
+				if marker.get('total_area') else None
+			sale_price = self.format_price(marker['sale_price'], marker['sale_currency_sid'], currency)
+			result.update({
+				'd0': u'Площадь: {0} м²'.format(total_area) if total_area else u'Площадь неизвестна',
+				'd1': u'{0} {1}'.format(sale_price, self.format_currency(currency)),
 			})
+			return result
 
-			# check for rent terms
-			if bitmask[-2] == '1':
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[7]),
-				    'rent_currency_sid': int(parts[8]),
-				})
+		elif marker.get('for_rent', False):
+			total_area = '{0:.2f}'.format(marker.get('total_area')).rstrip('0').rstrip('.') \
+				if marker.get('total_area') else None
+			rent_price = self.format_price(marker['rent_price'], marker['rent_currency_sid'], currency)
+			result.update({
+				'd0': u'Площадь: {0} м²'.format(total_area) if total_area else u'Площадь неизвестна',
+				'd1': u'{0} {1}'.format(rent_price, self.format_currency(currency)),
+			})
+			return result
 
-		else:
-			if bitmask[-2] == '1':
-				# rent terms
-				# todo: check indexes
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[5]),
-					'rent_currency_sid': float(parts[6]),
-				})
-		return data
+		raise RuntimeException('Marker is not for sale and not for rent.')
 
-
-	def marker_brief(self, data, condition=None):
-		if condition is None:
-			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
-			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
-				return {
-					'id': data['id'],
-					'd0': u'Продажа: ' + self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-
-					'd1': u'Аренда: ' + self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_sale', False):
-				return {
-					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
-					'd1': self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_rent', False):
-				return{
-					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
-					'd1': self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			else:
-				raise DeserializationError()
-
-		else:
-			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
-			# todo: додати конввертацію валют в залженост від фільтрів
-			pass
 
 
 	def filter(self, publications, filters):
@@ -3756,7 +3589,7 @@ class TradesMarkersManager(BaseMarkersManager):
 
 		operation_sid = filters.get('operation_sid')
 		if operation_sid is None:
-			raise ValueError('Invalid conditions. Operation_sid is absent.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is absent.')
 
 
 		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
@@ -3768,12 +3601,12 @@ class TradesMarkersManager(BaseMarkersManager):
 			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
 			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
 			# На фронтенді валюта повинна бути задана за замовчуванням.
-			raise ValueError('sale_currency_sid is absent.')
+			raise InvalidArgument('sale_currency_sid is absent.')
 		elif currency_sid not in CURRENCIES.values():
-			raise ValueError('currency_sid is invalid.')
+			raise InvalidArgument('currency_sid is invalid.')
 
 		if operation_sid not in [0, 1]:
-			raise ValueError('Invalid operation_sid.')
+			raise InvalidArgument('Invalid operation_sid.')
 
 
 		# Для відбору елементів зі списку publications, використовується список statuses.
@@ -3795,6 +3628,18 @@ class TradesMarkersManager(BaseMarkersManager):
 				continue
 
 			marker = publications[i][1]
+
+			# operation type
+			if operation_sid == 0:
+				if not marker.get('for_sale', False):
+					statuses[i] = False
+					continue
+
+			elif operation_sid == 1:
+				if not marker.get('for_rent', False):
+					statuses[i] = False
+					continue
+
 
 			# price
 			price_min = filters.get('price_from')
@@ -3956,191 +3801,196 @@ class OfficesMarkersManager(BaseMarkersManager):
 		super(OfficesMarkersManager, self).__init__(OBJECTS_TYPES.office())
 
 
-	def record_queryset(self, hid):
+	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
-
-			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
-
+			'rent_terms__price', 'rent_terms__currency_sid',
 			'body__security', 'body__kitchen', 'body__hot_water', 'body__cold_water',
-		    'body__building_type_sid',
-			'body__cabinets_count', 'body__total_area')
+		    'body__building_type_sid', 'body__total_area', 'body__cabinets_count')
 
 
-	def serialize_publication_record(self, record):
+	def serialize_publication(self, record):
+		operation_bitmask =  '1' if record.for_sale else '0'
+		operation_bitmask += '1' if record.for_rent else '0'
+		if operation_bitmask == '00':
+			raise self.SerializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
 		# common terms
-		#-- bitmask
-		bitmask = ''
-		bitmask += '1' if record.for_sale else '0'
-		bitmask += '1' if record.for_rent else '0'
-		bitmask += '1' if record.body.security else '0'
+		bitmask =  '1' if record.body.security else '0'
 		bitmask += '1' if record.body.kitchen else '0'
 		bitmask += '1' if record.body.hot_water else '0'
 		bitmask += '1' if record.body.cold_water else '0'
 		bitmask += '{0:03b}'.format(record.body.building_type_sid)  # 3 bits
-		if len(bitmask) != 8:
-			raise SerializationError('Bitmask corruption. Potential deserialization error.')
+		if len(bitmask) != 7:
+			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
+
+		# data
+		data = str(record.id) + self.separator
 
 
-		#-- data
-		data = ''
-		data += str(record.id) + self.separator
+		if record.body.total_area is None:
+			raise self.SerializationError('total_area is required but absent.')
+		data += str(record.body.total_area) + self.separator
 
-		# REQUIRED
-		if record.body.cabinets_count is not None:
-			data += str(record.body.cabinets_count) + self.separator
-		else: data += self.separator
-
-		# WARNING: this field can be None
-		if record.body.total_area is not None:
-			data += str(record.body.total_area) + self.separator
-		else: data += self.separator
+		if record.body.cabinets_count is None:
+			raise self.SerializationError('cabinets_count is required but absent.')
+		data += str(record.body.cabinets_count) + self.separator
 
 
-		#-- sale terms
+		# sale terms
 		if record.for_sale:
 			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 13:
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) != 9:
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.sale_terms.price is not None:
-				data += str(record.sale_terms.price) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
-
-			# REQUIRED field
-			if record.sale_terms.currency_sid is not None:
-				data += str(record.sale_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
+			if record.sale_terms.price is None:
+				raise self.SerializationError('sale_price is required but absent.')
+			data += str(record.sale_terms.price) + self.separator
 
 
-		#-- rent terms
+		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
 			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			if len(bitmask) not in (17, 19):
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) not in (9, 11):
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.rent_terms.price is not None:
-				data += str(record.rent_terms.price) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
+			if record.rent_terms.price is None:
+				raise self.SerializationError('rent_price is required but absent.')
+			data += str(record.rent_terms.price) + self.separator
 
-			# REQUIRED field
-			if record.rent_terms.currency_sid is not None:
-				data += str(record.rent_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
-
-
-		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
-		# Це пов’язано із тим, що при десериалізації старші біти, втрачаються, якщо вони нулі.
-		# Доповнити маску неможливо, оскільки для доповнення слід знати точну к-сть біт маски,
-		# а це залежить від того чи продаєтсья об’єкт, чи здаєтсья в оренду, чи і те і інше.
-		bitmask = bitmask[::-1]
-
-		record_data = data + self.separator +  str(int(bitmask, 2))
+		record_data = str(int(operation_bitmask, 2)) + self.separator +\
+		              str(int(bitmask, 2)) + self.separator + \
+		              data
 		if record_data[-1] == self.separator:
 			record_data = record_data[:-1]
 		return record_data
 
 
-	def deserialize_publication_record(self, record_data):
+	def deserialize_marker_data(self, record_data):
 		parts = record_data.split(self.separator)
-		bitmask = bin(int(parts[-1]))[2:]
-		data = {
-			'id': int(parts[0]),
-			'cabinets_count':   int(parts[1]) if parts[1] != '' else None,
-			'total_area':       int(parts[2]) if parts[2] != '' else None,
+		operations_bitmask = parts[0]
+		operations_bitmask = str(bin(int(operations_bitmask))[2:])
+		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
 
-			'security':     (bitmask[-3] == '1'),
-			'kitchen':      (bitmask[-4] == '1'),
-			'hot_water':    (bitmask[-5] == '1'),
-			'cold_water':   (bitmask[-6] == '1'),
+		bitmask = parts[1]
+		bitmask = str(bin(int(bitmask))[2:])
 
-			'building_type_sid':    int('' + bitmask[-7] + bitmask[-8] + bitmask[-9]),
+		data = parts[2:]
+
+
+		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
+			bitmask = '0' * (11 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'total_area':         float(data[1]),
+			    'cabinets_count':       int(data[2]),
+			    'sale_price':         float(data[3]),
+			    'rent_price':         float(data[4]),
+
+				# bitmask deserialization
+			    'security':                 (bitmask[0] == '1'),
+				'kitchen':                  (bitmask[1] == '1'),
+			    'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+			    'building_type_sid':     int(bitmask[4] + bitmask[5] + bitmask[6]),
+
+			    'sale_currency_sid':     int(bitmask[7] + bitmask[8]),
+			    'rent_currency_sid':     int(bitmask[9] + bitmask[10]),
+			}
+
+		elif operations_bitmask[0] == '1': # for sale
+			bitmask = '0' * (9 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'total_area':         float(data[1]),
+			    'cabinets_count':       int(data[2]),
+			    'sale_price':         float(data[3]),
+
+				# bitmask deserialization
+			    'security':                 (bitmask[0] == '1'),
+				'kitchen':                  (bitmask[1] == '1'),
+			    'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+			    'building_type_sid':     int(bitmask[4] + bitmask[5] + bitmask[6]),
+			    'sale_currency_sid':     int(bitmask[7] + bitmask[8]),
+			}
+
+		elif operations_bitmask[1] == '1': # for rent
+			bitmask = '0' * (9 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'total_area':         float(data[1]),
+			    'cabinets_count':       int(data[2]),
+			    'rent_price':         float(data[3]),
+
+				# bitmask deserialization
+			    'security':                 (bitmask[0] == '1'),
+				'kitchen':                  (bitmask[1] == '1'),
+			    'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+			    'building_type_sid':     int(bitmask[4] + bitmask[5] + bitmask[6]),
+			    'rent_currency_sid':     int(bitmask[7] + bitmask[8]),
+			}
+		else:
+			raise self.DeserializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+
+	def marker_brief(self, marker, filters=None):
+		"""
+		Сформує бриф для маркеру на основі даних, переданих у фільтрі.
+		(В даний момент враховується лише валюта запиту)
+		"""
+
+		# todo: додати зміну видачі в залежності від фільтрів.
+		# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
+		# ітак ясно, що їх буде не більше одної.
+
+		result = {
+			'id': marker['id']
 		}
 
-		if bitmask[-1] == '1':
-			# sale terms
-			data.update({
-				'for_sale': True,
-			    'sale_price': float(parts[3]),
-			    'sale_currency_sid': int(parts[4]),
+		# Гривня як базова валюта обирається згідно з чинним законодавством,
+		# але якщо у фільтрі вказана інша - переформатувати бриф на неї.
+		if filters is None:
+			currency = CURRENCIES.uah()
+		else:
+			currency = filters.get('currency_sid', CURRENCIES.uah())
+
+
+		if marker.get('for_sale', False):
+			total_area = '{0:.2f}'.format(marker.get('total_area')).rstrip('0').rstrip('.') \
+				if marker.get('total_area') else None
+			sale_price = self.format_price(marker['sale_price'], marker['sale_currency_sid'], currency)
+			result.update({
+				'd0': u'Площадь: {0} м²'.format(total_area) if total_area else u'Площадь неизвестна',
+				'd1': u'{0} {1}'.format(sale_price, self.format_currency(currency)),
 			})
+			return result
 
-			# check for rent terms
-			if bitmask[-2] == '1':
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[5]),
-				    'rent_currency_sid': int(parts[6]),
-				})
+		elif marker.get('for_rent', False):
+			total_area = '{0:.2f}'.format(marker.get('total_area')).rstrip('0').rstrip('.') \
+				if marker.get('total_area') else None
+			rent_price = self.format_price(marker['rent_price'], marker['rent_currency_sid'], currency)
+			result.update({
+				'd0': u'Площадь: {0} м²'.format(total_area) if total_area else u'Площадь неизвестна',
+				'd1': u'{0} {1}'.format(rent_price, self.format_currency(currency)),
+			})
+			return result
 
-		else:
-			if bitmask[-2] == '1':
-				# rent terms
-				# todo: check indexes
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[3]),
-					'rent_currency_sid': float(parts[4]),
-				})
-		return data
-
-
-	def marker_brief(self, data, condition=None):
-		if condition is None:
-			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
-			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
-				return {
-					'id': data['id'],
-					'd0': u'Продажа: ' + self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-
-					'd1': u'Аренда: ' + self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_sale', False):
-				return {
-					'id': data['id'],
-					'd0': u'Кабинетов: ' + str(data['cabinets_count']) if data['cabinets_count'] else '',
-					'd1': self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_rent', False):
-				return{
-					'id': data['id'],
-					'd0': u'Кабинетов: ' + str(data['cabinets_count']) if data['cabinets_count'] else '',
-					'd1': self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			else:
-				raise DeserializationError()
-
-		else:
-			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
-			# todo: додати конввертацію валют в залженост від фільтрів
-			pass
+		raise RuntimeException('Marker is not for sale and not for rent.')
 
 
 	def filter(self, publications, filters):
@@ -4152,7 +4002,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 
 		operation_sid = filters.get('operation_sid')
 		if operation_sid is None:
-			raise ValueError('Invalid conditions. Operation_sid is absent.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is absent.')
 
 
 		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
@@ -4164,12 +4014,12 @@ class OfficesMarkersManager(BaseMarkersManager):
 			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
 			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
 			# На фронтенді валюта повинна бути задана за замовчуванням.
-			raise ValueError('sale_currency_sid is absent.')
+			raise InvalidArgument('sale_currency_sid is absent.')
 		elif currency_sid not in CURRENCIES.values():
-			raise ValueError('currency_sid is invalid.')
+			raise InvalidArgument('currency_sid is invalid.')
 
 		if operation_sid not in [0, 1]:
-			raise ValueError('Invalid operation_sid.')
+			raise InvalidArgument('Invalid operation_sid.')
 
 
 		# Для відбору елементів зі списку publications, використовується список statuses.
@@ -4192,27 +4042,46 @@ class OfficesMarkersManager(BaseMarkersManager):
 
 			marker = publications[i][1]
 
+			# operation type
+			if operation_sid == 0:
+				if not marker.get('for_sale', False):
+					statuses[i] = False
+					continue
+
+			elif operation_sid == 1:
+				if not marker.get('for_rent', False):
+					statuses[i] = False
+					continue
+
 			# price
+			if operation_sid == 0:
+				marker_price = marker.get('sale_price')
+				marker_currency = marker.get('sale_currency_sid')
+			else:
+				marker_price = marker.get('rent_price')
+				marker_currency = marker.get('rent_currency_sid')
+
+
 			price_min = filters.get('price_from')
 			price_max = filters.get('price_to')
 			if price_min is not None:
-				price_min = convert_currency(price_min, currency_sid, marker['sale_currency_sid'])
+				price_min = convert_currency(price_min, currency_sid, marker_currency)
 			if price_max is not None:
-				price_max = convert_currency(price_max, currency_sid, marker['sale_currency_sid'])
+				price_max = convert_currency(price_max, currency_sid, marker_currency)
 
 
 			if (price_max is not None) and (price_min is not None):
-				if not price_min <= marker['sale_price'] <= price_max:
+				if not price_min <= marker_price <= price_max:
 					statuses[i] = False
 					continue
 
 			elif price_min is not None:
-				if not price_min <= marker['sale_price']:
+				if not price_min <= marker_price:
 					statuses[i] = False
 					continue
 
 			elif price_max is not None:
-				if not marker['sale_price'] <= price_max:
+				if not marker_price <= price_max:
 					statuses[i] = False
 					continue
 
@@ -4321,186 +4190,190 @@ class WarehousesMarkersManager(BaseMarkersManager):
 		super(WarehousesMarkersManager, self).__init__(OBJECTS_TYPES.warehouse())
 
 
-	def record_queryset(self, hid):
+	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
-
-			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
-
+			'rent_terms__price', 'rent_terms__currency_sid',
 			'body__electricity', 'body__gas', 'body__hot_water', 'body__cold_water',
-		    'body__security_alarm', 'body__fire_alarm',
-			'body__halls_area',)
+		    'body__security_alarm', 'body__fire_alarm', 'body__area')
 
 
-	def serialize_publication_record(self, record):
+	def serialize_publication(self, record):
+		operation_bitmask =  '1' if record.for_sale else '0'
+		operation_bitmask += '1' if record.for_rent else '0'
+		if operation_bitmask == '00':
+			raise self.SerializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
 		# common terms
-		#-- bitmask
-		bitmask = ''
-		bitmask += '1' if record.for_sale else '0'
-		bitmask += '1' if record.for_rent else '0'
-		bitmask += '1' if record.body.electricity else '0'
+		bitmask =  '1' if record.body.electricity else '0'
 		bitmask += '1' if record.body.gas else '0'
 		bitmask += '1' if record.body.hot_water else '0'
 		bitmask += '1' if record.body.cold_water else '0'
 		bitmask += '1' if record.body.security_alarm else '0'
 		bitmask += '1' if record.body.fire_alarm else '0'
-		if len(bitmask) != 8:
-			raise SerializationError('Bitmask corruption. Potential deserialization error.')
+		if len(bitmask) != 6:
+			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
+
+		# data
+		data = str(record.id) + self.separator
+
+		if record.body.area is None:
+			raise self.SerializationError('area is required but absent.')
+		data += str(record.body.area) + self.separator
 
 
-		#-- data
-		data = ''
-		data += str(record.id) + self.separator
-
-		# REQUIRED
-		if record.body.halls_area is not None:
-			data += str(record.body.halls_area) + self.separator
-		else: data += self.separator
-
-
-		#-- sale terms
+		# sale terms
 		if record.for_sale:
 			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 13:
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) != 8:
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.sale_terms.price is not None:
-				data += str(record.sale_terms.price) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
-
-			# REQUIRED field
-			if record.sale_terms.currency_sid is not None:
-				data += str(record.sale_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
+			if record.sale_terms.price is None:
+				raise self.SerializationError('sale_price is required but absent.')
+			data += str(record.sale_terms.price) + self.separator
 
 
-		#-- rent terms
+		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
 			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			if len(bitmask) not in (17, 19):
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) not in (8, 10):
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.rent_terms.price is not None:
-				data += str(record.rent_terms.price) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
+			if record.rent_terms.price is None:
+				raise self.SerializationError('rent_price is required but absent.')
+			data += str(record.rent_terms.price) + self.separator
 
-			# REQUIRED field
-			if record.rent_terms.currency_sid is not None:
-				data += str(record.rent_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
-
-
-		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
-		# Це пов’язано із тим, що при десериалізації старші біти, втрачаються, якщо вони нулі.
-		# Доповнити маску неможливо, оскільки для доповнення слід знати точну к-сть біт маски,
-		# а це залежить від того чи продаєтсья об’єкт, чи здаєтсья в оренду, чи і те і інше.
-		bitmask = bitmask[::-1]
-
-		record_data = data + self.separator +  str(int(bitmask, 2))
+		record_data = str(int(operation_bitmask, 2)) + self.separator +\
+		              str(int(bitmask, 2)) + self.separator + \
+		              data
 		if record_data[-1] == self.separator:
 			record_data = record_data[:-1]
 		return record_data
 
 
-	def deserialize_publication_record(self, record_data):
+	def deserialize_marker_data(self, record_data):
 		parts = record_data.split(self.separator)
-		bitmask = bin(int(parts[-1]))[2:]
-		data = {
-			'id': int(parts[0]),
-			'halls_area':   int(parts[1]) if parts[1] != '' else None,
+		operations_bitmask = parts[0]
+		operations_bitmask = str(bin(int(operations_bitmask))[2:])
+		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
 
-		    'electricity':      (bitmask[-3] == '1'),
-			'gas':              (bitmask[-4] == '1'),
-			'hot_water':        (bitmask[-5] == '1'),
-			'cold_water':       (bitmask[-6] == '1'),
-		    'security_alarm':   (bitmask[-5] == '1'),
-			'fire_alarm':       (bitmask[-6] == '1'),
+		bitmask = parts[1]
+		bitmask = str(bin(int(bitmask))[2:])
+
+		data = parts[2:]
+
+
+		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
+			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'area':         float(data[1]),
+			    'sale_price':         float(data[2]),
+			    'rent_price':         float(data[3]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+				'security_alarm':           (bitmask[4] == '1'),
+				'fire_alarm':               (bitmask[5] == '1'),
+
+			    'sale_currency_sid':     int(bitmask[6] + bitmask[7]),
+			    'rent_currency_sid':     int(bitmask[8] + bitmask[9]),
+			}
+
+		elif operations_bitmask[0] == '1': # for sale
+			bitmask = '0' * (8 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'area':         float(data[1]),
+			    'sale_price':         float(data[2]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+				'security_alarm':           (bitmask[4] == '1'),
+				'fire_alarm':               (bitmask[5] == '1'),
+			    'sale_currency_sid':     int(bitmask[6] + bitmask[7]),
+			}
+
+		elif operations_bitmask[1] == '1': # for rent
+			bitmask = '0' * (11 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'area':         float(data[1]),
+			    'rent_price':         float(data[2]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+				'hot_water':                (bitmask[2] == '1'),
+				'cold_water':               (bitmask[3] == '1'),
+				'security_alarm':           (bitmask[4] == '1'),
+				'fire_alarm':               (bitmask[5] == '1'),
+			    'rent_currency_sid':     int(bitmask[6] + bitmask[7]),
+			}
+		else:
+			raise self.DeserializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+
+	def marker_brief(self, marker, filters=None):
+		"""
+		Сформує бриф для маркеру на основі даних, переданих у фільтрі.
+		(В даний момент враховується лише валюта запиту)
+		"""
+
+		# todo: додати зміну видачі в залежності від фільтрів.
+		# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
+		# ітак ясно, що їх буде не більше одної.
+
+		result = {
+			'id': marker['id']
 		}
 
-		if bitmask[-1] == '1':
-			# sale terms
-			data.update({
-				'for_sale': True,
-			    'sale_price': float(parts[5]),
-			    'sale_currency_sid': int(parts[6]),
+		# Гривня як базова валюта обирається згідно з чинним законодавством,
+		# але якщо у фільтрі вказана інша - переформатувати бриф на неї.
+		if filters is None:
+			currency = CURRENCIES.uah()
+		else:
+			currency = filters.get('currency_sid', CURRENCIES.uah())
+
+
+		if marker.get('for_sale', False):
+			area = '{0:.2f}'.format(marker.get('area')).rstrip('0').rstrip('.') if marker.get('area') else None
+			sale_price = self.format_price(marker['sale_price'], marker['sale_currency_sid'], currency)
+			result.update({
+				'd0': u'Площадь: {0} м²'.format(area) if area else u'Площадь неизвестна',
+				'd1': u'{0} {1}'.format(sale_price, self.format_currency(currency)),
 			})
+			return result
 
-			# check for rent terms
-			if bitmask[-2] == '1':
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[7]),
-				    'rent_currency_sid': int(parts[8]),
-				})
+		elif marker.get('for_rent', False):
+			area = '{0:.2f}'.format(marker.get('area')).rstrip('0').rstrip('.') if marker.get('area') else None
+			rent_price = self.format_price(marker['rent_price'], marker['rent_currency_sid'], currency)
+			result.update({
+				'd0': u'Площадь: {0} м²'.format(area) if area else u'Площадь неизвестна',
+				'd1': u'{0} {1}'.format(rent_price, self.format_currency(currency)),
+			})
+			return result
 
-		else:
-			if bitmask[-2] == '1':
-				# rent terms
-				# todo: check indexes
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[5]),
-					'rent_currency_sid': float(parts[6]),
-				})
-		return data
-
-
-	def marker_brief(self, data, condition=None):
-		if condition is None:
-			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
-			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
-				return {
-					'id': data['id'],
-					'd0': u'Продажа: ' + self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-
-					'd1': u'Аренда: ' + self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_sale', False):
-				return {
-					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['halls_area']) + u' м²' if data['halls_area'] else '',
-					'd1': self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_rent', False):
-				return{
-					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['halls_area']) + u' м²' if data['halls_area'] else '',
-					'd1': self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			else:
-				raise DeserializationError()
-
-		else:
-			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
-			# todo: додати конввертацію валют в залженост від фільтрів
-			pass
+		raise RuntimeException('Marker is not for sale and not for rent.')
 
 
 	def filter(self, publications, filters):
@@ -4512,7 +4385,7 @@ class WarehousesMarkersManager(BaseMarkersManager):
 
 		operation_sid = filters.get('operation_sid')
 		if operation_sid is None:
-			raise ValueError('Invalid conditions. Operation_sid is absent.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is absent.')
 
 
 		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
@@ -4524,12 +4397,12 @@ class WarehousesMarkersManager(BaseMarkersManager):
 			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
 			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
 			# На фронтенді валюта повинна бути задана за замовчуванням.
-			raise ValueError('sale_currency_sid is absent.')
+			raise InvalidArgument('sale_currency_sid is absent.')
 		elif currency_sid not in CURRENCIES.values():
-			raise ValueError('currency_sid is invalid.')
+			raise InvalidArgument('currency_sid is invalid.')
 
 		if operation_sid not in [0, 1]:
-			raise ValueError('Invalid operation_sid.')
+			raise InvalidArgument('Invalid operation_sid.')
 
 
 		# Для відбору елементів зі списку publications, використовується список statuses.
@@ -4552,13 +4425,28 @@ class WarehousesMarkersManager(BaseMarkersManager):
 
 			marker = publications[i][1]
 
+			# operation type
+			if operation_sid == 0:
+				if not marker.get('for_sale', False):
+					statuses[i] = False
+					continue
+
+			elif operation_sid == 1:
+				if not marker.get('for_rent', False):
+					statuses[i] = False
+					continue
+
 			# price
+			marker_currency = marker.get('sale_currency_sid')
+			if marker_currency is None:
+				marker_currency = marker.get('rent_currency_sid')
+
 			price_min = filters.get('price_from')
 			price_max = filters.get('price_to')
 			if price_min is not None:
-				price_min = convert_currency(price_min, currency_sid, marker['sale_currency_sid'])
+				price_min = convert_currency(price_min, currency_sid, marker_currency)
 			if price_max is not None:
-				price_max = convert_currency(price_max, currency_sid, marker['sale_currency_sid'])
+				price_max = convert_currency(price_max, currency_sid, marker_currency)
 
 
 			if (price_max is not None) and (price_min is not None):
@@ -4590,30 +4478,30 @@ class WarehousesMarkersManager(BaseMarkersManager):
 
 
 			# halls area
-			halls_area_min = filters.get('halls_area_from')
-			halls_area_max = filters.get('halls_area_to')
-			halls_area = marker.get('halls_area')
+			area_min = filters.get('halls_area_from')
+			area_max = filters.get('halls_area_to')
+			area = marker.get('area')
 
-			if (halls_area_max is not None) or (halls_area_min is not None):
+			if (area_max is not None) or (area_min is not None):
 				# Поле "площа залів" може бути не обов’язковим.
 				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
 				# відхилити запис через неможливість аналізу.
-				if halls_area is None:
+				if area is None:
 					statuses[i] = False
 					continue
 
-			if (halls_area_max is not None) and (halls_area_min is not None):
-				if not halls_area_min <= halls_area <= halls_area_max:
+			if (area_max is not None) and (area_min is not None):
+				if not area_min <= area <= area_max:
 					statuses[i] = False
 					continue
 
-			elif halls_area_min is not None:
-				if not halls_area_min <= halls_area:
+			elif area_min is not None:
+				if not area_min <= area:
 					statuses[i] = False
 					continue
 
-			elif halls_area_max is not None:
-				if not halls_area <= halls_area_max:
+			elif area_max is not None:
+				if not area <= area_max:
 					statuses[i] = False
 					continue
 
@@ -4661,180 +4549,152 @@ class BusinessesMarkersManager(BaseMarkersManager):
 		super(BusinessesMarkersManager, self).__init__(OBJECTS_TYPES.business())
 
 
-	def record_queryset(self, hid):
+	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
-
-			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
-
-			'body__building_type_sid', 'body__age', 'body__total_area',)
+			'rent_terms__price', 'rent_terms__currency_sid')
 
 
-	def serialize_publication_record(self, record):
+	def serialize_publication(self, record):
+		operation_bitmask =  '1' if record.for_sale else '0'
+		operation_bitmask += '1' if record.for_rent else '0'
+		if operation_bitmask == '00':
+			raise self.SerializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
 		# common terms
-		#-- bitmask
 		bitmask = ''
-		bitmask += '1' if record.for_sale else '0'
-		bitmask += '1' if record.for_rent else '0'
-		bitmask += '{0:03b}'.format(record.body.building_type_sid)  # 3 bits
-		if len(bitmask) != 5:
-			raise SerializationError('Bitmask corruption. Potential deserialization error.')
 
+		# data
+		data = str(record.id) + self.separator
 
-		#-- data
-		data = ''
-		data += str(record.id) + self.separator
-
-		# WARNING: this field can be None
-		if record.body.age is not None:
-			data += str(record.body.age) + self.separator
-		else: data += self.separator
-
-		# WARNING: this field can be None
-		if record.body.total_area is not None:
-			data += str(record.body.total_area) + self.separator
-		else: data += self.separator
-
-
-		#-- sale terms
+		# sale terms
 		if record.for_sale:
 			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 7:
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) != 2:
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.sale_terms.price is not None:
-				data += str(record.sale_terms.price) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
-
-			# REQUIRED field
-			if record.sale_terms.currency_sid is not None:
-				data += str(record.sale_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
+			if record.sale_terms.price is None:
+				raise self.SerializationError('sale_price is required but absent.')
+			data += str(record.sale_terms.price) + self.separator
 
 
-		#-- rent terms
+		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
 			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			if len(bitmask) not in (9, 11):
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) not in (2, 4):
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.rent_terms.price is not None:
-				data += str(record.rent_terms.price) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
+			if record.rent_terms.price is None:
+				raise self.SerializationError('rent_price is required but absent.')
+			data += str(record.rent_terms.price) + self.separator
 
-			# REQUIRED field
-			if record.rent_terms.currency_sid is not None:
-				data += str(record.rent_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
-
-
-		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
-		# Це пов’язано із тим, що при десериалізації старші біти, втрачаються, якщо вони нулі.
-		# Доповнити маску неможливо, оскільки для доповнення слід знати точну к-сть біт маски,
-		# а це залежить від того чи продаєтсья об’єкт, чи здаєтсья в оренду, чи і те і інше.
-		bitmask = bitmask[::-1]
-
-		record_data = data + self.separator +  str(int(bitmask, 2))
+		record_data = str(int(operation_bitmask, 2)) + self.separator +\
+		              str(int(bitmask, 2)) + self.separator + \
+		              data
 		if record_data[-1] == self.separator:
 			record_data = record_data[:-1]
 		return record_data
 
 
-	def deserialize_publication_record(self, record_data):
+	def deserialize_marker_data(self, record_data):
 		parts = record_data.split(self.separator)
-		bitmask = bin(int(parts[-1]))[2:]
-		data = {
-			'id': int(parts[0]),
-			'halls_area': int(parts[1]) if parts[1] != '' else None,
-			'total_area': int(parts[2]) if parts[2] != '' else None,
+		operations_bitmask = parts[0]
+		operations_bitmask = str(bin(int(operations_bitmask))[2:])
+		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
 
-			'building_type_sid': int('' + bitmask[-3] + bitmask[-4] + bitmask[-5]),
+		bitmask = parts[1]
+		bitmask = str(bin(int(bitmask))[2:])
+
+		data = parts[2:]
+
+
+		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
+			bitmask = '0' * (4 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+			    'sale_price':         float(data[1]),
+			    'rent_price':         float(data[2]),
+
+				# bitmask deserialization
+			    'sale_currency_sid':     int(bitmask[0] + bitmask[1]),
+			    'rent_currency_sid':     int(bitmask[2] + bitmask[3]),
+			}
+
+		elif operations_bitmask[0] == '1': # for sale
+			bitmask = '0' * (2 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+			    'sale_price':         float(data[1]),
+
+				# bitmask deserialization
+			    'sale_currency_sid':     int(bitmask[0] + bitmask[1]),
+			}
+
+		elif operations_bitmask[1] == '1': # for rent
+			bitmask = '0' * (2 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+			    'rent_price':         float(data[1]),
+
+				# bitmask deserialization
+			    'rent_currency_sid':     int(bitmask[0] + bitmask[1]),
+			}
+		else:
+			raise self.DeserializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+
+	def marker_brief(self, marker, filters=None):
+		"""
+		Сформує бриф для маркеру на основі даних, переданих у фільтрі.
+		(В даний момент враховується лише валюта запиту)
+		"""
+
+		# todo: додати зміну видачі в залежності від фільтрів.
+		# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
+		# ітак ясно, що їх буде не більше одної.
+
+		result = {
+			'id': marker['id']
 		}
 
-		if bitmask[-1] == '1':
-			# sale terms
-			data.update({
-				'for_sale': True,
-			    'sale_price': float(parts[3]),
-			    'sale_currency_sid': int(parts[4]),
+		# Гривня як базова валюта обирається згідно з чинним законодавством,
+		# але якщо у фільтрі вказана інша - переформатувати бриф на неї.
+		if filters is None:
+			currency = CURRENCIES.uah()
+		else:
+			currency = filters.get('currency_sid', CURRENCIES.uah())
+
+
+		if marker.get('for_sale', False):
+			sale_price = self.format_price(marker['sale_price'], marker['sale_currency_sid'], currency)
+			result.update({
+				'd0': u'{0} {1}'.format(sale_price, self.format_currency(currency)),
+			    'd1': u'' # немає додаткового параметру
 			})
+			return result
 
-			# check for rent terms
-			if bitmask[-2] == '1':
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[4]),
-				    'rent_currency_sid': int(parts[5]),
-				})
+		elif marker.get('for_rent', False):
+			rent_price = self.format_price(marker['rent_price'], marker['rent_currency_sid'], currency)
+			result.update({
+				'd0': u'{0} {1}'.format(rent_price, self.format_currency(currency)),
+			    'd1': u''  # немає додаткового параметру
+			})
+			return result
 
-		else:
-			if bitmask[-2] == '1':
-				# rent terms
-				# todo: check indexes
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[3]),
-					'rent_currency_sid': float(parts[4]),
-				})
-		return data
-
-
-	def marker_brief(self, data, condition=None):
-		if condition is None:
-			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
-			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
-				return {
-					'id': data['id'],
-					'd0': u'Продажа: ' + self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-
-					'd1': u'Аренда: ' + self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_sale', False):
-				return {
-					'id': data['id'],
-					'd0': self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				    'd1': u''
-				}
-
-			elif data.get('for_rent', False):
-				return{
-					'id': data['id'],
-					'd0': self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				    'd1': u''
-				}
-
-			else:
-				raise DeserializationError()
-
-		else:
-			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
-			# todo: додати конввертацію валют в залженост від фільтрів
-			pass
+		raise RuntimeException('Marker is not for sale and not for rent.')
 
 
 	def filter(self, publications, filters):
@@ -4846,7 +4706,7 @@ class BusinessesMarkersManager(BaseMarkersManager):
 
 		operation_sid = filters.get('operation_sid')
 		if operation_sid is None:
-			raise ValueError('Invalid conditions. Operation_sid is absent.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is absent.')
 
 
 		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
@@ -4858,12 +4718,12 @@ class BusinessesMarkersManager(BaseMarkersManager):
 			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
 			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
 			# На фронтенді валюта повинна бути задана за замовчуванням.
-			raise ValueError('sale_currency_sid is absent.')
+			raise InvalidArgument('sale_currency_sid is absent.')
 		elif currency_sid not in CURRENCIES.values():
-			raise ValueError('currency_sid is invalid.')
+			raise InvalidArgument('currency_sid is invalid.')
 
 		if operation_sid not in [0, 1]:
-			raise ValueError('Invalid operation_sid.')
+			raise InvalidArgument('Invalid operation_sid.')
 
 
 		# Для відбору елементів зі списку publications, використовується список statuses.
@@ -4885,6 +4745,18 @@ class BusinessesMarkersManager(BaseMarkersManager):
 				continue
 
 			marker = publications[i][1]
+
+			# operation type
+			if operation_sid == 0:
+				if not marker.get('for_sale', False):
+					statuses[i] = False
+					continue
+
+			elif operation_sid == 1:
+				if not marker.get('for_rent', False):
+					statuses[i] = False
+					continue
+
 
 			# price
 			price_min = filters.get('price_from')
@@ -4935,197 +4807,205 @@ class CateringsMarkersManager(BaseMarkersManager):
 		super(CateringsMarkersManager, self).__init__(OBJECTS_TYPES.catering())
 
 
-	def record_queryset(self, hid):
+	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
-
-			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
-
+			'rent_terms__price', 'rent_terms__currency_sid',
 			'body__electricity', 'body__gas', 'body__hot_water', 'body__cold_water',
-			'body__building_type_sid',
-			'body__halls_count', 'body__halls_area', 'body__total_area',)
+			'body__building_type_sid', 'body__halls_count', 'body__halls_area', 'body__total_area',)
 
 
-	def serialize_publication_record(self, record):
+	def serialize_publication(self, record):
+		operation_bitmask =  '1' if record.for_sale else '0'
+		operation_bitmask += '1' if record.for_rent else '0'
+		if operation_bitmask == '00':
+			raise self.SerializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
 		# common terms
-		#-- bitmask
-		bitmask = ''
-		bitmask += '1' if record.for_sale else '0'
-		bitmask += '1' if record.for_rent else '0'
-		bitmask += '1' if record.body.electricity else '0'
+		bitmask =  '1' if record.body.electricity else '0'
 		bitmask += '1' if record.body.gas else '0'
 		bitmask += '1' if record.body.hot_water else '0'
 		bitmask += '1' if record.body.cold_water else '0'
 		bitmask += '{0:03b}'.format(record.body.building_type_sid)  # 3 bits
-		if len(bitmask) != 9:
-			raise SerializationError('Bitmask corruption. Potential deserialization error.')
+		if len(bitmask) != 7:
+			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
+
+		# data
+		data = str(record.id) + self.separator
+
+		if record.body.halls_count is None:
+			raise self.SerializationError('halls_count is required but absent.')
+		data += str(record.body.halls_count) + self.separator
+
+		if record.body.halls_area is None:
+			raise self.SerializationError('halls_area is required but absent.')
+		data += str(record.body.halls_area) + self.separator
+
+		if record.body.total_area is None:
+			raise self.SerializationError('total_area is required but absent.')
+		data += str(record.body.total_area) + self.separator
 
 
-		#-- data
-		data = ''
-		data += str(record.id) + self.separator
-
-		# REQUIRED
-		if record.body.halls_count is not None:
-			data += str(record.body.halls_count) + self.separator
-		else: data += self.separator
-
-		# REQUIRED
-		if record.body.halls_area is not None:
-			data += str(record.body.halls_area) + self.separator
-		else: data += self.separator
-
-		# WARNING: this field can be None
-		if record.body.total_area is not None:
-			data += str(record.body.total_area) + self.separator
-		else: data += self.separator
-
-
-		#-- sale terms
+		# sale terms
 		if record.for_sale:
 			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 11:
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) != 9:
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.sale_terms.price is not None:
-				data += str(record.sale_terms.price) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
-
-			# REQUIRED field
-			if record.sale_terms.currency_sid is not None:
-				data += str(record.sale_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
+			if record.sale_terms.price is None:
+				raise self.SerializationError('sale_price is required but absent.')
+			data += str(record.sale_terms.price) + self.separator
 
 
-		#-- rent terms
+		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
 			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			if len(bitmask) not in (13, 15):
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) not in (9, 11):
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.rent_terms.price is not None:
-				data += str(record.rent_terms.price) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
+			if record.rent_terms.price is None:
+				raise self.SerializationError('rent_price is required but absent.')
+			data += str(record.rent_terms.price) + self.separator
 
-			# REQUIRED field
-			if record.rent_terms.currency_sid is not None:
-				data += str(record.rent_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
-
-
-		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
-		# Це пов’язано із тим, що при десериалізації старші біти, втрачаються, якщо вони нулі.
-		# Доповнити маску неможливо, оскільки для доповнення слід знати точну к-сть біт маски,
-		# а це залежить від того чи продаєтсья об’єкт, чи здаєтсья в оренду, чи і те і інше.
-		bitmask = bitmask[::-1]
-
-		record_data = data + self.separator +  str(int(bitmask, 2))
+		record_data = str(int(operation_bitmask, 2)) + self.separator +\
+		              str(int(bitmask, 2)) + self.separator + \
+		              data
 		if record_data[-1] == self.separator:
 			record_data = record_data[:-1]
 		return record_data
 
 
-	def deserialize_publication_record(self, record_data):
+	def deserialize_marker_data(self, record_data):
 		parts = record_data.split(self.separator)
-		bitmask = bin(int(parts[-1]))[2:]
-		data = {
-			'id': int(parts[0]),
-		    'halls_count': int(parts[1]), # required
-			'halls_area':  int(parts[2]), # required
-			'total_area':  int(parts[3]) if parts[3] != '' else None,
+		operations_bitmask = parts[0]
+		operations_bitmask = str(bin(int(operations_bitmask))[2:])
+		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
 
-		    'electricity': (bitmask[-3] == '1'),
-			'gas':         (bitmask[-4] == '1'),
-			'hot_water':   (bitmask[-5] == '1'),
-			'cold_water':  (bitmask[-6] == '1'),
+		bitmask = parts[1]
+		bitmask = str(bin(int(bitmask))[2:])
 
-			'building_type_sid': int('' + bitmask[-7] + bitmask[-8] + bitmask[-9]),
+		data = parts[2:]
+
+
+		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
+			bitmask = '0' * (12 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+			    'halls_count':        float(data[1]),
+				'halls_area':         float(data[2]),
+				'total_area':         float(data[3]),
+			    'sale_price':         float(data[4]),
+			    'rent_price':         float(data[5]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+			    'sewerage':                 (bitmask[2] == '1'),
+				'hot_water':                (bitmask[3] == '1'),
+				'cold_water':               (bitmask[4] == '1'),
+			    'building_type_sid':     int(bitmask[5]  + bitmask[6] + bitmask[7]),
+
+			    'sale_currency_sid':     int(bitmask[8]  + bitmask[9]),
+			    'rent_currency_sid':     int(bitmask[10] + bitmask[11]),
+			}
+
+		elif operations_bitmask[0] == '1': # for sale
+			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'halls_count':          int(data[1]),
+				'halls_area':         float(data[2]),
+				'total_area':         float(data[3]),
+			    'sale_price':         float(data[4]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+			    'sewerage':                 (bitmask[2] == '1'),
+				'hot_water':                (bitmask[3] == '1'),
+				'cold_water':               (bitmask[4] == '1'),
+			    'building_type_sid':     int(bitmask[5] + bitmask[6] + bitmask[7]),
+			    'sale_currency_sid':     int(bitmask[8] + bitmask[9]),
+			}
+
+		elif operations_bitmask[1] == '1': # for rent
+			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'halls_count':        float(data[1]),
+				'halls_area':         float(data[2]),
+				'total_area':         float(data[3]),
+			    'rent_price':         float(data[4]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+			    'sewerage':                 (bitmask[2] == '1'),
+				'hot_water':                (bitmask[3] == '1'),
+				'cold_water':               (bitmask[4] == '1'),
+			    'building_type_sid':     int(bitmask[5] + bitmask[6] + bitmask[7]),
+			    'rent_currency_sid':     int(bitmask[8] + bitmask[9]),
+			}
+		else:
+			raise self.DeserializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+
+	def marker_brief(self, marker, filters=None):
+		"""
+		Сформує бриф для маркеру на основі даних, переданих у фільтрі.
+		(В даний момент враховується лише валюта запиту)
+		"""
+
+		# todo: додати зміну видачі в залежності від фільтрів.
+		# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
+		# ітак ясно, що їх буде не більше одної.
+
+		result = {
+			'id': marker['id']
 		}
 
-		if bitmask[-1] == '1':
-			# sale terms
-			data.update({
-				'for_sale': True,
-			    'sale_price': float(parts[5]),
-			    'sale_currency_sid': int(parts[6]),
+		# Гривня як базова валюта обирається згідно з чинним законодавством,
+		# але якщо у фільтрі вказана інша - переформатувати бриф на неї.
+		if filters is None:
+			currency = CURRENCIES.uah()
+		else:
+			currency = filters.get('currency_sid', CURRENCIES.uah())
+
+
+		if marker.get('for_sale', False):
+			halls_area = '{0:.2f}'.format(marker.get('halls_area')).rstrip('0').rstrip('.') \
+				if marker.get('halls_area') else None
+			sale_price = self.format_price(marker['sale_price'], marker['sale_currency_sid'], currency)
+			result.update({
+				'd0': u'Пл. залов: {0} м²'.format(halls_area) if halls_area else u'Пл. залов неизвестна',
+				'd1': u'{0} {1}'.format(sale_price, self.format_currency(currency)),
 			})
+			return result
 
-			# check for rent terms
-			if bitmask[-2] == '1':
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[7]),
-				    'rent_currency_sid': int(parts[8]),
-				})
+		elif marker.get('for_rent', False):
+			halls_area = '{0:.2f}'.format(marker.get('halls_area')).rstrip('0').rstrip('.') \
+				if marker.get('halls_area') else None
+			rent_price = self.format_price(marker['rent_price'], marker['rent_currency_sid'], currency)
+			result.update({
+				'd0': u'Пл. залов: {0} м²'.format(halls_area) if halls_area else u'Пл. залов неизвестна',
+				'd1': u'{0} {1}'.format(rent_price, self.format_currency(currency)),
+			})
+			return result
 
-		else:
-			if bitmask[-2] == '1':
-				# rent terms
-				# todo: check indexes
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[5]),
-					'rent_currency_sid': float(parts[6]),
-				})
-		return data
-
-
-	def marker_brief(self, data, condition=None):
-		if condition is None:
-			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
-			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
-				return {
-					'id': data['id'],
-					'd0': u'Продажа: ' + self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-
-					'd1': u'Аренда: ' + self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_sale', False):
-				return {
-					'id': data['id'],
-					'd0': u'Пл. залов: ' + str(data['halls_area']) + u' м²' if data['halls_area'] else '',
-					'd1': self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_rent', False):
-				return{
-					'id': data['id'],
-					'd0': u'Пл. залов: ' + str(data['halls_area']) + u' м²' if data['halls_area'] else '',
-					'd1': self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			else:
-				raise DeserializationError()
-
-		else:
-			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
-			# todo: додати конввертацію валют в залженост від фільтрів
-			pass
+		raise RuntimeException('Marker is not for sale and not for rent.')
 
 
 	def filter(self, publications, filters):
@@ -5137,7 +5017,7 @@ class CateringsMarkersManager(BaseMarkersManager):
 
 		operation_sid = filters.get('operation_sid')
 		if operation_sid is None:
-			raise ValueError('Invalid conditions. Operation_sid is absent.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is absent.')
 
 
 		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
@@ -5149,12 +5029,12 @@ class CateringsMarkersManager(BaseMarkersManager):
 			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
 			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
 			# На фронтенді валюта повинна бути задана за замовчуванням.
-			raise ValueError('sale_currency_sid is absent.')
+			raise InvalidArgument('sale_currency_sid is absent.')
 		elif currency_sid not in CURRENCIES.values():
-			raise ValueError('currency_sid is invalid.')
+			raise InvalidArgument('currency_sid is invalid.')
 
 		if operation_sid not in [0, 1]:
-			raise ValueError('Invalid operation_sid.')
+			raise InvalidArgument('Invalid operation_sid.')
 
 
 		# Для відбору елементів зі списку publications, використовується список statuses.
@@ -5177,13 +5057,29 @@ class CateringsMarkersManager(BaseMarkersManager):
 
 			marker = publications[i][1]
 
+
+			# operation type
+			if operation_sid == 0:
+				if not marker.get('for_sale', False):
+					statuses[i] = False
+					continue
+
+			elif operation_sid == 1:
+				if not marker.get('for_rent', False):
+					statuses[i] = False
+					continue
+
 			# price
+			marker_currency = marker.get('sale_currency_sid')
+			if marker_currency is None:
+				marker_currency = marker.get('rent_currency_sid')
+
 			price_min = filters.get('price_from')
 			price_max = filters.get('price_to')
 			if price_min is not None:
-				price_min = convert_currency(price_min, currency_sid, marker['sale_currency_sid'])
+				price_min = convert_currency(price_min, currency_sid, marker_currency)
 			if price_max is not None:
-				price_max = convert_currency(price_max, currency_sid, marker['sale_currency_sid'])
+				price_max = convert_currency(price_max, currency_sid, marker_currency)
 
 
 			if (price_max is not None) and (price_min is not None):
@@ -5214,7 +5110,7 @@ class CateringsMarkersManager(BaseMarkersManager):
 				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
 
 
-			#-- total area
+			# total area
 			total_area_min = filters.get('total_area_from')
 			total_area_max = filters.get('total_area_to')
 			total_area = marker.get('total_area')
@@ -5360,180 +5256,177 @@ class GaragesMarkersManager(BaseMarkersManager):
 		super(GaragesMarkersManager, self).__init__(OBJECTS_TYPES.garage())
 
 
-	def record_queryset(self, hid):
+	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
-
-			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
-
-			'body__pit', 'body__total_area', 'body__ceiling_height',)
+			'rent_terms__price', 'rent_terms__currency_sid',
+			'body__pit', 'body__area', 'body__ceiling_height',)
 
 
-	def serialize_publication_record(self, record):
+	def serialize_publication(self, record):
+		operation_bitmask =  '1' if record.for_sale else '0'
+		operation_bitmask += '1' if record.for_rent else '0'
+		if operation_bitmask == '00':
+			raise self.SerializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
 		# common terms
-		#-- bitmask
-		bitmask = ''
-		bitmask += '1' if record.for_sale else '0'
-		bitmask += '1' if record.for_rent else '0'
-		bitmask += '1' if record.body.pit else '0'
-		if len(bitmask) != 3:
-			raise SerializationError('Bitmask corruption. Potential deserialization error.')
+		bitmask = '1' if record.body.pit else '0'
+		if len(bitmask) != 1:
+			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
+
+		# data
+		data = str(record.id) + self.separator
+
+		if record.body.area is None:
+			raise self.SerializationError('area is required but absent.')
+		data += str(record.body.area) + self.separator
+
+		if record.body.ceiling_height is None:
+			raise self.SerializationError('ceiling_height is required but absent.')
+		data += str(record.body.ceiling_height) + self.separator
 
 
-		#-- data
-		data = ''
-		data += str(record.id) + self.separator
-
-		# REQUIRED
-		if record.body.total_area is not None:
-			data += str(record.body.total_area) + self.separator
-		else: data += self.separator
-
-		# WARNING: field can be None
-		if record.body.ceiling_height is not None:
-			data += str(record.body.ceiling_height) + self.separator
-		else: data += self.separator
-
-
-		#-- sale terms
+		# sale terms
 		if record.for_sale:
 			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 11:
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) != 3:
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.sale_terms.price is not None:
-				data += str(record.sale_terms.price) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
-
-			# REQUIRED field
-			if record.sale_terms.currency_sid is not None:
-				data += str(record.sale_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
+			if record.sale_terms.price is None:
+				raise self.SerializationError('sale_price is required but absent.')
+			data += str(record.sale_terms.price) + self.separator
 
 
-		#-- rent terms
+		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
 			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			if len(bitmask) not in (13, 15):
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) not in (3, 5):
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.rent_terms.price is not None:
-				data += str(record.rent_terms.price) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
+			if record.rent_terms.price is None:
+				raise self.SerializationError('rent_price is required but absent.')
+			data += str(record.rent_terms.price) + self.separator
 
-			# REQUIRED field
-			if record.rent_terms.currency_sid is not None:
-				data += str(record.rent_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
-
-
-		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
-		# Це пов’язано із тим, що при десериалізації старші біти, втрачаються, якщо вони нулі.
-		# Доповнити маску неможливо, оскільки для доповнення слід знати точну к-сть біт маски,
-		# а це залежить від того чи продаєтсья об’єкт, чи здаєтсья в оренду, чи і те і інше.
-		bitmask = bitmask[::-1]
-
-		record_data = data + self.separator +  str(int(bitmask, 2))
+		record_data = str(int(operation_bitmask, 2)) + self.separator +\
+		              str(int(bitmask, 2)) + self.separator + \
+		              data
 		if record_data[-1] == self.separator:
 			record_data = record_data[:-1]
 		return record_data
 
 
-	def deserialize_publication_record(self, record_data):
+	def deserialize_marker_data(self, record_data):
 		parts = record_data.split(self.separator)
-		bitmask = bin(int(parts[-1]))[2:]
-		data = {
-			'id': int(parts[0]),
-		    'total_area':       int(parts[1]), # required
-			'ceiling_height':   int(parts[2]) if parts[2] != '' else None,
+		operations_bitmask = parts[0]
+		operations_bitmask = str(bin(int(operations_bitmask))[2:])
+		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
 
-		    'pit':  (bitmask[-3] == '1'),
+		bitmask = parts[1]
+		bitmask = str(bin(int(bitmask))[2:])
+
+		data = parts[2:]
+
+
+		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
+			bitmask = '0' * (12 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'area':               float(data[1]),
+			    'ceiling_height':     float(data[2]),
+			    'sale_price':         float(data[3]),
+			    'rent_price':         float(data[4]),
+
+				# bitmask deserialization
+			    'pit':                  (bitmask[0] == '1'),
+			    'sale_currency_sid': int(bitmask[1] + bitmask[2]),
+			    'rent_currency_sid': int(bitmask[3] + bitmask[4]),
+			}
+
+		elif operations_bitmask[0] == '1': # for sale
+			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'area':               float(data[1]),
+			    'ceiling_height':     float(data[2]),
+			    'sale_price':         float(data[3]),
+
+				# bitmask deserialization
+			    'pit':                  (bitmask[0] == '1'),
+			    'sale_currency_sid': int(bitmask[1] + bitmask[2]),
+			}
+
+		elif operations_bitmask[1] == '1': # for rent
+			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'area':               float(data[1]),
+			    'ceiling_height':     float(data[2]),
+			    'rent_price':         float(data[3]),
+
+				# bitmask deserialization
+			    'pit':                  (bitmask[0] == '1'),
+			    'rent_currency_sid': int(bitmask[1] + bitmask[2]),
+			}
+		else:
+			raise self.DeserializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+
+	def marker_brief(self, marker, filters=None):
+		"""
+		Сформує бриф для маркеру на основі даних, переданих у фільтрі.
+		(В даний момент враховується лише валюта запиту)
+		"""
+
+		# todo: додати зміну видачі в залежності від фільтрів.
+		# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
+		# ітак ясно, що їх буде не більше одної.
+
+		result = {
+			'id': marker['id']
 		}
 
-		if bitmask[-1] == '1':
-			# sale terms
-			data.update({
-				'for_sale': True,
-			    'sale_price': float(parts[3]),
-			    'sale_currency_sid': int(parts[4]),
+		# Гривня як базова валюта обирається згідно з чинним законодавством,
+		# але якщо у фільтрі вказана інша - переформатувати бриф на неї.
+		if filters is None:
+			currency = CURRENCIES.uah()
+		else:
+			currency = filters.get('currency_sid', CURRENCIES.uah())
+
+
+		if marker.get('for_sale', False):
+			area = u'{0:.2f}'.format(marker.get('area')).rstrip('0').rstrip('.') \
+				if marker.get('area') else None
+			sale_price = self.format_price(marker['sale_price'], marker['sale_currency_sid'], currency)
+			result.update({
+				'd0': u'Площадь: {0} м²'.format(area),
+				'd1': u'{0} {1}'.format(sale_price, self.format_currency(currency)),
 			})
+			return result
 
-			# check for rent terms
-			if bitmask[-2] == '1':
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[5]),
-				    'rent_currency_sid': int(parts[6]),
-				})
+		elif marker.get('for_rent', False):
+			area = u'Площадь: {0:.2f} м²'.format(marker.get('area')).rstrip('0').rstrip('.') \
+				if marker.get('area') else None
+			rent_price = self.format_price(marker['rent_price'], marker['rent_currency_sid'], currency)
+			result.update({
+				'd0': u'Площадь: {0} м²'.format(area) if area else u'Площадь неизвестна',
+				'd1': u'{0} {1}'.format(rent_price, self.format_currency(currency)),
+			})
+			return result
 
-		else:
-			if bitmask[-2] == '1':
-				# rent terms
-				# todo: check indexes
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[3]),
-					'rent_currency_sid': float(parts[4]),
-				})
-		return data
-
-
-	def marker_brief(self, data, condition=None):
-		if condition is None:
-			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
-			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
-				return {
-					'id': data['id'],
-					'd0': u'Продажа: ' + self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-
-					'd1': u'Аренда: ' + self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_sale', False):
-				return {
-					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
-					'd1': self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_rent', False):
-				return{
-					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['total_area']) + u' м²' if data['total_area'] else '',
-					'd1': self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			else:
-				raise DeserializationError()
-
-		else:
-			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
-			# todo: додати конввертацію валют в залженост від фільтрів
-			pass
+		raise RuntimeException('Marker is not for sale and not for rent.')
 
 
 	def filter(self, publications, filters):
@@ -5545,7 +5438,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 
 		operation_sid = filters.get('operation_sid')
 		if operation_sid is None:
-			raise ValueError('Invalid conditions. Operation_sid is absent.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is absent.')
 
 
 		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
@@ -5557,12 +5450,12 @@ class GaragesMarkersManager(BaseMarkersManager):
 			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
 			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
 			# На фронтенді валюта повинна бути задана за замовчуванням.
-			raise ValueError('sale_currency_sid is absent.')
+			raise InvalidArgument('sale_currency_sid is absent.')
 		elif currency_sid not in CURRENCIES.values():
-			raise ValueError('currency_sid is invalid.')
+			raise InvalidArgument('currency_sid is invalid.')
 
 		if operation_sid not in [0, 1]:
-			raise ValueError('Invalid operation_sid.')
+			raise InvalidArgument('Invalid operation_sid.')
 
 
 		# Для відбору елементів зі списку publications, використовується список statuses.
@@ -5584,6 +5477,18 @@ class GaragesMarkersManager(BaseMarkersManager):
 				continue
 
 			marker = publications[i][1]
+
+			# operation type
+			if operation_sid == 0:
+				if not marker.get('for_sale', False):
+					statuses[i] = False
+					continue
+
+			elif operation_sid == 1:
+				if not marker.get('for_rent', False):
+					statuses[i] = False
+					continue
+
 
 			# price
 			price_min = filters.get('price_from')
@@ -5609,7 +5514,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 					statuses[i] = False
 					continue
 
-			#-- total area
+			# total area
 			total_area_min = filters.get('total_area_from')
 			total_area_max = filters.get('total_area_to')
 			total_area = marker.get('total_area')
@@ -5638,7 +5543,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 					continue
 					
 					
-			#-- ceiling height
+			# ceiling height
 			ceiling_height_min = filters.get('ceiling_height_from')
 			ceiling_height_max = filters.get('ceiling_height_to')
 			ceiling_height = marker.get('ceiling_height')
@@ -5685,181 +5590,182 @@ class LandsMarkersManager(BaseMarkersManager):
 		super(LandsMarkersManager, self).__init__(OBJECTS_TYPES.land())
 
 
-	def record_queryset(self, hid):
+	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
-
-			'rent_terms__price', 'rent_terms__currency_sid', 'rent_terms__period_sid',
-
-			'body__electricity', 'body__gas', 'body__sewerage', 'body__water',
-			'body__area')
+			'rent_terms__price', 'rent_terms__currency_sid',
+			'body__electricity', 'body__gas', 'body__sewerage', 'body__water', 'body__area')
 
 
-	def serialize_publication_record(self, record):
+	def serialize_publication(self, record):
+		operation_bitmask =  '1' if record.for_sale else '0'
+		operation_bitmask += '1' if record.for_rent else '0'
+		if operation_bitmask == '00':
+			raise self.SerializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
 		# common terms
-		#-- bitmask
-		bitmask = ''
-		bitmask += '1' if record.for_sale else '0'
-		bitmask += '1' if record.for_rent else '0'
-		bitmask += '1' if record.body.electricity else '0'
+		bitmask =  '1' if record.body.electricity else '0'
 		bitmask += '1' if record.body.gas else '0'
 		bitmask += '1' if record.body.sewerage else '0'
 		bitmask += '1' if record.body.water else '0'
-		if len(bitmask) != 6:
-			raise SerializationError('Bitmask corruption. Potential deserialization error.')
+		if len(bitmask) != 4:
+			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
+
+		# data
+		data = str(record.id) + self.separator
+
+		if record.body.area is None:
+			raise self.SerializationError('area is required but absent.')
+		data += str(record.body.area) + self.separator
 
 
-		#-- data
-		data = ''
-		data += str(record.id) + self.separator
-
-		# WARNING: next fields can be None
-		if record.body.area is not None:
-			data += str(record.body.area) + self.separator
-		else: data += self.separator
-
-
-		#-- sale terms
+		# sale terms
 		if record.for_sale:
 			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 8:
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) != 6:
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.sale_terms.price is not None:
-				data += str(record.sale_terms.price) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
-
-			# REQUIRED field
-			if record.sale_terms.currency_sid is not None:
-				data += str(record.sale_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Sale price is required.')
+			if record.sale_terms.price is None:
+				raise self.SerializationError('sale_price is required but absent.')
+			data += str(record.sale_terms.price) + self.separator
 
 
-		#-- rent terms
+		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
 			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			if len(bitmask) not in (12, 10):
-				raise SerializationError('Bitmask corruption. Potential deserialization error.')
+			if len(bitmask) not in (6, 8):
+				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
-			# REQUIRED field
-			if record.rent_terms.price is not  None:
-				data += str(record.rent_terms.price) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
+			if record.rent_terms.price is None:
+				raise self.SerializationError('rent_price is required but absent.')
+			data += str(record.rent_terms.price) + self.separator
 
-			# REQUIRED field
-			if record.rent_terms.currency_sid is not None:
-				data += str(record.rent_terms.currency_sid) + self.separator
-			else:
-				raise SerializationError('Rent price is required.')
-
-
-		# Інвертація бітової маски для того, щоб біти типу операції опинились справа.
-		# Це пов’язано із тим, що при десериалізації старші біти, втрачаються, якщо вони нулі.
-		# Доповнити маску неможливо, оскільки для доповнення слід знати точну к-сть біт маски,
-		# а це залежить від того чи продаєтсья об’єкт, чи здаєтсья в оренду, чи і те і інше.
-		bitmask = bitmask[::-1]
-
-		record_data = data + self.separator +  str(int(bitmask, 2))
+		record_data = str(int(operation_bitmask, 2)) + self.separator +\
+		              str(int(bitmask, 2)) + self.separator + \
+		              data
 		if record_data[-1] == self.separator:
 			record_data = record_data[:-1]
 		return record_data
 
 
-	def deserialize_publication_record(self, record_data):
+	def deserialize_marker_data(self, record_data):
 		parts = record_data.split(self.separator)
-		bitmask = bin(int(parts[-1]))[2:]
-		data = {
-			'id': int(parts[0]),
-			'area':  int(parts[1]) if parts[1] != '' else None,
+		operations_bitmask = parts[0]
+		operations_bitmask = str(bin(int(operations_bitmask))[2:])
+		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
 
-		    'electricity':  (bitmask[-3] == '1'),
-			'gas':          (bitmask[-4] == '1'),
-			'sewerage':     (bitmask[-5] == '1'),
-			'water':        (bitmask[-6] == '1'),
+		bitmask = parts[1]
+		bitmask = str(bin(int(bitmask))[2:])
+
+		data = parts[2:]
+
+
+		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
+			bitmask = '0' * (8 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+			    'for_rent': True,
+
+				# data deserialization
+				'id':             int(data[0]),
+				'area':         float(data[1]),
+			    'sale_price':   float(data[2]),
+			    'rent_price':   float(data[3]),
+
+				# bitmask deserialization
+			    'electricity':             (bitmask[0] == '1'),
+				'gas':                     (bitmask[1] == '1'),
+			    'sewerage':                (bitmask[2] == '1'),
+				'water':                   (bitmask[3] == '1'),
+			    'sale_currency_sid':    int(bitmask[4] + bitmask[5]),
+			    'rent_currency_sid':    int(bitmask[6] + bitmask[7]),
+			}
+
+		elif operations_bitmask[0] == '1': # for sale
+			bitmask = '0' * (6 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+				'for_sale': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'area':               float(data[1]),
+			    'sale_price':         float(data[2]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+			    'sewerage':                 (bitmask[2] == '1'),
+				'water':                    (bitmask[3] == '1'),
+			    'sale_currency_sid':     int(bitmask[4] + bitmask[5]),
+			}
+
+		elif operations_bitmask[1] == '1': # for rent
+			bitmask = '0' * (6 - len(bitmask)) + bitmask # Доповнити до мін. розміру
+			return {
+			    'for_rent': True,
+
+				# data deserialization
+				'id':                   int(data[0]),
+				'area':               float(data[1]),
+			    'rent_price':         float(data[2]),
+
+				# bitmask deserialization
+			    'electricity':              (bitmask[0] == '1'),
+				'gas':                      (bitmask[1] == '1'),
+			    'sewerage':                 (bitmask[2] == '1'),
+				'water':                    (bitmask[3] == '1'),
+			    'rent_currency_sid':     int(bitmask[4] + bitmask[5]),
+			}
+		else:
+			raise self.DeserializationError(
+				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+
+	def marker_brief(self, marker, filters=None):
+		"""
+		Сформує бриф для маркеру на основі даних, переданих у фільтрі.
+		(В даний момент враховується лише валюта запиту)
+		"""
+
+		# todo: додати зміну видачі в залежності від фільтрів.
+		# Наприклад, якщо задано к-сть кімнат від 1 до 1 - нема змісту показувати в брифі к-сть кімнат,
+		# ітак ясно, що їх буде не більше одної.
+
+		result = {
+			'id': marker['id']
 		}
 
-		if bitmask[-1] == '1':
-			# sale terms
-			data.update({
-				'for_sale': True,
-			    'sale_price': float(parts[3]),
-			    'sale_currency_sid': int(parts[4]),
+		# Гривня як базова валюта обирається згідно з чинним законодавством,
+		# але якщо у фільтрі вказана інша - переформатувати бриф на неї.
+		if filters is None:
+			currency = CURRENCIES.uah()
+		else:
+			currency = filters.get('currency_sid', CURRENCIES.uah())
+
+
+		if marker.get('for_sale', False):
+			area = u'{0:.2f}'.format(marker.get('area')).rstrip('0').rstrip('.') \
+				if marker.get('area') else None
+			sale_price = self.format_price(marker['sale_price'], marker['sale_currency_sid'], currency)
+			result.update({
+				'd0': u'Площадь: {0} м²'.format(area),
+				'd1': u'{0} {1}'.format(sale_price, self.format_currency(currency)),
 			})
+			return result
 
-			# check for rent terms
-			if bitmask[-2] == '1':
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[5]),
-				    'rent_currency_sid': int(parts[6])
-				})
+		elif marker.get('for_rent', False):
+			area = u'Площадь: {0:.2f} м²'.format(marker.get('area')).rstrip('0').rstrip('.') \
+				if marker.get('area') else None
+			rent_price = self.format_price(marker['rent_price'], marker['rent_currency_sid'], currency)
+			result.update({
+				'd0': u'Площадь: {0} м²'.format(area) if area else u'Площадь неизвестна',
+				'd1': u'{0} {1}'.format(rent_price, self.format_currency(currency)),
+			})
+			return result
 
-		else:
-			if bitmask[-2] == '1':
-				# rent terms
-				# todo: check indexes
-				data.update({
-					'for_rent': True,
-					'rent_price': float(parts[3]),
-					'rent_currency_sid': float(parts[4])
-				})
-		return data
-
-
-	def marker_brief(self, data, condition=None):
-		if condition is None:
-			# Фільтри не виставлені, віддаєм у форматі за замовчуванням
-			if (data.get('for_sale', False)) and (data.get('for_rent', False)):
-				return {
-					'id': data['id'],
-					'd0': u'Продажа: ' + self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-
-					'd1': u'Аренда: ' + self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_sale', False):
-				return {
-					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['area'])  + u' м²' if data['area'] else '',
-					'd1': self.format_price(
-						data['sale_price'],
-						data['sale_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			elif data.get('for_rent', False):
-				return{
-					'id': data['id'],
-					'd0': u'Площадь: ' + str(data['area'])  + u' м²' if data['area'] else '',
-					'd1': self.format_price(
-						data['rent_price'],
-						data['rent_currency_sid'],
-						CURRENCIES.uah()
-					) + u' грн.',
-				}
-
-			else:
-				raise DeserializationError()
-
-		else:
-			# todo: додати сюди відомості про об’єкт в залежності від фільтрів
-			# todo: додати конввертацію валют в залженост від фільтрів
-			pass
+		raise RuntimeException('Marker is not for sale and not for rent.')
 
 
 	def filter(self, publications, filters):
@@ -5871,7 +5777,7 @@ class LandsMarkersManager(BaseMarkersManager):
 
 		operation_sid = filters.get('operation_sid')
 		if operation_sid is None:
-			raise ValueError('Invalid conditions. Operation_sid is absent.')
+			raise InvalidArgument('Invalid conditions. Operation_sid is absent.')
 
 
 		# Перед фільтруванням оголошень слід перевірити цілісність і коректність об’єкту умов.
@@ -5883,12 +5789,12 @@ class LandsMarkersManager(BaseMarkersManager):
 			# Перевіряти фільтри цін має зміст лише тоді, коли задано валюту фільтру,
 			# інакше неможливо привести валюту ціни з фільтра до валюти з оголошення.
 			# На фронтенді валюта повинна бути задана за замовчуванням.
-			raise ValueError('sale_currency_sid is absent.')
+			raise InvalidArgument('sale_currency_sid is absent.')
 		elif currency_sid not in CURRENCIES.values():
-			raise ValueError('currency_sid is invalid.')
+			raise InvalidArgument('currency_sid is invalid.')
 
 		if operation_sid not in [0, 1]:
-			raise ValueError('Invalid operation_sid.')
+			raise InvalidArgument('Invalid operation_sid.')
 
 
 		# Для відбору елементів зі списку publications, використовується список statuses.
@@ -5911,13 +5817,29 @@ class LandsMarkersManager(BaseMarkersManager):
 
 			marker = publications[i][1]
 
+			# operation type
+			if operation_sid == 0:
+				if not marker.get('for_sale', False):
+					statuses[i] = False
+					continue
+
+			elif operation_sid == 1:
+				if not marker.get('for_rent', False):
+					statuses[i] = False
+					continue
+
+
 			# price
+			marker_currency = marker.get('sale_currency_sid')
+			if marker_currency is None:
+				marker_currency = marker.get('rent_currency_sid')
+
 			price_min = filters.get('price_from')
 			price_max = filters.get('price_to')
 			if price_min is not None:
-				price_min = convert_currency(price_min, currency_sid, marker['sale_currency_sid'])
+				price_min = convert_currency(price_min, currency_sid, marker_currency)
 			if price_max is not None:
-				price_max = convert_currency(price_max, currency_sid, marker['sale_currency_sid'])
+				price_max = convert_currency(price_max, currency_sid, marker_currency)
 
 
 			if (price_max is not None) and (price_min is not None):

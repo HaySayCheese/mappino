@@ -9,7 +9,10 @@ class BaseCustomException(Exception):
 	"""
 	pass
 
-class InvalidArgument(BaseCustomException): pass
+class InvalidValue(BaseCustomException): pass
+class InvalidArgument(InvalidValue): pass
+
+
 class RuntimeException(BaseCustomException): pass
 
 class ResourceThrottled(SuspiciousOperation): pass
