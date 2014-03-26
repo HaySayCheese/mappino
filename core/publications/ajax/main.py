@@ -272,6 +272,8 @@ class DetailedView(View):
 
 			'market_type': p.body.print_market_type(),
 		    'building_type': p.body.print_building_type(),
+
+
 		    'build_year': p.body.print_build_year(),
 		    'rooms_planning': p.body.print_rooms_planning(),
 		    'condition': p.body.print_condition(),

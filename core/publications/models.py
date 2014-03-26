@@ -940,19 +940,19 @@ class HousesBodies(BodyModel):
 	def print_total_area(self):
 		if not self.total_area:
 			return u''
-		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.')
 
 
 	def print_living_area(self):
 		if not self.living_area:
 			return u''
-		return "{:.2f}".format(self.living_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.living_area).rstrip('0').rstrip('.')
 
 
 	def print_kitchen_area(self):
 		if not self.kitchen_area:
 			return u''
-		return "{:.2f}".format(self.kitchen_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.kitchen_area).rstrip('0').rstrip('.')
 
 
 	def print_floors_count(self):
