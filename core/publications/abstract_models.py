@@ -419,55 +419,52 @@ class LivingRentTermsModel(AbstractModel):
 		return price
 
 
-	def print_add_terms(self):
-		if self.add_terms is None:
-			return u''
-		return self.add_terms
-
-
 	def print_terms(self):
-		options = u''
+		terms = u''
 		if self.period_sid == LIVING_RENT_PERIODS.daily():
-			options += u', посуточно'
+			terms += u', посуточно'
 		elif self.period_sid == LIVING_RENT_PERIODS.monthly():
-			options += u', помесячно'
+			terms += u', помесячно'
 		elif self.period_sid == LIVING_RENT_PERIODS.long_period():
-			options += u', долгосрочная аренда'
+			terms += u', долгосрочная аренда'
 
 		if self.persons_count:
-			options += u', количество мест — ' + unicode(self.persons_count)
+			terms += u', количество мест — ' + unicode(self.persons_count)
 
 		if self.family:
-			options += u', подходит для семей с детьми'
+			terms += u', подходит для семей с детьми'
 		if self.pets:
-			options += u', питомцы разрешены'
+			terms += u', питомцы разрешены'
 		if self.foreigners:
-			options += u', размещение иностранцев'
+			terms += u', размещение иностранцев'
 		if self.smoking:
-			options += u', можно курить'
+			terms += u', можно курить'
 
-		if options:
-			return options[2:]
+		if self.add_terms:
+			terms += u'. ' + self.add_terms
+
+		if terms:
+			return terms[2:]
 		return u''
 
 
-	def print_furniture(self):
-		furniture = u''
+	def print_facilities(self):
+		facilities = u''
 		if self.furniture:
-			furniture += u', мебель'
+			facilities += u', мебель'
 		if self.refrigerator:
-			furniture += u', холодильник'
+			facilities += u', холодильник'
 		if self.tv:
-			furniture += u', телевизор'
+			facilities += u', телевизор'
 		if self.washing_machine:
-			furniture += u', стиральная машина'
+			facilities += u', стиральная машина'
 		if self.conditioner:
-			furniture += u', кондиционер'
+			facilities += u', кондиционер'
 		if self.home_theater:
-			furniture += u', домашний кинотеатр'
+			facilities += u', домашний кинотеатр'
 
-		if furniture:
-			return furniture[2:]
+		if facilities:
+			return facilities[2:]
 		return u''
 
 
@@ -503,7 +500,7 @@ class CommercialRentTermsModel(AbstractModel):
 
 	#-- output
 	def print_price(self, currency=CURRENCIES.uah()):
-		if self.body.price is None:
+		if self.price is None:
 			return u''
 
 		price = u'{:.2f}'.format(currencies_manager.convert(self.price, self.currency_sid, currency))
@@ -520,26 +517,23 @@ class CommercialRentTermsModel(AbstractModel):
 		elif currency == CURRENCIES.uah():
 			price += u' грн.'
 
-		if self.body.price_is_contract:
+		if self.is_contract:
 			price += u' (цена договорная)'
 		return price
 
 
-	def print_add_terms(self):
-		if self.add_terms is None:
-			return u''
-		return self.add_terms
-
-
 	def print_terms(self):
-		options = u''
-		if self.rent.period_sid == COMMERCIAL_RENT_PERIODS.monthly():
-			options += u', помесячно'
-		elif self.rent.period_sid == COMMERCIAL_RENT_PERIODS.long_period():
-			options += u', долгосрочная аренда'
+		terms = u''
+		if self.period_sid == COMMERCIAL_RENT_PERIODS.monthly():
+			terms += u', помесячно'
+		elif self.period_sid == COMMERCIAL_RENT_PERIODS.long_period():
+			terms += u', долгосрочная аренда'
 
-		if options:
-			return options[2:]
+		if self.add_terms:
+			terms += u'. ' + self.add_terms
+
+		if terms:
+			return terms[2:]
 		return u''
 
 
