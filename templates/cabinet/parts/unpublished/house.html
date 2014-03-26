@@ -566,18 +566,6 @@
                     <input id="sport_center" type="checkbox" name="sport_center" ng-model="publication.body.sport_center">
                     <label for="sport_center">Спортивно-оздоровительный центр</label>
                 </div>
-                <!--<div class="checkbox">-->
-                    <!--<input id="water" type="checkbox" name="water" ng-model="publication.body.water">-->
-                    <!--<label for="water">Речка / озеро</label>-->
-                <!--</div>-->
-                <!--<div class="checkbox">-->
-                    <!--<input id="wood" type="checkbox" name="sea" ng-model="publication.body.wood">-->
-                    <!--<label for="wood">Лес</label>-->
-                <!--</div>-->
-                <!--<div class="checkbox">-->
-                    <!--<input id="sea" type="checkbox" name="sea" ng-model="publication.body.sea">-->
-                    <!--<label for="sea">Море</label>-->
-                <!--</div>-->
             </div>
             <div class="col-sm-12">
                 <div class="form-group">
@@ -604,7 +592,7 @@
         </div>
 
 
-        <div class="row">
+        <div class="row" ng-show="tags.length">
             <h3 id="pub-tags-section">Ярлыки</h3>
             <div class="col-sm-6 col-lg-4 form-group">
                 <div class="checkbox" ng-repeat="tag in tags" ng-if="$even">
