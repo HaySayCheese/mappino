@@ -114,7 +114,7 @@ def update_cottage(h, field, value, tid):
 		elif field == 'sale_add_terms':
 			st = CottagesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 			if not value:
-				st.add_terms = None
+				st.add_terms = u''
 				st.save(force_update=True)
 				return
 
@@ -273,7 +273,7 @@ def update_cottage(h, field, value, tid):
 		elif field == 'rent_add_terms':
 			rt = CottagesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
 			if not value:
-				rt.add_terms = None
+				rt.add_terms = u''
 				rt.save(force_update=True)
 				return
 			else:
@@ -287,7 +287,7 @@ def update_cottage(h, field, value, tid):
 		elif field == 'title':
 			b = CottagesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.title = None
+				b.title = u''
 				b.save(force_update=True)
 				return
 			else:
@@ -301,7 +301,7 @@ def update_cottage(h, field, value, tid):
 		elif field == 'description':
 			b = CottagesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.description = None
+				b.description = u''
 				b.save(force_update=True)
 				return
 			else:
@@ -525,7 +525,7 @@ def update_cottage(h, field, value, tid):
 		elif field == 'custom_heating_type_sid':
 			b = CottagesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.custom_heating_type = None
+				b.custom_heating_type = u''
 				b.save(force_update=True)
 				return
 			else:
@@ -551,7 +551,7 @@ def update_cottage(h, field, value, tid):
 		elif field == 'custom_ind_heating_type_sid':
 			b = CottagesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.custom_ind_heating_type = None
+				b.custom_ind_heating_type = u''
 				b.save(force_update=True)
 				return
 			else:
@@ -706,7 +706,7 @@ def update_cottage(h, field, value, tid):
 		elif field == 'add_facilities':
 			b = CottagesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.add_facilities = None
+				b.add_facilities = u''
 				b.save(force_update=True)
 				return
 			else:
@@ -830,7 +830,7 @@ def update_cottage(h, field, value, tid):
 		elif field == 'add_buildings':
 			b = CottagesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.add_buildings= None
+				b.add_buildings = u''
 				b.save(force_update=True)
 				return
 			else:
@@ -921,7 +921,7 @@ def update_cottage(h, field, value, tid):
 		elif field == 'add_showplaces':
 			b = CottagesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.add_showplaces= None
+				b.add_showplaces = u''
 				b.save(force_update=True)
 				return
 			else:
@@ -940,7 +940,7 @@ def update_cottage(h, field, value, tid):
 		# text
 		elif field == 'address':
 			if not value:
-				h.address = None
+				h.address = u''
 				h.save(force_update=True)
 				return
 			else:

@@ -103,7 +103,7 @@ def update_office(h, field, value, tid):
 		elif field == 'sale_add_terms':
 			st = OfficesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 			if not value:
-				st.add_terms = None
+				st.add_terms = u''
 				st.save(force_update=True)
 				return
 			else:
@@ -186,7 +186,7 @@ def update_office(h, field, value, tid):
 		elif field == 'rent_add_terms':
 			rt = OfficesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
 			if not value:
-				rt.add_terms = None
+				rt.add_terms = u''
 				rt.save(force_update=True)
 				return
 			else:
@@ -212,7 +212,7 @@ def update_office(h, field, value, tid):
 		elif field == 'title':
 			b = OfficesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.title = None
+				b.title = u''
 				b.save(force_update=True)
 				return
 			else:
@@ -226,7 +226,7 @@ def update_office(h, field, value, tid):
 		elif field == 'description':
 			b = OfficesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.description = None
+				b.description = u''
 				b.save(force_update=True)
 				return
 			else:
@@ -451,7 +451,7 @@ def update_office(h, field, value, tid):
 		elif field == 'custom_heating_type':
 			b = OfficesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.custom_heating_type = None
+				b.custom_heating_type = u''
 				b.save(force_update=True)
 				return
 			else:
@@ -477,7 +477,7 @@ def update_office(h, field, value, tid):
 		elif field == 'custom_ind_heating_type':
 			b = OfficesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.custom_ind_heating_type = None
+				b.custom_ind_heating_type = u''
 				b.save(force_update=True)
 				return
 			else:
@@ -579,7 +579,7 @@ def update_office(h, field, value, tid):
 		elif field == 'add_equipment':
 			rt = OfficesSaleTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
 			if not value:
-				rt.add_equipment = None
+				rt.add_equipment = u''
 				rt.save(force_update=True)
 				return
 			else:
@@ -593,7 +593,7 @@ def update_office(h, field, value, tid):
 		elif field == 'add_facilities':
 			b = OfficesBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.add_facilities = None
+				b.add_facilities = u''
 				b.save(force_update=True)
 				return
 			else:
@@ -801,7 +801,7 @@ def update_office(h, field, value, tid):
 		# text
 		elif field == 'address':
 			if not value:
-				h.address = None
+				h.address = u''
 				h.save(force_update=True)
 				return
 			else:

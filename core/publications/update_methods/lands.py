@@ -103,7 +103,7 @@ def update_land(h, field, value, tid):
 		elif field == 'sale_add_terms':
 			st = LandsSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 			if not value:
-				st.add_terms = None
+				st.add_terms = u''
 				st.save(force_update=True)
 				return
 			else:
@@ -186,7 +186,7 @@ def update_land(h, field, value, tid):
 		elif field == 'rent_add_terms':
 			rt = LandsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
 			if not value:
-				rt.add_terms = None
+				rt.add_terms = u''
 				rt.save(force_update=True)
 				return
 			else:
@@ -211,7 +211,7 @@ def update_land(h, field, value, tid):
 		elif field == 'title':
 			b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.title = None
+				b.title = u''
 				b.save(force_update=True)
 				return
 			else:
@@ -225,7 +225,7 @@ def update_land(h, field, value, tid):
 		elif field == 'description':
 			b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.description = None
+				b.description = u''
 				b.save(force_update=True)
 				return
 			else:
@@ -330,7 +330,7 @@ def update_land(h, field, value, tid):
 		elif field == 'add_facilities':
 			b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
 			if not value:
-				b.add_facilities = None
+				b.add_facilities = u''
 				b.save(force_update=True)
 				return
 			else:
@@ -388,7 +388,7 @@ def update_land(h, field, value, tid):
 		# text
 		elif field == 'address':
 			if not value:
-				h.address = None
+				h.address = u''
 				h.save(force_update=True)
 				return
 			else:
