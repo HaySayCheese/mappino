@@ -342,7 +342,7 @@ class SaleTermsModel(AbstractModel):
 		elif currency == CURRENCIES.uah():
 			price += u' грн.'
 		if self.transaction_sid == SALE_TRANSACTION_TYPES.for_square_meter():
-			price += u'/м<sup>2</sup>'
+			price += u'/м²'
 
 		if self.is_contract:
 			price += u' (цена договорная)'
