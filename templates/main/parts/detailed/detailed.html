@@ -44,15 +44,15 @@
                                     </tr>
                                     <tr>
                                         <td>Общая площадь:</td>
-                                        <td>[[ publicationDescription.total_area ]] м<sup>2</sup></td>
+                                        <td>[[ publicationDescription.total_area ]]</td>
                                     </tr>
                                     <tr>
                                         <td>Жилая площадь:</td>
-                                        <td>[[ publicationDescription.living_area ]] м<sup>2</sup></td>
+                                        <td>[[ publicationDescription.living_area ]]</td>
                                     </tr>
                                     <tr>
                                         <td>Площадь кухни:</td>
-                                        <td>[[ publicationDescription.kitchen_area ]] м<sup>2</sup></td>
+                                        <td>[[ publicationDescription.kitchen_area ]]</td>
                                     </tr>
                                 </table>
                             </div>
@@ -82,19 +82,20 @@
                             </div>
                         </div>
                         <div class="other-properties">
+                            <span class="section-header">Удобства: </span>
+                            [[ publicationDescription.facilities ]]
+                        </div>
+                        <div class="property-price">
                             Продажа: [[ publicationDescription.sale_price_uah ]]
                         </div>
                         <div class="other-properties">
-                            <span class="section-header">Условия продажи: </span>
                             [[ publicationDescription.sale_terms ]]
                         </div>
-                        <div class="other-properties">
-                            <span class="section-header">Условия аренды: </span>
-                            [[ publicationDescription.rent_terms ]]
+                        <div class="property-price">
+                            Аренда: [[ publicationDescription.rent_price_uah ]]
                         </div>
                         <div class="other-properties">
-                            <span class="section-header">Удобства: </span>
-                            [[ publicationDescription.facilities ]]
+                            [[ publicationDescription.rent_terms ]]
                         </div>
                         <div class="other-properties">
                             <span class="section-header">Удобства аренды: </span>
