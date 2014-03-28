@@ -1,7 +1,7 @@
 'use strict';
 
 app.controller('PublicationViewCtrl', function($scope, $rootScope, mapQueries) {
-    $scope.publicationViewStatePart = "Contacts";
+    $scope.publicationViewStatePart = "Description";
     $scope.publicationDescription = {};
 
 

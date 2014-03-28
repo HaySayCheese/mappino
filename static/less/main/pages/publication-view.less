@@ -9,12 +9,16 @@
 
 .publication-view-modal {
 
+    .modal-dialog {
+        width: 1000px;
+    }
+
     .content-white {
-        .size(800px, 500px);
+        .size(1000px, 600px);
     }
 
     .publication-photo {
-        .size(300px, 500px);
+        .size(300px, 600px);
 
         > .counter {
             .square(60px);
@@ -50,17 +54,22 @@
     }
 
     .publication-content {
-        .size(500px, 500px);
+        .size(700px, 600px);
 
         .publication-content-header {
             .size(100%, 50px);
             padding: 10px;
+
+            span {
+                font-size: @font-size-h3;
+            }
         }
 
         .publication-content-body {
             .size(100%, calc(~"100% - 115px"));
-            padding: 10px 0;
-            //text-align: center;
+            padding: 10px;
+            overflow-y: auto;
+            line-height: 120%;
 
             .user-photo,
             .user-name,
@@ -89,6 +98,33 @@
                 :last-child {
                     border-bottom: 2px dashed @nice-violet;
                 }
+            }
+
+            .section-header {
+                font-weight: bold;
+            }
+
+            .description {
+                padding-bottom: 50px;
+            }
+            .properties {
+                .clearfix();
+
+                .padding-top > td {
+                    padding-top: 20px;
+                }
+                > .left {
+                    width: 35%;
+                    float: left;
+                }
+                > .right {
+                    width: 65%;
+                    float: right;
+                }
+            }
+            .other-properties {
+                display: block;
+                margin-top: 10px;
             }
         }
 

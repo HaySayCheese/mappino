@@ -9,7 +9,7 @@
             </div>
             <div class="publication-content pull-right">
                 <div class="publication-content-header">
-                    <span>[[ publicationDescription ]]</span>
+                    <span ng-show="publicationViewStatePart == 'Description'">[[ publicationDescription.title ]]</span>
                     <img class="close" src="{{ static }}img/main/publication-view/detailed-close.png" alt="" data-dismiss="modal"/>
                 </div>
                 <div class="publication-content-body" ng-switch on="publicationViewStatePart">
@@ -31,7 +31,83 @@
                     </div>
 
                     <div ng-switch-when="Description">
-                        [[ publicationViewStatePart ]]
+                        <div class="description">
+                            [[ publicationDescription.description ]]
+                        </div>
+                        <div class="properties">
+                            <div class="left">
+                                <table>
+                                    <tr>
+                                        <td>Общая площадь:</td>
+                                        <td>[[ publicationDescription.total_area ]] м<sup>2</sup></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Жилая площадь:</td>
+                                        <td>[[ publicationDescription.living_area ]] м<sup>2</sup></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Площадь кухни:</td>
+                                        <td>[[ publicationDescription.kitchen_area ]] м<sup>2</sup></td>
+                                    </tr>
+                                    <tr  class="padding-top">
+                                        <td>Количество комнат:</td>
+                                        <td>[[ publicationDescription.rooms_count ]]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Кол-во спален:</td>
+                                        <td>[[ publicationDescription.bedrooms_count ]]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Кол-во сан. узлов:</td>
+                                        <td>[[ publicationDescription.vcs_count ]]</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="right">
+                                <table>
+                                    <tr>
+                                        <td>Количество этажей:</td>
+                                        <td>[[ publicationDescription.floors_count ]]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Состояние:</td>
+                                        <td>[[ publicationDescription.condition ]]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Тип рынка:</td>
+                                        <td>[[ publicationDescription.market_type ]]</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="other-properties">
+                            <span class="section-header">Условия продажи: </span>
+                            [[ publicationDescription.sale_terms ]]
+                        </div>
+                        <div class="other-properties">
+                            <span class="section-header">Условия аренды: </span>
+                            [[ publicationDescription.rent_terms ]]
+                        </div>
+                        <div class="other-properties">
+                            <span class="section-header">Удобства: </span>
+                            [[ publicationDescription.facilities ]]
+                        </div>
+                        <div class="other-properties">
+                            <span class="section-header">Удобства аренды: </span>
+                            [[ publicationDescription.rent_facilities ]]
+                        </div>
+                        <div class="other-properties">
+                            <span class="section-header">Коммуникации: </span>
+                            [[ publicationDescription.communications ]]
+                        </div>
+                        <div class="other-properties">
+                            <span class="section-header">Дополнительные постройки: </span>
+                            [[ publicationDescription.buildings ]]
+                        </div>
+                        <div class="other-properties">
+                            <span class="section-header">Рядом находиться: </span>
+                            [[ publicationDescription.showplaces ]]
+                        </div>
                     </div>
                 </div>
                 <div class="publication-content-footer">
