@@ -961,14 +961,14 @@ class HousesBodies(BodyModel):
 
 		floors = u''
 		if self.ground:
-			floors += u', цокольный этаж'
+			floors += u', цоколь'
 		if self.lower_floor:
 			floors += u', подвал'
 		if self.mansard:
 			floors += u', мансарда'
 
 		if floors and self.floors_count:
-			return unicode(self.floors_count) + u' (есть ' + floors[2:] + u')'
+			return unicode(self.floors_count) + u' (' + floors[2:] + u')'
 		return unicode(self.floors_count)
 
 
