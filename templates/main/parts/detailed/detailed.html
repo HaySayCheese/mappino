@@ -30,13 +30,18 @@
                         </div>
                     </div>
 
-                    <div ng-switch-when="Description">
+                    <div class="publication-loading" ng-show="!publicationLoaded"></div>
+                    <div ng-switch-when="Description" ng-show="publicationLoaded">
                         <div class="description">
                             [[ publicationDescription.description ]]
                         </div>
                         <div class="properties">
                             <div class="left">
                                 <table>
+                                    <tr>
+                                        <td>Тип рынка:</td>
+                                        <td>[[ publicationDescription.market_type ]]</td>
+                                    </tr>
                                     <tr>
                                         <td>Общая площадь:</td>
                                         <td>[[ publicationDescription.total_area ]] м<sup>2</sup></td>
@@ -49,33 +54,29 @@
                                         <td>Площадь кухни:</td>
                                         <td>[[ publicationDescription.kitchen_area ]] м<sup>2</sup></td>
                                     </tr>
-                                    <tr  class="padding-top">
-                                        <td>Количество комнат:</td>
-                                        <td>[[ publicationDescription.rooms_count ]]</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Кол-во спален:</td>
-                                        <td>[[ publicationDescription.bedrooms_count ]]</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Кол-во сан. узлов:</td>
-                                        <td>[[ publicationDescription.vcs_count ]]</td>
-                                    </tr>
                                 </table>
                             </div>
                             <div class="right">
                                 <table>
                                     <tr>
-                                        <td>Количество этажей:</td>
-                                        <td>[[ publicationDescription.floors_count ]]</td>
-                                    </tr>
-                                    <tr>
                                         <td>Состояние:</td>
                                         <td>[[ publicationDescription.condition ]]</td>
                                     </tr>
                                     <tr>
-                                        <td>Тип рынка:</td>
-                                        <td>[[ publicationDescription.market_type ]]</td>
+                                        <td>Количество комнат:</td>
+                                        <td>[[ publicationDescription.rooms_count ]]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Количество спален:</td>
+                                        <td>[[ publicationDescription.bedrooms_count ]]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Количество сан. узлов:</td>
+                                        <td>[[ publicationDescription.vcs_count ]]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Количество этажей:</td>
+                                        <td>[[ publicationDescription.floors_count ]]</td>
                                     </tr>
                                 </table>
                             </div>

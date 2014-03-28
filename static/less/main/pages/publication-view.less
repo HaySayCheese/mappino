@@ -58,7 +58,7 @@
 
         .publication-content-header {
             .size(100%, 50px);
-            padding: 10px;
+            padding: 10px 20px;
 
             span {
                 font-size: @font-size-h3;
@@ -67,7 +67,7 @@
 
         .publication-content-body {
             .size(100%, calc(~"100% - 115px"));
-            padding: 10px;
+            padding: 10px 20px;
             overflow-y: auto;
             line-height: 120%;
 
@@ -105,26 +105,40 @@
             }
 
             .description {
-                padding-bottom: 50px;
+                padding-bottom: 20px;
+                text-align: justify;
             }
             .properties {
                 .clearfix();
 
                 .padding-top > td {
-                    padding-top: 20px;
+                    padding-top: 18px;
                 }
                 > .left {
-                    width: 35%;
+                    width: 40%;
                     float: left;
                 }
                 > .right {
-                    width: 65%;
+                    width: 60%;
                     float: right;
                 }
             }
             .other-properties {
                 display: block;
                 margin-top: 10px;
+            }
+            .publication-loading {
+                display: block;
+                height: 12px;
+                background: url("../../img/main/publication-view/ajax-loader.gif") center center no-repeat;
+            }
+            tr {
+                > td:first-child {
+                    text-align: right;
+                }
+                > td:last-child {
+                    padding-left: 10px;
+                }
             }
         }
 
@@ -137,7 +151,7 @@
             }
 
             .btn:nth-child(1) {
-                width: 370px;
+                width: 570px;
             }
             .btn:nth-child(2) {
                 width: 65px;

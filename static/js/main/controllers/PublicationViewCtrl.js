@@ -3,6 +3,7 @@
 app.controller('PublicationViewCtrl', function($scope, $rootScope, mapQueries) {
     $scope.publicationViewStatePart = "Description";
     $scope.publicationDescription = {};
+    $scope.publicationLoaded = false;
 
 
     var publicationViewModal = angular.element(".publication-view-modal");
@@ -11,6 +12,8 @@ app.controller('PublicationViewCtrl', function($scope, $rootScope, mapQueries) {
 
     mapQueries.getPublicationDescription($rootScope.publicationIdPart).success(function(data) {
         $scope.publicationDescription = data;
+
+        $scope.publicationLoaded = true;
         console.log(data)
     });
 
