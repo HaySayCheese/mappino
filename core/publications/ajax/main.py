@@ -36,7 +36,7 @@ class DetailedView(View):
 		    OBJECTS_TYPES.office():     self.compose_office_description,
 		    OBJECTS_TYPES.warehouse():  self.compose_warehouse_description,
 		    OBJECTS_TYPES.business():   self.compose_business_description,
-		    OBJECTS_TYPES.trade():      self.compose_catering_description,
+		    OBJECTS_TYPES.catering():   self.compose_catering_description,
 
 		    # другая недвижимость
 		    OBJECTS_TYPES.garage():     self.compose_garage_description,
@@ -311,16 +311,7 @@ class DetailedView(View):
 
 
 	@staticmethod
-	def compose_trade_description(hid):
-		if hid is None:
-			return None
-
-		try:
-			p = TradesHeads.objects.filter(id=hid).only(
-				'for_sale', 'for_rent', 'body', 'sale_terms', 'rent_terms')[:1][0]
-		except IndexError:
-			return None
-
+	def compose_trade_description(p):
 		description = {
 			'title': p.body.print_title(),
 		    'description': p.body.print_description(),
@@ -330,23 +321,19 @@ class DetailedView(View):
 		    'build_year': p.body.print_build_year(),
 		    'condition': p.body.print_condition() or u'неизвестно',
 
-		    'floor': p.body.print_floor() + p.body.print_floor_type() \
-		        if p.body.print_floor() else p.body.print_floor_type(),
-			'floors_count': p.body.print_floors_count() + u'. Есть ' + p.body.print_extra_floors() \
-				if p.body.print_floors_count() else '',
+		    'floor': p.body.print_floor(),
+			'floors_count': p.body.print_floors_count(),
 
 			'halls_count': p.body.print_halls_count() or u'неизвестно',
 			'halls_area': p.body.print_halls_area() or u'неизвестно',
-		    'total_area': p.body.print_total_area() +
-		                  (u' (закрытая територия)' if p.body.closed_area else u'') or u'неизвестно',
+		    'total_area': p.body.print_total_area() or u'неизвестно',
 
 		    'vcs_count': p.body.print_vcs_count(),
 		    'ceiling_height': p.body.print_ceiling_height(),
 
 			'facilities': p.body.print_facilities(),
 		    'communications': p.body.print_communications(),
-		    'buildings': p.body.print_provided_add_buildings() + u'. ' + p.body.print_add_buildings() \
-			    if p.body.print_add_buildings() else p.body.print_provided_add_buildings(),
+		    'buildings': p.body.print_provided_add_buildings(),
 		    'showplaces': p.body.print_showplaces()
 		}
 
