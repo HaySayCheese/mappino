@@ -2350,13 +2350,13 @@ class OfficesBodies(BodyModel):
 
 	# output
 	def print_title(self):
-		if self.title is None:
+		if not self.title:
 			return u''
 		return self.title
 
 
 	def print_description(self):
-		if self.description is None:
+		if not self.description:
 			return u''
 		return self.description
 
@@ -2370,7 +2370,7 @@ class OfficesBodies(BodyModel):
 
 
 	def print_build_year(self):
-		if self.build_year is None:
+		if not self.build_year:
 			return u''
 		return unicode(self.build_year) + u' г.'
 
@@ -2388,19 +2388,19 @@ class OfficesBodies(BodyModel):
 
 
 	def print_floors_count(self):
-		if self.floors_count is None:
+		if not self.floors_count:
 			return u''
 		return unicode(self.floors_count)
 
 
 	def print_cabinets_count(self):
-		if self.cabinets_count is None:
+		if not self.cabinets_count:
 			return u''
 		return unicode(self.cabinets_count)
 
 
 	def print_total_area(self):
-		if self.total_area is None:
+		if not self.total_area:
 			return u''
 
 		total_area = "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
@@ -2410,13 +2410,13 @@ class OfficesBodies(BodyModel):
 
 
 	def print_vcs_count(self):
-		if self.vcs_count is None:
+		if not self.vcs_count:
 			return u''
 		return unicode(self.vcs_count)
 
 
 	def print_ceiling_height(self):
-		if self.ceiling_height is None:
+		if not self.ceiling_height:
 			return u''
 		return unicode(self.ceiling_height) + u' м'
 
@@ -2576,7 +2576,7 @@ class WarehousesBodies(BodyModel):
 	market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
 	area = models.FloatField(null=True)
 	plot_area = models.FloatField(null=True) # площа участку
-	open_space = models.FloatField(null=True) # вільне плаування
+	open_space = models.BooleanField(default=False) # вільне плаування
 	closed_area = models.BooleanField(default=False) # закрита територія
 
 	# Опалення
@@ -2646,13 +2646,13 @@ class WarehousesBodies(BodyModel):
 
 	# output
 	def print_title(self):
-		if self.title is None:
+		if not self.title:
 			return u''
 		return self.title
 
 
 	def print_description(self):
-		if self.description is None:
+		if not self.description:
 			return u''
 		return self.description
 
@@ -2662,15 +2662,23 @@ class WarehousesBodies(BodyModel):
 
 
 	def print_halls_area(self):
-		if self.area is None:
+		if not self.area:
 			return u''
-		return "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+
+		area = "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м²'
+		if self.open_space:
+			area += u' (свободная планировка)'
+		return area
 
 
 	def print_plot_area(self):
-		if self.plot_area is None:
+		if not self.plot_area:
 			return u''
-		return "{:.2f}".format(self.plot_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+
+		area = "{:.2f}".format(self.plot_area).rstrip('0').rstrip('.') + u' м²'
+		if self.closed_area:
+			area += u' (закрытая територия)'
+		return area
 
 
 	def print_facilities(self):
@@ -2699,7 +2707,7 @@ class WarehousesBodies(BodyModel):
 			facilities += u', электричество'
 		if self.gas:
 			facilities += u', газ'
-		if self.canalisation:
+		if self.sewerage:
 			facilities += u', канализация'
 		if self.hot_water:
 			facilities += u', гарячая вода'
@@ -2725,7 +2733,7 @@ class WarehousesBodies(BodyModel):
 
 
 	def print_add_facilities(self):
-		if self.add_facilities is None:
+		if not self.add_facilities:
 			return u''
 		return self.add_facilities
 
@@ -2741,8 +2749,6 @@ class WarehousesBodies(BodyModel):
 			communications += u', интернет'
 		if self.mobile_coverage:
 			communications += u', покрытие мобильными операторами'
-		if self.cable_tv:
-			communications += u', кабельное телевидение'
 		if self.lan:
 			communications += u', локальная сеть'
 
@@ -2770,19 +2776,19 @@ class WarehousesBodies(BodyModel):
 
 	def print_driveways(self):
 		driveways = u''
-		if self.body.railway:
+		if self.railway:
 			driveways += u', Ж/Д ветка'
-		if self.body.asphalt:
+		if self.asphalt:
 			driveways += u', асфальт'
-		if self.body.concrete:
+		if self.concrete:
 			driveways += u', бетон'
-		if self.body.ground:
+		if self.ground:
 			driveways += u', грунт'
 		if driveways:
 			driveways += u'.'
 
-		if self.body.add_driveways:
-			driveways += u' ' + self.body.add_driveways.capitalize()
+		if self.add_driveways:
+			driveways += u' ' + self.add_driveways.capitalize()
 		return driveways[2:].capitalize() + u'.' if driveways else u''
 
 
@@ -2793,33 +2799,30 @@ class WarehousesBodies(BodyModel):
 
 
 	def print_showplaces(self):
-		buildings = u''
+		showplaces = u''
 		if self.transport_stop:
-			buildings += u', остановка общ. транспорта'
+			showplaces += u', остановка общ. транспорта'
 		if self.bank:
-			buildings += u', отделения банка'
+			showplaces += u', отделения банка'
 		if self.cash_machine:
-			buildings += u', банкомат'
+			showplaces += u', банкомат'
 		if self.cafe:
-			buildings += u', кафе / ресторан'
+			showplaces += u', кафе / ресторан'
 		if self.market:
-			buildings += u', рынок / супермаркет'
+			showplaces += u', рынок / супермаркет'
 		if self.bank:
-			buildings += u', отделение банка'
+			showplaces += u', отделение банка'
 		if self.railway:
-			buildings += u', Ж/Д станция'
+			showplaces += u', Ж/Д станция'
 		if self.refueling:
-			buildings += u', заправка'
+			showplaces += u', заправка'
 
-		if buildings:
-			return buildings[2:].capitalize() + u'.'
+		if self.add_showplaces:
+			showplaces += u'. ' + self.add_showplaces
+
+		if showplaces:
+			return showplaces[2:].capitalize() + u'.'
 		return u''
-
-
-	def print_add_close_objects(self):
-		if self.add_showplaces is None:
-			return u''
-		return self.add_showplaces
 
 
 class WarehousesHeads(CommercialHeadModel):
@@ -3080,19 +3083,19 @@ class BusinessesBodies(BodyModel):
 	def print_total_area(self):
 		if self.total_area is None:
 			return u''
-		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_plot_area(self):
 		if self.plot_area is None:
 			return u''
-		return "{:.2f}".format(self.plot_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.plot_area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_halls_area(self):
 		if self.halls_area is None:
 			return u''
-		return "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м²'
 
 
 
@@ -3304,13 +3307,13 @@ class CateringsBodies(BodyModel):
 	def print_halls_area(self):
 		if self.halls_area is None:
 			return u''
-		return "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_total_area(self):
 		if self.total_area is None:
 			return u''
-		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_vcs_count(self):
@@ -3536,7 +3539,7 @@ class GaragesBodies(BodyModel):
 	def print_area(self):
 		if self.area is None:
 			return u''
-		return "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_ceiling_height(self):
@@ -3667,7 +3670,7 @@ class LandsBodies(BodyModel):
 	def print_area(self):
 		if self.area is None:
 			return u''
-		return "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_driveways(self):

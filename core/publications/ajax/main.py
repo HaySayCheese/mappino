@@ -394,31 +394,19 @@ class DetailedView(View):
 
 
 	@staticmethod
-	def compose_warehouse_description(hid):
-		if hid is None:
-			return None
-
-		try:
-			p = WarehousesHeads.objects.filter(id=hid).only(
-				'for_sale', 'for_rent', 'body', 'sale_terms', 'rent_terms')[:1][0]
-		except IndexError:
-			return None
-
+	def compose_warehouse_description(p):
 		description = {
 			'title': p.body.print_title(),
 		    'description': p.body.print_description(),
 
 			'market_type': p.body.print_market_type(),
-		    'halls_area': p.body.print_halls_area() +
-		                  (u' (свободная планировка)' if p.body.open_space else u'') or u'неизвестно',
-		    'plot_area': p.body.print_plot_area() +
-		                  (u' (закрытая територия)' if p.body.closed_area else u'') or u'неизвестно',
+		    'halls_area': p.body.print_halls_area(),
+		    'plot_area': p.body.print_plot_area(),
 			'driveways': p.body.print_driveways(),
 
 			'facilities': p.body.print_facilities(),
 		    'communications': p.body.print_communications(),
-		    'buildings': p.body.print_provided_add_buildings() + u'. ' + p.body.print_add_buildings() \
-			    if p.body.print_add_buildings() else p.body.print_provided_add_buildings(),
+		    'buildings': p.body.print_provided_add_buildings(),
 		    'showplaces': p.body.print_showplaces()
 		}
 
@@ -434,8 +422,7 @@ class DetailedView(View):
 				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
 				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
 				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
-			    'rent_terms': p.rent_terms.print_terms() + '. ' + p.rent_terms.print_add_terms() \
-			        if p.rent_terms.print_add_terms() else p.rent_terms.print_terms(),
+			    'rent_terms': p.rent_terms.print_terms(),
 			})
 		return description
 
