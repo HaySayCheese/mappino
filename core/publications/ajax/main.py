@@ -5,10 +5,8 @@ from django.http.response import HttpResponseBadRequest, HttpResponse
 from django.views.generic import View
 
 from core.publications.constants import OBJECTS_TYPES, CURRENCIES, HEAD_MODELS
-from core.publications.models import RoomsHeads, TradesHeads, OfficesHeads, \
+from core.publications.models import OfficesHeads, \
 	BusinessesHeads, CateringsHeads, GaragesHeads, LandsHeads, WarehousesHeads
-from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
-
 
 
 class DetailedView(View):
@@ -349,23 +347,13 @@ class DetailedView(View):
 				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
 				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
 				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
-			    'rent_terms': p.rent_terms.print_terms() + '. ' + p.rent_terms.print_add_terms() \
-			        if p.rent_terms.print_add_terms() else p.rent_terms.print_terms(),
+			    'rent_terms': p.rent_terms.print_terms(),
 			})
 		return description
 
 
 	@staticmethod
-	def compose_office_description(hid):
-		if hid is None:
-			return None
-
-		try:
-			p = OfficesHeads.objects.filter(id=hid).only(
-				'for_sale', 'for_rent', 'body', 'sale_terms', 'rent_terms')[:1][0]
-		except IndexError:
-			return None
-
+	def compose_office_description(p):
 		description = {
 			'title': p.body.print_title(),
 		    'description': p.body.print_description(),
@@ -375,21 +363,16 @@ class DetailedView(View):
 		    'build_year': p.body.print_build_year(),
 		    'condition': p.body.print_condition() or u'неизвестно',
 
-		    'floor': p.body.print_floor() + p.body.print_floor_type() \
-		        if p.body.print_floor() else p.body.print_floor_type(),
+		    'floor': p.body.print_floor() or u'неизвестно',
 			'floors_count': p.body.print_floors_count(),
-
 			'cabinets_count': p.body.print_cabinets_count() or u'неизвестно',
-		    'total_area': p.body.print_total_area() +
-		                  (u' (закрытая територия)' if p.body.closed_area else u'') or u'неизвестно',
-
+		    'total_area': p.body.print_total_area(),
 		    'vcs_count': p.body.print_vcs_count(),
 		    'ceiling_height': p.body.print_ceiling_height(),
 
 			'facilities': p.body.print_facilities(),
 		    'communications': p.body.print_communications(),
-		    'buildings': p.body.print_provided_add_buildings() + u'. ' + p.body.print_add_buildings() \
-			    if p.body.print_add_buildings() else p.body.print_provided_add_buildings(),
+		    'buildings': p.body.print_provided_add_buildings(),
 		    'showplaces': p.body.print_showplaces()
 		}
 
@@ -405,8 +388,7 @@ class DetailedView(View):
 				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
 				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
 				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
-			    'rent_terms': p.rent_terms.print_terms() + '. ' + p.rent_terms.print_add_terms() \
-			        if p.rent_terms.print_add_terms() else p.rent_terms.print_terms(),
+			    'rent_terms': p.rent_terms.print_terms(),
 			})
 		return description
 

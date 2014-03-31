@@ -2281,9 +2281,9 @@ class OfficesBodies(BodyModel):
 
 
 	market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
-	building_type_sid = models.SmallIntegerField(default=TRADE_BUILDING_TYPES.entertainment())
+	building_type_sid = models.SmallIntegerField(default=TRADE_BUILDING_TYPES.business())
 	build_year = models.PositiveSmallIntegerField(null=True)
-	condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
+	condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.cosmetic_repair()) # загальний стан
 
 	floor = models.SmallIntegerField(null=True) # номер поверху
 	floor_type_sid = models.SmallIntegerField(default=FLOOR_TYPES.floor()) # тип поверху: мансарда, цоколь, звичайний поверх і т.д
@@ -2380,8 +2380,10 @@ class OfficesBodies(BodyModel):
 
 
 	def print_floor(self):
-		if self.floor is None:
-			return u''
+		# Поле "этаж" пропущено в floor_types умисно, щоб воно зайвий раз не потрапляло у видачу.
+		floor_type = self.substitutions['floor_types'].get(self.floor_type_sid, u'')
+		if floor_type:
+			return floor_type
 		return unicode(self.floor)
 
 
@@ -2391,20 +2393,20 @@ class OfficesBodies(BodyModel):
 		return unicode(self.floors_count)
 
 
-	def print_floor_type(self):
-		# Поле "этаж" пропущено в floor_types умисно, щоб воно зайвий раз не потрапляло у видачу.
-		return self.substitutions['floor_types'].get(self.floor_type_sid, u'')
-
-
 	def print_cabinets_count(self):
 		if self.cabinets_count is None:
 			return u''
 		return unicode(self.cabinets_count)
 
+
 	def print_total_area(self):
 		if self.total_area is None:
 			return u''
-		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+
+		total_area = "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
+		if self.closed_area:
+			total_area += u' (закрытая територия)'
+		return total_area
 
 
 	def print_vcs_count(self):
@@ -2416,7 +2418,7 @@ class OfficesBodies(BodyModel):
 	def print_ceiling_height(self):
 		if self.ceiling_height is None:
 			return u''
-		return unicode(self.ceiling_height)
+		return unicode(self.ceiling_height) + u' м'
 
 
 	#-- output formatted strings
@@ -2468,12 +2470,6 @@ class OfficesBodies(BodyModel):
 		return facilities if facilities else u''
 
 
-	def print_add_facilities(self):
-		if self.add_facilities is None:
-			return u''
-		return self.add_facilities
-
-
 	def print_communications(self):
 		communications = u''
 		if self.phone:
@@ -2501,40 +2497,34 @@ class OfficesBodies(BodyModel):
 			buildings += u', парковка'
 		if self.open_air:
 			buildings += u', открытая площадка'
+
+		if self.add_buildings:
+			buildings += u'.' + self.add_buildings
+
 		return buildings[2:] if buildings else u''
 
 
-	def print_add_buildings(self):
-		if self.add_buildings is None:
-			return u''
-		return self.add_buildings
-
-
 	def print_showplaces(self):
-		buildings = u''
+		showplaces = u''
 		if self.transport_stop:
-			buildings += u', остановка общ. транспорта'
+			showplaces += u', остановка общ. транспорта'
 		if self.bank:
-			buildings += u', отделения банка'
+			showplaces += u', отделения банка'
 		if self.cash_machine:
-			buildings += u', банкомат'
+			showplaces += u', банкомат'
 		if self.cafe:
-			buildings += u', кафе / ресторан'
+			showplaces += u', кафе / ресторан'
 		if self.market:
-			buildings += u', рынок / супермаркет'
+			showplaces += u', рынок / супермаркет'
 		if self.entertainment:
-			buildings += u', развлекательные заведения'
+			showplaces += u', развлекательные заведения'
 
-		if buildings:
-			return buildings[2:].capitalize() + u'.'
+		if self.add_showplaces:
+			showplaces += u'. ' + self.add_showplaces
+
+		if showplaces:
+			return showplaces[2:].capitalize() + u'.'
 		return u''
-
-
-	def print_add_close_objects(self):
-		if self.add_showplaces is None:
-			return u''
-		return self.add_showplaces
-
 
 
 
@@ -3332,7 +3322,7 @@ class CateringsBodies(BodyModel):
 	def print_ceiling_height(self):
 		if self.ceiling_height is None:
 			return u''
-		return unicode(self.ceiling_height)
+		return unicode(self.ceiling_height) + u' м'
 
 
 	#-- output formatted strings
@@ -3552,7 +3542,7 @@ class GaragesBodies(BodyModel):
 	def print_ceiling_height(self):
 		if self.ceiling_height is None:
 			return u''
-		return unicode(self.ceiling_height)
+		return unicode(self.ceiling_height) + u' м'
 
 
 	def print_driveways(self):
