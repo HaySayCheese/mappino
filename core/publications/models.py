@@ -2727,15 +2727,12 @@ class WarehousesBodies(BodyModel):
 		if self.security:
 			facilities += u', охрана'
 
+		if self.add_facilities:
+			facilities += u'. ' + self.add_facilities
+
 		if facilities[:2] == u', ':
 			facilities = facilities[2:]
 		return(facilities.capitalize() + u'.') if facilities else u''
-
-
-	def print_add_facilities(self):
-		if not self.add_facilities:
-			return u''
-		return self.add_facilities
 
 
 	def print_communications(self):
@@ -2968,20 +2965,21 @@ class BusinessesBodies(BodyModel):
 
 	# output
 	def print_title(self):
-		if self.title is None:
+		if not self.title:
 			return u''
 		return self.title
 
 
 	def print_description(self):
-		if self.description is None:
+		if not self.description:
 			return u''
 		return self.description
 
 
 	def print_monthly_cost(self):
-		if self.monthly_costs is None:
-			return u'' # необов’язкове поле
+		# todo: змінити для видачі по всім валютам окремо
+		if not self.monthly_costs:
+			return u'' # WARN: необов’язкове поле
 
 		cost = "{:.2f}".format(self.monthly_costs).rstrip('0').rstrip('.')
 		if self.mc_currency_sid == CURRENCIES.dol():
@@ -2994,8 +2992,9 @@ class BusinessesBodies(BodyModel):
 	
 	
 	def print_annual_receipts(self):
-		if self.annual_receipts is None:
-			return u'' # необов’язкове поле
+		# todo: змінити для видачі по всім валютам окремо
+		if not self.annual_receipts:
+			return u'' # WARN: необов’язкове поле
 
 		cost = "{:.2f}".format(self.annual_receipts).rstrip('0').rstrip('.')
 		if self.ar_currency_sid == CURRENCIES.dol():
@@ -3008,7 +3007,9 @@ class BusinessesBodies(BodyModel):
 	
 	
 	def print_age(self):
-		if self.age is None:
+		if not self.age:
+			# Якщо вік бізнесу — 0, все одно не показувати.
+			# Перевірка на not це передбачає.
 			return u'' # не обов’язкове поле може бути відсутнім
 
 		age = "{:.2f}".format(self.age).rstrip('0').rstrip('.')
@@ -3020,19 +3021,23 @@ class BusinessesBodies(BodyModel):
 			age += u' года'
 		else:
 			age += u' лет'
-		return age + u'.'
+		return age
 
 
 	def print_workers_count(self):
-		if self.body.workers_count is None:
+		if not self.body.workers_count:
+			# Якщо к-сть працівників — 0, все одно не показувати.
+			# Перевірка на not це передбачає.
 			return u'' # необов’язкове поле
 		return unicode(self.body.workers_count) + u' чел.'
 
 
 	def print_share(self):
-		if self.share is None:
+		if not self.share:
+			# Якщо відсоткова доля — 0, все одно не показувати.
+			# Перевірка на not це передбачає.
 			return u'' # необов’язкове поле
-		return "{:.2f}".format(self.share) + u' %.'
+		return "{:.2f}".format(self.share) + u' %'
 
 
 	def print_building_type(self):
@@ -3040,7 +3045,9 @@ class BusinessesBodies(BodyModel):
 
 
 	def print_build_year(self):
-		if self.build_year is None:
+		if not self.build_year:
+			# Якщо рік побудови — 0, все одно не показувати.
+			# Перевірка на not це передбачає.
 			return u''
 		return unicode(self.build_year) + u' г.'
 
@@ -3050,13 +3057,13 @@ class BusinessesBodies(BodyModel):
 
 
 	def print_floor(self):
-		if self.floor is None:
+		if not self.floor:
 			return u''
 		return unicode(self.floor)
 
 
 	def print_floors_count(self):
-		if self.floors_count is None:
+		if not self.floors_count:
 			return u''
 		return unicode(self.floors_count)
 
@@ -3081,21 +3088,121 @@ class BusinessesBodies(BodyModel):
 
 
 	def print_total_area(self):
-		if self.total_area is None:
+		if not self.total_area:
 			return u''
 		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_plot_area(self):
-		if self.plot_area is None:
+		if not self.plot_area:
 			return u''
 		return "{:.2f}".format(self.plot_area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_halls_area(self):
-		if self.halls_area is None:
+		if not self.halls_area:
 			return u''
 		return "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м²'
+
+
+	def print_facilities(self):
+		facilities = u''
+
+		# Опалення (пункт "невідомо" не виводиться)
+		if self.heating_type_sid == HEATING_TYPES.none():
+			facilities += u'отопление отсутствует'
+		elif self.heating_type_sid == HEATING_TYPES.central():
+			facilities += u'центральное отопление'
+		elif self.heating_type_sid == HEATING_TYPES.individual():
+			facilities += u'индивидуальное отопление'
+			if self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.electricity():
+				facilities += u' (электричество)'
+			elif self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.gas():
+				facilities += u' (газ)'
+			elif self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.firewood():
+				facilities += u' (дрова)'
+			elif self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.other():
+				if self.custom_ind_heating_type is not None:
+					facilities += u' ('+self.custom_ind_heating_type + u')'
+		elif self.heating_type_sid == HEATING_TYPES.other():
+			facilities += u'отопление: ' + self.custom_heating_type
+
+		if self.electricity:
+			facilities += u', электричество'
+		if self.gas:
+			facilities += u', газ'
+		if self.sewerage:
+			facilities += u', канализация'
+		if self.hot_water:
+			facilities += u', гарячая вода'
+		if self.cold_water:
+			facilities += u', холодная вода'
+		if self.ventilation:
+			facilities += u', вентиляция'
+
+		if self.security_alarm and self.fire_alarm:
+			facilities += u', охранная и пожарная сигнализации'
+		else:
+			if self.security_alarm:
+				facilities += u', охранная сигнализация'
+			if self.fire_alarm:
+				facilities += u', пожарная сигнализация'
+
+		if self.security:
+			facilities += u', охрана'
+
+		if self.add_facilities:
+			facilities += '. ' + self.add_facilities
+
+		if facilities[:2] == u', ':
+			facilities = facilities[2:]
+		return(facilities.capitalize() + u'.') if facilities else u''
+
+
+	def print_communications(self):
+		communications = u''
+		if self.phone:
+			communications += u', телефон'
+			if self.phone_lines_count:
+				communications += u' (количество линий - ' + unicode(self.phone_lines_count) + u')'
+
+		if self.internet:
+			communications += u', интернет'
+		if self.mobile_coverage:
+			communications += u', покрытие мобильными операторами'
+		if self.lan:
+			communications += u', локальная сеть'
+
+		if communications:
+			return communications[2:].capitalize() + u"."
+		return u''
+
+
+	def print_showplaces(self):
+		showplaces = u''
+		if self.transport_stop:
+			showplaces += u', остановка общ. транспорта'
+		if self.bank:
+			showplaces += u', отделения банка'
+		if self.cash_machine:
+			showplaces += u', банкомат'
+		if self.cafe:
+			showplaces += u', кафе / ресторан'
+		if self.market:
+			showplaces += u', рынок / супермаркет'
+		if self.bank:
+			showplaces += u', отделение банка'
+		if self.railway:
+			showplaces += u', Ж/Д станция'
+		if self.refueling:
+			showplaces += u', заправка'
+
+		if self.add_showplaces:
+			showplaces += u'. ' + self.add_showplaces
+
+		if showplaces:
+			return showplaces[2:].capitalize() + u'.'
+		return u''
 
 
 
@@ -3238,13 +3345,13 @@ class CateringsBodies(BodyModel):
 
 	# output
 	def print_title(self):
-		if self.title is None:
+		if not self.title:
 			return u''
 		return self.title
 
 
 	def print_description(self):
-		if self.description is None:
+		if not self.description:
 			return u''
 		return self.description
 
@@ -3262,19 +3369,19 @@ class CateringsBodies(BodyModel):
 
 
 	def print_build_year(self):
-		if self.build_year is None:
+		if not self.build_year:
 			return u''
 		return unicode(self.build_year) + u' г.'
 
 
 	def print_floor(self):
-		if self.floor is None:
+		if not self.floor:
 			return u''
 		return unicode(self.floor)
 
 
 	def print_floors_count(self):
-		if self.floors_count is None:
+		if not self.floors_count:
 			return u''
 		return unicode(self.floors_count)
 
@@ -3299,31 +3406,31 @@ class CateringsBodies(BodyModel):
 
 
 	def print_halls_count(self):
-		if self.halls_count is None:
+		if not self.halls_count:
 			return u''
 		return unicode(self.halls_count)
 
 
 	def print_halls_area(self):
-		if self.halls_area is None:
+		if not self.halls_area:
 			return u''
 		return "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_total_area(self):
-		if self.total_area is None:
+		if not self.total_area:
 			return u''
 		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_vcs_count(self):
-		if self.vcs_count is None:
+		if not self.vcs_count:
 			return u''
 		return unicode(self.vcs_count)
 
 
 	def print_ceiling_height(self):
-		if self.ceiling_height is None:
+		if not self.ceiling_height:
 			return u''
 		return unicode(self.ceiling_height) + u' м'
 
@@ -3383,12 +3490,6 @@ class CateringsBodies(BodyModel):
 		return facilities if facilities else u''
 
 
-	def print_add_facilities(self):
-		if self.add_facilities is None:
-			return u''
-		return self.add_facilities
-
-
 	def print_communications(self):
 		communications = u''
 		if self.phone:
@@ -3419,12 +3520,6 @@ class CateringsBodies(BodyModel):
 		return buildings[2:] if buildings else u''
 
 
-	def print_add_buildings(self):
-		if self.add_buildings is None:
-			return u''
-		return self.add_buildings
-
-
 	def print_showplaces(self):
 		buildings = u''
 		if self.transport_stop:
@@ -3446,9 +3541,10 @@ class CateringsBodies(BodyModel):
 
 
 	def print_add_close_objects(self):
-		if self.add_showplaces is None:
+		if not self.add_showplaces:
 			return u''
 		return self.add_showplaces
+
 
 
 class CateringsHeads(CommercialHeadModel):
@@ -3521,13 +3617,13 @@ class GaragesBodies(BodyModel):
 
 	# output
 	def print_title(self):
-		if self.title is None:
+		if not self.title:
 			return u''
 		return self.title
 
 
 	def print_description(self):
-		if self.description is None:
+		if not self.description:
 			return u''
 		return self.description
 
@@ -3537,13 +3633,13 @@ class GaragesBodies(BodyModel):
 
 
 	def print_area(self):
-		if self.area is None:
+		if not self.area:
 			return u''
 		return "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_ceiling_height(self):
-		if self.ceiling_height is None:
+		if not self.ceiling_height:
 			return u''
 		return unicode(self.ceiling_height) + u' м'
 
@@ -3581,6 +3677,9 @@ class GaragesBodies(BodyModel):
 
 		if self.security:
 			facilities += u', охрана'
+
+		if self.add_facilities:
+			facilities += u'.' + self.add_facilities
 
 		if facilities[:2] == u', ':
 			facilities = facilities[2:]
@@ -3656,7 +3755,7 @@ class LandsBodies(BodyModel):
 
 	# output
 	def print_title(self):
-		if self.title is None:
+		if not self.title:
 			return u''
 		return self.title
 
@@ -3711,29 +3810,26 @@ class LandsBodies(BodyModel):
 
 
 	def print_showplaces(self):
-		buildings = u''
+		showplaces = u''
 		if self.transport_stop:
-			buildings += u', остановка общ. транспорта'
+			showplaces += u', остановка общ. транспорта'
 		if self.bank:
-			buildings += u', отделения банка'
+			showplaces += u', отделения банка'
 		if self.cash_machine:
-			buildings += u', банкомат'
+			showplaces += u', банкомат'
 		if self.cafe:
-			buildings += u', кафе / ресторан'
+			showplaces += u', кафе / ресторан'
 		if self.market:
-			buildings += u', рынок / супермаркет'
+			showplaces += u', рынок / супермаркет'
 		if self.entertainment:
-			buildings += u', развлекательные заведения'
+			showplaces += u', развлекательные заведения'
 
-		if buildings:
-			return buildings[2:].capitalize() + u'.'
+		if self.add_showplaces:
+			showplaces += u'.' + self.add_showplaces
+
+		if showplaces:
+			return showplaces[2:].capitalize() + u'.'
 		return u''
-
-
-	def print_add_close_objects(self):
-		if self.add_showplaces is None:
-			return u''
-		return self.add_showplaces
 
 
 class LandsHeads(LivingHeadModel):

@@ -253,6 +253,9 @@ class LivingHeadModel(models.Model):
 		self.body.check_required_fields()
 
 
+	def is_published(self):
+		return self.state_sid == OBJECT_STATES.published()
+
 
 class CommercialHeadModel(LivingHeadModel):
 	class Meta:
