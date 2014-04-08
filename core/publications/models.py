@@ -2630,7 +2630,6 @@ class WarehousesBodies(BodyModel):
 	cafe = models.BooleanField(default=False)
 	bank = models.BooleanField(default=False)
 	cash_machine = models.BooleanField(default=False)
-	entertainment = models.BooleanField(default=False) # розважальні установи
 	refueling = models.BooleanField(default=False) # автозапрака
 	railway_station = models.BooleanField(default=False)
 	add_showplaces = models.TextField(null=True)
@@ -2768,6 +2767,10 @@ class WarehousesBodies(BodyModel):
 			buildings += u', подсобка / кладовая'
 		if self.vc:
 			buildings += u', уборная'
+
+		if self.add_buildings:
+			buildings += u'. ' + self.add_buildings
+
 		return buildings[2:].capitalize() + u'.' if buildings else u''
 
 
@@ -2781,18 +2784,11 @@ class WarehousesBodies(BodyModel):
 			driveways += u', бетон'
 		if self.ground:
 			driveways += u', грунт'
-		if driveways:
-			driveways += u'.'
 
 		if self.add_driveways:
-			driveways += u' ' + self.add_driveways.capitalize()
+			driveways += u'. ' + self.add_driveways.capitalize()
+
 		return driveways[2:].capitalize() + u'.' if driveways else u''
-
-
-	def print_add_buildings(self):
-		if self.add_buildings is None:
-			return u''
-		return self.add_buildings
 
 
 	def print_showplaces(self):
@@ -2804,11 +2800,9 @@ class WarehousesBodies(BodyModel):
 		if self.cash_machine:
 			showplaces += u', банкомат'
 		if self.cafe:
-			showplaces += u', кафе / ресторан'
+			showplaces += u', кафе'
 		if self.market:
 			showplaces += u', рынок / супермаркет'
-		if self.bank:
-			showplaces += u', отделение банка'
 		if self.railway:
 			showplaces += u', Ж/Д станция'
 		if self.refueling:
