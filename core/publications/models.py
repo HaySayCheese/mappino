@@ -1396,14 +1396,14 @@ class CottagesBodies(BodyModel):
 
 		floors = u''
 		if self.ground:
-			floors += u', цокольный этаж'
+			floors += u', цоколь'
 		if self.lower_floor:
 			floors += u', подвал'
 		if self.mansard:
 			floors += u', мансарда'
 
 		if floors and self.floors_count:
-			return unicode(self.floors_count) + u' (есть ' + floors[2:] + u')'
+			return unicode(self.floors_count) + u' (' + floors[2:] + u')'
 		return unicode(self.floors_count)
 
 
@@ -2044,23 +2044,20 @@ class TradesBodies(BodyModel):
 
 
 	def print_floors_count(self):
-		if self.floors_count is None:
+		if not self.floors_count:
 			return u''
-		return unicode(self.floors_count)
 
-
-	def print_extra_floors(self):
 		floors = u''
 		if self.ground:
-			floors += u', цокольный этаж'
+			floors += u', цоколь'
 		if self.lower_floor:
 			floors += u', подвал'
 		if self.mansard:
 			floors += u', мансарда'
 
-		if floors[:2] == u', ':
-			floors = floors[2:]
-		return floors
+		if floors and self.floors_count:
+			return unicode(self.floors_count) + u' (' + floors[2:] + u')'
+		return unicode(self.floors_count)
 
 
 	def print_halls_count(self):
@@ -2981,7 +2978,7 @@ class BusinessesBodies(BodyModel):
 		elif self.mc_currency_sid == CURRENCIES.eur():
 			cost += u' евро'
 		elif self.mc_currency_sid == CURRENCIES.uah():
-			cost += u' грн'
+			cost += u' грн.'
 		return cost
 	
 	
@@ -2996,7 +2993,7 @@ class BusinessesBodies(BodyModel):
 		elif self.ar_currency_sid == CURRENCIES.eur():
 			cost += u' евро'
 		elif self.ar_currency_sid == CURRENCIES.uah():
-			cost += u' грн'
+			cost += u' грн.'
 		return cost
 	
 	
@@ -3019,11 +3016,11 @@ class BusinessesBodies(BodyModel):
 
 
 	def print_workers_count(self):
-		if not self.body.workers_count:
+		if not self.workers_count:
 			# Якщо к-сть працівників — 0, все одно не показувати.
 			# Перевірка на not це передбачає.
 			return u'' # необов’язкове поле
-		return unicode(self.body.workers_count) + u' чел.'
+		return unicode(self.workers_count) + u' чел.'
 
 
 	def print_share(self):
@@ -3031,7 +3028,7 @@ class BusinessesBodies(BodyModel):
 			# Якщо відсоткова доля — 0, все одно не показувати.
 			# Перевірка на not це передбачає.
 			return u'' # необов’язкове поле
-		return "{:.2f}".format(self.share) + u' %'
+		return "{:.2f}".format(self.share) + u'%'
 
 
 	def print_building_type(self):
@@ -3051,20 +3048,28 @@ class BusinessesBodies(BodyModel):
 
 
 	def print_floor(self):
-		if not self.floor:
-			return u''
+		# Поле "этаж" пропущено в floor_types умисно, щоб воно зайвий раз не потрапляло у видачу.
+		floor_type = self.substitutions['floor_types'].get(self.floor_type_sid, u'')
+		if floor_type:
+			return floor_type
 		return unicode(self.floor)
 
 
 	def print_floors_count(self):
 		if not self.floors_count:
 			return u''
+
+		floors = u''
+		if self.ground:
+			floors += u', цоколь'
+		if self.lower_floor:
+			floors += u', подвал'
+		if self.mansard:
+			floors += u', мансарда'
+
+		if floors and self.floors_count:
+			return unicode(self.floors_count) + u' (' + floors[2:] + u')'
 		return unicode(self.floors_count)
-
-
-	def print_floor_type(self):
-		# Поле "этаж" пропущено в floor_types умисно, щоб воно зайвий раз не потрапляло у видачу.
-		return self.substitutions['floor_types'].get(self.floor_type_sid, u'')
 
 
 	def print_extra_floors(self):
@@ -3084,7 +3089,11 @@ class BusinessesBodies(BodyModel):
 	def print_total_area(self):
 		if not self.total_area:
 			return u''
-		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
+
+		area = "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
+		if self.closed_area:
+			area += u' (закрытая територия)'
+		return area
 
 
 	def print_plot_area(self):
@@ -3172,6 +3181,21 @@ class BusinessesBodies(BodyModel):
 		return u''
 
 
+	def print_add_buildings(self):
+		buildings = u''
+		if self.parking:
+			buildings += u', парковка'
+		if self.open_air:
+			buildings += u', открытая площадка'
+
+		if self.add_buildings:
+			buildings += u'. ' + self.add_buildings
+
+		if buildings:
+			return buildings[2:].capitalize() + u"."
+		return u''
+
+
 	def print_showplaces(self):
 		showplaces = u''
 		if self.transport_stop:
@@ -3184,12 +3208,8 @@ class BusinessesBodies(BodyModel):
 			showplaces += u', кафе / ресторан'
 		if self.market:
 			showplaces += u', рынок / супермаркет'
-		if self.bank:
-			showplaces += u', отделение банка'
-		if self.railway:
-			showplaces += u', Ж/Д станция'
-		if self.refueling:
-			showplaces += u', заправка'
+		if self.entertainment:
+			showplaces += u', развлекательные заведения'
 
 		if self.add_showplaces:
 			showplaces += u'. ' + self.add_showplaces

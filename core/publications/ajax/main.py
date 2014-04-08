@@ -1,5 +1,6 @@
 #coding=utf-8
 import json
+from django.conf import settings
 
 from collective.exceptions import RuntimeException
 from django.core.exceptions import SuspiciousOperation
@@ -58,9 +59,10 @@ class DetailedView(View):
 			return HttpResponseBadRequest(
 				json.dumps(self.codes['invalid_parameters']), content_type='application/json')
 
-		# Якщо оголошення не опубліковано — заборонити показ.
-		if not publication.is_published():
-			raise SuspiciousOperation('Publication unpublished.')
+		if not settings.DEBUG:
+			# Якщо оголошення не опубліковано — заборонити показ.
+			if not publication.is_published():
+				raise SuspiciousOperation('Publication unpublished.')
 
 		generate = self.description_generators.get(tid)
 		if generate is None:
@@ -448,7 +450,7 @@ class DetailedView(View):
 
 			'facilities': p.body.print_facilities(),
 		    'communications': p.body.print_communications(),
-		    'buildings': p.body.print_provided_add_buildings(),
+		    'buildings': p.body.print_add_buildings(),
 		    'showplaces': p.body.print_showplaces()
 		}
 
