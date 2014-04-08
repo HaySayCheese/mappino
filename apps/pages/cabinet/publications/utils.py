@@ -127,4 +127,30 @@ def format_output_data(data):
 				# Інакше - округлити до 2х знаків після коми
 				data['rent_terms']['price'] = "%.2f" % r_price
 
+	# Костиль..
+	# Об’єкти готового бізнесу мають 2 decimal-поля, які ломають json-encoder.
+	# Логічно винести функцію формування json-опису об’єкту в модель,
+	# але зараз зроблено як зроблено і часу змінювати це немає.
+	# Отже, тут ці 2 поля переформатовуються.
+
+	monthly_costs = data['body'].get('monthly_costs')
+	if monthly_costs:
+		if int(monthly_costs) == monthly_costs:
+			# Якщо після коми лише нулі - повернути ціле значення
+			data['body']['monthly_costs'] = "%.0f" % monthly_costs
+		else:
+			# Інакше - округлити до 2х знаків після коми
+			data['body']['monthly_costs'] = "%.2f" % float(monthly_costs)
+
+
+	annual_receipts = data['body'].get('annual_receipts')
+	if annual_receipts:
+		if int(annual_receipts) == annual_receipts:
+			# Якщо після коми лише нулі - повернути ціле значення
+			data['body']['annual_receipts'] = "%.0f" % annual_receipts
+		else:
+			# Інакше - округлити до 2х знаків після коми
+			data['body']['annual_receipts'] = "%.2f" % float(annual_receipts)
+
+
 	return data
