@@ -482,11 +482,12 @@ class DetailedView(View):
 		    'build_year': p.body.print_build_year(),
 		    'condition': p.body.print_condition() or u'неизвестно',
 
-		    'floor': p.body.print_floor() + p.body.print_floor_type(),
+		    'floor': p.body.print_floor(),
 			'floors_count': p.body.print_floors_count(),
+
 			'halls_count': p.body.print_halls_count() or u'неизвестно',
 			'halls_area': p.body.print_halls_area() or u'неизвестно',
-		    'total_area': p.body.print_total_area(),
+		    'total_area': p.body.print_total_area() or u'неизвестно',
 
 		    'vcs_count': p.body.print_vcs_count(),
 		    'ceiling_height': p.body.print_ceiling_height(),
@@ -519,7 +520,6 @@ class DetailedView(View):
 		description = {
 			'title': p.body.print_title(),
 		    'description': p.body.print_description(),
-
 			'market_type': p.body.print_market_type(),
 		    'area': p.body.print_area() or u'неизвестно',
 		    'ceiling_height': p.body.print_ceiling_height() or u'неизвестно',

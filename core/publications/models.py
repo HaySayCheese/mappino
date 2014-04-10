@@ -3359,13 +3359,13 @@ class CateringsBodies(BodyModel):
 
 	# output
 	def print_title(self):
-		if not self.title:
+		if self.title is None:
 			return u''
 		return self.title
 
 
 	def print_description(self):
-		if not self.description:
+		if self.description is None:
 			return u''
 		return self.description
 
@@ -3382,69 +3382,68 @@ class CateringsBodies(BodyModel):
 		return self.substitutions['condition'][self.condition_sid]
 
 
+	#-- output numeric fields
 	def print_build_year(self):
-		if not self.build_year:
+		if self.build_year is None:
 			return u''
 		return unicode(self.build_year) + u' г.'
 
 
 	def print_floor(self):
-		if not self.floor:
-			return u''
+		# Поле "этаж" пропущено в floor_types умисно, щоб воно зайвий раз не потрапляло у видачу.
+		floor_type = self.substitutions['floor_types'].get(self.floor_type_sid, u'')
+		if floor_type:
+			return floor_type
 		return unicode(self.floor)
 
 
 	def print_floors_count(self):
 		if not self.floors_count:
 			return u''
-		return unicode(self.floors_count)
 
-
-	def print_floor_type(self):
-		# Поле "этаж" пропущено в floor_types умисно, щоб воно зайвий раз не потрапляло у видачу.
-		return self.substitutions['floor_types'].get(self.floor_type_sid, u'')
-
-
-	def print_extra_floors(self):
 		floors = u''
 		if self.ground:
-			floors += u', цокольный этаж'
+			floors += u', цоколь'
 		if self.lower_floor:
 			floors += u', подвал'
 		if self.mansard:
 			floors += u', мансарда'
 
-		if floors[:2] == u', ':
-			floors = floors[2:]
-		return floors
+		if floors and self.floors_count:
+			return unicode(self.floors_count) + u' (' + floors[2:] + u')'
+		return unicode(self.floors_count)
 
 
 	def print_halls_count(self):
-		if not self.halls_count:
+		if self.halls_count is None:
 			return u''
 		return unicode(self.halls_count)
 
 
 	def print_halls_area(self):
-		if not self.halls_area:
+		if self.halls_area is None:
 			return u''
 		return "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_total_area(self):
-		if not self.total_area:
+		if self.total_area is None:
 			return u''
-		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
+
+		total_area = "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
+		if self.closed_area:
+			total_area += u' (закрытая територия)'
+		return total_area
 
 
 	def print_vcs_count(self):
-		if not self.vcs_count:
+		if self.vcs_count is None:
 			return u''
 		return unicode(self.vcs_count)
 
 
 	def print_ceiling_height(self):
-		if not self.ceiling_height:
+		if self.ceiling_height is None:
 			return u''
 		return unicode(self.ceiling_height) + u' м'
 
@@ -3504,6 +3503,12 @@ class CateringsBodies(BodyModel):
 		return facilities if facilities else u''
 
 
+	def print_add_facilities(self):
+		if self.add_facilities is None:
+			return u''
+		return self.add_facilities
+
+
 	def print_communications(self):
 		communications = u''
 		if self.phone:
@@ -3531,33 +3536,36 @@ class CateringsBodies(BodyModel):
 			buildings += u', парковка'
 		if self.open_air:
 			buildings += u', открытая площадка'
+
+		if self.add_buildings:
+			buildings += u'. ' + self.add_buildings
+
+		if buildings:
+			return buildings[2:]
 		return buildings[2:] if buildings else u''
 
 
 	def print_showplaces(self):
-		buildings = u''
+		showplaces = u''
 		if self.transport_stop:
-			buildings += u', остановка общ. транспорта'
+			showplaces += u', остановка общ. транспорта'
 		if self.bank:
-			buildings += u', отделения банка'
+			showplaces += u', отделения банка'
 		if self.cash_machine:
-			buildings += u', банкомат'
+			showplaces += u', банкомат'
 		if self.cafe:
-			buildings += u', кафе / ресторан'
+			showplaces += u', кафе / ресторан'
 		if self.market:
-			buildings += u', рынок / супермаркет'
+			showplaces += u', рынок / супермаркет'
 		if self.entertainment:
-			buildings += u', развлекательные заведения'
+			showplaces += u', развлекательные заведения'
 
-		if buildings:
-			return buildings[2:].capitalize() + u'.'
+		if self.add_showplaces:
+			showplaces += '. ' + self.add_showplaces
+
+		if showplaces:
+			return showplaces[2:].capitalize() + u'.'
 		return u''
-
-
-	def print_add_close_objects(self):
-		if not self.add_showplaces:
-			return u''
-		return self.add_showplaces
 
 
 
