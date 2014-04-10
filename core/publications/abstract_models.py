@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.db import models, transaction
 from django.utils.timezone import now
-from collective.exceptions import InvalidArgument
+from collective.exceptions import InvalidArgument, RuntimeException
 
 from core.currencies import currencies_manager
 from core.publications import models_signals
@@ -543,101 +543,236 @@ class CommercialRentTermsModel(AbstractModel):
 
 class PhotosModel(AbstractModel):
 	class NoFileInRequest(Exception): pass
+	class ImageIsTooLarge(Exception): pass
+	class ImageIsTooSmall(Exception): pass
 	class UnsupportedImageType(Exception): pass
-	class UploadProcessingFailed(Exception): pass
+	class ProcessingFailed(Exception): pass
 
 	class Meta:
 		abstract = True
 
 	#-- constraints
 	destination_dir_name = '' # @override
+	photos_dir = 'models/photos/'
+	extension = '.jpg'
 
-	__original_suffix  = 'or'
-	__full_size_suffix = 'fs'
-	__watermark_suffix = 'wt'
-	__thumbnail_suffix = 'th'
-	__extension = '.jpg'
+	# Only "uid" is stored into database. No full paths to images are stored.
+	# Therefor to distinguish images they are marked with suffixes.
+	original_photo_suffix  = 'or'
+	photo_suffix = 'p'
+	# watermark_suffix = 'w'
+	title_thumbnail_suffix = 't'
+	big_thumbnail_suffix = 'bth'
+	small_thumbnail_suffix = 'sth'
 
-	__dir = 'models/photos/'
+
+	#-- size constraints
+	min_image_size = [300, 600]
+	max_image_size = [900, 1000]
+
+	title_thumb_size = min_image_size
+	big_thumb_size = [280, 280]
+	small_thumb_size = [70, 70]
 
 
 	#-- fields
 	hid = None # @override FK()
-	uid = models.TextField()
+	uid = models.TextField(db_index=True)
 	# Розширення оригіналу зберігається,
 	# оскільки неможливо передбачити формат зображення,
 	# яке буде завантажене користувачем.
 	original_extension = models.CharField(max_length=5)
+	is_title = models.BooleanField(default=False)
+
+
+	def original_image_name(self):
+		return self.uid + self.original_photo_suffix + self.original_extension
+
+
+	def image_name(self):
+		return self.uid + self.photo_suffix + self.extension
+
+
+	def title_thumbnail_name(self):
+		return self.uid + self.title_thumbnail_suffix + self.extension
+
+
+	# def watermark_name(self):
+	# 	return self.uid + self.__watermark_suffix + self.__extension
+
+
+	def big_thumbnail_name(self):
+		return self.uid + self.big_thumbnail_suffix + self.extension
+
+
+	def small_thumbnail_name(self):
+		return self.uid + self.small_thumbnail_suffix + self.extension
+
+
+	def info(self):
+		return {
+			'id': self.id,
+			'image': self.url() + self.image_name(),
+			'thumbnail': self.url() + self.big_thumbnail_name(),
+			'small_thumbnail': self.url() + self.small_thumbnail_name(),
+
+		    'is_title': self.is_title
+		}
+
+
+	def mark_as_title(self):
+		# remove previous title image
+		destination_dir = self.destination_dir()
+		try:
+			title_photo = self._default_manager.filter(hid=self.hid, is_title=True).only('uid')[:1][0]
+			path = os.path.join(destination_dir, title_photo.title_thumbnail_name())
+			if os.path.exists(path):
+				os.remove(path)
+		except IndexError:
+			pass
+
+		# create new title image
+		image = Image.open(os.path.join(destination_dir, self.original_image_name()))
+
+		# the image is scaled/cropped vertically or horizontally depending on the ratio
+		image_ratio = image.size[0] / float(image.size[1])
+		ratio = self.title_thumb_size[0] / float(self.title_thumb_size[1])
+		if ratio > image_ratio:
+			image = image.resize(
+				(self.title_thumb_size[0], self.title_thumb_size[0] * image.size[1] / image.size[0]), Image.ANTIALIAS)
+			box = (0, (image.size[1] - self.title_thumb_size[1]) / 2, image.size[0], (image.size[1] + self.title_thumb_size[1]) / 2)
+			image = image.crop(box)
+
+		elif ratio < image_ratio:
+			image = image.resize(
+				(self.title_thumb_size[1] * image.size[0] / image.size[1], self.title_thumb_size[1]), Image.ANTIALIAS)
+			box = ((image.size[0] - self.title_thumb_size[0]) / 2, 0, (image.size[0] + self.title_thumb_size[0]) / 2, image.size[1])
+			image = image.crop(box)
+
+		else:
+			image = image.resize((self.title_thumb_size[0], self.title_thumb_size[1]), Image.ANTIALIAS)
+
+
+		# saving
+		name = self.uid + self.title_thumbnail_suffix + self.extension
+		path = os.path.join(destination_dir, name)
+		image.save(path, 'JPEG', quality=100)
+		with transaction.atomic():
+			self._default_manager.filter(hid=self.hid).update(is_title=False)
+			self.is_title = True
+			self.save()
+
+
+	def remove(self):
+		destination_dir = self.destination_dir()
+		try:
+			os.remove(os.path.join(destination_dir, self.original_image_name()))
+		except IOError: pass
+
+		try:
+			os.remove(os.path.join(destination_dir, self.image_name()))
+		except IOError: pass
+
+		try:
+			os.remove(os.path.join(destination_dir, self.title_thumbnail_name()))
+		except IOError: pass
+
+		try:
+			os.remove(os.path.join(destination_dir, self.big_thumbnail_name()))
+		except IOError: pass
+
+		try:
+			os.remove(os.path.join(destination_dir, self.small_thumbnail_name()))
+		except IOError: pass
+
+		# WARN: enable it if watermark is present
+		# try:
+		# 	os.remove(os.path.join(destination_dir, self.watermark_name()))
+		# except Exception: pass
+
+		super(PhotosModel, self).delete()
+
+
+	def delete(self, using=None):
+		raise RuntimeException('Method disabled. Use "remove" instead.')
 
 
 	@classmethod
-	def handle_uploaded(cls, request, head):
-		# Перевірка чи існує папка для завантаження фото
-		destination_dir = settings.MEDIA_ROOT + cls.__dir + cls.destination_dir_name
+	def handle_uploaded(cls, request, publication_head):
+		destination_dir = cls.destination_dir()
+
+
+		# check if destination dir is exists
 		if not os.path.exists(destination_dir):
 			os.makedirs(destination_dir)
+			if not os.path.exists(destination_dir):
+				raise RuntimeException("Can't create dir for photo upload.")
 
-		# Перевірка на пустий запит
-		file = request.FILES.get('file') # fixme
-		if (file is None) or (not file):
+
+		# check if request is not empty
+		img_file = request.FILES.get('file')
+		if (img_file is None) or (not img_file):
 			raise cls.NoFileInRequest()
 
-		# Перевірка на максимально-допустимий розмір
-		if file._size > 1024 * 1024 * 3:
-			file.close()
-			raise cls.UploadProcessingFailed('Image is too large.')
+		# check file size
+		if img_file.size >  1024 * 1024 * 5: # 5mb
+			img_file.close()
+			raise cls.ImageIsTooLarge()
 
-		# Перевірка по mime-type чи отриманий файл дійсно є зображенням
-		if 'image/' not in file.content_type:
-			file.close()
-			raise cls.UnsupportedImageType()
+		# check file type
+		if 'image/' not in img_file.content_type:
+			img_file.close()
+			raise cls.UnsupportedImageType('Not an image.')
 
-		# Перевірка чи це не .gif
-		# PIL деколи помиляється на .gif, генеруючи пусті прев’ю
-		if 'gif' in file.content_type:
-			file.close()
-			raise cls.UnsupportedImageType()
+		# exclude .gif
+		# pillow sometimes generates incorrect thumbs from .gif
+		if 'gif' in img_file.content_type:
+			img_file.close()
+			raise cls.UnsupportedImageType('.gif')
 
 
-		# Збереження оригіналу
-		uid = unicode(head.id) + unicode(uuid.uuid4())
-		original_ext = os.path.splitext(file.name)[1]
-		original_name = uid + cls.__original_suffix + original_ext
+		# original photo saving
+		uid = unicode(publication_head.id) + unicode(uuid.uuid4())
+		while cls.objects.filter(uid=uid).count() > 0:
+			uid = unicode(publication_head.id) + unicode(uuid.uuid4())
+
+		original_ext = os.path.splitext(img_file.name)[1]
+		original_name = uid + cls.original_photo_suffix + original_ext
 		original_path = os.path.join(destination_dir, original_name)
 
-		with open(original_path, 'wb+') as i:
-			for chunk in file.chunks():
-				i.write(chunk)
-
+		with open(original_path, 'wb+') as original_img:
+			for chunk in img_file.chunks():
+				original_img.write(chunk)
 		try:
 			image = Image.open(original_path)
-			if image.mode != "RGB":
-				image = image.convert("RGB")
-			width, height = image.size
 		except IOError:
-			# Видалити оригінальне зображення
-			if os.path.exists(original_path):
-				os.remove(original_path)
-			raise cls.UploadProcessingFailed()
+			os.remove(original_path)
+			raise RuntimeException('Unknown I/O error.')
 
 
-		# Стиснене велике зображення
-		image_name = uid + cls.__full_size_suffix + cls.__extension
-		image_path = os.path.join(destination_dir, image_name)
-		min_image_size = [250, 200]
-		if width < min_image_size[0] or height < min_image_size[1]:
-			raise cls.UploadProcessingFailed('Image is too small.')
+		# big photo generation
+		if image.mode != "RGB":
+			image = image.convert("RGB")
 
-		max_image_size = [900, 900]
-		if width > max_image_size[0] or height > max_image_size[1]:
-			image.thumbnail(max_image_size, Image.ANTIALIAS)
+		width, height = image.size
+		if width < cls.min_image_size[0] or height < cls.min_image_size[1]:
+			os.remove(original_path)
+			raise cls.ImageIsTooSmall()
+		elif width > cls.max_image_size[0] or height > cls.max_image_size[1]:
+			image.thumbnail(cls.max_image_size, Image.ANTIALIAS)
 		else:
 			# Всеодно виконати операцію над зображенням, інакше PIL не збереже файл.
-			# Розміри зображення при цьому слід залишити без змін, щоб уникнути
-			# небажаного розширення.
+			# Розміри зображення при цьому слід залишити без змін, щоб уникнути небажаного розширення.
 			image.thumbnail(image.size, Image.ANTIALIAS)
 
-		image.save(image_path, 'JPEG', quality=100)
+
+		image_name = uid + cls.photo_suffix + cls.extension
+		image_path = os.path.join(destination_dir, image_name)
+		try:
+			image.save(image_path, 'JPEG', quality=100)
+		except Exception as e:
+			os.remove(original_path)
+			raise e
 
 
 		# ...
@@ -646,72 +781,93 @@ class PhotosModel(AbstractModel):
 		# todo: генерація зображення з водяним знаком
 		# ...
 
-		# Прев’ю
-		thumb_name = uid + cls.__thumbnail_suffix + cls.__extension
-		thumb_path = os.path.join(destination_dir, thumb_name)
-		min_thumb_size = (150, 150)
-		if width < min_thumb_size[0] or height < min_thumb_size[1]:
-			raise cls.UploadProcessingFailed('Image is too small.')
 
-		max_thumb_size = (300, 300)
-		if width > max_thumb_size[0] or height > max_thumb_size[1]:
-			image.thumbnail(max_thumb_size, Image.ANTIALIAS)
+		# big thumbnail generation
+		if width < cls.big_thumb_size[0] or height < cls.big_thumb_size[1]:
+			os.remove(original_path)
+			os.remove(image_path)
+			raise cls.ImageIsTooSmall()
+		image.thumbnail(cls.big_thumb_size, Image.ANTIALIAS)
+
+
+		big_thumb_name = uid + cls.big_thumbnail_suffix + cls.extension
+		big_thumb_path = os.path.join(destination_dir, big_thumb_name)
+		try:
+			image.save(big_thumb_path, 'JPEG', quality=100)
+		except Exception as e:
+			os.remove(original_path)
+			os.remove(image_path)
+			raise e
+
+
+		# small thumbnail generation
+		if width < cls.small_thumb_size[0] or height < cls.small_thumb_size[1]:
+			os.remove(original_path)
+			os.remove(image_path)
+			os.remove(big_thumb_path)
+			raise cls.ImageIsTooSmall()
+
+
+		# the image is scaled/cropped vertically or horizontally depending on the ratio
+		image_ratio = image.size[0] / float(image.size[1])
+		ratio = cls.small_thumb_size[0] / float(cls.small_thumb_size[1])
+		if ratio > image_ratio:
+			image = image.resize(
+				(cls.small_thumb_size[0], cls.small_thumb_size[0] * image.size[1] / image.size[0]), Image.ANTIALIAS)
+			box = (0, (image.size[1] - cls.small_thumb_size[1]) / 2, image.size[0], (image.size[1] + cls.small_thumb_size[1]) / 2)
+			image = image.crop(box)
+
+		elif ratio < image_ratio:
+			image = image.resize(
+				(cls.small_thumb_size[1] * image.size[0] / image.size[1], cls.small_thumb_size[1]), Image.ANTIALIAS)
+			box = ((image.size[0] - cls.small_thumb_size[0]) / 2, 0, (image.size[0] + cls.small_thumb_size[0]) / 2, image.size[1])
+			image = image.crop(box)
 		else:
-			# Всеодно виконати операцію над зображенням, інакше PIL не збереже файл.
-			image.thumbnail(image.size, Image.ANTIALIAS)
-
-		# Прев’ю можна стиснути з втратами якості, всеодно є повнорозмірна копія.
-		image.save(thumb_path, 'JPEG', quality=95)
+			image = image.resize((cls.small_thumb_size[0], cls.small_thumb_size[1]), Image.ANTIALIAS)
 
 
-		# Збереження в БД
-		record = cls.objects.create(
-			hid = head,
-		    uid = uid,
-		    original_extension = original_ext
-		)
-		return record.dump()
+		# saving
+		small_thumb_name = uid + cls.small_thumbnail_suffix + cls.extension
+		small_thumb_path = os.path.join(destination_dir, small_thumb_name)
+		try:
+			image.save(small_thumb_path, 'JPEG', quality=98)
+		except Exception as e:
+			os.remove(original_path)
+			os.remove(image_path)
+			os.remove(big_thumb_path)
+			os.remove(small_thumb_path)
+			raise e
+
+
+		# saving to DB
+		try:
+			record = cls.objects.create(
+				hid = publication_head,
+				uid = uid,
+				original_extension = original_ext
+			)
+		except Exception as e:
+			os.remove(original_path)
+			os.remove(image_path)
+			os.remove(big_thumb_path)
+			os.remove(small_thumb_path)
+			raise e
+
+
+		# set as title if it is a first photo
+		if cls.objects.filter(hid=publication_head).count() == 1:
+			record.mark_as_title()
+
+		# seems to be ok
+		return record.info()
 
 
 	@classmethod
 	def url(cls):
-		return settings.MEDIA_URL + cls.__dir + cls.destination_dir_name
+		return settings.MEDIA_URL + cls.photos_dir + cls.destination_dir_name
 
 
-	def original_image_name(self):
-		return self.uid + self.__original_suffix + self.original_extension
-
-
-	def image_name(self):
-		return self.uid + self.__full_size_suffix + self.__extension
-
-
-	def watermark_name(self):
-		return self.uid + self.__watermark_suffix + self.__extension
-
-
-	def thumbnail_name(self):
-		return self.uid + self.__thumbnail_suffix + self.__extension
-
-
-	def dump(self):
-		return {
-			'id': self.id,
-		    'thumbnail': self.url() + self.thumbnail_name(),
-		    'image': self.url() + self.image_name(),
-		    # todo: watermark
-		}
-
-
-	def remove(self):
-		destination_dir = settings.MEDIA_ROOT + self.__dir + self.destination_dir_name
-		try:
-			os.remove(os.path.join(destination_dir, self.original_image_name()))
-			os.remove(os.path.join(destination_dir, self.thumbnail_name()))
-			os.remove(os.path.join(destination_dir, self.image_name()))
-			# os.remove(os.path.join(destination_dir, self.watermark_name())) # todo: check this
-		except Exception:
-			pass
-
-		self.delete()
+	@classmethod
+	def destination_dir(cls):
+		return os.path.join(settings.MEDIA_ROOT, cls.photos_dir, cls.destination_dir_name)
 

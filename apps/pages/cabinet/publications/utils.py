@@ -38,7 +38,7 @@ def publication_data(tid, record):
 		rent_terms = None
 
 	# Фото
-	photos = [photo.dump() for photo in record.photos_model.objects.filter(hid = record.id)]
+	photos = [photo.info() for photo in record.photos_model.objects.filter(hid = record.id)]
 	if not photos:
 		photos = None
 
