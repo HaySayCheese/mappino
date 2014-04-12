@@ -171,8 +171,8 @@
                     <div class="form-group">
                         <div class="col-sm-6 col-lg-6 col-sm-offset-6 col-lg-offset-4">
                             <div class="checkbox">
-                                <input id="mansard" type="checkbox" name="mansard" ng-model="publication.body.mansard">
-                                <label for="mansard">Свободная планировка</label>
+                                <input id="open_space" type="checkbox" name="open_space" ng-model="publication.body.open_space">
+                                <label for="open_space">Свободная планировка</label>
                             </div>
                         </div>
                     </div>
@@ -259,12 +259,12 @@
                     <label for="offices">Офисные помещения</label>
                 </div>
                 <div class="checkbox">
-                    <input id="cathead" type="checkbox" name="ground" ng-model="publication.body.cathead">
-                    <label for="cathead">Кран-балка</label>
+                    <input id="cat_head" type="checkbox" name="cat_head" ng-model="publication.body.cat_head">
+                    <label for="cat_head">Кран-балка</label>
                 </div>
                 <div class="checkbox">
-                    <input id="vc" type="checkbox" name="vc" ng-model="publication.body.vc">
-                    <label for="vc">Уборная</label>
+                    <input id="wc" type="checkbox" name="wc" ng-model="publication.body.wc">
+                    <label for="wc">Уборная</label>
                 </div>
             </div>
             <div class="col-sm-12">
@@ -336,6 +336,10 @@
                             <input id="sewerage" type="checkbox" name="sewerage" ng-model="publication.body.sewerage">
                             <label for="sewerage">Канализация</label>
                         </div>
+                        <div class="checkbox">
+                            <input id="lan" type="checkbox" name="lan" ng-model="publication.body.lan">
+                            <label for="lan">Локальная сеть</label>
+                        </div>
                     </div>
                     <div class="col-sm-6 col-lg-4 form-group">
                         <div class="checkbox">
@@ -363,6 +367,13 @@
                         <div class="checkbox">
                             <input id="security" type="checkbox" name="security" ng-model="publication.body.security">
                             <label for="security">Охрана</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 form-group" ng-show="publication.body.phone">
+                        <label class="col-sm-6 col-lg-4 control-label">Количество линий:</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="phone_lines_count" ng-model="publication.body.phone_lines_count" allow-only-number-without-dot>
+                            <span class="input-has-error" ng-show="form.publication.phone_lines_count.$error.incorrect">Количество линий указано неверно.</span>
                         </div>
                     </div>
                 </div>
@@ -394,10 +405,6 @@
                 <div class="checkbox">
                     <input id="mobile_coverage" type="checkbox" name="mobile_coverage" ng-model="publication.body.mobile_coverage">
                     <label for="mobile_coverage">Покрытие моб. операторов</label>
-                </div>
-                <div class="checkbox">
-                    <input id="cable_tv" type="checkbox" name="cable_tv" ng-model="publication.body.cable_tv">
-                    <label for="cable_tv">Кабельное / спутниковое телевидение</label>
                 </div>
             </div>
         </div>
