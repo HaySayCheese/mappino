@@ -115,3 +115,11 @@ class Users(AbstractBaseUser):
 
 	def full_name(self):
 		return self.name + ' ' + self.surname
+
+
+class Settings(models.Model):
+	user = models.ForeignKey(Users)
+	sendNewClientEmailNotification = models.BooleanField(default=True)
+	sendNewClientSMSNotification = models.BooleanField(default=True)
+
+

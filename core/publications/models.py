@@ -1,7 +1,6 @@
 #coding=utf-8
 from django.db import models
 
-from collective.exceptions import RuntimeException
 from core.publications.abstract_models import LivingHeadModel, BodyModel, LivingRentTermsModel, CommercialRentTermsModel, PhotosModel, SaleTermsModel, CommercialHeadModel, AbstractModel
 from core.publications.constants import MARKET_TYPES, OBJECT_CONDITIONS, FLOOR_TYPES, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, CURRENCIES, \
 	OBJECTS_TYPES
@@ -23,7 +22,7 @@ class FlatsPhotos(PhotosModel):
 		db_table = 'img_flats_photos'
 
 	destination_dir_name = 'flats/'
-	hid = models.ForeignKey('FlatsHeads')
+	hid = models.ForeignKey('FlatsHeads', db_index=True)
 
 
 class FlatsSaleTerms(SaleTermsModel):
@@ -238,19 +237,19 @@ class FlatsBodies(BodyModel):
 	def print_total_area(self):
 		if not self.total_area:
 			return u''
-		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.')  + u'м²'
 
 
 	def print_living_area(self):
 		if not self.living_area:
 			return u''
-		return "{:.2f}".format(self.living_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.living_area).rstrip('0').rstrip('.')  + u'м²'
 
 
 	def print_kitchen_area(self):
 		if not self.kitchen_area:
 			return u''
-		return "{:.2f}".format(self.kitchen_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.kitchen_area).rstrip('0').rstrip('.')  + u'м²'
 
 
 	def print_rooms_count(self):
@@ -412,7 +411,7 @@ class ApartmentsPhotos(PhotosModel):
 		db_table = 'img_apartments_photos'
 
 	destination_dir_name = 'apartments/'
-	hid = models.ForeignKey('ApartmentsHeads')
+	hid = models.ForeignKey('ApartmentsHeads', db_index=True)
 
 
 class ApartmentsSaleTerms(SaleTermsModel):
@@ -628,19 +627,19 @@ class ApartmentsBodies(BodyModel):
 	def print_total_area(self):
 		if not self.total_area:
 			return u''
-		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.')  + u'м²'
 
 
 	def print_living_area(self):
 		if not self.living_area:
 			return u''
-		return "{:.2f}".format(self.living_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.living_area).rstrip('0').rstrip('.')  + u'м²'
 
 
 	def print_kitchen_area(self):
 		if not self.kitchen_area:
 			return u''
-		return "{:.2f}".format(self.kitchen_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.kitchen_area).rstrip('0').rstrip('.')  + u'м²'
 
 
 	def print_rooms_count(self):
@@ -802,7 +801,7 @@ class HousesPhotos(PhotosModel):
 		db_table = 'img_houses_photos'
 
 	destination_dir_name = 'houses/'
-	hid = models.ForeignKey('HousesHeads')
+	hid = models.ForeignKey('HousesHeads', db_index=True)
 
 
 class HousesSaleTerms(SaleTermsModel):
@@ -940,19 +939,19 @@ class HousesBodies(BodyModel):
 	def print_total_area(self):
 		if not self.total_area:
 			return u''
-		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.')
+		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u'м²'
 
 
 	def print_living_area(self):
 		if not self.living_area:
 			return u''
-		return "{:.2f}".format(self.living_area).rstrip('0').rstrip('.')
+		return "{:.2f}".format(self.living_area).rstrip('0').rstrip('.') + u'м²'
 
 
 	def print_kitchen_area(self):
 		if not self.kitchen_area:
 			return u''
-		return "{:.2f}".format(self.kitchen_area).rstrip('0').rstrip('.')
+		return "{:.2f}".format(self.kitchen_area).rstrip('0').rstrip('.') + u'м²'
 
 
 	def print_floors_count(self):
@@ -1128,7 +1127,7 @@ class DachasPhotos(PhotosModel):
 		db_table = 'img_dachas_photos'
 
 	destination_dir_name = 'dachas/'
-	hid = models.ForeignKey('DachasHeads')
+	hid = models.ForeignKey('DachasHeads', db_index=True)
 
 
 class DachasSaleTerms(SaleTermsModel):
@@ -1241,7 +1240,7 @@ class CottagesPhotos(PhotosModel):
 		db_table = 'img_cottages_photos'
 
 	destination_dir_name = 'cottages/'
-	hid = models.ForeignKey('CottagesHeads')
+	hid = models.ForeignKey('CottagesHeads', db_index=True)
 
 
 class CottagesSaleTerms(SaleTermsModel):
@@ -1376,19 +1375,19 @@ class CottagesBodies(BodyModel):
 	def print_total_area(self):
 		if not self.total_area:
 			return u''
-		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.')  + u'м²'
 
 
 	def print_living_area(self):
 		if not self.living_area:
 			return u''
-		return "{:.2f}".format(self.living_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.living_area).rstrip('0').rstrip('.')  + u'м²'
 
 
 	def print_kitchen_area(self):
 		if not self.kitchen_area:
 			return u''
-		return "{:.2f}".format(self.kitchen_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.kitchen_area).rstrip('0').rstrip('.')  + u'м²'
 
 
 	def print_floors_count(self):
@@ -1397,14 +1396,14 @@ class CottagesBodies(BodyModel):
 
 		floors = u''
 		if self.ground:
-			floors += u', цокольный этаж'
+			floors += u', цоколь'
 		if self.lower_floor:
 			floors += u', подвал'
 		if self.mansard:
 			floors += u', мансарда'
 
 		if floors and self.floors_count:
-			return unicode(self.floors_count) + u' (есть ' + floors[2:] + u')'
+			return unicode(self.floors_count) + u' (' + floors[2:] + u')'
 		return unicode(self.floors_count)
 
 
@@ -1564,7 +1563,7 @@ class RoomsPhotos(PhotosModel):
 		db_table = 'img_rooms_photos'
 
 	destination_dir_name = 'rooms/'
-	hid = models.ForeignKey('RoomsHeads')
+	hid = models.ForeignKey('RoomsHeads', db_index=True)
 
 
 class RoomsSaleTerms(SaleTermsModel):
@@ -1747,19 +1746,19 @@ class RoomsBodies(BodyModel):
 	def print_total_area(self):
 		if self.total_area is None:
 			return u''
-		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.')  + u'м²'
 
 
 	def print_living_area(self):
 		if self.living_area is None:
 			return u''
-		return "{:.2f}".format(self.living_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.living_area).rstrip('0').rstrip('.')  + u'м²'
 
 
 	def print_kitchen_area(self):
 		if self.kitchen_area is None:
 			return u''
-		return "{:.2f}".format(self.kitchen_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.kitchen_area).rstrip('0').rstrip('.')  + u'м²'
 
 
 	def print_facilities(self):
@@ -1893,7 +1892,7 @@ class TradesPhotos(PhotosModel):
 		db_table = 'img_trades_photos'
 
 	destination_dir_name = 'trades/'
-	hid = models.ForeignKey('TradesHeads')
+	hid = models.ForeignKey('TradesHeads', db_index=True)
 
 
 class TradesBodies(BodyModel):
@@ -1931,7 +1930,7 @@ class TradesBodies(BodyModel):
 	market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
 	building_type_sid = models.SmallIntegerField(default=TRADE_BUILDING_TYPES.entertainment())
 	build_year = models.PositiveSmallIntegerField(null=True)
-	condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
+	condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.cosmetic_repair()) # загальний стан
 
 	floor = models.SmallIntegerField(null=True) # номер поверху
 	floor_type_sid = models.SmallIntegerField(default=FLOOR_TYPES.floor()) # тип поверху: мансарда, цоколь, звичайний поверх і т.д
@@ -2037,34 +2036,28 @@ class TradesBodies(BodyModel):
 
 
 	def print_floor(self):
-		if self.floor is None:
-			return u''
+		# Поле "этаж" пропущено в floor_types умисно, щоб воно зайвий раз не потрапляло у видачу.
+		floor_type = self.substitutions['floor_types'].get(self.floor_type_sid, u'')
+		if floor_type:
+			return floor_type
 		return unicode(self.floor)
 
 
 	def print_floors_count(self):
-		if self.floors_count is None:
+		if not self.floors_count:
 			return u''
-		return unicode(self.floors_count)
 
-
-	def print_floor_type(self):
-		# Поле "этаж" пропущено в floor_types умисно, щоб воно зайвий раз не потрапляло у видачу.
-		return self.substitutions['floor_types'].get(self.floor_type_sid, u'')
-
-
-	def print_extra_floors(self):
 		floors = u''
 		if self.ground:
-			floors += u', цокольный этаж'
+			floors += u', цоколь'
 		if self.lower_floor:
 			floors += u', подвал'
 		if self.mansard:
 			floors += u', мансарда'
 
-		if floors[:2] == u', ':
-			floors = floors[2:]
-		return floors
+		if floors and self.floors_count:
+			return unicode(self.floors_count) + u' (' + floors[2:] + u')'
+		return unicode(self.floors_count)
 
 
 	def print_halls_count(self):
@@ -2076,13 +2069,17 @@ class TradesBodies(BodyModel):
 	def print_halls_area(self):
 		if self.halls_area is None:
 			return u''
-		return "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_total_area(self):
 		if self.total_area is None:
 			return u''
-		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+
+		total_area = "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
+		if self.closed_area:
+			total_area += u' (закрытая територия)'
+		return total_area
 
 
 	def print_vcs_count(self):
@@ -2094,7 +2091,7 @@ class TradesBodies(BodyModel):
 	def print_ceiling_height(self):
 		if self.ceiling_height is None:
 			return u''
-		return unicode(self.ceiling_height)
+		return unicode(self.ceiling_height) + u' м'
 
 
 	#-- output formatted strings
@@ -2185,40 +2182,36 @@ class TradesBodies(BodyModel):
 			buildings += u', парковка'
 		if self.open_air:
 			buildings += u', открытая площадка'
+
+		if self.add_buildings:
+			buildings += u'. ' + self.add_buildings
+
+		if buildings:
+			return buildings[2:]
 		return buildings[2:] if buildings else u''
 
 
-	def print_add_buildings(self):
-		if self.add_buildings is None:
-			return u''
-		return self.add_buildings
-
-
 	def print_showplaces(self):
-		buildings = u''
+		showplaces = u''
 		if self.transport_stop:
-			buildings += u', остановка общ. транспорта'
+			showplaces += u', остановка общ. транспорта'
 		if self.bank:
-			buildings += u', отделения банка'
+			showplaces += u', отделения банка'
 		if self.cash_machine:
-			buildings += u', банкомат'
+			showplaces += u', банкомат'
 		if self.cafe:
-			buildings += u', кафе / ресторан'
+			showplaces += u', кафе / ресторан'
 		if self.market:
-			buildings += u', рынок / супермаркет'
+			showplaces += u', рынок / супермаркет'
 		if self.entertainment:
-			buildings += u', развлекательные заведения'
+			showplaces += u', развлекательные заведения'
 
-		if buildings:
-			return buildings[2:].capitalize() + u'.'
+		if self.add_showplaces:
+			showplaces += '. ' + self.add_showplaces
+
+		if showplaces:
+			return showplaces[2:].capitalize() + u'.'
 		return u''
-
-
-	def print_add_close_objects(self):
-		if self.add_showplaces is None:
-			return u''
-		return self.add_showplaces
-
 
 
 class TradesHeads(CommercialHeadModel):
@@ -2251,7 +2244,7 @@ class OfficesPhotos(PhotosModel):
 		db_table = 'img_offices_photos'
 
 	destination_dir_name = 'offices/'
-	hid = models.ForeignKey('OfficesHeads')
+	hid = models.ForeignKey('OfficesHeads', db_index=True)
 
 
 class OfficesBodies(BodyModel):
@@ -2285,9 +2278,9 @@ class OfficesBodies(BodyModel):
 
 
 	market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
-	building_type_sid = models.SmallIntegerField(default=TRADE_BUILDING_TYPES.entertainment())
+	building_type_sid = models.SmallIntegerField(default=TRADE_BUILDING_TYPES.business())
 	build_year = models.PositiveSmallIntegerField(null=True)
-	condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
+	condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.cosmetic_repair()) # загальний стан
 
 	floor = models.SmallIntegerField(null=True) # номер поверху
 	floor_type_sid = models.SmallIntegerField(default=FLOOR_TYPES.floor()) # тип поверху: мансарда, цоколь, звичайний поверх і т.д
@@ -2354,13 +2347,13 @@ class OfficesBodies(BodyModel):
 
 	# output
 	def print_title(self):
-		if self.title is None:
+		if not self.title:
 			return u''
 		return self.title
 
 
 	def print_description(self):
-		if self.description is None:
+		if not self.description:
 			return u''
 		return self.description
 
@@ -2374,7 +2367,7 @@ class OfficesBodies(BodyModel):
 
 
 	def print_build_year(self):
-		if self.build_year is None:
+		if not self.build_year:
 			return u''
 		return unicode(self.build_year) + u' г.'
 
@@ -2384,43 +2377,45 @@ class OfficesBodies(BodyModel):
 
 
 	def print_floor(self):
-		if self.floor is None:
-			return u''
+		# Поле "этаж" пропущено в floor_types умисно, щоб воно зайвий раз не потрапляло у видачу.
+		floor_type = self.substitutions['floor_types'].get(self.floor_type_sid, u'')
+		if floor_type:
+			return floor_type
 		return unicode(self.floor)
 
 
 	def print_floors_count(self):
-		if self.floors_count is None:
+		if not self.floors_count:
 			return u''
 		return unicode(self.floors_count)
 
 
-	def print_floor_type(self):
-		# Поле "этаж" пропущено в floor_types умисно, щоб воно зайвий раз не потрапляло у видачу.
-		return self.substitutions['floor_types'].get(self.floor_type_sid, u'')
-
-
 	def print_cabinets_count(self):
-		if self.cabinets_count is None:
+		if not self.cabinets_count:
 			return u''
 		return unicode(self.cabinets_count)
 
+
 	def print_total_area(self):
-		if self.total_area is None:
+		if not self.total_area:
 			return u''
-		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+
+		total_area = "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
+		if self.closed_area:
+			total_area += u' (закрытая територия)'
+		return total_area
 
 
 	def print_vcs_count(self):
-		if self.vcs_count is None:
+		if not self.vcs_count:
 			return u''
 		return unicode(self.vcs_count)
 
 
 	def print_ceiling_height(self):
-		if self.ceiling_height is None:
+		if not self.ceiling_height:
 			return u''
-		return unicode(self.ceiling_height)
+		return unicode(self.ceiling_height) + u' м'
 
 
 	#-- output formatted strings
@@ -2472,12 +2467,6 @@ class OfficesBodies(BodyModel):
 		return facilities if facilities else u''
 
 
-	def print_add_facilities(self):
-		if self.add_facilities is None:
-			return u''
-		return self.add_facilities
-
-
 	def print_communications(self):
 		communications = u''
 		if self.phone:
@@ -2505,40 +2494,34 @@ class OfficesBodies(BodyModel):
 			buildings += u', парковка'
 		if self.open_air:
 			buildings += u', открытая площадка'
+
+		if self.add_buildings:
+			buildings += u'.' + self.add_buildings
+
 		return buildings[2:] if buildings else u''
 
 
-	def print_add_buildings(self):
-		if self.add_buildings is None:
-			return u''
-		return self.add_buildings
-
-
 	def print_showplaces(self):
-		buildings = u''
+		showplaces = u''
 		if self.transport_stop:
-			buildings += u', остановка общ. транспорта'
+			showplaces += u', остановка общ. транспорта'
 		if self.bank:
-			buildings += u', отделения банка'
+			showplaces += u', отделения банка'
 		if self.cash_machine:
-			buildings += u', банкомат'
+			showplaces += u', банкомат'
 		if self.cafe:
-			buildings += u', кафе / ресторан'
+			showplaces += u', кафе / ресторан'
 		if self.market:
-			buildings += u', рынок / супермаркет'
+			showplaces += u', рынок / супермаркет'
 		if self.entertainment:
-			buildings += u', развлекательные заведения'
+			showplaces += u', развлекательные заведения'
 
-		if buildings:
-			return buildings[2:].capitalize() + u'.'
+		if self.add_showplaces:
+			showplaces += u'. ' + self.add_showplaces
+
+		if showplaces:
+			return showplaces[2:].capitalize() + u'.'
 		return u''
-
-
-	def print_add_close_objects(self):
-		if self.add_showplaces is None:
-			return u''
-		return self.add_showplaces
-
 
 
 
@@ -2572,7 +2555,7 @@ class WarehousesPhotos(PhotosModel):
 		db_table = 'img_warehouses_photos'
 
 	destination_dir_name = 'warehouses/'
-	hid = models.ForeignKey('WarehousesHeads')
+	hid = models.ForeignKey('WarehousesHeads', db_index=True)
 
 
 class WarehousesBodies(BodyModel):
@@ -2590,7 +2573,7 @@ class WarehousesBodies(BodyModel):
 	market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
 	area = models.FloatField(null=True)
 	plot_area = models.FloatField(null=True) # площа участку
-	open_space = models.FloatField(null=True) # вільне плаування
+	open_space = models.BooleanField(default=False) # вільне плаування
 	closed_area = models.BooleanField(default=False) # закрита територія
 
 	# Опалення
@@ -2644,7 +2627,6 @@ class WarehousesBodies(BodyModel):
 	cafe = models.BooleanField(default=False)
 	bank = models.BooleanField(default=False)
 	cash_machine = models.BooleanField(default=False)
-	entertainment = models.BooleanField(default=False) # розважальні установи
 	refueling = models.BooleanField(default=False) # автозапрака
 	railway_station = models.BooleanField(default=False)
 	add_showplaces = models.TextField(null=True)
@@ -2660,13 +2642,13 @@ class WarehousesBodies(BodyModel):
 
 	# output
 	def print_title(self):
-		if self.title is None:
+		if not self.title:
 			return u''
 		return self.title
 
 
 	def print_description(self):
-		if self.description is None:
+		if not self.description:
 			return u''
 		return self.description
 
@@ -2676,15 +2658,23 @@ class WarehousesBodies(BodyModel):
 
 
 	def print_halls_area(self):
-		if self.area is None:
+		if not self.area:
 			return u''
-		return "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+
+		area = "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м²'
+		if self.open_space:
+			area += u' (свободная планировка)'
+		return area
 
 
 	def print_plot_area(self):
-		if self.plot_area is None:
+		if not self.plot_area:
 			return u''
-		return "{:.2f}".format(self.plot_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+
+		area = "{:.2f}".format(self.plot_area).rstrip('0').rstrip('.') + u' м²'
+		if self.closed_area:
+			area += u' (закрытая територия)'
+		return area
 
 
 	def print_facilities(self):
@@ -2713,7 +2703,7 @@ class WarehousesBodies(BodyModel):
 			facilities += u', электричество'
 		if self.gas:
 			facilities += u', газ'
-		if self.canalisation:
+		if self.sewerage:
 			facilities += u', канализация'
 		if self.hot_water:
 			facilities += u', гарячая вода'
@@ -2733,15 +2723,12 @@ class WarehousesBodies(BodyModel):
 		if self.security:
 			facilities += u', охрана'
 
+		if self.add_facilities:
+			facilities += u'. ' + self.add_facilities
+
 		if facilities[:2] == u', ':
 			facilities = facilities[2:]
 		return(facilities.capitalize() + u'.') if facilities else u''
-
-
-	def print_add_facilities(self):
-		if self.add_facilities is None:
-			return u''
-		return self.add_facilities
 
 
 	def print_communications(self):
@@ -2755,8 +2742,6 @@ class WarehousesBodies(BodyModel):
 			communications += u', интернет'
 		if self.mobile_coverage:
 			communications += u', покрытие мобильными операторами'
-		if self.cable_tv:
-			communications += u', кабельное телевидение'
 		if self.lan:
 			communications += u', локальная сеть'
 
@@ -2779,61 +2764,53 @@ class WarehousesBodies(BodyModel):
 			buildings += u', подсобка / кладовая'
 		if self.vc:
 			buildings += u', уборная'
+
+		if self.add_buildings:
+			buildings += u'. ' + self.add_buildings
+
 		return buildings[2:].capitalize() + u'.' if buildings else u''
 
 
 	def print_driveways(self):
 		driveways = u''
-		if self.body.railway:
+		if self.railway:
 			driveways += u', Ж/Д ветка'
-		if self.body.asphalt:
+		if self.asphalt:
 			driveways += u', асфальт'
-		if self.body.concrete:
+		if self.concrete:
 			driveways += u', бетон'
-		if self.body.ground:
+		if self.ground:
 			driveways += u', грунт'
-		if driveways:
-			driveways += u'.'
 
-		if self.body.add_driveways:
-			driveways += u' ' + self.body.add_driveways.capitalize()
+		if self.add_driveways:
+			driveways += u'. ' + self.add_driveways.capitalize()
+
 		return driveways[2:].capitalize() + u'.' if driveways else u''
 
 
-	def print_add_buildings(self):
-		if self.add_buildings is None:
-			return u''
-		return self.add_buildings
-
-
 	def print_showplaces(self):
-		buildings = u''
+		showplaces = u''
 		if self.transport_stop:
-			buildings += u', остановка общ. транспорта'
+			showplaces += u', остановка общ. транспорта'
 		if self.bank:
-			buildings += u', отделения банка'
+			showplaces += u', отделения банка'
 		if self.cash_machine:
-			buildings += u', банкомат'
+			showplaces += u', банкомат'
 		if self.cafe:
-			buildings += u', кафе / ресторан'
+			showplaces += u', кафе'
 		if self.market:
-			buildings += u', рынок / супермаркет'
-		if self.bank:
-			buildings += u', отделение банка'
+			showplaces += u', рынок / супермаркет'
 		if self.railway:
-			buildings += u', Ж/Д станция'
+			showplaces += u', Ж/Д станция'
 		if self.refueling:
-			buildings += u', заправка'
+			showplaces += u', заправка'
 
-		if buildings:
-			return buildings[2:].capitalize() + u'.'
+		if self.add_showplaces:
+			showplaces += u'. ' + self.add_showplaces
+
+		if showplaces:
+			return showplaces[2:].capitalize() + u'.'
 		return u''
-
-
-	def print_add_close_objects(self):
-		if self.add_showplaces is None:
-			return u''
-		return self.add_showplaces
 
 
 class WarehousesHeads(CommercialHeadModel):
@@ -2863,7 +2840,7 @@ class BusinessesPhotos(PhotosModel):
 		db_table = 'img_business_photos'
 
 	destination_dir_name = 'businesses/'
-	hid = models.ForeignKey('BusinessesHeads')
+	hid = models.ForeignKey('BusinessesHeads', db_index=True)
 
 
 class BusinessesBodies(BodyModel):
@@ -2979,20 +2956,21 @@ class BusinessesBodies(BodyModel):
 
 	# output
 	def print_title(self):
-		if self.title is None:
+		if not self.title:
 			return u''
 		return self.title
 
 
 	def print_description(self):
-		if self.description is None:
+		if not self.description:
 			return u''
 		return self.description
 
 
 	def print_monthly_cost(self):
-		if self.monthly_costs is None:
-			return u'' # необов’язкове поле
+		# todo: змінити для видачі по всім валютам окремо
+		if not self.monthly_costs:
+			return u'' # WARN: необов’язкове поле
 
 		cost = "{:.2f}".format(self.monthly_costs).rstrip('0').rstrip('.')
 		if self.mc_currency_sid == CURRENCIES.dol():
@@ -3000,13 +2978,14 @@ class BusinessesBodies(BodyModel):
 		elif self.mc_currency_sid == CURRENCIES.eur():
 			cost += u' евро'
 		elif self.mc_currency_sid == CURRENCIES.uah():
-			cost += u' грн'
+			cost += u' грн.'
 		return cost
 	
 	
 	def print_annual_receipts(self):
-		if self.annual_receipts is None:
-			return u'' # необов’язкове поле
+		# todo: змінити для видачі по всім валютам окремо
+		if not self.annual_receipts:
+			return u'' # WARN: необов’язкове поле
 
 		cost = "{:.2f}".format(self.annual_receipts).rstrip('0').rstrip('.')
 		if self.ar_currency_sid == CURRENCIES.dol():
@@ -3014,12 +2993,14 @@ class BusinessesBodies(BodyModel):
 		elif self.ar_currency_sid == CURRENCIES.eur():
 			cost += u' евро'
 		elif self.ar_currency_sid == CURRENCIES.uah():
-			cost += u' грн'
+			cost += u' грн.'
 		return cost
 	
 	
 	def print_age(self):
-		if self.age is None:
+		if not self.age:
+			# Якщо вік бізнесу — 0, все одно не показувати.
+			# Перевірка на not це передбачає.
 			return u'' # не обов’язкове поле може бути відсутнім
 
 		age = "{:.2f}".format(self.age).rstrip('0').rstrip('.')
@@ -3031,19 +3012,23 @@ class BusinessesBodies(BodyModel):
 			age += u' года'
 		else:
 			age += u' лет'
-		return age + u'.'
+		return age
 
 
 	def print_workers_count(self):
-		if self.body.workers_count is None:
+		if not self.workers_count:
+			# Якщо к-сть працівників — 0, все одно не показувати.
+			# Перевірка на not це передбачає.
 			return u'' # необов’язкове поле
-		return unicode(self.body.workers_count) + u' чел.'
+		return unicode(self.workers_count) + u' чел.'
 
 
 	def print_share(self):
-		if self.share is None:
+		if not self.share:
+			# Якщо відсоткова доля — 0, все одно не показувати.
+			# Перевірка на not це передбачає.
 			return u'' # необов’язкове поле
-		return "{:.2f}".format(self.share) + u' %.'
+		return "{:.2f}".format(self.share) + u'%'
 
 
 	def print_building_type(self):
@@ -3051,7 +3036,9 @@ class BusinessesBodies(BodyModel):
 
 
 	def print_build_year(self):
-		if self.build_year is None:
+		if not self.build_year:
+			# Якщо рік побудови — 0, все одно не показувати.
+			# Перевірка на not це передбачає.
 			return u''
 		return unicode(self.build_year) + u' г.'
 
@@ -3061,20 +3048,28 @@ class BusinessesBodies(BodyModel):
 
 
 	def print_floor(self):
-		if self.floor is None:
-			return u''
+		# Поле "этаж" пропущено в floor_types умисно, щоб воно зайвий раз не потрапляло у видачу.
+		floor_type = self.substitutions['floor_types'].get(self.floor_type_sid, u'')
+		if floor_type:
+			return floor_type
 		return unicode(self.floor)
 
 
 	def print_floors_count(self):
-		if self.floors_count is None:
+		if not self.floors_count:
 			return u''
+
+		floors = u''
+		if self.ground:
+			floors += u', цоколь'
+		if self.lower_floor:
+			floors += u', подвал'
+		if self.mansard:
+			floors += u', мансарда'
+
+		if floors and self.floors_count:
+			return unicode(self.floors_count) + u' (' + floors[2:] + u')'
 		return unicode(self.floors_count)
-
-
-	def print_floor_type(self):
-		# Поле "этаж" пропущено в floor_types умисно, щоб воно зайвий раз не потрапляло у видачу.
-		return self.substitutions['floor_types'].get(self.floor_type_sid, u'')
 
 
 	def print_extra_floors(self):
@@ -3092,21 +3087,136 @@ class BusinessesBodies(BodyModel):
 
 
 	def print_total_area(self):
-		if self.total_area is None:
+		if not self.total_area:
 			return u''
-		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+
+		area = "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
+		if self.closed_area:
+			area += u' (закрытая територия)'
+		return area
 
 
 	def print_plot_area(self):
-		if self.plot_area is None:
+		if not self.plot_area:
 			return u''
-		return "{:.2f}".format(self.plot_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.plot_area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_halls_area(self):
-		if self.halls_area is None:
+		if not self.halls_area:
 			return u''
-		return "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м²'
+
+
+	def print_facilities(self):
+		facilities = u''
+
+		# Опалення (пункт "невідомо" не виводиться)
+		if self.heating_type_sid == HEATING_TYPES.none():
+			facilities += u'отопление отсутствует'
+		elif self.heating_type_sid == HEATING_TYPES.central():
+			facilities += u'центральное отопление'
+		elif self.heating_type_sid == HEATING_TYPES.individual():
+			facilities += u'индивидуальное отопление'
+			if self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.electricity():
+				facilities += u' (электричество)'
+			elif self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.gas():
+				facilities += u' (газ)'
+			elif self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.firewood():
+				facilities += u' (дрова)'
+			elif self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.other():
+				if self.custom_ind_heating_type is not None:
+					facilities += u' ('+self.custom_ind_heating_type + u')'
+		elif self.heating_type_sid == HEATING_TYPES.other():
+			facilities += u'отопление: ' + self.custom_heating_type
+
+		if self.electricity:
+			facilities += u', электричество'
+		if self.gas:
+			facilities += u', газ'
+		if self.sewerage:
+			facilities += u', канализация'
+		if self.hot_water:
+			facilities += u', гарячая вода'
+		if self.cold_water:
+			facilities += u', холодная вода'
+		if self.ventilation:
+			facilities += u', вентиляция'
+
+		if self.security_alarm and self.fire_alarm:
+			facilities += u', охранная и пожарная сигнализации'
+		else:
+			if self.security_alarm:
+				facilities += u', охранная сигнализация'
+			if self.fire_alarm:
+				facilities += u', пожарная сигнализация'
+
+		if self.security:
+			facilities += u', охрана'
+
+		if self.add_facilities:
+			facilities += '. ' + self.add_facilities
+
+		if facilities[:2] == u', ':
+			facilities = facilities[2:]
+		return(facilities.capitalize() + u'.') if facilities else u''
+
+
+	def print_communications(self):
+		communications = u''
+		if self.phone:
+			communications += u', телефон'
+			if self.phone_lines_count:
+				communications += u' (количество линий - ' + unicode(self.phone_lines_count) + u')'
+
+		if self.internet:
+			communications += u', интернет'
+		if self.mobile_coverage:
+			communications += u', покрытие мобильными операторами'
+		if self.lan:
+			communications += u', локальная сеть'
+
+		if communications:
+			return communications[2:].capitalize() + u"."
+		return u''
+
+
+	def print_add_buildings(self):
+		buildings = u''
+		if self.parking:
+			buildings += u', парковка'
+		if self.open_air:
+			buildings += u', открытая площадка'
+
+		if self.add_buildings:
+			buildings += u'. ' + self.add_buildings
+
+		if buildings:
+			return buildings[2:].capitalize() + u"."
+		return u''
+
+
+	def print_showplaces(self):
+		showplaces = u''
+		if self.transport_stop:
+			showplaces += u', остановка общ. транспорта'
+		if self.bank:
+			showplaces += u', отделения банка'
+		if self.cash_machine:
+			showplaces += u', банкомат'
+		if self.cafe:
+			showplaces += u', кафе / ресторан'
+		if self.market:
+			showplaces += u', рынок / супермаркет'
+		if self.entertainment:
+			showplaces += u', развлекательные заведения'
+
+		if self.add_showplaces:
+			showplaces += u'. ' + self.add_showplaces
+
+		if showplaces:
+			return showplaces[2:].capitalize() + u'.'
+		return u''
 
 
 
@@ -3137,7 +3247,7 @@ class CateringsPhotos(PhotosModel):
 		db_table = 'img_caterings_photos'
 
 	destination_dir_name = 'caterings/'
-	hid = models.ForeignKey('CateringsHeads')
+	hid = models.ForeignKey('CateringsHeads', db_index=True)
 
 
 class CateringsBodies(BodyModel):
@@ -3272,6 +3382,7 @@ class CateringsBodies(BodyModel):
 		return self.substitutions['condition'][self.condition_sid]
 
 
+	#-- output numeric fields
 	def print_build_year(self):
 		if self.build_year is None:
 			return u''
@@ -3279,34 +3390,28 @@ class CateringsBodies(BodyModel):
 
 
 	def print_floor(self):
-		if self.floor is None:
-			return u''
+		# Поле "этаж" пропущено в floor_types умисно, щоб воно зайвий раз не потрапляло у видачу.
+		floor_type = self.substitutions['floor_types'].get(self.floor_type_sid, u'')
+		if floor_type:
+			return floor_type
 		return unicode(self.floor)
 
 
 	def print_floors_count(self):
-		if self.floors_count is None:
+		if not self.floors_count:
 			return u''
-		return unicode(self.floors_count)
 
-
-	def print_floor_type(self):
-		# Поле "этаж" пропущено в floor_types умисно, щоб воно зайвий раз не потрапляло у видачу.
-		return self.substitutions['floor_types'].get(self.floor_type_sid, u'')
-
-
-	def print_extra_floors(self):
 		floors = u''
 		if self.ground:
-			floors += u', цокольный этаж'
+			floors += u', цоколь'
 		if self.lower_floor:
 			floors += u', подвал'
 		if self.mansard:
 			floors += u', мансарда'
 
-		if floors[:2] == u', ':
-			floors = floors[2:]
-		return floors
+		if floors and self.floors_count:
+			return unicode(self.floors_count) + u' (' + floors[2:] + u')'
+		return unicode(self.floors_count)
 
 
 	def print_halls_count(self):
@@ -3318,13 +3423,17 @@ class CateringsBodies(BodyModel):
 	def print_halls_area(self):
 		if self.halls_area is None:
 			return u''
-		return "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_total_area(self):
 		if self.total_area is None:
 			return u''
-		return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+
+		total_area = "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
+		if self.closed_area:
+			total_area += u' (закрытая територия)'
+		return total_area
 
 
 	def print_vcs_count(self):
@@ -3336,7 +3445,7 @@ class CateringsBodies(BodyModel):
 	def print_ceiling_height(self):
 		if self.ceiling_height is None:
 			return u''
-		return unicode(self.ceiling_height)
+		return unicode(self.ceiling_height) + u' м'
 
 
 	#-- output formatted strings
@@ -3427,39 +3536,37 @@ class CateringsBodies(BodyModel):
 			buildings += u', парковка'
 		if self.open_air:
 			buildings += u', открытая площадка'
+
+		if self.add_buildings:
+			buildings += u'. ' + self.add_buildings
+
+		if buildings:
+			return buildings[2:]
 		return buildings[2:] if buildings else u''
 
 
-	def print_add_buildings(self):
-		if self.add_buildings is None:
-			return u''
-		return self.add_buildings
-
-
 	def print_showplaces(self):
-		buildings = u''
+		showplaces = u''
 		if self.transport_stop:
-			buildings += u', остановка общ. транспорта'
+			showplaces += u', остановка общ. транспорта'
 		if self.bank:
-			buildings += u', отделения банка'
+			showplaces += u', отделения банка'
 		if self.cash_machine:
-			buildings += u', банкомат'
+			showplaces += u', банкомат'
 		if self.cafe:
-			buildings += u', кафе / ресторан'
+			showplaces += u', кафе / ресторан'
 		if self.market:
-			buildings += u', рынок / супермаркет'
+			showplaces += u', рынок / супермаркет'
 		if self.entertainment:
-			buildings += u', развлекательные заведения'
+			showplaces += u', развлекательные заведения'
 
-		if buildings:
-			return buildings[2:].capitalize() + u'.'
+		if self.add_showplaces:
+			showplaces += '. ' + self.add_showplaces
+
+		if showplaces:
+			return showplaces[2:].capitalize() + u'.'
 		return u''
 
-
-	def print_add_close_objects(self):
-		if self.add_showplaces is None:
-			return u''
-		return self.add_showplaces
 
 
 class CateringsHeads(CommercialHeadModel):
@@ -3489,7 +3596,7 @@ class GaragesPhotos(PhotosModel):
 		db_table = 'img_garages_photos'
 
 	destination_dir_name = 'garages/'
-	hid = models.ForeignKey('GaragesHeads')
+	hid = models.ForeignKey('GaragesHeads', db_index=True)
 
 
 class GaragesBodies(BodyModel):
@@ -3532,13 +3639,13 @@ class GaragesBodies(BodyModel):
 
 	# output
 	def print_title(self):
-		if self.title is None:
+		if not self.title:
 			return u''
 		return self.title
 
 
 	def print_description(self):
-		if self.description is None:
+		if not self.description:
 			return u''
 		return self.description
 
@@ -3548,15 +3655,15 @@ class GaragesBodies(BodyModel):
 
 
 	def print_area(self):
-		if self.area is None:
+		if not self.area:
 			return u''
-		return "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_ceiling_height(self):
-		if self.ceiling_height is None:
+		if not self.ceiling_height:
 			return u''
-		return unicode(self.ceiling_height)
+		return unicode(self.ceiling_height) + u' м'
 
 
 	def print_driveways(self):
@@ -3593,6 +3700,9 @@ class GaragesBodies(BodyModel):
 		if self.security:
 			facilities += u', охрана'
 
+		if self.add_facilities:
+			facilities += u'.' + self.add_facilities
+
 		if facilities[:2] == u', ':
 			facilities = facilities[2:]
 		return(facilities.capitalize() + u'.') if facilities else u''
@@ -3626,7 +3736,7 @@ class LandsPhotos(PhotosModel):
 		db_table = 'img_lands_photos'
 
 	destination_dir_name = 'lands/'
-	hid = models.ForeignKey('LandsHeads')
+	hid = models.ForeignKey('LandsHeads', db_index=True)
 
 
 class LandsBodies(BodyModel):
@@ -3667,7 +3777,7 @@ class LandsBodies(BodyModel):
 
 	# output
 	def print_title(self):
-		if self.title is None:
+		if not self.title:
 			return u''
 		return self.title
 
@@ -3681,7 +3791,7 @@ class LandsBodies(BodyModel):
 	def print_area(self):
 		if self.area is None:
 			return u''
-		return "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м<sup>2</sup>'
+		return "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м²'
 
 
 	def print_driveways(self):
@@ -3722,29 +3832,26 @@ class LandsBodies(BodyModel):
 
 
 	def print_showplaces(self):
-		buildings = u''
+		showplaces = u''
 		if self.transport_stop:
-			buildings += u', остановка общ. транспорта'
+			showplaces += u', остановка общ. транспорта'
 		if self.bank:
-			buildings += u', отделения банка'
+			showplaces += u', отделения банка'
 		if self.cash_machine:
-			buildings += u', банкомат'
+			showplaces += u', банкомат'
 		if self.cafe:
-			buildings += u', кафе / ресторан'
+			showplaces += u', кафе / ресторан'
 		if self.market:
-			buildings += u', рынок / супермаркет'
+			showplaces += u', рынок / супермаркет'
 		if self.entertainment:
-			buildings += u', развлекательные заведения'
+			showplaces += u', развлекательные заведения'
 
-		if buildings:
-			return buildings[2:].capitalize() + u'.'
+		if self.add_showplaces:
+			showplaces += u'.' + self.add_showplaces
+
+		if showplaces:
+			return showplaces[2:].capitalize() + u'.'
 		return u''
-
-
-	def print_add_close_objects(self):
-		if self.add_showplaces is None:
-			return u''
-		return self.add_showplaces
 
 
 class LandsHeads(LivingHeadModel):

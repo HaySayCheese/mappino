@@ -1,5 +1,12 @@
 from django.conf.urls import patterns, url
 
+# cabinet's imports
+from core.publications.ajax.cabinet import \
+	UploadPhoto as publications_cabinet_UploadPhoto, \
+	Photos as publications_cabinet_Photos, \
+	PhotoTitle as publications_cabinet_PhotoTitle
+
+# main imports
 from core.publications.ajax.main import \
 	DetailedView as publications_main_DetailedView
 from core.correspondence.ajax.main import \
@@ -115,8 +122,9 @@ urlpatterns += patterns('apps.pages.cabinet',
 	    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/unpublish/$', 'publications.ajax.unpublish'),
 
 	    # photos
-	    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/$', 'publications.photos_ajax.upload'),
-	    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/(\d+)/$', 'publications.photos_ajax.rud_switch'),
+	    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/$', publications_cabinet_UploadPhoto.as_view()),
+	    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/(\d+)/$', publications_cabinet_Photos.as_view()),
+	    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/(\d+)/title/$', publications_cabinet_PhotoTitle.as_view()),
 
 
     #-- search
