@@ -5,6 +5,8 @@ from core.publications.ajax.cabinet import \
 	UploadPhoto as publications_cabinet_UploadPhoto, \
 	Photos as publications_cabinet_Photos, \
 	PhotoTitle as publications_cabinet_PhotoTitle
+from core.users.ajax.cabinet import \
+	Account as users_cabinet_Account
 
 # main imports
 from core.publications.ajax.main import \
@@ -139,6 +141,10 @@ urlpatterns += patterns('apps.pages.cabinet',
 
         #-- web hooks
         url(r'^web-hooks/support/agents-answers/$', support_hooks_IncomingAnswer),
+
+
+    #-- accounts
+    url(r'^ajax/api/cabinet/accounts/$', users_cabinet_Account.as_view()),
 )
 
 

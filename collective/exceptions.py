@@ -10,10 +10,15 @@ class BaseCustomException(Exception):
 	pass
 
 class InvalidValue(BaseCustomException): pass
+class DuplicateValue(InvalidValue): pass
+
+
 class InvalidArgument(InvalidValue): pass
+class EmptyArgument(InvalidArgument): pass
 
 
 class RuntimeException(BaseCustomException): pass
+
 
 class ResourceThrottled(SuspiciousOperation): pass
 

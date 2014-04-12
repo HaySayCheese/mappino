@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.tests.custom_user import CustomUserManager
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, transaction
-from collective.exceptions import InvalidArgument
+from collective.exceptions import InvalidArgument, EmptyArgument
 
 
 class UsersManager(CustomUserManager):
@@ -15,6 +15,7 @@ class UsersManager(CustomUserManager):
 		if not mobile_phone:
 			raise ValueError('User must have phone number.')
 
+
 		with transaction.atomic():
 			user = self.model(
 				is_active = False,
@@ -23,6 +24,10 @@ class UsersManager(CustomUserManager):
 			)
 			user.set_password(password)
 			user.save(using=self._db)
+
+			# creating preferences record for the user
+			Preferences.objects.create(user_id = user.id)
+
 			return user
 
 
@@ -38,7 +43,7 @@ class UsersManager(CustomUserManager):
 	@staticmethod
 	def normalize_phone_number(number):
 		if not number:
-			raise InvalidArgument('number can not be empty.')
+			raise EmptyArgument('number can not be empty.')
 
 		# Відсікти всі не цифрові символи
 		phone_number = ''
@@ -65,13 +70,14 @@ class Users(AbstractBaseUser):
 	name = models.TextField(null=True)
 	surname = models.TextField(null=True)
 	email = models.EmailField(unique=True)
+	work_email = models.EmailField(unique=True, null=True)
 
 	# contacts
 	mobile_phone = models.CharField(max_length=20, unique=True)
 	add_mobile_phone = models.CharField(max_length=20, unique=True, null=True)
 	landline_phone = models.CharField(max_length=20, unique=True, null=True) # стаціонарний телефон
 	add_landline_phone = models.CharField(max_length=20, unique=True, null=True)
-	skype = models.TextField()
+	skype = models.TextField(unique=True, null=True)
 
 
 	#-- managers
@@ -117,9 +123,50 @@ class Users(AbstractBaseUser):
 		return self.name + ' ' + self.surname
 
 
-class Settings(models.Model):
+	def contacts(self):
+		preferences = self.preferences()
+		contacts = {}
+
+		if preferences.showMobilePhone and self.mobile_phone:
+			contacts['mobile_phone'] = self.mobile_phone
+		if preferences.showAddMobilePhone and self.add_mobile_phone:
+			contacts['add_mobile_phone'] = self.add_mobile_phone
+		if preferences.showLandlinePhone and self.landline_phone:
+			contacts['landline_phone'] = self.landline_phone
+		if preferences.showAddLandlinePhone and self.add_landline_phone:
+			contacts['add_landline_phone'] = self.add_landline_phone
+		if preferences.showSkype and self.skype:
+			contacts['skype'] = self.skype
+		if preferences.showEmail:
+			if self.work_email:
+				contacts['email'] = self.work_email
+			elif self.email:
+				contacts['email'] = self.email
+		return contacts
+
+
+	def preferences(self):
+		return Preferences.by_user(self.id)
+
+
+class Preferences(models.Model):
+	class Meta:
+		db_table = "users_preferences"
+
 	user = models.ForeignKey(Users)
 	sendNewClientEmailNotification = models.BooleanField(default=True)
 	sendNewClientSMSNotification = models.BooleanField(default=True)
+
+	showMobilePhone = models.BooleanField(default=True)
+	showAddMobilePhone = models.BooleanField(default=True)
+	showLandlinePhone = models.BooleanField(default=True)
+	showAddLandlinePhone = models.BooleanField(default=True)
+	showEmail = models.BooleanField(default=True)
+	showSkype = models.BooleanField(default=True)
+
+
+	@staticmethod
+	def by_user(user_id):
+		return Preferences.objects.filter(user=user_id)[:1][0]
 
 
