@@ -9,6 +9,9 @@ from core.users.ajax.cabinet import \
 	Account as users_cabinet_Account
 
 # main imports
+from core.users.ajax.main import \
+	RegistrationManager as main_RegistrationManager, \
+	LoginManager as main_LoginManager
 from core.publications.ajax.main import \
 	DetailedView as publications_main_DetailedView
 from core.correspondence.ajax.main import \
@@ -65,21 +68,26 @@ urlpatterns += patterns('apps.pages.cabinet',
 
 #-- angular API for main pages
 urlpatterns += patterns('apps',
-    #-- login and registration
-	url(r'^ajax/api/accounts/registration/$', 'accounts.accounts_ajax.registration_handler'),
-    url(r'^ajax/api/accounts/registration/cancel/$', 'accounts.accounts_ajax.registration_cancel_handler'),
-    url(r'^ajax/api/accounts/registration/resend-sms/$', 'accounts.accounts_ajax.resend_sms_handler'),
-	url(r'^ajax/api/accounts/login/$', 'accounts.accounts_ajax.login_handler'),
-	url(r'^ajax/api/accounts/logout/$', 'accounts.accounts_ajax.logout_handler'),
+    # registration
+    url(r'^ajax/api/accounts/registration/$', main_RegistrationManager.Registration.as_view()),
+    url(r'^ajax/api/accounts/registration/cancel/$', main_RegistrationManager.Cancel.as_view()),
+    url(r'^ajax/api/accounts/registration/resend-sms/$', main_RegistrationManager.ResendCheckSMS.as_view()),
+
+        # validators
+	    url(r'^ajax/api/accounts/validate-email/$', main_RegistrationManager.EmailValidation.as_view()),
+	    url(r'^ajax/api/accounts/validate-phone-number/$', main_RegistrationManager.MobilePhoneValidation.as_view()),
+
+    # login
+	url(r'^ajax/api/accounts/login/$', main_LoginManager.Login.as_view()),
+	url(r'^ajax/api/accounts/logout/$', main_LoginManager.Logout.as_view()),
+
+        # data getters
+        url(r'^ajax/api/accounts/on-login-info/$', main_LoginManager.OnLogin.as_view()),
+
+	# password reset
 	url(r'^ajax/api/accounts/password-reset/$', 'accounts.accounts_ajax.password_reset_handler'),
     url(r'^ajax/api/accounts/password-reset/check/$', 'accounts.accounts_ajax.check_token_handler'),
 
-        # validators
-	    url(r'^ajax/api/accounts/validate-email/$', 'accounts.accounts_ajax.validate_email_handler'),
-	    url(r'^ajax/api/accounts/validate-phone-number/$', 'accounts.accounts_ajax.validate_phone_handler'),
-
-		# data getters
-        url(r'^ajax/api/accounts/on-login-info/$', 'accounts.accounts_ajax.on_login_info_handler'),
 
 
     #-- markers

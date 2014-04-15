@@ -10,19 +10,11 @@ from mappino.wsgi import redis_connections
 
 class BaseSMSSender(object):
 	def process_query(self, number, message):
-		# if settings.DEBUG:
-		# 	return True
-
 		if not message:
 			raise InvalidArgument('Message can not be empty')
 		if not number:
 			raise InvalidArgument('Number can not be empty.')
 		# todo: додати перевірку номеру на відповідність формату
-
-		# todo: забрати цю перевірку після перевірки рефакторингу моделі юзерів
-		number = str(number)
-		if '+380' != number[0:4]:
-			number = '+380' + str(number)
 
 		params = urllib.urlencode({
 			'login': settings.SMS_GATE_LOGIN,
@@ -38,13 +30,16 @@ class BaseSMSSender(object):
 
 	@staticmethod
 	def __send_request(params):
+		if settings.DEBUG:
+			return True
+
 		response = urllib.urlopen("http://smsc.ru/sys/send.php", params).read()
 		return 'OK' in response
 
 
 class RegistrationCheckCodesSender(BaseSMSSender):
 	"""
-	Клас призначений для розсилки кодів перевірки мобільних телефонів.
+	Клас призначений для розсилки кодів перевірки мобільних телефонів під час реєстрації.
 	"""
 
 	MAX_ATTEMPTS_PER_DAY = 12 # з одного ip
