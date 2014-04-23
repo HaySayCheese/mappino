@@ -1,9 +1,6 @@
 #coding=utf-8
 import copy
-import hashlib
 import json
-import random
-import string
 
 from django.contrib.auth import login, authenticate, logout
 from django.core.exceptions import ValidationError
@@ -14,190 +11,11 @@ from django.views.generic import View
 import phonenumbers
 from phonenumbers.phonenumberutil import NumberParseException
 
-from collective.exceptions import EmptyArgument
-from collective.http.cookies import set_signed_cookie
 from collective.methods.request_data_getters import angular_post_parameters
 from core.publications.constants import HEAD_MODELS, OBJECTS_TYPES
-from core.sms_dispatcher import check_codes_sms_sender
 from core.users import tasks
+from core.users.ajax.utils import MobilePhoneChecker
 from core.users.models import Users
-from mappino.wsgi import redis_connections
-
-
-class MobilePhoneChecker(object):
-	redis = redis_connections['steady']
-	transaction_ttl = 60 * 60 * 2 # check code ttl in seconds.
-	max_attempts_count = 3
-	max_sms_per_transaction = 2
-
-	record_prefix = 'mob_check_'
-	id_field = 'id'
-	code_field = 'code'
-	attempts_field = 'attempts'
-	sms_count_field = 'sms_count'
-	phone_number_field = 'phone'
-
-	cookie_name = 'mcheck'
-	cookie_salt = 'JMH2FWWYa1ogCJR0gW4z'
-
-
-	@classmethod
-	def begin_check(cls, account_id, mobile_phone, request, response):
-		"""
-		Запукає механізм перевірки мобільного телефону рієлтора шляхом надсилання SMS з кодом.
-		"""
-		h = hashlib.sha256()
-		h.update(str(account_id))
-		h.update('E66bLuTGzEkDqQHmrSNU') # salt
-
-		token = h.hexdigest()
-		record_id = cls.record_prefix + token
-		if cls.redis.exists(record_id):
-			# todo: suspicious operation
-			return
-
-		code = ''.join(random.choice(string.digits) for x in range(6))
-
-		pipe = cls.redis.pipeline()
-		pipe.hset(record_id, cls.code_field, code)
-		pipe.hset(record_id, cls.attempts_field, 0)
-		pipe.hset(record_id, cls.id_field, account_id)
-		pipe.hset(record_id, cls.sms_count_field, 1) # first sms will be sent immediately
-		pipe.hset(record_id, cls.phone_number_field, mobile_phone)
-		pipe.expire(record_id, cls.transaction_ttl)
-		pipe.execute()
-
-		set_signed_cookie(response, cls.cookie_name, token, salt=cls.cookie_salt,
-		                  seconds_expire=cls.transaction_ttl, http_only=False)
-
-		# Note: даний метод здійснює низку перевірок перед тим як вислати sms
-		cls.send_code(mobile_phone, code, request)
-
-
-	@classmethod
-	def check_is_started(cls, request):
-		return cls.cookie_name in request.COOKIES
-
-
-	@classmethod
-	def check_code(cls, code, request, response):
-		if not code:
-			raise EmptyArgument('"code" is empty or None.')
-
-
-		key = cls.record_prefix + request.get_signed_cookie(cls.cookie_name, salt=cls.cookie_salt)
-		if not cls.redis.exists(key):
-			response.delete_cookie(cls.cookie_name)
-			# todo: ban here
-			# todo: admins email
-			return False, {'attempts': cls.max_attempts_count}
-
-
-		attempts_count = cls.redis.hget(key, cls.attempts_field)
-		if attempts_count is None:
-			# key was deleted moment ago
-			response.delete_cookie(cls.cookie_name)
-			return False, {'attempts': cls.max_attempts_count}
-
-		attempts_count = int(attempts_count)
-		if attempts_count >= cls.max_attempts_count - 1:
-			cls.redis.delete(key)
-			response.delete_cookie(cls.cookie_name)
-			return False, {'attempts': cls.max_attempts_count}
-
-		true_code = cls.redis.hget(key, cls.code_field)
-		if true_code is None:
-			# key was deleted moment ago
-			response.delete_cookie(cls.cookie_name)
-			return False, {'attempts': cls.max_attempts_count}
-
-		if code != true_code:
-			cls.redis.hincrby(key, cls.attempts_field, 1)
-			return False, {'attempts': attempts_count + 1}
-
-
-		uid = cls.redis.hget(key, cls.id_field)
-		if not uid:
-			# key was deleted moment ago
-			response.delete_cookie(cls.cookie_name)
-			return False, {'attempts': cls.max_attempts_count}
-
-
-		# seems to be ok
-		cls.redis.delete(key)
-		response.delete_cookie(cls.cookie_name)
-		return True, {'id': uid}
-
-
-	@classmethod
-	def resend_sms(cls, request, response):
-		key = cls.record_prefix + request.get_signed_cookie(cls.cookie_name, salt=cls.cookie_salt)
-		if not cls.redis.exists(key):
-			response.delete_cookie(cls.cookie_name)
-			# todo: ban ip here
-			# todo: admins email
-			return
-
-
-		code = cls.redis.hget(key, cls.code_field)
-		if code is None:
-			# key was deleted moment ago
-			response.delete_cookie(cls.cookie_name)
-			return
-
-		phone = cls.redis.hget(key, cls.phone_number_field)
-		if phone is None:
-			# key was deleted moment ago
-			response.delete_cookie(cls.cookie_name)
-			return
-
-
-		# Перевірки розміщено тут, щоб мати змогу залочити, також, і номер.
-		if request.user.is_authenticated():
-			# todo: ban ip and number here
-			return
-
-		if not cls.check_is_started(request):
-			# todo: ban ip and number here
-			return
-
-
-		attempts = cls.redis.hget(key, cls.sms_count_field)
-		if attempts is None:
-			# key was deleted moment ago
-			response.delete_cookie(cls.cookie_name)
-			return
-
-		attempts = int(attempts)
-		if attempts >= cls.max_sms_per_transaction:
-			# no more sms to this number
-			response.delete_cookie(cls.cookie_name)
-			return
-
-
-		cls.redis.hincrby(key, cls.sms_count_field, 1)
-		cls.send_code(phone, code, request, resend=True)
-
-
-	@classmethod
-	def cancel_number_check(cls, request, response):
-		key = cls.record_prefix + request.get_signed_cookie(cls.cookie_name, salt=cls.cookie_salt)
-		if not cls.redis.exists(key):
-			# todo: suspicious operation
-			return
-
-		cls.redis.delete(key)
-		response.delete_cookie(cls.cookie_name)
-
-
-	@staticmethod
-	def send_code(mobile_phone, code, request, resend=False):
-		# todo: тут всі перевірки на кшталт того чи варто слати SMS
-
-		if resend:
-			check_codes_sms_sender.resend(mobile_phone, code, resend)
-		else:
-			check_codes_sms_sender.send(mobile_phone, code, request)
 
 
 class RegistrationManager(object):
@@ -266,9 +84,9 @@ class RegistrationManager(object):
 				return HttpResponseBadRequest('Empty or absent parameter "number".')
 
 			# is number correct?
-			# todo: check me
 			try:
 				parsed_number = phonenumbers.parse(number, 'UA')
+				# fixme: перевірка коду допускає стаціонарні телефони (смс на них не надійде)
 			except NumberParseException:
 				return HttpResponse(json.dumps(self.post_codes['invalid']), content_type='application/json')
 
@@ -316,9 +134,14 @@ class RegistrationManager(object):
 		    'invalid_code_check': {
 			    'code': 100,
 		    },
+
+		    # --
+		    'in_check_queue': {
+			    # користувач з такими даними вже зареєстрований
+		        # і знаходиться на етапі перевірки коду моб. телефону.
+			    'code': 200,
+		    }
 		}
-		redis = redis_connections['steady']
-		redis_mob_check_prefix = 'mob_check_'
 
 
 		def post(self, request, *args):
@@ -328,65 +151,61 @@ class RegistrationManager(object):
 
 			if MobilePhoneChecker.check_is_started(request):
 				try:
-					data = angular_post_parameters(request, ['code'])
+					code = angular_post_parameters(request, ['code'])['code']
 				except ValueError:
 					return HttpResponseBadRequest('Empty or absent parameter "code".')
 
 				response = HttpResponse()
-				code = data['code']
-				ok, data = MobilePhoneChecker.check_code(code, request, response)
+				ok, check_results = MobilePhoneChecker.check_code(code, request, response)
 				if not ok:
 					# WARNING: deep copy is needed here
 					body = copy.deepcopy(self.post_codes['invalid_code_check'])
-					body['attempts'] = data['attempts']
-					body['max_attempts'] = MobilePhoneChecker.max_attempts_count
 					response.write(json.dumps(body))
 					return response
 
 
 				# seems to be ok
-				uid = data['id']
+				uid = check_results['id']
 				user = Users.objects.filter(id=uid).only('id')[:1][0]
 				user.is_active = True
 				user.save()
-
 				return LoginManager.Login.login_user_without_password(user, request, response)
 
 
 			else:
 				try:
-					data = angular_post_parameters(request,
+					check_results = angular_post_parameters(request,
 					        ['name', 'surname', 'phone-number', 'email', 'password', 'password-repeat'])
 				except ValueError as e:
 					return HttpResponseBadRequest(e.message)
 
 
-				first_name = data.get('name', '')
+				first_name = check_results.get('name', '')
 				if not first_name:
 					return HttpResponseBadRequest(
 						json.dumps(self.post_codes['first_name_empty']), content_type='application/json')
 
-				last_name = data.get('surname', '')
+				last_name = check_results.get('surname', '')
 				if not last_name:
 					return HttpResponseBadRequest(
 						json.dumps(self.post_codes['last_name_empty']), content_type='application/json')
 
-				phone_number = data.get('phone-number', '')
+				phone_number = check_results.get('phone-number', '')
 				if not phone_number:
 					return HttpResponseBadRequest(
 						json.dumps(self.post_codes['phone_empty']), content_type='application/json')
 
-				email = data.get('email', '')
+				email = check_results.get('email', '')
 				if not email:
 					return HttpResponseBadRequest(
 						json.dumps(self.post_codes['email_empty']), content_type='application/json')
 
-				password = data.get('password', '')
+				password = check_results.get('password', '')
 				if not password:
 					return HttpResponseBadRequest(
 						json.dumps(self.post_codes['password_empty']), content_type='application/json')
 
-				password_repeat = data.get('password-repeat', '')
+				password_repeat = check_results.get('password-repeat', '')
 				if not password_repeat:
 					return HttpResponseBadRequest(
 						json.dumps(self.post_codes['password_repeat_empty']), content_type='application/json')
@@ -402,29 +221,35 @@ class RegistrationManager(object):
 				# todo: request check here
 				# ...
 
+				try:
+					# Дана функція зажди повертає результат ОК,
+					# незалежно від того чи була насправді відіслана sms.
+					# Це зроблено для того, щоб зловмисники у випадку атаки
+					# не мали змоги слідкувати за тим чи надсилаються sms.
+					response = HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
 
-				# Дана функція зажди повертає результат ОК,
-				# незалежно від того чи була насправді відіслана sms.
-				# Це зроблено для того, щоб зловмисники у випадку атаки
-				# не мали змоги слідкувати за тим чи надсилаються sms.
-				response = HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
+					# creating of disabled account.
+					with transaction.atomic():
+						user = Users.objects.create_user(email, phone_number, password)
+						user.first_name = first_name
+						user.last_name = last_name
+						user.save()
 
-				# creating of disabled account.
-				with transaction.atomic():
-					user = Users.objects.create_user(email, phone_number, password)
-					user.first_name = first_name
-					user.last_name = last_name
-					user.save()
+						tasks.remove_inactive_account.apply_async(
+							[user.id, ], countdown=MobilePhoneChecker._transaction_ttl)
+						MobilePhoneChecker.begin_check(user.id, phone_number, request, response)
 
-					tasks.remove_inactive_account.apply_async(
-						[user.id, ], countdown=MobilePhoneChecker.transaction_ttl)
-					MobilePhoneChecker.begin_check(user.id, phone_number, request, response)
+					# seems to be ok.
+					return response
 
-				# seems to be ok.
-				return response
+				except MobilePhoneChecker.AlreadyInQueue:
+					# Користувач з такими реєстраційними даними вже присутній
+					# і знаходиться на етапі перевірки коду з СМС
+					return HttpResponse(self.post_codes['in_check_queue'], content_type='application/json')
 
 
-	class Cancel(View):
+
+	class CancelRegistration(View):
 		post_codes = {
 			'OK': {
 				'code': 0
@@ -437,7 +262,7 @@ class RegistrationManager(object):
 				return HttpResponseBadRequest('Anonymous users only.')
 
 			response = HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
-			MobilePhoneChecker.cancel_number_check(request, response)
+			MobilePhoneChecker.cancel_check(request, response)
 			return response
 
 
@@ -459,7 +284,7 @@ class RegistrationManager(object):
 			# не мали змоги слідкувати за тим чи надсилаються sms.
 			response = HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
 			try:
-				MobilePhoneChecker.resend_sms(request, response)
+				MobilePhoneChecker.resend_sms(request)
 			except Exception:
 				pass
 			return response
@@ -504,12 +329,16 @@ class LoginManager(object):
 					json.dumps(self.post_codes['password_empty']), content_type='application/json')
 
 
-			# attempt with phone number
-			phone_number = phonenumbers.parse(username, 'UA')
-			if phonenumbers.is_valid_number(phone_number):
-				username = phonenumbers.format_number(phone_number, phonenumbers.PhoneNumberFormat.E164)
+			try:
+				# attempt with phone number
+				phone_number = phonenumbers.parse(username, 'UA')
+				if phonenumbers.is_valid_number(phone_number):
+					username = phonenumbers.format_number(phone_number, phonenumbers.PhoneNumberFormat.E164)
+				user = Users.objects.filter(mobile_phone=username).only('id')[:1]
+			except NumberParseException:
+				user = None
 
-			user = Users.objects.filter(mobile_phone=username).only('id')[:1]
+
 			if not user:
 				# attempt with email
 				user = Users.objects.filter(email=username).only('id')[:1]
