@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 
 # cabinet's imports
 from core.publications.ajax.cabinet import \
@@ -9,9 +9,6 @@ from core.users.ajax.cabinet import \
 	Account as users_cabinet_Account
 
 # main imports
-from core.users.ajax.main import \
-	RegistrationManager as main_RegistrationManager, \
-	LoginManager as main_LoginManager
 from core.publications.ajax.main import \
 	DetailedView as publications_main_DetailedView
 from core.correspondence.ajax.main import \
@@ -68,26 +65,7 @@ urlpatterns += patterns('apps.pages.cabinet',
 
 #-- angular API for main pages
 urlpatterns += patterns('apps',
-    # registration
-    url(r'^ajax/api/accounts/registration/$', main_RegistrationManager.Registration.as_view()),
-    url(r'^ajax/api/accounts/registration/cancel/$', main_RegistrationManager.Cancel.as_view()),
-    url(r'^ajax/api/accounts/registration/resend-sms/$', main_RegistrationManager.ResendCheckSMS.as_view()),
-
-        # validators
-	    url(r'^ajax/api/accounts/validate-email/$', main_RegistrationManager.EmailValidation.as_view()),
-	    url(r'^ajax/api/accounts/validate-phone-number/$', main_RegistrationManager.MobilePhoneValidation.as_view()),
-
-    # login
-	url(r'^ajax/api/accounts/login/$', main_LoginManager.Login.as_view()),
-	url(r'^ajax/api/accounts/logout/$', main_LoginManager.Logout.as_view()),
-
-        # data getters
-        url(r'^ajax/api/accounts/on-login-info/$', main_LoginManager.OnLogin.as_view()),
-
-	# password reset
-	url(r'^ajax/api/accounts/password-reset/$', 'accounts.accounts_ajax.password_reset_handler'),
-    url(r'^ajax/api/accounts/password-reset/check/$', 'accounts.accounts_ajax.check_token_handler'),
-
+    url(r'', include('core.users.ajax_urls')), # registration, login and password reset
 
 
     #-- markers
