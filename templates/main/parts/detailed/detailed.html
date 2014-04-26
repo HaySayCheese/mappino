@@ -9,7 +9,7 @@
             </div>
             <div class="publication-content pull-right">
                 <div class="publication-content-header">
-                    <span ng-show="publicationViewStatePart == 'Description'">[[ publicationDescription.title ]]</span>
+                    <span ng-show="publicationViewStatePart == 'Description'">[[ publication.title ]]</span>
                     <img class="close" src="{{ static }}img/main/publication-view/detailed-close.png" alt="" data-dismiss="modal"/>
                 </div>
                 <div class="publication-content-body" ng-switch on="publicationViewStatePart">
@@ -32,92 +32,95 @@
 
                     <div class="publication-loading" ng-show="!publicationLoaded"></div>
                     <div ng-switch-when="Description" ng-show="publicationLoaded">
-                        <div class="description">
-                            [[ publicationDescription.description ]]
+                        <div class="description" ng-show="publication.description">
+                            [[ publication.description ]]
                         </div>
                         <div class="properties">
                             <div class="left">
                                 <table>
-                                    <tr>
+                                    <tr ng-show="publication.market_type">
                                         <td>Тип рынка:</td>
-                                        <td>[[ publicationDescription.market_type ]]</td>
+                                        <td>[[ publication.market_type ]]</td>
                                     </tr>
-                                    <tr>
+                                    <tr ng-show="publication.total_area">
                                         <td>Общая площадь:</td>
-                                        <td>[[ publicationDescription.total_area ]]</td>
+                                        <td>[[ publication.total_area ]]</td>
                                     </tr>
-                                    <tr>
+                                    <tr ng-show="publication.living_area">
                                         <td>Жилая площадь:</td>
-                                        <td>[[ publicationDescription.living_area ]]</td>
+                                        <td>[[ publication.living_area ]]</td>
                                     </tr>
-                                    <tr>
+                                    <tr ng-show="publication.kitchen_area">
                                         <td>Площадь кухни:</td>
-                                        <td>[[ publicationDescription.kitchen_area ]]</td>
+                                        <td>[[ publication.kitchen_area ]]</td>
                                     </tr>
                                 </table>
                             </div>
                             <div class="right">
                                 <table>
-                                    <tr>
+                                    <tr ng-show="publication.condition">
                                         <td>Состояние:</td>
-                                        <td>[[ publicationDescription.condition ]]</td>
+                                        <td>[[ publication.condition ]]</td>
                                     </tr>
-                                    <tr>
+                                    <tr ng-show="publication.rooms_count">
                                         <td>Количество комнат:</td>
-                                        <td>[[ publicationDescription.rooms_count ]]</td>
+                                        <td>[[ publication.rooms_count ]]</td>
                                     </tr>
-                                    <tr>
+                                    <tr ng-show="publication.bedrooms_count">
                                         <td>Количество спален:</td>
-                                        <td>[[ publicationDescription.bedrooms_count ]]</td>
+                                        <td>[[ publication.bedrooms_count ]]</td>
                                     </tr>
-                                    <tr>
+                                    <tr ng-show="publication.vcs_count">
                                         <td>Количество сан. узлов:</td>
-                                        <td>[[ publicationDescription.vcs_count ]]</td>
+                                        <td>[[ publication.vcs_count ]]</td>
                                     </tr>
-                                    <tr>
+                                    <tr ng-show="publication.floors_count">
                                         <td>Количество этажей:</td>
-                                        <td>[[ publicationDescription.floors_count ]]</td>
+                                        <td>[[ publication.floors_count ]]</td>
                                     </tr>
                                 </table>
                             </div>
                         </div>
-                        <div class="other-properties">
+                        <div class="other-properties" ng-show="publication.facilities">
                             <span class="section-header">Удобства: </span>
-                            [[ publicationDescription.facilities ]]
+                            [[ publication.facilities ]]
                         </div>
-                        <div class="property-price">
-                            Продажа: [[ publicationDescription.sale_price_uah ]]
+                        <div class="property-price" ng-show="publication.sale_price_uah">
+                            Продажа: [[ publication.sale_price_dol ]], [[ publication.sale_price_eur ]], [[ publication.sale_price_uah ]]
                         </div>
-                        <div class="other-properties">
-                            [[ publicationDescription.sale_terms ]]
+                        <div class="other-properties" ng-show="publication.sale_terms">
+                            [[ publication.sale_terms ]]
                         </div>
-                        <div class="property-price">
-                            Аренда: [[ publicationDescription.rent_price_uah ]]
+                        <div class="property-price" ng-show="publication.rent_price_uah">
+                            Аренда: [[ publication.sale_price_dol ]], [[ publication.sale_price_eur ]], [[ publication.sale_price_uah ]]
                         </div>
-                        <div class="other-properties">
-                            [[ publicationDescription.rent_terms ]]
+                        <div class="other-properties" ng-show="publication.rent_terms">
+                            [[ publication.rent_terms ]]
                         </div>
-                        <div class="other-properties">
+                        <div class="other-properties" ng-show="publication.rent_facilities">
                             <span class="section-header">Удобства аренды: </span>
-                            [[ publicationDescription.rent_facilities ]]
+                            [[ publication.rent_facilities ]]
                         </div>
-                        <div class="other-properties">
+                        <div class="other-properties" ng-show="publication.communications">
                             <span class="section-header">Коммуникации: </span>
-                            [[ publicationDescription.communications ]]
+                            [[ publication.communications ]]
                         </div>
-                        <div class="other-properties">
+                        <div class="other-properties" ng-show="publication.buildings">
                             <span class="section-header">Дополнительные постройки: </span>
-                            [[ publicationDescription.buildings ]]
+                            [[ publication.buildings ]]
                         </div>
-                        <div class="other-properties">
+                        <div class="other-properties" ng-show="publication.showplaces">
                             <span class="section-header">Рядом находиться: </span>
-                            [[ publicationDescription.showplaces ]]
+                            [[ publication.showplaces ]]
                         </div>
                     </div>
                 </div>
                 <div class="publication-content-footer">
                     <div class="btn-group btn-group-justified">
-                        <a type="button" class="btn btn-success btn-xlg" ng-click="changeState()">Перейти к описанию</a>
+                        <a type="button" class="btn btn-success btn-xlg" ng-click="changeState()">
+                            <span ng-show="publicationViewStatePart == 'Contacts'">< Вернуться к описанию</span>
+                            <span ng-show="publicationViewStatePart == 'Description'">Связаться с продавцем</span>
+                        </a>
                         <a type="button" class="btn btn-warning btn-xlg">2</a>
                         <a type="button" class="btn btn-primary btn-xlg">3</a>
                     </div>

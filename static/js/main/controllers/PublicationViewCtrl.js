@@ -2,7 +2,7 @@
 
 app.controller('PublicationViewCtrl', function($scope, $rootScope, mapQueries) {
     $scope.publicationViewStatePart = "Description";
-    $scope.publicationDescription = {};
+    $scope.publication = {};
     $scope.publicationLoaded = false;
 
 
@@ -11,7 +11,7 @@ app.controller('PublicationViewCtrl', function($scope, $rootScope, mapQueries) {
 
 
     mapQueries.getPublicationDescription($rootScope.publicationIdPart).success(function(data) {
-        $scope.publicationDescription = data;
+        $scope.publication = data;
 
         $scope.publicationLoaded = true;
         console.log(data)
