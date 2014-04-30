@@ -175,7 +175,7 @@ def update_land(h, field, value, tid):
 		elif field == 'rent_is_contract':
 			if (value is True) or (value is False):
 				rt = LandsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-				rt.price_is_contract = True
+				rt.is_contract = True
 				rt.save(force_update=True)
 				return
 			else:
@@ -363,6 +363,72 @@ def update_land(h, field, value, tid):
 				b.add_buildings = value
 				b.save(force_update=True)
 				return
+
+
+		# boolean
+		elif field == 'transport_stop':
+			if (value is True) or (value is False):
+				b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.transport_stop = value
+				b.save(force_update=True)
+				return
+			else:
+				raise ValueError()
+
+
+		# boolean
+		elif field == 'bank':
+			if (value is True) or (value is False):
+				b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.bank = value
+				b.save(force_update=True)
+				return
+			else:
+				raise ValueError()
+
+
+		# boolean
+		elif field == 'market':
+			if (value is True) or (value is False):
+				b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.market = value
+				b.save(force_update=True)
+				return
+			else:
+				raise ValueError()
+
+
+		# boolean
+		elif field == 'cash_machine':
+			if (value is True) or (value is False):
+				b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.cash_machine = value
+				b.save(force_update=True)
+				return
+			else:
+				raise ValueError()
+
+
+		# boolean
+		elif field == 'cafe':
+			if (value is True) or (value is False):
+				b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.cafe = value
+				b.save(force_update=True)
+				return
+			else:
+				raise ValueError()
+
+
+		# boolean
+		elif field == 'entertainment':
+			if (value is True) or (value is False):
+				b = LandsBodies.objects.filter(id=h.body_id).only('id')[0]
+				b.entertainment = value
+				b.save(force_update=True)
+				return
+			else:
+				raise ValueError()
 
 
 		# text
