@@ -1503,8 +1503,6 @@ class CottagesBodies(BodyModel):
 			buildings += u', бассейн'
 		if self.terrace:
 			buildings += u', терраса'
-		if self.cellar:
-			buildings += u', погреб'
 		if self.alcove:
 			buildings += u', беседка'
 		if self.kaleyard:
