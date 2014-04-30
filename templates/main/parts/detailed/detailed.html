@@ -98,6 +98,10 @@
                                         <td>Годовая выручка:</td>
                                         <td>[[ publication.annual_receipts ]]</td>
                                     </tr>
+                                    <tr ng-show="publication.share">
+                                        <td>Долевое участие:</td>
+                                        <td>[[ publication.share ]]</td>
+                                    </tr>
                                     <tr ng-show="publication.workers_count">
                                         <td>Работников:</td>
                                         <td>[[ publication.workers_count ]]</td>
@@ -111,7 +115,7 @@
                                         <td>[[ publication.floor ]]</td>
                                     </tr>
                                     <tr ng-show="publication.floors_count">
-                                        <td>Кол-во этажей:</td>
+                                        <td>Этажей:</td>
                                         <td>[[ publication.floors_count ]]</td>
                                     </tr>
                                     <tr ng-show="publication.condition">
@@ -119,12 +123,8 @@
                                         <td>[[ publication.condition ]]</td>
                                     </tr>
                                     <tr ng-show="publication.monthly_cost">
-                                        <td>Ежемесячные расходы:</td>
+                                        <td>Расходы / мес.:</td>
                                         <td>[[ publication.monthly_cost ]]</td>
-                                    </tr>
-                                    <tr ng-show="publication.share">
-                                        <td>Долевое участие:</td>
-                                        <td>[[ publication.share ]]</td>
                                     </tr>
                                     <tr ng-show="publication.rooms_count">
                                         <td>Кол-во комнат:</td>
