@@ -285,6 +285,9 @@ class FlatsBodies(BodyModel):
 	def print_ceiling_height(self):
 		if self.ceiling_height is None:
 			return u''
+
+		if self.ceiling_height == int(self.ceiling_height):
+			return unicode(int(self.ceiling_height)) + u' м'
 		return unicode(self.ceiling_height) + u' м'
 
 
@@ -675,6 +678,9 @@ class ApartmentsBodies(BodyModel):
 	def print_ceiling_height(self):
 		if self.ceiling_height is None:
 			return u''
+
+		if self.ceiling_height == int(self.ceiling_height):
+			return unicode(int(self.ceiling_height)) + u' м'
 		return unicode(self.ceiling_height) + u' м'
 
 
@@ -2085,6 +2091,9 @@ class TradesBodies(BodyModel):
 	def print_ceiling_height(self):
 		if self.ceiling_height is None:
 			return u''
+
+		if self.ceiling_height == int(self.ceiling_height):
+			return unicode(int(self.ceiling_height)) + u' м'
 		return unicode(self.ceiling_height) + u' м'
 
 
@@ -2407,8 +2416,11 @@ class OfficesBodies(BodyModel):
 
 
 	def print_ceiling_height(self):
-		if not self.ceiling_height:
+		if self.ceiling_height is None:
 			return u''
+
+		if self.ceiling_height == int(self.ceiling_height):
+			return unicode(int(self.ceiling_height)) + u' м'
 		return unicode(self.ceiling_height) + u' м'
 
 
@@ -3439,6 +3451,9 @@ class CateringsBodies(BodyModel):
 	def print_ceiling_height(self):
 		if self.ceiling_height is None:
 			return u''
+
+		if self.ceiling_height == int(self.ceiling_height):
+			return unicode(int(self.ceiling_height)) + u' м'
 		return unicode(self.ceiling_height) + u' м'
 
 
@@ -3655,8 +3670,11 @@ class GaragesBodies(BodyModel):
 
 
 	def print_ceiling_height(self):
-		if not self.ceiling_height:
+		if self.ceiling_height is None:
 			return u''
+
+		if self.ceiling_height == int(self.ceiling_height):
+			return unicode(int(self.ceiling_height)) + u' м'
 		return unicode(self.ceiling_height) + u' м'
 
 
