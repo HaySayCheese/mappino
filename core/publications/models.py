@@ -2078,7 +2078,7 @@ class TradesBodies(BodyModel):
 
 		total_area = "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
 		if self.closed_area:
-			total_area += u' (закрытая територия)'
+			total_area += u' (закрытая терр.)'
 		return total_area
 
 
@@ -2405,7 +2405,7 @@ class OfficesBodies(BodyModel):
 
 		total_area = "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
 		if self.closed_area:
-			total_area += u' (закрытая територия)'
+			total_area += u' (закрытая терр.)'
 		return total_area
 
 
@@ -2679,7 +2679,7 @@ class WarehousesBodies(BodyModel):
 
 		area = "{:.2f}".format(self.plot_area).rstrip('0').rstrip('.') + u' м²'
 		if self.closed_area:
-			area += u' (закрытая територия)'
+			area += u' (закрытая терр.)'
 		return area
 
 
@@ -3098,7 +3098,7 @@ class BusinessesBodies(BodyModel):
 
 		area = "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
 		if self.closed_area:
-			area += u' (закрытая територия)'
+			area += u' (закрытая терр.)'
 		return area
 
 
@@ -3438,7 +3438,7 @@ class CateringsBodies(BodyModel):
 
 		total_area = "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
 		if self.closed_area:
-			total_area += u' (закрытая територия)'
+			total_area += u' (закрытая терр.)'
 		return total_area
 
 
