@@ -50,12 +50,16 @@
                                         <td>Год постройки:</td>
                                         <td>[[ publication.build_year ]]</td>
                                     </tr>
+                                    <tr ng-show="publication.floor">
+                                        <td>Этаж:</td>
+                                        <td>[[ publication.floor ]]</td>
+                                    </tr>
                                     <tr ng-show="publication.flat_type">
                                         <td>Тип квартиры:</td>
                                         <td>[[ publication.flat_type ]]</td>
                                     </tr>
                                     <tr ng-show="publication.rooms_planning">
-                                        <td>Планировка комнат:</td>
+                                        <td>Планировка:</td>
                                         <td>[[ publication.rooms_planning ]]</td>
                                     </tr>
                                     <tr ng-show="publication.total_area">
@@ -81,10 +85,6 @@
                                     <tr ng-show="publication.plot_area">
                                         <td>Площадь участка:</td>
                                         <td>[[ publication.plot_area ]]</td>
-                                    </tr>
-                                    <tr ng-show="publication.floor">
-                                        <td>Этаж:</td>
-                                        <td>[[ publication.floor ]]</td>
                                     </tr>
                                     <tr ng-show="publication.driveways">
                                         <td>Подъездные пути:</td>
