@@ -71,7 +71,7 @@ class DetailedView(View):
 		description = generate(publication)
 		# Деякі із полів, згенерованих генератором видачі можуть бути пустими.
 		# Для уникнення їх появи на фронті їх слід видалити із словника опису.
-		description = dict((k, v) for k, v in description.iteritems() if v)
+		description = dict((k, v) for k, v in description.iteritems() if (v is not None) and (v != ""))
 
 		return HttpResponse(json.dumps(description), content_type='application/json')
 
