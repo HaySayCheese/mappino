@@ -5,7 +5,7 @@ from core.publications.abstract_models import LivingHeadModel, BodyModel, Living
 from core.publications.constants import MARKET_TYPES, OBJECT_CONDITIONS, FLOOR_TYPES, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, CURRENCIES, \
 	OBJECTS_TYPES
 from core.publications.exceptions import EmptyFloor, EmptyTotalArea, EmptyLivingArea, EmptyRoomsCount, EmptyFloorsCount, \
-	EmptyHallsArea, EmptyHallsCount, EmptyCabinetsCount
+	EmptyHallsArea, EmptyHallsCount, EmptyCabinetsCount, EmptyPlotArea
 from core.publications.objects_constants.apartments import APARTMENTS_BUILDINGS_TYPES, APARTMENTS_FLAT_TYPES, APARTMENTS_ROOMS_PLANNING_TYPES
 from core.publications.objects_constants.cottages import COTTAGE_RENT_TYPES, COTTAGE_SALE_TYPES
 from core.publications.objects_constants.dachas import DACHA_WC_LOCATIONS, DACHA_WC

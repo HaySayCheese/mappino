@@ -70,7 +70,7 @@ def update_garage(h, field, value, tid):
 			if value not in SALE_TRANSACTION_TYPES.values():
 				raise ValueError()
 
-			st = GaragesSaleTerms.objectts.filter(id=h.sale_terms_id).only('id')[0]
+			st = GaragesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 			st.transaction_sid = value
 			st.save(force_update=True)
 			return
@@ -82,7 +82,7 @@ def update_garage(h, field, value, tid):
 			if value not in CURRENCIES.values():
 				raise ValueError()
 
-			st = GaragesSaleTerms.objectts.filter(id=h.sale_terms_id).only('id')[0]
+			st = GaragesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 			st.currency_sid = value
 			st.save(force_update=True)
 			return
@@ -91,7 +91,7 @@ def update_garage(h, field, value, tid):
 		# bool
 		elif field == 'sale_is_contract':
 			if (value is True) or (value is False):
-				st = GaragesSaleTerms.objectts.filter(id=h.sale_terms_id).only('id')[0]
+				st = GaragesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 				st.is_contract = value
 				st.save(force_update=True)
 				return
@@ -101,7 +101,7 @@ def update_garage(h, field, value, tid):
 
 		# text
 		elif field == 'sale_add_terms':
-			st = GaragesSaleTerms.objectts.filter(id=h.sale_terms_id).only('id')[0]
+			st = GaragesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
 			if not value:
 				st.add_terms = u''
 				st.save(force_update=True)
