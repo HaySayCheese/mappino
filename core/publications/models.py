@@ -2628,10 +2628,10 @@ class WarehousesBodies(BodyModel):
 
 	# validation
 	def check_extended_fields(self):
-		if self.halls_area is None:
+		if self.area is None:
 			raise EmptyHallsArea('Halls area is None.')
-		if self.halls_count is None:
-			raise EmptyHallsCount('Halls count is None.')
+		if self.plot_area is None:
+			raise EmptyPlotArea('Halls count is None.')
 
 
 	# output
