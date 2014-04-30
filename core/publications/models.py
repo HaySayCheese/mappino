@@ -3806,8 +3806,6 @@ class LandsBodies(BodyModel):
 			facilities += u', газ'
 		if self.water:
 			facilities += u', вода'
-		if self.canalisation:
-			facilities += u', канализация'
 
 		if facilities[:2] == u', ':
 			facilities = facilities[2:]
