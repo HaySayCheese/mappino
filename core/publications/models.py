@@ -1906,7 +1906,7 @@ class TradesBodies(BodyModel):
 		},
 		'building_type': {
 			TRADE_BUILDING_TYPES.residential(): u'жилое',
-			TRADE_BUILDING_TYPES.entertainment(): u'торгово-развлекательный центр',
+			TRADE_BUILDING_TYPES.entertainment(): u'ТРЦ',
 			TRADE_BUILDING_TYPES.business(): u'бизнес-центр',
 			TRADE_BUILDING_TYPES.administrative(): u'административное',
 			TRADE_BUILDING_TYPES.separate(): u'отдельное',
@@ -2860,7 +2860,7 @@ class BusinessesBodies(BodyModel):
 		},
 		'building_type': {
 			TRADE_BUILDING_TYPES.residential(): u'жилое',
-			TRADE_BUILDING_TYPES.entertainment(): u'торгово-развлекательный центр',
+			TRADE_BUILDING_TYPES.entertainment(): u'ТРЦ',
 			TRADE_BUILDING_TYPES.business(): u'бизнес-центр',
 			TRADE_BUILDING_TYPES.administrative(): u'административное',
 			TRADE_BUILDING_TYPES.separate(): u'отдельное',
@@ -3267,7 +3267,7 @@ class CateringsBodies(BodyModel):
 		},
 		'building_type': {
 			TRADE_BUILDING_TYPES.residential(): u'жилое',
-			TRADE_BUILDING_TYPES.entertainment(): u'торгово-развлекательный центр',
+			TRADE_BUILDING_TYPES.entertainment(): u'ТРЦ',
 			TRADE_BUILDING_TYPES.business(): u'бизнес-центр',
 			TRADE_BUILDING_TYPES.administrative(): u'административное',
 			TRADE_BUILDING_TYPES.separate(): u'отдельное',
