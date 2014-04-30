@@ -86,18 +86,6 @@
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Количество мест:</label>
-                        <div class="col-sm-8">
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="rent_persons_count" ng-model="publication.rent_terms.persons_count" allow-only-number/>
-                                <span class="input-group-addon">чел.</span>
-                            </div>
-                            <span class="input-has-error" ng-show="form.publication.rent_persons_count.$error.incorrect">Количество мест указано неверно.</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group">
                         <label class="col-sm-4 control-label"><span class="required-star">*</span>Цена:</label>
                         <div class="col-sm-4">
                             <input class="form-control" type="text" name="rent_price" ng-model="publication.rent_terms.price" allow-only-number ng-required="publication.head.for_rent"/>

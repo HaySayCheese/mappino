@@ -42,9 +42,17 @@
                                         <td>Тип рынка:</td>
                                         <td>[[ publication.market_type ]]</td>
                                     </tr>
+                                    <tr ng-show="publication.building_type">
+                                        <td>Тип здания:</td>
+                                        <td>[[ publication.building_type ]]</td>
+                                    </tr>
                                     <tr ng-show="publication.total_area">
                                         <td>Общая площадь:</td>
                                         <td>[[ publication.total_area ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.area">
+                                        <td>Площадь:</td>
+                                        <td>[[ publication.area ]]</td>
                                     </tr>
                                     <tr ng-show="publication.living_area">
                                         <td>Жилая площадь:</td>
@@ -54,6 +62,34 @@
                                         <td>Площадь кухни:</td>
                                         <td>[[ publication.kitchen_area ]]</td>
                                     </tr>
+                                    <tr ng-show="publication.halls_area">
+                                        <td>Площадь помещений:</td>
+                                        <td>[[ publication.halls_area ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.plot_area">
+                                        <td>Площадь участка:</td>
+                                        <td>[[ publication.plot_area ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.build_year">
+                                        <td>Год постройки:</td>
+                                        <td>[[ publication.build_year ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.ceiling_height">
+                                        <td>Высота потолков:</td>
+                                        <td>[[ publication.ceiling_height ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.floor">
+                                        <td>Этаж:</td>
+                                        <td>[[ publication.floor ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.driveways">
+                                        <td>Подъездные пути:</td>
+                                        <td>[[ publication.driveways ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.pit">
+                                        <td>Яма:</td>
+                                        <td>[[ publication.pit ]]</td>
+                                    </tr>
                                 </table>
                             </div>
                             <div class="right">
@@ -61,6 +97,22 @@
                                     <tr ng-show="publication.condition">
                                         <td>Состояние:</td>
                                         <td>[[ publication.condition ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.age">
+                                        <td>Возраст бизнеса:</td>
+                                        <td>[[ publication.age ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.annual_receipts">
+                                        <td>Годовая выручка:</td>
+                                        <td>[[ publication.annual_receipts ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.monthly_cost">
+                                        <td>Ежемесячные расходы:</td>
+                                        <td>[[ publication.monthly_cost ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.share">
+                                        <td>Долевое участие:</td>
+                                        <td>[[ publication.share ]]</td>
                                     </tr>
                                     <tr ng-show="publication.rooms_count">
                                         <td>Количество комнат:</td>
@@ -77,6 +129,26 @@
                                     <tr ng-show="publication.floors_count">
                                         <td>Количество этажей:</td>
                                         <td>[[ publication.floors_count ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.balconies_count">
+                                        <td>Количество балконов:</td>
+                                        <td>[[ publication.balconies_count ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.loggias_count">
+                                        <td>Количество лоджий:</td>
+                                        <td>[[ publication.loggias_count ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.halls_count">
+                                        <td>Количество залов:</td>
+                                        <td>[[ publication.halls_count ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.cabinets_count">
+                                        <td>Количество кабинетов:</td>
+                                        <td>[[ publication.cabinets_count ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.workers_count">
+                                        <td>Количество работников:</td>
+                                        <td>[[ publication.workers_count ]]</td>
                                     </tr>
                                 </table>
                             </div>
