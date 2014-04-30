@@ -42,7 +42,7 @@ class FlatsBodies(BodyModel):
 	substitutions = {
 		'market_type': {
 			MARKET_TYPES.new_building(): u'новостройка',
-			MARKET_TYPES.secondary_market(): u'вторичный рынок',
+			MARKET_TYPES.secondary_market(): u'вторичный',
 		},
 		'building_type': {
 			FLAT_BUILDING_TYPES.panel(): u'панель',
@@ -70,7 +70,7 @@ class FlatsBodies(BodyModel):
 		},
 		'condition': {
 			OBJECT_CONDITIONS.cosmetic_repair(): u'косметический ремонт',
-			OBJECT_CONDITIONS.living(): u'жилое / советское',
+			OBJECT_CONDITIONS.living(): u'жилое',
 			OBJECT_CONDITIONS.euro_repair(): u'евроремонт',
 			OBJECT_CONDITIONS.design_repair(): u'дизайнерский ремонт',
 			OBJECT_CONDITIONS.cosmetic_repair_needed(): u'требуется косметический ремонт',
@@ -434,7 +434,7 @@ class ApartmentsBodies(BodyModel):
 	substitutions = {
 		'market_type': {
 			MARKET_TYPES.new_building(): u'новостройка',
-			MARKET_TYPES.secondary_market(): u'вторичный рынок',
+			MARKET_TYPES.secondary_market(): u'вторичный',
 		},
 		'building_type': {
 			FLAT_BUILDING_TYPES.panel(): u'панель',
@@ -462,7 +462,7 @@ class ApartmentsBodies(BodyModel):
 		},
 		'condition': {
 			OBJECT_CONDITIONS.cosmetic_repair(): u'косметический ремонт',
-			OBJECT_CONDITIONS.living(): u'жилое / советское',
+			OBJECT_CONDITIONS.living(): u'жилое',
 			OBJECT_CONDITIONS.euro_repair(): u'евроремонт',
 			OBJECT_CONDITIONS.design_repair(): u'дизайнерский ремонт',
 			OBJECT_CONDITIONS.cosmetic_repair_needed(): u'требуется косметический ремонт',
@@ -831,11 +831,11 @@ class HousesBodies(BodyModel):
 	substitutions = {
 		'market_type': {
 			MARKET_TYPES.new_building(): u'новостройка',
-			MARKET_TYPES.secondary_market(): u'вторичный рынок',
+			MARKET_TYPES.secondary_market(): u'вторичный',
 		},
 		'condition': {
 			OBJECT_CONDITIONS.cosmetic_repair(): u'косметический ремонт',
-			OBJECT_CONDITIONS.living(): u'жилое / советское',
+			OBJECT_CONDITIONS.living(): u'жилое',
 			OBJECT_CONDITIONS.euro_repair(): u'евроремонт',
 			OBJECT_CONDITIONS.design_repair(): u'дизайнерский ремонт',
 			OBJECT_CONDITIONS.cosmetic_repair_needed(): u'требуется косметический ремонт',
@@ -1270,11 +1270,11 @@ class CottagesBodies(BodyModel):
 	substitutions = {
 		'market_type': {
 			MARKET_TYPES.new_building(): u'новостройка',
-			MARKET_TYPES.secondary_market(): u'вторичный рынок',
+			MARKET_TYPES.secondary_market(): u'вторичный',
 		},
 		'condition': {
 			OBJECT_CONDITIONS.cosmetic_repair(): u'косметический ремонт',
-			OBJECT_CONDITIONS.living(): u'жилое / советское',
+			OBJECT_CONDITIONS.living(): u'жилое',
 			OBJECT_CONDITIONS.euro_repair(): u'евроремонт',
 			OBJECT_CONDITIONS.design_repair(): u'дизайнерский ремонт',
 			OBJECT_CONDITIONS.cosmetic_repair_needed(): u'требуется косметический ремонт',
@@ -1583,7 +1583,7 @@ class RoomsBodies(BodyModel):
 	substitutions = {
 		'market_type': {
 			MARKET_TYPES.new_building(): u'новостройка',
-			MARKET_TYPES.secondary_market(): u'вторичный рынок',
+			MARKET_TYPES.secondary_market(): u'вторичный',
 		},
 		'building_type': {
 			ROOMS_BUILDINGS_TYPES.panel(): u'панель',
@@ -1603,7 +1603,7 @@ class RoomsBodies(BodyModel):
 		},
 		'condition': {
 			OBJECT_CONDITIONS.cosmetic_repair(): u'косметический ремонт',
-			OBJECT_CONDITIONS.living(): u'жилое / советское',
+			OBJECT_CONDITIONS.living(): u'жилое',
 			OBJECT_CONDITIONS.euro_repair(): u'евроремонт',
 			OBJECT_CONDITIONS.design_repair(): u'дизайнерский ремонт',
 			OBJECT_CONDITIONS.cosmetic_repair_needed(): u'требуется косметический ремонт',
@@ -1902,7 +1902,7 @@ class TradesBodies(BodyModel):
 	substitutions = {
 		'market_type': {
 			MARKET_TYPES.new_building(): u'новостройка',
-			MARKET_TYPES.secondary_market(): u'вторичный рынок',
+			MARKET_TYPES.secondary_market(): u'вторичный',
 		},
 		'building_type': {
 			TRADE_BUILDING_TYPES.residential(): u'жилое',
@@ -1913,7 +1913,7 @@ class TradesBodies(BodyModel):
 		},
 		'condition': {
 			OBJECT_CONDITIONS.cosmetic_repair(): u'косметический ремонт',
-			OBJECT_CONDITIONS.living(): u'жилое / советское',
+			OBJECT_CONDITIONS.living(): u'жилое',
 			OBJECT_CONDITIONS.euro_repair(): u'евроремонт',
 			OBJECT_CONDITIONS.design_repair(): u'дизайнерский ремонт',
 			OBJECT_CONDITIONS.cosmetic_repair_needed(): u'требуется косметический ремонт',
@@ -2175,7 +2175,7 @@ class TradesBodies(BodyModel):
 			communications += u', локальная сеть'
 
 		if communications:
-			return communications[2:].capitalize() + u"."
+			return communications[2:] + u"."
 		return u''
 
 
@@ -2257,7 +2257,7 @@ class OfficesBodies(BodyModel):
 	substitutions = {
 		'market_type': {
 			MARKET_TYPES.new_building(): u'новостройка',
-			MARKET_TYPES.secondary_market(): u'вторичный рынок',
+			MARKET_TYPES.secondary_market(): u'вторичный',
 		},
 		'building_type': {
 			TRADE_BUILDING_TYPES.residential(): u'жилое',
@@ -2490,7 +2490,7 @@ class OfficesBodies(BodyModel):
 			communications += u', локальная сеть'
 
 		if communications:
-			return communications[2:].capitalize() + u"."
+			return communications[2:] + u"."
 		return u''
 
 
@@ -2571,7 +2571,7 @@ class WarehousesBodies(BodyModel):
 	substitutions = {
 		'market_type': {
 			MARKET_TYPES.new_building(): u'новостройка',
-			MARKET_TYPES.secondary_market(): u'вторичный рынок',
+			MARKET_TYPES.secondary_market(): u'вторичный',
 		},
 	}
 
@@ -2752,7 +2752,7 @@ class WarehousesBodies(BodyModel):
 			communications += u', локальная сеть'
 
 		if communications:
-			return communications[2:].capitalize() + u"."
+			return communications[2:] + u"."
 		return u''
 
 
@@ -2856,7 +2856,7 @@ class BusinessesBodies(BodyModel):
 	substitutions = {
 		'market_type': {
 			MARKET_TYPES.new_building(): u'новостройка',
-			MARKET_TYPES.secondary_market(): u'вторичный рынок',
+			MARKET_TYPES.secondary_market(): u'вторичный',
 		},
 		'building_type': {
 			TRADE_BUILDING_TYPES.residential(): u'жилое',
@@ -2867,7 +2867,7 @@ class BusinessesBodies(BodyModel):
 		},
 		'condition': {
 			OBJECT_CONDITIONS.cosmetic_repair(): u'косметический ремонт',
-			OBJECT_CONDITIONS.living(): u'жилое / советское',
+			OBJECT_CONDITIONS.living(): u'жилое',
 			OBJECT_CONDITIONS.euro_repair(): u'евроремонт',
 			OBJECT_CONDITIONS.design_repair(): u'дизайнерский ремонт',
 			OBJECT_CONDITIONS.cosmetic_repair_needed(): u'требуется косметический ремонт',
@@ -3183,7 +3183,7 @@ class BusinessesBodies(BodyModel):
 			communications += u', локальная сеть'
 
 		if communications:
-			return communications[2:].capitalize() + u"."
+			return communications[2:] + u"."
 		return u''
 
 
@@ -3263,7 +3263,7 @@ class CateringsBodies(BodyModel):
 	substitutions = {
 		'market_type': {
 			MARKET_TYPES.new_building(): u'новостройка',
-			MARKET_TYPES.secondary_market(): u'вторичный рынок',
+			MARKET_TYPES.secondary_market(): u'вторичный',
 		},
 		'building_type': {
 			TRADE_BUILDING_TYPES.residential(): u'жилое',
@@ -3274,7 +3274,7 @@ class CateringsBodies(BodyModel):
 		},
 		'condition': {
 			OBJECT_CONDITIONS.cosmetic_repair(): u'косметический ремонт',
-			OBJECT_CONDITIONS.living(): u'жилое / советское',
+			OBJECT_CONDITIONS.living(): u'жилое',
 			OBJECT_CONDITIONS.euro_repair(): u'евроремонт',
 			OBJECT_CONDITIONS.design_repair(): u'дизайнерский ремонт',
 			OBJECT_CONDITIONS.cosmetic_repair_needed(): u'требуется косметический ремонт',
@@ -3535,7 +3535,7 @@ class CateringsBodies(BodyModel):
 			communications += u', локальная сеть'
 
 		if communications:
-			return communications[2:].capitalize() + u"."
+			return communications[2:] + u"."
 		return u''
 
 
@@ -3615,7 +3615,7 @@ class GaragesBodies(BodyModel):
 	substitutions = {
 		'market_type': {
 			MARKET_TYPES.new_building(): u'новостройка',
-			MARKET_TYPES.secondary_market(): u'вторичный рынок',
+			MARKET_TYPES.secondary_market(): u'вторичный',
 		},
 	}
 
