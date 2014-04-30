@@ -90,6 +90,18 @@
                                         <td>Яма:</td>
                                         <td>[[ publication.pit ]]</td>
                                     </tr>
+                                    <tr ng-show="publication.age">
+                                        <td>Возраст бизнеса:</td>
+                                        <td>[[ publication.age ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.annual_receipts">
+                                        <td>Годовая выручка:</td>
+                                        <td>[[ publication.annual_receipts ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.workers_count">
+                                        <td>Кол-во работников:</td>
+                                        <td>[[ publication.workers_count ]]</td>
+                                    </tr>
                                 </table>
                             </div>
                             <div class="right">
@@ -105,14 +117,6 @@
                                     <tr ng-show="publication.condition">
                                         <td>Состояние:</td>
                                         <td>[[ publication.condition ]]</td>
-                                    </tr>
-                                    <tr ng-show="publication.age">
-                                        <td>Возраст бизнеса:</td>
-                                        <td>[[ publication.age ]]</td>
-                                    </tr>
-                                    <tr ng-show="publication.annual_receipts">
-                                        <td>Годовая выручка:</td>
-                                        <td>[[ publication.annual_receipts ]]</td>
                                     </tr>
                                     <tr ng-show="publication.monthly_cost">
                                         <td>Ежемесячные расходы:</td>
@@ -149,10 +153,6 @@
                                     <tr ng-show="publication.cabinets_count">
                                         <td>Кол-во кабинетов:</td>
                                         <td>[[ publication.cabinets_count ]]</td>
-                                    </tr>
-                                    <tr ng-show="publication.workers_count">
-                                        <td>Кол-во работников:</td>
-                                        <td>[[ publication.workers_count ]]</td>
                                     </tr>
                                     <tr ng-show="publication.ceiling_height">
                                         <td>Высота потолков:</td>
