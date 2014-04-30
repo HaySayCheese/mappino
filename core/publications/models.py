@@ -1505,8 +1505,6 @@ class CottagesBodies(BodyModel):
 			buildings += u', терраса'
 		if self.alcove:
 			buildings += u', беседка'
-		if self.garden:
-			buildings += u', сад'
 
 		if self.add_buildings:
 			buildings += u'. ' + self.add_buildings
