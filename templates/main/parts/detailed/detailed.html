@@ -50,10 +50,6 @@
                                         <td>Год постройки:</td>
                                         <td>[[ publication.build_year ]]</td>
                                     </tr>
-                                    <tr ng-show="publication.floor">
-                                        <td>Этаж:</td>
-                                        <td>[[ publication.floor ]]</td>
-                                    </tr>
                                     <tr ng-show="publication.flat_type">
                                         <td>Тип квартиры:</td>
                                         <td>[[ publication.flat_type ]]</td>
@@ -94,6 +90,14 @@
                                         <td>Яма:</td>
                                         <td>[[ publication.pit ]]</td>
                                     </tr>
+                                    <tr ng-show="publication.floor">
+                                        <td>Этаж:</td>
+                                        <td>[[ publication.floor ]]</td>
+                                    </tr>
+                                    <tr ng-show="publication.floors_count">
+                                        <td>Кол-во этажей:</td>
+                                        <td>[[ publication.floors_count ]]</td>
+                                    </tr>
                                 </table>
                             </div>
                             <div class="right">
@@ -129,10 +133,6 @@
                                     <tr ng-show="publication.vcs_count">
                                         <td>Кол-во сан. узлов:</td>
                                         <td>[[ publication.vcs_count ]]</td>
-                                    </tr>
-                                    <tr ng-show="publication.floors_count">
-                                        <td>Кол-во этажей:</td>
-                                        <td>[[ publication.floors_count ]]</td>
                                     </tr>
                                     <tr ng-show="publication.balconies_count">
                                         <td>Кол-во балконов:</td>
