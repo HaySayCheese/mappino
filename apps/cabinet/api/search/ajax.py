@@ -3,7 +3,7 @@ import json
 from django.http.response import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
 
-from apps.pages.cabinet.briefs.utils import briefs_of_publications
+from apps.cabinet.api.publications.briefs.utils import briefs_of_publications
 from collective.decorators.views import login_required_or_forbidden
 from collective.methods.request_data_getters import GET_parameter
 from core.search import search_manager

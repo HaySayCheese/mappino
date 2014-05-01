@@ -6,9 +6,8 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, Validat
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 
-from apps.pages.cabinet.publications.utils import publication_data
+from apps.cabinet.api.publications.utils import publication_data
 from core.publications.models_signals import record_updated
-
 from core.publications.update_methods.dachas import update_dacha
 from core.publications.update_methods.flats import update_flat
 from core.publications.update_methods.apartments import update_apartments
@@ -25,7 +24,6 @@ from core.publications.update_methods.lands import update_land
 from collective.decorators.views import login_required_or_forbidden
 from collective.methods.request_data_getters import angular_parameters
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
-
 
 
 create_codes = {

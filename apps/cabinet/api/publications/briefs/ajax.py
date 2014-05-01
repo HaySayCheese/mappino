@@ -5,7 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
 
-from apps.pages.cabinet.briefs.utils import briefs_of_tag, briefs_of_section, get_sections_counters
+from apps.cabinet.api.publications.briefs.utils import briefs_of_tag, briefs_of_section, get_sections_counters
 from collective.decorators.views import login_required_or_forbidden
 from core.dirtags import DirTags
 
@@ -53,6 +53,6 @@ def get(request, tag_id=None, section=None):
 
 @login_required_or_forbidden
 @require_http_methods('GET')
-def get_counters(request):
+def counters(request):
 	return HttpResponse(json.dumps(
 		get_sections_counters(request.user.id)), content_type='application/json')

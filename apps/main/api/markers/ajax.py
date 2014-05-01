@@ -4,7 +4,7 @@ import json
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 
-from apps.pages.main.markers.utils import parse_houses_filters, parse_flats_filters, parse_apartments_filters, \
+from apps.main.api.markers.utils import parse_houses_filters, parse_flats_filters, parse_apartments_filters, \
 	parse_dachas_filters, parse_cottages_filters, parse_rooms_filters, parse_trades_filters, parse_offices_filters, \
 	parse_warehouses_filters, parse_businesses_filters, parse_caterings_filters, parse_garages_filters, \
 	parse_lands_filters
@@ -70,7 +70,8 @@ get_codes = {
 }
 @require_http_methods('GET')
 # @condition(etag_func=get_markers_etag) # todo: enable me back
-def get_markers(request):
+def markers(request):
+	# todo: rewrite in view style
 	try:
 		tid = int(GET_parameter(request, 'tid'))
 	except ValueError:

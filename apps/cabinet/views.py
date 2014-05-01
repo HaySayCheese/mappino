@@ -4,7 +4,7 @@ from mappino.wsgi import templates
 
 
 @ensure_csrf_cookie
-def cabinet(request):
+def main(request):
 	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/#!/account/login')
 

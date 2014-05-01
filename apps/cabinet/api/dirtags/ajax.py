@@ -65,6 +65,7 @@ DT_DELETE_RESPONSES = {
 @require_http_methods(['GET', 'POST', 'PUT', 'DELETE'])
 @login_required_or_forbidden
 def dirtags_handler(request, dirtag_id=None):
+	# todo: rewrite in view style
 	if request.method == 'GET':
 		tags = DirTags.by_user_id(request.user.id)
 		response = copy.deepcopy(DT_GET_RESPONSES['OK']) # Note: deepcopy here

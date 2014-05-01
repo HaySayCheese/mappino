@@ -5,28 +5,16 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from mappino.wsgi import templates
 
 
-#-- templates
 @ensure_csrf_cookie
-def publications_template(request):
+def publications_panel_template(request):
 	t =  templates.get_template('cabinet/parts/publications.html')
 	return HttpResponse(t.render())
 
 
-@ensure_csrf_cookie
-def map_template(request):
-	t =  templates.get_template('cabinet/parts/unpublished/parts/map.html')
-	return HttpResponse(t.render())
 
 
 @ensure_csrf_cookie
-def photos_template(request):
-	t =  templates.get_template('cabinet/parts/unpublished/parts/photos.html')
-	return HttpResponse(t.render())
-
-
-#-- unpublished publications templates
-@ensure_csrf_cookie
-def publication_form_template(request, tid):
+def unpublished_form_template(request, tid):
 	if not tid:
 		return HttpResponseBadRequest('@tid is invalid')
 	try:
@@ -69,9 +57,22 @@ def publication_form_template(request, tid):
 	return HttpResponseBadRequest('@tid is invalid.')
 
 
-#-- published publications templates
 @ensure_csrf_cookie
-def published_publication_form_template(request, tid):
+def unpublished_map_template(request):
+	t =  templates.get_template('cabinet/parts/unpublished/parts/map.html')
+	return HttpResponse(t.render())
+
+
+@ensure_csrf_cookie
+def unpublished_photos_template(request):
+	t =  templates.get_template('cabinet/parts/unpublished/parts/photos.html')
+	return HttpResponse(t.render())
+
+
+
+
+@ensure_csrf_cookie
+def published_form_template(request, tid):
 	if not tid:
 		return HttpResponseBadRequest('@tid is invalid')
 	try:

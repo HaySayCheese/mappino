@@ -1,7 +1,8 @@
 #coding=utf-8
-from django.http import HttpResponseBadRequest, HttpResponse
+from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import ensure_csrf_cookie
 from core.publications.constants import OBJECTS_TYPES
+
 from mappino.wsgi import templates
 
 
@@ -24,7 +25,19 @@ __FILTERS_TEMPLATES_PATHS = {
 
 
 @ensure_csrf_cookie
-def filter_form(request, color, tid):
+def first_enter_template(request):
+	t = templates.get_template('main/parts/home/first_enter.html')
+	return HttpResponse(content=t.render())
+
+
+@ensure_csrf_cookie
+def search_template(request):
+	t = templates.get_template('main/parts/home/search.html')
+	return HttpResponse(content=t.render())
+
+
+@ensure_csrf_cookie
+def filters_form_template(request, color, tid):
 	"""
 	Повертає шаблон форми фільтрів відповідно до @color та @tid.
 	"""
@@ -46,3 +59,13 @@ def filter_form(request, color, tid):
 		'current_panel': color,
 	    'current_panel_prefix': color_prefix,
 	}))
+
+
+@ensure_csrf_cookie
+def detailed_dlg_template(request):
+	"""
+	Повертає шаблон діалогу детальногоо опису.
+	Для всіх типів використовується спільний шаблон.
+	"""
+	t = templates.get_template('main/parts/detailed/detailed.html')
+	return HttpResponse(content=t.render())
