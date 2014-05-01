@@ -870,4 +870,3 @@ class PhotosModel(AbstractModel):
 	@classmethod
 	def destination_dir(cls):
 		return os.path.join(settings.MEDIA_ROOT, cls.photos_dir, cls.destination_dir_name)
-

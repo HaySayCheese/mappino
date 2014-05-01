@@ -73,6 +73,17 @@ class DetailedView(View):
 		# Для уникнення їх появи на фронті їх слід видалити із словника опису.
 		description = dict((k, v) for k, v in description.iteritems() if (v is not None) and (v != ""))
 
+
+		# photos
+		description['photos'] = []
+		photos = publication.photos_model.objects.filter(hid=publication.id)
+		for photo in photos:
+			if photo.is_title:
+				description['title_photo'] = photo.url() + photo.image_name()
+			else:
+				description['photos'].append(photo.url() + photo.image_name())
+
+
 		return HttpResponse(json.dumps(description), content_type='application/json')
 
 
