@@ -80,6 +80,7 @@ class DetailedView(View):
 		for photo in photos:
 			if photo.is_title:
 				description['title_photo'] = photo.url() + photo.title_thumbnail_name()
+				description['photos'].append(photo.url() + photo.image_name())
 			else:
 				description['photos'].append(photo.url() + photo.image_name())
 
