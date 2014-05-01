@@ -23,3 +23,11 @@ def login_required_or_forbidden(func):
 			return HttpResponseForbidden()
 		return func(request, *args, **kwargs)
 	return wrapper
+
+
+def anonymous_require(func):
+	def wrapper(request, *args, **kwargs):
+		if request.user.is_authenticated():
+			return HttpResponseBadRequest('Anonymous only.')
+		return func(request, *args, **kwargs)
+	return wrapper
