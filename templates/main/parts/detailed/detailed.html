@@ -3,8 +3,27 @@
 
 
 
-        <div class="modal-content content-white" ng-switch-when="Photos">
+        <div class="modal-content content-white photos-modal" ng-switch-when="Photos">
+            <div id="publication-view-carousel" class="carousel slide" data-ride="carousel" ng-init="publication.photos.length">
 
+                <ol class="carousel-indicators">
+                    <li ng-repeat="photo in publication.photos" data-target="#publication-view-carousel" data-slide-to="[[ $index ]]" ng-class="{ active : $first }"></li>
+                </ol>
+
+                <div class="carousel-inner">
+                    <div class="item" ng-repeat="photo in publication.photos" ng-class="{ active : $first }">
+                        <img ng-src="[[ photo ]]">
+                    </div>
+                </div>
+
+                <a class="left carousel-control" ng-href="#publication-view-carousel" data-slide="prev" ng-click="$event.preventDefault()">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </a>
+                <a class="right carousel-control" ng-href="#publication-view-carousel" data-slide="next" ng-click="$event.preventDefault()">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
+                <div class="btn btn-success close-photos-btn" ng-click="changeBasePart()">Вернуться к описанию</div>
+            </div>
         </div>
 
 
@@ -30,24 +49,36 @@
                 </div>
 
                 <div class="publication-content-body" ng-switch on="publicationViewDetailedPart">
-                    <div ng-switch-when="Contacts">
-                        <div class="user-photo">
-                            <img src="{{ static }}img/main/publication-view/mark.png"/>
-                        </div>
-                        <div class="user-name">
-                            Марк Цукерберг
-                        </div>
-                        <div class="user-phones">
-                            моб. телефон: (050) 82-42-618 <br/>
-                            роб. телефон: (050) 82-42-618
-                        </div>
-                        <div class="user-btns">
-                            <div class="btn btn-primary btn-block">Заказать обратный звонок</div>
-                            <div class="btn btn-default btn-block">Оставить сообщение</div>
+
+                    <div ng-switch-when="Contacts" ng-controller="PublicationViewContactsCtrl">
+                        <div class="contacts-loading" ng-hide="contactsLoaded"></div>
+
+                        <div ng-show="contactsLoaded">
+                            <div class="user-photo">
+                                <img src="{{ static }}img/main/publication-view/mark.png"/>
+                            </div>
+                            <div class="user-name">
+                                Марк Цукерберг
+                            </div>
+                            <div class="user-phones">
+                                моб. телефон: (050) 82-42-618 <br/>
+                                роб. телефон: (050) 82-42-618
+                            </div>
+                            <div class="user-btns">
+                                <div class="btn btn-primary btn-block">Заказать обратный звонок</div>
+                                <div class="btn btn-default btn-block" ng-click="sendingMessage = true" ng-hide="sendingMessage">Оставить сообщение</div>
+                            </div>
+                            <div class="user-message" ng-show="sendingMessage">
+                                <textarea class="form-control" rows="3" placeholder="Введите текст сообщения" ng-model="message"></textarea>
+                                <div class="btn btn-default" ng-click="cancelSendMessage()">Отменить</div>
+                                <div class="btn btn-primary pull-right" ng-click="sendMessage()">Отправить сообщение</div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="publication-loading" ng-show="!publicationLoaded"></div>
+
+
+                    <div class="publication-loading" ng-hide="publicationLoaded"></div>
 
                     <div ng-switch-when="Description" ng-show="publicationLoaded">
                         <div class="description" ng-show="publication.description">
