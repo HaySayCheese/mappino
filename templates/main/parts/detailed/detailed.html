@@ -1,21 +1,38 @@
 <div class="modal publication-view-modal fade" ng-controller="PublicationViewCtrl">
-    <div class="modal-dialog">
-        <div class="modal-content content-white">
+    <div class="modal-dialog" ng-switch on="publicationViewPart">
+
+
+
+        <div class="modal-content content-white" ng-switch-when="Photos">
+
+        </div>
+
+
+
+
+        <div class="modal-content content-white" ng-switch-when="Detailed">
             <div class="publication-photo pull-left">
-                <img src="{{ static }}img/main/publication-view/temp-main-photo.png" alt=""/>
-                <div class="counter">
-                    Фото<br/> 1 / 10
+                <img ng-src="[[ publication.title_photo ]]" ng-show="publication.title_photo" ng-click="changeBasePart()"/>
+                <div class="no-photo" ng-hide="publication.title_photo">
+                    <div class="text">
+                        К сожалению, нет ни одной фотографии
+                    </div>
+                </div>
+                <div class="counter" ng-hide="!publication.title_photo">
+                    Фото<br/> 1 / [[ publication.photos.length + 1 ]]
                 </div>
             </div>
+
             <div class="publication-content pull-right">
                 <div class="publication-content-header">
-                    <span ng-show="publicationViewStatePart == 'Description'">[[ publication.title ]]</span>
-                    <img class="close" src="{{ static }}img/main/publication-view/detailed-close.png" alt="" data-dismiss="modal"/>
+                    <span ng-show="publicationViewDetailedPart == 'Description'">[[ publication.title ]]</span>
+                    <img class="close" src="{{ static }}img/main/publication-view/detailed-close.png" data-dismiss="modal"/>
                 </div>
-                <div class="publication-content-body" ng-switch on="publicationViewStatePart">
+
+                <div class="publication-content-body" ng-switch on="publicationViewDetailedPart">
                     <div ng-switch-when="Contacts">
                         <div class="user-photo">
-                            <img src="{{ static }}img/main/publication-view/mark.png" alt=""/>
+                            <img src="{{ static }}img/main/publication-view/mark.png"/>
                         </div>
                         <div class="user-name">
                             Марк Цукерберг
@@ -31,6 +48,7 @@
                     </div>
 
                     <div class="publication-loading" ng-show="!publicationLoaded"></div>
+
                     <div ng-switch-when="Description" ng-show="publicationLoaded">
                         <div class="description" ng-show="publication.description">
                             [[ publication.description ]]
@@ -197,9 +215,9 @@
                 </div>
                 <div class="publication-content-footer">
                     <div class="btn-group btn-group-justified">
-                        <a type="button" class="btn btn-success btn-xlg" ng-click="changeState()">
-                            <span ng-show="publicationViewStatePart == 'Contacts'">< Вернуться к описанию</span>
-                            <span ng-show="publicationViewStatePart == 'Description'">Связаться с продавцем</span>
+                        <a type="button" class="btn btn-success btn-xlg" ng-click="changeDetailedPart()">
+                            <span ng-show="publicationViewDetailedPart == 'Contacts'">< Вернуться к описанию</span>
+                            <span ng-show="publicationViewDetailedPart == 'Description'">Связаться с продавцем</span>
                         </a>
                         <a type="button" class="btn btn-warning btn-xlg">2</a>
                         <a type="button" class="btn btn-primary btn-xlg">3</a>

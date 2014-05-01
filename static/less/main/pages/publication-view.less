@@ -51,6 +51,23 @@
                 background-color: rgba(79, 170, 160, 0.6);
             }
         }
+
+        .no-photo {
+            .square(100%);
+            position: relative;
+            background: #ededed url("../../img/main/publication-view/no-photo.png") center center no-repeat;
+
+            > .text {
+                position: absolute;
+                top: 70%;
+                left: 50%;
+
+                .translate(-50%, 0);
+
+                text-align: center;
+                color: @gray-light;
+            }
+        }
     }
 
     .publication-content {

@@ -1,9 +1,13 @@
 'use strict';
 
 app.controller('PublicationViewCtrl', function($scope, $rootScope, mapQueries) {
-    $scope.publicationViewStatePart = "Description";
+
+    $scope.publicationViewPart = "Detailed";
+    $scope.publicationViewDetailedPart = "Description";
+
     $scope.publication = {};
     $scope.publicationLoaded = false;
+
 
 
     var publicationViewModal = angular.element(".publication-view-modal");
@@ -18,7 +22,12 @@ app.controller('PublicationViewCtrl', function($scope, $rootScope, mapQueries) {
     });
 
 
-    $scope.changeState = function() {
-        $scope.publicationViewStatePart = $scope.publicationViewStatePart == "Contacts" ? "Description" : "Contacts";
-    }
+
+    $scope.changeBasePart = function() {
+        $scope.publicationViewPart = $scope.publicationViewPart == "Detailed" ? "Photos" : "Detailed";
+    };
+
+    $scope.changeDetailedPart = function() {
+        $scope.publicationViewDetailedPart = $scope.publicationViewDetailedPart == "Contacts" ? "Description" : "Contacts";
+    };
 });
