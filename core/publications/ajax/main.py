@@ -79,7 +79,7 @@ class DetailedView(View):
 		photos = publication.photos_model.objects.filter(hid=publication.id)
 		for photo in photos:
 			if photo.is_title:
-				description['title_photo'] = photo.url() + photo.title_thumbnail_nam
+				description['title_photo'] = photo.url() + photo.title_thumbnail_name()
 			else:
 				description['photos'].append(photo.url() + photo.image_name())
 
