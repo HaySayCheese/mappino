@@ -2,20 +2,25 @@
 import copy
 import json
 
+from django.conf import settings
 from django.contrib.auth import login, authenticate, logout
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import transaction
 from django.http.response import HttpResponseBadRequest, HttpResponse
+from django.utils.decorators import method_decorator
 from django.views.generic import View
 import phonenumbers
 from phonenumbers.phonenumberutil import NumberParseException
 
+from collective.decorators.views import anonymous_require
 from collective.methods.request_data_getters import angular_post_parameters
+from core.email_backend import email_sender
 from core.publications.constants import HEAD_MODELS, OBJECTS_TYPES
 from core.users import tasks
 from core.users.ajax.utils import MobilePhoneChecker
-from core.users.models import Users
+from core.users.models import Users, AccessRestoreTokens
+from mappino.wsgi import templates
 
 
 class RegistrationManager(object):
@@ -308,6 +313,9 @@ class LoginManager(object):
 		}
 
 
+		# todo: add dispatch method
+
+
 		def post(self, request, *args):
 			if request.user.is_authenticated():
 				return HttpResponseBadRequest('Anonymous only.')
@@ -412,6 +420,122 @@ class LoginManager(object):
 		    'surname': user.last_name,
 		}
 
+
+
+class AccessRestoreManager(object):
+	class BaseView(View):
+		@method_decorator(anonymous_require)
+		def dispatch(self, *args, **kwargs):
+			return super(AccessRestoreManager.BaseView, self).dispatch(*args, **kwargs)
+
+
+	class BeginRestore(BaseView):
+		post_codes = {
+			'OK': {
+				'code': 0,
+			},
+			'invalid_username': {
+				'code': 1,
+			},
+		    'invalid_attempt': {
+				'code': 2,
+		    },
+		}
+
+
+		def post(self, request, *args):
+			try:
+				username = angular_post_parameters(request, ['username'])['username']
+			except ValueError:
+				return HttpResponseBadRequest(
+					self.post_codes['invalid_username'], content_type='application/json')
+
+
+			user = None
+			try:
+				# attempt with phone number
+				phone_number = phonenumbers.parse(username, 'UA')
+				if phonenumbers.is_valid_number(phone_number):
+					phone_number = phonenumbers.format_number(phone_number, phonenumbers.PhoneNumberFormat.E164)
+
+				users = Users.objects.filter(mobile_phone=phone_number).only('id')[:1]
+				if users:
+					user = users[0]
+
+			except NumberParseException:
+				# attempt with email
+				users = Users.objects.filter(email=username).only('id')[:1]
+				if users:
+					user = users[0]
+
+			if user is None:
+				return HttpResponse(json.dumps(self.post_codes['invalid_attempt']), content_type='application/json')
+
+
+			record = AccessRestoreTokens.new(user)
+			html = templates.get_template('email/access_restore/new_token.html').render({
+				'url_token': settings.REDIRECT_DOMAIN.join([
+					'ajax/api/accounts/password-reset/check?token=', record.token])
+			})
+			email_sender.send_html_email(
+				subject=u'Восстановление пароля', # tr
+			    html=html,
+			    addresses_list=[record.user.email],
+			)
+
+			return HttpResponse(self.post_codes['OK'], content_type='application/json')
+
+
+	class Check(BaseView):
+		post_codes = {
+			'OK': {
+				'code': 0,
+			},
+			'invalid_token': {
+				'code': 1,
+			},
+		    'invalid_password_or_repeat': {
+			    'code': 2,
+		    },
+		    'passwords_not_match': {
+			    'code': 3,
+		    }
+		}
+
+
+		def post(self, request, *args):
+			try:
+				token = angular_post_parameters(request, ['token'])['token']
+				if not token:
+					raise ValueError('Token can\'t be empty.')
+
+			except (IndexError, ValueError):
+				return HttpResponseBadRequest(self.post_codes['invalid_token'], content_type='application/json')
+
+			try:
+				params = angular_post_parameters(request, ['password', 'password-repeat'])
+			except ValueError:
+				return HttpResponseBadRequest(
+					self.post_codes['invalid_password_or_repeat'], content_type='application/json')
+
+
+			if params['password'] != params['password-repeat']:
+				return HttpResponse(self.post_codes['passwords_not_match'], content_type='application/json')
+
+
+			token_record_query = AccessRestoreTokens.objects.filter(token=token)[:1]
+			if not token_record_query:
+				return HttpResponse(self.post_codes['invalid_token'], content_type='application/json')
+
+			token = token_record_query[0]
+			token.user = token_record_query[0]
+
+			with transaction.atomic():
+				token.user.set_password(params['password'])
+				token.user.save()
+				token.delete()
+
+			return HttpResponse(self.post_codes['OK'], content_type='application/json')
 
 
 class Contacts(View):

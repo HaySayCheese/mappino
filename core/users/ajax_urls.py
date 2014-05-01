@@ -1,7 +1,5 @@
 from django.conf.urls import patterns, url
-from core.users.ajax.main import \
-	RegistrationManager as RegistrationManager, \
-	LoginManager as LoginManager
+from core.users.ajax.main import RegistrationManager, LoginManager, AccessRestoreManager
 
 
 
@@ -24,6 +22,6 @@ urlpatterns = patterns('',
 
 
 	# password reset
-	url(r'^ajax/api/accounts/password-reset/$', 'apps.accounts.accounts_ajax.password_reset_handler'),
-    url(r'^ajax/api/accounts/password-reset/check/$', 'apps.accounts.accounts_ajax.check_token_handler'),
+	url(r'^ajax/api/accounts/password-reset/$', AccessRestoreManager.BeginRestore.as_view()),
+    url(r'^ajax/api/accounts/password-reset/check/$', AccessRestoreManager.Check.as_view()),
 )

@@ -1,4 +1,6 @@
 #coding=utf-8
+import random
+import string
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.tests.custom_user import CustomUserManager
 from django.db import models, transaction
@@ -119,6 +121,7 @@ class Preferences(models.Model):
 	class Meta:
 		db_table = "users_preferences"
 
+	# fixme: camel case?
 	user = models.ForeignKey(Users)
 	sendNewClientEmailNotification = models.BooleanField(default=True)
 	sendNewClientSMSNotification = models.BooleanField(default=True)
@@ -138,5 +141,43 @@ class Preferences(models.Model):
 		except IndexError:
 			return cls.objects.create(user=user)
 
+
+class AccessRestoreTokens(models.Model):
+	class Meta:
+		db_table = "users_access_restore_tokens"
+
+	user = models.ForeignKey(Users)
+	token = models.TextField(unique=True)
+	created = models.DateTimeField(auto_created=True)
+
+
+	@classmethod
+	def new(cls, user_id):
+		def generate():
+			return ''.join(random.choice(string.digits + string.ascii_letters) for x in range(256))
+
+
+		check_user_query = cls.objects.filter(user=user_id)[:1]
+		if check_user_query:
+			# user already requested password reset
+			# regenerating the token
+			record = check_user_query[0]
+
+			new_token = generate()
+			while new_token == record.token:
+				new_token = generate()
+
+			record.token = new_token
+			record.save()
+			return record
+
+
+		else:
+			# user does not exist
+			token = generate()
+			while cls.objects.filter(token=token).count() > 0:
+				token = generate()
+
+			return cls.objects.create(user=user_id, token=token)
 
 
