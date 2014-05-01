@@ -846,6 +846,7 @@ class PhotosModel(AbstractModel):
 				uid = uid,
 				original_extension = original_ext
 			)
+			record.save()
 		except Exception as e:
 			os.remove(original_path)
 			os.remove(image_path)
@@ -855,8 +856,9 @@ class PhotosModel(AbstractModel):
 
 
 		# set as title if it is a first photo
-		if cls.objects.filter(hid=publication_head).count() == 1:
-			record.mark_as_title()
+		with transaction.atomic():
+			if cls.objects.filter(hid=publication_head, is_title=True).count() == 0:
+				record.mark_as_title()
 
 		# seems to be ok
 		return record.info()
