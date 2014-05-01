@@ -1,13 +1,12 @@
 'use strict';
 
-app.controller('PublicationViewCtrl', function($scope, $rootScope, mapQueries) {
 
+app.controller('PublicationViewCtrl', function($scope, $rootScope, mapQueries) {
     $scope.publicationViewPart = "Detailed";
     $scope.publicationViewDetailedPart = "Description";
 
-    $scope.publication = {};
     $scope.publicationLoaded = false;
-
+    $scope.publication = {};
 
 
     var publicationViewModal = angular.element(".publication-view-modal");
@@ -18,10 +17,18 @@ app.controller('PublicationViewCtrl', function($scope, $rootScope, mapQueries) {
         $scope.publication = data;
 
         $scope.publicationLoaded = true;
-        console.log(data)
+        console.log(data);
+
+        if (data.photos.length)
+            preloadImage(data.photos[0]);
     });
 
 
+
+    function preloadImage(image) {
+        var img = new Image();
+        img.src = image;
+    }
 
     $scope.changeBasePart = function() {
         $scope.publicationViewPart = $scope.publicationViewPart == "Detailed" ? "Photos" : "Detailed";
@@ -29,5 +36,22 @@ app.controller('PublicationViewCtrl', function($scope, $rootScope, mapQueries) {
 
     $scope.changeDetailedPart = function() {
         $scope.publicationViewDetailedPart = $scope.publicationViewDetailedPart == "Contacts" ? "Description" : "Contacts";
+    };
+});
+
+
+
+
+app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQueries) {
+
+    $scope.contactsLoaded = true;
+
+    $scope.sendMessage = function() {
+        $scope.contactsLoaded = false;
+    };
+
+    $scope.cancelSendMessage = function() {
+        $scope.sendingMessage = false;
+        $scope.message = "";
     };
 });

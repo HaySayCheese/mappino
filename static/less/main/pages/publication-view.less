@@ -103,6 +103,7 @@
                 }
             }
             .user-name {
+                margin-top: 10px;
                 font-size: @font-size-h3;
             }
             .user-phones {
@@ -116,6 +117,15 @@
 
                 :last-child {
                     border-bottom: 2px dashed @nice-violet;
+                }
+            }
+            .user-message {
+                width: 50%;
+                margin-top: 15px;
+                .center-block();
+
+                > .btn {
+                    margin-top: 5px;
                 }
             }
 
@@ -150,11 +160,11 @@
             .property-price {
                 font-size: @font-size-h4;
                 font-weight: bold;
-                //color: @nice-green;
                 line-height: @line-height-computed;
                 margin-top: 20px;
             }
-            .publication-loading {
+            .publication-loading,
+            .contacts-loading {
                 display: block;
                 height: 12px;
                 background: url("../../img/main/publication-view/ajax-loader.gif") center center no-repeat;
@@ -185,6 +195,37 @@
             }
             .btn:nth-child(3) {
                 width: 65px;
+            }
+        }
+    }
+
+    .photos-modal {
+        height: auto;
+        min-height: 500px;
+        background: @gray-light;
+
+        .close-photos-btn {
+            position: absolute;
+            bottom: 0px;
+            left: 50%;
+            .translate(-50%, 0);
+            border-radius: 0px;
+        }
+    }
+
+    .carousel {
+        .square(100%);
+        position: relative;
+        padding: 40px 0 80px;
+
+        .carousel-inner {
+            .square(100%);
+        }
+
+        .item {
+            .square(100%);
+            > img {
+                .center-block();
             }
         }
     }
