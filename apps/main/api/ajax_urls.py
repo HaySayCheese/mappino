@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, url
+from apps.main.api.realtors_contacts.ajax import RealtorsContacts
 from core.correspondence.ajax.main import NewMessage, NewCallRequest
 from core.publications.ajax.main import DetailedView
 
@@ -10,6 +11,7 @@ urlpatterns = patterns('apps.main.api',
 
     # detailed
     url(r'^ajax/api/detailed/publication/(\d+:\d+)/$', DetailedView.as_view()),
+    url(r'^ajax/api/detailed/publication/(\d+:\d+)/contacts/$', RealtorsContacts.as_view()),
 
 
     # correspondence

@@ -92,29 +92,32 @@ class Users(AbstractBaseUser):
 		return '{0} {1}'.format(self.first_name, self.last_name)
 
 
-	# def contacts(self):
-	# 	preferences = self.preferences()
-	# 	contacts = {}
-	#
-	# 	if preferences.showMobilePhone and self.mobile_phone:
-	# 		contacts['mobile_phone'] = self.mobile_phone
-	# 	if preferences.showAddMobilePhone and self.add_mobile_phone:
-	# 		contacts['add_mobile_phone'] = self.add_mobile_phone
-	# 	if preferences.showLandlinePhone and self.landline_phone:
-	# 		contacts['landline_phone'] = self.landline_phone
-	# 	if preferences.showAddLandlinePhone and self.add_landline_phone:
-	# 		contacts['add_landline_phone'] = self.add_landline_phone
-	# 	if preferences.showSkype and self.skype:
-	# 		contacts['skype'] = self.skype
-	# 	if preferences.showEmail:
-	# 		if self.work_email:
-	# 			contacts['email'] = self.work_email
-	# 		elif self.email:
-	# 			contacts['email'] = self.email
-	# 	return contacts
+	def contacts(self):
+		preferences = Preferences.by_user(self)
+		contacts = {}
 
 
+		if preferences.show_mobile_phone and self.mobile_phone:
+			contacts['mobile_phone'] = self.mobile_phone
 
+		if preferences.show_add_mobile_phone and self.add_mobile_phone:
+			contacts['add_mobile_phone'] = self.add_mobile_phone
+
+		if preferences.show_landline_phone and self.landline_phone:
+			contacts['landline_phone'] = self.landline_phone
+
+		if preferences.show_add_landline_phone and self.add_landline_phone:
+			contacts['add_landline_phone'] = self.add_landline_phone
+
+		if preferences.show_skype and self.skype:
+			contacts['skype'] = self.skype
+
+		if preferences.show_email:
+			if self.work_email:
+				contacts['email'] = self.work_email
+			elif self.email:
+				contacts['email'] = self.email
+		return contacts
 
 
 class Preferences(models.Model):
@@ -123,15 +126,15 @@ class Preferences(models.Model):
 
 	# fixme: camel case?
 	user = models.ForeignKey(Users)
-	sendNewClientEmailNotification = models.BooleanField(default=True)
-	sendNewClientSMSNotification = models.BooleanField(default=True)
+	send_new_client_email_notification = models.BooleanField(default=True)
+	send_new_client_sms_notification = models.BooleanField(default=True)
 
-	showMobilePhone = models.BooleanField(default=True)
-	showAddMobilePhone = models.BooleanField(default=True)
-	showLandlinePhone = models.BooleanField(default=True)
-	showAddLandlinePhone = models.BooleanField(default=True)
-	showEmail = models.BooleanField(default=True)
-	showSkype = models.BooleanField(default=True)
+	show_mobile_phone = models.BooleanField(default=True)
+	show_add_mobile_phone = models.BooleanField(default=True)
+	show_landline_phone = models.BooleanField(default=True)
+	show_add_landline_phone = models.BooleanField(default=True)
+	show_email = models.BooleanField(default=True)
+	show_skype = models.BooleanField(default=True)
 
 
 	@classmethod
