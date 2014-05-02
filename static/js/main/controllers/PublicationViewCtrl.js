@@ -46,6 +46,7 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
 
     $scope.contactsLoaded = false;
     $scope.message = {};
+    $scope.call_request = {};
 
     mapQueries.getPublicationContacts($rootScope.publicationIdPart).success(function(data) {
         $scope.contacts = data.contacts;
@@ -55,6 +56,19 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
     });
 
 
+    $scope.sendCallRequest = function() {
+
+        var btn = angular.element(".send-btn").button("loading");
+        mapQueries.sendPublicationCallRequest($rootScope.publicationIdPart, $scope.call_request).success(function(data) {
+            btn.button("reset");
+            $scope.call_request = {};
+            $scope.cancelSendCallRequest();
+        }).error(function() {
+            btn.button("reset");
+        });
+    };
+
+
     $scope.sendMessage = function() {
 
         var btn = angular.element(".send-btn").button("loading");
@@ -62,11 +76,14 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
             btn.button("reset");
             $scope.message = {};
             $scope.cancelSendMessage();
-
-            console.log(data);
         }).error(function() {
             btn.button("reset");
         });
+    };
+
+    $scope.cancelSendCallRequest = function() {
+        $scope.sendingCallRequest = false;
+        $scope.call_request = {};
     };
 
     $scope.cancelSendMessage = function() {

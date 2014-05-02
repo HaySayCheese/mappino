@@ -21,6 +21,13 @@ app.factory('mapQueries', function($http) {
                 email: message.email,
                 name: message.name
             })
+        },
+
+        sendPublicationCallRequest: function(tid_hid, call_request) {
+            return $http.post('ajax/api/notifications/send-call-request/' + tid_hid + '/', {
+                phone_number: call_request.phone,
+                name: call_request.name
+            })
         }
 
     }

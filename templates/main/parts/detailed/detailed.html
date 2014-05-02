@@ -61,15 +61,16 @@
                                 [[ contacts.first_name ]] [[ contacts.last_name ]]
                             </div>
                             <div class="user-phones">
-                                моб. телефон: [[ contacts.mobile_phone ]]<span ng-show="contacts.add_mobile_phone">, [[ contacts.add_mobile_phone ]]</span><br/>
-                                роб. телефон: [[ contacts.landline_phone ]]<span ng-show="contacts.add_landline_phone">, [[ contacts.add_landline_phone ]]</span><br/>
-                                Email: [[ contacts.email ]]<br/>
-                                Skype: [[ contacts.skype ]]
+                                Моб. телефон: <span ng-show="contacts.mobile_phone">[[ contacts.mobile_phone ]]</span><span ng-show="contacts.add_mobile_phone">, [[ contacts.add_mobile_phone ]]</span><br/>
+                                Роб. телефон: <span ng-show="contacts.landline_phone">[[ contacts.landline_phone ]]</span><span ng-show="contacts.add_landline_phone">, [[ contacts.add_landline_phone ]]</span><br/>
+                                Email: <span ng-show="contacts.email">[[ contacts.email ]]</span><br/>
+                                Skype: <span ng-show="contacts.skype">[[ contacts.skype ]]</span>
                             </div>
-                            <div class="user-btns">
-                                <div class="btn btn-primary btn-block">Заказать обратный звонок</div>
-                                <div class="btn btn-default btn-block" ng-click="sendingMessage = true" ng-hide="sendingMessage">Оставить сообщение</div>
+                            <div class="user-btns" ng-hide="sendingMessage || sendingCallRequest">
+                                <div class="btn btn-primary btn-block" ng-click="sendingCallRequest = true">Заказать обратный звонок</div>
+                                <div class="btn btn-default btn-block" ng-click="sendingMessage = true">Оставить сообщение</div>
                             </div>
+
                             <div class="user-message" ng-show="sendingMessage">
                                 <div class="row">
                                     <div class="col-sm-12">
@@ -84,8 +85,25 @@
                                     </div>
                                 </div>
                                 <textarea class="form-control" rows="2" placeholder="Введите текст сообщения" ng-model="message.text"></textarea>
-                                <div class="btn btn-default" ng-click="cancelSendMessage()">Отменить</div>
+                                <div class="btn btn-default" ng-click="cancelSendMessage()">Отмена</div>
                                 <div class="btn btn-primary pull-right send-btn" ng-click="sendMessage()" data-loading-text="Отправка данных..." ng-disabled="!message.text || !message.email">Отправить сообщение</div>
+                            </div>
+
+                            <div class="user-call-request" ng-show="sendingCallRequest">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="row">
+                                            <div class="col-sm-5">
+                                                <input type="text" class="form-control" placeholder="Имя"ng-model="call_request.name">
+                                            </div>
+                                            <div class="col-sm-7">
+                                                <input type="text" class="form-control" placeholder="Телефон" ng-model="call_request.phone" allow-only-number>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="btn btn-default" ng-click="cancelSendCallRequest()">Отмена</div>
+                                <div class="btn btn-primary pull-right send-btn" ng-click="sendCallRequest()" data-loading-text="Отправка данных..." ng-disabled="!call_request.name || !call_request.phone">Заказать обратный звонок</div>
                             </div>
                         </div>
                     </div>
