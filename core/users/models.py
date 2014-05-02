@@ -97,6 +97,7 @@ class Users(AbstractBaseUser):
 		contacts = {
 			'first_name': self.first_name,
 		    'last_name': self.last_name,
+		    'avatar_url': 'http://fake-here.com' # todo: замінити на реальну фотку
 		}
 
 		if preferences.show_mobile_phone and self.mobile_phone:
