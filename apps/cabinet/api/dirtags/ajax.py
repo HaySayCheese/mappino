@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from collective.decorators.views import login_required_or_forbidden
 from collective.exceptions import RecordAlreadyExists
 from collective.methods.request_data_getters import angular_post_parameters, angular_put_parameters
-from core.dirtags.constants import DIR_TAGS_COLORS
+from core.dirtags.constants import DIRTAGS_COLORS_IDS
 from core.dirtags.models import DirTags
 
 
@@ -120,7 +120,7 @@ def dirtags_handler(request, dirtag_id=None):
 
 		color_id = d.get('color_id', '')
 		if color_id != '':
-			if color_id not in DIR_TAGS_COLORS.keys():
+			if color_id not in DIRTAGS_COLORS_IDS.keys():
 				return HttpResponseBadRequest(
 					json.dumps(DT_PUT_RESPONSES['invalid_color_id']), content_type='application/json')
 			dirtag.color_id = color_id

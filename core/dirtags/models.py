@@ -4,7 +4,7 @@ from django.db.models import Q
 import operator
 from collective.exceptions import AlreadyExist, RecordAlreadyExists, RecordDoesNotExists
 from core.publications.constants import HEAD_MODELS, OBJECTS_TYPES
-from core.dirtags.constants import DIR_TAGS_COLORS
+from core.dirtags.constants import DIRTAGS_COLORS_IDS
 from core.users.models import Users
 
 
@@ -34,7 +34,7 @@ class DirTags(models.Model):
 		if not title:
 			raise ValueError('Title contains only spaces.')
 
-		if color_id not in DIR_TAGS_COLORS.keys():
+		if color_id not in DIRTAGS_COLORS_IDS.keys():
 			raise ValueError('Invalid @color_id')
 
 		try:

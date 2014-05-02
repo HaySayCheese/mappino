@@ -2,9 +2,9 @@
 from collective.constants import AbstractConstant
 
 
-class DirtagsColors(AbstractConstant):
+class DirtagsColorsIDs(AbstractConstant):
 	def __init__(self):
-		super(DirtagsColors, self).__init__()
+		super(DirtagsColorsIDs, self).__init__()
 		self.set_ids({
 			0: '0',
 			1: '1',
@@ -15,4 +15,4 @@ class DirtagsColors(AbstractConstant):
 			6: '6',
 			7: '7',
 		})
-DIR_TAGS_COLORS = DirtagsColors()
+DIRTAGS_COLORS_IDS = DirtagsColorsIDs()
