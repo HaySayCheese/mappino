@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 from apps.main.api.correspondence.ajax import SendMessageFromClient, SendCallRequestFromClient
+from apps.main.api.publications.ajax import DetailedView
 from apps.main.api.realtors_contacts.ajax import RealtorsContacts
-from core.publications.ajax.main import DetailedView
 
 
 urlpatterns = patterns('apps.main.api',

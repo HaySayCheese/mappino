@@ -1,12 +1,10 @@
 #coding=utf-8
 import json
 from django.conf import settings
-
-from collective.exceptions import RuntimeException
 from django.core.exceptions import SuspiciousOperation
-
-from django.http.response import HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.generic import View
+from collective.exceptions import RuntimeException
 from core.currencies.constants import CURRENCIES
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 

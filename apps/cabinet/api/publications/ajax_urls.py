@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from core.publications.ajax.cabinet import PhotoTitle, Photos, UploadPhoto
+from apps.cabinet.api.publications.ajax import UploadPhoto, Photos, PhotoTitle
 
 
 urlpatterns = patterns('apps.cabinet.api',
