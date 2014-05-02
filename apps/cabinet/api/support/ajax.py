@@ -1,14 +1,9 @@
-#coding=utf-8
 import json
-
-from django.http import HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils.decorators import method_decorator
 from django.views.generic import View
-
 from collective.decorators.views import login_required_or_forbidden
-
 from collective.exceptions import InvalidArgument
-
 from collective.methods.request_data_getters import angular_parameters
 from core.support import support_agents_notifier
 from core.support.models import Tickets

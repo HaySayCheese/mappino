@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from core.support.ajax.cabinet import CloseTicket, TicketsView, MessagesView
+from apps.cabinet.api.support.ajax import TicketsView, CloseTicket, MessagesView
 
 
 urlpatterns = patterns('',
