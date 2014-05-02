@@ -44,10 +44,29 @@ app.controller('PublicationViewCtrl', function($scope, $rootScope, mapQueries) {
 
 app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQueries) {
 
-    $scope.contactsLoaded = true;
+    $scope.contactsLoaded = false;
+    $scope.message = {};
+
+    mapQueries.getPublicationContacts($rootScope.publicationIdPart).success(function(data) {
+        $scope.contacts = data.contacts;
+
+        $scope.contactsLoaded = true;
+        console.log(data);
+    });
+
 
     $scope.sendMessage = function() {
-        $scope.contactsLoaded = false;
+
+        var btn = angular.element(".send-btn").button("loading");
+        mapQueries.sendPublicationMessage($rootScope.publicationIdPart, $scope.message).success(function(data) {
+            btn.button("reset");
+            $scope.message = {};
+            $scope.cancelSendMessage();
+
+            console.log(data);
+        }).error(function() {
+            btn.button("reset");
+        });
     };
 
     $scope.cancelSendMessage = function() {
