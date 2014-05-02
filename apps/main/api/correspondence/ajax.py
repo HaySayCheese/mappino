@@ -87,7 +87,7 @@ class SendCallRequestFromClient(View):
 			return HttpResponseBadRequest(json.dumps(
 				self.codes['invalid_parameters']), content_type='application/json')
 
-		phone_number = params['phone_number']
+		phone_number = params['phone-number']
 		client_name = params.get('name') # not required
 
 
