@@ -55,6 +55,9 @@ def send_new_message_notification(request, tid, hid, message, client_email, clie
 
 
 def send_new_call_request_notification(self, request, tid, hid, client_number, client_name=None):
+	# todo: додати перевірку, чи недсилався недавно рієлтору запит на дзвінок на цей номер
+	# можна використати інтервал в 2-3 години перед наступним повідомленням.
+
 	if not client_number:
 		raise InvalidArgument('Phone number can not be empty.')
 
