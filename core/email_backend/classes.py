@@ -35,7 +35,9 @@ class EmailDispatcher(object):
 			'html': html,
 		}
 		if reply_to is not None:
-			message['headers']['Reply-To'] = reply_to
+			message['headers'] = {
+				'Reply-To': reply_to
+			}
 
 		if not self.__send_email(message):
 			raise RuntimeException('Email can\'t be sent.')
