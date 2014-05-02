@@ -1,10 +1,10 @@
 #coding=utf-8
 from itertools import ifilter
+
 from django.db import connection
-from core.dirtags.models import DirTags
 
+from apps.cabinet.api.dirtags.models import DirTags
 from core.publications.constants import HEAD_MODELS, OBJECTS_TYPES, OBJECT_STATES
-
 
 
 def briefs_of_tag(tag):

@@ -11,8 +11,9 @@ from django.utils.timezone import now
 from collective.exceptions import InvalidArgument, RuntimeException
 
 from core.currencies import currencies_manager
+from core.currencies.constants import CURRENCIES
 from core.publications import models_signals
-from core.publications.constants import OBJECT_STATES, CURRENCIES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
+from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, EmptyRentPrice
 from core.users.models import Users
 

@@ -1,14 +1,18 @@
 #coding=utf-8
 from decimal import InvalidOperation
+
 from django.db.utils import IntegrityError
+from django.db import DatabaseError
+
 from collective.exceptions import RecordDoesNotExists
 from collective.methods.formatters import format_text, format_title
-from core.dirtags.models import DirTags, PublicationAlreadyExists
-from core.publications.constants import SALE_TRANSACTION_TYPES, CURRENCIES, LIVING_RENT_PERIODS, MARKET_TYPES, \
+from apps.cabinet.api.dirtags.models import DirTags, PublicationAlreadyExists
+from core.currencies.constants import CURRENCIES
+from core.publications.constants import SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, MARKET_TYPES, \
 	OBJECT_CONDITIONS, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES
 from core.publications.models import HousesSaleTerms, HousesRentTerms, HousesBodies
 from core.publications.objects_constants.houses import HOUSE_SALE_TYPES, HOUSE_RENT_TYPES
-from django.db import DatabaseError
+
 
 
 

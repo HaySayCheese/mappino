@@ -1,13 +1,15 @@
 #coding=utf-8
 from decimal import InvalidOperation
-from django.db import DatabaseError, IntegrityError
-from collective.exceptions import RecordDoesNotExists
 
+from django.db import DatabaseError, IntegrityError
+
+from collective.exceptions import RecordDoesNotExists
 from collective.methods.formatters import format_text, format_title
-from core.dirtags import DirTags
-from core.dirtags.models import PublicationAlreadyExists
-from core.publications.constants import RED_LINE_VALUES, SALE_TRANSACTION_TYPES, CURRENCIES, INDIVIDUAL_HEATING_TYPES, HEATING_TYPES, MARKET_TYPES, COMMERCIAL_RENT_PERIODS
+from apps.cabinet.api.dirtags.models import PublicationAlreadyExists, DirTags
+from core.currencies.constants import CURRENCIES
+from core.publications.constants import RED_LINE_VALUES, SALE_TRANSACTION_TYPES, INDIVIDUAL_HEATING_TYPES, HEATING_TYPES, MARKET_TYPES, COMMERCIAL_RENT_PERIODS
 from core.publications.models import WarehousesBodies, WarehousesRentTerms, WarehousesSaleTerms
+
 
 
 

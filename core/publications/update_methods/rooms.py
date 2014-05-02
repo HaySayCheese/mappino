@@ -1,13 +1,16 @@
 #coding=utf-8
 from decimal import InvalidOperation
+
 from django.db import DatabaseError, IntegrityError
+
 from collective.exceptions import RecordDoesNotExists
 from collective.methods.formatters import format_text, format_title
-from core.dirtags import DirTags
-from core.dirtags.models import PublicationAlreadyExists
-from core.publications.constants import CURRENCIES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, MARKET_TYPES, OBJECT_CONDITIONS, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, FLOOR_TYPES
+from apps.cabinet.api.dirtags.models import PublicationAlreadyExists, DirTags
+from core.currencies.constants import CURRENCIES
+from core.publications.constants import SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, MARKET_TYPES, OBJECT_CONDITIONS, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, FLOOR_TYPES
 from core.publications.models import RoomsBodies, RoomsRentTerms, RoomsSaleTerms
 from core.publications.objects_constants.flats import FLAT_BUILDING_TYPES, FLAT_ROOMS_PLANNINGS
+
 
 # Оновлює інформацію про кімнату.
 #

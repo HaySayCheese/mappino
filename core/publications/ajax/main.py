@@ -7,7 +7,8 @@ from django.core.exceptions import SuspiciousOperation
 
 from django.http.response import HttpResponseBadRequest, HttpResponse
 from django.views.generic import View
-from core.publications.constants import OBJECTS_TYPES, CURRENCIES, HEAD_MODELS
+from core.currencies.constants import CURRENCIES
+from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 
 
 class DetailedView(View):

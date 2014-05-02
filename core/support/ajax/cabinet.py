@@ -30,7 +30,8 @@ class TicketsView(View):
 		return super(TicketsView, self).dispatch(*args, **kwargs)
 
 
-	def get(self, request, *args):
+	@staticmethod
+	def get(request, *args):
 		"""
 		Віддає всі звернення до служби підтримки,
 		які належать користувачу, який згенерував запит.

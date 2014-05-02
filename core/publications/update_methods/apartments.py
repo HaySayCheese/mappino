@@ -4,11 +4,11 @@ from decimal import InvalidOperation
 from django.db import DatabaseError, IntegrityError
 
 from collective.exceptions import RecordDoesNotExists
-from core.dirtags import DirTags
-from core.dirtags.models import PublicationAlreadyExists
+from apps.cabinet.api.dirtags.models import PublicationAlreadyExists, DirTags
+from core.currencies.constants import CURRENCIES
 from core.publications.objects_constants.flats import FLAT_TYPES
 from collective.methods.formatters import format_text, format_title
-from core.publications.constants import FLOOR_TYPES, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, MARKET_TYPES, OBJECT_CONDITIONS, CURRENCIES, LIVING_RENT_PERIODS, SALE_TRANSACTION_TYPES
+from core.publications.constants import FLOOR_TYPES, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, MARKET_TYPES, OBJECT_CONDITIONS, LIVING_RENT_PERIODS, SALE_TRANSACTION_TYPES
 from core.publications.models import ApartmentsBodies, ApartmentsRentTerms, ApartmentsSaleTerms
 from core.publications.objects_constants.apartments import APARTMENTS_BUILDINGS_TYPES, APARTMENTS_ROOMS_PLANNING_TYPES
 

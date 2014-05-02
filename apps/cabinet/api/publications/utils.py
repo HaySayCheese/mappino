@@ -1,6 +1,7 @@
 #coding=utf-8
 from django.core import serializers
-from core.dirtags.models import DirTags
+
+from apps.cabinet.api.dirtags.models import DirTags
 
 
 def publication_data(tid, record):

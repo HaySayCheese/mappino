@@ -1,12 +1,13 @@
 #coding=utf-8
+import operator
+
 from django.db import models, IntegrityError
 from django.db.models import Q
-import operator
+
 from collective.exceptions import AlreadyExist, RecordAlreadyExists, RecordDoesNotExists
 from core.publications.constants import HEAD_MODELS, OBJECTS_TYPES
-from core.dirtags.constants import DIRTAGS_COLORS_IDS
+from apps.cabinet.api.dirtags.constants import DIRTAGS_COLORS_IDS
 from core.users.models import Users
-
 
 
 class PublicationAlreadyExists(AlreadyExist): pass

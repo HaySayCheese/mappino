@@ -99,13 +99,13 @@ else:
 		'django.contrib.sessions',
 
 	    'core.users',
-	    'core.dirtags',
 	    'core.publications',
 	    'core.markers_servers',
 	    'core.search',
 	    'core.support',
 
-		# 'south',
+	    'apps.cabinet.api.dirtags',
+		'apps.main.api.correspondence',
 	)
 	MIDDLEWARE_CLASSES = (
 		'django.contrib.sessions.middleware.SessionMiddleware',

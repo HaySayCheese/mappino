@@ -1,5 +1,6 @@
 #coding=utf-8
-from core.publications.constants import CURRENCIES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, MARKET_TYPES
+from core.currencies.constants import CURRENCIES
+from core.publications.constants import SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, MARKET_TYPES
 
 
 def sale_terms_index_data(head):

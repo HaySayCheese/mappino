@@ -1,5 +1,5 @@
 #coding=utf-8
-from core.publications.constants import CURRENCIES
+from core.currencies.constants import CURRENCIES
 
 
 DOL = 9.500

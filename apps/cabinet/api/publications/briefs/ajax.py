@@ -4,10 +4,10 @@ import json
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
+from apps.cabinet.api.dirtags.models import DirTags
 
 from apps.cabinet.api.publications.briefs.utils import briefs_of_tag, briefs_of_section, get_sections_counters
 from collective.decorators.views import login_required_or_forbidden
-from core.dirtags import DirTags
 
 
 

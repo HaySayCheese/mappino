@@ -1,13 +1,17 @@
 import copy
 import json
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
+
+from apps.cabinet.api.dirtags.models import DirTags
 from collective.decorators.views import login_required_or_forbidden
 from collective.exceptions import RecordAlreadyExists
 from collective.methods.request_data_getters import angular_post_parameters, angular_put_parameters
-from core.dirtags.constants import DIRTAGS_COLORS_IDS
-from core.dirtags.models import DirTags
+from apps.cabinet.api.dirtags.constants import DIRTAGS_COLORS_IDS
+
+
 
 
 # todo: refactor

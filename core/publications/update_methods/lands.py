@@ -1,14 +1,16 @@
 #coding=utf-8
 from decimal import InvalidOperation
-from django.db import DatabaseError, IntegrityError
-from collective.exceptions import RecordDoesNotExists
 
+from django.db import DatabaseError, IntegrityError
+
+from collective.exceptions import RecordDoesNotExists
 from collective.methods.formatters import format_text, format_title
-from core.dirtags import DirTags
-from core.dirtags.models import PublicationAlreadyExists
-from core.publications.constants import CURRENCIES, COMMERCIAL_RENT_PERIODS, SALE_TRANSACTION_TYPES, RED_LINE_VALUES
+from apps.cabinet.api.dirtags.models import PublicationAlreadyExists, DirTags
+from core.currencies.constants import CURRENCIES
+from core.publications.constants import COMMERCIAL_RENT_PERIODS, SALE_TRANSACTION_TYPES, RED_LINE_VALUES
 from core.publications.models import LandsBodies, LandsRentTerms, LandsSaleTerms
 from core.publications.objects_constants.lands import LAND_DRIVEWAYS
+
 
 
 # Оновлює інформацію про зем. ділянку.

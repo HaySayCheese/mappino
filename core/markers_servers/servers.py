@@ -5,10 +5,11 @@ import copy
 import abc
 from django.core.exceptions import SuspiciousOperation
 from collective.exceptions import InvalidArgument, RuntimeException
+from core.currencies.constants import CURRENCIES
 
 from core.currencies.currencies_manager import convert as convert_currency
 from core.markers_servers.utils import DegreeSegmentPoint, Point, SegmentPoint, DegreePoint
-from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, CURRENCIES, MARKET_TYPES, LIVING_RENT_PERIODS, \
+from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, MARKET_TYPES, LIVING_RENT_PERIODS, \
 	HEATING_TYPES
 from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
