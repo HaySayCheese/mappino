@@ -38,7 +38,7 @@
                     </div>
                 </div>
                 <div class="counter" ng-hide="!publication.title_photo">
-                    Фото<br/> 1 / [[ publication.photos.length + 1 ]]
+                    Фото<br/> 1 / [[ publication.photos.length ]]
                 </div>
             </div>
 
@@ -58,20 +58,34 @@
                                 <img src="{{ static }}img/main/publication-view/mark.png"/>
                             </div>
                             <div class="user-name">
-                                Марк Цукерберг
+                                [[ contacts.first_name ]] [[ contacts.last_name ]]
                             </div>
                             <div class="user-phones">
-                                моб. телефон: (050) 82-42-618 <br/>
-                                роб. телефон: (050) 82-42-618
+                                моб. телефон: [[ contacts.mobile_phone ]]<span ng-show="contacts.add_mobile_phone">, [[ contacts.add_mobile_phone ]]</span><br/>
+                                роб. телефон: [[ contacts.landline_phone ]]<span ng-show="contacts.add_landline_phone">, [[ contacts.add_landline_phone ]]</span><br/>
+                                Email: [[ contacts.email ]]<br/>
+                                Skype: [[ contacts.skype ]]
                             </div>
                             <div class="user-btns">
                                 <div class="btn btn-primary btn-block">Заказать обратный звонок</div>
                                 <div class="btn btn-default btn-block" ng-click="sendingMessage = true" ng-hide="sendingMessage">Оставить сообщение</div>
                             </div>
                             <div class="user-message" ng-show="sendingMessage">
-                                <textarea class="form-control" rows="3" placeholder="Введите текст сообщения" ng-model="message"></textarea>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="row">
+                                            <div class="col-sm-5">
+                                                <input type="text" class="form-control" placeholder="Имя"ng-model="message.name">
+                                            </div>
+                                            <div class="col-sm-7">
+                                                <input type="text" class="form-control" placeholder="Email" ng-model="message.email">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <textarea class="form-control" rows="2" placeholder="Введите текст сообщения" ng-model="message.text"></textarea>
                                 <div class="btn btn-default" ng-click="cancelSendMessage()">Отменить</div>
-                                <div class="btn btn-primary pull-right" ng-click="sendMessage()">Отправить сообщение</div>
+                                <div class="btn btn-primary pull-right send-btn" ng-click="sendMessage()" data-loading-text="Отправка данных..." ng-disabled="!message.text || !message.email">Отправить сообщение</div>
                             </div>
                         </div>
                     </div>
