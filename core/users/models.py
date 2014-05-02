@@ -94,8 +94,10 @@ class Users(AbstractBaseUser):
 
 	def contacts(self):
 		preferences = Preferences.by_user(self)
-		contacts = {}
-
+		contacts = {
+			'first_name': self.first_name,
+		    'last_name': self.last_name,
+		}
 
 		if preferences.show_mobile_phone and self.mobile_phone:
 			contacts['mobile_phone'] = self.mobile_phone
