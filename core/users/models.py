@@ -120,6 +120,10 @@ class Users(AbstractBaseUser):
 		return contacts
 
 
+	def contact_email(self):
+		return self.work_email if self.work_email else self.email
+
+
 class Preferences(models.Model):
 	class Meta:
 		db_table = "users_preferences"

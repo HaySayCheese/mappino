@@ -6,9 +6,7 @@
     Здравствуйте.<br/>
     Вам оставлен запрос на обратный звонок по номеру {{ phone_number }}
     касательно объявления
-    <a href="{{ domain }}/cabinet/#!/publications/published/{{ publication.tid }}:{{ publication.hid }}/">
-        {{ publication.title }}
-    </a>:
+    <a href="{{ publication.url }}/">{{ publication.title }}</a>:
     {% if client_name %}
         <br/>
         Контактное лицо — {{ client_name }}.

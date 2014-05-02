@@ -1,10 +1,12 @@
 #coding=utf-8
 import json
+
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.generic import View
+
+from apps.main.api.correspondence.utils import send_new_message_notification, send_new_call_request_notification
 from collective.exceptions import InvalidArgument
 from collective.methods.request_data_getters import angular_parameters
-from core.correspondence import notifications_dispatcher
 
 
 class SendMessageFromClient(View):
@@ -45,7 +47,7 @@ class SendMessageFromClient(View):
 
 
 		try:
-			notifications_dispatcher.send_new_message_notification(request, tid, hid, message, client_email, client_name)
+			send_new_message_notification(request, tid, hid, message, client_email, client_name)
 		except InvalidArgument:
 			return HttpResponseBadRequest(json.dumps(self.codes['invalid_parameters']), content_type='application/json')
 
@@ -90,7 +92,7 @@ class SendCallRequestFromClient(View):
 
 
 		try:
-			notifications_dispatcher.send_new_call_request_notification(request, tid, hid, phone_number, client_name)
+			send_new_call_request_notification(request, tid, hid, phone_number, client_name)
 		except InvalidArgument:
 			return HttpResponseBadRequest(json.dumps(self.codes['invalid_parameters']), content_type='application/json')
 

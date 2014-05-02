@@ -103,7 +103,6 @@ else:
 	    'core.publications',
 	    'core.markers_servers',
 	    'core.search',
-	    'core.correspondence',
 	    'core.support',
 
 		# 'south',

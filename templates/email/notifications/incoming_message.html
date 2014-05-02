@@ -12,11 +12,8 @@
     {% endif %}
 
     сообщение касательно объявления
-    <a href="{{ domain }}/cabinet/#!/publications/published/{{ publication.tid }}:{{ publication.hid }}/">
-        {{ publication.title }}
-    </a>:
+    <a href="{{ publication.url }}/">{{ publication.title }}</a>: <br/><br/>
 
-    <br/><br/>
     {{ message }}
     <br/><br/>
     С уважением и пожеланием успехов,<br>
