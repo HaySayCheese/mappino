@@ -61,10 +61,10 @@
                                 [[ contacts.first_name ]] [[ contacts.last_name ]]
                             </div>
                             <div class="user-phones">
-                                Моб. телефон: <span ng-show="contacts.mobile_phone">[[ contacts.mobile_phone ]]</span><span ng-show="contacts.add_mobile_phone">, [[ contacts.add_mobile_phone ]]</span><br/>
-                                Роб. телефон: <span ng-show="contacts.landline_phone">[[ contacts.landline_phone ]]</span><span ng-show="contacts.add_landline_phone">, [[ contacts.add_landline_phone ]]</span><br/>
-                                Email: <span ng-show="contacts.email">[[ contacts.email ]]</span><br/>
-                                Skype: <span ng-show="contacts.skype">[[ contacts.skype ]]</span>
+                                <div ng-show="contacts.mobile_phone">Моб. телефон: [[ contacts.mobile_phone ]]<span ng-show="contacts.add_mobile_phone">, [[ contacts.add_mobile_phone ]]</span></div>
+                                <div ng-show="contacts.landline_phone">Роб. телефон: [[ contacts.landline_phone ]]<span ng-show="contacts.add_landline_phone">, [[ contacts.add_landline_phone ]]</span></div>
+                                <div ng-show="contacts.email">Email: [[ contacts.email ]]</div>
+                                <div ng-show="contacts.skype">Skype: [[ contacts.skype ]]</div>
                             </div>
                             <div class="user-btns" ng-hide="sendingMessage || sendingCallRequest">
                                 <div class="btn btn-primary btn-block" ng-click="sendingCallRequest = true">Заказать обратный звонок</div>
