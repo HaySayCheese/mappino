@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
+from apps.main.api.correspondence.ajax import SendMessageFromClient, SendCallRequestFromClient
 from apps.main.api.realtors_contacts.ajax import RealtorsContacts
-from core.correspondence.ajax.main import NewMessage, NewCallRequest
 from core.publications.ajax.main import DetailedView
 
 
@@ -15,6 +15,6 @@ urlpatterns = patterns('apps.main.api',
 
 
     # correspondence
-    url(r'^ajax/api/notifications/send-message/(\d+:\d+)/$', NewMessage.as_view()),
-    url(r'^ajax/api/notifications/send-call-request/(\d+:\d+)/$', NewCallRequest.as_view()),
+    url(r'^ajax/api/notifications/send-message/(\d+:\d+)/$', SendMessageFromClient.as_view()),
+    url(r'^ajax/api/notifications/send-call-request/(\d+:\d+)/$', SendCallRequestFromClient.as_view()),
 )

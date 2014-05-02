@@ -1,15 +1,13 @@
 #coding=utf-8
 import json
-
-from django.http.response import HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.generic import View
-
 from collective.exceptions import InvalidArgument
 from collective.methods.request_data_getters import angular_parameters
 from core.correspondence import notifications_dispatcher
 
 
-class NewMessage(View):
+class SendMessageFromClient(View):
 	codes = {
 		'ok': {
 			'code': 0,
@@ -24,7 +22,8 @@ class NewMessage(View):
 
 	def post(self, request, *args):
 		"""
-		Обробляє запит на додавання нового повідомлення для рієлтора.
+		Надсилає власнику оголошення повідомлення від зацікавелного клієнта @message на адресу @email.
+		Якщо передано параметр @name - його буде використано в листі.
 		"""
 		try:
 			tid, hid = args[0].split(':')
@@ -44,15 +43,17 @@ class NewMessage(View):
 		client_email = params['email']
 		client_name = params.get('name') # not required
 
+
 		try:
 			notifications_dispatcher.send_new_message_notification(request, tid, hid, message, client_email, client_name)
 		except InvalidArgument:
-			return HttpResponseBadRequest(json.dumps(
-				self.codes['invalid_parameters']), content_type='application/json')
+			return HttpResponseBadRequest(json.dumps(self.codes['invalid_parameters']), content_type='application/json')
+
 		return HttpResponse(json.dumps(self.codes['ok']), content_type="application/json")
 
 
-class NewCallRequest(View):
+
+class SendCallRequestFromClient(View):
 	codes = {
 		'ok': {
 			'code': 0,
@@ -67,7 +68,8 @@ class NewCallRequest(View):
 
 	def post(self, request, *args):
 		"""
-		Обробляє запит на додавання запиту на зворотній дзвінок для рієлтора.
+		Надсилає власнику оголошення запит на зворотній дзвінок на номер @phone-number.
+		Якщо передано параметр @name - його буде використано в повідомленні.
 		"""
 		try:
 			tid, hid = args[0].split(':')
@@ -78,7 +80,7 @@ class NewCallRequest(View):
 				self.codes['invalid_publication_id']), content_type='application/json')
 
 		try:
-			params = angular_parameters(request, ['phone_number'])
+			params = angular_parameters(request, ['phone-number'])
 		except ValueError:
 			return HttpResponseBadRequest(json.dumps(
 				self.codes['invalid_parameters']), content_type='application/json')
@@ -86,9 +88,10 @@ class NewCallRequest(View):
 		phone_number = params['phone_number']
 		client_name = params.get('name') # not required
 
+
 		try:
 			notifications_dispatcher.send_new_call_request_notification(request, tid, hid, phone_number, client_name)
 		except InvalidArgument:
-			return HttpResponseBadRequest(json.dumps(
-				self.codes['invalid_parameters']), content_type='application/json')
+			return HttpResponseBadRequest(json.dumps(self.codes['invalid_parameters']), content_type='application/json')
+
 		return HttpResponse(json.dumps(self.codes['ok']), content_type="application/json")
