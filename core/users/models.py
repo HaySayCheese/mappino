@@ -4,6 +4,7 @@ import string
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.tests.custom_user import CustomUserManager
 from django.db import models, transaction
+import phonenumbers
 
 from collective.exceptions import EmptyArgument
 
@@ -101,16 +102,20 @@ class Users(AbstractBaseUser):
 		}
 
 		if preferences.show_mobile_phone and self.mobile_phone:
-			contacts['mobile_phone'] = self.mobile_phone
+			contacts['mobile_phone'] = phonenumbers.format_number(
+				phonenumbers.parse(self.mobile_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
 
 		if preferences.show_add_mobile_phone and self.add_mobile_phone:
-			contacts['add_mobile_phone'] = self.add_mobile_phone
+			contacts['add_mobile_phone'] = phonenumbers.format_number(
+				phonenumbers.parse(self.add_mobile_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
 
 		if preferences.show_landline_phone and self.landline_phone:
-			contacts['landline_phone'] = self.landline_phone
+			contacts['landline_phone'] = phonenumbers.format_number(
+				phonenumbers.parse(self.landline_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
 
 		if preferences.show_add_landline_phone and self.add_landline_phone:
-			contacts['add_landline_phone'] = self.add_landline_phone
+			contacts['add_landline_phone'] = phonenumbers.format_number(
+				phonenumbers.parse(self.add_landline_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
 
 		if preferences.show_skype and self.skype:
 			contacts['skype'] = self.skype
