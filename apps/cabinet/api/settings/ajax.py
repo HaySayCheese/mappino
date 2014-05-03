@@ -67,6 +67,14 @@ class PersonalPagesAliasesManager(object):
 			    'code': 2
 		    }
 		}
+		delete_codes = {
+			'OK': {
+				'code': 0
+			},
+		    'no_alias': {
+			    'code': 1
+		    }
+		}
 
 
 		@method_decorator(login_required_or_forbidden)
@@ -111,3 +119,15 @@ class PersonalPagesAliasesManager(object):
 
 			return HttpResponse(json.dumps(
 				self.post_codes["OK"]), content_type="application/json")
+
+
+		def delete(self, request, *args):
+			records =  PersonalPagesAliases.objects.filter(user=request.user).only('id')[:1]
+			if not records:
+				return HttpResponse(json.dumps(
+					self.delete_codes['no_alias']), content_type="application/json")
+
+			alias = records[0]
+			alias.delete()
+			return HttpResponse(json.dumps(
+				self.delete_codes['OK']), content_type="application/json")

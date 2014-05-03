@@ -354,3 +354,41 @@ class AliasesCreatingDuplicates(unittest.TestCase):
 
 		record = PersonalPagesAliases.objects.filter(user=self.user)[0]
 		self.assertEqual(record.alias, 'new-value')
+
+
+class AliasesDelete(unittest.TestCase):
+	@classmethod
+	def setUpClass(cls):
+		cls.client = Client()
+		cls.user = Users.objects.create_user('mail@mail.com', '+380954699151', 'password')
+		cls.user.is_active = True # за замовчуванням аккаунти вимкнені
+		cls.user.save()
+		cls.client.login(username='+380954699151', password='password')
+
+
+	@classmethod
+	def tearDownClass(cls):
+		Users.objects.all().delete()
+		PersonalPagesAliases.objects.all().delete()
+
+
+	def test_deleting_normal(self):
+		PersonalPagesAliases.objects.create(
+			user = self.user,
+		    alias = 'test'
+		)
+
+		response = self.client.delete('/ajax/api/cabinet/settings/personal-page-aliases/')
+		data = json.loads(response.content)
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue('code' in data)
+		self.assertEqual(data['code'], 0)
+		self.assertEqual(PersonalPagesAliases.objects.filter(user=self.user).count(), 0)
+
+
+	def test_deleting_nonexistent(self):
+		response = self.client.delete('/ajax/api/cabinet/settings/personal-page-aliases/')
+		data = json.loads(response.content)
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue('code' in data)
+		self.assertEqual(data['code'], 1)
