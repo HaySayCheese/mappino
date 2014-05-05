@@ -7,7 +7,7 @@ from mappino.wsgi import templates
 
 @ensure_csrf_cookie
 def publications_panel_template(request):
-	t =  templates.get_template('cabinet/parts/publications.html')
+	t =  templates.get_template('cabinet/publications/publications.html')
 	return HttpResponse(t.render())
 
 
@@ -24,48 +24,61 @@ def unpublished_form_template(request, tid):
 
 	# Жилая недвижимость
 	if tid == OBJECTS_TYPES.house():
-		return HttpResponse(templates.get_template('cabinet/parts/unpublished/house.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/unpublished/house.html').render())
 	elif tid == OBJECTS_TYPES.flat():
-		return HttpResponse(templates.get_template('cabinet/parts/unpublished/flat.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/unpublished/flat.html').render())
 	elif tid == OBJECTS_TYPES.apartments():
-		return HttpResponse(templates.get_template('cabinet/parts/unpublished/apartments.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/unpublished/apartments.html').render())
 	elif tid == OBJECTS_TYPES.dacha():
-		return HttpResponse(templates.get_template('cabinet/parts/unpublished/dacha.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/unpublished/dacha.html').render())
 	elif tid == OBJECTS_TYPES.cottage():
-		return HttpResponse(templates.get_template('cabinet/parts/unpublished/cottage.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/unpublished/cottage.html').render())
 	elif tid == OBJECTS_TYPES.room():
-		return HttpResponse(templates.get_template('cabinet/parts/unpublished/room.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/unpublished/room.html').render())
 
 	# Коммерческая недвижимость
 	elif tid == OBJECTS_TYPES.trade():
-		return HttpResponse(templates.get_template('cabinet/parts/unpublished/trade.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/unpublished/trade.html').render())
 	elif tid == OBJECTS_TYPES.office():
-		return HttpResponse(templates.get_template('cabinet/parts/unpublished/office.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/unpublished/office.html').render())
 	elif tid == OBJECTS_TYPES.warehouse():
-		return HttpResponse(templates.get_template('cabinet/parts/unpublished/warehouse.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/unpublished/warehouse.html').render())
 	elif tid == OBJECTS_TYPES.business():
-		return HttpResponse(templates.get_template('cabinet/parts/unpublished/business.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/unpublished/business.html').render())
 	elif tid == OBJECTS_TYPES.catering():
-		return HttpResponse(templates.get_template('cabinet/parts/unpublished/catering.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/unpublished/catering.html').render())
 
 	# Другая недвижимость
 	elif tid == OBJECTS_TYPES.garage():
-		return HttpResponse(templates.get_template('cabinet/parts/unpublished/garage.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/unpublished/garage.html').render())
 	elif tid == OBJECTS_TYPES.land():
-		return HttpResponse(templates.get_template('cabinet/parts/unpublished/land.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/unpublished/land.html').render())
 
 	return HttpResponseBadRequest('@tid is invalid.')
 
 
 @ensure_csrf_cookie
 def unpublished_map_template(request):
-	t =  templates.get_template('cabinet/parts/unpublished/parts/map.html')
+	t =  templates.get_template('cabinet/publications/unpublished/parts/map.html')
 	return HttpResponse(t.render())
 
 
 @ensure_csrf_cookie
 def unpublished_photos_template(request):
-	t =  templates.get_template('cabinet/parts/unpublished/parts/photos.html')
+	t =  templates.get_template('cabinet/publications/unpublished/parts/photos.html')
 	return HttpResponse(t.render())
 
 
@@ -82,34 +95,47 @@ def published_form_template(request, tid):
 
 	# Жилая недвижимость
 	if tid == OBJECTS_TYPES.house():
-		return HttpResponse(templates.get_template('cabinet/parts/published/house.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/published/house.html').render())
 	elif tid == OBJECTS_TYPES.flat():
-		return HttpResponse(templates.get_template('cabinet/parts/published/flat.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/published/flat.html').render())
 	elif tid == OBJECTS_TYPES.apartments():
-		return HttpResponse(templates.get_template('cabinet/parts/published/apartments.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/published/apartments.html').render())
 	elif tid == OBJECTS_TYPES.dacha():
-		return HttpResponse(templates.get_template('cabinet/parts/published/dacha.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/published/dacha.html').render())
 	elif tid == OBJECTS_TYPES.cottage():
-		return HttpResponse(templates.get_template('cabinet/parts/published/cottage.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/published/cottage.html').render())
 	elif tid == OBJECTS_TYPES.room():
-		return HttpResponse(templates.get_template('cabinet/parts/published/room.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/published/room.html').render())
 
 	# Коммерческая недвижимость
 	elif tid == OBJECTS_TYPES.trade():
-		return HttpResponse(templates.get_template('cabinet/parts/published/trade.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/published/trade.html').render())
 	elif tid == OBJECTS_TYPES.office():
-		return HttpResponse(templates.get_template('cabinet/parts/published/office.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/published/office.html').render())
 	elif tid == OBJECTS_TYPES.warehouse():
-		return HttpResponse(templates.get_template('cabinet/parts/published/warehouse.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/published/warehouse.html').render())
 	elif tid == OBJECTS_TYPES.business():
-		return HttpResponse(templates.get_template('cabinet/parts/published/business.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/published/business.html').render())
 	elif tid == OBJECTS_TYPES.catering():
-		return HttpResponse(templates.get_template('cabinet/parts/published/catering.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/published/catering.html').render())
 
 	# Другая недвижимость
 	elif tid == OBJECTS_TYPES.garage():
-		return HttpResponse(templates.get_template('cabinet/parts/published/garage.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/published/garage.html').render())
 	elif tid == OBJECTS_TYPES.land():
-		return HttpResponse(templates.get_template('cabinet/parts/published/land.html').render())
+		return HttpResponse(templates.get_template(
+			'cabinet/publications/published/land.html').render())
 
 	return HttpResponseBadRequest('@tid is invalid.')

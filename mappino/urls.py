@@ -3,8 +3,8 @@ from django.conf.urls import patterns, url, include
 
 urlpatterns = patterns('apps',
     # templates
-    url(r'', include('apps.main.templates_ajax.urls')),
-	url(r'', include('apps.cabinet.templates_ajax.urls')),
+    url(r'', include('apps.main.templates_ajax.ajax_urls')),
+	url(r'', include('apps.cabinet.templates_ajax.ajax_urls')),
 
 
     # API for main pages
