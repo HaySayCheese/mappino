@@ -47,11 +47,8 @@ class AbstractPriceModel(AbstractModel):
 			return u''
 
 
-		# todo: переписати форматування ціни
-		# в данний момент ціна форматується таким чином: 0,000.0,
-		# тоді як за укр. стандартами має бути 0 000.0
-		price = u'{:,.2f}'.format(currencies_manager.convert(self.price, self.currency_sid, CURRENCIES.dol()))
-
+		price = u'{:,.2f}'.format(
+			currencies_manager.convert(self.price, self.currency_sid, CURRENCIES.dol())).replace(',',' ')
 		# видаляємо копійки, в ціні на нерухомість вони зайві
 		if price[-3] == '.':
 			price = price[:-3]
@@ -66,7 +63,8 @@ class AbstractPriceModel(AbstractModel):
 
 
 		# додаємо ціну в інших валютах
-		price_uah = u'{:,.2f}'.format(currencies_manager.convert(self.price, self.currency_sid, CURRENCIES.uah()))
+		price_uah = u'{:,.2f}'.format(
+			currencies_manager.convert(self.price, self.currency_sid, CURRENCIES.uah())).replace(',',' ')
 		# видаляємо копійки
 		if price_uah[-3] == '.':
 			price_uah = price_uah[:-3]
@@ -76,7 +74,8 @@ class AbstractPriceModel(AbstractModel):
 		price_uah += u' грн.'
 
 
-		price_eur = u'{:,.2f}'.format(currencies_manager.convert(self.price, self.currency_sid, CURRENCIES.eur()))
+		price_eur = u'{:,.2f}'.format(
+			currencies_manager.convert(self.price, self.currency_sid, CURRENCIES.eur())).replace(',',' ')
 		# видаляємо копійки
 		if price_eur[-3] == '.':
 			price_eur = price_eur[:-3]
