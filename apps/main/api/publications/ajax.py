@@ -1,11 +1,12 @@
 #coding=utf-8
 import json
+
 from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.generic import View
+
 from collective.exceptions import RuntimeException
-from core.currencies.constants import CURRENCIES
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 
 
@@ -30,15 +31,12 @@ class DetailedView(View):
 		    OBJECTS_TYPES.trade():      self.compose_trade_description,
 		    OBJECTS_TYPES.office():     self.compose_office_description,
 		    OBJECTS_TYPES.warehouse():  self.compose_warehouse_description,
-		    OBJECTS_TYPES.business():   self.compose_business_description, # todo: check me
-		    OBJECTS_TYPES.catering():   self.compose_catering_description, # todo: check me
+		    OBJECTS_TYPES.business():   self.compose_business_description,
+		    OBJECTS_TYPES.catering():   self.compose_catering_description,
 
 		    # другая недвижимость
-		    OBJECTS_TYPES.garage():     self.compose_garage_description, # todo: check me
-		    OBJECTS_TYPES.land():       self.compose_land_description, # todo: check me
-
-		    # todo: звірити обов’язкові поля
-		    # todo; перевірити інформацію у виводі
+		    OBJECTS_TYPES.garage():     self.compose_garage_description,
+		    OBJECTS_TYPES.land():       self.compose_land_description,
 		}
 
 	def get(self, request, *args):
@@ -122,16 +120,12 @@ class DetailedView(View):
 
 		if p.for_sale:
 			description.update({
-				'sale_price_uah': p.sale_terms.print_price(CURRENCIES.uah()),
-				'sale_price_dol': p.sale_terms.print_price(CURRENCIES.dol()),
-				'sale_price_eur': p.sale_terms.print_price(CURRENCIES.eur()),
+				'sale_price': p.sale_terms.print_price(),
 			    'sale_terms': p.sale_terms.print_add_terms()
 			})
 		if p.for_rent:
 			description.update({
-				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
-				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
-				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
+				'rent_price': p.sale_terms.print_price(),
 			    'rent_terms': p.rent_terms.print_terms(),
 			    'rent_facilities': p.rent_terms.print_facilities()
 			})
@@ -173,16 +167,12 @@ class DetailedView(View):
 
 		if p.for_sale:
 			description.update({
-				'sale_price_uah': p.sale_terms.print_price(CURRENCIES.uah()),
-				'sale_price_dol': p.sale_terms.print_price(CURRENCIES.dol()),
-				'sale_price_eur': p.sale_terms.print_price(CURRENCIES.eur()),
+				'sale_price': p.sale_terms.print_price(),
 			    'sale_terms': p.sale_terms.print_add_terms()
 			})
 		if p.for_rent:
 			description.update({
-				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
-				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
-				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
+				'rent_price': p.rent_terms.print_price(),
 			    'rent_terms': p.rent_terms.print_terms(),
 			    'rent_facilities': p.rent_terms.print_facilities()
 			})
@@ -215,16 +205,12 @@ class DetailedView(View):
 
 		if p.for_sale:
 			description.update({
-				'sale_price_uah': p.sale_terms.print_price(CURRENCIES.uah()),
-				'sale_price_dol': p.sale_terms.print_price(CURRENCIES.dol()),
-				'sale_price_eur': p.sale_terms.print_price(CURRENCIES.eur()),
+				'sale_price': p.sale_terms.print_price(),
 			    'sale_terms': p.sale_terms.print_add_terms()
 			})
 		if p.for_rent:
 			description.update({
-				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
-				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
-				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
+				'rent_price': p.rent_terms.print_price(),
 			    'rent_terms': p.rent_terms.print_terms(),
 			    'rent_facilities': p.rent_terms.print_facilities()
 			})
@@ -257,16 +243,12 @@ class DetailedView(View):
 
 		if p.for_sale:
 			description.update({
-				'sale_price_uah': p.sale_terms.print_price(CURRENCIES.uah()),
-				'sale_price_dol': p.sale_terms.print_price(CURRENCIES.dol()),
-				'sale_price_eur': p.sale_terms.print_price(CURRENCIES.eur()),
+				'sale_price': p.sale_terms.print_price(),
 			    'sale_terms': p.sale_terms.print_add_terms()
 			})
 		if p.for_rent:
 			description.update({
-				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
-				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
-				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
+				'rent_price': p.rent_terms.print_price(),
 			    'rent_terms': p.rent_terms.print_terms(),
 			    'rent_facilities': p.rent_terms.print_facilities()
 			})
@@ -303,16 +285,12 @@ class DetailedView(View):
 
 		if p.for_sale:
 			description.update({
-				'sale_price_uah': p.sale_terms.print_price(CURRENCIES.uah()),
-				'sale_price_dol': p.sale_terms.print_price(CURRENCIES.dol()),
-				'sale_price_eur': p.sale_terms.print_price(CURRENCIES.eur()),
+				'sale_price': p.sale_terms.print_price(),
 			    'sale_terms': p.sale_terms.print_add_terms()
 			})
 		if p.for_rent:
 			description.update({
-				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
-				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
-				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
+				'rent_price': p.rent_terms.print_price(),
 			    'rent_terms': p.rent_terms.print_terms(),
 			    'rent_facilities': p.rent_terms.print_facilities()
 			})
@@ -348,16 +326,12 @@ class DetailedView(View):
 
 		if p.for_sale:
 			description.update({
-				'sale_price_uah': p.sale_terms.print_price(CURRENCIES.uah()),
-				'sale_price_dol': p.sale_terms.print_price(CURRENCIES.dol()),
-				'sale_price_eur': p.sale_terms.print_price(CURRENCIES.eur()),
+				'sale_price': p.sale_terms.print_price(),
 			    'sale_terms': p.sale_terms.print_add_terms(),
 			})
 		if p.for_rent:
 			description.update({
-				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
-				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
-				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
+				'rent_price': p.rent_terms.print_price(),
 			    'rent_terms': p.rent_terms.print_terms(),
 			})
 		return description
@@ -389,16 +363,12 @@ class DetailedView(View):
 
 		if p.for_sale:
 			description.update({
-				'sale_price_uah': p.sale_terms.print_price(CURRENCIES.uah()),
-				'sale_price_dol': p.sale_terms.print_price(CURRENCIES.dol()),
-				'sale_price_eur': p.sale_terms.print_price(CURRENCIES.eur()),
+				'sale_price': p.sale_terms.print_price(),
 			    'sale_terms': p.sale_terms.print_add_terms(),
 			})
 		if p.for_rent:
 			description.update({
-				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
-				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
-				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
+				'rent_price': p.rent_terms.print_price(),
 			    'rent_terms': p.rent_terms.print_terms(),
 			})
 		return description
@@ -423,16 +393,12 @@ class DetailedView(View):
 
 		if p.for_sale:
 			description.update({
-				'sale_price_uah': p.sale_terms.print_price(CURRENCIES.uah()),
-				'sale_price_dol': p.sale_terms.print_price(CURRENCIES.dol()),
-				'sale_price_eur': p.sale_terms.print_price(CURRENCIES.eur()),
+				'sale_price': p.sale_terms.print_price(),
 			    'sale_terms': p.sale_terms.print_add_terms(),
 			})
 		if p.for_rent:
 			description.update({
-				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
-				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
-				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
+				'rent_price': p.rent_terms.print_price(),
 			    'rent_terms': p.rent_terms.print_terms(),
 			})
 		return description
@@ -467,16 +433,12 @@ class DetailedView(View):
 
 		if p.for_sale:
 			description.update({
-				'sale_price_uah': p.sale_terms.print_price(CURRENCIES.uah()),
-				'sale_price_dol': p.sale_terms.print_price(CURRENCIES.dol()),
-				'sale_price_eur': p.sale_terms.print_price(CURRENCIES.eur()),
+				'sale_price': p.sale_terms.print_price(),
 			    'sale_terms': p.sale_terms.print_add_terms(),
 			})
 		if p.for_rent:
 			description.update({
-				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
-				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
-				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
+				'rent_price': p.rent_terms.print_price(),
 			    'rent_terms': p.rent_terms.print_terms(),
 			})
 		return description
@@ -511,16 +473,12 @@ class DetailedView(View):
 
 		if p.for_sale:
 			description.update({
-				'sale_price_uah': p.sale_terms.print_price(CURRENCIES.uah()),
-				'sale_price_dol': p.sale_terms.print_price(CURRENCIES.dol()),
-				'sale_price_eur': p.sale_terms.print_price(CURRENCIES.eur()),
+				'sale_price': p.sale_terms.print_price(),
 			    'sale_terms': p.sale_terms.print_add_terms(),
 			})
 		if p.for_rent:
 			description.update({
-				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
-				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
-				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
+				'rent_price': p.rent_terms.print_price(),
 			    'rent_terms': p.rent_terms.print_terms(),
 			})
 		return description
@@ -541,16 +499,12 @@ class DetailedView(View):
 
 		if p.for_sale:
 			description.update({
-				'sale_price_uah': p.sale_terms.print_price(CURRENCIES.uah()),
-				'sale_price_dol': p.sale_terms.print_price(CURRENCIES.dol()),
-				'sale_price_eur': p.sale_terms.print_price(CURRENCIES.eur()),
+				'sale_price': p.sale_terms.print_price(),
 			    'sale_terms': p.sale_terms.print_add_terms(),
 			})
 		if p.for_rent:
 			description.update({
-				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
-				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
-				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
+				'rent_price': p.rent_terms.print_price(),
 			    'rent_terms': p.rent_terms.print_terms(),
 			})
 		return description
@@ -570,16 +524,12 @@ class DetailedView(View):
 
 		if p.for_sale:
 			description.update({
-				'sale_price_uah': p.sale_terms.print_price(CURRENCIES.uah()),
-				'sale_price_dol': p.sale_terms.print_price(CURRENCIES.dol()),
-				'sale_price_eur': p.sale_terms.print_price(CURRENCIES.eur()),
+				'sale_price': p.sale_terms.print_price(),
 			    'sale_terms': p.sale_terms.print_add_terms(),
 			})
 		if p.for_rent:
 			description.update({
-				'rent_price_uah': p.rent_terms.print_price(CURRENCIES.uah()),
-				'rent_price_dol': p.rent_terms.print_price(CURRENCIES.dol()),
-				'rent_price_eur': p.rent_terms.print_price(CURRENCIES.eur()),
+				'rent_price': p.rent_terms.print_price(),
 			    'rent_terms': p.rent_terms.print_terms(),
 			})
 		return description
