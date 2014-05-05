@@ -12,7 +12,11 @@ app.config(function($routeProvider) {
         })
 
         .when('/settings', {
-            templateUrl: "/ajax/template/cabinet/publications/"
+            templateUrl: "/ajax/template/cabinet/settings/"
+        })
+
+        .when('/support', {
+            templateUrl: "/ajax/template/cabinet/support/"
         })
 
         .otherwise({
