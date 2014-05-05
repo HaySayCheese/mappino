@@ -288,8 +288,8 @@ class BaseMarkersManager(object):
 
 		converted_price = convert_currency(price, base_currency, destination_currency)
 		if int(converted_price) == converted_price:
-			return result + u'{:0,.0f}'.format(converted_price) # відсікти дробову частину
-		return result + u'{:0,.2f}'.format(converted_price)
+			return result + u'{:0,.0f}'.format(converted_price).replace(',',' ') # відсікти дробову частину
+		return result + u'{:0,.2f}'.format(converted_price).replace(',',' ')
 
 
 	@staticmethod
