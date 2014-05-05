@@ -31,7 +31,11 @@
 
         <div class="modal-content content-white" ng-switch-when="Detailed">
             <div class="publication-photo pull-left">
-                <img ng-src="[[ publication.title_photo ]]" ng-show="publication.title_photo" ng-click="changeBasePart()"/>
+                <div class="photo" ng-show="publication.title_photo" ng-click="changeBasePart()">
+                    <div class="overlay"></div>
+                    <img ng-src="[[ publication.title_photo ]]" ng-click="changeBasePart()"/>
+                </div>
+
                 <div class="no-photo" ng-hide="publication.title_photo">
                     <div class="text">
                         К сожалению, нет ни одной фотографии
@@ -63,7 +67,7 @@
                             <div class="user-phones">
                                 <div ng-show="contacts.mobile_phone">Моб. телефон: [[ contacts.mobile_phone ]]<span ng-show="contacts.add_mobile_phone">, [[ contacts.add_mobile_phone ]]</span></div>
                                 <div ng-show="contacts.landline_phone">Роб. телефон: [[ contacts.landline_phone ]]<span ng-show="contacts.add_landline_phone">, [[ contacts.add_landline_phone ]]</span></div>
-                                <div ng-show="contacts.email">Email: [[ contacts.email ]]</div>
+                                <div ng-show="contacts.email">Эл. почта: [[ contacts.email ]]</div>
                                 <div ng-show="contacts.skype">Skype: [[ contacts.skype ]]</div>
                             </div>
                             <div class="user-btns" ng-hide="sendingMessage || sendingCallRequest">
@@ -79,7 +83,7 @@
                                                 <input type="text" class="form-control" placeholder="Имя"ng-model="message.name">
                                             </div>
                                             <div class="col-sm-7">
-                                                <input type="text" class="form-control" placeholder="Email" ng-model="message.email">
+                                                <input type="text" class="form-control" placeholder="Эл. почта" ng-model="message.email">
                                             </div>
                                         </div>
                                     </div>
@@ -90,20 +94,10 @@
                             </div>
 
                             <div class="user-call-request" ng-show="sendingCallRequest">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="row">
-                                            <div class="col-sm-5">
-                                                <input type="text" class="form-control" placeholder="Имя"ng-model="call_request.name">
-                                            </div>
-                                            <div class="col-sm-7">
-                                                <input type="text" class="form-control" placeholder="Телефон" ng-model="call_request.phone" allow-only-number>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <input type="text" class="form-control" placeholder="Имя"ng-model="call_request.name">
+                                <input type="text" class="form-control" placeholder="Телефон" ng-model="call_request.phone" allow-only-number>
+                                <div class="btn btn-primary send-btn" ng-click="sendCallRequest()" data-loading-text="Отправка данных..." ng-disabled="!call_request.name || !call_request.phone">Заказать обратный звонок</div>
                                 <div class="btn btn-default" ng-click="cancelSendCallRequest()">Отмена</div>
-                                <div class="btn btn-primary pull-right send-btn" ng-click="sendCallRequest()" data-loading-text="Отправка данных..." ng-disabled="!call_request.name || !call_request.phone">Заказать обратный звонок</div>
                             </div>
                         </div>
                     </div>
@@ -247,13 +241,13 @@
                             [[ publication.facilities ]]
                         </div>
                         <div class="property-price" ng-show="publication.sale_price_uah">
-                            Продажа: [[ publication.sale_price_dol ]], [[ publication.sale_price_eur ]], [[ publication.sale_price_uah ]]
+                            Продажа: [[ publication.price ]]
                         </div>
                         <div class="other-properties" ng-show="publication.sale_terms">
                             [[ publication.sale_terms ]]
                         </div>
                         <div class="property-price" ng-show="publication.rent_price_uah">
-                            Аренда: [[ publication.rent_price_dol ]], [[ publication.rent_price_eur ]], [[ publication.rent_price_uah ]]
+                            Аренда: [[ publication.price ]]
                         </div>
                         <div class="other-properties" ng-show="publication.rent_terms">
                             [[ publication.rent_terms ]]

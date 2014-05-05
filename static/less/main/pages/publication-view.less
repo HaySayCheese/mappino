@@ -19,7 +19,27 @@
 
     .publication-photo {
         .size(300px, 600px);
+        position: relative;
         cursor: pointer;
+
+
+        .photo > .overlay {
+            .size(300px, 600px);
+            position: absolute;
+            z-index: 100;
+            background-color: transparent;
+            background-image: url("../../img/main/publication-view/fool-size.png");
+            background-repeat: no-repeat;
+            background-position: center center;
+            .opacity(0);
+            .transition(~"all 0.2s linear");
+        }
+        .photo:hover {
+            .overlay {
+                background-color: rgba(0,0,0,0.5);
+                .opacity(1);
+            }
+        }
 
         > .counter {
             .square(65px);
@@ -27,6 +47,7 @@
             position: absolute;
             left: 0;
             bottom: 0;
+            z-index: 90;
 
             text-align: center;
 
@@ -133,6 +154,14 @@
 
                 > textarea {
                     margin-top: 10px;
+                }
+            }
+            .user-call-request {
+                padding: 10px 50px 0 50px;
+                text-align: center;
+
+                .form-control {
+                    margin-bottom: 10px;
                 }
             }
 
