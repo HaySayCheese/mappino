@@ -155,7 +155,7 @@
                 <div class="menu-block">
                     <div class="menu-block-header icon-user">Учетная запись</div>
                     <ul class="menu-block-list">
-                        <li ng-class="{ 'active': routeBase == 'help-me' }"><a href="#!/help-me"><span class="menu-icon icon-support"></span>Онлайн поддержка</a></li>
+                        <li ng-class="{ 'active': routeBase == 'help-me' }"><a href="#!/support"><span class="menu-icon icon-support"></span>Онлайн поддержка</a></li>
                         <li ng-class="{ 'active': routeBase == 'settings' }"><a href="#!/settings"><span class="menu-icon icon-settings"></span>Параметры</a></li>
                     </ul>
                 </div>
@@ -164,7 +164,7 @@
         </div>
 
 
-        <div class="sidebar-item-list" ng-controller="SidebarItemListCtrl" ng-hide="routeBase == 'settings'">
+        <div class="sidebar-item-list" ng-controller="SidebarItemListCtrl" ng-hide="routeBase == 'settings' || routeBase == 'support'">
             <div class="sidebar-item-list-header">
                 <input type="text" class="form-control" placeholder="Поиск..." ng-model="searchQuery">
             </div>
@@ -227,6 +227,7 @@
     <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarMenuCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarItemListCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarItemDetailedCtrl.js"></script>
+    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/settingsCtrl.js"></script>
 
     <script type="text/javascript" src="{{ static }}js/cabinet/directives/selectOnClick.js"></script>
     <script type="text/javascript" src="{{ static }}js/cabinet/directives/focusOnLoad.js"></script>

@@ -1,1 +1,120 @@
-settings
+<div class="sidebar-item-detailed" ng-controller="SettingsCtrl">
+
+    <div class="sidebar-item-detailed-body without-sidebar-list">
+        <div class="col-sm-12 col-lg-10 col-lg-offset-1">
+            <form class="form-horizontal" name="form.publication" novalidate>
+
+                <div class="row">
+                    <h3 id="settings-main-info">Основная информация</h3>
+
+                    <div class="col-sm-8 col-lg-5">
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">Имя:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" name="name" ng-model="user.name"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">Фамиллия:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" name="surname" ng-model="user.surname"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">Эл. адрес:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" name="email" ng-model="user.email"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">Моб. телефон:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" name="mobile_phone" ng-model="user.mobile_phone"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4 col-lg-4">
+                        <div class="user-photo-block text-center">
+                            <div class="photo">
+
+                            </div>
+                            <a href="">Сменить</a>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row">
+                    <h3 id="settings-other-contacts">Контакты</h3>
+
+                    <div class="col-sm-8 col-lg-5">
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">Раб. эл. почта:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" name="work_email" ng-model="user.work_email"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">Доп. моб. телефон:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" name="add_mobile_phone" ng-model="user.add_mobile_phone"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">Раб. телефон:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" name="work_phone" ng-model="user.work_phone"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">Доп. раб. телефон:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" name="add_work_phone" ng-model="user.add_work_phone"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">Skype:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" name="Skype" ng-model="user.skype"/>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+            </form>
+        </div>
+    </div>
+</div>

@@ -65,6 +65,10 @@
                 padding: 0 100px;
             }
         }
+
+        &.without-sidebar-list {
+            .size(calc(~"100% + 300px"), 100%);
+        }
     }
 
     h3 {
@@ -139,6 +143,17 @@
         .size(100%, 400px);
         display: block;
         border: 1px solid @gray-lighter;
+    }
+
+    .user-photo-block {
+        width: 180px;
+
+        > .photo {
+            .square(180px);
+            background: #f5f3f4;
+            border: 1px solid @gray-lighter;
+            border-radius: 50%;
+        }
     }
 
     form > .row:last-child {
