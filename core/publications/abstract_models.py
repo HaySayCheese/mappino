@@ -8,8 +8,8 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.db import models, transaction
 from django.utils.timezone import now
-from collective.exceptions import InvalidArgument, RuntimeException
 
+from collective.exceptions import InvalidArgument, RuntimeException
 from core.currencies import currencies_manager
 from core.currencies.constants import CURRENCIES
 from core.publications import models_signals
@@ -35,6 +35,65 @@ class AbstractModel(models.Model):
 			return cls.objects.filter(id=record_id)
 		except IndexError:
 			raise ObjectDoesNotExist()
+
+
+class AbstractPriceModel(AbstractModel):
+	class Meta:
+		abstract = True
+
+
+	def print_price(self):
+		if self.price is None:
+			return u''
+
+
+		# todo: переписати форматування ціни
+		# в данний момент ціна форматується таким чином: 0,000.0,
+		# тоді як за укр. стандартами має бути 0 000.0
+		price = u'{:,.2f}'.format(currencies_manager.convert(self.price, self.currency_sid, CURRENCIES.dol()))
+
+		# видаляємо копійки, в ціні на нерухомість вони зайві
+		if price[-3] == '.':
+			price = price[:-3]
+
+		# підказуємо користувачу, що валюта сконвертована в долари
+		if self.currency_sid != CURRENCIES.dol():
+			price = u'~' + price
+
+		price += u' дол.'
+		if self.is_contract:
+			price += u', договорная'
+
+
+		# додаємо ціну в інших валютах
+		price_uah = u'{:,.2f}'.format(currencies_manager.convert(self.price, self.currency_sid, CURRENCIES.uah()))
+		# видаляємо копійки
+		if price_uah[-3] == '.':
+			price_uah = price_uah[:-3]
+
+		if self.currency_sid != CURRENCIES.uah():
+			price_uah = u'~' + price_uah
+		price_uah += u' грн.'
+
+
+		price_eur = u'{:,.2f}'.format(currencies_manager.convert(self.price, self.currency_sid, CURRENCIES.eur()))
+		# видаляємо копійки
+		if price_eur[-3] == '.':
+			price_eur = price_eur[:-3]
+
+		if self.currency_sid != CURRENCIES.eur():
+			price_eur = u'~' + price_eur
+		price_eur += u' евро.'
+
+
+		price += u' ({0}, {1})'.format(price_uah, price_eur)
+		return price
+
+
+	def print_add_terms(self):
+		if self.add_terms is None:
+			return u''
+		return self.add_terms
 
 
 
@@ -300,7 +359,7 @@ class BodyModel(AbstractModel):
 
 
 
-class SaleTermsModel(AbstractModel):
+class SaleTermsModel(AbstractPriceModel):
 	class Meta:
 		abstract = True
 
@@ -327,39 +386,8 @@ class SaleTermsModel(AbstractModel):
 			raise EmptySalePrice('Sale price is None.')
 
 
-	#-- output
-	def print_price(self, currency=CURRENCIES.uah()):
-		if self.price is None:
-			return u''
 
-		price = u'{:.2f}'.format(currencies_manager.convert(self.price, self.currency_sid, currency))
-		if price and price[-3:] == '.00':
-			price = price[:-3]
-
-		if self.currency_sid != currency:
-			price = u'≈' + price
-
-		if currency == CURRENCIES.dol():
-			price += u' дол. США'
-		elif currency == CURRENCIES.eur():
-			price += u' евро'
-		elif currency == CURRENCIES.uah():
-			price += u' грн.'
-		if self.transaction_sid == SALE_TRANSACTION_TYPES.for_square_meter():
-			price += u'/м²'
-
-		if self.is_contract:
-			price += u' (цена договорная)'
-		return price
-
-
-	def print_add_terms(self):
-		if self.add_terms is None:
-			return u''
-		return self.add_terms
-
-
-class LivingRentTermsModel(AbstractModel):
+class LivingRentTermsModel(AbstractPriceModel):
 	class Meta:
 		abstract = True
 
@@ -397,30 +425,6 @@ class LivingRentTermsModel(AbstractModel):
 		"""
 		if self.price is None:
 			raise EmptyRentPrice('Rent price is None.')
-
-
-	#-- output
-	def print_price(self, currency=CURRENCIES.uah()):
-		if self.price is None:
-			return u''
-
-		price = u'{:.2f}'.format(currencies_manager.convert(self.price, self.currency_sid, currency))
-		if price and price[-3:] == '.00':
-			price = price[:-3]
-
-		if self.currency_sid != currency:
-			price = u'≈' + price
-
-		if currency == CURRENCIES.dol():
-			price += u' дол. США'
-		elif currency == CURRENCIES.eur():
-			price += u' евро'
-		elif currency == CURRENCIES.uah():
-			price += u' грн.'
-
-		if self.is_contract:
-			price += u' (цена договорная)'
-		return price
 
 
 	def print_terms(self):
@@ -472,7 +476,7 @@ class LivingRentTermsModel(AbstractModel):
 		return u''
 
 
-class CommercialRentTermsModel(AbstractModel):
+class CommercialRentTermsModel(AbstractPriceModel):
 	class Meta:
 		abstract = True
 
@@ -503,29 +507,6 @@ class CommercialRentTermsModel(AbstractModel):
 
 
 	#-- output
-	def print_price(self, currency=CURRENCIES.uah()):
-		if self.price is None:
-			return u''
-
-		price = u'{:.2f}'.format(currencies_manager.convert(self.price, self.currency_sid, currency))
-		if price and price[-3:] == '.00':
-			price = price[:-3]
-
-		if self.currency_sid != currency:
-			price = u'≈' + price
-
-		if currency == CURRENCIES.dol():
-			price += u' дол. США'
-		elif currency == CURRENCIES.eur():
-			price += u' евро'
-		elif currency == CURRENCIES.uah():
-			price += u' грн.'
-
-		if self.is_contract:
-			price += u' (цена договорная)'
-		return price
-
-
 	def print_terms(self):
 		terms = u''
 		if self.period_sid == COMMERCIAL_RENT_PERIODS.monthly():
