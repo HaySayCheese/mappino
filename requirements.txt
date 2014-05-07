@@ -1,0 +1,14 @@
+Django
+Jinja2
+MySQL-python
+Pillow
+South
+celery
+hiredis
+mandrill
+mmh3
+phonenumbers
+psycopg2cffi
+pysqlite
+pytz
+redis
