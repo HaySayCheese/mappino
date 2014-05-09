@@ -1,3 +1,4 @@
+#coding=utf-8
 import json
 from collective.decorators.views import login_required_or_forbidden
 from collective.exceptions import EmptyArgument, InvalidArgument, DuplicateValue, RuntimeException
@@ -9,6 +10,65 @@ from django.db import IntegrityError
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import View
+
+
+
+class AccountManager(object):
+	class AccountView(View):
+
+
+		@method_decorator(login_required_or_forbidden)
+		def dispatch(self, *args, **kwargs):
+			return super(AccountManager.AccountView, self).dispatch(*args, **kwargs)
+
+
+		def get(self, request, *args):
+			user = request.user
+			preferences = user.preferences
+
+
+			data = {
+				'account': {
+					'first_name': user.first_name or '',
+				    'last_name': user.last_name or '',
+				    'email': user.email or '',
+				    'work_email': user.work_email or '',
+				    'mobile_phone': user.mobile_phone or '',
+				    'add_mobile_phone': user.add_mobile_phone or '',
+				    'landline_phone': user.landline_phone or '',
+				    'add_landline_phone': user.add_landline_phone or '',
+				    'skype': user.skype or ''
+				},
+			    'preferences': {
+				    # bool values
+					'allow_call_requests': preferences.allow_call_requests,
+					'allow_messaging': preferences.allow_messaging,
+
+			        'hide_email': preferences.hide_email,
+			        'hide_mobile_phone_number': preferences.hide_phone_number,
+			        'hide_add_mobile_phone_number': preferences.hide_add_mobile_phone_number,
+
+			        'hide_landline_phone': preferences.hide_landline_phone,
+			        'hide_add_landline_phone': preferences.hide_add_landline_phone,
+					'hide_skype': preferences.hide_skype,
+
+			        # sids
+			        # todo
+			        ''
+			    }
+			}
+
+			# clearing empty parameters and forming response
+			data['account'].update((k, v) for k, v in data['account'].iteritems() if v is not None)
+
+
+			response_data = {
+
+			}
+
+
+
+
 
 
 class Account(View):
