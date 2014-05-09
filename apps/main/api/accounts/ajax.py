@@ -2,25 +2,24 @@
 import copy
 import json
 
-from django.conf import settings
-from django.contrib.auth import login, authenticate, logout
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
-from django.db import transaction
-from django.http.response import HttpResponseBadRequest, HttpResponse
-from django.utils.decorators import method_decorator
-from django.views.generic import View
-import phonenumbers
-from phonenumbers.phonenumberutil import NumberParseException
-
 from collective.decorators.views import anonymous_require
 from collective.methods.request_data_getters import angular_post_parameters
 from core.email_backend import email_sender
-from core.publications.constants import HEAD_MODELS, OBJECTS_TYPES
+from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 from core.users import tasks
-from core.users.ajax.utils import MobilePhoneChecker
+from apps.main.api.accounts.utils import MobilePhoneChecker
 from core.users.models import Users, AccessRestoreTokens
+from django.conf import settings
+from django.contrib.auth import authenticate, login, logout
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django.db import transaction
+from django.http import HttpResponseBadRequest, HttpResponse
+from django.utils.decorators import method_decorator
+from django.views.generic import View
 from mappino.wsgi import templates
+import phonenumbers
+from phonenumbers import NumberParseException
 
 
 class RegistrationManager(object):
@@ -421,7 +420,6 @@ class LoginManager(object):
 		}
 
 
-
 class AccessRestoreManager(object):
 	class BaseView(View):
 		@method_decorator(anonymous_require)
@@ -588,4 +586,3 @@ class Contacts(View):
 		data = copy.deepcopy(self.get_codes['OK']) # WARN: deep copy here
 		data['contacts'] = publication.owner.contacts()
 		return HttpResponse(json.dumps(data), content_type='application/json')
-

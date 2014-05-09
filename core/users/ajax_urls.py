@@ -1,6 +1,5 @@
+from apps.main.api.accounts.ajax import RegistrationManager, LoginManager, AccessRestoreManager
 from django.conf.urls import patterns, url
-from core.users.ajax.main import RegistrationManager, LoginManager, AccessRestoreManager
-
 
 
 urlpatterns = patterns('',

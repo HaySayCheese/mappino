@@ -1,7 +1,6 @@
+from apps.cabinet.api.accounts.ajax import Account
 from django.conf.urls import patterns, url
 from apps.cabinet.api.settings.ajax import PersonalPagesAliasesManager
-
-from core.users.ajax.cabinet import Account
 
 
 urlpatterns = patterns('',
