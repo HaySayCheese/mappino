@@ -47,6 +47,10 @@
         .bootstrap-select {
             margin: 0;
         }
+
+        &.without-sidebar-list {
+            .size(calc(~"100% + 300px"), 65px);
+        }
     }
 
     .sidebar-item-detailed-body {
@@ -67,7 +71,7 @@
         }
 
         &.without-sidebar-list {
-            .size(calc(~"100% + 300px"), 100%);
+            .size(calc(~"100% + 300px"), calc(~"100% - 65px"));
         }
     }
 
@@ -159,6 +163,20 @@
             border: 1px solid @gray-lighter;
             border-radius: 50%;
         }
+    }
+
+    .support-message-list {
+        padding: 0;
+        list-style: none;
+
+        li {
+            padding: 5px 5px 5px 25px;
+            border-bottom: 1px dashed @gray-lighter;
+        }
+    }
+
+    .checkbox-hint {
+        padding-left: 28px;
     }
 
     form > .row:last-child {

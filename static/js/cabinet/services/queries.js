@@ -75,6 +75,17 @@ app.factory('Queries', function($http, $upload) {
             counts: function(callback) {
                 return $http.get('/ajax/api/cabinet/publications/counters/').success(callback);
             }
+        },
+
+
+        Settings: {
+            load: function(callback) {
+                return $http.get("/ajax/api/cabinet/account/").success(callback);
+            },
+
+            check: function(data, callback) {
+                return $http.post("/ajax/api/cabinet/account/", data).success(callback);
+            }
         }
 
     }

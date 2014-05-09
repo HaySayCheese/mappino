@@ -1,8 +1,13 @@
 <div class="sidebar-item-detailed" ng-controller="SettingsCtrl">
+    <div class="sidebar-item-detailed-header without-sidebar-list">
+        <div class="btn btn-link btn-xlg pull-right">
+            <span class="btn-icon-exit"></span>
+        </div>
+    </div>
 
     <div class="sidebar-item-detailed-body without-sidebar-list">
         <div class="col-sm-12 col-lg-10 col-lg-offset-1">
-            <form class="form-horizontal" name="form.publication" novalidate>
+            <form class="form-horizontal" name="form.user" novalidate>
 
                 <div class="row">
                     <h3 id="settings-main-info">Основная информация</h3>
@@ -13,7 +18,7 @@
                             <div class="form-group">
                                 <label class="col-sm-5 control-label">Имя:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="name" ng-model="user.name"/>
+                                    <input type="text" class="form-control" name="first_name" ng-model="user.account.first_name"/>
                                 </div>
                             </div>
                         </div>
@@ -22,7 +27,7 @@
                             <div class="form-group">
                                 <label class="col-sm-5 control-label">Фамиллия:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="surname" ng-model="user.surname"/>
+                                    <input type="text" class="form-control" name="last_name" ng-model="user.account.last_name"/>
                                 </div>
                             </div>
                         </div>
@@ -31,7 +36,7 @@
                             <div class="form-group">
                                 <label class="col-sm-5 control-label">Эл. адрес:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="email" ng-model="user.email"/>
+                                    <input type="text" class="form-control" name="email" ng-model="user.account.email"/>
                                 </div>
                             </div>
                         </div>
@@ -40,7 +45,7 @@
                             <div class="form-group">
                                 <label class="col-sm-5 control-label">Моб. телефон:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="mobile_phone" ng-model="user.mobile_phone"/>
+                                    <input type="text" class="form-control" name="mobile_phone" ui-mask="+38 (099) 99 - 99 - 999" ng-model="user.account.mobile_phone"/>
                                 </div>
                             </div>
                         </div>
@@ -67,7 +72,7 @@
                             <div class="form-group">
                                 <label class="col-sm-5 control-label">Раб. эл. почта:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="work_email" ng-model="user.work_email"/>
+                                    <input type="text" class="form-control" name="work_email" ng-model="user.account.work_email"/>
                                 </div>
                             </div>
                         </div>
@@ -76,7 +81,7 @@
                             <div class="form-group">
                                 <label class="col-sm-5 control-label">Доп. моб. телефон:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="add_mobile_phone" ng-model="user.add_mobile_phone"/>
+                                    <input type="text" class="form-control" name="add_mobile_phone" ui-mask="+38 (099) 99 - 99 - 999" ng-model="user.account.add_mobile_phone"/>
                                 </div>
                             </div>
                         </div>
@@ -85,7 +90,7 @@
                             <div class="form-group">
                                 <label class="col-sm-5 control-label">Раб. телефон:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="work_phone" ng-model="user.work_phone"/>
+                                    <input type="text" class="form-control" name="landline_phone" ng-model="user.account.landline_phone"/>
                                 </div>
                             </div>
                         </div>
@@ -94,7 +99,7 @@
                             <div class="form-group">
                                 <label class="col-sm-5 control-label">Доп. раб. телефон:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="add_work_phone" ng-model="user.add_work_phone"/>
+                                    <input type="text" class="form-control" name="add_landline_phone" ng-model="user.add_landline_phone"/>
                                 </div>
                             </div>
                         </div>
@@ -103,7 +108,7 @@
                             <div class="form-group">
                                 <label class="col-sm-5 control-label">Skype:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="Skype" ng-model="user.skype"/>
+                                    <input type="text" class="form-control" name="skype" ng-model="user.account.skype"/>
                                 </div>
                             </div>
                         </div>
@@ -121,13 +126,13 @@
                             <div class="col-sm-12">
                                 <div class="col-sm-12 col-lg-6 form-group">
                                     <div class="checkbox">
-                                        <input id="allow_call_request" type="checkbox" name="allow_call_request" ng-model="user.allow_call_request">
-                                        <label for="allow_call_request">Разрешать запрос обратного звонка</label>
+                                        <input id="allow_call_requests" type="checkbox" name="allow_call_requests" ng-model="user.preferences.allow_call_requests">
+                                        <label for="allow_call_requests">Разрешать запрос обратного звонка</label>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-sm-4 col-lg-4 control-label">Присылать уведомления на:</label>
                                         <div class="col-sm-6">
-                                            <select name="cr_sending_notification" data-width="100%" ng-disabled="!user.allow_call_request" ng-model="user.cr_sending_notification">
+                                            <select name="send_call_request_notifications_to_sid" data-width="100%" ng-disabled="!user.preferences.allow_call_requests" ng-model="user.preferences.send_call_request_notifications_to_sid">
                                                 <option value="1">телефон посредством sms</option>
                                                 <option value="2">почту</option>
                                                 <option value="3">телефон и почту</option>
@@ -136,13 +141,13 @@
                                     </div>
 
                                     <div class="checkbox">
-                                        <input id="allow_messaging" type="checkbox" name="allow_messaging" ng-model="user.allow_messaging">
+                                        <input id="allow_messaging" type="checkbox" name="allow_messaging" ng-model="user.preferences.allow_messaging">
                                         <label for="allow_messaging">Разрешать оставлять сообщения через форму обратной связи</label>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-sm-4 col-lg-4 control-label">Присылать уведомления на:</label>
                                         <div class="col-sm-6">
-                                            <select name="am_sending_notification" data-width="100%" ng-disabled="!user.allow_messaging" ng-model="user.am_sending_notification">
+                                            <select name="send_message_notifications_to_sid" data-width="100%" ng-disabled="!user.preferences.allow_messaging" ng-model="user.preferences.send_message_notifications_to_sid">
                                                 <option value="1">телефон посредством sms</option>
                                                 <option value="2">почту</option>
                                                 <option value="3">телефон и почту</option>
@@ -159,30 +164,33 @@
                             <div class="col-sm-12">
                                 <div class="col-sm-12 col-lg-6 form-group">
                                     <div class="checkbox">
-                                        <input id="hide_mail" type="checkbox" name="hide_mail" ng-model="user.hide_mail">
-                                        <label for="hide_mail">Скрывать почту</label>
+                                        <input id="hide_email" type="checkbox" name="hide_email" ng-model="user.preferences.hide_email">
+                                        <label for="hide_email">Скрывать почту</label>
+                                    </div>
+                                    <div class="small text-muted checkbox-hint">
+                                        При запросе Ваших контактов адрес Вашей эл. почты будет скрыт, но клиенты смогут оставить Вам сообщение через форму обратной связи на нашем сайте, если она включена. Обратите внимание, ответив на сообщение клиента со своей почты Вы тем самым раскроете свой эл. адрес.
                                     </div>
 
                                     <div class="checkbox">
-                                        <input id="hide_mobile_phone" type="checkbox" name="hide_mobile_phone" ng-model="user.hide_mobile_phone">
-                                        <label for="hide_mobile_phone">Скрывать основной мобильный телефон</label>
+                                        <input id="hide_mobile_phone_number" type="checkbox" name="hide_mobile_phone_number" ng-model="user.preferences.hide_mobile_phone_number">
+                                        <label for="hide_mobile_phone_number">Скрывать основной мобильный телефон</label>
                                     </div>
 
                                     <div class="checkbox">
-                                        <input id="hide_add_mobile_phone" type="checkbox" name="hide_add_mobile_phone" ng-model="user.hide_add_mobile_phone">
-                                        <label for="hide_add_mobile_phone">Скрывать дополнительный мобильный телефон</label>
+                                        <input id="hide_add_mobile_phone_number" type="checkbox" name="hide_add_mobile_phone_number" ng-model="user.preferences.hide_add_mobile_phone_number">
+                                        <label for="hide_add_mobile_phone_number">Скрывать дополнительный мобильный телефон</label>
                                     </div>
                                 </div>
 
                                 <div class="col-sm-12 col-lg-6 form-group">
                                     <div class="checkbox">
-                                        <input id="hide_work_phone" type="checkbox" name="hide_work_phone" ng-model="user.hide_work_phone">
-                                        <label for="hide_work_phone">Скрывать рабочий телефон</label>
+                                        <input id="hide_landline_phone" type="checkbox" name="hide_landline_phone" ng-model="user.preferences.hide_landline_phone">
+                                        <label for="hide_landline_phone">Скрывать рабочий телефон</label>
                                     </div>
 
                                     <div class="checkbox">
-                                        <input id="hide_add_work_phone" type="checkbox" name="hide_add_work_phone" ng-model="user.hide_add_work_phone">
-                                        <label for="hide_add_work_phone">Скрывать дополнительный рабочий телефон</label>
+                                        <input id="hide_add_landline_phone" type="checkbox" name="hide_add_landline_phone" ng-model="user.preferences.hide_add_landline_phone">
+                                        <label for="hide_add_landline_phone">Скрывать дополнительный рабочий телефон</label>
                                     </div>
 
                                     <div class="checkbox">

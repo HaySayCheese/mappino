@@ -1,9 +1,45 @@
 'use strict';
 
-app.controller('SettingsCtrl', function($scope, $rootScope) {
+app.controller('SettingsCtrl', function($scope, $rootScope, Settings) {
 
     initScrollBar();
     initDropdowns();
+    initInputsChange();
+
+
+    Settings.load(function(data) {
+        $scope.user = data;
+    });
+
+
+    /**
+    * При втраті фокуса з інпута
+    * викликати запит на відправку на сервер
+    */
+    function initInputsChange() {
+        angular.element(".sidebar-item-detailed-body input[type='text']").bind("focusout", function(e) {
+            var name  = e.currentTarget.name,
+                value = e.currentTarget.value.replace(/\s+/g, " ");
+
+            if (!$scope.form.user[name].$dirty)
+                return;
+
+            Settings.checkInputs({ f: name, v: value }, function(newValue, code) {
+                if (newValue)
+                    e.currentTarget.value = newValue;
+
+                //$scope.form.user[name].$setValidity("incorrect", code === 0);
+            });
+
+        });
+
+        angular.element(".sidebar-item-detailed-body input[type='checkbox']").bind("change", function(e) {
+            var name  = e.currentTarget.name,
+                value = e.currentTarget.checked;
+
+            Settings.checkInputs({ f: name, v: value }, null);
+        });
+    }
 
 
     /**

@@ -19,6 +19,10 @@ app.config(function($routeProvider) {
             templateUrl: "/ajax/template/cabinet/support/"
         })
 
+        .when('/support/ticket/:id', {
+            templateUrl: "/ajax/template/cabinet/support/"
+        })
+
         .otherwise({
             redirectTo: '/publications/all'
         });
