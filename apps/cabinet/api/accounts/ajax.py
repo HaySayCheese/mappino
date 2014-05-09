@@ -10,13 +10,11 @@ from django.db import IntegrityError
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import View
-
+import phonenumbers
 
 
 class AccountManager(object):
 	class AccountView(View):
-
-
 		@method_decorator(login_required_or_forbidden)
 		def dispatch(self, *args, **kwargs):
 			return super(AccountManager.AccountView, self).dispatch(*args, **kwargs)
@@ -27,16 +25,49 @@ class AccountManager(object):
 			preferences = user.preferences()
 
 
+			# phones formatting
+			if user.mobile_phone:
+				mobile_phone_number = phonenumbers.format_number(
+					phonenumbers.parse(
+						user.mobile_phone), phonenumbers.PhoneNumberFormat.NATIONAL).replace(" ", '')
+			else:
+				mobile_phone_number = ''
+
+
+			if user.add_mobile_phone:
+				add_mobile_phone_number = phonenumbers.format_number(
+					phonenumbers.parse(
+						user.add_mobile_phone), phonenumbers.PhoneNumberFormat.NATIONAL).replace(" ", '')
+			else:
+				add_mobile_phone_number = ''
+
+
+			if user.landline_phone:
+				landline_phone_number = phonenumbers.format_number(
+					phonenumbers.parse(
+						user.landline_phone), phonenumbers.PhoneNumberFormat.NATIONAL).replace(" ", '')
+			else:
+				landline_phone_number = ''
+
+
+			if user.add_landline_phone:
+				add_landline_phone_number = phonenumbers.format_number(
+					phonenumbers.parse(
+						user.add_landline_phone), phonenumbers.PhoneNumberFormat.NATIONAL).replace(" ", '')
+			else:
+				add_landline_phone_number = ''
+
+
 			data = {
 				'account': {
 					'first_name': user.first_name or '',
 				    'last_name': user.last_name or '',
 				    'email': user.email or '',
 				    'work_email': user.work_email or '',
-				    'mobile_phone': user.mobile_phone or '',
-				    'add_mobile_phone': user.add_mobile_phone or '',
-				    'landline_phone': user.landline_phone or '',
-				    'add_landline_phone': user.add_landline_phone or '',
+				    'mobile_phone': mobile_phone_number,
+				    'add_mobile_phone': add_mobile_phone_number,
+				    'landline_phone': landline_phone_number,
+				    'add_landline_phone': add_landline_phone_number,
 				    'skype': user.skype or ''
 				},
 			    'preferences': {
@@ -62,6 +93,26 @@ class AccountManager(object):
 			data['account'].update((k, v) for k, v in data['account'].iteritems() if v is not None)
 
 			return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+	# class AccountUpdater(View):
+	# 	@method_decorator(login_required_or_forbidden)
+	# 	def dispatch(self, *args, **kwargs):
+	# 		return super(AccountManager.AccountUpdater, self).dispatch(*args, **kwargs)
+	#
+	#
+	# 	def post(self, request, *args):
+	# 		try:
+	# 			data = angular_post_parameters(request, ['field, value'])
+	# 		except ValueError:
+	# 			return HttpResponseBadRequest('Invalid or absent parameter @field or @value.')
+	#
+	# 		field = data.get('field', '')
+	# 		value = data.get('value', '')
+	# 		if (not field) or (not value):
+	# 			return HttpResponseBadRequest('Invalid or absent parameter @field or @value.')
+
+
 
 
 
