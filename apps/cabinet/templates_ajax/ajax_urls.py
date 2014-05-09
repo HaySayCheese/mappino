@@ -20,4 +20,5 @@ urlpatterns = patterns('apps.cabinet.templates_ajax',
 
     # support
     url(r'^ajax/template/cabinet/support/$', 'support.support_template'),
+    url(r'^ajax/template/cabinet/support/ticket/$', 'support.ticket_template'),
 )

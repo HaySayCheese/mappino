@@ -11,5 +11,7 @@ def support_template(request):
 	return HttpResponse(t.render())
 
 
-
-
+@ensure_csrf_cookie
+def ticket_template(request):
+	t = templates.get_template('cabinet/support/ticket.html')
+	return HttpResponse(t.render())
