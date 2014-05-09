@@ -53,21 +53,15 @@ class AccountManager(object):
 					'hide_skype': preferences.hide_skype,
 
 			        # sids
-			        # todo
-			        #''
+			        'send_call_requests_notifications_to_sid': preferences.send_call_requests_notifications_to_sid,
+			        'send_message_notifications_to_sid': preferences.send_call_request_to_sid,
 			    }
 			}
 
 			# clearing empty parameters and forming response
 			data['account'].update((k, v) for k, v in data['account'].iteritems() if v is not None)
 
-
-			response_data = {
-
-			}
-
-
-
+			return HttpResponse(json.dumps(data), content_type='application/json')
 
 
 

@@ -1,5 +1,6 @@
 #coding=utf-8
 import random
+from core.users import constants
 import re
 import string
 from django.contrib.auth.models import AbstractBaseUser
@@ -137,17 +138,21 @@ class Preferences(models.Model):
 	class Meta:
 		db_table = "users_preferences"
 
-	# fixme: camel case?
 	user = models.ForeignKey(Users)
-	send_new_client_email_notification = models.BooleanField(default=True)
-	send_new_client_sms_notification = models.BooleanField(default=True)
+	hide_email = models.BooleanField(default=False)
+	hide_mobile_phone_number = models.BooleanField(default=False)
+	hide_add_mobile_phone_number = models.BooleanField(default=False)
+	hide_landline_phone = models.BooleanField(default=False)
+	hide_add_landline_phone = models.BooleanField(default=True)
+	hide_skype = models.BooleanField(default=True)
 
-	show_mobile_phone = models.BooleanField(default=True)
-	show_add_mobile_phone = models.BooleanField(default=True)
-	show_landline_phone = models.BooleanField(default=True)
-	show_add_landline_phone = models.BooleanField(default=True)
-	show_email = models.BooleanField(default=True)
-	show_skype = models.BooleanField(default=True)
+	allow_call_requests = models.BooleanField(default=True)
+	send_call_request_notifications_to_sid = models.SmallIntegerField(
+		default=constants.Preferences.CALL_REQUEST_NOTIFICATIONS.sms())
+
+	allow_messaging = models.BooleanField(default=True)
+	send_message_notifications_to_sid = models.SmallIntegerField(
+		default=constants.Preferences.MESSAGE_NOTIFICATIONS.email())
 
 
 	@classmethod
@@ -199,6 +204,10 @@ class AccessRestoreTokens(models.Model):
 
 
 class PersonalPagesAliases(models.Model):
+	class Meta:
+		db_table = "users_personal_page_aliases"
+
+
 	user = models.ForeignKey(Users, unique=True)
 	alias = models.TextField(unique=True)
 
