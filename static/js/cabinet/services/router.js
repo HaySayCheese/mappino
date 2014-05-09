@@ -19,7 +19,7 @@ app.config(function($routeProvider) {
             templateUrl: "/ajax/template/cabinet/support/"
         })
 
-        .when('/support/ticket/:id', {
+        .when('/support/ticket/:ticketId', {
             templateUrl: "/ajax/template/cabinet/support/"
         })
 

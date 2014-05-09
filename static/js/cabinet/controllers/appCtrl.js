@@ -33,6 +33,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
         $rootScope.routeBase     = "";
         $rootScope.routeSection  = "";
         $rootScope.publicationId = "";
+        $rootScope.isSupportPage = false;
 
         if ($location.path().replace("/", ""))
             $rootScope.routeBase = $location.path().replace("/", "");
@@ -42,6 +43,9 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
 
         if ($routeParams.pubId)
             $rootScope.publicationId = $routeParams.pubId;
+
+        if ($routeParams.ticketId)
+            $rootScope.isSupportPage = true;
     });
 
 
