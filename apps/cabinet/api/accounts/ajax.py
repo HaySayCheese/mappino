@@ -1,17 +1,14 @@
-#coding=utf-8
 import json
-
-from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
-from django.http.response import HttpResponseBadRequest, HttpResponse
-from django.utils.decorators import method_decorator
-from django.views.generic import View
-
 from collective.decorators.views import login_required_or_forbidden
-from collective.exceptions import InvalidArgument, EmptyArgument, RuntimeException, DuplicateValue
+from collective.exceptions import EmptyArgument, InvalidArgument, DuplicateValue, RuntimeException
 from collective.methods.request_data_getters import angular_post_parameters
 from collective.validators import validate_mobile_phone_number
 from core.users.models import UsersManager
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
+from django.http import HttpResponseBadRequest, HttpResponse
+from django.utils.decorators import method_decorator
+from django.views.generic import View
 
 
 class Account(View):
@@ -319,4 +316,3 @@ class Account(View):
 
 		user.add_landline_phone = phone
 		user.save()
-
