@@ -2,6 +2,8 @@
 
 app.controller('SettingsCtrl', function($scope, $rootScope, Settings) {
 
+    $rootScope.loadings.settings = true;
+
     initScrollBar();
     initDropdowns();
     initInputsChange();
@@ -9,6 +11,7 @@ app.controller('SettingsCtrl', function($scope, $rootScope, Settings) {
 
     Settings.load(function(data) {
         $scope.user = data;
+        $rootScope.loadings.settings = false;
     });
 
 

@@ -7,7 +7,7 @@
 
     <div class="sidebar-item-detailed-body without-sidebar-list">
         <div class="col-sm-12 col-lg-10 col-lg-offset-1">
-            <form class="form-horizontal" name="form.user" novalidate>
+            <form class="form-horizontal" name="form.user" ng-hide="loadings.settings" novalidate>
 
                 <div class="row">
                     <h3 id="settings-main-info">Основная информация</h3>
@@ -124,13 +124,13 @@
                     <div class="col-sm-12 form-group">
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="col-sm-12 col-lg-6 form-group">
+                                <div class="col-sm-12 col-lg-8 form-group">
                                     <div class="checkbox">
                                         <input id="allow_call_requests" type="checkbox" name="allow_call_requests" ng-model="user.preferences.allow_call_requests">
                                         <label for="allow_call_requests">Разрешать запрос обратного звонка</label>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-sm-6 control-label">Присылать уведомления на:</label>
+                                        <label class="col-sm-6 col-md-4 col-lg-6 control-label">Присылать уведомления на:</label>
                                         <div class="col-sm-6">
                                             <select name="send_call_request_notifications_to_sid" data-width="100%" ng-disabled="!user.preferences.allow_call_requests" ng-model="user.preferences.send_call_request_notifications_to_sid">
                                                 <option value="1">телефон посредством sms</option>
@@ -145,7 +145,7 @@
                                         <label for="allow_messaging">Разрешать оставлять сообщения через форму обратной связи</label>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-sm-4 col-lg-6 control-label">Присылать уведомления на:</label>
+                                        <label class="col-sm-6 col-md-4 col-lg-6 control-label">Присылать уведомления на:</label>
                                         <div class="col-sm-6">
                                             <select name="send_message_notifications_to_sid" data-width="100%" ng-disabled="!user.preferences.allow_messaging" ng-model="user.preferences.send_message_notifications_to_sid">
                                                 <option value="1">телефон посредством sms</option>
@@ -205,5 +205,6 @@
 
             </form>
         </div>
+        <div class="load-detailed" ng-show="loadings.settings"></div>
     </div>
 </div>
