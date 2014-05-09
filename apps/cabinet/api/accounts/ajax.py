@@ -24,7 +24,7 @@ class AccountManager(object):
 
 		def get(self, request, *args):
 			user = request.user
-			preferences = user.preferences
+			preferences = user.preferences()
 
 
 			data = {
@@ -45,7 +45,7 @@ class AccountManager(object):
 					'allow_messaging': preferences.allow_messaging,
 
 			        'hide_email': preferences.hide_email,
-			        'hide_mobile_phone_number': preferences.hide_phone_number,
+			        'hide_mobile_phone_number': preferences.hide_mobile_phone_number,
 			        'hide_add_mobile_phone_number': preferences.hide_add_mobile_phone_number,
 
 			        'hide_landline_phone': preferences.hide_landline_phone,
@@ -53,8 +53,8 @@ class AccountManager(object):
 					'hide_skype': preferences.hide_skype,
 
 			        # sids
-			        'send_call_requests_notifications_to_sid': preferences.send_call_requests_notifications_to_sid,
-			        'send_message_notifications_to_sid': preferences.send_call_request_to_sid,
+			        'send_call_request_notifications_to_sid': preferences.send_call_request_notifications_to_sid,
+			        'send_message_notifications_to_sid': preferences.send_message_notifications_to_sid,
 			    }
 			}
 

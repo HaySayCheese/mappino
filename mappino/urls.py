@@ -17,7 +17,10 @@ urlpatterns = patterns('apps',
     url(r'', include('apps.cabinet.api.publications.ajax_urls')),
     url(r'', include('apps.cabinet.api.search.ajax_urls')),
     url(r'', include('apps.cabinet.api.support.ajax_urls')),
+
+
     url(r'', include('apps.cabinet.api.settings.ajax_urls')),
+    url(r'', include('apps.cabinet.api.accounts.ajax_urls')),
 
 
     # flat pages
