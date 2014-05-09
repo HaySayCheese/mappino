@@ -29,7 +29,7 @@ class AccountManager(object):
 			if user.mobile_phone:
 				mobile_phone_number = phonenumbers.format_number(
 					phonenumbers.parse(
-						user.mobile_phone), phonenumbers.PhoneNumberFormat.NATIONAL).replace(" ", '')
+						user.mobile_phone), phonenumbers.PhoneNumberFormat.NATIONAL).replace(" ", '')[:1]
 			else:
 				mobile_phone_number = ''
 
@@ -37,23 +37,19 @@ class AccountManager(object):
 			if user.add_mobile_phone:
 				add_mobile_phone_number = phonenumbers.format_number(
 					phonenumbers.parse(
-						user.add_mobile_phone), phonenumbers.PhoneNumberFormat.NATIONAL).replace(" ", '')
+						user.add_mobile_phone), phonenumbers.PhoneNumberFormat.NATIONAL).replace(" ", '')[:1]
 			else:
 				add_mobile_phone_number = ''
 
 
 			if user.landline_phone:
-				landline_phone_number = phonenumbers.format_number(
-					phonenumbers.parse(
-						user.landline_phone), phonenumbers.PhoneNumberFormat.NATIONAL).replace(" ", '')
+				landline_phone_number = user.landline_phone
 			else:
 				landline_phone_number = ''
 
 
 			if user.add_landline_phone:
-				add_landline_phone_number = phonenumbers.format_number(
-					phonenumbers.parse(
-						user.add_landline_phone), phonenumbers.PhoneNumberFormat.NATIONAL).replace(" ", '')
+				add_landline_phone_number = user.add_landline_phone
 			else:
 				add_landline_phone_number = ''
 
@@ -111,8 +107,15 @@ class AccountManager(object):
 	# 		value = data.get('value', '')
 	# 		if (not field) or (not value):
 	# 			return HttpResponseBadRequest('Invalid or absent parameter @field or @value.')
-
-
+	#
+	#
+	# 		if field == 'name':
+	# 			pass
+	#
+	#
+	# 	def update_first_name(self, user, name):
+	# 		user.first_name = name
+	# 		user.save()
 
 
 
