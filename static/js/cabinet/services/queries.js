@@ -90,6 +90,10 @@ app.factory('Queries', function($http, $upload) {
 
 
         Support: {
+            loadTickets: function(callback) {
+                return $http.get("/ajax/api/cabinet/support/tickets/").success(callback);
+            },
+
             loadTicketData: function(data, callback) {
                 return $http.get("/ajax/api/cabinet/support/ticket/" + data.ticketId + "/").success(callback);
             },

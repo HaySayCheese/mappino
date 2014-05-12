@@ -3,6 +3,10 @@
 app.controller('SupportCtrl', function($scope, $location, $rootScope, $routeParams, Support) {
     $scope.supportPage = true;
 
+
+    initScrollBar();
+
+
     $scope.$on("$routeChangeSuccess", function() {
         $routeParams.ticketId ? loadTicket() : $scope.showTicket = false;
     });
@@ -28,6 +32,26 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
         Support.createTicket({ ticketId: $routeParams.ticketId }, function(data) {
             console.log("ticket created");
             $location.path("/support/ticket/" + data.ticketId)
+        });
+    };
+
+
+    /**
+     * Функція скролбара
+     */
+    function initScrollBar() {
+        var sidebar = angular.element(".sidebar-item-detailed-body");
+
+        sidebar.perfectScrollbar("destroy");
+
+        sidebar.perfectScrollbar({
+            wheelSpeed: 40,
+            useKeyboard: false,
+            suppressScrollX: true
+        });
+
+        angular.element(window).resize(function() {
+            sidebar.perfectScrollbar("update");
         });
     }
 });

@@ -3,13 +3,25 @@
 app.factory('Support', function($rootScope, Queries) {
 
     return {
+
+        /**
+         * Загрузка всіх тікетів
+         *
+         * @param {function} callback
+         */
+        loadTickets: function(callback) {
+            Queries.Support.loadTickets(function(data) {
+                _.isFunction(callback) && callback(data);
+            })
+        },
+
         /**
          * Загрузка даних тікета
          *
          * @param {function} callback
          */
-        load: function(callback) {
-            Queries.Support.loadTicketData($rootScope.ticketId, function(data) {
+        loadTicketData: function(data, callback) {
+            Queries.Support.loadTicketData(data.ticketId, function(data) {
                 _.isFunction(callback) && callback(data);
             })
         },
