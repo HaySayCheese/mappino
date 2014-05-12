@@ -1,11 +1,11 @@
 <div class="sidebar-item-detailed" ng-controller="SupportCtrl">
     <div class="sidebar-item-detailed-header without-sidebar-list">
         <div class="publication-controls">
-            <div class="btn btn-xlg btn-link" ng-click="returnToSupport()">
+            <div class="btn btn-xlg btn-link" ng-show="showTicket" ng-click="returnToSupport()">
                 <span class="btn-icon-publish"></span>
                 Вернуться
             </div>
-            <div class="btn btn-xlg btn-link" ng-click="newMessage()">
+            <div class="btn btn-xlg btn-link" ng-hide="showTicket" ng-click="createTicket()">
                 <span class="btn-icon-remove"></span>
                 Новое сообщение
             </div>
