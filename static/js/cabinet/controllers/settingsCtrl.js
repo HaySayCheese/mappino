@@ -5,18 +5,13 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
     $rootScope.loadings.settings = true;
 
     initScrollBar();
-    initDropdowns();
     initInputsChange();
+    initDropdowns();
 
 
     Settings.load(function(data) {
         $scope.user = data;
         $rootScope.loadings.settings = false;
-
-//        $timeout(function() {
-//            initDropdowns();
-//        }, 500)
-
     });
 
 
@@ -29,7 +24,7 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
             var name  = e.currentTarget.name,
                 value = e.currentTarget.value.replace(/\s+/g, " ");
 
-            if (!$scope.form.user[name].$dirty)
+            if (!$scope.form.user[name].$dirty || !value)
                 return;
 
             Settings.checkInputs({ f: name, v: value }, function(newValue, code) {
@@ -65,6 +60,8 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
             style: 'btn-default btn-md'
         });
     }
+
+
 
     /**
      * Функція скролбара
