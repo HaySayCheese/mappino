@@ -48,6 +48,13 @@ class AccountManager(object):
 			    'landline_phone': self.update_landline_phone_number,
 			    'add_landline_phone': self.update_add_landline_phone_number,
 			    'skype': self.update_skype,
+
+				'hide_email': self.update_hide_email,
+			    'hide_mobile_phone_number': self.update_hide_mobile_phone,
+			    'hide_add_mobile_phone_number': self.update_hide_add_mobile_phone,
+			    'hide_landline_phone_number': self.update_hide_landline_phone,
+			    'hide_add_landline_phone_number': self.update_hide_add_landline_phone,
+			    'hide_skype': self.update_hide_skype,
 			}
 
 
@@ -135,7 +142,10 @@ class AccountManager(object):
 
 			field = data.get('f', '')
 			value = data.get('v', '')
-			if (not field) or (not value):
+
+
+			# checks
+			if (field == '') or (value == ''):
 				return HttpResponseBadRequest('Invalid or absent parameter @field or @value.')
 
 
@@ -266,11 +276,53 @@ class AccountManager(object):
 				self.post_codes['OK']), content_type='application/json')
 
 
-		def update_skype(self, user, phone):
-			user.skype = phone
+		def update_skype(self, user, login):
+			user.skype = login
 			user.save()
 			return HttpResponse(json.dumps(
 				self.post_codes['OK']), content_type='application/json')
+
+
+		def update_hide_email(self, user, hide):
+			preferences = user.preferences()
+			preferences.hide_email = hide
+			preferences.save()
+			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
+
+
+		def update_hide_mobile_phone(self, user, hide):
+			preferences = user.preferences()
+			preferences.hide_mobile_phone_number = hide
+			preferences.save()
+			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
+
+
+		def update_hide_add_mobile_phone(self, user, hide):
+			preferences = user.preferences()
+			preferences.hide_add_mobile_phone_number = hide
+			preferences.save()
+			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
+
+
+		def update_hide_landline_phone(self, user, hide):
+			preferences = user.preferences()
+			preferences.hide_landline_phone = hide
+			preferences.save()
+			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
+
+
+		def update_hide_add_landline_phone(self, user, hide):
+			preferences = user.preferences()
+			preferences.hide_add_landline_phone = hide
+			preferences.save()
+			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
+
+
+		def update_hide_skype(self, user, hide):
+			preferences = user.preferences()
+			preferences.hide_skype = hide
+			preferences.save()
+			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
 
 
 
