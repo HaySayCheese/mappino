@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SettingsCtrl', function($scope, $rootScope, Settings) {
+app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) {
 
     $rootScope.loadings.settings = true;
 
@@ -12,6 +12,11 @@ app.controller('SettingsCtrl', function($scope, $rootScope, Settings) {
     Settings.load(function(data) {
         $scope.user = data;
         $rootScope.loadings.settings = false;
+
+//        $timeout(function() {
+//            initDropdowns();
+//        }, 500)
+
     });
 
 
@@ -39,6 +44,13 @@ app.controller('SettingsCtrl', function($scope, $rootScope, Settings) {
         angular.element(".sidebar-item-detailed-body input[type='checkbox']").bind("change", function(e) {
             var name  = e.currentTarget.name,
                 value = e.currentTarget.checked;
+
+            Settings.checkInputs({ f: name, v: value }, null);
+        });
+
+        angular.element(".sidebar-item-detailed-body select").bind('change',function(e) {
+            var name  = e.currentTarget.name,
+                value = e.currentTarget.value;
 
             Settings.checkInputs({ f: name, v: value }, null);
         });

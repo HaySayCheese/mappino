@@ -1,4 +1,4 @@
-<div class="sidebar-item-detailed" ng-controller="SettingsCtrl">
+<div class="sidebar-item-detailed" ng-controller="SupportCtrl">
     <div class="sidebar-item-detailed-header without-sidebar-list">
         <div class="publication-controls">
             <div class="btn btn-xlg btn-link" ng-click="returnToSupport()">
@@ -18,12 +18,12 @@
 
 
     <div class="sidebar-item-detailed-body without-sidebar-list">
-        <div class="col-sm-12 col-lg-8 col-lg-offset-1">
+        <div class="col-sm-12 col-lg-8 col-lg-offset-1" ng-hide="showTicket">
             <div class="row">
                 <h3 id="support-messages">Сообщения</h3>
                 <ul class="support-message-list">
                     <li>
-                        <a href="#">Test message</a>
+                        <a href="#!/support/ticket/1">Test message</a>
                         <div class="text-muted small pull-right">
                             <span>Создано 10.10.10</span>
                             &nbsp;&#8226;&nbsp;
@@ -36,7 +36,7 @@
 
 
         <div ng-if="showTicket">
-            <div ng-include="ajax/template/cabinet/support/ticket/"></div>
+            <div ng-include="'/ajax/template/cabinet/support/ticket/'"></div>
         </div>
 
     </div>

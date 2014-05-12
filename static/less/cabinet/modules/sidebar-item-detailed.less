@@ -165,6 +165,7 @@
         }
     }
 
+
     .support-message-list {
         padding: 0;
         list-style: none;
@@ -172,6 +173,32 @@
         li {
             padding: 10px 10px 10px 20px;
             border-bottom: 1px dashed @gray-lighter;
+        }
+    }
+    .support-message-block {
+        padding: 20px 80px;
+
+        &.user-message {
+            > .user-photo {
+                margin-right: 10px;
+            }
+        }
+        &.admin-message {
+            > .user-photo {
+                margin-left: 10px;
+            }
+        }
+
+        > .user-photo {
+            .square(100px);
+            background: @gray-lighter;
+            border-radius: 50%;
+
+        }
+        > .user-message {
+            .message {
+                margin-bottom: 10px;
+            }
         }
     }
 
