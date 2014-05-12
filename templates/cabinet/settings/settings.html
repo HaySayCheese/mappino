@@ -40,6 +40,8 @@
                                 <div class="col-sm-7">
                                     <input type="text" class="form-control" name="email" ng-model="user.account.email" required/>
                                     <span class="input-has-error" ng-show="form.user.email.$error.required">Укажите, пожалуйста, эл. адрес.</span>
+                                    <span class="input-has-error" ng-show="form.user.email.$error.incorrect">Эл. адрес. указан неверно.</span>
+                                    <span class="input-has-error" ng-show="form.user.email.$error.duplicated">Эл. адрес. уже зайнят.</span>
                                 </div>
                             </div>
                         </div>
@@ -50,6 +52,8 @@
                                 <div class="col-sm-7">
                                     <input type="text" class="form-control" name="mobile_phone" ui-mask="+38 (099) 99 - 99 - 999" ng-model="user.account.mobile_phone" required/>
                                     <span class="input-has-error" ng-show="form.user.mobile_phone.$error.required">Укажите, пожалуйста, моб. телефон.</span>
+                                    <span class="input-has-error" ng-show="form.user.mobile_phone.$error.incorrect">Моб. телефон указан неверно.</span>
+                                    <span class="input-has-error" ng-show="form.user.mobile_phone.$error.duplicated">Моб. телефон уже зайнят.</span>
                                 </div>
                             </div>
                         </div>
