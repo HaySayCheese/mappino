@@ -27,7 +27,7 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
             if (!$scope.form.user[name].$dirty || !value)
                 return;
 
-            if (name == "mobile_phone" && value == "+38 (0__) __ - __ - ___")
+            if (name == "mobile_phone" && (value == "+38 (0__) __ - __ - ___" || value[22] == "_"))
                 return;
 
             Settings.checkInputs({ f: name, v: value }, function(newValue, code) {
