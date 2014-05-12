@@ -31,7 +31,8 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
                 if (newValue)
                     e.currentTarget.value = newValue;
 
-                //$scope.form.user[name].$setValidity("incorrect", code === 0);
+                $scope.form.user[name].$setValidity("incorrect", code === 10);
+                $scope.form.user[name].$setValidity("duplicated", code === 11);
             });
 
         });
