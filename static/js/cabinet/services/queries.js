@@ -86,6 +86,21 @@ app.factory('Queries', function($http, $upload) {
             check: function(data, callback) {
                 return $http.post("/ajax/api/cabinet/account/", data).success(callback);
             }
+        },
+
+
+        Support: {
+            loadTicketData: function(data, callback) {
+                return $http.get("/ajax/api/cabinet/support/ticket/" + data.ticketId + "/").success(callback);
+            },
+
+            createTicket: function(callback) {
+                return $http.post("/ajax/api/cabinet/support/new-ticket/").success(callback);
+            },
+
+            sendMessage: function(data, callback) {
+                return $http.post("/ajax/api/cabinet/support/ticket/" + data.ticketId + "/").success(callback);
+            }
         }
 
     }
