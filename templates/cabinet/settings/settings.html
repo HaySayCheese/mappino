@@ -16,36 +16,40 @@
 
                         <div class="row">
                             <div class="form-group">
-                                <label class="col-sm-5 control-label">Имя:</label>
+                                <label class="col-sm-5 control-label"><span class="required-star">*</span>Имя:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="first_name" ng-model="user.account.first_name"/>
+                                    <input type="text" class="form-control" name="first_name" ng-model="user.account.first_name" required/>
+                                    <span class="input-has-error" ng-show="form.user.first_name.$error.required">Укажите, пожалуйста, имя.</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="form-group">
-                                <label class="col-sm-5 control-label">Фамиллия:</label>
+                                <label class="col-sm-5 control-label"><span class="required-star">*</span>Фамиллия:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="last_name" ng-model="user.account.last_name"/>
+                                    <input type="text" class="form-control" name="last_name" ng-model="user.account.last_name" required/>
+                                    <span class="input-has-error" ng-show="form.user.last_name.$error.required">Укажите, пожалуйста, фамиллию.</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="form-group">
-                                <label class="col-sm-5 control-label">Эл. адрес:</label>
+                                <label class="col-sm-5 control-label"><span class="required-star">*</span>Эл. адрес:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="email" ng-model="user.account.email"/>
+                                    <input type="text" class="form-control" name="email" ng-model="user.account.email" required/>
+                                    <span class="input-has-error" ng-show="form.user.email.$error.required">Укажите, пожалуйста, эл. адрес.</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="form-group">
-                                <label class="col-sm-5 control-label">Моб. телефон:</label>
+                                <label class="col-sm-5 control-label"><span class="required-star">*</span>Моб. телефон:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="mobile_phone" ui-mask="+38 (099) 99 - 99 - 999" ng-model="user.account.mobile_phone"/>
+                                    <input type="text" class="form-control" name="mobile_phone" ui-mask="+38 (099) 99 - 99 - 999" ng-model="user.account.mobile_phone" required/>
+                                    <span class="input-has-error" ng-show="form.user.mobile_phone.$error.required">Укажите, пожалуйста, моб. телефон.</span>
                                 </div>
                             </div>
                         </div>
@@ -99,7 +103,7 @@
                             <div class="form-group">
                                 <label class="col-sm-5 control-label">Доп. раб. телефон:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="add_landline_phone" ng-model="user.add_landline_phone" allow-only-number-without-dot/>
+                                    <input type="text" class="form-control" name="add_landline_phone" ng-model="user.account.add_landline_phone" allow-only-number-without-dot/>
                                 </div>
                             </div>
                         </div>
@@ -189,8 +193,8 @@
                                     </div>
 
                                     <div class="checkbox">
-                                        <input id="hide_add_landline_phone" type="checkbox" name="hide_add_landline_phone" ng-model="user.preferences.hide_add_landline_phone">
-                                        <label for="hide_add_landline_phone">Скрывать дополнительный рабочий телефон</label>
+                                        <input id="hide_add_landline_phone_number" type="checkbox" name="hide_add_landline_phone_number" ng-model="user.preferences.hide_add_landline_phone_number">
+                                        <label for="hide_add_landline_phone_number">Скрывать дополнительный рабочий телефон</label>
                                     </div>
 
                                     <div class="checkbox">
