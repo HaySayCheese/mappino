@@ -90,7 +90,7 @@
                             <div class="form-group">
                                 <label class="col-sm-5 control-label">Раб. телефон:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="landline_phone" ng-model="user.account.landline_phone"/>
+                                    <input type="text" class="form-control" name="landline_phone" ng-model="user.account.landline_phone" allow-only-number-without-dot/>
                                 </div>
                             </div>
                         </div>
@@ -99,7 +99,7 @@
                             <div class="form-group">
                                 <label class="col-sm-5 control-label">Доп. раб. телефон:</label>
                                 <div class="col-sm-7">
-                                    <input type="text" class="form-control" name="add_landline_phone" ng-model="user.add_landline_phone"/>
+                                    <input type="text" class="form-control" name="add_landline_phone" ng-model="user.add_landline_phone" allow-only-number-without-dot/>
                                 </div>
                             </div>
                         </div>
