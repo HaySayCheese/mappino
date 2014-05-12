@@ -57,6 +57,16 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">Никнейм:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" name="nickname" ng-model="user.account.nickname"/>
+                                    <span class="input-has-error" ng-show="form.user.nickname.$error.duplicated">Никнейм уже используеться.</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="col-sm-4 col-lg-4">
