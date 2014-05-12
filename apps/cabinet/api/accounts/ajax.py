@@ -43,7 +43,7 @@ class AccountManager(object):
 				'last_name': self.update_last_name,
 			    'email': self.update_email,
 			    'work_email': self.update_work_email,
-			    'mobile_phone': self.update_work_email,
+			    'mobile_phone': self.update_mobile_phone_number,
 			    'add_mobile_phone': self.update_add_mobile_phone_number,
 			    'landline_phone': self.update_landline_phone_number,
 			    'add_landline_phone': self.update_add_landline_phone_number,
@@ -64,16 +64,16 @@ class AccountManager(object):
 			# phones formatting
 			if user.mobile_phone:
 				mobile_phone_number = phonenumbers.format_number(
-					phonenumbers.parse(
-						user.mobile_phone), phonenumbers.PhoneNumberFormat.NATIONAL).replace(" ", '')[:1]
+					phonenumbers.parse(user.mobile_phone),
+					phonenumbers.PhoneNumberFormat.NATIONAL).replace(" ", '')[1:]
 			else:
 				mobile_phone_number = ''
 
 
 			if user.add_mobile_phone:
 				add_mobile_phone_number = phonenumbers.format_number(
-					phonenumbers.parse(
-						user.add_mobile_phone), phonenumbers.PhoneNumberFormat.NATIONAL).replace(" ", '')[:1]
+					phonenumbers.parse(user.add_mobile_phone),
+					phonenumbers.PhoneNumberFormat.NATIONAL).replace(" ", '')[1:]
 			else:
 				add_mobile_phone_number = ''
 
@@ -129,7 +129,7 @@ class AccountManager(object):
 
 		def post(self, request, *args):
 			try:
-				data = angular_post_parameters(request, ['field, value'])
+				data = angular_post_parameters(request, ['f', 'v'])
 			except ValueError:
 				return HttpResponseBadRequest('Invalid or absent parameter @field or @value.')
 
@@ -149,109 +149,128 @@ class AccountManager(object):
 		def update_first_name(self, user, name):
 			user.first_name = name
 			user.save()
-			return HttpResponse(self.post_codes['OK'], content_type='application/json')
+			return HttpResponse(json.dumps(
+				self.post_codes['OK']), content_type='application/json')
 
 
 		def update_last_name(self, user, name):
 			user.last_name = name
 			user.save()
-			return HttpResponse(self.post_codes['OK'], content_type='application/json')
+			return HttpResponse(json.dumps(
+				self.post_codes['OK']), content_type='application/json')
 
 
 		def update_email(self, user, email):
 			try:
 				validate_email(email)
 			except ValidationError:
-				return HttpResponse(self.post_codes['invalid_email'], content_type='application/json')
+				return HttpResponse(json.dumps(
+					self.post_codes['invalid_email']), content_type='application/json')
 
 			# check for duplicates
 			if user.work_email == email:
-				return HttpResponse(self.post_codes['duplicated_email'], content_type='application/json')
+				return HttpResponse(json.dumps(
+					self.post_codes['duplicated_email']), content_type='application/json')
 
 			user.email = email
 			user.save()
-			return HttpResponse(self.post_codes['OK'], content_type='application/json')
+			return HttpResponse(json.dumps(
+				self.post_codes['OK']), content_type='application/json')
 
 
 		def update_work_email(self, user, email):
 			try:
 				validate_email(email)
 			except ValidationError:
-				return HttpResponse(self.post_codes['invalid_email'], content_type='application/json')
+				return HttpResponse(json.dumps(
+					self.post_codes['invalid_email']), content_type='application/json')
 
 			# check for duplicates
 			if user.email == email:
-				return HttpResponse(self.post_codes['duplicated_email'], content_type='application/json')
+				return HttpResponse(json.dumps(
+					self.post_codes['duplicated_email']), content_type='application/json')
 
 			user.work_email = email
 			user.save()
-			return HttpResponse(self.post_codes['OK'], content_type='application/json')
+			return HttpResponse(json.dumps(
+				self.post_codes['OK']), content_type='application/json')
 
 
 		def update_mobile_phone_number(self, user, phone):
 			try:
 				phone = phonenumbers.parse(phone)
 			except phonenumbers.NumberParseException:
-				return HttpResponse(self.post_codes['invalid_phone'], content_type='application/json')
+				return HttpResponse(json.dumps(
+					self.post_codes['invalid_phone']), content_type='application/json')
 
-			phone = phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+			phone = phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.E164)
 
 
 			# check for duplicates
 			if user.add_mobile_phone == phone:
-				return HttpResponse(self.post_codes['duplicated_phone'], content_type='application/json')
+				return HttpResponse(json.dumps(
+					self.post_codes['duplicated_phone']), content_type='application/json')
 
 
 			user.mobile_phone = phone
 			user.save()
-			return HttpResponse(self.post_codes['OK'], content_type='application/json')
+			return HttpResponse(json.dumps(
+				self.post_codes['OK']), content_type='application/json')
 
 
 		def update_add_mobile_phone_number(self, user, phone):
 			try:
 				phone = phonenumbers.parse(phone)
 			except phonenumbers.NumberParseException:
-				return HttpResponse(self.post_codes['invalid_phone'], content_type='application/json')
+				return HttpResponse(json.dumps(
+					self.post_codes['invalid_phone']), content_type='application/json')
 
-			phone = phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+			phone = phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.E164)
 
 
 			# check for duplicates
 			if user.mobile_phone == phone:
-				return  HttpResponse(self.post_codes['duplicated_phone'], content_type='application/json')
+				return  HttpResponse(
+					json.dumps(self.post_codes['duplicated_phone']), content_type='application/json')
 
 
 			user.add_mobile_phone = phone
 			user.save()
-			return HttpResponse(self.post_codes['OK'], content_type='application/json')
+			return HttpResponse(json.dumps(
+				self.post_codes['OK']), content_type='application/json')
 
 
 		def update_landline_phone_number(self, user, phone):
 			# check for duplicates
 			if user.add_landline_phone:
-				return HttpResponse(self.post_codes['duplicated_phone'], content_type='application/json')
+				return HttpResponse(json.dumps(
+					self.post_codes['duplicated_phone']), content_type='application/json')
 
 
 			user.landline_phone = phone
 			user.save()
-			return HttpResponse(self.post_codes['OK'], content_type='application/json')
+			return HttpResponse(json.dumps(
+				self.post_codes['OK']), content_type='application/json')
 
 
 		def update_add_landline_phone_number(self, user, phone):
 			# check for duplicates
 			if user.landline_phone == phone:
-				return HttpResponse(self.post_codes['duplicated_phone'], content_type='application/json')
+				return HttpResponse(json.dumps(
+					self.post_codes['duplicated_phone']), content_type='application/json')
 
 
-			user.landline_phone = phone
+			user.add_landline_phone = phone
 			user.save()
-			return HttpResponse(self.post_codes['OK'], content_type='application/json')
+			return HttpResponse(json.dumps(
+				self.post_codes['OK']), content_type='application/json')
 
 
 		def update_skype(self, user, phone):
-			user.add_landline_phone = phone
+			user.skype = phone
 			user.save()
-			return HttpResponse(self.post_codes['OK'], content_type='application/json')
+			return HttpResponse(json.dumps(
+				self.post_codes['OK']), content_type='application/json')
 
 
 
