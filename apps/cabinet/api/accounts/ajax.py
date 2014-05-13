@@ -4,7 +4,8 @@ from collective.decorators.views import login_required_or_forbidden
 from collective.exceptions import EmptyArgument, InvalidArgument, DuplicateValue, RuntimeException
 from collective.methods.request_data_getters import angular_post_parameters
 from collective.validators import validate_mobile_phone_number
-from core.users.models import UsersManager
+from core.users.constants import Preferences
+from core.users.models import UsersManager, Users
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import IntegrityError
@@ -48,6 +49,13 @@ class AccountManager(object):
 			    'landline_phone': self.update_landline_phone_number,
 			    'add_landline_phone': self.update_add_landline_phone_number,
 			    'skype': self.update_skype,
+
+
+				'allow_call_requests': self.update_allow_call_request,
+			    'send_call_request_notifications_to_sid': self.update_send_call_request_notifications_to_sid,
+
+				'allow_messaging': self.update_allow_messaging,
+			    'send_message_notifications_to_sid': self.update_send_call_request_notifications_to_sid,
 
 				'hide_email': self.update_hide_email,
 			    'hide_mobile_phone_number': self.update_hide_mobile_phone,
@@ -143,10 +151,9 @@ class AccountManager(object):
 			field = data.get('f', '')
 			value = data.get('v', '')
 
-
-			# checks
-			if (field == '') or (value == ''):
-				return HttpResponseBadRequest('Invalid or absent parameter @field or @value.')
+			if field == '':
+				return HttpResponseBadRequest('Invalid or absent parameter @field')
+				# (value can be empty)
 
 
 			update_method = self.update_methods.get(field)
@@ -157,6 +164,12 @@ class AccountManager(object):
 
 
 		def update_first_name(self, user, name):
+			"""
+			@name is required.
+			"""
+			if not name:
+				return HttpResponseBadRequest('@value can\'t be empty.')
+
 			user.first_name = name
 			user.save()
 			return HttpResponse(json.dumps(
@@ -164,6 +177,12 @@ class AccountManager(object):
 
 
 		def update_last_name(self, user, name):
+			"""
+			@name is required.
+			"""
+			if not name:
+				return HttpResponseBadRequest('@value can\'t be empty.')
+
 			user.last_name = name
 			user.save()
 			return HttpResponse(json.dumps(
@@ -171,16 +190,29 @@ class AccountManager(object):
 
 
 		def update_email(self, user, email):
+			"""
+			@email is required.
+			"""
+			if not email:
+				return HttpResponseBadRequest('@value can\'t be empty.')
+
+			if user.email == email:
+				return HttpResponse(json.dumps(
+					self.post_codes['OK']), content_type='application/json')
+
+
 			try:
 				validate_email(email)
 			except ValidationError:
 				return HttpResponse(json.dumps(
 					self.post_codes['invalid_email']), content_type='application/json')
 
+
 			# check for duplicates
-			if user.work_email == email:
+			if not Users.email_is_free(email):
 				return HttpResponse(json.dumps(
 					self.post_codes['duplicated_email']), content_type='application/json')
+
 
 			user.email = email
 			user.save()
@@ -189,16 +221,28 @@ class AccountManager(object):
 
 
 		def update_work_email(self, user, email):
+			"""
+			@email may be empty.
+			"""
+			if not email:
+				user.work_email = ''
+				user.save()
+				return HttpResponse(json.dumps(
+					self.post_codes['OK']), content_type='application/json')
+
+
 			try:
 				validate_email(email)
 			except ValidationError:
 				return HttpResponse(json.dumps(
 					self.post_codes['invalid_email']), content_type='application/json')
 
+
 			# check for duplicates
-			if user.email == email:
+			if not Users.email_is_free(email):
 				return HttpResponse(json.dumps(
 					self.post_codes['duplicated_email']), content_type='application/json')
+
 
 			user.work_email = email
 			user.save()
@@ -207,17 +251,31 @@ class AccountManager(object):
 
 
 		def update_mobile_phone_number(self, user, phone):
+			"""
+			@phone is required.
+			"""
+			if not phone:
+				return HttpResponseBadRequest('@value can\'t be empty.')
+
+
 			try:
 				phone = phonenumbers.parse(phone)
-			except phonenumbers.NumberParseException:
+				if not phonenumbers.is_valid_number(phone):
+					raise ValidationError('Invalid number.')
+			except (phonenumbers.NumberParseException, ValidationError):
 				return HttpResponse(json.dumps(
 					self.post_codes['invalid_phone']), content_type='application/json')
 
+
 			phone = phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.E164)
+			if user.mobile_phone == phone:
+				# already the same
+				return HttpResponse(json.dumps(
+					self.post_codes['OK']), content_type='application/json')
 
 
 			# check for duplicates
-			if user.add_mobile_phone == phone:
+			if not user.mobile_phone_number_is_free(phone):
 				return HttpResponse(json.dumps(
 					self.post_codes['duplicated_phone']), content_type='application/json')
 
@@ -229,13 +287,30 @@ class AccountManager(object):
 
 
 		def update_add_mobile_phone_number(self, user, phone):
+			"""
+			@phone may be empty.
+			"""
+			if not phone:
+				user.add_mobile_phone = ''
+				user.save()
+				return HttpResponse(json.dumps(
+					self.post_codes['OK']), content_type='application/json')
+
+
 			try:
 				phone = phonenumbers.parse(phone)
-			except phonenumbers.NumberParseException:
+				if not phonenumbers.is_valid_number(phone):
+					raise ValidationError('Invalid number.')
+			except (phonenumbers.NumberParseException, ValidationError):
 				return HttpResponse(json.dumps(
 					self.post_codes['invalid_phone']), content_type='application/json')
 
+
 			phone = phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.E164)
+			if user.add_mobile_phone == phone:
+				# already the same
+				return HttpResponse(json.dumps(
+					self.post_codes['OK']), content_type='application/json')
 
 
 			# check for duplicates
@@ -251,6 +326,16 @@ class AccountManager(object):
 
 
 		def update_landline_phone_number(self, user, phone):
+			"""
+			@phone may be empty.
+			"""
+			if not phone:
+				user.landline_phone = ''
+				user.save()
+				return HttpResponse(json.dumps(
+					self.post_codes['OK']), content_type='application/json')
+
+
 			# check for duplicates
 			if user.add_landline_phone:
 				return HttpResponse(json.dumps(
@@ -264,6 +349,16 @@ class AccountManager(object):
 
 
 		def update_add_landline_phone_number(self, user, phone):
+			"""
+			@phone may be empty.
+			"""
+			if not phone:
+				user.add_landline_phone = ''
+				user.save()
+				return HttpResponse(json.dumps(
+					self.post_codes['OK']), content_type='application/json')
+
+
 			# check for duplicates
 			if user.landline_phone == phone:
 				return HttpResponse(json.dumps(
@@ -277,41 +372,116 @@ class AccountManager(object):
 
 
 		def update_skype(self, user, login):
+			"""
+			@login may be empty.
+			"""
 			user.skype = login
 			user.save()
 			return HttpResponse(json.dumps(
 				self.post_codes['OK']), content_type='application/json')
 
 
+		def update_allow_call_request(self, user, allow):
+			if allow is not bool:
+				return HttpResponseBadRequest('Invalid @value.')
+
+
+			preferences = user.preferences()
+			preferences.allow_call_requests = allow
+			preferences.save()
+			return HttpResponse(
+				json.dumps(self.post_codes['OK']), content_type='application/json')
+
+
+		def update_send_call_request_notifications_to_sid(self, user, sid):
+			sid = int(sid)
+			if sid not in Preferences.CALL_REQUEST_NOTIFICATIONS.values():
+				return HttpResponseBadRequest('Invalid @value.')
+
+			preferences = user.preferences()
+			preferences.send_call_request_notifications_to_sid = sid
+			preferences.save()
+			return HttpResponse(
+				json.dumps(self.post_codes['OK']), content_type='application/json')
+
+
+		def update_allow_messaging(self, user, allow):
+			if allow is not bool:
+				return HttpResponseBadRequest('Invalid @value.')
+
+
+			preferences = user.preferences()
+			preferences.allow_messaging = allow
+			preferences.save()
+			return HttpResponse(
+				json.dumps(self.post_codes['OK']), content_type='application/json')
+
+
+		def update_send_message_notifications_to_sid(self, user, sid):
+			sid = int(sid)
+			if sid not in Preferences.MESSAGE_NOTIFICATIONS.values():
+				return HttpResponseBadRequest('Invalid @value.')
+
+			preferences = user.preferences()
+			preferences.send_message_notifications_to_sid = sid
+			preferences.save()
+			return HttpResponse(
+				json.dumps(self.post_codes['OK']), content_type='application/json')
+
+
 		def update_hide_email(self, user, hide):
+			if hide is not bool:
+				return HttpResponseBadRequest('Invalid @value.')
+
+
 			preferences = user.preferences()
 			preferences.hide_email = hide
 			preferences.save()
-			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
+			return HttpResponse(
+				json.dumps(self.post_codes['OK']), content_type='application/json')
 
 
 		def update_hide_mobile_phone(self, user, hide):
+			if hide is not bool:
+				return HttpResponseBadRequest('Invalid @value.')
+
+
 			preferences = user.preferences()
 			preferences.hide_mobile_phone_number = hide
 			preferences.save()
-			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
+			return HttpResponse(
+				json.dumps(self.post_codes['OK']), content_type='application/json')
 
 
 		def update_hide_add_mobile_phone(self, user, hide):
+			if hide is not bool:
+				return HttpResponseBadRequest('Invalid @value.')
+
+
 			preferences = user.preferences()
 			preferences.hide_add_mobile_phone_number = hide
 			preferences.save()
-			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
+			return HttpResponse(
+				json.dumps(self.post_codes['OK']), content_type='application/json')
 
 
 		def update_hide_landline_phone(self, user, hide):
+			if hide is not bool:
+				return HttpResponseBadRequest('Invalid @value.')
+
+
 			preferences = user.preferences()
 			preferences.hide_landline_phone = hide
 			preferences.save()
-			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
+			return HttpResponse(
+				json.dumps(self.post_codes['OK']), content_type='application/json')
 
 
 		def update_hide_add_landline_phone(self, user, hide):
+			if hide is not bool:
+				return HttpResponseBadRequest('Invalid @value.')
+
+
 			preferences = user.preferences()
 			preferences.hide_add_landline_phone = hide
 			preferences.save()
@@ -319,10 +489,15 @@ class AccountManager(object):
 
 
 		def update_hide_skype(self, user, hide):
+			if hide is not bool:
+				return HttpResponseBadRequest('Invalid @value.')
+
+
 			preferences = user.preferences()
 			preferences.hide_skype = hide
 			preferences.save()
-			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
+			return HttpResponse(
+				json.dumps(self.post_codes['OK']), content_type='application/json')
 
 
 
