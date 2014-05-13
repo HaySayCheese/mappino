@@ -26,6 +26,18 @@ app.factory('Settings', function($rootScope, Queries) {
             Queries.Settings.check(data, function(data) {
                 _.isFunction(callback) && callback(data.value ? data.value : inputValue, data.code);
             });
+        },
+
+        /**
+         * Загрузка фотки юзера
+         *
+         * @param {object}   photo
+         * @param {function} callback
+         */
+        uploadUserPhoto: function(photo, callback) {
+            Queries.Settings.uploadUserPhoto(photo, function(data) {
+                _.isFunction(callback) && callback(data);
+            });
         }
     }
 });

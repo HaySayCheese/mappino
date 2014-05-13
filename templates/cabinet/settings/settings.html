@@ -74,7 +74,8 @@
                             <div class="photo">
 
                             </div>
-                            <a href="">Сменить</a>
+                            <a href="" ng-click="openPhotoDialog()">Сменить</a>
+                            <input type="file" ng-file-select="onFileSelect($files)"/>
                         </div>
                     </div>
                 </div>

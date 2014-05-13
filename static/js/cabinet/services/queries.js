@@ -85,6 +85,13 @@ app.factory('Queries', function($http, $upload) {
 
             check: function(data, callback) {
                 return $http.post("/ajax/api/cabinet/account/", data).success(callback);
+            },
+
+            uploadUserPhoto: function(photo, callback) {
+                return $upload.upload({
+                    url: '/ajax/api/cabinet/account/photo/',
+                    file: photo
+                }).success(callback);
             }
         },
 
