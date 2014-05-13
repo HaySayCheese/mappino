@@ -16,6 +16,28 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
 
 
     /**
+     * Ініціалізація діалога загрузки зображення
+     */
+    $scope.openPhotoDialog = function() {
+        $timeout(function() {
+            angular.element("input[type='file']").trigger("click");
+        }, 0);
+    };
+
+
+    /**
+     * Логіка загрузки зображень
+     */
+    $scope.onFileSelect = function(files) {
+
+        Settings.uploadUserPhoto(files[0], function(data) {
+            console.log(data);
+        });
+        console.log(files);
+    };
+
+
+    /**
     * При втраті фокуса з інпута
     * викликати запит на відправку на сервер
     */

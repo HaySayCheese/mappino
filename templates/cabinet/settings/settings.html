@@ -57,6 +57,16 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-5 control-label">Никнейм:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" name="nickname" ng-model="user.account.nickname"/>
+                                    <span class="input-has-error" ng-show="form.user.nickname.$error.duplicated">Никнейм уже используеться.</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="col-sm-4 col-lg-4">
@@ -64,7 +74,8 @@
                             <div class="photo">
 
                             </div>
-                            <a href="">Сменить</a>
+                            <a href="" ng-click="openPhotoDialog()">Сменить</a>
+                            <input type="file" ng-file-select="onFileSelect($files)"/>
                         </div>
                     </div>
                 </div>
@@ -143,9 +154,9 @@
                                         <label class="col-sm-6 col-md-4 col-lg-6 control-label">Присылать уведомления на:</label>
                                         <div class="col-sm-6">
                                             <select name="send_call_request_notifications_to_sid" data-width="100%" ng-disabled="!user.preferences.allow_call_requests" ng-model="user.preferences.send_call_request_notifications_to_sid">
-                                                <option value="1">телефон посредством sms</option>
-                                                <option value="2">почту</option>
-                                                <option value="3">телефон и почту</option>
+                                                <option value="0">телефон посредством sms</option>
+                                                <option value="1">почту</option>
+                                                <option value="2">телефон и почту</option>
                                             </select>
                                         </div>
                                     </div>
@@ -158,9 +169,9 @@
                                         <label class="col-sm-6 col-md-4 col-lg-6 control-label">Присылать уведомления на:</label>
                                         <div class="col-sm-6">
                                             <select name="send_message_notifications_to_sid" data-width="100%" ng-disabled="!user.preferences.allow_messaging" ng-model="user.preferences.send_message_notifications_to_sid">
-                                                <option value="1">телефон посредством sms</option>
-                                                <option value="2">почту</option>
-                                                <option value="3">телефон и почту</option>
+                                                <option value="0">телефон посредством sms</option>
+                                                <option value="1">почту</option>
+                                                <option value="2">телефон и почту</option>
                                             </select>
                                         </div>
                                     </div>

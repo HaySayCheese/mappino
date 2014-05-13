@@ -85,11 +85,22 @@ app.factory('Queries', function($http, $upload) {
 
             check: function(data, callback) {
                 return $http.post("/ajax/api/cabinet/account/", data).success(callback);
+            },
+
+            uploadUserPhoto: function(photo, callback) {
+                return $upload.upload({
+                    url: '/ajax/api/cabinet/account/photo/',
+                    file: photo
+                }).success(callback);
             }
         },
 
 
         Support: {
+            loadTickets: function(callback) {
+                return $http.get("/ajax/api/cabinet/support/tickets/").success(callback);
+            },
+
             loadTicketData: function(data, callback) {
                 return $http.get("/ajax/api/cabinet/support/ticket/" + data.ticketId + "/").success(callback);
             },
