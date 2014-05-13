@@ -2,14 +2,27 @@
 
 app.controller('SupportCtrl', function($scope, $location, $rootScope, $routeParams, Support) {
     $scope.supportPage = true;
+    $rootScope.loadings.tickets = false;
 
 
     initScrollBar();
 
 
     $scope.$on("$routeChangeSuccess", function() {
-        $routeParams.ticketId ? loadTicket() : $scope.showTicket = false;
+        $routeParams.ticketId ? loadTicket() : loadTickets();
     });
+
+    function loadTickets() {
+        $scope.showTicket = false;
+        $rootScope.loadings.tickets = true;
+
+        Support.loadTickets(function(data) {
+            console.log("tickets loaded");
+            $rootScope.loadings.tickets = false;
+
+            $scope.tickets = data;
+        });
+    }
 
 
     function loadTicket() {

@@ -20,14 +20,14 @@
     <div class="sidebar-item-detailed-body without-sidebar-list">
         <div class="col-sm-12 col-lg-8 col-lg-offset-1" ng-hide="showTicket">
             <div class="row">
-                <h3 id="support-messages">Сообщения</h3>
+                <h3 id="support-messages" ng-hide="loadings.tickets || !tickets.length">Сообщения</h3>
                 <ul class="support-message-list">
-                    <li>
-                        <a href="#!/support/ticket/1">Test message</a>
+                    <li ng-repeat="ticket in tickets">
+                        <a href="#!/support/ticket/[[ ticket.id ]]">[[ ticket.subject ]]</a>
                         <div class="text-muted small pull-right">
-                            <span>Создано 10.10.10</span>
+                            <span>[[ ticket.created ]]</span>
                             &nbsp;&#8226;&nbsp;
-                            <span>Последнее сообщение - 10.10.10</span>
+                            <span>[[ ticket.last_message ]]</span>
                         </div>
                     </li>
                 </ul>
@@ -39,5 +39,9 @@
             <div ng-include="'/ajax/template/cabinet/support/ticket/'"></div>
         </div>
 
+        <div class="load-detailed" ng-show="loadings.tickets"></div>
+        <div class="detailed-empty text-muted" ng-show="!tickets.length && !loadings.tickets">
+            <span>У вас пока нет сообщений</span>
+        </div>
     </div>
 </div>
