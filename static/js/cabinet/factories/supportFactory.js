@@ -18,10 +18,11 @@ app.factory('Support', function($rootScope, Queries) {
         /**
          * Загрузка даних тікета
          *
+         * @param {number}   ticketId
          * @param {function} callback
          */
-        loadTicketData: function(data, callback) {
-            Queries.Support.loadTicketData(data.ticketId, function(data) {
+        loadTicketData: function(ticketId, callback) {
+            Queries.Support.loadTicketData(ticketId, function(data) {
                 _.isFunction(callback) && callback(data);
             })
         },
@@ -41,11 +42,12 @@ app.factory('Support', function($rootScope, Queries) {
         /**
          * Відправка повідомлення
          *
-         * @param {object}   data Обєкт з даними тікета
+         * @param {number}   ticketId
+         * @param {object}   message
          * @param {function} callback
          */
-        sendMessage: function(data, callback) {
-            Queries.Support.sendMessage(data, function(data) {
+        sendMessage: function(ticketId, message, callback) {
+            Queries.Support.sendMessage(ticketId, message, function(data) {
                 _.isFunction(callback) && callback(data);
             });
         }

@@ -2,7 +2,8 @@
 
 app.controller('SupportCtrl', function($scope, $location, $rootScope, $routeParams, Support) {
     $scope.supportPage = true;
-    $rootScope.loadings.tickets = false;
+    $rootScope.loadings.tickets    = false;
+    $rootScope.loadings.ticketData = false;
 
 
     initScrollBar();
@@ -27,9 +28,11 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
 
     function loadTicket() {
         $scope.showTicket = true;
+        $rootScope.loadings.ticketData = true;
 
-        Support.loadTicketData({ ticketId: $routeParams.ticketId }, function(data) {
+        Support.loadTicketData($routeParams.ticketId, function(data) {
             console.log("ticket loaded");
+            $rootScope.loadings.ticketData = false;
 
             $scope.messages = data;
         });
@@ -45,6 +48,16 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
         Support.createTicket({ ticketId: $routeParams.ticketId }, function(data) {
             console.log("ticket created");
             $location.path("/support/ticket/" + data.ticketId)
+        });
+    };
+
+
+    $scope.sendMessage = function() {
+        if ($scope.messages.length)
+            delete $scope.message.title;
+
+        Support.createTicket($routeParams.ticketId, $scope.message, function(data) {
+            console.log("message send");
         });
     };
 

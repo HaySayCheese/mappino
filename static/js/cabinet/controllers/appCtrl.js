@@ -23,7 +23,9 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
         briefs:     false,
         detailed:   false,
         settings:   false,
-        support:    false
+        support:    false,
+        tickets:    false,
+        ticketData: false
     };
 
 

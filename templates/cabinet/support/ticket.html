@@ -1,9 +1,9 @@
-<div class="col-sm-12 col-lg-8 col-lg-offset-2">
+<div class="col-sm-12 col-lg-8 col-lg-offset-2" ng-hide="loadings.ticketData">
     <div class="row">
         <div class="col-sm-12 support-message-form">
-            <input class="form-control form-group" type="text" name="sale_price" placeholder="Тема" ng-model="support.message_title"/>
-            <textarea class="form-control form-group" name="message_text" rows="3" placeholder="Текст сообщения" ng-model="support.message_text"></textarea>
-            <div class="btn btn-primary pull-right">Отправить сообщение</div>
+            <input class="form-control form-group" type="text" name="title" placeholder="Тема" ng-model="message.title"/>
+            <textarea class="form-control form-group" name="text" rows="3" placeholder="Текст сообщения" ng-model="message.text"></textarea>
+            <div class="btn btn-primary pull-right" ng-disabled="!message.text">Отправить сообщение</div>
         </div>
     </div>
 

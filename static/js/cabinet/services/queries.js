@@ -101,16 +101,16 @@ app.factory('Queries', function($http, $upload) {
                 return $http.get("/ajax/api/cabinet/support/tickets/").success(callback);
             },
 
-            loadTicketData: function(data, callback) {
-                return $http.get("/ajax/api/cabinet/support/ticket/" + data.ticketId + "/").success(callback);
+            loadTicketData: function(ticketId, callback) {
+                return $http.get("/ajax/api/cabinet/support/ticket/" + ticketId + "/").success(callback);
             },
 
             createTicket: function(callback) {
                 return $http.post("/ajax/api/cabinet/support/new-ticket/").success(callback);
             },
 
-            sendMessage: function(data, callback) {
-                return $http.post("/ajax/api/cabinet/support/ticket/" + data.ticketId + "/").success(callback);
+            sendMessage: function(ticketId, message, callback) {
+                return $http.post("/ajax/api/cabinet/support/ticket/" + ticketId + "/", message).success(callback);
             }
         }
 
