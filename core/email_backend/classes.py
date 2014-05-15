@@ -45,7 +45,7 @@ class EmailDispatcher(object):
 
 	def __send_email(self, message):
 		def send():
-			result = self.mandrill_client.messages.send(message=message, async=False)
+			result = self.mandrill_client.messages.send(message=message, async=True)
 			return result[0]['status'] == 'sent'
 
 		try:

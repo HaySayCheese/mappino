@@ -8,14 +8,17 @@ from core.users.models import Users
 
 
 class Tickets(models.Model):
-	class ClosedTicket(Exception): pass
-	class Meta:
-		db_table = "support_tickets"
+	# exceptions
+	class ClosedTicket(Exception):
+		pass
 
 	owner = models.ForeignKey(Users)
 	state_sid = models.SmallIntegerField(default=TICKETS_STATES.open())
 	created = models.DateTimeField(auto_now_add=True)
 	subject = models.TextField()
+
+	class Meta:
+		db_table = "support_tickets"
 
 
 	@classmethod
@@ -37,8 +40,11 @@ class Tickets(models.Model):
 
 
 	def add_message(self, text):
+		"""
+		Додає повідомлення text
+		"""
 		if self.state_sid != TICKETS_STATES.open():
-			raise SuspiciousOperation('Attempt to add message into closed ticket.')
+			raise self.ClosedTicket()
 
 		Messages.objects.create(
 			ticket = self,
@@ -59,7 +65,14 @@ class Tickets(models.Model):
 
 
 	def messages(self):
-		return Messages.objects.filter(ticket=self).defer('ticket')
+		return Messages.objects.filter(ticket=self).defer('ticket').order_by('-created')
+
+
+	def last_message_datetime(self):
+		try:
+			return self.messages().order_by('-created').only('created')[:1][0].created
+		except IndexError:
+			return None
 
 
 class Messages(models.Model):

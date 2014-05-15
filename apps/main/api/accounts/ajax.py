@@ -472,8 +472,11 @@ class AccessRestoreManager(object):
 
 			record = AccessRestoreTokens.new(user)
 			html = templates.get_template('email/access_restore/new_token.html').render({
-				'url_token': settings.REDIRECT_DOMAIN.join([
-					'ajax/api/accounts/password-reset/check?token=', record.token])
+				'token_url': '{domain}{url}?token={token_id}'.format(
+					domain = settings.REDIRECT_DOMAIN,
+				    url = '/ajax/api/accounts/password-reset/check',
+				    token_id = record.token
+				)
 			})
 			email_sender.send_html_email(
 				subject=u'Восстановление пароля', # tr
@@ -481,7 +484,7 @@ class AccessRestoreManager(object):
 			    addresses_list=[record.user.email],
 			)
 
-			return HttpResponse(self.post_codes['OK'], content_type='application/json')
+			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
 
 
 	class Check(BaseView):
@@ -508,17 +511,22 @@ class AccessRestoreManager(object):
 					raise ValueError('Token can\'t be empty.')
 
 			except (IndexError, ValueError):
-				return HttpResponseBadRequest(self.post_codes['invalid_token'], content_type='application/json')
+				return HttpResponse(
+					json.dumps(self.post_codes['invalid_token']),
+					content_type='application/json')
 
 			try:
 				params = angular_post_parameters(request, ['password', 'password-repeat'])
 			except ValueError:
-				return HttpResponseBadRequest(
-					self.post_codes['invalid_password_or_repeat'], content_type='application/json')
+				return HttpResponse(
+					json.dumps(self.post_codes['invalid_password_or_repeat']),
+					content_type='application/json')
 
 
 			if params['password'] != params['password-repeat']:
-				return HttpResponse(self.post_codes['passwords_not_match'], content_type='application/json')
+				return HttpResponse(
+					json.dumps(self.post_codes['passwords_not_match']),
+					content_type='application/json')
 
 
 			token_record_query = AccessRestoreTokens.objects.filter(token=token)[:1]
@@ -533,7 +541,9 @@ class AccessRestoreManager(object):
 				token.user.save()
 				token.delete()
 
-			return HttpResponse(self.post_codes['OK'], content_type='application/json')
+			return HttpResponse(
+				json.dumps(self.post_codes['OK']),
+				content_type='application/json')
 
 
 class Contacts(View):
