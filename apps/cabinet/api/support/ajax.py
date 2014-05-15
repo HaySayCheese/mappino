@@ -4,11 +4,10 @@ import json
 
 from apps.cabinet.api.classes import CabinetView
 from django.http import HttpResponse, HttpResponseBadRequest
-from collective.exceptions import InvalidArgument, RuntimeException
+from collective.exceptions import RuntimeException, EmptyArgument
 from collective.methods.request_data_getters import angular_parameters
 from core.support import support_agents_notifier
 from core.support.models import Tickets
-
 
 
 class Support(object):
@@ -23,15 +22,15 @@ class Support(object):
 		@staticmethod
 		def get(request, *args):
 			"""
-			Returns JSON-response with all tickets of the user.
-			For the format of response see code.
+			Returns JSON-response with all tickets of the user. For the format of response see code.
 			"""
 			tickets = Tickets.by_owner(request.user.id)
 			result = [{
 				'id': t.id,
 			    'state_sid': t.state_sid,
-			    'created': t.created.strftime('%Y/%m/%d %H:%M:00 UTC'), # todo: форматування часу
-			    'last_message': t.last_message_datetime().strftime('%d.%m.%Y - %H:%M') if t.last_message_datetime() else '-', # todo: форматування часу
+			    'created': t.created.strftime('%Y/%m/%d %H:%M:00 UTC'),
+			    'last_message': t.last_message_datetime().strftime('%Y/%m/%d %H:%M:00 UTC')
+			                        if t.last_message_datetime() else '-',
 			    'subject': t.subject
 			} for t in tickets]
 			return HttpResponse(json.dumps(result), content_type="application/json")
@@ -56,21 +55,25 @@ class Support(object):
 
 		def post(self, request, *args):
 			"""
-			Обробляє запит на закриття тікета
+			Closes the ticket with id from the url-params.
+
+			Params:
+				ticket_id: (url, pos=0) - id of the ticket.
 			"""
 			try:
-				ticket_id = args[0]
+				ticket_id = int(args[0])
 			except IndexError:
-				return HttpResponseBadRequest(json.dumps(
-					self.post_codes['invalid_parameters']), content_type='application/json')
+				return HttpResponseBadRequest()
+
 
 			ticket = Tickets.objects.filter(id=ticket_id, owner=request.user).only('id')[:1]
 			if not ticket:
-				return HttpResponseBadRequest(json.dumps(
-					self.post_codes['invalid_ticket_id']), content_type='application/json')
+				return HttpResponseBadRequest('No ticket with such id.')
+
 			ticket = ticket[0]
 			ticket.close()
-			return HttpResponse(json.dumps(self.post_codes['ok']), content_type="application/json")
+			return HttpResponse(json.dumps(
+				self.post_codes['ok']), content_type="application/json")
 
 
 	class Messages(CabinetView):
@@ -86,7 +89,11 @@ class Support(object):
 
 		def get(self, request, *args):
 			"""
-			Віддає всі повідомлення одного тікета в json
+			Returns JSON-response with all messages of ticket ith id from url.
+			For the response format see the code.
+
+			Params:
+				ticket_id (url, pos=0)
 			"""
 			try:
 				ticket_id = args[0]
@@ -111,19 +118,23 @@ class Support(object):
 
 		def post(self, request, *args):
 			"""
-			Обробляє запит на створення нового повідомлення в запиті до служби підтримки
-			(нове повідомлення)
+			Params:
+				ticket_id - (url, pos=0)
+				message - message in plaintext that will be added to the ticket.
+				subject - (optional) - subject that will be set tot the ticket.
+
+			Updates ticket with @message and @subject (if present).
+			If @subject is present and ticket does not have subject already -
+			the subject will be set to the ticket, else the response with error code will be returned.
 			"""
 			try:
-				ticket_id = args[0]
+				ticket_id = int(args[0])
 			except IndexError:
-				return HttpResponseBadRequest(json.dumps(
-					self.post_codes['invalid_parameters']), content_type='application/json')
+				return HttpResponseBadRequest()
 
 			ticket = Tickets.objects.filter(id=ticket_id, owner=request.user).only('id')[:1]
 			if not ticket:
-				return HttpResponseBadRequest(json.dumps(
-					self.post_codes['invalid_ticket_id']), content_type='application/json')
+				return HttpResponseBadRequest('No ticket with such id.')
 			ticket = ticket[0]
 
 			try:
@@ -137,25 +148,22 @@ class Support(object):
 			if subject:
 				try:
 					ticket.set_subject(subject)
-				except RuntimeException:
-					# ticket already contains subject
+				except (RuntimeException, EmptyArgument):
+					# Runtime exception may be thrown id ticket already contains subject.
 					return HttpResponse(json.dumps(
 						self.post_codes['invalid_parameters']), content_type='application/json')
 
+
 			message = params.get('message')
-			if message:
-				ticket.add_message(message)
-
-
-
-
+			if not message:
+				return HttpResponseBadRequest('@message can\'t be empty, it is required.')
 
 			try:
-
-
 				ticket.add_message(message)
-				support_agents_notifier.send_notification(ticket, message)
-			except InvalidArgument:
+			except EmptyArgument:
 				return HttpResponseBadRequest(json.dumps(
 					self.post_codes['invalid_parameters']), content_type='application/json')
+
+
+			support_agents_notifier.send_notification(ticket, message)
 			return HttpResponse(json.dumps(self.post_codes['ok']), content_type="application/json")
