@@ -1,13 +1,15 @@
 #coding=utf-8
 import random
+import string
+from core.users.classes import UserAvatar
+
+from django.utils.timezone import now
 from core.users import constants
 import re
-import string
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.tests.custom_user import CustomUserManager
 from django.db import models, transaction
 import phonenumbers
-
 from collective.exceptions import EmptyArgument
 
 
@@ -44,16 +46,8 @@ class UsersManager(CustomUserManager):
 
 
 class Users(AbstractBaseUser):
-	class Meta:
-		db_table = "users"
-		unique_together = (
-			('mobile_phone', 'add_mobile_phone'),
-		)
-
 	USERNAME_FIELD = 'mobile_phone'
 	REQUIRED_FIELDS = ['name', 'surname', 'email']
-	objects = UsersManager()
-
 
 	is_active = models.BooleanField(default=False)
 	is_admin = models.BooleanField(default=False)
@@ -74,6 +68,17 @@ class Users(AbstractBaseUser):
 	landline_phone = models.TextField(null=True) # landline phone is not personal.
 	add_landline_phone = models.TextField(null=True) # therefore it can not be unique.
 
+	# other fields
+	avatar_url = models.TextField()
+
+
+	objects = UsersManager()
+	class Meta:
+		db_table = "users"
+		unique_together = (
+			('mobile_phone', 'add_mobile_phone'),
+		)
+
 
 	@classmethod
 	def email_is_free(cls, email):
@@ -87,20 +92,21 @@ class Users(AbstractBaseUser):
 		        cls.objects.filter(add_mobile_phone = number).count() == 0)
 
 
-	def preferences(self):
-		return Preferences.by_user(self.id)
-
-
 	def full_name(self):
 		return '{0} {1}'.format(self.first_name, self.last_name)
 
 
+	def contact_email(self):
+		return self.work_email if self.work_email else self.email
+
+
 	def contacts(self):
-		preferences = Preferences.by_user(self)
+		preferences = self.preferences()
+
 		contacts = {
 			'first_name': self.first_name,
 		    'last_name': self.last_name,
-		    'avatar_url': 'http://fake-here.com' # todo: замінити на реальну фотку
+		    'avatar_url': self.avatar_url,
 		}
 
 		if preferences.show_mobile_phone and self.mobile_phone:
@@ -130,8 +136,12 @@ class Users(AbstractBaseUser):
 		return contacts
 
 
-	def contact_email(self):
-		return self.work_email if self.work_email else self.email
+	def preferences(self):
+		return Preferences.by_user(self.id)
+
+
+	def avatar(self):
+		return UserAvatar(self)
 
 
 class Preferences(models.Model):
@@ -169,7 +179,7 @@ class AccessRestoreTokens(models.Model):
 
 	user = models.ForeignKey(Users)
 	token = models.TextField(unique=True)
-	created = models.DateTimeField(auto_created=True)
+	created = models.DateTimeField(default=now())
 
 
 	@classmethod
