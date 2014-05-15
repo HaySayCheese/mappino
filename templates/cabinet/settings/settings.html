@@ -71,9 +71,7 @@
 
                     <div class="col-sm-4 col-lg-4">
                         <div class="user-photo-block text-center">
-                            <div class="photo">
-
-                            </div>
+                            <img class="photo" ng-src="[[ user.account.avatar_url ]]"/>
                             <a href="" ng-click="openPhotoDialog()">Сменить</a>
                             <input type="file" ng-file-select="onFileSelect($files)" accept="image/jpeg, image/png"/>
                         </div>

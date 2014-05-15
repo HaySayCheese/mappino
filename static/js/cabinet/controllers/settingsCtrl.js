@@ -29,11 +29,11 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
      * Логіка загрузки зображень
      */
     $scope.onFileSelect = function(files) {
+        $scope.user.account.avatar_url = "";
 
         Settings.uploadUserPhoto(files[0], function(data) {
-            console.log(data);
+            $scope.user.account.avatar_url = data.url;
         });
-        console.log(files);
     };
 
 
