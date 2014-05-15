@@ -3,7 +3,6 @@ import json
 
 from apps.cabinet.api.classes import CabinetView
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.utils import timezone
 from collective.exceptions import InvalidArgument
 from collective.methods.request_data_getters import angular_parameters
 from core.support import support_agents_notifier
@@ -26,13 +25,14 @@ class Support(object):
 		@staticmethod
 		def get(request, *args):
 			"""
-			Віддає всі звернення до служби підтримки, які належать користувачу, який згенерував запит.
+			Returns JSON-response with all tickets of the user.
+			For the format of response see code.
 			"""
 			tickets = Tickets.by_owner(request.user.id)
 			result = [{
 				'id': t.id,
 			    'state_sid': t.state_sid,
-			    'created': t.created.ut .strftime('%d.%m.%Y - %H:%M'), # todo: форматування часу
+			    'created': t.created.strftime('%d.%m.%Y - %H:%M'), # todo: форматування часу
 			    'last_message': t.last_message_datetime().strftime('%d.%m.%Y - %H:%M') if t.last_message_datetime() else '-', # todo: форматування часу
 			    'subject': t.subject
 			} for t in tickets]
@@ -41,7 +41,7 @@ class Support(object):
 
 		def post(self, request, *args):
 			"""
-			Обробляє запит на створення нового звернення в службу підтримки
+			Creates new ticket and returns JSON-response with it's id.
 			"""
 			try:
 				params = angular_parameters(request, ['subject', 'message'])
@@ -54,7 +54,7 @@ class Support(object):
 			message = params['message']
 
 			try:
-				ticket = Tickets.open(user, subject, message)
+				ticket = Tickets.open(user)
 				support_agents_notifier.send_notification(ticket, message)
 			except InvalidArgument:
 				return HttpResponseBadRequest(json.dumps(
