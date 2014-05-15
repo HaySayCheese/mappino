@@ -55,9 +55,9 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
             Settings.checkInputs({ f: name, v: value }, function(newValue, code) {
                 if (newValue)
                     e.currentTarget.value = newValue;
-
-                $scope.form.user[name].$setValidity("incorrect", code === 10);
-                $scope.form.user[name].$setValidity("duplicated", code === 11);
+                console.log(code)
+                $scope.form.user[name].$setValidity("incorrect", code !== 10);
+                $scope.form.user[name].$setValidity("duplicated", code !== 11);
             });
 
         });
