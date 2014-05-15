@@ -25,9 +25,9 @@
                     <li ng-repeat="ticket in tickets">
                         <a href="#!/support/ticket/[[ ticket.id ]]">[[ ticket.subject ]]</a>
                         <div class="text-muted small pull-right">
-                            <span>[[ ticket.created ]]</span>
+                            <span>[[ ticket.created | dateLocalize | date:'dd-MM-yyyy hh:mm' ]]</span>
                             &nbsp;&#8226;&nbsp;
-                            <span>[[ ticket.last_message ]]</span>
+                            <!--<span>[[ ticket.last_message | dateLocalize | date:'dd-MM-yyyy hh:mm' ]]</span>-->
                         </div>
                     </li>
                 </ul>
