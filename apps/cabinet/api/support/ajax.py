@@ -28,8 +28,8 @@ class Support(object):
 			result = [{
 				'id': t.id,
 			    'state_sid': t.state_sid,
-			    'created': t.created.strftime('%Y/%m/%d %H:%M:00 UTC'),
-			    'last_message': t.last_message_datetime().strftime('%Y/%m/%d %H:%M:00 UTC')
+			    'created': t.created.strftime('%Y/%m/%d %H:%M:00 +0000'),
+			    'last_message': t.last_message_datetime().strftime('%Y/%m/%d %H:%M:00 +0000')
 			                        if t.last_message_datetime() else '-',
 			    'subject': t.subject
 			} for t in tickets]
