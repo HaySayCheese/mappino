@@ -24,12 +24,13 @@ class Support(object):
 			"""
 			Returns JSON-response with all tickets of the user. For the format of response see code.
 			"""
+
 			tickets = Tickets.by_owner(request.user.id)
 			result = [{
 				'id': t.id,
 			    'state_sid': t.state_sid,
-			    'created': t.created.strftime('%Y/%m/%d %H:%M:00 +0000'),
-			    'last_message': t.last_message_datetime().strftime('%Y/%m/%d %H:%M:00 +0000')
+			    'created': t.created.strftime('%Y-%m-%dT%H:%M:00Z'),
+			    'last_message': t.last_message_datetime().strftime('%Y-%m-%dT%H:%M:00Z')
 			                        if t.last_message_datetime() else '-',
 			    'subject': t.subject
 			} for t in tickets]
