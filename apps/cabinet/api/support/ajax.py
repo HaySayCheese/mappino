@@ -112,7 +112,6 @@ class Support(object):
 			ticket = ticket[0]
 
 			result = [{
-				'id': m.id,
 			    'type_sid': m.type_sid,
 			    'created': m.created.strftime('%Y-%m-%dT%H:%M:00Z'),
 			    'text': m.text,
