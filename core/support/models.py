@@ -1,5 +1,5 @@
 #coding=utf-8
-from collective.exceptions import EmptyArgument, RuntimeException
+from collective.exceptions import EmptyArgument
 
 from django.db import models
 

@@ -114,7 +114,7 @@ class Support(object):
 			result = [{
 				'id': m.id,
 			    'type_sid': m.type_sid,
-			    'created': m.created.strftime('%Y-%m-%dT%H:%M:%S'),
+			    'created': m.created.strftime('%Y-%m-%dT%H:%M:00Z'),
 			    'text': m.text,
 			} for m in ticket.messages()]
 			return HttpResponse(json.dumps(result), content_type="application/json")
