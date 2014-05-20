@@ -79,6 +79,9 @@ class Support(object):
 
 	class Messages(CabinetView):
 		post_codes = {
+		    'ok': {
+				'code': 0,
+		    },
 		    'invalid_parameters': {
 			    'code': 1
 		    },
