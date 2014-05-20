@@ -61,7 +61,7 @@ class SupportAgentsNotifier(object):
 
 	def __send_email(self, ticket, html):
 		def send():
-			result = self.mandrill_client.messages.send(message=message, async=True)
+			result = self.mandrill_client.messages.send(message=message, async=False)
 			return result[0]['status'] == 'sent'
 
 		message = {

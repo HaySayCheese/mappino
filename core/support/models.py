@@ -54,10 +54,6 @@ class Tickets(models.Model):
 		if not subject:
 			raise EmptyArgument('@subject')
 
-		if self.subject:
-			raise RuntimeException('The subject is already set')
-
-
 		self.subject = subject
 		self.save()
 

@@ -93,7 +93,7 @@ class Users(AbstractBaseUser):
 
 
 	def full_name(self):
-		return '{0} {1}'.format(self.first_name, self.last_name)
+		return u'{0} {1}'.format(self.first_name, self.last_name)
 
 
 	def contact_email(self):

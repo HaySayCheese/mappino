@@ -149,8 +149,7 @@ class Support(object):
 			if subject:
 				try:
 					ticket.set_subject(subject)
-				except (RuntimeException, EmptyArgument):
-					# Runtime exception may be thrown id ticket already contains subject.
+				except EmptyArgument:
 					return HttpResponse(json.dumps(
 						self.post_codes['invalid_parameters']), content_type='application/json')
 
