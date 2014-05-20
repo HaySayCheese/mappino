@@ -102,7 +102,7 @@ app.factory('Queries', function($http, $upload) {
             },
 
             loadTicketData: function(ticketId, callback) {
-                return $http.get("/ajax/api/cabinet/support/ticket/" + ticketId + "/").success(callback);
+                return $http.get("/ajax/api/cabinet/support/tickets/" + ticketId + "/messages/").success(callback);
             },
 
             createTicket: function(callback) {
@@ -110,7 +110,7 @@ app.factory('Queries', function($http, $upload) {
             },
 
             sendMessage: function(ticketId, message, callback) {
-                return $http.post("/ajax/api/cabinet/support/ticket/" + ticketId + "/", message).success(callback);
+                return $http.post("/ajax/api/cabinet/support/tickets/" + ticketId + "/messages/", message).success(callback);
             }
         }
 

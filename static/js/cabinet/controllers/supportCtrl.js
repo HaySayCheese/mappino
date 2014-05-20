@@ -5,6 +5,7 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
     $rootScope.loadings.tickets    = false;
     $rootScope.loadings.ticketData = false;
 
+    $scope.message = {};
 
     initScrollBar();
 
@@ -18,7 +19,6 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
         $rootScope.loadings.tickets = true;
 
         Support.loadTickets(function(data) {
-            console.log("tickets loaded");
             $rootScope.loadings.tickets = false;
 
             $scope.tickets = data;
@@ -31,7 +31,6 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
         $rootScope.loadings.ticketData = true;
 
         Support.loadTicketData($routeParams.ticketId, function(data) {
-            console.log("ticket loaded");
             $rootScope.loadings.ticketData = false;
 
             $scope.messages = data;
@@ -46,17 +45,16 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
 
     $scope.createTicket = function() {
         Support.createTicket({ ticketId: $routeParams.ticketId }, function(data) {
-            console.log("ticket created");
             $location.path("/support/ticket/" + data.ticketId)
         });
     };
 
 
     $scope.sendMessage = function() {
-        if ($scope.messages.length)
-            delete $scope.message.title;
-
-        Support.createTicket($routeParams.ticketId, $scope.message, function(data) {
+//        if ($scope.messages.length)
+//            delete $scope.message.title;
+        console.log("message send");
+        Support.sendMessage($routeParams.ticketId, $scope.message, function(data) {
             console.log("message send");
         });
     };
