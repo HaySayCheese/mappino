@@ -106,7 +106,7 @@ app.factory('Queries', function($http, $upload) {
             },
 
             createTicket: function(callback) {
-                return $http.post("/ajax/api/cabinet/support/new-ticket/").success(callback);
+                return $http.post("/ajax/api/cabinet/support/tickets/").success(callback);
             },
 
             sendMessage: function(ticketId, message, callback) {

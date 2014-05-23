@@ -1,36 +1,21 @@
 <div class="col-sm-12 col-lg-8 col-lg-offset-2" ng-hide="loadings.ticketData">
     <div class="row">
         <div class="col-sm-12 support-message-form">
-            <input class="form-control form-group" type="text" name="subject" placeholder="Тема" ng-model="message.subject"/>
+            <input class="form-control form-group" type="text" name="subject" placeholder="Тема" ng-hide="messages.length" ng-model="message.subject"/>
             <textarea class="form-control form-group" name="message" rows="3" placeholder="Текст сообщения" ng-model="message.message"></textarea>
-            <div class="btn btn-primary pull-right" ng-disabled="!message.message" ng-click="sendMessage()">Отправить сообщение</div>
+            <div class="btn btn-primary pull-right ticket-send-btn" ng-disabled="!message.message" data-loading-text="Отправка данных..."  ng-click="sendMessage()">Отправить сообщение</div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-sm-12 support-message-block user-message">
-            <div class="user-photo pull-left"></div>
+    <div class="row" ng-repeat="message in messages">
+        <div class="col-sm-12 support-message-block" ng-class="{ 'user-message' : message.type_sid === 0, 'admin-message' : message.type_sid === 1 }">
+            <div class="user-photo pull-left" ng-class="{ 'pull-left' : message.type_sid === 0, 'pull-right' : message.type_sid === 1 }"></div>
             <div class="user-message">
                 <div class="message">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis dolor necessitatibus quia rem veritatis vitae!
+                    [[ message.text ]]
                 </div>
                 <div class="message-info text-muted small text-right">
-                    Отправлено 10.10.10
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="row">
-        <div class="col-sm-12 support-message-block admin-message">
-            <div class="user-photo pull-right"></div>
-            <div class="user-message">
-                <div class="message">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis dolor necessitatibus quia rem veritatis vitae!
-                </div>
-                <div class="message-info text-muted small text-left">
-                    Отправлено 10.10.10
+                    [[ message.created | date:'dd-MM-yyyy HH:mm' ]]
                 </div>
             </div>
         </div>
