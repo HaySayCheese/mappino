@@ -63,9 +63,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
             // якщо оголошення неопубліковане
             if (!data.head.actual) {
-                $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/" + tid + "/";
+                $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/unpublished/" + tid + "/";
             } else {
-                $scope.publicationTemplateUrl = "/ajax/template/cabinet/published/" + tid + "/";
+                $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/published/";
             }
         });
     }
@@ -85,7 +85,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $scope.showPublication = true;
 
             $timeout(function() {
-                initMap();
+                !$scope.publication.head.actual && initMap();
+                $scope.publication.head.actual && initCharts();
                 initScrollBar();
             }, 300);
         }, 500);
@@ -144,6 +145,79 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             value = e.currentTarget.checked;
 
         Publication.checkInputs(tid, hid, { f: name, v: id + "," + value }, null);
+    };
+
+
+    /**
+     * Ініціалізація графіків
+     */
+    function initCharts() {
+        var lineChart = {};
+        lineChart.type = "AreaChart";
+
+        lineChart.data = {
+            "cols": [
+                {
+                    "id": "month",
+                    "label": "Month",
+                    "type": "string"
+                }, {
+                    "id": "laptop-id",
+                    "label": "Laptop",
+                    "type": "number"
+                }
+            ],
+            "rows": [
+                {
+                    "c": [
+                        {
+                            "v": "January"
+                        }, {
+                            "v": 2
+                        }
+                    ]
+                }, {
+                    "c": [
+                        {
+                            "v": "February"
+                        }, {
+                            "v": 3
+                        }
+                    ]
+                }, {
+                    "c": [
+                        {
+                            "v": "March"
+                        }, {
+                            "v": 6
+                        }
+                    ]
+                }, {
+                    "c": [
+                        {
+                            "v": "March"
+                        }, {
+                            "v": 6
+                        }
+                    ]
+                }
+            ]
+        };
+
+        lineChart.options = {
+            title: "Просмотров за месяц",
+            isStacked: "true",
+            legend: 'none',
+            displayExactValues: true,
+            height: 300,
+            series: {
+                0: { color: '#318ce1' }
+            },
+            lineWidth: 4,
+            pointSize: 8
+        };
+
+        $scope.chart = lineChart;
     };
 
 
