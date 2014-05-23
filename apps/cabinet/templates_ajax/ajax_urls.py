@@ -5,13 +5,13 @@ urlpatterns = patterns('apps.cabinet.templates_ajax',
 
 
     # unpublished forms
-    url(r'^ajax/template/cabinet/publications/(\d+)/$', 'publications.unpublished_form_template'),
-    url(r'^ajax/template/cabinet/publications/map/$', 'publications.unpublished_map_template'),
-    url(r'^ajax/template/cabinet/publications/photos/$', 'publications.unpublished_photos_template'),
+    url(r'^ajax/template/cabinet/publications/unpublished/(\d+)/$', 'publications.unpublished_form_template'),
+    url(r'^ajax/template/cabinet/publications/unpublished/map/$', 'publications.unpublished_map_template'),
+    url(r'^ajax/template/cabinet/publications/unpublished/photos/$', 'publications.unpublished_photos_template'),
 
 
 	# published publications forms
-    url(r'^ajax/template/cabinet/published/(\d+)/$', 'publications.published_form_template'),
+    url(r'^ajax/template/cabinet/publications/published/$', 'publications.published_form_template'),
 
 
     # settings
