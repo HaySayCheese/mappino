@@ -4,7 +4,7 @@ import json
 
 from apps.cabinet.api.classes import CabinetView
 from django.http import HttpResponse, HttpResponseBadRequest
-from collective.exceptions import RuntimeException, EmptyArgument
+from collective.exceptions import EmptyArgument
 from collective.methods.request_data_getters import angular_parameters
 from core.support import support_agents_notifier
 from core.support.models import Tickets
