@@ -6,6 +6,8 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
     $rootScope.loadings.ticketData = false;
 
     $scope.message = {};
+    $scope.admin_avatar = {};
+    $scope.user_avatar = {};
 
     initScrollBar();
 
@@ -33,7 +35,9 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
         Support.loadTicketData($routeParams.ticketId, function(data) {
             $rootScope.loadings.ticketData = false;
 
-            $scope.messages = data;
+            $scope.messages = data.messages;
+            $scope.admin_avatar = data.admin_avatar;
+            $scope.user_avatar = data.user_avatar;
         });
     }
 

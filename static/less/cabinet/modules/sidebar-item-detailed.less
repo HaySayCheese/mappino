@@ -176,6 +176,10 @@
         li {
             padding: 7px 7px 7px 20px;
             border-bottom: 1px dashed @gray-lighter;
+
+            div {
+                padding-top: 2px;
+            }
         }
     }
     .support-message-form {
@@ -197,11 +201,11 @@
             }
         }
 
-        > .user-photo {
+        > .user-photo img {
             .square(100px);
             background: @gray-lighter;
             border-radius: 50%;
-
+            border: 1px solid @gray-lighter;
         }
         > .user-message {
             .message {
