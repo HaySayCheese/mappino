@@ -45,17 +45,26 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
 
     $scope.createTicket = function() {
         Support.createTicket({ ticketId: $routeParams.ticketId }, function(data) {
-            $location.path("/support/ticket/" + data.ticketId)
+            $location.path("/support/tickets/" + data.id)
         });
     };
 
 
     $scope.sendMessage = function() {
-//        if ($scope.messages.length)
-//            delete $scope.message.title;
-        console.log("message send");
+        if ($scope.messages.length)
+            delete $scope.message.subject;
+
+        var btn = angular.element(".ticket-send-btn").button("loading");
+
         Support.sendMessage($routeParams.ticketId, $scope.message, function(data) {
-            console.log("message send");
+            $scope.messages.unshift({
+                created: new Date().getTime(),
+                text: $scope.message.message,
+                type_sid: 0
+            });
+
+            btn.button("reset");
+            $scope.message = {};
         });
     };
 
