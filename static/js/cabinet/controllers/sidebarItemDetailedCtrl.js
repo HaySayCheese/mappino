@@ -153,17 +153,17 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      */
     function initCharts() {
         var lineChart = {};
-        lineChart.type = "AreaChart";
+        lineChart.type = "LineChart";
 
         lineChart.data = {
             "cols": [
                 {
                     "id": "month",
-                    "label": "Month",
-                    "type": "string"
+                    "label": "Месяц",
+                    "type": "date"
                 }, {
-                    "id": "laptop-id",
-                    "label": "Laptop",
+                    "id": "views",
+                    "label": "Просмотров",
                     "type": "number"
                 }
             ],
@@ -171,7 +171,23 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 {
                     "c": [
                         {
-                            "v": "January"
+                            "v": new Date(2014, 5, 18)
+                        }, {
+                            "v": 0
+                        }
+                    ]
+                }, {
+                    "c": [
+                        {
+                            "v": new Date(2014, 5, 19)
+                        }, {
+                            "v": 10
+                        }
+                    ]
+                }, {
+                    "c": [
+                        {
+                            "v": new Date(2014, 5, 20)
                         }, {
                             "v": 2
                         }
@@ -179,7 +195,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 }, {
                     "c": [
                         {
-                            "v": "February"
+                            "v": new Date(2014, 5, 21)
                         }, {
                             "v": 3
                         }
@@ -187,7 +203,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 }, {
                     "c": [
                         {
-                            "v": "March"
+                            "v": new Date(2014, 5, 22)
                         }, {
                             "v": 6
                         }
@@ -195,9 +211,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 }, {
                     "c": [
                         {
-                            "v": "March"
+                            "v": new Date(2014, 5, 23)
                         }, {
-                            "v": 6
+                            "v": 1
                         }
                     ]
                 }
@@ -205,20 +221,31 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         };
 
         lineChart.options = {
-            title: "Просмотров за месяц",
+            chartArea: {
+                width: "94%",
+                top: 20
+            },
+            height: 300,
+
             isStacked: "true",
             legend: 'none',
             displayExactValues: true,
-            height: 300,
+
             series: {
                 0: { color: '#318ce1' }
             },
+
+            smoothLine: true,
             lineWidth: 4,
-            pointSize: 8
+            pointSize: 8,
+
+            hAxis: {
+                format : "dd.MM"
+            }
         };
 
-        $scope.chart = lineChart;
-    };
+        $scope.lineChart = lineChart;
+    }
 
 
     /**
