@@ -111,11 +111,15 @@ class Support(object):
 					self.post_codes['invalid_ticket_id']), content_type='application/json')
 			ticket = ticket[0]
 
-			result = [{
-			    'type_sid': m.type_sid,
-			    'created': m.created.strftime('%Y-%m-%dT%H:%M:00Z'),
-			    'text': m.text,
-			} for m in ticket.messages()]
+			result = {
+				'user_avatar': request.user.avatar().url(),
+			    'admin_avatar': '', # todo: add admin avatar here.
+				'messages': [{
+				    'type_sid': m.type_sid,
+				    'created': m.created.strftime('%Y-%m-%dT%H:%M:00Z'),
+				    'text': m.text,
+				} for m in ticket.messages()]
+			}
 			return HttpResponse(json.dumps(result), content_type="application/json")
 
 
