@@ -15,7 +15,7 @@ class Tickets(models.Model):
 	owner = models.ForeignKey(Users)
 	state_sid = models.SmallIntegerField(default=TICKETS_STATES.open())
 	created = models.DateTimeField(auto_now_add=True)
-	subject = models.TextField(null=True)
+	subject = models.TextField(null=True, blank=True)
 
 	class Meta:
 		db_table = "support_tickets"
