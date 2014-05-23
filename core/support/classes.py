@@ -22,7 +22,7 @@ class SupportAgentsNotifier(object):
 				'id': ticket.owner.id,
 			    'name': ticket.owner.full_name(),
 			},
-		    'message': message
+		    'message': message,
 		})
 		self.__send_email(ticket, html)
 

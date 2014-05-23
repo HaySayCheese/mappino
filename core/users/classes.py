@@ -49,7 +49,7 @@ class UserAvatar(object):
 		salt = '94034782133244956047'
 		uid_hash = hashlib.sha384(str(self.user.id) + salt).hexdigest()
 
-		image_name = uid_hash + '.png'
+		image_name = uid_hash + '.jpg'
 		image_path = os.path.join(self.dir, image_name)
 		with open(image_path, 'wb+') as avatar:
 			for chunk in file.chunks():
