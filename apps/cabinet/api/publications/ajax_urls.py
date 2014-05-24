@@ -5,14 +5,10 @@ from django.conf.urls import patterns, url
 urlpatterns = patterns('apps.cabinet.api',
     # create
 	url(r'^ajax/api/cabinet/publications/$', Publications.Create.as_view()),
+	url(r'^ajax/api/cabinet/publications/(\d+:\d+)/$', Publications.RUD.as_view()),
+    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/publish/$', Publications.Publish.as_view()),
+    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/unpublish/$', Publications.Unpublish.as_view()),
 
-	# unpublished
-	url(r'^ajax/api/cabinet/publications/unpublished/(\d+:\d+)/$', Publications.RUD.as_view()),
-    url(r'^ajax/api/cabinet/publications/unpublished/(\d+:\d+)/publish/$', Publications.Publish.as_view()),
-
-	# published
-	url(r'^ajax/api/cabinet/publications/published/(\d+:\d+)/$', Publications.RUD.as_view()),
-    url(r'^ajax/api/cabinet/publications/unpublished/(\d+:\d+)/unpublish/$', Publications.Unpublish.as_view()),
 
 	# photos
     url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/$', Publications.UploadPhoto.as_view()),

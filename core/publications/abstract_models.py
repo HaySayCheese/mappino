@@ -312,6 +312,21 @@ class LivingHeadModel(models.Model):
 		self.body.check_required_fields()
 
 
+	def photos_json(self):
+		result = {
+			'title_photos': '',
+			'photos': [],
+		}
+
+		for photo in self.photos_model.objects.filter(hid=self.id).order_by('-is_title'):
+			if photo.is_title:
+				result['title_photo'] = photo.url() + photo.title_thumbnail_name()
+				result['photos'].append(photo.url() + photo.image_name())
+			else:
+				result['photos'].append(photo.url() + photo.image_name())
+		return result
+
+
 	def is_published(self):
 		return self.state_sid == OBJECT_STATES.published()
 

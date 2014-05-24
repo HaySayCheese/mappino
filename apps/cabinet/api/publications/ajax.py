@@ -3,8 +3,7 @@ import copy
 import json
 
 from apps.cabinet.api.classes import CabinetView
-from apps.cabinet.api.dirtags.models import DirTags
-from django.core import serializers
+from core.publications import formatters
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from core.publications.abstract_models import PhotosModel
@@ -105,6 +104,13 @@ class Publications(object):
 		    },
 		}
 
+
+		def __init__(self):
+			super(Publications.RUD, self).__init__()
+			self.published_formatter = formatters.PublishedFormatter()
+			self.unpublished_formatter = formatters.UnpublishedFormatter()
+
+
 		def get(self, request, *args):
 			if not args:
 				return HttpResponseBadRequest('Not enough parameters.')
@@ -125,8 +131,20 @@ class Publications(object):
 				raise PermissionDenied()
 
 			# seems to be ok
-			return HttpResponse(json.dumps(
-				self.publication_data(tid, head)), content_type='application/json')
+			if head.is_published:
+				description_generator = self.published_formatter.by_tid(tid)
+				description = description_generator(head)
+
+				# Деякі із полів, згенерованих генератором видачі можуть бути пустими.
+				# Для уникнення їх появи на фронті їх слід видалити із словника опису.
+				description = dict((k, v) for k, v in description.iteritems() if (v is not None) and (v != ""))
+
+				description['photos'] = head.photos_json()
+				return HttpResponse(json.dumps(description), content_type='application/json')
+
+			else:
+				return HttpResponse(json.dumps(
+					self.unpublished_formatter.format(tid, head)), content_type='application/json')
 
 
 		def put(self, request, *args):
@@ -241,161 +259,6 @@ class Publications(object):
 			# all publications that was deleted are situated in trash
 			head.mark_as_deleted()
 			return HttpResponse(json.dumps(self.delete_codes['OK']), content_type='application/json')
-
-
-		@classmethod
-		def publication_data(cls, tid, record):
-			head = serializers.serialize(
-				'python', [record], fields=('created', 'actual', 'for_rent', 'for_sale', 'state_sid',
-				                            'degree_lat', 'degree_lng', 'segment_lat', 'segment_lng',
-				                            'pos_lat', 'pos_lng','address'))[0]['fields']
-
-			# Переформатувати дату створення оголошення у прийнятний для десериалізації формат
-			created = head['created']
-			if created is not None:
-				head['created'] = created.isoformat()
-
-			# Переформатувати дату завершального терміну актуальності оголошення
-			# у прийнятний для десериалізації формат
-			actual = head['actual']
-			if actual is not None:
-				head['actual'] = actual.isoformat()
-
-
-			body = serializers.serialize('python', [record.body])[0]['fields']
-
-			# Якщо оголошення призначено для продажу - підгрузити і сериалізувати цю інформацію.
-			# Дана інформація не грузиться автоматично щоб уникнути потенційно-зайвих селектів.
-			if record.for_sale:
-				sale_terms = serializers.serialize('python', [record.sale_terms])[0]['fields']
-			else:
-				sale_terms = None
-
-			# Якщо оголошення призначено для оренди - підгрузити і сериалізувати цю інформацію.
-			# Дана інформація не грузиться автоматично щоб уникнути потенційно-зайвих селектів.
-			if record.for_rent:
-				rent_terms = serializers.serialize('python', [record.rent_terms])[0]['fields']
-			else:
-				rent_terms = None
-
-			# Фото
-			photos = [photo.info() for photo in record.photos_model.objects.filter(hid = record.id)]
-			if not photos:
-				photos = None
-
-			# Перелік тегів, якими позначене оголошення.
-			tags = {
-				tag.id: True for tag in DirTags.contains_publications(tid, [record.id])
-			}
-
-			data = {
-				'head': head,
-				'body': body,
-				'sale_terms': sale_terms,
-				'rent_terms': rent_terms,
-			    'photos': photos,
-			    'tags': tags,
-			}
-			return cls.format_output_data(data)
-
-
-		@classmethod
-		def format_output_data(cls, data):
-			# maps coordinates
-			head = data.get('head')
-			if head is None:
-				raise ValueError('@head can not be None.')
-
-			degree_lat = head.get('degree_lat')
-			degree_lng = head.get('degree_lng')
-			if (degree_lat is None) or (degree_lng is None):
-				coordinates = {
-					'lat': None,
-				    'lng': None,
-				}
-			else:
-				segment_lat = head.get('segment_lat')
-				segment_lng = head.get('segment_lng')
-				if (segment_lat is None) or (segment_lng is None):
-					coordinates = {
-						'lat': None,
-					    'lng': None,
-					}
-				else:
-					pos_lat = head.get('pos_lat')
-					pos_lng = head.get('pos_lng')
-					if (pos_lat is None) or (pos_lng is None):
-						coordinates = {
-							'lat': None,
-						    'lng': None,
-						}
-					else:
-						coordinates = {
-							'lat': str(degree_lat) + '.' + str(segment_lat) + str(pos_lat),
-						    'lng': str(degree_lng) + '.' + str(segment_lng) + str(pos_lng),
-						}
-
-			del data['head']['degree_lat']
-			del data['head']['degree_lng']
-			del data['head']['segment_lat']
-			del data['head']['segment_lng']
-			del data['head']['pos_lat']
-			del data['head']['pos_lng']
-			data['head'].update(coordinates)
-
-
-			# sale terms
-			s_terms = data.get('sale_terms')
-			if s_terms:
-				s_price = s_terms.get('price')
-				if s_price:
-					if int(s_price) == s_price:
-						# Якщо після коми лише нулі - повернути ціле значення
-						data['sale_terms']['price'] = "%.0f" % s_price
-					else:
-						# Інакше - округлити до 2х знаків після коми
-						data['sale_terms']['price'] = "%.2f" % s_price
-
-
-			# rent terms
-			r_terms = data.get('rent_terms')
-			if r_terms:
-				r_price = r_terms.get('price')
-				if r_price:
-					if int(r_price) == r_price:
-						# Якщо після коми лише нулі - повернути ціле значення
-						data['rent_terms']['price'] = "%.0f" % r_price
-					else:
-						# Інакше - округлити до 2х знаків після коми
-						data['rent_terms']['price'] = "%.2f" % r_price
-
-			# Костиль..
-			# Об’єкти готового бізнесу мають 2 decimal-поля, які ломають json-encoder.
-			# Логічно винести функцію формування json-опису об’єкту в модель,
-			# але зараз зроблено як зроблено і часу змінювати це немає.
-			# Отже, тут ці 2 поля переформатовуються.
-
-			monthly_costs = data['body'].get('monthly_costs')
-			if monthly_costs:
-				if int(monthly_costs) == monthly_costs:
-					# Якщо після коми лише нулі - повернути ціле значення
-					data['body']['monthly_costs'] = "%.0f" % monthly_costs
-				else:
-					# Інакше - округлити до 2х знаків після коми
-					data['body']['monthly_costs'] = "%.2f" % float(monthly_costs)
-
-
-			annual_receipts = data['body'].get('annual_receipts')
-			if annual_receipts:
-				if int(annual_receipts) == annual_receipts:
-					# Якщо після коми лише нулі - повернути ціле значення
-					data['body']['annual_receipts'] = "%.0f" % annual_receipts
-				else:
-					# Інакше - округлити до 2х знаків після коми
-					data['body']['annual_receipts'] = "%.2f" % float(annual_receipts)
-
-
-			return data
 
 
 
