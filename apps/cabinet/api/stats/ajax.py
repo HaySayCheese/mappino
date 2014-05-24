@@ -38,9 +38,9 @@ class Stats(object):
 			l = [
 				{
 				'date': '2014-05-{0}'.format(i),
-				'views': random.randint(1, 30),
+				'views': random.randint(10, 30),
 				'contacts_requests': random.randint(1, 30),
-				} for i in xrange(30)
+				} for i in xrange(20)
 			]
 
 			return HttpResponse(json.dumps(l), content_type='application/json')
