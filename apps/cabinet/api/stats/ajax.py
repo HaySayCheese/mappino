@@ -1,4 +1,5 @@
 import json
+import random
 
 from apps.cabinet.api.classes import CabinetView
 from collective.methods.request_data_getters import GET_parameter
@@ -34,20 +35,12 @@ class Stats(object):
 					self.get_codes['invalid_params']), content_type='application/json')
 
 
-			return HttpResponse(json.dumps([
+			l = [
 				{
-				'date': '2014-05-21',
-				'views': 10,
-				'contacts_requests': 5,
-				},
-			    {
-				'date': '2014-05-22',
-				'views': 14,
-				'contacts_requests': 6,
-				},
-			    {
-				'date': '2014-05-24',
-				'views': 18,
-				'contacts_requests': 9,
-				}
-			]), content_type='application/json')
+				'date': '2014-05-{0}'.format(i),
+				'views': random.randint(1, 30),
+				'contacts_requests': random.randint(1, 30),
+				} for i in xrange(30)
+			]
+
+			return HttpResponse(json.dumps(l), content_type='application/json')
