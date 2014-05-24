@@ -55,8 +55,40 @@ class Stats(object):
 				'contacts_requests': 6,
 				},
 			    {
-				'date': '2014-05-24',
+				'date': '2014-05-23',
 				'views': 18,
 				'contacts_requests': 9,
-				}
+				},
+
+			     {
+				'date': '2014-05-24',
+				'views': 14,
+				'contacts_requests': 6,
+				},
+			    {
+				'date': '2014-05-25',
+				'views': 18,
+				'contacts_requests': 9,
+				},
+
+			     {
+				'date': '2014-05-26',
+				'views': 14,
+				'contacts_requests': 6,
+				},
+			    {
+				'date': '2014-05-27',
+				'views': 18,
+				'contacts_requests': 9,
+				},
+			    {
+				'date': '2014-05-28',
+				'views': 18,
+				'contacts_requests': 9,
+				},
+			    {
+				'date': '2014-05-29',
+				'views': 18,
+				'contacts_requests': 9,
+				},
 			]), content_type='application/json')
