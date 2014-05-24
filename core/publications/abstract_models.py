@@ -283,6 +283,7 @@ class LivingHeadModel(models.Model):
 		self.published = None
 		self.actual = None
 		self.deleted = now()
+		self.save()
 
 
 	def check_required_fields(self):
