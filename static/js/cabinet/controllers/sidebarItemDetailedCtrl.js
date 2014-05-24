@@ -54,20 +54,19 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         $scope.publication = [];
         $rootScope.loadings.detailed = true;
 
-
         Publication.load(tid, hid, function(data) {
             $scope.publication = data.data ? data.data : data;
 
             console.log(data);
-            $scope.publicationLoaded = true;
 
             if (data.head.state_sid === 0) {
                 isPublished = true;
                 loadChartData();
                 $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/published/";
             } else {
-                $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/unpublished/" + tid + "/";
                 isPublished = false;
+                $scope.publicationLoaded = true;
+                $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/unpublished/" + tid + "/";
             }
         });
     }
