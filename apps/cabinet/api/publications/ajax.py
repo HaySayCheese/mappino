@@ -140,17 +140,18 @@ class Publications(object):
 				description = dict((k, v) for k, v in description.iteritems() if (v is not None) and (v != ""))
 
 				description['photos'] = head.photos_json()
-				return HttpResponse(json.dumps(description), content_type='application/json')
 
-			else:
 				data = {
 					'head': {
 						'state_sid': head.state_sid
 					},
-				    'data': self.unpublished_formatter.format(tid, head),
+				    'data': description
 				}
-
 				return HttpResponse(json.dumps(data), content_type='application/json')
+
+			else:
+				return HttpResponse(json.dumps(
+					self.unpublished_formatter.format(tid, head)), content_type='application/json')
 
 
 		def put(self, request, *args):
