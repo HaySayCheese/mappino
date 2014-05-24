@@ -59,15 +59,15 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $scope.publication = data.data ? data.data : data;
 
             console.log(data);
+            $scope.publicationLoaded = true;
 
             if (data.head.state_sid === 0) {
                 isPublished = true;
                 loadChartData();
                 $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/published/";
             } else {
-                isPublished = false;
-                $scope.publicationLoaded = true;
                 $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/unpublished/" + tid + "/";
+                isPublished = false;
             }
         });
     }
@@ -101,10 +101,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $scope.showPublication = true;
 
             $timeout(function() {
-                initMap();
                 initScrollBar();
             }, 300);
-        }, 500);
+        }, 0);
 
 
         // якщо опубліковане
@@ -114,12 +113,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $rootScope.loadings.detailed = false;
             $scope.showPublication = true;
 
-            initCharts();
-
             $timeout(function() {
+                initCharts();
                 initScrollBar();
-            }, 300);
-        }, 500);
+            }, 0);
+        }, 0);
     };
 
 
@@ -256,7 +254,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     /**
      * Ініціалізація карти
      */
-    function initMap() {
+    $scope.initMap = function() {
 
         var cityInput = document.getElementById("publication-map-input"),
             center = new google.maps.LatLng($scope.publication.head.lat || 50.448159, $scope.publication.head.lng || 30.524654),
@@ -399,11 +397,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * Зняття оголошення з опублікованих
      */
     $scope.unpublishPublication = function() {
-
         var btn = angular.element(".publish-btn").button("loading");
 
         Publication.unpublish(tid, hid, function(data) {
             btn.button("reset");
+            $location.path("publications/unpublished/" + tid + ":" + hid)
         });
     };
 

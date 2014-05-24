@@ -77,7 +77,6 @@
 
     h3 {
         padding: 10px 0;
-
         font-weight: bold;
         border-bottom: 1px solid @gray-lighter;
 
@@ -154,72 +153,8 @@
         border: 1px solid @gray-lighter;
     }
 
-    .user-photo-block {
-        width: 180px;
-
-        > .photo {
-            .square(180px);
-            background-color: #f5f3f4;
-            border: 1px solid @gray-lighter;
-            border-radius: 50%;
-        }
-    }
-
-
-    /**
-    * Support page styles
-    */
-    .support-message-list {
-        padding: 0;
-        list-style: none;
-
-        li {
-            padding: 7px 7px 7px 20px;
-            border-bottom: 1px dashed @gray-lighter;
-
-            div {
-                padding-top: 2px;
-            }
-        }
-    }
-    .support-message-form {
-        padding: 40px 80px 10px;
-        margin-bottom: 30px;
-        border-bottom: 1px dashed @gray-lighter;
-    }
-    .support-message-block {
-        padding: 20px 80px;
-
-        &.user-message {
-            > .user-photo {
-                margin-right: 10px;
-            }
-        }
-        &.admin-message {
-            > .user-photo {
-                margin-left: 10px;
-            }
-        }
-
-        > .user-photo img {
-            .square(100px);
-            background: @gray-lighter;
-            border-radius: 50%;
-            border: 1px solid @gray-lighter;
-        }
-        > .user-message {
-            .message {
-                margin-bottom: 10px;
-            }
-        }
-    }
-
     .chart-block {
         padding: 0 20px;
-    }
-
-    .checkbox-hint {
-        padding-left: 28px;
     }
 
     form > .row:last-child {
@@ -313,4 +248,8 @@
             background-image: url("../../img/cabinet/sidebar-item-detailed/trash.png");
         }
     }
+
+
+    @import "../pages/settings";
+    @import "../pages/support";
 }
