@@ -2,7 +2,7 @@
 import copy
 import json
 
-from apps.cabinet.api.classes import CabinetView
+from apps.classes import CabinetView
 from core.publications import formatters
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.http.response import HttpResponse, HttpResponseBadRequest

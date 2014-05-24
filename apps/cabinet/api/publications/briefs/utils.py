@@ -218,7 +218,7 @@ def get_sections_counters(user_id):
 		'all': all,
 	    'published': published,
 	    'unpublished': unpublished,
-	    'deleted': deleted
+	    'trash': deleted
 	})
 	return counters
 
