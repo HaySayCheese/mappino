@@ -5,9 +5,16 @@ from apps.cabinet.api.publications.ajax import UploadPhoto, Photos, PhotoTitle
 urlpatterns = patterns('apps.cabinet.api',
     # CRUD
 	url(r'^ajax/api/cabinet/publications/$', 'publications.ajax.create'),
-	url(r'^ajax/api/cabinet/publications/(\d+:\d+)/$', 'publications.ajax.rud_switch'),
-    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/publish/$', 'publications.ajax.publish'),
-    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/unpublish/$','publications.ajax.unpublish'),
+
+	# unpublished
+	url(r'^ajax/api/cabinet/publications/unpublished/(\d+:\d+)/$', 'publications.ajax.rud_switch'),
+    url(r'^ajax/api/cabinet/publications/unpublished/(\d+:\d+)/publish/$', 'publications.ajax.publish'),
+
+	# published
+	url(r'^ajax/api/cabinet/publications/published/(\d+:\d+)/$', 'publications.ajax.rud_switch'), # todo: change me
+    url(r'^ajax/api/cabinet/publications/unpublished/(\d+:\d+)/unpublish/$','publications.ajax.unpublish'),
+
+
 
     # briefs
     url(r'^ajax/api/cabinet/publications/counters/$', 'publications.briefs.ajax.counters'),
