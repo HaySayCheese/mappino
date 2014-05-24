@@ -230,14 +230,14 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                     color: "#eee"
                 },
                 baselineColor: '#eee',
-                textColor: '#555'
+                textColor: '#999'
             },
             vAxis: {
                 gridlines: {
                     color: "#eee"
                 },
                 baselineColor: '#eee',
-                textColor: '#555'
+                textColor: '#999'
             }
 
         };
