@@ -416,6 +416,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
         Publication.remove(tid, hid, function(data) {
             btn.button("reset");
+            Briefs.remove(tid, hid);
             $location.path("publications/" + $rootScope.routeSection)
         });
     };

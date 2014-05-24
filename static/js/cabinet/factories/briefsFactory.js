@@ -152,6 +152,20 @@ app.factory('Briefs', function($rootScope, Queries, Tags) {
 
 
         /**
+         * Видаляє бриф
+         *
+         * @param {number} tid              Ідентифікатор типу оголошення
+         * @param {number} id               Ідентифікатор оголошення
+         */
+        remove: function(tid, id) {
+            _.each(briefs, function(brief, index, list) {
+                if (brief.tid == tid && brief.id == id)
+                    list.splice(index, 1);
+            });
+        },
+
+
+        /**
          * Вертає масив брифів
          *
          * @return {Array} Масив брифік
