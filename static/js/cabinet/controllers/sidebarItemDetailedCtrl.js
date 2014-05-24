@@ -6,10 +6,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
     $scope.publicationSections = [];
     $scope.publication = [];
+    $scope.publicationChartData = [];
     $scope.tags = Tags.getAll();
     $scope.form = {};
 
-    var tid, hid;
+    var tid, hid, isPublished = false;
 
 
     /**
@@ -44,7 +45,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
 
     /**
-     * Функція загрузки даних по неопублікованому оголошенню
+     * Функція загрузки даних по оголошенню
      */
     function loadPublicationData() {
         if (!$rootScope.publicationId)
@@ -55,18 +56,32 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
 
         Publication.load(tid, hid, function(data) {
-            $scope.publication = data;
+            $scope.publication = data.data ? data.data : data;
 
             console.log(data);
 
+            if (data.head.state_sid === 0) {
+                isPublished = true;
+                loadChartData();
+                $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/published/";
+            } else {
+                isPublished = false;
+                $scope.publicationLoaded = true;
+                $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/unpublished/" + tid + "/";
+            }
+        });
+    }
+
+    /**
+     * Функція загрузки даних для графіків
+     */
+    function loadChartData() {
+        Publication.loadChartData(tid, hid, function(data) {
+            $scope.publicationChartData = data;
+
             $scope.publicationLoaded = true;
 
-            // якщо оголошення неопубліковане
-            if (!data.head.actual) {
-                $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/unpublished/" + tid + "/";
-            } else {
-                $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/published/";
-            }
+            console.log(data);
         });
     }
 
@@ -75,7 +90,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * Ініціюється при інклуді хтмл файла
      */
     $scope.initLoadFormScripts = function() {
-        $timeout(function() {
+        // якщо неопубліковане
+        !isPublished && $timeout(function() {
             // Послідовність має значення
             initInputsChange();
             initDropdowns();
@@ -85,14 +101,26 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $scope.showPublication = true;
 
             $timeout(function() {
-                !$scope.publication.head.actual && initMap();
-                $scope.publication.head.actual && initCharts();
+                initMap();
+                initScrollBar();
+            }, 300);
+        }, 500);
+
+
+        // якщо опубліковане
+        isPublished && $timeout(function() {
+            initSectionDropdown();
+
+            $rootScope.loadings.detailed = false;
+            $scope.showPublication = true;
+
+            initCharts();
+
+            $timeout(function() {
                 initScrollBar();
             }, 300);
         }, 500);
     };
-
-
 
 
 
@@ -165,59 +193,13 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                     "id": "views",
                     "label": "Просмотров",
                     "type": "number"
+                }, {
+                    "id": "get-number",
+                    "label": "Запросили контакты",
+                    "type": "number"
                 }
             ],
-            "rows": [
-                {
-                    "c": [
-                        {
-                            "v": new Date(2014, 5, 18)
-                        }, {
-                            "v": 0
-                        }
-                    ]
-                }, {
-                    "c": [
-                        {
-                            "v": new Date(2014, 5, 19)
-                        }, {
-                            "v": 10
-                        }
-                    ]
-                }, {
-                    "c": [
-                        {
-                            "v": new Date(2014, 5, 20)
-                        }, {
-                            "v": 2
-                        }
-                    ]
-                }, {
-                    "c": [
-                        {
-                            "v": new Date(2014, 5, 21)
-                        }, {
-                            "v": 3
-                        }
-                    ]
-                }, {
-                    "c": [
-                        {
-                            "v": new Date(2014, 5, 22)
-                        }, {
-                            "v": 6
-                        }
-                    ]
-                }, {
-                    "c": [
-                        {
-                            "v": new Date(2014, 5, 23)
-                        }, {
-                            "v": 1
-                        }
-                    ]
-                }
-            ]
+            "rows": $scope.publicationChartData
         };
 
         lineChart.options = {
@@ -228,11 +210,14 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             height: 300,
 
             isStacked: "true",
-            legend: 'none',
+            legend: {
+                position: 'bottom'
+            },
             displayExactValues: true,
 
             series: {
-                0: { color: '#318ce1' }
+                0: { color: '#318ce1' },
+                1: { color: '#06b358' }
             },
 
             smoothLine: true,
@@ -242,6 +227,13 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             hAxis: {
                 format : "dd.MM"
             }
+        };
+
+        lineChart.formatters = {
+            number : [{
+                columnNum: 2,
+                pattern: "# чел'.'"
+            }]
         };
 
         $scope.lineChart = lineChart;
@@ -387,6 +379,32 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         Publication.publish(tid, hid, function(data) {
             btn.button("reset");
         })
+    };
+
+
+    /**
+     * Зняття оголошення з опублікованих
+     */
+    $scope.unpublishPublication = function() {
+
+        var btn = angular.element(".publish-btn").button("loading");
+
+        Publication.unpublish(tid, hid, function(data) {
+            btn.button("reset");
+        });
+    };
+
+
+    /**
+     * Видалення оголошення
+     */
+    $scope.removePublication = function() {
+
+        var btn = angular.element(".remove-btn").button("loading");
+
+        Publication.remove(tid, hid, function(data) {
+            btn.button("reset");
+        });
     };
 
 

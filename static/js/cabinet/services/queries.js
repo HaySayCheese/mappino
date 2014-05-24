@@ -31,17 +31,19 @@ app.factory('Queries', function($http, $upload) {
                 return $http.get('/ajax/api/cabinet/publications/briefs/' + category + '/').success(callback);
             },
 
-
             search: function(value, callback) {
                 return $http.get("/ajax/api/cabinet/search/?q=" + value).success(callback);
             }
-
         },
 
 
         Publications: {
             load: function(tid, hid, callback) {
                 return $http.get("/ajax/api/cabinet/publications/" + tid + ":" + hid + "/").success(callback);
+            },
+
+            loadChartData: function(tid, hid, days, callback) {
+                return $http.get("/ajax/api/cabinet/stats/publications/" + tid + ":" + hid + "/visits?count=" + days).success(callback);
             },
 
             create: function(publication, callback) {
@@ -56,8 +58,12 @@ app.factory('Queries', function($http, $upload) {
                 return $http.put('/ajax/api/cabinet/publications/' + tid + ":" + hid + '/unpublish/').success(callback);
             },
 
+            remove: function(tid, hid, callback) {
+                return $http.delete('/ajax/api/cabinet/publications/' + tid + ":" + hid + '/remove/').success(callback);
+            },
+
             check: function(tid, hid, data, callback) {
-                return $http.put("/ajax/api/cabinet/publications/" + tid + ":" + hid + "/", data).success(callback);
+                return $http.put("/ajax/api/cabinet/publications/unpublished/" + tid + ":" + hid + "/", data).success(callback);
             },
 
             uploadPhotos: function(tid, hid, photos, callback) {

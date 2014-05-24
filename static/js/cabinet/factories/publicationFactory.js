@@ -3,6 +3,7 @@
 app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, Briefs) {
 
     var publication = [],
+        publicationChartData = [],
         channel = lrNotifier('mainChannel'),
         publicationsCount = $rootScope.publicationsCount,
 
@@ -26,7 +27,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
 
 
         /**
-         * Загружає оголошення
+         * Загружає дані неопублікованого оголошення
          *
          * @param {number} tid              Ідентифікатор типу оголошення
          * @param {number} id               Ідентифікатор оголошення
@@ -41,6 +42,44 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
                 that.setDefaults();
 
                 _.isFunction(callback) && callback(that.getAll());
+            });
+        },
+
+
+        /**
+         * Загружає дані графіків опублікованого оголошення
+         *
+         * @param {number} tid              Ідентифікатор типу оголошення
+         * @param {number} id               Ідентифікатор оголошення
+         * @param {function} callback
+         */
+        loadChartData: function(tid, id, callback) {
+            var that = this,
+                days = 0,
+                resolution = window.innerWidth;
+
+            resolution <= 1024 ? days = 7 :
+                resolution >= 1024 && resolution <= 1600 ? days = 14 :
+                    days = 30;
+
+            Queries.Publications.loadChartData(tid, id, days, function(data) {
+                publicationChartData = [];
+
+                _.each(data, function(col, index, list) {
+                    publicationChartData.push({
+                        "c": [
+                            {
+                                "v": new Date(new Date(col.date).setHours(0, 0, 0, 0))
+                            }, {
+                                "v": col.views
+                            }, {
+                                "v": col.contacts_requests
+                            }
+                        ]
+                    });
+                });
+
+                _.isFunction(callback) && callback(publicationChartData);
             });
         },
 
@@ -114,10 +153,29 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
          * @param {function} callback
          */
         unpublish: function(tid, id, callback) {
-            publicationQueries.unpublish(tid, id).success(function(data) {
+            Queries.Publications.unpublish(tid, id).success(function(data) {
 
-                publicationsCount['published'] -= 1;
-                publicationsCount['trash']     += 1;
+                publicationsCount['published']      -= 1;
+                publicationsCount['unpublished']    += 1;
+
+                typeof callback === 'function' && callback(data);
+            });
+        },
+
+
+        /**
+         * Видалення оголошення
+         *
+         * @param {number} tid              Ідентифікатор типу оголошення
+         * @param {number} id               Ідентифікатор оголошення
+         * @param {function} callback
+         */
+        remove: function(tid, id, callback) {
+            Queries.Publications.remove(tid, id).success(function(data) {
+
+                $rootScope.routeSection === 'published'   ? publicationsCount['published']   -= 1 : "";
+                $rootScope.routeSection === 'unpublished' ? publicationsCount['unpublished'] -= 1 : "";
+                publicationsCount['trash']  += 1;
 
                 typeof callback === 'function' && callback(data);
             });

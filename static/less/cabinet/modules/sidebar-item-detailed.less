@@ -215,7 +215,7 @@
     }
 
     .chart-block {
-        padding: 0 25px;
+        padding: 0 20px;
     }
 
     .checkbox-hint {
@@ -236,6 +236,32 @@
         }
         @media (min-width: @screen-md-min) and (max-width: @screen-md-max) {
             margin-top: 5px;
+        }
+    }
+
+    .other-properties {
+        display: block;
+        margin-top: 10px;
+        &:last-child {
+            padding-bottom: 30px;
+        }
+    }
+    .section-header {
+        font-weight: bold;
+    }
+    .property-price {
+        font-size: @font-size-h4;
+        font-weight: bold;
+        line-height: @line-height-computed;
+        margin-top: 20px;
+    }
+
+    table > tr {
+        > td:first-child {
+            text-align: right;
+        }
+        > td:last-child {
+            padding-left: 10px;
         }
     }
 
