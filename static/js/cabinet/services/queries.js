@@ -43,7 +43,7 @@ app.factory('Queries', function($http, $upload) {
             },
 
             loadChartData: function(tid, hid, days, callback) {
-                return $http.get("/ajax/api/cabinet/stats/publications/" + tid + ":" + hid + "/visits?count=" + days).success(callback);
+                return $http.get("/ajax/api/cabinet/stats/publications/" + tid + ":" + hid + "/visits/?count=" + days).success(callback);
             },
 
             create: function(publication, callback) {
