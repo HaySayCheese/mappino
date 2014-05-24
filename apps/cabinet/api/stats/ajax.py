@@ -39,7 +39,7 @@ class Stats(object):
 				{
 				'date': '2014-05-{0}'.format(i),
 				'views': random.randint(10, 30),
-				'contacts_requests': random.randint(1, 30),
+				'contacts_requests': random.randint(10, 30),
 				} for i in xrange(20)
 			]
 
