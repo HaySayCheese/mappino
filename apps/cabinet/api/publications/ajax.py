@@ -143,8 +143,14 @@ class Publications(object):
 				return HttpResponse(json.dumps(description), content_type='application/json')
 
 			else:
-				return HttpResponse(json.dumps(
-					self.unpublished_formatter.format(tid, head)), content_type='application/json')
+				data = {
+					'head': {
+						'state_sid': head.state_sid
+					},
+				    'data': self.unpublished_formatter.format(tid, head),
+				}
+
+				return HttpResponse(json.dumps(data), content_type='application/json')
 
 
 		def put(self, request, *args):
