@@ -216,8 +216,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             displayExactValues: true,
 
             series: {
-                0: { color: '#318ce1' },
-                1: { color: '#06b358' }
+                0: { color: '#3db1d7' },
+                1: { color: '#54c6a7' }
             },
 
             smoothLine: true,
@@ -225,8 +225,21 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             pointSize: 8,
 
             hAxis: {
-                format : "dd.MM"
+                format : "dd.MM",
+                gridlines: {
+                    color: "#eee"
+                },
+                baselineColor: '#eee',
+                textColor: '#555'
+            },
+            vAxis: {
+                gridlines: {
+                    color: "#eee"
+                },
+                baselineColor: '#eee',
+                textColor: '#555'
             }
+
         };
 
         lineChart.formatters = {
