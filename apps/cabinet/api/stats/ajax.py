@@ -36,17 +36,17 @@ class Stats(object):
 
 			return HttpResponse(json.dumps([
 				{
-				'date': '2014-05-21T00:00:00Z',
+				'date': '2014-05-21',
 				'views': 10,
 				'contacts_requests': 5,
 				},
 			    {
-				'date': '2014-05-22T00:00:00Z',
+				'date': '2014-05-22',
 				'views': 14,
 				'contacts_requests': 6,
 				},
 			    {
-				'date': '2014-05-24T00:00:00Z',
+				'date': '2014-05-24',
 				'views': 18,
 				'contacts_requests': 9,
 				}
