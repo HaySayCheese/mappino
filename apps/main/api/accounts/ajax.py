@@ -1,6 +1,7 @@
 #coding=utf-8
 import copy
 import json
+from apps.classes import AnonymousOnlyView, AuthenticatedOnlyView
 
 from collective.decorators.views import anonymous_require
 from collective.methods.request_data_getters import angular_post_parameters
@@ -60,7 +61,8 @@ class RegistrationManager(object):
 			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
 
 
-	class MobilePhoneValidation(View):
+
+	class MobilePhoneValidation(AnonymousOnlyView):
 		post_codes = {
 			'OK': {
 				'code': 0
@@ -76,12 +78,26 @@ class RegistrationManager(object):
 		    }
 		}
 
+		ua_phone_codes = [
+			'91', # Тримоб
+			'99', # MTC
+			'95', # MTC
+		    '66', # MTC
+		    '50', # MTC
+		    '39', # Київстар
+		    '68', # Київстар
+		    '98', # Київстар
+		    '97', # Київстар
+		    '96', # Київстар
+		    '67', # Київстар
+		    '94', # Інтертелеком
+		    '92', # PEOPLEnet
+		    '93', # life :)
+		    '63', # life :)
+		]
+
 
 		def post(self, request, *args):
-			if request.user.is_authenticated():
-				return HttpResponseBadRequest('Anonymous users only.')
-
-
 			try:
 				number = angular_post_parameters(request, ['number'])['number']
 			except (ValueError, IndexError):
@@ -89,17 +105,15 @@ class RegistrationManager(object):
 
 			# is number correct?
 			try:
-				parsed_number = phonenumbers.parse(number, 'UA')
-				# fixme: перевірка коду допускає стаціонарні телефони (смс на них не надійде)
+				number = phonenumbers.parse(number, 'UA')
 			except NumberParseException:
 				return HttpResponse(json.dumps(self.post_codes['invalid']), content_type='application/json')
 
-			if not phonenumbers.is_valid_number(parsed_number):
+			if not phonenumbers.is_valid_number(number):
 				return HttpResponse(json.dumps(self.post_codes['only_ua']), content_type='application/json')
 
-			number = phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.E164)
-
 			# is number in use?
+			number = phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
 			if not Users.mobile_phone_number_is_free(number):
 				return HttpResponse(json.dumps(self.post_codes['already_in_use']), content_type='application/json')
 
@@ -107,7 +121,8 @@ class RegistrationManager(object):
 			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
 
 
-	class Registration(View):
+
+	class Registration(AnonymousOnlyView):
 		post_codes = {
 			'OK': {
 			    'code': 0,
@@ -149,10 +164,6 @@ class RegistrationManager(object):
 
 
 		def post(self, request, *args):
-			if request.user.is_authenticated():
-				return HttpResponseBadRequest('Anonymous users only.')
-
-
 			if MobilePhoneChecker.check_is_started(request):
 				try:
 					code = angular_post_parameters(request, ['code'])['code']
@@ -253,7 +264,7 @@ class RegistrationManager(object):
 
 
 
-	class CancelRegistration(View):
+	class CancelRegistration(AnonymousOnlyView):
 		post_codes = {
 			'OK': {
 				'code': 0
@@ -262,15 +273,13 @@ class RegistrationManager(object):
 
 
 		def post(self, request, *args):
-			if request.user.is_authenticated():
-				return HttpResponseBadRequest('Anonymous users only.')
-
 			response = HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
 			MobilePhoneChecker.cancel_check(request, response)
 			return response
 
 
-	class ResendCheckSMS(View):
+
+	class ResendCheckSMS(AnonymousOnlyView):
 		post_codes = {
 			'OK': {
 				'code': 0
@@ -279,9 +288,6 @@ class RegistrationManager(object):
 
 
 		def post(self, request, *args):
-			if request.user.is_authenticated():
-				return HttpResponseBadRequest('Anonymous users only.')
-
 			# Дана функція зажди повертає результат ОК,
 			# незалежно від того чи була насправді відіслана sms.
 			# Це зроблено для того, щоб зловмисники у випадку атаки
@@ -294,8 +300,9 @@ class RegistrationManager(object):
 			return response
 
 
+
 class LoginManager(object):
-	class Login(View):
+	class Login(AnonymousOnlyView):
 		post_codes = {
 			'OK': {
 			    'code': 0,
@@ -312,13 +319,7 @@ class LoginManager(object):
 		}
 
 
-		# todo: add dispatch method
-
-
 		def post(self, request, *args):
-			if request.user.is_authenticated():
-				return HttpResponseBadRequest('Anonymous only.')
-
 			try:
 				d = angular_post_parameters(request, ['username', 'password'])
 			except ValueError:
@@ -378,7 +379,8 @@ class LoginManager(object):
 			return response
 
 
-	class Logout(View):
+
+	class Logout(AuthenticatedOnlyView):
 		post_codes = {
 			'OK': {
 			    'code': 0,
@@ -387,14 +389,12 @@ class LoginManager(object):
 
 
 		def post(self, request, *args):
-			if not request.user.is_authenticated():
-				return HttpResponseBadRequest('Authenticated only.')
-
 			logout(request)
 			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
 
 
-	class OnLogin(View):
+
+	class OnLogin(AuthenticatedOnlyView):
 		post_codes = {
 			'OK': {
 			    'code': 0,
@@ -403,13 +403,10 @@ class LoginManager(object):
 
 
 		def get(self, request, *args):
-			if not request.user.is_authenticated():
-				return HttpResponseBadRequest('Authenticated only.')
-
-			# WARNING: deep copy is needed here
-			body = copy.deepcopy(self.post_codes['OK'])
+			body = copy.deepcopy(self.post_codes['OK']) # note: deep copy is needed here
 			body['user'] = LoginManager.on_login_data(request.user)
 			return HttpResponse(json.dumps(body), content_type='application/json')
+
 
 
 	@staticmethod
@@ -420,14 +417,9 @@ class LoginManager(object):
 		}
 
 
+
 class AccessRestoreManager(object):
-	class BaseView(View):
-		@method_decorator(anonymous_require)
-		def dispatch(self, *args, **kwargs):
-			return super(AccessRestoreManager.BaseView, self).dispatch(*args, **kwargs)
-
-
-	class BeginRestore(BaseView):
+	class BeginRestore(AnonymousOnlyView):
 		post_codes = {
 			'OK': {
 				'code': 0,
@@ -487,7 +479,7 @@ class AccessRestoreManager(object):
 			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
 
 
-	class Check(BaseView):
+	class Check(AnonymousOnlyView):
 		post_codes = {
 			'OK': {
 				'code': 0,
