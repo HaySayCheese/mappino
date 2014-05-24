@@ -423,6 +423,19 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
 
     /**
+     * Переміщення оголошення в неопубліковані
+     */
+    $scope.toUnpublishedPublication = function() {
+        var btn = angular.element(".publish-btn").button("loading");
+
+        Publication.toUnpublished(tid, hid, function(data) {
+            btn.button("reset");
+            $location.path("publications/unpublished/" + tid + ":" + hid)
+        });
+    };
+
+
+    /**
      * Скрол до розділа
      */
     $scope.scrollToHeader = function(id) {

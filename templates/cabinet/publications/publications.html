@@ -14,9 +14,12 @@
                 Опубликовать
             </div>
             <div class="btn btn-xlg btn-link publish-btn" data-loading-text="Отправка данных..." ng-show="routeSection === 'published'" ng-click="unpublishPublication()">
-                Снять с публикации
+                Редактировать
             </div>
-            <div class="btn btn-xlg btn-link remove-btn" data-loading-text="Удаление..." ng-click="removePublication()">
+            <div class="btn btn-xlg btn-link publish-btn" data-loading-text="Отправка данных..." ng-show="routeSection === 'trash'" ng-click="toUnpublishedPublication()">
+                В неопубликование
+            </div>
+            <div class="btn btn-xlg btn-link remove-btn" data-loading-text="Удаление..." ng-hide="routeSection === 'trash'" ng-click="removePublication()">
                 <span class="btn-icon-remove"></span>
             </div>
         </div>
@@ -28,7 +31,7 @@
     <div class="sidebar-item-detailed-body">
         <div ng-show="showPublication" class="detailed-container">
             <div ng-if='publicationLoaded'>
-                <div ng-include="publicationTemplateUrl" ng-init="initLoadFormScripts()"></div>
+                <div ng-include="publicationTemplateUrl"></div>
             </div>
         </div>
 

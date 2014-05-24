@@ -184,6 +184,24 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
 
 
         /**
+         * Перенесення в неопубліковані
+         *
+         * @param {number} tid              Ідентифікатор типу оголошення
+         * @param {number} id               Ідентифікатор оголошення
+         * @param {function} callback
+         */
+        toUnpublished: function(tid, id, callback) {
+            Queries.Publications.unpublish(tid, id).success(function(data) {
+
+                publicationsCount['trash']       -= 1;
+                publicationsCount['unpublished'] += 1;
+
+                _.isFunction(callback) && callback(data);
+            });
+        },
+
+
+        /**
          * Відправка полів вводу на сервер для перевірки
          *
          * @param {number} tid              Ідентифікатор типу оголошення
