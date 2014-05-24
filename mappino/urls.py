@@ -15,6 +15,7 @@ urlpatterns = patterns('apps',
     # API for cabinet
     url(r'', include('apps.cabinet.api.dirtags.ajax_urls')),
     url(r'', include('apps.cabinet.api.publications.ajax_urls')),
+    url(r'', include('apps.cabinet.api.stats.ajax_urls')),
     url(r'', include('apps.cabinet.api.search.ajax_urls')),
     url(r'', include('apps.cabinet.api.support.ajax_urls')),
 
