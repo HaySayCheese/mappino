@@ -106,6 +106,7 @@ else:
 
 	    'apps.cabinet.api.dirtags',
 		'apps.main.api.correspondence',
+	    'middlewares',
 	)
 	MIDDLEWARE_CLASSES = (
 		'django.contrib.sessions.middleware.SessionMiddleware',
@@ -113,6 +114,8 @@ else:
 		# 'django.middleware.csrf.CsrfViewMiddleware',
 		'django.contrib.auth.middleware.AuthenticationMiddleware',
 		'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+	    'middlewares.auto_prolong_session.AutoProlongSession', # custom
 	)
 
 	ROOT_URLCONF = 'mappino.urls'
