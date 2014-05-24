@@ -251,12 +251,15 @@ class LivingHeadModel(models.Model):
 
 
 	def unpublish(self):
-		if self.deleted is not None:
-			raise SuspiciousOperation('Attempt to process deleted publication.')
+		# Moves the publication to unpublished publications.
+		#
+		# This method is called to move publications from trash too,
+		# so no checks for deleted publication is needed here.
 
 		self.state_sid = OBJECT_STATES.unpublished()
 		self.published = None
 		self.actual = None
+		self.deleted = None
 		self.save(force_update=True)
 
 
