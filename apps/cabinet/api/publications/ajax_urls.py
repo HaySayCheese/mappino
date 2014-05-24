@@ -1,18 +1,23 @@
+from apps.cabinet.api.publications.ajax import Publications
 from django.conf.urls import patterns, url
-from apps.cabinet.api.publications.ajax import UploadPhoto, Photos, PhotoTitle
 
 
 urlpatterns = patterns('apps.cabinet.api',
-    # CRUD
-	url(r'^ajax/api/cabinet/publications/$', 'publications.ajax.create'),
+    # create
+	url(r'^ajax/api/cabinet/publications/$', Publications.Create.as_view()),
 
 	# unpublished
-	url(r'^ajax/api/cabinet/publications/unpublished/(\d+:\d+)/$', 'publications.ajax.rud_switch'),
-    url(r'^ajax/api/cabinet/publications/unpublished/(\d+:\d+)/publish/$', 'publications.ajax.publish'),
+	url(r'^ajax/api/cabinet/publications/unpublished/(\d+:\d+)/$', Publications.RUD.as_view()),
+    url(r'^ajax/api/cabinet/publications/unpublished/(\d+:\d+)/publish/$', Publications.Publish.as_view()),
 
 	# published
-	url(r'^ajax/api/cabinet/publications/published/(\d+:\d+)/$', 'publications.ajax.rud_switch'), # todo: change me
-    url(r'^ajax/api/cabinet/publications/unpublished/(\d+:\d+)/unpublish/$','publications.ajax.unpublish'),
+	url(r'^ajax/api/cabinet/publications/published/(\d+:\d+)/$', Publications.RUD.as_view()),
+    url(r'^ajax/api/cabinet/publications/unpublished/(\d+:\d+)/unpublish/$', Publications.Unpublish.as_view()),
+
+	# photos
+    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/$', Publications.UploadPhoto.as_view()),
+    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/(\d+)/$', Publications.Photos.as_view()),
+    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/(\d+)/title/$', Publications.PhotoTitle.as_view()),
 
 
 
@@ -28,9 +33,4 @@ urlpatterns = patterns('apps.cabinet.api',
         'publications.briefs.ajax.get', {'section': 'deleted'}),
     url(r'^ajax/api/cabinet/publications/briefs/(\d+)/$',
         'publications.briefs.ajax.get', {'section': 'tag'}),
-
-    # photos
-    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/$', UploadPhoto.as_view()),
-    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/(\d+)/$', Photos.as_view()),
-    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/(\d+)/title/$', PhotoTitle.as_view()),
 )
