@@ -29,7 +29,7 @@ def briefs_of_section(section, user_id):
 			query = query.filter(state_sid = OBJECT_STATES.published())
 		elif section == 'unpublished':
 			query = query.filter(state_sid = OBJECT_STATES.unpublished())
-		elif section == 'deleted':
+		elif section == 'trash':
 			query = query.filter(state_sid = OBJECT_STATES.deleted())
 		else:
 			raise ValueError('Invalid section title {0}'.format(section))

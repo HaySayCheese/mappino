@@ -26,7 +26,7 @@ urlpatterns = patterns('apps.cabinet.api',
     url(r'^ajax/api/cabinet/publications/briefs/unpublished/$',
         'publications.briefs.ajax.get', {'section': 'unpublished'}),
     url(r'^ajax/api/cabinet/publications/briefs/deleted/$',
-        'publications.briefs.ajax.get', {'section': 'deleted'}),
+        'publications.briefs.ajax.get', {'section': 'trash'}),
     url(r'^ajax/api/cabinet/publications/briefs/(\d+)/$',
         'publications.briefs.ajax.get', {'section': 'tag'}),
 )
