@@ -49,7 +49,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
             $rootScope.publicationId = $routeParams.pubId;
 
         if ($routeParams.ticketId)
-            $rootScope.isSupportPage = true;
+            $rootScope.isSupportPagePart = true;
     });
 
 

@@ -63,9 +63,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
             // якщо оголошення неопубліковане
             if (!data.head.actual) {
-                $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/" + tid + "/";
+                $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/unpublished/" + tid + "/";
             } else {
-                $scope.publicationTemplateUrl = "/ajax/template/cabinet/published/" + tid + "/";
+                $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/published/";
             }
         });
     }
@@ -85,7 +85,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $scope.showPublication = true;
 
             $timeout(function() {
-                initMap();
+                !$scope.publication.head.actual && initMap();
+                $scope.publication.head.actual && initCharts();
                 initScrollBar();
             }, 300);
         }, 500);
@@ -145,6 +146,106 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
         Publication.checkInputs(tid, hid, { f: name, v: id + "," + value }, null);
     };
+
+
+    /**
+     * Ініціалізація графіків
+     */
+    function initCharts() {
+        var lineChart = {};
+        lineChart.type = "LineChart";
+
+        lineChart.data = {
+            "cols": [
+                {
+                    "id": "month",
+                    "label": "Месяц",
+                    "type": "date"
+                }, {
+                    "id": "views",
+                    "label": "Просмотров",
+                    "type": "number"
+                }
+            ],
+            "rows": [
+                {
+                    "c": [
+                        {
+                            "v": new Date(2014, 5, 18)
+                        }, {
+                            "v": 0
+                        }
+                    ]
+                }, {
+                    "c": [
+                        {
+                            "v": new Date(2014, 5, 19)
+                        }, {
+                            "v": 10
+                        }
+                    ]
+                }, {
+                    "c": [
+                        {
+                            "v": new Date(2014, 5, 20)
+                        }, {
+                            "v": 2
+                        }
+                    ]
+                }, {
+                    "c": [
+                        {
+                            "v": new Date(2014, 5, 21)
+                        }, {
+                            "v": 3
+                        }
+                    ]
+                }, {
+                    "c": [
+                        {
+                            "v": new Date(2014, 5, 22)
+                        }, {
+                            "v": 6
+                        }
+                    ]
+                }, {
+                    "c": [
+                        {
+                            "v": new Date(2014, 5, 23)
+                        }, {
+                            "v": 1
+                        }
+                    ]
+                }
+            ]
+        };
+
+        lineChart.options = {
+            chartArea: {
+                width: "94%",
+                top: 20
+            },
+            height: 300,
+
+            isStacked: "true",
+            legend: 'none',
+            displayExactValues: true,
+
+            series: {
+                0: { color: '#318ce1' }
+            },
+
+            smoothLine: true,
+            lineWidth: 4,
+            pointSize: 8,
+
+            hAxis: {
+                format : "dd.MM"
+            }
+        };
+
+        $scope.lineChart = lineChart;
+    }
 
 
     /**

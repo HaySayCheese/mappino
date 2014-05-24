@@ -156,7 +156,7 @@
                 <div class="menu-block">
                     <div class="menu-block-header icon-user">Учетная запись</div>
                     <ul class="menu-block-list">
-                        <li ng-class="{ 'active': routeBase == 'support' || isSupportPage }"><a href="#!/support"><span class="menu-icon icon-support"></span>Онлайн поддержка</a></li>
+                        <li ng-class="{ 'active': routeBase == 'support' || isSupportPagePart }"><a href="#!/support"><span class="menu-icon icon-support"></span>Онлайн поддержка</a></li>
                         <li ng-class="{ 'active': routeBase == 'settings' }"><a href="#!/settings"><span class="menu-icon icon-settings"></span>Параметры</a></li>
                     </ul>
                 </div>
@@ -165,7 +165,7 @@
         </div>
 
 
-        <div class="sidebar-item-list" ng-controller="SidebarItemListCtrl" ng-hide="routeBase == 'settings' || routeBase == 'support' || isSupportPage">
+        <div class="sidebar-item-list" ng-controller="SidebarItemListCtrl" ng-hide="routeBase == 'settings' || routeBase == 'support' || isSupportPagePart">
             <div class="sidebar-item-list-header">
                 <input type="text" class="form-control" placeholder="Поиск..." ng-model="searchQuery">
             </div>
