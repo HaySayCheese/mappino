@@ -59,11 +59,11 @@ app.factory('Queries', function($http, $upload) {
             },
 
             remove: function(tid, hid, callback) {
-                return $http.delete('/ajax/api/cabinet/publications/' + tid + ":" + hid + '/remove/').success(callback);
+                return $http.delete('/ajax/api/cabinet/publications/' + tid + ":" + hid + '/').success(callback);
             },
 
             check: function(tid, hid, data, callback) {
-                return $http.put("/ajax/api/cabinet/publications/unpublished/" + tid + ":" + hid + "/", data).success(callback);
+                return $http.put("/ajax/api/cabinet/publications/" + tid + ":" + hid + "/", data).success(callback);
             },
 
             uploadPhotos: function(tid, hid, photos, callback) {

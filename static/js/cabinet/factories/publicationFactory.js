@@ -158,7 +158,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
                 publicationsCount['published']      -= 1;
                 publicationsCount['unpublished']    += 1;
 
-                typeof callback === 'function' && callback(data);
+                _.isFunction(callback) && callback(data);
             });
         },
 
@@ -172,12 +172,13 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
          */
         remove: function(tid, id, callback) {
             Queries.Publications.remove(tid, id).success(function(data) {
+                $rootScope.routeSection === 'published' ?
+                    publicationsCount['published'] -= 1 :
+                        $rootScope.routeSection === 'unpublished' ? publicationsCount['unpublished'] -= 1 : "";
 
-                $rootScope.routeSection === 'published'   ? publicationsCount['published']   -= 1 : "";
-                $rootScope.routeSection === 'unpublished' ? publicationsCount['unpublished'] -= 1 : "";
-                publicationsCount['trash']  += 1;
+                publicationsCount['trash'] += 1;
 
-                typeof callback === 'function' && callback(data);
+                _.isFunction(callback) && callback(data);
             });
         },
 

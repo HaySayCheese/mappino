@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $compile, $routeParams, Publication, Briefs, Tags) {
+app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $location, $compile, $routeParams, Publication, Briefs, Tags) {
 
     initScrollBar();
 
@@ -412,11 +412,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * Видалення оголошення
      */
     $scope.removePublication = function() {
-
         var btn = angular.element(".remove-btn").button("loading");
 
         Publication.remove(tid, hid, function(data) {
             btn.button("reset");
+            $location.path("publications/" + $rootScope.routeSection)
         });
     };
 
