@@ -160,43 +160,43 @@ def get_sections_counters(user_id):
 
 	UNION ALL SELECT SUM(deleted) FROM(
 		SELECT count(*) AS deleted FROM o_apartments_heads
-			WHERE "deleted" != NULL AND "owner_id" = '{owner_id}'
+			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS deleted FROM o_business_heads
-			WHERE "deleted" != NULL AND "owner_id" = '{owner_id}'
+			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS deleted FROM o_caterings_heads
-			WHERE "deleted" != NULL AND "owner_id" = '{owner_id}'
+			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS deleted FROM o_cottages_heads
-			WHERE "deleted" != NULL AND "owner_id" = '{owner_id}'
+			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS deleted FROM o_dachas_heads
-			WHERE "deleted" != NULL AND "owner_id" = '{owner_id}'
+			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS deleted FROM o_flats_heads
-			WHERE "deleted" != NULL AND "owner_id" = '{owner_id}'
+			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS deleted FROM o_garages_heads
-			WHERE "deleted" != NULL AND "owner_id" = '{owner_id}'
+			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS deleted FROM o_houses_heads
-			WHERE "deleted" != NULL AND "owner_id" = '{owner_id}'
+			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS deleted FROM o_lands_heads
-			WHERE "deleted" != NULL AND "owner_id" = '{owner_id}'
+			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS deleted FROM o_offices_heads
-			WHERE "deleted" != NULL AND "owner_id" = '{owner_id}'
+			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS deleted FROM o_rooms_heads
-			WHERE "deleted" != NULL AND "owner_id" = '{owner_id}'
+			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS deleted FROM o_trades_heads
-			WHERE "deleted" != NULL AND "owner_id" = '{owner_id}'
+			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS deleted FROM o_warehouses_heads
-			WHERE "deleted" != NULL AND "owner_id" = '{owner_id}'
+			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 	) AS deleted;
 	""".format(
 		owner_id = user_id,
