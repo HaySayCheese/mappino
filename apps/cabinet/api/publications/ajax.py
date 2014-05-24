@@ -131,7 +131,7 @@ class Publications(object):
 				raise PermissionDenied()
 
 			# seems to be ok
-			if head.is_published:
+			if head.is_published():
 				description_generator = self.published_formatter.by_tid(tid)
 				description = description_generator(head)
 
