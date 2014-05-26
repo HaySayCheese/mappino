@@ -2,8 +2,6 @@
 
 app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $location, $compile, $routeParams, Publication, Briefs, Tags) {
 
-    initScrollBar();
-
     $scope.publicationSections = [];
     $scope.publication = [];
     $scope.publicationChartData = [];
@@ -112,10 +110,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $rootScope.loadings.detailed = false;
             $scope.showPublication = true;
 
+            initCharts();
+
             $timeout(function() {
-                initCharts();
                 initScrollBar();
-            }, 0);
+            }, 300);
         }, 0);
     };
 
@@ -420,7 +419,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
 
     /**
-     * Переміщення оголошення в неопубліковані
+     * Переміщення оголошення в неопубліковані з корзини
      */
     $scope.toUnpublishedPublication = function() {
         var btn = angular.element(".publish-btn").button("loading");
@@ -450,6 +449,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     }
 
 
+    /**
+     * Ініціалізація дропдаунів в хедері контента
+     */
     function initSectionDropdown() {
         $scope.publicationSections = [];
 
@@ -475,7 +477,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
 
     /**
-     * Функція скролбара
+     * Ініціалізація скролбара
      */
     function initScrollBar() {
         var sidebar = angular.element(".sidebar-item-detailed-body .detailed-container");
