@@ -1,13 +1,13 @@
 #coding=utf-8
 from apps.cabinet.api.dirtags.models import DirTags
-from collective.exceptions import RuntimeException
+from collective.exceptions import RuntimeException, InvalidArgument
 from core.publications.constants import OBJECTS_TYPES
 from django.core import serializers
 
 
-class PublishedFormatter(object):
+class PublishedDataSource(object):
 	def __init__(self):
-		self.description_generators = {
+		self.data_generators = {
 			# living
 			OBJECTS_TYPES.flat():       self.compose_flat_description,
 		    OBJECTS_TYPES.apartments(): self.compose_apartments_description,
@@ -28,11 +28,61 @@ class PublishedFormatter(object):
 		}
 
 
-	def by_tid(self, hid):
-		method = self.description_generators.get(hid, None)
-		if method is None:
+	def format(self, tid, p):
+		"""
+		:param tid: type id of the publication.
+		:param p: head-record of the publication.
+		:return:
+			dict with two main sections:
+				head - all system information about publication, such as photos and tags.
+				data - formatted text information about publication.
+		:raises:
+			InvalidArgument: p is incorrect.
+			RuntimeException: broken list of data generators.
+		"""
+
+		if tid not in OBJECTS_TYPES.values():
+			raise InvalidArgument('@p is absent in OBJECT_TYPES.')
+
+
+		generator = self.data_generators.get(tid, None)
+		if generator is None:
 			raise RuntimeException('Missed formatter.')
-		return self.description_generators[hid]
+
+		# noinspection PyCallingNonCallable
+		result = {
+			'head': self.base_generator(p, tid),
+		    'data': generator(p),
+		}
+
+		# clearing the results from all empty and None entries, that potentially can occurs
+		result['head'].update((k, v) for k, v in result['head'].iteritems() if v is not None)
+		result['data'].update((k, v) for k, v in result['data'].iteritems() if v is not None)
+
+		return result
+
+
+	@staticmethod
+	def base_generator(p, tid):
+		"""
+		:param p: head-record of the publication.
+		:param tid: type id of the record.
+		:return: dictionary with common data for all types of publication,
+				 such as photos and tags.
+		"""
+		result = {
+			'photos': p.photos_json(),
+		}
+
+
+		tags = DirTags.contains_publications(tid, [p.id])
+		if tags:
+			result['tags'] = {
+		        tag.id: True for tag in tags
+		    }
+
+
+		return result
 
 
 	@staticmethod

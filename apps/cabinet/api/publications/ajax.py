@@ -1,9 +1,10 @@
 #coding=utf-8
 import copy
 import json
+from apps.cabinet.api.dirtags.models import DirTags
 
 from apps.classes import CabinetView
-from core.publications import formatters
+from core.publications import classes
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from core.publications.abstract_models import PhotosModel
@@ -107,8 +108,8 @@ class Publications(object):
 
 		def __init__(self):
 			super(Publications.RUD, self).__init__()
-			self.published_formatter = formatters.PublishedFormatter()
-			self.unpublished_formatter = formatters.UnpublishedFormatter()
+			self.published_formatter = classes.PublishedDataSource()
+			self.unpublished_formatter = classes.UnpublishedFormatter()
 
 
 		def get(self, request, *args):
@@ -132,22 +133,8 @@ class Publications(object):
 
 			# seems to be ok
 			if head.is_published():
-				description_generator = self.published_formatter.by_tid(tid)
-				description = description_generator(head)
-
-				# Деякі із полів, згенерованих генератором видачі можуть бути пустими.
-				# Для уникнення їх появи на фронті їх слід видалити із словника опису.
-				description = dict((k, v) for k, v in description.iteritems() if (v is not None) and (v != ""))
-
-				description['photos'] = head.photos_json()
-
-				data = {
-					'head': {
-						'state_sid': head.state_sid
-					},
-				    'data': description
-				}
-				return HttpResponse(json.dumps(data), content_type='application/json')
+				return HttpResponse(json.dumps(
+					self.published_formatter.format(tid, head)), content_type='application/json')
 
 			else:
 				return HttpResponse(json.dumps(
