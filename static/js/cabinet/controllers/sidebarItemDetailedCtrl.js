@@ -2,8 +2,6 @@
 
 app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $location, $compile, $routeParams, Publication, Briefs, Tags) {
 
-    initScrollBar();
-
     $scope.publicationSections = [];
     $scope.publication = [];
     $scope.publicationChartData = [];
@@ -54,7 +52,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         $scope.publication = [];
         $rootScope.loadings.detailed = true;
 
-
         Publication.load(tid, hid, function(data) {
             $scope.publication = data.data ? data.data : data;
 
@@ -101,10 +98,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $scope.showPublication = true;
 
             $timeout(function() {
-                initMap();
                 initScrollBar();
             }, 300);
-        }, 500);
+        }, 0);
 
 
         // якщо опубліковане
@@ -119,7 +115,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $timeout(function() {
                 initScrollBar();
             }, 300);
-        }, 500);
+        }, 0);
     };
 
 
@@ -256,7 +252,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     /**
      * Ініціалізація карти
      */
-    function initMap() {
+    $scope.initMap = function() {
 
         var cityInput = document.getElementById("publication-map-input"),
             center = new google.maps.LatLng($scope.publication.head.lat || 50.448159, $scope.publication.head.lng || 30.524654),
@@ -399,11 +395,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * Зняття оголошення з опублікованих
      */
     $scope.unpublishPublication = function() {
-
         var btn = angular.element(".publish-btn").button("loading");
 
         Publication.unpublish(tid, hid, function(data) {
             btn.button("reset");
+            $location.path("publications/unpublished/" + tid + ":" + hid)
         });
     };
 
@@ -423,7 +419,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
 
     /**
-     * Переміщення оголошення в неопубліковані
+     * Переміщення оголошення в неопубліковані з корзини
      */
     $scope.toUnpublishedPublication = function() {
         var btn = angular.element(".publish-btn").button("loading");
@@ -453,6 +449,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     }
 
 
+    /**
+     * Ініціалізація дропдаунів в хедері контента
+     */
     function initSectionDropdown() {
         $scope.publicationSections = [];
 
@@ -478,7 +477,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
 
     /**
-     * Функція скролбара
+     * Ініціалізація скролбара
      */
     function initScrollBar() {
         var sidebar = angular.element(".sidebar-item-detailed-body .detailed-container");

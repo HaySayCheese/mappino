@@ -153,7 +153,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
          * @param {function} callback
          */
         unpublish: function(tid, id, callback) {
-            Queries.Publications.unpublish(tid, id).success(function(data) {
+            Queries.Publications.unpublish(tid, id, function(data) {
 
                 publicationsCount['published']      -= 1;
                 publicationsCount['unpublished']    += 1;
@@ -171,7 +171,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
          * @param {function} callback
          */
         remove: function(tid, id, callback) {
-            Queries.Publications.remove(tid, id).success(function(data) {
+            Queries.Publications.remove(tid, id, function(data) {
                 $rootScope.routeSection === 'published' ?
                     publicationsCount['published'] -= 1 :
                         $rootScope.routeSection === 'unpublished' ? publicationsCount['unpublished'] -= 1 : "";
@@ -191,7 +191,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
          * @param {function} callback
          */
         toUnpublished: function(tid, id, callback) {
-            Queries.Publications.unpublish(tid, id).success(function(data) {
+            Queries.Publications.unpublish(tid, id, function(data) {
 
                 publicationsCount['trash']       -= 1;
                 publicationsCount['unpublished'] += 1;
