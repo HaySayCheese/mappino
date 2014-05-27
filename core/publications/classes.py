@@ -72,8 +72,8 @@ class PublishedDataSource(object):
 		"""
 		result = {
 			'state_sid': p.state_sid,
-			'photos': p.photos_json(),
 		}
+		result.update(p.photos_json)
 
 
 		tags = DirTags.contains_publications(tid, [p.id])
