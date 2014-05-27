@@ -53,7 +53,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         $rootScope.loadings.detailed = true;
 
         Publication.load(tid, hid, function(data) {
-            $scope.publication = data.data ? data.data : data;
+            $scope.publication = data;
 
             console.log(data);
 
@@ -209,6 +209,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             legend: {
                 position: 'bottom'
             },
+            focusTarget: 'category',
             displayExactValues: true,
 
             series: {
@@ -405,12 +406,12 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
 
     /**
-     * Видалення оголошення
+     * Перенесення оголошення в корзину
      */
     $scope.removePublication = function() {
         var btn = angular.element(".remove-btn").button("loading");
 
-        Publication.remove(tid, hid, function(data) {
+        Publication.toTrash(tid, hid, function(data) {
             btn.button("reset");
             Briefs.remove(tid, hid);
             $location.path("publications/" + $rootScope.routeSection)

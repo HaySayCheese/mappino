@@ -8,192 +8,202 @@
         </div>
     </div>
 
+
     <div class="row">
         <h3 id="info-section">Информация</h3>
 
-        <div class="row">
-            <div class="col-sm-12">
-                <h5 class="section-header">[[ publication.title ]]</h5>
+        <div class="col-sm-12">
+            <h5 class="section-header">[[ publication.title ]]</h5>
+        </div>
+
+        <div class="col-sm-12 text-justify">
+            <p>[[ publication.description ]]</p>
+        </div>
+
+        <div class="col-sm-12 col-lg-6">
+            <table>
+                <tr ng-show="publication.market_type">
+                    <td>Тип рынка:</td>
+                    <td>[[ publication.market_type ]]</td>
+                </tr>
+                <tr ng-show="publication.building_type">
+                    <td>Тип здания:</td>
+                    <td>[[ publication.building_type ]]</td>
+                </tr>
+                <tr ng-show="publication.build_year">
+                    <td>Год постройки:</td>
+                    <td>[[ publication.build_year ]]</td>
+                </tr>
+                <tr ng-show="publication.age">
+                    <td>Возраст бизнеса:</td>
+                    <td>[[ publication.age ]]</td>
+                </tr>
+                <tr ng-show="publication.flat_type">
+                    <td>Тип квартиры:</td>
+                    <td>[[ publication.flat_type ]]</td>
+                </tr>
+                <tr ng-show="publication.rooms_planning">
+                    <td>Планировка:</td>
+                    <td>[[ publication.rooms_planning ]]</td>
+                </tr>
+                <tr ng-show="publication.total_area">
+                    <td>Общая площадь:</td>
+                    <td>[[ publication.total_area ]]</td>
+                </tr>
+                <tr ng-show="publication.area">
+                    <td>Площадь:</td>
+                    <td>[[ publication.area ]]</td>
+                </tr>
+                <tr ng-show="publication.living_area">
+                    <td>Жилая площадь:</td>
+                    <td>[[ publication.living_area ]]</td>
+                </tr>
+                <tr ng-show="publication.kitchen_area">
+                    <td>Площадь кухни:</td>
+                    <td>[[ publication.kitchen_area ]]</td>
+                </tr>
+                <tr ng-show="publication.halls_area">
+                    <td>Площадь залов:</td>
+                    <td>[[ publication.halls_area ]]</td>
+                </tr>
+                <tr ng-show="publication.plot_area">
+                    <td>Площадь участка:</td>
+                    <td>[[ publication.plot_area ]]</td>
+                </tr>
+                <tr ng-show="publication.driveways">
+                    <td>Подъездные пути:</td>
+                    <td>[[ publication.driveways ]]</td>
+                </tr>
+                <tr ng-show="publication.share">
+                    <td>Долевое участие:</td>
+                    <td>[[ publication.share ]]</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="col-sm-12 col-lg-6">
+            <table>
+                <tr ng-show="publication.floor">
+                    <td>Этаж:</td>
+                    <td>[[ publication.floor ]]</td>
+                </tr>
+                <tr ng-show="publication.floors_count">
+                    <td>Этажей:</td>
+                    <td>[[ publication.floors_count ]]</td>
+                </tr>
+                <tr ng-show="publication.condition">
+                    <td>Состояние:</td>
+                    <td>[[ publication.condition ]]</td>
+                </tr>
+                <tr ng-show="publication.monthly_cost">
+                    <td>Расходы / мес.:</td>
+                    <td>[[ publication.monthly_cost ]]</td>
+                </tr>
+                <tr ng-show="publication.annual_receipts">
+                    <td>Год. выручка:</td>
+                    <td>[[ publication.annual_receipts ]]</td>
+                </tr>
+                <tr ng-show="publication.rooms_count">
+                    <td>Кол-во комнат:</td>
+                    <td>[[ publication.rooms_count ]]</td>
+                </tr>
+                <tr ng-show="publication.bedrooms_count">
+                    <td>Кол-во спален:</td>
+                    <td>[[ publication.bedrooms_count ]]</td>
+                </tr>
+                <tr ng-show="publication.vcs_count">
+                    <td>Кол-во сан. узлов:</td>
+                    <td>[[ publication.vcs_count ]]</td>
+                </tr>
+                <tr ng-show="publication.balconies_count">
+                    <td>Кол-во балконов:</td>
+                    <td>[[ publication.balconies_count ]]</td>
+                </tr>
+                <tr ng-show="publication.loggias_count">
+                    <td>Кол-во лоджий:</td>
+                    <td>[[ publication.loggias_count ]]</td>
+                </tr>
+                <tr ng-show="publication.halls_count">
+                    <td>Кол-во залов:</td>
+                    <td>[[ publication.halls_count ]]</td>
+                </tr>
+                <tr ng-show="publication.cabinets_count">
+                    <td>Кол-во кабинетов:</td>
+                    <td>[[ publication.cabinets_count ]]</td>
+                </tr>
+                <tr ng-show="publication.ceiling_height">
+                    <td>Высота потолков:</td>
+                    <td>[[ publication.ceiling_height ]]</td>
+                </tr>
+                <tr ng-show="publication.workers_count">
+                    <td>Работников:</td>
+                    <td>[[ publication.workers_count ]]</td>
+                </tr>
+                <tr ng-show="publication.pit">
+                    <td>Яма:</td>
+                    <td>[[ publication.pit ]]</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="col-sm-12">
+            <div class="other-properties" ng-show="publication.facilities">
+                <span class="section-header">Удобства: </span>
+                [[ publication.facilities ]]
+            </div>
+            <div class="property-price" ng-show="publication.sale_price_uah">
+                Продажа: [[ publication.sale_price ]]
+            </div>
+            <div class="other-properties" ng-show="publication.sale_terms">
+                [[ publication.sale_terms ]]
+            </div>
+            <div class="property-price" ng-show="publication.rent_price">
+                Аренда: [[ publication.rent_price ]]
+            </div>
+            <div class="other-properties" ng-show="publication.rent_terms">
+                [[ publication.rent_terms ]]
+            </div>
+            <div class="other-properties" ng-show="publication.rent_facilities">
+                <span class="section-header">Удобства аренды: </span>
+                [[ publication.rent_facilities ]]
+            </div>
+            <div class="other-properties" ng-show="publication.communications">
+                <span class="section-header">Коммуникации: </span>
+                [[ publication.communications ]]
+            </div>
+            <div class="other-properties" ng-show="publication.buildings">
+                <span class="section-header">Дополнительные постройки: </span>
+                [[ publication.buildings ]]
+            </div>
+            <div class="other-properties" ng-show="publication.showplaces">
+                <span class="section-header">Рядом находиться: </span>
+                [[ publication.showplaces ]]
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-sm-12 text-justify">
-                <p>[[ publication.description ]]</p>
+        <div class="col-sm-6 col-lg-6" ng-repeat="photo in publication.head.photos">
+            <div class="uploaded-photo">
+                <img ng-src="[[ photo ]]"/>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-sm-12 col-lg-6">
-                <table>
-                    <tr ng-show="publication.market_type">
-                        <td>Тип рынка:</td>
-                        <td>[[ publication.market_type ]]</td>
-                    </tr>
-                    <tr ng-show="publication.building_type">
-                        <td>Тип здания:</td>
-                        <td>[[ publication.building_type ]]</td>
-                    </tr>
-                    <tr ng-show="publication.build_year">
-                        <td>Год постройки:</td>
-                        <td>[[ publication.build_year ]]</td>
-                    </tr>
-                    <tr ng-show="publication.age">
-                        <td>Возраст бизнеса:</td>
-                        <td>[[ publication.age ]]</td>
-                    </tr>
-                    <tr ng-show="publication.flat_type">
-                        <td>Тип квартиры:</td>
-                        <td>[[ publication.flat_type ]]</td>
-                    </tr>
-                    <tr ng-show="publication.rooms_planning">
-                        <td>Планировка:</td>
-                        <td>[[ publication.rooms_planning ]]</td>
-                    </tr>
-                    <tr ng-show="publication.total_area">
-                        <td>Общая площадь:</td>
-                        <td>[[ publication.total_area ]]</td>
-                    </tr>
-                    <tr ng-show="publication.area">
-                        <td>Площадь:</td>
-                        <td>[[ publication.area ]]</td>
-                    </tr>
-                    <tr ng-show="publication.living_area">
-                        <td>Жилая площадь:</td>
-                        <td>[[ publication.living_area ]]</td>
-                    </tr>
-                    <tr ng-show="publication.kitchen_area">
-                        <td>Площадь кухни:</td>
-                        <td>[[ publication.kitchen_area ]]</td>
-                    </tr>
-                    <tr ng-show="publication.halls_area">
-                        <td>Площадь залов:</td>
-                        <td>[[ publication.halls_area ]]</td>
-                    </tr>
-                    <tr ng-show="publication.plot_area">
-                        <td>Площадь участка:</td>
-                        <td>[[ publication.plot_area ]]</td>
-                    </tr>
-                    <tr ng-show="publication.driveways">
-                        <td>Подъездные пути:</td>
-                        <td>[[ publication.driveways ]]</td>
-                    </tr>
-                    <tr ng-show="publication.share">
-                        <td>Долевое участие:</td>
-                        <td>[[ publication.share ]]</td>
-                    </tr>
-                </table>
-            </div>
-            <div class="col-sm-12 col-lg-6">
-                <table>
-                    <tr ng-show="publication.floor">
-                        <td>Этаж:</td>
-                        <td>[[ publication.floor ]]</td>
-                    </tr>
-                    <tr ng-show="publication.floors_count">
-                        <td>Этажей:</td>
-                        <td>[[ publication.floors_count ]]</td>
-                    </tr>
-                    <tr ng-show="publication.condition">
-                        <td>Состояние:</td>
-                        <td>[[ publication.condition ]]</td>
-                    </tr>
-                    <tr ng-show="publication.monthly_cost">
-                        <td>Расходы / мес.:</td>
-                        <td>[[ publication.monthly_cost ]]</td>
-                    </tr>
-                    <tr ng-show="publication.annual_receipts">
-                        <td>Год. выручка:</td>
-                        <td>[[ publication.annual_receipts ]]</td>
-                    </tr>
-                    <tr ng-show="publication.rooms_count">
-                        <td>Кол-во комнат:</td>
-                        <td>[[ publication.rooms_count ]]</td>
-                    </tr>
-                    <tr ng-show="publication.bedrooms_count">
-                        <td>Кол-во спален:</td>
-                        <td>[[ publication.bedrooms_count ]]</td>
-                    </tr>
-                    <tr ng-show="publication.vcs_count">
-                        <td>Кол-во сан. узлов:</td>
-                        <td>[[ publication.vcs_count ]]</td>
-                    </tr>
-                    <tr ng-show="publication.balconies_count">
-                        <td>Кол-во балконов:</td>
-                        <td>[[ publication.balconies_count ]]</td>
-                    </tr>
-                    <tr ng-show="publication.loggias_count">
-                        <td>Кол-во лоджий:</td>
-                        <td>[[ publication.loggias_count ]]</td>
-                    </tr>
-                    <tr ng-show="publication.halls_count">
-                        <td>Кол-во залов:</td>
-                        <td>[[ publication.halls_count ]]</td>
-                    </tr>
-                    <tr ng-show="publication.cabinets_count">
-                        <td>Кол-во кабинетов:</td>
-                        <td>[[ publication.cabinets_count ]]</td>
-                    </tr>
-                    <tr ng-show="publication.ceiling_height">
-                        <td>Высота потолков:</td>
-                        <td>[[ publication.ceiling_height ]]</td>
-                    </tr>
-                    <tr ng-show="publication.workers_count">
-                        <td>Работников:</td>
-                        <td>[[ publication.workers_count ]]</td>
-                    </tr>
-                    <tr ng-show="publication.pit">
-                        <td>Яма:</td>
-                        <td>[[ publication.pit ]]</td>
-                    </tr>
-                </table>
+    </div>
+
+
+    <div class="row" ng-show="tags.length">
+        <h3 id="pub-tags-section">Ярлыки</h3>
+
+        <div class="col-sm-6 col-lg-4 form-group">
+            <div class="checkbox" ng-repeat="tag in tags" ng-if="$even">
+                <input id="[[ tag.id ]]" type="checkbox" name="tag" ng-model="publication.tags[tag.id]" ng-click="tagCheckboxChange($event)">
+                <label for="[[ tag.id ]]">[[ tag.title ]]</label>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="other-properties" ng-show="publication.facilities">
-                    <span class="section-header">Удобства: </span>
-                    [[ publication.facilities ]]
-                </div>
-                <div class="property-price" ng-show="publication.sale_price_uah">
-                    Продажа: [[ publication.sale_price ]]
-                </div>
-                <div class="other-properties" ng-show="publication.sale_terms">
-                    [[ publication.sale_terms ]]
-                </div>
-                <div class="property-price" ng-show="publication.rent_price">
-                    Аренда: [[ publication.rent_price ]]
-                </div>
-                <div class="other-properties" ng-show="publication.rent_terms">
-                    [[ publication.rent_terms ]]
-                </div>
-                <div class="other-properties" ng-show="publication.rent_facilities">
-                    <span class="section-header">Удобства аренды: </span>
-                    [[ publication.rent_facilities ]]
-                </div>
-                <div class="other-properties" ng-show="publication.communications">
-                    <span class="section-header">Коммуникации: </span>
-                    [[ publication.communications ]]
-                </div>
-                <div class="other-properties" ng-show="publication.buildings">
-                    <span class="section-header">Дополнительные постройки: </span>
-                    [[ publication.buildings ]]
-                </div>
-                <div class="other-properties" ng-show="publication.showplaces">
-                    <span class="section-header">Рядом находиться: </span>
-                    [[ publication.showplaces ]]
-                </div>
+        <div class="col-sm-6 col-lg-4 form-group">
+            <div class="checkbox" ng-repeat="tag in tags" ng-if="$odd">
+                <input id="[[ tag.id ]]" type="checkbox" name="tag" ng-model="publication.tags[tag.id]" ng-click="tagCheckboxChange($event)">
+                <label for="[[ tag.id ]]">[[ tag.title ]]</label>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-sm-6 col-lg-6" ng-repeat="photo in publication.photos.photos">
-                <div class="uploaded-photo">
-                    <img ng-src="[[ photo ]]"/>
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>

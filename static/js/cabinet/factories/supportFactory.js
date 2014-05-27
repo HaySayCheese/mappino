@@ -15,10 +15,11 @@ app.factory('Support', function($rootScope, Queries) {
             })
         },
 
+
         /**
-         * Загрузка даних тікета
+         * Загрузка даних по ідентифікатору тікета
          *
-         * @param {number}   ticketId
+         * @param {number}   ticketId   Ідентифікатор тікета
          * @param {function} callback
          */
         loadTicketData: function(ticketId, callback) {
@@ -27,8 +28,9 @@ app.factory('Support', function($rootScope, Queries) {
             })
         },
 
+
         /**
-         * Створення тікета
+         * Створення нового тікета
          *
          * @param {object}   data Обєкт з даними тікета
          * @param {function} callback
@@ -42,8 +44,8 @@ app.factory('Support', function($rootScope, Queries) {
         /**
          * Відправка повідомлення
          *
-         * @param {number}   ticketId
-         * @param {object}   message
+         * @param {number}   ticketId   Ідентифікатор тікета
+         * @param {object}   message    Обєкт з заголовком (якщо це перше повідомлення) і повідомленням
          * @param {function} callback
          */
         sendMessage: function(ticketId, message, callback) {

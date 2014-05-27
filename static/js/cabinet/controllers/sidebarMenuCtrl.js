@@ -85,6 +85,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
                 htmlText = "<div class='tag-edit-panel state-edit'>" +
                                 "<div class='form-group'>" +
                                     "<input type='text' class='form-control' ng-model='editingTag.title' required>" +
+                                    "<span class='input-has-error' ng-show='tagNameDuplicated'>Такое имя уже используеться</span>" +
                                 "</div>" +
                                 "<div class='pick-color-box text-center'>" +
                                     "<div class='color-item' ng-repeat='color in tagParameters.colors' ng-click='editingTag.color = color' style='background-color: [[ color ]]'></div>" +
@@ -114,13 +115,17 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
         if (_.isEmpty($scope.newTag.title))
             return;
 
+        $scope.tagNameDuplicated = false;
+
         var btn = angular.element(".btn-creating").button("loading");
 
         Tags.create($scope.newTag, function(data) {
             btn.button("reset");
 
-            if (data === "error")
+            if (data == "error") {
+                $scope.tagNameDuplicated = true;
                 return;
+            }
 
             $scope.tags = data;
 

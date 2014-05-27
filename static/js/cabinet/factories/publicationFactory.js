@@ -27,7 +27,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
 
 
         /**
-         * Загружає дані неопублікованого оголошення
+         * Загружає дані оголошення
          *
          * @param {number} tid              Ідентифікатор типу оголошення
          * @param {number} id               Ідентифікатор оголошення
@@ -47,7 +47,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
 
 
         /**
-         * Загружає дані графіків опублікованого оголошення
+         * Загружає дані графіків для опублікованого оголошення
          *
          * @param {number} tid              Ідентифікатор типу оголошення
          * @param {number} id               Ідентифікатор оголошення
@@ -87,7 +87,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
         /**
          * Створення нового оголошення
          *
-         * @param {object} publication Обєкт оголошення
+         * @param {object} publication Обєкт з полями оголошення
          * @param {function} callback
          */
         create: function(publication, callback) {
@@ -135,10 +135,11 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
                     }
                 });
 
-                channel.info("Объявление успешно опубликовано");
 
                 publicationsCount['unpublished'] -= 1;
                 publicationsCount['published']   += 1;
+
+                channel.info("Объявление успешно опубликовано");
 
                 _.isFunction(callback) && callback(data);
             });
@@ -146,7 +147,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
 
 
         /**
-         * Перенесення оголошення в чорновики
+         * Перенесення оголошення з опублікованих в неопубліковані
          *
          * @param {number} tid              Ідентифікатор типу оголошення
          * @param {number} id               Ідентифікатор оголошення
@@ -164,19 +165,21 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
 
 
         /**
-         * Видалення оголошення
+         * Перенесення оголошення в корзину
          *
          * @param {number} tid              Ідентифікатор типу оголошення
          * @param {number} id               Ідентифікатор оголошення
          * @param {function} callback
          */
-        remove: function(tid, id, callback) {
-            Queries.Publications.remove(tid, id, function(data) {
+        toTrash: function(tid, id, callback) {
+            Queries.Publications.toTrash(tid, id, function(data) {
                 $rootScope.routeSection === 'published' ?
                     publicationsCount['published'] -= 1 :
                         $rootScope.routeSection === 'unpublished' ? publicationsCount['unpublished'] -= 1 : "";
 
                 publicationsCount['trash'] += 1;
+
+                channel.info("Объявление перемещено в корзину");
 
                 _.isFunction(callback) && callback(data);
             });
@@ -184,7 +187,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
 
 
         /**
-         * Перенесення в неопубліковані
+         * Перенесення з корзини в неопубліковані
          *
          * @param {number} tid              Ідентифікатор типу оголошення
          * @param {number} id               Ідентифікатор оголошення
@@ -195,6 +198,8 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
 
                 publicationsCount['trash']       -= 1;
                 publicationsCount['unpublished'] += 1;
+
+                channel.info("Объявление восстановлено в неопубликование");
 
                 _.isFunction(callback) && callback(data);
             });
@@ -270,12 +275,22 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
 
 
         /**
-         * Отримання кількості оголошень
+         * Вертає кількість оголошень в кожному розділі
          */
         getCounts: function() {
             Queries.Publications.counts(function(data) {
                 publicationsCount = $rootScope.publicationsCount = data;
             });
+        },
+
+
+        /**
+         * Вертає масив з типами оголошення
+         *
+         * @return {Array}
+         */
+        getTypes: function() {
+            return publicationTypes;
         },
 
 
@@ -309,16 +324,6 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
                     rent_type_sid:  0
                 });
             }
-        },
-
-
-        /**
-         * Вертає масив з типами оголошення
-         *
-         * @return {Array}
-         */
-        getTypes: function() {
-            return publicationTypes;
         }
 
     }

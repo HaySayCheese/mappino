@@ -3,8 +3,10 @@
 app.factory('Settings', function($rootScope, Queries) {
 
     return {
+
+
         /**
-        * Загрузка даних юзера
+        * Загрузка даних користувача
         *
         * @param {function} callback
         */
@@ -13,6 +15,7 @@ app.factory('Settings', function($rootScope, Queries) {
                 _.isFunction(callback) && callback(data);
             })
         },
+
 
         /**
          * Валідація полів на сервері
@@ -28,10 +31,11 @@ app.factory('Settings', function($rootScope, Queries) {
             });
         },
 
+
         /**
-         * Загрузка фотки юзера
+         * Загрузка фотографії користувача
          *
-         * @param {object}   photo
+         * @param {object}   photo  Обєкт з фотографією
          * @param {function} callback
          */
         uploadUserPhoto: function(photo, callback) {

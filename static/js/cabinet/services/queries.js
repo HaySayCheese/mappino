@@ -58,6 +58,11 @@ app.factory('Queries', function($http, $upload) {
                 return $http.put('/ajax/api/cabinet/publications/' + tid + ":" + hid + '/unpublish/').success(callback);
             },
 
+            toTrash: function(tid, hid, callback) {
+                return $http.delete('/ajax/api/cabinet/publications/' + tid + ":" + hid + '/').success(callback);
+            },
+
+            // todo: змінити урл
             remove: function(tid, hid, callback) {
                 return $http.delete('/ajax/api/cabinet/publications/' + tid + ":" + hid + '/').success(callback);
             },

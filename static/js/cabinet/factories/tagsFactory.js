@@ -55,7 +55,7 @@ app.factory('Tags', function($rootScope, lrNotifier, Queries) {
 
 
         /**
-         * Створення тега
+         * Створення нового тега
          *
          * @param {object} tag Обєкт тега
          * @param {function} callback
@@ -69,12 +69,12 @@ app.factory('Tags', function($rootScope, lrNotifier, Queries) {
             Queries.Tags.create({ title: tag.title, color_id: tag.color_id } , function(data) {
 
                 if (data.code !== 0) {                                          // Якщо 'data.code' не '0'
-                    channel.warn("Тег с таким именем уже существует");          // кричимо шо біда
                     _.isFunction(callback) && callback("error");                // вертаєм колбек шо біда
                     return;                                                     // ну і капут
                 }
 
                 that.add(tag, { id: data.id });                                 // Но якшо таки все ок то додаємо тег
+                $rootScope.publicationsCount[data.id] = 0;                      // Ставимо лічильник в 0
 
                 $rootScope.$emit('tagsUpdated');                                // Кажем всім шо в нас новий тег
 
@@ -123,6 +123,7 @@ app.factory('Tags', function($rootScope, lrNotifier, Queries) {
                 $rootScope.lastRemovedTag = tag;            // Зберігаємо останній видалений шо б видлити його з брифів
 
                 $rootScope.$emit('tagsUpdated');            // Кажем всім шо в нас одного не стало
+                channel.info("Ярлык '" + tag.title + "' успешно удален");
 
                 _.isFunction(callback) && callback(tags);   // І вертаємо колбек з тегами
             });
