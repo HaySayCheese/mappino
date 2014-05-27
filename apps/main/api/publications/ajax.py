@@ -1,7 +1,7 @@
 #coding=utf-8
 import json
 
-from core.publications import formatters
+from core.publications import classes
 from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 from django.http import HttpResponseBadRequest, HttpResponse
@@ -18,7 +18,7 @@ class DetailedView(View):
 
 	def __init__(self):
 		super(DetailedView, self).__init__()
-		self.formatter = formatters.PublishedFormatter()
+		self.formatter = classes.PublishedDataSource()
 
 
 	def get(self, request, *args):

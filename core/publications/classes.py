@@ -71,6 +71,7 @@ class PublishedDataSource(object):
 				 such as photos and tags.
 		"""
 		result = {
+			'state_sid': p.state_sid,
 			'photos': p.photos_json(),
 		}
 
