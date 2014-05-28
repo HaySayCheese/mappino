@@ -100,7 +100,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $timeout(function() {
                 initScrollBar();
             }, 300);
-        }, 0);
+        }, 300);
 
 
         // якщо опубліковане
