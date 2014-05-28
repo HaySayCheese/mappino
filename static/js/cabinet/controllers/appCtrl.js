@@ -34,10 +34,10 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
      * пункту меню
      */
     $scope.$on("$routeChangeSuccess", function() {
-        $rootScope.routeBase     = "";
-        $rootScope.routeSection  = "";
-        $rootScope.publicationId = "";
-        $rootScope.isSupportPage = false;
+        $rootScope.routeBase            = "";
+        $rootScope.routeSection         = "";
+        $rootScope.publicationId        = "";
+        $rootScope.isSupportPagePart    = false;
 
         if ($location.path().replace("/", ""))
             $rootScope.routeBase = $location.path().replace("/", "");

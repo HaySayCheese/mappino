@@ -159,6 +159,8 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
                 publicationsCount['published']      -= 1;
                 publicationsCount['unpublished']    += 1;
 
+                $location.path("publications/unpublished/" + tid + ":" + id);
+
                 _.isFunction(callback) && callback(data);
             });
         },
@@ -179,6 +181,8 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
 
                 publicationsCount['trash'] += 1;
 
+                $location.path("publications/" + $rootScope.routeSection);
+
                 channel.info("Объявление перемещено в корзину");
 
                 _.isFunction(callback) && callback(data);
@@ -198,6 +202,8 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
 
                 publicationsCount['trash']       -= 1;
                 publicationsCount['unpublished'] += 1;
+
+                $location.path("publications/unpublished/" + tid + ":" + id);
 
                 channel.info("Объявление восстановлено в неопубликование");
 

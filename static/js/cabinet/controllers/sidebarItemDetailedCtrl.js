@@ -307,7 +307,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 setAddressFromLatLng(place.geometry.location, cityInput);
             }
         });
-    }
+    };
 
 
     /**
@@ -400,7 +400,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
         Publication.unpublish(tid, hid, function(data) {
             btn.button("reset");
-            $location.path("publications/unpublished/" + tid + ":" + hid)
         });
     };
 
@@ -408,13 +407,12 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     /**
      * Перенесення оголошення в корзину
      */
-    $scope.removePublication = function() {
+    $scope.toTrashPublication = function() {
         var btn = angular.element(".remove-btn").button("loading");
 
         Publication.toTrash(tid, hid, function(data) {
             btn.button("reset");
             Briefs.remove(tid, hid);
-            $location.path("publications/" + $rootScope.routeSection)
         });
     };
 
@@ -427,7 +425,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
         Publication.toUnpublished(tid, hid, function(data) {
             btn.button("reset");
-            $location.path("publications/unpublished/" + tid + ":" + hid)
         });
     };
 

@@ -43,13 +43,15 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
 
 
     $scope.returnToSupport = function() {
-        $location.path("/support")
+        $location.path("/support");
     };
 
 
     $scope.createTicket = function() {
-        Support.createTicket({ ticketId: $routeParams.ticketId }, function(data) {
-            $location.path("/support/tickets/" + data.id)
+        var btn = angular.element(".new-ticket-btn").button("loading");
+
+        Support.createTicket(function() {
+            btn.button("reset");
         });
     };
 

@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Support', function($rootScope, Queries) {
+app.factory('Support', function($rootScope, $location, Queries) {
 
     return {
 
@@ -32,11 +32,12 @@ app.factory('Support', function($rootScope, Queries) {
         /**
          * Створення нового тікета
          *
-         * @param {object}   data Обєкт з даними тікета
          * @param {function} callback
          */
-        createTicket: function(data, callback) {
-            Queries.Support.createTicket(data, function(data) {
+        createTicket: function(callback) {
+            Queries.Support.createTicket(function(data) {
+                $location.path("/support/ticket/" + data.id);
+
                 _.isFunction(callback) && callback(data);
             });
         },

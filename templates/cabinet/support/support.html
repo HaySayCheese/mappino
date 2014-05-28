@@ -4,7 +4,7 @@
             <div class="btn btn-xlg btn-link" ng-show="showTicket" ng-click="returnToSupport()">
                 Вернуться
             </div>
-            <div class="btn btn-xlg btn-link" ng-hide="showTicket" ng-click="createTicket()">
+            <div class="btn btn-xlg btn-link new-ticket-btn" data-loading-text="Создание сообщения..." ng-hide="showTicket" ng-click="createTicket()">
                 Новое сообщение
             </div>
         </div>
@@ -41,6 +41,7 @@
         </div>
 
         <div class="load-detailed" ng-show="loadings.tickets || loadings.ticketData"></div>
+
         <div class="detailed-empty text-muted" ng-show="!tickets.length && !loadings.tickets && !showTicket">
             <span>У вас пока нет сообщений</span>
         </div>
