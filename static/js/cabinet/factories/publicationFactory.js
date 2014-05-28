@@ -205,7 +205,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
 
                 $location.path("publications/unpublished/" + tid + ":" + id);
 
-                channel.info("Объявление восстановлено в неопубликование");
+                channel.info("Объявление восстановлено в неопубликованные");
 
                 _.isFunction(callback) && callback(data);
             });
