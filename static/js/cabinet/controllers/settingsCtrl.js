@@ -30,9 +30,13 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
      */
     $scope.onFileSelect = function(files) {
         $scope.user.account.avatar_url = "";
+        $scope.uploadingAvatar = true;
 
         Settings.uploadUserPhoto(files[0], function(data) {
             $scope.user.account.avatar_url = data.url;
+            $scope.uploadingAvatar = false;
+
+            data.code !== 0 ? $scope.avatarErrorCode = data.code : $scope.avatarErrorCode = 0;
         });
     };
 
