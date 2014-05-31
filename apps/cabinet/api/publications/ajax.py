@@ -132,7 +132,7 @@ class Publications(object):
 				raise PermissionDenied()
 
 			# seems to be ok
-			if head.is_published():
+			if head.is_published() or head.is_deleted():
 				return HttpResponse(json.dumps(
 					self.published_formatter.format(tid, head)), content_type='application/json')
 
