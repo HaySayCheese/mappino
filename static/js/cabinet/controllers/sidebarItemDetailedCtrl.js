@@ -422,6 +422,19 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
 
     /**
+     * Видалення оголошення
+     */
+    $scope.removePublication = function() {
+        var btn = angular.element(".remove-btn").button("loading");
+
+        Publication.remove(tid, hid, function(data) {
+            btn.button("reset");
+            Briefs.remove(tid, hid);
+        });
+    };
+
+
+    /**
      * Переміщення оголошення в неопубліковані з корзини
      */
     $scope.toUnpublishedPublication = function() {
