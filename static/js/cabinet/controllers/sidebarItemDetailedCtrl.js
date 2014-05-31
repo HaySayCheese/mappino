@@ -35,10 +35,14 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * оренди і продажу
      */
     $scope.$watch("publication.head.for_sale", function() {
-        initSectionDropdown();
+        $timeout(function() {
+            initSectionDropdown();
+        }, 100);
     });
     $scope.$watch("publication.head.for_rent", function() {
-        initSectionDropdown();
+        $timeout(function() {
+            initSectionDropdown();
+        }, 100);
     });
 
 
@@ -100,7 +104,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $timeout(function() {
                 initScrollBar();
             }, 300);
-        }, 0);
+        }, 300);
 
 
         // якщо опубліковане
@@ -463,13 +467,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         });
 
         for (var i = 0; i < $scope.publicationSections.length; i++) {
-            if ($scope.publicationSections[i].href === 'for-sale-section' && !$scope.publication.head.for_sale) {
+            if ($scope.publicationSections[i].href === 'for-sale-section' && !$scope.publication.head.for_sale)
                 $scope.publicationSections.splice(i, 1);
-            }
 
-            if ($scope.publicationSections[i].href === 'for-rent-section' && !$scope.publication.head.for_rent) {
+            if ($scope.publicationSections[i].href === 'for-rent-section' && !$scope.publication.head.for_rent)
                 $scope.publicationSections.splice(i, 1);
-            }
         }
     }
 

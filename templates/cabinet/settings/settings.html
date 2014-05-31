@@ -72,9 +72,13 @@
                     <div class="col-sm-4 col-lg-4">
                         <div class="user-photo-block text-center">
                             <img class="photo" ng-src="[[ user.account.avatar_url ]]"/>
-                            <a href="" ng-click="openPhotoDialog()">Сменить</a>
+                            <a href="" ng-show="!uploadingAvatar" ng-click="openPhotoDialog()">Сменить</a>
+                            <div class="avatar-loader" ng-show="uploadingAvatar"></div>
                             <input type="file" ng-file-select="onFileSelect($files)" accept="image/jpeg, image/png"/>
                         </div>
+                        <span class="input-has-error text-center" ng-show="avatarErrorCode === 1">Слишком большое изображение (ограничение в 5 мб.)</span>
+                        <span class="input-has-error text-center" ng-show="avatarErrorCode === 2">Слишком малое изображение <br/>(<200px по одной из сторон)</span>
+                        <span class="input-has-error text-center" ng-show="avatarErrorCode === 3">Неподдерживаемый тип</span>
                     </div>
                 </div>
 
