@@ -60,16 +60,10 @@
             .opacity(1);
         }
 
-        .set-main-photo,
-        .remove-photo {
-            .square(50px);
+        .set-main-photo-block,
+        .remove-photo-block {
             position: absolute;
-            top: 50%;
-
-            background-color: #ffffff;
-            border: 1px solid @gray-light;
-            border-radius: 50%;
-            .translate(0, -50%);
+            .opacity(0.9);
 
             &:hover {
                 .icon-remove:after {
@@ -77,11 +71,16 @@
                 }
             }
         }
-        .set-main-photo {
-            left: 20%;
+        .preview {
+            .size(70%, 100%);
+            left: 0;
         }
-        .remove-photo {
-            right: 20%;
+        .controls {
+            .size(30%, 100%);
+            right: -1px;
+            background: @nice-blue;
+            border-left: 2px solid white;
+            border-radius: 0;
         }
 
         .icon-remove,
