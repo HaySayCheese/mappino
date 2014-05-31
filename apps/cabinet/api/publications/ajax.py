@@ -1,12 +1,12 @@
 #coding=utf-8
 import copy
 import json
-from apps.cabinet.api.dirtags.models import DirTags
+
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
+from django.http.response import HttpResponse, HttpResponseBadRequest
 
 from apps.classes import CabinetView
 from core.publications import classes
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
-from django.http.response import HttpResponse, HttpResponseBadRequest
 from core.publications.abstract_models import PhotosModel
 from core.publications.models_signals import record_updated
 from core.publications.update_methods.dachas import update_dacha
@@ -254,6 +254,40 @@ class Publications(object):
 			head.mark_as_deleted()
 			return HttpResponse(json.dumps(self.delete_codes['OK']), content_type='application/json')
 
+
+	class PermanentDelete(CabinetView):
+		delete_codes = {
+			'OK': {
+			    'code': 0,
+		    },
+		    'invalid_hid': {
+			    'code': 1,
+		    },
+		}
+
+
+		def delete(self, request, *args):
+			if not args:
+				return HttpResponseBadRequest('Not enough parameters.')
+
+			tid, hid = args[0].split(':')
+			tid = int(tid)
+			hid = int(hid)
+
+			try:
+				model = HEAD_MODELS[tid]
+				head = model.objects.filter(id=hid).only('id', 'owner')[0]
+			except IndexError:
+				return HttpResponseBadRequest(json.dumps(
+					self.delete_codes['invalid_hid']), content_type='application/json')
+
+
+			# check owner
+			if head.owner.id != request.user.id:
+				raise PermissionDenied()
+
+			head.delete_permanently()
+			return HttpResponse(json.dumps(self.delete_codes['OK']), content_type='application/json')
 
 
 	class Publish(CabinetView):

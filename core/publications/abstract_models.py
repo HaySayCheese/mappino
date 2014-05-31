@@ -288,6 +288,29 @@ class LivingHeadModel(models.Model):
 		self.deleted = now()
 		self.save()
 
+		models_signals.moved_to_trash.send(None, tid=self.tid, hid=self.id)
+
+
+	def delete(self, using=None):
+		# Standard delete method does not emits useful signals about deletion.
+		# So this method was locked for prevent mistakes usages.
+		raise RuntimeException('Method not allowed.')
+
+
+	def delete_permanent(self):
+		"""
+		Removes record permanent. without possibility to restore it.
+		If deletion was performed without errors - signal "deleted_permanently" will be emitted.
+
+		:return: None
+		"""
+		if self.deleted is None:
+			raise SuspiciousOperation('Attempt to delete publication that was not moved to trash.')
+
+		super(LivingHeadModel, self).delete()
+		models_signals.deleted_permanent.send(None, tid=self.tid, hid=self.id)
+
+
 
 	def check_required_fields(self):
 		"""
