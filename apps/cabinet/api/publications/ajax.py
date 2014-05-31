@@ -459,6 +459,7 @@ class Publications(object):
 			# seems to be OK
 			response = copy.deepcopy(self.post_codes['OK']) # WARN: deep copy is needed here.
 			response['image'] = image_data
+			response['title_url'] = publication.title_photo_url()
 			return HttpResponse(json.dumps(response), content_type='application/json')
 
 
@@ -514,7 +515,9 @@ class Publications(object):
 
 
 			# seems to be OK
-			return HttpResponse(json.dumps(self.delete_codes['OK']), content_type='application/json')
+			response = copy.deepcopy(self.delete_codes['OK'])
+			response['title_url'] = publication.title_photo_url()
+			return HttpResponse(json.dumps(response), content_type='application/json')
 
 
 
