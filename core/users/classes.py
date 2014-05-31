@@ -49,21 +49,25 @@ class UserAvatar(object):
 		salt = '94034782133244956047'
 		uid_hash = hashlib.sha384(str(self.user.id) + salt).hexdigest()
 
-		image_name = uid_hash + '.jpg'
-		image_path = os.path.join(self.dir, image_name)
-		with open(image_path, 'wb+') as avatar:
+
+		# Temporary image path is used to save newly uploaded image on the drive,
+		# and to not rewrite existing user avatar before all checks and processing will be executed.
+		temp_image_name = uid_hash + '.tmp.jpg'
+		temp_image_path = os.path.join(self.dir, temp_image_name)
+		with open(temp_image_path, 'wb+') as avatar:
 			for chunk in file.chunks():
 				avatar.write(chunk)
 
 		# processing and scaling
 		try:
-			avatar = Image.open(image_path)
+			avatar = Image.open(temp_image_path)
 		except IOError:
-			os.remove(image_path)
+			os.remove(temp_image_path)
 			raise RuntimeException('Unknown I/O error.')
 
 		# check the minimum image size
 		if (avatar.size[0] < self.size) or (avatar.size[1] < self.size):
+			os.remove(temp_image_path)
 			raise self.TooSmallImage()
 
 		# the image is scaled/cropped vertically or horizontally depending on the ratio
@@ -83,7 +87,11 @@ class UserAvatar(object):
 			avatar = avatar.resize((self.size, self.size), Image.ANTIALIAS)
 
 		# saving
+		image_name = uid_hash + '.jpg'
+		image_path = os.path.join(self.dir, image_name)
+
 		avatar.save(image_path, 'JPEG', quality=100)
+		os.rename(temp_image_path, image_path)
 		self.user.avatar_url = ''.join([settings.MEDIA_URL, self.destination, image_name])
 		self.user.save()
 

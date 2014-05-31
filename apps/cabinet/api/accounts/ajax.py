@@ -2,7 +2,7 @@
 from copy import deepcopy
 import json
 
-from apps.cabinet.api.classes import CabinetView
+from apps.classes import CabinetView
 from collective.methods.request_data_getters import angular_post_parameters
 from core.users.classes import UserAvatar
 from core.users.constants import Preferences
