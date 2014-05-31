@@ -244,8 +244,8 @@ def __dump_publications_list(tid, user_id, queryset):
 		'id': publication[0], # id
 	    'state_sid': publication[1], # state_sid
 	    'title': publication[2], # body.title
-	    'for_sale': publication[3], # for_sale
-	    'for_rent': publication[4], # for_rent
+	    'for_rent': publication[3], # for_rent
+	    'for_sale': publication[4], # for_sale
 	    'tags': [tag.id for tag in ifilter(lambda t: t.contains(tid, publication[0]), tags)],
 	    'photo_url': 'http://localhost/mappino_static/img/cabinet/house.png' # fixme
 
