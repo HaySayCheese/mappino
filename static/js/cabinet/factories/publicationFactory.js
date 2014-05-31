@@ -191,6 +191,24 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
 
 
         /**
+         * Видалення оголошення
+         *
+         * @param {number} tid              Ідентифікатор типу оголошення
+         * @param {number} id               Ідентифікатор оголошення
+         * @param {function} callback
+         */
+        remove: function(tid, id, callback) {
+            Queries.Publications.remove(tid, id, function(data) {
+                publicationsCount['trash'] -= 1;
+
+                channel.info("Объявление успешно удалено");
+
+                _.isFunction(callback) && callback(data);
+            });
+        },
+
+
+        /**
          * Перенесення з корзини в неопубліковані
          *
          * @param {number} tid              Ідентифікатор типу оголошення

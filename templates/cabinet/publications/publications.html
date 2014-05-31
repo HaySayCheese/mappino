@@ -22,6 +22,9 @@
             <div class="btn btn-xlg btn-link remove-btn" data-loading-text="Удаление..." ng-hide="routeSection === 'trash'" ng-click="toTrashPublication()">
                 <span class="btn-icon-remove"></span>
             </div>
+            <div class="btn btn-xlg btn-link remove-btn" data-loading-text="Удаление..." ng-show="routeSection === 'trash'" ng-click="removePublication()">
+                <span class="btn-icon-remove"></span>
+            </div>
         </div>
 
         <div class="btn btn-link btn-xlg pull-right">
