@@ -309,8 +309,13 @@ class LivingHeadModel(models.Model):
 		if self.deleted is None:
 			raise SuspiciousOperation('Attempt to delete publication that was not moved to trash.')
 
-		super(LivingHeadModel, self).delete()
+		# @deleted_permanently needs id of the publication as a parameter,
+		# but the id will be None after deleting.
+		# So, for the correct work of all handlers related to this signal,
+		# it is emitted before the physical record removing.
 		models_signals.deleted_permanent.send(None, tid=self.tid, hid=self.id)
+
+		super(LivingHeadModel, self).delete()
 
 
 
@@ -366,6 +371,10 @@ class LivingHeadModel(models.Model):
 
 	def is_published(self):
 		return self.state_sid == OBJECT_STATES.published()
+
+
+	def is_deleted(self):
+		return self.state_sid == OBJECT_STATES.deleted()
 
 
 class CommercialHeadModel(LivingHeadModel):
