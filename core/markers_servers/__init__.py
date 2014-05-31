@@ -6,9 +6,8 @@ from core.markers_servers.servers import \
 	CottagesMarkersManager, RoomsMarkersManager, TradesMarkersManager, \
 	OfficesMarkersManager, WarehousesMarkersManager, BusinessesMarkersManager, \
 	CateringsMarkersManager, GaragesMarkersManager, LandsMarkersManager
+from core.publications import models_signals
 from core.publications.constants import OBJECTS_TYPES
-from core.publications.models_signals import before_publish
-
 
 
 MARKERS_SERVERS = {
@@ -32,6 +31,13 @@ MARKERS_SERVERS = {
 }
 
 
-@receiver(before_publish)
+@receiver(models_signals.before_publish)
 def add_publication_marker(sender, **kwargs):
 	MARKERS_SERVERS[kwargs['tid']].add_publication(kwargs['hid'])
+
+
+@receiver(models_signals.unpublished)
+@receiver(models_signals.moved_to_trash)
+@receiver(models_signals.deleted_permanent)
+def remove_publication_marker(sender, **kwargs):
+	MARKERS_SERVERS[kwargs['tid']].remove_publication(kwargs['hid'])

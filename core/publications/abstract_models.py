@@ -262,6 +262,8 @@ class LivingHeadModel(models.Model):
 		self.deleted = None
 		self.save(force_update=True)
 
+		models_signals.unpublished.send(None, tid=self.tid, hid=self.id)
+
 
 	def prolong(self, days=14):
 		"""

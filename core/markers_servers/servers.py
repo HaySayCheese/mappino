@@ -77,6 +77,38 @@ class BaseMarkersManager(object):
 		self.__update_segment_hash(seg_digest, hid)
 
 
+	def remove_publication(self, hid):
+		"""
+		Removes marker of publication with id = @hid from the redis cache.
+
+		:param hid: id of the head-record of the publication.
+		:raises
+			InvalidArgument: hid == None
+			InvalidArgument: head record does not exist.
+
+		"""
+		if hid is None:
+			raise InvalidArgument('head id can not be None.')
+
+		try:
+			queryset = self.record_min_queryset(hid)
+			record = queryset[0]
+		except IndexError:
+			raise InvalidArgument('Object with such hid does not exist.')
+
+		degree = DegreePoint(record.degree_lat, record.degree_lng)
+		segment = SegmentPoint(record.segment_lat, record.segment_lng)
+		seg_digest = self.__segment_digest(degree, segment)
+
+		sector = Point(record.segment_lat, record.segment_lng)
+		position = Point(record.pos_lat, record.pos_lng)
+		pos_digest = self.__position_digest(sector, position)
+
+
+		self.redis.hdel(seg_digest, pos_digest)
+		self.__update_segment_hash(seg_digest, hid)
+
+
 	def markers(self, ne, sw, conditions=None):
 		"""
 		Повертає список маркерів, що потрапляють у в’юпорт з координатами North East (ne) та South West (sw).
