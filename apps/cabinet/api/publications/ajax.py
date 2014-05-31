@@ -286,7 +286,7 @@ class Publications(object):
 			if head.owner.id != request.user.id:
 				raise PermissionDenied()
 
-			head.delete_permanently()
+			head.delete_permanent()
 			return HttpResponse(json.dumps(self.delete_codes['OK']), content_type='application/json')
 
 
