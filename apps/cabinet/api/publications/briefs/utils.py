@@ -239,6 +239,8 @@ def __dump_publications_list(tid, user_id, queryset):
 	pub_ids = [publication[0] for publication in publications_list] # publication[0] = publication.id
 	tags = DirTags.contains_publications(tid, pub_ids).filter(user_id = user_id).only('id', 'pubs')
 
+	model = HEAD_MODELS[tid]
+
 	return [{
 		'tid': tid,
 		'id': publication[0], # id
@@ -247,7 +249,7 @@ def __dump_publications_list(tid, user_id, queryset):
 	    'for_rent': publication[3], # for_rent
 	    'for_sale': publication[4], # for_sale
 	    'tags': [tag.id for tag in ifilter(lambda t: t.contains(tid, publication[0]), tags)],
-	    'photo_url': 'http://localhost/mappino_static/img/cabinet/house.png' # fixme
+	    'photo_url': model.objects.filter(id=publication[0]).only('id')[:1][0].title_photo_url()
 
 	    # ...
 	    # other fields here

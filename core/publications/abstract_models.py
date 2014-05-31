@@ -353,6 +353,14 @@ class LivingHeadModel(models.Model):
 				result['photos'].append(photo.url() + photo.image_name())
 		return result
 
+	def title_photo_url(self):
+		title_photo = self.photos_model.objects.filter(hid=self.id).filter(is_title=True)[:1]
+		if not title_photo:
+			return None
+
+		photo = title_photo[0]
+		return photo.url() + photo.title_thumbnail_name()
+
 
 	def is_published(self):
 		return self.state_sid == OBJECT_STATES.published()
