@@ -576,4 +576,8 @@ class Publications(object):
 					json.dumps(self.post_codes['invalid_pid']), content_type='application/json')
 
 			photo.mark_as_title()
-			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
+
+			# seems to be ok
+			response = copy.deepcopy(self.post_codes['OK'])
+			response['title_url'] = publication.title_photo_url()
+			return HttpResponse(json.dumps(response), content_type='application/json')
