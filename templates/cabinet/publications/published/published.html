@@ -195,13 +195,13 @@
 
         <div class="col-sm-6 col-lg-4 form-group">
             <div class="checkbox" ng-repeat="tag in tags" ng-if="$even">
-                <input id="[[ tag.id ]]" type="checkbox" name="tag" ng-model="publication.data.tags[tag.id]" ng-click="tagCheckboxChange($event)">
+                <input id="[[ tag.id ]]" type="checkbox" name="tag" ng-model="publication.head.tags[tag.id]" ng-click="tagCheckboxChange($event)">
                 <label for="[[ tag.id ]]">[[ tag.title ]]</label>
             </div>
         </div>
         <div class="col-sm-6 col-lg-4 form-group">
             <div class="checkbox" ng-repeat="tag in tags" ng-if="$odd">
-                <input id="[[ tag.id ]]" type="checkbox" name="tag" ng-model="publication.data.tags[tag.id]" ng-click="tagCheckboxChange($event)">
+                <input id="[[ tag.id ]]" type="checkbox" name="tag" ng-model="publication.head.tags[tag.id]" ng-click="tagCheckboxChange($event)">
                 <label for="[[ tag.id ]]">[[ tag.title ]]</label>
             </div>
         </div>

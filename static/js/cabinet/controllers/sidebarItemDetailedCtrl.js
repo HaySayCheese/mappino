@@ -61,7 +61,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
             console.log(data);
 
-            if (data.head.state_sid === 0) {
+            if (data.head.state_sid !== 1) {
                 isPublished = true;
                 loadChartData();
                 $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/published/";
@@ -270,7 +270,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 streetViewControl: false
             },
             // Карта
-            map = new google.maps.Map(document.getElementById("publication-map"), mapOptions),
+            map = null || new google.maps.Map(document.getElementById("publication-map"), mapOptions),
             // Автокомпліт
             autocompleteOptions = {
                 componentRestrictions: {
@@ -311,6 +311,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 setAddressFromLatLng(place.geometry.location, cityInput);
             }
         });
+
+        // todo: частини карти не відображаються. хак
+        $timeout(function() {
+            google.maps.event.trigger(map, "resize");
+        }, 500);
     };
 
 
@@ -355,6 +360,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         for (var i = 0; i < files.length; i++) {
             Publication.uploadPhotos(tid, hid, files[i], function(data) {
                 $scope.publication.photos.push(data.image);
+
+                Briefs.updateBriefOfPublication(tid, hid, "photo_url", data.title_url);
             });
         }
     };

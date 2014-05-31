@@ -64,6 +64,10 @@
             position: relative;
             overflow: hidden;
 
+            div[class*='col-'].ng-scope {
+                padding-bottom: 30px;
+            }
+
             @media (min-width: 1920px) {
                 padding: 0 100px;
             }
@@ -197,7 +201,6 @@
     }
 
     .btn-icon-sections,
-    .btn-icon-publish,
     .btn-icon-exit,
     .btn-icon-remove {
         .square(16px);
@@ -224,12 +227,6 @@
         background-image: url("../../img/cabinet/sidebar-item-detailed/sections.png");
         &:after {
             background-image: url("../../img/cabinet/sidebar-item-detailed/sections.png");
-        }
-    }
-    .btn-icon-publish {
-        background-image: url("../../img/cabinet/sidebar-item-detailed/publish.png");
-        &:after {
-            background-image: url("../../img/cabinet/sidebar-item-detailed/publish.png");
         }
     }
     .btn-icon-exit {

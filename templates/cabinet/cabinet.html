@@ -192,7 +192,7 @@
                             <span ng-show="brief.for_sale && !brief.for_rent">Продажа</span>
                             <span ng-show="brief.for_rent && !brief.for_sale">Аренда</span>
                             <span ng-show="brief.for_sale && brief.for_rent">Продажа и аренда</span>
-                            <span ng-show="brief.for_rent || brief.for_sale">[[ brief.typeTitle.toLowerCase() ]]</span>
+                            <span ng-show="brief.for_rent || brief.for_sale">[[ brief.typeTitle ]]</span>
                         </div>
                         <div class="sidebar-item-list-item-tags" ng-show="brief.tags.length">
                             <span class="label" style="background-color: [[ tag.color ]]" ng-repeat="tag in brief.tags">[[ tag.title ]]</span>

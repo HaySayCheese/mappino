@@ -25,6 +25,8 @@ app.factory('Briefs', function($rootScope, Queries, Tags) {
 
                 $rootScope.loadings.briefs = false;
 
+                console.log(briefs)
+
                 _.isFunction(callback) && callback(data);
             });
         },
@@ -72,7 +74,7 @@ app.factory('Briefs', function($rootScope, Queries, Tags) {
             publicationTypes = $rootScope.publicationTypes;
 
             _.each(briefs, function(brief) {
-                brief.typeTitle = _.where(publicationTypes, { id: brief.tid })[0].title;
+                brief.typeTitle = _.where(publicationTypes, { id: brief.tid })[0].title.toLowerCase();
             });
         },
 
