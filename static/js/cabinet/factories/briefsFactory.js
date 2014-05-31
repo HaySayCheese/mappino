@@ -118,7 +118,7 @@ app.factory('Briefs', function($rootScope, Queries, Tags) {
          */
         updateBriefOfPublication: function(tid, id, key, value) {
 
-            if (!_.contains(["title", "for_sale", "for_rent", "tag"], key))
+            if (!_.contains(["title", "for_sale", "for_rent", "tag", "photo_url"], key))
                 return;
 
             _.each(briefs, function(brief, index, list) {
