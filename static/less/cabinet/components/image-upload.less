@@ -60,69 +60,44 @@
             .opacity(1);
         }
 
-        .set-main-photo-block,
-        .remove-photo-block {
+        .btn-preview,
+        .btns-block {
             position: absolute;
-            .opacity(0.9);
-
-            &:hover {
-                .icon-remove:after {
-                    .opacity(1);
-                }
-            }
         }
-        .preview {
+        .btn-preview {
             .size(70%, 100%);
             left: 0;
+            cursor: pointer;
         }
-        .controls {
+        .btns-block {
             .size(30%, 100%);
             right: -1px;
-            background: @nice-blue;
             border-left: 2px solid white;
-            border-radius: 0;
         }
 
-        .icon-remove,
-        .icon-main {
-            .square(16px);
-            margin-top: 5px;
-            position: relative;
-            display: inline-block;
-            background-repeat: no-repeat;
-            background-position: center top;
+        .btn-main-photo,
+        .btn-remove-photo {
+            .size(100%, 50%);
+            cursor: pointer;
+            background: @nice-blue no-repeat center center;
+            .opacity(0.9);
+            .transition(~"opacity 0.2s ease");
 
-            &:after {
-                content: " ";
-                .square(16px;);
-                position: absolute;
-                top: 0;
-                left: 0;
-
-                background-repeat: no-repeat;
-                background-position: center -16px;
-
-                .opacity(0);
-                .transition(~"opacity 0.2s ease");
+            &:hover {
+                .opacity(1);
             }
         }
-
-        .icon-remove {
+        .btn-main-photo {
+            border-bottom: 1px solid white;
             background-image: url("../../img/cabinet/sidebar-item-detailed/trash.png");
-            &:after {
-                background-image: url("../../img/cabinet/sidebar-item-detailed/trash.png");
-            }
         }
-        .icon-main {
+        .btn-remove-photo {
             background-image: url("../../img/cabinet/sidebar-item-detailed/trash.png");
-            &:after {
-                background-image: url("../../img/cabinet/sidebar-item-detailed/trash.png");
-            }
         }
     }
 
     img {
-        .square(100%)
+        .square(100%);
     }
 }
 

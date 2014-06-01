@@ -257,10 +257,10 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Этаж:</label>
+                        <label class="col-sm-6 col-lg-4 control-label"><span class="required-star" ng-show="publication.body.floor_type_sid == 0">*</span>Этаж:</label>
                         <div class="col-sm-6 col-lg-4">
                             <input class="form-control" type="text" name="floor" ng-model="publication.body.floor"
-                                   ng-disabled="publication.body.floor_type_sid == 1 || publication.body.floor_type_sid == 2" allow-only-number-without-dot required/>
+                                   ng-disabled="publication.body.floor_type_sid == 1 || publication.body.floor_type_sid == 2" allow-only-number-without-dot ng-required="publication.body.floor_type_sid == 0"/>
                             <span class="input-has-error" ng-show="form.publication.floor.$error.required && showValidationMessages">Укажите, пожалуйста, этаж.</span>
                             <span class="input-has-error" ng-show="form.publication.floor.$error.incorrect">Этаж указан неверно.</span>
                         </div>

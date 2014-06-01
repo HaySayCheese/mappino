@@ -357,9 +357,13 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
         !$scope.publication.photos && ($scope.publication.photos = []);
 
+        $rootScope.loadings.uploadPhotos = true;
+
         for (var i = 0; i < files.length; i++) {
             Publication.uploadPhotos(tid, hid, files[i], function(data) {
                 $scope.publication.photos.push(data.image);
+
+                $rootScope.loadings.uploadPhotos = false;
 
                 Briefs.updateBriefOfPublication(tid, hid, "photo_url", data.title_url);
             });

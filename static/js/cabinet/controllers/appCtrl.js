@@ -19,13 +19,14 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
      * Лоадери
      */
     $rootScope.loadings = {
-        tags:       false,
-        briefs:     false,
-        detailed:   false,
-        settings:   false,
-        support:    false,
-        tickets:    false,
-        ticketData: false
+        tags:           false,
+        briefs:         false,
+        detailed:       false,
+        settings:       false,
+        support:        false,
+        tickets:        false,
+        ticketData:     false,
+        uploadPhotos:   false
     };
 
 

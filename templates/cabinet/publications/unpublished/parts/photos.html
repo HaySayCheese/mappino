@@ -12,16 +12,22 @@
         </div>
     </div>
 </div>
+
+<div class="load-detailed" ng-show="loadings.uploadPhotos"></div>
+
 <div class="row">
     <div class="col-sm-6 col-lg-6" ng-repeat="photo in publication.photos">
         <div class="uploaded-photo">
             <img ng-src="[[ photo.thumbnail ]]"/>
             <div class="uploaded-photo-controls">
-                <div class="btn set-main-photo-block">
+                <div class="btn-preview">
                     <span class="icon-remove"></span>
                 </div>
-                <div class="btn remove-photo-block" ng-click="removePhoto(photo)">
-                    <span class="icon-remove"></span>
+                <div class="btns-block">
+                    <div class="btn-main-photo" ng-click="mainPhoto(photo)">
+                    </div>
+                    <div class="btn-remove-photo" ng-click="removePhoto(photo)">
+                    </div>
                 </div>
             </div>
         </div>
