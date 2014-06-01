@@ -1,11 +1,10 @@
 'use strict';
 
-app.factory('Queries', function($http, $upload) {
+app.factory('Queries', function($http, $q, $upload) {
 
     return {
 
         Tags: {
-
             load: function(callback) {
                 return $http.get('/ajax/api/cabinet/dirtags/').success(callback);
             },
@@ -26,9 +25,10 @@ app.factory('Queries', function($http, $upload) {
 
 
         Briefs: {
-
             load: function(category, callback) {
+                //var canceler = $q.defer(), request = "";
                 return $http.get('/ajax/api/cabinet/publications/briefs/' + category + '/').success(callback);
+                //canceler.resolve();
             },
 
             search: function(value, callback) {

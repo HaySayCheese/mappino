@@ -46,6 +46,11 @@
     border: 1px solid @gray-lighter;
     border-radius: @border-radius-small;
 
+    &.main-photo {
+        background: @nice-orange;
+        border-color: darken(@nice-orange, 10%);
+    }
+
     .uploaded-photo-controls {
         .size(calc(~"100% - 14px"), calc(~"100% - 14px"));
         position: absolute;
@@ -56,7 +61,7 @@
         .transition(~"background-color 0.2s ease, opacity 0.2s ease");
 
         &:hover {
-            background-color: rgba(0,0,0,0.2);
+            background-color: rgba(0,0,0,0.3);
             .opacity(1);
         }
 
@@ -68,11 +73,18 @@
             .size(70%, 100%);
             left: 0;
             cursor: pointer;
+            background: url("../../img/cabinet/sidebar-item-detailed/fullscreen-photo.png") center center no-repeat;
+            .opacity(0.8);
+            .transition(~"opacity 0.2s ease");
+
+            &:hover {
+                .opacity(1);
+            }
         }
         .btns-block {
             .size(30%, 100%);
             right: -1px;
-            border-left: 2px solid white;
+            border-left: 1px solid white;
         }
 
         .btn-main-photo,
@@ -89,10 +101,10 @@
         }
         .btn-main-photo {
             border-bottom: 1px solid white;
-            background-image: url("../../img/cabinet/sidebar-item-detailed/trash.png");
+            background-image: url("../../img/cabinet/sidebar-item-detailed/title-photo.png");
         }
         .btn-remove-photo {
-            background-image: url("../../img/cabinet/sidebar-item-detailed/trash.png");
+            background-image: url("../../img/cabinet/sidebar-item-detailed/remove-photo.png");
         }
     }
 

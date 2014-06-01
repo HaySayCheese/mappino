@@ -182,7 +182,7 @@
         </div>
 
         <div class="col-sm-6 col-lg-6" ng-repeat="photo in publication.head.photos">
-            <div class="uploaded-photo">
+            <div class="uploaded-photo" ng-class="{ 'main-photo': $index === 0 }">
                 <img ng-src="[[ photo ]]"/>
             </div>
         </div>
