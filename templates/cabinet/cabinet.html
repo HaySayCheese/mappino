@@ -177,7 +177,7 @@
                 <!-- Item -->
                 <div class="sidebar-item-list-item"
                      ng-class="{ active: publicationId == brief.tid + ':' + brief.id }"
-                     ng-repeat="brief in briefs"
+                     ng-repeat="brief in briefs | orderBy: 'created'"
                      ng-click="selectBrief(brief)">
 
                     <div class="sidebar-item-list-item-img">
