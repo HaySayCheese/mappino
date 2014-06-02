@@ -21,7 +21,7 @@ class UserAvatar(object):
 	# constants
 	destination = 'users/avatars/'
 	dir = settings.MEDIA_ROOT + destination
-	size = 200
+	size = 180
 
 
 	def __init__(self, user):
@@ -71,18 +71,19 @@ class UserAvatar(object):
 			raise self.TooSmallImage()
 
 		# the image is scaled/cropped vertically or horizontally depending on the ratio
-		ratio = 1
 		image_ratio = avatar.size[0] / float(avatar.size[1])
+		ratio = 1
 		if ratio > image_ratio:
-			avatar = avatar.resize((self.size, self.size * avatar.size[1] / avatar.size[0]), Image.ANTIALIAS)
+			avatar = avatar.resize(
+				(self.size, self.size * avatar.size[1] / avatar.size[0]), Image.ANTIALIAS)
 			box = (0, (avatar.size[1] - self.size) / 2, avatar.size[0], (avatar.size[1] + self.size) / 2)
 			avatar = avatar.crop(box)
 
 		elif ratio < image_ratio:
-			avatar = avatar.resize((self.size * avatar.size[0] / avatar.size[1], self.size), Image.ANTIALIAS)
+			avatar = avatar.resize(
+				(self.size * avatar.size[0] / avatar.size[1], self.size), Image.ANTIALIAS)
 			box = ((avatar.size[0] - self.size) / 2, 0, (avatar.size[0] + self.size) / 2, avatar.size[1])
 			avatar = avatar.crop(box)
-
 		else:
 			avatar = avatar.resize((self.size, self.size), Image.ANTIALIAS)
 
@@ -90,7 +91,7 @@ class UserAvatar(object):
 		image_name = uid_hash + '.jpg'
 		image_path = os.path.join(self.dir, image_name)
 
-		avatar.save(image_path, 'JPEG', quality=100)
+		avatar.save(temp_image_path, 'JPEG', quality=100)
 		os.rename(temp_image_path, image_path)
 		self.user.avatar_url = ''.join([settings.MEDIA_URL, self.destination, image_name])
 		self.user.save()
