@@ -361,6 +361,15 @@ class LivingHeadModel(models.Model):
 		return result
 
 
+	def photos(self):
+		return [{
+			'id': p.id,
+		    'image': p.url() + p.image_name(),
+		    'thumbnail': p.url() + p.big_thumbnail_name(),
+		    'is_title': p.is_title
+		} for p in self.photos_model.objects.filter(hid = self.id)]
+
+
 	def title_photo_url(self):
 		title_photo = self.photos_model.objects.filter(hid=self.id).filter(is_title=True)[:1]
 		if not title_photo:
@@ -666,7 +675,6 @@ class PhotosModel(AbstractModel):
 			'id': self.id,
 			'image': self.url() + self.image_name(),
 			'thumbnail': self.url() + self.big_thumbnail_name(),
-			'small_thumbnail': self.url() + self.small_thumbnail_name(),
 
 		    'is_title': self.is_title
 		}

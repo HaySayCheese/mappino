@@ -72,9 +72,8 @@ class PublishedDataSource(object):
 		"""
 		result = {
 			'state_sid': p.state_sid,
+		    'photos': p.photos(),
 		}
-		result.update(p.photos_json())
-
 
 		tags = DirTags.contains_publications(tid, [p.id])
 		if tags:
@@ -577,10 +576,6 @@ class UnpublishedFormatter(object):
 		else:
 			rent_terms = None
 
-		# Фото
-		photos = [photo.info() for photo in record.photos_model.objects.filter(hid = record.id)]
-		if not photos:
-			photos = None
 
 		# Перелік тегів, якими позначене оголошення.
 		tags = {
@@ -592,7 +587,7 @@ class UnpublishedFormatter(object):
 			'body': body,
 			'sale_terms': sale_terms,
 			'rent_terms': rent_terms,
-		    'photos': photos,
+		    'photos': record.photos(),
 		    'tags': tags,
 		}
 		return cls.format_output_data(data)
