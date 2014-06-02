@@ -201,6 +201,10 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
             Queries.Publications.remove(tid, id, function(data) {
                 publicationsCount['trash'] -= 1;
 
+                _.each(publication.tags ? publication.tags : publication.head.tags, function(tag, index, list) {
+                    publicationsCount[index] -= 1;
+                });
+
                 channel.info("Объявление успешно удалено");
 
                 _.isFunction(callback) && callback(data);
