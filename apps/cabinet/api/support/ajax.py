@@ -1,13 +1,14 @@
 #coding=utf-8
 from copy import deepcopy
 import json
+from django.db.models import Q
 
-from apps.cabinet.api.classes import CabinetView
+from apps.classes import CabinetView
 from django.http import HttpResponse, HttpResponseBadRequest
 from collective.exceptions import EmptyArgument
 from collective.methods.request_data_getters import angular_parameters
 from core.support import support_agents_notifier
-from core.support.models import Tickets
+from core.support.models import Tickets, Messages
 
 
 class Support(object):
@@ -41,6 +42,19 @@ class Support(object):
 			"""
 			Creates new ticket and returns JSON-response with it's id.
 			"""
+
+			empty_tickets = Tickets.objects.filter(
+				Q(
+					Q(subject=None) or Q(subject='')
+				),
+				~Q(id__in=Messages.objects.values_list('ticket_id'))
+			).only('id')[:1]
+			if empty_tickets:
+				response = deepcopy(self.post_codes['ok'])
+				response['id'] = empty_tickets[0].id
+				return HttpResponse(json.dumps(response), content_type='application/json')
+
+
 			ticket = Tickets.open(request.user)
 			response = deepcopy(self.post_codes['ok'])
 			response['id'] = ticket.id

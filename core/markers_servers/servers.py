@@ -96,6 +96,12 @@ class BaseMarkersManager(object):
 		except IndexError:
 			raise InvalidArgument('Object with such hid does not exist.')
 
+
+		if not record.is_published():
+			# unpublished records does not have coordinates,
+			# so they can not be deleted from index
+			return
+
 		degree = DegreePoint(record.degree_lat, record.degree_lng)
 		segment = SegmentPoint(record.segment_lat, record.segment_lng)
 		seg_digest = self.__segment_digest(degree, segment)
