@@ -43,8 +43,7 @@ class DetailedView(View):
 			if not publication.is_published():
 				raise SuspiciousOperation('Publication is unpublished.')
 
-		description_generator = self.formatter.by_tid(tid)
-		description = description_generator(publication)
+		description = self.formatter.format(tid, publication)
 
 		# Деякі із полів, згенерованих генератором видачі можуть бути пустими.
 		# Для уникнення їх появи на фронті їх слід видалити із словника опису.

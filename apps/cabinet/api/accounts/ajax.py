@@ -3,6 +3,7 @@ from copy import deepcopy
 import json
 
 from apps.classes import CabinetView
+from collective.exceptions import RuntimeException
 from collective.methods.request_data_getters import angular_post_parameters
 from core.users.classes import UserAvatar
 from core.users.constants import Preferences
@@ -499,6 +500,10 @@ class AccountManager(object):
 		    },
 		    'unsupported_type': {
 			    'code': 3
+		    },
+
+		    'unknown_error': {
+			    'code': 100
 		    }
 		}
 
@@ -518,6 +523,8 @@ class AccountManager(object):
 				return HttpResponse(json.dumps(self.post_codes['too_small']), content_type='application/json')
 			except UserAvatar.InvalidImageFormat:
 				return HttpResponse(json.dumps(self.post_codes['unsupported_type']), content_type='application/json')
+			except RuntimeException:
+				return HttpResponse(json.dumps(self.post_codes['unknown_error']), content_type='application/json')
 
 			# seems to be ok
 			response = deepcopy(self.post_codes['OK'])

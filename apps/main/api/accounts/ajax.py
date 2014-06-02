@@ -1,9 +1,8 @@
 #coding=utf-8
 import copy
 import json
-from apps.classes import AnonymousOnlyView, AuthenticatedOnlyView
 
-from collective.decorators.views import anonymous_require
+from apps.classes import AnonymousOnlyView, AuthenticatedOnlyView
 from collective.methods.request_data_getters import angular_post_parameters
 from core.email_backend import email_sender
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
@@ -16,7 +15,6 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import transaction
 from django.http import HttpResponseBadRequest, HttpResponse
-from django.utils.decorators import method_decorator
 from django.views.generic import View
 from mappino.wsgi import templates
 import phonenumbers
