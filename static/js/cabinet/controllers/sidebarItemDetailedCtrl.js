@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $location, $compile, $routeParams, Publication, Briefs, Tags) {
+app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout, $location, $compile, $routeParams, Publication, Briefs, Tags, Settings) {
 
     $scope.publicationSections = [];
     $scope.publication = [];
@@ -452,6 +452,13 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
 
     /**
+     *  Вихід з адмінки
+     */
+    $scope.logoutFromCabinet = function() {
+        Settings.logoutUser();
+    };
+
+    /**
      * Переміщення оголошення в неопубліковані з корзини
      */
     $scope.toUnpublishedPublication = function() {
@@ -515,7 +522,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         sidebar.perfectScrollbar("destroy");
 
         sidebar.perfectScrollbar({
-            wheelSpeed: 40,
+            wheelSpeed: 20,
             useKeyboard: false,
             suppressScrollX: true
         });

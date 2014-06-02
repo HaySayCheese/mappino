@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Settings', function($rootScope, Queries) {
+app.factory('Settings', function($rootScope, $window, Queries) {
 
     var user = [];
 
@@ -46,6 +46,20 @@ app.factory('Settings', function($rootScope, Queries) {
                 user.account.avatar_url = data.url + "?" + new Date().getTime();
 
                 _.isFunction(callback) && callback(user);
+            });
+        },
+
+
+        /**
+         * Логаут
+         *
+         * @param {function} callback
+         */
+        logoutUser: function(callback) {
+            Queries.Settings.logoutUser(function(data) {
+                $window.location.reload();
+
+                _.isFunction(callback) && callback(data);
             });
         }
     }

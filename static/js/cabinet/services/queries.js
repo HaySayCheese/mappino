@@ -106,6 +106,10 @@ app.factory('Queries', function($http, $q, $upload) {
                     url: '/ajax/api/cabinet/account/photo/',
                     file: photo
                 }).success(callback);
+            },
+
+            logoutUser: function() {
+                return $http.post('/ajax/api/accounts/logout/');
             }
         },
 
