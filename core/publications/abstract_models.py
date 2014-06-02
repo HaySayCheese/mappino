@@ -727,30 +727,42 @@ class PhotosModel(AbstractModel):
 		destination_dir = self.destination_dir()
 		try:
 			os.remove(os.path.join(destination_dir, self.original_image_name()))
-		except IOError: pass
+		except Exception: pass
 
 		try:
 			os.remove(os.path.join(destination_dir, self.image_name()))
-		except IOError: pass
+		except Exception: pass
 
 		try:
 			os.remove(os.path.join(destination_dir, self.title_thumbnail_name()))
-		except IOError: pass
+		except Exception: pass
 
 		try:
 			os.remove(os.path.join(destination_dir, self.big_thumbnail_name()))
-		except IOError: pass
+		except Exception: pass
 
 		try:
 			os.remove(os.path.join(destination_dir, self.small_thumbnail_name()))
-		except IOError: pass
+		except Exception: pass
 
 		# WARN: enable it if watermark is present
 		# try:
 		# 	os.remove(os.path.join(destination_dir, self.watermark_name()))
 		# except Exception: pass
 
+		# caching params so they wold not be None after record removing
+		hid = self.hid
+		is_title = self.is_title
 		super(PhotosModel, self).delete()
+
+		if is_title:
+			# generate new title photo
+			photos = self.__class__.objects.filter(hid=hid)[:1] # hack here
+			if photos:
+				photos[0].mark_as_title()
+				return photos[0]
+
+
 
 
 	def delete(self, using=None):

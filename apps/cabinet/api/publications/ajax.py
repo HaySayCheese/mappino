@@ -508,15 +508,21 @@ class Publications(object):
 
 			# process photo deletion
 			try:
-				publication.photos_model.objects.get(id=photo_id).remove()
+				photo = publication.photos_model.objects.get(id=photo_id)
+				new_title_photo = photo.remove()
 			except ObjectDoesNotExist:
 				return HttpResponseBadRequest(
 					json.dumps(self.delete_codes['invalid_pid']), content_type='application/json')
 
-
 			# seems to be OK
 			response = copy.deepcopy(self.delete_codes['OK'])
-			response['title_url'] = publication.title_small_thumbnail_url()
+			if new_title_photo is None:
+				response['photo_id'] = None
+				response['brief_url'] = None
+			else:
+				response['photo_id'] = new_title_photo.id
+				response['brief_url'] = new_title_photo.url() + new_title_photo.small_thumbnail_name()
+
 			return HttpResponse(json.dumps(response), content_type='application/json')
 
 
@@ -579,5 +585,5 @@ class Publications(object):
 
 			# seems to be ok
 			response = copy.deepcopy(self.post_codes['OK'])
-			response['title_url'] = publication.title_small_thumbnail_url()
+			response['brief_url'] = publication.title_small_thumbnail_url()
 			return HttpResponse(json.dumps(response), content_type='application/json')
