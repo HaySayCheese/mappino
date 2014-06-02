@@ -361,8 +361,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
         for (var i = 0; i < files.length; i++) {
             Publication.uploadPhotos(tid, hid, files[i], function(data) {
-                $scope.publication.photos.push(data.image);
-
                 $rootScope.loadings.uploadPhotos = false;
 
                 Briefs.updateBriefOfPublication(tid, hid, "photo_url", data.title_url);
@@ -376,6 +374,14 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      */
     $scope.removePhoto = function(photo) {
         Publication.removePhoto(tid, hid, photo.id);
+    };
+
+
+    /**
+     * Видалення зображень
+     */
+    $scope.setMainPhoto = function(photo) {
+        Publication.setMainPhoto(tid, hid, photo.id);
     };
 
 

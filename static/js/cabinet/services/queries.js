@@ -82,6 +82,10 @@ app.factory('Queries', function($http, $q, $upload) {
                 return $http.delete('/ajax/api/cabinet/publications/' + tid + ':' + hid + '/photos/' + pid + '/').success(callback);
             },
 
+            setMainPhoto: function(tid, hid, pid, callback) {
+                return $http.post('/ajax/api/cabinet/publications/' + tid + ':' + hid + '/photos/' + pid + '/title/').success(callback);
+            },
+
             counts: function(callback) {
                 return $http.get('/ajax/api/cabinet/publications/counters/').success(callback);
             }

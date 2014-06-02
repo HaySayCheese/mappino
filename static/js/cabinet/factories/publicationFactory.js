@@ -201,6 +201,10 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
             Queries.Publications.remove(tid, id, function(data) {
                 publicationsCount['trash'] -= 1;
 
+                _.each(publication.tags ? publication.tags : publication.head.tags, function(tag, index, list) {
+                    publicationsCount[index] -= 1;
+                });
+
                 channel.info("Объявление успешно удалено");
 
                 _.isFunction(callback) && callback(data);
@@ -262,6 +266,8 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
          */
         uploadPhotos: function(tid, hid, data, callback) {
             Queries.Publications.uploadPhotos(tid, hid, data, function(data) {
+                publication.photos.push(data.image);
+
                 _.isFunction(callback) && callback(data);
             });
         },
@@ -279,8 +285,47 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
             Queries.Publications.removePhoto(tid, hid, pid, function(data) {
 
                 _.each(publication.photos, function(photo, index, list) {
-                    if (photo.id === pid)
+                    if (photo.id === pid) {
+                        if (photo.is_title)
+                            Briefs.updateBriefOfPublication(tid, hid, "photo_url", "");
+
                         list.splice(index, 1);
+                    }
+                });
+
+                _.each(publication.photos, function(photo, index, list) {
+                    if (photo.id == data.photo_id) {
+                        list[index].is_title = true;
+
+                        Briefs.updateBriefOfPublication(tid, hid, "photo_url", data.brief_url);
+                    }
+                });
+
+                _.isFunction(callback) && callback(data);
+            });
+        },
+
+
+        /**
+         * Видалення фотографії
+         *
+         * @param {number} tid              Ідентифікатор типу оголошення
+         * @param {number} hid              Ідентифікатор оголошення
+         * @param {object} pid              Ідентифікатор фотографії
+         * @param {function} callback
+         */
+        setMainPhoto: function(tid, hid, pid, callback) {
+            Queries.Publications.setMainPhoto(tid, hid, pid, function(data) {
+
+                _.each(publication.photos, function(photo, index, list) {
+
+                    photo.is_title = false;
+
+                    if (pid === photo.id) {
+                        list[index].is_title = true;
+
+                        Briefs.updateBriefOfPublication(tid, hid, "photo_url", data.brief_url);
+                    }
                 });
 
                 _.isFunction(callback) && callback(data);

@@ -2,8 +2,9 @@
 
 app.factory('Settings', function($rootScope, Queries) {
 
-    return {
+    var user = [];
 
+    return {
 
         /**
         * Загрузка даних користувача
@@ -12,7 +13,9 @@ app.factory('Settings', function($rootScope, Queries) {
         */
         load: function(callback) {
             Queries.Settings.load(function(data) {
-                _.isFunction(callback) && callback(data);
+                user = data;
+
+                _.isFunction(callback) && callback(user);
             })
         },
 
@@ -40,7 +43,9 @@ app.factory('Settings', function($rootScope, Queries) {
          */
         uploadUserPhoto: function(photo, callback) {
             Queries.Settings.uploadUserPhoto(photo, function(data) {
-                _.isFunction(callback) && callback(data);
+                user.account.avatar_url = data.url + "?" + new Date().getTime();
+
+                _.isFunction(callback) && callback(user);
             });
         }
     }

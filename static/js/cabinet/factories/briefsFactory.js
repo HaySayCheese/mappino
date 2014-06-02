@@ -15,7 +15,9 @@ app.factory('Briefs', function($rootScope, Queries, Tags) {
          */
         load: function(category, callback) {
             var that = this;
+
             $rootScope.loadings.briefs = true;
+            briefs = [];
 
             Queries.Briefs.load(category, function(data) {
                 briefs = data;
@@ -24,8 +26,6 @@ app.factory('Briefs', function($rootScope, Queries, Tags) {
                 that.updateTags();
 
                 $rootScope.loadings.briefs = false;
-
-                console.log(briefs)
 
                 _.isFunction(callback) && callback(data);
             });
