@@ -522,7 +522,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         sidebar.perfectScrollbar("destroy");
 
         sidebar.perfectScrollbar({
-            wheelSpeed: 20,
+            wheelSpeed: 10,
             useKeyboard: false,
             suppressScrollX: true
         });
