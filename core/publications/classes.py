@@ -578,9 +578,7 @@ class UnpublishedFormatter(object):
 			rent_terms = None
 
 		# Фото
-		photos = [photo.info() for photo in record.photos_model.objects.filter(hid = record.id)]
-		if not photos:
-			photos = None
+		photos = record.photos_json()
 
 		# Перелік тегів, якими позначене оголошення.
 		tags = {
