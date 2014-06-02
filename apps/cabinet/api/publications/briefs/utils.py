@@ -245,7 +245,7 @@ def __dump_publications_list(tid, user_id, queryset):
 		'tid': tid,
 		'id': publication[0], # id
 	    'state_sid': publication[1], # state_sid
-	    'created': publication[2],
+	    'created': publication[2].strftime('%Y-%m-%dT%H:%M:00Z'),
 	    'title': publication[3], # body.title
 	    'for_rent': publication[4], # for_rent
 	    'for_sale': publication[5], # for_sale
