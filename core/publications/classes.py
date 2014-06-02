@@ -577,9 +577,6 @@ class UnpublishedFormatter(object):
 		else:
 			rent_terms = None
 
-		# Фото
-		photos = record.photos_json()
-
 		# Перелік тегів, якими позначене оголошення.
 		tags = {
 			tag.id: True for tag in DirTags.contains_publications(tid, [record.id])
@@ -590,9 +587,12 @@ class UnpublishedFormatter(object):
 			'body': body,
 			'sale_terms': sale_terms,
 			'rent_terms': rent_terms,
-		    'photos': photos,
 		    'tags': tags,
 		}
+
+		# Фото
+		data.update(record.photos_json())
+
 		return cls.format_output_data(data)
 
 
