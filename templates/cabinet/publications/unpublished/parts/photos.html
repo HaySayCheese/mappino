@@ -16,13 +16,13 @@
 <div class="load-detailed" ng-show="loadings.uploadPhotos"></div>
 
 <div class="row">
-    <div class="col-sm-6 col-lg-6" ng-repeat="photo in publication.photos">
+    <div class="col-sm-6 col-lg-6" ng-repeat="photo in publication.photos | orderBy: 'is_title': true">
         <div class="uploaded-photo" ng-class="{ 'main-photo': photo.is_title }">
             <img ng-src="[[ photo.thumbnail ]]"/>
             <div class="uploaded-photo-controls">
                 <div class="btn-preview" title="Просмотреть в полном размере"></div>
                 <div class="btns-block">
-                    <div class="btn-main-photo" ng-click="mainPhoto(photo)" title="Установить как главную фотографию"></div>
+                    <div class="btn-main-photo" ng-click="setMainPhoto(photo)" title="Установить как главную фотографию"></div>
                     <div class="btn-remove-photo" ng-click="removePhoto(photo)" title="Удалить фотографию"></div>
                 </div>
             </div>

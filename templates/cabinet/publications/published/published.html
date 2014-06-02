@@ -181,9 +181,9 @@
             </div>
         </div>
 
-        <div class="col-sm-6 col-lg-6" ng-repeat="photo in publication.head.photos">
-            <div class="uploaded-photo" ng-class="{ 'main-photo': $index === 0 }">
-                <img ng-src="[[ photo ]]"/>
+        <div class="col-sm-6 col-lg-6" ng-repeat="photo in publication.head.photos | orderBy: 'is_title': true">
+            <div class="uploaded-photo" ng-class="{ 'main-photo': photo.is_title }">
+                <img ng-src="[[ photo.thumbnail ]]"/>
             </div>
         </div>
 

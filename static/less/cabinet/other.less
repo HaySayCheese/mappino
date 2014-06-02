@@ -16,6 +16,7 @@ html, body {
 body {
     @media (min-width: 1600px) {
         background: url("../../img/cabinet/bg.jpg");
+        background-size: cover;
         padding-top: 50px;
         padding-bottom: 50px;
     }
@@ -24,6 +25,7 @@ body {
 .wrapper {
     .square(100%);
     .opacity(0);
+    max-width: 1600px;
 
     @media (min-width: 1600px) {
         width: 85%;
@@ -34,7 +36,6 @@ body {
 }
 
 .view {
-    max-width: 1800px;
     height: 100%;
     .box-shadow(~"0 0 3px #326448");
 }
