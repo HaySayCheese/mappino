@@ -232,7 +232,7 @@ def __dump_publications_list(tid, user_id, queryset):
 		щоб на вищих рівнях можна було накласти додакові умови на вибірку.
 		По суті, дана функція лишш дампить результати цієї вибірки в список в певному форматі.
 	"""
-	publications_list = queryset.values_list('id', 'state_sid', 'body__title', 'for_rent', 'for_sale')
+	publications_list = queryset.values_list('id', 'state_sid', 'created', 'body__title', 'for_rent', 'for_sale')
 	if not publications_list:
 		return []
 
@@ -245,9 +245,10 @@ def __dump_publications_list(tid, user_id, queryset):
 		'tid': tid,
 		'id': publication[0], # id
 	    'state_sid': publication[1], # state_sid
-	    'title': publication[2], # body.title
-	    'for_rent': publication[3], # for_rent
-	    'for_sale': publication[4], # for_sale
+	    'created': publication[2],
+	    'title': publication[3], # body.title
+	    'for_rent': publication[4], # for_rent
+	    'for_sale': publication[5], # for_sale
 	    'tags': [tag.id for tag in ifilter(lambda t: t.contains(tid, publication[0]), tags)],
 	    'photo_url': model.objects.filter(id=publication[0]).only('id')[:1][0].title_small_thumbnail_url()
 
