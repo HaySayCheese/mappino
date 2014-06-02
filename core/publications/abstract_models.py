@@ -632,8 +632,8 @@ class PhotosModel(AbstractModel):
 	max_image_size = [900, 1000]
 
 	title_thumb_size = min_image_size
-	big_thumb_size = [280, 280]
-	small_thumb_size = [70, 70]
+	big_thumb_size = [300, 188]
+	small_thumb_size = [50, 50]
 
 
 	#-- fields
