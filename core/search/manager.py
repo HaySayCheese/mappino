@@ -122,7 +122,7 @@ class SearchManager(object):
 
 		try:
 			results = query_results()
-		except MySQLdb.OperationalError:
+		except Exception:
 			# Якщо втрачено з’єднання - спробувати повторно з’єднатись.
 			# OperationalError може свідчити і про інші помилки,
 			# тож не варто перехоплювати дану викл. ситуацію більше одного разу.

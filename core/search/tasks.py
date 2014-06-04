@@ -29,8 +29,8 @@ class SphinxUpdateIndexTask(Task):
 	def cursor(self):
 		if self.connection is None:
 			self.connect()
-			return self.connection.cursor()
 		return self.connection.cursor()
+
 
 	def connect(self):
 		self.connection = MySQLdb.connect(
@@ -59,7 +59,7 @@ class SphinxUpdateIndexTask(Task):
 
 		try:
 			execute()
-		except MySQLdb.OperationalError:
+		except Exception:
 			# Якщо втрачено з’єднання - спробувати повторно з’єднатись.
 			# OperationalError може свідчити і про інші помилки,
 			# тож не варто перехоплювати дану викл. ситуацію більше одного разу.
