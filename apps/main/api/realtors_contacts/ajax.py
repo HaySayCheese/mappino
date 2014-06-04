@@ -52,6 +52,13 @@ class RealtorsContacts(View):
 				json.dumps(self.get_codes['invalid_hid']), content_type='application/json')
 
 
+		realtor = publication.owner
+		preferences = realtor.preferences()
+
 		data = copy.deepcopy(self.get_codes['OK']) # WARN: deep copy here
-		data['contacts'] = publication.owner.contacts()
+		data['contacts'] = realtor.contacts()
+		data['preferences'] = {
+			'allow_call_requests': preferences.allow_call_requests,
+		    'allow_messaging': preferences.allow_messaging,
+		}
 		return HttpResponse(json.dumps(data), content_type='application/json')

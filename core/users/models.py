@@ -101,34 +101,43 @@ class Users(AbstractBaseUser):
 
 
 	def contacts(self):
-		preferences = self.preferences()
-
 		contacts = {
 			'first_name': self.first_name,
 		    'last_name': self.last_name,
-		    'avatar_url': self.avatar_url,
+		    'avatar_url': self.avatar().url(),
 		}
 
-		if preferences.show_mobile_phone and self.mobile_phone:
-			contacts['mobile_phone'] = phonenumbers.format_number(
-				phonenumbers.parse(self.mobile_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
+		preferences = self.preferences()
+		if preferences.mobile_phone_may_be_shown():
+			if self.mobile_phone:
+				contacts['mobile_phone'] = phonenumbers.format_number(
+					phonenumbers.parse(self.mobile_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
 
-		if preferences.show_add_mobile_phone and self.add_mobile_phone:
-			contacts['add_mobile_phone'] = phonenumbers.format_number(
-				phonenumbers.parse(self.add_mobile_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
 
-		if preferences.show_landline_phone and self.landline_phone:
-			contacts['landline_phone'] = phonenumbers.format_number(
-				phonenumbers.parse(self.landline_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
+		if preferences.add_mobile_phone_may_be_shown():
+			if self.add_mobile_phone:
+				contacts['add_mobile_phone'] = phonenumbers.format_number(
+					phonenumbers.parse(self.add_mobile_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
 
-		if preferences.show_add_landline_phone and self.add_landline_phone:
-			contacts['add_landline_phone'] = phonenumbers.format_number(
-				phonenumbers.parse(self.add_landline_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
 
-		if preferences.show_skype and self.skype:
-			contacts['skype'] = self.skype
+		if preferences.landline_phone_may_be_shown():
+			if self.landline_phone:
+				contacts['landline_phone'] = phonenumbers.format_number(
+					phonenumbers.parse(self.landline_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
 
-		if preferences.show_email:
+
+		if preferences.add_mobile_phone_may_be_shown():
+			if self.add_landline_phone:
+				contacts['add_landline_phone'] = phonenumbers.format_number(
+					phonenumbers.parse(self.add_landline_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
+
+
+		if preferences.skype_may_be_shown():
+			if self.skype:
+				contacts['skype'] = self.skype
+
+
+		if preferences.email_may_be_shown():
 			if self.work_email:
 				contacts['email'] = self.work_email
 			elif self.email:
@@ -171,6 +180,25 @@ class Preferences(models.Model):
 			return cls.objects.filter(user=user)[:1][0]
 		except IndexError:
 			return cls.objects.create(user=user)
+
+
+	def mobile_phone_may_be_shown(self):
+		return not self.hide_mobile_phone_number
+
+	def add_mobile_phone_may_be_shown(self):
+		return not self.hide_add_mobile_phone_number
+
+	def landline_phone_may_be_shown(self):
+		return not self.hide_landline_phone
+
+	def add_landline_phone_may_be_shown (self):
+		return not self.hide_landline_phone
+
+	def skype_may_be_shown(self):
+		return not self.hide_skype
+
+	def email_may_be_shown(self):
+		return not self.hide_email
 
 
 class AccessRestoreTokens(models.Model):
