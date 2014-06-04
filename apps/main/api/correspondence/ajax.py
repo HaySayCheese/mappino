@@ -82,12 +82,12 @@ class SendCallRequestFromClient(View):
 				self.codes['invalid_publication_id']), content_type='application/json')
 
 		try:
-			params = angular_parameters(request, ['phone-number'])
+			params = angular_parameters(request, ['phone_number'])
 		except ValueError:
 			return HttpResponseBadRequest(json.dumps(
 				self.codes['invalid_parameters']), content_type='application/json')
 
-		phone_number = params['phone-number']
+		phone_number = params['phone_number']
 		client_name = params.get('name') # not required
 
 
