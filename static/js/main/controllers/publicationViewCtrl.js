@@ -56,7 +56,7 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
 
         $scope.contactsLoaded = true;
 
-        ga('send', 'event', 'publication_dialog', 'contact_requested', 'contacts', $rootScope.publicationIdPart);
+        ga('send', 'event', 'publication_dialog', 'contact_requested', 'contacts',1);
     });
 
 
