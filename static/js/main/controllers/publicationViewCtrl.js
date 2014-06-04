@@ -21,7 +21,7 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, mapQueries, l
         if (data.head.photos.length)
             preloadImage(data.head.photos[0]);
 
-        ga('send', 'event', '', 'opened', $rootScope.publicationIdPart, 1);
+        ga('send', 'event', 'dialog', 'opened', $rootScope.publicationIdPart, 1);
     });
 
 
