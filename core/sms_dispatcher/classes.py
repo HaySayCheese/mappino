@@ -30,8 +30,8 @@ class BaseSMSSender(object):
 
 	@staticmethod
 	def __send_request(params):
-		if settings.DEBUG:
-			return True
+		# if settings.DEBUG:
+		# 	return True
 
 		response = urllib.urlopen("http://smsc.ru/sys/send.php", params).read()
 		return 'OK' in response

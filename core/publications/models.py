@@ -1,7 +1,7 @@
 #coding=utf-8
 from django.db import models
-from core.currencies.constants import CURRENCIES
 
+from core.currencies.constants import CURRENCIES
 from core.publications.abstract_models import LivingHeadModel, BodyModel, LivingRentTermsModel, CommercialRentTermsModel, PhotosModel, SaleTermsModel, CommercialHeadModel, AbstractModel
 from core.publications.constants import MARKET_TYPES, OBJECT_CONDITIONS, FLOOR_TYPES, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, \
 	OBJECTS_TYPES
@@ -9,7 +9,6 @@ from core.publications.exceptions import EmptyFloor, EmptyTotalArea, EmptyLiving
 	EmptyHallsArea, EmptyHallsCount, EmptyCabinetsCount, EmptyPlotArea
 from core.publications.objects_constants.apartments import APARTMENTS_BUILDINGS_TYPES, APARTMENTS_FLAT_TYPES, APARTMENTS_ROOMS_PLANNING_TYPES
 from core.publications.objects_constants.cottages import COTTAGE_RENT_TYPES, COTTAGE_SALE_TYPES
-from core.publications.objects_constants.dachas import DACHA_WC_LOCATIONS, DACHA_WC
 from core.publications.objects_constants.flats import FLAT_BUILDING_TYPES, FLAT_TYPES, FLAT_ROOMS_PLANNINGS
 from core.publications.objects_constants.garages import GARAGE_DRIVE_WAYS
 from core.publications.objects_constants.houses import HOUSE_RENT_TYPES, HOUSE_SALE_TYPES
@@ -1129,119 +1128,119 @@ class HousesHeads(LivingHeadModel):
 	rent_terms = models.OneToOneField(HousesRentTerms)
 
 
-class DachasPhotos(PhotosModel):
-	class Meta:
-		db_table = 'img_dachas_photos'
-
-	destination_dir_name = 'dachas/'
-	hid = models.ForeignKey('DachasHeads', db_index=True)
-
-
-class DachasSaleTerms(SaleTermsModel):
-	class Meta:
-		db_table = 'o_dachas_sale_terms'
-
-
-class DachasRentTerms(LivingRentTermsModel):
-	class Meta:
-		db_table = 'o_dachas_rent_terms'
-
-
-class DachasBodies(BodyModel):
-	class Meta:
-		db_table = 'o_dachas_bodies'
-
-	market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
-
-	condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
-	total_area = models.FloatField(null=True)
-	living_area = models.FloatField(null=True)
-	kitchen_area = models.FloatField(null=True)
-
-	mansard = models.BooleanField(default=False) # мансарда
-	ground = models.BooleanField(default=False) # цокольний поверх
-	lower_floor = models.BooleanField(default=False) # підвал
-
-	floors_count = models.SmallIntegerField(null=True)
-	rooms_count = models.PositiveSmallIntegerField(null=True)
-	bedrooms_count = models.PositiveSmallIntegerField(null=True)
-
-	# vc
-	vc_sid = models.SmallIntegerField(default=DACHA_WC.present())
-	vc_loc_sid = models.SmallIntegerField(default=DACHA_WC_LOCATIONS.inside())
-
-	# Опалення
-	heating_type_sid = models.SmallIntegerField(default=HEATING_TYPES.individual())
-	custom_heating_type = models.TextField(null=True) # якщо нічого не вказано в heating_type_sid
-	# якщо вибрано ідивідуальний тип опалення в heating_type_sid
-	ind_heating_type_sid = models.SmallIntegerField(default=INDIVIDUAL_HEATING_TYPES.gas())
-	custom_ind_heating_type = models.TextField(null=True) # якщо нічого не вказано в ind_heating_type_sid
-
-	# Інші зручності
-	electricity = models.BooleanField(default=False)
-	gas = models.BooleanField(default=False)
-	sewerage = models.BooleanField(default=False) # каналізація
-	irrigation_water = models.BooleanField(default=False) # вода для поливу
-
-	hot_water = models.BooleanField(default=False)
-	cold_water = models.BooleanField(default=False)
-	security_alarm = models.BooleanField(default=False)
-	fire_alarm = models.BooleanField(default=False)
-	add_facilities = models.TextField(null=True) # дод. відомості про зручності
-
-	# Комунікації
-	phone = models.BooleanField(default=False)
-	internet = models.BooleanField(default=False)
-	mobile_coverage = models.BooleanField(default=False) # покриття моб. операторами
-	cable_tv = models.BooleanField(default=False) # кабельне / супутникове тб
-
-	# Дод. будівлі
-	garage = models.BooleanField(default=False) # гараж / паркомісце
-	fence = models.BooleanField(default=False) # огорожа
-	terrace = models.BooleanField(default=False)
-	well = models.BooleanField(default=False) # колодязь
-	alcove = models.BooleanField(default=False) # альтанка
-	kaleyard = models.BooleanField(default=False) # огород
-	garden = models.BooleanField(default=False) # сад
-	pool = models.BooleanField(default=False)
-	cellar = models.BooleanField(default=False) # погреб
-	add_buildings = models.TextField(null=True)
-
-	# Поряд знаходиться
-	kindergarten = models.BooleanField(default=False)
-	school = models.BooleanField(default=False)
-	market = models.BooleanField(default=False)
-	transport_stop = models.BooleanField(default=False)
-	entertainment = models.BooleanField(default=False) # розважальні установи
-	sport_center = models.BooleanField(default=False)
-	park = models.BooleanField(default=False)
-	add_showplaces = models.TextField(null=True)
-
-
-	def check_extended_fields(self):
-		if self.total_area is None:
-			raise EmptyTotalArea('Total area is None.')
-		if self.living_area is None:
-			raise EmptyLivingArea('Living area is None.')
-		if self.floors_count is None:
-			raise EmptyFloorsCount('Floors count is None.')
-		if self.rooms_count is None:
-			raise EmptyRoomsCount('Rooms count is None.')
-
-
-
-class DachasHeads(LivingHeadModel):
-	class Meta:
-		db_table = 'o_dachas_heads'
-
-	tid = OBJECTS_TYPES.dacha()
-	photos_model = DachasPhotos
-
-	body = models.ForeignKey(DachasBodies)
-	sale_terms = models.OneToOneField(DachasSaleTerms)
-	rent_terms = models.OneToOneField(DachasRentTerms)
-
-
+# class DachasPhotos(PhotosModel):
+# 	class Meta:
+# 		db_table = 'img_dachas_photos'
+#
+# 	destination_dir_name = 'dachas/'
+# 	hid = models.ForeignKey('DachasHeads', db_index=True)
+#
+#
+# class DachasSaleTerms(SaleTermsModel):
+# 	class Meta:
+# 		db_table = 'o_dachas_sale_terms'
+#
+#
+# class DachasRentTerms(LivingRentTermsModel):
+# 	class Meta:
+# 		db_table = 'o_dachas_rent_terms'
+#
+#
+# class DachasBodies(BodyModel):
+# 	class Meta:
+# 		db_table = 'o_dachas_bodies'
+#
+# 	market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
+#
+# 	condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
+# 	total_area = models.FloatField(null=True)
+# 	living_area = models.FloatField(null=True)
+# 	kitchen_area = models.FloatField(null=True)
+#
+# 	mansard = models.BooleanField(default=False) # мансарда
+# 	ground = models.BooleanField(default=False) # цокольний поверх
+# 	lower_floor = models.BooleanField(default=False) # підвал
+#
+# 	floors_count = models.SmallIntegerField(null=True)
+# 	rooms_count = models.PositiveSmallIntegerField(null=True)
+# 	bedrooms_count = models.PositiveSmallIntegerField(null=True)
+#
+# 	# vc
+# 	vc_sid = models.SmallIntegerField(default=DACHA_WC.present())
+# 	vc_loc_sid = models.SmallIntegerField(default=DACHA_WC_LOCATIONS.inside())
+#
+# 	# Опалення
+# 	heating_type_sid = models.SmallIntegerField(default=HEATING_TYPES.individual())
+# 	custom_heating_type = models.TextField(null=True) # якщо нічого не вказано в heating_type_sid
+# 	# якщо вибрано ідивідуальний тип опалення в heating_type_sid
+# 	ind_heating_type_sid = models.SmallIntegerField(default=INDIVIDUAL_HEATING_TYPES.gas())
+# 	custom_ind_heating_type = models.TextField(null=True) # якщо нічого не вказано в ind_heating_type_sid
+#
+# 	# Інші зручності
+# 	electricity = models.BooleanField(default=False)
+# 	gas = models.BooleanField(default=False)
+# 	sewerage = models.BooleanField(default=False) # каналізація
+# 	irrigation_water = models.BooleanField(default=False) # вода для поливу
+#
+# 	hot_water = models.BooleanField(default=False)
+# 	cold_water = models.BooleanField(default=False)
+# 	security_alarm = models.BooleanField(default=False)
+# 	fire_alarm = models.BooleanField(default=False)
+# 	add_facilities = models.TextField(null=True) # дод. відомості про зручності
+#
+# 	# Комунікації
+# 	phone = models.BooleanField(default=False)
+# 	internet = models.BooleanField(default=False)
+# 	mobile_coverage = models.BooleanField(default=False) # покриття моб. операторами
+# 	cable_tv = models.BooleanField(default=False) # кабельне / супутникове тб
+#
+# 	# Дод. будівлі
+# 	garage = models.BooleanField(default=False) # гараж / паркомісце
+# 	fence = models.BooleanField(default=False) # огорожа
+# 	terrace = models.BooleanField(default=False)
+# 	well = models.BooleanField(default=False) # колодязь
+# 	alcove = models.BooleanField(default=False) # альтанка
+# 	kaleyard = models.BooleanField(default=False) # огород
+# 	garden = models.BooleanField(default=False) # сад
+# 	pool = models.BooleanField(default=False)
+# 	cellar = models.BooleanField(default=False) # погреб
+# 	add_buildings = models.TextField(null=True)
+#
+# 	# Поряд знаходиться
+# 	kindergarten = models.BooleanField(default=False)
+# 	school = models.BooleanField(default=False)
+# 	market = models.BooleanField(default=False)
+# 	transport_stop = models.BooleanField(default=False)
+# 	entertainment = models.BooleanField(default=False) # розважальні установи
+# 	sport_center = models.BooleanField(default=False)
+# 	park = models.BooleanField(default=False)
+# 	add_showplaces = models.TextField(null=True)
+#
+#
+# 	def check_extended_fields(self):
+# 		if self.total_area is None:
+# 			raise EmptyTotalArea('Total area is None.')
+# 		if self.living_area is None:
+# 			raise EmptyLivingArea('Living area is None.')
+# 		if self.floors_count is None:
+# 			raise EmptyFloorsCount('Floors count is None.')
+# 		if self.rooms_count is None:
+# 			raise EmptyRoomsCount('Rooms count is None.')
+#
+#
+#
+# class DachasHeads(LivingHeadModel):
+# 	class Meta:
+# 		db_table = 'o_dachas_heads'
+#
+# 	tid = OBJECTS_TYPES.dacha()
+# 	photos_model = DachasPhotos
+#
+# 	body = models.ForeignKey(DachasBodies)
+# 	sale_terms = models.OneToOneField(DachasSaleTerms)
+# 	rent_terms = models.OneToOneField(DachasRentTerms)
+#
+#
 class CottagesPhotos(PhotosModel):
 	class Meta:
 		db_table = 'img_cottages_photos'

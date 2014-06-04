@@ -1853,8 +1853,7 @@ class HousesMarkersManager(BaseMarkersManager):
 		if marker.get('for_sale', False):
 			sale_price = self.format_price(marker['sale_price'], marker['sale_currency_sid'], currency)
 			result.update({
-				'd0': u'Комнат: {0}'.format(marker.get('rooms_count')) \
-						if marker.get('rooms_count') else 'Комнат: не указано',
+				'd0': u'{0} м²'.format(marker.get('total_area')).rstrip('0').rstrip('.'),
 				'd1': u'{0} {1}'.format(sale_price, self.format_currency(currency)),
 			})
 			return result

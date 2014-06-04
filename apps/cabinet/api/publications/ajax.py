@@ -9,7 +9,6 @@ from apps.classes import CabinetView
 from core.publications import classes
 from core.publications.abstract_models import PhotosModel
 from core.publications.models_signals import record_updated
-from core.publications.update_methods.dachas import update_dacha
 from core.publications.update_methods.flats import update_flat
 from core.publications.update_methods.apartments import update_apartments
 from core.publications.update_methods.houses import update_house
@@ -187,8 +186,6 @@ class Publications(object):
 					return_value = update_flat(head, field, value, tid)
 				elif tid == OBJECTS_TYPES.apartments():
 					return_value = update_apartments(head, field, value, tid)
-				elif tid == OBJECTS_TYPES.dacha():
-					return_value = update_dacha(head, field, value, tid)
 				elif tid == OBJECTS_TYPES.cottage():
 					return_value = update_cottage(head, field, value, tid)
 				elif tid == OBJECTS_TYPES.room():

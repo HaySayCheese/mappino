@@ -6,7 +6,7 @@ from django.conf import settings
 
 from core.publications.constants import OBJECTS_TYPES
 from core.publications.models_signals import record_updated
-from core.search.tasks import update_house_index, update_flat_index, update_apartments_index, update_dacha_index, \
+from core.search.tasks import update_house_index, update_flat_index, update_apartments_index, \
 	update_cottage_index, update_room_index, update_trade_index, update_office_index, update_warehouse_index, \
 	update_business_index, update_catering_index, update_garage_index, update_land_index
 from mappino.celery import app
@@ -47,8 +47,6 @@ class SearchManager(object):
 				task = update_flat_index.apply_async([hid, ], countdown=self.update_interval)
 			elif tid == OBJECTS_TYPES.apartments():
 				task = update_apartments_index.apply_async([hid, ], countdown=self.update_interval)
-			elif tid == OBJECTS_TYPES.dacha():
-				task = update_dacha_index.apply_async([hid, ], countdown=self.update_interval)
 			elif tid == OBJECTS_TYPES.cottage():
 				task = update_cottage_index.apply_async([hid, ], countdown=self.update_interval)
 			elif tid == OBJECTS_TYPES.room():

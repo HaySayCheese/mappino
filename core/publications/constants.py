@@ -10,20 +10,19 @@ class ObjectTypes(AbstractConstant):
 			'house':      0,
 		    'flat':       1,
 		    'apartments': 2,
-			'dacha':      3,
-		    'cottage':    4,
-			'room':       5,
+		    'cottage':    3,
+			'room':       4,
 
 		    # Коммерческая недвижимость
-		    'trade':      6,
-			'office':     7,
-		    'warehouse':  8,
-		    'business':   9,
-		    'catering':   10,
+		    'trade':      5,
+			'office':     6,
+		    'warehouse':  7,
+		    'business':   8,
+		    'catering':   9,
 
 		    # Другая недвижимость
-		    'garage':     11,
-		    'land':       12,
+		    'garage':     10,
+		    'land':       11,
 		})
 		self.commercial_estate = [
 			self.ids['trade'],
@@ -42,9 +41,6 @@ class ObjectTypes(AbstractConstant):
 
 	def apartments(self):
 		return self.ids['apartments']
-
-	def dacha(self):
-		return self.ids['dacha']
 
 	def cottage(self):
 		return self.ids['cottage']
@@ -303,10 +299,10 @@ RED_LINE_VALUES = RedLineValues()
 
 
 
-from core.publications.models import FlatsHeads, ApartmentsHeads, HousesHeads, DachasHeads, \
+from core.publications.models import FlatsHeads, ApartmentsHeads, HousesHeads, \
 	CottagesHeads, RoomsHeads, TradesHeads, OfficesHeads, WarehousesHeads, BusinessesHeads, \
 	CateringsHeads, GaragesHeads, LandsHeads, \
-	FlatsPhotos, ApartmentsPhotos, HousesPhotos, DachasPhotos, CottagesPhotos, RoomsPhotos, \
+	FlatsPhotos, ApartmentsPhotos, HousesPhotos, CottagesPhotos, RoomsPhotos, \
 	TradesPhotos, OfficesPhotos, WarehousesPhotos, BusinessesPhotos, CateringsPhotos, \
 	GaragesPhotos, LandsPhotos
 
@@ -314,7 +310,6 @@ HEAD_MODELS = {
     OBJECTS_TYPES.flat():       FlatsHeads,
     OBJECTS_TYPES.apartments(): ApartmentsHeads,
     OBJECTS_TYPES.house():      HousesHeads,
-    OBJECTS_TYPES.dacha():      DachasHeads,
     OBJECTS_TYPES.cottage():    CottagesHeads,
     OBJECTS_TYPES.room():       RoomsHeads,
 
@@ -331,7 +326,6 @@ PHOTOS_MODELS = {
 	OBJECTS_TYPES.flat():       FlatsPhotos,
     OBJECTS_TYPES.apartments(): ApartmentsPhotos,
     OBJECTS_TYPES.house():      HousesPhotos,
-    OBJECTS_TYPES.dacha():      DachasPhotos,
     OBJECTS_TYPES.cottage():    CottagesPhotos,
     OBJECTS_TYPES.room():       RoomsPhotos,
 

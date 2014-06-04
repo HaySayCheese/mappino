@@ -6,10 +6,10 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
 from core.publications.constants import OBJECTS_TYPES
-from core.publications.models import HousesHeads, FlatsHeads, ApartmentsHeads, DachasHeads, CottagesHeads, RoomsHeads
+from core.publications.models import HousesHeads, FlatsHeads, ApartmentsHeads, CottagesHeads, RoomsHeads
 from core.publications.objects_constants.houses import HOUSE_SALE_TYPES
 from core.search.utils import sale_terms_index_data, living_rent_terms_index_data, house_body_index_data, \
-	flat_body_index_data, apartments_body_index_data, dacha_body_index_data, cottage_body_index_data, \
+	flat_body_index_data, apartments_body_index_data, cottage_body_index_data, \
 	room_body_index_data, commercial_rent_terms_index_data, trades_body_index_data, office_body_index_data, \
 	warehouse_body_index_data, business_body_index_data, catering_body_index_data, garage_body_index_data, \
 	land_body_index_data
@@ -140,30 +140,6 @@ def update_apartments_index(self, hid):
 		)
 	except Exception as e:
 		self.retry(exc=e)
-
-
-
-@app.task(bind=True, base=SphinxUpdateIndexTask)
-def update_dacha_index(self, hid):
-	try:
-		try:
-			head = DachasHeads.by_id(hid, select_body=True)
-		except ObjectDoesNotExist as e:
-			raise Reject(e, requeue=False)
-
-		self.update_index(
-			tid = OBJECTS_TYPES.house(),
-			hid = hid,
-		    uid = head.owner.id,
-			title = head.body.title if head.body.title else u'',
-		    description = head.body.description if head.body.description else u'' +
-		                  dacha_body_index_data(head.body),
-		    sale_terms = sale_terms_index_data(head),
-		    rent_terms = living_rent_terms_index_data(head),
-		)
-	except Exception as e:
-		self.retry(exc=e)
-
 
 
 @app.task(bind=True, base=SphinxUpdateIndexTask)

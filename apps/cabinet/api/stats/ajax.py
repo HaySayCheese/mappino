@@ -1,9 +1,9 @@
 import json
-import random
+
+from django.http.response import HttpResponseBadRequest, HttpResponse
 
 from apps.classes import CabinetView
 from collective.methods.request_data_getters import GET_parameter
-from django.http.response import HttpResponseBadRequest, HttpResponse
 
 
 class Stats(object):
