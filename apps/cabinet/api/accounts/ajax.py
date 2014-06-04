@@ -368,7 +368,7 @@ class AccountManager(object):
 
 
 		def update_allow_call_request(self, user, allow):
-			if allow is not bool:
+			if allow not in (True, False):
 				return HttpResponseBadRequest('Invalid @value.')
 
 
@@ -392,7 +392,7 @@ class AccountManager(object):
 
 
 		def update_allow_messaging(self, user, allow):
-			if allow is not bool:
+			if allow not in (True, False):
 				return HttpResponseBadRequest('Invalid @value.')
 
 
@@ -416,7 +416,7 @@ class AccountManager(object):
 
 
 		def update_hide_email(self, user, hide):
-			if hide is not bool:
+			if hide not in (True, False):
 				return HttpResponseBadRequest('Invalid @value.')
 
 
@@ -428,7 +428,7 @@ class AccountManager(object):
 
 
 		def update_hide_mobile_phone(self, user, hide):
-			if hide is not bool:
+			if hide not in (True, False):
 				return HttpResponseBadRequest('Invalid @value.')
 
 
@@ -440,7 +440,7 @@ class AccountManager(object):
 
 
 		def update_hide_add_mobile_phone(self, user, hide):
-			if hide is not bool:
+			if hide not in (True, False):
 				return HttpResponseBadRequest('Invalid @value.')
 
 
@@ -452,7 +452,7 @@ class AccountManager(object):
 
 
 		def update_hide_landline_phone(self, user, hide):
-			if hide is not bool:
+			if hide not in (True, False):
 				return HttpResponseBadRequest('Invalid @value.')
 
 
@@ -464,7 +464,7 @@ class AccountManager(object):
 
 
 		def update_hide_add_landline_phone(self, user, hide):
-			if hide is not bool:
+			if hide not in (True, False):
 				return HttpResponseBadRequest('Invalid @value.')
 
 
@@ -475,7 +475,7 @@ class AccountManager(object):
 
 
 		def update_hide_skype(self, user, hide):
-			if hide is not bool:
+			if hide not in (True, False):
 				return HttpResponseBadRequest('Invalid @value.')
 
 

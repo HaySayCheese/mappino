@@ -1,7 +1,7 @@
 import json
 import random
 
-from apps.cabinet.api.classes import CabinetView
+from apps.classes import CabinetView
 from collective.methods.request_data_getters import GET_parameter
 from django.http.response import HttpResponseBadRequest, HttpResponse
 
