@@ -270,7 +270,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 streetViewControl: false
             },
             // Карта
-            map = null || new google.maps.Map(document.getElementById("publication-map"), mapOptions),
+            map = new google.maps.Map(document.getElementById("publication-map"), mapOptions),
             // Автокомпліт
             autocompleteOptions = {
                 componentRestrictions: {

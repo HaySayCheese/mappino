@@ -11,16 +11,15 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
             { name: "house",     id: 0,  title: "Дома" },
             { name: "flat",      id: 1,  title: "Квартиры" },
             { name: "apartments",id: 2,  title: "Аппартаментов" },
-            { name: "dacha",     id: 3,  title: "Дачи" },
-            { name: "cottage",   id: 4,  title: "Коттеджа" },
-            { name: "room",      id: 5,  title: "Комнаты" },
-            { name: "trade",     id: 6,  title: "Торгового помещения" },
-            { name: "office",    id: 7,  title: "Офиса" },
-            { name: "warehouse", id: 8,  title: "Склада" },
-            { name: "business",  id: 9,  title: "Готового бизнеса" },
-            { name: "catering",  id: 10, title: "Обьекта общепита" },
-            { name: "garage",    id: 11, title: "Гаража" },
-            { name: "land",      id: 12, title: "Земельного участка" }
+            { name: "cottage",   id: 3,  title: "Коттеджа" },
+            { name: "room",      id: 4,  title: "Комнаты" },
+            { name: "trade",     id: 5,  title: "Торгового помещения" },
+            { name: "office",    id: 6,  title: "Офиса" },
+            { name: "warehouse", id: 7,  title: "Склада" },
+            { name: "business",  id: 8,  title: "Готового бизнеса" },
+            { name: "catering",  id: 9,  title: "Обьекта общепита" },
+            { name: "garage",    id: 10, title: "Гаража" },
+            { name: "land",      id: 11, title: "Земельного участка" }
         ];
 
     return {
@@ -179,6 +178,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
                     publicationsCount['published'] -= 1 :
                         $rootScope.routeSection === 'unpublished' ? publicationsCount['unpublished'] -= 1 : "";
 
+                publicationsCount['all']   -= 1;
                 publicationsCount['trash'] += 1;
 
                 $location.path("publications/" + $rootScope.routeSection);
@@ -205,6 +205,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
                     publicationsCount[index] -= 1;
                 });
 
+                $location.path("/publication/trash");
                 channel.info("Объявление успешно удалено");
 
                 _.isFunction(callback) && callback(data);
