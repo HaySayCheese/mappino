@@ -21,7 +21,7 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, mapQueries, l
         if (data.head.photos.length)
             preloadImage(data.head.photos[0]);
 
-        ga('send', 'event', 'dialog', 'data_requested', $rootScope.publicationIdPart, 1);
+        ga('send', 'event', 'publication_dialog', 'data_requested', 'detailed', $rootScope.publicationIdPart);
     });
 
 
@@ -56,7 +56,7 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
 
         $scope.contactsLoaded = true;
 
-        ga('send', 'event', 'dialog', 'contacts_requested', $rootScope.publicationIdPart, 1);
+        ga('send', 'event', 'publication_dialog', 'contact_requested', 'contacts', $rootScope.publicationIdPart);
     });
 
 
@@ -69,6 +69,8 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
             $scope.cancelSendCallRequest();
 
             channel.info("Запрос на обратный звонок успешно отправлен");
+
+            ga('send', 'event', 'publication_dialog', 'call_request_sent', 'contacts', $rootScope.publicationIdPart);
         }).error(function() {
             btn.button("reset");
 
@@ -86,6 +88,8 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
             $scope.cancelSendMessage();
 
             channel.info("Сообщение успешно отправлено");
+
+            ga('send', 'event', 'publication_dialog', 'message_sent', 'contacts', $rootScope.publicationIdPart);
         }).error(function() {
             btn.button("reset");
 
