@@ -7,7 +7,7 @@
             <div id="publication-view-carousel" class="carousel slide" data-ride="carousel" ng-init="publication.head.photos.length">
 
                 <ol class="carousel-indicators">
-                    <li ng-repeat="photo in publication.photos" data-target="#publication-view-carousel" data-slide-to="[[ $index ]]" ng-class="{ active : $first }"></li>
+                    <li ng-repeat="photo in publication.head.photos" data-target="#publication-view-carousel" data-slide-to="[[ $index ]]" ng-class="{ active : $first }"></li>
                 </ol>
 
                 <div class="carousel-inner">
