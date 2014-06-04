@@ -264,9 +264,10 @@
 
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-sm-6 col-lg-4 control-label">Кол-во кабинетов:</label>
+                        <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Кол-во кабинетов:</label>
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="cabinets_count" ng-model="publication.body.cabinets_count" allow-only-number-without-dot>
+                            <input type="text" class="form-control" name="cabinets_count" ng-model="publication.body.cabinets_count" allow-only-number-without-dot required>
+                            <span class="input-has-error" ng-show="form.publication.cabinets_count.$error.required && showValidationMessages">Укажите, пожалуйста, количество кабинетов.</span>
                             <span class="input-has-error" ng-show="form.publication.cabinets_count.$error.incorrect">Количество кабинетов указано неверно.</span>
                         </div>
                     </div>

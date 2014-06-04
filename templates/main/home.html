@@ -32,6 +32,9 @@
     <script type="text/javascript" src="{{ static }}js/libs/angular-route-1.2.16.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/angular-cookies-1.2.16.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/angular-ui-mask.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/angular-animate-1.2.16.min.js"></script>
+
+    <script type="text/javascript" src="{{ static }}js/libs/angular-notifier.js"></script>
 </head>
 <body ng-app="Mappino" ng-controller="AppCtrl" ng-init="firstEnterInit()">
 
@@ -235,6 +238,10 @@
             </div>
         </div>
 
+    </div>
+
+    <div lr-notification-stack-container="mainChannel">
+        [[ notification.message ]]
     </div>
 
 

@@ -1,7 +1,7 @@
 'use strict';
 
 
-app.controller('publicationViewCtrl', function($scope, $rootScope, mapQueries) {
+app.controller('publicationViewCtrl', function($scope, $rootScope, mapQueries, lrNotifier) {
     $scope.publicationViewPart = "Detailed";
     $scope.publicationViewDetailedPart = "Description";
 
@@ -42,11 +42,13 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, mapQueries) {
 
 
 
-app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQueries) {
+app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQueries, lrNotifier) {
 
     $scope.contactsLoaded = false;
     $scope.message = {};
     $scope.call_request = {};
+
+    var channel = lrNotifier('mainChannel');
 
     mapQueries.getPublicationContacts($rootScope.publicationIdPart).success(function(data) {
         $scope.user = data;
@@ -63,8 +65,12 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
             btn.button("reset");
             $scope.call_request = {};
             $scope.cancelSendCallRequest();
+
+            channel.info("Запрос на обратный звонок успешно отправлен");
         }).error(function() {
             btn.button("reset");
+
+            channel.info("При запросе обратного звонка возникла ошибка");
         });
     };
 
@@ -76,8 +82,12 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
             btn.button("reset");
             $scope.message = {};
             $scope.cancelSendMessage();
+
+            channel.info("Сообщение успешно отправлено");
         }).error(function() {
             btn.button("reset");
+
+            channel.info("При отправке сообщения возникла ошибка");
         });
     };
 
