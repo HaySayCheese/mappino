@@ -32,9 +32,6 @@ def unpublished_form_template(request, tid):
 	elif tid == OBJECTS_TYPES.apartments():
 		return HttpResponse(templates.get_template(
 			'cabinet/publications/unpublished/apartments.html').render())
-	elif tid == OBJECTS_TYPES.dacha():
-		return HttpResponse(templates.get_template(
-			'cabinet/publications/unpublished/dacha.html').render())
 	elif tid == OBJECTS_TYPES.cottage():
 		return HttpResponse(templates.get_template(
 			'cabinet/publications/unpublished/cottage.html').render())
