@@ -205,7 +205,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
                     publicationsCount[index] -= 1;
                 });
 
-                $location.path("/publication/trash");
+                $location.path("/publications/trash");
                 channel.info("Объявление успешно удалено");
 
                 _.isFunction(callback) && callback(data);
