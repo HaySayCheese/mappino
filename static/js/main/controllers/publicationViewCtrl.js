@@ -21,7 +21,7 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, mapQueries, l
         if (data.head.photos.length)
             preloadImage(data.head.photos[0]);
 
-        ga('send', 'event', 'dialog', 'opened', $rootScope.publicationIdPart, 1);
+        ga('send', 'event', 'dialog', 'data_requested', $rootScope.publicationIdPart, 1);
     });
 
 
@@ -55,7 +55,8 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
         $scope.user = data;
 
         $scope.contactsLoaded = true;
-        console.log(data);
+
+        ga('send', 'event', 'dialog', 'contacts_requested', $rootScope.publicationIdPart, 1);
     });
 
 
