@@ -45,12 +45,18 @@ class DetailedView(View):
 
 		description = self.formatter.format(tid, publication)
 
+		photos = publication.photos()
+		if photos:
+			description['head']['photos'] = []
+			for photo in photos:
+				if photo.is_title:
+					description['head']['title_photo'] = photo.url() + photo.title_thumbnail_name()
+				description['head']['photos'].append(photo.url() + photo.image_name())
+
+
 		# Деякі із полів, згенерованих генератором видачі можуть бути пустими.
 		# Для уникнення їх появи на фронті їх слід видалити із словника опису.
 		description = dict((k, v) for k, v in description.iteritems() if (v is not None) and (v != ""))
-
-
-		description['photos'] = publication.photos_json()
 		return HttpResponse(json.dumps(description), content_type='application/json')
 
 

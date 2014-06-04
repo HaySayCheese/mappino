@@ -72,7 +72,7 @@ class PublishedDataSource(object):
 		"""
 		result = {
 			'state_sid': p.state_sid,
-		    'photos': p.photos(),
+		    'photos': p.photos_dict(),
 		}
 
 		tags = DirTags.contains_publications(tid, [p.id])
@@ -587,7 +587,7 @@ class UnpublishedFormatter(object):
 			'body': body,
 			'sale_terms': sale_terms,
 			'rent_terms': rent_terms,
-		    'photos': record.photos(),
+		    'photos': record.photos_dict(),
 		    'tags': tags,
 		}
 		return cls.format_output_data(data)
