@@ -126,7 +126,7 @@ class Users(AbstractBaseUser):
 					phonenumbers.parse(self.landline_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
 
 
-		if preferences.add_mobile_phone_may_be_shown():
+		if preferences.add_landline_phone_may_be_shown():
 			if self.add_landline_phone:
 				contacts['add_landline_phone'] = phonenumbers.format_number(
 					phonenumbers.parse(self.add_landline_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
