@@ -31,17 +31,17 @@
 
         <div class="modal-content content-white" ng-switch-when="Detailed">
             <div class="publication-photo pull-left">
-                <div class="photo" ng-show="publication.photos.title_photo" ng-click="changeBasePart()">
+                <div class="photo" ng-show="publication.head.title_photo" ng-click="changeBasePart()">
                     <div class="overlay"></div>
                     <img ng-src="[[ publication.head.title_photo ]]" ng-click="changeBasePart()"/>
                 </div>
 
-                <div class="no-photo" ng-hide="publication.photos.title_photo">
+                <div class="no-photo" ng-hide="publication.head.title_photo">
                     <div class="text">
                         К сожалению, нет ни одной фотографии
                     </div>
                 </div>
-                <div class="counter" ng-hide="!publication.photos.title_photo">
+                <div class="counter" ng-hide="!publication.head.title_photo">
                     Фото<br/> 1 / [[ publication.head.photos.length ]]
                 </div>
             </div>
