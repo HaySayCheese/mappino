@@ -89,9 +89,6 @@ def get_sections_counters(user_id):
 		UNION ALL SELECT count(*) AS published FROM o_cottages_heads
 			WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
 
-		UNION ALL SELECT count(*) AS published FROM o_dachas_heads
-			WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
-
 		UNION ALL SELECT count(*) AS published FROM o_flats_heads
 			WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
 
@@ -130,9 +127,6 @@ def get_sections_counters(user_id):
 		UNION ALL SELECT count(*) AS unpublished FROM o_cottages_heads
 			WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
 
-		UNION ALL SELECT count(*) AS unpublished FROM o_dachas_heads
-			WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
-
 		UNION ALL SELECT count(*) AS unpublished FROM o_flats_heads
 			WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
 
@@ -169,9 +163,6 @@ def get_sections_counters(user_id):
 			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS deleted FROM o_cottages_heads
-			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
-
-		UNION ALL SELECT count(*) AS deleted FROM o_dachas_heads
 			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS deleted FROM o_flats_heads
