@@ -59,20 +59,41 @@
 
                         <div ng-show="contactsLoaded">
                             <div class="user-photo">
-                                <img src="{{ static }}img/main/publication-view/mark.png"/>
+                                <img ng-src="[[ user.contacts.avatar_url ]]" ng-show="user.contacts.avatar_url"/>
+                                <img src="{{ static }}img/main/publication-view/no-user.png" ng-hide="user.contacts.avatar_url"/>
                             </div>
                             <div class="user-name">
-                                [[ contacts.first_name ]] [[ contacts.last_name ]]
+                                [[ user.contacts.first_name ]] [[ user.contacts.last_name ]]
                             </div>
                             <div class="user-phones">
-                                <div ng-show="contacts.mobile_phone">Моб. телефон: [[ contacts.mobile_phone ]]<span ng-show="contacts.add_mobile_phone">, [[ contacts.add_mobile_phone ]]</span></div>
-                                <div ng-show="contacts.landline_phone">Роб. телефон: [[ contacts.landline_phone ]]<span ng-show="contacts.add_landline_phone">, [[ contacts.add_landline_phone ]]</span></div>
-                                <div ng-show="contacts.email">Эл. почта: [[ contacts.email ]]</div>
-                                <div ng-show="contacts.skype">Skype: [[ contacts.skype ]]</div>
+                                <div ng-show="user.contacts.mobile_phone || user.contacts.add_mobile_phone">
+                                    <span ng-show="user.contacts.mobile_phone">
+                                        Моб. телефон: [[ user.contacts.mobile_phone ]]
+                                    </span>
+                                    <span ng-show="user.contacts.mobile_phone && user.contacts.add_mobile_phone">,</span>
+                                    <span ng-show="user.contacts.add_mobile_phone">
+                                        <span ng-hide="user.contacts.mobile_phone">Моб. телефон:</span> [[ user.contacts.add_mobile_phone ]]
+                                    </span>
+                                </div>
+                                <div ng-show="user.contacts.landline_phone || user.contacts.add_landline_phone">
+                                    <span ng-show="user.contacts.landline_phone">
+                                        Роб. телефон: [[ user.contacts.landline_phone ]]
+                                    </span>
+                                    <span ng-show="user.contacts.landline_phone && user.contacts.add_landline_phone">,</span>
+                                    <span ng-show="user.contacts.add_landline_phone">
+                                        <span ng-hide="user.contacts.landline_phone">Роб. телефон:</span> [[ user.contacts.add_landline_phone ]]
+                                    </span>
+                                </div>
+                                <div ng-show="user.contacts.email">
+                                    Эл. почта: [[ user.contacts.email ]]
+                                </div>
+                                <div ng-show="user.contacts.skype">
+                                    Skype: [[ user.contacts.skype ]]
+                                </div>
                             </div>
                             <div class="user-btns" ng-hide="sendingMessage || sendingCallRequest">
-                                <div class="btn btn-primary btn-block" ng-click="sendingCallRequest = true">Заказать обратный звонок</div>
-                                <div class="btn btn-default btn-block" ng-click="sendingMessage = true">Оставить сообщение</div>
+                                <div class="btn btn-primary btn-block" ng-show="user.preferences.allow_call_requests" ng-click="sendingCallRequest = true">Заказать обратный звонок</div>
+                                <div class="btn btn-default btn-block" ng-show="user.preferences.allow_messaging" ng-click="sendingMessage = true">Оставить сообщение</div>
                             </div>
 
                             <div class="user-message" ng-show="sendingMessage">

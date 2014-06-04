@@ -49,7 +49,7 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
     $scope.call_request = {};
 
     mapQueries.getPublicationContacts($rootScope.publicationIdPart).success(function(data) {
-        $scope.contacts = data.contacts;
+        $scope.user = data;
 
         $scope.contactsLoaded = true;
         console.log(data);
