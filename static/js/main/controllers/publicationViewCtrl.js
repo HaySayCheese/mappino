@@ -19,8 +19,8 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, mapQueries) {
         $scope.publicationLoaded = true;
         console.log(data);
 
-        if (data.photos.length)
-            preloadImage(data.photos[0]);
+        if (data.head.photos.length)
+            preloadImage(data.head.photos[0]);
     });
 
 
