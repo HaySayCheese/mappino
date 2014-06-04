@@ -278,24 +278,24 @@ class IndividualHeatingTypes(AbstractConstant):
 INDIVIDUAL_HEATING_TYPES = IndividualHeatingTypes()
 
 
-class RedLineValues(AbstractConstant):
-	def __init__(self):
-		super(RedLineValues, self).__init__()
-		self.set_ids({
-			'yes': 0,
-			'no': 1,
-		    'unknown': 2,
-		})
-
-	def yes(self):
-		return self.ids['yes']
-
-	def no(self):
-		return self.ids['no']
-
-	def unknown(self):
-		return self.ids['unknown']
-RED_LINE_VALUES = RedLineValues()
+# class RedLineValues(AbstractConstant):
+# 	def __init__(self):
+# 		super(RedLineValues, self).__init__()
+# 		self.set_ids({
+# 			'yes': 0,
+# 			'no': 1,
+# 		    'unknown': 2,
+# 		})
+#
+# 	def yes(self):
+# 		return self.ids['yes']
+#
+# 	def no(self):
+# 		return self.ids['no']
+#
+# 	def unknown(self):
+# 		return self.ids['unknown']
+# RED_LINE_VALUES = RedLineValues()
 
 
 
