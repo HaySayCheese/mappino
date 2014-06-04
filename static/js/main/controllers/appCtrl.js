@@ -61,8 +61,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
                 "heating_type_sid"  // Тільки в продажі
             ]
         },
-        { name: "dacha", id: 3, title: "Дачи" },
-        { name: "cottage", id: 4, title: "Коттеджы",
+        { name: "cottage", id: 3, title: "Коттеджы",
             filters: [
                 "operation_sid",    // Загальні
                 "period_sid",       // Тільки в оренді
@@ -80,7 +79,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
                 "heating_type_sid"
             ]
         },
-        { name: "room", id: 5, title: "Комнаты",
+        { name: "room", id: 4, title: "Комнаты",
             filters: [
                 "operation_sid",    // Загальні
                 "period_sid",       // Тільки в оренді
@@ -99,7 +98,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
                 "heating_type_sid"  // Тільки в продажі
             ]
         },
-        { name: "trade", id: 6, title: "Торговые помещения",
+        { name: "trade", id: 5, title: "Торговые помещения",
             filters: [
                 "operation_sid",
                 "price_from", "price_to", "currency_sid",
@@ -113,7 +112,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
                 "sewerage"
             ]
         },
-        { name: "office", id: 7, title: "Офисы",
+        { name: "office", id: 6, title: "Офисы",
             filters: [
                 "operation_sid",
                 "price_from", "price_to", "currency_sid",
@@ -125,7 +124,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
                 "hot_water", "cold_water",
             ]
         },
-        { name: "warehouse", id: 8, title: "Склады",
+        { name: "warehouse", id: 7, title: "Склады",
             filters: [
                 "operation_sid",
                 "price_from", "price_to", "currency_sid",
@@ -137,7 +136,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
                 "security_alarm", "fire_alarm"
             ]
         },
-        { name: "business", id: 9, title: "Готовый бизнес",
+        { name: "business", id: 8, title: "Готовый бизнес",
             filters: [
                 "operation_sid",
                 "price_from", "price_to", "currency_sid",
@@ -145,7 +144,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
                 "secondary_market"
             ]
         },
-        { name: "catering", id: 10, title: "Обьекты общепита",
+        { name: "catering", id: 9, title: "Обьекты общепита",
             filters: [
                 "operation_sid",
                 "price_from", "price_to", "currency_sid",
@@ -159,14 +158,14 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
                 "hot_water", "cold_water"
             ]
         },
-        { name: "garage", id: 11, title: "Гаражи",
+        { name: "garage", id: 10, title: "Гаражи",
             filters: [
                 "operation_sid",
                 "price_from", "price_to", "currency_sid",
                 "total_area_from", "total_area_to",
             ]
         },
-        { name: "land", id: 12, title: "Земельные участки",
+        { name: "land", id: 11, title: "Земельные участки",
             filters: [
                 "operation_sid",
                 "price_from", "price_to", "currency_sid",
