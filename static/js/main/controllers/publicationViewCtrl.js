@@ -17,10 +17,11 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, mapQueries, l
         $scope.publication = data;
 
         $scope.publicationLoaded = true;
-        console.log(data);
 
         if (data.head.photos.length)
             preloadImage(data.head.photos[0]);
+
+        ga('send', 'event', '', 'opened', $rootScope.publicationIdPart, 1);
     });
 
 
