@@ -4,14 +4,14 @@
 
 
         <div class="modal-content content-white photos-modal" ng-switch-when="Photos">
-            <div id="publication-view-carousel" class="carousel slide" data-ride="carousel" ng-init="publication.photos.length">
+            <div id="publication-view-carousel" class="carousel slide" data-ride="carousel" ng-init="publication.head.photos.length">
 
                 <ol class="carousel-indicators">
                     <li ng-repeat="photo in publication.photos" data-target="#publication-view-carousel" data-slide-to="[[ $index ]]" ng-class="{ active : $first }"></li>
                 </ol>
 
                 <div class="carousel-inner">
-                    <div class="item" ng-repeat="photo in publication.photos" ng-class="{ active : $first }">
+                    <div class="item" ng-repeat="photo in publication.head.photos" ng-class="{ active : $first }">
                         <img ng-src="[[ photo ]]">
                     </div>
                 </div>
@@ -33,7 +33,7 @@
             <div class="publication-photo pull-left">
                 <div class="photo" ng-show="publication.photos.title_photo" ng-click="changeBasePart()">
                     <div class="overlay"></div>
-                    <img ng-src="[[ publication.photos.title_photo ]]" ng-click="changeBasePart()"/>
+                    <img ng-src="[[ publication.head.title_photo ]]" ng-click="changeBasePart()"/>
                 </div>
 
                 <div class="no-photo" ng-hide="publication.photos.title_photo">
@@ -42,7 +42,7 @@
                     </div>
                 </div>
                 <div class="counter" ng-hide="!publication.photos.title_photo">
-                    Фото<br/> 1 / [[ publication.photos.length ]]
+                    Фото<br/> 1 / [[ publication.head.photos.length ]]
                 </div>
             </div>
 
