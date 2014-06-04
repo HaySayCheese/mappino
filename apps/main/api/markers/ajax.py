@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 
 from apps.main.api.markers.utils import parse_houses_filters, parse_flats_filters, parse_apartments_filters, \
-	parse_dachas_filters, parse_cottages_filters, parse_rooms_filters, parse_trades_filters, parse_offices_filters, \
+	parse_cottages_filters, parse_rooms_filters, parse_trades_filters, parse_offices_filters, \
 	parse_warehouses_filters, parse_businesses_filters, parse_caterings_filters, parse_garages_filters, \
 	parse_lands_filters
 from collective.exceptions import InvalidArgument
@@ -20,7 +20,6 @@ FILTERS_PARSERS =  {
 	OBJECTS_TYPES.house(): parse_houses_filters,
 	OBJECTS_TYPES.flat(): parse_flats_filters,
 	OBJECTS_TYPES.apartments(): parse_apartments_filters,
-	OBJECTS_TYPES.dacha(): parse_dachas_filters,
 	OBJECTS_TYPES.cottage(): parse_cottages_filters,
 	OBJECTS_TYPES.room(): parse_rooms_filters,
 	OBJECTS_TYPES.trade(): parse_trades_filters,

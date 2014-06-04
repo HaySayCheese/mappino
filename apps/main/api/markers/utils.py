@@ -503,11 +503,6 @@ def parse_apartments_filters(request):
 		raise ValueError('Invalid operation_sid.')
 
 
-def parse_dachas_filters(request):
-	# todo: визначитись із цим типом
-	raise Exception
-
-
 def parse_cottages_filters(request):
 	"""
 	Формує об’єкт фільтрів із параметрів, переданих в запиті.

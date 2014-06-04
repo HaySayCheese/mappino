@@ -24,11 +24,11 @@ def briefs_of_section(section, user_id):
 		query = HEAD_MODELS[tid].by_user_id(user_id).only('id')
 
 		if section == 'all':
-			pass
+			query = query.filter(deleted=None)
 		elif section == 'published':
-			query = query.filter(state_sid = OBJECT_STATES.published())
+			query = query.filter(state_sid = OBJECT_STATES.published(), deleted=None)
 		elif section == 'unpublished':
-			query = query.filter(state_sid = OBJECT_STATES.unpublished())
+			query = query.filter(state_sid = OBJECT_STATES.unpublished(), deleted=None)
 		elif section == 'trash':
 			query = query.filter(state_sid = OBJECT_STATES.deleted())
 		else:

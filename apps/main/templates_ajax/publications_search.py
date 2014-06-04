@@ -10,7 +10,6 @@ __FILTERS_TEMPLATES_PATHS = {
 	OBJECTS_TYPES.house():      'main/parts/filters/houses.html',
 	OBJECTS_TYPES.flat():       'main/parts/filters/flats.html',
 	OBJECTS_TYPES.apartments(): 'main/parts/filters/apartments.html',
-	OBJECTS_TYPES.dacha():      'main/parts/filters/dachas.html',
 	OBJECTS_TYPES.cottage():    'main/parts/filters/cottages.html',
 	OBJECTS_TYPES.room():       'main/parts/filters/rooms.html',
 

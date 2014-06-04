@@ -159,18 +159,6 @@ def apartments_body_index_data(body):
 
 
 
-def dacha_body_index_data(body):
-	index = u''
-	if body.market_type_sid == MARKET_TYPES.new_building():
-		index += u'новостройка '
-	else:
-		index += u'вторичный рынок '
-
-	# todo: подумати над тим, чи варто додавати ще що-небудь в пошуковий індекс
-	return index
-
-
-
 def cottage_body_index_data(body):
 	index = u''
 	if body.market_type_sid == MARKET_TYPES.new_building():
