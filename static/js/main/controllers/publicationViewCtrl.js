@@ -21,7 +21,7 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, mapQueries, l
         if (data.head.photos.length)
             preloadImage(data.head.photos[0]);
 
-        ga('send', 'event', 'publication_dialog:detailed', 'data_requested', $rootScope.publicationIdPart, 1);
+        ga('send', 'event', 'publication:dialog:detailed', 'data_requested', $rootScope.publicationIdPart, 0);
     });
 
 
@@ -55,7 +55,7 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
         $scope.user = data;
         $scope.contactsLoaded = true;
 
-        ga('send', 'event', 'publication_dialog:contacts', 'contact_requested', $rootScope.publicationIdPart, 1);
+        ga('send', 'event', 'publication:dialog:contacts', 'contact_requested', $rootScope.publicationIdPart, 0);
     });
 
 
@@ -69,7 +69,7 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
 
             channel.info("Запрос на обратный звонок успешно отправлен");
 
-            ga('send', 'event', 'publication_dialog:contacts', 'call_request_sent', $rootScope.publicationIdPart, 1);
+            ga('send', 'event', 'publication:dialog:contacts', 'call_request_sent', $rootScope.publicationIdPart, 0);
         }).error(function() {
             btn.button("reset");
             channel.info("При запросе обратного звонка возникла ошибка");
@@ -87,7 +87,7 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
 
             channel.info("Сообщение успешно отправлено");
 
-            ga('send', 'event', 'publication_dialog:contacts', 'message_sent', $rootScope.publicationIdPart, 1);
+            ga('send', 'event', 'publication:dialog:contacts', 'message_sent', $rootScope.publicationIdPart, 0);
         }).error(function() {
             btn.button("reset");
 
