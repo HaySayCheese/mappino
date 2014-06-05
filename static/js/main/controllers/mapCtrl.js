@@ -107,25 +107,25 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        Markers.clearPanelMarkers("red");
+        //Markers.clearPanelMarkers("red");
         loadData(newValue, "red", true)
     });
     $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        Markers.clearPanelMarkers("blue");
+        //Markers.clearPanelMarkers("blue");
         loadData(newValue, "blue", true)
     });
     $scope.$watchCollection("filters.green", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        Markers.clearPanelMarkers("green");
+        //Markers.clearPanelMarkers("green");
         loadData(newValue, "green", true)
     });
     $scope.$watchCollection("filters.yellow", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        Markers.clearPanelMarkers("yellow");
+        //Markers.clearPanelMarkers("yellow");
         loadData(newValue, "yellow", true)
     });
 
@@ -212,6 +212,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 swLng: map.getBounds().getSouthWest().lng()
             };
             $scope.filters.map.latLng   = map.getCenter().toUrlValue();
+            $scope.filters.map.viewport = map.getBounds();
             $scope.filters.map.zoom     = map.getZoom();
 
             parseFiltersCollectionAndUpdateUrl($scope.filters.map);
@@ -340,10 +341,10 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      */
     function loadData(filters, panel, timeout) {
         $timeout(function() {
-            var sneLat = $scope.filters.map.viewport.neLat.toString(),
-                sneLng = $scope.filters.map.viewport.neLng.toString(),
-                sswLat = $scope.filters.map.viewport.swLat.toString(),
-                sswLng = $scope.filters.map.viewport.swLng.toString();
+            var sneLat = $scope.filters.map.viewport.getNorthEast().lat().toString(),
+                sneLng = $scope.filters.map.viewport.getNorthEast().lng().toString(),
+                sswLat = $scope.filters.map.viewport.getSouthWest().lat().toString(),
+                sswLng = $scope.filters.map.viewport.getSouthWest().lng().toString();
 
             var neLat = sneLat.replace(sneLat.substring(sneLat.indexOf(".") + 3, sneLat.length), ""),
                 neLng = sneLng.replace(sneLng.substring(sneLng.indexOf(".") + 3, sneLng.length), ""),
