@@ -27,8 +27,10 @@ app.factory('Markers', function(mapQueries, $location) {
                 if (filters.hasOwnProperty(key)) {
 
                     if (key.toString().substring(2) == "type_sid") {
-                        if (filters[key] == null || filters[key] == "undefined")
+                        if (filters[key] == null || filters[key] == "undefined") {
+                            that.clearPanelMarkers(panel);
                             return;
+                        }
 
                         tid = filters[key];
                     }
@@ -43,6 +45,7 @@ app.factory('Markers', function(mapQueries, $location) {
             }
 
             mapQueries.getMarkers(tid, stringFilters, viewport).success(function(data) {
+                that.clearPanelMarkers(panel);
                 that.add(tid, panel, data, function() {
                     _.isFunction(callback) && callback(markers);
                 });

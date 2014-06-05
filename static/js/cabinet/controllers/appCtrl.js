@@ -59,5 +59,5 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
             angular.element(".wrapper").addClass("fadeInDown")
         }, 100)
 
-    })
+    });
 });
