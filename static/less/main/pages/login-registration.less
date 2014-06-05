@@ -43,10 +43,13 @@
     }
 
     .form-control {
-        border-color: @blue-00;
-        border-width: 2px;
-
+        border: 2px solid @blue-00;
         .placeholder(#9da9b4);
+
+        &:focus,
+        &:active {
+            border-color: @nice-blue;
+        }
     }
 
     .form-group {
