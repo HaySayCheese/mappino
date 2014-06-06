@@ -62,6 +62,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             if (data.head.state_sid !== 1) {
                 isPublished = true;
                 loadChartData();
+                $scope.publicationLoaded = true;
                 $scope.publicationTemplateUrl = "/ajax/template/cabinet/publications/published/";
             } else {
                 isPublished = false;
@@ -75,10 +76,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      * Функція загрузки даних для графіків
      */
     function loadChartData() {
+        $scope.chartLoaded = false;
+
         Publication.loadChartData(tid, hid, function(data) {
             $scope.publicationChartData = data;
-
-            $scope.publicationLoaded = true;
+            $scope.chartLoaded = true;
         });
     }
 
