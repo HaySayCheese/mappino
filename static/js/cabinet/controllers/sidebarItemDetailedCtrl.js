@@ -199,7 +199,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                     "type": "number"
                 }
             ],
-            "rows": $scope.publicationChartData
+            "rows": ""//$scope.publicationChartData
         };
 
         lineChart.options = {
