@@ -110,7 +110,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $rootScope.loadings.detailed = false;
             $scope.showPublication = true;
 
-            initCharts();
+            initChart();
 
             $timeout(function() {
                 initScrollBar();
@@ -175,11 +175,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     /**
      * Ініціалізація графіків
      */
-    function initCharts() {
-        var lineChart = {};
-        lineChart.type = "LineChart";
+    function initChart() {
+        var areaChart = {};
+        areaChart.type = "AreaChart";
 
-        lineChart.data = {
+        areaChart.data = {
             "cols": [
                 {
                     "id": "month",
@@ -198,14 +198,13 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             "rows": $scope.publicationChartData
         };
 
-        lineChart.options = {
+        areaChart.options = {
             chartArea: {
                 width: "94%",
                 top: 20
             },
             height: 300,
 
-            isStacked: "true",
             legend: {
                 position: 'bottom'
             },
@@ -217,12 +216,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 1: { color: '#54c6a7' }
             },
 
-            //smoothLine: true,
             lineWidth: 4,
             pointSize: 8,
 
             hAxis: {
-                format : "dd.MM",
+                format : "dd/MM",
                 gridlines: {
                     color: "#eee"
                 },
@@ -241,14 +239,14 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
         };
 
-        lineChart.formatters = {
+        areaChart.formatters = {
             number : [{
                 columnNum: 2,
                 pattern: "# чел'.'"
             }]
         };
 
-        $scope.lineChart = lineChart;
+        $scope.areaChart = areaChart;
     }
 
 
