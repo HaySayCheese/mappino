@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Account', function(authorizationQueries, $location) {
+app.factory('Account', function(Queries, $location) {
 
     return {
 
@@ -11,7 +11,7 @@ app.factory('Account', function(authorizationQueries, $location) {
          * @param {function}    callback
          */
         login: function(user, callback) {
-            authorizationQueries.loginUser(user).success(function(data) {
+            Queries.Account.loginUser(user).success(function(data) {
                 _.isFunction(callback) && callback(data);
             });
         },
@@ -24,7 +24,7 @@ app.factory('Account', function(authorizationQueries, $location) {
          * @param {function}    callback
          */
         register: function(user, callback) {
-            authorizationQueries.registerUser(user).success(function(data) {
+            Queries.Account.registerUser(user).success(function(data) {
                 _.isFunction(callback) && callback(data);
             });
         },
@@ -36,7 +36,7 @@ app.factory('Account', function(authorizationQueries, $location) {
          * @param {function}    callback
          */
         repeatRegister: function(callback) {
-            authorizationQueries.repeatRegistration().success(function(data) {
+            Queries.Account.repeatRegistration().success(function(data) {
                 _.isFunction(callback) && callback(data);
             });
         },
@@ -45,10 +45,11 @@ app.factory('Account', function(authorizationQueries, $location) {
         /**
          * Відправка коду на перевірку
          *
+         * @param {object}      code  Обєкт з кодом
          * @param {function}    callback
          */
-        checkPhoneCode: function(callback) {
-            authorizationQueries.validatePhoneCode().success(function(data) {
+        checkPhoneCode: function(code, callback) {
+            Queries.Account.validatePhoneCode(code).success(function(data) {
                 _.isFunction(callback) && callback(data);
             });
         },
@@ -60,7 +61,7 @@ app.factory('Account', function(authorizationQueries, $location) {
          * @param {function}    callback
          */
         repeatSendCode: function(callback) {
-            authorizationQueries.repeatSendCode().success(function(data) {
+            Queries.Account.repeatSendCode().success(function(data) {
                 _.isFunction(callback) && callback(data);
             });
         },
@@ -73,7 +74,7 @@ app.factory('Account', function(authorizationQueries, $location) {
          * @param {function}    callback
          */
         checkEmail: function(email, callback) {
-            authorizationQueries.validateEmail(email).success(function(data) {
+            Queries.Account.validateEmail(email).success(function(data) {
                 _.isFunction(callback) && callback(data);
             })
         },
@@ -86,7 +87,7 @@ app.factory('Account', function(authorizationQueries, $location) {
          * @param {function}    callback
          */
         checkPhone: function(phone, callback) {
-            authorizationQueries.validatePhone(phone).success(function(data) {
+            Queries.Account.validatePhone(phone).success(function(data) {
                 _.isFunction(callback) && callback(data);
             })
         },
@@ -98,7 +99,7 @@ app.factory('Account', function(authorizationQueries, $location) {
          * @param {function}    callback
          */
         checkToken: function(callback) {
-            authorizationQueries.checkToken($location.search().token).success(function(data) {
+            Queries.Account.checkToken($location.search().token).success(function(data) {
                 _.isFunction(callback) && callback(data);
             })
         },
@@ -111,7 +112,7 @@ app.factory('Account', function(authorizationQueries, $location) {
          * @param {function}    callback
          */
         restoreAccessSendEmail: function(email, callback) {
-            authorizationQueries.restoreAccessSendEmail(email).success(function(data) {
+            Queries.Account.restoreAccessSendEmail(email).success(function(data) {
                 _.isFunction(callback) && callback(data);
             })
         },
@@ -124,7 +125,7 @@ app.factory('Account', function(authorizationQueries, $location) {
          * @param {function}    callback
          */
         restoreAccessSendPasswords: function(passwords, callback) {
-            authorizationQueries.restoreAccessSendPasswords(passwords).success(function(data) {
+            Queries.Account.restoreAccessSendPasswords(passwords).success(function(data) {
                 _.isFunction(callback) && callback(data);
             })
         },
@@ -136,7 +137,7 @@ app.factory('Account', function(authorizationQueries, $location) {
          * @param {function}    callback
          */
         getUserName: function(callback) {
-            authorizationQueries.getUserName().success(function(data) {
+            Queries.Account.getUserName().success(function(data) {
                 _.isFunction(callback) && callback(data);
             }).error(function() {
                 //
@@ -150,7 +151,7 @@ app.factory('Account', function(authorizationQueries, $location) {
          * @param {function}    callback
          */
         logoutUser: function(callback) {
-            authorizationQueries.logoutUser().success(function(data) {
+            Queries.Account.logoutUser().success(function(data) {
                 _.isFunction(callback) && callback(data);
             })
         }

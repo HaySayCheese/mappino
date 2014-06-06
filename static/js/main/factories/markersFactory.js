@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Markers', function(mapQueries, $rootScope) {
+app.factory('Markers', function(Queries, $rootScope) {
     var markers = {
             red: {},
             blue: {},
@@ -45,7 +45,7 @@ app.factory('Markers', function(mapQueries, $rootScope) {
             }
 
             $rootScope.loadings.markers = true;
-            mapQueries.getMarkers(tid, stringFilters, viewport).success(function(data) {
+            Queries.Map.getMarkers(tid, stringFilters, viewport).success(function(data) {
                 that.clearPanelMarkers(panel);
                 that.add(tid, panel, data, function() {
                     _.isFunction(callback) && callback(markers);
