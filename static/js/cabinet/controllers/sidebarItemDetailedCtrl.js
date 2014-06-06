@@ -194,7 +194,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                     "label": "Просмотров",
                     "type": "number"
                 }, {
-                    "id": "get-number",
+                    "id": "contacts_requests",
                     "label": "Запросили контакты",
                     "type": "number"
                 }
@@ -221,7 +221,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 1: { color: '#54c6a7' }
             },
 
-            smoothLine: true,
+            //smoothLine: true,
             lineWidth: 4,
             pointSize: 8,
 
@@ -234,8 +234,10 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 textColor: '#999'
             },
             vAxis: {
+                format: '0',
                 gridlines: {
-                    color: "#eee"
+                    color: "#eee",
+                    count: -1
                 },
                 baselineColor: '#eee',
                 textColor: '#999'
@@ -283,7 +285,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 map: map,
                 draggable: true,
                 position: center,
-                icon: 'http://127.0.0.1/mappino_static/img/markers/red-normal.png'
+                icon: '/mappino_static/img/markers/red-normal.png'
             });
 
         autocomplete.bindTo('bounds', map);
