@@ -44,14 +44,14 @@ app.factory('Markers', function(mapQueries, $rootScope) {
                 }
             }
 
-            $rootScope.loaders.markers = true;
+            $rootScope.loadings.markers = true;
             mapQueries.getMarkers(tid, stringFilters, viewport).success(function(data) {
                 that.clearPanelMarkers(panel);
                 that.add(tid, panel, data, function() {
                     _.isFunction(callback) && callback(markers);
                 });
 
-                $rootScope.loaders.markers = false;
+                $rootScope.loadings.markers = false;
             });
         },
 
