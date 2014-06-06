@@ -1851,9 +1851,10 @@ class HousesMarkersManager(BaseMarkersManager):
 
 
 		if marker.get('for_sale', False):
+			total_area = '{0}'.format(marker.get('total_area')).rstrip('0').rstrip('.')
 			sale_price = self.format_price(marker['sale_price'], marker['sale_currency_sid'], currency)
 			result.update({
-				'd0': u'{0} м²'.format(marker.get('total_area')).rstrip('0').rstrip('.'),
+				'd0': u'{0} м²'.format(total_area),
 				'd1': u'{0} {1}'.format(sale_price, self.format_currency(currency)),
 			})
 			return result

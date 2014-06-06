@@ -12,3 +12,7 @@ psycopg2cffi
 pysqlite
 pytz
 redis
+httplib2
+googleapiclient
+oauth2client
+pyOpenSSL
