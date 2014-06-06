@@ -50,7 +50,7 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
             var name  = e.currentTarget.name,
                 value = e.currentTarget.value.replace(/\s+/g, " ");
 
-            if (!$scope.form.user[name].$dirty || !value)
+            if (!$scope.form.user[name].$dirty)
                 return;
 
             if (name == "mobile_phone" && (value == "+38 (0__) __ - __ - ___" || value[22] == "_"))
@@ -59,7 +59,7 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
             Settings.checkInputs({ f: name, v: value }, function(newValue, code) {
                 if (newValue)
                     e.currentTarget.value = newValue;
-                console.log(code)
+
                 $scope.form.user[name].$setValidity("incorrect", code !== 10);
                 $scope.form.user[name].$setValidity("duplicated", code !== 11);
             });

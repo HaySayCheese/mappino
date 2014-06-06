@@ -288,8 +288,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         }, 1000);
 
         initializeMap();
-
-        console.log("Filters are parsed");
     };
 
 

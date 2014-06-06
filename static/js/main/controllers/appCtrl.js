@@ -190,7 +190,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
     }];
 
 
-    $rootScope.loaders = {
+    $rootScope.loadings = {
         markers: false
     };
 

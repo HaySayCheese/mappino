@@ -23,13 +23,13 @@ app.factory('Settings', function($rootScope, $window, $cookies, Queries) {
         /**
          * Валідація полів на сервері
          *
-         * @param {object}   data Обєкт з полем і значенням
+         * @param {object}   input Обєкт з полем і значенням
          * @param {function} callback
          */
-        checkInputs: function(data, callback) {
-            var inputValue  = data.v;
+        checkInputs: function(input, callback) {
+            var inputValue  = input.v;
 
-            Queries.Settings.check(data, function(data) {
+            Queries.Settings.check(input, function(data) {
                 _.isFunction(callback) && callback(data.value ? data.value : inputValue, data.code);
             });
         },
