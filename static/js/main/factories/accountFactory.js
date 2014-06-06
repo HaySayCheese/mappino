@@ -138,6 +138,8 @@ app.factory('Account', function(authorizationQueries, $location) {
         getUserName: function(callback) {
             authorizationQueries.getUserName().success(function(data) {
                 _.isFunction(callback) && callback(data);
+            }).error(function() {
+                //
             })
         },
 

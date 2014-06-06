@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Settings', function($rootScope, $window, Queries) {
+app.factory('Settings', function($rootScope, $window, $cookies, Queries) {
 
     var user = [];
 
@@ -57,6 +57,9 @@ app.factory('Settings', function($rootScope, $window, Queries) {
          */
         logoutUser: function(callback) {
             Queries.Settings.logoutUser(function(data) {
+                delete sessionStorage.userName;
+                delete $cookies.sessionid;
+
                 $window.location.reload();
 
                 _.isFunction(callback) && callback(data);

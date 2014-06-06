@@ -32,11 +32,13 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, A
     $scope.$watch(function() {
         return sessionStorage.userName;
     }, function(newValue, oldValue) {
-
         if (newValue)
             $scope.userName = sessionStorage.userName;
-        else
+        else {
             $scope.userName = "";
+            delete $cookies.sessionid;
+        }
+
     });
 
 
@@ -47,8 +49,6 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, A
     function getUserName() {
         Account.getUserName(function(data) {
             sessionStorage.userName = data.user.name + " " + data.user.surname;
-        }).error(function() {
-            delete $cookies.sessionid;
         });
     }
 

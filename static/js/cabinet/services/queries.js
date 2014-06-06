@@ -108,8 +108,8 @@ app.factory('Queries', function($http, $q, $upload) {
                 }).success(callback);
             },
 
-            logoutUser: function() {
-                return $http.post('/ajax/api/accounts/logout/');
+            logoutUser: function(callback) {
+                return $http.post('/ajax/api/accounts/logout/').success(callback);
             }
         },
 
