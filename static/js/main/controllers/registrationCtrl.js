@@ -20,7 +20,7 @@ app.controller('RegistrationCtrl', function($scope, $rootScope, $cookieStore) {
 /**
  * Контроллер який відповідає за форму реєстрації
  **/
-app.controller('RegistrationUserCtrl', function($scope, $rootScope, $cookies, authorizationQueries) {
+app.controller('RegistrationUserCtrl', function($scope, $rootScope, $cookies, Account) {
 
     /**
      * Зміннні які відповідають за показ повідомлень при валідації
@@ -172,7 +172,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $cookies, au
 
         $scope.validated.email = false;
 
-        authorizationQueries.validateEmail($scope.user.email).success(function(data) {
+        Account.checkEmail($scope.user.email, function(data) {
             validateEmail(data.code);
 
             if (data.code === 0) {
@@ -229,7 +229,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $cookies, au
 
         $scope.validated.phone = false;
 
-        authorizationQueries.validatePhone($scope.user.phoneNumber).success(function(data) {
+        Account.checkPhone($scope.user.phoneNumber, function(data) {
             validatePhone(data.code);
 
             if (data.code === 0) {
@@ -259,7 +259,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $cookies, au
 
         registrationBtn.button('loading');
 
-        authorizationQueries.registerUser($scope.user).success(function(data) {
+        Account.register($scope.user, function(data) {
             registrationBtn.button('reset');
 
             $rootScope.registrationStatePart = "codeCheck";
@@ -274,7 +274,7 @@ app.controller('RegistrationUserCtrl', function($scope, $rootScope, $cookies, au
 /**
  * Контроллер який відповідає за форму введення коду підтвердження
  **/
-app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $rootScope, authorizationQueries) {
+app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $rootScope, Account) {
 
     /**
      * Змінні
@@ -315,9 +315,9 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $root
      * Функція повторної реєстрації
      **/
     $scope.repeatRegistration = function() {
-        authorizationQueries.repeatRegistration();
-
-        $rootScope.registrationStatePart = "registration";
+        Account.repeatRegister(function() {
+            $rootScope.registrationStatePart = "registration";
+        });
     };
 
 
@@ -325,7 +325,7 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $root
      * Функція повторної відправки кода
      **/
     $scope.repeatSendCode = function(e) {
-        authorizationQueries.repeatSendCode().success(function(data) {
+        Account.repeatSendCode(function(data) {
             if (data.code === 0)
                 $scope.codeSend = true;
             else
@@ -341,7 +341,7 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $root
 
         registrationBtn.button('loading');
 
-        authorizationQueries.validatePhoneCode($scope.codeCheck).success(function(data) {
+        Account.checkPhoneCode($scope.codeCheck, function(data) {
             registrationBtn.button('reset');
 
             attempt = data.attempts;

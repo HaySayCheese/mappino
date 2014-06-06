@@ -21,7 +21,7 @@ app.controller('RestoreAccessCtrl', function($scope, $rootScope, $location) {
 /**
  * Контроллер який відповідає відправку мила юзеру
  **/
-app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, authorizationQueries) {
+app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, Account) {
 
     /**
      * Змінні
@@ -69,7 +69,7 @@ app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, authori
 
         restoreAccessBtn.button('loading');
 
-        authorizationQueries.restoreAccessSendEmail($scope.user.login).success(function(data) {
+        Account.restoreAccessSendEmail($scope.user.login, function(data) {
             restoreAccessBtn.button('reset');
 
             if (data.code === 0) {
@@ -123,7 +123,7 @@ app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, authori
 /**
  * Контроллер який відповідає за зміну пароля
  **/
-app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $location, authorizationQueries) {
+app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $location, Account) {
 
     /**
      * Змінні
@@ -144,7 +144,7 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
     /**
      * Провірка токена
      **/
-    authorizationQueries.checkToken($location.search().token).success(function(data) {
+    Account.checkToken(function(data) {
         if (data.code !== 0)
             $rootScope.restoreAccessStatePart = "invalidTokenMessage";
     });
@@ -183,7 +183,7 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
 
         restoreAccessBtn.button('loading');
 
-        authorizationQueries.restoreAccessSendPasswords($scope.user).success(function(data) {
+        Account.restoreAccessSendPasswords($scope.user).success(function(data) {
             restoreAccessBtn.button('reset');
 
             if (data.code === 0)

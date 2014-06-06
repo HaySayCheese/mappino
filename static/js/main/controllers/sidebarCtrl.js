@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, authorizationQueries) {
+app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, Account) {
 
     $scope.userName = "";
 
@@ -45,7 +45,7 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, a
      * Отримання імені користувача по кукі
      **/
     function getUserName() {
-        authorizationQueries.getUserName().success(function(data) {
+        Account.getUserName(function(data) {
             sessionStorage.userName = data.user.name + " " + data.user.surname;
         }).error(function() {
             delete $cookies.sessionid;
@@ -58,7 +58,7 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, a
      * Логаут юзера
      **/
     $scope.logoutUser = function() {
-        authorizationQueries.logoutUser().success(function(data) {
+        Account.logoutUser(function(data) {
             delete $cookies.sessionid;
         });
     };

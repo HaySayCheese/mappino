@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('LoginCtrl', function($scope, $timeout, authorizationQueries) {
+app.controller('LoginCtrl', function($scope, $timeout, Account) {
 
     /**
      * Змінні
@@ -51,7 +51,7 @@ app.controller('LoginCtrl', function($scope, $timeout, authorizationQueries) {
 
         loginBtn.button("loading");
 
-        authorizationQueries.loginUser($scope.user).success(function(data) {
+        Account.login($scope.user, function(data) {
             loginBtn.button("reset");
 
             validateLoginForm(data);

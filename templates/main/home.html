@@ -62,7 +62,7 @@
             <div class="sidebar-header">
 
                 <div class="bwb-header text-right" ng-show="!userName || userName === ''">
-                    <a ng-href="/cabinet">Подать обьявление</a>
+                    <a ng-href="/cabinet/">Подать обьявление</a>
                     <span class="text-muted">&#8226;</span>
                     <a ng-href="#!/account/registration[[ urlFiltersPart ]]">Регистрация</a>
                     <span class="text-muted">&#8226;</span>
@@ -72,7 +72,7 @@
                 <div class="bwb-header text-right" ng-show="userName && userName !== ''">
                     <a ng-href="#!/account/registration[[ urlFiltersPart ]]">Подать обьявление</a>
                     <span class="text-muted">&#8226;</span>
-                    <a ng-href="/cabinet">[[ userName ]]</a>
+                    <a ng-href="/cabinet/">[[ userName ]]</a>
                     <span class="text-muted">&#8226;</span>
                     <a href ng-click="logoutUser()">Выйти</a>
                 </div>
@@ -265,6 +265,7 @@
     <script type="text/javascript" src="{{ static }}js/main/services/mapQueries.js"></script>
 
     <script type="text/javascript" src="{{ static }}js/main/factories/markersFactory.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/factories/accountFactory.js"></script>
 
     <script type="text/javascript" src="{{ static }}js/main/controllers/appCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/controllers/mapCtrl.js"></script>
