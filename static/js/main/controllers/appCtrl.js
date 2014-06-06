@@ -190,6 +190,11 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
     }];
 
 
+    $rootScope.loaders = {
+        markers: false
+    };
+
+
     /**
      * При закритті діалога додає параметри пошука в урл
      **/

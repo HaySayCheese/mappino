@@ -27,6 +27,19 @@ html, body, .wrapper, #map {
     .box-shadow(~"0 0 5px @{gray-light}")
 }
 
+.map-loader {
+    position: absolute;
+    top: 0;
+    left: calc(~'50% - 160px');
+
+    padding: 10px 15px 10px 49px;
+    font-size: @font-size-h5;
+
+    background: #ffffff url('../../img/main/markers-loader.gif') 15px center no-repeat;
+    .box-shadow(~"0 0 15px rgba(0, 0, 0, 0.4)");
+    .translate(calc(~'50% - 160px'), 0);
+    .border-bottom-radius(@border-radius-base);
+}
 
 
 

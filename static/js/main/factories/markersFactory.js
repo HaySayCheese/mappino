@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Markers', function(mapQueries, $location) {
+app.factory('Markers', function(mapQueries, $rootScope) {
     var markers = {
             red: {},
             blue: {},
@@ -44,11 +44,14 @@ app.factory('Markers', function(mapQueries, $location) {
                 }
             }
 
+            $rootScope.loaders.markers = true;
             mapQueries.getMarkers(tid, stringFilters, viewport).success(function(data) {
                 that.clearPanelMarkers(panel);
                 that.add(tid, panel, data, function() {
                     _.isFunction(callback) && callback(markers);
                 });
+
+                $rootScope.loaders.markers = false;
             });
         },
 

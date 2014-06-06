@@ -59,8 +59,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         Publication.load(tid, hid, function(data) {
             $scope.publication = data;
 
-            console.log(data);
-
             if (data.head.state_sid !== 1) {
                 isPublished = true;
                 loadChartData();
@@ -81,8 +79,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $scope.publicationChartData = data;
 
             $scope.publicationLoaded = true;
-
-            console.log(data);
         });
     }
 
@@ -332,8 +328,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 input.value = results[0].formatted_address;
 
             angular.element(input).trigger("input");
-
-            console.log(latLng)
 
             Publication.checkInputs(tid, hid, { f: "address", v: input.value }, null);
             Publication.checkInputs(tid, hid, { f: "lat_lng", v: latLng.lat() + ";" + latLng.lng() }, null);

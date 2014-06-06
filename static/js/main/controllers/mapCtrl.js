@@ -205,12 +205,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
          * Евенти карти
          **/
         google.maps.event.addListener(map, 'idle', function() {
-            $scope.filters.map.viewport = {
-                neLat: map.getBounds().getNorthEast().lat(),
-                neLng: map.getBounds().getNorthEast().lng(),
-                swLat: map.getBounds().getSouthWest().lat(),
-                swLng: map.getBounds().getSouthWest().lng()
-            };
             $scope.filters.map.latLng   = map.getCenter().toUrlValue();
             $scope.filters.map.viewport = map.getBounds();
             $scope.filters.map.zoom     = map.getZoom();
@@ -366,7 +360,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                     placeMarkers();
                 });
             }
-        }, 1000);
+        }, 1500);
     }
 
 
