@@ -26,7 +26,8 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
         support:        false,
         tickets:        false,
         ticketData:     false,
-        uploadPhotos:   false
+        uploadPhotos:   false,
+        chartData:      false
     };
 
 

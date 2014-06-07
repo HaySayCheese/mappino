@@ -77,10 +77,13 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      */
     function loadChartData() {
         $scope.chartLoaded = false;
+        $rootScope.loadings.chartData = true;
 
         Publication.loadChartData(tid, hid, function(data) {
             $scope.publicationChartData = data;
             $scope.chartLoaded = true;
+            $rootScope.loadings.chartData = false;
+            initChart();
         });
     }
 
@@ -112,7 +115,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             $rootScope.loadings.detailed = false;
             $scope.showPublication = true;
 
-            initChart();
+            //initChart();
 
             $timeout(function() {
                 initScrollBar();
@@ -222,7 +225,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             pointSize: 8,
 
             hAxis: {
-                format : "dd/MM",
+                format : "dd.MM",
                 gridlines: {
                     color: "#eee"
                 },
