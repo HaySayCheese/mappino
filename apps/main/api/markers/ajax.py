@@ -12,7 +12,7 @@ from collective.exceptions import InvalidArgument
 from collective.methods.request_data_getters import GET_parameter
 from core.markers_servers import MARKERS_SERVERS
 from core.markers_servers.servers import BaseMarkersManager
-from core.markers_servers.utils import Point
+from core.markers_servers.classes import Point
 from core.publications.constants import OBJECTS_TYPES
 
 

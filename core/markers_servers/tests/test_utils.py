@@ -1,5 +1,5 @@
 from unittest import TestCase
-from core.markers_servers.utils import DegreePoint, SegmentPoint
+from core.markers_servers.classes import DegreePoint, SegmentPoint
 
 
 class TestDegreePoint(TestCase):
