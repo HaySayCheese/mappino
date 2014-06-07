@@ -21,5 +21,5 @@ urlpatterns = patterns('apps.main.api',
 
 
     # realtors pages
-    url(r'^ajax/api/realtors-pages/data/(\[A-z-]+)/$', RealtorsData.as_view()),
+    url(r'^ajax/api/realtors-pages/data/([A-z]+)/$', RealtorsData.as_view()),
 )

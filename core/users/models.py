@@ -68,6 +68,8 @@ class Users(AbstractBaseUser):
 	landline_phone = models.TextField(null=True) # landline phone is not personal.
 	add_landline_phone = models.TextField(null=True) # therefore it can not be unique.
 
+	nickname = models.TextField(unique=True, null=True)
+
 	# other fields
 	avatar_url = models.TextField()
 
