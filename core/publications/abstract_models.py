@@ -622,7 +622,7 @@ class PhotosModel(AbstractModel):
 
 
 	#-- size constraints
-	min_image_size = [300, 600]
+	min_image_size = [300, 300]
 	max_image_size = [900, 1000]
 
 	title_thumb_size = min_image_size
