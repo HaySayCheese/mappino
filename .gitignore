@@ -3,6 +3,7 @@
 
 mappino/settings.py
 mappino/passwords.py
+mappino/keys/*
 
 *.pyc
 *.log
