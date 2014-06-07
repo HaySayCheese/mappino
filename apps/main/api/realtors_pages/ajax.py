@@ -28,5 +28,5 @@ class RealtorsData(View):
 
 
 		response = self.get_codes['OK']
-		response.update(realtor.contacts())
+		response['contacts'] = realtor.contacts()
 		return HttpResponse(json.dumps(response), content_type='application/json')
