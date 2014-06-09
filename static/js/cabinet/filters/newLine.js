@@ -1,5 +1,5 @@
 app.filter('newlines', function () {
     return function(text) {
-        return text.replace(/\n/g, '<br/>');
+        return text.replace(/\r\n/g, '<br/>');
     }
 });
