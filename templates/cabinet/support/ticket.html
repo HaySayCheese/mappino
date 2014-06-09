@@ -12,8 +12,8 @@
             <div class="user-photo" ng-class="{ 'pull-left' : message.type_sid === 0, 'pull-right' : message.type_sid === 1 }">
                 <img ng-src="[[ admin_avatar ]]" ng-show="message.type_sid === 1"/>
                 <img ng-src="[[ user_avatar ]]" ng-show="message.type_sid === 0"/>
-                <img ng-src="{{ static }}img/cabinet/sidebar-item-detailed/no-user.png" ng-show="!admin_avatar"/>
-                <img ng-src="{{ static }}img/cabinet/sidebar-item-detailed/no-user.png" ng-show="!user_avatar"/>
+                <img ng-src="{{ static }}img/cabinet/sidebar-item-detailed/no-user.png" ng-show="!admin_avatar && message.type_sid === 1"/>
+                <img ng-src="{{ static }}img/cabinet/sidebar-item-detailed/no-user.png" ng-show="!user_avatar && message.type_sid === 0"/>
             </div>
             <div class="user-message">
                 <div class="message">
@@ -28,7 +28,7 @@
 
     <div class="row">
         <div class="detailed-empty text-muted" ng-show="!messages.length">
-            <span>У вас пока нет сообщений в даном тикете</span>
+            <span>У вас пока нет сообщений в даном диалоге</span>
         </div>
     </div>
 </div>
