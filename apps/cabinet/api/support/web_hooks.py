@@ -11,6 +11,10 @@ from core.support.models import Tickets
 
 
 class IncomingAgentResponseHook(View):
+	def get(self, request, *args):
+		return HttpResponse()
+
+
 	def post(self, request, *args):
 		try:
 			events = POST_parameter(request, 'mandrill_events')
