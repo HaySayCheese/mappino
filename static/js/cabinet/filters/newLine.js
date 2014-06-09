@@ -1,5 +1,5 @@
-app.filter('newlines', function ($compile) {
+app.filter('newlines', function ($sce) {
     return function(text) {
-        return text.replace(/\r\n/g, '<br/>');
+        return $sce.trustAsHtml(text.replace(/\r\n/g, '<br/>'));
     }
 });
