@@ -201,3 +201,26 @@
         border: 1px solid #cccccc !important;
     }
 }
+
+
+.realtor-sidebar {
+    .sidebar-body {
+        height: ~"calc(100% - 105px)";
+    }
+
+
+    .realtor {
+        > img.photo {
+            .square(120px);
+            margin-top: 20px;
+            border-radius: 50%;
+            border: 1px solid @gray-lighter;
+            .center-block();
+        }
+
+        > .name {
+            margin-top: 10px;
+            font-size: @font-size-h3;
+        }
+    }
+}

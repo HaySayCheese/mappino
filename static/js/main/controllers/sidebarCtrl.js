@@ -4,9 +4,7 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, A
 
     $scope.userName = "";
 
-    if ($cookies.sessionid && !sessionStorage.userName) {
-        getUserName();
-    }
+    getUserName();
 
 
     /**

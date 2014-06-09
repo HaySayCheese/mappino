@@ -250,6 +250,19 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     $scope.parseSearchParametersFromUrl = function() {
         var searchParameters = $location.search();
 
+        if ($location.host().split(".").length === 3) {
+            $rootScope.subdommain = $location.host().split(".")[0];
+            $rootScope.sidebarTemplateUrl = "ajax/template/main/sidebar/realtors/";
+
+            Markers.getRealtorsData($rootScope.subdommain, function(data) {
+                $scope.realtor = data;
+            });
+        } else {
+            $rootScope.subdommain = "";
+            $rootScope.sidebarTemplateUrl = "ajax/template/main/sidebar/common/";
+        }
+
+
         for (var key in searchParameters) {
             if (searchParameters.hasOwnProperty(key)) {
 
@@ -332,6 +345,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Функція яка ініціює загрузку даних
      */
     function loadData(filters, panel, timeout) {
+        if ($rootScope.subdommain.length)
+            return;
+
         $timeout(function() {
             var sneLat = $scope.filters.map.viewport.getNorthEast().lat().toString(),
                 sneLng = $scope.filters.map.viewport.getNorthEast().lng().toString(),
@@ -428,7 +444,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 style: 'btn-default btn-md',
                 container: angular.element("body")
             });
-        }, 500);
+        }, 0);
     }
     function initScrollBar() {
         $timeout(function() {

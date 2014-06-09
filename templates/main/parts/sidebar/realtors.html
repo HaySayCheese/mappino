@@ -1,0 +1,60 @@
+<div class="bwb sidebar realtor-sidebar" ng-controller="SidebarCtrl">
+    <div class="sidebar-header">
+
+        <div class="bwb-header text-right" ng-show="!userName || userName === ''">
+            <a ng-href="#!/account/registration[[ urlFiltersPart ]]">Регистрация</a>
+            <span class="text-muted">&#8226;</span>
+            <a ng-href="#!/account/login[[ urlFiltersPart ]]">Войти</a>
+        </div>
+
+        <div class="bwb-header text-right" ng-show="userName && userName !== ''">
+            <a ng-href="/cabinet/">[[ userName ]]</a>
+            <span class="text-muted">&#8226;</span>
+            <a href ng-click="logoutUser()">Выйти</a>
+        </div>
+    </div>
+    <div class="bwb-body sidebar-body">
+        <div class="realtor">
+            <img class="photo" src="" ng-show="realtor.contacts.avatar_url"/>
+            <img class="photo" src="{{ static }}img/main/sidebar/no-user.png" ng-hide="realtor.contacts.avatar_url"/>
+            <div class="name text-center">[[ realtor.contacts.first_name ]] [[ realtor.contacts.last_name ]]</div>
+            <div class="phones text-center">
+                <div ng-show="realtor.contacts.mobile_phone || realtor.contacts.add_mobile_phone">
+                    <span ng-show="realtor.contacts.mobile_phone">
+                        Моб. телефон: [[ realtor.contacts.mobile_phone ]]
+                    </span>
+                    <span ng-show="realtor.contacts.mobile_phone && realtor.contacts.add_mobile_phone">,</span>
+                    <span ng-show="realtor.contacts.add_mobile_phone">
+                        <span ng-hide="realtor.contacts.mobile_phone">Моб. телефон:</span> [[ realtor.contacts.add_mobile_phone ]]
+                    </span>
+                </div>
+                <div ng-show="realtor.contacts.landline_phone || realtor.contacts.add_landline_phone">
+                    <span ng-show="realtor.contacts.landline_phone">
+                        Роб. телефон: [[ realtor.contacts.landline_phone ]]
+                    </span>
+                    <span ng-show="realtor.contacts.landline_phone && realtor.contacts.add_landline_phone">,</span>
+                    <span ng-show="realtor.contacts.add_landline_phone">
+                        <span ng-hide="realtor.contacts.landline_phone">Роб. телефон:</span> [[ realtor.contacts.add_landline_phone ]]
+                    </span>
+                </div>
+                <div ng-show="realtor.contacts.email">
+                    Эл. почта: [[ realtor.contacts.email ]]
+                </div>
+                <div ng-show="realtor.contacts.skype">
+                    Skype: [[ realtor.contacts.skype ]]
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bwb-footer">
+        <div class="bwb-footer-text">
+            Данные - mappino. 2014.
+        </div>
+        <div class="bwb-social-icons">
+            <a href="http://vk.com"></a>
+            <a href="http://facebook.com"></a>
+            <a href="http://twitter.com"></a>
+            <a href="http://plus.google.com"></a>
+        </div>
+    </div>
+</div>

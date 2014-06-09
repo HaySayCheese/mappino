@@ -122,6 +122,13 @@ app.factory('Markers', function(Queries, $rootScope) {
                     delete markers[panel][marker];
                 }
             }
+        },
+
+
+        getRealtorsData: function(realtor, callback) {
+            Queries.Map.getRealtorData(realtor).success(function(data) {
+                _.isFunction(callback) && callback(data);
+            })
         }
     }
 
