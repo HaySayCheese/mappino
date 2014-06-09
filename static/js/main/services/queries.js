@@ -7,6 +7,10 @@ app.factory('Queries', function($http) {
                return $http.get('ajax/api/markers/?tid=' + tid + viewport + filters)
            },
 
+           getRealtorData: function(realtor) {
+               return $http.get('ajax/api/realtors-pages/data/' + realtor + "/")
+           },
+
            getPublicationDescription: function(tid_hid) {
                return $http.get('ajax/api/detailed/publication/' + tid_hid + '/')
            },

@@ -194,6 +194,8 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
         markers: false
     };
 
+    $rootScope.subdommain = "";
+
 
     /**
      * При закритті діалога додає параметри пошука в урл
