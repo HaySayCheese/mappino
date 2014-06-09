@@ -1,7 +1,7 @@
 'use strict';
 
 
-app.controller('publicationViewCtrl', function($scope, $rootScope, mapQueries, lrNotifier) {
+app.controller('publicationViewCtrl', function($scope, $rootScope, Queries, lrNotifier) {
     $scope.publicationViewPart = "Detailed";
     $scope.publicationViewDetailedPart = "Description";
 
@@ -13,7 +13,7 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, mapQueries, l
     publicationViewModal.modal();
 
 
-    mapQueries.getPublicationDescription($rootScope.publicationIdPart).success(function(data) {
+    Queries.Map.getPublicationDescription($rootScope.publicationIdPart).success(function(data) {
         $scope.publication = data;
 
         $scope.publicationLoaded = true;
@@ -43,7 +43,7 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, mapQueries, l
 
 
 
-app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQueries, lrNotifier) {
+app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, Queries, lrNotifier) {
 
     $scope.contactsLoaded = false;
     $scope.message = {};
@@ -51,7 +51,7 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
 
     var channel = lrNotifier('mainChannel');
 
-    mapQueries.getPublicationContacts($rootScope.publicationIdPart).success(function(data) {
+    Queries.Map.getPublicationContacts($rootScope.publicationIdPart).success(function(data) {
         $scope.user = data;
         $scope.contactsLoaded = true;
 
@@ -62,7 +62,7 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
     $scope.sendCallRequest = function() {
 
         var btn = angular.element(".send-btn").button("loading");
-        mapQueries.sendPublicationCallRequest($rootScope.publicationIdPart, $scope.call_request).success(function(data) {
+        Queries.Map.sendPublicationCallRequest($rootScope.publicationIdPart, $scope.call_request).success(function(data) {
             btn.button("reset");
             $scope.call_request = {};
             $scope.cancelSendCallRequest();
@@ -80,7 +80,7 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, mapQu
     $scope.sendMessage = function() {
 
         var btn = angular.element(".send-btn").button("loading");
-        mapQueries.sendPublicationMessage($rootScope.publicationIdPart, $scope.message).success(function(data) {
+        Queries.Map.sendPublicationMessage($rootScope.publicationIdPart, $scope.message).success(function(data) {
             btn.button("reset");
             $scope.message = {};
             $scope.cancelSendMessage();

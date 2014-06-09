@@ -193,8 +193,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 country: "ua"
             }
         };
-        var autocomplete = new google.maps.places.Autocomplete(cityInput, autocompleteOptions);
-        autocomplete.bindTo('bounds', map);
+
+//        var autocomplete = new google.maps.places.Autocomplete(cityInput, autocompleteOptions);
+//        autocomplete.bindTo('bounds', map);
 
         /**
          * Інші екземпляри
@@ -220,26 +221,26 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         });
 
         // Евент вибору елемента в автокомпліті
-        google.maps.event.addListener(autocomplete, 'place_changed', function() {
-            var place = autocomplete.getPlace();
-
-            if (!place.geometry) {
-                return;
-            }
-
-            // If the place has a geometry, then present it on a map.
-            if (place.geometry.viewport) {
-                map.fitBounds(place.geometry.viewport);
-            } else {
-                map.panTo(place.geometry.location);
-                map.setZoom(17);
-            }
-
-            $scope.filters.map.city = cityInput.value;
-
-            if(!$scope.$$phase)
-                $scope.$apply();
-        });
+//        google.maps.event.addListener(autocomplete, 'place_changed', function() {
+//            var place = autocomplete.getPlace();
+//
+//            if (!place.geometry) {
+//                return;
+//            }
+//
+//            // If the place has a geometry, then present it on a map.
+//            if (place.geometry.viewport) {
+//                map.fitBounds(place.geometry.viewport);
+//            } else {
+//                map.panTo(place.geometry.location);
+//                map.setZoom(17);
+//            }
+//
+//            $scope.filters.map.city = cityInput.value;
+//
+//            if(!$scope.$$phase)
+//                $scope.$apply();
+//        });
     }
 
 
@@ -256,6 +257,10 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
             Markers.getRealtorsData($rootScope.subdommain, function(data) {
                 $scope.realtor = data;
+            });
+            Markers.getRealtorsMarkers(0, $rootScope.subdommain, function(data) {
+                markers = data;
+                placeMarkers();
             });
         } else {
             $rootScope.subdommain = "";
