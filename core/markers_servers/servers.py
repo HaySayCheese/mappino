@@ -10,7 +10,7 @@ from core.currencies.constants import CURRENCIES
 from core.currencies.currencies_manager import convert as convert_currency
 from core.markers_servers.classes import DegreeSegmentPoint, Point, SegmentPoint, DegreePoint
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, MARKET_TYPES, LIVING_RENT_PERIODS, \
-	HEATING_TYPES
+	HEATING_TYPES, OBJECT_STATES
 from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
 from mappino.wsgi import redis_connections
@@ -165,6 +165,32 @@ class BaseMarkersManager(object):
 				data = marker[1]
 				brief = self.marker_brief(data, conditions)
 				result[degrees][minutes] = brief
+		return result
+
+
+	def markers_of_realtor(self, realtor):
+		model = HEAD_MODELS[self.tid]
+		publications = model.objects.filter(
+			owner = realtor,
+			state_sid = OBJECT_STATES.published()
+		)
+
+
+		result = {}
+		for record in publications:
+			degree = DegreePoint(record.degree_lat, record.degree_lng)
+			degree_digest = '{lat};{lng}'.format(lat=degree.lat, lng=degree.lng)
+
+			position = Point(record.pos_lat, record.pos_lng)
+			position_digest = '{lat};{lng}'.format(lat=position.lat, lng=position.lng)
+
+			data = self.marker_brief(self.deserialize_marker_data(self.serialize_publication(record)))
+
+
+			if not degree_digest in result:
+				result[degree_digest] = {}
+			result[degree_digest][position_digest] = data
+
 		return result
 
 

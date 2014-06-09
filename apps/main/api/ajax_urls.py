@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url
 from apps.main.api.correspondence.ajax import SendMessageFromClient, SendCallRequestFromClient
 from apps.main.api.publications.ajax import DetailedView
 from apps.main.api.realtors_contacts.ajax import RealtorsContacts
-from apps.main.api.realtors_pages.ajax import RealtorsData
+from apps.main.api.realtors_pages.ajax import RealtorsData, RealtorsMarkers
 
 
 urlpatterns = patterns('apps.main.api',
@@ -21,5 +21,6 @@ urlpatterns = patterns('apps.main.api',
 
 
     # realtors pages
-    url(r'^ajax/api/realtors-pages/data/([A-z]+)/$', RealtorsData.as_view()),
+    url(r'^ajax/api/realtors-pages/([A-z]+)/data/$', RealtorsData.as_view()),
+    url(r'^ajax/api/realtors-pages/([A-z]+)/markers/(\d+)/$', RealtorsMarkers.as_view()),
 )
