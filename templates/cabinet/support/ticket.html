@@ -8,15 +8,15 @@
     </div>
 
     <div class="row" ng-repeat="message in messages">
-        <div class="col-sm-12 support-message-block" ng-class="{ 'user-message' : message.type_sid === 0, 'admin-message' : message.type_sid === 1 }">
+        <div class="col-sm-12 support-message-block" ng-class="{ 'user' : message.type_sid === 0, 'admin' : message.type_sid === 1 }">
             <div class="user-photo" ng-class="{ 'pull-left' : message.type_sid === 0, 'pull-right' : message.type_sid === 1 }">
                 <img ng-src="[[ admin_avatar ]]" ng-show="message.type_sid === 1 && admin_avatar"/>
                 <img ng-src="[[ user_avatar ]]" ng-show="message.type_sid === 0 && user_avatar"/>
                 <img ng-src="{{ static }}img/cabinet/sidebar-item-detailed/no-user.png" ng-show="!admin_avatar && message.type_sid === 1"/>
                 <img ng-src="{{ static }}img/cabinet/sidebar-item-detailed/no-user.png" ng-show="!user_avatar && message.type_sid === 0"/>
             </div>
-            <div class="user-message">
-                <div class="message" ng-bind-html="message.text | newlines"></div>
+            <div class="message-body">
+                <div class="message text-justify" ng-bind-html="message.text | toHtml"></div>
                 <div class="message-info text-muted small" ng-class="{ 'pull-left' : message.type_sid === 1, 'pull-right' : message.type_sid === 0 }">
                     [[ message.created | date:'dd-MM-yyyy HH:mm' ]]
                 </div>

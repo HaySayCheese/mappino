@@ -21,14 +21,14 @@
 .support-message-block {
     padding: 20px 80px;
 
-    &.user-message {
+    &.user {
         > .user-photo {
-            margin-right: 10px;
+            margin-right: 20px;
         }
     }
-    &.admin-message {
+    &.admin {
         > .user-photo {
-            margin-left: 10px;
+            margin-left: 20px;
         }
     }
 
@@ -38,8 +38,9 @@
         border-radius: 50%;
         border: 1px solid @gray-lighter;
     }
-    > .user-message {
+    > .message-body {
         .message {
+            overflow: hidden;
             margin-bottom: 10px;
         }
     }
