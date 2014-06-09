@@ -12,7 +12,14 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      **/
     var map,
         markers = [],
-        cityInput = document.getElementById('sidebar-city-input'),
+        cityInput,// = document.getElementById('sidebar-city-input'),
+        autocomplete,
+        autocompleteOptions = {
+            types: ['(cities)'],
+            componentRestrictions: {
+                country: "ua"
+            }
+        },
         markerClusterer,
         geocoder,
         requestTimeout,
@@ -185,19 +192,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
         /**
-         * Автокомпліт
-         **/
-        var autocompleteOptions = {
-            types: ['(cities)'],
-            componentRestrictions: {
-                country: "ua"
-            }
-        };
-
-//        var autocomplete = new google.maps.places.Autocomplete(cityInput, autocompleteOptions);
-//        autocomplete.bindTo('bounds', map);
-
-        /**
          * Інші екземпляри
          **/
         markerClusterer = new MarkerClusterer(map, markers);
@@ -220,7 +214,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 $scope.$apply();
         });
 
-        // Евент вибору елемента в автокомпліті
+//        // Евент вибору елемента в автокомпліті
 //        google.maps.event.addListener(autocomplete, 'place_changed', function() {
 //            var place = autocomplete.getPlace();
 //
@@ -265,6 +259,35 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         } else {
             $rootScope.subdommain = "";
             $rootScope.sidebarTemplateUrl = "ajax/template/main/sidebar/common/";
+
+            $timeout(function() {
+                cityInput = document.getElementById('sidebar-city-input');
+                autocomplete = new google.maps.places.Autocomplete(cityInput, autocompleteOptions);
+                autocomplete.bindTo('bounds', map);
+
+                // Евент вибору елемента в автокомпліті
+                google.maps.event.addListener(autocomplete, 'place_changed', function() {
+                    var place = autocomplete.getPlace();
+
+                    if (!place.geometry) {
+                        return;
+                    }
+
+                    // If the place has a geometry, then present it on a map.
+                    if (place.geometry.viewport) {
+                        map.fitBounds(place.geometry.viewport);
+                    } else {
+                        map.panTo(place.geometry.location);
+                        map.setZoom(17);
+                    }
+
+                    $scope.filters.map.city = cityInput.value;
+
+                    if(!$scope.$$phase)
+                        $scope.$apply();
+                });
+            }, 1000);
+
         }
 
 
@@ -387,9 +410,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Функція яка розставляє маркери
      */
     function placeMarkers() {
-
-        console.log(markers);
-
         for (var panel in markers) {
             if (markers.hasOwnProperty(panel)) {
                 for (var marker in markers[panel]) {
