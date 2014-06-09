@@ -16,7 +16,7 @@
                 <img ng-src="{{ static }}img/cabinet/sidebar-item-detailed/no-user.png" ng-show="!user_avatar && message.type_sid === 0"/>
             </div>
             <div class="user-message">
-                <div class="message" ng-bind-html="message.text | newlines"></div>
+                <div class="message" ng-bind-html="message.text | toHtml"></div>
                 <div class="message-info text-muted small" ng-class="{ 'pull-left' : message.type_sid === 1, 'pull-right' : message.type_sid === 0 }">
                     [[ message.created | date:'dd-MM-yyyy HH:mm' ]]
                 </div>
