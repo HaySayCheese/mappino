@@ -107,7 +107,7 @@ app.factory('Markers', function(Queries, $rootScope) {
                 position: new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
                 tid: tid,
                 id: data.id,
-                icon: '/mappino_static/img/markers/' + panel + '-normal.png',
+                icon: 'http://localhost/mappino_static/img/markers/' + panel + '-normal.png',
                 labelInBackground: true,
                 labelContent: data.d0 + "</br>" + data.d1,
                 labelAnchor: new google.maps.Point(0, 40),
@@ -128,6 +128,18 @@ app.factory('Markers', function(Queries, $rootScope) {
         getRealtorsData: function(realtor, callback) {
             Queries.Map.getRealtorData(realtor).success(function(data) {
                 _.isFunction(callback) && callback(data);
+            })
+        },
+
+
+        getRealtorsMarkers: function(tid, realtor, callback) {
+            var that = this;
+
+            Queries.Map.getRealtorMarkers(tid, realtor).success(function(data) {
+                that.clearPanelMarkers("red");
+                that.add(tid, "red", data, function() {
+                    _.isFunction(callback) && callback(markers);
+                });
             })
         }
     }
