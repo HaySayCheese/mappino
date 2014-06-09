@@ -124,14 +124,12 @@ class Users(AbstractBaseUser):
 
 		if preferences.landline_phone_may_be_shown():
 			if self.landline_phone:
-				contacts['landline_phone'] = phonenumbers.format_number(
-					phonenumbers.parse(self.landline_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
+				contacts['landline_phone'] = self.landline_phone
 
 
 		if preferences.add_landline_phone_may_be_shown():
 			if self.add_landline_phone:
-				contacts['add_landline_phone'] = phonenumbers.format_number(
-					phonenumbers.parse(self.add_landline_phone), phonenumbers.PhoneNumberFormat.NATIONAL)
+				contacts['add_landline_phone'] = self.add_landline_phone
 
 
 		if preferences.skype_may_be_shown():
