@@ -184,6 +184,8 @@ class BaseMarkersManager(object):
 			position = Point(record.pos_lat, record.pos_lng)
 			position_digest = '{lat};{lng}'.format(lat=position.lat, lng=position.lng)
 
+			# todo: брифи маркерів формуються через виклик функції сериалізаії/десериалізації,
+			# тоді як можна було б обійтись
 			data = self.marker_brief(self.deserialize_marker_data(self.serialize_publication(record)))
 
 

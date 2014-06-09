@@ -127,7 +127,7 @@ class Support(object):
 
 			result = {
 				'user_avatar': request.user.avatar().url(),
-			    'admin_avatar': '', # todo: add admin avatar here.
+			    # 'admin_avatar': '', # todo: add admin avatar here.
 				'messages': [{
 				    'type_sid': m.type_sid,
 				    'created': m.created.strftime('%Y-%m-%dT%H:%M:00Z'),
@@ -185,5 +185,5 @@ class Support(object):
 					self.post_codes['invalid_parameters']), content_type='application/json')
 
 
-			support_agents_notifier.send_notification(ticket, message)
+			support_agents_notifier.send_notification(ticket, message, request.user.full_name())
 			return HttpResponse(json.dumps(self.post_codes['ok']), content_type="application/json")

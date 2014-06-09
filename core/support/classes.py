@@ -10,7 +10,7 @@ class SupportAgentsNotifier(object):
 		self.__connect_to_mandrill()
 
 
-	def send_notification(self, ticket, message):
+	def send_notification(self, ticket, message, user_name):
 		"""
 		Надішле повідомлення, що надійшло від рієлтора на ящик підтримки.
 		"""
@@ -24,7 +24,7 @@ class SupportAgentsNotifier(object):
 			},
 		    'message': message,
 		})
-		self.__send_email(ticket, html)
+		self.__send_email(ticket, html, user_name)
 
 
 	def send_empty_answer_notification(self, ticket, html):
@@ -59,14 +59,17 @@ class SupportAgentsNotifier(object):
 		self.__send_email(ticket, html)
 
 
-	def __send_email(self, ticket, html):
+	def __send_email(self, ticket, html, user_name=None):
 		def send():
 			result = self.mandrill_client.messages.send(message=message, async=False)
 			return result[0]['status'] == 'sent'
 
+		if user_name is None:
+			user_name = ''
+
 		message = {
-			'from_email': 'support-dispatcher@mappino.com',
-			'from_name': 'support-request',
+			'from_email': 'support@mandrill-3702849048.mappino.com',
+			'from_name': '{user_name} (support-request)'.format(user_name = user_name),
 			'to': [{
 				'type': 'to',
 				'email': settings.SUPPORT_EMAIL,
@@ -74,7 +77,7 @@ class SupportAgentsNotifier(object):
 		    'subject': u'Ticket {0}: {1}'.format(ticket.id, ticket.subject),
 			'html': html,
 			'headers': {
-				'Reply-To': settings.SUPPORT_EMAIL, # todo: add web hook here
+				'Reply-To': 'support@mandrill-3702849048.mappino.com', # todo: add web hook here
 			    'X-Ticket-Id': unicode(ticket.id),
 			},
 		}
