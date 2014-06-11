@@ -205,6 +205,10 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             $scope.filters.map.zoom     = map.getZoom();
 
             parseFiltersCollectionAndUpdateUrl($scope.filters.map);
+
+            if ($scope.filters.map.zoom < 15)
+                return;
+
             loadData($scope.filters.red, "red", false);
             loadData($scope.filters.blue, "blue", false);
             loadData($scope.filters.green, "green", false);
@@ -213,28 +217,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             if(!$scope.$$phase)
                 $scope.$apply();
         });
-
-//        // Евент вибору елемента в автокомпліті
-//        google.maps.event.addListener(autocomplete, 'place_changed', function() {
-//            var place = autocomplete.getPlace();
-//
-//            if (!place.geometry) {
-//                return;
-//            }
-//
-//            // If the place has a geometry, then present it on a map.
-//            if (place.geometry.viewport) {
-//                map.fitBounds(place.geometry.viewport);
-//            } else {
-//                map.panTo(place.geometry.location);
-//                map.setZoom(17);
-//            }
-//
-//            $scope.filters.map.city = cityInput.value;
-//
-//            if(!$scope.$$phase)
-//                $scope.$apply();
-//        });
     }
 
 
