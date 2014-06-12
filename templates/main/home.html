@@ -65,6 +65,10 @@
         <div class="map-loader" ng-show="loadings.markers">
             Загрузка обьектов
         </div>
+
+        <div class="map-info" ng-show="zoomSoSmall">
+            Масштаб слишком мал. <a href ng-click="setMinimumZoom()">Увеличьте</a> для отображения объектов
+        </div>
     </div>
 
 

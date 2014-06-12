@@ -102,7 +102,7 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
         sidebar.perfectScrollbar("destroy");
 
         sidebar.perfectScrollbar({
-            wheelSpeed: 40,
+            wheelSpeed: 20,
             useKeyboard: false,
             suppressScrollX: true
         });

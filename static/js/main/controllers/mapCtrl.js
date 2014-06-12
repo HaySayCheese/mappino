@@ -138,6 +138,18 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
 
     /**
+     * Функція встановлення мінімального зума карти для пошуку обєктів
+     */
+    $scope.setMinimumZoom = function() {
+        $scope.filters.map.zoom = 15;
+
+        map.setZoom(15);
+
+        parseFiltersCollectionAndUpdateUrl($scope.filters.map);
+    };
+
+
+    /**
      * Функція створення обєкта з фільтрами
      */
     function createFiltersForPanels(panel, tid, clear) {
@@ -206,8 +218,17 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
             parseFiltersCollectionAndUpdateUrl($scope.filters.map);
 
-            if ($scope.filters.map.zoom < 15)
+            if ($scope.filters.map.zoom < 15) {
+                Markers.clearPanelMarkers("red");
+                Markers.clearPanelMarkers("blue");
+                Markers.clearPanelMarkers("green");
+                Markers.clearPanelMarkers("yellow");
+                $scope.zoomSoSmall = true;
+
                 return;
+            } else {
+                $scope.zoomSoSmall = false;
+            }
 
             loadData($scope.filters.red, "red", false);
             loadData($scope.filters.blue, "blue", false);

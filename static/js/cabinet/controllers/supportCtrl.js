@@ -84,7 +84,7 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
         sidebar.perfectScrollbar("destroy");
 
         sidebar.perfectScrollbar({
-            wheelSpeed: 40,
+            wheelSpeed: 20,
             useKeyboard: false,
             suppressScrollX: true
         });
