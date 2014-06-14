@@ -1,7 +1,9 @@
 #coding=utf-8
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 import random
 import string
+import exceptions
 from core.users.classes import UserAvatar
 
 from django.utils.timezone import now
@@ -69,7 +71,7 @@ class Users(AbstractBaseUser):
 	landline_phone = models.TextField(null=True) # landline phone is not personal.
 	add_landline_phone = models.TextField(null=True) # therefore it can not be unique.
 
-	nickname = models.TextField(unique=True, null=True)
+	alias = models.TextField(unique=True, null=True)
 
 	# other fields
 	avatar_url = models.TextField()
@@ -89,6 +91,27 @@ class Users(AbstractBaseUser):
 			return cls.objects.get(email__iexact=email)
 		except ObjectDoesNotExist:
 			return None
+
+
+	@classmethod
+	def alias_free(cls, alias, exclude_user=None):
+		if exclude_user:
+			return cls.objects.filter(
+				Q(
+					 Q(alias__iexact=alias),
+					~Q(id=exclude_user.id),
+				)).count() == 0
+
+		return cls.objects.filter(alias__iexact=alias).count() == 0
+
+
+	@classmethod
+	def validate_alias(cls, alias, exclude_user=None):
+		if not cls.alias_free(alias, exclude_user=exclude_user):
+			raise exceptions.AliasAlreadyTaken()
+
+		if len(alias) <= 3:
+			raise exceptions.TooShortAlias()
 
 
 	@classmethod

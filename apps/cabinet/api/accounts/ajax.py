@@ -1,6 +1,10 @@
 #coding=utf-8
 from copy import deepcopy
 import json
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django.http import HttpResponseBadRequest, HttpResponse
+import phonenumbers
 
 from apps.classes import CabinetView
 from collective.exceptions import RuntimeException
@@ -8,10 +12,7 @@ from collective.methods.request_data_getters import angular_post_parameters
 from core.users.classes import UserAvatar
 from core.users.constants import Preferences
 from core.users.models import Users
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
-from django.http import HttpResponseBadRequest, HttpResponse
-import phonenumbers
+from core.users import exceptions as users_exceptions
 
 
 class AccountManager(object):
@@ -36,6 +37,13 @@ class AccountManager(object):
 			    'duplicated_phone': {
 				    'code': 21
 			    },
+
+			    'nickname_already_taken': {
+				    'code': 31
+			    },
+			    'nickname_to_short': {
+				    'code': 32
+			    }
 			}
 
 			self.update_methods = {
@@ -48,6 +56,8 @@ class AccountManager(object):
 			    'landline_phone': self.update_landline_phone_number,
 			    'add_landline_phone': self.update_add_landline_phone_number,
 			    'skype': self.update_skype,
+
+			    'nickname': self.update_alias,
 
 
 				'allow_call_requests': self.update_allow_call_request,
@@ -375,6 +385,32 @@ class AccountManager(object):
 			preferences = user.preferences()
 			preferences.allow_call_requests = allow
 			preferences.save()
+			return HttpResponse(
+				json.dumps(self.post_codes['OK']), content_type='application/json')
+
+
+		def update_alias(self, user, alias):
+			if user.alias == alias:
+				return
+
+			if not alias:
+				user.alias = ''
+				user.save()
+				return
+
+			try:
+				Users.validate_alias(alias, user)
+
+			except users_exceptions.AliasAlreadyTaken:
+				return HttpResponse(
+					json.dumps(self.post_codes['nickname_already_taken']), content_type='application/json')
+
+			except users_exceptions.TooShortAlias:
+				return HttpResponse(
+					json.dumps(self.post_codes['nickname_to_short']), content_type='application/json')
+
+			user.alias = alias
+			user.save()
 			return HttpResponse(
 				json.dumps(self.post_codes['OK']), content_type='application/json')
 

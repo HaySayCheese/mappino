@@ -24,7 +24,7 @@ class RealtorsData(View):
 
 
 		try:
-			realtor = Users.objects.get(nickname=args[0])
+			realtor = Users.objects.get(alias=args[0])
 		except ObjectDoesNotExist:
 			return HttpResponse(json.dumps(self.get_codes['no_such_user']), content_type='application/json')
 
@@ -54,7 +54,7 @@ class RealtorsMarkers(View):
 
 
 		try:
-			realtor = Users.objects.get(nickname=args[0])
+			realtor = Users.objects.get(alias=args[0])
 		except ObjectDoesNotExist:
 			return HttpResponse(json.dumps(self.get_codes['no_such_user']), content_type='application/json')
 

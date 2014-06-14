@@ -16,6 +16,7 @@ from core.publications import models_signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, EmptyRentPrice
 from core.users.models import Users
+from mappino.wsgi import redis_connections
 
 
 class AbstractModel(models.Model):
@@ -603,8 +604,6 @@ class PhotosModel(AbstractModel):
 	class UnsupportedImageType(Exception): pass
 	class ProcessingFailed(Exception): pass
 
-	class Meta:
-		abstract = True
 
 	#-- constraints
 	destination_dir_name = '' # @override
@@ -638,6 +637,9 @@ class PhotosModel(AbstractModel):
 	# яке буде завантажене користувачем.
 	original_extension = models.CharField(max_length=5)
 	is_title = models.BooleanField(default=False)
+
+	class Meta:
+		abstract = True
 
 
 	def original_image_name(self):
@@ -747,7 +749,14 @@ class PhotosModel(AbstractModel):
 		# caching params so they wold not be None after record removing
 		hid = self.hid
 		is_title = self.is_title
-		super(PhotosModel, self).delete()
+
+
+		try:
+			# race condition: if client will generate several requests for deleting one photo
+			# if deleting will fail - than seems that this photo was removed already
+			super(PhotosModel, self).delete()
+		except:
+			pass
 
 		if is_title:
 			# generate new title photo
@@ -755,8 +764,6 @@ class PhotosModel(AbstractModel):
 			if photos:
 				photos[0].mark_as_title()
 				return photos[0]
-
-
 
 
 	def delete(self, using=None):
@@ -858,6 +865,24 @@ class PhotosModel(AbstractModel):
 
 		big_thumb_name = uid + cls.big_thumbnail_suffix + cls.extension
 		big_thumb_path = os.path.join(destination_dir, big_thumb_name)
+
+		# the image is scaled/cropped vertically or horizontally depending on the ratio
+		image_ratio = image.size[0] / float(image.size[1])
+		ratio = cls.big_thumb_size[0] / float(cls.big_thumb_size[1])
+		if ratio > image_ratio:
+			image = image.resize(
+				(cls.big_thumb_size[0], cls.big_thumb_size[0] * image.size[1] / image.size[0]), Image.ANTIALIAS)
+			box = (0, (image.size[1] - cls.big_thumb_size[1]) / 2, image.size[0], (image.size[1] + cls.big_thumb_size[1]) / 2)
+			image = image.crop(box)
+
+		elif ratio < image_ratio:
+			image = image.resize(
+				(cls.big_thumb_size[1] * image.size[0] / image.size[1], cls.big_thumb_size[1]), Image.ANTIALIAS)
+			box = ((image.size[0] - cls.big_thumb_size[0]) / 2, 0, (image.size[0] + cls.big_thumb_size[0]) / 2, image.size[1])
+			image = image.crop(box)
+		else:
+			image = image.resize((cls.big_thumb_size[0], cls.big_thumb_size[1]), Image.ANTIALIAS)
+
 		try:
 			image.save(big_thumb_path, 'JPEG', quality=100)
 		except Exception as e:
@@ -910,7 +935,8 @@ class PhotosModel(AbstractModel):
 			record = cls.objects.create(
 				hid = publication_head,
 				uid = uid,
-				original_extension = original_ext
+				original_extension = original_ext,
+			    is_title = False,
 			)
 			record.save()
 		except Exception as e:
@@ -921,10 +947,18 @@ class PhotosModel(AbstractModel):
 			raise e
 
 
-		# set as title if it is a first photo
-		with transaction.atomic():
-			if cls.objects.filter(hid=publication_head, is_title=True).count() == 0:
+		if cls.objects.filter(hid=record.hid, is_title=True).count() < 1:
+			# It is possible that the race condition will be present
+			# if several photos will be uploaded at the same time.
+			# In this case several photos may be marked as title,
+			# So here wee ned a mechanism to prevent race conditions.
+			# Database transactions are unhelpfull here.
+			redis = redis_connections['cache']
+			key = 'photos_upl_queue_{0}'.format(record.hid)
+			if redis.get(key) is None:
+				redis.setex(key, 60, '0')
 				record.mark_as_title()
+
 
 		# seems to be ok
 		return record.info()
