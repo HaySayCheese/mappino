@@ -137,15 +137,6 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
 
 
     /**
-     * Провірка токена
-     **/
-//    Account.checkToken(function(data) {
-//        if (data.code !== 0)
-//            $rootScope.restoreAccessStatePart = "invalidTokenMessage";
-//    });
-
-
-    /**
      * Ініціалізація тултіпів
      **/
     restoreAccessModal.on("shown.bs.modal", function() {

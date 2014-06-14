@@ -107,12 +107,6 @@ app.factory('Queries', function($http) {
                    'password': user.password,
                    'password-repeat': user.passwordRepeat
                });
-           },
-
-           checkToken: function(token) {
-               return $http.post('ajax/api/accounts/password-reset/check/', {
-                   token: token
-               });
            }
        }
    }
