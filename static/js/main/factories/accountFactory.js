@@ -94,18 +94,6 @@ app.factory('Account', function(Queries, $location) {
 
 
         /**
-         * Перевірка токена
-         *
-         * @param {function}    callback
-         */
-//        checkToken: function(callback) {
-//            Queries.Account.checkToken($location.search().token).success(function(data) {
-//                _.isFunction(callback) && callback(data);
-//            })
-//        },
-
-
-        /**
          * Відновлення доступу: відправка пошти
          *
          * @param {object}      email  Обєкт з поштою користувача
