@@ -5,6 +5,6 @@ app.directive('focusOnLoad', function ($timeout) {
     return function (scope, element, attrs) {
         $timeout(function (){
             element.focus();
-        }, 300);
+        }, 500);
     };
 });
