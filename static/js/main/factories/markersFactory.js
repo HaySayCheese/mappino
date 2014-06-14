@@ -6,6 +6,22 @@ app.factory('Markers', function(Queries, $rootScope) {
             blue: {},
             green: {},
             yellow: {}
+        },
+//        nePoint = {
+//            lat: -89.99,
+//            lng: 179.99
+//        },
+//        swPoint= {
+//            lat: 89.99,
+//            lng: -179.99
+//        };
+        nePoint = {
+            lat: 0,
+            lng: 0
+        },
+        swPoint= {
+            lat: 0,
+            lng: 0
         };
 
     return {
@@ -68,7 +84,7 @@ app.factory('Markers', function(Queries, $rootScope) {
             var that = this;
 
             for (var d_key in data) {
-                var latLng = "";
+                var lat = "", lng = "", latLng = "";
 
                 if (data.hasOwnProperty(d_key)) {
 
@@ -76,9 +92,13 @@ app.factory('Markers', function(Queries, $rootScope) {
                         return;
 
                     for (var c_key in data[d_key]) {
-
                         if (data[d_key].hasOwnProperty(c_key)) {
-                            latLng = d_key.split(";")[0] + "." + c_key.split(":")[0] + ";" + d_key.split(";")[1] + "." + c_key.split(":")[1];
+                            lat = d_key.split(";")[0] + "." + c_key.split(":")[0];
+                            lng = d_key.split(";")[1] + "." + c_key.split(":")[1];
+                            latLng = lat + ";" + lng;
+
+                            lat = parseFloat(lat);
+                            lng = parseFloat(lng);
 
                             if (panel != "red" && markers["red"][latLng]) {
                                 return;
@@ -92,6 +112,18 @@ app.factory('Markers', function(Queries, $rootScope) {
                                 that.createMarkerObject(data[d_key][c_key], tid, panel, latLng);
                             } else {
                                 return;
+                            }
+
+
+
+
+                            if (lat < nePoint.lat || lng > nePoint.lng) {
+                                nePoint.lat = lat;
+                                nePoint.lng = lng;
+                            }
+                            if (lat > swPoint.lat || lng < swPoint.lng) {
+                                swPoint.lat = lat;
+                                swPoint.lng = lng;
                             }
                         }
                     }
@@ -141,6 +173,15 @@ app.factory('Markers', function(Queries, $rootScope) {
                     _.isFunction(callback) && callback(markers);
                 });
             })
+        },
+
+        getViewport: function() {
+            var a = new google.maps.LatLngBounds(new google.maps.LatLng(nePoint.lat, nePoint.lng), new google.maps.LatLng(swPoint.lat, swPoint.lng));
+            console.log(nePoint.lat);
+            console.log(nePoint.lng);
+            console.log(swPoint.lat);
+            console.log(swPoint.lng);
+            return a;
         }
     }
 

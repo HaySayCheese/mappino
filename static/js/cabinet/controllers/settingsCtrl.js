@@ -2,6 +2,7 @@
 
 app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) {
 
+    $rootScope.pageTitle = "Параметры - Mappino";
     $rootScope.loadings.settings = true;
 
     initScrollBar();

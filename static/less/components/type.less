@@ -85,6 +85,9 @@ cite    { font-style: normal; }
 .text-muted {
   color: @text-muted;
 }
+.text-white {
+    color: #ffffff;
+}
 .text-primary {
   color: @brand-primary;
   &:hover {
@@ -120,6 +123,29 @@ cite    { font-style: normal; }
 .text-left           { text-align: left; }
 .text-right          { text-align: right; }
 .text-center         { text-align: center; }
+
+
+// Contextual backgrounds
+// For now we'll leave these alongside the text classes until v4 when we can
+// safely shift things around (per SemVer rules).
+.bg-primary {
+    // Given the contrast here, this is the only class to have its color inverted
+    // automatically.
+    color: #fff;
+    .bg-variant(@nice-blue);
+}
+.bg-success {
+    .bg-variant(@nice-green);
+}
+.bg-info {
+    .bg-variant(@pink-10);
+}
+.bg-warning {
+    .bg-variant(@nice-yellow);
+}
+.bg-danger {
+    .bg-variant(@nice-red);
+}
 
 
 // Page header

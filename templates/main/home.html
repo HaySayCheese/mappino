@@ -50,9 +50,9 @@
 </head>
 <body ng-app="Mappino" ng-controller="AppCtrl" ng-init="firstEnterInit()">
 
-    <div class="wrapper" ng-controller="MapCtrl" ng-init="parseSearchParametersFromUrl()">
+    <div class="wrapper" ng-controller="MapCtrl" ng-init="parseSearchParametersFromUrl()" ng-cloak>
 
-        <div id="map" ng-cloak></div>
+        <div id="map"></div>
 
         <div ng-view="content-view"></div>
 
@@ -66,7 +66,7 @@
             Загрузка обьектов
         </div>
 
-        <div class="map-info" ng-show="zoomSoSmall">
+        <div class="map-info" ng-show="filters.map.zoom < 15">
             Масштаб слишком большой. Попробуйте <a href ng-click="setMinimumZoom()">немного уменьшить</a>
         </div>
     </div>

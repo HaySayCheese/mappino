@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="MappinoCabinet" ng-controller="AppCtrl">
 <head>
-    <title>Cabinet</title>
+    <title ng-bind="pageTitle"></title>
 
     <link rel="stylesheet/less" href="{{ static }}less/cabinet/base.less"/>
     <link rel="stylesheet" href="{{ static }}css/bootstrap-select.css"/>
@@ -94,7 +94,7 @@
                         <li ng-class="{ active: routeSection == 'unpublished' }">
                             <a href="#!/publications/unpublished">
                                 <span class="menu-icon icon-unpublished-pubs"></span>
-                                Не опубликованные
+                                Неопубликованные
                                 <span class="badge pull-right"
                                       ng-hide="publicationsCount['unpublished'] == 0">[[ publicationsCount['unpublished'] ]]</span>
                             </a>

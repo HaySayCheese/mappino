@@ -15,6 +15,8 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
         trash: 0
     };
 
+    $rootScope.pageTitle = "Mappino";
+
     /**
      * Лоадери
      */
@@ -44,14 +46,28 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
         if ($location.path().replace("/", ""))
             $rootScope.routeBase = $location.path().replace("/", "");
 
-        if ($routeParams.section)
+        if ($routeParams.section) {
             $rootScope.routeSection = $routeParams.section;
+
+            if ($rootScope.routeSection == "all")
+                $rootScope.pageTitle = "Все обьявления - Mappino";
+            else if ($rootScope.routeSection == "published")
+                $rootScope.pageTitle = "Опубликованные обьявления - Mappino";
+            else if ($rootScope.routeSection == "unpublished")
+                $rootScope.pageTitle = "Неопубликованные обьявления - Mappino";
+            else if ($rootScope.routeSection == "trash")
+                $rootScope.pageTitle = "Удаленные обьявления - Mappino";
+            else
+                $rootScope.pageTitle = $rootScope.routeSection + " - Mappino";
+        }
+
 
         if ($routeParams.pubId)
             $rootScope.publicationId = $routeParams.pubId;
 
         if ($routeParams.ticketId)
             $rootScope.isSupportPagePart = true;
+
     });
 
 

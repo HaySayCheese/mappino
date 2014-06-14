@@ -32,8 +32,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
         map: {
             city: "",
-            zoom: parseInt(9),
-            latLng: "50.442218,30.779838"
+            zoom: parseInt(15),
+            latLng: "50.449583,30.527024"
         },
 
         base: {
@@ -218,16 +218,13 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
             parseFiltersCollectionAndUpdateUrl($scope.filters.map);
 
-            if ($scope.filters.map.zoom < 15) {
+            if ($scope.filters.map.zoom < 15 && !$rootScope.subdommain) {
                 Markers.clearPanelMarkers("red");
                 Markers.clearPanelMarkers("blue");
                 Markers.clearPanelMarkers("green");
                 Markers.clearPanelMarkers("yellow");
-                $scope.zoomSoSmall = true;
 
                 return;
-            } else {
-                $scope.zoomSoSmall = false;
             }
 
             loadData($scope.filters.red, "red", false);
@@ -258,6 +255,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             Markers.getRealtorsMarkers(0, $rootScope.subdommain, function(data) {
                 markers = data;
                 placeMarkers();
+                map.fitBounds(Markers.getViewport());
             });
         } else {
             $rootScope.subdommain = "";

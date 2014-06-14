@@ -1,6 +1,8 @@
 'use strict';
 
 app.controller('SupportCtrl', function($scope, $location, $rootScope, $routeParams, Support) {
+
+    $rootScope.pageTitle = "Поддержка - Mappino";
     $scope.supportPage = true;
     $rootScope.loadings.tickets    = false;
     $rootScope.loadings.ticketData = false;
