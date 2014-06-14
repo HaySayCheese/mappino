@@ -189,7 +189,11 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
             if (data.code === 0)
                 sessionStorage.userName = data.user.name + " " + data.user.surname;
 
+            if (data.code === 1)
+                $rootScope.restoreAccessStatePart = "invalidTokenMessage";
+
             $location.search("token", null);
+            $location.path("/search");
         });
 
     };
