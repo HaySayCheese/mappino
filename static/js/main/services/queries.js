@@ -102,7 +102,7 @@ app.factory('Queries', function($http) {
            },
 
            restoreAccessSendPasswords: function(user) {
-               return $http.post('ajax/api/accounts/password-reset/', {
+               return $http.post('ajax/api/accounts/password-reset/restore/', {
                    'token': user.token,
                    'password': user.password,
                    'password-repeat': user.passwordRepeat
