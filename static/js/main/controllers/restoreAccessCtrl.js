@@ -98,14 +98,15 @@ app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, Account
         $scope.restoreAccessForm.login.$setValidity("token", true);
 
         if (code === 1) {
+            $scope.restoreAccessForm.login.$setValidity("login", true);
+            $scope.restoreAccessForm.login.$setValidity("token", false);
+        }
+        if (code === 2) {
             $scope.restoreAccessForm.login.$setValidity("login", false);
             $scope.restoreAccessForm.login.$setValidity("token", true);
         }
 
-        if (code === 2) {
-            $scope.restoreAccessForm.login.$setValidity("login", true);
-            $scope.restoreAccessForm.login.$setValidity("token", false);
-        }
+
     }
 
 });
