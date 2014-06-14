@@ -95,21 +95,15 @@ app.controller('RestoreAccessSendMailCtrl', function($scope, $rootScope, Account
             return;
 
         $scope.restoreAccessForm.login.$setValidity("login", true);
-        $scope.restoreAccessForm.login.$setValidity("tokenInvalid", true);
         $scope.restoreAccessForm.login.$setValidity("token", true);
 
-        if (code === 3) {
+        if (code === 1) {
             $scope.restoreAccessForm.login.$setValidity("login", false);
-            $scope.restoreAccessForm.login.$setValidity("tokenInvalid", true);
             $scope.restoreAccessForm.login.$setValidity("token", true);
         }
 
-        if (code === 7)
-            $rootScope.restoreAccessStatePart = "invalidTokenMessage";
-
-        if (code === 8) {
+        if (code === 2) {
             $scope.restoreAccessForm.login.$setValidity("login", true);
-            $scope.restoreAccessForm.login.$setValidity("tokenInvalid", true);
             $scope.restoreAccessForm.login.$setValidity("token", false);
         }
     }
