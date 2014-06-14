@@ -178,7 +178,7 @@ app.controller('RestoreAccessChangePasswordCtrl', function($scope, $rootScope, $
 
         restoreAccessBtn.button('loading');
 
-        Account.restoreAccessSendPasswords($scope.user).success(function(data) {
+        Account.restoreAccessSendPasswords($scope.user, function(data) {
             restoreAccessBtn.button('reset');
 
             if (data.code === 0)
