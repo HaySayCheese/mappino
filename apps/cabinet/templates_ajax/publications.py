@@ -83,3 +83,9 @@ def unpublished_photos_template(request):
 def published_form_template(request):
 	t = templates.get_template('cabinet/publications/published/published.html')
 	return HttpResponse(t.render())
+
+
+@ensure_csrf_cookie
+def no_pubs_hint(request):
+	t = templates.get_template('cabinet/publications/hints/no_publications.html')
+	return HttpResponse(t.render())
