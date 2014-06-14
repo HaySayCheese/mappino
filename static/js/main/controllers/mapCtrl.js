@@ -297,6 +297,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         for (var key in searchParameters) {
             if (searchParameters.hasOwnProperty(key)) {
 
+                if (key.toString() == "token")
+                    continue;
+
                 if (key.toString().indexOf("_sid") != -1)
                     searchParameters[key] = parseInt(searchParameters[key]);
 
