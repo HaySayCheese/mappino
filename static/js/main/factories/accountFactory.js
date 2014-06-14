@@ -98,11 +98,11 @@ app.factory('Account', function(Queries, $location) {
          *
          * @param {function}    callback
          */
-        checkToken: function(callback) {
-            Queries.Account.checkToken($location.search().token).success(function(data) {
-                _.isFunction(callback) && callback(data);
-            })
-        },
+//        checkToken: function(callback) {
+//            Queries.Account.checkToken($location.search().token).success(function(data) {
+//                _.isFunction(callback) && callback(data);
+//            })
+//        },
 
 
         /**
