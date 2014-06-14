@@ -179,10 +179,10 @@ class BaseMarkersManager(object):
 		result = {}
 		for record in publications:
 			degree = DegreePoint(record.degree_lat, record.degree_lng)
-			degree_digest = '{lat};{lng}'.format(lat=degree.lat, lng=degree.lng)
+			degree_digest = '{lat}:{lng}'.format(lat=degree.lat, lng=degree.lng)
 
 			position = Point(record.pos_lat, record.pos_lng)
-			position_digest = '{lat};{lng}'.format(lat=position.lat, lng=position.lng)
+			position_digest = '{lat}:{lng}'.format(lat=position.lat, lng=position.lng)
 
 			# todo: брифи маркерів формуються через виклик функції сериалізаії/десериалізації,
 			# тоді як можна було б обійтись

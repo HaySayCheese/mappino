@@ -108,10 +108,10 @@ class Users(AbstractBaseUser):
 	@classmethod
 	def validate_alias(cls, alias, exclude_user=None):
 		if not cls.alias_free(alias, exclude_user=exclude_user):
-			raise exceptions.AliasAlreadyTaken()
+			raise exceptions.AliasAlreadyTaken('')
 
 		if len(alias) <= 3:
-			raise exceptions.TooShortAlias()
+			raise exceptions.TooShortAlias('')
 
 
 	@classmethod
