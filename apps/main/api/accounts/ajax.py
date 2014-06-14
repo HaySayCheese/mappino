@@ -337,7 +337,12 @@ class LoginManager(object):
 
 			try:
 				# attempt with phone number
-				phone_number = phonenumbers.parse(username, 'UA')
+				if '+380' != username[:3]:
+					number = '+380' + username
+				else:
+					number = username
+
+				phone_number = phonenumbers.parse(number, 'UA')
 				if phonenumbers.is_valid_number(phone_number):
 					username = phonenumbers.format_number(phone_number, phonenumbers.PhoneNumberFormat.E164)
 				user = Users.objects.filter(mobile_phone=username).only('id')[:1]
@@ -506,16 +511,16 @@ class AccessRestoreManager(object):
 
 			token_record_query = AccessRestoreTokens.objects.filter(token=token)[:1]
 			if not token_record_query:
-				return HttpResponse(self.post_codes['invalid_token'], content_type='application/json')
+				return HttpResponse(json.dumps(
+					self.post_codes['invalid_token']), content_type='application/json')
 			token = token_record_query[0]
 
 
 			try:
 				params = angular_post_parameters(request, ['password', 'password-repeat'])
 			except ValueError:
-				return HttpResponse(
-					json.dumps(self.post_codes['invalid_password_or_repeat']),
-					content_type='application/json')
+				return HttpResponse(json.dumps(
+					self.post_codes['invalid_password_or_repeat']), content_type='application/json')
 
 
 			if params['password'] != params['password-repeat']:
@@ -528,7 +533,7 @@ class AccessRestoreManager(object):
 				token.user.save()
 				token.delete()
 
-			response = HttpResponse()
+			response = HttpResponse(content_type='application/json')
 			LoginManager.Login.login_user_without_password(token.user, request, response)
 			return response
 
