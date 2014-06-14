@@ -22,5 +22,5 @@ urlpatterns = patterns('',
 
 	# password reset
 	url(r'^ajax/api/accounts/password-reset/$', AccessRestoreManager.BeginRestore.as_view()),
-    url(r'^ajax/api/accounts/password-reset/check/$', AccessRestoreManager.Check.as_view()),
+    url(r'^ajax/api/accounts/password-reset/restore/$', AccessRestoreManager.Check.as_view()),
 )

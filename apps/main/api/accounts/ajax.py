@@ -464,7 +464,7 @@ class AccessRestoreManager(object):
 			html = templates.get_template('email/access_restore/new_token.html').render({
 				'token_url': '{domain}{url}?token={token_id}'.format(
 					domain = settings.REDIRECT_DOMAIN,
-				    url = '/ajax/api/accounts/password-reset/check',
+				    url = '#!/account/restore-access',
 				    token_id = record.token
 				)
 			})
@@ -499,11 +499,16 @@ class AccessRestoreManager(object):
 				token = angular_post_parameters(request, ['token'])['token']
 				if not token:
 					raise ValueError('Token can\'t be empty.')
-
 			except (IndexError, ValueError):
-				return HttpResponse(
-					json.dumps(self.post_codes['invalid_token']),
-					content_type='application/json')
+				return HttpResponse(json.dumps(
+					self.post_codes['invalid_token']), content_type='application/json')
+
+
+			token_record_query = AccessRestoreTokens.objects.filter(token=token)[:1]
+			if not token_record_query:
+				return HttpResponse(self.post_codes['invalid_token'], content_type='application/json')
+			token = token_record_query[0]
+
 
 			try:
 				params = angular_post_parameters(request, ['password', 'password-repeat'])
@@ -518,22 +523,14 @@ class AccessRestoreManager(object):
 					json.dumps(self.post_codes['passwords_not_match']),
 					content_type='application/json')
 
-
-			token_record_query = AccessRestoreTokens.objects.filter(token=token)[:1]
-			if not token_record_query:
-				return HttpResponse(self.post_codes['invalid_token'], content_type='application/json')
-
-			token = token_record_query[0]
-			token.user = token_record_query[0]
-
 			with transaction.atomic():
 				token.user.set_password(params['password'])
 				token.user.save()
 				token.delete()
 
-			return HttpResponse(
-				json.dumps(self.post_codes['OK']),
-				content_type='application/json')
+			response = HttpResponse()
+			LoginManager.Login.login_user_without_password(token.user, request, response)
+			return response
 
 
 class Contacts(View):
