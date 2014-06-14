@@ -1,4 +1,5 @@
 #coding=utf-8
+from django.core.exceptions import ObjectDoesNotExist
 import random
 import string
 from core.users.classes import UserAvatar
@@ -80,6 +81,14 @@ class Users(AbstractBaseUser):
 		unique_together = (
 			('mobile_phone', 'add_mobile_phone'),
 		)
+
+
+	@classmethod
+	def by_email(cls, email):
+		try:
+			return cls.objects.get(email__iexact=email)
+		except ObjectDoesNotExist:
+			return None
 
 
 	@classmethod

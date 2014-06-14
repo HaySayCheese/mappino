@@ -336,29 +336,25 @@ class LoginManager(object):
 
 
 			try:
-				# attempt with phone number
-				if '+380' != username[:3]:
-					number = '+380' + username
-				else:
-					number = username
-
-				phone_number = phonenumbers.parse(number, 'UA')
+				phone_number = phonenumbers.parse(username, 'UA')
 				if phonenumbers.is_valid_number(phone_number):
 					username = phonenumbers.format_number(phone_number, phonenumbers.PhoneNumberFormat.E164)
 				user = Users.objects.filter(mobile_phone=username).only('id')[:1]
+				if user:
+					user = user[0]
+
 			except NumberParseException:
 				user = None
 
 
 			if not user:
 				# attempt with email
-				user = Users.objects.filter(email=username).only('id')[:1]
-				if not user:
+				user = Users.by_email(username)
+				if user is None:
 					return HttpResponse(
 						json.dumps(self.post_codes['invalid_attempt']), content_type='application/json')
 
 
-			user = user[0]
 			user = authenticate(username=user.mobile_phone, password=password)
 			if user is not None:
 				if user.is_active:
