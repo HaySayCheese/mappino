@@ -1,44 +1,49 @@
-<div class="fe-video-block"></div>
+<div class="modal first-enter-modal fade" ng-controller="FirstEnterCtrl" data-backdrop="static" data-keyboard="false" ng-init="initializeAutocomplete()">
+    <div class="modal-dialog">
+        <div class="modal-content content-blue">
+            <div class="modal-header header-blue">
 
-<div class="bwb fe-search-block">
+            </div>
+            <div class="modal-body modal-body-wtp">
+                <div class="row top-margin">
+                    <div class="col-sm-3 h1">
+                        <span class="text-with-picture">mappino</span>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="search-input-block">
+                            <input id="first-enter-autocomplete" type="text" class="form-control input-lg" ng-model="firstEnter.city" focus-on-load/>
+                            <div class="pin"></div>
+                            <div class="pulse"></div>
+                        </div>
+                    </div>
+                </div>
 
-    <div class="bwb-body text-center" ng-switch on="firstEnterPart">
+                <div class="row">
+                    <div class="col-sm-9 col-sm-offset-3 text-center search-input-text">
+                        Пожалуйста, введите город, например <span class="city-example">Черновцы</span>
+                    </div>
+                </div>
 
-        <div ng-switch-when="city">
-            <input id="fe-city-input" type="text" placeholder="" value="" class="form-control fe-city-input input-lg text-center" select-on-click>
-            <span class="text-muted cursor-icon">Укажите, пожалуйста, желаемый регион</span>
-        </div>
-
-        <div ng-switch-when="type">
-            <select id="fe-property-type-select" class="selectpicker" data-width="300px">
-                <option value="flat">Квартиры</option>
-                <option value="apartments">Аппартаменты</option>
-                <option value="house">Дома</option>
-                <option value="dacha">Дачи</option>
-                <option value="cottage">Коттеджы</option>
-                <option value="room">Комнаты</option>
-                <option value="trade">Торговые помещения</option>
-                <option value="office">Офисы</option>
-                <option value="warehouse">Склады</option>
-                <option value="business">Готовый бизнес</option>
-                <option value="catering">Обьекты общепита</option>
-                <option value="garage">Гаражы</option>
-                <option value="land">Земельные участки</option>
-            </select>
-            <br/>
-            <span class="text-muted cursor-icon">Укажите, пожалуйста, желаемый тип недвижимости</span>
-        </div>
-    </div>
-
-    <div class="bwb-footer">
-        <div class="bwb-footer-text">
-            <span class="text-muted">Возможно,</span> самый удобный поисковик недвижимости. <span class="text-muted">Binno. 2014.</span>
-        </div>
-        <div class="bwb-social-icons">
-            <a href="http://vk.com"></a>
-            <a href="http://facebook.com"></a>
-            <a href="http://twitter.com"></a>
-            <a href="http://plus.google.com"></a>
+                <div class="row top-margin padding-horizontal">
+                    <div class="col-sm-5">
+                        <h3>Экономьте время!</h3>
+                        <p>
+                            Просматривайте сразу несколько типо обьектов,
+                            разделяя их маркерами разных цветов.
+                        </p>
+                        <a href="http://google.com">Что еще можно сделать?</a>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="first-enter-picture">
+                            <img src="http://localhost/mappino_static/img/main/first-enter/common-z-1.png" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer footer-blue">
+                <a href="#">О сервисе</a>
+                <a href="#">Риелторам</a>
+            </div>
         </div>
     </div>
 </div>

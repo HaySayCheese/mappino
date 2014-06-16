@@ -66,7 +66,7 @@
             Загрузка обьектов
         </div>
 
-        <div class="map-info" ng-show="filters.map.zoom < 15">
+        <div class="map-info" ng-show="filters.map.zoom < 15 && !subdommain.length">
             Масштаб слишком большой. Попробуйте <a href ng-click="setMinimumZoom()">немного уменьшить</a>
         </div>
     </div>
@@ -89,6 +89,7 @@
     <script type="text/javascript" src="{{ static }}js/main/controllers/registrationCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/controllers/restoreAccessCtrl.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/controllers/publicationViewCtrl.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/controllers/firstEnterCtrl.js"></script>
 
     <script type="text/javascript" src="{{ static }}js/main/directives/selectOnClick.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/directives/focusOnLoad.js"></script>

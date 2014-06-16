@@ -15,13 +15,17 @@ app.factory('Markers', function(Queries, $rootScope) {
 //            lat: 89.99,
 //            lng: -179.99
 //        };
+        maxLat = 90,
+        minLat = -90,
+        maxLng = 180,
+        minLng = -180,
         nePoint = {
-            lat: 0,
-            lng: 0
+            lat: minLat,
+            lng: maxLng
         },
         swPoint= {
-            lat: 0,
-            lng: 0
+            lat: maxLat,
+            lng: minLng
         };
 
     return {
@@ -116,14 +120,19 @@ app.factory('Markers', function(Queries, $rootScope) {
 
 
 
+                            if (lat > minLat && lng < maxLng){
+                                if (lat > nePoint.lat)
+                                    nePoint.lat = lat;
 
-                            if (lat < nePoint.lat || lng > nePoint.lng) {
-                                nePoint.lat = lat;
-                                nePoint.lng = lng;
+                                if (lng < nePoint.lng)
+                                    nePoint.lng = lng;
                             }
-                            if (lat > swPoint.lat || lng < swPoint.lng) {
-                                swPoint.lat = lat;
-                                swPoint.lng = lng;
+                            if (lat < maxLat && lng > minLng){
+                                if (lat < swPoint.lat)
+                                    swPoint.lat = lat;
+
+                                if (lng > swPoint.lng)
+                                    swPoint.lng = lng;
                             }
                         }
                     }
@@ -176,12 +185,7 @@ app.factory('Markers', function(Queries, $rootScope) {
         },
 
         getViewport: function() {
-            var a = new google.maps.LatLngBounds(new google.maps.LatLng(nePoint.lat, nePoint.lng), new google.maps.LatLng(swPoint.lat, swPoint.lng));
-            console.log(nePoint.lat);
-            console.log(nePoint.lng);
-            console.log(swPoint.lat);
-            console.log(swPoint.lng);
-            return a;
+            return new google.maps.LatLngBounds(new google.maps.LatLng(nePoint.lat, nePoint.lng), new google.maps.LatLng(swPoint.lat, swPoint.lng));
         }
     }
 

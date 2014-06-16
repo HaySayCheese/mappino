@@ -256,6 +256,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 markers = data;
                 placeMarkers();
                 map.fitBounds(Markers.getViewport());
+                offsetCenter(map.getCenter(), -300);
             });
         } else {
             $rootScope.subdommain = "";
@@ -337,6 +338,33 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
 
     /**
+     * Встановлення оффсета для карти
+     */
+    function offsetCenter(latlng, offsetx, offsety) {
+
+        var scale = Math.pow(2, map.getZoom()),
+            worldCoordinateCenter = map.getProjection().fromLatLngToPoint(latlng),
+            pixelOffset = new google.maps.Point((offsetx / scale) || 0, (offsety / scale) || 0),
+
+            worldCoordinateNewCenter = new google.maps.Point(
+                worldCoordinateCenter.x - pixelOffset.x,
+                worldCoordinateCenter.y + pixelOffset.y
+            ),
+            newCenter = map.getProjection().fromPointToLatLng(worldCoordinateNewCenter);
+
+        if (!_.size(markers.red)) {
+            newCenter = new google.maps.LatLng(48.455935, 34.41285);
+            map.setCenter(newCenter);
+            map.setZoom(6);
+            return;
+        }
+
+        map.setCenter(newCenter);
+        map.setZoom(map.getZoom() - 1);
+    }
+
+
+    /**
      * Парсимо колекцію з фільтрами '$scope.filters'
      * Оновлюємо строку пошука все шо після '?')
      */
@@ -366,6 +394,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             .replace("/account/registration", "")
             .replace("/account/restore-access", "")
             .replace("/account/login", "")
+            .replace("/first-enter", "")
             .replace("/publication/" + $scope.publicationIdPart, "");
 
         if (!$scope.$$phase)
