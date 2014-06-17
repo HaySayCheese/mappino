@@ -7,3 +7,9 @@ from mappino.wsgi import templates
 def home(request):
 	template = templates.get_template('main/home.html')
 	return HttpResponse(content=template.render())
+
+
+@ensure_csrf_cookie
+def promo(request):
+	template = templates.get_template('main/promo.html')
+	return HttpResponse(content=template.render())
