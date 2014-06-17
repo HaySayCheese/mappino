@@ -1,35 +1,42 @@
 $(document).ready(function() {
 
 
-    var scrollableBlock = $(".wrapper"),
+    var scrollableBlock = $(document),
+        scrollableBlockImage = scrollableBlock.find(".img-holder"),
+        headerLinksBlock = scrollableBlock.find(".header-links");
 
-        scrollableBlockPart = scrollableBlock.find(".content-block-body"),
-        scrollableBlockPartImg = scrollableBlock.find("img");
-
-
-    scrollableBlockPart.css("margin-top", $(document).height());
-
+    scrollableBlockImage.imageScroll({
+        container: $('.wrapper'),
+        mediaHeight: 1080
+    });
 
 
     scrollableBlock.scroll(function() {
-        var scrollTop = scrollableBlock.scrollTop(),
-            headerLinksBlock = scrollableBlock.find(".header-links");
+        var scrollTop = scrollableBlock.scrollTop();
 
+        $(".image-caption")
+            .css("opacity", (100 / (scrollTop / 6)) - 1)
+            .css("top", '50%')
+            .css("top", '+=' + (scrollTop / 1.5));
 
-        headerLinksBlock.css({
-            "opacity": (100 / (scrollTop / 2 )) - 1.5,
-            "top": 50 + (scrollTop / 2)
-        });
+        if (scrollTop > $(window).height() - 70) {
+            headerLinksBlock.removeClass("slideOutUp").addClass("slideInDown panel");
+        } else if (headerLinksBlock.hasClass("panel") && !headerLinksBlock.hasClass("slideOutUp")) {
+                headerLinksBlock
+                    .removeClass("slideInDown")
+                    .addClass("slideOutUp")
 
-        headerLinksBlock.css("opacity") < 0.2 ? headerLinksBlock.css("display", "none") : headerLinksBlock.css("display", "block");
+                    .delay(300).queue(function(next) {
+                        $(this).removeClass("slideOutUp panel");
+                        next();
+                    })
+                    .addClass("slideInDown")
+                    .delay(250).queue(function(next) {
+                        $(this).removeClass("slideInDown");
 
-        scrollableBlockPartImg.css({
-            "-webkit-transform": "translate(0, " + (scrollTop / 2) + "px)",
-                "-ms-transform": "translate(0, " + (scrollTop / 2) + "px)",
-                    "transform": "translate(0, " + (scrollTop / 2) + "px)"
-        });
-
-        console.log(scrollTop / 3)
+                        next();
+                    });
+        }
     });
 
 });
