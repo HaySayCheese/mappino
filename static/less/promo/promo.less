@@ -1,0 +1,55 @@
+@import "../components/bootstrap";
+
+html, body, .wrapper {
+    .square(100%);
+}
+body {
+    overflow: hidden;
+}
+
+.wrapper {
+    position: relative;
+    overflow-y: auto;
+
+    .header-links {
+        position: absolute;
+        top: 50px;
+        right: 70px;
+        z-index: 10;
+
+        a {
+            color: #ffffff !important;
+            font-size: @font-size-h4;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+    }
+
+
+    .content-block {
+        //position: relative;
+        //overflow-y: scroll;
+
+        img {
+            position: absolute;
+            top: 0;
+            z-index: -1;
+            max-width: 100%;
+        }
+    }
+
+    .content-block-body {
+        //height: 500px;
+        position: relative;
+        margin-top: 500px;
+        background: #ffffff;
+
+        .box-shadow(~"0px 0px 15px rgba(0, 0, 0, .4)");
+        .clearfix();
+
+        div {
+            position: relative;
+            padding: 30px;
+        }
+    }
+}
