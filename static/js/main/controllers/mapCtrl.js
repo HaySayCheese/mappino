@@ -32,8 +32,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
         map: {
             city: "",
-            zoom: parseInt(15),
-            latLng: "50.449583,30.527024"
+            zoom: parseInt(6),
+            latLng: "48.455935, 34.41285"
         },
 
         base: {
@@ -114,26 +114,29 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        //Markers.clearPanelMarkers("red");
         loadData(newValue, "red", true)
     });
     $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        //Markers.clearPanelMarkers("blue");
         loadData(newValue, "blue", true)
     });
     $scope.$watchCollection("filters.green", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        //Markers.clearPanelMarkers("green");
         loadData(newValue, "green", true)
     });
     $scope.$watchCollection("filters.yellow", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        //Markers.clearPanelMarkers("yellow");
         loadData(newValue, "yellow", true)
+    });
+    $rootScope.$on("first-enter-change", function(event, data) {
+        $scope.filters.map.zoom = data[1];
+        $scope.filters.map.latLng = data[0];
+
+        map.panTo($scope.filters.map.latLng);
+        map.setZoom($scope.filters.map.zoom);
     });
 
 
