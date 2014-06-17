@@ -32,8 +32,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
         map: {
             city: "",
-            zoom: parseInt(15),
-            latLng: "50.449583,30.527024"
+            zoom: parseInt(6),
+            latLng: "48.455935, 34.41285"
         },
 
         base: {
@@ -114,26 +114,29 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        //Markers.clearPanelMarkers("red");
         loadData(newValue, "red", true)
     });
     $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        //Markers.clearPanelMarkers("blue");
         loadData(newValue, "blue", true)
     });
     $scope.$watchCollection("filters.green", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        //Markers.clearPanelMarkers("green");
         loadData(newValue, "green", true)
     });
     $scope.$watchCollection("filters.yellow", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        //Markers.clearPanelMarkers("yellow");
         loadData(newValue, "yellow", true)
+    });
+    $rootScope.$on("first-enter-change", function(event, data) {
+        $scope.filters.map.zoom = data[1];
+        $scope.filters.map.latLng = data[0];
+
+        map.panTo($scope.filters.map.latLng);
+        map.setZoom($scope.filters.map.zoom);
     });
 
 
@@ -256,6 +259,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 markers = data;
                 placeMarkers();
                 map.fitBounds(Markers.getViewport());
+                offsetCenter(map.getCenter(), -300);
             });
         } else {
             $rootScope.subdommain = "";
@@ -337,6 +341,33 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
 
     /**
+     * Встановлення оффсета для карти
+     */
+    function offsetCenter(latlng, offsetx, offsety) {
+
+        var scale = Math.pow(2, map.getZoom()),
+            worldCoordinateCenter = map.getProjection().fromLatLngToPoint(latlng),
+            pixelOffset = new google.maps.Point((offsetx / scale) || 0, (offsety / scale) || 0),
+
+            worldCoordinateNewCenter = new google.maps.Point(
+                worldCoordinateCenter.x - pixelOffset.x,
+                worldCoordinateCenter.y + pixelOffset.y
+            ),
+            newCenter = map.getProjection().fromPointToLatLng(worldCoordinateNewCenter);
+
+        if (!_.size(markers.red)) {
+            newCenter = new google.maps.LatLng(48.455935, 34.41285);
+            map.setCenter(newCenter);
+            map.setZoom(6);
+            return;
+        }
+
+        map.setCenter(newCenter);
+        map.setZoom(map.getZoom() - 1);
+    }
+
+
+    /**
      * Парсимо колекцію з фільтрами '$scope.filters'
      * Оновлюємо строку пошука все шо після '?')
      */
@@ -366,6 +397,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             .replace("/account/registration", "")
             .replace("/account/restore-access", "")
             .replace("/account/login", "")
+            .replace("/first-enter", "")
             .replace("/publication/" + $scope.publicationIdPart, "");
 
         if (!$scope.$$phase)
