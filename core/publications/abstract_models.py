@@ -263,7 +263,7 @@ class LivingHeadModel(models.Model):
 		self.deleted = None
 		self.save(force_update=True)
 
-		models_signals.unpublished.send(None, tid=self.tid, hid=self.id)
+		models_signals.unpublished.send(sender=None, tid=self.tid, hid=self.id)
 
 
 	def prolong(self, days=14):
@@ -291,7 +291,7 @@ class LivingHeadModel(models.Model):
 		self.deleted = now()
 		self.save()
 
-		models_signals.moved_to_trash.send(None, tid=self.tid, hid=self.id)
+		models_signals.moved_to_trash.send(sender=None, tid=self.tid, hid=self.id)
 
 
 	def delete(self, using=None):
@@ -314,7 +314,7 @@ class LivingHeadModel(models.Model):
 		# but the id will be None after deleting.
 		# So, for the correct work of all handlers related to this signal,
 		# it is emitted before the physical record removing.
-		models_signals.deleted_permanent.send(None, tid=self.tid, hid=self.id)
+		models_signals.deleted_permanent.send(sender=None, tid=self.tid, hid=self.id)
 
 		super(LivingHeadModel, self).delete()
 
