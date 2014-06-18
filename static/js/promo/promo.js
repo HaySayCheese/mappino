@@ -6,7 +6,8 @@ $(document).ready(function() {
         headerLinksBlock = scrollableBlock.find(".header-links");
 
     scrollableBlockImage.imageScroll({
-        container: $('.wrapper')
+        container: $('.wrapper'),
+        touch: Modernizr.touch
     });
 
 
@@ -17,10 +18,10 @@ $(document).ready(function() {
             .css("top", '50%')
             .css("top", '+=' + (scrollTop / 1.5))
             .find("h1")
-            .css("opacity", (100 / (scrollTop / 6)) - 2)
+            .css("opacity", (100 / (scrollTop / 6)) - 3)
             .parent()
             .find("img")
-            .css("opacity", (100 / (scrollTop / 6)) - 1);
+            .css("opacity", (100 / (scrollTop / 6)) - 2);
 
 
         /** Navbar */
@@ -47,7 +48,7 @@ $(document).ready(function() {
         var sections = $("section"),
             markers = $(".tablet-marker");
 
-        if (scrollTop > sections[0].offsetTop - 100) {
+        if (scrollTop > sections[0].offsetTop - 150) {
 
             $.each(markers, function(i, el) {
 //                $(el).addClass("fadeInDown");

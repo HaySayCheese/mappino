@@ -7,6 +7,7 @@
 
     <!-- Libs include -->
     <script type="text/javascript" src="{{ static }}js/libs/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/modernizr.touch-2.8.2.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/less-1.7.0.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/bootstrap-3.1.1.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/jquery.imageScroll.min.js"></script>
@@ -18,10 +19,12 @@
 <div class="wrapper">
 
     <div class="header-links animated text-right">
-        <div class="col-sm-12 col-lg-10 col-lg-offset-1">
-            <a href="#about-service">О сервисе</a>
-            <a href="#">Риелторам</a>
-            <a href="#">Помощь</a>
+        <div class="row">
+            <div class="col-sm-12 col-lg-10 col-lg-offset-1">
+                <a href="#about-service">О сервисе</a>
+                <a href="#">Риелторам</a>
+                <a href="#">Помощь</a>
+            </div>
         </div>
     </div>
 
@@ -35,27 +38,29 @@
         </div>
     </div>
     <section id="about-service">
-        <div class="col-sm-12 col-lg-10 col-lg-offset-1">
-            <div class="row">
-                <div class="col-sm-6">
-                    <h1>Знакомый регион</h1>
-                    <p class="h3">
-                        Просматривать обьявления на карте
-                        гораздо быстрее и удобнее, независимо
-                        от того какой регион вам интересен:
-                        большой город, его район, или даже
-                        отдельная улица.
-                    </p>
-                </div>
-                <div class="col-sm-6">
-                    <div class="section-image">
-                        <img src="{{ static }}img/promo/tablet.png" alt=""/>
+        <div class="row">
+            <div class="col-sm-12 col-lg-10 col-lg-offset-1">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h1>Знакомый регион</h1>
+                        <p class="h3">
+                            Просматривать обьявления на карте
+                            гораздо быстрее и удобнее, независимо
+                            от того какой регион вам интересен:
+                            большой город, его район, или даже
+                            отдельная улица.
+                        </p>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="section-image">
+                            <img src="{{ static }}img/promo/tablet.png" alt=""/>
 
-                        <div class="tablet-marker m-1 animated"></div>
-                        <div class="tablet-marker m-2 animated"></div>
-                        <div class="tablet-marker m-3 animated"></div>
-                        <div class="tablet-marker m-4 animated"></div>
-                        <div class="tablet-marker m-5 animated"></div>
+                            <div class="tablet-marker m-1 animated"></div>
+                            <div class="tablet-marker m-2 animated"></div>
+                            <div class="tablet-marker m-3 animated"></div>
+                            <div class="tablet-marker m-4 animated"></div>
+                            <div class="tablet-marker m-5 animated"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -71,7 +76,7 @@
     </section>
 
 
-    <div class="img-holder" data-cover-ratio="0.5" data-image="{{ static }}img/promo/promo-bg-1920x1080.jpg"></div>
+    <div class="img-holder" data-cover-ratio="0.5" data-height="600" data-image="{{ static }}img/promo/map_1600x600.jpg"></div>
     <section>
         <div class="col-sm-12 col-lg-8 col-lg-offset-2">
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa magnam minima nemo ratione? A accusantium aliquam aperiam consequuntur dolorem error eveniet expedita fugit minima modi molestias nostrum officia optio qui quidem quis, quod quos recusandae repellendus, repudiandae sapiente sit suscipit unde veritatis, vero voluptas voluptatibus voluptatum. Consequuntur cumque vel veritatis.</p>
