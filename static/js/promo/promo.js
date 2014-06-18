@@ -1,3 +1,5 @@
+"use strict";
+
 $(document).ready(function() {
 
 
@@ -11,6 +13,7 @@ $(document).ready(function() {
     });
 
 
+    /** Обробник евента скрола контента */
     scrollableBlock.scroll(function() {
         var scrollTop = scrollableBlock.scrollTop();
 
@@ -21,7 +24,7 @@ $(document).ready(function() {
             .css("opacity", (100 / (scrollTop / 6)) - 3)
             .parent()
             .find("img")
-            .css("opacity", (100 / (scrollTop / 6)) - 2);
+            .css("opacity", (100 / (scrollTop / 6)) - 1.8);
 
 
         /** Navbar */
@@ -42,6 +45,9 @@ $(document).ready(function() {
 
                         next();
                     });
+
+            $("a").removeClass("active");
+            window.location.hash = "main";
         }
 
         /** Markers */
@@ -51,24 +57,38 @@ $(document).ready(function() {
         if (scrollTop > sections[0].offsetTop - 150) {
 
             $.each(markers, function(i, el) {
-//                $(el).addClass("fadeInDown");
-
                 setTimeout(function() {
                     $(el).addClass("fadeInDown");
                 }, 300 + (i * 300));
             });
-
-
-//            for (var i = 0; i <= markers.length; i++) {
-//                $(".tablet-marker.m-" + i)
-//                    //.addClass("fadeInDown")
-//                    .delay(250).queue(function(next) {
-//                        $(this).addClass("fadeInDown");
-//
-//                        next();
-//                    });
-//            }
         }
     });
+
+
+    /** Скролимо до секції якщо є хеш в урлі */
+    window.location.hash && animateScroll(window.location.hash);
+
+
+    /** Скролимо до секції по кліку на ссилки */
+    headerLinksBlock.find('a').click(function(e) {
+        animateScroll($(this).attr("href"));
+
+        e.preventDefault();
+    });
+
+
+
+    /** Функція яка забезпечує плавний скрол */
+    function animateScroll(href) {
+        $('html, body').animate({
+            scrollTop: href != "#main" ? $(href).offset().top - 69 : 0
+        }, 500, function () {
+            window.location.hash = href;
+        });
+
+
+        $("a").removeClass("active");
+        $("a[href$=" + href +"]").addClass("active");
+    }
 
 });
