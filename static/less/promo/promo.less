@@ -6,6 +6,7 @@ body {
 
 .wrapper {
     position: relative;
+    overflow-x: hidden;
 
     .header-links {
         height: 70px;
@@ -22,6 +23,7 @@ body {
 
             a {
                 color: @gray-light !important;
+                text-shadow: none;
             }
         }
 
@@ -30,6 +32,7 @@ body {
             font-size: @font-size-h4;
             text-decoration: none;
             margin-left: 15px;
+            text-shadow: ~"0px 0px 5px rgba(0, 0, 0, 0.4)";
         }
     }
 
@@ -42,19 +45,69 @@ body {
         color: #ffffff;
 
         .translate(-50%, -50%);
+        text-shadow: ~"0px 0px 5px rgba(0, 0, 0, 0.4)";
     }
 
     section {
+        padding: 80px 40px;
         background: #ffffff;
         .box-shadow(~"0px 0px 15px rgba(0, 0, 0, .4)");
         .clearfix();
 
+        h1 {
+            margin-top: 100px;
+            font-size: 45px;
+            color: @gray-dark;
+        }
+
         p {
-            padding: 30px;
+            margin-top: 50px;
+            line-height: @line-height-large + 0.1;
+        }
+
+        .section-image {
+            position: relative;
+
+            img {
+                display: block;
+            }
         }
     }
 
 }
+
+
+.tablet-marker {
+    .size(36px, 49px);
+    position: absolute;
+
+    background: url("../../img/promo/red-marker.png") center center no-repeat;
+
+    &[class*='m-'] {
+        .translate(0, -2000px);
+    }
+    &.m-1 {
+        top: 140px;
+        left: 150px;
+    }
+    &.m-2 {
+        top: 130px;
+        left: 220px;
+    }
+    &.m-3 {
+        top: 230px;
+        left: 220px;
+    }
+    &.m-4 {
+        top: 165px;
+        left: 320px;
+    }
+    &.m-5 {
+        top: 230px;
+        left: 290px;
+    }
+}
+
 
 
 .animated {
@@ -101,7 +154,6 @@ body {
         .translate(0, -300px);
     }
 }
-
 @keyframes slideOutUp {
     0% {
         .opacity(100);
@@ -112,8 +164,36 @@ body {
         .translate(0, -300px);
     }
 }
-
 .slideOutUp {
     -webkit-animation-name: slideOutUp;
     animation-name: slideOutUp;
+}
+
+
+
+@-webkit-keyframes fadeInDown {
+    0% {
+        .opacity(0);
+        .translate(0, -2000px);
+    }
+    100% {
+        .opacity(100);
+        .translate(0, 0);
+    }
+}
+
+@keyframes fadeInDown {
+    0% {
+        .opacity(0);
+        .translate(0, -2000px);
+    }
+    100% {
+        .opacity(100);
+        .translate(0, 0);
+    }
+}
+
+.fadeInDown {
+    -webkit-animation-name: fadeInDown;
+    animation-name: fadeInDown;
 }
