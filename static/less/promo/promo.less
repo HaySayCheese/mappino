@@ -10,24 +10,34 @@ body {
 
     .header-links {
         height: 70px;
-        padding: 26px 0;
+        padding: 12px 0;
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         z-index: 10;
+        line-height: 45px;
 
         &.panel {
             background: #ffffff;
             border-bottom: 1px solid @gray-lighter;
 
-            a {
+            .btn {
+                visibility: visible;
+            }
+
+            a:not(.btn) {
                 color: @gray-light !important;
                 text-shadow: none;
             }
         }
 
-        a {
+        .btn {
+            border-radius: 0;
+            visibility: hidden;
+        }
+
+        a:not(.btn) {
             color: #ffffff !important;
             font-size: @font-size-h4;
             text-decoration: none;
@@ -72,6 +82,10 @@ body {
             padding: 60px 40px;
         }
 
+        &.with-padding-bottom {
+            padding-bottom: 60px;
+        }
+
         .section-image {
             position: relative;
 
@@ -81,6 +95,11 @@ body {
         }
     }
 
+}
+
+.btn.section-btn {
+    color: #ffffff !important;
+    text-decoration: none;
 }
 
 
