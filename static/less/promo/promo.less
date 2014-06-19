@@ -26,7 +26,7 @@ body {
                 visibility: visible;
             }
 
-            a {
+            a:not(.btn) {
                 color: @gray-light !important;
                 text-shadow: none;
             }
@@ -37,7 +37,7 @@ body {
             visibility: hidden;
         }
 
-        a {
+        a:not(.btn) {
             color: #ffffff !important;
             font-size: @font-size-h4;
             text-decoration: none;
@@ -78,12 +78,12 @@ body {
             line-height: @line-height-large + 0.1;
         }
 
-        .btn {
-            text-decoration: none;
-        }
-
         &.with-padding {
             padding: 60px 40px;
+        }
+
+        &.with-padding-bottom {
+            padding-bottom: 60px;
         }
 
         .section-image {
@@ -95,6 +95,11 @@ body {
         }
     }
 
+}
+
+.btn.section-btn {
+    color: #ffffff !important;
+    text-decoration: none;
 }
 
 
