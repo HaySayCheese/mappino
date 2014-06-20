@@ -2,6 +2,7 @@
 
 app.controller('FirstEnterCtrl', function($scope, $location, $rootScope) {
 
+    $rootScope.pageTitle = "Добро пожаловать на Mappino";
     $scope.firstEnter = {
         city: "",
         latLng: ""

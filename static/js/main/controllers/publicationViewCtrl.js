@@ -17,6 +17,7 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, Queries, lrNo
         $scope.publication = data;
 
         $scope.publicationLoaded = true;
+        $rootScope.pageTitle = data.data.title + " - Mappino";
 
         if (data.head.photos.length)
             preloadImage(data.head.photos[0]);

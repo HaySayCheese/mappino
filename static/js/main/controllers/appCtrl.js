@@ -2,6 +2,8 @@
 
 app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $routeParams) {
 
+    $rootScope.pageTitle = "Mappino";
+
     $rootScope.publicationTypes = [
         { name: "house", id: 0, title: "Дома",
             filters: [

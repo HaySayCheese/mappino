@@ -268,7 +268,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 zoom: $scope.publication.head.lat ? 17 : 8,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 mapTypeControl: false,
-                streetViewControl: false
+                streetViewControl: false,
+                scrollwheel: true
             },
             // Карта
             map = new google.maps.Map(document.getElementById("publication-map"), mapOptions),

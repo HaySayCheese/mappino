@@ -1,11 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="Mappino">
 <head>
-    <title>
-        {% block title %}
-            Mappino
-        {% endblock title %}
-    </title>
+    <title ng-bind="pageTitle"></title>
 
     <!-- Styles include -->
     <link rel="stylesheet/less" href="{{ static }}less/main/base.less"/>
@@ -48,7 +44,7 @@
 
     </script>
 </head>
-<body ng-app="Mappino" ng-controller="AppCtrl" ng-init="firstEnterInit()">
+<body ng-controller="AppCtrl" ng-init="firstEnterInit()">
 
     <div class="wrapper" ng-controller="MapCtrl" ng-init="parseSearchParametersFromUrl()" ng-cloak>
 

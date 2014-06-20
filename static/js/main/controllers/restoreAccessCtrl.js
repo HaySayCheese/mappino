@@ -7,6 +7,7 @@ app.controller('RestoreAccessCtrl', function($scope, $rootScope, $location) {
     /**
      * Стан вікна восстановлення пароля
      **/
+    $rootScope.pageTitle = "Восстановление пароля - Mappino";
     $rootScope.restoreAccessStatePart = "sendEmail";
 
     if ($location.search().token)

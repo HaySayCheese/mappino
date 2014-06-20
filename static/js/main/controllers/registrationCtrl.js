@@ -2,6 +2,7 @@
 
 app.controller('RegistrationCtrl', function($scope, $rootScope, $cookieStore) {
 
+    $rootScope.pageTitle = "Регистрация - Mappino";
     angular.element(".registration-modal").modal();
 
     /**
