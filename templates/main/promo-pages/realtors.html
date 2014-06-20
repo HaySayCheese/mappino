@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>О сервисе - Mappino</title>
+
+    <link rel="stylesheet/less" href="{{ static }}less/promo/promo.less"/>
+
+    <!-- Libs include -->
+    <script type="text/javascript" src="{{ static }}js/libs/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/modernizr.touch-2.8.2.min.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/less-1.7.0.min.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/bootstrap-3.1.1.min.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/jquery.imageScroll.min.js"></script>
+
+    <script type="text/javascript" src="{{ static }}js/promo/promo.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+
+    <div class="header-links animated text-right">
+        <div class="row">
+            <div class="col-sm-12 col-lg-10 col-lg-offset-1">
+                <a class="btn btn-success btn-lg pull-left section-btn" href="/#!/search">Попробовать</a>
+                <a href="/promo/">О сервисе</a>
+                <a href="/promo/realtors/" class="active">Риелторам</a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="img-holder" data-cover-ratio="1" data-image="{{ static }}img/promo/promo-bg-1600x900.jpg">
+        <div class="image-caption text-center">
+            <img src="{{ static }}img/promo/logo.png" alt=""/>
+            <h1>
+                Удобный поиск недвижимости
+            </h1>
+        </div>
+    </div>
+    <section class="with-padding">
+        <div class="row">
+            <div class="col-sm-12 col-lg-10 col-lg-offset-1">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h1>Знакомый регион</h1>
+                        <p class="h3">
+                            Просматривать обьявления на карте
+                            гораздо быстрее и удобнее, независимо
+                            от того какой регион вам интересен:
+                            большой город, его район, или даже
+                            отдельная улица.
+                        </p>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="section-image">
+                            <img src="{{ static }}img/promo/tablet.jpg" alt=""/>
+
+                            <div class="tablet-marker m-1 animated"></div>
+                            <div class="tablet-marker m-2 animated"></div>
+                            <div class="tablet-marker m-3 animated"></div>
+                            <div class="tablet-marker m-4 animated"></div>
+                            <div class="tablet-marker m-5 animated"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <div class="img-holder" data-cover-ratio="0.5" data-height="600" data-image="{{ static }}img/promo/2_1600x600.jpg"></div>
+    <section>
+        <div class="row">
+            <div class="col-sm-12 col-lg-10 col-lg-offset-1 text-center">
+                <div class="row">
+                    <h1>Экономьте время</h1>
+                    <p class="h3">
+                        Маркеры разных цветов позволяют быстро отличать предложения разных типов. <br/>
+                        Их можно настроить согласно с Вашими критериями на панели справа.
+                    </p>
+                </div>
+                <div class="row">
+                    <img src="{{ static }}img/promo/browser.jpg" alt=""/>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <div class="img-holder" data-cover-ratio="0.5" data-height="600" data-image="{{ static }}img/promo/street-1600x600.jpg"></div>
+    <section class="with-padding-bottom">
+        <div class="row">
+            <div class="col-sm-12 col-lg-10 col-lg-offset-1 text-center">
+                <h1>Попробуйте сейчас</h1>
+                <p>
+                    <a class="btn btn-success btn-xlg section-btn" href="/#!/search">Перейти к поиску</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+</body>
+</html>
