@@ -13,3 +13,9 @@ def home(request):
 def promo(request):
 	template = templates.get_template('main/promo.html')
 	return HttpResponse(content=template.render())
+
+
+@ensure_csrf_cookie
+def realtors_promo(request):
+	template = templates.get_template('main/realtors_promo.html')
+	return HttpResponse(content=template.render())
