@@ -11,11 +11,11 @@ def home(request):
 
 @ensure_csrf_cookie
 def promo(request):
-	template = templates.get_template('main/promo.html')
+	template = templates.get_template('main/promo-pages/promo.html')
 	return HttpResponse(content=template.render())
 
 
 @ensure_csrf_cookie
 def realtors_promo(request):
-	template = templates.get_template('main/realtors_promo.html')
+	template = templates.get_template('main/promo-pages/realtors.html')
 	return HttpResponse(content=template.render())
