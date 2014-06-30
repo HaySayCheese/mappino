@@ -1,4 +1,4 @@
-from apps.cabinet.api.accounts.ajax import AccountManager
+from apps.cabinet.api.settings.ajax import AccountManager
 from django.conf.urls import patterns, url
 
 
