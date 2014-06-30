@@ -4,7 +4,7 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
 
     $rootScope.pageTitle = "Добро пожаловать на Mappino";
     $scope.firstEnter = {
-        city: "",
+        city: $location.search().city || "",
         latLng: ""
     };
 
