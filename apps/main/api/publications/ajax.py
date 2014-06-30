@@ -14,6 +14,9 @@ class DetailedView(View):
 	    'invalid_parameters': {
 		    'code': 1
 	    },
+	    'unpublished': {
+		    'code': 2
+	    }
 	}
 
 	def __init__(self):
@@ -38,10 +41,11 @@ class DetailedView(View):
 			return HttpResponseBadRequest(
 				json.dumps(self.codes['invalid_parameters']), content_type='application/json')
 
-		if not settings.DEBUG:
-			# Якщо оголошення не опубліковано — заборонити показ.
-			if not publication.is_published():
-				raise SuspiciousOperation('Publication is unpublished.')
+		# Якщо оголошення не опубліковано — заборонити показ.
+		if not publication.is_published():
+			return HttpResponse(
+				json.dumps(self.codes['unpublished']), content_type='application/json')
+
 
 		description = self.formatter.format(tid, publication)
 
