@@ -12,7 +12,6 @@ from collective.methods.request_data_getters import angular_post_parameters
 from core.users.classes import UserAvatar
 from core.users.constants import Preferences
 from core.users.models import Users
-from core.users import exceptions as users_exceptions
 
 
 class AccountManager(object):
@@ -148,7 +147,7 @@ class AccountManager(object):
 
 		def post(self, request, *args):
 			try:
-				params = angular_post_parameters(request, ['f', 'v'])
+				params = angular_post_parameters(request)
 				field = params.get('f', '')
 				value = params.get('v', '')
 			except ValueError:
