@@ -8,6 +8,7 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
     $rootScope.loadings.ticketData = false;
 
     $scope.message = {};
+    $scope.subject = "";
     $scope.admin_avatar = {};
     $scope.user_avatar = {};
 
@@ -38,6 +39,7 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
             $rootScope.loadings.ticketData = false;
 
             $scope.messages = data.messages;
+            $scope.subject = data.subject;
             $scope.admin_avatar = data.admin_avatar;
             $scope.user_avatar = data.user_avatar;
         });

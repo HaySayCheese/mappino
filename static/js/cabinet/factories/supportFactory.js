@@ -1,6 +1,8 @@
 'use strict';
 
-app.factory('Support', function($rootScope, $location, Queries) {
+app.factory('Support', function($rootScope, $location, lrNotifier, Queries) {
+
+    var channel = lrNotifier('mainChannel');
 
     return {
 
@@ -51,6 +53,10 @@ app.factory('Support', function($rootScope, $location, Queries) {
          */
         sendMessage: function(ticketId, message, callback) {
             Queries.Support.sendMessage(ticketId, message, function(data) {
+
+                if (data.code !== 0)
+                    channel.info("При отправке сообщения возникла ошибка");
+
                 _.isFunction(callback) && callback(data);
             });
         }

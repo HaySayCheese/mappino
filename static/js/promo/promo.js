@@ -17,14 +17,17 @@ $(document).ready(function() {
     scrollableBlock.scroll(function() {
         var scrollTop = scrollableBlock.scrollTop();
 
-        $(".image-caption")
-            .css("top", '50%')
-            .css("top", '+=' + (scrollTop / 1.5))
-            .find("h1")
-            .css("opacity", (100 / (scrollTop / 6)) - 3)
-            .parent()
-            .find("img")
-            .css("opacity", (100 / (scrollTop / 6)) - 1.8);
+        setTimeout(function() {
+            $(".image-caption")
+                .css("top", '50%')
+                .css("top", '+=' + (scrollTop / 1.5) + 'px')
+                .find("h1")
+                .css("opacity", (100 / (scrollTop / 6)) - 3)
+                .parent()
+                .find("img")
+                .css("opacity", (100 / (scrollTop / 6)) - 1.8);
+        }, 100);
+
 
 
         /** Navbar */

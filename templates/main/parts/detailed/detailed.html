@@ -27,8 +27,6 @@
         </div>
 
 
-
-
         <div class="modal-content content-white" ng-switch-when="Detailed">
             <div class="publication-photo pull-left">
                 <div class="photo" ng-show="publication.head.title_photo" ng-click="changeBasePart()">
@@ -302,6 +300,12 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+
+        <div class="modal-content content-white text-center" ng-switch-when="PublicationNF">
+            <img src="{{ static }}img/promo/logo.png" alt=""/>
+            <h2>К сожалению, объявление снято с публикации.</h2>
         </div>
     </div>
 </div>

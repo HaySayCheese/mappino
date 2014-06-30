@@ -1,7 +1,7 @@
 'use strict';
 
 
-app.controller('publicationViewCtrl', function($scope, $rootScope, Queries, lrNotifier) {
+app.controller('publicationViewCtrl', function($scope, $rootScope, Queries) {
     $scope.publicationViewPart = "Detailed";
     $scope.publicationViewDetailedPart = "Description";
 
@@ -14,6 +14,8 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, Queries, lrNo
 
 
     Queries.Map.getPublicationDescription($rootScope.publicationIdPart).success(function(data) {
+        data.code === 2 ? $scope.publicationViewPart = "PublicationNF" : $scope.publicationViewPart = "Detailed";
+
         $scope.publication = data;
 
         $scope.publicationLoaded = true;

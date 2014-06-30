@@ -127,7 +127,7 @@ app.factory('Queries', function($http, $q, $upload) {
             },
 
             sendMessage: function(ticketId, message, callback) {
-                return $http.post("/ajax/api/cabinet/support/tickets/" + ticketId + "/messages/", message).success(callback);
+                return $http.post("/ajax/api/cabinet/support/tickets/" + ticketId + "/messages/", message).then(callback);
             }
         }
 

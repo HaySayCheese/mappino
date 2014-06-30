@@ -52,9 +52,6 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
         $timeout(function() {
             angular.element(input).focus().trigger("change");
         }, 100);
-
-
-        returnMapPositionFromAddress(city);
     };
 
 
