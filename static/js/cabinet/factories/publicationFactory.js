@@ -124,10 +124,11 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
          * @param {function} callback
          */
         publish: function(tid, id, callback) {
-            Queries.Publications.publish(tid, id, function(data) {
+            Queries.Publications.publish(tid, id).success(function(data) {
 
-                if (data.code != 0) {
+                if (data.data.code !== 0) {
                     channel.info("При публикации произошла ошибка, попробуйте еще раз");
+                    _.isFunction(callback) && callback(data);
                     return;
                 }
 
@@ -147,7 +148,10 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
                 channel.info("Объявление успешно опубликовано");
 
                 _.isFunction(callback) && callback(data);
-            });
+            }).error(function(data) {
+                channel.info("При публикации произошла ошибка, попробуйте еще раз");
+                _.isFunction(callback) && callback(data);
+            })
         },
 
 

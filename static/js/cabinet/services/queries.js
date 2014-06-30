@@ -50,8 +50,8 @@ app.factory('Queries', function($http, $q, $upload) {
                 return $http.post('/ajax/api/cabinet/publications/', publication).success(callback);
             },
 
-            publish: function(tid, hid, callback) {
-                return $http.put('/ajax/api/cabinet/publications/' + tid + ":" + hid + '/publish/').then(callback);
+            publish: function(tid, hid) {
+                return $http.put('/ajax/api/cabinet/publications/' + tid + ":" + hid + '/publish/');
             },
 
             unpublish: function(tid, hid, callback) {
