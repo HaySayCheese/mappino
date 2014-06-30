@@ -1999,8 +1999,6 @@ class TradesBodies(BodyModel):
 			raise EmptyFloor('Floor is None.')
 		if self.halls_area is None:
 			raise EmptyHallsArea('Halls area is None.')
-		if self.halls_count is None:
-			raise EmptyHallsCount('Halls count is None.')
 
 
 	# output
