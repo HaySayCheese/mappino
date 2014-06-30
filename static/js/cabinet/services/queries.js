@@ -51,7 +51,7 @@ app.factory('Queries', function($http, $q, $upload) {
             },
 
             publish: function(tid, hid, callback) {
-                return $http.put('/ajax/api/cabinet/publications/' + tid + ":" + hid + '/publish/').success(callback);
+                return $http.put('/ajax/api/cabinet/publications/' + tid + ":" + hid + '/publish/').then(callback);
             },
 
             unpublish: function(tid, hid, callback) {
@@ -74,8 +74,7 @@ app.factory('Queries', function($http, $q, $upload) {
                 return $upload.upload({
                     url: '/ajax/api/cabinet/publications/' + tid + ':' + hid + '/photos/',
                     file: photos
-                })
-                .success(callback);
+                }).then(callback);
             },
 
             removePhoto: function(tid, hid, pid, callback) {
@@ -105,7 +104,7 @@ app.factory('Queries', function($http, $q, $upload) {
                 return $upload.upload({
                     url: '/ajax/api/cabinet/account/photo/',
                     file: photo
-                }).success(callback);
+                }).then(callback);
             },
 
             logoutUser: function(callback) {
