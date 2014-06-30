@@ -1,11 +1,9 @@
 #coding=utf-8
 import json
-
-from core.publications import classes
-from django.conf import settings
-from django.core.exceptions import SuspiciousOperation
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.generic import View
+
+from core.publications import classes
 from core.publications.constants import HEAD_MODELS
 
 
