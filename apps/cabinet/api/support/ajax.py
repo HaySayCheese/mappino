@@ -45,7 +45,10 @@ class Support(object):
 
 			empty_tickets = Tickets.objects.filter(
 				Q(
-					Q(subject=None) or Q(subject='')
+					owner = request.user.id,
+				),
+				Q(
+					Q(subject=None) or Q(subject=''),
 				),
 				~Q(id__in=Messages.objects.values_list('ticket_id'))
 			).only('id')[:1]
@@ -126,6 +129,7 @@ class Support(object):
 			ticket = ticket[0]
 
 			result = {
+				'subject': ticket.subject,
 				'user_avatar': request.user.avatar().url(),
 			    # 'admin_avatar': '', # todo: add admin avatar here.
 				'messages': [{
@@ -183,7 +187,6 @@ class Support(object):
 			except EmptyArgument:
 				return HttpResponseBadRequest(json.dumps(
 					self.post_codes['invalid_parameters']), content_type='application/json')
-
 
 			support_agents_notifier.send_notification(ticket, message, request.user.full_name())
 			return HttpResponse(json.dumps(self.post_codes['ok']), content_type="application/json")

@@ -1,7 +1,7 @@
 #coding=utf-8
 from django.conf import settings
 import mandrill
-from collective.exceptions import InvalidArgument
+from collective.exceptions import InvalidArgument, RuntimeException
 from mappino.wsgi import templates
 
 
@@ -24,7 +24,8 @@ class SupportAgentsNotifier(object):
 			},
 		    'message': message,
 		})
-		self.__send_email(ticket, html, user_name)
+		if not self.__send_email(ticket, html, user_name):
+			raise RuntimeException('Emails was not sent.')
 
 
 	def send_empty_answer_notification(self, ticket, html):
@@ -36,7 +37,8 @@ class SupportAgentsNotifier(object):
 		html = templates.get_template('email/support/auto_responses/empty_answer.html').render({
 		    'html': html
 		})
-		self.__send_email(ticket, html)
+		if not self.__send_email(ticket, html):
+			raise RuntimeException('Emails was not sent.')
 
 
 	def send_closed_ticket_notification(self, ticket):
@@ -46,7 +48,8 @@ class SupportAgentsNotifier(object):
 		що клієнт закрив тікет.
 		"""
 		html = templates.get_template('email/support/auto_responses/closed_ticket.html').render()
-		self.__send_email(ticket, html)
+		if not self.__send_email(ticket, html):
+			raise RuntimeException('Emails was not sent.')
 
 
 	def send_nonexistent_ticket_notification(self, ticket):
@@ -56,7 +59,9 @@ class SupportAgentsNotifier(object):
 		(наприклад, якшо тікет був фізично видалений)
 		"""
 		html = templates.get_template('email/support/auto_responses/nonexistent_ticket.html').render()
-		self.__send_email(ticket, html)
+		if not self.__send_email(ticket, html):
+			raise RuntimeException('Emails was not sent.')
+
 
 
 	def __send_email(self, ticket, html, user_name=None):
@@ -68,16 +73,16 @@ class SupportAgentsNotifier(object):
 			user_name = ''
 
 		message = {
-			'from_email': 'support@mandrill-3702849048.mappino.com',
-			'from_name': '{user_name} (support-request)'.format(user_name = user_name),
+			'from_email': u'support@mandrill-3702849048.mappino.com',
+			'from_name': u'{user_name}'.format(user_name = user_name),
 			'to': [{
-				'type': 'to',
+				'type': u'to',
 				'email': settings.SUPPORT_EMAIL,
 			}],
 		    'subject': u'Ticket {0}: {1}'.format(ticket.id, ticket.subject),
 			'html': html,
 			'headers': {
-				'Reply-To': 'support@mandrill-3702849048.mappino.com', # todo: add web hook here
+				'Reply-To': u'support@mandrill-3702849048.mappino.com', # todo: add web hook here
 			    'X-Ticket-Id': unicode(ticket.id),
 			},
 		}
