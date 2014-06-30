@@ -125,6 +125,12 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
          */
         publish: function(tid, id, callback) {
             Queries.Publications.publish(tid, id, function(data) {
+
+                if (data.code != 0) {
+                    channel.info("При публикации произошла ошибка, попробуйте еще раз");
+                    return;
+                }
+
                 var briefs = Briefs.getAll();
 
                 _.each(briefs, function(brief, index, list) {
@@ -267,6 +273,13 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
          */
         uploadPhotos: function(tid, hid, data, callback) {
             Queries.Publications.uploadPhotos(tid, hid, data, function(data) {
+
+                if (data.code === 100) {
+                    channel.info("Во время загрузки возникла ошибка. Повторите попытку с другим изображением");
+                    _.isFunction(callback) && callback(data);
+                    return;
+                }
+
                 publication.photos.push(data.image);
 
                 _.isFunction(callback) && callback(data);
