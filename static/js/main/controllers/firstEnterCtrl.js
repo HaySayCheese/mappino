@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('FirstEnterCtrl', function($scope, $location, $rootScope) {
+app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScope) {
 
     $rootScope.pageTitle = "Добро пожаловать на Mappino";
     $scope.firstEnter = {
@@ -8,13 +8,14 @@ app.controller('FirstEnterCtrl', function($scope, $location, $rootScope) {
         latLng: ""
     };
 
+    var input = document.getElementById('first-enter-autocomplete');
+
     var firstEnterModal = angular.element(".first-enter-modal");
     firstEnterModal.modal();
 
 
     $scope.initializeAutocomplete = function() {
-        var input = document.getElementById('first-enter-autocomplete'),
-            autocomplete,
+        var autocomplete,
             autocompleteOptions = {
                 types:  ['(cities)'],
                 componentRestrictions: {
@@ -48,10 +49,12 @@ app.controller('FirstEnterCtrl', function($scope, $location, $rootScope) {
 
     $scope.setCityFromExample = function(city) {
         $scope.firstEnter.city = city;
+        $timeout(function() {
+            angular.element(input).focus().trigger("change");
+        }, 100);
+
 
         returnMapPositionFromAddress(city);
-//        $rootScope.$emit('first-enter-change', [returnMapPositionFromAddress(city), 17]);
-        firstEnterDone();
     };
 
 
