@@ -1,7 +1,9 @@
+#coding=utf-8
 import json
 
 from django.http.response import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
+from apps.cabinet.api.dirtags.models import DirTags
 
 from apps.cabinet.api.publications.briefs.utils import briefs_of_publications
 from collective.decorators.views import login_required_or_forbidden
@@ -23,7 +25,6 @@ def search(request):
 		return HttpResponseBadRequest(
 			json.dumps(search_codes['invalid_query']), content_type='application/json')
 
-	found_ids = search_manager.process_search_query(query, request.user.id)
-	bries = briefs_of_publications(found_ids, request.user.id)
-
+	pubs_ids = search_manager.process_search_query(query, request.user.id)
+	bries = briefs_of_publications(pubs_ids, request.user.id)
 	return HttpResponse(json.dumps(bries), content_type='application/json')

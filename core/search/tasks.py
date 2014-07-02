@@ -6,11 +6,11 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
 from core.publications.constants import OBJECTS_TYPES
-from core.publications.models import HousesHeads, FlatsHeads, ApartmentsHeads, CottagesHeads, RoomsHeads
+from core.publications.models import HousesHeads, FlatsHeads, ApartmentsHeads, RoomsHeads, CottagesHeads, TradesHeads, \
+	OfficesHeads, WarehousesHeads, BusinessesHeads, CateringsHeads, GaragesHeads, LandsHeads
 from core.publications.objects_constants.houses import HOUSE_SALE_TYPES
 from core.search.utils import sale_terms_index_data, living_rent_terms_index_data, house_body_index_data, \
-	flat_body_index_data, apartments_body_index_data, cottage_body_index_data, \
-	room_body_index_data, commercial_rent_terms_index_data, trades_body_index_data, office_body_index_data, \
+	flat_body_index_data, apartments_body_index_data, room_body_index_data, commercial_rent_terms_index_data, trades_body_index_data, office_body_index_data, \
 	warehouse_body_index_data, business_body_index_data, catering_body_index_data, garage_body_index_data, \
 	land_body_index_data
 from mappino.celery import app
@@ -90,7 +90,8 @@ def update_house_index(self, hid):
 		    description = head.body.description if head.body.description else u'' +
 		                  house_body_index_data(head.body),
 		    sale_terms = sale_terms_idx,
-		    rent_terms = living_rent_terms_index_data(head)
+		    rent_terms = living_rent_terms_index_data(head),
+		    other='дом, дома, дача, дачи, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -106,7 +107,7 @@ def update_flat_index(self, hid):
 			raise Reject(e, requeue=False)
 
 		self.update_index(
-			tid = OBJECTS_TYPES.house(),
+			tid = OBJECTS_TYPES.flat(),
 			hid = hid,
 		    uid = head.owner.id,
 			title = head.body.title if head.body.title else u'',
@@ -114,6 +115,7 @@ def update_flat_index(self, hid):
 		                  flat_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = living_rent_terms_index_data(head),
+		    other='квартиры, квартира, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -129,7 +131,7 @@ def update_apartments_index(self, hid):
 			raise Reject(e, requeue=False)
 
 		self.update_index(
-			tid = OBJECTS_TYPES.house(),
+			tid = OBJECTS_TYPES.apartments(),
 			hid = hid,
 		    uid = head.owner.id,
 			title = head.body.title if head.body.title else u'',
@@ -137,6 +139,7 @@ def update_apartments_index(self, hid):
 		                  apartments_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = living_rent_terms_index_data(head),
+		    other='апартаменты, апартамент, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -146,7 +149,7 @@ def update_apartments_index(self, hid):
 def update_cottage_index(self, hid):
 	try:
 		try:
-			head = HousesHeads.by_id(hid, select_body=True)
+			head = CottagesHeads.by_id(hid, select_body=True)
 		except ObjectDoesNotExist as e:
 			raise Reject(e, requeue=False)
 
@@ -158,40 +161,41 @@ def update_cottage_index(self, hid):
 		sale_terms_idx += sale_type_idx
 
 		self.update_index(
-			tid = OBJECTS_TYPES.house(),
+			tid = OBJECTS_TYPES.cottage(),
 			hid = hid,
 		    uid = head.owner.id,
 			title = head.body.title if head.body.title else u'',
 		    description = head.body.description if head.body.description else u'' +
 		                  house_body_index_data(head.body),
 		    sale_terms = sale_terms_idx,
-		    rent_terms = living_rent_terms_index_data(head)
+		    rent_terms = living_rent_terms_index_data(head),
+		    other='коттеджи, коттедж, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
 
-
-
-@app.task(bind=True, base=SphinxUpdateIndexTask)
-def update_cottage_index(self, hid):
-	try:
-		try:
-			head = CottagesHeads.by_id(hid, select_body=True)
-		except ObjectDoesNotExist as e:
-			raise Reject(e, requeue=False)
-
-		self.update_index(
-			tid = OBJECTS_TYPES.house(),
-			hid = hid,
-		    uid = head.owner.id,
-			title = head.body.title if head.body.title else u'',
-		    description = head.body.description if head.body.description else u'' +
-		                 cottage_body_index_data(head.body),
-		    sale_terms = sale_terms_index_data(head),
-		    rent_terms = living_rent_terms_index_data(head)
-		)
-	except Exception as e:
-		self.retry(exc=e)
+#
+# todo: possible deprecated method
+# @app.task(bind=True, base=SphinxUpdateIndexTask)
+# def update_cottage_index(self, hid):
+# 	try:
+# 		try:
+# 			head = CottagesHeads.by_id(hid, select_body=True)
+# 		except ObjectDoesNotExist as e:
+# 			raise Reject(e, requeue=False)
+#
+# 		self.update_index(
+# 			tid = OBJECTS_TYPES.cottage(),
+# 			hid = hid,
+# 		    uid = head.owner.id,
+# 			title = head.body.title if head.body.title else u'',
+# 		    description = head.body.description if head.body.description else u'' +
+# 		                 cottage_body_index_data(head.body),
+# 		    sale_terms = sale_terms_index_data(head),
+# 		    rent_terms = living_rent_terms_index_data(head)
+# 		)
+# 	except Exception as e:
+# 		self.retry(exc=e)
 
 
 
@@ -204,7 +208,7 @@ def update_room_index(self, hid):
 			raise Reject(e, requeue=False)
 
 		self.update_index(
-			tid = OBJECTS_TYPES.house(),
+			tid = OBJECTS_TYPES.room(),
 			hid = hid,
 		    uid = head.owner.id,
 			title = head.body.title if head.body.title else u'',
@@ -212,6 +216,7 @@ def update_room_index(self, hid):
 		                  room_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = living_rent_terms_index_data(head),
+		    other='комнаты, комната, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -222,12 +227,12 @@ def update_room_index(self, hid):
 def update_trade_index(self, hid):
 	try:
 		try:
-			head = RoomsHeads.by_id(hid, select_body=True)
+			head = TradesHeads.by_id(hid, select_body=True)
 		except ObjectDoesNotExist as e:
 			raise Reject(e, requeue=False)
 
 		self.update_index(
-			tid = OBJECTS_TYPES.house(),
+			tid = OBJECTS_TYPES.trade(),
 			hid = hid,
 		    uid = head.owner.id,
 			title = head.body.title if head.body.title else u'',
@@ -235,6 +240,7 @@ def update_trade_index(self, hid):
 		                  trades_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = commercial_rent_terms_index_data(head),
+		    other='торговые помещения, торговое помещение, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -245,12 +251,12 @@ def update_trade_index(self, hid):
 def update_office_index(self, hid):
 	try:
 		try:
-			head = RoomsHeads.by_id(hid, select_body=True)
+			head = OfficesHeads.by_id(hid, select_body=True)
 		except ObjectDoesNotExist as e:
 			raise Reject(e, requeue=False)
 
 		self.update_index(
-			tid = OBJECTS_TYPES.house(),
+			tid = OBJECTS_TYPES.office(),
 			hid = hid,
 		    uid = head.owner.id,
 			title = head.body.title if head.body.title else u'',
@@ -258,6 +264,7 @@ def update_office_index(self, hid):
 		                  office_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = commercial_rent_terms_index_data(head),
+		    other='офис, офисы, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -268,12 +275,12 @@ def update_office_index(self, hid):
 def update_warehouse_index(self, hid):
 	try:
 		try:
-			head = RoomsHeads.by_id(hid, select_body=True)
+			head = WarehousesHeads.by_id(hid, select_body=True)
 		except ObjectDoesNotExist as e:
 			raise Reject(e, requeue=False)
 
 		self.update_index(
-			tid = OBJECTS_TYPES.house(),
+			tid = OBJECTS_TYPES.warehouse(),
 			hid = hid,
 		    uid = head.owner.id,
 			title = head.body.title if head.body.title else u'',
@@ -281,6 +288,7 @@ def update_warehouse_index(self, hid):
 		                  warehouse_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = commercial_rent_terms_index_data(head),
+		    other='склад, склады, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -291,12 +299,12 @@ def update_warehouse_index(self, hid):
 def update_business_index(self, hid):
 	try:
 		try:
-			head = RoomsHeads.by_id(hid, select_body=True)
+			head = BusinessesHeads.by_id(hid, select_body=True)
 		except ObjectDoesNotExist as e:
 			raise Reject(e, requeue=False)
 
 		self.update_index(
-			tid = OBJECTS_TYPES.house(),
+			tid = OBJECTS_TYPES.business(),
 			hid = hid,
 		    uid = head.owner.id,
 			title = head.body.title if head.body.title else u'',
@@ -304,6 +312,7 @@ def update_business_index(self, hid):
 		                  business_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = commercial_rent_terms_index_data(head),
+		    other='готовый бизнес, готовые бизнесы, бизнес, бизнесы, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -314,12 +323,12 @@ def update_business_index(self, hid):
 def update_catering_index(self, hid):
 	try:
 		try:
-			head = RoomsHeads.by_id(hid, select_body=True)
+			head = CateringsHeads.by_id(hid, select_body=True)
 		except ObjectDoesNotExist as e:
 			raise Reject(e, requeue=False)
 
 		self.update_index(
-			tid = OBJECTS_TYPES.house(),
+			tid = OBJECTS_TYPES.catering(),
 			hid = hid,
 		    uid = head.owner.id,
 			title = head.body.title if head.body.title else u'',
@@ -327,6 +336,7 @@ def update_catering_index(self, hid):
 		                  catering_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = commercial_rent_terms_index_data(head),
+		    other='общепит, общепиты, питание, питания, общественные, общественного, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -337,12 +347,12 @@ def update_catering_index(self, hid):
 def update_garage_index(self, hid):
 	try:
 		try:
-			head = RoomsHeads.by_id(hid, select_body=True)
+			head = GaragesHeads.by_id(hid, select_body=True)
 		except ObjectDoesNotExist as e:
 			raise Reject(e, requeue=False)
 
 		self.update_index(
-			tid = OBJECTS_TYPES.house(),
+			tid = OBJECTS_TYPES.garage(),
 			hid = hid,
 		    uid = head.owner.id,
 			title = head.body.title if head.body.title else u'',
@@ -350,6 +360,7 @@ def update_garage_index(self, hid):
 		                  garage_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = commercial_rent_terms_index_data(head),
+		    other='гараж, гаражи, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -360,12 +371,12 @@ def update_garage_index(self, hid):
 def update_land_index(self, hid):
 	try:
 		try:
-			head = RoomsHeads.by_id(hid, select_body=True)
+			head = LandsHeads.by_id(hid, select_body=True)
 		except ObjectDoesNotExist as e:
 			raise Reject(e, requeue=False)
 
 		self.update_index(
-			tid = OBJECTS_TYPES.house(),
+			tid = OBJECTS_TYPES.land(),
 			hid = hid,
 		    uid = head.owner.id,
 			title = head.body.title if head.body.title else u'',
@@ -373,6 +384,7 @@ def update_land_index(self, hid):
 		                  land_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = commercial_rent_terms_index_data(head),
+		    other='земельные участки, земельный участок, земля, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
