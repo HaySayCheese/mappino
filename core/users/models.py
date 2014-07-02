@@ -272,42 +272,44 @@ class AccessRestoreTokens(models.Model):
 			return cls.objects.create(user=user_id, token=token)
 
 
-
-class PersonalPagesAliases(models.Model):
-	class Meta:
-		db_table = "users_personal_page_aliases"
-
-
-	user = models.ForeignKey(Users, unique=True)
-	alias = models.TextField(unique=True)
-
-	@staticmethod
-	def is_valid(alias):
-		if not alias:
-			return False
-
-		# is alias contains only latin symbols?
-		only_latin = re.match("[a-z]+", alias)
-		if not only_latin:
-			return False
-
-		return True
-
-	@classmethod
-	def contains(cls, alias, exclude_user=None):
-		if exclude_user is None:
-			return cls.objects.filter(alias=alias).count() > 0
-
-		else:
-			# визначити чи не зустрічається alias в межах таблиці,
-			# виключаючи користувача exclude_user
-			users_records = cls.objects.filter(user=exclude_user).only('id')
-			if not users_records:
-				return cls.objects.filter(alias=alias).count() > 0
-
-
-			users_alias = users_records[0].alias
-			if users_alias == alias:
-				return cls.objects.filter(alias=alias).count() > 1
-			else:
-				return cls.objects.filter(alias=alias).count() > 0
+# todo: 1.01
+# Фіча повинна буде реалізована в наступному релізі
+#
+# class PersonalPagesAliases(models.Model):
+# 	class Meta:
+# 		db_table = "users_personal_page_aliases"
+#
+#
+# 	user = models.ForeignKey(Users, unique=True)
+# 	alias = models.TextField(unique=True)
+#
+# 	@staticmethod
+# 	def is_valid(alias):
+# 		if not alias:
+# 			return False
+#
+# 		# is alias contains only latin symbols?
+# 		only_latin = re.match("[a-z]+", alias)
+# 		if not only_latin:
+# 			return False
+#
+# 		return True
+#
+# 	@classmethod
+# 	def contains(cls, alias, exclude_user=None):
+# 		if exclude_user is None:
+# 			return cls.objects.filter(alias=alias).count() > 0
+#
+# 		else:
+# 			# визначити чи не зустрічається alias в межах таблиці,
+# 			# виключаючи користувача exclude_user
+# 			users_records = cls.objects.filter(user=exclude_user).only('id')
+# 			if not users_records:
+# 				return cls.objects.filter(alias=alias).count() > 0
+#
+#
+# 			users_alias = users_records[0].alias
+# 			if users_alias == alias:
+# 				return cls.objects.filter(alias=alias).count() > 1
+# 			else:
+# 				return cls.objects.filter(alias=alias).count() > 0

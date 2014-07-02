@@ -1,3 +1,4 @@
+#coding=utf-8
 from collective.constants import AbstractConstant
 
 
@@ -28,14 +29,11 @@ class MessageNotificationTypes(AbstractConstant):
 	def __init__(self):
 		super(MessageNotificationTypes, self).__init__()
 		self.set_ids({
-			'sms': 0,
+			# id починались з 0,
+		    # але тут був старий пункт sms: 0
 		    'email': 1,
 		    'sms_and_email': 2,
 		})
-
-
-	def sms(self):
-		return self.ids['sms']
 
 
 	def email(self):
