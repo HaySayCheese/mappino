@@ -3,6 +3,7 @@ import Queue
 
 import MySQLdb
 from django.conf import settings
+from apps.cabinet.api.dirtags import DirTags
 
 from core.publications.constants import OBJECTS_TYPES
 from core.publications.models_signals import record_updated
@@ -18,7 +19,12 @@ class SearchManager(object):
 	def __init__(self):
 		self.redis = redis_connections['cache']
 		self.prefix = 'search_upd_idx_task_'
-		self.update_interval = 60 * 2 # in seconds
+
+		if settings.DEBUG:
+			self.update_interval = 10 # in seconds
+		else:
+			self.update_interval = 60 * 2 # in seconds
+
 
 		self.connections = Queue.Queue()
 		for i in xrange(settings.ESTIMATE_THREADS_COUNT):
@@ -86,12 +92,12 @@ class SearchManager(object):
 
 
 	def process_search_query(self, query, user_id):
-		query = u"SELECT tid, hid FROM publications_rt " \
+		sql = u"SELECT tid, hid FROM publications_rt " \
 		        u"WHERE MATCH('{query}') AND uid = {uid} LIMIT 50".format(
 				query = query, uid = user_id)
 
 		results = {}
-		for record in self.__execute_query(query):
+		for record in self.__execute_sphinxql(sql):
 			tid = record[0]
 			hid = record[1]
 
@@ -99,6 +105,24 @@ class SearchManager(object):
 				results[tid].append(hid)
 			else:
 				results[tid] = [hid]
+
+		# Пошук по ярликам:
+		# Якщо пошуковий запит співпадає по icontains з назвою якого-небудь ярлика користувача,
+		# тоді дані оголошення вважаються релевантними до пошуку
+		dirtags = DirTags.by_user_id(user_id).filter(title__icontains=query)
+		for dirtag in dirtags:
+			records = dirtag.publications_hids()
+
+			# Шоб випадково не затерти результати попереднього пошуку —
+			# тут результати об’єднуються
+			for tid in records.keys(): # records.keys() == list of tids
+				hids = records[tid]
+				if tid in results:
+					results[tid].extend(hids)
+				else:
+					results[tid] = hids
+
+
 		return results
 
 
@@ -110,7 +134,7 @@ class SearchManager(object):
 		)
 
 
-	def __execute_query(self, query):
+	def __execute_sphinxql(self, query):
 		connection = self.connections.get(block=True)
 
 		def query_results():
