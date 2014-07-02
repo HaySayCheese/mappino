@@ -42,6 +42,9 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     $scope.publicationCount = $rootScope.publicationsCount;
 
 
+    $location.search().cp ? $scope.creatingPublication = true : $scope.creatingPublication = false;
+
+
     /**
      * Створення нового оголошенн
      */
