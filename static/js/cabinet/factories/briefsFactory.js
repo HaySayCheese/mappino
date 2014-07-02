@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Briefs', function($rootScope, Queries, Tags) {
+app.factory('Briefs', function($rootScope, $timeout, Queries, Tags) {
     var briefs = [],
         publicationTypes,
         publicationsCount = $rootScope.publicationsCount;
@@ -52,7 +52,10 @@ app.factory('Briefs', function($rootScope, Queries, Tags) {
          */
         search: function(value, callback) {
             var that = this;
-            $rootScope.loadings.briefs = true;
+
+            $timeout(function() {
+                $rootScope.loadings.briefs = true;
+            }, 0);
 
             Queries.Briefs.search(value, function(data) {
                 briefs = data;

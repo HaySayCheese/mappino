@@ -41,6 +41,7 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     $scope.$watch("searchQuery", function(newValue, oldValue) {
         loadCount++;
         window.clearTimeout(timer);
+        $scope.briefLoaded = false;
 
         if (loadCount <= 1)
             return;
@@ -49,14 +50,16 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
             loadBriefsInit();
         } else {
             initScrollBar();
+            $scope.briefs = [];
 
-            timer = setTimeout(function(){
+            timer = setTimeout(function() {
                 Briefs.search(newValue, function(data) {
                     $scope.briefs = data;
 
+                    $scope.briefLoaded = true;
                     initScrollBar();
                 });
-            }, 0);
+            }, 1000);
         }
     });
 
@@ -79,12 +82,14 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
      */
     function loadBriefsInit() {
         $scope.briefs = [];
+        $scope.briefLoaded = false;
 
         initScrollBar();
 
         Briefs.load($rootScope.routeSection, function(data) {
             $scope.briefs = data;
 
+            $scope.briefLoaded = true;
             initScrollBar();
         });
     }
