@@ -1,7 +1,7 @@
-<div id="publication-map" class="form-group" ng-init="initMap()"></div>
 <div class="form-group">
     <label><span class="required-star">*</span>Укажите местоположение:</label>
     <input id="publication-map-input" type="text" class="form-control" name="address" ng-model="publication.head.address" required/>
     <span class="input-has-error" ng-show="form.publication.address.$error.required && showValidationMessages">Укажите, пожалуйста, местоположение.</span>
     <span class="input-has-error" ng-show="form.publication.address.$error.incorrect">Местоположение указано неверно.</span>
 </div>
+<div id="publication-map" class="form-group" ng-init="initMap()"></div>
