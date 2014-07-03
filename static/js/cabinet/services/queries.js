@@ -72,7 +72,7 @@ app.factory('Queries', function($http, $q, $upload) {
                 return $upload.upload({
                     url: '/ajax/api/cabinet/publications/' + tid + ':' + hid + '/photos/',
                     file: photos
-                }).then(callback);
+                }).success(callback);
             },
 
             removePhoto: function(tid, hid, pid, callback) {
