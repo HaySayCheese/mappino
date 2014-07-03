@@ -42,6 +42,9 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     $scope.publicationCount = $rootScope.publicationsCount;
 
 
+    $location.search().cp ? $scope.creatingPublication = true : $scope.creatingPublication = false;
+
+
     /**
      * Створення нового оголошенн
      */
@@ -50,9 +53,19 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
 
         Publication.create($scope.newPublication, function(data) {
             $scope.creatingPublication = false;
+            $location.search("cp", null);
 
             btn.button("reset");
         });
+    };
+
+
+    /**
+     * Закриття діалога створення оголошення
+     */
+    $scope.closeCreatingPublication = function() {
+        $scope.creatingPublication = false;
+        $location.search("cp", null);
     };
 
 

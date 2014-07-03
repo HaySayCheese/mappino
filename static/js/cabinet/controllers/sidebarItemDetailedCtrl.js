@@ -10,13 +10,14 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
     var tid, hid, isPublished = false;
 
-
     /**
      * При зміні урла грузить дані оголошення
      */
     $scope.$on("$routeChangeSuccess", function() {
         tid = $rootScope.publicationId.split(":")[0];
         hid = $rootScope.publicationId.split(":")[1];
+
+        angular.element('body > #photosModal').remove();
 
         loadPublicationData();
     });
@@ -29,6 +30,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         $scope.tags = Tags.getAll();
     });
 
+
+
+    $scope.moveToBody = function() {
+        angular.element('#photosModal').appendTo("body");
+    };
 
     /**
      * Змінюємо пункти дропдауна ярликів в залежності від чекбоксів
@@ -122,7 +128,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             }, 300);
         }, 0);
     };
-
 
 
     /**

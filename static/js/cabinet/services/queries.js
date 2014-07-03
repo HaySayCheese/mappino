@@ -26,9 +26,7 @@ app.factory('Queries', function($http, $q, $upload) {
 
         Briefs: {
             load: function(category, callback) {
-                //var canceler = $q.defer(), request = "";
                 return $http.get('/ajax/api/cabinet/publications/briefs/' + category + '/').success(callback);
-                //canceler.resolve();
             },
 
             search: function(value, callback) {
@@ -74,7 +72,7 @@ app.factory('Queries', function($http, $q, $upload) {
                 return $upload.upload({
                     url: '/ajax/api/cabinet/publications/' + tid + ':' + hid + '/photos/',
                     file: photos
-                }).then(callback);
+                }).success(callback);
             },
 
             removePhoto: function(tid, hid, pid, callback) {

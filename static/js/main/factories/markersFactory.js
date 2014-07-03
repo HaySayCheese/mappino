@@ -7,14 +7,6 @@ app.factory('Markers', function(Queries, $rootScope) {
             green: {},
             yellow: {}
         },
-//        nePoint = {
-//            lat: -89.99,
-//            lng: 179.99
-//        },
-//        swPoint= {
-//            lat: 89.99,
-//            lng: -179.99
-//        };
         maxLat = 90,
         minLat = -90,
         maxLng = 180,
