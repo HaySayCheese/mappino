@@ -57,7 +57,7 @@ app.controller('LoginCtrl', function($scope, $rootScope, $timeout, $location, Ac
 
             validateLoginForm(data);
 
-            $location.path("/cabinet")
+            window.location = "/cabinet/";
         });
     };
 

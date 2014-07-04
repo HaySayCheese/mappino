@@ -9,9 +9,10 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, $
 
 
     $scope.$on("$routeChangeSuccess", function(event, current) {
-        (current.$$route.originalPath === "/first-enter") ?
-            $scope.sidebarIsVisible = false :
-            $scope.sidebarIsVisible = true;
+        if (current.$$route.originalPath)
+            (current.$$route.originalPath === "/first-enter") ?
+                $scope.sidebarIsVisible = false :
+                $scope.sidebarIsVisible = true;
     });
 
 
@@ -55,7 +56,7 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, $
     function getUserName() {
         Account.getUserName(function(data) {
             if (data != "error") {
-                sessionStorage.userName = data.data.user.name + " " + data.data.user.surname;
+                sessionStorage.userName = data.user.name + " " + data.user.surname;
             } else {
                 $scope.userName = "";
                 delete $cookies.sessionid;
