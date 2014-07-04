@@ -23,7 +23,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         markerClusterer,
         geocoder,
         requestTimeout,
-        requestTimeoutTime = 1500;
+        requestTimeoutTime = 1500,
+        mapIsLoaded = false;
 
     /**
      * Фільтри
@@ -221,6 +222,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             $scope.filters.map.zoom     = map.getZoom();
 
             parseFiltersCollectionAndUpdateUrl($scope.filters.map);
+
+            mapIsLoaded = true;
 
             if ($scope.filters.map.zoom < 15 && !$rootScope.subdommain) {
                 Markers.clearPanelMarkers("red");
@@ -458,7 +461,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             return;
 
         $timeout(function() {
-            if (!$scope.filters.map.viewport)
+            if (!mapIsLoaded)
                 return;
 
             var sneLat = $scope.filters.map.viewport.getNorthEast().lat().toString(),
