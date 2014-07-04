@@ -44,6 +44,40 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
             if(!$scope.$$phase)
                 $scope.$apply();
         });
+
+
+        angular.element(input).focusin(function () {
+            angular.element(document).keypress(function (e) {
+                var autocompleteContainer = angular.element(".pac-container"),
+                    autocompleteFirstItem = autocompleteContainer.find(".pac-item:first"),
+                    geocoder = new google.maps.Geocoder();
+
+                if (e.which == 13)
+                    geocoder.geocode({ "address": autocompleteFirstItem.text() }, function(results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+
+                            autocompleteFirstItem.addClass("pac-selected");
+                            autocompleteContainer.hide();
+
+                            angular.element(input)
+                                .val(autocompleteFirstItem.find(".pac-item-query").text()
+                                    + ", " +
+                                    autocompleteFirstItem.find("span:nth-child(3)").text());
+
+                            if (results[0].geometry.viewport)
+                                $rootScope.$emit('first-enter-change', [results[0].geometry.location, 17]);
+                            else {
+                                $rootScope.$emit('first-enter-change', [results[0].geometry.location, 17]);
+                            }
+
+                            $scope.firstEnter.city = input.value;
+                            firstEnterDone();
+                        }
+                    });
+                else
+                    autocompleteContainer.show();
+            });
+        });
     };
 
 
@@ -55,24 +89,6 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
     };
 
 
-    /**
-     * Вертає центр карти на місто введене в автокомпліті
-     */
-    function returnMapPositionFromAddress(address) {
-
-        var geocoder = new google.maps.Geocoder();
-
-        geocoder.geocode({ 'address': address }, function(results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-                if (results[0].geometry.viewport)
-                    $scope.firstEnter.latLng = results[0].geometry.location;
-                else
-                    $scope.firstEnter.latLng = results[0].geometry.location;
-            }
-
-            $rootScope.$emit('first-enter-change', [$scope.firstEnter.latLng, 17]);
-        });
-    }
 
     function firstEnterDone() {
         $location.path("/search");

@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, Account) {
+app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, $location, Account) {
 
     $scope.userName = "";
     $scope.sidebarIsVisible = true;
@@ -54,10 +54,14 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, A
      **/
     function getUserName() {
         Account.getUserName(function(data) {
-            sessionStorage.userName = data.data.user.name + " " + data.data.user.surname;
-        }, function() {
-            $scope.userName = "";
-            delete $cookies.sessionid;
+            if (data != "error") {
+                sessionStorage.userName = data.data.user.name + " " + data.data.user.surname;
+            } else {
+                $scope.userName = "";
+                delete $cookies.sessionid;
+
+                $location.path("/account/login")
+            }
         });
     }
 
