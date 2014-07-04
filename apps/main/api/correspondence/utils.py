@@ -12,14 +12,14 @@ from mappino.wsgi import templates
 
 
 
-def send_new_message_notification(request, tid, hid, message, client_email, client_name=None):
+def send_new_message_notification(request, tid, hash_hid, message, client_email, client_name=None):
 	def send_email_notification():
 		template = templates.get_template('email/notifications/incoming_message.html')
 		html = template.render({
 			'client_name': client_name,
 		    'publication': {
 			    'title': publication.body.title,
-		        'url': settings.REDIRECT_DOMAIN + '/cabinet/#!/publications/published/{0}:{1}'.format(tid, hid)
+		        'url': settings.REDIRECT_DOMAIN + '/cabinet/#!/publications/published/{0}:{1}'.format(tid, hash_hid)
 		    },
 		    'message': message
 		})
@@ -43,7 +43,7 @@ def send_new_message_notification(request, tid, hid, message, client_email, clie
 	if model is None:
 		raise InvalidArgument('Invalid publication tid.')
 
-	publications = model.objects.filter(id = hid).only('id', 'owner', 'state_sid', 'body__title')[:1]
+	publications = model.objects.filter(hash_id = hash_hid).only('id', 'owner', 'state_sid', 'body__title')[:1]
 	if not publications:
 		raise InvalidArgument('Invalid publication hid.')
 	publication = publications[0]
@@ -57,19 +57,16 @@ def send_new_message_notification(request, tid, hid, message, client_email, clie
 
 
 	preferences = publication.owner.preferences()
-	if not preferences.allow_call_requests:
+	if not preferences.allow_messaging:
 		raise SuspiciousOperation('Attempt to send call request to the realtor that was disabled this future.')
 
 
 	# choosing delivery method for the notification
-	method = preferences.send_call_request_notifications_to_sid
-	if method == Preferences.CALL_REQUEST_NOTIFICATIONS.sms():
-		send_sms_notification()
-
-	elif method == Preferences.CALL_REQUEST_NOTIFICATIONS.email():
+	method = preferences.send_message_notifications_to_sid
+	if method == Preferences.MESSAGE_NOTIFICATIONS.email():
 		send_email_notification()
 
-	elif method == Preferences.CALL_REQUEST_NOTIFICATIONS.sms_and_email():
+	elif method == Preferences.MESSAGE_NOTIFICATIONS.sms_and_email():
 		send_sms_notification()
 		send_email_notification()
 
@@ -79,7 +76,7 @@ def send_new_message_notification(request, tid, hid, message, client_email, clie
 
 
 
-def send_new_call_request_notification(request, tid, hid, client_number, client_name=None):
+def send_new_call_request_notification(request, tid, hash_hid, client_number, client_name=None):
 	# todo: додати перевірку, чи недсилався недавно рієлтору запит на дзвінок на цей номер
 	# можна використати інтервал в 2-3 години перед наступним повідомленням.
 
@@ -91,7 +88,7 @@ def send_new_call_request_notification(request, tid, hid, client_number, client_
 		    'phone_number': client_number,
 		    'publication': {
 			    'title': publication.body.title,
-		        'url': settings.REDIRECT_DOMAIN + '/cabinet/#!/publications/published/{0}:{1}'.format(tid, hid)
+		        'url': settings.REDIRECT_DOMAIN + '/cabinet/#!/publications/published/{0}:{1}'.format(tid, hash_hid)
 		    },
 		})
 		email_sender.send_html_email(
@@ -119,7 +116,7 @@ def send_new_call_request_notification(request, tid, hid, client_number, client_
 	if model is None:
 		raise InvalidArgument('Invalid publication tid.')
 
-	publications = model.objects.filter(id = hid).only('id', 'owner', 'state_sid', 'body__title')[:1]
+	publications = model.objects.filter(hash_id = hash_hid).only('owner', 'state_sid', 'body__title')[:1]
 	if not publications:
 		raise InvalidArgument('Invalid publication hid.')
 	publication = publications[0]

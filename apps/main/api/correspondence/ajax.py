@@ -7,6 +7,7 @@ from django.views.generic import View
 from apps.main.api.correspondence.utils import send_new_message_notification, send_new_call_request_notification
 from collective.exceptions import InvalidArgument
 from collective.methods.request_data_getters import angular_parameters
+from core.publications.constants import HEAD_MODELS
 
 
 class SendMessageFromClient(View):
@@ -28,9 +29,8 @@ class SendMessageFromClient(View):
 		Якщо передано параметр @name - його буде використано в листі.
 		"""
 		try:
-			tid, hid = args[0].split(':')
+			tid, hash_hid = args[0].split(':')
 			tid = int(tid)
-			hid = int(hid)
 		except (ValueError, IndexError):
 			return HttpResponseBadRequest(json.dumps(
 				self.codes['invalid_publication_id']), content_type='application/json')
@@ -47,9 +47,10 @@ class SendMessageFromClient(View):
 
 
 		try:
-			send_new_message_notification(request, tid, hid, message, client_email, client_name)
+			send_new_message_notification(request, tid, hash_hid, message, client_email, client_name)
 		except InvalidArgument:
-			return HttpResponseBadRequest(json.dumps(self.codes['invalid_parameters']), content_type='application/json')
+			return HttpResponseBadRequest(
+				json.dumps(self.codes['invalid_parameters']), content_type='application/json')
 
 		return HttpResponse(json.dumps(self.codes['ok']), content_type="application/json")
 
@@ -74,9 +75,8 @@ class SendCallRequestFromClient(View):
 		Якщо передано параметр @name - його буде використано в повідомленні.
 		"""
 		try:
-			tid, hid = args[0].split(':')
+			tid, hash_hid = args[0].split(':')
 			tid = int(tid)
-			hid = int(hid)
 		except ValueError:
 			return HttpResponseBadRequest(json.dumps(
 				self.codes['invalid_publication_id']), content_type='application/json')
@@ -92,8 +92,9 @@ class SendCallRequestFromClient(View):
 
 
 		try:
-			send_new_call_request_notification(request, tid, hid, phone_number, client_name)
+			send_new_call_request_notification(request, tid, hash_hid, phone_number, client_name)
 		except InvalidArgument:
-			return HttpResponseBadRequest(json.dumps(self.codes['invalid_parameters']), content_type='application/json')
+			return HttpResponseBadRequest(
+				json.dumps(self.codes['invalid_parameters']), content_type='application/json')
 
 		return HttpResponse(json.dumps(self.codes['ok']), content_type="application/json")

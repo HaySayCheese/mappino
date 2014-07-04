@@ -24,16 +24,15 @@ class DetailedView(View):
 
 	def get(self, request, *args):
 		try:
-			tid, hid = args[0].split(':')
+			tid, hash_hid = args[0].split(':')
 			tid = int(tid)
-			hid = int(hid)
 		except (ValueError, IndexError):
 			return HttpResponseBadRequest(
 				json.dumps(self.codes['invalid_parameters']), content_type='application/json')
 
 		try:
 			model = HEAD_MODELS[tid]
-			publication = model.objects.filter(id=hid).only(
+			publication = model.objects.filter(hash_id=hash_hid).only(
 				'for_sale', 'for_rent', 'body', 'sale_terms', 'rent_terms')[:1][0]
 		except IndexError:
 			return HttpResponseBadRequest(

@@ -2,9 +2,9 @@
 from collective.constants import AbstractConstant
 
 
-class CallRequestNotifications(AbstractConstant):
+class CallRequestNotificationsTypes(AbstractConstant):
 	def __init__(self):
-		super(CallRequestNotifications, self).__init__()
+		super(CallRequestNotificationsTypes, self).__init__()
 		self.set_ids({
 			'sms': 0,
 		    'email': 1,
@@ -25,9 +25,9 @@ class CallRequestNotifications(AbstractConstant):
 
 
 
-class MessageNotificationTypes(AbstractConstant):
+class MessageNotificationsTypes(AbstractConstant):
 	def __init__(self):
-		super(MessageNotificationTypes, self).__init__()
+		super(MessageNotificationsTypes, self).__init__()
 		self.set_ids({
 			# id починались з 0,
 		    # але тут був старий пункт sms: 0
@@ -46,5 +46,5 @@ class MessageNotificationTypes(AbstractConstant):
 
 
 class Preferences(object):
-	CALL_REQUEST_NOTIFICATIONS = CallRequestNotifications()
-	MESSAGE_NOTIFICATIONS = CallRequestNotifications()
+	CALL_REQUEST_NOTIFICATIONS = CallRequestNotificationsTypes()
+	MESSAGE_NOTIFICATIONS = MessageNotificationsTypes()
