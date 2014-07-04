@@ -34,9 +34,9 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
 
             // If the place has a geometry, then present it on a map.
             if (place.geometry.viewport) {
-                $rootScope.$emit('first-enter-change', [place.geometry.location, 17, input.value]);
+                $rootScope.$emit('first-enter-change', [place.geometry.location, 15, input.value]);
             } else {
-                $rootScope.$emit('first-enter-change', [place.geometry.location, 17, input.value]);
+                $rootScope.$emit('first-enter-change', [place.geometry.location, 15, input.value]);
             }
 
             firstEnterDone();
@@ -65,9 +65,9 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
                                     autocompleteFirstItem.find("span:nth-child(3)").text());
 
                             if (results[0].geometry.viewport)
-                                $rootScope.$emit('first-enter-change', [results[0].geometry.location, 17, input.value]);
+                                $rootScope.$emit('first-enter-change', [results[0].geometry.location, 15, input.value]);
                             else {
-                                $rootScope.$emit('first-enter-change', [results[0].geometry.location, 17, input.value]);
+                                $rootScope.$emit('first-enter-change', [results[0].geometry.location, 15, input.value]);
                             }
 
                             $scope.firstEnter.city = input.value;

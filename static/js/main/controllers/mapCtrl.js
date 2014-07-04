@@ -287,7 +287,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                         map.fitBounds(place.geometry.viewport);
                     } else {
                         map.panTo(place.geometry.location);
-                        map.setZoom(17);
+                        map.setZoom(15);
                     }
 
                     $scope.filters.map.city = cityInput.value;
@@ -379,7 +379,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                     map.fitBounds(results[0].geometry.viewport);
                 } else {
                     map.panTo(results[0].geometry.location);
-                    map.setZoom(17);
+                    map.setZoom(15);
                 }
 
                 $scope.filters.map.city = cityInput.value;

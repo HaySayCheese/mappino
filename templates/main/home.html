@@ -57,7 +57,7 @@
             [[ notification.message ]]
         </div>
 
-        <div class="map-loader" ng-show="loadings.markers">
+        <div class="map-loader" ng-show="loadings.markers && filters.map.zoom >= 15">
             Загрузка обьектов
         </div>
 
