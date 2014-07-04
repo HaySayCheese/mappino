@@ -28,6 +28,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
      */
     $rootScope.$on("tagsUpdated", function() {
         $scope.tags = Tags.getAll();
+
+        initSectionDropdown();
     });
 
 
@@ -594,6 +596,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 $scope.publicationSections.splice(i, 1);
 
             if ($scope.publicationSections[i].href === 'for-rent-section' && !$scope.publication.head.for_rent)
+                $scope.publicationSections.splice(i, 1);
+
+            if ($scope.publicationSections[i].href === 'pub-tags-section' && $scope.tags.length < 1)
                 $scope.publicationSections.splice(i, 1);
         }
     }
