@@ -1,13 +1,16 @@
 import json
 
 from datetime import timedelta
+from django.core.exceptions import SuspiciousOperation
 from django.utils.timezone import now
 from django.http.response import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.cache import cache_control
 
 from apps.cabinet.api.stats.ga import auth
 from apps.classes import CabinetView
+from collective.exceptions import RuntimeException
 from collective.methods.request_data_getters import GET_parameter
+from core.publications.constants import HEAD_MODELS
 
 
 class Stats(object):
@@ -24,7 +27,7 @@ class Stats(object):
 			"""
 			:param args:
 				args[0]: tid - id the publication's type.
-				args[1]: hid - id of the publication's head record.
+				args[1]: hash_id - id of the publication's head record.
 
 			:param request:
 				count: (int) - count of days in output data.
@@ -40,19 +43,30 @@ class Stats(object):
 				return HttpResponseBadRequest('Not enough parameters.')
 
 
-			tid, hid = args[0].split(':')
+			tid, hash_id = args[0].split(':')
 			tid = int(tid)
-			hid = int(hid)
+			# hash_id doesnt need to be converted to int
+
+
+			# check if current user is owner of the requested publication
+			try:
+				publication = HEAD_MODELS[tid].objects.filter(hash_id=hash_id).only('owner')[:1][0]
+				if not publication.owner_id == request.user.id:
+					raise SuspiciousOperation('Current user does\'t own\'s the publication')
+
+			except (IndexError, RuntimeException):
+				return HttpResponse(json.dumps(
+					self.get_codes['invalid_params']), content_type='application/json')
 
 
 			try:
 				count = int(GET_parameter(request, 'count'))
 			except ValueError:
-				return HttpResponseBadRequest(json.dumps(
+				return HttpResponse(json.dumps(
 					self.get_codes['invalid_params']), content_type='application/json')
 
 			if count not in [7, 14, 30]:
-				return HttpResponseBadRequest(json.dumps(
+				return HttpResponse(json.dumps(
 					self.get_codes['invalid_params']), content_type='application/json')
 
 
@@ -78,7 +92,7 @@ class Stats(object):
 				           'ga:date',
 				filters='ga:eventCategory==publication:dialog:detailed;'
 				        'ga:eventAction==data_requested;'
-				        'ga:eventLabel=={0}:{1}'.format(tid, hid),
+				        'ga:eventLabel=={0}:{1}'.format(tid, hash_id),
 			    fields='rows'
 			).execute()
 

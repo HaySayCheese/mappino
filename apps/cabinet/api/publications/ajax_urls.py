@@ -4,16 +4,16 @@ from django.conf.urls import patterns, url
 
 urlpatterns = patterns('apps.cabinet.api',
 	url(r'^ajax/api/cabinet/publications/$', Publications.Create.as_view()),
-	url(r'^ajax/api/cabinet/publications/(\d+:\d+)/$', Publications.RUD.as_view()),
-    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/delete-permanent/$', Publications.PermanentDelete.as_view()),
-    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/publish/$', Publications.Publish.as_view()),
-    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/unpublish/$', Publications.Unpublish.as_view()),
+	url(r'^ajax/api/cabinet/publications/(\d+:\w+)/$', Publications.RUD.as_view()),
+    url(r'^ajax/api/cabinet/publications/(\d+:\w+)/delete-permanent/$', Publications.PermanentDelete.as_view()),
+    url(r'^ajax/api/cabinet/publications/(\d+:\w+)/publish/$', Publications.Publish.as_view()),
+    url(r'^ajax/api/cabinet/publications/(\d+:\w+)/unpublish/$', Publications.Unpublish.as_view()),
 
 
 	# photos
-    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/$', Publications.UploadPhoto.as_view()),
-    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/(\d+)/$', Publications.Photos.as_view()),
-    url(r'^ajax/api/cabinet/publications/(\d+:\d+)/photos/(\d+)/title/$', Publications.PhotoTitle.as_view()),
+    url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/$', Publications.UploadPhoto.as_view()),
+    url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/(\w+)/$', Publications.Photos.as_view()),
+    url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/(\w+)/title/$', Publications.PhotoTitle.as_view()),
 
 
     url(r'^ajax/api/cabinet/publications/counters/$', 'publications.briefs.ajax.counters'),

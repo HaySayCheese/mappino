@@ -2,7 +2,7 @@
 from django.db import models
 
 from core.currencies.constants import CURRENCIES
-from core.publications.abstract_models import LivingHeadModel, BodyModel, LivingRentTermsModel, CommercialRentTermsModel, PhotosModel, SaleTermsModel, CommercialHeadModel, AbstractModel
+from core.publications.abstract_models import AbstractHeadModel, BodyModel, LivingRentTermsModel, CommercialRentTermsModel, PhotosModel, SaleTermsModel, CommercialHeadModel, AbstractModel
 from core.publications.constants import MARKET_TYPES, OBJECT_CONDITIONS, FLOOR_TYPES, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, \
 	OBJECTS_TYPES
 from core.publications.exceptions import EmptyFloor, EmptyTotalArea, EmptyLivingArea, EmptyRoomsCount, EmptyFloorsCount, \
@@ -397,7 +397,7 @@ class FlatsBodies(BodyModel):
 
 
 
-class FlatsHeads(LivingHeadModel):
+class FlatsHeads(AbstractHeadModel):
 	class Meta:
 		db_table = 'o_flats_heads'
 
@@ -790,7 +790,7 @@ class ApartmentsBodies(BodyModel):
 
 
 
-class ApartmentsHeads(LivingHeadModel):
+class ApartmentsHeads(AbstractHeadModel):
 	class Meta:
 		db_table = 'o_apartments_heads'
 
@@ -1116,7 +1116,7 @@ class HousesBodies(BodyModel):
 
 
 
-class HousesHeads(LivingHeadModel):
+class HousesHeads(AbstractHeadModel):
 	class Meta:
 		db_table = 'o_houses_heads'
 
@@ -1546,7 +1546,7 @@ class CottagesBodies(BodyModel):
 
 
 
-class CottagesHeads(LivingHeadModel):
+class CottagesHeads(AbstractHeadModel):
 	class Meta:
 		db_table = 'o_cottages_heads'
 
@@ -1865,7 +1865,7 @@ class RoomsBodies(BodyModel):
 
 
 
-class RoomsHeads(LivingHeadModel):
+class RoomsHeads(AbstractHeadModel):
 	class Meta:
 		db_table = 'o_rooms_heads'
 
@@ -3719,7 +3719,7 @@ class GaragesBodies(BodyModel):
 
 
 
-class GaragesHeads(LivingHeadModel):
+class GaragesHeads(AbstractHeadModel):
 	class Meta:
 		db_table = 'o_garages_heads'
 
@@ -3862,7 +3862,7 @@ class LandsBodies(BodyModel):
 		return u''
 
 
-class LandsHeads(LivingHeadModel):
+class LandsHeads(AbstractHeadModel):
 	class Meta:
 		db_table = 'o_lands_heads'
 

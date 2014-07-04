@@ -39,6 +39,7 @@ def get(request, tag_id=None, section=None):
 		# check owner
 		if tag.user_id != request.user.id:
 			raise PermissionDenied()
+
 		return HttpResponse(
 			json.dumps(briefs_of_tag(tag)), content_type='application/json')
 			# todo: додати код 0 (ok) у відповідь

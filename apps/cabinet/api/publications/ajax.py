@@ -62,7 +62,7 @@ class Publications(object):
 
 			# seems to be ok
 			response = copy.deepcopy(self.post_codes['OK']) # Note: deepcopy here
-			response['id'] = record.id
+			response['id'] = record.hash_id
 			return HttpResponse(json.dumps(response), content_type='application/json')
 
 
@@ -117,11 +117,11 @@ class Publications(object):
 
 			tid, hid = args[0].split(':')
 			tid = int(tid)
-			hid = int(hid)
+			# hid doesnt need to be converted to int
 
 			model =  HEAD_MODELS[tid]
 			try:
-				head = model.by_id(hid, select_body=True)
+				head = model.by_hash_id(hid, select_body=True)
 			except ObjectDoesNotExist:
 				return HttpResponseBadRequest(json.dumps(
 					self.get_codes['invalid_tid']), content_type='application/json')
@@ -144,10 +144,9 @@ class Publications(object):
 			if not args:
 				return HttpResponseBadRequest('Not enough parameters.')
 
-			tid, hid = args[0].split(':')
+			tid, hash_id = args[0].split(':')
 			tid = int(tid)
-			hid = int(hid)
-
+			# hash_id doesnt need to be converted to int
 
 			try:
 				p = angular_parameters(request, ['f'])
@@ -166,7 +165,7 @@ class Publications(object):
 
 			try:
 				model =  HEAD_MODELS[tid]
-				head = model.objects.filter(id=hid).only('id', 'owner')[0]
+				head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
 			except IndexError:
 				return HttpResponseBadRequest(json.dumps(
 					self.update_codes['invalid_hid']), content_type='application/json')
@@ -216,7 +215,7 @@ class Publications(object):
 			# Кастомний сигнал відправляєтсья, оскільки стандартний post-save
 			# не містить необхідної інформації (tid).
 			# todo: позбавитись цього сигналу, або винести його в інше місце
-			record_updated.send(None, tid=tid, hid=hid)
+			record_updated.send(None, tid=tid, hid=hash_id)
 
 			if return_value is not None:
 				response = copy.deepcopy(self.update_codes['OK']) # note: deep copy here
@@ -230,13 +229,13 @@ class Publications(object):
 			if not args:
 				return HttpResponseBadRequest('Not enough parameters.')
 
-			tid, hid = args[0].split(':')
+			tid, hash_id = args[0].split(':')
 			tid = int(tid)
-			hid = int(hid)
+			# hid doesnt need to be converted to int
 
 			try:
 				model = HEAD_MODELS[tid]
-				head = model.objects.filter(id=hid).only('id', 'owner')[0]
+				head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
 			except IndexError:
 				return HttpResponseBadRequest(json.dumps(
 					self.delete_codes['invalid_hid']), content_type='application/json')
@@ -267,13 +266,13 @@ class Publications(object):
 			if not args:
 				return HttpResponseBadRequest('Not enough parameters.')
 
-			tid, hid = args[0].split(':')
+			tid, hash_id = args[0].split(':')
 			tid = int(tid)
-			hid = int(hid)
+			# hash_id doesnt need to be converted to int
 
 			try:
 				model = HEAD_MODELS[tid]
-				head = model.objects.filter(id=hid).only('id', 'owner')[0]
+				head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
 			except IndexError:
 				return HttpResponseBadRequest(json.dumps(
 					self.delete_codes['invalid_hid']), content_type='application/json')
@@ -305,14 +304,14 @@ class Publications(object):
 			if not args:
 				return HttpResponseBadRequest('Not enough parameters.')
 
-			tid, hid = args[0].split(':')
+			tid, hash_id = args[0].split(':')
 			tid = int(tid)
-			hid = int(hid)
+			# hash_id doesnt need to be converted to int
 
 
 			model = HEAD_MODELS[tid]
 			try:
-				head = model.objects.filter(id=hid).only('id', 'owner')[0]
+				head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
 			except IndexError:
 				return HttpResponseBadRequest(json.dumps(
 					self.put_codes['invalid_hid']), content_type='application/json')
@@ -350,14 +349,14 @@ class Publications(object):
 			if not args:
 				return HttpResponseBadRequest('Not enough parameters.')
 
-			tid, hid = args[0].split(':')
+			tid, hash_id = args[0].split(':')
 			tid = int(tid)
-			hid = int(hid)
+			# hash_id doesnt need to be converted to int
 
 
 			model = HEAD_MODELS[tid]
 			try:
-				head = model.objects.filter(id=hid).only('id', 'owner')[0]
+				head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
 			except IndexError:
 				return HttpResponseBadRequest(json.dumps(
 					self.put_codes['invalid_hid']), content_type='application/json')
@@ -405,9 +404,9 @@ class Publications(object):
 
 
 		def post(self, request, *args):
-			tid, hid = args[0].split(':')
+			tid, hash_id = args[0].split(':')
 			tid = int(tid)
-			hid = int(hid)
+			# hash_id doesnt need to be converted to int
 
 
 			if tid not in OBJECTS_TYPES.values():
@@ -417,7 +416,7 @@ class Publications(object):
 
 			model = HEAD_MODELS[tid]
 			try:
-				publication = model.objects.filter(id=hid).only('id', 'owner')[:1][0]
+				publication = model.objects.filter(hash_id=hash_id).only('id', 'owner')[:1][0]
 			except IndexError:
 				return HttpResponseBadRequest(
 					json.dumps(self.post_codes['invalid_hid']), content_type='application/json')
@@ -479,10 +478,10 @@ class Publications(object):
 
 
 		def delete(self, request, *args):
-			tid, hid = args[0].split(':')
+			tid, hash_id = args[0].split(':')
 			tid = int(tid)
-			hid = int(hid)
-			photo_id = args[1]
+			# hash_id doesnt need to be converted to int
+			photo_hash_id = args[1]
 
 
 			if tid not in OBJECTS_TYPES.values():
@@ -492,7 +491,7 @@ class Publications(object):
 
 			model = HEAD_MODELS[tid]
 			try:
-				publication = model.objects.filter(id=hid).only('id', 'owner')[:1][0]
+				publication = model.objects.filter(hash_id=hash_id).only('id', 'owner')[:1][0]
 			except IndexError:
 				return HttpResponseBadRequest(
 					json.dumps(self.delete_codes['invalid_hid']), content_type='application/json')
@@ -505,7 +504,7 @@ class Publications(object):
 
 			# process photo deletion
 			try:
-				photo = publication.photos_model.objects.get(id=photo_id)
+				photo = publication.photos_model.objects.get(hash_id=photo_hash_id)
 				new_title_photo = photo.remove()
 			except ObjectDoesNotExist:
 				return HttpResponseBadRequest(
@@ -517,7 +516,7 @@ class Publications(object):
 				response['photo_id'] = None
 				response['brief_url'] = None
 			else:
-				response['photo_id'] = new_title_photo.id
+				response['photo_id'] = new_title_photo.hash_id
 				response['brief_url'] = new_title_photo.url() + new_title_photo.small_thumbnail_name()
 
 			return HttpResponse(json.dumps(response), content_type='application/json')
@@ -543,13 +542,13 @@ class Publications(object):
 
 		def post(self, request, *args):
 			"""
-			Помічає фото з id=photo_id як основне.
+			Помічає фото з hash_id=hash_photo_id як основне.
 			Для даного фото буде згенеровано title_thumb і воно використовуватиметься як початкове у видачі.
 			"""
-			tid, hid = args[0].split(':')
+			tid, hash_id = args[0].split(':')
 			tid = int(tid)
-			hid = int(hid)
-			photo_id = args[1]
+			# hash_id doesnt need to be converted to int
+			hash_photo_id = args[1]
 
 
 			if tid not in OBJECTS_TYPES.values():
@@ -559,7 +558,7 @@ class Publications(object):
 
 			model = HEAD_MODELS[tid]
 			try:
-				publication = model.objects.filter(id=hid).only('id', 'owner')[:1][0]
+				publication = model.objects.filter(hash_id=hash_id).only('id', 'owner')[:1][0]
 			except IndexError:
 				return HttpResponseBadRequest(
 					json.dumps(self.post_codes['invalid_hid']), content_type='application/json')
@@ -573,7 +572,7 @@ class Publications(object):
 			# process image
 			photos_model = PHOTOS_MODELS[tid]
 			try:
-				photo = photos_model.objects.get(id=photo_id)
+				photo = photos_model.objects.get(hash_id=hash_photo_id)
 			except ObjectDoesNotExist:
 				return HttpResponseBadRequest(
 					json.dumps(self.post_codes['invalid_pid']), content_type='application/json')

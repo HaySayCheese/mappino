@@ -1,22 +1,20 @@
 #coding=utf-8
 import uuid
-
 import os
-import datetime
 from PIL import Image
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
-from django.db import models, transaction
+from django.db import models, transaction, connection
 from django.utils.timezone import now
+import datetime
 
 from collective.exceptions import InvalidArgument, RuntimeException
-from core.currencies import currencies_manager
-from core.currencies.constants import CURRENCIES
+from core.currencies import currencies_manager as currencies
+from core.currencies.constants import CURRENCIES as currencies_constants
 from core.publications import models_signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, EmptyRentPrice
 from core.users.models import Users
-from mappino.wsgi import redis_connections
 
 
 class AbstractModel(models.Model):
@@ -26,68 +24,59 @@ class AbstractModel(models.Model):
 	#-- constraints
 	max_price_symbols_count = 18
 
+
 	@classmethod
 	def new(cls):
 		return cls.objects.create()
 
 	@classmethod
 	def by_id(cls, record_id):
-		try:
-			return cls.objects.filter(id=record_id)
-		except IndexError:
-			raise ObjectDoesNotExist()
-
-
-class AbstractPriceModel(AbstractModel):
-	class Meta:
-		abstract = True
+		return cls.objects.filter(id=record_id)
 
 
 	def print_price(self):
 		if self.price is None:
 			return u''
 
+		dol = u'{:,.2f}'.format(currencies.convert(self.price, self.currency_sid, currencies_constants.dol()))
+		dol = dol.replace(',', ' ')
 
-		price = u'{:,.2f}'.format(
-			currencies_manager.convert(self.price, self.currency_sid, CURRENCIES.dol())).replace(',',' ')
-		# видаляємо копійки, в ціні на нерухомість вони зайві
-		if price[-3] == '.':
-			price = price[:-3]
+		# Видалення копійок
+		if dol[-3] == '.':
+			dol = dol[:-3]
 
-		# підказуємо користувачу, що валюта сконвертована в долари
-		if self.currency_sid != CURRENCIES.dol():
-			price = u'~' + price
+		# Підказуємо користувачу, що валюта сконвертована
+		if self.currency_sid != currencies_constants.dol():
+			dol = u'~' + dol
 
-		price += u' дол.'
+		dol += u' дол.'
 		if self.is_contract:
-			price += u', договорная'
+			dol += u', договорная'
 
 
-		# додаємо ціну в інших валютах
-		price_uah = u'{:,.2f}'.format(
-			currencies_manager.convert(self.price, self.currency_sid, CURRENCIES.uah())).replace(',',' ')
-		# видаляємо копійки
-		if price_uah[-3] == '.':
-			price_uah = price_uah[:-3]
+		# Додаємо ціну в інших валютах
+		uah = u'{:,.2f}'.format(currencies.convert(self.price, self.currency_sid, currencies_constants.uah()))
+		uah = uah.replace(',', ' ')
 
-		if self.currency_sid != CURRENCIES.uah():
-			price_uah = u'~' + price_uah
-		price_uah += u' грн.'
+		if uah[-3] == '.':
+			uah = uah[:-3]
 
-
-		price_eur = u'{:,.2f}'.format(
-			currencies_manager.convert(self.price, self.currency_sid, CURRENCIES.eur())).replace(',',' ')
-		# видаляємо копійки
-		if price_eur[-3] == '.':
-			price_eur = price_eur[:-3]
-
-		if self.currency_sid != CURRENCIES.eur():
-			price_eur = u'~' + price_eur
-		price_eur += u' евро.'
+		if self.currency_sid != currencies_constants.uah():
+			uah = u'~' + uah
+		uah += u' грн.'
 
 
-		price += u' ({0}, {1})'.format(price_uah, price_eur)
-		return price
+		eur = u'{:,.2f}'.format(currencies.convert(self.price, self.currency_sid, currencies_constants.eur()))
+		eur = eur.replace(',', ' ')
+
+		if eur[-3] == '.':
+			eur = eur[:-3]
+
+		if self.currency_sid != currencies_constants.eur():
+			eur = u'~' + eur
+		eur += u' евро.'
+
+		return u'{dol} ({uah}, {eur})'.format(dol=dol, uah=uah, eur=eur)
 
 
 	def print_add_terms(self):
@@ -97,7 +86,7 @@ class AbstractPriceModel(AbstractModel):
 
 
 
-class LivingHeadModel(models.Model):
+class AbstractHeadModel(models.Model):
 	class Meta:
 		abstract = True
 
@@ -109,16 +98,23 @@ class LivingHeadModel(models.Model):
 	photos_model = None
 
 	#-- fields
+	#
+	# hash_id використовується для передачі ссилок на клієнт.
+	# Передача id у відкритому вигляді небезпечна тим, що:
+	#   * полегшує повний перебір записів з таблиці по інкременту, а значить — полегшує ddos.
+	#   * відкриває внутрішню структуру таблиць в БД і наяні зв’язки.
+	hash_id = models.TextField(unique=True, default=lambda: uuid.uuid4().hex)
 	owner = models.ForeignKey(Users)
 
+
 	state_sid = models.SmallIntegerField(default=OBJECT_STATES.unpublished(), db_index=True)
-	for_sale = models.BooleanField(default=False, db_index=True)
-	for_rent = models.BooleanField(default=False, db_index=True)
+	for_sale = models.BooleanField(default=False)
+	for_rent = models.BooleanField(default=False)
 	created = models.DateTimeField(auto_now_add=True)
 	modified = models.DateTimeField(auto_now=True)
 	published = models.DateTimeField(null=True)
-	actual = models.DateTimeField(null=True)
 	deleted = models.DateTimeField(null=True)
+	actual = models.DateTimeField(null=True)
 
 	#-- map coordinates
 	degree_lat = models.TextField(null=True)
@@ -134,17 +130,16 @@ class LivingHeadModel(models.Model):
 
 	@classmethod
 	def new(cls, owner_id, for_sale=False, for_rent=False):
-		with transaction.atomic():
-			return cls.objects.create(
-				body_id = cls._meta.get_field_by_name('body')[0].rel.to.new().id,
-				sale_terms_id = cls._meta.get_field_by_name('sale_terms')[0].rel.to.new().id,
-				rent_terms_id = cls._meta.get_field_by_name('rent_terms')[0].rel.to.new().id,
+		return cls.objects.create(
+			body_id = cls._meta.get_field_by_name('body')[0].rel.to.new().id,
+			sale_terms_id = cls._meta.get_field_by_name('sale_terms')[0].rel.to.new().id,
+			rent_terms_id = cls._meta.get_field_by_name('rent_terms')[0].rel.to.new().id,
 
-				owner_id = owner_id,
-				for_sale = for_sale,
-				for_rent = for_rent,
-				state_sid = OBJECT_STATES.unpublished(),
-			)
+			owner_id = owner_id,
+			for_sale = for_sale,
+			for_rent = for_rent,
+			state_sid = OBJECT_STATES.unpublished(),
+		)
 
 
 	@classmethod
@@ -165,6 +160,20 @@ class LivingHeadModel(models.Model):
 
 
 	@classmethod
+	def by_hash_id(cls, head_id, select_body=False, select_sale=False, select_rent=False, select_owner=False):
+		query = cls.objects.filter(hash_id = head_id).only('id')
+		if select_body:
+			query = query.only('id', 'body').select_related('body')
+		if select_sale:
+			query = query.only('id', 'sale_terms').select_related('sale_terms')
+		if select_rent:
+			query = query.only('id', 'rent_terms').select_related('rent_terms')
+		if select_owner:
+			query = query.only('id', 'owner').select_related('owner')
+		return query[:1][0]
+
+
+	@classmethod
 	def by_user_id(cls, user_id, select_body=False, select_sale=False, select_rent=False, select_owner=False):
 		query = cls.objects.filter(owner_id = user_id).only('id')
 		if select_body:
@@ -180,20 +189,19 @@ class LivingHeadModel(models.Model):
 
 	def set_lat_lng(self, lat_lng):
 		if not lat_lng or lat_lng is None:
-			self.degree_lat = None
-			self.degree_lng = None
-			self.segment_lat = None
-			self.segment_lng = None
-			self.pos_lat = None
-			self.pos_lng = None
+			# clearing the coordinates
+			self.degree_lat = self.degree_lng = None
+			self.segment_lat = self.segment_lng = None
+			self.pos_lat = self.pos_lng = None
 			self.save(force_update=True)
 			return
 
+		splitter = ';'
+		if not splitter in lat_lng:
+			raise InvalidArgument('lat_lng doesnt contains ')
 
-		if not ';' in lat_lng:
-			raise InvalidArgument()
-		lat, lng = lat_lng.split(';')
-		if (not lat) or (not lng):
+		lat, lng = lat_lng.split(splitter)
+		if (not lat) or (not lng): # lat & lng are strings, it's OK
 			raise ValueError()
 
 		if len(lat) <= 6:
@@ -248,7 +256,8 @@ class LivingHeadModel(models.Model):
 		with transaction.atomic():
 			self.state_sid = OBJECT_STATES.published()
 			self.published = now()
-			self.prolong() # Немає необхідності викликати save. prolong() його викличе.
+			self.prolong()
+			self.save()
 
 
 	def unpublish(self):
@@ -259,7 +268,6 @@ class LivingHeadModel(models.Model):
 
 		self.state_sid = OBJECT_STATES.unpublished()
 		self.published = None
-		self.actual = None
 		self.deleted = None
 		self.save(force_update=True)
 
@@ -287,7 +295,6 @@ class LivingHeadModel(models.Model):
 
 		self.state_sid = OBJECT_STATES.deleted()
 		self.published = None
-		self.actual = None
 		self.deleted = now()
 		self.save()
 
@@ -316,7 +323,7 @@ class LivingHeadModel(models.Model):
 		# it is emitted before the physical record removing.
 		models_signals.deleted_permanent.send(sender=None, tid=self.tid, hid=self.id)
 
-		super(LivingHeadModel, self).delete()
+		super(AbstractHeadModel, self).delete()
 
 
 
@@ -391,11 +398,9 @@ class LivingHeadModel(models.Model):
 		return self.state_sid == OBJECT_STATES.deleted()
 
 
-class CommercialHeadModel(LivingHeadModel):
+class CommercialHeadModel(AbstractHeadModel):
 	class Meta:
 		abstract = True
-
-	red_line_sid = models.NullBooleanField()
 
 
 
@@ -433,21 +438,16 @@ class BodyModel(AbstractModel):
 
 
 
-class SaleTermsModel(AbstractPriceModel):
+class SaleTermsModel(AbstractModel):
 	class Meta:
 		abstract = True
 
 	#-- fields
-	price = models.DecimalField(
-		null = True,
-		max_digits =  AbstractModel.max_price_symbols_count,
-		decimal_places = 2
-	)
-	currency_sid = models.SmallIntegerField(default=CURRENCIES.dol())
+	price = models.DecimalField(null=True, max_digits=AbstractModel.max_price_symbols_count, decimal_places=2)
+	currency_sid = models.SmallIntegerField(default=currencies_constants.dol())
 	is_contract = models.BooleanField(default=False)
 	transaction_sid = models.SmallIntegerField(default=SALE_TRANSACTION_TYPES.for_all())
 	add_terms = models.TextField(default='')
-
 
 	#-- validation
 	def check_required_fields(self):
@@ -461,17 +461,13 @@ class SaleTermsModel(AbstractPriceModel):
 
 
 
-class LivingRentTermsModel(AbstractPriceModel):
+class LivingRentTermsModel(AbstractModel):
 	class Meta:
 		abstract = True
 
 	#-- fields
-	price = models.DecimalField(
-		null=True,
-		max_digits=AbstractModel.max_price_symbols_count,
-		decimal_places=2
-	)
-	currency_sid = models.SmallIntegerField(default=CURRENCIES.dol())
+	price = models.DecimalField(null=True, max_digits=AbstractModel.max_price_symbols_count, decimal_places=2)
+	currency_sid = models.SmallIntegerField(default=currencies_constants.dol())
 	is_contract = models.BooleanField(default=False)
 	period_sid = models.SmallIntegerField(default=LIVING_RENT_PERIODS.monthly())
 	persons_count = models.SmallIntegerField(null=True)
@@ -488,7 +484,6 @@ class LivingRentTermsModel(AbstractPriceModel):
 	washing_machine = models.BooleanField(default=False)
 	conditioner = models.BooleanField(default=False)
 	home_theater = models.BooleanField(default=False)
-
 
 	#-- validation
 	def check_required_fields(self):
@@ -550,7 +545,7 @@ class LivingRentTermsModel(AbstractPriceModel):
 		return u''
 
 
-class CommercialRentTermsModel(AbstractPriceModel):
+class CommercialRentTermsModel(AbstractModel):
 	class Meta:
 		abstract = True
 
@@ -558,12 +553,8 @@ class CommercialRentTermsModel(AbstractPriceModel):
 	max_price_symbols_count = 18
 
 	#-- fields
-	price = models.DecimalField(
-		null=True,
-		max_digits=max_price_symbols_count,
-		decimal_places=2
-	)
-	currency_sid = models.SmallIntegerField(default=CURRENCIES.dol())
+	price = models.DecimalField(null=True, max_digits=max_price_symbols_count, decimal_places=2)
+	currency_sid = models.SmallIntegerField(default=currencies_constants.dol())
 	is_contract = models.BooleanField(default=False)
 	period_sid = models.SmallIntegerField(default=COMMERCIAL_RENT_PERIODS.monthly())
 	add_terms = models.TextField(default='')
@@ -630,6 +621,13 @@ class PhotosModel(AbstractModel):
 
 
 	#-- fields
+	#
+	# hash_id використовується для передачі ссилок на клієнт.
+	# Передача id у відкритому вигляді небезпечна тим, що:
+	#   * полегшує повний перебір записів з таблиці по інкременту, а значить — полегшує ddos.
+	#   * відкриває внутрішню структуру таблиць в БД і наяні зв’язки.
+	hash_id = models.TextField(unique=True, default=lambda: uuid.uuid4().hex)
+
 	hid = None # @override FK()
 	uid = models.TextField(db_index=True)
 	# Розширення оригіналу зберігається,
@@ -668,7 +666,7 @@ class PhotosModel(AbstractModel):
 
 	def info(self):
 		return {
-			'id': self.id,
+			'id': self.hash_id, # WARN: hash_id here
 			'image': self.url() + self.image_name(),
 			'thumbnail': self.url() + self.big_thumbnail_name(),
 
@@ -771,6 +769,7 @@ class PhotosModel(AbstractModel):
 
 
 	@classmethod
+	@transaction.atomic
 	def handle_uploaded(cls, request, publication_head):
 		destination_dir = cls.destination_dir()
 
@@ -809,7 +808,7 @@ class PhotosModel(AbstractModel):
 		while cls.objects.filter(uid=uid).count() > 0:
 			uid = unicode(publication_head.id) + unicode(uuid.uuid4())
 
-		original_ext = os.path.splitext(img_file.name)[1]
+		original_ext = (os.path.splitext(img_file.name)[1]).lower()
 		original_name = uid + cls.original_photo_suffix + original_ext
 		original_path = os.path.join(destination_dir, original_name)
 
@@ -946,22 +945,28 @@ class PhotosModel(AbstractModel):
 			os.remove(small_thumb_path)
 			raise e
 
-
-		if cls.objects.filter(hid=record.hid, is_title=True).count() < 1:
-			# It is possible that the race condition will be present
-			# if several photos will be uploaded at the same time.
-			# In this case several photos may be marked as title,
-			# So here wee ned a mechanism to prevent race conditions.
-			# Database transactions are unhelpfull here.
-			redis = redis_connections['cache']
-			key = 'photos_upl_queue_{0}'.format(record.hid)
-			if redis.get(key) is None:
-				redis.setex(key, 60, '0')
-				record.mark_as_title()
-
-
-		# seems to be ok
-		return record.info()
+		raise Exception('Todo here')
+		# with transaction.atomic():
+		# 	cursor = connection.cursor()
+		# 	cursor.execute('LOCK TABLE {table} IN ACCESS EXCLUSIVE MODE;'.format(table=cls._meta.db_table))
+		#
+		# 	if cls.objects.filter(hid=record.hid, is_title=True).count() == 0:
+		# 		# # It is possible that the race condition will be present
+		# 		# # if several photos will be uploaded at the same time.
+		# 		# # In this case several photos may be marked as title,
+		# 		# # So here wee ned a mechanism to prevent race conditions.
+		# 		# # Database transactions are unhelpfull here.
+		# 		# redis = redis_connections['cache']
+		# 		# key = 'photos_upload_queue_{0}'.format(publication_head.tid)
+		# 		#
+		# 		# while not redis.setnx(key, '0'):
+		# 		# 	sleep(random.random() * 2)
+		# 		#
+		# 		record.mark_as_title()
+		# 		# redis.delete(key)
+		#
+		# # seems to be ok
+		# return record.info()
 
 
 	@classmethod

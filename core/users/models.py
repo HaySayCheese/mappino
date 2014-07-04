@@ -1,18 +1,19 @@
 #coding=utf-8
+import base64
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 import random
 import string
-import exceptions
-from core.users.classes import UserAvatar
-
 from django.utils.timezone import now
-from core.users import constants
-import re
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.tests.custom_user import CustomUserManager
 from django.db import models, transaction
 import phonenumbers
+import uuid
+
+import exceptions
+from core.users.classes import UserAvatar
+from core.users import constants
 from collective.exceptions import EmptyArgument
 
 
@@ -47,20 +48,18 @@ class UsersManager(CustomUserManager):
 			return user
 
 
-
 class Users(AbstractBaseUser):
-	USERNAME_FIELD = 'mobile_phone'
-	REQUIRED_FIELDS = ['name', 'surname', 'email']
-
+	# hash_id використовується для передачі ссилок на клієнт.
+	# Передача id у відкритому вигляді небезпечна тим, що:
+	#   * полегшує повний перебір записів з таблиці по інкременту, а значить — полегшує ddos.
+	#   * відкриває внутрішню структуру таблиць в БД і наяні зв’язки.
+	hash_id = models.TextField(unique=True, default=lambda: uuid.uuid4().hex)
 	is_active = models.BooleanField(default=False)
-	is_admin = models.BooleanField(default=False)
-	is_stuff = models.BooleanField(default=False)
-	is_realtor = models.BooleanField(default=False)
 
+
+	# required
 	first_name = models.TextField()
 	last_name = models.TextField()
-
-	# required contacts
 	email = models.EmailField(unique=True)
 	mobile_phone = models.TextField(unique=True)
 
@@ -71,13 +70,19 @@ class Users(AbstractBaseUser):
 	landline_phone = models.TextField(null=True) # landline phone is not personal.
 	add_landline_phone = models.TextField(null=True) # therefore it can not be unique.
 
-	alias = models.TextField(unique=True, null=True)
-
 	# other fields
 	avatar_url = models.TextField()
 
+	# 1.1: subdomains
+	# alias = models.TextField(unique=True, null=True)
+
+
+	USERNAME_FIELD = 'mobile_phone'
+	REQUIRED_FIELDS = ['name', 'surname', 'email']
 
 	objects = UsersManager()
+
+
 	class Meta:
 		db_table = "users"
 		unique_together = (

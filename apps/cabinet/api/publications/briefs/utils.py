@@ -223,24 +223,24 @@ def __dump_publications_list(tid, user_id, queryset):
 		щоб на вищих рівнях можна було накласти додакові умови на вибірку.
 		По суті, дана функція лишш дампить результати цієї вибірки в список в певному форматі.
 	"""
-	publications_list = queryset.values_list('id', 'state_sid', 'created', 'body__title', 'for_rent', 'for_sale')
+	publications_list = queryset.values_list('id', 'hash_id', 'state_sid', 'created', 'body__title', 'for_rent', 'for_sale')
 	if not publications_list:
 		return []
 
-	pub_ids = [publication[0] for publication in publications_list] # publication[0] = publication.id
+	pub_ids = [publication[0] for publication in publications_list] # publication[0] = publication.hash_id
 	tags = DirTags.contains_publications(tid, pub_ids).filter(user_id = user_id).only('id', 'pubs')
 
 	model = HEAD_MODELS[tid]
 
 	return [{
 		'tid': tid,
-		'id': publication[0], # id
-	    'state_sid': publication[1], # state_sid
-	    'created': publication[2].strftime('%Y-%m-%dT%H:%M:%SZ'),
-	    'title': publication[3], # body.title
-	    'for_rent': publication[4], # for_rent
-	    'for_sale': publication[5], # for_sale
-	    'tags': [tag.id for tag in ifilter(lambda t: t.contains(tid, publication[0]), tags)],
+		'id': publication[1], # hash_id
+	    'state_sid': publication[2], # state_sid
+	    'created': publication[3].strftime('%Y-%m-%dT%H:%M:%SZ'),
+	    'title': publication[4], # body.title
+	    'for_rent': publication[5], # for_rent
+	    'for_sale': publication[6], # for_sale
+	    'tags': [tag.id for tag in ifilter(lambda t: t.contains(tid, publication[0]), tags)], # real_id here
 	    'photo_url': model.objects.filter(id=publication[0]).only('id')[:1][0].title_small_thumbnail_url()
 
 	    # ...
