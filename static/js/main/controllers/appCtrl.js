@@ -222,6 +222,9 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
         $rootScope.publicationIdPart = $routeParams.id;
 
         angular.element(".modal-backdrop").remove();
+
+        if ($location.path() == "/search")
+            $rootScope.pageTitle = "Mappino";
     });
 
 
@@ -243,11 +246,4 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
                 $scope.$apply();
         }
     });
-
-
-    $scope.firstEnterInit = function() {
-
-    }
-
-
 });
