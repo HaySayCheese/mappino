@@ -125,8 +125,10 @@ app.factory('Account', function(Queries, $location) {
          * @param {function}    callback
          */
         getUserName: function(callback) {
-            Queries.Account.getUserName().then(function(data) {
+            Queries.Account.getUserName().success(function(data) {
                 _.isFunction(callback) && callback(data);
+            }).error(function() {
+                _.isFunction(callback) && callback("error");
             });
         },
 

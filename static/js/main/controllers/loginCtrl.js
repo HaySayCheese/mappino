@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('LoginCtrl', function($scope, $rootScope, $timeout, Account) {
+app.controller('LoginCtrl', function($scope, $rootScope, $timeout, $location, Account) {
 
     /**
      * Змінні
@@ -56,6 +56,8 @@ app.controller('LoginCtrl', function($scope, $rootScope, $timeout, Account) {
             loginBtn.button("reset");
 
             validateLoginForm(data);
+
+            $location.path("/cabinet")
         });
     };
 
