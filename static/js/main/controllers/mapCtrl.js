@@ -458,6 +458,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             return;
 
         $timeout(function() {
+            if (!$scope.filters.map.viewport)
+                return;
+
             var sneLat = $scope.filters.map.viewport.getNorthEast().lat().toString(),
                 sneLng = $scope.filters.map.viewport.getNorthEast().lng().toString(),
                 sswLat = $scope.filters.map.viewport.getSouthWest().lat().toString(),
