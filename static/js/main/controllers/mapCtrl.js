@@ -294,36 +294,17 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
                 angular.element(cityInput).focusin(function () {
                     angular.element(document).keypress(function (e) {
-                        var autocompleteContainer = angular.element(".pac-container"),
-                            autocompleteFirstItem = autocompleteContainer.find(".pac-item:first"),
-                            geocoder = new google.maps.Geocoder();
-
-                        if (e.which == 13)
-                            geocoder.geocode({ "address": autocompleteFirstItem.text() }, function(results, status) {
-                                if (status == google.maps.GeocoderStatus.OK) {
-
-                                    autocompleteFirstItem.addClass("pac-selected");
-                                    autocompleteContainer.hide();
-
-                                    angular.element(cityInput)
-                                        .val(autocompleteFirstItem.find(".pac-item-query").text()
-                                            + ", " +
-                                            autocompleteFirstItem.find("span:nth-child(3)").text());
-
-                                    if (results[0].geometry.viewport) {
-                                        $scope.filters.map.city = cityInput.value;
-                                        map.fitBounds(results[0].geometry.viewport);
-                                    } else {
-                                        map.panTo(results[0].geometry.location);
-                                        map.setZoom(17);
-
-                                        $scope.filters.map.city = cityInput.value;
-                                    }
-                                }
-                            });
-                        else
-                            autocompleteContainer.show();
+                        if (e.which == 13) {
+                            selectFirstResultInAutocomplete();
+                        }
                     });
+                    selectFirstResultInAutocomplete()
+                });
+                angular.element(cityInput).focusout(function () {
+                    var autocompleteContainer = angular.element(".pac-container");
+
+                    if(!autocompleteContainer.is(":focus") && !autocompleteContainer.is(":visible"))
+                        selectFirstResultInAutocomplete()
                 });
             }, 1000);
 
@@ -372,6 +353,36 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
         initializeMap();
     };
+
+
+    function selectFirstResultInAutocomplete() {
+        var autocompleteContainer = angular.element(".pac-container"),
+            autocompleteFirstItem = autocompleteContainer.find(".pac-item:first"),
+            geocoder = new google.maps.Geocoder();
+
+
+        geocoder.geocode({ "address": autocompleteFirstItem.text() }, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+
+                angular.element(cityInput)
+                    .val(autocompleteFirstItem.find(".pac-item-query").text()
+                        + ", " +
+                        autocompleteFirstItem.find("span:nth-child(3)").text());
+
+                autocompleteFirstItem.addClass("pac-selected");
+                autocompleteContainer.hide();
+
+                if (results[0].geometry.viewport) {
+                    map.fitBounds(results[0].geometry.viewport);
+                } else {
+                    map.panTo(results[0].geometry.location);
+                    map.setZoom(17);
+                }
+
+                $scope.filters.map.city = cityInput.value;
+            }
+        });
+    }
 
 
     /**
