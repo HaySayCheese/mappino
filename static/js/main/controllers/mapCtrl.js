@@ -134,6 +134,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     $rootScope.$on("first-enter-change", function(event, data) {
         $scope.filters.map.zoom = data[1];
         $scope.filters.map.latLng = data[0];
+        $scope.filters.map.city = data[2];
 
         map.panTo($scope.filters.map.latLng);
         map.setZoom($scope.filters.map.zoom);
@@ -298,7 +299,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                             selectFirstResultInAutocomplete();
                         }
                     });
-                    selectFirstResultInAutocomplete()
                 });
                 angular.element(cityInput).focusout(function () {
                     var autocompleteContainer = angular.element(".pac-container");
