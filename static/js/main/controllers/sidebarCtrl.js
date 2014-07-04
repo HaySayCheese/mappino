@@ -60,8 +60,6 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, $
             } else {
                 $scope.userName = "";
                 delete $cookies.sessionid;
-
-                $location.path("/account/login")
             }
         });
     }
