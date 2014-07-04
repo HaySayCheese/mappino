@@ -310,14 +310,15 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                                             + ", " +
                                             autocompleteFirstItem.find("span:nth-child(3)").text());
 
-                                    if (results[0].geometry.viewport)
+                                    if (results[0].geometry.viewport) {
+                                        $scope.filters.map.city = cityInput.value;
                                         map.fitBounds(results[0].geometry.viewport);
-                                    else {
+                                    } else {
                                         map.panTo(results[0].geometry.location);
                                         map.setZoom(17);
-                                    }
 
-                                    $scope.filters.map.city = cityInput.value;
+                                        $scope.filters.map.city = cityInput.value;
+                                    }
                                 }
                             });
                         else
