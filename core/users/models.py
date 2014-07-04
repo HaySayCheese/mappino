@@ -1,15 +1,15 @@
 #coding=utf-8
-import base64
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
 import random
 import string
+import uuid
+
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 from django.utils.timezone import now
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.tests.custom_user import CustomUserManager
 from django.db import models, transaction
 import phonenumbers
-import uuid
 
 import exceptions
 from core.users.classes import UserAvatar

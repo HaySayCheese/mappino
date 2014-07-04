@@ -31,9 +31,8 @@ class RealtorsContacts(View):
 		Returns contacts of the owner of the publication accordingly to his preferences.
 		"""
 		try:
-			tid, hid = args[0].split(':')
+			tid, hash_hid = args[0].split(':')
 			tid = int(tid)
-			hid = int(hid)
 		except (ValueError, IndexError):
 			return HttpResponseBadRequest(
 				json.dumps(self.get_codes['invalid_parameters']), content_type='application/json')
@@ -46,7 +45,7 @@ class RealtorsContacts(View):
 
 		model = HEAD_MODELS[tid]
 		try:
-			publication = model.objects.filter(id=hid).only('id', 'owner')[:1][0]
+			publication = model.objects.filter(hash_id=hash_hid).only('id', 'owner')[:1][0]
 		except IndexError:
 			return HttpResponseBadRequest(
 				json.dumps(self.get_codes['invalid_hid']), content_type='application/json')

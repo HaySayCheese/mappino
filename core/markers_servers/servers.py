@@ -407,6 +407,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 
 	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
+			'hash_id',
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
 
@@ -439,7 +440,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 
 
 		# data
-		data = str(record.id) + self.separator
+		data = str(record.hash_id) + self.separator
 
 		if record.body.rooms_count is None:
 			raise self.SerializationError('rooms_count is required but absent.')
@@ -511,7 +512,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'rooms_count':          int(data[1]),
 				'total_area':         float(data[2]),
 				'floor':                int(data[3]),
@@ -543,7 +544,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 				'for_sale': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':                   data[0],
 				'rooms_count':          int(data[1]),
 				'total_area':         float(data[2]),
 				'floor':                int(data[3]),
@@ -567,7 +568,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':                   data[0],
 				'rooms_count':          int(data[1]),
 				'total_area':         float(data[2]),
 				'floor':                int(data[3]),
@@ -604,7 +605,7 @@ class FlatsMarkersManager(BaseMarkersManager):
 		# ітак ясно, що їх буде не більше одної.
 
 		result = {
-			'id': marker['id']
+			'id': marker['hash_id']
 		}
 
 		# Гривня як базова валюта обирається згідно з чинним законодавством,
@@ -1040,6 +1041,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 
 	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
+			'hash_id',
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
 
@@ -1072,7 +1074,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 
 
 		# data
-		data = str(record.id) + self.separator
+		data = str(record.hash_id) + self.separator
 
 		if record.body.rooms_count is None:
 			raise self.SerializationError('rooms_count is required but absent.')
@@ -1144,7 +1146,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':                   data[0],
 				'rooms_count':          int(data[1]),
 				'total_area':         float(data[2]),
 				'floor':                int(data[3]),
@@ -1176,7 +1178,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 				'for_sale': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':                   data[0],
 				'rooms_count':          int(data[1]),
 				'total_area':         float(data[2]),
 				'floor':                int(data[3]),
@@ -1200,7 +1202,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':                   data[0],
 				'rooms_count':          int(data[1]),
 				'total_area':         float(data[2]),
 				'floor':                int(data[3]),
@@ -1237,7 +1239,7 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 		# ітак ясно, що їх буде не більше одної.
 
 		result = {
-			'id': marker['id']
+			'id': marker['hash_id']
 		}
 
 		# Гривня як базова валюта обирається згідно з чинним законодавством,
@@ -1676,6 +1678,7 @@ class HousesMarkersManager(BaseMarkersManager):
 
 	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
+			'hash_id',
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
 
@@ -1707,7 +1710,7 @@ class HousesMarkersManager(BaseMarkersManager):
 
 
 		# data
-		data = str(record.id) + self.separator
+		data = str(record.hash_id) + self.separator
 
 		if record.body.rooms_count is None:
 			raise self.SerializationError('rooms_count is required but absent.')
@@ -1778,7 +1781,7 @@ class HousesMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'rooms_count':          int(data[1]),
 				'floors_count':         int(data[2]),
 				'total_area':         float(data[3]),
@@ -1808,7 +1811,7 @@ class HousesMarkersManager(BaseMarkersManager):
 				'for_sale': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'rooms_count':          int(data[1]),
 			    'floors_count':         int(data[2]),
 			    'total_area':         float(data[3]),
@@ -1831,7 +1834,7 @@ class HousesMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'rooms_count':          int(data[1]),
 				'floors_count':         int(data[2]),
 				'total_area':         float(data[3]),
@@ -1867,7 +1870,7 @@ class HousesMarkersManager(BaseMarkersManager):
 		# ітак ясно, що їх буде не більше одної.
 
 		result = {
-			'id': marker['id']
+			'id': marker['hash_id']
 		}
 
 		# Гривня як базова валюта обирається згідно з чинним законодавством,
@@ -2255,6 +2258,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 
 	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
+			'hash_id',
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
 
@@ -2286,7 +2290,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 
 
 		# data
-		data = str(record.id) + self.separator
+		data = str(record.hash_id) + self.separator
 
 		if record.body.rooms_count is None:
 			raise self.SerializationError('rooms_count is required but absent.')
@@ -2357,7 +2361,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'rooms_count':          int(data[1]),
 				'floors_count':         int(data[2]),
 				'total_area':         float(data[3]),
@@ -2387,7 +2391,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 				'for_sale': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'rooms_count':          int(data[1]),
 			    'floors_count':         int(data[2]),
 			    'total_area':         float(data[3]),
@@ -2410,7 +2414,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'rooms_count':          int(data[1]),
 				'floors_count':         int(data[2]),
 				'total_area':         float(data[3]),
@@ -2446,7 +2450,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 		# ітак ясно, що їх буде не більше одної.
 
 		result = {
-			'id': marker['id']
+			'id': marker['hash_id']
 		}
 
 		# Гривня як базова валюта обирається згідно з чинним законодавством,
@@ -2835,6 +2839,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 
 	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
+			'hash_id',
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
 
@@ -2867,7 +2872,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 
 
 		# data
-		data = str(record.id) + self.separator
+		data = str(record.hash_id) + self.separator
 
 		if record.body.rooms_count is None:
 			raise self.SerializationError('rooms_count is required but absent.')
@@ -2939,7 +2944,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'rooms_count':          int(data[1]),
 				'total_area':         float(data[2]),
 				'floor':                int(data[3]),
@@ -2971,7 +2976,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 				'for_sale': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'rooms_count':          int(data[1]),
 				'total_area':         float(data[2]),
 				'floor':                int(data[3]),
@@ -2995,7 +3000,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'rooms_count':          int(data[1]),
 				'total_area':         float(data[2]),
 				'floor':                int(data[3]),
@@ -3453,6 +3458,7 @@ class TradesMarkersManager(BaseMarkersManager):
 
 	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
+			'hash_id',
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
 			'rent_terms__price', 'rent_terms__currency_sid',
@@ -3478,7 +3484,7 @@ class TradesMarkersManager(BaseMarkersManager):
 			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
 		# data
-		data = str(record.id) + self.separator
+		data = str(record.hash_id) + self.separator
 
 		if record.body.halls_area is None:
 			raise self.SerializationError('halls_area is required but absent.')
@@ -3537,7 +3543,7 @@ class TradesMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'halls_area':         float(data[1]),
 				'total_area':         float(data[2]),
 			    'sale_price':         float(data[3]),
@@ -3561,7 +3567,7 @@ class TradesMarkersManager(BaseMarkersManager):
 				'for_sale': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'halls_area':         float(data[1]),
 				'total_area':         float(data[2]),
 			    'sale_price':         float(data[3]),
@@ -3582,7 +3588,7 @@ class TradesMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'halls_area':         float(data[1]),
 				'total_area':         float(data[2]),
 			    'rent_price':         float(data[3]),
@@ -3612,7 +3618,7 @@ class TradesMarkersManager(BaseMarkersManager):
 		# ітак ясно, що їх буде не більше одної.
 
 		result = {
-			'id': marker['id']
+			'id': marker['hash_id']
 		}
 
 		# Гривня як базова валюта обирається згідно з чинним законодавством,
@@ -3870,6 +3876,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 
 	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
+			'hash_id',
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
 			'rent_terms__price', 'rent_terms__currency_sid',
@@ -3894,7 +3901,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
 		# data
-		data = str(record.id) + self.separator
+		data = str(record.hash_id) + self.separator
 
 
 		if record.body.total_area is None:
@@ -3954,7 +3961,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'total_area':         float(data[1]),
 			    'cabinets_count':       int(data[2]),
 			    'sale_price':         float(data[3]),
@@ -3977,7 +3984,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 				'for_sale': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'total_area':         float(data[1]),
 			    'cabinets_count':       int(data[2]),
 			    'sale_price':         float(data[3]),
@@ -3997,7 +4004,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'total_area':         float(data[1]),
 			    'cabinets_count':       int(data[2]),
 			    'rent_price':         float(data[3]),
@@ -4026,7 +4033,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 		# ітак ясно, що їх буде не більше одної.
 
 		result = {
-			'id': marker['id']
+			'id': marker['hash_id']
 		}
 
 		# Гривня як базова валюта обирається згідно з чинним законодавством,
@@ -4259,6 +4266,7 @@ class WarehousesMarkersManager(BaseMarkersManager):
 
 	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
+			'hash_id',
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
 			'rent_terms__price', 'rent_terms__currency_sid',
@@ -4284,7 +4292,7 @@ class WarehousesMarkersManager(BaseMarkersManager):
 			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
 		# data
-		data = str(record.id) + self.separator
+		data = str(record.hash_id) + self.separator
 
 		if record.body.area is None:
 			raise self.SerializationError('area is required but absent.')
@@ -4339,8 +4347,8 @@ class WarehousesMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
-				'area':         float(data[1]),
+				'hash_id':              data[0],
+				'area':               float(data[1]),
 			    'sale_price':         float(data[2]),
 			    'rent_price':         float(data[3]),
 
@@ -4362,8 +4370,8 @@ class WarehousesMarkersManager(BaseMarkersManager):
 				'for_sale': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
-				'area':         float(data[1]),
+				'hash_id':              data[0],
+				'area':               float(data[1]),
 			    'sale_price':         float(data[2]),
 
 				# bitmask deserialization
@@ -4382,8 +4390,8 @@ class WarehousesMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
-				'area':         float(data[1]),
+				'hash_id':              data[0],
+				'area':               float(data[1]),
 			    'rent_price':         float(data[2]),
 
 				# bitmask deserialization
@@ -4411,7 +4419,7 @@ class WarehousesMarkersManager(BaseMarkersManager):
 		# ітак ясно, що їх буде не більше одної.
 
 		result = {
-			'id': marker['id']
+			'id': marker['hash_id']
 		}
 
 		# Гривня як базова валюта обирається згідно з чинним законодавством,
@@ -4618,6 +4626,7 @@ class BusinessesMarkersManager(BaseMarkersManager):
 
 	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
+			'hash_id',
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
 			'rent_terms__price', 'rent_terms__currency_sid')
@@ -4634,7 +4643,7 @@ class BusinessesMarkersManager(BaseMarkersManager):
 		bitmask = ''
 
 		# data
-		data = str(record.id) + self.separator
+		data = str(record.hash_id) + self.separator
 
 		# sale terms
 		if record.for_sale:
@@ -4684,7 +4693,7 @@ class BusinessesMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 			    'sale_price':         float(data[1]),
 			    'rent_price':         float(data[2]),
 
@@ -4699,7 +4708,7 @@ class BusinessesMarkersManager(BaseMarkersManager):
 				'for_sale': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 			    'sale_price':         float(data[1]),
 
 				# bitmask deserialization
@@ -4712,7 +4721,7 @@ class BusinessesMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 			    'rent_price':         float(data[1]),
 
 				# bitmask deserialization
@@ -4734,7 +4743,7 @@ class BusinessesMarkersManager(BaseMarkersManager):
 		# ітак ясно, що їх буде не більше одної.
 
 		result = {
-			'id': marker['id']
+			'id': marker['hash_id']
 		}
 
 		# Гривня як базова валюта обирається згідно з чинним законодавством,
@@ -4876,6 +4885,7 @@ class CateringsMarkersManager(BaseMarkersManager):
 
 	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
+			'hash_id',
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
 			'rent_terms__price', 'rent_terms__currency_sid',
@@ -4900,7 +4910,7 @@ class CateringsMarkersManager(BaseMarkersManager):
 			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
 		# data
-		data = str(record.id) + self.separator
+		data = str(record.hash_id) + self.separator
 
 		if record.body.halls_count is None:
 			raise self.SerializationError('halls_count is required but absent.')
@@ -4963,7 +4973,7 @@ class CateringsMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 			    'halls_count':        float(data[1]),
 				'halls_area':         float(data[2]),
 				'total_area':         float(data[3]),
@@ -4988,7 +4998,7 @@ class CateringsMarkersManager(BaseMarkersManager):
 				'for_sale': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'halls_count':          int(data[1]),
 				'halls_area':         float(data[2]),
 				'total_area':         float(data[3]),
@@ -5010,7 +5020,7 @@ class CateringsMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'halls_count':        float(data[1]),
 				'halls_area':         float(data[2]),
 				'total_area':         float(data[3]),
@@ -5041,7 +5051,7 @@ class CateringsMarkersManager(BaseMarkersManager):
 		# ітак ясно, що їх буде не більше одної.
 
 		result = {
-			'id': marker['id']
+			'id': marker['hash_id']
 		}
 
 		# Гривня як базова валюта обирається згідно з чинним законодавством,
@@ -5325,6 +5335,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 
 	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
+			'hash_id',
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
 			'rent_terms__price', 'rent_terms__currency_sid',
@@ -5344,7 +5355,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
 		# data
-		data = str(record.id) + self.separator
+		data = str(record.hash_id) + self.separator
 
 		if record.body.area is None:
 			raise self.SerializationError('area is required but absent.')
@@ -5403,7 +5414,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'area':               float(data[1]),
 			    'ceiling_height':     float(data[2]),
 			    'sale_price':         float(data[3]),
@@ -5421,7 +5432,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 				'for_sale': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'area':               float(data[1]),
 			    'ceiling_height':     float(data[2]),
 			    'sale_price':         float(data[3]),
@@ -5437,7 +5448,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'area':               float(data[1]),
 			    'ceiling_height':     float(data[2]),
 			    'rent_price':         float(data[3]),
@@ -5462,7 +5473,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 		# ітак ясно, що їх буде не більше одної.
 
 		result = {
-			'id': marker['id']
+			'id': marker['hash_id']
 		}
 
 		# Гривня як базова валюта обирається згідно з чинним законодавством,
@@ -5659,6 +5670,7 @@ class LandsMarkersManager(BaseMarkersManager):
 
 	def record_min_queryset(self, hid):
 		return self.model.objects.filter(id=hid).only(
+			'hash_id',
 			'for_sale', 'for_rent',
 			'sale_terms__price', 'sale_terms__currency_sid',
 			'rent_terms__price', 'rent_terms__currency_sid',
@@ -5681,7 +5693,7 @@ class LandsMarkersManager(BaseMarkersManager):
 			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
 
 		# data
-		data = str(record.id) + self.separator
+		data = str(record.hash_id) + self.separator
 
 		if record.body.area is None:
 			raise self.SerializationError('area is required but absent.')
@@ -5736,7 +5748,7 @@ class LandsMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':             int(data[0]),
+				'hash_id':        data[0],
 				'area':         float(data[1]),
 			    'sale_price':   float(data[2]),
 			    'rent_price':   float(data[3]),
@@ -5756,7 +5768,7 @@ class LandsMarkersManager(BaseMarkersManager):
 				'for_sale': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'area':               float(data[1]),
 			    'sale_price':         float(data[2]),
 
@@ -5774,7 +5786,7 @@ class LandsMarkersManager(BaseMarkersManager):
 			    'for_rent': True,
 
 				# data deserialization
-				'id':                   int(data[0]),
+				'hash_id':              data[0],
 				'area':               float(data[1]),
 			    'rent_price':         float(data[2]),
 
@@ -5801,7 +5813,7 @@ class LandsMarkersManager(BaseMarkersManager):
 		# ітак ясно, що їх буде не більше одної.
 
 		result = {
-			'id': marker['id']
+			'id': marker['hash_id']
 		}
 
 		# Гривня як базова валюта обирається згідно з чинним законодавством,

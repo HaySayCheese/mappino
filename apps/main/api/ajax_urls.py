@@ -11,13 +11,13 @@ urlpatterns = patterns('apps.main.api',
 
 
     # detailed
-    url(r'^ajax/api/detailed/publication/(\d+:\d+)/$', DetailedView.as_view()),
-    url(r'^ajax/api/detailed/publication/(\d+:\d+)/contacts/$', RealtorsContacts.as_view()),
+    url(r'^ajax/api/detailed/publication/(\d+:\w+)/$', DetailedView.as_view()),
+    url(r'^ajax/api/detailed/publication/(\d+:\w+)/contacts/$', RealtorsContacts.as_view()),
 
 
     # correspondence
-    url(r'^ajax/api/notifications/send-message/(\d+:\d+)/$', SendMessageFromClient.as_view()),
-    url(r'^ajax/api/notifications/send-call-request/(\d+:\d+)/$', SendCallRequestFromClient.as_view()),
+    url(r'^ajax/api/notifications/send-message/(\d+:\w+)/$', SendMessageFromClient.as_view()),
+    url(r'^ajax/api/notifications/send-call-request/(\d+:\w+)/$', SendCallRequestFromClient.as_view()),
 
 
     # realtors pages
