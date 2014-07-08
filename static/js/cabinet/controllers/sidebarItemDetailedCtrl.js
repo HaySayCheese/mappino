@@ -292,7 +292,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 map: map,
                 draggable: true,
                 position: center,
-                icon: '/mappino_static/img/markers/red-normal.png'
+                icon: '/static/img/markers/red-normal.png'
             });
 
         autocomplete.bindTo('bounds', map);
