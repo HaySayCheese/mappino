@@ -252,21 +252,68 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     $scope.parseSearchParametersFromUrl = function() {
         var searchParameters = $location.search();
 
-        if ($location.host().split(".").length === 3) {
-            $rootScope.subdommain = $location.host().split(".")[0];
-            $rootScope.sidebarTemplateUrl = "ajax/template/main/sidebar/realtors/";
+//        if ($location.host().split(".").length === 3) {
+//            $rootScope.subdommain = $location.host().split(".")[0];
+//            $rootScope.sidebarTemplateUrl = "ajax/template/main/sidebar/realtors/";
+//
+//            Markers.getRealtorsData($rootScope.subdommain, function(data) {
+//                $scope.realtor = data;
+//            });
+//            Markers.getRealtorsMarkers(0, $rootScope.subdommain, function(data) {
+//                markers = data;
+//                placeMarkers();
+//                map.fitBounds(Markers.getViewport());
+//                offsetCenter(map.getCenter(), -300);
+//            });
+//        } else {
+//            $rootScope.subdommain = "";
+//            $rootScope.sidebarTemplateUrl = "ajax/template/main/sidebar/common/";
+//
+//            $timeout(function() {
+//                cityInput = document.getElementById('sidebar-city-input');
+//                autocomplete = new google.maps.places.Autocomplete(cityInput, autocompleteOptions);
+//                autocomplete.bindTo('bounds', map);
+//
+//                // Евент вибору елемента в автокомпліті
+//                google.maps.event.addListener(autocomplete, 'place_changed', function() {
+//                    var place = autocomplete.getPlace();
+//
+//                    if (!place.geometry) {
+//                        return;
+//                    }
+//
+//                    // If the place has a geometry, then present it on a map.
+//                    if (place.geometry.viewport) {
+//                        map.fitBounds(place.geometry.viewport);
+//                    } else {
+//                        map.panTo(place.geometry.location);
+//                        map.setZoom(15);
+//                    }
+//
+//                    $scope.filters.map.city = cityInput.value;
+//
+//                    if(!$scope.$$phase)
+//                        $scope.$apply();
+//                });
+//
+//                angular.element(cityInput).focusin(function () {
+//                    angular.element(document).keypress(function (e) {
+//                        if (e.which == 13) {
+//                            selectFirstResultInAutocomplete();
+//                        }
+//                    });
+//                });
+//                angular.element(cityInput).focusout(function () {
+//                    var autocompleteContainer = angular.element(".pac-container");
+//
+//                    if(!autocompleteContainer.is(":focus") && !autocompleteContainer.is(":visible"))
+//                        selectFirstResultInAutocomplete()
+//                });
+//            }, 1000);
+//
+//        }
 
-            Markers.getRealtorsData($rootScope.subdommain, function(data) {
-                $scope.realtor = data;
-            });
-            Markers.getRealtorsMarkers(0, $rootScope.subdommain, function(data) {
-                markers = data;
-                placeMarkers();
-                map.fitBounds(Markers.getViewport());
-                offsetCenter(map.getCenter(), -300);
-            });
-        } else {
-            $rootScope.subdommain = "";
+
             $rootScope.sidebarTemplateUrl = "ajax/template/main/sidebar/common/";
 
             $timeout(function() {
@@ -310,8 +357,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                         selectFirstResultInAutocomplete()
                 });
             }, 1000);
-
-        }
 
 
         for (var key in searchParameters) {
