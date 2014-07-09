@@ -140,7 +140,7 @@ app.factory('Markers', function(Queries, $rootScope) {
                 position: new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
                 tid: tid,
                 id: data.id,
-                icon: 'http://mappino.com.ua/static/img/markers/' + panel + '-normal.png',
+                icon: '/static/img/markers/' + panel + '-normal.png',
                 labelInBackground: true,
                 labelContent: data.d0 + "</br>" + data.d1,
                 labelAnchor: new google.maps.Point(0, 40),
