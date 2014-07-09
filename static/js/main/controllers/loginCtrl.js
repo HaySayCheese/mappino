@@ -56,8 +56,6 @@ app.controller('LoginCtrl', function($scope, $rootScope, $timeout, $location, Ac
             loginBtn.button("reset");
 
             validateLoginForm(data);
-
-            window.location = "/cabinet/";
         });
     };
 
@@ -75,6 +73,8 @@ app.controller('LoginCtrl', function($scope, $rootScope, $timeout, $location, Ac
             sessionStorage.userName = user.name + " " + user.surname;
 
             loginModal.modal('hide');
+
+            window.location = "/cabinet/";
         }
 
         if (code === 3)
