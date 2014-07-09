@@ -18,7 +18,8 @@ app.factory('Markers', function(Queries, $rootScope) {
         swPoint= {
             lat: maxLat,
             lng: minLng
-        };
+        },
+        requestTimeout;
 
     return {
 
@@ -56,7 +57,14 @@ app.factory('Markers', function(Queries, $rootScope) {
                 }
             }
 
-            $rootScope.loadings.markers = true;
+            //$rootScope.loadings.markers = true;
+
+            clearTimeout(requestTimeout);
+            requestTimeout = setTimeout(function() {
+                $rootScope.loadings.markers = true;
+
+                $rootScope.$$phase() && $rootScope.$apply();
+            }, 200);
 
             Queries.Map.getMarkers(tid, stringFilters, viewport).success(function(data) {
                 that.clearPanelMarkers(panel);
