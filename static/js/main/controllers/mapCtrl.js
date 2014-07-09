@@ -435,6 +435,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
     /**
      * Встановлення оффсета для карти
+     *
+     * юзається для рієлторів, не видаляти!!
      */
     function offsetCenter(latlng, offsetx, offsety) {
 
