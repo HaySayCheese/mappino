@@ -72,7 +72,9 @@ app.factory('Queries', function($http, $q, $upload) {
                 return $upload.upload({
                     url: '/ajax/api/cabinet/publications/' + tid + ':' + hid + '/photos/',
                     file: photos,
-                    isTitle: isTitle
+                    data: {
+                        isTitle: isTitle
+                    }
                 }).success(callback);
             },
 
