@@ -57,6 +57,7 @@ app.factory('Markers', function(Queries, $rootScope) {
             }
 
             $rootScope.loadings.markers = true;
+
             Queries.Map.getMarkers(tid, stringFilters, viewport).success(function(data) {
                 that.clearPanelMarkers(panel);
                 that.add(tid, panel, data, function() {

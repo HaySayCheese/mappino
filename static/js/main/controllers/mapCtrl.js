@@ -356,7 +356,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                     if(!autocompleteContainer.is(":focus") && !autocompleteContainer.is(":visible"))
                         selectFirstResultInAutocomplete()
                 });
-            }, 1000);
+            }, 2000);
 
 
         for (var key in searchParameters) {
