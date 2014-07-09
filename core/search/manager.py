@@ -3,10 +3,10 @@ import Queue
 
 import MySQLdb
 from django.conf import settings
-from apps.cabinet.api.dirtags import DirTags
 
+from apps.cabinet.api.dirtags import DirTags
+from core.publications import models_signals
 from core.publications.constants import OBJECTS_TYPES
-from core.publications.models_signals import record_updated
 from core.search.tasks import update_house_index, update_flat_index, update_apartments_index, \
 	update_cottage_index, update_room_index, update_trade_index, update_office_index, update_warehouse_index, \
 	update_business_index, update_catering_index, update_garage_index, update_land_index
@@ -30,7 +30,9 @@ class SearchManager(object):
 		for i in xrange(settings.ESTIMATE_THREADS_COUNT):
 			self.connections.put(self.__new_connection())
 
-		record_updated.connect(self.update_record_index)
+		# signals initialisation
+		models_signals.record_updated.connect(self.update_record_index)
+		models_signals.deleted_permanent.connect(self.remove_record_from_index)
 
 
 	def update_record_index(self, **kwargs):
@@ -89,6 +91,22 @@ class SearchManager(object):
 			if settings.DEBUG:
 				raise e
 			pass
+
+
+	def remove_record_from_index(self, **kwargs):
+		tid = kwargs['tid']
+		hid = kwargs['hid']
+
+		# sphinx doesn't support subqueries, so wee need 2 queries to delete the record
+		try:
+			record_id = self.__execute_sphinxql(
+				u"SELECT id FROM publications_rt WHERE tid={0} AND hid={1}".format(tid, hid))[0][0]
+		except IndexError:
+			# invalid tid or hid,
+			# or record is absent
+			return
+
+		self.__execute_sphinxql(u"DELETE FROM publications_rt WHERE id={0}".format(record_id))
 
 
 	def process_search_query(self, query, user_id):
