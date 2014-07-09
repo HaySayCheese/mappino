@@ -76,11 +76,9 @@ class PublishedDataSource(object):
 		}
 
 		tags = DirTags.contains_publications(tid, [p.id])
-		if tags:
-			result['tags'] = {
-		        tag.id: True for tag in tags
-		    }
-
+		result['tags'] = {
+		    tag.id: True for tag in tags
+		}
 
 		return result
 
