@@ -534,7 +534,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                     placeMarkers();
                 });
             }
-        }, 1500);
+        }, 100);
     }
 
 
