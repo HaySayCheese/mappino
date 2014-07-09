@@ -57,13 +57,11 @@ app.factory('Markers', function(Queries, $rootScope) {
                 }
             }
 
-            //$rootScope.loadings.markers = true;
-
             clearTimeout(requestTimeout);
             requestTimeout = setTimeout(function() {
                 $rootScope.loadings.markers = true;
 
-                $rootScope.$$phase() && $rootScope.$apply();
+                $rootScope.$apply();
             }, 200);
 
             Queries.Map.getMarkers(tid, stringFilters, viewport).success(function(data) {
@@ -118,7 +116,6 @@ app.factory('Markers', function(Queries, $rootScope) {
                             } else {
                                 return;
                             }
-
 
 
                             if (lat > minLat && lng < maxLng){

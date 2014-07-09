@@ -68,10 +68,11 @@ app.factory('Queries', function($http, $q, $upload) {
                 return $http.put("/ajax/api/cabinet/publications/" + tid + ":" + hid + "/", data).success(callback);
             },
 
-            uploadPhotos: function(tid, hid, photos, callback) {
+            uploadPhotos: function(tid, hid, photos, isTitle, callback) {
                 return $upload.upload({
                     url: '/ajax/api/cabinet/publications/' + tid + ':' + hid + '/photos/',
-                    file: photos
+                    file: photos,
+                    isTitle: isTitle
                 }).success(callback);
             },
 
@@ -125,7 +126,7 @@ app.factory('Queries', function($http, $q, $upload) {
             },
 
             sendMessage: function(ticketId, message, callback) {
-                return $http.post("/ajax/api/cabinet/support/tickets/" + ticketId + "/messages/", message).then(callback);
+                return $http.post("/ajax/api/cabinet/support/tickets/" + ticketId + "/messages/", message).success(callback);
             }
         }
 
