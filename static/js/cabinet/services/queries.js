@@ -68,13 +68,10 @@ app.factory('Queries', function($http, $q, $upload) {
                 return $http.put("/ajax/api/cabinet/publications/" + tid + ":" + hid + "/", data).success(callback);
             },
 
-            uploadPhotos: function(tid, hid, photos, isTitle, callback) {
+            uploadPhotos: function(tid, hid, photos, callback) {
                 return $upload.upload({
                     url: '/ajax/api/cabinet/publications/' + tid + ':' + hid + '/photos/',
-                    file: photos,
-                    data: {
-                        is_title: isTitle
-                    }
+                    file: photos
                 }).success(callback);
             },
 

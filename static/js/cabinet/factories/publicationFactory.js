@@ -20,9 +20,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
             { name: "catering",  id: 9,  title: "Обьекта общепита" },
             { name: "garage",    id: 10, title: "Гаража" },
             { name: "land",      id: 11, title: "Земельного участка" }
-        ],
-
-        mainFotoIsSetted = false;
+        ];
 
     return {
 
@@ -278,15 +276,13 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
          * @param {function} callback
          */
         uploadPhotos: function(tid, hid, data, callback) {
-            Queries.Publications.uploadPhotos(tid, hid, data, !mainFotoIsSetted, function(data) {
+            Queries.Publications.uploadPhotos(tid, hid, data, function(data) {
 
                 if (data.code === 100) {
                     channel.info("Во время загрузки возникла ошибка. Повторите попытку с другим изображением");
                     _.isFunction(callback) && callback(data);
                     return;
                 }
-
-                mainFotoIsSetted = true;
 
                 publication.photos.push(data.image);
 
@@ -305,9 +301,6 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
          */
         removePhoto: function(tid, hid, pid, callback) {
             Queries.Publications.removePhoto(tid, hid, pid, function(data) {
-
-                if (publication.photos.length < 1)
-                    mainFotoIsSetted = false;
 
                 _.each(publication.photos, function(photo, index, list) {
                     if (photo.id === pid) {
