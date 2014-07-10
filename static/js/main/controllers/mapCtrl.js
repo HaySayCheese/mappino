@@ -15,7 +15,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         cityInput,// = document.getElementById('sidebar-city-input'),
         autocomplete,
         autocompleteOptions = {
-            types: ['(cities)'],
             componentRestrictions: {
                 country: "ua"
             }
