@@ -303,6 +303,9 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             marker.setPosition(e.latLng);
             setAddressFromLatLng(e.latLng, cityInput);
         });
+        google.maps.event.addListener(map, 'dblclick', function(event) {
+            map.setZoom(map.getZoom() + 1);
+        });
         google.maps.event.addListener(marker, 'dragend', function(e) {
             setAddressFromLatLng(e.latLng, cityInput);
         });
