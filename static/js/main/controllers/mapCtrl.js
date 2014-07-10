@@ -108,6 +108,23 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
 
     /**
+     * Слідкуємо за зміною типа нерухомості на панелі і грузимо темплейт
+     */
+    $scope.$watch("filters.red.r_type_sid", function(newValue) {
+        createFiltersForPanels("red", newValue, true);
+    });
+    $scope.$watch("filters.blue.b_type_sid", function(newValue) {
+        createFiltersForPanels("blue", newValue, true);
+    });
+    $scope.$watch("filters.green.g_type_sid", function(newValue) {
+        createFiltersForPanels("green", newValue, true);
+    });
+    $scope.$watch("filters.yellow.y_type_sid", function(newValue) {
+        createFiltersForPanels("yellow", newValue, true);
+    });
+
+
+    /**
      * Слідкуємо за зміною фільттрів. Динамічно оновлюємо урл
      */
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
@@ -161,6 +178,11 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             types       = $rootScope.publicationTypes,
             prefix      = panel.toString().substring(0, 1) + "_";
 
+        $scope.templateLoaded = false;
+        $timeout(function() {
+            $scope.templateLoaded = true;
+        }, 1000);
+
         if (clear) {
             for (var key in filters) {
                 if (filters.hasOwnProperty(key) && key != (prefix + "type_sid"))
@@ -184,8 +206,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             if (!filters[[prefix + types[tid].filters[i]]])
                 filters[prefix + types[tid].filters[i]] = baseFilters[types[tid].filters[i]];
         }
-
-
     }
 
 
@@ -593,7 +613,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     $scope.initPlugins = function() {
         initDropdown();
         initScrollBar();
-        initHandlerCreateFilters();
     };
     function initDropdown() {
         $timeout(function() {
@@ -647,19 +666,5 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             });
 
         }, 1000);
-    }
-    function initHandlerCreateFilters() {
-        angular.element(".type-selectpicker").bind('change',function(e) {
-            var panel = angular.element(e.currentTarget).attr("data-panel"),
-                value = e.currentTarget.value;
-
-            $scope.templateLoaded = false;
-            $timeout(function() {
-                $scope.templateLoaded = true;
-            }, 1000);
-
-            createFiltersForPanels(panel, value, true);
-        });
-
     }
 });
