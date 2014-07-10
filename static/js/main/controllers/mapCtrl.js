@@ -20,7 +20,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 country: "ua"
             }
         },
-        markerClusterer,
         geocoder,
         requestTimeout,
         requestTimeoutTime = 1500,
@@ -211,7 +210,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         /**
          * Інші екземпляри
          **/
-        markerClusterer = new MarkerClusterer(map, markers);
+
 
         /**
          * Евенти карти
