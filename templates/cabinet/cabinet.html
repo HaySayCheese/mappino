@@ -3,35 +3,28 @@
 <head>
     <title ng-bind="pageTitle"></title>
 
-    <link rel="stylesheet/less" href="{{ static }}less/cabinet/base.less"/>
-    <link rel="stylesheet" href="{{ static }}css/bootstrap-select.css"/>
+    <link rel="stylesheet" href="{{ static }}css/cabinet/base.min.css"/>
 
     <script type="text/javascript"
             src="http://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places">
     </script>
 
     <!-- Libs include -->
-    <script type="text/javascript" src="{{ static }}js/libs/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/underscore-1.6.0.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/less-1.7.0.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/bootstrap-3.1.1.min.js"></script>
+    <script src="http://yandex.st/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://yandex.st/underscore/1.6.0/underscore-min.js"></script>
+    <script src="http://yandex.st/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select-1.5.4.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/perfect-scrollbar-0.4.10.min.js"></script>
 
-    <script type="text/javascript" src="{{ static }}js/libs/angular-1.2.16.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/angular-route-1.2.16.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/angular-cookies-1.2.16.min.js"></script>
+    <script src="http://yandex.st/angularjs/1.2.16/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.18/angular-route.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.18/angular-cookies.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.18/angular-animate.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/angular-file-upload-shim-1.4.0.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/angular-animate-1.2.16.min.js"></script>
-
-    <script type="text/javascript" src="{{ static }}js/libs/angular-ui-mask.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/angular-ui-mask.min.js"></script>
     <script type="text/javascript" src="{{ static }}js/libs/angular-file-upload-1.4.0.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/angular-notifier.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/angular-google-charts.js"></script>
-
-
-    <!-- Init angular file -->
-    <script type="text/javascript" src="{{ static }}js/cabinet/app.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/angular-notifier.min.js"></script>
+    <script type="text/javascript" src="{{ static }}js/libs/angular-google-charts.min.js"></script>
 </head>
 <body>
     <div class="wrapper animated">
@@ -217,6 +210,10 @@
         </div>
     </div>
 
+
+
+    <!-- Init angular file -->
+    <script type="text/javascript" src="{{ static }}js/cabinet/app.js"></script>
 
     <script type="text/javascript" src="{{ static }}js/cabinet/services/router.js"></script>
     <script type="text/javascript" src="{{ static }}js/cabinet/services/queries.js"></script>
