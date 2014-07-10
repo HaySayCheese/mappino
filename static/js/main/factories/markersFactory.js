@@ -57,12 +57,13 @@ app.factory('Markers', function(Queries, $rootScope) {
                 }
             }
 
-            clearTimeout(requestTimeout);
-            requestTimeout = setTimeout(function() {
-                $rootScope.loadings.markers = true;
-
-                $rootScope.$apply();
-            }, 300);
+//            clearTimeout(requestTimeout);
+//            requestTimeout = setTimeout(function() {
+//                $rootScope.loadings.markers = true;
+//
+//                $rootScope.$apply();
+//            }, 200);
+            $rootScope.loadings.markers = true;
 
             Queries.Map.getMarkers(tid, stringFilters, viewport).success(function(data) {
                 that.clearPanelMarkers(panel);
