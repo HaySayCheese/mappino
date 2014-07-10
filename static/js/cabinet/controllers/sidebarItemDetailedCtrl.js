@@ -300,8 +300,10 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
 
         // Евенти
         google.maps.event.addListener(map, 'click', function(e) {
-            marker.setPosition(e.latLng);
-            setAddressFromLatLng(e.latLng, cityInput);
+            setTimeout(function() {
+                marker.setPosition(e.latLng);
+                setAddressFromLatLng(e.latLng, cityInput);
+            }, 500)
         });
         google.maps.event.addListener(map, 'dblclick', function(event) {
             map.setZoom(map.getZoom() + 1);
