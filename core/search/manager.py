@@ -149,6 +149,9 @@ class SearchManager(object):
 		return MySQLdb.connect(
 			host = settings.SPHINX_SEARCH['HOST'],
 			port = settings.SPHINX_SEARCH['PORT'],
+
+		    use_unicode = True,
+		    charset = 'utf8',
 		)
 
 

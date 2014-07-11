@@ -36,6 +36,9 @@ class SphinxUpdateIndexTask(Task):
 		self.connection = MySQLdb.connect(
 			host = settings.SPHINX_SEARCH['HOST'],
 			port = settings.SPHINX_SEARCH['PORT'],
+
+		    use_unicode = True,
+		    charset = 'utf8',
 		)
 
 
@@ -91,7 +94,7 @@ def update_house_index(self, hid):
 		                  house_body_index_data(head.body),
 		    sale_terms = sale_terms_idx,
 		    rent_terms = living_rent_terms_index_data(head),
-		    other='дом, дома, дача, дачи, ' # type
+		    other=u'дом, дома, дача, дачи, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -139,7 +142,7 @@ def update_apartments_index(self, hid):
 		                  apartments_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = living_rent_terms_index_data(head),
-		    other='апартаменты, апартамент, ' # type
+		    other=u'апартаменты, апартамент, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -169,7 +172,7 @@ def update_cottage_index(self, hid):
 		                  house_body_index_data(head.body),
 		    sale_terms = sale_terms_idx,
 		    rent_terms = living_rent_terms_index_data(head),
-		    other='коттеджи, коттедж, ' # type
+		    other=u'коттеджи, коттедж, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -216,7 +219,7 @@ def update_room_index(self, hid):
 		                  room_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = living_rent_terms_index_data(head),
-		    other='комнаты, комната, ' # type
+		    other=u'комнаты, комната, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -240,7 +243,7 @@ def update_trade_index(self, hid):
 		                  trades_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = commercial_rent_terms_index_data(head),
-		    other='торговые помещения, торговое помещение, ' # type
+		    other=u'торговые помещения, торговое помещение, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -264,7 +267,7 @@ def update_office_index(self, hid):
 		                  office_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = commercial_rent_terms_index_data(head),
-		    other='офис, офисы, ' # type
+		    other=u'офис, офисы, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -288,7 +291,7 @@ def update_warehouse_index(self, hid):
 		                  warehouse_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = commercial_rent_terms_index_data(head),
-		    other='склад, склады, ' # type
+		    other=u'склад, склады, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -312,7 +315,7 @@ def update_business_index(self, hid):
 		                  business_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = commercial_rent_terms_index_data(head),
-		    other='готовый бизнес, готовые бизнесы, бизнес, бизнесы, ' # type
+		    other=u'готовый бизнес, готовые бизнесы, бизнес, бизнесы, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -336,7 +339,7 @@ def update_catering_index(self, hid):
 		                  catering_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = commercial_rent_terms_index_data(head),
-		    other='общепит, общепиты, питание, питания, общественные, общественного, ' # type
+		    other=u'общепит, общепиты, питание, питания, общественные, общественного, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -360,7 +363,7 @@ def update_garage_index(self, hid):
 		                  garage_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = commercial_rent_terms_index_data(head),
-		    other='гараж, гаражи, ' # type
+		    other=u'гараж, гаражи, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
@@ -384,7 +387,7 @@ def update_land_index(self, hid):
 		                  land_body_index_data(head.body),
 		    sale_terms = sale_terms_index_data(head),
 		    rent_terms = commercial_rent_terms_index_data(head),
-		    other='земельные участки, земельный участок, земля, ' # type
+		    other=u'земельные участки, земельный участок, земля, ' # type
 		)
 	except Exception as e:
 		self.retry(exc=e)
