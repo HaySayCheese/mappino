@@ -372,7 +372,7 @@ class AbstractHeadModel(models.Model):
 
 	def photos_dict(self):
 		return [{
-			'id': p.id,
+			'id': p.hash_id,
 		    'image': p.url() + p.image_name(),
 		    'thumbnail': p.url() + p.big_thumbnail_name(),
 		    'is_title': p.is_title
@@ -617,7 +617,7 @@ class PhotosModel(AbstractModel):
 	min_image_size = [300, 300]
 	max_image_size = [900, 1000]
 
-	title_thumb_size = min_image_size
+	title_thumb_size = [300, 600]
 	big_thumb_size = [300, 188]
 	small_thumb_size = [50, 50]
 

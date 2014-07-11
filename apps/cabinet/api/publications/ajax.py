@@ -513,10 +513,10 @@ class Publications(object):
 			# seems to be OK
 			response = copy.deepcopy(self.delete_codes['OK'])
 			if new_title_photo is None:
-				response['photo_id'] = None
+				response['photo_hash_id'] = None
 				response['brief_url'] = None
 			else:
-				response['photo_id'] = new_title_photo.hash_id
+				response['photo_hash_id'] = new_title_photo.hash_id
 				response['brief_url'] = new_title_photo.url() + new_title_photo.small_thumbnail_name()
 
 			return HttpResponse(json.dumps(response), content_type='application/json')
@@ -542,13 +542,13 @@ class Publications(object):
 
 		def post(self, request, *args):
 			"""
-			Помічає фото з hash_id=hash_photo_id як основне.
+			Помічає фото з hash_id=photo_hash_id як основне.
 			Для даного фото буде згенеровано title_thumb і воно використовуватиметься як початкове у видачі.
 			"""
 			tid, hash_id = args[0].split(':')
 			tid = int(tid)
 			# hash_id doesnt need to be converted to int
-			hash_photo_id = args[1]
+			photo_hash_id = args[1]
 
 
 			if tid not in OBJECTS_TYPES.values():
@@ -572,7 +572,7 @@ class Publications(object):
 			# process image
 			photos_model = PHOTOS_MODELS[tid]
 			try:
-				photo = photos_model.objects.get(hash_id=hash_photo_id)
+				photo = photos_model.objects.get(hash_id=photo_hash_id)
 			except ObjectDoesNotExist:
 				return HttpResponseBadRequest(
 					json.dumps(self.post_codes['invalid_pid']), content_type='application/json')
