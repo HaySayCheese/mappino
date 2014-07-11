@@ -25,6 +25,11 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, Queries) {
             preloadImage(data.head.photos[0]);
 
         ga('send', 'event', 'publication:dialog:detailed', 'data_requested', $rootScope.publicationIdPart, 0);
+
+        ga('send', 'pageview', {
+            'page': '#!/publication/' + $rootScope.publicationIdPart,
+            'title': $rootScope.pageTitle
+        });
     });
 
 

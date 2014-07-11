@@ -14,6 +14,12 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
     firstEnterModal.modal();
 
 
+    ga('send', 'pageview', {
+        'page': '#!/first-enter',
+        'title': $rootScope.pageTitle
+    });
+
+
     $scope.initializeAutocomplete = function() {
         var autocomplete,
             autocompleteOptions = {
