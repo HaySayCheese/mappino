@@ -126,8 +126,8 @@ USE_TZ = True
 
 
 STATIC_URL = 'http://mappino.com.ua/static/'
-MEDIA_URL = 'http://localhost/mappino_media/'
-MEDIA_ROOT = '/hsc/www/mappino/mappino/media/'
+MEDIA_URL = 'http://mappino.com.ua/media/'
+MEDIA_ROOT = '/home/hsc/www/mappino/mappino/media/'
 
 
 # todo: check me

@@ -2,8 +2,8 @@
     <div class="modal-dialog">
         <div class="modal-content content-blue">
             <div class="modal-header header-blue">
-                <img src="{{ static }}img/login/login-reg-logo.png" alt=""/>
-                <img class="close" src="{{ static }}img/login/login-reg-close.png" alt="" data-dismiss="modal"/>
+                <img src="{{ hastash_tic("img/login/login-reg-logo.png") }}" alt=""/>
+                <img class="close" src="{{ hash_static("img/login/login-reg-close.png") }}" alt="" data-dismiss="modal"/>
             </div>
             <div class="modal-body modal-body-wtp">
                 <div class="row" ng-switch on="restoreAccessStatePart">
@@ -42,7 +42,7 @@
 
 
                     <div class="col-sm-12 text-center" ng-switch-when="emailSendMessage">
-                        <img src="{{ static }}img/login/email-sent.png" alt=""/>
+                        <img src="{{ hash_static("img/login/email-sent.png") }}" alt=""/>
                         <p class="col-sm-8 col-sm-offset-2 top-margin">
                             Сообщение с дальнейшими инструкциями успешно отправлено. Через несколько мгновений оно должно оказаться в Вашем ящике.
                         </p>
@@ -50,7 +50,7 @@
 
 
                     <div class="col-sm-12 text-center" ng-switch-when="invalidTokenMessage">
-                        <img src="{{ static }}img/login/no-data.png" alt=""/>
+                        <img src="{{ hash_static("img/login/no-data.png") }}" alt=""/>
                         <p class="col-sm-8 col-sm-offset-2 top-margin">
                             Похоже, что запроса на восстановление пароля с такими данными не было или его срок уже истек.
                         </p>

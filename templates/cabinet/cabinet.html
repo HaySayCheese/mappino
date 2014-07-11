@@ -3,7 +3,7 @@
 <head>
     <title ng-bind="pageTitle"></title>
 
-    <link rel="stylesheet" href="{{ static }}css/cabinet/base.min.css"/>
+    <link rel="stylesheet" href="{{ hash_static("css/cabinet/base.min.css") }}"/>
 
     <script type="text/javascript"
             src="http://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places">
@@ -13,18 +13,21 @@
     <script src="http://yandex.st/jquery/2.1.1/jquery.min.js"></script>
     <script src="http://yandex.st/underscore/1.6.0/underscore-min.js"></script>
     <script src="http://yandex.st/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select-1.5.4.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/perfect-scrollbar-0.4.10.min.js"></script>
 
     <script src="http://yandex.st/angularjs/1.2.16/angular.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.18/angular-route.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.18/angular-cookies.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.18/angular-animate.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/angular-file-upload-shim-1.4.0.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/angular-ui-mask.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/angular-file-upload-1.4.0.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/angular-notifier.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/angular-google-charts.min.js"></script>
+
+
+    <script type="text/javascript" src="{{ hash_static("js/libs/bootstrap-select-1.5.4.min.js", "cabinet_libs", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/libs/perfect-scrollbar-0.4.10.min.js", "cabinet_libs", "js") }}"></script>
+
+    <script type="text/javascript" src="{{ hash_static("js/libs/angular-file-upload-shim-1.4.0.min.js", "cabinet_libs", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/libs/angular-ui-mask.min.js", "cabinet_libs", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/libs/angular-file-upload-1.4.0.min.js", "cabinet_libs", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/libs/angular-notifier.min.js", "cabinet_libs", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/libs/angular-google-charts.min.js", "cabinet_libs", "js") }}"></script>
 </head>
 <body>
     <div class="wrapper animated">
@@ -213,30 +216,30 @@
 
 
     <!-- Init angular file -->
-    <script type="text/javascript" src="{{ static }}js/cabinet/app.js"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/app.js", "cabinet", "js") }}"></script>
 
-    <script type="text/javascript" src="{{ static }}js/cabinet/services/router.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/services/queries.js"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/services/router.js", "cabinet", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/services/queries.js", "cabinet", "js") }}"></script>
 
-    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/appCtrl.js"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/controllers/appCtrl.js", "cabinet", "js") }}"></script>
 
-    <script type="text/javascript" src="{{ static }}js/cabinet/factories/tagsFactory.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/factories/briefsFactory.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/factories/publicationFactory.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/factories/settingsFactory.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/factories/supportFactory.js"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/factories/tagsFactory.js", "cabinet", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/factories/briefsFactory.js", "cabinet", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/factories/publicationFactory.js", "cabinet", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/factories/settingsFactory.js", "cabinet", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/factories/supportFactory.js", "cabinet", "js") }}"></script>
 
-    <script type="text/javascript" src="{{ static }}js/cabinet/filters/toHtml.js"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/filters/toHtml.js", "cabinet", "js") }}"></script>
 
-    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarMenuCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarItemListCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarItemDetailedCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/settingsCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/controllers/supportCtrl.js"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/controllers/sidebarMenuCtrl.js", "cabinet", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/controllers/sidebarItemListCtrl.js", "cabinet", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/controllers/sidebarItemDetailedCtrl.js", "cabinet", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/controllers/settingsCtrl.js", "cabinet", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/controllers/supportCtrl.js", "cabinet", "js") }}"></script>
 
-    <script type="text/javascript" src="{{ static }}js/cabinet/directives/selectOnClick.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/directives/focusOnLoad.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/directives/allowOnlyNumber.js"></script>
-    <script type="text/javascript" src="{{ static }}js/cabinet/directives/allowOnlyNumberWithoutDot.js"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/directives/selectOnClick.js", "cabinet", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/directives/focusOnLoad.js", "cabinet", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/directives/allowOnlyNumber.js", "cabinet", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/cabinet/directives/allowOnlyNumberWithoutDot.js", "cabinet", "js") }}"></script>
 </body>
 </html>
