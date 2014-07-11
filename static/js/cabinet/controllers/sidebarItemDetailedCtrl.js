@@ -146,10 +146,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 return;
 
             Publication.checkInputs(tid, hid, { f: name, v: value }, function(newValue, code) {
-                if (newValue && !angular.element(e.currentTarget).is(":focus"))
+                if (newValue && !angular.element(e.currentTarget).is(":focus")) {
                     e.currentTarget.value = newValue;
 
-                $scope.form.publication[name].$setValidity("incorrect", code === 0);
+                    $scope.form.publication[name].$setValidity("incorrect", code === 0);
+                }
             });
 
         });
