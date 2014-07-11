@@ -5,6 +5,11 @@ app.controller('RegistrationCtrl', function($scope, $rootScope, $cookieStore) {
     $rootScope.pageTitle = "Регистрация - Mappino";
     angular.element(".registration-modal").modal();
 
+    ga('send', 'pageview', {
+        'page': '#!/account/registration',
+        'title': $rootScope.pageTitle
+    });
+
     /**
      * Стан вікна реєстрації
      **/

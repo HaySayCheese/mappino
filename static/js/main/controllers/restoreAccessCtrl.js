@@ -13,6 +13,11 @@ app.controller('RestoreAccessCtrl', function($scope, $rootScope, $location) {
     if ($location.search().token)
         $rootScope.restoreAccessStatePart = "changePassword";
 
+
+    ga('send', 'pageview', {
+        'page': '#!/account/restore-access',
+        'title': $rootScope.pageTitle
+    });
 });
 
 

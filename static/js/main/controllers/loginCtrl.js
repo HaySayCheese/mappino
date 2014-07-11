@@ -20,6 +20,12 @@ app.controller('LoginCtrl', function($scope, $rootScope, $timeout, $location, Ac
     loginModal.modal();
 
 
+    ga('send', 'pageview', {
+        'page': '#!/account/login',
+        'title': $rootScope.pageTitle
+    });
+
+
     /**
      * Ініціалізація тултіпів
      **/

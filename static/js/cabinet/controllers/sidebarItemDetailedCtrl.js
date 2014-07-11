@@ -146,10 +146,11 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 return;
 
             Publication.checkInputs(tid, hid, { f: name, v: value }, function(newValue, code) {
-                if (newValue)
+                if (newValue && !angular.element(e.currentTarget).is(":focus")) {
                     e.currentTarget.value = newValue;
 
-                $scope.form.publication[name].$setValidity("incorrect", code === 0);
+                    $scope.form.publication[name].$setValidity("incorrect", code === 0);
+                }
             });
 
         });
@@ -327,91 +328,10 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             }
         });
 
-        // todo: частини карти не відображаються. хак
+
         $timeout(function() {
             google.maps.event.trigger(map, "resize");
-
-            // Setup prototype as OverlayView object
-            ScrollInterceptOverlay.prototype = new google.maps.OverlayView();
-
-            // Now create a new ScrollInterceptOverlay OverlayView object:
-            var mapScrollInterceptor = new ScrollInterceptOverlay();
-            mapScrollInterceptor.setMap(map);
         }, 500);
-    };
-    // Define a ScrollInterceptOverlay class function
-    var ScrollInterceptOverlay = function () {
-        if (!(this instanceof ScrollInterceptOverlay)) return;
-
-        var div;
-
-        // private instance function
-        var mouseScrollStop = function (e) {
-            if (e && e.preventDefault) e.preventDefault();
-        };
-
-        // public instance function
-        this.onAdd = function () {
-            div = document.createElement('div');
-            div.style.display = 'inline-block';
-            div.style.position = 'absolute';
-            div.style.top = div.style.left = 0;
-
-            if (div.addEventListener) {
-                // Internet Explorer, Opera, Google Chrome and Safari
-                div.addEventListener("mousewheel", mouseScrollStop);
-                // Firefox
-                div.addEventListener("DOMMouseScroll", mouseScrollStop);
-                div.addEventListener("MozMousePixelScroll", mouseScrollStop);
-            } else if (div.attachEvent) { // IE before version 9
-                div.attachEvent("onmousewheel", mouseScrollStop);
-            }
-
-            var pane = this.getPanes().overlayMouseTarget;
-            var firstChild = pane.firstChild;
-            if (!firstChild) {
-                pane.appendChild(div);
-            }
-            else {
-                pane.insertBefore(div, firstChild);
-            }
-        };
-
-        // public instance function
-        this.onRemove = function () {
-            if (div) {
-                if (div.removeEventListener) {
-                    // Internet Explorer, Opera, Google Chrome and Safari
-                    div.removeEventListener("mousewheel", mouseScrollStop);
-                    // Firefox
-                    div.removeEventListener("DOMMouseScroll", mouseScrollStop);
-                    div.removeEventListener("MozMousePixelScroll", mouseScrollStop);
-                }
-                else if (div.detachEvent) { // IE before version 9
-                    div.detachEvent("onmousewheel", mouseScrollStop);
-                }
-
-                var parent = div.parentNode;
-                parent.removeChild(div);
-            }
-
-            // do not delete div var'iable
-            div = undefined;
-        };
-
-        // public instance function
-        this.draw = function () {
-            var map = this.getMap();
-            if (map) {
-                var mapDiv = map.getDiv();
-                if (mapDiv) {
-                    var rect = mapDiv.getBoundingClientRect();
-                    div.style.width = rect.width + 'px';
-                    div.style.height = rect.height + 'px';
-                }
-            }
-        };
-
     };
 
 

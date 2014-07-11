@@ -18,8 +18,7 @@ app.factory('Markers', function(Queries, $rootScope) {
         swPoint= {
             lat: maxLat,
             lng: minLng
-        },
-        requestTimeout;
+        };
 
     return {
 
@@ -57,12 +56,13 @@ app.factory('Markers', function(Queries, $rootScope) {
                 }
             }
 
-            clearTimeout(requestTimeout);
-            requestTimeout = setTimeout(function() {
-                $rootScope.loadings.markers = true;
-
-                $rootScope.$apply();
-            }, 300);
+//            clearTimeout(requestTimeout);
+//            requestTimeout = setTimeout(function() {
+//                $rootScope.loadings.markers = true;
+//
+//                $rootScope.$apply();
+//            }, 200);
+            $rootScope.loadings.markers = true;
 
             Queries.Map.getMarkers(tid, stringFilters, viewport).success(function(data) {
                 that.clearPanelMarkers(panel);
@@ -161,9 +161,9 @@ app.factory('Markers', function(Queries, $rootScope) {
                     delete markers[panel][marker];
                 }
             }
-        },
+        }
 
-
+        /*
         getRealtorsData: function(realtor, callback) {
             Queries.Map.getRealtorData(realtor).success(function(data) {
                 _.isFunction(callback) && callback(data);
@@ -185,6 +185,7 @@ app.factory('Markers', function(Queries, $rootScope) {
         getViewport: function() {
             return new google.maps.LatLngBounds(new google.maps.LatLng(nePoint.lat, nePoint.lng), new google.maps.LatLng(swPoint.lat, swPoint.lng));
         }
+        */
     }
 
 });

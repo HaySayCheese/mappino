@@ -19,13 +19,11 @@ $(document).ready(function() {
 
         setTimeout(function() {
             $(".image-caption")
-                .css("top", '50%')
-                .css("top", '+=' + (scrollTop / 1.5) + 'px')
                 .find("h1")
-                .css("opacity", (100 / (scrollTop / 6)) - 3)
+                .css("opacity", (100 / (scrollTop / 7)) - 1.2)
                 .parent()
                 .find("img")
-                .css("opacity", (100 / (scrollTop / 6)) - 1.8);
+                .css("opacity", (100 / (scrollTop / 9)) - 2);
         }, 100);
 
 
