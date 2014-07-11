@@ -238,9 +238,11 @@
     }
 
     .photos-modal {
+        width: 900px;
         height: auto;
         min-height: 500px;
         background: @gray-light;
+        .center-block();
 
         .close-photos-btn {
             position: absolute;
@@ -252,10 +254,8 @@
 
 
         @media (min-height: 500px) and (max-height: 800px) {
-            max-width: 900px;
             img {
-                max-width: 800px;
-                max-height: 500px;
+                height: 600px;
             }
 
         }
@@ -264,7 +264,7 @@
     .carousel {
         .square(100%);
         position: relative;
-        padding: 40px 0 80px;
+        //padding: 40px 0 80px;
 
         .carousel-inner {
             .square(100%);
