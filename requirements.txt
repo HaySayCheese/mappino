@@ -18,3 +18,4 @@ oauth2client
 pyOpenSSL
 billiard
 python-redis-lock
+kombu
