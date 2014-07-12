@@ -65,6 +65,23 @@ SPHINX_SEARCH = {
 	'HOST': '95.85.40.162',
     'PORT': 9306
 }
+CACHES = {
+	'default': {
+		# Даний кеш використовується django-compressor для зберігання імен зжатих файлів.
+		# Явної настройки для цього указувати не треба.
+
+		'BACKEND': 'redis_cache.RedisCache',
+	    'LOCATION': '{0}:{1}'.format(REDIS_DATABASES['cache']['HOST'], REDIS_DATABASES['cache']['PORT']),
+	    'OPTIONS': {
+		    'DB': 1,
+	        'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
+	        'CONNECTION_POOL_CLASS_KWARGS': {
+		        'max_connections': 10,
+	            'timeout': 20
+	        }
+	    }
+	}
+}
 
 SESSION_COOKIE_AGE = 1209600
 # SESSION_SAVE_EVERY_REQUEST = True
