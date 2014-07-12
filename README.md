@@ -1,29 +1,6 @@
-# README #
+# MAPPINO #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+### Пам’ятка по керуванню сервером ###
 
-### What is this repository for? ###
-
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+## Cache ##
+* Всі темлейти на production кешуються по last-modified. В хедер записується unix-timestamp, який одноразово генерується при першому запиті і зберігаєтсья в кеш редіса. Для скидання кешу темплейтів слід видалити ключ "static_template_last_modified" з кеш-сервера redis.
