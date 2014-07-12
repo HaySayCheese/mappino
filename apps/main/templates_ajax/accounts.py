@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 
-from mappino.wsgi import templates
+from core.utils.jinja2_integration import templates
 
 
 @ensure_csrf_cookie

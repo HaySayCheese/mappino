@@ -16,7 +16,7 @@ from django.core.validators import validate_email
 from django.db import transaction
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.generic import View
-from mappino.wsgi import templates
+from core.utils.jinja2_integration import templates
 import phonenumbers
 from phonenumbers import NumberParseException
 

@@ -5,5 +5,8 @@ mappino/settings.py
 mappino/passwords.py
 mappino/keys/*
 
+static/CACHE
+static/CACHE/*
+
 *.pyc
 *.log

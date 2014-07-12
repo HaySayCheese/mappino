@@ -2,7 +2,7 @@
 from django.conf import settings
 import mandrill
 from collective.exceptions import InvalidArgument, RuntimeException
-from mappino.wsgi import templates
+from core.utils.jinja2_integration import templates
 
 
 class SupportAgentsNotifier(object):

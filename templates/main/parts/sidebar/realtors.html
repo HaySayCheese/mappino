@@ -16,7 +16,7 @@
     <div class="bwb-body sidebar-body">
         <div class="realtor">
             <img class="photo" src="" ng-show="realtor.contacts.avatar_url"/>
-            <img class="photo" src="{{ hash_static("img/main/sidebar/no-user.png") }}" ng-hide="realtor.contacts.avatar_url"/>
+            <img class="photo" src="{{ static }}img/main/sidebar/no-user.png" ng-hide="realtor.contacts.avatar_url"/>
             <div class="name text-center">[[ realtor.contacts.first_name ]] [[ realtor.contacts.last_name ]]</div>
             <div class="phones text-center">
                 <div ng-show="realtor.contacts.mobile_phone || realtor.contacts.add_mobile_phone">

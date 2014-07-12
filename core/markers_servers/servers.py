@@ -1,9 +1,10 @@
 #coding=utf-8
 import copy
-#import mmh3 # todo: enable me back
+import mmh3
 
 import abc
 from django.core.exceptions import SuspiciousOperation
+import mmh3
 from collective.exceptions import InvalidArgument, RuntimeException
 from core.currencies.constants import CURRENCIES
 
@@ -211,16 +212,15 @@ class BaseMarkersManager(object):
 		 	sw: (South West) Point з координатами південно-східного кута в’юпорта.
 		"""
 
-		# todo: Розкоментувати (mmh3 не ставиться на вінді. закоментовано, щоб Сєрий мав можливість працювати).
-		# pipe = self.redis.pipeline()
-		# for digest in self.__segments_digests(ne, sw):
-		# 	pipe.hget(self.segments_hashes_prefix, digest)
-		#
-		# key = ''
-		# for segment_data in pipe.execute():
-		# 	if segment_data is not None:
-		# 		key += mmh3.hash(segment_data)
-		# return str(mmh3.hash(key))
+		pipe = self.redis.pipeline()
+		for digest in self.__segments_digests(ne, sw):
+			pipe.hget(self.segments_hashes_prefix, digest)
+
+		key = ''
+		for segment_data in pipe.execute():
+			if segment_data is not None:
+				key += mmh3.hash(segment_data)
+		return str(mmh3.hash(key))
 
 
 	def __segments_digests(self, ne, sw):

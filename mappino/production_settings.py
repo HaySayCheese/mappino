@@ -32,7 +32,7 @@ EVE_M1_IP = '10.129.177.252' # internal
 HUL_M1_IP = '10.129.178.15' # internal
 
 
-ESTIMATE_THREADS_COUNT = 6
+ESTIMATE_THREADS_COUNT = 2
 DATABASES = {
 	'default': {
 		'ENGINE':'django.db.backends.postgresql_psycopg2',
@@ -87,6 +87,8 @@ SUPPORT_EMAIL = 'Dima.Chizhevsky@gmail.com' # todo: change me
 
 
 INSTALLED_APPS = (
+	'compressor',
+
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
 	'django.contrib.sessions',
@@ -126,8 +128,13 @@ USE_TZ = True
 
 
 STATIC_URL = 'http://mappino.com.ua/static/'
+STATIC_ROOT = 'static/'
+
 MEDIA_URL = 'http://mappino.com.ua/media/'
-MEDIA_ROOT = '/home/hsc/www/mappino/mappino/media/'
+MEDIA_ROOT = 'media/'
+
+COMPRESS_ENABLED = True
+COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
 
 
 # todo: check me

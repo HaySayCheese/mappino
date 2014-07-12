@@ -8,7 +8,7 @@ from core.email_backend import email_sender
 from core.publications.constants import HEAD_MODELS
 from core.sms_dispatcher import notifications_sms_sender
 from core.users.constants import Preferences
-from mappino.wsgi import templates
+from core.utils.jinja2_integration import templates
 
 
 

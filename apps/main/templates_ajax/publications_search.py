@@ -3,7 +3,7 @@ from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import ensure_csrf_cookie
 from core.publications.constants import OBJECTS_TYPES
 
-from mappino.wsgi import templates
+from core.utils.jinja2_integration import templates
 
 
 __FILTERS_TEMPLATES_PATHS = {
