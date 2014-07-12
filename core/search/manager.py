@@ -111,7 +111,7 @@ class SearchManager(object):
 
 	def process_search_query(self, query, user_id):
 		sql = u"SELECT tid, hid FROM publications_rt " \
-		        u"WHERE MATCH('{query}') AND uid = {uid} LIMIT 50".format(
+		        u"WHERE MATCH('{query}*') AND uid = {uid} LIMIT 50".format(
 				query = query, uid = user_id)
 
 		results = {}
@@ -149,6 +149,9 @@ class SearchManager(object):
 		return MySQLdb.connect(
 			host = settings.SPHINX_SEARCH['HOST'],
 			port = settings.SPHINX_SEARCH['PORT'],
+
+		    use_unicode = True,
+		    charset = 'utf8',
 		)
 
 

@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.db import models, transaction, connection
 from django.utils.timezone import now
 import datetime
+import redis_lock
 
 from collective.exceptions import InvalidArgument, RuntimeException
 from core.currencies import currencies_manager as currencies
@@ -15,6 +16,7 @@ from core.publications import models_signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, EmptyRentPrice
 from core.users.models import Users
+from mappino.wsgi import redis_connections
 
 
 class AbstractModel(models.Model):
@@ -370,7 +372,7 @@ class AbstractHeadModel(models.Model):
 
 	def photos_dict(self):
 		return [{
-			'id': p.id,
+			'id': p.hash_id,
 		    'image': p.url() + p.image_name(),
 		    'thumbnail': p.url() + p.big_thumbnail_name(),
 		    'is_title': p.is_title
@@ -615,7 +617,7 @@ class PhotosModel(AbstractModel):
 	min_image_size = [300, 300]
 	max_image_size = [900, 1000]
 
-	title_thumb_size = min_image_size
+	title_thumb_size = [300, 600]
 	big_thumb_size = [300, 188]
 	small_thumb_size = [50, 50]
 
@@ -770,7 +772,7 @@ class PhotosModel(AbstractModel):
 
 	@classmethod
 	@transaction.atomic
-	def handle_uploaded(cls, request, publication_head):
+	def handle_uploaded(cls, request, publication):
 		destination_dir = cls.destination_dir()
 
 
@@ -804,9 +806,9 @@ class PhotosModel(AbstractModel):
 
 
 		# original photo saving
-		uid = unicode(publication_head.id) + unicode(uuid.uuid4())
+		uid = unicode(publication.id) + unicode(uuid.uuid4())
 		while cls.objects.filter(uid=uid).count() > 0:
-			uid = unicode(publication_head.id) + unicode(uuid.uuid4())
+			uid = unicode(publication.id) + unicode(uuid.uuid4())
 
 		original_ext = (os.path.splitext(img_file.name)[1]).lower()
 		original_name = uid + cls.original_photo_suffix + original_ext
@@ -932,7 +934,7 @@ class PhotosModel(AbstractModel):
 		# saving to DB
 		try:
 			record = cls.objects.create(
-				hid = publication_head,
+				hid = publication,
 				uid = uid,
 				original_extension = original_ext,
 			    is_title = False,
@@ -945,28 +947,28 @@ class PhotosModel(AbstractModel):
 			os.remove(small_thumb_path)
 			raise e
 
-		raise Exception('Todo here')
-		# with transaction.atomic():
-		# 	cursor = connection.cursor()
-		# 	cursor.execute('LOCK TABLE {table} IN ACCESS EXCLUSIVE MODE;'.format(table=cls._meta.db_table))
-		#
-		# 	if cls.objects.filter(hid=record.hid, is_title=True).count() == 0:
-		# 		# # It is possible that the race condition will be present
-		# 		# # if several photos will be uploaded at the same time.
-		# 		# # In this case several photos may be marked as title,
-		# 		# # So here wee ned a mechanism to prevent race conditions.
-		# 		# # Database transactions are unhelpfull here.
-		# 		# redis = redis_connections['cache']
-		# 		# key = 'photos_upload_queue_{0}'.format(publication_head.tid)
-		# 		#
-		# 		# while not redis.setnx(key, '0'):
-		# 		# 	sleep(random.random() * 2)
-		# 		#
-		# 		record.mark_as_title()
-		# 		# redis.delete(key)
-		#
-		# # seems to be ok
-		# return record.info()
+
+		# Формування головного фото
+		if cls.objects.filter(hid_id=publication.id, is_title=True).count() == 0:
+			# Якщо в оголошення немає головного фото — вибрати перше з черги на завантаження.
+			#
+			# Тут виникає race condition тому, що збереження фото в БД відбувається не зразу,
+			# і перевірка повертає 0, але потім, коли всі обрробники проходять цю перевірку,
+			# створюється декілька записів з головним фото.
+			# Для уникнення цього створено глобальний lock на редіс.
+
+			# Для кожного оголошення повинен існувати власний lock на завантаження.
+			lock_name = 'pub_{0}:{0}_photo_upload'.format(publication.tid, publication.id)
+
+			# expire використовується для розмикання dead-lock'ів, якщо раптом даний обробник впаде.
+			lock = redis_lock.Lock(redis_connections['steady'], lock_name, expire=60*3)
+
+			if lock.acquire(blocking=False):
+				record.mark_as_title()
+				lock.release()
+
+
+		return record.info()
 
 
 	@classmethod

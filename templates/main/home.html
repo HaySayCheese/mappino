@@ -8,21 +8,25 @@
     <script type="text/javascript"
             src="http://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places">
     </script>
-    <script type="text/javascript" src="{{ static }}js/libs/markerwithlabel-1.1.9.min.js"></script>
+
 
 
     <script src="http://yandex.st/jquery/2.1.1/jquery.min.js"></script>
     <script src="http://yandex.st/underscore/1.6.0/underscore-min.js"></script>
     <script src="http://yandex.st/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select-1.5.4.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/perfect-scrollbar-0.4.10.min.js"></script>
 
     <script src="http://yandex.st/angularjs/1.2.16/angular.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.18/angular-route.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.18/angular-cookies.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.18/angular-animate.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/angular-ui-mask.min.js"></script>
-    <script type="text/javascript" src="{{ static }}js/libs/angular-notifier.min.js"></script>
+
+    <script type="text/javascript" src="{{ hash_static("js/libs/markerwithlabel-1.1.9.min.js", "libs", "js") }}"></script>
+
+    <script type="text/javascript" src="{{ hash_static("js/libs/angular-ui-mask.min.js", "libs", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/libs/angular-notifier.min.js", "libs", "js") }}"></script>
+
+    <script type="text/javascript" src="{{ hash_static("js/libs/bootstrap-select-1.5.4.min.js", "libs", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/libs/perfect-scrollbar-0.4.10.min.js", "libs", "js") }}"></script>
 
 
     <script>
@@ -59,27 +63,26 @@
     </div>
 
 
+    <script type="text/javascript" src="{{ hash_static("js/main/app.js", "home", "js") }}"></script>
 
-    <script type="text/javascript" src="{{ static }}js/main/app.js"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/services/router.js", "home", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/services/queries.js", "home", "js") }}"></script>
 
-    <script type="text/javascript" src="{{ static }}js/main/services/router.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/services/queries.js"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/factories/markersFactory.js", "home", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/factories/accountFactory.js", "home", "js") }}"></script>
 
-    <script type="text/javascript" src="{{ static }}js/main/factories/markersFactory.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/factories/accountFactory.js"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/controllers/appCtrl.js", "home", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/controllers/mapCtrl.js", "home", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/controllers/sidebarCtrl.js", "home", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/controllers/loginCtrl.js", "home", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/controllers/registrationCtrl.js", "home", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/controllers/restoreAccessCtrl.js", "home", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/controllers/publicationViewCtrl.js", "home", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/controllers/firstEnterCtrl.js", "home", "js") }}"></script>
 
-    <script type="text/javascript" src="{{ static }}js/main/controllers/appCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/controllers/mapCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/controllers/sidebarCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/controllers/loginCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/controllers/registrationCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/controllers/restoreAccessCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/controllers/publicationViewCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/controllers/firstEnterCtrl.js"></script>
-
-    <script type="text/javascript" src="{{ static }}js/main/directives/selectOnClick.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/directives/focusOnLoad.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/directives/allowOnlyNumber.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/directives/allowOnlyNumberWithoutDot.js"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/directives/selectOnClick.js", "home", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/directives/focusOnLoad.js", "home", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/directives/allowOnlyNumber.js", "home", "js") }}"></script>
+    <script type="text/javascript" src="{{ hash_static("js/main/directives/allowOnlyNumberWithoutDot.js", "home", "js") }}"></script>
 </body>
 </html>
