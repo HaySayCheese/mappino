@@ -8,7 +8,7 @@ from psycopg2cffi import compat
 # https://docs.djangoproject.com/en/1.6/topics/settings/
 
 
-DEBUG = True # todo: change me
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 ALLOWED_HOSTS = ['mappino.com', 'mappino.com.ua']
 
