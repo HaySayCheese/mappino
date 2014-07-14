@@ -17,6 +17,9 @@ class InvalidArgument(InvalidValue): pass
 class EmptyArgument(InvalidArgument): pass
 
 
+class InvalidHttpParameter(InvalidArgument): pass
+
+
 class RuntimeException(BaseCustomException): pass
 
 
