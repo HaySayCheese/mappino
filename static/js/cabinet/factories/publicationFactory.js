@@ -235,6 +235,7 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
 
                 publicationsCount['trash']       -= 1;
                 publicationsCount['unpublished'] += 1;
+                publicationsCount['all']         += 1;
 
                 $location.path("publications/unpublished/" + tid + ":" + id);
 
