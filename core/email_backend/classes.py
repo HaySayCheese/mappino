@@ -42,6 +42,8 @@ class EmailDispatcher(object):
 		if not self.__send_email(message):
 			raise RuntimeException('Email can\'t be sent.')
 
+		return True
+
 
 	def __send_email(self, message):
 		def send():

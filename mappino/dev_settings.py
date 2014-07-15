@@ -12,7 +12,11 @@ compat.register() # cffi hook
 # import compressor.contrib.jinja2ext
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-TEMPLATE_DEBUG = True
+
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
+SMS_DEBUG = DEBUG
+
 ALLOWED_HOSTS = ['127.0.0.1']
 
 

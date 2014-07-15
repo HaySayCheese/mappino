@@ -46,5 +46,5 @@ class MessageNotificationsTypes(AbstractConstant):
 
 
 class Preferences(object):
-	CALL_REQUEST_NOTIFICATIONS = CallRequestNotificationsTypes()
-	MESSAGE_NOTIFICATIONS = MessageNotificationsTypes()
+	call_requests = CallRequestNotificationsTypes()
+	messaging = MessageNotificationsTypes()

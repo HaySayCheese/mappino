@@ -57,9 +57,9 @@ class RealtorsContacts(View):
 
 
 		try:
+			tid = int(tid)
 			if tid not in OBJECTS_TYPES.values():
 				raise InvalidHttpParameter()
-			tid = int(tid)
 
 		except (
 			InvalidHttpParameter, # tid is incorrect object type

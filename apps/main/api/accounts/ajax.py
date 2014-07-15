@@ -582,5 +582,5 @@ class Contacts(View):
 
 
 		data = copy.deepcopy(self.get_codes['OK']) # WARN: deep copy here
-		data['contacts'] = publication.owner.contacts()
+		data['contacts'] = publication.owner.contacts_dict()
 		return HttpResponse(json.dumps(data), content_type='application/json')

@@ -30,7 +30,7 @@ class RealtorsData(View):
 
 
 		response = self.get_codes['OK']
-		response['contacts'] = realtor.contacts()
+		response['contacts'] = realtor.contacts_dict()
 		return HttpResponse(json.dumps(response), content_type='application/json')
 
 

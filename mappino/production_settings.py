@@ -10,6 +10,9 @@ from psycopg2cffi import compat
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
+SMS_DEBUG = DEBUG
+
+
 ALLOWED_HOSTS = ['mappino.com', 'mappino.com.ua']
 
 SECRET_KEY = 'CpOFHrZ9x696TkKFIfj5-paHVO24I60nDJ9YsFkpO'

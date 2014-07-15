@@ -9,11 +9,20 @@ from mappino.wsgi import redis_connections
 
 
 class BaseSMSSender(object):
-	def process_query(self, number, message):
+	def process_transaction(self, number, message):
+		"""
+		Повертає True, якщо повідомлення message було вдало надіслано на номер number.
+		Інакше повертає False.
+
+		params:
+		number: номер телефону на який буде надіслано повідомлення у міжнародному форматі.
+		message: текст повідомлення.
+		"""
 		if not message:
 			raise InvalidArgument('Message can not be empty')
 		if not number:
 			raise InvalidArgument('Number can not be empty.')
+
 		# todo: додати перевірку номеру на відповідність формату
 
 		params = urllib.urlencode({
@@ -30,8 +39,9 @@ class BaseSMSSender(object):
 
 	@staticmethod
 	def __send_request(params):
-		# if settings.DEBUG:
-		# 	return True
+		if settings.SMS_DEBUG:
+			print('SMS sent.', params)
+			return True
 
 		response = urllib.urlopen("http://smsc.ru/sys/send.php", params).read()
 		return 'OK' in response
@@ -69,12 +79,17 @@ class RegistrationCheckCodesSender(BaseSMSSender):
 
 	def resend(self, number, code, request):
 		self.throttle(request)
-		return self.process_query(number, 'Ваш проверочный код mappino: {0}'.format(code))
+		return self.process_transaction(
+			# WARN: message can't be encoded in unicode, because of urlencode can process only ASCII
+			number, 'Ваш проверочный код mappino: {0}'.format(code))
 
 
 	def send(self, number, code, request):
 		self.throttle(request)
-		return self.process_query(number, 'Добро пожаловать на mappino. Ваш код: {0}'.format(code))
+		return self.process_transaction(
+		# WARN: message can't be encoded in unicode, because of urlencode can process only ASCII
+			number, 'Добро пожаловать на mappino. Ваш код: {0}'.format(code))
+		# WARN: message can't be encoded in unicode, because of urlencode can process only ASCII
 
 
 	@staticmethod
@@ -108,33 +123,57 @@ class NotificationsSender(BaseSMSSender):
 		self.redis_prefix = GLOBAL_REDIS_PREFIXES.new_message_notification_throttle()
 
 	def throttle(self, request):
-		key = self.redis_prefix + self.__get_client_ip(request)
+		# todo: test me and enable me
+		pass
 
-		if self.redis.exists(key):
-			attempts_count = int(self.redis.get(key))
-			if attempts_count >= self.MAX_ATTEMPTS_PER_10_DAYS:
-				raise ResourceThrottled()
+		# key = self.redis_prefix + self.__get_client_ip(request)
+		#
+		# if self.redis.exists(key):
+		# 	attempts_count = int(self.redis.get(key))
+		# 	if attempts_count >= self.MAX_ATTEMPTS_PER_10_DAYS:
+		# 		raise ResourceThrottled()
+		#
+		# 	pipe = self.redis.pipeline()
+		# 	pipe.incr(key)
+		# 	pipe.expireat(key, self.__ten_days_timestamp())
+		# 	pipe.execute()
+		# else:
+		# 	pipe = self.redis.pipeline()
+		# 	pipe.set(key, 1)
+		# 	pipe.expireat(key, self.__ten_days_timestamp())
+		# 	pipe.execute()
 
-			pipe = self.redis.pipeline()
-			pipe.incr(key)
-			pipe.expireat(key, self.__ten_days_timestamp())
-			pipe.execute()
-		else:
-			pipe = self.redis.pipeline()
-			pipe.set(key, 1)
-			pipe.expireat(key, self.__ten_days_timestamp())
-			pipe.execute()
 
+	def incoming_message(self, request, number):
+		"""
+		Перевірить транзакцію на ідсутність признаків шахрайства
+		та надішле sms про нового клієнта на номер number.
 
-	def incoming_message(self, number, request):
+		:param request: http-запит для перевірки транзакцї.
+		:param number: номер у міжнародному форматі, наприклад +380....
+		"""
 		self.throttle(request)
-		return self.process_query(number, 'Заинтересованный клиент оставил Вам сообщение. Проверьте почту.')
+		return self.process_transaction(
+			# WARN: message can't be encoded in unicode, because of urlencode can process only ASCII
+			number, 'Заинтересованный клиент оставил Вам сообщение. Проверьте, пожалуйста, почту.')
 
 
-	def incoming_call_request(self, number, call_number, request):
+	def incoming_call_request(self, request, number, call_number):
+		"""
+		Перевірить транзакцію на ідсутність признаків шахрайства
+		та надішле sms про новий запит зворотнього дзвінка на номер number.
+
+		:paомram request: http-запит для перевірки транзакцї.
+		:param number: номер у міжнародному форматі, наприклад +380....
+		:param call_number: номер, на який слід здійснити дзвінок.
+		"""
+		if len(call_number) > 20:
+			raise InvalidArgument('call_number can\'t be longer than 20 synbols.')
+
 		self.throttle(request)
-		return self.process_query(
-			number, 'Заинтересованный клиент просит перезвонить на номер ' + str(call_number) + '.')
+		return self.process_transaction(
+			# WARN: message can't be encoded in unicode, because of urlencode can process only ASCII
+			number, 'Заинтересованный клиент просит перезвонить на номер {0}.'.format(call_number))
 
 
 	@staticmethod
