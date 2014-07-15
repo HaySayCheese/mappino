@@ -116,9 +116,9 @@ class Stats(object):
 				           'ga:eventLabel,'
 				           'ga:eventAction,'
 				           'ga:date',
-				filters='ga:eventCategory==publication:dialog:detailed;'
+				filters='ga:eventCategory==publication:dialog:contacts;'
 				        'ga:eventAction==contacts_requested;'
-				        'ga:eventLabel==0:4',
+				        'ga:eventLabel=={0}:{1}'.format(tid, hash_id),
 			    fields='rows'
 			).execute()
 
