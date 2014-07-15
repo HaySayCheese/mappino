@@ -123,7 +123,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
                 "total_area_from", "total_area_to",
                 "cabinets_count_from", "cabinets_count_to",
                 "security", "kitchen",
-                "hot_water", "cold_water",
+                "hot_water", "cold_water"
             ]
         },
         { name: "warehouse", id: 7, title: "Склады",
@@ -164,7 +164,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
             filters: [
                 "operation_sid",
                 "price_from", "price_to", "currency_sid",
-                "total_area_from", "total_area_to",
+                "total_area_from", "total_area_to"
             ]
         },
         { name: "land", id: 11, title: "Земельные участки",

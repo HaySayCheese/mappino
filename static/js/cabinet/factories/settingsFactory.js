@@ -43,13 +43,13 @@ app.factory('Settings', function($rootScope, $window, $cookies, Queries) {
          */
         uploadUserPhoto: function(photo, callback) {
             Queries.Settings.uploadUserPhoto(photo, function(data) {
-                if (data.code === 100) {
+                if (data.data.code === 100) {
                     channel.info("Во время загрузки возникла ошибка. Повторите попытку с другим изображением");
                     _.isFunction(callback) && callback(user);
                     return;
                 }
 
-                user.account.avatar_url = data.url + "?" + new Date().getTime();
+                user.account.avatar_url = data.data.url + "?" + new Date().getTime();
 
                 _.isFunction(callback) && callback(user);
             });

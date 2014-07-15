@@ -38,6 +38,9 @@
         </div>
 
         <div class="load-detailed" ng-show="loadings.detailed"></div>
-        <div ng-include="'/ajax/template/cabinet/publications/hints/no-publications/'" ng-if="!publicationLoaded && !loadings.detailed"></div>
+        <div ng-include="'/ajax/template/cabinet/publications/hints/no-publications/'" ng-if="!publicationLoaded && !loadings.detailed && publicationsCount.all == 0 && publicationsCount.trash == 0"></div>
+        <div class="detailed-empty text-muted" ng-show="!loadings.detailed && (publicationsCount.all != 0 || publicationsCount.trash != 0)">
+            <span>Выберите объявление на панели слева</span>
+        </div>
     </div>
 </div>

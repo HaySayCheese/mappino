@@ -95,6 +95,7 @@
                             </div>
 
                             <div class="user-message" ng-show="sendingMessage">
+
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="row">
@@ -113,11 +114,14 @@
                             </div>
 
                             <div class="user-call-request" ng-show="sendingCallRequest">
-                                <input type="text" class="form-control" placeholder="Имя"ng-model="call_request.name">
-                                <input type="text" class="form-control" placeholder="Телефон" ng-model="call_request.phone" allow-only-number>
-                                <div class="btn btn-primary send-btn" ng-click="sendCallRequest()" data-loading-text="Отправка данных..." ng-disabled="!call_request.name || !call_request.phone">Заказать обратный звонок</div>
-                                <div class="btn btn-default" ng-click="cancelSendCallRequest()">Отмена</div>
+                                <form name="sendCallRequestForm" autocomplete="off" novalidate>
+                                    <input type="text" class="form-control" placeholder="Имя"ng-model="call_request.name">
+                                    <input type="text" class="form-control" placeholder="Телефон" ng-model="call_request.phone" allow-only-number-without-dot>
+                                    <button type="submit" class="btn btn-primary send-btn" ng-click="sendCallRequest()" data-loading-text="Отправка данных..." ng-disabled="!call_request.name || !call_request.phone">Заказать обратный звонок</button>
+                                    <div class="btn btn-default" ng-click="cancelSendCallRequest()">Отмена</div>
+                                </form>
                             </div>
+
                         </div>
                     </div>
 

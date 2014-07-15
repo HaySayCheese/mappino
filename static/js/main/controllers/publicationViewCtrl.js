@@ -51,11 +51,14 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, Queries) {
 
 
 
-app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, Queries, lrNotifier) {
+app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, $timeout, Queries, lrNotifier) {
 
     $scope.contactsLoaded = false;
     $scope.message = {};
-    $scope.call_request = {};
+    $scope.call_request = {
+        name: "",
+        phone: ""
+    };
 
     var channel = lrNotifier('mainChannel');
 
@@ -63,7 +66,7 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, Queri
         $scope.user = data;
         $scope.contactsLoaded = true;
 
-        ga('send', 'event', 'publication:dialog:contacts', 'contact_requested', $rootScope.publicationIdPart, 0);
+        ga('send', 'event', 'publication:dialog:contacts', 'contacts_requested', $rootScope.publicationIdPart, 0);
     });
 
 
@@ -72,13 +75,17 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, Queri
         var btn = angular.element(".send-btn").button("loading");
         Queries.Map.sendPublicationCallRequest($rootScope.publicationIdPart, $scope.call_request).success(function(data) {
             btn.button("reset");
-            $scope.call_request = {};
+
             $scope.cancelSendCallRequest();
+            $timeout(function() {
+                btn.attr('disabled', 'disabled');
+            }, 50);
 
             channel.info("Запрос на обратный звонок успешно отправлен");
 
             ga('send', 'event', 'publication:dialog:contacts', 'call_request_sent', $rootScope.publicationIdPart, 0);
         }).error(function() {
+            $scope.cancelSendCallRequest();
             btn.button("reset");
             channel.info("При запросе обратного звонка возникла ошибка");
         });
@@ -90,22 +97,28 @@ app.controller('PublicationViewContactsCtrl', function($scope, $rootScope, Queri
         var btn = angular.element(".send-btn").button("loading");
         Queries.Map.sendPublicationMessage($rootScope.publicationIdPart, $scope.message).success(function(data) {
             btn.button("reset");
-            $scope.message = {};
+
             $scope.cancelSendMessage();
+            $timeout(function() {
+                btn.attr('disabled', 'disabled');
+            }, 50);
 
             channel.info("Сообщение успешно отправлено");
 
             ga('send', 'event', 'publication:dialog:contacts', 'message_sent', $rootScope.publicationIdPart, 0);
         }).error(function() {
+            $scope.cancelSendMessage();
             btn.button("reset");
-
             channel.info("При отправке сообщения возникла ошибка");
         });
     };
 
     $scope.cancelSendCallRequest = function() {
+        $scope.call_request = {
+            name: "",
+            phone: ""
+        };
         $scope.sendingCallRequest = false;
-        $scope.call_request = {};
     };
 
     $scope.cancelSendMessage = function() {
