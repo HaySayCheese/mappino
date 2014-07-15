@@ -3,7 +3,7 @@
 <head>
     <title>О сервисе - Mappino</title>
 
-    {% compress %}
+    {% compress ccs %}
         <link rel="stylesheet" href="{{ static }}css/promo/promo.min.css"/>
     {% endcompress %}
 
@@ -13,7 +13,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js"></script>
     <script src="http://yandex.st/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
-    {% compress %}
+    {% compress js %}
         <script type="text/javascript" src="{{ static }}js/libs/jquery.imageScroll.min.js"></script>
         <script type="text/javascript" src="{{ static }}js/promo/promo.js"></script>
     {% endcompress %}
