@@ -268,11 +268,17 @@ class AbstractHeadModel(models.Model):
 		# This method is called to move publications from trash too,
 		# so no checks for deleted publication is needed here.
 
+		# sender=None для того, щоб django-orm не витягував автоматично дані з БД,
+		# які, швидше за все, не знадобляться в подальшій обробці.
+		models_signals.before_unpublish.send(sender=None, tid=self.tid, hid=self.id)
+
 		self.state_sid = OBJECT_STATES.unpublished()
 		self.published = None
 		self.deleted = None
 		self.save(force_update=True)
 
+		# sender=None для того, щоб django-orm не витягував автоматично дані з БД,
+		# які, швидше за все, не знадобляться в подальшій обробці.
 		models_signals.unpublished.send(sender=None, tid=self.tid, hid=self.id)
 
 
