@@ -158,22 +158,26 @@ class NotificationsSender(BaseSMSSender):
 			number, 'Заинтересованный клиент оставил Вам сообщение. Проверьте, пожалуйста, почту.')
 
 
-	def incoming_call_request(self, request, number, call_number):
+	def incoming_call_request(self, request, number, call_number, client_name):
 		"""
 		Перевірить транзакцію на ідсутність признаків шахрайства
 		та надішле sms про новий запит зворотнього дзвінка на номер number.
 
-		:paомram request: http-запит для перевірки транзакцї.
+		:param request: http-запит для перевірки транзакцї.
 		:param number: номер у міжнародному форматі, наприклад +380....
 		:param call_number: номер, на який слід здійснити дзвінок.
+		:param client_name: ім’я клієнта з форми зв. дзвінка.
 		"""
 		if len(call_number) > 20:
-			raise InvalidArgument('call_number can\'t be longer than 20 synbols.')
+			raise InvalidArgument('call_number can\'t be longer than 20 symbols.')
+		if len(client_name) > 26:
+			raise InvalidArgument('client_name can\'t be longer than 26 symbols.')
+
 
 		self.throttle(request)
 		return self.process_transaction(
 			# WARN: message can't be encoded in unicode, because of urlencode can process only ASCII
-			number, 'Заинтересованный клиент просит перезвонить на номер {0}.'.format(call_number))
+			number, '{0} просит перезвонить на номер {1}.'.format(client_name.encode('utf-8'), call_number))
 
 
 	@staticmethod

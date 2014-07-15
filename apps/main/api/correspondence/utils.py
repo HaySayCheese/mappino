@@ -40,8 +40,9 @@ class NewClients(object):
 
 class CallRequests(object):
 	@staticmethod
-	def send_sms_notification(request, publication):
-		return notifications_sms_sender.incoming_message(request, publication.owner.mobile_phone)
+	def send_sms_notification(request, publication, call_number, client_name):
+		return notifications_sms_sender.incoming_call_request(
+			request, publication.owner.mobile_phone, call_number, client_name)
 
 
 	@staticmethod
@@ -64,9 +65,9 @@ class CallRequests(object):
 
 
 	@staticmethod
-	def send_sms_notification(request, publication):
+	def send_sms_notification(request, publication, call_number, client_name):
 		return notifications_sms_sender.incoming_call_request(
-			request, publication.owner.mobile_phone, publication.owner.mobile_phone)
+			request, publication.owner.mobile_phone, call_number, client_name)
 
 
 
@@ -177,7 +178,7 @@ def send_notification_about_new_call_request(request, tid, publication, client_n
 	# and sending the message
 	method = preferences.send_call_request_notifications_to_sid
 	if method == Preferences.call_requests.sms():
-		CallRequests.send_sms_notification(request, publication)
+		CallRequests.send_sms_notification(request, publication, client_number, client_name)
 
 	elif method == Preferences.call_requests.email():
 		CallRequests.send_email_notification(tid, publication, client_number, client_name)
@@ -189,7 +190,7 @@ def send_notification_about_new_call_request(request, tid, publication, client_n
 
 		error = None
 		try:
-			if not CallRequests.send_sms_notification(request, publication):
+			if not CallRequests.send_sms_notification(request, publication, client_number, client_name):
 				raise RuntimeException('Message can\'t be delivered.')
 
 		except Exception as e:
