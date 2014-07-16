@@ -158,7 +158,7 @@ STATIC_ROOT = 'static/'
 MEDIA_URL = 'http://localhost/mappino_media/'
 MEDIA_ROOT = 'media/'
 
-
+COMPRESS_ENABLED = False
 COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
 
 

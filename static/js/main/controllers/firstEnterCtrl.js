@@ -58,12 +58,9 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
                     autocompleteFirstItem = autocompleteContainer.find(".pac-item:first"),
                     geocoder = new google.maps.Geocoder();
 
-                if (e.which == 13)
-                    geocoder.geocode({ "address": autocompleteFirstItem.text() }, function(results, status) {
+                if (e.which == 13) {
+                    geocoder.geocode({ "address": autocompleteFirstItem.text() }, function (results, status) {
                         if (status == google.maps.GeocoderStatus.OK) {
-
-                            autocompleteFirstItem.addClass("pac-selected");
-                            autocompleteContainer.hide();
 
                             angular.element(input)
                                 .val(autocompleteFirstItem.find(".pac-item-query").text()
@@ -72,16 +69,14 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
 
                             if (results[0].geometry.viewport)
                                 $rootScope.$emit('first-enter-change', [results[0].geometry.location, 15, input.value]);
-                            else {
+                            else
                                 $rootScope.$emit('first-enter-change', [results[0].geometry.location, 15, input.value]);
-                            }
 
                             $scope.firstEnter.city = input.value;
                             firstEnterDone();
                         }
                     });
-                else
-                    autocompleteContainer.show();
+                }
             });
         });
     };
@@ -97,7 +92,6 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
 
 
     function firstEnterDone() {
-        input.blur();
         $location.path("/search");
     }
 

@@ -8,7 +8,7 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
     $scope.tags = Tags.getAll();
     $scope.form = {};
 
-    var tid, hid, isPublished = false;
+    var tid, hid, isPublished = false, map;
 
     /**
      * При зміні урла грузить дані оголошення
@@ -280,22 +280,22 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 scrollwheel: true,
                 disableDoubleClickZoom: false
             },
-            // Карта
-            map = new google.maps.Map(document.getElementById("publication-map"), mapOptions),
             // Автокомпліт
             autocompleteOptions = {
                 componentRestrictions: {
                     country: "ua"
                 }
             },
-            autocomplete = new google.maps.places.Autocomplete(cityInput, autocompleteOptions),
-            // Маркер
-            marker = new google.maps.Marker({
-                map: map,
-                draggable: true,
-                position: center,
-                icon: '/static/img/markers/red-normal.png'
-            });
+            autocomplete = new google.maps.places.Autocomplete(cityInput, autocompleteOptions);
+
+        map = new google.maps.Map(document.getElementById("publication-map"), mapOptions);
+
+        var marker = new google.maps.Marker({
+            map: map,
+            draggable: true,
+            position: center,
+            icon: '/static/img/markers/red-normal.png'
+        });
 
         autocomplete.bindTo('bounds', map);
 
@@ -326,6 +326,15 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
                 map.setZoom(17);
                 setAddressFromLatLng(place.geometry.location, cityInput);
             }
+        });
+
+
+        google.maps.event.addListenerOnce(map, 'idle', function(e) {
+            $timeout(function() {
+                var latLng = new google.maps.LatLng($scope.publication.head.lat || 50.448159, $scope.publication.head.lng || 30.524654);
+                map.setCenter(latLng);
+                Publication.checkInputs(tid, hid, { f: "lat_lng", v: latLng.lat() + ";" + latLng.lng() }, null);
+            }, 1000);
         });
 
 
@@ -464,13 +473,6 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
         });
     };
 
-
-    /**
-     *  Вихід з адмінки
-     */
-    $scope.logoutFromCabinet = function() {
-        Settings.logoutUser();
-    };
 
     /**
      * Переміщення оголошення в неопубліковані з корзини

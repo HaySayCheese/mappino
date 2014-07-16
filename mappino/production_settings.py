@@ -8,9 +8,9 @@ from psycopg2cffi import compat
 # https://docs.djangoproject.com/en/1.6/topics/settings/
 
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-SMS_DEBUG = DEBUG
+SMS_DEBUG = False
 
 
 ALLOWED_HOSTS = ['mappino.com', 'mappino.com.ua']
@@ -103,7 +103,7 @@ BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 60*60*4}
 CELERY_RESULT_BACKEND = BROKER_URL
 
 
-SUPPORT_EMAIL = 'Dima.Chizhevsky@gmail.com' # todo: change me
+SUPPORT_EMAIL = 'support@mappino.com'
 
 
 INSTALLED_APPS = (
