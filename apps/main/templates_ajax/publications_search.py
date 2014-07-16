@@ -1,9 +1,11 @@
 #coding=utf-8
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import condition
+from core.cache.templates_cache import static_template_last_modified
 from core.publications.constants import OBJECTS_TYPES
 
-from mappino.wsgi import templates
+from core.utils.jinja2_integration import templates
 
 
 __FILTERS_TEMPLATES_PATHS = {
@@ -23,13 +25,16 @@ __FILTERS_TEMPLATES_PATHS = {
 }
 
 
+
 @ensure_csrf_cookie
+@condition(last_modified_func=static_template_last_modified)
 def first_enter_template(request):
 	t = templates.get_template('main/parts/home/first_enter.html')
 	return HttpResponse(content=t.render())
 
 
 @ensure_csrf_cookie
+@condition(last_modified_func=static_template_last_modified)
 def search_template(request):
 	t = templates.get_template('main/parts/home/search.html')
 	return HttpResponse(content=t.render())
@@ -60,7 +65,9 @@ def filters_form_template(request, color, tid):
 	}))
 
 
+
 @ensure_csrf_cookie
+@condition(last_modified_func=static_template_last_modified)
 def detailed_dlg_template(request):
 	"""
 	Повертає шаблон діалогу детальногоо опису.

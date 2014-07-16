@@ -1,78 +1,72 @@
 #coding=utf-8
 
 import os
-from mappino import passwords
 from psycopg2cffi import compat
 
+from mappino import passwords
 
-# https://docs.djangoproject.com/en/1.6/topics/settings/
+# from mappino.wsgi import env
 
+
+compat.register() # cffi hook
+# import compressor.contrib.jinja2ext
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-SMS_DEBUG = False
+SMS_DEBUG = DEBUG
+
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
-ALLOWED_HOSTS = ['mappino.com', 'mappino.com.ua']
-
-SECRET_KEY = 'CpOFHrZ9x696TkKFIfj5-paHVO24I60nDJ9YsFkpO'
+SECRET_KEY = '*m9ye0^!5otq35^(rb1^5mau92$6xen5!y69c$9e20yr0etexi'
 SMS_GATE_LOGIN = passwords.SMS_GATE_LOGIN
 SMS_GATE_PASSWORD = passwords.SMS_GATE_PASSWORD
 MANDRILL_API_KEY = passwords.MANDRILL_API_KEY
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-# pypy psycopg2cffi compatible hook
-compat.register()
+ESTIMATE_THREADS_COUNT = 4
 
 # Визначає домен, який точно може забезпечити роботу всіх посилань.
 # Як правило, це який-небудь міжнародний домен типу .com.
 # Застосовується, між іншим, у формуванні посилань в шаблонах емейл-повідомлень.
-REDIRECT_DOMAIN = 'http://mappino.com'
+REDIRECT_DOMAIN = 'http://127.0.0.1:8000'
 
 
-EVE_M1_IP = '10.129.177.252' # internal
-HUL_M1_IP = '10.129.178.15' # internal
-
-
-ESTIMATE_THREADS_COUNT = 2
 DATABASES = {
 	'default': {
 		'ENGINE':'django.db.backends.postgresql_psycopg2',
-		'NAME': 'mappino-db',
+		'NAME': '(dev)mappino',
 		'USER': 'mappino',
-		'PASSWORD': passwords.DB_PASSWORD,
-		'HOST': EVE_M1_IP,
-	    'PORT': 6432,
+		'PASSWORD': '123123',
+		'HOST': '146.185.129.95',
 	}
 }
-
-
-
 REDIS_DATABASES = {
 	'throttle': {
-		'HOST': HUL_M1_IP,
-	    'PORT': 6379,
+		'HOST': '95.85.40.162',
+	    'PORT': 6381,
 	},
     'steady': {
-	    'HOST': HUL_M1_IP,
-	    'PORT': 6379,
+	    'HOST': '95.85.40.162',
+	    'PORT': 6381,
     },
     'celery': {
-	    'HOST': HUL_M1_IP,
-	    'PORT': 6379,
-    },
-    'sessions': {
-	    'HOST': HUL_M1_IP,
-	    'PORT': 6379,
+	    'HOST': '95.85.40.162',
+	    'PORT': 6381,
     },
     'cache': {
-	    'HOST': HUL_M1_IP,
-	    'PORT': 6380, # redis-cache
+	    'HOST': '95.85.40.162',
+	    'PORT': 6381,
     },
+    'sessions': {
+	    'HOST': '95.85.40.162',
+	    'PORT': 6381,
+    }
 }
 SPHINX_SEARCH = {
-	'HOST': HUL_M1_IP,
+	'HOST': '95.85.40.162',
     'PORT': 9306
 }
 CACHES = {
@@ -83,7 +77,7 @@ CACHES = {
 		'BACKEND': 'redis_cache.RedisCache',
 	    'LOCATION': '{0}:{1}'.format(REDIS_DATABASES['cache']['HOST'], REDIS_DATABASES['cache']['PORT']),
 	    'OPTIONS': {
-		    'DB': 0,
+		    'DB': 1,
 	        'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
 	        'CONNECTION_POOL_CLASS_KWARGS': {
 		        'max_connections': 10,
@@ -94,17 +88,23 @@ CACHES = {
 }
 
 SESSION_COOKIE_AGE = 1209600
+# SESSION_SAVE_EVERY_REQUEST = True
 
 # celery config
 CELERY_REDIS_HOST = REDIS_DATABASES['celery']['HOST']
 CELERY_REDIS_PORT = REDIS_DATABASES['celery']['PORT']
+
 BROKER_URL = 'redis://' + str(CELERY_REDIS_HOST) + ':' + str(CELERY_REDIS_PORT) + '/0'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 60*60*4}
 CELERY_RESULT_BACKEND = BROKER_URL
 
+# SESSION_ENGINE = 'redis_sessions.session'
+# SESSION_REDIS_HOST = REDIS_DATABASES['sessions']['HOST']
+# SESSION_REDIS_PORT = REDIS_DATABASES['sessions']['PORT']
+# SESSION_REDIS_DB = 0
+# SESSION_REDIS_PREFIX = 'ses'
 
-SUPPORT_EMAIL = 'support@mappino.com'
-
+SUPPORT_EMAIL = 'Dima.Chizhevsky@gmail.com'
 
 INSTALLED_APPS = (
 	'compressor',
@@ -125,12 +125,13 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'django.middleware.common.CommonMiddleware',
-	# 'django.middleware.csrf.CsrfViewMiddleware', # todo: enable csrf
+	# 'django.middleware.csrf.CsrfViewMiddleware',
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'middlewares.auto_prolong_session.AutoProlongSession', # custom
 )
+
 
 ROOT_URLCONF = 'mappino.urls'
 WSGI_APPLICATION = 'mappino.wsgi.application'
@@ -138,26 +139,35 @@ WSGI_APPLICATION = 'mappino.wsgi.application'
 AUTH_USER_MODEL = 'users.Users'
 SESSION_COOKIE_HTTPONLY = False
 
+# Internationalization
+# https://docs.djangoproject.com/en/1.6/topics/i18n/
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'UTC'
 
 USE_I18N = False
 USE_L10N = False
-
-TIME_ZONE = 'UTC'
 USE_TZ = True
 
 
-
-STATIC_URL = 'http://mappino.com.ua/static/'
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.6/howto/static-files/
+STATIC_URL = 'http://localhost/mappino_static/'
 STATIC_ROOT = 'static/'
 
-MEDIA_URL = 'http://mappino.com.ua/media/'
+MEDIA_URL = 'http://localhost/mappino_media/'
 MEDIA_ROOT = 'media/'
 
-COMPRESS_ENABLED = True
+COMPRESS_ENABLED = False
 COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
 
 
-# todo: check me
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'compressor.finders.CompressorFinder',
+)
+
 LOGGING = {
 	'version': 1,
 	'disable_existing_loggers': True,

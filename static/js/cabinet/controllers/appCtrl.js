@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) {
+app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location, Settings) {
 
     Object.defineProperty(console, '_commandLineAPI', {
         get : function() {
@@ -69,6 +69,13 @@ app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location) 
             $rootScope.isSupportPagePart = true;
 
     });
+
+    /**
+     *  Вихід з адмінки
+     */
+    $rootScope.logoutFromCabinet = function() {
+        Settings.logoutUser();
+    };
 
 
     angular.element(document).ready(function() {

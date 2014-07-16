@@ -347,9 +347,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                         return;
                     }
 
-                    // If the place has a geometry, then present it on a map.
                     if (place.geometry.viewport) {
-                        map.fitBounds(place.geometry.viewport);
+                        map.panTo(place.geometry.location);
+                        map.setZoom(15);
                     } else {
                         map.panTo(place.geometry.location);
                         map.setZoom(15);
@@ -372,7 +372,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                     var autocompleteContainer = angular.element(".pac-container");
 
                     if(!autocompleteContainer.is(":focus") && !autocompleteContainer.is(":visible"))
-                        selectFirstResultInAutocomplete()
+                        selectFirstResultInAutocomplete();
                 });
             }, 2000);
 
@@ -426,6 +426,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             autocompleteFirstItem = autocompleteContainer.find(".pac-item:first"),
             geocoder = new google.maps.Geocoder();
 
+//        if (autocompleteContainer.find(".pac-item.pac-item-selected").length < 1)
+//            return;
+
 
         geocoder.geocode({ "address": autocompleteFirstItem.text() }, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
@@ -435,11 +438,12 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                         + ", " +
                         autocompleteFirstItem.find("span:nth-child(3)").text());
 
-                autocompleteFirstItem.addClass("pac-selected");
-                autocompleteContainer.hide();
+                autocompleteFirstItem.addClass("pac-item-selected");
+                //autocompleteContainer.hide();
 
                 if (results[0].geometry.viewport) {
                     map.fitBounds(results[0].geometry.viewport);
+                    map.setZoom(15);
                 } else {
                     map.panTo(results[0].geometry.location);
                     map.setZoom(15);

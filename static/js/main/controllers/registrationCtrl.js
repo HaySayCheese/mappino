@@ -384,6 +384,8 @@ app.controller("RegistrationUserCodeCheckCtrl", function($scope, $cookies, $root
         if (code == 0) {
             sessionStorage.userName = user.name + " " + user.surname;
             registrationModal.modal('hide');
+
+            window.location = "/cabinet/";
         }
 
         $scope.incorrectCode = true;

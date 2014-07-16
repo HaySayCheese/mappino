@@ -1,19 +1,23 @@
 #coding=utf-8
+from django.views.decorators.http import condition
+from core.cache.templates_cache import static_template_last_modified
 from core.publications.constants import OBJECTS_TYPES
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import ensure_csrf_cookie
-from mappino.wsgi import templates
+from core.utils.jinja2_integration import templates
+
 
 
 @ensure_csrf_cookie
+@condition(last_modified_func=static_template_last_modified)
 def publications_panel_template(request):
-	t =  templates.get_template('cabinet/publications/publications.html')
+	t = templates.get_template('cabinet/publications/publications.html')
 	return HttpResponse(t.render())
 
 
 
-
 @ensure_csrf_cookie
+@condition(last_modified_func=static_template_last_modified)
 def unpublished_form_template(request, tid):
 	if not tid:
 		return HttpResponseBadRequest('@tid is invalid')
@@ -67,25 +71,33 @@ def unpublished_form_template(request, tid):
 	return HttpResponseBadRequest('@tid is invalid.')
 
 
+
 @ensure_csrf_cookie
+@condition(last_modified_func=static_template_last_modified)
 def unpublished_map_template(request):
 	t = templates.get_template('cabinet/publications/unpublished/parts/map.html')
 	return HttpResponse(t.render())
 
 
+
 @ensure_csrf_cookie
+@condition(last_modified_func=static_template_last_modified)
 def unpublished_photos_template(request):
 	t = templates.get_template('cabinet/publications/unpublished/parts/photos.html')
 	return HttpResponse(t.render())
 
 
+
 @ensure_csrf_cookie
+@condition(last_modified_func=static_template_last_modified)
 def published_form_template(request):
 	t = templates.get_template('cabinet/publications/published/published.html')
 	return HttpResponse(t.render())
 
 
+
 @ensure_csrf_cookie
+@condition(last_modified_func=static_template_last_modified)
 def no_pubs_hint(request):
 	t = templates.get_template('cabinet/publications/hints/no_publications.html')
 	return HttpResponse(t.render())

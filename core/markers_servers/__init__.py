@@ -36,7 +36,7 @@ def add_publication_marker(sender, **kwargs):
 	MARKERS_SERVERS[kwargs['tid']].add_publication(kwargs['hid'])
 
 
-@receiver(models_signals.unpublished)
+@receiver(models_signals.before_unpublish)
 @receiver(models_signals.moved_to_trash)
 @receiver(models_signals.deleted_permanent)
 def remove_publication_marker(sender, **kwargs):

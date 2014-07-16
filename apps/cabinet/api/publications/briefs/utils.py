@@ -12,7 +12,7 @@ def briefs_of_tag(tag):
 
 	pubs = []
 	for tid in ids.keys():
-		query = HEAD_MODELS[tid].objects.filter(id__in = ids[tid]).only('id')
+		query = HEAD_MODELS[tid].objects.filter(id__in = ids[tid]).only('id').order_by('created')
 		pubs.extend(__dump_publications_list(tid, tag.user.id, query))
 	return pubs
 
@@ -24,13 +24,13 @@ def briefs_of_section(section, user_id):
 		query = HEAD_MODELS[tid].by_user_id(user_id).only('id')
 
 		if section == 'all':
-			query = query.filter(deleted=None)
+			query = query.filter(deleted=None).order_by('created')
 		elif section == 'published':
-			query = query.filter(state_sid = OBJECT_STATES.published(), deleted=None)
+			query = query.filter(state_sid = OBJECT_STATES.published(), deleted=None).order_by('created')
 		elif section == 'unpublished':
-			query = query.filter(state_sid = OBJECT_STATES.unpublished(), deleted=None)
+			query = query.filter(state_sid = OBJECT_STATES.unpublished(), deleted=None).order_by('created')
 		elif section == 'trash':
-			query = query.filter(state_sid = OBJECT_STATES.deleted())
+			query = query.filter(state_sid = OBJECT_STATES.deleted()).order_by('deleted')
 		else:
 			raise ValueError('Invalid section title {0}'.format(section))
 

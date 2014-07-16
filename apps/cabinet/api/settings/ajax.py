@@ -69,7 +69,7 @@ class AccountManager(object):
 			    'send_call_request_notifications_to_sid': self.update_send_call_request_notifications_to_sid,
 
 				'allow_messaging': self.update_allow_messaging,
-			    'send_message_notifications_to_sid': self.update_send_call_request_notifications_to_sid,
+			    'send_message_notifications_to_sid': self.update_send_message_notifications_to_sid,
 
 				'hide_email': self.update_hide_email,
 			    'hide_mobile_phone_number': self.update_hide_mobile_phone,
@@ -391,7 +391,7 @@ class AccountManager(object):
 
 		def update_send_call_request_notifications_to_sid(self, user, sid):
 			sid = int(sid)
-			if sid not in Preferences.CALL_REQUEST_NOTIFICATIONS.values():
+			if sid not in Preferences.call_requests.values():
 				return HttpResponse(
 					json.dumps(self.post_codes['invalid_value']), content_type='application/json')
 
@@ -420,7 +420,7 @@ class AccountManager(object):
 
 		def update_send_message_notifications_to_sid(self, user, sid):
 			sid = int(sid)
-			if sid not in Preferences.MESSAGE_NOTIFICATIONS.values():
+			if sid not in Preferences.messaging.values():
 				return HttpResponse(
 					json.dumps(self.post_codes['invalid_value']), content_type='application/json')
 

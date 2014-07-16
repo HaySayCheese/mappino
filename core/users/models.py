@@ -139,7 +139,7 @@ class Users(AbstractBaseUser):
 		return self.work_email if self.work_email else self.email
 
 
-	def contacts(self):
+	def contacts_dict(self):
 		contacts = {
 			'first_name': self.first_name,
 		    'last_name': self.last_name,
@@ -204,11 +204,11 @@ class Preferences(models.Model):
 
 	allow_call_requests = models.BooleanField(default=True)
 	send_call_request_notifications_to_sid = models.SmallIntegerField(
-		default=constants.Preferences.CALL_REQUEST_NOTIFICATIONS.sms())
+		default=constants.Preferences.call_requests.sms())
 
 	allow_messaging = models.BooleanField(default=True)
 	send_message_notifications_to_sid = models.SmallIntegerField(
-		default=constants.Preferences.MESSAGE_NOTIFICATIONS.email())
+		default=constants.Preferences.messaging.email())
 
 
 	@classmethod
