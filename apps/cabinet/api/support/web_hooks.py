@@ -49,15 +49,20 @@ class IncomingAgentResponseHook(View):
 					raise ValueError('Empty message.')
 
 
-				# removing the extra text
-				message = message[:message.index('<div class="gmail_quote">')]
+				try:
+					# Пробуємо розпарсити і відформатувати відповідь, припускаючи, що вона надійшла від gmail.
+					message = message[:message.index('<div class="gmail_quote">')]
 
-				extra = message[message.index('<div class="gmail_extra">'):]
-				extra = extra.replace('<br>','')
-				extra = extra.replace('\r','')
-				extra = extra.replace('\n','')
-				extra = extra.replace('<br clear="all">','<br/>')
-				message = message[:message.index('<div class="gmail_extra">')] + extra
+					extra = message[message.index('<div class="gmail_extra">'):]
+					extra = extra.replace('<br>','')
+					extra = extra.replace('\r','')
+					extra = extra.replace('\n','')
+					extra = extra.replace('<br clear="all">','<br/>')
+					message = message[:message.index('<div class="gmail_extra">')] + extra
+				except:
+					# Розпарсити не вдається.
+					# Отже відповідь надійшла з yandex і її парсити не треба.
+					pass
 
 
 				# Searching the ticket and adding the agent's response.
