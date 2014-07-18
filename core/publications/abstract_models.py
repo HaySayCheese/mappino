@@ -1,10 +1,11 @@
 #coding=utf-8
 import uuid
+
 import os
 from PIL import Image
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
-from django.db import models, transaction, connection
+from django.db import models, transaction
 from django.utils.timezone import now
 import datetime
 import redis_lock
@@ -132,7 +133,7 @@ class AbstractHeadModel(models.Model):
 
 	@classmethod
 	def new(cls, owner_id, for_sale=False, for_rent=False):
-		return cls.objects.create(
+		model = cls.objects.create(
 			body_id = cls._meta.get_field_by_name('body')[0].rel.to.new().id,
 			sale_terms_id = cls._meta.get_field_by_name('sale_terms')[0].rel.to.new().id,
 			rent_terms_id = cls._meta.get_field_by_name('rent_terms')[0].rel.to.new().id,
@@ -142,6 +143,11 @@ class AbstractHeadModel(models.Model):
 			for_rent = for_rent,
 			state_sid = OBJECT_STATES.unpublished(),
 		)
+
+		# По сигналу про створення запису запускається його індексація в sphinx
+		models_signals.created.send(sender=None, tid=cls.tid, hid=model.id)
+
+		return model
 
 
 	@classmethod
