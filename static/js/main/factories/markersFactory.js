@@ -18,7 +18,8 @@ app.factory('Markers', function(Queries, $rootScope) {
         swPoint= {
             lat: maxLat,
             lng: minLng
-        };
+        },
+        requestTimeout = null;
 
     return {
 
@@ -56,13 +57,10 @@ app.factory('Markers', function(Queries, $rootScope) {
                 }
             }
 
-//            clearTimeout(requestTimeout);
-//            requestTimeout = setTimeout(function() {
-//                $rootScope.loadings.markers = true;
-//
-//                $rootScope.$apply();
-//            }, 200);
-            $rootScope.loadings.markers = true;
+            clearTimeout(requestTimeout);
+            requestTimeout = setTimeout(function() {
+                $rootScope.loadings.markers = true;
+            }, 300);
 
             Queries.Map.getMarkers(tid, stringFilters, viewport).success(function(data) {
                 that.clearPanelMarkers(panel);
@@ -70,6 +68,7 @@ app.factory('Markers', function(Queries, $rootScope) {
                     _.isFunction(callback) && callback(markers);
                 });
 
+                clearTimeout(requestTimeout);
                 $rootScope.loadings.markers = false;
             });
         },

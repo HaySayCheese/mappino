@@ -184,9 +184,17 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
          */
         toTrash: function(tid, id, callback) {
             Queries.Publications.toTrash(tid, id, function(data) {
-                $rootScope.routeSection === 'published' ?
-                    publicationsCount['published'] -= 1 :
-                        $rootScope.routeSection === 'unpublished' ? publicationsCount['unpublished'] -= 1 : "";
+                switch (publication.head.state_sid) {
+                    case 0:
+                        publicationsCount['published'] -= 1;
+                        break;
+                    case 1:
+                        publicationsCount['unpublished'] -= 1;
+                        break;
+                    case 2:
+                        publicationsCount['trash'] -= 1;
+                        break;
+                }
 
                 publicationsCount['all']   -= 1;
                 publicationsCount['trash'] += 1;

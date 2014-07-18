@@ -347,9 +347,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                         return;
                     }
 
-                    // If the place has a geometry, then present it on a map.
                     if (place.geometry.viewport) {
-                        map.fitBounds(place.geometry.viewport);
+                        map.panTo(place.geometry.location);
+                        map.setZoom(15);
                     } else {
                         map.panTo(place.geometry.location);
                         map.setZoom(15);
@@ -359,20 +359,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
                     if(!$scope.$$phase)
                         $scope.$apply();
-                });
-
-                angular.element(cityInput).focusin(function () {
-                    angular.element(document).keypress(function (e) {
-                        if (e.which == 13) {
-                            selectFirstResultInAutocomplete();
-                        }
-                    });
-                });
-                angular.element(cityInput).focusout(function () {
-                    var autocompleteContainer = angular.element(".pac-container");
-
-                    if(!autocompleteContainer.is(":focus") && !autocompleteContainer.is(":visible"))
-                        selectFirstResultInAutocomplete()
                 });
             }, 2000);
 
@@ -419,36 +405,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
         initializeMap();
     };
-
-
-    function selectFirstResultInAutocomplete() {
-        var autocompleteContainer = angular.element(".pac-container"),
-            autocompleteFirstItem = autocompleteContainer.find(".pac-item:first"),
-            geocoder = new google.maps.Geocoder();
-
-
-        geocoder.geocode({ "address": autocompleteFirstItem.text() }, function(results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-
-                angular.element(cityInput)
-                    .val(autocompleteFirstItem.find(".pac-item-query").text()
-                        + ", " +
-                        autocompleteFirstItem.find("span:nth-child(3)").text());
-
-                autocompleteFirstItem.addClass("pac-selected");
-                autocompleteContainer.hide();
-
-                if (results[0].geometry.viewport) {
-                    map.fitBounds(results[0].geometry.viewport);
-                } else {
-                    map.panTo(results[0].geometry.location);
-                    map.setZoom(15);
-                }
-
-                $scope.filters.map.city = cityInput.value;
-            }
-        });
-    }
 
 
     /**

@@ -19,9 +19,9 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, Queries) {
         $scope.publication = data;
 
         $scope.publicationLoaded = true;
-        $rootScope.pageTitle = data.data.title + " - Mappino";
+        $rootScope.pageTitle = data.title ? data.title + " - Mappino" : "Mappino";
 
-        if (data.head.photos.length)
+        if (data.head && data.head.photos.length)
             preloadImage(data.head.photos[0]);
 
         ga('send', 'event', 'publication:dialog:detailed', 'data_requested', $rootScope.publicationIdPart, 0);
