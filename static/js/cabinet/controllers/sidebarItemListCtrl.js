@@ -29,6 +29,11 @@ app.controller('SidebarItemListCtrl', function($scope, $rootScope, $location, $t
     });
 
 
+    $rootScope.$on("publicationCreated", function() {
+        $scope.searchQuery = "";
+    });
+
+
     /**
      * Ловим евент зміни тегів
      */

@@ -25,20 +25,24 @@
             .btn:not(:first-child) {
                 margin-left: -4px;
             }
+
+            .publish-btn {
+                color: @nice-green !important;
+            }
         }
 
         .btn-link {
             &:hover,
             &:focus,
             &:active {
-                color: @nice-green !important;
+                color: darken(@nice-green, 10%) !important;
                 > * {
                     &:after {
                         .opacity(1);
                     }
                 }
             }
-            &:not(.btn-icon-exit) {
+            &:not(.btn-exit) {
                 color: #c2c2c2;
                 border-right: 1px solid @gray-lighter;
             }

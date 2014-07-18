@@ -109,6 +109,8 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
                 publicationsCount['all']         += 1;
                 publicationsCount['unpublished'] += 1;
 
+                $rootScope.$emit('publicationCreated');
+
                 $location.path("/publications/unpublished/" + publication.tid + ":" + data.id);
 
                 _.isFunction(callback) && callback(data);
