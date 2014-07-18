@@ -2952,8 +2952,11 @@ class BusinessesBodies(BodyModel):
 
 	# validation
 	def check_extended_fields(self):
-		if self.floor is None:
+		if self.building_type_sid != TRADE_BUILDING_TYPES.separate() and self.floor is None:
+			# Якщо вказано, що об’єкт знаходиться в окремій будівлі,
+			# тоді немає змісту показувати поле "етаж", оскільки вся будівля є об’єктом.
 			raise EmptyFloor('Floor is None.')
+
 		if self.total_area is None:
 			raise EmptyTotalArea('Total area count is None.')
 
