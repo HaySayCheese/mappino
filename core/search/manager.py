@@ -23,7 +23,7 @@ class SearchManager(object):
 		if settings.DEBUG:
 			self.update_interval = 10 # in seconds
 		else:
-			self.update_interval = 60 * 2 # in seconds
+			self.update_interval = 30 # in seconds
 
 
 		self.connections = Queue.Queue()
@@ -31,6 +31,7 @@ class SearchManager(object):
 			self.connections.put(self.__new_connection())
 
 		# signals initialisation
+		models_signals.created.connect(self.update_record_index)
 		models_signals.record_updated.connect(self.update_record_index)
 		models_signals.deleted_permanent.connect(self.remove_record_from_index)
 

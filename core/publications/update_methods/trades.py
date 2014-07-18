@@ -4,7 +4,7 @@ from decimal import InvalidOperation
 from django.db import DatabaseError, IntegrityError
 
 from collective.exceptions import RecordDoesNotExists
-from collective.methods.formatters import format_text, format_title
+from core.publications.update_methods.utils.formaters import format_text, format_title
 from apps.cabinet.api.dirtags.models import PublicationAlreadyExists, DirTags
 from core.currencies.constants import CURRENCIES
 from core.publications.constants import RED_LINE_VALUES, INDIVIDUAL_HEATING_TYPES, FLOOR_TYPES, HEATING_TYPES, OBJECT_CONDITIONS, MARKET_TYPES, COMMERCIAL_RENT_PERIODS, SALE_TRANSACTION_TYPES
@@ -510,7 +510,7 @@ def update_trade(h, field, value, tid):
 				b.save(force_update=True)
 				return
 			else:
-				# fixme: додати форматування
+				value = format_text(value)
 				b.custom_heating_type = value
 				b.save(force_update=True)
 				return value
@@ -536,7 +536,7 @@ def update_trade(h, field, value, tid):
 				b.save(force_update=True)
 				return
 			else:
-				# fixme: додати форматування
+				value = format_text(value)
 				b.custom_ind_heating_type = value
 				b.save(force_update=True)
 				return value
@@ -649,7 +649,7 @@ def update_trade(h, field, value, tid):
 				b.save(force_update=True)
 				return
 			else:
-				# fixme: додати форматування
+				value = format_text(value)
 				b.add_facilities = value
 				b.save(force_update=True)
 				return
@@ -757,7 +757,7 @@ def update_trade(h, field, value, tid):
 				b.save(force_update=True)
 				return
 			else:
-				# fixme: додати форматування
+				value = format_text(value)
 				b.add_buildings = value
 				b.save(force_update=True)
 				return value
@@ -837,7 +837,7 @@ def update_trade(h, field, value, tid):
 				b.save(force_update=True)
 				return
 			else:
-				# fixme: додати форматування
+				value = format_text(value)
 				b.add_showplaces = value
 				b.save(force_update=True)
 				return

@@ -1,6 +1,8 @@
 from django.dispatch import Signal
 
 
+created = Signal(providing_args=['tid', 'hid'])
+
 before_publish = Signal(providing_args=['tid', 'hid'])
 record_updated = Signal(providing_args=['tid', 'hid'])
 

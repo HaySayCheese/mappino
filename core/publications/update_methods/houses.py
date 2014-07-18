@@ -5,7 +5,7 @@ from django.db.utils import IntegrityError
 from django.db import DatabaseError
 
 from collective.exceptions import RecordDoesNotExists
-from collective.methods.formatters import format_text, format_title
+from core.publications.update_methods.utils.formaters import format_text, format_title
 from apps.cabinet.api.dirtags.models import DirTags, PublicationAlreadyExists
 from core.currencies.constants import CURRENCIES
 from core.publications.constants import SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, MARKET_TYPES, \
@@ -536,7 +536,7 @@ def update_house(h, field, value, tid):
 				b.save(force_update=True)
 				return
 			else:
-				# fixme: додати форматування
+				value = format_text(value)
 				b.custom_heating_type = value
 				b.save(force_update=True)
 				return value
@@ -562,7 +562,7 @@ def update_house(h, field, value, tid):
 				b.save(force_update=True)
 				return
 			else:
-				# fixme: додати форматування
+				value = format_text(value)
 				b.custom_ind_heating_type = value
 				b.save(force_update=True)
 				return value
@@ -717,7 +717,7 @@ def update_house(h, field, value, tid):
 				b.save(force_update=True)
 				return
 			else:
-				# fixme: додати форматування
+				value = format_text(value)
 				b.add_facilities = value
 				b.save(force_update=True)
 				return value
@@ -874,7 +874,7 @@ def update_house(h, field, value, tid):
 				b.save(force_update=True)
 				return
 			else:
-				# fixme: додати форматування
+				value = format_text(value)
 				b.add_buildings = value
 				b.save(force_update=True)
 				return value
@@ -966,7 +966,7 @@ def update_house(h, field, value, tid):
 				b.save(force_update=True)
 				return
 			else:
-				# fixme: додати форматування
+				value = format_text(value)
 				b.add_showplaces = value
 				b.save(force_update=True)
 				return
