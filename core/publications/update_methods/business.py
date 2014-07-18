@@ -4,8 +4,8 @@ from decimal import InvalidOperation
 from django.db import DatabaseError, IntegrityError
 
 from collective.exceptions import RecordDoesNotExists
-from collective.methods.formatters import format_text, format_title
 from apps.cabinet.api.dirtags.models import PublicationAlreadyExists, DirTags
+from core.publications.update_methods.utils.formaters import format_text, format_title
 from core.currencies.constants import CURRENCIES
 from core.publications.constants import OBJECT_CONDITIONS, FLOOR_TYPES, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, COMMERCIAL_RENT_PERIODS, SALE_TRANSACTION_TYPES, RED_LINE_VALUES
 from core.publications.models import BusinessesRentTerms, BusinessesBodies, BusinessesSaleTerms
@@ -30,6 +30,7 @@ from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
 # тоді як перевірка певних полів може залежати від значень інших, пропущених полів.
 #
 # Перевірку консистентності даних слід виконувати на етапі підготовки оголошення до публікації.
+
 
 def update_business(h, field, value, tid):
 	try:
@@ -638,7 +639,7 @@ def update_business(h, field, value, tid):
 				b.save(force_update=True)
 				return
 			else:
-				# fixme: додати форматування
+				value = format_text(value)
 				b.custom_heating_type = value
 				b.save(force_update=True)
 				return
@@ -664,7 +665,7 @@ def update_business(h, field, value, tid):
 				b.save(force_update=True)
 				return
 			else:
-				# fixme: додати форматування
+				value = format_text(value)
 				b.custom_ind_heating_type = value
 				b.save(force_update=True)
 				return value
@@ -777,7 +778,7 @@ def update_business(h, field, value, tid):
 				b.save(force_update=True)
 				return
 			else:
-				# fixme: додати форматування
+				value = format_text(value)
 				b.add_facilities = value
 				b.save(force_update=True)
 				return
@@ -885,7 +886,7 @@ def update_business(h, field, value, tid):
 				b.save(force_update=True)
 				return
 			else:
-				# fixme: додати форматування
+				value = format_text(value)
 				b.add_buildings = value
 				b.save(force_update=True)
 				return value
@@ -965,7 +966,7 @@ def update_business(h, field, value, tid):
 				b.save(force_update=True)
 				return
 			else:
-				# fixme: додати форматування
+				value = format_text(value)
 				b.add_showplaces = value
 				b.save(force_update=True)
 				return
