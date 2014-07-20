@@ -191,22 +191,21 @@
                         <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Тип дома:</label>
                         <div class="col-sm-6">
                             <select name="building_type_sid" data-width="100%" ng-model="publication.body.building_type_sid">
-                                <option value="0">Панель</option>
-                                <option value="1">Кирпич</option>
-                                <option value="2">Хрущевка</option>
-                                <option value="3">Брежневка</option>
-                                <option value="4">Сталинка</option>
-                                <option value="5">Монолит</option>
+                                <option value="1">Панель</option>
+                                <option value="2">Кирпич</option>
+                                <option value="3">Хрущевка</option>
+                                <option value="4">Монолит</option>
+                                <option value="5">Дореволюционний</option>
                                 <option value="6">Малосемейка</option>
                                 <option value="7">Индивидуальный проект</option>
-                                <option value="8">Другой</option>
-                                <option value="9">Неизвестно</option>
+                                <option value="0">Другой</option>
+                                <option value="8">Неизвестно</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
-                <div class="row" ng-show="publication.body.building_type_sid == 8">
+                <div class="row" ng-show="publication.body.building_type_sid == 0">
                     <div class="col-sm-6 col-sm-offset-4">
                         <div class="form-group">
                             <input type="text" class="form-control" name="custom_building_type" ng-model="publication.body.custom_building_type">
@@ -281,7 +280,7 @@
                                 <option value="4">Требуется косметический ремонт</option>
                                 <option value="5">Неоконченный ремонт</option>
                                 <option value="6">Под чистовую отделку</option>
-                                <option value="1">Жилое / советское</option>
+                                <option value="1">Жилое</option>
                             </select>
                         </div>
                     </div>

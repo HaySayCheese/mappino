@@ -112,28 +112,6 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-6 form-group">
-                        <div class="checkbox">
-                            <input id="rent_family" type="checkbox" name="rent_family" ng-model="publication.rent_terms.family">
-                            <label for="rent_family">Подходит для семей с детьми</label>
-                        </div>
-                        <div class="checkbox">
-                            <input id="rent_foreigners" type="checkbox" name="rent_foreigners" ng-model="publication.rent_terms.foreigners">
-                            <label for="rent_foreigners">Размещение иностранцев</label>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 form-group">
-                        <div class="checkbox">
-                            <input id="rent_smoking" type="checkbox" name="rent_smoking" ng-model="publication.rent_terms.smoking">
-                            <label for="rent_smoking">Можно курить</label>
-                        </div>
-                        <div class="checkbox">
-                            <input id="rent_pets" type="checkbox" name="rent_pets" ng-model="publication.rent_terms.pets">
-                            <label for="rent_pets">Питомцы разрешены</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col-lg-12">
                         <div class="form-group">
                             <label>Дополнительные условия, уточнения:</label>
@@ -179,9 +157,10 @@
                         <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Тип здания:</label>
                         <div class="col-sm-6">
                             <select name="building_type_sid" data-width="100%" ng-model="publication.body.building_type_sid">
-                                <option value="1">В бизнес-центре</option>
-                                <option value="3">В отдельном здании</option>
-                                <option value="2">В административном здании</option>
+                                <option value="1">В торгово-развлекательном центре</option>
+                                <option value="3">В бизнес-центре</option>
+                                <option value="5">В отдельном здании</option>
+                                <option value="4">В административном здании</option>
                                 <option value="0">В жилом здании</option>
                             </select>
                         </div>
@@ -409,10 +388,15 @@
                         </div>
                     </div>
                     <div class="col-sm-6 col-lg-4 form-group">
+                        <!--<div class="checkbox">-->
+                            <!--<input id="conditioning" type="checkbox" name="conditioning" ng-model="publication.rent_terms.conditioning">-->
+                            <!--<label for="conditioning">Кондиционер</label>-->
+                        <!--</div>-->
                         <div class="checkbox">
-                            <input id="conditioner" type="checkbox" name="conditioner" ng-model="publication.rent_terms.conditioner">
-                            <label for="conditioner">Кондиционер</label>
+                            <input id="air_conditioning" type="checkbox" name="air_conditioning" ng-model="publication.rent_terms.air_conditioning">
+                            <label for="air_conditioning">Кондиционер</label>
                         </div>
+
                     </div>
                 </div>
             </div>

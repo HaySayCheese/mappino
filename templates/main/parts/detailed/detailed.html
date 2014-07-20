@@ -224,6 +224,10 @@
                                         <td>Кол-во спален:</td>
                                         <td>[[ publication.data.bedrooms_count ]]</td>
                                     </tr>
+                                    <tr ng-show="publication.data.halls_count">
+                                        <td>Кол-во залов:</td>
+                                        <td>[[ publication.data.halls_count ]]</td>
+                                    </tr>
                                     <tr ng-show="publication.data.vcs_count">
                                         <td>Кол-во сан. узлов:</td>
                                         <td>[[ publication.data.vcs_count ]]</td>
@@ -235,10 +239,6 @@
                                     <tr ng-show="publication.data.loggias_count">
                                         <td>Кол-во лоджий:</td>
                                         <td>[[ publication.data.loggias_count ]]</td>
-                                    </tr>
-                                    <tr ng-show="publication.data.halls_count">
-                                        <td>Кол-во залов:</td>
-                                        <td>[[ publication.data.halls_count ]]</td>
                                     </tr>
                                     <tr ng-show="publication.data.cabinets_count">
                                         <td>Кол-во кабинетов:</td>

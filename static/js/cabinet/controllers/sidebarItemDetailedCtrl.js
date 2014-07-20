@@ -386,6 +386,8 @@ app.controller('SidebarItemDetailedCtrl', function($scope, $rootScope, $timeout,
             Publication.uploadPhotos(tid, hid, files[i], function(data) {
                 $rootScope.loadings.uploadPhotos = false;
 
+                initScrollBar();
+
                 Briefs.updateBriefOfPublication(tid, hid, "photo_url", data.title_url);
             });
         }

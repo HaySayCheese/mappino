@@ -42,8 +42,6 @@
 
         <div class="load-detailed" ng-show="loadings.tickets || loadings.ticketData"></div>
 
-        <div class="detailed-empty text-muted" ng-show="!tickets.length && !loadings.tickets && !showTicket">
-            <span>У вас пока нет сообщений</span>
-        </div>
+        <div ng-include="'/ajax/template/cabinet/support/hints/no-tickets/'" ng-show="!tickets.length && !loadings.tickets && !showTicket"></div>
     </div>
 </div>
