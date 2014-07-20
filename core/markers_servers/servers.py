@@ -3036,7 +3036,7 @@ class RoomsMarkersManager(BaseMarkersManager):
 		# ітак ясно, що їх буде не більше одної.
 
 		result = {
-			'id': marker['id']
+			'id': marker['hash_id']
 		}
 
 		# Гривня як базова валюта обирається згідно з чинним законодавством,

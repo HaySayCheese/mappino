@@ -603,7 +603,7 @@ def update_warehouse(h, field, value, tid):
 
 		# boolean
 		elif field == 'vc':
-			if value == 'true':
+			if (value is True) or (value is False):
 				b = WarehousesBodies.objects.filter(id=h.body_id).only('id')[0]
 				b.vc = value
 				b.save(force_update=True)
