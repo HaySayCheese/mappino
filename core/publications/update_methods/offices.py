@@ -558,7 +558,7 @@ def update_office(h, field, value, tid):
 		# boolean
 		elif field == 'furniture':
 			if (value is True) or (value is False):
-				rt = OfficesSaleTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt = OfficesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
 				rt.furniture = value
 				rt.save(force_update=True)
 				return
@@ -569,7 +569,7 @@ def update_office(h, field, value, tid):
 		# boolean
 		elif field == 'air_conditioning':
 			if (value is True) or (value is False):
-				rt = OfficesSaleTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
+				rt = OfficesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
 				rt.air_conditioning = value
 				rt.save(force_update=True)
 				return

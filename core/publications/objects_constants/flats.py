@@ -8,14 +8,12 @@ class FlatBuildingsTypes(AbstractConstant):
 			'panel': 1,
 		    'brick': 2,
 		    'khrushchovka': 3,
-		    'brezhnevka': 4,
-		    'stalinka': 5,
-		    'monolith': 6,
-		    'pre_revolutionary': 7,
-		    'small_family': 8,
-		    'individual_project': 9,
+		    'monolith': 4,
+		    'pre_revolutionary': 5,
+		    'small_family': 6,
+		    'individual_project': 7,
 		    'custom': 0,
-		    'unknown': 10,
+		    'unknown': 8,
 		})
 
 	def panel(self):
@@ -26,12 +24,6 @@ class FlatBuildingsTypes(AbstractConstant):
 
 	def khrushchovka(self):
 		return self.ids['khrushchovka']
-
-	def brezhnevka(self):
-		return self.ids['brezhnevka']
-
-	def stalinka(self):
-		return self.ids['stalinka']
 
 	def monolith(self):
 		return self.ids['monolith']

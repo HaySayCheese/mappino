@@ -53,6 +53,9 @@ class AbstractModel(models.Model):
 			dol = u'~' + dol
 
 		dol += u' дол.'
+		if self.transaction_sid == SALE_TRANSACTION_TYPES.for_square_meter():
+			dol += u'/м²'
+
 		if self.is_contract:
 			dol += u', договорная'
 
@@ -67,6 +70,8 @@ class AbstractModel(models.Model):
 		if self.currency_sid != currencies_constants.uah():
 			uah = u'~' + uah
 		uah += u' грн.'
+		if self.transaction_sid == SALE_TRANSACTION_TYPES.for_square_meter():
+			uah += u'/м²'
 
 
 		eur = u'{:,.2f}'.format(currencies.convert(self.price, self.currency_sid, currencies_constants.eur()))
@@ -78,6 +83,8 @@ class AbstractModel(models.Model):
 		if self.currency_sid != currencies_constants.eur():
 			eur = u'~' + eur
 		eur += u' евро.'
+		if self.transaction_sid == SALE_TRANSACTION_TYPES.for_square_meter():
+			eur += u'/м²'
 
 		return u'{dol} ({uah}, {eur})'.format(dol=dol, uah=uah, eur=eur)
 
@@ -559,6 +566,51 @@ class LivingRentTermsModel(AbstractModel):
 		return u''
 
 
+	def print_price(self):
+		if self.price is None:
+			return u''
+
+		dol = u'{:,.2f}'.format(currencies.convert(self.price, self.currency_sid, currencies_constants.dol()))
+		dol = dol.replace(',', ' ')
+
+		# Видалення копійок
+		if dol[-3] == '.':
+			dol = dol[:-3]
+
+		# Підказуємо користувачу, що валюта сконвертована
+		if self.currency_sid != currencies_constants.dol():
+			dol = u'~' + dol
+
+		dol += u' дол.'
+		if self.is_contract:
+			dol += u', договорная'
+
+
+		# Додаємо ціну в інших валютах
+		uah = u'{:,.2f}'.format(currencies.convert(self.price, self.currency_sid, currencies_constants.uah()))
+		uah = uah.replace(',', ' ')
+
+		if uah[-3] == '.':
+			uah = uah[:-3]
+
+		if self.currency_sid != currencies_constants.uah():
+			uah = u'~' + uah
+		uah += u' грн.'
+
+		eur = u'{:,.2f}'.format(currencies.convert(self.price, self.currency_sid, currencies_constants.eur()))
+		eur = eur.replace(',', ' ')
+
+		if eur[-3] == '.':
+			eur = eur[:-3]
+
+		if self.currency_sid != currencies_constants.eur():
+			eur = u'~' + eur
+		eur += u' евро.'
+
+		return u'{dol} ({uah}, {eur})'.format(dol=dol, uah=uah, eur=eur)
+
+
+
 class CommercialRentTermsModel(AbstractModel):
 	class Meta:
 		abstract = True
@@ -583,6 +635,50 @@ class CommercialRentTermsModel(AbstractModel):
 		"""
 		if self.price is None:
 			raise EmptyRentPrice('Rent price is None.')
+
+
+	def print_price(self):
+		if self.price is None:
+			return u''
+
+		dol = u'{:,.2f}'.format(currencies.convert(self.price, self.currency_sid, currencies_constants.dol()))
+		dol = dol.replace(',', ' ')
+
+		# Видалення копійок
+		if dol[-3] == '.':
+			dol = dol[:-3]
+
+		# Підказуємо користувачу, що валюта сконвертована
+		if self.currency_sid != currencies_constants.dol():
+			dol = u'~' + dol
+
+		dol += u' дол.'
+		if self.is_contract:
+			dol += u', договорная'
+
+
+		# Додаємо ціну в інших валютах
+		uah = u'{:,.2f}'.format(currencies.convert(self.price, self.currency_sid, currencies_constants.uah()))
+		uah = uah.replace(',', ' ')
+
+		if uah[-3] == '.':
+			uah = uah[:-3]
+
+		if self.currency_sid != currencies_constants.uah():
+			uah = u'~' + uah
+		uah += u' грн.'
+
+		eur = u'{:,.2f}'.format(currencies.convert(self.price, self.currency_sid, currencies_constants.eur()))
+		eur = eur.replace(',', ' ')
+
+		if eur[-3] == '.':
+			eur = eur[:-3]
+
+		if self.currency_sid != currencies_constants.eur():
+			eur = u'~' + eur
+		eur += u' евро.'
+
+		return u'{dol} ({uah}, {eur})'.format(dol=dol, uah=uah, eur=eur)
 
 
 	#-- output

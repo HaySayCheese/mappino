@@ -151,7 +151,7 @@ class FlatsBodies(BodyModel):
 
 	#-- validation
 	def check_extended_fields(self):
-		if self.floor is None:
+		if self.floor_type_sid == FLOOR_TYPES.floor() and self.floor is None:
 			raise EmptyFloor('Floor is None.')
 		if self.total_area is None:
 			raise EmptyTotalArea('Total area is None.')
@@ -352,7 +352,7 @@ class FlatsBodies(BodyModel):
 			communications += u', кабельное телевидение'
 
 		if communications:
-			return communications[2:]
+			return communications[2:] + u'.'
 		return u''
 
 
@@ -544,7 +544,7 @@ class ApartmentsBodies(BodyModel):
 
 	#-- validation
 	def check_extended_fields(self):
-		if self.floor is None:
+		if self.floor_type_sid == FLOOR_TYPES.floor() and self.floor is None:
 			raise EmptyFloor('Floor is None.')
 		if self.total_area is None:
 			raise EmptyTotalArea('Total area is None.')
@@ -745,7 +745,7 @@ class ApartmentsBodies(BodyModel):
 			communications += u', кабельное телевидение'
 
 		if communications:
-			return communications[2:]
+			return communications[2:]  + u'.'
 		return u''
 
 
@@ -822,6 +822,15 @@ class HousesRentTerms(LivingRentTermsModel):
 		db_table = 'o_houses_rent_terms'
 
 	rent_type_sid = models.SmallIntegerField(default=HOUSE_RENT_TYPES.all_house())
+
+
+	def print_terms(self):
+		terms = super(HousesRentTerms, self).print_terms()
+
+		if self.rent_type_sid == HOUSE_RENT_TYPES.part():
+			return u'Часть дома, ' + terms
+		return terms
+
 
 
 class HousesBodies(BodyModel):
@@ -1057,7 +1066,7 @@ class HousesBodies(BodyModel):
 			communications += u', кабельное телевидение'
 
 		if communications:
-			return communications[2:]
+			return communications[2:]  + u'.'
 		return u''
 
 
@@ -1261,6 +1270,13 @@ class CottagesRentTerms(LivingRentTermsModel):
 		db_table = 'o_cottages_rent_terms'
 
 	rent_type_sid = models.SmallIntegerField(default=COTTAGE_RENT_TYPES.all_house())
+
+	def print_terms(self):
+		terms = super(CottagesRentTerms, self).print_terms()
+
+		if self.rent_type_sid == HOUSE_RENT_TYPES.part():
+			return u'Часть дома, ' + terms
+		return terms
 
 
 class CottagesBodies(BodyModel):
@@ -1493,7 +1509,7 @@ class CottagesBodies(BodyModel):
 			communications += u', кабельное телевидение'
 
 		if communications:
-			return communications[2:]
+			return communications[2:]  + u'.'
 		return u''
 
 
@@ -1673,8 +1689,8 @@ class RoomsBodies(BodyModel):
 
 	# validation
 	def check_extended_fields(self):
-		if self.floor is None:
-			raise EmptyFloor('Floor count is None.')
+		if self.floor_type_sid == FLOOR_TYPES.floor() and self.floor is None:
+			raise EmptyFloor('Floor is None.')
 		if self.rooms_count is None:
 			raise EmptyRoomsCount('Rooms count is None.')
 		if self.total_area is None:
@@ -1822,7 +1838,7 @@ class RoomsBodies(BodyModel):
 			communications += u', кабельное телевидение'
 
 		if communications:
-			return communications[2:]
+			return communications[2:]  + u'.'
 		return u''
 
 
@@ -1995,8 +2011,9 @@ class TradesBodies(BodyModel):
 
 	# validation
 	def check_extended_fields(self):
-		if self.floor is None:
+		if self.floor_type_sid == FLOOR_TYPES.floor() and self.floor is None:
 			raise EmptyFloor('Floor is None.')
+
 		if self.halls_area is None:
 			raise EmptyHallsArea('Halls area is None.')
 
@@ -2211,7 +2228,7 @@ class TradesBodies(BodyModel):
 			showplaces += '. ' + self.add_showplaces
 
 		if showplaces:
-			return showplaces[2:].capitalize() + u'.'
+			return showplaces[2:]
 		return u''
 
 
@@ -2239,6 +2256,18 @@ class OfficesRentTerms(CommercialRentTermsModel):
 	furniture = models.BooleanField(default=False)
 	air_conditioning = models.BooleanField(default=False)
 
+	def print_facilities(self):
+		facilities = u''
+		if self.furniture:
+			facilities += u', мебель'
+		if self.air_conditioning:
+			facilities += u', кондиционер'
+
+		if facilities:
+			return facilities[2:] + u'.'
+		return u''
+
+
 
 class OfficesPhotos(PhotosModel):
 	class Meta:
@@ -2260,6 +2289,7 @@ class OfficesBodies(BodyModel):
 		'building_type': {
 			TRADE_BUILDING_TYPES.residential(): u'жилое',
 			TRADE_BUILDING_TYPES.business(): u'бизнес-центр',
+			TRADE_BUILDING_TYPES.entertainment(): u'ТРЦ',
 			TRADE_BUILDING_TYPES.administrative(): u'административное',
 			TRADE_BUILDING_TYPES.separate(): u'отдельное',
 		},
@@ -2340,7 +2370,7 @@ class OfficesBodies(BodyModel):
 
 	# validation
 	def check_extended_fields(self):
-		if self.floor is None:
+		if self.floor_type_sid == FLOOR_TYPES.floor() and self.floor is None:
 			raise EmptyFloor('Floor is None.')
 		if self.cabinets_count is None:
 			raise EmptyCabinetsCount('Cabinets count is None.')
@@ -2524,7 +2554,7 @@ class OfficesBodies(BodyModel):
 			showplaces += u'. ' + self.add_showplaces
 
 		if showplaces:
-			return showplaces[2:].capitalize() + u'.'
+			return showplaces[2:]
 		return u''
 
 
@@ -2732,7 +2762,7 @@ class WarehousesBodies(BodyModel):
 
 		if facilities[:2] == u', ':
 			facilities = facilities[2:]
-		return(facilities.capitalize() + u'.') if facilities else u''
+		return(facilities) if facilities else u''
 
 
 	def print_communications(self):
@@ -2772,7 +2802,7 @@ class WarehousesBodies(BodyModel):
 		if self.add_buildings:
 			buildings += u'. ' + self.add_buildings
 
-		return buildings[2:].capitalize() + u'.' if buildings else u''
+		return buildings[2:] + u'.' if buildings else u''
 
 
 	def print_driveways(self):
@@ -2787,9 +2817,9 @@ class WarehousesBodies(BodyModel):
 			driveways += u', грунт'
 
 		if self.add_driveways:
-			driveways += u'. ' + self.add_driveways.capitalize()
+			driveways += u'. ' + self.add_driveways
 
-		return driveways[2:].capitalize() + u'.' if driveways else u''
+		return driveways[2:] if driveways else u''
 
 
 	def print_showplaces(self):
@@ -2813,7 +2843,7 @@ class WarehousesBodies(BodyModel):
 			showplaces += u'. ' + self.add_showplaces
 
 		if showplaces:
-			return showplaces[2:].capitalize() + u'.'
+			return showplaces[2:]
 		return u''
 
 
@@ -2952,7 +2982,8 @@ class BusinessesBodies(BodyModel):
 
 	# validation
 	def check_extended_fields(self):
-		if self.building_type_sid != TRADE_BUILDING_TYPES.separate() and self.floor is None:
+		if self.building_type_sid != TRADE_BUILDING_TYPES.separate() and \
+						self.floor_type_sid == FLOOR_TYPES.floor() and self.floor is None:
 			# Якщо вказано, що об’єкт знаходиться в окремій будівлі,
 			# тоді немає змісту показувати поле "етаж", оскільки вся будівля є об’єктом.
 			raise EmptyFloor('Floor is None.')
@@ -3166,7 +3197,7 @@ class BusinessesBodies(BodyModel):
 
 		if facilities[:2] == u', ':
 			facilities = facilities[2:]
-		return(facilities.capitalize() + u'.') if facilities else u''
+		return(facilities) if facilities else u''
 
 
 	def print_communications(self):
@@ -3182,6 +3213,8 @@ class BusinessesBodies(BodyModel):
 			communications += u', покрытие мобильными операторами'
 		if self.lan:
 			communications += u', локальная сеть'
+		if self.cable_tv:
+			communications += u', кабельное телевидение'
 
 		if communications:
 			return communications[2:] + u"."
@@ -3199,7 +3232,7 @@ class BusinessesBodies(BodyModel):
 			buildings += u'. ' + self.add_buildings
 
 		if buildings:
-			return buildings[2:].capitalize() + u"."
+			return buildings[2:]
 		return u''
 
 
@@ -3222,7 +3255,7 @@ class BusinessesBodies(BodyModel):
 			showplaces += u'. ' + self.add_showplaces
 
 		if showplaces:
-			return showplaces[2:].capitalize() + u'.'
+			return showplaces[2:]
 		return u''
 
 
@@ -3356,7 +3389,7 @@ class CateringsBodies(BodyModel):
 
 	# validation
 	def check_extended_fields(self):
-		if self.floor is None:
+		if self.floor_type_sid == FLOOR_TYPES.floor() and self.floor is None:
 			raise EmptyFloor('Floor is None.')
 		if self.halls_count is None:
 			raise EmptyHallsCount('Halls count is None.')
@@ -3574,7 +3607,7 @@ class CateringsBodies(BodyModel):
 			showplaces += '. ' + self.add_showplaces
 
 		if showplaces:
-			return showplaces[2:].capitalize() + u'.'
+			return showplaces[2:]
 		return u''
 
 
@@ -3682,7 +3715,7 @@ class GaragesBodies(BodyModel):
 	def print_driveways(self):
 		driveways = u''
 		if self.driveways_sid == GARAGE_DRIVE_WAYS.asphalt():
-			driveways = u'асфальт'+ u'.'
+			driveways = u'асфальт' + u'.'
 		elif self.driveways_sid == GARAGE_DRIVE_WAYS.ground():
 			driveways = u'грунт'+ u'.'
 		return driveways
@@ -3718,7 +3751,7 @@ class GaragesBodies(BodyModel):
 
 		if facilities[:2] == u', ':
 			facilities = facilities[2:]
-		return(facilities.capitalize() + u'.') if facilities else u''
+		return(facilities + u'.') if facilities else u''
 
 
 
@@ -3804,7 +3837,11 @@ class LandsBodies(BodyModel):
 	def print_area(self):
 		if self.area is None:
 			return u''
-		return "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м²'
+
+		area = "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м²'
+		if self.closed_area:
+			area += u' (закр. територия)'
+		return area
 
 
 	def print_driveways(self):
@@ -3825,10 +3862,12 @@ class LandsBodies(BodyModel):
 			facilities += u', газ'
 		if self.water:
 			facilities += u', вода'
+		if self.sewerage:
+			facilities += u', канализация'
 
 		if facilities[:2] == u', ':
 			facilities = facilities[2:]
-		return(facilities.capitalize() + u'.') if facilities else u''
+		return(facilities + u'.') if facilities else u''
 	
 	
 	def print_provided_add_buildings(self):
@@ -3839,7 +3878,7 @@ class LandsBodies(BodyModel):
 		if self.add_buildings:
 			buildings += '. ' + self.add_buildings
 
-		return buildings.capitalize() + u'.' if buildings else u''
+		return buildings + u'.' if buildings else u''
 
 
 	def print_showplaces(self):
@@ -3861,7 +3900,7 @@ class LandsBodies(BodyModel):
 			showplaces += u'.' + self.add_showplaces
 
 		if showplaces:
-			return showplaces[2:].capitalize() + u'.'
+			return showplaces[2:]
 		return u''
 
 

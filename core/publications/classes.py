@@ -123,7 +123,7 @@ class PublishedDataSource(object):
 			})
 		if p.for_rent:
 			description.update({
-				'rent_price': p.sale_terms.print_price(),
+				'rent_price': p.rent_terms.print_price(),
 			    'rent_terms': p.rent_terms.print_terms(),
 			    'rent_facilities': p.rent_terms.print_facilities()
 			})
@@ -368,6 +368,7 @@ class PublishedDataSource(object):
 			description.update({
 				'rent_price': p.rent_terms.print_price(),
 			    'rent_terms': p.rent_terms.print_terms(),
+			    'rent_facilities': p.rent_terms.print_facilities()
 			})
 		return description
 
