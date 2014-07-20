@@ -75,9 +75,12 @@
     .clearfix();
 
     &:hover,
-    &:focus,
-    &.active {
+    &:focus {
         background: #fafafa;
+    }
+
+    &.active {
+        background: darken(#fafafa, 2%);
     }
 
     .sidebar-item-list-item-img {
