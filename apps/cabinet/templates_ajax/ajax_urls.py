@@ -25,4 +25,5 @@ urlpatterns = patterns('apps.cabinet.templates_ajax',
 
     # hints
     url(r'^ajax/template/cabinet/publications/hints/no-publications/$', 'publications.no_pubs_hint'),
+    url(r'^ajax/template/cabinet/support/hints/no-tickets/$', 'publications.no_pubs_hint'),
 )
