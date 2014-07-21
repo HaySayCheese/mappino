@@ -1,21 +1,20 @@
 #coding=utf-8
 import copy
+import json
 import mmh3
 
 import abc
 from django.core.exceptions import SuspiciousOperation
-import mmh3
+
 from collective.exceptions import InvalidArgument, RuntimeException
 from core.currencies.constants import CURRENCIES
-
 from core.currencies.currencies_manager import convert as convert_currency
 from core.markers_servers.classes import DegreeSegmentPoint, Point, SegmentPoint, DegreePoint
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, MARKET_TYPES, LIVING_RENT_PERIODS, \
-	HEATING_TYPES, OBJECT_STATES
+	HEATING_TYPES, OBJECT_STATES, FLOOR_TYPES
 from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
 from mappino.wsgi import redis_connections
-
 
 
 class BaseMarkersManager(object):
@@ -331,14 +330,12 @@ class BaseMarkersManager(object):
 		Новий хеш вираховується за формулою h = hash(попередній хеш + record_id)
 		"""
 
-		#  todo: Розкоментувати (mmh3 не ставиться на вінді. закоментовано, щоб Сєрий мав можливість працювати).
-		# current_hash = self.redis.hget(self.redis_segments_hashes_prefix, digest)
-		# if current_hash is None:
-		# 	current_hash = ''
-		#
-		# segment_hash = mmh3.hash(current_hash + str(record_id))
-		# self.redis.hset(self.redis_segments_hashes_prefix, digest, segment_hash)
-		pass
+		current_hash = self.redis.hget(self.segments_hashes_prefix, digest)
+		if current_hash is None:
+			current_hash = ''
+
+		segment_hash = mmh3.hash(current_hash + str(record_id))
+		self.redis.hset(self.segments_hashes_prefix, digest, segment_hash)
 
 
 	@staticmethod
@@ -415,182 +412,119 @@ class FlatsMarkersManager(BaseMarkersManager):
 
 			'body__electricity', 'body__gas', 'body__hot_water', 'body__cold_water', 'body__lift',
 			'body__market_type_sid', 'body__heating_type_sid', 'body__rooms_planning_sid',
-			'body__rooms_count', 'body__total_area', 'body__floors_count')
+			'body__rooms_count', 'body__total_area', 'body__floor_type_sid', 'body__floor', 'body__floors_count')
 
 
 	def serialize_publication(self, record):
-		operation_bitmask =  '1' if record.for_sale else '0'
-		operation_bitmask += '1' if record.for_rent else '0'
-		if operation_bitmask == '00':
-			raise self.SerializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
-
-		# common terms
-		bitmask =  '1' if record.body.electricity else '0'
-		bitmask += '1' if record.body.gas else '0'
-		bitmask += '1' if record.body.hot_water else '0'
-		bitmask += '1' if record.body.cold_water else '0'
-		bitmask += '1' if record.body.lift else '0'
-		bitmask += '{0:01b}'.format(record.body.market_type_sid)  # 1 bit
-		bitmask += '{0:02b}'.format(record.body.heating_type_sid) # 2 bits
-		bitmask += '{0:02b}'.format(record.body.rooms_planning_sid) # 2 bits
-		if len(bitmask) != 10:
-			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
-
-		# data
-		data = str(record.hash_id) + self.separator
+		if True not in (record.for_sale, record.for_rent):
+			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
 		if record.body.rooms_count is None:
 			raise self.SerializationError('rooms_count is required but absent.')
-		data += str(record.body.rooms_count) + self.separator
 
 		if record.body.total_area is None:
 			raise self.SerializationError('total_area is required but absent.')
-		data += str(record.body.total_area) + self.separator
-
-		if record.body.floor is None:
-			raise self.SerializationError('floor is required but absent.')
-		data += str(record.body.floor) + self.separator
 
 
-		# sale terms
+		data = [
+			record.hash_id,
+			record.for_sale,
+		    record.for_rent,
+
+			record.body.rooms_count,
+			float(record.body.total_area), # json can't handle decimal
+
+			record.body.electricity,
+		    record.body.gas,
+		    record.body.hot_water,
+		    record.body.cold_water,
+		    record.body.lift,
+
+		    record.body.market_type_sid,
+		    record.body.heating_type_sid,
+		    record.body.rooms_planning_sid,
+			record.body.floor_type_sid,
+		]
+
+		# Поле поверху може бути пустим, якщо тип поверху вибрано як "мансарда" чи "цоколь".
+		# Якщо воно пусте — немає змісту його сериалізувати.
+		if record.body.floor_type_sid == FLOOR_TYPES.floor():
+			data.append(record.body.floor)
+
+
 		if record.for_sale:
-			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 12:
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
 			if record.sale_terms.price is None:
 				raise self.SerializationError('sale_price is required but absent.')
-			data += str(record.sale_terms.price) + self.separator
+
+			data.extend([
+		        float(record.sale_terms.price), # json can't handle decimal
+			    record.sale_terms.currency_sid,
+			])
 
 
-		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
-			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			bitmask += '1' if record.rent_terms.family else '0'
-			bitmask += '1' if record.rent_terms.foreigners else '0'
-			if len(bitmask) not in (16, 18):
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
+			data.extend([
+				float(record.rent_terms.price), # json can't handle decimal
+			    record.rent_terms.currency_sid,
+				record.rent_terms.period_sid,
+			    record.rent_terms.persons_count, # WARN: необов’язкове поле
 
-			if record.rent_terms.price is None:
-				raise self.SerializationError('rent_price is required but absent.')
-			data += str(record.rent_terms.price) + self.separator
-
-			# WARNING: next fields can be None
-			if record.rent_terms.persons_count is not None:
-				data += str(record.rent_terms.persons_count) + self.separator
-			else:
-				data += self.separator
-
-		record_data = str(int(operation_bitmask, 2)) + self.separator +\
-		              str(int(bitmask, 2)) + self.separator + \
-		              data
-		if record_data[-1] == self.separator:
-			record_data = record_data[:-1]
-		return record_data
+			    record.rent_terms.family,
+			    record.rent_terms.foreigners,
+			])
 
 
-	def deserialize_marker_data(self, record_data):
-		parts = record_data.split(self.separator)
-		operations_bitmask = parts[0]
-		operations_bitmask = str(bin(int(operations_bitmask))[2:])
-		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
-
-		bitmask = parts[1]
-		bitmask = str(bin(int(bitmask))[2:])
-
-		data = parts[2:]
+		digest = json.dumps(data).replace('true', 't').replace('false', 'f').replace(' ', '')
+		return digest
 
 
-		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
-			bitmask = '0' * (18 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
-			    'for_rent': True,
+	def deserialize_marker_data(self, data):
+		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
 
-				# data deserialization
-				'hash_id':              data[0],
-				'rooms_count':          int(data[1]),
-				'total_area':         float(data[2]),
-				'floor':                int(data[3]),
-			    'sale_price':         float(data[4]),
-			    'rent_price':         float(data[5]),
-			    'persons_count':        int(data[6]) if data[6] != '' else None,
+		index = iter(xrange(0, len(data)))
+		deserialized_data = {
+			'hash_id':              data[next(index)],
+			'for_sale':             data[next(index)],
+		    'for_rent':             data[next(index)],
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-				'lift':                     (bitmask[4] == '1'),
-			    'market_type_sid':       int(bitmask[5]),
-			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
-			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
+			'rooms_count':          data[next(index)],
+		    'total_area':           data[next(index)],
 
-			    'sale_currency_sid':     int(bitmask[10] + bitmask[11]),
+			'electricity':          data[next(index)],
+		    'gas':                  data[next(index)],
+		    'hot_water':            data[next(index)],
+		    'cold_water':           data[next(index)],
+		    'lift':                 data[next(index)],
 
-			    'rent_period_sid':       int(bitmask[12] + bitmask[13]),
-			    'rent_currency_sid':     int(bitmask[14] + bitmask[15]),
-				'family':                   (bitmask[16] == '1'),
-				'foreigners':               (bitmask[17] == '1'),
-			}
+			'market_type_sid':      data[next(index)],
+			'heating_type_sid':     data[next(index)],
+			'rooms_planning_sid':   data[next(index)],
+			'floor_type_sid':       data[next(index)],
+		}
+		if deserialized_data['floor_type_sid'] == FLOOR_TYPES.floor():
+			deserialized_data['floor'] = data[next(index)]
 
-		elif operations_bitmask[0] == '1': # for sale
-			bitmask = '0' * (12 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
 
-				# data deserialization
-				'hash_id':                   data[0],
-				'rooms_count':          int(data[1]),
-				'total_area':         float(data[2]),
-				'floor':                int(data[3]),
-			    'sale_price':         float(data[4]),
+		if deserialized_data['for_sale']:
+			deserialized_data.update({
+				'sale_price': data[next(index)],
+				'sale_currency_sid': data[next(index)],
+			})
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-				'lift':                     (bitmask[4] == '1'),
-			    'market_type_sid':       int(bitmask[5]),
-			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
-			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
-			    'sale_currency_sid':     int(bitmask[10] + bitmask[11]),
-			}
 
-		elif operations_bitmask[1] == '1': # for rent
-			bitmask = '0' * (16 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-			    'for_rent': True,
+		if deserialized_data['for_rent']:
+			deserialized_data.update({
+				'rent_price': data[next(index)],
+				'rent_currency_sid': data[next(index)],
+				'rent_period_sid': data[next(index)],
+			    'persons_count': data[next(index)],
 
-				# data deserialization
-				'hash_id':                   data[0],
-				'rooms_count':          int(data[1]),
-				'total_area':         float(data[2]),
-				'floor':                int(data[3]),
-			    'rent_price':         float(data[4]),
-			    'persons_count':        int(data[5]) if data[5] != '' else None,
+				'family': data[next(index)],
+				'foreigners': data[next(index)],
+			})
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-				'lift':                     (bitmask[4] == '1'),
-			    'market_type_sid':       int(bitmask[5]),
-			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
-			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
-			    'rent_period_sid':       int(bitmask[10] + bitmask[11]),
-			    'rent_currency_sid':     int(bitmask[12] + bitmask[13]),
-				'family':                   (bitmask[14] == '1'),
-				'foreigners':               (bitmask[15] == '1'),
-			}
-		else:
-			raise self.DeserializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+		return deserialized_data
 
 
 	def marker_brief(self, marker, filters=None):
@@ -1053,178 +987,115 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 
 
 	def serialize_publication(self, record):
-		operation_bitmask =  '1' if record.for_sale else '0'
-		operation_bitmask += '1' if record.for_rent else '0'
-		if operation_bitmask == '00':
-			raise self.SerializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
-
-		# common terms
-		bitmask =  '1' if record.body.electricity else '0'
-		bitmask += '1' if record.body.gas else '0'
-		bitmask += '1' if record.body.hot_water else '0'
-		bitmask += '1' if record.body.cold_water else '0'
-		bitmask += '1' if record.body.lift else '0'
-		bitmask += '{0:01b}'.format(record.body.market_type_sid)  # 1 bit
-		bitmask += '{0:02b}'.format(record.body.heating_type_sid) # 2 bits
-		bitmask += '{0:02b}'.format(record.body.rooms_planning_sid) # 2 bits
-		if len(bitmask) != 10:
-			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
-
-		# data
-		data = str(record.hash_id) + self.separator
+		if True not in (record.for_sale, record.for_rent):
+			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
 		if record.body.rooms_count is None:
 			raise self.SerializationError('rooms_count is required but absent.')
-		data += str(record.body.rooms_count) + self.separator
 
 		if record.body.total_area is None:
 			raise self.SerializationError('total_area is required but absent.')
-		data += str(record.body.total_area) + self.separator
-
-		if record.body.floor is None:
-			raise self.SerializationError('floor is required but absent.')
-		data += str(record.body.floor) + self.separator
 
 
-		# sale terms
+		data = [
+			record.hash_id,
+			record.for_sale,
+		    record.for_rent,
+
+			record.body.rooms_count,
+			float(record.body.total_area), # json can't handle decimal
+
+			record.body.electricity,
+		    record.body.gas,
+		    record.body.hot_water,
+		    record.body.cold_water,
+		    record.body.lift,
+
+		    record.body.market_type_sid,
+		    record.body.heating_type_sid,
+		    record.body.rooms_planning_sid,
+			record.body.floor_type_sid,
+		]
+
+		# Поле поверху може бути пустим, якщо тип поверху вибрано як "мансарда" чи "цоколь".
+		# Якщо воно пусте — немає змісту його сериалізувати.
+		if record.body.floor_type_sid == FLOOR_TYPES.floor():
+			data.append(record.body.floor)
+
+
 		if record.for_sale:
-			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 12:
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
 			if record.sale_terms.price is None:
 				raise self.SerializationError('sale_price is required but absent.')
-			data += str(record.sale_terms.price) + self.separator
+
+			data.extend([
+		        float(record.sale_terms.price), # json can't handle decimal
+			    record.sale_terms.currency_sid,
+			])
 
 
-		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
-			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			bitmask += '1' if record.rent_terms.family else '0'
-			bitmask += '1' if record.rent_terms.foreigners else '0'
-			if len(bitmask) not in (16, 18):
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
+			data.extend([
+				float(record.rent_terms.price), # json can't handle decimal
+			    record.rent_terms.currency_sid,
+				record.rent_terms.period_sid,
+			    record.rent_terms.persons_count, # WARN: необов’язкове поле
 
-			if record.rent_terms.price is None:
-				raise self.SerializationError('rent_price is required but absent.')
-			data += str(record.rent_terms.price) + self.separator
-
-			# WARNING: next fields can be None
-			if record.rent_terms.persons_count is not None:
-				data += str(record.rent_terms.persons_count) + self.separator
-			else:
-				data += self.separator
-
-		record_data = str(int(operation_bitmask, 2)) + self.separator +\
-		              str(int(bitmask, 2)) + self.separator + \
-		              data
-		if record_data[-1] == self.separator:
-			record_data = record_data[:-1]
-		return record_data
+			    record.rent_terms.family,
+			    record.rent_terms.foreigners,
+			])
 
 
-	def deserialize_marker_data(self, record_data):
-		parts = record_data.split(self.separator)
-		operations_bitmask = parts[0]
-		operations_bitmask = str(bin(int(operations_bitmask))[2:])
-		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розмірку
-
-		bitmask = parts[1]
-		bitmask = str(bin(int(bitmask))[2:])
-
-		data = parts[2:]
+		digest = json.dumps(data).replace('true', 't').replace('false', 'f').replace(' ', '')
+		return digest
 
 
-		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
-			bitmask = '0' * (18 - len(bitmask)) + bitmask # Доповнити до мін. розмірку
-			return {
-				'for_sale': True,
-			    'for_rent': True,
+	def deserialize_marker_data(self, data):
+		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
 
-				# data deserialization
-				'hash_id':                   data[0],
-				'rooms_count':          int(data[1]),
-				'total_area':         float(data[2]),
-				'floor':                int(data[3]),
-			    'sale_price':         float(data[4]),
-			    'rent_price':         float(data[5]),
-			    'persons_count':        int(data[6]) if data[6] != '' else None,
+		index = iter(xrange(0, len(data)))
+		deserialized_data = {
+			'hash_id':              data[next(index)],
+			'for_sale':             data[next(index)],
+		    'for_rent':             data[next(index)],
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-				'lift':                     (bitmask[4] == '1'),
-			    'market_type_sid':       int(bitmask[5]),
-			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
-			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
+			'rooms_count':          data[next(index)],
+		    'total_area':           data[next(index)],
 
-			    'sale_currency_sid':     int(bitmask[10] + bitmask[11]),
+			'electricity':          data[next(index)],
+		    'gas':                  data[next(index)],
+		    'hot_water':            data[next(index)],
+		    'cold_water':           data[next(index)],
+		    'lift':                 data[next(index)],
 
-			    'rent_period_sid':       int(bitmask[12] + bitmask[13]),
-			    'rent_currency_sid':     int(bitmask[14] + bitmask[15]),
-				'family':                   (bitmask[16] == '1'),
-				'foreigners':               (bitmask[17] == '1'),
-			}
+			'market_type_sid':      data[next(index)],
+			'heating_type_sid':     data[next(index)],
+			'rooms_planning_sid':   data[next(index)],
+			'floor_type_sid':       data[next(index)],
+		}
+		if deserialized_data['floor_type_sid'] == FLOOR_TYPES.floor():
+			deserialized_data['floor'] = data[next(index)]
 
-		elif operations_bitmask[0] == '1': # for sale
-			bitmask = '0' * (12 - len(bitmask)) + bitmask
-			return {
-				'for_sale': True,
 
-				# data deserialization
-				'hash_id':                   data[0],
-				'rooms_count':          int(data[1]),
-				'total_area':         float(data[2]),
-				'floor':                int(data[3]),
-			    'sale_price':         float(data[4]),
+		if deserialized_data['for_sale']:
+			deserialized_data.update({
+				'sale_price': data[next(index)],
+				'sale_currency_sid': data[next(index)],
+			})
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-				'lift':                     (bitmask[4] == '1'),
-			    'market_type_sid':       int(bitmask[5]),
-			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
-			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
-			    'sale_currency_sid':     int(bitmask[10] + bitmask[11]),
-			}
 
-		elif operations_bitmask[1] == '1': # for rent
-			bitmask = '0' * (16 - len(bitmask)) + bitmask
-			return {
-			    'for_rent': True,
+		if deserialized_data['for_rent']:
+			deserialized_data.update({
+				'rent_price': data[next(index)],
+				'rent_currency_sid': data[next(index)],
+				'rent_period_sid': data[next(index)],
+			    'persons_count': data[next(index)],
 
-				# data deserialization
-				'hash_id':                   data[0],
-				'rooms_count':          int(data[1]),
-				'total_area':         float(data[2]),
-				'floor':                int(data[3]),
-			    'rent_price':         float(data[4]),
-			    'persons_count':        int(data[5]) if data[5] != '' else None,
+				'family': data[next(index)],
+				'foreigners': data[next(index)],
+			})
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-				'lift':                     (bitmask[4] == '1'),
-			    'market_type_sid':       int(bitmask[5]),
-			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
-			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
-			    'rent_period_sid':       int(bitmask[10] + bitmask[11]),
-			    'rent_currency_sid':     int(bitmask[12] + bitmask[13]),
-				'family':                   (bitmask[14] == '1'),
-				'foreigners':               (bitmask[15] == '1'),
-			}
-		else:
-			raise self.DeserializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+		return deserialized_data
 
 
 	def marker_brief(self, marker, filters=None):
@@ -1690,172 +1561,112 @@ class HousesMarkersManager(BaseMarkersManager):
 
 
 	def serialize_publication(self, record):
-		operation_bitmask =  '1' if record.for_sale else '0'
-		operation_bitmask += '1' if record.for_rent else '0'
-		if operation_bitmask == '00':
-			raise self.SerializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
-
-		# common terms
-		bitmask = '1' if record.body.electricity else '0'
-		bitmask += '1' if record.body.gas else '0'
-		bitmask += '1' if record.body.sewerage else '0'
-		bitmask += '1' if record.body.hot_water else '0'
-		bitmask += '1' if record.body.cold_water else '0'
-		bitmask += '{0:01b}'.format(record.body.market_type_sid)  # 1 bit
-		bitmask += '{0:02b}'.format(record.body.heating_type_sid) # 2 bits
-		if len(bitmask) != 8:
-			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
-
-		# data
-		data = str(record.hash_id) + self.separator
+		if True not in (record.for_sale, record.for_rent):
+			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
 		if record.body.rooms_count is None:
 			raise self.SerializationError('rooms_count is required but absent.')
-		data += str(record.body.rooms_count) + self.separator
-
-		if record.body.floors_count is None:
-			raise self.SerializationError('floors_count is required but absent.')
-		data += str(record.body.floors_count) + self.separator
 
 		if record.body.total_area is None:
 			raise self.SerializationError('total_area is required but absent.')
-		data += str(record.body.total_area) + self.separator
 
-		# sale terms
+
+		data = [
+			record.hash_id,
+			record.for_sale,
+		    record.for_rent,
+
+			record.body.rooms_count,
+		    record.body.floors_count,
+			float(record.body.total_area), # json can't handle decimal
+
+
+			record.body.electricity,
+		    record.body.gas,
+		    record.body.sewerage,
+		    record.body.hot_water,
+		    record.body.cold_water,
+
+		    record.body.market_type_sid,
+		    record.body.heating_type_sid,
+		]
+
+		# Поле поверху може бути пустим, якщо тип поверху вибрано як "мансарда" чи "цоколь".
+		# Якщо воно пусте — немає змісту його сериалізувати.
+		if record.body.floor_type_sid == FLOOR_TYPES.floor():
+			data.append(record.body.floor)
+
+
 		if record.for_sale:
-			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 10:
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
 			if record.sale_terms.price is None:
 				raise self.SerializationError('sale_price is required but absent.')
-			data += str(record.sale_terms.price) + self.separator
+
+			data.extend([
+		        float(record.sale_terms.price), # json can't handle decimal
+			    record.sale_terms.currency_sid,
+			])
 
 
-		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
-			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			bitmask += '1' if record.rent_terms.family else '0'
-			bitmask += '1' if record.rent_terms.foreigners else '0'
-			if len(bitmask) not in (14, 16):
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
+			data.extend([
+				float(record.rent_terms.price), # json can't handle decimal
+			    record.rent_terms.currency_sid,
+				record.rent_terms.period_sid,
+			    record.rent_terms.persons_count, # WARN: необов’язкове поле
 
-			if record.rent_terms.price is None:
-				raise self.SerializationError('rent_price is required but absent.')
-			data += str(record.rent_terms.price) + self.separator
-
-			# WARNING: next fields can be None
-			if record.rent_terms.persons_count is not None:
-				data += str(record.rent_terms.persons_count) + self.separator
-			else:
-				data += self.separator
-
-		record_data = str(int(operation_bitmask, 2)) + self.separator +\
-		              str(int(bitmask, 2)) + self.separator + \
-		              data
-		if record_data[-1] == self.separator:
-			record_data = record_data[:-1]
-		return record_data
+			    record.rent_terms.family,
+			    record.rent_terms.foreigners,
+			])
 
 
-	def deserialize_marker_data(self, record_data):
-		parts = record_data.split(self.separator)
-		operations_bitmask = parts[0]
-		operations_bitmask = str(bin(int(operations_bitmask))[2:])
-		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
-
-		bitmask = parts[1]
-		bitmask = str(bin(int(bitmask))[2:])
-
-		data = parts[2:]
+		digest = json.dumps(data).replace('true', 't').replace('false', 'f').replace(' ', '')
+		return digest
 
 
-		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
-			bitmask = '0' * (16 - len(bitmask)) + bitmask # Доповнити до мін. розмірку
-			return {
-				'for_sale': True,
-			    'for_rent': True,
+	def deserialize_marker_data(self, data):
+		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
 
-				# data deserialization
-				'hash_id':              data[0],
-				'rooms_count':          int(data[1]),
-				'floors_count':         int(data[2]),
-				'total_area':         float(data[3]),
-			    'sale_price':         float(data[4]),
-			    'rent_price':         float(data[5]),
-			    'persons_count':        int(data[6]) if data[6] != '' else None,
+		index = iter(xrange(0, len(data)))
+		deserialized_data = {
+			'hash_id':              data[next(index)],
+			'for_sale':             data[next(index)],
+		    'for_rent':             data[next(index)],
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'sewerage':                 (bitmask[2] == '1'),
-				'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-			    'market_type_sid':       int(bitmask[5]),
-			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+			'rooms_count':          data[next(index)],
+		    'floors_count':         data[next(index)],
+		    'total_area':           data[next(index)],
 
-			    'sale_currency_sid':     int(bitmask[8] + bitmask[9]),
-			    'rent_period_sid':       int(bitmask[10] + bitmask[11]),
-			    'rent_currency_sid':     int(bitmask[12] + bitmask[13]),
-				'family':                   (bitmask[14] == '1'),
-				'foreigners':               (bitmask[15] == '1'),
-			}
+			'electricity':          data[next(index)],
+		    'gas':                  data[next(index)],
+		    'sewerage':             data[next(index)],
+		    'hot_water':            data[next(index)],
+		    'cold_water':           data[next(index)],
 
-		elif operations_bitmask[0] == '1': # for sale
-			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
+			'market_type_sid':      data[next(index)],
+			'heating_type_sid':     data[next(index)],
+		}
 
-				# data deserialization
-				'hash_id':              data[0],
-				'rooms_count':          int(data[1]),
-			    'floors_count':         int(data[2]),
-			    'total_area':         float(data[3]),
-			    'sale_price':         float(data[4]),
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'sewerage':                 (bitmask[2] == '1'),
-				'hot_water':                (bitmask[3] == '1'),
-				'cold_water':               (bitmask[4] == '1'),
-			    'market_type_sid':       int(bitmask[5]),
-			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
-			    'sale_currency_sid':     int(bitmask[8] + bitmask[9]),
-			}
+		if deserialized_data['for_sale']:
+			deserialized_data.update({
+				'sale_price': data[next(index)],
+				'sale_currency_sid': data[next(index)],
+			})
 
-		elif operations_bitmask[1] == '1': # for rent
-			bitmask = '0' * (14 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-			    'for_rent': True,
 
-				# data deserialization
-				'hash_id':              data[0],
-				'rooms_count':          int(data[1]),
-				'floors_count':         int(data[2]),
-				'total_area':         float(data[3]),
-			    'rent_price':         float(data[4]),
-			    'persons_count':        int(data[5]) if data[5] != '' else None,
+		if deserialized_data['for_rent']:
+			deserialized_data.update({
+				'rent_price': data[next(index)],
+				'rent_currency_sid': data[next(index)],
+				'rent_period_sid': data[next(index)],
+			    'persons_count': data[next(index)],
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-			    'sewerage':                 (bitmask[2] == '1'),
-				'hot_water':                (bitmask[3] == '1'),
-				'cold_water':               (bitmask[4] == '1'),
-			    'market_type_sid':       int(bitmask[5]),
-			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
-			    'rent_period_sid':       int(bitmask[8] + bitmask[9]),
-			    'rent_currency_sid':     int(bitmask[10] + bitmask[11]),
-				'family':                   (bitmask[12] == '1'),
-				'foreigners':               (bitmask[13] == '1'),
-			}
-		else:
-			raise self.DeserializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+				'family': data[next(index)],
+				'foreigners': data[next(index)],
+			})
+
+
+		return deserialized_data
 
 
 	def marker_brief(self, marker, filters=None):
@@ -2270,172 +2081,112 @@ class CottagesMarkersManager(BaseMarkersManager):
 
 
 	def serialize_publication(self, record):
-		operation_bitmask =  '1' if record.for_sale else '0'
-		operation_bitmask += '1' if record.for_rent else '0'
-		if operation_bitmask == '00':
-			raise self.SerializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
-
-		# common terms
-		bitmask = '1' if record.body.electricity else '0'
-		bitmask += '1' if record.body.gas else '0'
-		bitmask += '1' if record.body.sewerage else '0'
-		bitmask += '1' if record.body.hot_water else '0'
-		bitmask += '1' if record.body.cold_water else '0'
-		bitmask += '{0:01b}'.format(record.body.market_type_sid)  # 1 bit
-		bitmask += '{0:02b}'.format(record.body.heating_type_sid) # 2 bits
-		if len(bitmask) != 8:
-			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
-
-		# data
-		data = str(record.hash_id) + self.separator
+		if True not in (record.for_sale, record.for_rent):
+			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
 		if record.body.rooms_count is None:
 			raise self.SerializationError('rooms_count is required but absent.')
-		data += str(record.body.rooms_count) + self.separator
-
-		if record.body.floors_count is None:
-			raise self.SerializationError('floors_count is required but absent.')
-		data += str(record.body.floors_count) + self.separator
 
 		if record.body.total_area is None:
 			raise self.SerializationError('total_area is required but absent.')
-		data += str(record.body.total_area) + self.separator
 
-		# sale terms
+
+		data = [
+			record.hash_id,
+			record.for_sale,
+		    record.for_rent,
+
+			record.body.rooms_count,
+		    record.body.floors_count,
+			float(record.body.total_area), # json can't handle decimal
+
+
+			record.body.electricity,
+		    record.body.gas,
+		    record.body.sewerage,
+		    record.body.hot_water,
+		    record.body.cold_water,
+
+		    record.body.market_type_sid,
+		    record.body.heating_type_sid,
+		]
+
+		# Поле поверху може бути пустим, якщо тип поверху вибрано як "мансарда" чи "цоколь".
+		# Якщо воно пусте — немає змісту його сериалізувати.
+		if record.body.floor_type_sid == FLOOR_TYPES.floor():
+			data.append(record.body.floor)
+
+
 		if record.for_sale:
-			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 10:
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
 			if record.sale_terms.price is None:
 				raise self.SerializationError('sale_price is required but absent.')
-			data += str(record.sale_terms.price) + self.separator
+
+			data.extend([
+		        float(record.sale_terms.price), # json can't handle decimal
+			    record.sale_terms.currency_sid,
+			])
 
 
-		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
-			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			bitmask += '1' if record.rent_terms.family else '0'
-			bitmask += '1' if record.rent_terms.foreigners else '0'
-			if len(bitmask) not in (14, 16):
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
+			data.extend([
+				float(record.rent_terms.price), # json can't handle decimal
+			    record.rent_terms.currency_sid,
+				record.rent_terms.period_sid,
+			    record.rent_terms.persons_count, # WARN: необов’язкове поле
 
-			if record.rent_terms.price is None:
-				raise self.SerializationError('rent_price is required but absent.')
-			data += str(record.rent_terms.price) + self.separator
-
-			# WARNING: next fields can be None
-			if record.rent_terms.persons_count is not None:
-				data += str(record.rent_terms.persons_count) + self.separator
-			else:
-				data += self.separator
-
-		record_data = str(int(operation_bitmask, 2)) + self.separator +\
-		              str(int(bitmask, 2)) + self.separator + \
-		              data
-		if record_data[-1] == self.separator:
-			record_data = record_data[:-1]
-		return record_data
+			    record.rent_terms.family,
+			    record.rent_terms.foreigners,
+			])
 
 
-	def deserialize_marker_data(self, record_data):
-		parts = record_data.split(self.separator)
-		operations_bitmask = parts[0]
-		operations_bitmask = str(bin(int(operations_bitmask))[2:])
-		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
-
-		bitmask = parts[1]
-		bitmask = str(bin(int(bitmask))[2:])
-
-		data = parts[2:]
+		digest = json.dumps(data).replace('true', 't').replace('false', 'f').replace(' ', '')
+		return digest
 
 
-		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
-			bitmask = '0' * (16 - len(bitmask)) + bitmask # Доповнити до мін. розмірку
-			return {
-				'for_sale': True,
-			    'for_rent': True,
+	def deserialize_marker_data(self, data):
+		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
 
-				# data deserialization
-				'hash_id':              data[0],
-				'rooms_count':          int(data[1]),
-				'floors_count':         int(data[2]),
-				'total_area':         float(data[3]),
-			    'sale_price':         float(data[4]),
-			    'rent_price':         float(data[5]),
-			    'persons_count':        int(data[6]) if data[6] != '' else None,
+		index = iter(xrange(0, len(data)))
+		deserialized_data = {
+			'hash_id':              data[next(index)],
+			'for_sale':             data[next(index)],
+		    'for_rent':             data[next(index)],
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'sewerage':                 (bitmask[2] == '1'),
-				'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-			    'market_type_sid':       int(bitmask[5]),
-			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
+			'rooms_count':          data[next(index)],
+		    'floors_count':         data[next(index)],
+		    'total_area':           data[next(index)],
 
-			    'sale_currency_sid':     int(bitmask[8] + bitmask[9]),
-			    'rent_period_sid':       int(bitmask[10] + bitmask[11]),
-			    'rent_currency_sid':     int(bitmask[12] + bitmask[13]),
-				'family':                   (bitmask[14] == '1'),
-				'foreigners':               (bitmask[15] == '1'),
-			}
+			'electricity':          data[next(index)],
+		    'gas':                  data[next(index)],
+		    'sewerage':             data[next(index)],
+		    'hot_water':            data[next(index)],
+		    'cold_water':           data[next(index)],
 
-		elif operations_bitmask[0] == '1': # for sale
-			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
+			'market_type_sid':      data[next(index)],
+			'heating_type_sid':     data[next(index)],
+		}
 
-				# data deserialization
-				'hash_id':              data[0],
-				'rooms_count':          int(data[1]),
-			    'floors_count':         int(data[2]),
-			    'total_area':         float(data[3]),
-			    'sale_price':         float(data[4]),
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'sewerage':                 (bitmask[2] == '1'),
-				'hot_water':                (bitmask[3] == '1'),
-				'cold_water':               (bitmask[4] == '1'),
-			    'market_type_sid':       int(bitmask[5]),
-			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
-			    'sale_currency_sid':     int(bitmask[8] + bitmask[9]),
-			}
+		if deserialized_data['for_sale']:
+			deserialized_data.update({
+				'sale_price': data[next(index)],
+				'sale_currency_sid': data[next(index)],
+			})
 
-		elif operations_bitmask[1] == '1': # for rent
-			bitmask = '0' * (14 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-			    'for_rent': True,
 
-				# data deserialization
-				'hash_id':              data[0],
-				'rooms_count':          int(data[1]),
-				'floors_count':         int(data[2]),
-				'total_area':         float(data[3]),
-			    'rent_price':         float(data[4]),
-			    'persons_count':        int(data[5]) if data[5] != '' else None,
+		if deserialized_data['for_rent']:
+			deserialized_data.update({
+				'rent_price': data[next(index)],
+				'rent_currency_sid': data[next(index)],
+				'rent_period_sid': data[next(index)],
+			    'persons_count': data[next(index)],
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-			    'sewerage':                 (bitmask[2] == '1'),
-				'hot_water':                (bitmask[3] == '1'),
-				'cold_water':               (bitmask[4] == '1'),
-			    'market_type_sid':       int(bitmask[5]),
-			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
-			    'rent_period_sid':       int(bitmask[8] + bitmask[9]),
-			    'rent_currency_sid':     int(bitmask[10] + bitmask[11]),
-				'family':                   (bitmask[12] == '1'),
-				'foreigners':               (bitmask[13] == '1'),
-			}
-		else:
-			raise self.DeserializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+				'family': data[next(index)],
+				'foreigners': data[next(index)],
+			})
+
+
+		return deserialized_data
 
 
 	def marker_brief(self, marker, filters=None):
@@ -2851,178 +2602,113 @@ class RoomsMarkersManager(BaseMarkersManager):
 
 
 	def serialize_publication(self, record):
-		operation_bitmask =  '1' if record.for_sale else '0'
-		operation_bitmask += '1' if record.for_rent else '0'
-		if operation_bitmask == '00':
-			raise self.SerializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
-
-		# common terms
-		bitmask =  '1' if record.body.electricity else '0'
-		bitmask += '1' if record.body.gas else '0'
-		bitmask += '1' if record.body.hot_water else '0'
-		bitmask += '1' if record.body.cold_water else '0'
-		bitmask += '1' if record.body.lift else '0'
-		bitmask += '{0:01b}'.format(record.body.market_type_sid)  # 1 bit
-		bitmask += '{0:02b}'.format(record.body.heating_type_sid) # 2 bits
-		bitmask += '{0:02b}'.format(record.body.rooms_planning_sid) # 2 bits
-		if len(bitmask) != 10:
-			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
-
-		# data
-		data = str(record.hash_id) + self.separator
+		if True not in (record.for_sale, record.for_rent):
+			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
 		if record.body.rooms_count is None:
 			raise self.SerializationError('rooms_count is required but absent.')
-		data += str(record.body.rooms_count) + self.separator
 
 		if record.body.total_area is None:
 			raise self.SerializationError('total_area is required but absent.')
-		data += str(record.body.total_area) + self.separator
-
-		if record.body.floor is None:
-			raise self.SerializationError('floor is required but absent.')
-		data += str(record.body.floor) + self.separator
 
 
-		# sale terms
+		data = [
+			record.hash_id,
+			record.for_sale,
+		    record.for_rent,
+
+			record.body.rooms_count,
+			float(record.body.total_area), # json can't handle decimal
+
+			record.body.electricity,
+		    record.body.gas,
+		    record.body.hot_water,
+		    record.body.cold_water,
+		    record.body.lift,
+
+		    record.body.market_type_sid,
+		    record.body.heating_type_sid,
+			record.body.floor_type_sid,
+		]
+
+		# Поле поверху може бути пустим, якщо тип поверху вибрано як "мансарда" чи "цоколь".
+		# Якщо воно пусте — немає змісту його сериалізувати.
+		if record.body.floor_type_sid == FLOOR_TYPES.floor():
+			data.append(record.body.floor)
+
+
 		if record.for_sale:
-			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 12:
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
 			if record.sale_terms.price is None:
 				raise self.SerializationError('sale_price is required but absent.')
-			data += str(record.sale_terms.price) + self.separator
+
+			data.extend([
+		        float(record.sale_terms.price), # json can't handle decimal
+			    record.sale_terms.currency_sid,
+			])
 
 
-		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.period_sid)   # 2 bits
-			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			bitmask += '1' if record.rent_terms.family else '0'
-			bitmask += '1' if record.rent_terms.foreigners else '0'
-			if len(bitmask) not in (16, 18):
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
+			data.extend([
+				float(record.rent_terms.price), # json can't handle decimal
+			    record.rent_terms.currency_sid,
+				record.rent_terms.period_sid,
+			    record.rent_terms.persons_count, # WARN: необов’язкове поле
 
-			if record.rent_terms.price is None:
-				raise self.SerializationError('rent_price is required but absent.')
-			data += str(record.rent_terms.price) + self.separator
-
-			# WARNING: next fields can be None
-			if record.rent_terms.persons_count is not None:
-				data += str(record.rent_terms.persons_count) + self.separator
-			else:
-				data += self.separator
-
-		record_data = str(int(operation_bitmask, 2)) + self.separator +\
-		              str(int(bitmask, 2)) + self.separator + \
-		              data
-		if record_data[-1] == self.separator:
-			record_data = record_data[:-1]
-		return record_data
+			    record.rent_terms.family,
+			    record.rent_terms.foreigners,
+			])
 
 
-	def deserialize_marker_data(self, record_data):
-		parts = record_data.split(self.separator)
-		operations_bitmask = parts[0]
-		operations_bitmask = str(bin(int(operations_bitmask))[2:])
-		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
-
-		bitmask = parts[1]
-		bitmask = str(bin(int(bitmask))[2:])
-
-		data = parts[2:]
+		digest = json.dumps(data).replace('true', 't').replace('false', 'f').replace(' ', '')
+		return digest
 
 
-		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
-			bitmask = '0' * (18 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
-			    'for_rent': True,
+	def deserialize_marker_data(self, data):
+		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
 
-				# data deserialization
-				'hash_id':              data[0],
-				'rooms_count':          int(data[1]),
-				'total_area':         float(data[2]),
-				'floor':                int(data[3]),
-			    'sale_price':         float(data[4]),
-			    'rent_price':         float(data[5]),
-			    'persons_count':        int(data[6]) if data[6] != '' else None,
+		index = iter(xrange(0, len(data)))
+		deserialized_data = {
+			'hash_id':              data[next(index)],
+			'for_sale':             data[next(index)],
+		    'for_rent':             data[next(index)],
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-				'lift':                     (bitmask[4] == '1'),
-			    'market_type_sid':       int(bitmask[5]),
-			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
-			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
+			'rooms_count':          data[next(index)],
+		    'total_area':           data[next(index)],
 
-			    'sale_currency_sid':     int(bitmask[10] + bitmask[11]),
+			'electricity':          data[next(index)],
+		    'gas':                  data[next(index)],
+		    'hot_water':            data[next(index)],
+		    'cold_water':           data[next(index)],
+		    'lift':                 data[next(index)],
 
-			    'rent_period_sid':       int(bitmask[12] + bitmask[13]),
-			    'rent_currency_sid':     int(bitmask[14] + bitmask[15]),
-				'family':                   (bitmask[16] == '1'),
-				'foreigners':               (bitmask[17] == '1'),
-			}
+			'market_type_sid':      data[next(index)],
+			'heating_type_sid':     data[next(index)],
+			'floor_type_sid':       data[next(index)],
+		}
+		if deserialized_data['floor_type_sid'] == FLOOR_TYPES.floor():
+			deserialized_data['floor'] = data[next(index)]
 
-		elif operations_bitmask[0] == '1': # for sale
-			bitmask = '0' * (12 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
 
-				# data deserialization
-				'hash_id':              data[0],
-				'rooms_count':          int(data[1]),
-				'total_area':         float(data[2]),
-				'floor':                int(data[3]),
-			    'sale_price':         float(data[4]),
+		if deserialized_data['for_sale']:
+			deserialized_data.update({
+				'sale_price': data[next(index)],
+				'sale_currency_sid': data[next(index)],
+			})
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-				'lift':                     (bitmask[4] == '1'),
-			    'market_type_sid':       int(bitmask[5]),
-			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
-			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
-			    'sale_currency_sid':     int(bitmask[10] + bitmask[11]),
-			}
 
-		elif operations_bitmask[1] == '1': # for rent
-			bitmask = '0' * (16 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-			    'for_rent': True,
+		if deserialized_data['for_rent']:
+			deserialized_data.update({
+				'rent_price': data[next(index)],
+				'rent_currency_sid': data[next(index)],
+				'rent_period_sid': data[next(index)],
+			    'persons_count': data[next(index)],
 
-				# data deserialization
-				'hash_id':              data[0],
-				'rooms_count':          int(data[1]),
-				'total_area':         float(data[2]),
-				'floor':                int(data[3]),
-			    'rent_price':         float(data[4]),
-			    'persons_count':        int(data[5]) if data[5] != '' else None,
+				'family': data[next(index)],
+				'foreigners': data[next(index)],
+			})
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-				'lift':                     (bitmask[4] == '1'),
-			    'market_type_sid':       int(bitmask[5]),
-			    'heating_type_sid':      int(bitmask[6] + bitmask[7]),
-			    'rooms_planning_sid':    int(bitmask[8] + bitmask[9]),
-			    'rent_period_sid':       int(bitmask[10] + bitmask[11]),
-			    'rent_currency_sid':     int(bitmask[12] + bitmask[13]),
-				'family':                   (bitmask[14] == '1'),
-				'foreigners':               (bitmask[15] == '1'),
-			}
-		else:
-			raise self.DeserializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+		return deserialized_data
 
 
 	def marker_brief(self, marker, filters=None):
@@ -3466,144 +3152,93 @@ class TradesMarkersManager(BaseMarkersManager):
 
 
 	def serialize_publication(self, record):
-		operation_bitmask =  '1' if record.for_sale else '0'
-		operation_bitmask += '1' if record.for_rent else '0'
-		if operation_bitmask == '00':
-			raise self.SerializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+		if True not in (record.for_sale, record.for_rent):
+			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
-		# common terms
-		bitmask =  '1' if record.body.electricity else '0'
-		bitmask += '1' if record.body.gas else '0'
-		bitmask += '1' if record.body.sewerage else '0'
-		bitmask += '1' if record.body.hot_water else '0'
-		bitmask += '1' if record.body.cold_water else '0'
-		bitmask += '{0:03b}'.format(record.body.building_type_sid)  # 3 bits
-		if len(bitmask) != 8:
-			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
-		# data
-		data = str(record.hash_id) + self.separator
-
-		if record.body.halls_area is None:
-			raise self.SerializationError('halls_area is required but absent.')
-		data += str(record.body.halls_area) + self.separator
+		if record.body.rooms_count is None:
+			raise self.SerializationError('rooms_count is required but absent.')
 
 		if record.body.total_area is None:
 			raise self.SerializationError('total_area is required but absent.')
-		data += str(record.body.total_area) + self.separator
 
 
-		# sale terms
+		data = [
+			record.hash_id,
+			record.for_sale,
+		    record.for_rent,
+
+			float(record.body.halls_area), # json can't handle decimal
+			float(record.body.total_area), # json can't handle decimal
+
+			record.body.electricity,
+		    record.body.gas,
+		    record.body.sewerage,
+		    record.body.hot_water,
+		    record.body.cold_water,
+
+			record.body.market_type_sid,
+			record.body.building_type_sid,
+		]
+
+
 		if record.for_sale:
-			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 10:
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
 			if record.sale_terms.price is None:
 				raise self.SerializationError('sale_price is required but absent.')
-			data += str(record.sale_terms.price) + self.separator
+
+			data.extend([
+		        float(record.sale_terms.price), # json can't handle decimal
+			    record.sale_terms.currency_sid,
+			])
 
 
-		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			if len(bitmask) not in (10, 12):
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
-			if record.rent_terms.price is None:
-				raise self.SerializationError('rent_price is required but absent.')
-			data += str(record.rent_terms.price) + self.separator
-
-		record_data = str(int(operation_bitmask, 2)) + self.separator +\
-		              str(int(bitmask, 2)) + self.separator + \
-		              data
-		if record_data[-1] == self.separator:
-			record_data = record_data[:-1]
-		return record_data
+			data.extend([
+				float(record.rent_terms.price), # json can't handle decimal
+			    record.rent_terms.currency_sid,
+			])
 
 
-	def deserialize_marker_data(self, record_data):
-		parts = record_data.split(self.separator)
-		operations_bitmask = parts[0]
-		operations_bitmask = str(bin(int(operations_bitmask))[2:])
-		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
-
-		bitmask = parts[1]
-		bitmask = str(bin(int(bitmask))[2:])
-
-		data = parts[2:]
+		digest = json.dumps(data).replace('true', 't').replace('false', 'f').replace(' ', '')
+		return digest
 
 
-		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
-			bitmask = '0' * (12 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
-			    'for_rent': True,
+	def deserialize_marker_data(self, data):
+		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
 
-				# data deserialization
-				'hash_id':              data[0],
-				'halls_area':         float(data[1]),
-				'total_area':         float(data[2]),
-			    'sale_price':         float(data[3]),
-			    'rent_price':         float(data[4]),
+		index = iter(xrange(0, len(data)))
+		deserialized_data = {
+			'hash_id':              data[next(index)],
+			'for_sale':             data[next(index)],
+		    'for_rent':             data[next(index)],
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-			    'sewerage':                 (bitmask[2] == '1'),
-				'hot_water':                (bitmask[3] == '1'),
-				'cold_water':               (bitmask[4] == '1'),
-			    'building_type_sid':     int(bitmask[5]  + bitmask[6] + bitmask[7]),
+			'halls_area':           data[next(index)],
+		    'total_area':           data[next(index)],
 
-			    'sale_currency_sid':     int(bitmask[8]  + bitmask[9]),
-			    'rent_currency_sid':     int(bitmask[10] + bitmask[11]),
-			}
+			'electricity':          data[next(index)],
+		    'gas':                  data[next(index)],
+		    'sewerage':             data[next(index)],
+		    'hot_water':            data[next(index)],
+		    'cold_water':           data[next(index)],
 
-		elif operations_bitmask[0] == '1': # for sale
-			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
+			'market_type_sid':      data[next(index)],
+			'building_type_sid':    data[next(index)],
+		}
 
-				# data deserialization
-				'hash_id':              data[0],
-				'halls_area':         float(data[1]),
-				'total_area':         float(data[2]),
-			    'sale_price':         float(data[3]),
+		if deserialized_data['for_sale']:
+			deserialized_data.update({
+				'sale_price': data[next(index)],
+				'sale_currency_sid': data[next(index)],
+			})
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-			    'sewerage':                 (bitmask[2] == '1'),
-				'hot_water':                (bitmask[3] == '1'),
-				'cold_water':               (bitmask[4] == '1'),
-			    'building_type_sid':     int(bitmask[5] + bitmask[6] + bitmask[7]),
-			    'sale_currency_sid':     int(bitmask[8] + bitmask[9]),
-			}
 
-		elif operations_bitmask[1] == '1': # for rent
-			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-			    'for_rent': True,
+		if deserialized_data['for_rent']:
+			deserialized_data.update({
+				'rent_price': data[next(index)],
+				'rent_currency_sid': data[next(index)],
+			})
 
-				# data deserialization
-				'hash_id':              data[0],
-				'halls_area':         float(data[1]),
-				'total_area':         float(data[2]),
-			    'rent_price':         float(data[3]),
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-			    'sewerage':                 (bitmask[2] == '1'),
-				'hot_water':                (bitmask[3] == '1'),
-				'cold_water':               (bitmask[4] == '1'),
-			    'building_type_sid':     int(bitmask[5] + bitmask[6] + bitmask[7]),
-			    'rent_currency_sid':     int(bitmask[8] + bitmask[9]),
-			}
-		else:
-			raise self.DeserializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+		return deserialized_data
 
 
 	def marker_brief(self, marker, filters=None):
@@ -3884,141 +3519,91 @@ class OfficesMarkersManager(BaseMarkersManager):
 
 
 	def serialize_publication(self, record):
-		operation_bitmask =  '1' if record.for_sale else '0'
-		operation_bitmask += '1' if record.for_rent else '0'
-		if operation_bitmask == '00':
-			raise self.SerializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+		if True not in (record.for_sale, record.for_rent):
+			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
-		# common terms
-		bitmask =  '1' if record.body.security else '0'
-		bitmask += '1' if record.body.kitchen else '0'
-		bitmask += '1' if record.body.hot_water else '0'
-		bitmask += '1' if record.body.cold_water else '0'
-		bitmask += '{0:03b}'.format(record.body.building_type_sid)  # 3 bits
-		if len(bitmask) != 7:
-			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
-		# data
-		data = str(record.hash_id) + self.separator
-
+		if record.body.rooms_count is None:
+			raise self.SerializationError('rooms_count is required but absent.')
 
 		if record.body.total_area is None:
 			raise self.SerializationError('total_area is required but absent.')
-		data += str(record.body.total_area) + self.separator
-
-		if record.body.cabinets_count is None:
-			raise self.SerializationError('cabinets_count is required but absent.')
-		data += str(record.body.cabinets_count) + self.separator
 
 
-		# sale terms
+		data = [
+			record.hash_id,
+			record.for_sale,
+		    record.for_rent,
+
+			float(record.body.total_area), # json can't handle decimal
+			record.body.cabinets_count,
+
+			record.body.security,
+		    record.body.kitchen,
+		    record.body.hot_water,
+		    record.body.cold_water,
+
+			record.body.market_type_sid,
+		    record.body.building_type_sid,
+		]
+
+
 		if record.for_sale:
-			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 9:
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
 			if record.sale_terms.price is None:
 				raise self.SerializationError('sale_price is required but absent.')
-			data += str(record.sale_terms.price) + self.separator
+
+			data.extend([
+		        float(record.sale_terms.price), # json can't handle decimal
+			    record.sale_terms.currency_sid,
+			])
 
 
-		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			if len(bitmask) not in (9, 11):
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
-			if record.rent_terms.price is None:
-				raise self.SerializationError('rent_price is required but absent.')
-			data += str(record.rent_terms.price) + self.separator
-
-		record_data = str(int(operation_bitmask, 2)) + self.separator +\
-		              str(int(bitmask, 2)) + self.separator + \
-		              data
-		if record_data[-1] == self.separator:
-			record_data = record_data[:-1]
-		return record_data
+			data.extend([
+				float(record.rent_terms.price), # json can't handle decimal
+			    record.rent_terms.currency_sid,
+			])
 
 
-	def deserialize_marker_data(self, record_data):
-		parts = record_data.split(self.separator)
-		operations_bitmask = parts[0]
-		operations_bitmask = str(bin(int(operations_bitmask))[2:])
-		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
-
-		bitmask = parts[1]
-		bitmask = str(bin(int(bitmask))[2:])
-
-		data = parts[2:]
+		digest = json.dumps(data).replace('true', 't').replace('false', 'f').replace(' ', '')
+		return digest
 
 
-		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
-			bitmask = '0' * (11 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
-			    'for_rent': True,
+	def deserialize_marker_data(self, data):
+		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
 
-				# data deserialization
-				'hash_id':              data[0],
-				'total_area':         float(data[1]),
-			    'cabinets_count':       int(data[2]),
-			    'sale_price':         float(data[3]),
-			    'rent_price':         float(data[4]),
+		index = iter(xrange(0, len(data)))
+		deserialized_data = {
+			'hash_id':              data[next(index)],
+			'for_sale':             data[next(index)],
+		    'for_rent':             data[next(index)],
 
-				# bitmask deserialization
-			    'security':                 (bitmask[0] == '1'),
-				'kitchen':                  (bitmask[1] == '1'),
-			    'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-			    'building_type_sid':     int(bitmask[4] + bitmask[5] + bitmask[6]),
+			'cabinets_count':       data[next(index)],
+		    'total_area':           data[next(index)],
 
-			    'sale_currency_sid':     int(bitmask[7] + bitmask[8]),
-			    'rent_currency_sid':     int(bitmask[9] + bitmask[10]),
-			}
+			'security':             data[next(index)],
+		    'kitchen':              data[next(index)],
+		    'hot_water':            data[next(index)],
+		    'cold_water':           data[next(index)],
 
-		elif operations_bitmask[0] == '1': # for sale
-			bitmask = '0' * (9 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
+			'market_type_sid':      data[next(index)],
+			'building_type_sid':    data[next(index)],
+		}
 
-				# data deserialization
-				'hash_id':              data[0],
-				'total_area':         float(data[1]),
-			    'cabinets_count':       int(data[2]),
-			    'sale_price':         float(data[3]),
+		if deserialized_data['for_sale']:
+			deserialized_data.update({
+				'sale_price': data[next(index)],
+				'sale_currency_sid': data[next(index)],
+			})
 
-				# bitmask deserialization
-			    'security':                 (bitmask[0] == '1'),
-				'kitchen':                  (bitmask[1] == '1'),
-			    'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-			    'building_type_sid':     int(bitmask[4] + bitmask[5] + bitmask[6]),
-			    'sale_currency_sid':     int(bitmask[7] + bitmask[8]),
-			}
 
-		elif operations_bitmask[1] == '1': # for rent
-			bitmask = '0' * (9 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-			    'for_rent': True,
+		if deserialized_data['for_rent']:
+			deserialized_data.update({
+				'rent_price': data[next(index)],
+				'rent_currency_sid': data[next(index)],
+			})
 
-				# data deserialization
-				'hash_id':              data[0],
-				'total_area':         float(data[1]),
-			    'cabinets_count':       int(data[2]),
-			    'rent_price':         float(data[3]),
 
-				# bitmask deserialization
-			    'security':                 (bitmask[0] == '1'),
-				'kitchen':                  (bitmask[1] == '1'),
-			    'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-			    'building_type_sid':     int(bitmask[4] + bitmask[5] + bitmask[6]),
-			    'rent_currency_sid':     int(bitmask[7] + bitmask[8]),
-			}
-		else:
-			raise self.DeserializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+		return deserialized_data
 
 
 	def marker_brief(self, marker, filters=None):
@@ -4274,137 +3859,97 @@ class WarehousesMarkersManager(BaseMarkersManager):
 
 
 	def serialize_publication(self, record):
-		operation_bitmask =  '1' if record.for_sale else '0'
-		operation_bitmask += '1' if record.for_rent else '0'
-		if operation_bitmask == '00':
-			raise self.SerializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+		if True not in (record.for_sale, record.for_rent):
+			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
-		# common terms
-		bitmask =  '1' if record.body.electricity else '0'
-		bitmask += '1' if record.body.gas else '0'
-		bitmask += '1' if record.body.hot_water else '0'
-		bitmask += '1' if record.body.cold_water else '0'
-		bitmask += '1' if record.body.security_alarm else '0'
-		bitmask += '1' if record.body.fire_alarm else '0'
-		if len(bitmask) != 6:
-			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
+		if record.body.rooms_count is None:
+			raise self.SerializationError('rooms_count is required but absent.')
 
-		# data
-		data = str(record.hash_id) + self.separator
-
-		if record.body.area is None:
-			raise self.SerializationError('area is required but absent.')
-		data += str(record.body.area) + self.separator
+		if record.body.total_area is None:
+			raise self.SerializationError('total_area is required but absent.')
 
 
-		# sale terms
+		data = [
+			record.hash_id,
+			record.for_sale,
+		    record.for_rent,
+
+			float(record.body.area), # json can't handle decimal
+
+			record.body.electricity,
+		    record.body.gas,
+		    record.body.hot_water,
+		    record.body.cold_water,
+		    record.body.security_alarm,
+		    record.body.fire_alarm,
+
+		    record.body.market_type_sid,
+		]
+
+		# Поле поверху може бути пустим, якщо тип поверху вибрано як "мансарда" чи "цоколь".
+		# Якщо воно пусте — немає змісту його сериалізувати.
+		if record.body.floor_type_sid == FLOOR_TYPES.floor():
+			data.append(record.body.floor)
+
+
 		if record.for_sale:
-			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 8:
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
 			if record.sale_terms.price is None:
 				raise self.SerializationError('sale_price is required but absent.')
-			data += str(record.sale_terms.price) + self.separator
+
+			data.extend([
+		        float(record.sale_terms.price), # json can't handle decimal
+			    record.sale_terms.currency_sid,
+			])
 
 
-		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			if len(bitmask) not in (8, 10):
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
-			if record.rent_terms.price is None:
-				raise self.SerializationError('rent_price is required but absent.')
-			data += str(record.rent_terms.price) + self.separator
-
-		record_data = str(int(operation_bitmask, 2)) + self.separator +\
-		              str(int(bitmask, 2)) + self.separator + \
-		              data
-		if record_data[-1] == self.separator:
-			record_data = record_data[:-1]
-		return record_data
+			data.extend([
+				float(record.rent_terms.price), # json can't handle decimal
+			    record.rent_terms.currency_sid,
+			])
 
 
-	def deserialize_marker_data(self, record_data):
-		parts = record_data.split(self.separator)
-		operations_bitmask = parts[0]
-		operations_bitmask = str(bin(int(operations_bitmask))[2:])
-		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
-
-		bitmask = parts[1]
-		bitmask = str(bin(int(bitmask))[2:])
-
-		data = parts[2:]
+		digest = json.dumps(data).replace('true', 't').replace('false', 'f').replace(' ', '')
+		return digest
 
 
-		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
-			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
-			    'for_rent': True,
+	def deserialize_marker_data(self, data):
+		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
 
-				# data deserialization
-				'hash_id':              data[0],
-				'area':               float(data[1]),
-			    'sale_price':         float(data[2]),
-			    'rent_price':         float(data[3]),
+		index = iter(xrange(0, len(data)))
+		deserialized_data = {
+			'hash_id':              data[next(index)],
+			'for_sale':             data[next(index)],
+		    'for_rent':             data[next(index)],
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-				'security_alarm':           (bitmask[4] == '1'),
-				'fire_alarm':               (bitmask[5] == '1'),
+		    'area':           data[next(index)],
 
-			    'sale_currency_sid':     int(bitmask[6] + bitmask[7]),
-			    'rent_currency_sid':     int(bitmask[8] + bitmask[9]),
-			}
+			'electricity':          data[next(index)],
+		    'gas':                  data[next(index)],
+		    'hot_water':            data[next(index)],
+		    'cold_water':           data[next(index)],
+		    'security_alarm':       data[next(index)],
+		    'fire_alarm':           data[next(index)],
 
-		elif operations_bitmask[0] == '1': # for sale
-			bitmask = '0' * (8 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
+		    'market_type_sid':      data[next(index)],
+		}
 
-				# data deserialization
-				'hash_id':              data[0],
-				'area':               float(data[1]),
-			    'sale_price':         float(data[2]),
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-				'security_alarm':           (bitmask[4] == '1'),
-				'fire_alarm':               (bitmask[5] == '1'),
-			    'sale_currency_sid':     int(bitmask[6] + bitmask[7]),
-			}
+		if deserialized_data['for_sale']:
+			deserialized_data.update({
+				'sale_price': data[next(index)],
+				'sale_currency_sid': data[next(index)],
+			})
 
-		elif operations_bitmask[1] == '1': # for rent
-			bitmask = '0' * (11 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-			    'for_rent': True,
 
-				# data deserialization
-				'hash_id':              data[0],
-				'area':               float(data[1]),
-			    'rent_price':         float(data[2]),
+		if deserialized_data['for_rent']:
+			deserialized_data.update({
+				'rent_price': data[next(index)],
+				'rent_currency_sid': data[next(index)],
+			})
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-				'hot_water':                (bitmask[2] == '1'),
-				'cold_water':               (bitmask[3] == '1'),
-				'security_alarm':           (bitmask[4] == '1'),
-				'fire_alarm':               (bitmask[5] == '1'),
-			    'rent_currency_sid':     int(bitmask[6] + bitmask[7]),
-			}
-		else:
-			raise self.DeserializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+		return deserialized_data
 
 
 	def marker_brief(self, marker, filters=None):
@@ -4632,103 +4177,73 @@ class BusinessesMarkersManager(BaseMarkersManager):
 
 
 	def serialize_publication(self, record):
-		operation_bitmask =  '1' if record.for_sale else '0'
-		operation_bitmask += '1' if record.for_rent else '0'
-		if operation_bitmask == '00':
-			raise self.SerializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+		if True not in (record.for_sale, record.for_rent):
+			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
-		# common terms
-		bitmask = ''
+		if record.body.rooms_count is None:
+			raise self.SerializationError('rooms_count is required but absent.')
 
-		# data
-		data = str(record.hash_id) + self.separator
+		if record.body.total_area is None:
+			raise self.SerializationError('total_area is required but absent.')
 
-		# sale terms
+
+		data = [
+			record.hash_id,
+			record.for_sale,
+		    record.for_rent,
+
+		    record.body.market_type_sid,
+		]
+
 		if record.for_sale:
-			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 2:
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
 			if record.sale_terms.price is None:
 				raise self.SerializationError('sale_price is required but absent.')
-			data += str(record.sale_terms.price) + self.separator
+
+			data.extend([
+		        float(record.sale_terms.price), # json can't handle decimal
+			    record.sale_terms.currency_sid,
+			])
 
 
-		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			if len(bitmask) not in (2, 4):
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
-			if record.rent_terms.price is None:
-				raise self.SerializationError('rent_price is required but absent.')
-			data += str(record.rent_terms.price) + self.separator
-
-		record_data = str(int(operation_bitmask, 2)) + self.separator +\
-		              str(int(bitmask, 2)) + self.separator + \
-		              data
-		if record_data[-1] == self.separator:
-			record_data = record_data[:-1]
-		return record_data
+			data.extend([
+				float(record.rent_terms.price), # json can't handle decimal
+			    record.rent_terms.currency_sid,
+			])
 
 
-	def deserialize_marker_data(self, record_data):
-		parts = record_data.split(self.separator)
-		operations_bitmask = parts[0]
-		operations_bitmask = str(bin(int(operations_bitmask))[2:])
-		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
-
-		bitmask = parts[1]
-		bitmask = str(bin(int(bitmask))[2:])
-
-		data = parts[2:]
+		digest = json.dumps(data).replace('true', 't').replace('false', 'f').replace(' ', '')
+		return digest
 
 
-		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
-			bitmask = '0' * (4 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
-			    'for_rent': True,
+	def deserialize_marker_data(self, data):
+		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
 
-				# data deserialization
-				'hash_id':              data[0],
-			    'sale_price':         float(data[1]),
-			    'rent_price':         float(data[2]),
+		index = iter(xrange(0, len(data)))
+		deserialized_data = {
+			'hash_id':              data[next(index)],
+			'for_sale':             data[next(index)],
+		    'for_rent':             data[next(index)],
 
-				# bitmask deserialization
-			    'sale_currency_sid':     int(bitmask[0] + bitmask[1]),
-			    'rent_currency_sid':     int(bitmask[2] + bitmask[3]),
-			}
+			'market_type_sid':      data[next(index)],
+		}
 
-		elif operations_bitmask[0] == '1': # for sale
-			bitmask = '0' * (2 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
 
-				# data deserialization
-				'hash_id':              data[0],
-			    'sale_price':         float(data[1]),
+		if deserialized_data['for_sale']:
+			deserialized_data.update({
+				'sale_price': data[next(index)],
+				'sale_currency_sid': data[next(index)],
+			})
 
-				# bitmask deserialization
-			    'sale_currency_sid':     int(bitmask[0] + bitmask[1]),
-			}
 
-		elif operations_bitmask[1] == '1': # for rent
-			bitmask = '0' * (2 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-			    'for_rent': True,
+		if deserialized_data['for_rent']:
+			deserialized_data.update({
+				'rent_price': data[next(index)],
+				'rent_currency_sid': data[next(index)],
+			})
 
-				# data deserialization
-				'hash_id':              data[0],
-			    'rent_price':         float(data[1]),
 
-				# bitmask deserialization
-			    'rent_currency_sid':     int(bitmask[0] + bitmask[1]),
-			}
-		else:
-			raise self.DeserializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+		return deserialized_data
 
 
 	def marker_brief(self, marker, filters=None):
@@ -4893,150 +4408,93 @@ class CateringsMarkersManager(BaseMarkersManager):
 
 
 	def serialize_publication(self, record):
-		operation_bitmask =  '1' if record.for_sale else '0'
-		operation_bitmask += '1' if record.for_rent else '0'
-		if operation_bitmask == '00':
-			raise self.SerializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+		if True not in (record.for_sale, record.for_rent):
+			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
-		# common terms
-		bitmask =  '1' if record.body.electricity else '0'
-		bitmask += '1' if record.body.gas else '0'
-		bitmask += '1' if record.body.hot_water else '0'
-		bitmask += '1' if record.body.cold_water else '0'
-		bitmask += '{0:03b}'.format(record.body.building_type_sid)  # 3 bits
-		if len(bitmask) != 7:
-			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
-		# data
-		data = str(record.hash_id) + self.separator
-
-		if record.body.halls_count is None:
-			raise self.SerializationError('halls_count is required but absent.')
-		data += str(record.body.halls_count) + self.separator
-
-		if record.body.halls_area is None:
-			raise self.SerializationError('halls_area is required but absent.')
-		data += str(record.body.halls_area) + self.separator
+		if record.body.rooms_count is None:
+			raise self.SerializationError('rooms_count is required but absent.')
 
 		if record.body.total_area is None:
 			raise self.SerializationError('total_area is required but absent.')
-		data += str(record.body.total_area) + self.separator
 
 
-		# sale terms
+		data = [
+			record.hash_id,
+			record.for_sale,
+		    record.for_rent,
+
+			float(record.body.halls_area), # json can't handle decimal
+			float(record.body.total_area), # json can't handle decimal
+
+			record.body.electricity,
+		    record.body.gas,
+		    record.body.sewerage,
+		    record.body.hot_water,
+		    record.body.cold_water,
+
+			record.body.market_type_sid,
+			record.body.building_type_sid,
+		]
+
+
 		if record.for_sale:
-			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 9:
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
 			if record.sale_terms.price is None:
 				raise self.SerializationError('sale_price is required but absent.')
-			data += str(record.sale_terms.price) + self.separator
+
+			data.extend([
+		        float(record.sale_terms.price), # json can't handle decimal
+			    record.sale_terms.currency_sid,
+			])
 
 
-		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			if len(bitmask) not in (9, 11):
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
-			if record.rent_terms.price is None:
-				raise self.SerializationError('rent_price is required but absent.')
-			data += str(record.rent_terms.price) + self.separator
-
-		record_data = str(int(operation_bitmask, 2)) + self.separator +\
-		              str(int(bitmask, 2)) + self.separator + \
-		              data
-		if record_data[-1] == self.separator:
-			record_data = record_data[:-1]
-		return record_data
+			data.extend([
+				float(record.rent_terms.price), # json can't handle decimal
+			    record.rent_terms.currency_sid,
+			])
 
 
-	def deserialize_marker_data(self, record_data):
-		parts = record_data.split(self.separator)
-		operations_bitmask = parts[0]
-		operations_bitmask = str(bin(int(operations_bitmask))[2:])
-		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
-
-		bitmask = parts[1]
-		bitmask = str(bin(int(bitmask))[2:])
-
-		data = parts[2:]
+		digest = json.dumps(data).replace('true', 't').replace('false', 'f').replace(' ', '')
+		return digest
 
 
-		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
-			bitmask = '0' * (12 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
-			    'for_rent': True,
+	def deserialize_marker_data(self, data):
+		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
 
-				# data deserialization
-				'hash_id':              data[0],
-			    'halls_count':        float(data[1]),
-				'halls_area':         float(data[2]),
-				'total_area':         float(data[3]),
-			    'sale_price':         float(data[4]),
-			    'rent_price':         float(data[5]),
+		index = iter(xrange(0, len(data)))
+		deserialized_data = {
+			'hash_id':              data[next(index)],
+			'for_sale':             data[next(index)],
+		    'for_rent':             data[next(index)],
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-			    'sewerage':                 (bitmask[2] == '1'),
-				'hot_water':                (bitmask[3] == '1'),
-				'cold_water':               (bitmask[4] == '1'),
-			    'building_type_sid':     int(bitmask[5]  + bitmask[6] + bitmask[7]),
+			'halls_area':           data[next(index)],
+		    'total_area':           data[next(index)],
 
-			    'sale_currency_sid':     int(bitmask[8]  + bitmask[9]),
-			    'rent_currency_sid':     int(bitmask[10] + bitmask[11]),
-			}
+			'electricity':          data[next(index)],
+		    'gas':                  data[next(index)],
+		    'sewerage':             data[next(index)],
+		    'hot_water':            data[next(index)],
+		    'cold_water':           data[next(index)],
 
-		elif operations_bitmask[0] == '1': # for sale
-			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
+			'market_type_sid':      data[next(index)],
+			'building_type_sid':    data[next(index)],
+		}
 
-				# data deserialization
-				'hash_id':              data[0],
-				'halls_count':          int(data[1]),
-				'halls_area':         float(data[2]),
-				'total_area':         float(data[3]),
-			    'sale_price':         float(data[4]),
+		if deserialized_data['for_sale']:
+			deserialized_data.update({
+				'sale_price': data[next(index)],
+				'sale_currency_sid': data[next(index)],
+			})
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-			    'sewerage':                 (bitmask[2] == '1'),
-				'hot_water':                (bitmask[3] == '1'),
-				'cold_water':               (bitmask[4] == '1'),
-			    'building_type_sid':     int(bitmask[5] + bitmask[6] + bitmask[7]),
-			    'sale_currency_sid':     int(bitmask[8] + bitmask[9]),
-			}
 
-		elif operations_bitmask[1] == '1': # for rent
-			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-			    'for_rent': True,
+		if deserialized_data['for_rent']:
+			deserialized_data.update({
+				'rent_price': data[next(index)],
+				'rent_currency_sid': data[next(index)],
+			})
 
-				# data deserialization
-				'hash_id':              data[0],
-				'halls_count':        float(data[1]),
-				'halls_area':         float(data[2]),
-				'total_area':         float(data[3]),
-			    'rent_price':         float(data[4]),
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-			    'sewerage':                 (bitmask[2] == '1'),
-				'hot_water':                (bitmask[3] == '1'),
-				'cold_water':               (bitmask[4] == '1'),
-			    'building_type_sid':     int(bitmask[5] + bitmask[6] + bitmask[7]),
-			    'rent_currency_sid':     int(bitmask[8] + bitmask[9]),
-			}
-		else:
-			raise self.DeserializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+		return deserialized_data
 
 
 	def marker_brief(self, marker, filters=None):
@@ -5342,123 +4800,80 @@ class GaragesMarkersManager(BaseMarkersManager):
 
 
 	def serialize_publication(self, record):
-		operation_bitmask =  '1' if record.for_sale else '0'
-		operation_bitmask += '1' if record.for_rent else '0'
-		if operation_bitmask == '00':
-			raise self.SerializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+		if True not in (record.for_sale, record.for_rent):
+			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
-		# common terms
-		bitmask = '1' if record.body.pit else '0'
-		if len(bitmask) != 1:
-			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
+		if record.body.rooms_count is None:
+			raise self.SerializationError('rooms_count is required but absent.')
 
-		# data
-		data = str(record.hash_id) + self.separator
-
-		if record.body.area is None:
-			raise self.SerializationError('area is required but absent.')
-		data += str(record.body.area) + self.separator
-
-		if record.body.ceiling_height is None:
-			raise self.SerializationError('ceiling_height is required but absent.')
-		data += str(record.body.ceiling_height) + self.separator
+		if record.body.total_area is None:
+			raise self.SerializationError('total_area is required but absent.')
 
 
-		# sale terms
+		data = [
+			record.hash_id,
+			record.for_sale,
+		    record.for_rent,
+
+			float(record.body.area), # json can't handle decimal
+			float(record.body.ceiling_height), # json can't handle decimal
+
+			record.body.pit,
+		]
+
+
 		if record.for_sale:
-			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 3:
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
 			if record.sale_terms.price is None:
 				raise self.SerializationError('sale_price is required but absent.')
-			data += str(record.sale_terms.price) + self.separator
+
+			data.extend([
+		        float(record.sale_terms.price), # json can't handle decimal
+			    record.sale_terms.currency_sid,
+			])
 
 
-		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			if len(bitmask) not in (3, 5):
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
-			if record.rent_terms.price is None:
-				raise self.SerializationError('rent_price is required but absent.')
-			data += str(record.rent_terms.price) + self.separator
-
-		record_data = str(int(operation_bitmask, 2)) + self.separator +\
-		              str(int(bitmask, 2)) + self.separator + \
-		              data
-		if record_data[-1] == self.separator:
-			record_data = record_data[:-1]
-		return record_data
+			data.extend([
+				float(record.rent_terms.price), # json can't handle decimal
+			    record.rent_terms.currency_sid,
+			])
 
 
-	def deserialize_marker_data(self, record_data):
-		parts = record_data.split(self.separator)
-		operations_bitmask = parts[0]
-		operations_bitmask = str(bin(int(operations_bitmask))[2:])
-		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
-
-		bitmask = parts[1]
-		bitmask = str(bin(int(bitmask))[2:])
-
-		data = parts[2:]
+		digest = json.dumps(data).replace('true', 't').replace('false', 'f').replace(' ', '')
+		return digest
 
 
-		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
-			bitmask = '0' * (12 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
-			    'for_rent': True,
+	def deserialize_marker_data(self, data):
+		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
 
-				# data deserialization
-				'hash_id':              data[0],
-				'area':               float(data[1]),
-			    'ceiling_height':     float(data[2]),
-			    'sale_price':         float(data[3]),
-			    'rent_price':         float(data[4]),
+		index = iter(xrange(0, len(data)))
+		deserialized_data = {
+			'hash_id':              data[next(index)],
+			'for_sale':             data[next(index)],
+		    'for_rent':             data[next(index)],
 
-				# bitmask deserialization
-			    'pit':                  (bitmask[0] == '1'),
-			    'sale_currency_sid': int(bitmask[1] + bitmask[2]),
-			    'rent_currency_sid': int(bitmask[3] + bitmask[4]),
-			}
+		    'area':                 data[next(index)],
+		    'ceiling_height':       data[next(index)],
 
-		elif operations_bitmask[0] == '1': # for sale
-			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
+			'pit':                  data[next(index)],
+		}
 
-				# data deserialization
-				'hash_id':              data[0],
-				'area':               float(data[1]),
-			    'ceiling_height':     float(data[2]),
-			    'sale_price':         float(data[3]),
 
-				# bitmask deserialization
-			    'pit':                  (bitmask[0] == '1'),
-			    'sale_currency_sid': int(bitmask[1] + bitmask[2]),
-			}
+		if deserialized_data['for_sale']:
+			deserialized_data.update({
+				'sale_price': data[next(index)],
+				'sale_currency_sid': data[next(index)],
+			})
 
-		elif operations_bitmask[1] == '1': # for rent
-			bitmask = '0' * (10 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-			    'for_rent': True,
 
-				# data deserialization
-				'hash_id':              data[0],
-				'area':               float(data[1]),
-			    'ceiling_height':     float(data[2]),
-			    'rent_price':         float(data[3]),
+		if deserialized_data['for_rent']:
+			deserialized_data.update({
+				'rent_price': data[next(index)],
+				'rent_currency_sid': data[next(index)],
+			})
 
-				# bitmask deserialization
-			    'pit':                  (bitmask[0] == '1'),
-			    'rent_currency_sid': int(bitmask[1] + bitmask[2]),
-			}
-		else:
-			raise self.DeserializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+		return deserialized_data
 
 
 	def marker_brief(self, marker, filters=None):
@@ -5677,128 +5092,84 @@ class LandsMarkersManager(BaseMarkersManager):
 
 
 	def serialize_publication(self, record):
-		operation_bitmask =  '1' if record.for_sale else '0'
-		operation_bitmask += '1' if record.for_rent else '0'
-		if operation_bitmask == '00':
-			raise self.SerializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+		if True not in (record.for_sale, record.for_rent):
+			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
-		# common terms
-		bitmask =  '1' if record.body.electricity else '0'
-		bitmask += '1' if record.body.gas else '0'
-		bitmask += '1' if record.body.sewerage else '0'
-		bitmask += '1' if record.body.water else '0'
-		if len(bitmask) != 4:
-			raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
+		if record.body.rooms_count is None:
+			raise self.SerializationError('rooms_count is required but absent.')
 
-		# data
-		data = str(record.hash_id) + self.separator
-
-		if record.body.area is None:
-			raise self.SerializationError('area is required but absent.')
-		data += str(record.body.area) + self.separator
+		if record.body.total_area is None:
+			raise self.SerializationError('total_area is required but absent.')
 
 
-		# sale terms
+		data = [
+			record.hash_id,
+			record.for_sale,
+		    record.for_rent,
+
+			float(record.body.area), # json can't handle decimal
+
+			record.body.electricity,
+		    record.body.gas,
+		    record.body.sewerage,
+		    record.body.water,
+		]
+
+
 		if record.for_sale:
-			bitmask += '{0:02b}'.format(record.sale_terms.currency_sid) # 2 bits
-			if len(bitmask) != 6:
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
 			if record.sale_terms.price is None:
 				raise self.SerializationError('sale_price is required but absent.')
-			data += str(record.sale_terms.price) + self.separator
+
+			data.extend([
+		        float(record.sale_terms.price), # json can't handle decimal
+			    record.sale_terms.currency_sid,
+			])
 
 
-		# rent terms
 		if record.for_rent:
-			bitmask += '{0:02b}'.format(record.rent_terms.currency_sid) # 2 bits
-			if len(bitmask) not in (6, 8):
-				raise self.SerializationError('Bitmask corruption. Potential deserialization error.')
-
-			if record.rent_terms.price is None:
-				raise self.SerializationError('rent_price is required but absent.')
-			data += str(record.rent_terms.price) + self.separator
-
-		record_data = str(int(operation_bitmask, 2)) + self.separator +\
-		              str(int(bitmask, 2)) + self.separator + \
-		              data
-		if record_data[-1] == self.separator:
-			record_data = record_data[:-1]
-		return record_data
+			data.extend([
+				float(record.rent_terms.price), # json can't handle decimal
+			    record.rent_terms.currency_sid,
+			])
 
 
-	def deserialize_marker_data(self, record_data):
-		parts = record_data.split(self.separator)
-		operations_bitmask = parts[0]
-		operations_bitmask = str(bin(int(operations_bitmask))[2:])
-		operations_bitmask = '0' * (2 - len(operations_bitmask)) + operations_bitmask # Доповнити до мін. розміру
-
-		bitmask = parts[1]
-		bitmask = str(bin(int(bitmask))[2:])
-
-		data = parts[2:]
+		digest = json.dumps(data).replace('true', 't').replace('false', 'f').replace(' ', '')
+		return digest
 
 
-		if operations_bitmask[0] == operations_bitmask[1] == '1': # sale and rent
-			bitmask = '0' * (8 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
-			    'for_rent': True,
+	def deserialize_marker_data(self, data):
+		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
 
-				# data deserialization
-				'hash_id':        data[0],
-				'area':         float(data[1]),
-			    'sale_price':   float(data[2]),
-			    'rent_price':   float(data[3]),
+		index = iter(xrange(0, len(data)))
+		deserialized_data = {
+			'hash_id':              data[next(index)],
+			'for_sale':             data[next(index)],
+		    'for_rent':             data[next(index)],
 
-				# bitmask deserialization
-			    'electricity':             (bitmask[0] == '1'),
-				'gas':                     (bitmask[1] == '1'),
-			    'sewerage':                (bitmask[2] == '1'),
-				'water':                   (bitmask[3] == '1'),
-			    'sale_currency_sid':    int(bitmask[4] + bitmask[5]),
-			    'rent_currency_sid':    int(bitmask[6] + bitmask[7]),
-			}
+		    'area':                 data[next(index)],
 
-		elif operations_bitmask[0] == '1': # for sale
-			bitmask = '0' * (6 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-				'for_sale': True,
+			'electricity':          data[next(index)],
+		    'gas':                  data[next(index)],
+		    'sewerage':             data[next(index)],
+		    'water':                data[next(index)],
+		}
 
-				# data deserialization
-				'hash_id':              data[0],
-				'area':               float(data[1]),
-			    'sale_price':         float(data[2]),
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-			    'sewerage':                 (bitmask[2] == '1'),
-				'water':                    (bitmask[3] == '1'),
-			    'sale_currency_sid':     int(bitmask[4] + bitmask[5]),
-			}
+		if deserialized_data['for_sale']:
+			deserialized_data.update({
+				'sale_price': data[next(index)],
+				'sale_currency_sid': data[next(index)],
+			})
 
-		elif operations_bitmask[1] == '1': # for rent
-			bitmask = '0' * (6 - len(bitmask)) + bitmask # Доповнити до мін. розміру
-			return {
-			    'for_rent': True,
 
-				# data deserialization
-				'hash_id':              data[0],
-				'area':               float(data[1]),
-			    'rent_price':         float(data[2]),
+		if deserialized_data['for_rent']:
+			deserialized_data.update({
+				'rent_price': data[next(index)],
+				'rent_currency_sid': data[next(index)],
+			})
 
-				# bitmask deserialization
-			    'electricity':              (bitmask[0] == '1'),
-				'gas':                      (bitmask[1] == '1'),
-			    'sewerage':                 (bitmask[2] == '1'),
-				'water':                    (bitmask[3] == '1'),
-			    'rent_currency_sid':     int(bitmask[4] + bitmask[5]),
-			}
-		else:
-			raise self.DeserializationError(
-				'Object must be "for sale", or "for rent", or both, but nothing selected.')
+
+		return deserialized_data
 
 
 	def marker_brief(self, marker, filters=None):

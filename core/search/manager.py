@@ -147,6 +147,14 @@ class SearchManager(object):
 
 	@staticmethod
 	def __new_connection():
+		# В dev-версії sphinx не завжди доступний, наприклад якщо dev-server недоступний.
+		# У випадках, коли треба запустити дебаг на локалості,
+		# але менеджер sphinx не дає це зробити через відсутність коннекта —
+		# монжна відключати sphinx.
+		if not settings.ENABLE_SPHINX_SEARCH:
+			return None
+
+
 		return MySQLdb.connect(
 			host = settings.SPHINX_SEARCH['HOST'],
 			port = settings.SPHINX_SEARCH['PORT'],
