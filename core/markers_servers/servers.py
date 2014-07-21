@@ -1591,11 +1591,6 @@ class HousesMarkersManager(BaseMarkersManager):
 		    record.body.heating_type_sid,
 		]
 
-		# Поле поверху може бути пустим, якщо тип поверху вибрано як "мансарда" чи "цоколь".
-		# Якщо воно пусте — немає змісту його сериалізувати.
-		if record.body.floor_type_sid == FLOOR_TYPES.floor():
-			data.append(record.body.floor)
-
 
 		if record.for_sale:
 			if record.sale_terms.price is None:
@@ -1719,6 +1714,7 @@ class HousesMarkersManager(BaseMarkersManager):
 		if filters is None:
 			return publications
 
+
 		operation_sid = filters.get('operation_sid')
 		if operation_sid is None:
 			raise InvalidArgument('Invalid conditions. Operation_sid is absent.')
@@ -1741,9 +1737,6 @@ class HousesMarkersManager(BaseMarkersManager):
 			rent_period_sid = filters.get('period_sid')
 			if rent_period_sid is None:
 				raise InvalidArgument('Rent period sid is absent.')
-			else:
-				rent_period_sid = int(rent_period_sid)
-
 
 
 		# Для відбору елементів зі списку publications, використовується список statuses.
