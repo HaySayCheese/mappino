@@ -215,11 +215,11 @@ class BaseMarkersManager(object):
 		for digest in self.__segments_digests(ne, sw):
 			pipe.hget(self.segments_hashes_prefix, digest)
 
-		key = ''
+		key = 0
 		for segment_data in pipe.execute():
 			if segment_data is not None:
-				key += mmh3.hash(segment_data)
-		return str(mmh3.hash(key))
+				key += mmh3.hash(str(segment_data))
+		return str(mmh3.hash(str(key)))
 
 
 	def __segments_digests(self, ne, sw):
@@ -1803,6 +1803,36 @@ class HousesMarkersManager(BaseMarkersManager):
 					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
 
 
+				# total area
+				total_area_min = filters.get('total_area_from')
+				total_area_max = filters.get('total_area_to')
+				total_area = marker.get('total_area')
+
+				if (total_area_max is not None) or (total_area_min is not None):
+					# Поле "к-сть кімнат" не обов’язкове.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+					# відхилити запис через неможливість аналізу.
+					if total_area is None:
+						statuses[i] = False
+						continue
+
+
+				if (total_area_max is not None) and (total_area_min is not None):
+					if not total_area_min <= total_area <= total_area_max:
+						statuses[i] = False
+						continue
+
+				elif total_area_min is not None:
+					if not total_area_min <= total_area:
+						statuses[i] = False
+						continue
+
+				elif total_area_max is not None:
+					if not total_area <= total_area_max:
+						statuses[i] = False
+						continue
+
+
 				# rooms count
 				rooms_count_min = filters.get('rooms_count_from')
 				rooms_count_max = filters.get('rooms_count_to')
@@ -2003,6 +2033,36 @@ class HousesMarkersManager(BaseMarkersManager):
 
 				elif persons_count_max is not None:
 					if not persons_count <= persons_count_max:
+						statuses[i] = False
+						continue
+
+
+				# total area
+				total_area_min = filters.get('total_area_from')
+				total_area_max = filters.get('total_area_to')
+				total_area = marker.get('total_area')
+
+				if (total_area_max is not None) or (total_area_min is not None):
+					# Поле "к-сть кімнат" не обов’язкове.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+					# відхилити запис через неможливість аналізу.
+					if total_area is None:
+						statuses[i] = False
+						continue
+
+
+				if (total_area_max is not None) and (total_area_min is not None):
+					if not total_area_min <= total_area <= total_area_max:
+						statuses[i] = False
+						continue
+
+				elif total_area_min is not None:
+					if not total_area_min <= total_area:
+						statuses[i] = False
+						continue
+
+				elif total_area_max is not None:
+					if not total_area <= total_area_max:
 						statuses[i] = False
 						continue
 
