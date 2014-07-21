@@ -14,8 +14,10 @@ compat.register() # cffi hook
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 SMS_DEBUG = DEBUG
+TEMPLATE_DEBUG = DEBUG
+ENABLE_SPHINX_SEARCH = not DEBUG
+
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
