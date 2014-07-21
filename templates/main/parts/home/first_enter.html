@@ -1,10 +1,15 @@
 <div class="modal first-enter-modal fade" ng-controller="FirstEnterCtrl" data-backdrop="static" data-keyboard="false" ng-init="initializeAutocomplete()">
     <div class="modal-dialog">
         <div class="modal-content content-blue">
-            <div class="modal-header header-blue text-right">
+            <div class="modal-header header-blue text-right" ng-hide="userIsLogin">
                 <a ng-href="#!/account/registration[[ urlFiltersPart ]]">Регистрация</a>
                 <span class="text-muted">&nbsp;</span>
                 <a ng-href="#!/account/login[[ urlFiltersPart ]]">Войти</a>
+            </div>
+            <div class="modal-header header-blue text-right" ng-show="userIsLogin">
+                <a ng-href="/cabinet/">Перейти в кабинет</a>
+                <span class="text-muted">&nbsp;</span>
+                <img class="close" src="{{ static }}img/login/login-reg-close.png" alt="" data-dismiss="modal"/>
             </div>
             <div class="modal-body modal-body-wtp">
                 <div class="row top-margin">

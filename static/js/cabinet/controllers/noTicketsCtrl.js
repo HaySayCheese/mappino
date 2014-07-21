@@ -1,8 +1,10 @@
 'use strict';
 
-app.controller('NoTicketsCtrl', function($scope) {
+app.controller('NoTicketsCtrl', function($scope, $timeout) {
 
-    initScrollBar();
+    $timeout(function() {
+        initScrollBar();
+    }, 500);
 
     /**
      * Функція скролбара
