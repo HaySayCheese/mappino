@@ -87,8 +87,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             fire_alarm:         false,
             pit:                false,
             water:              false,
-            mansard:            false,
-            ground:             false
+            mansard:            true,
+            ground:             true
         },
 
         red: {
@@ -295,10 +295,13 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                         map.setZoom(15);
                     }
 
-                    $scope.filters.map.city = cityInput.value;
+                    $timeout(function() {
+                        cityInput.value = cityInput.value.substring(0, cityInput.value.lastIndexOf(","));
+                        $scope.filters.map.city = cityInput.value;
 
-                    if(!$scope.$$phase)
-                        $scope.$apply();
+                        if(!$scope.$$phase)
+                            $scope.$apply();
+                    }, 0);
                 });
             }, 2000);
 

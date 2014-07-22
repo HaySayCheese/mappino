@@ -148,8 +148,6 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
             filters: [
                 "operation_sid",
                 "price_from", "price_to", "currency_sid",
-                "new_buildings",
-                "secondary_market"
             ]
         },
         { name: "catering", id: 9, title: "Обьекты общепита",
