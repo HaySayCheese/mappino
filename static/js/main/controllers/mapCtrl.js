@@ -272,35 +272,35 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     $scope.parseSearchParametersFromUrl = function() {
         var searchParameters = $location.search();
 
-            $rootScope.sidebarTemplateUrl = "ajax/template/main/sidebar/common/";
+        $rootScope.sidebarTemplateUrl = "ajax/template/main/sidebar/common/";
 
-            $timeout(function() {
-                cityInput = document.getElementById('sidebar-city-input');
-                autocomplete = new google.maps.places.Autocomplete(cityInput, autocompleteOptions);
-                autocomplete.bindTo('bounds', map);
+        $timeout(function() {
+            cityInput = document.getElementById('sidebar-city-input');
+            autocomplete = new google.maps.places.Autocomplete(cityInput, autocompleteOptions);
+            autocomplete.bindTo('bounds', map);
 
-                // Евент вибору елемента в автокомпліті
-                google.maps.event.addListener(autocomplete, 'place_changed', function() {
-                    var place = autocomplete.getPlace();
+            // Евент вибору елемента в автокомпліті
+            google.maps.event.addListener(autocomplete, 'place_changed', function() {
+                var place = autocomplete.getPlace();
 
-                    if (!place.geometry) {
-                        return;
-                    }
+                if (!place.geometry) {
+                    return;
+                }
 
-                    if (place.geometry.viewport) {
-                        map.panTo(place.geometry.location);
-                        map.setZoom(15);
-                    } else {
-                        map.panTo(place.geometry.location);
-                        map.setZoom(15);
-                    }
+                if (place.geometry.viewport) {
+                    map.panTo(place.geometry.location);
+                    map.setZoom(15);
+                } else {
+                    map.panTo(place.geometry.location);
+                    map.setZoom(15);
+                }
 
-                    $scope.filters.map.city = cityInput.value;
+                $scope.filters.map.city = cityInput.value;
 
-                    if(!$scope.$$phase)
-                        $scope.$apply();
-                });
-            }, 2000);
+                if(!$scope.$$phase)
+                    $scope.$apply();
+            });
+        }, 2000);
 
 
         for (var key in searchParameters) {
