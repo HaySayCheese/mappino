@@ -8,6 +8,12 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
         latLng: ""
     };
 
+    $scope.$watch(function() {
+        return sessionStorage.userName;
+    }, function(newValue) {
+        $scope.userIsLogin = !_.isUndefined(newValue);
+    });
+
     var input = document.getElementById('first-enter-autocomplete');
 
     var firstEnterModal = angular.element(".first-enter-modal");

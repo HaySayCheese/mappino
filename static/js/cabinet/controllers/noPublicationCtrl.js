@@ -1,8 +1,11 @@
 'use strict';
 
-app.controller('NoPublicationCtrl', function($scope) {
+app.controller('NoPublicationCtrl', function($scope, $timeout) {
 
-    initScrollBar();
+    $timeout(function() {
+        initScrollBar();
+    }, 500);
+
 
     /**
      * Функція скролбара

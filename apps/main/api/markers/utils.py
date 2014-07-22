@@ -24,6 +24,12 @@ def __house_sale_filters(request):
 		filters['secondary_market'] = True
 
 
+	if 'total_area_from' in request.GET:
+		filters['total_area_from'] = int(request.GET['total_area_from'])
+	if 'total_area_to' in request.GET:
+		filters['total_area_to'] = int(request.GET['total_area_to'])
+
+
 	if 'rooms_count_from' in request.GET:
 		filters['rooms_count_from'] = int(request.GET['rooms_count_from'])
 	if 'rooms_count_to' in request.GET:
@@ -76,6 +82,12 @@ def __house_rent_filters(request):
 		filters['family'] = True
 	if 'foreigners' in request.GET:
 		filters['foreigners'] = True
+
+
+	if 'total_area_from' in request.GET:
+		filters['total_area_from'] = int(request.GET['total_area_from'])
+	if 'total_area_to' in request.GET:
+		filters['total_area_to'] = int(request.GET['total_area_to'])
 
 
 	if 'electricity' in request.GET:
