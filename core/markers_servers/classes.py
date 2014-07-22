@@ -2,6 +2,15 @@
 from collective.exceptions import InvalidArgument
 
 
+class Overflow(Exception): pass
+
+class LatMaxOverflow(Overflow): pass
+class LatMinOverflow(Overflow): pass
+
+class LngMaxOverflow(Overflow): pass
+class LngMinOverflow(Overflow): pass
+
+
 class Point(object):
 	"""
 	2D-точка. Використовується для зручної передачі координат, наприклад як рядків.
@@ -89,10 +98,17 @@ class SegmentPoint(object):
 		except ValueError:
 			raise InvalidArgument('Invalid parameters. Conversion to int can not be done.')
 
-		if not (self.min <= self.lat <= self.max):
-			raise InvalidArgument('Invalid parameters.')
-		if not (self.min <= self.lng <= self.max):
-			raise InvalidArgument('Invalid parameters.')
+
+		if self.lat < self.min:
+			raise LatMinOverflow()
+		if self.lng < self.min:
+			raise LngMinOverflow()
+
+		if self.lat > self.max:
+			raise LatMaxOverflow()
+		if self.lng > self.max:
+			raise LngMaxOverflow()
+
 
 		if adjust_to_sector:
 			while self.lat % self.step != 0:
@@ -157,16 +173,45 @@ class DegreeSegmentPoint(object):
 		if not '.' in lng:
 			raise InvalidArgument('Invalid longitude. "." is absent.')
 
+		min = 0
+		max = 98
+
 		degree_lat, segment_lat = lat.split('.')
 		degree_lng, segment_lng = lng.split('.')
 
+
+		# try:
 		self.degree = DegreePoint(degree_lat, degree_lng)
+		# except LatMaxOverflow:
+		# 	deg
 
 		if len(segment_lat) < 2:
 			raise InvalidArgument('Invalid latitude. (Shortest than 2)')
 		if len(segment_lng) < 2:
 			raise InvalidArgument('Invalid longitude. (Shortest than 2)')
-		self.segment = SegmentPoint(segment_lat[:2], segment_lng[:2])
+
+		try:
+			self.segment = SegmentPoint(segment_lat, segment_lng)
+
+		except LatMaxOverflow:
+			segment_lat = min
+			self.degree.add_lat(1)
+			self.segment = SegmentPoint(segment_lat, segment_lng)
+
+		except LatMinOverflow:
+			segment_lat = max
+			self.degree.subtract_lat(1)
+			self.segment = SegmentPoint(segment_lat, segment_lng)
+
+		except LngMaxOverflow:
+			segment_lng = min
+			self.degree.add_lng(1)
+			self.segment = SegmentPoint(segment_lat, segment_lng)
+
+		except LngMinOverflow:
+			segment_lng = max
+			self.degree.subtract_lng(1)
+			self.segment = SegmentPoint(segment_lat, segment_lng)
 
 
 	def dec_segment_lat(self):

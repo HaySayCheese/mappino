@@ -24,6 +24,12 @@ def __house_sale_filters(request):
 		filters['secondary_market'] = True
 
 
+	if 'total_area_from' in request.GET:
+		filters['total_area_from'] = int(request.GET['total_area_from'])
+	if 'total_area_to' in request.GET:
+		filters['total_area_to'] = int(request.GET['total_area_to'])
+
+
 	if 'rooms_count_from' in request.GET:
 		filters['rooms_count_from'] = int(request.GET['rooms_count_from'])
 	if 'rooms_count_to' in request.GET:
@@ -72,6 +78,12 @@ def __house_rent_filters(request):
 		filters['persons_count_to'] = int(request.GET['persons_count_to'])
 
 
+	if 'total_area_from' in request.GET:
+		filters['total_area_from'] = int(request.GET['total_area_from'])
+	if 'total_area_to' in request.GET:
+		filters['total_area_to'] = int(request.GET['total_area_to'])
+
+
 	if 'family' in request.GET:
 		filters['family'] = True
 	if 'foreigners' in request.GET:
@@ -108,6 +120,12 @@ def __flats_sale_filters(request):
 		filters['secondary_market'] = True
 
 
+	if 'rooms_count_from' in request.GET:
+		filters['rooms_count_from'] = int(request.GET['rooms_count_from'])
+	if 'rooms_count_to' in request.GET:
+		filters['rooms_count_to'] = int(request.GET['rooms_count_to'])
+
+
 	if 'total_area_from' in request.GET:
 		filters['total_area_from'] = int(request.GET['total_area_from'])
 	if 'total_area_to' in request.GET:
@@ -118,6 +136,10 @@ def __flats_sale_filters(request):
 		filters['floor_from'] = int(request.GET['floor_from'])
 	if 'floor_to' in request.GET:
 		filters['floor_to'] = int(request.GET['floor_to'])
+	if 'mansard' in request.GET:
+		filters['mansard'] = True
+	if 'ground' in request.GET:
+		filters['ground'] = True
 
 
 	if 'planning_sid' in request.GET: # планировка комнат
@@ -152,6 +174,22 @@ def __flat_rent_filters(request):
 		filters['price_to'] = int(request.GET['price_to'])
 	if 'currency_sid' in request.GET:
 		filters['currency_sid'] = int(request.GET['currency_sid'])
+
+
+	if 'total_area_from' in request.GET:
+		filters['total_area_from'] = int(request.GET['total_area_from'])
+	if 'total_area_to' in request.GET:
+		filters['total_area_to'] = int(request.GET['total_area_to'])
+
+
+	if 'floor_from' in request.GET:
+		filters['floor_from'] = int(request.GET['floor_from'])
+	if 'floor_to' in request.GET:
+		filters['floor_to'] = int(request.GET['floor_to'])
+	if 'mansard' in request.GET:
+		filters['mansard'] = True
+	if 'ground' in request.GET:
+		filters['ground'] = True
 
 
 	if 'persons_count_from' in request.GET:
@@ -196,6 +234,18 @@ def __apartments_sale_filters(request):
 		filters['new_buildings'] = True
 	if 'secondary_market' in request.GET:
 		filters['secondary_market'] = True
+
+
+	if 'rooms_count_from' in request.GET:
+		filters['rooms_count_from'] = int(request.GET['rooms_count_from'])
+	if 'rooms_count_to' in request.GET:
+		filters['rooms_count_to'] = int(request.GET['rooms_count_to'])
+
+
+	if 'mansard' in request.GET:
+		filters['mansard'] = True
+	if 'ground' in request.GET:
+		filters['ground'] = True
 
 
 	if 'total_area_from' in request.GET:
@@ -248,6 +298,24 @@ def __apartments_rent_filters(request):
 		filters['persons_count_from'] = int(request.GET['persons_count_from'])
 	if 'persons_count_to' in request.GET:
 		filters['persons_count_to'] = int(request.GET['persons_count_to'])
+
+
+	if 'total_area_from' in request.GET:
+		filters['total_area_from'] = int(request.GET['total_area_from'])
+	if 'total_area_to' in request.GET:
+		filters['total_area_to'] = int(request.GET['total_area_to'])
+
+
+	if 'floor_from' in request.GET:
+		filters['floor_from'] = int(request.GET['floor_from'])
+	if 'floor_to' in request.GET:
+		filters['floor_to'] = int(request.GET['floor_to'])
+
+
+	if 'mansard' in request.GET:
+		filters['mansard'] = True
+	if 'ground' in request.GET:
+		filters['ground'] = True
 
 
 	if 'family' in request.GET:
@@ -390,6 +458,12 @@ def __rooms_sale_filters(request):
 		filters['floor_to'] = int(request.GET['floor_to'])
 
 
+	if 'mansard' in request.GET:
+		filters['mansard'] = True
+	if 'ground' in request.GET:
+		filters['ground'] = True
+
+
 	if 'planning_sid' in request.GET: # планировка комнат
 		filters['planning_sid'] = int(request.GET['planning_sid'])
 
@@ -428,6 +502,24 @@ def __rooms_rent_filters(request):
 		filters['persons_count_from'] = int(request.GET['persons_count_from'])
 	if 'persons_count_to' in request.GET:
 		filters['persons_count_to'] = int(request.GET['persons_count_to'])
+
+
+	if 'total_area_from' in request.GET:
+		filters['total_area_from'] = int(request.GET['total_area_from'])
+	if 'total_area_to' in request.GET:
+		filters['total_area_to'] = int(request.GET['total_area_to'])
+
+
+	if 'floor_from' in request.GET:
+		filters['floor_from'] = int(request.GET['floor_from'])
+	if 'floor_to' in request.GET:
+		filters['floor_to'] = int(request.GET['floor_to'])
+
+
+	if 'mansard' in request.GET:
+		filters['mansard'] = True
+	if 'ground' in request.GET:
+		filters['ground'] = True
 
 
 	if 'family' in request.GET:

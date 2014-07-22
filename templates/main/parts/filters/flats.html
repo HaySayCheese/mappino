@@ -74,6 +74,19 @@
     </div>
 
 
+    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid == 1">
+        <div class="col-sm-12">
+            <label class="col-sm-6 control-label">Количество мест:</label>
+            <div class="col-sm-3">
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_persons_count_from" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_persons_count_from" allow-only-number-without-dot/>
+            </div>
+            <div class="col-sm-3">
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_persons_count_to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_persons_count_to" allow-only-number-without-dot/>
+            </div>
+        </div>
+    </div>
+
+
     <div class="row form-group">
         <div class="col-sm-12">
             <label class="col-sm-6 control-label">Общая площадь:</label>
@@ -94,7 +107,7 @@
                 <input class="form-control" type="text" name="{{ current_panel_prefix }}_floor_from" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_floor_from" allow-only-number-without-dot/>
             </div>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_floor__to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_floor__to" allow-only-number-without-dot/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_floor_to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_floor_to" allow-only-number-without-dot/>
             </div>
         </div>
     </div>
@@ -122,19 +135,6 @@
                     <option value="1">Свободная</option>
                     <option value="2">Предварительная</option>
                 </select>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid == 1">
-        <div class="col-sm-12">
-            <label class="col-sm-6 control-label">Количество мест:</label>
-            <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_persons_count_from" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_persons_count_from" allow-only-number-without-dot/>
-            </div>
-            <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_persons_count_to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_persons_count_to" allow-only-number-without-dot/>
             </div>
         </div>
     </div>
