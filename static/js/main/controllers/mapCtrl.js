@@ -87,8 +87,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             fire_alarm:         false,
             pit:                false,
             water:              false,
-            mansard:            false,
-            ground:             false
+            mansard:            true,
+            ground:             true
         },
 
         red: {
