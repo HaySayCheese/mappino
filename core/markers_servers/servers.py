@@ -5,6 +5,7 @@ import mmh3
 
 import abc
 from django.core.exceptions import SuspiciousOperation
+from apps.main.api.markers.utils import OPERATION_SID_SALE, OPERATION_SID_RENT
 
 from collective.exceptions import InvalidArgument, RuntimeException
 from core.currencies.constants import CURRENCIES
@@ -269,7 +270,7 @@ class BaseMarkersManager(object):
 				# Таким чином можна уберегтись від занадто великих транзакцій (ddos),
 				# накопичування занадто великих обсягів даних в пам’яті та
 				# занадто великої к-сті запитів від інших користувачів в черзі на обробку.
-				if len(digests) > 25:
+				if len(digests) > 300:
 					raise self.TooBigTransaction()
 
 				if (current.degree.lng == stop.degree.lng) and (current.segment.lng == stop.segment.lng):
@@ -479,7 +480,10 @@ class FlatsMarkersManager(BaseMarkersManager):
 
 
 	def deserialize_marker_data(self, data):
-		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
+		# Кома в строках заміни обов’язкова,
+		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
+		# що приводить до збоїв на фронті.
+		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -614,18 +618,21 @@ class FlatsMarkersManager(BaseMarkersManager):
 		statuses = [True] * len(publications)
 
 
-		# sale filters
-		if operation_sid == 0:
-			for i in range(len(statuses)):
-				# Якщо даний запис вже позначений як виключений — не аналізувати його.
-				if not statuses[i]:
-					continue
+		for i in range(len(statuses)):
+			# Якщо даний запис вже позначений як виключений — не аналізувати його.
+			if not statuses[i]:
+				continue
 
-				marker = publications[i][1]
 
+			marker = publications[i][1]
+
+
+			# sale filters
+			if operation_sid == 0:
 				if not marker.get('for_sale', False):
 					statuses[i] = False
 					continue
+
 
 				# sale price
 				price_min = filters.get('price_from')
@@ -652,188 +659,8 @@ class FlatsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				# market type
-				if ('new_buildings' in filters) and ('secondary_market' in filters):
-					# Немає змісту фільтрувати.
-					# Під дані умови потрапляють всі об’єкти.
-					pass
-
-				elif 'new_buildings' in filters:
-					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
-				elif 'new_buildings' in filters:
-					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
-
-
-				# rooms count
-				rooms_count_min = filters.get('rooms_count_from')
-				rooms_count_max = filters.get('rooms_count_to')
-				rooms_count = marker.get('rooms_count')
-
-				if (rooms_count_max is not None) or (rooms_count_min is not None):
-					# Поле "к-сть кімнат" не обов’язкове.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if rooms_count is None:
-						statuses[i] = False
-						continue
-
-
-				if (rooms_count_max is not None) and (rooms_count_min is not None):
-					if not rooms_count_min <= rooms_count <= rooms_count_max:
-						statuses[i] = False
-						continue
-
-				elif rooms_count_min is not None:
-					if not rooms_count_min <= rooms_count:
-						statuses[i] = False
-						continue
-
-				elif rooms_count_max is not None:
-					if not rooms_count <= rooms_count_max:
-						statuses[i] = False
-						continue
-
-
-				# total area
-				total_area_min = filters.get('total_area_from')
-				total_area_max = filters.get('total_area_to')
-				total_area = marker.get('total_area')
-
-				if (total_area_max is not None) or (total_area_min is not None):
-					# Поле "загальна площа" може бути не обов’язковим.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if total_area is None:
-						statuses[i] = False
-						continue
-
-
-				if (total_area_max is not None) and (total_area_min is not None):
-					if not total_area_min <= total_area <= total_area_max:
-						statuses[i] = False
-						continue
-
-				elif total_area_min is not None:
-					if not total_area_min <= total_area:
-						statuses[i] = False
-						continue
-
-				elif total_area_max is not None:
-					if not total_area <= total_area_max:
-						statuses[i] = False
-						continue
-
-
-				# floor
-				floor_min = filters.get('floor_from')
-				floor_max = filters.get('floor_to')
-				floor = marker.get('floor')
-
-				if (floor_max is not None) or (floor_max is not None):
-					# Поле "к-сть поверхів" не обов’язкове.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if floor is None:
-						statuses[i] = False
-						continue
-
-
-				if (floor_min is not None) and (floor_max is not None):
-					if not floor_min <= floor <= floor_max:
-						statuses[i] = False
-						continue
-
-				elif floor_min is not None:
-					if not floor_min <= floor:
-						statuses[i] = False
-						continue
-
-				elif floor_max is not None:
-					if not floor <= floor_max:
-						statuses[i] = False
-						continue
-
-
-				# rooms planning
-				rooms_planning_sid = filters.get('rooms_planning_sid')
-				if rooms_planning_sid is not None:
-					if rooms_planning_sid == 1: # свободная планировка
-						if marker['rooms_planning_sid'] != FLAT_ROOMS_PLANNINGS.free():
-							statuses[i] = False
-							continue
-
-					elif rooms_planning_sid == 2: # предварительная
-						if marker['rooms_planning_sid'] == FLAT_ROOMS_PLANNINGS.free():
-							statuses[i] = False
-							continue
-
-
-				# electricity
-				if 'electricity' in filters:
-					if (not 'electricity' in marker) or (not marker['electricity']):
-						statuses[i] = False
-						continue
-
-				# gas
-				if  'gas' in filters:
-					if (not 'gas' in marker) or (not marker['gas']):
-						statuses[i] = False
-						continue
-
-				# hot water
-				if 'hot_water' in filters:
-					if (not 'hot_water' in marker) or (not marker['hot_water']):
-						statuses[i] = False
-						continue
-
-				# cold water
-				if  'cold_water' in filters:
-					if (not 'cold_water' in marker) or (not marker['cold_water']):
-						statuses[i] = False
-						continue
-
-				# lift
-				if 'lift' in filters:
-					if (not 'lift' in marker) or (not marker['lift']):
-						statuses[i] = False
-						continue
-
-
-				# heating type
-				heating_type_sid = filters.get('heating_type_sid')
-				if heating_type_sid is not None:
-					# Поле "тип опалення" може бути не обов’язковим.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if 'heating_type_sid' not in marker:
-						statuses[i] = False
-						continue
-
-					if heating_type_sid == 1: # центральне
-						if marker['heating_type_sid'] != HEATING_TYPES.central():
-							statuses[i] = False
-							continue
-
-					elif heating_type_sid == 2: # індивідуальне
-						if marker['heating_type_sid'] != HEATING_TYPES.individual():
-							statuses[i] = False
-							continue
-
-					elif heating_type_sid == 3: # відсутнє
-						if marker['heating_type_sid'] != HEATING_TYPES.none():
-							statuses[i] = False
-							continue
-
-
-		# rent filters
-		elif operation_sid == 1:
-			for i in range(len(publications)):
-				# Якщо даний маркер вже позначений як виключений — не аналізувати його.
-				if not statuses[i]:
-					continue
-
-				marker = publications[i][1]
-
+			#-- rent filters
+			elif operation_sid == OPERATION_SID_RENT:
 				# operation type
 				if not marker.get('for_rent', False):
 					statuses[i] = False
@@ -926,38 +753,201 @@ class FlatsMarkersManager(BaseMarkersManager):
 						statuses[i] = False
 						continue
 
-				# electricity
-				if 'electricity' in filters:
-					if (not 'electricity' in marker) or (not marker['electricity']):
+
+
+			#-- common filters
+			# market type
+			if ('new_buildings' in filters) and ('secondary_market' in filters):
+				# Немає змісту фільтрувати.
+				# Під дані умови потрапляють всі об’єкти.
+				pass
+
+			elif 'new_buildings' in filters:
+				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
+			elif 'secondary_market' in filters:
+				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
+
+
+			# rooms count
+			rooms_count_min = filters.get('rooms_count_from')
+			rooms_count_max = filters.get('rooms_count_to')
+			rooms_count = marker.get('rooms_count')
+
+			if (rooms_count_max is not None) or (rooms_count_min is not None):
+				# Поле "к-сть кімнат" не обов’язкове.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if rooms_count is None:
+					statuses[i] = False
+					continue
+
+
+			if (rooms_count_max is not None) and (rooms_count_min is not None):
+				if not rooms_count_min <= rooms_count <= rooms_count_max:
+					statuses[i] = False
+					continue
+
+			elif rooms_count_min is not None:
+				if not rooms_count_min <= rooms_count:
+					statuses[i] = False
+					continue
+
+			elif rooms_count_max is not None:
+				if not rooms_count <= rooms_count_max:
+					statuses[i] = False
+					continue
+
+
+			# total area
+			total_area_min = filters.get('total_area_from')
+			total_area_max = filters.get('total_area_to')
+			total_area = marker.get('total_area')
+
+			if (total_area_max is not None) or (total_area_min is not None):
+				# Поле "загальна площа" може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if total_area is None:
+					statuses[i] = False
+					continue
+
+
+			if (total_area_max is not None) and (total_area_min is not None):
+				if not total_area_min <= total_area <= total_area_max:
+					statuses[i] = False
+					continue
+
+			elif total_area_min is not None:
+				if not total_area_min <= total_area:
+					statuses[i] = False
+					continue
+
+			elif total_area_max is not None:
+				if not total_area <= total_area_max:
+					statuses[i] = False
+					continue
+
+
+			# floor
+			floor_type = marker['floor_type_sid']
+			if floor_type == FLOOR_TYPES.floor():
+				floor_min = filters.get('floor_from')
+				floor_max = filters.get('floor_to')
+				floor = marker.get('floor')
+
+				if (floor_max is not None) or (floor_max is not None):
+					# Поле "к-сть поверхів" не обов’язкове.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+					# відхилити запис через неможливість аналізу.
+					if floor is None:
 						statuses[i] = False
 						continue
 
-				# gas
-				if  'gas' in filters:
-					if (not 'gas' in marker) or (not marker['gas']):
+
+				if (floor_min is not None) and (floor_max is not None):
+					if not floor_min <= floor <= floor_max:
 						statuses[i] = False
 						continue
 
-				# hot water
-				if 'hot_water' in filters:
-					if (not 'hot_water' in marker) or (not marker['hot_water']):
+				elif floor_min is not None:
+					if not floor_min <= floor:
 						statuses[i] = False
 						continue
 
-				# cold water
-				if  'cold_water' in filters:
-					if (not 'cold_water' in marker) or (not marker['cold_water']):
+				elif floor_max is not None:
+					if not floor <= floor_max:
 						statuses[i] = False
 						continue
 
-				# lift
-				if 'lift' in filters:
-					if (not 'lift' in marker) or (not marker['lift']):
+			else:
+				if ('mansard' in filters) and ('ground' in filters):
+					if floor_type not in (FLOOR_TYPES.mansard(),FLOOR_TYPES.ground()):
 						statuses[i] = False
 						continue
 
-		else:
-			raise InvalidArgument('Invalid conditions. Operation_sid is unexpected.')
+				elif ('mansard' in filters) or ('ground' in filters):
+					if 'mansard' in filters:
+						if floor_type != FLOOR_TYPES.mansard():
+							statuses[i] = False
+							continue
+
+					if 'ground' in filters:
+						if floor_type != FLOOR_TYPES.ground():
+							statuses[i] = False
+							continue
+
+
+
+			# rooms planning
+			rooms_planning_sid = filters.get('rooms_planning_sid')
+			if rooms_planning_sid is not None:
+				if rooms_planning_sid == 1: # свободная планировка
+					if marker['rooms_planning_sid'] != FLAT_ROOMS_PLANNINGS.free():
+						statuses[i] = False
+						continue
+
+				elif rooms_planning_sid == 2: # предварительная
+					if marker['rooms_planning_sid'] == FLAT_ROOMS_PLANNINGS.free():
+						statuses[i] = False
+						continue
+
+
+			# electricity
+			if 'electricity' in filters:
+				if (not 'electricity' in marker) or (not marker['electricity']):
+					statuses[i] = False
+					continue
+
+			# gas
+			if  'gas' in filters:
+				if (not 'gas' in marker) or (not marker['gas']):
+					statuses[i] = False
+					continue
+
+			# hot water
+			if 'hot_water' in filters:
+				if (not 'hot_water' in marker) or (not marker['hot_water']):
+					statuses[i] = False
+					continue
+
+			# cold water
+			if  'cold_water' in filters:
+				if (not 'cold_water' in marker) or (not marker['cold_water']):
+					statuses[i] = False
+					continue
+
+			# lift
+			if 'lift' in filters:
+				if (not 'lift' in marker) or (not marker['lift']):
+					statuses[i] = False
+					continue
+
+
+			# heating type
+			heating_type_sid = filters.get('heating_type_sid')
+			if heating_type_sid is not None:
+				# Поле "тип опалення" може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if 'heating_type_sid' not in marker:
+					statuses[i] = False
+					continue
+
+				if heating_type_sid == 1: # центральне
+					if marker['heating_type_sid'] != HEATING_TYPES.central():
+						statuses[i] = False
+						continue
+
+				elif heating_type_sid == 2: # індивідуальне
+					if marker['heating_type_sid'] != HEATING_TYPES.individual():
+						statuses[i] = False
+						continue
+
+				elif heating_type_sid == 3: # відсутнє
+					if marker['heating_type_sid'] != HEATING_TYPES.none():
+						statuses[i] = False
+						continue
+
 
 		result = []
 		for i in range(len(statuses)):
@@ -1050,7 +1040,10 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 
 
 	def deserialize_marker_data(self, data):
-		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
+		# Кома в строках заміни обов’язкова,
+		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
+		# що приводить до збоїв на фронті.
+		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -1185,16 +1178,17 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 		statuses = [True] * len(publications)
 
 
-		# sale filters
-		if operation_sid == 0:
-			for i in range(len(statuses)):
-				# Якщо даний запис вже позначений як виключений — не аналізувати його.
-				if not statuses[i]:
-					continue
+		for i in range(len(statuses)):
+			# Якщо даний запис вже позначений як виключений — не аналізувати його.
+			if not statuses[i]:
+				continue
 
-				marker = publications[i][1]
 
-				# operation type
+			marker = publications[i][1]
+
+
+			# sale filters
+			if operation_sid == 0:
 				if not marker.get('for_sale', False):
 					statuses[i] = False
 					continue
@@ -1225,189 +1219,8 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				# market type
-				if ('new_buildings' in filters) and ('secondary_market' in filters):
-					# Немає змісту фільтрувати.
-					# Під дані умови потрапляють всі об’єкти.
-					pass
-
-				elif 'new_buildings' in filters:
-					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
-				elif 'new_buildings' in filters:
-					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
-
-
-				# rooms count
-				rooms_count_min = filters.get('rooms_count_from')
-				rooms_count_max = filters.get('rooms_count_to')
-				rooms_count = marker.get('rooms_count')
-
-				if (rooms_count_max is not None) or (rooms_count_min is not None):
-					# Поле "к-сть кімнат" не обов’язкове.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if rooms_count is None:
-						statuses[i] = False
-						continue
-
-
-				if (rooms_count_max is not None) and (rooms_count_min is not None):
-					if not rooms_count_min <= rooms_count <= rooms_count_max:
-						statuses[i] = False
-						continue
-
-				elif rooms_count_min is not None:
-					if not rooms_count_min <= rooms_count:
-						statuses[i] = False
-						continue
-
-				elif rooms_count_max is not None:
-					if not rooms_count <= rooms_count_max:
-						statuses[i] = False
-						continue
-
-
-				# total area
-				total_area_min = filters.get('total_area_from')
-				total_area_max = filters.get('total_area_to')
-				total_area = marker.get('total_area')
-
-				if (total_area_max is not None) or (total_area_min is not None):
-					# Поле "загальна площа" може бути не обов’язковим.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if total_area is None:
-						statuses[i] = False
-						continue
-
-
-				if (total_area_max is not None) and (total_area_min is not None):
-					if not total_area_min <= total_area <= total_area_max:
-						statuses[i] = False
-						continue
-
-				elif total_area_min is not None:
-					if not total_area_min <= total_area:
-						statuses[i] = False
-						continue
-
-				elif total_area_max is not None:
-					if not total_area <= total_area_max:
-						statuses[i] = False
-						continue
-
-
-				# floor
-				floor_min = filters.get('floor_from')
-				floor_max = filters.get('floor_to')
-				floor = marker.get('floor')
-
-				if (floor_max is not None) or (floor_max is not None):
-					# Поле "к-сть поверхів" не обов’язкове.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if floor is None:
-						statuses[i] = False
-						continue
-
-
-				if (floor_min is not None) and (floor_max is not None):
-					if not floor_min <= floor <= floor_max:
-						statuses[i] = False
-						continue
-
-				elif floor_min is not None:
-					if not floor_min <= floor:
-						statuses[i] = False
-						continue
-
-				elif floor_max is not None:
-					if not floor <= floor_max:
-						statuses[i] = False
-						continue
-
-
-				# rooms planning
-				rooms_planning_sid = filters.get('rooms_planning_sid')
-				if rooms_planning_sid is not None:
-					if rooms_planning_sid == 1: # свободная планировка
-						if marker['rooms_planning_sid'] != FLAT_ROOMS_PLANNINGS.free():
-							statuses[i] = False
-							continue
-
-					elif rooms_planning_sid == 2: # предварительная
-						if marker['rooms_planning_sid'] == FLAT_ROOMS_PLANNINGS.free():
-							statuses[i] = False
-							continue
-
-
-				# electricity
-				if 'electricity' in filters:
-					if (not 'electricity' in marker) or (not marker['electricity']):
-						statuses[i] = False
-						continue
-
-				# gas
-				if  'gas' in filters:
-					if (not 'gas' in marker) or (not marker['gas']):
-						statuses[i] = False
-						continue
-
-				# hot water
-				if 'hot_water' in filters:
-					if (not 'hot_water' in marker) or (not marker['hot_water']):
-						statuses[i] = False
-						continue
-
-				# cold water
-				if  'cold_water' in filters:
-					if (not 'cold_water' in marker) or (not marker['cold_water']):
-						statuses[i] = False
-						continue
-
-				# lift
-				if 'lift' in filters:
-					if (not 'lift' in marker) or (not marker['lift']):
-						statuses[i] = False
-						continue
-
-
-				# heating type
-				heating_type_sid = filters.get('heating_type_sid')
-				if heating_type_sid is not None:
-					# Поле "тип опалення" може бути не обов’язковим.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if 'heating_type_sid' not in marker:
-						statuses[i] = False
-						continue
-
-					if heating_type_sid == 1: # центральне
-						if marker['heating_type_sid'] != HEATING_TYPES.central():
-							statuses[i] = False
-							continue
-
-					elif heating_type_sid == 2: # індивідуальне
-						if marker['heating_type_sid'] != HEATING_TYPES.individual():
-							statuses[i] = False
-							continue
-
-					elif heating_type_sid == 3: # відсутнє
-						if marker['heating_type_sid'] != HEATING_TYPES.none():
-							statuses[i] = False
-							continue
-
-
-		# rent filters
-		elif operation_sid == 1:
-			for i in range(len(publications)):
-				# Якщо даний маркер вже позначений як виключений — не аналізувати його.
-				if not statuses[i]:
-					continue
-
-				marker = publications[i][1]
-
-
+			#-- rent filters
+			elif operation_sid == OPERATION_SID_RENT:
 				# operation type
 				if not marker.get('for_rent', False):
 					statuses[i] = False
@@ -1500,38 +1313,201 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 						statuses[i] = False
 						continue
 
-				# electricity
-				if 'electricity' in filters:
-					if (not 'electricity' in marker) or (not marker['electricity']):
+
+
+			#-- common filters
+			# market type
+			if ('new_buildings' in filters) and ('secondary_market' in filters):
+				# Немає змісту фільтрувати.
+				# Під дані умови потрапляють всі об’єкти.
+				pass
+
+			elif 'new_buildings' in filters:
+				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
+			elif 'secondary_market' in filters:
+				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
+
+
+			# rooms count
+			rooms_count_min = filters.get('rooms_count_from')
+			rooms_count_max = filters.get('rooms_count_to')
+			rooms_count = marker.get('rooms_count')
+
+			if (rooms_count_max is not None) or (rooms_count_min is not None):
+				# Поле "к-сть кімнат" не обов’язкове.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if rooms_count is None:
+					statuses[i] = False
+					continue
+
+
+			if (rooms_count_max is not None) and (rooms_count_min is not None):
+				if not rooms_count_min <= rooms_count <= rooms_count_max:
+					statuses[i] = False
+					continue
+
+			elif rooms_count_min is not None:
+				if not rooms_count_min <= rooms_count:
+					statuses[i] = False
+					continue
+
+			elif rooms_count_max is not None:
+				if not rooms_count <= rooms_count_max:
+					statuses[i] = False
+					continue
+
+
+			# total area
+			total_area_min = filters.get('total_area_from')
+			total_area_max = filters.get('total_area_to')
+			total_area = marker.get('total_area')
+
+			if (total_area_max is not None) or (total_area_min is not None):
+				# Поле "загальна площа" може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if total_area is None:
+					statuses[i] = False
+					continue
+
+
+			if (total_area_max is not None) and (total_area_min is not None):
+				if not total_area_min <= total_area <= total_area_max:
+					statuses[i] = False
+					continue
+
+			elif total_area_min is not None:
+				if not total_area_min <= total_area:
+					statuses[i] = False
+					continue
+
+			elif total_area_max is not None:
+				if not total_area <= total_area_max:
+					statuses[i] = False
+					continue
+
+
+			# floor
+			floor_type = marker['floor_type_sid']
+			if floor_type == FLOOR_TYPES.floor():
+				floor_min = filters.get('floor_from')
+				floor_max = filters.get('floor_to')
+				floor = marker.get('floor')
+
+				if (floor_max is not None) or (floor_max is not None):
+					# Поле "к-сть поверхів" не обов’язкове.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+					# відхилити запис через неможливість аналізу.
+					if floor is None:
 						statuses[i] = False
 						continue
 
-				# gas
-				if  'gas' in filters:
-					if (not 'gas' in marker) or (not marker['gas']):
+
+				if (floor_min is not None) and (floor_max is not None):
+					if not floor_min <= floor <= floor_max:
 						statuses[i] = False
 						continue
 
-				# hot water
-				if 'hot_water' in filters:
-					if (not 'hot_water' in marker) or (not marker['hot_water']):
+				elif floor_min is not None:
+					if not floor_min <= floor:
 						statuses[i] = False
 						continue
 
-				# cold water
-				if  'cold_water' in filters:
-					if (not 'cold_water' in marker) or (not marker['cold_water']):
+				elif floor_max is not None:
+					if not floor <= floor_max:
 						statuses[i] = False
 						continue
 
-				# lift
-				if 'lift' in filters:
-					if (not 'lift' in marker) or (not marker['lift']):
+			else:
+				if ('mansard' in filters) and ('ground' in filters):
+					if floor_type not in (FLOOR_TYPES.mansard(),FLOOR_TYPES.ground()):
 						statuses[i] = False
 						continue
 
-		else:
-			raise InvalidArgument('Invalid conditions. Operation_sid is unexpected.')
+				elif ('mansard' in filters) or ('ground' in filters):
+					if 'mansard' in filters:
+						if floor_type != FLOOR_TYPES.mansard():
+							statuses[i] = False
+							continue
+
+					if 'ground' in filters:
+						if floor_type != FLOOR_TYPES.ground():
+							statuses[i] = False
+							continue
+
+
+
+			# rooms planning
+			rooms_planning_sid = filters.get('rooms_planning_sid')
+			if rooms_planning_sid is not None:
+				if rooms_planning_sid == 1: # свободная планировка
+					if marker['rooms_planning_sid'] != FLAT_ROOMS_PLANNINGS.free():
+						statuses[i] = False
+						continue
+
+				elif rooms_planning_sid == 2: # предварительная
+					if marker['rooms_planning_sid'] == FLAT_ROOMS_PLANNINGS.free():
+						statuses[i] = False
+						continue
+
+
+			# electricity
+			if 'electricity' in filters:
+				if (not 'electricity' in marker) or (not marker['electricity']):
+					statuses[i] = False
+					continue
+
+			# gas
+			if  'gas' in filters:
+				if (not 'gas' in marker) or (not marker['gas']):
+					statuses[i] = False
+					continue
+
+			# hot water
+			if 'hot_water' in filters:
+				if (not 'hot_water' in marker) or (not marker['hot_water']):
+					statuses[i] = False
+					continue
+
+			# cold water
+			if  'cold_water' in filters:
+				if (not 'cold_water' in marker) or (not marker['cold_water']):
+					statuses[i] = False
+					continue
+
+			# lift
+			if 'lift' in filters:
+				if (not 'lift' in marker) or (not marker['lift']):
+					statuses[i] = False
+					continue
+
+
+			# heating type
+			heating_type_sid = filters.get('heating_type_sid')
+			if heating_type_sid is not None:
+				# Поле "тип опалення" може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if 'heating_type_sid' not in marker:
+					statuses[i] = False
+					continue
+
+				if heating_type_sid == 1: # центральне
+					if marker['heating_type_sid'] != HEATING_TYPES.central():
+						statuses[i] = False
+						continue
+
+				elif heating_type_sid == 2: # індивідуальне
+					if marker['heating_type_sid'] != HEATING_TYPES.individual():
+						statuses[i] = False
+						continue
+
+				elif heating_type_sid == 3: # відсутнє
+					if marker['heating_type_sid'] != HEATING_TYPES.none():
+						statuses[i] = False
+						continue
+
 
 		result = []
 		for i in range(len(statuses)):
@@ -1566,6 +1542,9 @@ class HousesMarkersManager(BaseMarkersManager):
 
 		if record.body.rooms_count is None:
 			raise self.SerializationError('rooms_count is required but absent.')
+
+		if record.body.floors_count is None:
+			raise self.SerializationError('floors_count is required but absent.')
 
 		if record.body.total_area is None:
 			raise self.SerializationError('total_area is required but absent.')
@@ -1619,7 +1598,10 @@ class HousesMarkersManager(BaseMarkersManager):
 
 
 	def deserialize_marker_data(self, data):
-		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
+		# Кома в строках заміни обов’язкова,
+		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
+		# що приводить до збоїв на фронті.
+		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -1752,19 +1734,21 @@ class HousesMarkersManager(BaseMarkersManager):
 		statuses = [True] * len(publications)
 
 
-		# sale filters
-		if operation_sid == 0:
-			for i in range(len(statuses)):
-				# Якщо даний запис вже позначений як виключений — не аналізувати його.
-				if not statuses[i]:
-					continue
+		for i in range(len(statuses)):
+			# Якщо даний запис вже позначений як виключений — не аналізувати його.
+			if not statuses[i]:
+				continue
 
-				marker = publications[i][1]
 
-				# operation type
+			marker = publications[i][1]
+
+
+			#-- sale specific filters
+			if operation_sid == OPERATION_SID_SALE:
 				if not marker.get('for_sale', False):
 					statuses[i] = False
 					continue
+
 
 				# sale price
 				price_min = filters.get('price_from')
@@ -1791,173 +1775,8 @@ class HousesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				# market type
-				if ('new_buildings' in filters) and ('secondary_market' in filters):
-					# Немає змісту фільтрувати.
-					# Під дані умови потрапляють всі об’єкти.
-					pass
-
-				elif 'new_buildings' in filters:
-					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
-				elif 'new_buildings' in filters:
-					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
-
-
-				# total area
-				total_area_min = filters.get('total_area_from')
-				total_area_max = filters.get('total_area_to')
-				total_area = marker.get('total_area')
-
-				if (total_area_max is not None) or (total_area_min is not None):
-					# Поле "к-сть кімнат" не обов’язкове.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if total_area is None:
-						statuses[i] = False
-						continue
-
-
-				if (total_area_max is not None) and (total_area_min is not None):
-					if not total_area_min <= total_area <= total_area_max:
-						statuses[i] = False
-						continue
-
-				elif total_area_min is not None:
-					if not total_area_min <= total_area:
-						statuses[i] = False
-						continue
-
-				elif total_area_max is not None:
-					if not total_area <= total_area_max:
-						statuses[i] = False
-						continue
-
-
-				# rooms count
-				rooms_count_min = filters.get('rooms_count_from')
-				rooms_count_max = filters.get('rooms_count_to')
-				rooms_count = marker.get('rooms_count')
-
-				if (rooms_count_max is not None) or (rooms_count_min is not None):
-					# Поле "к-сть кімнат" не обов’язкове.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if rooms_count is None:
-						statuses[i] = False
-						continue
-
-
-				if (rooms_count_max is not None) and (rooms_count_min is not None):
-					if not rooms_count_min <= rooms_count <= rooms_count_max:
-						statuses[i] = False
-						continue
-
-				elif rooms_count_min is not None:
-					if not rooms_count_min <= rooms_count:
-						statuses[i] = False
-						continue
-
-				elif rooms_count_max is not None:
-					if not rooms_count <= rooms_count_max:
-						statuses[i] = False
-						continue
-
-
-				# floors count
-				floors_count_min = filters.get('floors_count_from')
-				floors_count_max = filters.get('floors_count_to')
-				floors_count = marker.get('floors_count')
-
-				if (floors_count_max is not None) or (floors_count_max is not None):
-					# Поле "к-сть поверхів" не обов’язкове.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if floors_count is None:
-						statuses[i] = False
-						continue
-
-
-				if (floors_count_min is not None) and (floors_count_max is not None):
-					if not floors_count_min <= floors_count <= floors_count_max:
-						statuses[i] = False
-						continue
-
-				elif floors_count_min is not None:
-					if not floors_count_min <= floors_count:
-						statuses[i] = False
-						continue
-
-				elif floors_count_max is not None:
-					if not floors_count <= floors_count_max:
-						statuses[i] = False
-						continue
-
-
-				# electricity
-				if 'electricity' in filters:
-					if (not 'electricity' in marker) or (not marker['electricity']):
-						statuses[i] = False
-						continue
-
-				# gas
-				if  'gas' in filters:
-					if (not 'gas' in marker) or (not marker['gas']):
-						statuses[i] = False
-						continue
-
-				# hot water
-				if 'hot_water' in filters:
-					if (not 'hot_water' in marker) or (not marker['hot_water']):
-						statuses[i] = False
-						continue
-
-				# cold water
-				if  'cold_water' in filters:
-					if (not 'cold_water' in marker) or (not marker['cold_water']):
-						statuses[i] = False
-						continue
-
-				# sewerage
-				if 'sewerage' in filters:
-					if (not 'sewerage' in marker) or (not marker['sewerage']):
-						statuses[i] = False
-						continue
-
-
-				# heating type
-				heating_type_sid = filters.get('heating_type_sid')
-				if heating_type_sid is not None:
-					# Поле "тип опалення" може бути не обов’язковим.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if 'heating_type_sid' not in marker:
-						statuses[i] = False
-						continue
-
-					if heating_type_sid == 1:
-						# пристунє
-						if marker['heating_type_sid'] not in [HEATING_TYPES.central(), HEATING_TYPES.individual()]:
-							statuses[i] = False
-							continue
-
-					elif heating_type_sid == 2:
-						# вісдутнє
-						if marker['heating_type_sid'] != HEATING_TYPES.none():
-							statuses[i] = False
-							continue
-
-
-		# rent filters
-		elif operation_sid == 1:
-			for i in range(len(publications)):
-				# Якщо даний маркер вже позначений як виключений — не аналізувати його.
-				if not statuses[i]:
-					continue
-
-				marker = publications[i][1]
-
-
-				# operation type
+			#-- rent specific filters
+			elif operation_sid == OPERATION_SID_RENT:
 				if not marker.get('for_rent', False):
 					statuses[i] = False
 					continue
@@ -1993,8 +1812,7 @@ class HousesMarkersManager(BaseMarkersManager):
 					statuses[i] = False
 					continue
 
-				if rent_period_sid == 1:
-					# посуточно
+				if rent_period_sid == LIVING_RENT_PERIODS.daily():
 					if marker['rent_period_sid'] != LIVING_RENT_PERIODS.daily():
 						statuses[i] = False
 						continue
@@ -2037,74 +1855,162 @@ class HousesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				# total area
-				total_area_min = filters.get('total_area_from')
-				total_area_max = filters.get('total_area_to')
-				total_area = marker.get('total_area')
+			#-- common filters
+			# market type
+			if ('new_buildings' in filters) and ('secondary_market' in filters):
+				# Немає змісту фільтрувати.
+				# Під дані умови потрапляють всі об’єкти.
+				pass
 
-				if (total_area_max is not None) or (total_area_min is not None):
-					# Поле "к-сть кімнат" не обов’язкове.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if total_area is None:
+			elif 'new_buildings' in filters:
+				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
+			elif 'secondary_market' in filters:
+				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
+
+
+			# total area
+			total_area_min = filters.get('total_area_from')
+			total_area_max = filters.get('total_area_to')
+			total_area = marker.get('total_area')
+
+			if (total_area_max is not None) or (total_area_min is not None):
+				# Поле "к-сть кімнат" не обов’язкове.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if total_area is None:
+					statuses[i] = False
+					continue
+
+
+			if (total_area_max is not None) and (total_area_min is not None):
+				if not total_area_min <= total_area <= total_area_max:
+					statuses[i] = False
+					continue
+
+			elif total_area_min is not None:
+				if not total_area_min <= total_area:
+					statuses[i] = False
+					continue
+
+			elif total_area_max is not None:
+				if not total_area <= total_area_max:
+					statuses[i] = False
+					continue
+
+
+			# rooms count
+			rooms_count_min = filters.get('rooms_count_from')
+			rooms_count_max = filters.get('rooms_count_to')
+			rooms_count = marker.get('rooms_count')
+
+			if (rooms_count_max is not None) or (rooms_count_min is not None):
+				# Поле "к-сть кімнат" не обов’язкове.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if rooms_count is None:
+					statuses[i] = False
+					continue
+
+
+			if (rooms_count_max is not None) and (rooms_count_min is not None):
+				if not rooms_count_min <= rooms_count <= rooms_count_max:
+					statuses[i] = False
+					continue
+
+			elif rooms_count_min is not None:
+				if not rooms_count_min <= rooms_count:
+					statuses[i] = False
+					continue
+
+			elif rooms_count_max is not None:
+				if not rooms_count <= rooms_count_max:
+					statuses[i] = False
+					continue
+
+
+			# floors count
+			floors_count_min = filters.get('floors_count_from')
+			floors_count_max = filters.get('floors_count_to')
+			floors_count = marker.get('floors_count')
+
+			if (floors_count_max is not None) or (floors_count_max is not None):
+				# Поле "к-сть поверхів" не обов’язкове.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if floors_count is None:
+					statuses[i] = False
+					continue
+
+
+			if (floors_count_min is not None) and (floors_count_max is not None):
+				if not floors_count_min <= floors_count <= floors_count_max:
+					statuses[i] = False
+					continue
+
+			elif floors_count_min is not None:
+				if not floors_count_min <= floors_count:
+					statuses[i] = False
+					continue
+
+			elif floors_count_max is not None:
+				if not floors_count <= floors_count_max:
+					statuses[i] = False
+					continue
+
+
+			# electricity
+			if 'electricity' in filters:
+				if (not 'electricity' in marker) or (not marker['electricity']):
+					statuses[i] = False
+					continue
+
+			# gas
+			if  'gas' in filters:
+				if (not 'gas' in marker) or (not marker['gas']):
+					statuses[i] = False
+					continue
+
+			# hot water
+			if 'hot_water' in filters:
+				if (not 'hot_water' in marker) or (not marker['hot_water']):
+					statuses[i] = False
+					continue
+
+			# cold water
+			if  'cold_water' in filters:
+				if (not 'cold_water' in marker) or (not marker['cold_water']):
+					statuses[i] = False
+					continue
+
+			# sewerage
+			if 'sewerage' in filters:
+				if (not 'sewerage' in marker) or (not marker['sewerage']):
+					statuses[i] = False
+					continue
+
+
+			# heating type
+			heating_type_sid = filters.get('heating_type_sid')
+			if heating_type_sid is not None:
+				# Поле "тип опалення" може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if 'heating_type_sid' not in marker:
+					statuses[i] = False
+					continue
+
+				if heating_type_sid == 1:
+					# пристунє
+					if marker['heating_type_sid'] not in [HEATING_TYPES.central(), HEATING_TYPES.individual()]:
 						statuses[i] = False
 						continue
 
-
-				if (total_area_max is not None) and (total_area_min is not None):
-					if not total_area_min <= total_area <= total_area_max:
+				elif heating_type_sid == 2:
+					# вісдутнє
+					if marker['heating_type_sid'] != HEATING_TYPES.none():
 						statuses[i] = False
 						continue
 
-				elif total_area_min is not None:
-					if not total_area_min <= total_area:
-						statuses[i] = False
-						continue
-
-				elif total_area_max is not None:
-					if not total_area <= total_area_max:
-						statuses[i] = False
-						continue
-
-
-				# for family
-				if 'family' in filters:
-					if (not 'for_family' in marker) or (not marker['for_family']):
-						statuses[i] = False
-						continue
-
-				# foreigners
-				if 'foreigners' in filters:
-					if (not 'foreigners' in marker) or (not marker['foreigners']):
-						statuses[i] = False
-						continue
-
-				# electricity
-				if 'electricity' in filters:
-					if (not 'electricity' in marker) or (not marker['electricity']):
-						statuses[i] = False
-						continue
-
-				# gas
-				if  'gas' in filters:
-					if (not 'gas' in marker) or (not marker['gas']):
-						statuses[i] = False
-						continue
-
-				# hot water
-				if 'hot_water' in filters:
-					if (not 'hot_water' in marker) or (not marker['hot_water']):
-						statuses[i] = False
-						continue
-
-				# cold water
-				if  'cold_water' in filters:
-					if (not 'cold_water' in marker) or (not marker['cold_water']):
-						statuses[i] = False
-						continue
-
-		else:
-			raise InvalidArgument('Invalid conditions. Operation_sid is unexpected.')
 
 		result = []
 		for i in range(len(statuses)):
@@ -2139,6 +2045,9 @@ class CottagesMarkersManager(BaseMarkersManager):
 
 		if record.body.rooms_count is None:
 			raise self.SerializationError('rooms_count is required but absent.')
+
+		if record.body.floors_count is None:
+			raise self.SerializationError('floors_count is required but absent.')
 
 		if record.body.total_area is None:
 			raise self.SerializationError('total_area is required but absent.')
@@ -2197,7 +2106,10 @@ class CottagesMarkersManager(BaseMarkersManager):
 
 
 	def deserialize_marker_data(self, data):
-		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
+		# Кома в строках заміни обов’язкова,
+		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
+		# що приводить до збоїв на фронті.
+		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -2332,16 +2244,17 @@ class CottagesMarkersManager(BaseMarkersManager):
 		statuses = [True] * len(publications)
 
 
-		# sale filters
-		if operation_sid == 0:
-			for i in range(len(statuses)):
-				# Якщо даний запис вже позначений як виключений — не аналізувати його.
-				if not statuses[i]:
-					continue
+		for i in range(len(statuses)):
+			# Якщо даний запис вже позначений як виключений — не аналізувати його.
+			if not statuses[i]:
+				continue
 
-				marker = publications[i][1]
 
-				# operation type
+			marker = publications[i][1]
+
+
+			#-- sale specific filters
+			if operation_sid == OPERATION_SID_SALE:
 				if not marker.get('for_sale', False):
 					statuses[i] = False
 					continue
@@ -2372,143 +2285,8 @@ class CottagesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				# market type
-				if ('new_buildings' in filters) and ('secondary_market' in filters):
-					# Немає змісту фільтрувати.
-					# Під дані умови потрапляють всі об’єкти.
-					pass
-
-				elif 'new_buildings' in filters:
-					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
-				elif 'new_buildings' in filters:
-					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
-
-
-				# rooms count
-				rooms_count_min = filters.get('rooms_count_from')
-				rooms_count_max = filters.get('rooms_count_to')
-				rooms_count = marker.get('rooms_count')
-
-				if (rooms_count_max is not None) or (rooms_count_min is not None):
-					# Поле "к-сть кімнат" не обов’язкове.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if rooms_count is None:
-						statuses[i] = False
-						continue
-
-
-				if (rooms_count_max is not None) and (rooms_count_min is not None):
-					if not rooms_count_min <= rooms_count <= rooms_count_max:
-						statuses[i] = False
-						continue
-
-				elif rooms_count_min is not None:
-					if not rooms_count_min <= rooms_count:
-						statuses[i] = False
-						continue
-
-				elif rooms_count_max is not None:
-					if not rooms_count <= rooms_count_max:
-						statuses[i] = False
-						continue
-
-
-				# floors count
-				floors_count_min = filters.get('floors_count_from')
-				floors_count_max = filters.get('floors_count_to')
-				floors_count = marker.get('floors_count')
-
-				if (floors_count_max is not None) or (floors_count_max is not None):
-					# Поле "к-сть поверхів" не обов’язкове.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if floors_count is None:
-						statuses[i] = False
-						continue
-
-
-				if (floors_count_min is not None) and (floors_count_max is not None):
-					if not floors_count_min <= floors_count <= floors_count_max:
-						statuses[i] = False
-						continue
-
-				elif floors_count_min is not None:
-					if not floors_count_min <= floors_count:
-						statuses[i] = False
-						continue
-
-				elif floors_count_max is not None:
-					if not floors_count <= floors_count_max:
-						statuses[i] = False
-						continue
-
-
-				# electricity
-				if 'electricity' in filters:
-					if (not 'electricity' in marker) or (not marker['electricity']):
-						statuses[i] = False
-						continue
-
-				# gas
-				if  'gas' in filters:
-					if (not 'gas' in marker) or (not marker['gas']):
-						statuses[i] = False
-						continue
-
-				# hot water
-				if 'hot_water' in filters:
-					if (not 'hot_water' in marker) or (not marker['hot_water']):
-						statuses[i] = False
-						continue
-
-				# cold water
-				if  'cold_water' in filters:
-					if (not 'cold_water' in marker) or (not marker['cold_water']):
-						statuses[i] = False
-						continue
-
-				# sewerage
-				if 'sewerage' in filters:
-					if (not 'sewerage' in marker) or (not marker['sewerage']):
-						statuses[i] = False
-						continue
-
-
-				# heating type
-				heating_type_sid = filters.get('heating_type_sid')
-				if heating_type_sid is not None:
-					# Поле "тип опалення" може бути не обов’язковим.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if 'heating_type_sid' not in marker:
-						statuses[i] = False
-						continue
-
-					if heating_type_sid == 1:
-						# пристунє
-						if marker['heating_type_sid'] not in [HEATING_TYPES.central(), HEATING_TYPES.individual()]:
-							statuses[i] = False
-							continue
-
-					elif heating_type_sid == 2:
-						# вісдутнє
-						if marker['heating_type_sid'] != HEATING_TYPES.none():
-							statuses[i] = False
-							continue
-
-
-		# rent filters
-		elif operation_sid == 1:
-			for i in range(len(publications)):
-				# Якщо даний маркер вже позначений як виключений — не аналізувати його.
-				if not statuses[i]:
-					continue
-
-				marker = publications[i][1]
-
-
-				# operation type
+			#-- rent specific filters
+			elif operation_sid == OPERATION_SID_RENT:
 				if not marker.get('for_rent', False):
 					statuses[i] = False
 					continue
@@ -2544,8 +2322,7 @@ class CottagesMarkersManager(BaseMarkersManager):
 					statuses[i] = False
 					continue
 
-				if rent_period_sid == 1:
-					# посуточно
+				if rent_period_sid == LIVING_RENT_PERIODS.daily():
 					if marker['rent_period_sid'] != LIVING_RENT_PERIODS.daily():
 						statuses[i] = False
 						continue
@@ -2588,44 +2365,162 @@ class CottagesMarkersManager(BaseMarkersManager):
 						continue
 
 
-				# for family
-				if 'family' in filters:
-					if (not 'for_family' in marker) or (not marker['for_family']):
+			#-- common filters
+			# market type
+			if ('new_buildings' in filters) and ('secondary_market' in filters):
+				# Немає змісту фільтрувати.
+				# Під дані умови потрапляють всі об’єкти.
+				pass
+
+			elif 'new_buildings' in filters:
+				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
+			elif 'secondary_market' in filters:
+				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
+
+
+			# total area
+			total_area_min = filters.get('total_area_from')
+			total_area_max = filters.get('total_area_to')
+			total_area = marker.get('total_area')
+
+			if (total_area_max is not None) or (total_area_min is not None):
+				# Поле "к-сть кімнат" не обов’язкове.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if total_area is None:
+					statuses[i] = False
+					continue
+
+
+			if (total_area_max is not None) and (total_area_min is not None):
+				if not total_area_min <= total_area <= total_area_max:
+					statuses[i] = False
+					continue
+
+			elif total_area_min is not None:
+				if not total_area_min <= total_area:
+					statuses[i] = False
+					continue
+
+			elif total_area_max is not None:
+				if not total_area <= total_area_max:
+					statuses[i] = False
+					continue
+
+
+			# rooms count
+			rooms_count_min = filters.get('rooms_count_from')
+			rooms_count_max = filters.get('rooms_count_to')
+			rooms_count = marker.get('rooms_count')
+
+			if (rooms_count_max is not None) or (rooms_count_min is not None):
+				# Поле "к-сть кімнат" не обов’язкове.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if rooms_count is None:
+					statuses[i] = False
+					continue
+
+
+			if (rooms_count_max is not None) and (rooms_count_min is not None):
+				if not rooms_count_min <= rooms_count <= rooms_count_max:
+					statuses[i] = False
+					continue
+
+			elif rooms_count_min is not None:
+				if not rooms_count_min <= rooms_count:
+					statuses[i] = False
+					continue
+
+			elif rooms_count_max is not None:
+				if not rooms_count <= rooms_count_max:
+					statuses[i] = False
+					continue
+
+
+			# floors count
+			floors_count_min = filters.get('floors_count_from')
+			floors_count_max = filters.get('floors_count_to')
+			floors_count = marker.get('floors_count')
+
+			if (floors_count_max is not None) or (floors_count_max is not None):
+				# Поле "к-сть поверхів" не обов’язкове.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if floors_count is None:
+					statuses[i] = False
+					continue
+
+
+			if (floors_count_min is not None) and (floors_count_max is not None):
+				if not floors_count_min <= floors_count <= floors_count_max:
+					statuses[i] = False
+					continue
+
+			elif floors_count_min is not None:
+				if not floors_count_min <= floors_count:
+					statuses[i] = False
+					continue
+
+			elif floors_count_max is not None:
+				if not floors_count <= floors_count_max:
+					statuses[i] = False
+					continue
+
+
+			# electricity
+			if 'electricity' in filters:
+				if (not 'electricity' in marker) or (not marker['electricity']):
+					statuses[i] = False
+					continue
+
+			# gas
+			if  'gas' in filters:
+				if (not 'gas' in marker) or (not marker['gas']):
+					statuses[i] = False
+					continue
+
+			# hot water
+			if 'hot_water' in filters:
+				if (not 'hot_water' in marker) or (not marker['hot_water']):
+					statuses[i] = False
+					continue
+
+			# cold water
+			if  'cold_water' in filters:
+				if (not 'cold_water' in marker) or (not marker['cold_water']):
+					statuses[i] = False
+					continue
+
+			# sewerage
+			if 'sewerage' in filters:
+				if (not 'sewerage' in marker) or (not marker['sewerage']):
+					statuses[i] = False
+					continue
+
+
+			# heating type
+			heating_type_sid = filters.get('heating_type_sid')
+			if heating_type_sid is not None:
+				# Поле "тип опалення" може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if 'heating_type_sid' not in marker:
+					statuses[i] = False
+					continue
+
+				if heating_type_sid == 1:
+					# пристунє
+					if marker['heating_type_sid'] not in [HEATING_TYPES.central(), HEATING_TYPES.individual()]:
 						statuses[i] = False
 						continue
 
-				# foreigners
-				if 'foreigners' in filters:
-					if (not 'foreigners' in marker) or (not marker['foreigners']):
+				elif heating_type_sid == 2:
+					# вісдутнє
+					if marker['heating_type_sid'] != HEATING_TYPES.none():
 						statuses[i] = False
 						continue
 
-				# electricity
-				if 'electricity' in filters:
-					if (not 'electricity' in marker) or (not marker['electricity']):
-						statuses[i] = False
-						continue
-
-				# gas
-				if  'gas' in filters:
-					if (not 'gas' in marker) or (not marker['gas']):
-						statuses[i] = False
-						continue
-
-				# hot water
-				if 'hot_water' in filters:
-					if (not 'hot_water' in marker) or (not marker['hot_water']):
-						statuses[i] = False
-						continue
-
-				# cold water
-				if  'cold_water' in filters:
-					if (not 'cold_water' in marker) or (not marker['cold_water']):
-						statuses[i] = False
-						continue
-
-		else:
-			raise InvalidArgument('Invalid conditions. Operation_sid is unexpected.')
 
 		result = []
 		for i in range(len(statuses)):
@@ -2717,7 +2612,10 @@ class RoomsMarkersManager(BaseMarkersManager):
 
 
 	def deserialize_marker_data(self, data):
-		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
+		# Кома в строках заміни обов’язкова,
+		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
+		# що приводить до збоїв на фронті.
+		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -2853,19 +2751,21 @@ class RoomsMarkersManager(BaseMarkersManager):
 		statuses = [True] * len(publications)
 
 
-		# sale filters
-		if operation_sid == 0:
-			for i in range(len(statuses)):
-				# Якщо даний запис вже позначений як виключений — не аналізувати його.
-				if not statuses[i]:
-					continue
+		for i in range(len(statuses)):
+			# Якщо даний запис вже позначений як виключений — не аналізувати його.
+			if not statuses[i]:
+				continue
 
-				marker = publications[i][1]
 
-				# operation type
+			marker = publications[i][1]
+
+
+			# sale filters
+			if operation_sid == 0:
 				if not marker.get('for_sale', False):
 					statuses[i] = False
 					continue
+
 
 				# sale price
 				price_min = filters.get('price_from')
@@ -2892,196 +2792,13 @@ class RoomsMarkersManager(BaseMarkersManager):
 						continue
 
 
-				# market type
-				if ('new_buildings' in filters) and ('secondary_market' in filters):
-					# Немає змісту фільтрувати.
-					# Під дані умови потрапляють всі об’єкти.
-					pass
-
-				elif 'new_buildings' in filters:
-					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
-				elif 'new_buildings' in filters:
-					statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
-
-
-				# rooms count
-				rooms_count_min = filters.get('rooms_count_from')
-				rooms_count_max = filters.get('rooms_count_to')
-				rooms_count = marker.get('rooms_count')
-
-				if (rooms_count_max is not None) or (rooms_count_min is not None):
-					# Поле "к-сть кімнат" не обов’язкове.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if rooms_count is None:
-						statuses[i] = False
-						continue
-
-
-				if (rooms_count_max is not None) and (rooms_count_min is not None):
-					if not rooms_count_min <= rooms_count <= rooms_count_max:
-						statuses[i] = False
-						continue
-
-				elif rooms_count_min is not None:
-					if not rooms_count_min <= rooms_count:
-						statuses[i] = False
-						continue
-
-				elif rooms_count_max is not None:
-					if not rooms_count <= rooms_count_max:
-						statuses[i] = False
-						continue
-
-
-				# total area
-				total_area_min = filters.get('total_area_from')
-				total_area_max = filters.get('total_area_to')
-				total_area = marker.get('total_area')
-
-				if (total_area_max is not None) or (total_area_min is not None):
-					# Поле "загальна площа" може бути не обов’язковим.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if total_area is None:
-						statuses[i] = False
-						continue
-
-
-				if (total_area_max is not None) and (total_area_min is not None):
-					if not total_area_min <= total_area <= total_area_max:
-						statuses[i] = False
-						continue
-
-				elif total_area_min is not None:
-					if not total_area_min <= total_area:
-						statuses[i] = False
-						continue
-
-				elif total_area_max is not None:
-					if not total_area <= total_area_max:
-						statuses[i] = False
-						continue
-
-
-				# floor
-				floor_min = filters.get('floor_from')
-				floor_max = filters.get('floor_to')
-				floor = marker.get('floor')
-
-				if (floor_max is not None) or (floor_max is not None):
-					# Поле "к-сть поверхів" не обов’язкове.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if floor is None:
-						statuses[i] = False
-						continue
-
-
-				if (floor_min is not None) and (floor_max is not None):
-					if not floor_min <= floor <= floor_max:
-						statuses[i] = False
-						continue
-
-				elif floor_min is not None:
-					if not floor_min <= floor:
-						statuses[i] = False
-						continue
-
-				elif floor_max is not None:
-					if not floor <= floor_max:
-						statuses[i] = False
-						continue
-
-
-				# electricity
-				if 'electricity' in filters:
-					if (not 'electricity' in marker) or (not marker['electricity']):
-						statuses[i] = False
-						continue
-
-				# gas
-				if  'gas' in filters:
-					if (not 'gas' in marker) or (not marker['gas']):
-						statuses[i] = False
-						continue
-
-				# hot water
-				if 'hot_water' in filters:
-					if (not 'hot_water' in marker) or (not marker['hot_water']):
-						statuses[i] = False
-						continue
-
-				# cold water
-				if  'cold_water' in filters:
-					if (not 'cold_water' in marker) or (not marker['cold_water']):
-						statuses[i] = False
-						continue
-
-				# lift
-				if 'lift' in filters:
-					if (not 'lift' in marker) or (not marker['lift']):
-						statuses[i] = False
-						continue
-
-
-				# heating type
-				heating_type_sid = filters.get('heating_type_sid')
-				if heating_type_sid is not None:
-					# Поле "тип опалення" може бути не обов’язковим.
-					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-					# відхилити запис через неможливість аналізу.
-					if 'heating_type_sid' not in marker:
-						statuses[i] = False
-						continue
-
-					if heating_type_sid == 1: # центральне
-						if marker['heating_type_sid'] != HEATING_TYPES.central():
-							statuses[i] = False
-							continue
-
-					elif heating_type_sid == 2: # індивідуальне
-						if marker['heating_type_sid'] != HEATING_TYPES.individual():
-							statuses[i] = False
-							continue
-
-					elif heating_type_sid == 3: # відсутнє
-						if marker['heating_type_sid'] != HEATING_TYPES.none():
-							statuses[i] = False
-							continue
-
-
-		# rent filters
-		elif operation_sid == 1:
-			for i in range(len(publications)):
-				# Якщо даний маркер вже позначений як виключений — не аналізувати його.
-				if not statuses[i]:
-					continue
-
-				marker = publications[i][1]
-
+			#-- rent filters
+			elif operation_sid == OPERATION_SID_RENT:
 				# operation type
 				if not marker.get('for_rent', False):
 					statuses[i] = False
 					continue
 
-				# rent period
-				if not 'rent_period_sid' in marker:
-					# Неможливо визначити, чи здається об’єкт в оренду.
-					# Виключаємо з видачі.
-					statuses[i] = False
-					continue
-
-				if rent_period_sid == 1: # посуточно
-					if marker['rent_period_sid'] != LIVING_RENT_PERIODS.daily():
-						statuses[i] = False
-						continue
-
-				elif rent_period_sid == 2: # помісячно і довгострокова оренда
-					if (marker['rent_period_sid'] != LIVING_RENT_PERIODS.monthly()) or \
-							(marker['rent_period_sid'] != LIVING_RENT_PERIODS.long_period()):
-						statuses[i] = False
-						continue
 
 				# rent price
 				price_min = filters.get('price_from')
@@ -3106,6 +2823,26 @@ class RoomsMarkersManager(BaseMarkersManager):
 					if not marker['rent_price'] <= price_max:
 						statuses[i] = False
 						continue
+
+
+				# rent period
+				if not 'rent_period_sid' in marker:
+					statuses[i] = False
+					continue
+
+				if rent_period_sid == 1:
+					# посуточно
+					if marker['rent_period_sid'] != LIVING_RENT_PERIODS.daily():
+						statuses[i] = False
+						continue
+
+				elif rent_period_sid == 2:
+					# помісячно і довгострокова оренда
+					if (marker['rent_period_sid'] != LIVING_RENT_PERIODS.monthly()) or \
+							(marker['rent_period_sid'] != LIVING_RENT_PERIODS.long_period()):
+						statuses[i] = False
+						continue
+
 
 				# persons_count
 				persons_count_min = filters.get('persons_count_from')
@@ -3149,37 +2886,201 @@ class RoomsMarkersManager(BaseMarkersManager):
 						statuses[i] = False
 						continue
 
-				# lift
-				if 'lift' in filters:
-					if (not 'lift' in marker) or (not marker['lift']):
+
+
+			#-- common filters
+			# market type
+			if ('new_buildings' in filters) and ('secondary_market' in filters):
+				# Немає змісту фільтрувати.
+				# Під дані умови потрапляють всі об’єкти.
+				pass
+
+			elif 'new_buildings' in filters:
+				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
+			elif 'secondary_market' in filters:
+				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
+
+
+			# rooms count
+			rooms_count_min = filters.get('rooms_count_from')
+			rooms_count_max = filters.get('rooms_count_to')
+			rooms_count = marker.get('rooms_count')
+
+			if (rooms_count_max is not None) or (rooms_count_min is not None):
+				# Поле "к-сть кімнат" не обов’язкове.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if rooms_count is None:
+					statuses[i] = False
+					continue
+
+
+			if (rooms_count_max is not None) and (rooms_count_min is not None):
+				if not rooms_count_min <= rooms_count <= rooms_count_max:
+					statuses[i] = False
+					continue
+
+			elif rooms_count_min is not None:
+				if not rooms_count_min <= rooms_count:
+					statuses[i] = False
+					continue
+
+			elif rooms_count_max is not None:
+				if not rooms_count <= rooms_count_max:
+					statuses[i] = False
+					continue
+
+
+			# total area
+			total_area_min = filters.get('total_area_from')
+			total_area_max = filters.get('total_area_to')
+			total_area = marker.get('total_area')
+
+			if (total_area_max is not None) or (total_area_min is not None):
+				# Поле "загальна площа" може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if total_area is None:
+					statuses[i] = False
+					continue
+
+
+			if (total_area_max is not None) and (total_area_min is not None):
+				if not total_area_min <= total_area <= total_area_max:
+					statuses[i] = False
+					continue
+
+			elif total_area_min is not None:
+				if not total_area_min <= total_area:
+					statuses[i] = False
+					continue
+
+			elif total_area_max is not None:
+				if not total_area <= total_area_max:
+					statuses[i] = False
+					continue
+
+
+			# floor
+			floor_type = marker['floor_type_sid']
+			if floor_type == FLOOR_TYPES.floor():
+				floor_min = filters.get('floor_from')
+				floor_max = filters.get('floor_to')
+				floor = marker.get('floor')
+
+				if (floor_max is not None) or (floor_max is not None):
+					# Поле "к-сть поверхів" не обов’язкове.
+					# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+					# відхилити запис через неможливість аналізу.
+					if floor is None:
 						statuses[i] = False
 						continue
 
-				# electricity
-				if 'electricity' in filters:
-					if (not 'electricity' in marker) or (not marker['electricity']):
+
+				if (floor_min is not None) and (floor_max is not None):
+					if not floor_min <= floor <= floor_max:
 						statuses[i] = False
 						continue
 
-				# gas
-				if  'gas' in filters:
-					if (not 'gas' in marker) or (not marker['gas']):
+				elif floor_min is not None:
+					if not floor_min <= floor:
 						statuses[i] = False
 						continue
 
-				# hot water
-				if 'hot_water' in filters:
-					if (not 'hot_water' in marker) or (not marker['hot_water']):
+				elif floor_max is not None:
+					if not floor <= floor_max:
 						statuses[i] = False
 						continue
 
-				# cold water
-				if  'cold_water' in filters:
-					if (not 'cold_water' in marker) or (not marker['cold_water']):
+			else:
+				if ('mansard' in filters) and ('ground' in filters):
+					if floor_type not in (FLOOR_TYPES.mansard(),FLOOR_TYPES.ground()):
 						statuses[i] = False
 						continue
-		else:
-			raise InvalidArgument('Invalid conditions. Operation_sid is unexpected.')
+
+				elif ('mansard' in filters) or ('ground' in filters):
+					if 'mansard' in filters:
+						if floor_type != FLOOR_TYPES.mansard():
+							statuses[i] = False
+							continue
+
+					if 'ground' in filters:
+						if floor_type != FLOOR_TYPES.ground():
+							statuses[i] = False
+							continue
+
+
+
+			# rooms planning
+			rooms_planning_sid = filters.get('rooms_planning_sid')
+			if rooms_planning_sid is not None:
+				if rooms_planning_sid == 1: # свободная планировка
+					if marker['rooms_planning_sid'] != FLAT_ROOMS_PLANNINGS.free():
+						statuses[i] = False
+						continue
+
+				elif rooms_planning_sid == 2: # предварительная
+					if marker['rooms_planning_sid'] == FLAT_ROOMS_PLANNINGS.free():
+						statuses[i] = False
+						continue
+
+
+			# electricity
+			if 'electricity' in filters:
+				if (not 'electricity' in marker) or (not marker['electricity']):
+					statuses[i] = False
+					continue
+
+			# gas
+			if  'gas' in filters:
+				if (not 'gas' in marker) or (not marker['gas']):
+					statuses[i] = False
+					continue
+
+			# hot water
+			if 'hot_water' in filters:
+				if (not 'hot_water' in marker) or (not marker['hot_water']):
+					statuses[i] = False
+					continue
+
+			# cold water
+			if  'cold_water' in filters:
+				if (not 'cold_water' in marker) or (not marker['cold_water']):
+					statuses[i] = False
+					continue
+
+			# lift
+			if 'lift' in filters:
+				if (not 'lift' in marker) or (not marker['lift']):
+					statuses[i] = False
+					continue
+
+
+			# heating type
+			heating_type_sid = filters.get('heating_type_sid')
+			if heating_type_sid is not None:
+				# Поле "тип опалення" може бути не обов’язковим.
+				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
+				# відхилити запис через неможливість аналізу.
+				if 'heating_type_sid' not in marker:
+					statuses[i] = False
+					continue
+
+				if heating_type_sid == 1: # центральне
+					if marker['heating_type_sid'] != HEATING_TYPES.central():
+						statuses[i] = False
+						continue
+
+				elif heating_type_sid == 2: # індивідуальне
+					if marker['heating_type_sid'] != HEATING_TYPES.individual():
+						statuses[i] = False
+						continue
+
+				elif heating_type_sid == 3: # відсутнє
+					if marker['heating_type_sid'] != HEATING_TYPES.none():
+						statuses[i] = False
+						continue
+
 
 		result = []
 		for i in range(len(statuses)):
@@ -3208,8 +3109,8 @@ class TradesMarkersManager(BaseMarkersManager):
 		if True not in (record.for_sale, record.for_rent):
 			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
-		if record.body.rooms_count is None:
-			raise self.SerializationError('rooms_count is required but absent.')
+		if record.body.halls_area is None:
+			raise self.SerializationError('halls_area is required but absent.')
 
 		if record.body.total_area is None:
 			raise self.SerializationError('total_area is required but absent.')
@@ -3256,7 +3157,10 @@ class TradesMarkersManager(BaseMarkersManager):
 
 
 	def deserialize_marker_data(self, data):
-		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
+		# Кома в строках заміни обов’язкова,
+		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
+		# що приводить до збоїв на фронті.
+		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -3434,7 +3338,7 @@ class TradesMarkersManager(BaseMarkersManager):
 
 			elif 'new_buildings' in filters:
 				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
-			elif 'new_buildings' in filters:
+			elif 'secondary_market' in filters:
 				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
 
 
@@ -3575,11 +3479,11 @@ class OfficesMarkersManager(BaseMarkersManager):
 		if True not in (record.for_sale, record.for_rent):
 			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
-		if record.body.rooms_count is None:
-			raise self.SerializationError('rooms_count is required but absent.')
-
 		if record.body.total_area is None:
 			raise self.SerializationError('total_area is required but absent.')
+
+		if record.body.cabinets_count is None:
+			raise self.SerializationError('cabinets_count is required but absent.')
 
 
 		data = [
@@ -3622,7 +3526,10 @@ class OfficesMarkersManager(BaseMarkersManager):
 
 
 	def deserialize_marker_data(self, data):
-		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
+		# Кома в строках заміни обов’язкова,
+		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
+		# що приводить до збоїв на фронті.
+		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -3805,7 +3712,7 @@ class OfficesMarkersManager(BaseMarkersManager):
 
 			elif 'new_buildings' in filters:
 				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
-			elif 'new_buildings' in filters:
+			elif 'secondary_market' in filters:
 				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
 
 
@@ -3915,11 +3822,8 @@ class WarehousesMarkersManager(BaseMarkersManager):
 		if True not in (record.for_sale, record.for_rent):
 			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
-		if record.body.rooms_count is None:
+		if record.body.area is None:
 			raise self.SerializationError('rooms_count is required but absent.')
-
-		if record.body.total_area is None:
-			raise self.SerializationError('total_area is required but absent.')
 
 
 		data = [
@@ -3938,11 +3842,6 @@ class WarehousesMarkersManager(BaseMarkersManager):
 
 		    record.body.market_type_sid,
 		]
-
-		# Поле поверху може бути пустим, якщо тип поверху вибрано як "мансарда" чи "цоколь".
-		# Якщо воно пусте — немає змісту його сериалізувати.
-		if record.body.floor_type_sid == FLOOR_TYPES.floor():
-			data.append(record.body.floor)
 
 
 		if record.for_sale:
@@ -3967,7 +3866,10 @@ class WarehousesMarkersManager(BaseMarkersManager):
 
 
 	def deserialize_marker_data(self, data):
-		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
+		# Кома в строках заміни обов’язкова,
+		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
+		# що приводить до збоїв на фронті.
+		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -4145,7 +4047,7 @@ class WarehousesMarkersManager(BaseMarkersManager):
 
 			elif 'new_buildings' in filters:
 				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
-			elif 'new_buildings' in filters:
+			elif 'secondary_market' in filters:
 				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
 
 
@@ -4233,19 +4135,11 @@ class BusinessesMarkersManager(BaseMarkersManager):
 		if True not in (record.for_sale, record.for_rent):
 			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
-		if record.body.rooms_count is None:
-			raise self.SerializationError('rooms_count is required but absent.')
-
-		if record.body.total_area is None:
-			raise self.SerializationError('total_area is required but absent.')
-
 
 		data = [
 			record.hash_id,
 			record.for_sale,
 		    record.for_rent,
-
-		    record.body.market_type_sid,
 		]
 
 		if record.for_sale:
@@ -4270,15 +4164,16 @@ class BusinessesMarkersManager(BaseMarkersManager):
 
 
 	def deserialize_marker_data(self, data):
-		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
+		# Кома в строках заміни обов’язкова,
+		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
+		# що приводить до збоїв на фронті.
+		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
 			'hash_id':              data[next(index)],
 			'for_sale':             data[next(index)],
 		    'for_rent':             data[next(index)],
-
-			'market_type_sid':      data[next(index)],
 		}
 
 
@@ -4426,17 +4321,6 @@ class BusinessesMarkersManager(BaseMarkersManager):
 					continue
 
 
-			# market type
-			if ('new_buildings' in filters) and ('secondary_market' in filters):
-				# Немає змісту фільтрувати.
-				# Під дані умови потрапляють всі об’єкти.
-				pass
-
-			elif 'new_buildings' in filters:
-				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
-			elif 'new_buildings' in filters:
-				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
-
 		result = []
 		for i in range(len(statuses)):
 			if statuses[i]:
@@ -4464,8 +4348,8 @@ class CateringsMarkersManager(BaseMarkersManager):
 		if True not in (record.for_sale, record.for_rent):
 			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
-		if record.body.rooms_count is None:
-			raise self.SerializationError('rooms_count is required but absent.')
+		if record.body.halls_area is None:
+			raise self.SerializationError('halls_area is required but absent.')
 
 		if record.body.total_area is None:
 			raise self.SerializationError('total_area is required but absent.')
@@ -4512,7 +4396,10 @@ class CateringsMarkersManager(BaseMarkersManager):
 
 
 	def deserialize_marker_data(self, data):
-		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
+		# Кома в строках заміни обов’язкова,
+		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
+		# що приводить до збоїв на фронті.
+		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -4597,7 +4484,7 @@ class CateringsMarkersManager(BaseMarkersManager):
 
 	def filter(self, publications, filters):
 		# WARNING:
-		#   дана функція для економії часу виконання не виконує deepcopy над publications
+		# дана функція для економії часу виконання не виконує deepcopy над publications
 
 		if filters is None:
 			return publications
@@ -4644,7 +4531,6 @@ class CateringsMarkersManager(BaseMarkersManager):
 
 			marker = publications[i][1]
 
-
 			# operation type
 			if operation_sid == 0:
 				if not marker.get('for_sale', False):
@@ -4656,17 +4542,14 @@ class CateringsMarkersManager(BaseMarkersManager):
 					statuses[i] = False
 					continue
 
-			# price
-			marker_currency = marker.get('sale_currency_sid')
-			if marker_currency is None:
-				marker_currency = marker.get('rent_currency_sid')
 
+			# price
 			price_min = filters.get('price_from')
 			price_max = filters.get('price_to')
 			if price_min is not None:
-				price_min = convert_currency(price_min, currency_sid, marker_currency)
+				price_min = convert_currency(price_min, currency_sid, marker['sale_currency_sid'])
 			if price_max is not None:
-				price_max = convert_currency(price_max, currency_sid, marker_currency)
+				price_max = convert_currency(price_max, currency_sid, marker['sale_currency_sid'])
 
 
 			if (price_max is not None) and (price_min is not None):
@@ -4693,37 +4576,8 @@ class CateringsMarkersManager(BaseMarkersManager):
 
 			elif 'new_buildings' in filters:
 				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.new_building())
-			elif 'new_buildings' in filters:
+			elif 'secondary_market' in filters:
 				statuses[i] = (marker['market_type_sid'] == MARKET_TYPES.secondary_market())
-
-
-			# total area
-			total_area_min = filters.get('total_area_from')
-			total_area_max = filters.get('total_area_to')
-			total_area = marker.get('total_area')
-
-			if (total_area_max is not None) or (total_area_min is not None):
-				# Поле може бути не обов’язковим.
-				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
-				# відхилити запис через неможливість аналізу.
-				if total_area is None:
-					statuses[i] = False
-					continue
-
-			if (total_area_max is not None) and (total_area_min is not None):
-				if not total_area_min <= total_area <= total_area_max:
-					statuses[i] = False
-					continue
-
-			elif total_area_min is not None:
-				if not total_area_min <= total_area:
-					statuses[i] = False
-					continue
-
-			elif total_area_max is not None:
-				if not total_area <= total_area_max:
-					statuses[i] = False
-					continue
 
 
 			# halls area
@@ -4753,33 +4607,34 @@ class CateringsMarkersManager(BaseMarkersManager):
 				if not halls_area <= halls_area_max:
 					statuses[i] = False
 					continue
-					
-					
-			# halls count
-			halls_count_min = filters.get('halls_count_from')
-			halls_count_max = filters.get('halls_count_to')
-			halls_count = marker.get('halls_count')
 
-			if (halls_count_max is not None) or (halls_count_min is not None):
-				# Поле може бути не обов’язковим.
+
+			# total area
+			total_area_min = filters.get('total_area_from')
+			total_area_max = filters.get('total_area_to')
+			total_area = marker.get('total_area')
+
+			if (total_area_max is not None) or (total_area_min is not None):
+				# Поле "загальна площа" може бути не обов’язковим.
 				# У випадку, коли воно задане у фільтрі, але відсутнє в записі маркера —
 				# відхилити запис через неможливість аналізу.
-				if halls_count is None:
+				if total_area is None:
 					statuses[i] = False
 					continue
 
-			if (halls_count_max is not None) and (halls_count_min is not None):
-				if not halls_count_min <= halls_count <= halls_count_max:
+
+			if (total_area_max is not None) and (total_area_min is not None):
+				if not total_area_min <= total_area <= total_area_max:
 					statuses[i] = False
 					continue
 
-			elif halls_count_min is not None:
-				if not halls_count_min <= halls_count:
+			elif total_area_min is not None:
+				if not total_area_min <= total_area:
 					statuses[i] = False
 					continue
 
-			elif halls_count_max is not None:
-				if not halls_count <= halls_count_max:
+			elif total_area_max is not None:
+				if not total_area <= total_area_max:
 					statuses[i] = False
 					continue
 
@@ -4830,12 +4685,16 @@ class CateringsMarkersManager(BaseMarkersManager):
 					statuses[i] = False
 					continue
 
+			if 'sewerage' in filters:
+				if (not 'sewerage' in marker) or (not marker['sewerage']):
+					statuses[i] = False
+					continue
+
 		result = []
 		for i in range(len(statuses)):
 			if statuses[i]:
 				result.append(publications[i])
 		return result
-
 
 
 class GaragesMarkersManager(BaseMarkersManager):
@@ -4856,11 +4715,11 @@ class GaragesMarkersManager(BaseMarkersManager):
 		if True not in (record.for_sale, record.for_rent):
 			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
-		if record.body.rooms_count is None:
-			raise self.SerializationError('rooms_count is required but absent.')
+		if record.body.area is None:
+			raise self.SerializationError('area is required but absent.')
 
-		if record.body.total_area is None:
-			raise self.SerializationError('total_area is required but absent.')
+		if record.body.ceiling_height is None:
+			raise self.SerializationError('ceiling_height is required but absent.')
 
 
 		data = [
@@ -4897,7 +4756,10 @@ class GaragesMarkersManager(BaseMarkersManager):
 
 
 	def deserialize_marker_data(self, data):
-		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
+		# Кома в строках заміни обов’язкова,
+		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
+		# що приводить до збоїв на фронті.
+		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -5062,7 +4924,7 @@ class GaragesMarkersManager(BaseMarkersManager):
 			# total area
 			total_area_min = filters.get('total_area_from')
 			total_area_max = filters.get('total_area_to')
-			total_area = marker.get('total_area')
+			total_area = marker.get('area')
 
 			if (total_area_max is not None) or (total_area_min is not None):
 				# Поле може бути не обов’язковим.
@@ -5148,11 +5010,8 @@ class LandsMarkersManager(BaseMarkersManager):
 		if True not in (record.for_sale, record.for_rent):
 			raise self.SerializationError('Object must be "for sale", "for rent", or both. Nothing selected.')
 
-		if record.body.rooms_count is None:
-			raise self.SerializationError('rooms_count is required but absent.')
-
-		if record.body.total_area is None:
-			raise self.SerializationError('total_area is required but absent.')
+		if record.body.area is None:
+			raise self.SerializationError('area is required but absent.')
 
 
 		data = [
@@ -5191,7 +5050,10 @@ class LandsMarkersManager(BaseMarkersManager):
 
 
 	def deserialize_marker_data(self, data):
-		data = json.loads(data.replace('t', 'true').replace('f', 'false'))
+		# Кома в строках заміни обов’язкова,
+		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
+		# що приводить до збоїв на фронті.
+		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {

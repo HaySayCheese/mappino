@@ -22,6 +22,7 @@ FILTERS_PARSERS =  {
 	OBJECTS_TYPES.apartments(): parse_apartments_filters,
 	OBJECTS_TYPES.cottage(): parse_cottages_filters,
 	OBJECTS_TYPES.room(): parse_rooms_filters,
+
 	OBJECTS_TYPES.trade(): parse_trades_filters,
 	OBJECTS_TYPES.office(): parse_offices_filters,
 	OBJECTS_TYPES.warehouse(): parse_warehouses_filters,
@@ -68,7 +69,7 @@ get_codes = {
 	},
 }
 @require_http_methods('GET')
-@condition(etag_func=get_markers_etag)
+# @condition(etag_func=get_markers_etag)
 def markers(request):
 	# todo: rewrite in view style
 	try:
