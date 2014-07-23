@@ -1,87 +1,87 @@
 #coding=utf-8
-
 import os
 from mappino import passwords
 from psycopg2cffi import compat
 
 
-# https://docs.djangoproject.com/en/1.6/topics/settings/
-
-
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
-SMS_DEBUG = False
+SMS_DEBUG = DEBUG
 
-
-ALLOWED_HOSTS = ['mappino.com', 'mappino.com.ua']
-
-SECRET_KEY = 'CpOFHrZ9x696TkKFIfj5-paHVO24I60nDJ9YsFkpO'
-SMS_GATE_LOGIN = passwords.SMS_GATE_LOGIN
-SMS_GATE_PASSWORD = passwords.SMS_GATE_PASSWORD
-MANDRILL_API_KEY = passwords.MANDRILL_API_KEY
-
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # pypy psycopg2cffi compatible hook
 compat.register()
 
-# Визначає домен, який точно може забезпечити роботу всіх посилань.
-# Як правило, це який-небудь міжнародний домен типу .com.
-# Застосовується, між іншим, у формуванні посилань в шаблонах емейл-повідомлень.
+
+SECRET_KEY = passwords.SECRET_KEY
+SMS_GATE_LOGIN = passwords.SMS_GATE_LOGIN
+SMS_GATE_PASSWORD = passwords.SMS_GATE_PASSWORD
+MANDRILL_API_KEY = passwords.MANDRILL_API_KEY
+
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+ESTIMATE_THREADS_COUNT = 2
+
+
+ALLOWED_HOSTS = ['mappino.com', 'mappino.com.ua']
+
+# Визначає домен, що може бути використаний під час формування посилань.
+# Використовується для всіх посилань будь-якої доменної зони,
+# тому є зміст обрати для цього параметру міжнародний домен .com
 REDIRECT_DOMAIN = 'http://mappino.com'
 
+# Визначає ел. адресу, на яку приходять всі листи в сапорт.
+# На даний момент адреса одна і балансування немає
+SUPPORT_EMAIL = 'support@mappino.com'
 
-EVE_M1_IP = '10.129.177.252' # internal
-HUL_M1_IP = '10.129.178.15' # internal
 
-
-ESTIMATE_THREADS_COUNT = 2
+EVE_M1_INTERNAL_IP = '10.129.177.252'
+HUL_M1_INTERNAL_IP = '10.129.178.15'
 DATABASES = {
 	'default': {
 		'ENGINE':'django.db.backends.postgresql_psycopg2',
 		'NAME': 'mappino-db',
 		'USER': 'mappino',
 		'PASSWORD': passwords.DB_PASSWORD,
-		'HOST': EVE_M1_IP,
+		'HOST': EVE_M1_INTERNAL_IP,
 	    'PORT': 6432,
 	}
 }
-
-
-
 REDIS_DATABASES = {
 	'throttle': {
-		'HOST': HUL_M1_IP,
+		'HOST': HUL_M1_INTERNAL_IP,
 	    'PORT': 6379,
 	},
     'steady': {
-	    'HOST': HUL_M1_IP,
+	    'HOST': HUL_M1_INTERNAL_IP,
 	    'PORT': 6379,
     },
     'celery': {
-	    'HOST': HUL_M1_IP,
+	    'HOST': HUL_M1_INTERNAL_IP,
 	    'PORT': 6379,
     },
     'sessions': {
-	    'HOST': HUL_M1_IP,
+	    'HOST': HUL_M1_INTERNAL_IP,
 	    'PORT': 6379,
     },
     'cache': {
-	    'HOST': HUL_M1_IP,
-	    'PORT': 6380, # redis-cache
+	    'HOST': HUL_M1_INTERNAL_IP,
+	    'PORT': 6380, # NOTE: redis-cache is on the different port
     },
 }
 SPHINX_SEARCH = {
-	'HOST': HUL_M1_IP,
+	'HOST': HUL_M1_INTERNAL_IP,
     'PORT': 9306
 }
 CACHES = {
 	'default': {
-		# Даний кеш використовується django-compressor для зберігання імен зжатих файлів.
-		# Явної настройки для цього указувати не треба.
+		# Даний кеш нуявно використовується django-compressor для зберігання імен опрацьованих файлів.
 
 		'BACKEND': 'redis_cache.RedisCache',
-	    'LOCATION': '{0}:{1}'.format(REDIS_DATABASES['cache']['HOST'], REDIS_DATABASES['cache']['PORT']),
+	    'LOCATION': '{0}:{1}'.format(
+		    REDIS_DATABASES['cache']['HOST'],
+		    REDIS_DATABASES['cache']['PORT']
+	    ),
 	    'OPTIONS': {
 		    'DB': 0,
 	        'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
@@ -92,18 +92,14 @@ CACHES = {
 	    }
 	}
 }
-
-SESSION_COOKIE_AGE = 1209600
-
-# celery config
-CELERY_REDIS_HOST = REDIS_DATABASES['celery']['HOST']
-CELERY_REDIS_PORT = REDIS_DATABASES['celery']['PORT']
-BROKER_URL = 'redis://' + str(CELERY_REDIS_HOST) + ':' + str(CELERY_REDIS_PORT) + '/0'
-BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 60*60*4}
+BROKER_URL = 'redis://{0}:{1}/0'.format(
+	REDIS_DATABASES['celery']['HOST'],
+	REDIS_DATABASES['celery']['PORT']
+)
+BROKER_TRANSPORT_OPTIONS = {
+	'visibility_timeout': 60*60*4
+}
 CELERY_RESULT_BACKEND = BROKER_URL
-
-
-SUPPORT_EMAIL = 'support@mappino.com'
 
 
 INSTALLED_APPS = (
@@ -132,11 +128,13 @@ MIDDLEWARE_CLASSES = (
     'middlewares.auto_prolong_session.AutoProlongSession', # custom
 )
 
+
 ROOT_URLCONF = 'mappino.urls'
 WSGI_APPLICATION = 'mappino.wsgi.application'
 
 AUTH_USER_MODEL = 'users.Users'
 SESSION_COOKIE_HTTPONLY = False
+SESSION_COOKIE_AGE = 1209600
 
 
 USE_I18N = False
