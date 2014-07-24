@@ -27,6 +27,11 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
             $rootScope.loadings.tickets = false;
 
             $scope.tickets = data;
+
+            ga('send', 'pageview', {
+                'page': '/cabinet/#!/support/',
+                'title': $rootScope.pageTitle
+            });
         });
     }
 
@@ -42,6 +47,11 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
             $scope.subject = data.subject;
             $scope.admin_avatar = data.admin_avatar;
             $scope.user_avatar = data.user_avatar;
+
+            ga('send', 'pageview', {
+                'page': '/cabinet/#!/support/ticket/' + $routeParams.ticketId,
+                'title': $rootScope.pageTitle
+            });
         });
     }
 
