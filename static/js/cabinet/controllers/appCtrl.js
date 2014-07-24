@@ -2,11 +2,6 @@
 
 app.controller('AppCtrl', function($scope, $rootScope, $routeParams, $location, Settings) {
 
-    Object.defineProperty(console, '_commandLineAPI', {
-        get : function() {
-            throw 'Kein Zugriff!'
-        }
-    });
 
     $rootScope.publicationsCount = {
         all: 0,
