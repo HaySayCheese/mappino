@@ -3,7 +3,7 @@
 app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, $location, Account) {
 
     $scope.userName = "";
-    $scope.sidebarIsVisible = true;
+    $rootScope.sidebarIsVisible = true;
 
     getUserName();
 
@@ -11,8 +11,8 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, $
     $scope.$on("$routeChangeSuccess", function(event, current) {
         if (current.$$route.originalPath)
             (current.$$route.originalPath === "/first-enter") ?
-                $scope.sidebarIsVisible = false :
-                $scope.sidebarIsVisible = true;
+                $rootScope.sidebarIsVisible = false :
+                $rootScope.sidebarIsVisible = true;
     });
 
 
