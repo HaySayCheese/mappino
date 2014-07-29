@@ -421,7 +421,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Функція яка ініціює загрузку даних
      */
     function loadData(filters, panel, timeout) {
-        if ($rootScope.subdommain.length && $scope.filters.map.zoom < 15)
+        if ($rootScope.subdommain.length)
             return;
 
         $timeout(function() {
