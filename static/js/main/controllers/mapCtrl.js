@@ -245,7 +245,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
             mapIsLoaded = true;
 
-            if ($scope.filters.map.zoom < 15 && !$rootScope.subdommain) {
+            if (/*$scope.filters.map.zoom < 15 && */!$rootScope.subdommain) {
                 Markers.clearPanelMarkers("red");
                 Markers.clearPanelMarkers("blue");
                 Markers.clearPanelMarkers("green");
