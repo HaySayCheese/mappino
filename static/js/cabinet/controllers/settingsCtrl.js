@@ -9,6 +9,11 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
     initInputsChange();
     initDropdowns();
 
+    ga('send', 'pageview', {
+        'page': '/cabinet/#!/settings/',
+        'title': $rootScope.pageTitle
+    });
+
 
     Settings.load(function(data) {
         $scope.user = data;
