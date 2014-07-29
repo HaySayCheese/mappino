@@ -245,14 +245,14 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
             mapIsLoaded = true;
 
-            if (/*$scope.filters.map.zoom < 15 && */!$rootScope.subdommain) {
-                Markers.clearPanelMarkers("red");
-                Markers.clearPanelMarkers("blue");
-                Markers.clearPanelMarkers("green");
-                Markers.clearPanelMarkers("yellow");
-
-                return;
-            }
+//            if ($scope.filters.map.zoom < 15 && !$rootScope.subdommain) {
+//                Markers.clearPanelMarkers("red");
+//                Markers.clearPanelMarkers("blue");
+//                Markers.clearPanelMarkers("green");
+//                Markers.clearPanelMarkers("yellow");
+//
+//                return;
+//            }
 
             loadData($scope.filters.red, "red", false);
             loadData($scope.filters.blue, "blue", false);
