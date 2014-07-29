@@ -1,6 +1,7 @@
 #coding=utf-8
 import copy
 import json
+from django.http.response import HttpResponseRedirect
 
 from apps.classes import AnonymousOnlyView, AuthenticatedOnlyView
 from collective.methods.request_data_getters import angular_post_parameters
@@ -465,7 +466,7 @@ class AccessRestoreManager(object):
 			html = templates.get_template('email/access_restore/new_token.html').render({
 				'token_url': '{domain}{url}?token={token_id}'.format(
 					domain = settings.REDIRECT_DOMAIN,
-				    url = '#!/account/restore-access',
+				    url = '/accounts/access-restore/redirect/',
 				    token_id = record.token
 				)
 			})
@@ -476,6 +477,28 @@ class AccessRestoreManager(object):
 			)
 
 			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
+
+
+	class RedirectFromEmail(AnonymousOnlyView):
+		"""
+		На деяких поштових клієнтах посилання виду "#!..." заміняються на "#%21...",
+		тому посилання на відновлення паролю не працює з цих поштовиків.
+
+		Даний клас забезпечує коректний HTTP-редірект на ajax-діалог на фронті.
+		Посилання на дану в’юху кидається в листі на віднолення паролю.
+		"""
+		def get(self, request):
+			token = request.GET.get('token')
+			if not token:
+				return HttpResponseBadRequest('Invalid request token.')
+
+
+			url = '{domain}{url}?token={token_id}'.format(
+				domain = settings.REDIRECT_DOMAIN,
+				url = '#!/account/restore-access',
+				token_id = token
+			)
+			return HttpResponseRedirect(url, content='Перенаправление...')
 
 
 	class Check(AnonymousOnlyView):

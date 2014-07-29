@@ -8,7 +8,7 @@ urlpatterns = patterns('apps',
 
 
     # API for main pages
-    url(r'', include('core.users.ajax_urls')), # registration, login and password reset
+    url(r'', include('apps.main.api.accounts.urls')),
     url(r'', include('apps.main.api.ajax_urls')),
 
 
