@@ -270,10 +270,8 @@ class BaseMarkersManager(object):
 				# Таким чином можна уберегтись від занадто великих транзакцій (ddos),
 				# накопичування занадто великих обсягів даних в пам’яті та
 				# занадто великої к-сті запитів від інших користувачів в черзі на обробку.
-
-				# ToDo: enable me back
-				# if len(digests) > 300:
-				# 	raise self.TooBigTransaction()
+				if len(digests) > 300:
+					raise self.TooBigTransaction()
 
 				if (current.degree.lng == stop.degree.lng) and (current.segment.lng == stop.segment.lng):
 					break
