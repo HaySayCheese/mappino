@@ -1,14 +1,16 @@
 'use strict';
 
-app.controller('SupportCtrl', function($scope, $location, $rootScope, $routeParams, Support) {
+app.controller('SupportCtrl', function($scope, $location, $rootScope, $routeParams, $timeout, Support) {
 
     $rootScope.pageTitle = "Поддержка - Mappino";
     $scope.supportPage = true;
     $rootScope.loadings.tickets    = false;
     $rootScope.loadings.ticketData = false;
 
-    $scope.message = {};
-    $scope.subject = "";
+    $scope.message = {
+        subject: null,
+        message: null
+    };
     $scope.admin_avatar = {};
     $scope.user_avatar = {};
 
@@ -44,7 +46,7 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
             $rootScope.loadings.ticketData = false;
 
             $scope.messages = data.messages;
-            $scope.subject = data.subject;
+            $scope.message.subject = data.subject;
             $scope.admin_avatar = data.admin_avatar;
             $scope.user_avatar = data.user_avatar;
 
@@ -71,9 +73,6 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
 
 
     $scope.sendMessage = function() {
-        if ($scope.messages.length)
-            delete $scope.message.subject;
-
         var btn = angular.element(".ticket-send-btn").button("loading");
 
         Support.sendMessage($routeParams.ticketId, $scope.message, function(data) {
@@ -84,7 +83,14 @@ app.controller('SupportCtrl', function($scope, $location, $rootScope, $routePara
             });
 
             btn.button("reset");
-            $scope.message = {};
+
+            $timeout(function() {
+                $scope.message.message = "";
+            }, 50);
+
+
+            if (!$scope.$$phase)
+                $scope.$apply();
         });
     };
 

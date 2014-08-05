@@ -2,10 +2,10 @@
     <div class="row">
         <div class="col-sm-12 support-message-form">
             <input class="form-control form-group" type="text" name="subject" placeholder="Тема" ng-hide="messages.length" ng-model="message.subject"/>
-            <div class="h4 form-group" ng-show="subject">Тема: [[ subject ]]</div>
+            <div class="h4 form-group" ng-show="messages.length">Тема: [[ message.subject ]]</div>
 
             <textarea class="form-control form-group" name="message" rows="3" placeholder="Текст сообщения" ng-model="message.message"></textarea>
-            <div class="btn btn-primary pull-right ticket-send-btn" ng-disabled="!message.message" data-loading-text="Отправка данных..."  ng-click="sendMessage()">Отправить сообщение</div>
+            <div class="btn btn-primary pull-right ticket-send-btn" ng-disabled="!message.message && !message.subject" data-loading-text="Отправка данных..."  ng-click="sendMessage()">Отправить сообщение</div>
         </div>
     </div>
 
