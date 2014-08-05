@@ -5,11 +5,8 @@ from psycopg2cffi import compat
 
 from mappino import passwords
 
-# from mappino.wsgi import env
-
 
 compat.register() # cffi hook
-# import compressor.contrib.jinja2ext
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -18,6 +15,8 @@ SMS_DEBUG = DEBUG
 TEMPLATE_DEBUG = DEBUG
 ENABLE_SPHINX_SEARCH = not DEBUG
 
+
+SERVE_STATIC_FILES = False
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
