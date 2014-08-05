@@ -120,7 +120,7 @@ INSTALLED_APPS = (
 	'core.markers_servers',
 	'core.search',
 	'core.support',
-	'core.se_digests_manager',
+	'core.escaped_fragments_manager',
 
 	'apps.cabinet.api.dirtags',
 	'apps.main.api.correspondence',

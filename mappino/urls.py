@@ -33,5 +33,5 @@ urlpatterns = patterns('apps',
 
 
     # core ulrs
-    url(r'', include('core.se_digests_manager.urls')),
+    url(r'', include('core.escaped_fragments_manager.urls')),
 )

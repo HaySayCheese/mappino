@@ -1,6 +1,6 @@
 from django.dispatch import receiver
 from core.publications import models_signals
-from core.se_digests_manager.models import SEIndexerQueue
+from core.escaped_fragments_manager.models import SEIndexerQueue
 
 
 

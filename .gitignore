@@ -8,5 +8,9 @@ mappino/keys/*
 static/CACHE
 static/CACHE/*
 
+static/escaped_fragments
+static/escaped_fragments/*
+
+
 *.pyc
 *.log
