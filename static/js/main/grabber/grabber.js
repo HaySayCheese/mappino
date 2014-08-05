@@ -15,45 +15,80 @@ var Grabber = {
 
     viewPage: function() {
         var self = this,
-            urls = this.getUrls();
+            urls = [];
 
-        for (var i = 0; i <= urls.length - 1; i++) {
-            var interval = null;
-            window.location = urls[i];
+        this.getUrls(function(data) {
+            urls = data;
+            console.log(urls);
 
 
-            (function(_interval) {
-                var repeatCount = 9;
+            for (var i = 0; i < urls.length; i++) {
+                var interval = null;
+                window.location = "http://127.0.0.1:8000/#!/publication/" + urls[i] + "/";
 
-                _interval = setInterval(function () {
-                    console.log(repeatCount);
 
-                    if (repeatCount == self.maxRepeatCount) {
-                        window.clearInterval(_interval);
-                    }
+                (function(_interval, urls, i) {
+                    var repeatCount = 9;
 
-                    if ($(self.modalContentClass).length) {
-                        self.parse($("body"));
+                    _interval = setInterval(function () {
+                        console.log(repeatCount);
 
-                        window.clearInterval(_interval);
-                    }
+                        if (repeatCount == self.maxRepeatCount) {
+                            window.clearInterval(_interval);
+                        }
 
-                    repeatCount++;
-                }, self.repeatInterval);
-            })(interval);
-        }
+                        if ($(self.modalContentClass).length) {
+                            self.parse(urls[i].split(":")[0], urls[i].split(":")[1], $("html"));
+
+                            window.clearInterval(_interval);
+                        }
+
+                        repeatCount++;
+                    }, self.repeatInterval);
+                })(interval, urls, i);
+            }
+        });
     },
 
 
-    parse: function(data) {
-        console.log($(data).find(this.modalContentClass))
+    parse: function(tid, hid, data) {
+        var self = this;
+
+        self.sendHtml(tid, hid, $(data).html())
     },
 
 
-    getUrls: function() {
-        return [
-            'http://mappino.com.ua/#!/publication/0:bc047e4cd3ce466391e95f0e4e79cc98'
-        ]
+    sendHtml: function(tid, hid, data) {
+        $.ajax({
+            type: "POST",
+            url: "/ajax/api/grabber/iMvorMXScUgbbDGuJGCbnTnQwPRFKk/",
+            data: {
+                tid: tid,
+                hash_id: hid,
+                html: data
+            },
+            success: function(data) {
+                console.log("ok")
+            }
+        });
+    },
+
+
+    getUrls: function(callback) {
+        var urls = [];
+
+        $.ajax({
+            type: "GET",
+            url: "/ajax/api/grabber/iMvorMXScUgbbDGuJGCbnTnQwPRFKk/",
+            success: function(data) {
+                console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    urls.push(data[i][0] + ":" + data[i][1]);
+                }
+
+                callback(urls);
+            }
+        });
     }
 
 };
