@@ -1,9 +1,4 @@
 /* TEAM */
     Back-end developer: Dmitriy Chizhevsky
     Front-end developer: Sergei Meketyuk
-    -- : Vitaliy Pavlinsky
-
-
-
-/* SITE */
-    Components: Modernizr, jQuery, Less, AngularJs
+    Creative ideas and marketing: Vitaliy Pavlinsky
