@@ -9,6 +9,19 @@ TEMPLATE_DEBUG = DEBUG
 SMS_DEBUG = DEBUG
 
 
+ADMINS = (
+	('Dima Chizhevsky', 'dima@mappino.com'),
+)
+MANAGERS = ADMINS
+
+EMAIL_HOST = 'smtp.mandrillapp.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'Dima.Chizhevsky@gmail.com'
+EMAIL_HOST_PASSWORD = passwords.MANDRILL_API_KEY
+EMAIL_USE_TLS = True
+SERVER_EMAIL = 'wall-e@mappino.com'
+
+
 # pypy psycopg2cffi compatible hook
 compat.register()
 
@@ -119,6 +132,8 @@ INSTALLED_APPS = (
 	'apps.main.api.correspondence',
 )
 MIDDLEWARE_CLASSES = (
+	'django.middleware.common.BrokenLinkEmailsMiddleware',
+
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'django.middleware.common.CommonMiddleware',
 	# 'django.middleware.csrf.CsrfViewMiddleware', # todo: enable csrf
@@ -153,50 +168,3 @@ MEDIA_ROOT = 'media/'
 
 COMPRESS_ENABLED = True
 COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
-
-
-# todo: check me
-LOGGING = {
-	'version': 1,
-	'disable_existing_loggers': True,
-	'formatters': {
-		'simple': {
-			'format': '%(levelname)s: %(asctime)s - %(message)s',
-		    'datefmt': '%Y-%m-%d %H:%M:%S'
-			},
-		},
-	'handlers': {
-		'mail_admins': {
-			'level': 'WARNING',
-			'class': 'django.utils.log.AdminEmailHandler',
-		},
-	    'sms_dispatcher_limits_file': {
-			'level': 'INFO',
-	        'class': 'logging.handlers.TimedRotatingFileHandler',
-	        'filename': 'logs/sms_dispatcher/limits.log',
-	        'when': 'W6',
-	        'backupCount': 24,
-	        'formatter': 'simple'
-	    },
-	    'sms_dispatcher_sender_file': {
-			'level': 'INFO',
-	        'class': 'logging.handlers.TimedRotatingFileHandler',
-	        'filename': 'logs/sms_dispatcher/sended.log',
-	        'when': 'D',
-	        'backupCount': 60,
-	        'formatter': 'simple'
-	    },
-	},
-	'loggers': {
-		'mappino.sms_dispatcher.limits': {
-			'handlers': ['sms_dispatcher_limits_file', 'mail_admins'],
-			'level': 'INFO',
-		    'propagate': False,
-		},
-	    'mappino.sms_dispatcher.sender': {
-			'handlers': ['sms_dispatcher_sender_file', 'mail_admins'],
-			'level': 'INFO',
-		    'propagate': False,
-		},
-	}
-}
