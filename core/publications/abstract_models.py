@@ -275,6 +275,9 @@ class AbstractHeadModel(models.Model):
 			self.save()
 
 
+		models_signals.published.send(sender=None, tid=self.tid, hid=self.id, hash_id=self.hash_id)
+
+
 	def unpublish(self):
 		# Moves the publication to unpublished publications.
 		#

@@ -30,4 +30,8 @@ urlpatterns = patterns('apps',
 
 
     url(r'^cabinet/$', 'cabinet.views.main'),
+
+
+    # core ulrs
+    url(r'', include('core.se_digests_manager.urls')),
 )

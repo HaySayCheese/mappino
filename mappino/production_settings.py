@@ -122,11 +122,13 @@ INSTALLED_APPS = (
 	'django.contrib.contenttypes',
 	'django.contrib.sessions',
 
+	'core',
 	'core.users',
 	'core.publications',
 	'core.markers_servers',
 	'core.search',
 	'core.support',
+	'core.se_digests_manager',
 
 	'apps.cabinet.api.dirtags',
 	'apps.main.api.correspondence',

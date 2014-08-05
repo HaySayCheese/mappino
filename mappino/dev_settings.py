@@ -114,11 +114,13 @@ INSTALLED_APPS = (
 	'django.contrib.contenttypes',
 	'django.contrib.sessions',
 
+	'core',
 	'core.users',
 	'core.publications',
 	'core.markers_servers',
 	'core.search',
 	'core.support',
+	'core.se_digests_manager',
 
 	'apps.cabinet.api.dirtags',
 	'apps.main.api.correspondence',
@@ -168,48 +170,3 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'compressor.finders.CompressorFinder',
 )
-
-LOGGING = {
-	'version': 1,
-	'disable_existing_loggers': True,
-	'formatters': {
-		'simple': {
-			'format': '%(levelname)s: %(asctime)s - %(message)s',
-		    'datefmt': '%Y-%m-%d %H:%M:%S'
-			},
-		},
-	'handlers': {
-		'mail_admins': {
-			'level': 'WARNING',
-			'class': 'django.utils.log.AdminEmailHandler',
-		},
-	    'sms_dispatcher_limits_file': {
-			'level': 'INFO',
-	        'class': 'logging.handlers.TimedRotatingFileHandler',
-	        'filename': 'logs/sms_dispatcher/limits.log',
-	        'when': 'W6',
-	        'backupCount': 24,
-	        'formatter': 'simple'
-	    },
-	    'sms_dispatcher_sender_file': {
-			'level': 'INFO',
-	        'class': 'logging.handlers.TimedRotatingFileHandler',
-	        'filename': 'logs/sms_dispatcher/sended.log',
-	        'when': 'D',
-	        'backupCount': 60,
-	        'formatter': 'simple'
-	    },
-	},
-	'loggers': {
-		'mappino.sms_dispatcher.limits': {
-			'handlers': ['sms_dispatcher_limits_file', 'mail_admins'],
-			'level': 'INFO',
-		    'propagate': False,
-		},
-	    'mappino.sms_dispatcher.sender': {
-			'handlers': ['sms_dispatcher_sender_file', 'mail_admins'],
-			'level': 'INFO',
-		    'propagate': False,
-		},
-	}
-}
