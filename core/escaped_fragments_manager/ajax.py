@@ -1,7 +1,9 @@
+#coding=utf-8
 import gzip
 import json
 
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.views.generic import View
 import os
@@ -33,6 +35,11 @@ class GrabberView(View):
 		hash_id = request.POST['hash_id']
 
 
+		try:
+			record_queue = SEIndexerQueue.objects.get(tid=tid, hash_id=hash_id)
+		except ObjectDoesNotExist:
+			return HttpResponseBadRequest('No such record in queue.')
+
 		path = os.path.join(settings.BASE_DIR, 'static', 'escaped_fragments', 'publication')
 		if not os.path.exists(path):
 			os.makedirs(path)
@@ -40,6 +47,12 @@ class GrabberView(View):
 		digest = gzip.open(path + '/{0}:{1}.gz'.format(tid, hash_id), 'w', 8)
 		digest.write(html.encode("utf-8"))
 		digest.close()
+
+		original = open(path + '/{0}:{1}'.format(tid, hash_id), 'w')
+		original.write(html.encode("utf-8"))
+		original.close()
+
+		# record_queue.delete()
 
 		return HttpResponse()
 
