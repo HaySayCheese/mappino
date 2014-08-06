@@ -54,7 +54,6 @@ var Grabber = {
 
 
     sendHtml: function(tid, hid, data) {
-        console.log($(data).find(".property-price").text())
         $.ajax({
             type: "POST",
             url: "/ajax/api/grabber/iMvorMXScUgbbDGuJGCbnTnQwPRFKk/",
