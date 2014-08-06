@@ -16,9 +16,15 @@ class SitemapView(View):
 		urlset.attrib['xmlns'] = "http://www.sitemaps.org/schemas/sitemap/0.9"
 
 
-		# todo: додати посилання на домашню сторінку
-		self.__add_url(urlset, "{domain}/promo/".format(domain=settings.MAIN_DOMAIN), priority='0.7')
-		self.__add_url(urlset, "{domain}/promo/realtors/".format(domain=settings.MAIN_DOMAIN), priority='0.8')
+		domain = settings.MAIN_DOMAIN
+
+		self.__add_url(urlset, "{domain}/#!/first-enter/".format(domain=domain), priority='0.9')
+
+		self.__add_url(urlset, "{domain}/#!/account/login/".format(domain=domain), priority='0.7')
+		self.__add_url(urlset, "{domain}/#!/account/registration/".format(domain=domain), priority='0.7')
+
+		self.__add_url(urlset, "{domain}/promo/".format(domain=domain), priority='0.8')
+		self.__add_url(urlset, "{domain}/promo/realtors/".format(domain=domain), priority='0.8')
 
 
 		# inserting publication's urls into sitemap.xml
@@ -29,7 +35,7 @@ class SitemapView(View):
 			break
 
 		for filename in files:
-			loc = "{domain}/#!/publication/{0}/".format(filename[:-3], domain=settings.MAIN_DOMAIN)
+			loc = "{domain}/#!/publication/{0}/".format(filename[:-3], domain=domain)
 			lastmod = time.strftime('%Y-%m-%d', time.gmtime(os.path.getmtime(os.path.join(fragments_root, filename))))
 			changefreq = 'monthly'
 			priority = '0.5'
