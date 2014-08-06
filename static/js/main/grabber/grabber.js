@@ -28,7 +28,7 @@ var Grabber = {
 
 
                 (function(_interval, urls, i) {
-                    var repeatCount = 9;
+                    var repeatCount = 0;
 
                     _interval = setInterval(function () {
                         console.log(repeatCount);
@@ -37,7 +37,7 @@ var Grabber = {
                             window.clearInterval(_interval);
                         }
 
-                        if ($(self.modalContentClass).length) {
+                        if ($(self.modalContentClass).find(".publication-content-header span").text().length) {
                             self.parse(urls[i].split(":")[0], urls[i].split(":")[1], $("html"));
 
                             window.clearInterval(_interval);
