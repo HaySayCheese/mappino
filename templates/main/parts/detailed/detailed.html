@@ -4,14 +4,14 @@
 
 
         <div class="modal-content content-white photos-modal" ng-switch-when="Photos">
-            <div id="publication-view-carousel" class="carousel slide" data-ride="carousel" ng-init="publication.head.photos.length">
+            <div id="publication-view-carousel" class="carousel slide" data-ride="carousel" ng-init="publication.head.photos.length" itemscope itemtype="http://schema.org/Place">
 
                 <ol class="carousel-indicators">
                     <li ng-repeat="photo in publication.head.photos" data-target="#publication-view-carousel" data-slide-to="[[ $index ]]" ng-class="{ active : $first }"></li>
                 </ol>
 
-                <div class="carousel-inner">
-                    <div class="item" ng-repeat="photo in publication.head.photos" ng-class="{ active : $first }">
+                <div class="carousel-inner" itemscope itemtype="http://schema.org/ImageObject">
+                    <div class="item" ng-repeat="photo in publication.head.photos" ng-class="{ active : $first }" itemprop="photos">
                         <img ng-src="[[ photo ]]">
                     </div>
                 </div>
@@ -130,8 +130,8 @@
                     <div class="publication-loading" ng-hide="publicationLoaded"></div>
 
                     <div ng-switch-when="Description" ng-show="publicationLoaded">
-                        <div class="description" ng-show="publication.data.description">
-                            [[ publication.data.description ]]
+                        <div itemscope itemtype="http://schema.org/Thing" class="description" ng-show="publication.data.description">
+                            <span itemprop="description">[[ publication.data.description ]]</span>
                         </div>
                         <div class="properties">
                             <div class="left">
