@@ -5,56 +5,49 @@
  */
 var Grabber = {
     modalContentClass: ".publication-view-modal .modal-content",
-    maxRepeatCount: 10,
-    repeatInterval: 1000,
+    modalContentLoaderClass: ".publication-loading",
 
     init: function() {
-        this.viewPage();
+        this.getUrls();
     },
 
 
-    viewPage: function() {
-        var self = this,
-            urls = [];
-
-        this.getUrls(function(data) {
-            urls = data;
-            console.log(urls);
-
-
-            for (var i = 0; i < urls.length; i++) {
-                var interval = null;
-                window.location = "http://127.0.0.1:8000/#!/publication/" + urls[i] + "/";
-
-
-                (function(_interval, urls, i) {
-                    var repeatCount = 0;
-
-                    _interval = setInterval(function () {
-                        console.log(repeatCount);
-
-                        if (repeatCount == self.maxRepeatCount) {
-                            window.clearInterval(_interval);
-                        }
-
-                        if ($(self.modalContentClass).find(".publication-content-header span").text().length) {
-                            self.parse(urls[i].split(":")[0], urls[i].split(":")[1], $("html"));
-
-                            window.clearInterval(_interval);
-                        }
-
-                        repeatCount++;
-                    }, self.repeatInterval);
-                })(interval, urls, i);
-            }
-        });
-    },
-
-
-    parse: function(tid, hid, data) {
+    viewPage: function(urls) {
         var self = this;
 
-        self.sendHtml(tid, hid, $(data).html())
+
+        for (var i = 0; i < urls.length; i++) {
+            (function(i) {
+                setTimeout(function () {
+                    window.location = "http://127.0.0.1:8000/#!/publication/" + urls[i] + "/";
+
+                    var tid = urls[i].split(":")[0],
+                        hid = urls[i].split(":")[1],
+                        html = $("html");
+
+                    setTimeout(function() {
+                        self.tryGetHtml(tid, hid, html);
+                    }, 2000);
+                }, 3000 * i);
+            })(i);
+        }
+    },
+
+
+    tryGetHtml: function(tid, hid, html) {
+        var self = this;
+
+        setTimeout(function() {
+            if (self.contentIsLoading()) {
+                self.sendHtml(tid, hid, $(html).html());
+            }
+        }, 2000)
+    },
+
+    contentIsLoading: function() {
+        var self = this;
+
+        return $(self.modalContentClass).find(self.modalContentLoaderClass).hasClass("ng-hide");
     },
 
 
@@ -68,25 +61,27 @@ var Grabber = {
                 html: data
             },
             success: function(data) {
-                console.log("ok")
+                console.info(tid + ":" + hid + " - parsed!");
             }
         });
     },
 
 
-    getUrls: function(callback) {
-        var urls = [];
+    getUrls: function() {
+        var self = this,
+            urls = [];
 
         $.ajax({
             type: "GET",
             url: "/ajax/api/grabber/iMvorMXScUgbbDGuJGCbnTnQwPRFKk/",
             success: function(data) {
-                console.log(data);
+                console.log("Received " + data.length + " urls.");
+
                 for (var i = 0; i < data.length; i++) {
                     urls.push(data[i][0] + ":" + data[i][1]);
                 }
 
-                callback(urls);
+                self.viewPage(urls);
             }
         });
     }
