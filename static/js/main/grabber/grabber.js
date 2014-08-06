@@ -25,23 +25,29 @@ var Grabber = {
                         hid = urls[i].split(":")[1],
                         html = $("html");
 
-                    setTimeout(function() {
-                        self.tryGetHtml(tid, hid, html);
-                    }, 2000);
+                    self.tryGetHtml(tid, hid, html, i, urls.length);
                 }, 3000 * i);
             })(i);
+
+
         }
     },
 
 
-    tryGetHtml: function(tid, hid, html) {
+    tryGetHtml: function(tid, hid, html, i, length) {
         var self = this;
 
         setTimeout(function() {
             if (self.contentIsLoading()) {
                 self.sendHtml(tid, hid, $(html).html());
+            } else {
+                self.tryGetHtml(tid, hid, html);
             }
-        }, 2000)
+        }, 2000);
+
+        // Наступний запит за порцією урлів
+//        if ((i + 1) === length)
+//            self.init();
     },
 
     contentIsLoading: function() {
@@ -79,6 +85,11 @@ var Grabber = {
 
                 for (var i = 0; i < data.length; i++) {
                     urls.push(data[i][0] + ":" + data[i][1]);
+                }
+
+                if (!urls.length) {
+                    console.info("All urls parsed!");
+                    return;
                 }
 
                 self.viewPage(urls);
