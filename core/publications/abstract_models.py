@@ -202,6 +202,11 @@ class AbstractHeadModel(models.Model):
 		return query
 
 
+	@classmethod
+	def all_published(cls):
+		return cls.objects.filter(state_sid=OBJECT_STATES.published())
+
+
 	def set_lat_lng(self, lat_lng):
 		if not lat_lng or lat_lng is None:
 			# clearing the coordinates
