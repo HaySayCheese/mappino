@@ -1,7 +1,7 @@
 #coding=utf-8
 import copy
 import json
-import mmh3
+# import mmh3
 
 import abc
 from django.core.exceptions import SuspiciousOperation
@@ -212,15 +212,16 @@ class BaseMarkersManager(object):
 		 	sw: (South West) Point з координатами південно-східного кута в’юпорта.
 		"""
 
-		pipe = self.redis.pipeline()
-		for digest in self.__segments_digests(ne, sw):
-			pipe.hget(self.segments_hashes_prefix, digest)
-
-		key = 0
-		for segment_data in pipe.execute():
-			if segment_data is not None:
-				key += mmh3.hash(str(segment_data))
-		return str(mmh3.hash(str(key)))
+		# pipe = self.redis.pipeline()
+		# for digest in self.__segments_digests(ne, sw):
+		# 	pipe.hget(self.segments_hashes_prefix, digest)
+		#
+		# key = 0
+		# for segment_data in pipe.execute():
+		# 	if segment_data is not None:
+		# 		key += mmh3.hash(str(segment_data))
+		# return str(mmh3.hash(str(key)))
+		pass
 
 
 	def __segments_digests(self, ne, sw):
@@ -331,12 +332,13 @@ class BaseMarkersManager(object):
 		Новий хеш вираховується за формулою h = hash(попередній хеш + record_id)
 		"""
 
-		current_hash = self.redis.hget(self.segments_hashes_prefix, digest)
-		if current_hash is None:
-			current_hash = ''
-
-		segment_hash = mmh3.hash(current_hash + str(record_id))
-		self.redis.hset(self.segments_hashes_prefix, digest, segment_hash)
+		# current_hash = self.redis.hget(self.segments_hashes_prefix, digest)
+		# if current_hash is None:
+		# 	current_hash = ''
+		#
+		# segment_hash = mmh3.hash(current_hash + str(record_id))
+		# self.redis.hset(self.segments_hashes_prefix, digest, segment_hash)
+		pass
 
 
 	@staticmethod
