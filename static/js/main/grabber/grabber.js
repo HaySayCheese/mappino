@@ -12,42 +12,38 @@ var Grabber = {
     },
 
 
-    viewPage: function(urls) {
+    viewPage: function(urls, i) {
         var self = this;
 
+        window.location = "http://127.0.0.1:8000/#!/publication/" + urls[i] + "/";
 
-        for (var i = 0; i < urls.length; i++) {
-            (function(i) {
-                setTimeout(function () {
-                    window.location = "http://127.0.0.1:8000/#!/publication/" + urls[i] + "/";
-
-                    var tid = urls[i].split(":")[0],
-                        hid = urls[i].split(":")[1],
-                        html = $("html");
-
-                    self.tryGetHtml(tid, hid, html, i, urls.length);
-                }, 3000 * i);
-            })(i);
+        var tid = urls[i].split(":")[0],
+            hid = urls[i].split(":")[1];
 
 
-        }
+        self.tryGetHtml(tid, hid, function() {
+            i++;
+
+            if (i == urls.length)
+                return;
+
+            self.viewPage(urls, i);
+        });
     },
 
 
-    tryGetHtml: function(tid, hid, html, i, length) {
+    tryGetHtml: function(tid, hid, callback) {
         var self = this;
 
         setTimeout(function() {
             if (self.contentIsLoading()) {
-                self.sendHtml(tid, hid, $(html).html());
+                self.sendHtml(tid, hid, $("html").html());
+
+                callback();
             } else {
-                self.tryGetHtml(tid, hid, html);
+                self.tryGetHtml(tid, hid);
             }
         }, 2000);
-
-        // Наступний запит за порцією урлів
-//        if ((i + 1) === length)
-//            self.init();
     },
 
     contentIsLoading: function() {
@@ -58,6 +54,7 @@ var Grabber = {
 
 
     sendHtml: function(tid, hid, data) {
+        console.log($(data).find(".property-price").text())
         $.ajax({
             type: "POST",
             url: "/ajax/api/grabber/iMvorMXScUgbbDGuJGCbnTnQwPRFKk/",
@@ -92,7 +89,7 @@ var Grabber = {
                     return;
                 }
 
-                self.viewPage(urls);
+                self.viewPage(urls, 0);
             }
         });
     }
