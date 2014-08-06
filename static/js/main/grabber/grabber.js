@@ -4,10 +4,14 @@
  * @license MIT
  */
 var Grabber = {
+    host: window.location.host,
+    port: window.location.port,
     modalContentClass: ".publication-view-modal .modal-content",
     modalContentLoaderClass: ".publication-loading",
 
     init: function() {
+        this.host.indexOf(this.port) ? this.host.replace(this.port, "") : null;
+
         this.getUrls();
     },
 
@@ -15,7 +19,7 @@ var Grabber = {
     viewPage: function(urls, i) {
         var self = this;
 
-        window.location = "http://127.0.0.1:8000/#!/publication/" + urls[i] + "/";
+        window.location = "http://" + self.host + "/#!/publication/" + urls[i] + "/";
 
         var tid = urls[i].split(":")[0],
             hid = urls[i].split(":")[1];
