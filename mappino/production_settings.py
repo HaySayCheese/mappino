@@ -42,6 +42,8 @@ ALLOWED_HOSTS = ['mappino.com', 'mappino.com.ua', '188.226.198.224']
 # Використовується для всіх посилань будь-якої доменної зони,
 # тому є зміст обрати для цього параметру міжнародний домен .com
 REDIRECT_DOMAIN = 'http://mappino.com'
+MAIN_DOMAIN = 'http://mappino.com.ua'
+
 
 # Визначає ел. адресу, на яку приходять всі листи в сапорт.
 # На даний момент адреса одна і балансування немає
@@ -86,6 +88,7 @@ SPHINX_SEARCH = {
 	'HOST': HUL_M1_INTERNAL_IP,
     'PORT': 9306
 }
+ENABLE_SPHINX_SEARCH = True
 CACHES = {
 	'default': {
 		# Даний кеш нуявно використовується django-compressor для зберігання імен опрацьованих файлів.

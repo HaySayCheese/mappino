@@ -1,9 +1,11 @@
 import gzip
 import json
+
 from django.conf import settings
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.views.generic import View
 import os
+
 from core.escaped_fragments_manager.models import SEIndexerQueue
 
 
@@ -31,13 +33,15 @@ class GrabberView(View):
 		hash_id = request.POST['hash_id']
 
 
-		path = os.path.join(settings.BASE_DIR, 'static', 'escaped_fragments')
+		path = os.path.join(settings.BASE_DIR, 'static', 'escaped_fragments', 'publication')
 		if not os.path.exists(path):
 			os.makedirs(path)
 
 		digest = gzip.open(path + '/{0}:{1}.gz'.format(tid, hash_id), 'w', 8)
 		digest.write(html.encode("utf-8"))
 		digest.close()
+
+		return HttpResponse()
 
 
 

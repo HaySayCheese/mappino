@@ -152,7 +152,7 @@ class AbstractHeadModel(models.Model):
 		)
 
 		# По сигналу про створення запису запускається його індексація в sphinx
-		models_signals.created.send(sender=None, tid=cls.tid, hid=model.id)
+		models_signals.created.send(sender=None, tid=cls.tid, hid=model.id, hash_id=model.hash_id)
 
 		return model
 
@@ -266,7 +266,7 @@ class AbstractHeadModel(models.Model):
 
 		# sender=None для того, щоб django-orm не витягував автоматично дані з БД,
 		# які, швидше за все, не знадобляться в подальшій обробці.
-		models_signals.before_publish.send(sender=None, tid=self.tid, hid=self.id)
+		models_signals.before_publish.send(sender=None, tid=self.tid, hid=self.id, hash_id=self.hash_id)
 
 		with transaction.atomic():
 			self.state_sid = OBJECT_STATES.published()
@@ -286,7 +286,7 @@ class AbstractHeadModel(models.Model):
 
 		# sender=None для того, щоб django-orm не витягував автоматично дані з БД,
 		# які, швидше за все, не знадобляться в подальшій обробці.
-		models_signals.before_unpublish.send(sender=None, tid=self.tid, hid=self.id)
+		models_signals.before_unpublish.send(sender=None, tid=self.tid, hid=self.id, hash_id=self.hash_id)
 
 		self.state_sid = OBJECT_STATES.unpublished()
 		self.published = None
@@ -295,7 +295,7 @@ class AbstractHeadModel(models.Model):
 
 		# sender=None для того, щоб django-orm не витягував автоматично дані з БД,
 		# які, швидше за все, не знадобляться в подальшій обробці.
-		models_signals.unpublished.send(sender=None, tid=self.tid, hid=self.id)
+		models_signals.unpublished.send(sender=None, tid=self.tid, hid=self.id, hash_id=self.hash_id)
 
 
 	def prolong(self, days=14):
@@ -322,7 +322,7 @@ class AbstractHeadModel(models.Model):
 		self.deleted = now()
 		self.save()
 
-		models_signals.moved_to_trash.send(sender=None, tid=self.tid, hid=self.id)
+		models_signals.moved_to_trash.send(sender=None, tid=self.tid, hid=self.id, hash_id=self.hash_id)
 
 
 	def delete(self, using=None):
@@ -345,7 +345,7 @@ class AbstractHeadModel(models.Model):
 		# but the id will be None after deleting.
 		# So, for the correct work of all handlers related to this signal,
 		# it is emitted before the physical record removing.
-		models_signals.deleted_permanent.send(sender=None, tid=self.tid, hid=self.id)
+		models_signals.deleted_permanent.send(sender=None, tid=self.tid, hid=self.id, hash_id=self.hash_id)
 
 		super(AbstractHeadModel, self).delete()
 

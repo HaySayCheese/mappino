@@ -33,6 +33,7 @@ ESTIMATE_THREADS_COUNT = 4
 # Як правило, це який-небудь міжнародний домен типу .com.
 # Застосовується, між іншим, у формуванні посилань в шаблонах емейл-повідомлень.
 REDIRECT_DOMAIN = 'http://127.0.0.1:8000'
+MAIN_DOMAIN = 'http://mappino.com.ua'
 
 
 DATABASES = {
