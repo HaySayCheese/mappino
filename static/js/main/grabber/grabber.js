@@ -39,11 +39,11 @@ var Grabber = {
             if (self.contentIsLoading()) {
                 self.sendHtml(tid, hid, $("html").html());
 
-                callback();
+                if (typeof callback == "function") callback();
             } else {
-                self.tryGetHtml(tid, hid);
+                self.tryGetHtml(tid, hid, callback);
             }
-        }, 2000);
+        }, 500);
     },
 
     contentIsLoading: function() {
@@ -54,6 +54,7 @@ var Grabber = {
 
 
     sendHtml: function(tid, hid, data) {
+//        console.log($(data).find(".property-price").text())
         $.ajax({
             type: "POST",
             url: "/ajax/api/grabber/iMvorMXScUgbbDGuJGCbnTnQwPRFKk/",
