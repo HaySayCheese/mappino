@@ -36,7 +36,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 ESTIMATE_THREADS_COUNT = 2
 
 
-ALLOWED_HOSTS = ['mappino.com', 'mappino.com.ua', '188.226.198.224']
+ALLOWED_HOSTS = [
+	'mappino.com', 'www.mappino.com',
+	'mappino.com.ua', 'www.mappino.com.ua',
+	'188.226.198.224',
+]
 
 # Визначає домен, що може бути використаний під час формування посилань.
 # Використовується для всіх посилань будь-якої доменної зони,
