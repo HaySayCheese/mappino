@@ -4,14 +4,14 @@
 
 
         <div class="modal-content content-white photos-modal" ng-switch-when="Photos">
-            <div id="publication-view-carousel" class="carousel slide" data-ride="carousel" ng-init="publication.head.photos.length" itemscope itemtype="http://schema.org/Place">
+            <div id="publication-view-carousel" class="carousel slide" data-ride="carousel" ng-init="publication.head.photos.length">
 
                 <ol class="carousel-indicators">
                     <li ng-repeat="photo in publication.head.photos" data-target="#publication-view-carousel" data-slide-to="[[ $index ]]" ng-class="{ active : $first }"></li>
                 </ol>
 
-                <div class="carousel-inner" itemscope itemtype="http://schema.org/ImageObject">
-                    <div class="item" ng-repeat="photo in publication.head.photos" ng-class="{ active : $first }" itemprop="photos">
+                <div class="carousel-inner">
+                    <div class="item" ng-repeat="photo in publication.head.photos" ng-class="{ active : $first }">
                         <img ng-src="[[ photo ]]">
                     </div>
                 </div>
@@ -27,11 +27,12 @@
         </div>
 
 
-        <div class="modal-content content-white" ng-switch-when="Detailed">
+        <div class="modal-content content-white" ng-switch-when="Detailed" itemscope itemtype="http://schema.org/RealStateAgent">
+
             <div class="publication-photo pull-left">
                 <div class="photo" ng-show="publication.head.title_photo" ng-click="changeBasePart()">
                     <div class="overlay"></div>
-                    <img ng-src="[[ publication.head.title_photo ]]" ng-click="changeBasePart()"/>
+                    <img ng-src="[[ publication.head.title_photo ]]" ng-click="changeBasePart()" itemprop="image"/>
                 </div>
 
                 <div class="no-photo" ng-hide="publication.head.title_photo">
@@ -130,7 +131,7 @@
                     <div class="publication-loading" ng-hide="publicationLoaded"></div>
 
                     <div ng-switch-when="Description" ng-show="publicationLoaded">
-                        <div itemscope itemtype="http://schema.org/Thing" class="description" ng-show="publication.data.description">
+                        <div class="description" ng-show="publication.data.description">
                             <span itemprop="description">[[ publication.data.description ]]</span>
                         </div>
                         <div class="properties">
