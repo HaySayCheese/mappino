@@ -1,5 +1,6 @@
 #coding=utf-8
 from django.dispatch.dispatcher import receiver
+from core.markers_servers.count_servers import MPSManager
 
 from core.markers_servers.servers import \
 	HousesMarkersManager, FlatsMarkersManager, ApartmentsMarkersManager, \
@@ -30,14 +31,24 @@ MARKERS_SERVERS = {
     OBJECTS_TYPES.land():       LandsMarkersManager(),
 }
 
+MARKERS_PER_SEGMENT_COUNT_MANAGER = MPSManager()
+
 
 @receiver(models_signals.before_publish)
 def add_publication_marker(sender, **kwargs):
-	MARKERS_SERVERS[kwargs['tid']].add_publication(kwargs['hid'])
+	tid = kwargs['tid']
+	hid = kwargs['hid']
+
+	MARKERS_SERVERS[tid].add_publication(hid)
+	MARKERS_PER_SEGMENT_COUNT_MANAGER.add_publication(tid, hid)
 
 
 @receiver(models_signals.before_unpublish)
 @receiver(models_signals.moved_to_trash)
 @receiver(models_signals.deleted_permanent)
 def remove_publication_marker(sender, **kwargs):
-	MARKERS_SERVERS[kwargs['tid']].remove_publication(kwargs['hid'])
+	tid = kwargs['tid']
+	hid = kwargs['hid']
+
+	MARKERS_SERVERS[tid].remove_publication(hid)
+	MARKERS_PER_SEGMENT_COUNT_MANAGER.remove_publication(tid, hid)

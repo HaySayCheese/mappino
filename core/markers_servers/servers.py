@@ -29,6 +29,8 @@ class BaseMarkersManager(object):
 	Наприклад: 00;00, 02;00, 04;00 і т.д. Таким чином отримуємо 50*50 = 2500 сегментів в межах одного градуса.
 	Крок сегмента підібрано експерементально. Як правило, у вибірку потрапляє від 4х сегментів одночасно.
 	"""
+
+	# todo: прибрати ці виключення звідси
 	class TooBigTransaction(SuspiciousOperation): pass
 	class SerializationError(BaseException): pass
 	class DeserializationError(BaseException): pass

@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, url
 from apps.main.api.correspondence.ajax import SendMessageFromClient, SendCallRequestFromClient
+from apps.main.api.markers.ajax import Markers
 from apps.main.api.publications.ajax import DetailedView
 from apps.main.api.realtors_contacts.ajax import RealtorsContacts
 from apps.main.api.realtors_pages.ajax import RealtorsData, RealtorsMarkers
@@ -7,7 +8,7 @@ from apps.main.api.realtors_pages.ajax import RealtorsData, RealtorsMarkers
 
 urlpatterns = patterns('apps.main.api',
 	# markers output
-	url(r'^ajax/api/markers/$', 'markers.ajax.markers'),
+	url(r'^ajax/api/markers/$', Markers.as_view()),
 
 
     # detailed
