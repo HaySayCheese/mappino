@@ -485,7 +485,11 @@ class FlatsMarkersManager(BaseMarkersManager):
 		# Кома в строках заміни обов’язкова,
 		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
 		# що приводить до збоїв на фронті.
-		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
+		data = json.loads(
+			data.replace('t,', 'true,')
+				.replace('t]', 'true]')
+				.replace('f,', 'false,')
+				.replace('f]', 'false]'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -1045,7 +1049,11 @@ class ApartmentsMarkersManager(BaseMarkersManager):
 		# Кома в строках заміни обов’язкова,
 		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
 		# що приводить до збоїв на фронті.
-		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
+		data = json.loads(
+			data.replace('t,', 'true,')
+				.replace('t]', 'true]')
+				.replace('f,', 'false,')
+				.replace('f]', 'false]'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -1603,7 +1611,11 @@ class HousesMarkersManager(BaseMarkersManager):
 		# Кома в строках заміни обов’язкова,
 		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
 		# що приводить до збоїв на фронті.
-		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
+		data = json.loads(
+			data.replace('t,', 'true,')
+				.replace('t]', 'true]')
+				.replace('f,', 'false,')
+				.replace('f]', 'false]'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -2111,7 +2123,11 @@ class CottagesMarkersManager(BaseMarkersManager):
 		# Кома в строках заміни обов’язкова,
 		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
 		# що приводить до збоїв на фронті.
-		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
+		data = json.loads(
+			data.replace('t,', 'true,')
+				.replace('t]', 'true]')
+				.replace('f,', 'false,')
+				.replace('f]', 'false]'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -2617,7 +2633,11 @@ class RoomsMarkersManager(BaseMarkersManager):
 		# Кома в строках заміни обов’язкова,
 		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
 		# що приводить до збоїв на фронті.
-		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
+		data = json.loads(
+			data.replace('t,', 'true,')
+				.replace('t]', 'true]')
+				.replace('f,', 'false,')
+				.replace('f]', 'false]'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -3162,7 +3182,11 @@ class TradesMarkersManager(BaseMarkersManager):
 		# Кома в строках заміни обов’язкова,
 		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
 		# що приводить до збоїв на фронті.
-		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
+		data = json.loads(
+			data.replace('t,', 'true,')
+				.replace('t]', 'true]')
+				.replace('f,', 'false,')
+				.replace('f]', 'false]'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -3531,7 +3555,11 @@ class OfficesMarkersManager(BaseMarkersManager):
 		# Кома в строках заміни обов’язкова,
 		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
 		# що приводить до збоїв на фронті.
-		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
+		data = json.loads(
+			data.replace('t,', 'true,')
+				.replace('t]', 'true]')
+				.replace('f,', 'false,')
+				.replace('f]', 'false]'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -3871,7 +3899,11 @@ class WarehousesMarkersManager(BaseMarkersManager):
 		# Кома в строках заміни обов’язкова,
 		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
 		# що приводить до збоїв на фронті.
-		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
+		data = json.loads(
+			data.replace('t,', 'true,')
+				.replace('t]', 'true]')
+				.replace('f,', 'false,')
+				.replace('f]', 'false]'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -4169,7 +4201,11 @@ class BusinessesMarkersManager(BaseMarkersManager):
 		# Кома в строках заміни обов’язкова,
 		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
 		# що приводить до збоїв на фронті.
-		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
+		data = json.loads(
+			data.replace('t,', 'true,')
+				.replace('t]', 'true]')
+				.replace('f,', 'false,')
+				.replace('f]', 'false]'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -4401,7 +4437,11 @@ class CateringsMarkersManager(BaseMarkersManager):
 		# Кома в строках заміни обов’язкова,
 		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
 		# що приводить до збоїв на фронті.
-		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
+		data = json.loads(
+			data.replace('t,', 'true,')
+				.replace('t]', 'true]')
+				.replace('f,', 'false,')
+				.replace('f]', 'false]'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -4761,7 +4801,11 @@ class GaragesMarkersManager(BaseMarkersManager):
 		# Кома в строках заміни обов’язкова,
 		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
 		# що приводить до збоїв на фронті.
-		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
+		data = json.loads(
+			data.replace('t,', 'true,')
+				.replace('t]', 'true]')
+				.replace('f,', 'false,')
+				.replace('f]', 'false]'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
@@ -5055,7 +5099,11 @@ class LandsMarkersManager(BaseMarkersManager):
 		# Кома в строках заміни обов’язкова,
 		# без неї заміняються також всі 'f' та 't' в hash_id оголошення,
 		# що приводить до збоїв на фронті.
-		data = json.loads(data.replace('t,', 'true,').replace('f,', 'false,'))
+		data = json.loads(
+			data.replace('t,', 'true,')
+				.replace('t]', 'true]')
+				.replace('f,', 'false,')
+				.replace('f]', 'false]'))
 
 		index = iter(xrange(0, len(data)))
 		deserialized_data = {
