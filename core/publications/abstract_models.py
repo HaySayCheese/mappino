@@ -262,7 +262,7 @@ class AbstractHeadModel(models.Model):
 		self.save(force_update=True)
 
 
-	def publish(self):
+	def publish(self, update_pub_date=True):
 		if self.deleted is not None:
 			raise SuspiciousOperation('Attempt to publish deleted publication.')
 
@@ -275,7 +275,8 @@ class AbstractHeadModel(models.Model):
 
 		with transaction.atomic():
 			self.state_sid = OBJECT_STATES.published()
-			self.published = now()
+			if update_pub_date:
+				self.published = now()
 			self.prolong()
 			self.save()
 
