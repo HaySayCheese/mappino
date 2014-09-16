@@ -7,7 +7,7 @@ OPERATION_SID_RENT = 1
 
 def __house_sale_filters(request):
 	filters = {
-		'operation_sid': OPERATION_SID_SALE
+		'for_sale': True
 	}
 
 	if 'price_from' in request.GET:
@@ -59,7 +59,7 @@ def __house_sale_filters(request):
 
 def __house_rent_filters(request):
 	filters = {
-		'operation_sid': OPERATION_SID_RENT
+		'for_rent': True
 	}
 
 	if 'period_sid' in request.GET:
@@ -103,7 +103,7 @@ def __house_rent_filters(request):
 
 def __flats_sale_filters(request):
 	filters = {
-		'operation_sid': OPERATION_SID_SALE
+		'for_sale': True
 	}
 
 	if 'price_from' in request.GET:
@@ -163,7 +163,7 @@ def __flats_sale_filters(request):
 
 def __flat_rent_filters(request):
 	filters = {
-		'operation_sid': OPERATION_SID_RENT
+		'for_rent': True
 	}
 
 	if 'period_sid' in request.GET:
@@ -217,213 +217,213 @@ def __flat_rent_filters(request):
 	return filters
 
 
-def __apartments_sale_filters(request):
-	filters = {
-		'operation_sid': OPERATION_SID_SALE
-	}
-
-	if 'price_from' in request.GET:
-		filters['price_from'] = int(request.GET['price_from'])
-	if 'price_to' in request.GET:
-		filters['price_to'] = int(request.GET['price_to'])
-	if 'currency_sid' in request.GET:
-		filters['currency_sid'] = int(request.GET['currency_sid'])
-
-
-	if 'new_buildings' in request.GET:
-		filters['new_buildings'] = True
-	if 'secondary_market' in request.GET:
-		filters['secondary_market'] = True
-
-
-	if 'rooms_count_from' in request.GET:
-		filters['rooms_count_from'] = int(request.GET['rooms_count_from'])
-	if 'rooms_count_to' in request.GET:
-		filters['rooms_count_to'] = int(request.GET['rooms_count_to'])
-
-
-	if 'mansard' in request.GET:
-		filters['mansard'] = True
-	if 'ground' in request.GET:
-		filters['ground'] = True
-
-
-	if 'total_area_from' in request.GET:
-		filters['total_area_from'] = int(request.GET['total_area_from'])
-	if 'total_area_to' in request.GET:
-		filters['total_area_to'] = int(request.GET['total_area_to'])
-
-
-	if 'floor_from' in request.GET:
-		filters['floor_from'] = int(request.GET['floor_from'])
-	if 'floor_to' in request.GET:
-		filters['floor_to'] = int(request.GET['floor_to'])
-
-
-	if 'planning_sid' in request.GET: # планировка комнат
-		filters['planning_sid'] = int(request.GET['planning_sid'])
-
-
-	if 'lift' in request.GET:
-		filters['lift'] = True
-	if 'electricity' in request.GET:
-		filters['electricity'] = True
-	if 'gas' in request.GET:
-		filters['gas'] = True
-	if 'hot_water' in request.GET:
-		filters['hot_water'] = True
-	if 'cold_water' in request.GET:
-		filters['cold_water'] = True
-	if 'heating_type_sid' in request.GET:
-		filters['heating_type_sid'] = int(request.GET['heating_type_sid'])
-	return filters
-
-
-def __apartments_rent_filters(request):
-	filters = {
-		'operation_sid': OPERATION_SID_RENT
-	}
-
-	if 'period_sid' in request.GET:
-		filters['period_sid'] = int(request.GET['period_sid'])
-	if 'price_from' in request.GET:
-		filters['price_from'] = int(request.GET['price_from'])
-	if 'price_to' in request.GET:
-		filters['price_to'] = int(request.GET['price_to'])
-	if 'currency_sid' in request.GET:
-		filters['currency_sid'] = int(request.GET['currency_sid'])
-
-
-	if 'persons_count_from' in request.GET:
-		filters['persons_count_from'] = int(request.GET['persons_count_from'])
-	if 'persons_count_to' in request.GET:
-		filters['persons_count_to'] = int(request.GET['persons_count_to'])
-
-
-	if 'total_area_from' in request.GET:
-		filters['total_area_from'] = int(request.GET['total_area_from'])
-	if 'total_area_to' in request.GET:
-		filters['total_area_to'] = int(request.GET['total_area_to'])
-
-
-	if 'floor_from' in request.GET:
-		filters['floor_from'] = int(request.GET['floor_from'])
-	if 'floor_to' in request.GET:
-		filters['floor_to'] = int(request.GET['floor_to'])
-
-
-	if 'mansard' in request.GET:
-		filters['mansard'] = True
-	if 'ground' in request.GET:
-		filters['ground'] = True
-
-
-	if 'family' in request.GET:
-		filters['family'] = True
-	if 'foreigners' in request.GET:
-		filters['foreigners'] = True
-
-
-	if 'lift' in request.GET:
-		filters['lift'] = True
-	if 'electricity' in request.GET:
-		filters['electricity'] = True
-	if 'gas' in request.GET:
-		filters['gas'] = True
-	if 'hot_water' in request.GET:
-		filters['hot_water'] = True
-	if 'cold_water' in request.GET:
-		filters['cold_water'] = True
-	return filters
-
-
-def __cottage_sale_filters(request):
-	filters = {
-		'operation_sid': OPERATION_SID_SALE
-	}
-
-	if 'price_from' in request.GET:
-		filters['price_from'] = int(request.GET['price_from'])
-	if 'price_to' in request.GET:
-		filters['price_to'] = int(request.GET['price_to'])
-	if 'currency_sid' in request.GET:
-		filters['currency_sid'] = int(request.GET['currency_sid'])
+# def __apartments_sale_filters(request):
+# 	filters = {
+# 		'for_sale': True
+# 	}
+#
+# 	if 'price_from' in request.GET:
+# 		filters['price_from'] = int(request.GET['price_from'])
+# 	if 'price_to' in request.GET:
+# 		filters['price_to'] = int(request.GET['price_to'])
+# 	if 'currency_sid' in request.GET:
+# 		filters['currency_sid'] = int(request.GET['currency_sid'])
+#
+#
+# 	if 'new_buildings' in request.GET:
+# 		filters['new_buildings'] = True
+# 	if 'secondary_market' in request.GET:
+# 		filters['secondary_market'] = True
+#
+#
+# 	if 'rooms_count_from' in request.GET:
+# 		filters['rooms_count_from'] = int(request.GET['rooms_count_from'])
+# 	if 'rooms_count_to' in request.GET:
+# 		filters['rooms_count_to'] = int(request.GET['rooms_count_to'])
+#
+#
+# 	if 'mansard' in request.GET:
+# 		filters['mansard'] = True
+# 	if 'ground' in request.GET:
+# 		filters['ground'] = True
+#
+#
+# 	if 'total_area_from' in request.GET:
+# 		filters['total_area_from'] = int(request.GET['total_area_from'])
+# 	if 'total_area_to' in request.GET:
+# 		filters['total_area_to'] = int(request.GET['total_area_to'])
+#
+#
+# 	if 'floor_from' in request.GET:
+# 		filters['floor_from'] = int(request.GET['floor_from'])
+# 	if 'floor_to' in request.GET:
+# 		filters['floor_to'] = int(request.GET['floor_to'])
+#
+#
+# 	if 'planning_sid' in request.GET: # планировка комнат
+# 		filters['planning_sid'] = int(request.GET['planning_sid'])
+#
+#
+# 	if 'lift' in request.GET:
+# 		filters['lift'] = True
+# 	if 'electricity' in request.GET:
+# 		filters['electricity'] = True
+# 	if 'gas' in request.GET:
+# 		filters['gas'] = True
+# 	if 'hot_water' in request.GET:
+# 		filters['hot_water'] = True
+# 	if 'cold_water' in request.GET:
+# 		filters['cold_water'] = True
+# 	if 'heating_type_sid' in request.GET:
+# 		filters['heating_type_sid'] = int(request.GET['heating_type_sid'])
+# 	return filters
+#
+#
+# def __apartments_rent_filters(request):
+# 	filters = {
+# 		'for_rent': True
+# 	}
+#
+# 	if 'period_sid' in request.GET:
+# 		filters['period_sid'] = int(request.GET['period_sid'])
+# 	if 'price_from' in request.GET:
+# 		filters['price_from'] = int(request.GET['price_from'])
+# 	if 'price_to' in request.GET:
+# 		filters['price_to'] = int(request.GET['price_to'])
+# 	if 'currency_sid' in request.GET:
+# 		filters['currency_sid'] = int(request.GET['currency_sid'])
+#
+#
+# 	if 'persons_count_from' in request.GET:
+# 		filters['persons_count_from'] = int(request.GET['persons_count_from'])
+# 	if 'persons_count_to' in request.GET:
+# 		filters['persons_count_to'] = int(request.GET['persons_count_to'])
+#
+#
+# 	if 'total_area_from' in request.GET:
+# 		filters['total_area_from'] = int(request.GET['total_area_from'])
+# 	if 'total_area_to' in request.GET:
+# 		filters['total_area_to'] = int(request.GET['total_area_to'])
+#
+#
+# 	if 'floor_from' in request.GET:
+# 		filters['floor_from'] = int(request.GET['floor_from'])
+# 	if 'floor_to' in request.GET:
+# 		filters['floor_to'] = int(request.GET['floor_to'])
+#
+#
+# 	if 'mansard' in request.GET:
+# 		filters['mansard'] = True
+# 	if 'ground' in request.GET:
+# 		filters['ground'] = True
+#
+#
+# 	if 'family' in request.GET:
+# 		filters['family'] = True
+# 	if 'foreigners' in request.GET:
+# 		filters['foreigners'] = True
+#
+#
+# 	if 'lift' in request.GET:
+# 		filters['lift'] = True
+# 	if 'electricity' in request.GET:
+# 		filters['electricity'] = True
+# 	if 'gas' in request.GET:
+# 		filters['gas'] = True
+# 	if 'hot_water' in request.GET:
+# 		filters['hot_water'] = True
+# 	if 'cold_water' in request.GET:
+# 		filters['cold_water'] = True
+# 	return filters
 
 
-	if 'new_buildings' in request.GET:
-		filters['new_buildings'] = True
-	if 'secondary_market' in request.GET:
-		filters['secondary_market'] = True
-
-
-	if 'rooms_count_from' in request.GET:
-		filters['rooms_count_from'] = int(request.GET['rooms_count_from'])
-	if 'rooms_count_to' in request.GET:
-		filters['rooms_count_to'] = int(request.GET['rooms_count_to'])
-
-
-	if 'floors_count_from' in request.GET:
-		filters['floors_count_from'] = int(request.GET['floors_count_from'])
-	if 'floors_count_to' in request.GET:
-		filters['floors_count_to'] = int(request.GET['floors_count_to'])
-
-
-	if 'electricity' in request.GET:
-		filters['electricity'] = True
-	if 'gas' in request.GET:
-		filters['gas'] = True
-	if 'hot_water' in request.GET:
-		filters['hot_water'] = True
-	if 'cold_water' in request.GET:
-		filters['cold_water'] = True
-	if 'sewerage' in request.GET:
-		filters['sewerage'] = True
-	if 'heating_type_sid' in request.GET:
-		filters['heating_type_sid'] = int(request.GET['heating_type_sid'])
-	return filters
-
-
-def __cottage_rent_filters(request):
-	filters = {
-		'operation_sid': OPERATION_SID_RENT
-	}
-
-	if 'period_sid' in request.GET:
-		filters['period_sid'] = int(request.GET['period_sid'])
-	if 'price_from' in request.GET:
-		filters['price_from'] = int(request.GET['price_from'])
-	if 'price_to' in request.GET:
-		filters['price_to'] = int(request.GET['price_to'])
-	if 'currency_sid' in request.GET:
-		filters['currency_sid'] = int(request.GET['currency_sid'])
-
-
-	if 'persons_count_from' in request.GET:
-		filters['persons_count_from'] = int(request.GET['persons_count_from'])
-	if 'persons_count_to' in request.GET:
-		filters['persons_count_to'] = int(request.GET['persons_count_to'])
-
-
-	if 'family' in request.GET:
-		filters['family'] = True
-	if 'foreigners' in request.GET:
-		filters['foreigners'] = True
-
-
-	if 'electricity' in request.GET:
-		filters['electricity'] = True
-	if 'gas' in request.GET:
-		filters['gas'] = True
-	if 'hot_water' in request.GET:
-		filters['hot_water'] = True
-	if 'cold_water' in request.GET:
-		filters['cold_water'] = True
-	return filters
+# def __cottage_sale_filters(request):
+# 	filters = {
+# 		'for_sale': True
+# 	}
+#
+# 	if 'price_from' in request.GET:
+# 		filters['price_from'] = int(request.GET['price_from'])
+# 	if 'price_to' in request.GET:
+# 		filters['price_to'] = int(request.GET['price_to'])
+# 	if 'currency_sid' in request.GET:
+# 		filters['currency_sid'] = int(request.GET['currency_sid'])
+#
+#
+# 	if 'new_buildings' in request.GET:
+# 		filters['new_buildings'] = True
+# 	if 'secondary_market' in request.GET:
+# 		filters['secondary_market'] = True
+#
+#
+# 	if 'rooms_count_from' in request.GET:
+# 		filters['rooms_count_from'] = int(request.GET['rooms_count_from'])
+# 	if 'rooms_count_to' in request.GET:
+# 		filters['rooms_count_to'] = int(request.GET['rooms_count_to'])
+#
+#
+# 	if 'floors_count_from' in request.GET:
+# 		filters['floors_count_from'] = int(request.GET['floors_count_from'])
+# 	if 'floors_count_to' in request.GET:
+# 		filters['floors_count_to'] = int(request.GET['floors_count_to'])
+#
+#
+# 	if 'electricity' in request.GET:
+# 		filters['electricity'] = True
+# 	if 'gas' in request.GET:
+# 		filters['gas'] = True
+# 	if 'hot_water' in request.GET:
+# 		filters['hot_water'] = True
+# 	if 'cold_water' in request.GET:
+# 		filters['cold_water'] = True
+# 	if 'sewerage' in request.GET:
+# 		filters['sewerage'] = True
+# 	if 'heating_type_sid' in request.GET:
+# 		filters['heating_type_sid'] = int(request.GET['heating_type_sid'])
+# 	return filters
+#
+#
+# def __cottage_rent_filters(request):
+# 	filters = {
+# 		'for_rent': True
+# 	}
+#
+# 	if 'period_sid' in request.GET:
+# 		filters['period_sid'] = int(request.GET['period_sid'])
+# 	if 'price_from' in request.GET:
+# 		filters['price_from'] = int(request.GET['price_from'])
+# 	if 'price_to' in request.GET:
+# 		filters['price_to'] = int(request.GET['price_to'])
+# 	if 'currency_sid' in request.GET:
+# 		filters['currency_sid'] = int(request.GET['currency_sid'])
+#
+#
+# 	if 'persons_count_from' in request.GET:
+# 		filters['persons_count_from'] = int(request.GET['persons_count_from'])
+# 	if 'persons_count_to' in request.GET:
+# 		filters['persons_count_to'] = int(request.GET['persons_count_to'])
+#
+#
+# 	if 'family' in request.GET:
+# 		filters['family'] = True
+# 	if 'foreigners' in request.GET:
+# 		filters['foreigners'] = True
+#
+#
+# 	if 'electricity' in request.GET:
+# 		filters['electricity'] = True
+# 	if 'gas' in request.GET:
+# 		filters['gas'] = True
+# 	if 'hot_water' in request.GET:
+# 		filters['hot_water'] = True
+# 	if 'cold_water' in request.GET:
+# 		filters['cold_water'] = True
+# 	return filters
 
 
 def __rooms_sale_filters(request):
 	filters = {
-		'operation_sid': OPERATION_SID_SALE
+		'for_sale': True
 	}
 
 	if 'price_from' in request.GET:
@@ -485,7 +485,7 @@ def __rooms_sale_filters(request):
 
 def __rooms_rent_filters(request):
 	filters = {
-		'operation_sid': OPERATION_SID_RENT
+		'for_rent': True
 	}
 
 	if 'period_sid' in request.GET:
@@ -577,40 +577,40 @@ def parse_flats_filters(request):
 		raise ValueError('Invalid operation_sid.')
 
 
-def parse_apartments_filters(request):
-	"""
-	Формує об’єкт фільтрів із параметрів, переданих в запиті.
-	WARNING:
-		Виконує тільки базові перевірки відповідності типів,
-		але не перевіряє передані фільтри з точки зору коректності структур даних
-		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
-		яка в даному випадку виступає інформаційним експертом.
-	"""
-	operation_sid = int(request.GET['operation_sid']) # required
-	if operation_sid == 0:
-		return __apartments_sale_filters(request)
-	elif operation_sid == 1:
-		return __apartments_rent_filters(request)
-	else:
-		raise ValueError('Invalid operation_sid.')
+# def parse_apartments_filters(request):
+# 	"""
+# 	Формує об’єкт фільтрів із параметрів, переданих в запиті.
+# 	WARNING:
+# 		Виконує тільки базові перевірки відповідності типів,
+# 		але не перевіряє передані фільтри з точки зору коректності структур даних
+# 		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
+# 		яка в даному випадку виступає інформаційним експертом.
+# 	"""
+# 	operation_sid = int(request.GET['operation_sid']) # required
+# 	if operation_sid == 0:
+# 		return __apartments_sale_filters(request)
+# 	elif operation_sid == 1:
+# 		return __apartments_rent_filters(request)
+# 	else:
+# 		raise ValueError('Invalid operation_sid.')
 
 
-def parse_cottages_filters(request):
-	"""
-	Формує об’єкт фільтрів із параметрів, переданих в запиті.
-	WARNING:
-		Виконує тільки базові перевірки відповідності типів,
-		але не перевіряє передані фільтри з точки зору коректності структур даних
-		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
-		яка в даному випадку виступає інформаційним експертом.
-	"""
-	operation_sid = int(request.GET['operation_sid']) # required
-	if operation_sid == 0:
-		return __cottage_sale_filters(request)
-	elif operation_sid == 1:
-		return __cottage_rent_filters(request)
-	else:
-		raise ValueError('Invalid operation_sid.')
+# def parse_cottages_filters(request):
+# 	"""
+# 	Формує об’єкт фільтрів із параметрів, переданих в запиті.
+# 	WARNING:
+# 		Виконує тільки базові перевірки відповідності типів,
+# 		але не перевіряє передані фільтри з точки зору коректності структур даних
+# 		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
+# 		яка в даному випадку виступає інформаційним експертом.
+# 	"""
+# 	operation_sid = int(request.GET['operation_sid']) # required
+# 	if operation_sid == 0:
+# 		return __cottage_sale_filters(request)
+# 	elif operation_sid == 1:
+# 		return __cottage_rent_filters(request)
+# 	else:
+# 		raise ValueError('Invalid operation_sid.')
 
 
 def parse_rooms_filters(request):
@@ -640,9 +640,12 @@ def parse_trades_filters(request):
 		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
 		яка в даному випадку виступає інформаційним експертом.
 	"""
-	filters = {
-		'operation_sid': int(request.GET['operation_sid']) # required
-	}
+	filters = {}
+	if int(request.GET['operation_sid']) == OPERATION_SID_SALE:
+		filters['for_sale'] = True
+	if int(request.GET['operation_sid']) == OPERATION_SID_RENT:
+		filters['for_rent'] = True
+
 
 	if 'price_from' in request.GET:
 		filters['price_from'] = int(request.GET['price_from'])
@@ -698,9 +701,12 @@ def parse_offices_filters(request):
 		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
 		яка в даному випадку виступає інформаційним експертом.
 	"""
-	filters = {
-		'operation_sid': int(request.GET['operation_sid']) # required
-	}
+	filters = {}
+	if int(request.GET['operation_sid']) == OPERATION_SID_SALE:
+		filters['for_sale'] = True
+	if int(request.GET['operation_sid']) == OPERATION_SID_RENT:
+		filters['for_rent'] = True
+
 
 	if 'price_from' in request.GET:
 		filters['price_from'] = int(request.GET['price_from'])
@@ -747,9 +753,12 @@ def parse_warehouses_filters(request):
 		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
 		яка в даному випадку виступає інформаційним експертом.
 	"""
-	filters = {
-		'operation_sid': int(request.GET['operation_sid']) # required
-	}
+	filters = {}
+	if int(request.GET['operation_sid']) == OPERATION_SID_SALE:
+		filters['for_sale'] = True
+	if int(request.GET['operation_sid']) == OPERATION_SID_RENT:
+		filters['for_rent'] = True
+
 
 	if 'price_from' in request.GET:
 		filters['price_from'] = int(request.GET['price_from'])
@@ -799,9 +808,12 @@ def parse_businesses_filters(request):
 		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
 		яка в даному випадку виступає інформаційним експертом.
 	"""
-	filters = {
-		'operation_sid': int(request.GET['operation_sid']) # required
-	}
+	filters = {}
+	if int(request.GET['operation_sid']) == OPERATION_SID_SALE:
+		filters['for_sale'] = True
+	if int(request.GET['operation_sid']) == OPERATION_SID_RENT:
+		filters['for_rent'] = True
+
 
 	if 'price_from' in request.GET:
 		filters['price_from'] = int(request.GET['price_from'])
@@ -887,9 +899,12 @@ def parse_garages_filters(request):
 		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
 		яка в даному випадку виступає інформаційним експертом.
 	"""
-	filters = {
-		'operation_sid': int(request.GET['operation_sid']) # required
-	}
+	filters = {}
+	if int(request.GET['operation_sid']) == OPERATION_SID_SALE:
+		filters['for_sale'] = True
+	if int(request.GET['operation_sid']) == OPERATION_SID_RENT:
+		filters['for_rent'] = True
+
 
 	if 'price_from' in request.GET:
 		filters['price_from'] = int(request.GET['price_from'])
@@ -925,9 +940,12 @@ def parse_lands_filters(request):
 		чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
 		яка в даному випадку виступає інформаційним експертом.
 	"""
-	filters = {
-		'operation_sid': int(request.GET['operation_sid']) # required
-	}
+	filters = {}
+	if int(request.GET['operation_sid']) == OPERATION_SID_SALE:
+		filters['for_sale'] = True
+	if int(request.GET['operation_sid']) == OPERATION_SID_RENT:
+		filters['for_rent'] = True
+
 
 	if 'price_from' in request.GET:
 		filters['price_from'] = int(request.GET['price_from'])
