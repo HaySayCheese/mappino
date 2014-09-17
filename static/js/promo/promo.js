@@ -4,13 +4,20 @@ $(document).ready(function() {
 
 
     var scrollableBlock = $(document),
+        dropdown        = $(".type-selectpicker"),
         scrollableBlockImage = scrollableBlock.find(".img-holder"),
         headerLinksBlock = scrollableBlock.find(".header-links");
+
+    dropdown.selectpicker({
+        style: 'btn-default btn-lg'
+    });
 
     scrollableBlockImage.imageScroll({
         container: $('.wrapper'),
         touch: Modernizr.touch
     });
+
+
 
 
     /** Обробник евента скрола контента */
