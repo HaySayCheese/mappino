@@ -54,13 +54,21 @@
 .icon-circle-unchecked:before { content: '\e801'; } /* '' */
 
 .icon-lightbulb {
+
     &:before {
         content: '\e802';
+        margin-left: -50px;
     }
 
 
     &.light-gray {
         color: @gray-lighter;
+    }
+    &.yellow {
+        color: @nice-yellow;
+    }
+    &.blue {
+        color: @nice-blue;
     }
 
 
@@ -68,10 +76,22 @@
     &.left-10:before {
         .rotate(-10deg);
     }
+    &.left-20:before {
+        .rotate(-20deg);
+    }
+    &.right-10:before {
+        .rotate(10deg);
+    }
 
 
 
-    &.x2:before {
-        font-size: 250%;
+    &.x3:before {
+        font-size: 300%;
+    }
+    &.x4:before {
+        font-size: 450%;
+    }
+    &.x5:before {
+        font-size: 550%;
     }
 }
