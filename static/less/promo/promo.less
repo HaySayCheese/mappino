@@ -1,4 +1,7 @@
 @import "../components/bootstrap";
+@import "../components/bootstrap-select";
+@import "../components/mappino-font/mappino";
+
 
 
 body {
@@ -10,43 +13,35 @@ body {
     overflow-x: hidden;
 
     .header-links {
-        height: 70px;
-        padding: 12px 20px;
-        position: fixed;
-        top: 0;
+        position: absolute;
+        top: 20px;
         left: 0;
         right: 0;
         z-index: 10;
-        line-height: 45px;
 
-        &.panel {
-            background: #ffffff;
-            border-bottom: 1px solid @gray-lighter;
 
-            .btn {
-                visibility: visible;
-            }
-
-            a:not(.btn) {
-                color: @gray-light !important;
-                text-shadow: none;
-            }
-        }
-
-        .btn {
-            border-radius: 0;
-            visibility: hidden;
-        }
 
         a:not(.btn) {
-            color: #ffffff !important;
-            font-size: @font-size-h4;
-            text-decoration: none;
-            margin-left: 15px;
-            text-shadow: ~"0px 0px 5px rgba(0, 0, 0, 0.4)";
+            padding: 7px 14px;
+            margin: 0;
+            line-height: 14px;
 
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-size: @font-size-base;
+            text-decoration: none;
+
+            border: 1px solid rgba(41, 73, 110, 0.4);
+
+            .transition(~"all 0.4s ease");
+
+            &:first-child {
+                border-left: none;
+            }
+
+            &:hover,
             &.active {
-                color: @nice-blue !important;
+                color: #ffffff !important;
+                background-color: rgba(255, 255, 255, 0.1);
             }
         }
     }
@@ -55,31 +50,54 @@ body {
         position: relative;
     }
 
+
     .image-caption {
         position: absolute;
-        top: 50%;
-        left: 50%;
+        top: 18%;
+        left: 20%;
 
         color: #ffffff;
+        text-shadow: ~"0px 0px 15px rgba(0, 0, 0, 0.7)";
 
-        .translate(-50%, -50%);
-        text-shadow: ~"0px 0px 5px rgba(0, 0, 0, 0.4)";
+        .brand {
+            font-size: 60px;
+        }
+        .slogan {
+            font-size: 16px;
+        }
     }
 
     section {
         background: #ffffff;
-        .box-shadow(~"0px 0px 15px rgba(0, 0, 0, .4)");
         .clearfix();
 
-        h1 {
-            margin-top: 100px;
-            font-size: 45px;
+        h2 {
             color: @gray-dark;
+
+            &.with-margin {
+                margin: 80px 0 60px;
+            }
+
+            &.with-margin-bottom {
+                margin-bottom: 60px;
+            }
         }
 
         p {
-            margin-top: 50px;
-            line-height: @line-height-large + 0.1;
+            position: relative;
+            font-size: 16px;
+        }
+
+        &.light-gray {
+            background-color: @gray-lighter;
+        }
+
+        &.promo-filters-pattern {
+            background: url("../../img/promo/promo-filters-pattern.jpg");
+        }
+
+        .row.with-margin {
+            margin: 25px 0;
         }
 
         &.with-padding {
@@ -99,9 +117,31 @@ body {
         }
     }
 
+    .promo-filters {
+        .size(80%, 700px);
+
+        margin-top: -190px;
+
+        background: #fff;
+        border-top: 15px solid rgba(105, 135, 170, 0.4);
+        background-clip: padding-box;
+
+        .box-shadow(~"0px 0px 15px 0px rgba(0, 0, 0, 0.15)");
+        .center-block();
+    }
+
 }
 
+
+.bootstrap-select .btn {
+    border: 1px solid #d2d2d2;
+    border-radius: 0 !important;
+}
+
+
 .btn.section-btn {
+    margin-bottom: 15px;
+
     color: #ffffff !important;
     text-decoration: none;
 }
@@ -114,7 +154,7 @@ body {
     background: url("../../img/promo/about/red-marker.png") center center no-repeat;
 
     &[class*='m-'] {
-        .translate(0, -2000px);
+        .translate(0, -3000px);
     }
     &.m-1 {
         top: 140px;
