@@ -4,6 +4,7 @@
 
 
 
+
 body {
     position: relative;
 }
@@ -96,20 +97,27 @@ body {
             background: url("../../img/promo/promo-filters-pattern.jpg");
         }
 
-        .row.with-margin {
-            margin: 25px 0;
-            > .col-xs-1 {
+        .row {
+            .col-xs-1,
+            .col-xs-2 {
                 padding: 0px;
             }
-            > .col-xs-11 {
+            .col-xs-11,
+            .col-xs-8 {
                 padding-left: 0px;
             }
         }
-
-        &.with-padding {
-            padding: 60px 40px;
+        .row.with-margin {
+            margin: 25px 0;
         }
 
+        &.with-padding {
+            padding: 60px 40px 20px;
+        }
+
+        .with-padding-top {
+            margin-top: 50px;
+        }
         &.with-padding-bottom {
             padding-bottom: 60px;
         }
