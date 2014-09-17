@@ -18,6 +18,9 @@
         <script type="text/javascript" src="{{ static }}js/libs/jquery.imageScroll.min.js"></script>
     {% endcompress %}
     {% compress js %}
+        <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select-1.5.4.min.js"></script>
+    {% endcompress %}
+    {% compress js %}
         <script type="text/javascript" src="{{ static }}js/promo/promo.js"></script>
     {% endcompress %}
 
@@ -35,35 +38,83 @@
 
     <div class="wrapper">
 
-        <div class="header-links animated text-right">
+        <div class="header-links">
             <div class="row">
                 <div class="col-sm-12 col-lg-10 col-lg-offset-1">
-                    <a class="btn btn-success btn-lg pull-left section-btn" href="/#!/search">Перейти к поиску</a>
-                    <a href="/promo/" class="active">О сервисе</a>
-                    <a href="/promo/realtors/">Риелторам</a>
+                    <a href="/promo/realtors/" class="pull-right">Войти</a>
+                    <a href="/promo/" class="pull-right">Регистрация</a>
                 </div>
             </div>
         </div>
 
 
-        <div class="img-holder" data-cover-ratio="1" data-image="{{ static }}img/promo/promo-bg-1600x900.jpg">
-            <div class="image-caption text-center">
-                <img src="{{ static }}img/promo/logo.png" alt=""/>
-                <h1>
-                    Удобный поиск недвижимости
-                </h1>
+
+        <div class="img-holder" data-cover-ratio="0.9" data-image="{{ static }}img/promo/kiev-bg-medium.jpg">
+            <div class="image-caption">
+                <div class="brand">mappino</div>
+                <div class="slogan">Возможно, самый удобный поисковик недвижимости</div>
             </div>
         </div>
+        <section class="light-gray promo-filters-pattern">
+            <div class="row">
+                <div class="col-lg-12 col-lg-10 col-lg-offset-1">
+                    <div class="promo-filters">
+                        <h3 class="text-center margin-md">Я ищу</h3>
+                        <div class="text-center">
+                            <div class="col-sm-6 col-sm-offset-3 col-lg-4 col-lg-offset-4">
+                                <select class="type-selectpicker" name="r_type_sid" data-width="100%">
+                                    <option value="">Виберите тип</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6 col-md-offset-3">
+                                <div class="btn-group btn-group-justified" data-toggle="buttons">
+                                    <label class="btn btn-lg btn-success active">
+                                        <input type="radio" name="operatio" id="for_sale" checked>На продажу
+                                    </label>
+                                    <label class="btn btn-lg btn-success">
+                                        <input type="radio" name="operatio" id="for_rent">В аренду
+                                    </label>
+                                    <label class="btn btn-lg btn-success">
+                                        <input type="radio" name="operatio" id="daily">Посуточно
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6 col-md-offset-3">
+                                <input class="form-control" type="text"/>
+                                <div class="help-text text-center text-muted"><i>Например, <u>Черновцы</u> или <u>Черновицкая область</u></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <div class="img-holder" data-cover-ratio="0.5" data-height="600" data-image="{{ static }}img/promo/about/home-bg-2.jpg"></div>
         <section class="with-padding">
             <div class="row">
                 <div class="col-sm-12 col-lg-10 col-lg-offset-1">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h1>Знакомый регион</h1>
-                            <p class="h3">
-                                Просматривать объявления на карте гораздо быстрее и удобнее,
-                                независимо от того какой регион вам интересен:
-                                большой город, его район, или даже отдельная улица.
+                            <h2 class="with-margin-bottom">Знакомый регион</h2>
+                            <p>
+                                Искать недвижимость на карте гораздо удобнее и быстрее.
+                                Так у Вас появляеться возможность в первую очередь просматривать предложения из интересных Вам регионов.
+                                Например:
+                            </p>
+                            <p>
+                                Вы можете начать поиск новой квартиры в знакомом Вам регионе или вблизи от работы.
+                            </p>
+                            <p>
+                                Или подыскать новый офис вблизи от станции метро или остановки общественного транспорта.
+                            </p>
+                            <p>
+                                Отправляясь в командировку в незнакомый город Вам будет намного легче найти жилье вблизи от
+                                предполагаемого места работы зная всего лишь название улицы.
+                            </p>
+                            <p>
+                                А отправляясь на экскурсию во Львов, Ужгород или любой другой турристический город или городок
+                                Вы сможете найти посутчное жилье вблизи от найболее интересных Вам объектов.
                             </p>
                         </div>
                         <div class="col-sm-6">
@@ -83,15 +134,34 @@
         </section>
 
 
-        <div class="img-holder" data-cover-ratio="0.5" data-height="600" data-image="{{ static }}img/promo/about/2_1600x600.jpg"></div>
+        <div class="img-holder" data-cover-ratio="0.5" data-height="600" data-image="{{ static }}img/promo/about/home-bg-1.jpg"></div>
         <section>
             <div class="row">
                 <div class="col-sm-12 col-lg-10 col-lg-offset-1 text-center">
                     <div class="row">
-                        <h1>Экономьте время</h1>
-                        <p class="h3">
-                            Маркеры разных цветов позволяют быстро отличать предложения разных типов. <br/>
-                            Их можно настроить согласно с Вашими критериями.
+                        <h2 class="with-margin">Экономьте время</h2>
+                        <p>
+                            Чтобы просматривать объявления было немного удобнее мы придумали сопособ как
+                            отделить разнотипные предложения между собой — маркеры разных цветов. <br/>
+                            В Вашем распоряжении 4 цвета которыми Вы можете обозначить маркеры
+                            самых разных критериев и скомбинировать самые разные условия. Например:
+                        </p>
+                        <div class="row with-margin">
+                            <div class="col-xs-3 text-right">
+                                <span class="icon-lightbulb x2 left-10 light-gray"></span>
+                            </div>
+                            <div class="col-xs-9">
+                                <p>
+                                    Вы можете одновременно просматривать предложения о квартирах, домах,
+                                    и комнатах, которые сдаються посуточно, назначив каждому типу свой цвет.
+                                </p>
+                            </div>
+                        </div>
+
+                        <p>
+                            Или, если Вас интересует только  определенный тип недвижимости — Вы можете
+                            разделить предлагаемые объявления по ценовому диапазону: до определенной
+                            суммы — один цвет маркера, больше — другой.
                         </p>
                     </div>
                     <div class="row">
@@ -102,14 +172,23 @@
         </section>
 
 
-        <div class="img-holder" data-cover-ratio="0.5" data-height="600" data-image="{{ static }}img/promo/about/street-1600x600.jpg"></div>
+        <div class="img-holder" data-cover-ratio="0.5" data-height="600" data-image="{{ static }}img/promo/about/home-bg-3.jpg"></div>
         <section class="with-padding-bottom">
             <div class="row">
                 <div class="col-sm-12 col-lg-10 col-lg-offset-1 text-center">
-                    <h1>Попробуйте сейчас</h1>
+                    <h2 class="with-margin">Попробуйте сейчас</h2>
                     <p>
-                        <a class="btn btn-success btn-xlg section-btn" href="/#!/search">Перейти к поиску</a>
+                        <a class="btn btn-success btn-lg section-btn" href="/search">Начать поиск</a>
+                        <br/>
+                        <a class="btn btn-primary btn-lg section-btn" href="/cabinet">Подать обьявление</a>
                     </p>
+
+                    <div class="col-xs-6 col-xs-offset-3">
+                        <p>
+                            Любые два обьявления в месяц - бесплатно. Всегда. <br/>
+                            <a href="/promo/realtors">Больше информации для риелторов и рекламодателей.</a>
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
