@@ -43,8 +43,17 @@ DATABASES = {
 		'USER': 'mappino',
 		'PASSWORD': '123123',
 		'HOST': '146.185.129.95',
+	},
+    'markers_index': {
+		'ENGINE':'django.db.backends.postgresql_psycopg2',
+		'NAME': '(dev)mappino',
+		'USER': 'mappino',
+		'PASSWORD': '123123',
+		'HOST': '146.185.129.95',
 	}
 }
+DATABASE_ROUTERS = ['core.database_router.Router', ]
+
 REDIS_DATABASES = {
 	'throttle': {
 		'HOST': '95.85.40.162',
@@ -119,11 +128,12 @@ INSTALLED_APPS = (
 	'core.users',
 	'core.publications',
 	'core.markers_servers',
+	'core.markers_handler',
 	'core.search',
 	'core.support',
 	'core.escaped_fragments_manager',
 
-	'apps.cabinet.api.dirtags',
+	# 'apps.cabinet.api.dirtags',
 	'apps.main.api.correspondence',
 )
 MIDDLEWARE_CLASSES = (

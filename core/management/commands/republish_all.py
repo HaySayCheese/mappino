@@ -12,5 +12,5 @@ class Command(BaseCommand):
 					publication.unpublish()
 					print('publication {0}:{1} unpublished'.format(tid, publication.id))
 
-					publication.publish()
+					publication.publish(update_pub_date=False)
 					print('publication {0}:{1} published back. OK'.format(tid, publication.id))
