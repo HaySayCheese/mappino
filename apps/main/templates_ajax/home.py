@@ -5,15 +5,17 @@ from core.cache.templates_cache import static_template_last_modified
 from core.utils.jinja2_integration import templates
 
 
+
 @ensure_csrf_cookie
 @condition(last_modified_func=static_template_last_modified)
 def suggests_template(request):
-	t = templates.get_template('main/parts/home/suggests.html')
-	return HttpResponse(t.render())
+    t = templates.get_template('main/home/checkboxes/suggests.html')
+    return HttpResponse(t.render())
+
 
 
 @ensure_csrf_cookie
 @condition(last_modified_func=static_template_last_modified)
 def types_template(request):
-	t = templates.get_template('main/parts/home/types.html')
-	return HttpResponse(t.render())
+    t = templates.get_template('main/home/checkboxes/types.html')
+    return HttpResponse(t.render())
