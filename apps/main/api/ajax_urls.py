@@ -3,7 +3,7 @@ from apps.main.api.correspondence.ajax import SendMessageFromClient, SendCallReq
 from apps.main.api.markers.ajax import Markers
 from apps.main.api.publications.ajax import DetailedView
 from apps.main.api.realtors_contacts.ajax import RealtorsContacts
-from apps.main.api.realtors_pages.ajax import RealtorsData, RealtorsMarkers
+# from apps.main.api.realtors_pages.ajax import RealtorsData, RealtorsMarkers
 
 
 urlpatterns = patterns('apps.main.api',
@@ -21,7 +21,7 @@ urlpatterns = patterns('apps.main.api',
     url(r'^ajax/api/notifications/send-call-request/(\d+:\w+)/$', SendCallRequestFromClient.as_view()),
 
 
-    # realtors pages
-    url(r'^ajax/api/realtors-pages/([A-z]+)/data/$', RealtorsData.as_view()),
-    url(r'^ajax/api/realtors-pages/([A-z]+)/markers/(\d+)/$', RealtorsMarkers.as_view()),
+    # # realtors pages
+    # url(r'^ajax/api/realtors-pages/([A-z]+)/data/$', RealtorsData.as_view()),
+    # url(r'^ajax/api/realtors-pages/([A-z]+)/markers/(\d+)/$', RealtorsMarkers.as_view()),
 )

@@ -127,7 +127,6 @@ INSTALLED_APPS = (
 	'core',
 	'core.users',
 	'core.publications',
-	'core.markers_servers',
 	'core.markers_handler',
 	'core.search',
 	'core.support',
