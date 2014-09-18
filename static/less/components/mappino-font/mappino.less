@@ -57,7 +57,24 @@
 
     &:before {
         content: '\e802';
-        margin-left: -50px;
+    }
+
+    &.margin-left {
+        &:before {
+            margin-left: -50px;
+        }
+    }
+    &.margin-top-right {
+        &:before {
+            margin-top: 20px;
+            margin-left: 0px;
+        }
+    }
+    &.margin-top-left {
+        &:before {
+            margin-top: 80px;
+            margin-left: -50px;
+        }
     }
 
 
@@ -67,8 +84,14 @@
     &.yellow {
         color: @nice-yellow;
     }
+    &.orange {
+        color: @nice-orange;
+    }
     &.blue {
         color: @nice-blue;
+    }
+    &.green {
+        color: @nice-green;
     }
 
 
@@ -93,5 +116,11 @@
     }
     &.x5:before {
         font-size: 550%;
+    }
+    &.x8:before {
+        font-size: 850%;
+    }
+    &.x12:before {
+        font-size: 1250%;
     }
 }
