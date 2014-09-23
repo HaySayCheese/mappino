@@ -60,8 +60,8 @@ class AbstractBaseIndex(models.Model):
 
 
     @classmethod
-    def remove(cls, record, using=None):
-        cls.objects.using(using).filter(publication_id=record.id).delete()
+    def remove(cls, hid, using=None):
+        cls.objects.using(using).filter(publication_id=hid).delete()
 
 
     @classmethod
@@ -77,12 +77,8 @@ class AbstractBaseIndex(models.Model):
     @classmethod
     def min_remove_queryset(cls):
         return cls.objects.all().only(
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
+            'lat',
+            'lng',
         )
 
 
@@ -1850,27 +1846,24 @@ class SegmentsIndex(models.Model):
                 if index is None:
                     raise ValueError('Invalid tid')
 
-        record = index.min_remove_queryset().filter(id=hid)[:1][0]
-
-        lat, lng = cls.record_lat_lng(record)
-
 
         # todo: add transaction here (find a way to combine custom sql and django orm to perform a transaction)
-        if record.for_sale:
-            cls.sale_indexes[record.tid].remove(record, using=cls.index_db_name)
-        else:
-            cls.rent_indexes[record.tid].remove(record, using=cls.index_db_name)
+        try:
+            index_record = index.min_remove_queryset().filter(id=hid)[:1][0]
+        except IndexError:
+            # оглошення немає в індексі
+            return
 
         cursor = cls.cursor()
         cursor.execute('BEGIN;')
-        for zoom, x, y in cls.grid.segments_digests(lat, lng):
+        for zoom, x, y in cls.grid.segments_digests(index_record.lat, index_record.lng):
 
             # Removing of the id from the index
             cursor.execute(
                 "SELECT array_remove(ids, {id}) FROM {table};"
                 .format(
                     table=cls._meta.db_table,
-                    id=record.id,
+                    id=index_record.id,
                 ))
 
             # If segment digest contains no more ids - remove it too
@@ -1879,8 +1872,8 @@ class SegmentsIndex(models.Model):
                 "   WHERE tid='{tid}' AND zoom='{zoom}' AND x='{x}' AND y='{y}' AND array_length('ids', 1) = 0;"
                 .format(
                     table=cls._meta.db_table,
-                    id=record.id,
-                    tid=record.tid,
+                    id=index_record.id,
+                    tid=tid,
                     zoom=zoom,
                     x=x,
                     y=y,
@@ -1888,6 +1881,9 @@ class SegmentsIndex(models.Model):
             )
         cursor.execute('END;')
         cursor.close()
+
+
+        index.remove(hid, using=cls.index_db_name)
 
 
     @classmethod
