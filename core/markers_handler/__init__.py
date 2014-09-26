@@ -1,20 +1,6 @@
 from django.dispatch import receiver
 
-from core.markers_handler.models import \
-    SegmentsIndex, \
-    FlatsSaleIndexAbstract, \
-    HousesSaleIndexAbstract, \
-    RoomsSaleIndexAbstract, \
-    FlatsRentIndexAbstract,\
-    HousesRentIndexAbstract, \
-    RoomsRentIndex, \
-    TradesIndex, \
-    OfficesIndex, \
-    WarehousesIndex, \
-    BusinessesIndex, \
-    CateringsIndex, \
-    GaragesIndex, \
-    LandsIndex
+from core.markers_handler.models import SegmentsIndex
 from core.publications import models_signals
 
 
