@@ -1,14 +1,16 @@
 # coding=utf-8
+from django.conf import settings
+
 from django.db import models, connections
 from django.db.models import Q
 from djorm_pgarray.fields import BigIntegerArrayField
+
 from collective.exceptions import InvalidArgument
-
 from core.currencies.constants import CURRENCIES
-
 from core.markers_handler.classes import Grid
 from core.markers_handler.exceptions import TooBigTransaction
-from core.publications.constants import OBJECTS_TYPES, MARKET_TYPES, FLOOR_TYPES, HEATING_TYPES, LIVING_RENT_PERIODS
+from core.publications.constants import \
+    OBJECTS_TYPES, MARKET_TYPES, FLOOR_TYPES, HEATING_TYPES, LIVING_RENT_PERIODS, HEAD_MODELS
 from core.currencies.currencies_manager import convert as convert_price
 from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
@@ -30,7 +32,7 @@ class AbstractBaseIndex(models.Model):
           не веде до проблем, оскільки індекс в будь-який момент може бути перебудований
           ціної декількох годин процесрного часу.
 
-        * неможливо з необхідним рівнем достовірності спрогноувати які саме фільтри
+        * неможливо з необхідним рівнем достовірності спрогнозувати які саме фільтри
           буде використовувати середньо-статистинчий користувач. Як наслідок — для забепечення ефективної
           роботи фільтрів за таких умов слід індексувати кожне поле, по якому може йти вибірка.
           Проактивна оптимізація з метою побудови такої системи, яка швидше працює лише за певного,
@@ -70,8 +72,19 @@ class AbstractBaseIndex(models.Model):
 
 
     @classmethod
-    def min_add_queryset(cls):  # virtual
-        return cls.objects.none()
+    def publication_add_min_queryset(cls):  # virtual
+        """
+        :return:
+            Мінімальний QuerySet моделі, до якої прив’язаний індекс.
+            Тобто, якщо це FlatsSaleIndexAbstract то буде повернуто QuerySet оголошень FlatsHeads,
+            якщо HousesRentIndexAbstract - HousesHeads і т.д.
+
+            Також, даний метод вибирає лише ті поля,
+            які використовуються під час додавання оголошення в індекс.
+            Саме тому даний метод перевизначається у всіх дочірніх індексах,
+            щоб була можливість вказувати специфічний набір полів під конкретний індекс.
+        """
+        raise Exception('Abstract method was called.')
 
 
     @classmethod
@@ -487,8 +500,9 @@ class FlatsSaleIndexAbstract(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        return cls.objects.all().only(
+    def publication_add_min_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.flat()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -506,7 +520,7 @@ class FlatsSaleIndexAbstract(AbstractBaseIndex):
             'body__floor',
             'body__floor_type_sid',
             'body__lift',
-            'body__how_water',
+            'body__hot_water',
             'body__cold_water',
             'body__gas',
             'body__electricity',
@@ -602,8 +616,9 @@ class FlatsRentIndexAbstract(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        return cls.objects.all().only(
+    def publication_add_min_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.flat()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -618,7 +633,7 @@ class FlatsRentIndexAbstract(AbstractBaseIndex):
             'body__floor',
             'body__floor_type_sid',
             'body__lift',
-            'body__how_water',
+            'body__hot_water',
             'body__cold_water',
             'body__gas',
             'body__electricity',
@@ -711,8 +726,9 @@ class HousesSaleIndexAbstract(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        return cls.objects.all().only(
+    def publication_add_min_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.house()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -727,7 +743,7 @@ class HousesSaleIndexAbstract(AbstractBaseIndex):
             'body__total_area',
             'body__rooms_count',
             'body__floors_count',
-            'body__how_water',
+            'body__hot_water',
             'body__cold_water',
             'body__electricity',
             'body__gas',
@@ -818,8 +834,9 @@ class HousesRentIndexAbstract(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        return cls.objects.all().only(
+    def publication_add_min_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.house()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -831,7 +848,7 @@ class HousesRentIndexAbstract(AbstractBaseIndex):
             'hash_id',
 
             'body__total_area',
-            'body__how_water',
+            'body__hot_water',
             'body__cold_water',
             'body__gas',
             'body__electricity',
@@ -925,8 +942,9 @@ class RoomsSaleIndexAbstract(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        return cls.objects.all().only(
+    def publication_add_min_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.room()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1038,8 +1056,9 @@ class RoomsRentIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        return cls.objects.all().only(
+    def publication_add_min_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.room()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1054,7 +1073,7 @@ class RoomsRentIndex(AbstractBaseIndex):
             'body__floor',
             'body__floor_type_sid',
             'body__lift',
-            'body__how_water',
+            'body__hot_water',
             'body__cold_water',
             'body__gas',
             'body__electricity',
@@ -1148,8 +1167,9 @@ class TradesIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        return cls.objects.all().only(
+    def publication_add_min_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.trade()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1248,8 +1268,9 @@ class OfficesIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        return cls.objects.all().only(
+    def publication_add_min_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.office()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1346,8 +1367,9 @@ class WarehousesIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        return cls.objects.all().only(
+    def publication_add_min_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.warehouse()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1429,8 +1451,9 @@ class BusinessesIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        return cls.objects.all().only(
+    def publication_add_min_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.business()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1513,8 +1536,9 @@ class CateringsIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        return cls.objects.all().only(
+    def publication_add_min_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.catering()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1606,8 +1630,9 @@ class GaragesIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        return cls.objects.all().only(
+    def publication_add_min_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.garage()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1691,8 +1716,9 @@ class LandsIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        return cls.objects.all().only(
+    def publication_add_min_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.land()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1793,7 +1819,7 @@ class SegmentsIndex(models.Model):
                 if index is None:
                     raise ValueError('Invalid tid')
 
-        record = index.min_add_queryset().filter(id=hid)[:1][0]
+        record = index.publication_add_min_queryset().filter(id=hid)[:1][0]
 
         lat, lng = cls.record_lat_lng(record)
         lat, lng = cls.grid.normalize_lat_lng(lat, lng)
@@ -1835,6 +1861,9 @@ class SegmentsIndex(models.Model):
 
     @classmethod
     def remove_record(cls, tid, hid):
+        if settings.DEBUG:
+            return
+
         # todo: даний метод потребує перевірки на реальному сервері postgres >=9.3
         # todo: даний метод потребує тестів
 
