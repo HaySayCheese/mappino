@@ -58,7 +58,7 @@ class Publications(object):
 
 
 			model = HEAD_MODELS[tid]
-			record = model.new(request.user.id, is_sale, is_rent)
+			record = model.new(request.user, is_sale, is_rent)
 
 			# seems to be ok
 			response = copy.deepcopy(self.post_codes['OK']) # Note: deepcopy here
