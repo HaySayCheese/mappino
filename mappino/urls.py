@@ -25,6 +25,7 @@ urlpatterns = patterns('apps',
 
     # flat pages
     url(r'^$', 'main.views.home'),
+    url(r'^search/$', 'main.views.search'),
     url(r'^promo/$', 'main.views.promo'),
     url(r'^promo/realtors/$', 'main.views.realtors_promo'),
 
