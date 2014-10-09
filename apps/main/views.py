@@ -5,14 +5,14 @@ from core.utils.jinja2_integration import templates
 
 @ensure_csrf_cookie
 def home(request):
-    template = templates.get_template('home.html')
-    return HttpResponse(content=template.render())
-
-
-@ensure_csrf_cookie
-def search(request):
     template = templates.get_template('main/home.html')
     return HttpResponse(content=template.render())
+
+
+# @ensure_csrf_cookie
+# def search(request):
+#     template = templates.get_template('main/home.html')
+#     return HttpResponse(content=template.render())
 
 
 @ensure_csrf_cookie
