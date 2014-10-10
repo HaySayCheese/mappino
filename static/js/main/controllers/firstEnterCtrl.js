@@ -26,45 +26,69 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
     });
 
 
-    $scope.initializeAutocomplete = function() {
-        var autocomplete,
-            autocompleteOptions = {
-                types:  ['(cities)'],
-                componentRestrictions: {
-                    country: 'ua'
-                }
-            };
+    var scrollableBlock = $(".modal-content"),
+        dropdown        = $(".type-selectpicker"),
+        scrollableBlockImage = scrollableBlock.find(".img-holder"),
+        headerLinksBlock = scrollableBlock.find(".header-links");
 
-        autocomplete = new google.maps.places.Autocomplete(input, autocompleteOptions);
+    dropdown.selectpicker({
+        style: 'btn-default btn-lg'
+    });
 
 
-        google.maps.event.addListener(autocomplete, 'place_changed', function() {
-            var place = autocomplete.getPlace();
-
-            if (!place.geometry)
-                return;
-
-            // If the place has a geometry, then present it on a map.
-            if (place.geometry.viewport) {
-                $rootScope.$emit('first-enter-change', [place.geometry.location, 15, input.value]);
-            } else {
-                $rootScope.$emit('first-enter-change', [place.geometry.location, 15, input.value]);
-            }
-
-            firstEnterDone();
-
-            if(!$scope.$$phase)
-                $scope.$apply();
-        });
-    };
+    scrollableBlockImage.imageScroll({
+        container: scrollableBlock,
+        touch: true
+    });
 
 
-    $scope.setCityFromExample = function(city) {
-        $scope.firstEnter.city = city;
-        $timeout(function() {
-            angular.element(input).focus().trigger("change");
+    /** Обробник евента скрола контента */
+    scrollableBlock.scroll(function() {
+        var scrollTop = scrollableBlock.scrollTop();
+
+        setTimeout(function() {
+            $(".image-caption")
+                .find("h1")
+                .css("opacity", (100 / (scrollTop / 7)) - 1.2)
+                .parent()
+                .find("img")
+                .css("opacity", (100 / (scrollTop / 9)) - 2);
         }, 100);
-    };
+
+
+
+        /** Navbar */
+        if (scrollTop > $(window).height() - 70) {
+            headerLinksBlock.removeClass("slideOutUp").addClass("slideInDown panel");
+        } else if (headerLinksBlock.hasClass("panel") && !headerLinksBlock.hasClass("slideOutUp")) {
+            headerLinksBlock
+                .removeClass("slideInDown")
+                .addClass("slideOutUp")
+
+                .delay(300).queue(function(next) {
+                    $(this).removeClass("slideOutUp panel");
+                    next();
+                })
+                .addClass("slideInDown")
+                .delay(250).queue(function(next) {
+                    $(this).removeClass("slideInDown");
+
+                    next();
+                });
+        }
+
+        /** Markers */
+        var sections = $("section"),
+            markers = $(".tablet-marker");
+
+        if (scrollTop > sections[0].offsetTop - 150) {
+            $.each(markers, function(i, el) {
+                setTimeout(function() {
+                    $(el).addClass("fadeInDown");
+                }, 300 + (i * 300));
+            });
+        }
+    });
 
 
 

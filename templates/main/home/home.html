@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="Mappino.Home">
 <head>
     <title>О сервисе - Mappino</title>
     <meta name="verify-reformal" content="a136a27e8d6dc3e9909629f0"/>
@@ -13,6 +13,8 @@
     <script src="http://yandex.st/modernizr/2.7.1/modernizr.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js"></script>
     <script src="http://yandex.st/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+    <script src="http://yandex.st/angularjs/1.2.16/angular.min.js"></script>
 
     {% compress js %}
         <script type="text/javascript" src="{{ static }}js/libs/jquery.imageScroll.min.js"></script>
@@ -55,7 +57,7 @@
                 <div class="slogan">Возможно, самый удобный поисковик недвижимости</div>
             </div>
         </div>
-        <section class="light-gray home-filters-pattern">
+        <section class="light-gray home-filters-pattern" ng-controller="FiltersCtrl">
             <div class="row">
                 <div class="col-lg-12 col-lg-10 col-lg-offset-1">
                     <div class="home-filters">
@@ -83,6 +85,8 @@
                                 <input class="form-control input-lg" type="text"/>
                                 <div class="help-text text-center text-muted"><i>Например, <u>Черновцы</u> или <u>Черновицкая область</u></i></div>
                             </div>
+                            <div ng-include="'ajax/template/main/home/types/'"></div>
+                            <div ng-include="'ajax/template/main/home/suggests/'"></div>
                         </div>
                     </div>
                 </div>
@@ -234,6 +238,15 @@
         </section>
 
     </div>
+
+
+    {% compress js %}
+        <script type="text/javascript" src="{{ static }}js/home/app.js"></script>
+
+        <script type="text/javascript" src="{{ static }}js/home/directives/filtersDirective.js"></script>
+
+        <script type="text/javascript" src="{{ static }}js/home/controllers/filtersCtrl.js"></script>
+    {% endcompress %}
 
 </body>
 </html>

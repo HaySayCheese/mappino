@@ -5,6 +5,7 @@
 
 @import "../../components/variables";
 @import "../../components/mixins";
+@import "../../components/mappino-font/mappino";
 
 
 
@@ -106,159 +107,351 @@
 
 
 .first-enter-modal {
-
-    .search-input-block {
-        &:before {
-            content: " ";
-            width: 0;
-            height: 0;
-
-            position: absolute;
-            top: calc(~"50% - 6px");
-            left: 12px;
-            border-style: solid;
-            border-width: 6px 6px 6px 0;
-            border-color: transparent #ffffff transparent transparent;
-        }
+    .modal-dialog {
+        .size(100%, 100%);
+        margin: 0;
     }
 
     .form-control {
-        height: 50px;
-        padding: 12px 50px 12px 16px;
-        .border-right-radius(0);
+        border: 1px solid @input-border;
     }
 
-    .brand-with-input {
-        margin-top: 3px;
-    }
+    .modal-content {
+        position: relative;
+        overflow-x: hidden;
 
-    .search-input-text {
-        margin-top: 6px;
-        color: #d2e0e5;
+        .header-links {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            z-index: 10;
 
-        > .city-example {
+
+
+            a:not(.btn) {
+                padding: 7px 14px;
+                margin: 0;
+                line-height: 14px;
+
+                color: rgba(255, 255, 255, 0.85) !important;
+                font-size: @font-size-base;
+                text-decoration: none;
+
+                border: 1px solid rgba(41, 73, 110, 0.4);
+
+                .transition(~"all 0.4s ease");
+
+                &:first-child {
+                    border-left: none;
+                }
+
+                &:hover,
+                &.active {
+                    color: #ffffff !important;
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+            }
+        }
+
+        .img-holder {
+            position: relative;
+        }
+
+
+        .image-caption {
+            position: absolute;
+            top: 18%;
+            left: 20%;
+
             color: #ffffff;
-            cursor: pointer;
-            border-bottom: 1px dashed #ffffff;
+            text-shadow: ~"0px 0px 15px rgba(0, 0, 0, 0.7)";
+
+            .brand {
+                font-size: 60px;
+            }
+            .slogan {
+                font-size: 16px;
+            }
+        }
+
+        section {
+            background: #ffffff;
+            .clearfix();
+
+            h2 {
+                color: @gray-dark;
+
+                &.with-margin {
+                    margin: 80px 0 60px;
+                }
+
+                &.with-margin-bottom {
+                    margin-bottom: 60px;
+                }
+            }
+
+            p {
+                position: relative;
+                font-size: 16px;
+            }
+
+            &.light-gray {
+                background-color: @gray-lighter;
+            }
+
+            &.home-filters-pattern {
+                background: url("../../img/home/home-filters-pattern.jpg");
+            }
+
+            .row {
+                .col-xs-1,
+                .col-xs-2 {
+                    padding: 0px;
+                }
+                .col-xs-11,
+                .col-xs-8 {
+                    padding-left: 0px;
+                }
+            }
+            .row.with-margin {
+                margin: 25px 0;
+            }
+
+            &.with-padding {
+                padding: 60px 40px 20px;
+            }
+
+            .with-padding-top {
+                margin-top: 50px;
+            }
+            &.with-padding-bottom {
+                padding-bottom: 60px;
+            }
+
+            .section-image {
+                position: relative;
+
+                img {
+                    display: block;
+                }
+            }
+        }
+
+        .home-filters {
+            .size(80%, 700px);
+
+            margin-top: -190px;
+
+            background: #fff;
+            border-top: 15px solid rgba(105, 135, 170, 0.4);
+            background-clip: padding-box;
+
+            .box-shadow(~"0px 0px 15px 0px rgba(0, 0, 0, 0.15)");
+            .center-block();
+
+            .suggests-header {
+                font-size: 16px;
+                padding-top: 30px;
+
+                hr {
+                    margin: 20px 43%;
+                }
+            }
+        }
+
+    }
+
+
+    .home-checkbox {
+        font-size: 16px;
+
+        &.red input[type="checkbox"]:checked + label:after {
+            color: @red-10;
+        }
+        &.blue input[type="checkbox"]:checked + label:after {
+            color: @nice-blue;
+        }
+        &.green input[type="checkbox"]:checked + label:after {
+            color: @nice-green;
+        }
+        &.yellow input[type="checkbox"]:checked + label:after {
+            color: @nice-yellow;
+        }
+
+        input[type="checkbox"] + label {
+            line-height: 40px;
+            padding: 10px 0 0 45px;
+
+            &:before,
+            &:after {
+                font-family: mappino;
+                font-size: 40px;
+                background-image: none;
+
+                //.transition(opacity 0.1s);
+            }
+
+            // unchecked
+            &:before {
+                content: '\e800';
+                color: @gray-lighter;
+            }
+
+            // checked
+            &:after {
+                content: '\e800';
+                opacity: 0;
+            }
+        }
+
+        input[type="checkbox"]:checked + label {
+
+            &:before {
+                opacity: 0;
+            }
+
+            &:after {
+                opacity: 1;
+            }
         }
     }
 
 
-    .padding-horizontal {
-        padding: 0 30px;
+    .bootstrap-select .btn {
+        border: 1px solid #d2d2d2;
+        border-radius: 0 !important;
     }
 
-    .modal-header {
-        padding-right: 45px;
+
+    .btn.section-btn {
+        margin-bottom: 15px;
+
+        color: #ffffff !important;
+        text-decoration: none;
     }
 
-    .modal-body {
-        padding: 0px 45px 35px 45px;
 
-        .padding-horizontal.top-margin {
-            margin-top: 44px;
+    .tablet-marker {
+        .size(36px, 49px);
+        position: absolute;
+
+        background: url("../../img/home/red-marker.png") center center no-repeat;
+
+        &[class*='m-'] {
+            .translate(0, -3000px);
         }
-
-    }
-
-    .modal-footer {
-        a {
-            margin: 0 10px;
+        &.m-1 {
+            top: 140px;
+            left: 150px;
+        }
+        &.m-2 {
+            top: 130px;
+            left: 220px;
+        }
+        &.m-3 {
+            top: 230px;
+            left: 220px;
+        }
+        &.m-4 {
+            top: 165px;
+            left: 320px;
+        }
+        &.m-5 {
+            top: 230px;
+            left: 290px;
         }
     }
 
 
-    /** Marker */
-    .pin {
-        width: 25px;
-        height: 25px;
-        border-radius: 50% 50% 50% 0;
-        background: #318ce1;
-        position: absolute;
-        right: 35px;
-        top: 50%;
-        margin: -20px 0 0 -20px;
-        z-index: @zindex-modal + 2;
-        .rotate(-45deg);
-    }
-    .pin:after {
-        content: "";
-        width: 9px;
-        height: 9px;
-        margin: 8px 0 0 8px;
-        background: #ffffff;
-        position: absolute;
-        border-radius: 50%;
+
+    .animated {
+        -webkit-animation-duration: .3s;
+        animation-duration: .3s;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
     }
 
-    .pulse {
-        background: #e2e2e2;
-        border-radius: 50%;
-        height: 10px;
-        width: 10px;
-        position: absolute;
-        right: 42px;
-        top: calc(~"50% - 5px");
-        margin: 11px 0px 0px -12px;
-        z-index: @zindex-modal + 1;
-        .rotateX(55deg);
-    }
-    .pulse:after {
-        content: "";
-        border-radius: 50%;
-        height: 25px;
-        width: 25px;
-        position: absolute;
-        margin: -7px 0 0 -7px;
-        opacity: 0;
-        box-shadow: 0 0 1px 2px #00cae9;
-
-        animation-name: pulsate;
-        -webkit-animation-name: pulsate;
-
-        animation-duration: 1s;
-        -webkit-animation-duration: 1s;
-
-        animation-delay: 1.1s;
-        -webkit-animation-delay: 1.1s;
-
-        animation-timing-function: ease-out;
-        -webkit-animation-timing-function: ease-out;
-
-        animation-iteration-count: infinite;
-        -webkit-animation-iteration-count: infinite;
-    }
-
-    @keyframes pulsate {
+    @-webkit-keyframes slideInDown {
         0% {
-            .scale(0.1);
-            opacity: 0;
+            .opacity(0);
+            .translate(0, -300px);
         }
-
-        50% {
-            opacity: 1;
-        }
-
         100% {
-            .scale(1.2);
-            opacity: 0;
+            .opacity(100);
+            .translate(0, 0);
         }
     }
-
-    @-webkit-keyframes pulsate {
+    @keyframes slideInDown {
         0% {
-            .scale(0.1);
-            opacity: 0;
+            .opacity(0);
+            .translate(0, -300px);
         }
-
-        50% {
-            opacity: 1;
-        }
-
         100% {
-            .scale(1.2);
-            opacity: 0;
+            .opacity(100);
+            .translate(0, 0);
         }
     }
+    .slideInDown {
+        -webkit-animation-name: slideInDown;
+        animation-name: slideInDown;
+    }
+
+
+
+    @-webkit-keyframes slideOutUp {
+        0% {
+            .opacity(100);
+            .translate(0, 0);
+        }
+        100% {
+            .opacity(0);
+            .translate(0, -300px);
+        }
+    }
+    @keyframes slideOutUp {
+        0% {
+            .opacity(100);
+            .translate(0, 0);
+        }
+        100% {
+            .opacity(0);
+            .translate(0, -300px);
+        }
+    }
+    .slideOutUp {
+        -webkit-animation-name: slideOutUp;
+        animation-name: slideOutUp;
+    }
+
+
+
+    @-webkit-keyframes fadeInDown {
+        0% {
+            .opacity(0);
+            .translate(0, -2000px);
+        }
+        100% {
+            .opacity(100);
+            .translate(0, 0);
+        }
+    }
+
+    @keyframes fadeInDown {
+        0% {
+            .opacity(0);
+            .translate(0, -2000px);
+        }
+        100% {
+            .opacity(100);
+            .translate(0, 0);
+        }
+    }
+
+    .fadeInDown {
+        -webkit-animation-name: fadeInDown;
+        animation-name: fadeInDown;
+    }
+
 }
 
