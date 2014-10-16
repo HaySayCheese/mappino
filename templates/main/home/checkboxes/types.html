@@ -1,8 +1,10 @@
 <div class="row" f-checkboxes>
     <div class="col-md-3 col-md-offset-3">
         <div class="checkbox home-checkbox">
-            <input f-checkbox id="flat_1_floor" type="checkbox" name="room_from=1" ng-model="cb.flat.1_room">
-            <label for="flat_1_floor">1-комнатную</label>
+            <input f-checkbox id="flat_1_floor" type="checkbox" name="room_from=1" ng-model="cb.flat.room_1">
+            <label for="flat_1_floor">
+                1-комнатную
+            </label>
         </div>
         <div class="checkbox home-checkbox">
             <input f-checkbox id="flat_3_floor" type="checkbox" name="room_from=3" ng-model="cb.flat.2_room">
@@ -20,3 +22,6 @@
         </div>
     </div>
 </div>
+
+
+<div ng-include="'ajax/template/main/home/suggests/'"></div>

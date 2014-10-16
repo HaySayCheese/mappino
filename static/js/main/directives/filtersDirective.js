@@ -26,6 +26,7 @@ app.directive('fCheckboxes', function () {
                             checkboxes[c] = true;
 
                             parent.addClass(c);
+                            parent.find("input").attr("checked", "checked");
 
                             return;
                         }
@@ -35,6 +36,7 @@ app.directive('fCheckboxes', function () {
                         color = classes[classes.length - 1];
 
                     parent.removeClass(color);
+                    parent.find("input").attr("checked", null);
                     checkboxes[color] = false;
                 }
 

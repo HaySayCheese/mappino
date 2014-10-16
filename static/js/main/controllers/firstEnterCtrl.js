@@ -28,7 +28,7 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
 
     var scrollableBlock = $(".modal-content"),
         dropdown        = $(".type-selectpicker"),
-        scrollableBlockImage = scrollableBlock.find(".img-holder"),
+        scrollableBlockImage = $(".img-holder"),
         headerLinksBlock = scrollableBlock.find(".header-links");
 
     dropdown.selectpicker({
@@ -36,10 +36,11 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
     });
 
 
-    scrollableBlockImage.imageScroll({
-        container: scrollableBlock,
-        touch: true
-    });
+    $scope.cb = {
+        flat: {
+            room_1: false
+        }
+    }
 
 
     /** Обробник евента скрола контента */
