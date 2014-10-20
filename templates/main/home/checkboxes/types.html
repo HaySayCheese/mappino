@@ -1,27 +1,58 @@
-<div class="row" f-checkboxes>
+
+<!-- Sale flat -->
+<div class="row" f-checkboxes ng-show="home.operation == 'sale'">
     <div class="col-md-3 col-md-offset-3">
         <div class="checkbox home-checkbox">
-            <input f-checkbox id="flat_1_floor" type="checkbox" name="room_from=1" ng-model="cb.flat.room_1">
-            <label for="flat_1_floor">
+            <input f-checkbox id="flat_1_1" type="checkbox" name="rooms_count_from=1&rooms_count_to=1" ng-model="home.flat.rooms_1_1">
+            <label for="flat_1_1">
                 1-комнатную
             </label>
         </div>
         <div class="checkbox home-checkbox">
-            <input f-checkbox id="flat_3_floor" type="checkbox" name="room_from=3" ng-model="cb.flat.2_room">
-            <label for="flat_3_floor">3-комнатную</label>
+            <input f-checkbox id="flat_3_3" type="checkbox" name="rooms_count_from=3&rooms_count_to=3" ng-model="home.flat.rooms_3_3">
+            <label for="flat_3_3">3-комнатную</label>
         </div>
     </div>
     <div class="col-md-3">
         <div class="checkbox home-checkbox">
-            <input f-checkbox id="flat_2_floor" type="checkbox" name="room_from=2" ng-model="cb.flat.3_room">
-            <label for="flat_2_floor">2-комнатную</label>
+            <input f-checkbox id="flat_2_2" type="checkbox" name="rooms_count_from=2&rooms_count_to=2" ng-model="home.flat.rooms_2_2">
+            <label for="flat_2_2">2-комнатную</label>
         </div>
         <div class="checkbox home-checkbox">
-            <input f-checkbox id="flat_4_floor" type="checkbox" name="room_from=4" ng-model="cb.flat.4_room">
-            <label for="flat_4_floor">4 и больше&nbsp;&nbsp;</label>
+            <input f-checkbox id="flat_4_0" type="checkbox" name="rooms_count_from=4" ng-model="home.flat.rooms_4_0">
+            <label for="flat_4_0">4 и больше&nbsp;&nbsp;</label>
         </div>
     </div>
 </div>
+
+
+<!-- Rent flat -->
+<!--<div class="row" f-checkboxes ng-show="home.operation == 'rent'">-->
+    <!--<div class="col-md-3 col-md-offset-3">-->
+        <!--<div class="checkbox home-checkbox">-->
+            <!--<input f-checkbox id="flat_1_1" type="checkbox" name="rooms_count_from=1&rooms_count_to=1" ng-model="home.flat.rooms_1_1">-->
+            <!--<label for="flat_1_1">-->
+                <!--1-комнатную-->
+            <!--</label>-->
+        <!--</div>-->
+        <!--<div class="checkbox home-checkbox">-->
+            <!--<input f-checkbox id="flat_3_3" type="checkbox" name="rooms_count_from=3&rooms_count_to=3" ng-model="home.flat.rooms_3_3">-->
+            <!--<label for="flat_3_3">3-комнатную</label>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="col-md-3">-->
+        <!--<div class="checkbox home-checkbox">-->
+            <!--<input f-checkbox id="flat_2_2" type="checkbox" name="rooms_count_from=2&rooms_count_to=2" ng-model="home.flat.rooms_2_2">-->
+            <!--<label for="flat_2_2">2-комнатную</label>-->
+        <!--</div>-->
+        <!--<div class="checkbox home-checkbox">-->
+            <!--<input f-checkbox id="flat_4_0" type="checkbox" name="rooms_count_from=4" ng-model="home.flat.rooms_4_0">-->
+            <!--<label for="flat_4_0">4 и больше&nbsp;&nbsp;</label>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+
+
 
 
 <div ng-include="'ajax/template/main/home/suggests/'"></div>

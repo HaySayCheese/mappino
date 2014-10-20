@@ -36,11 +36,15 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
     });
 
 
-    $scope.cb = {
+    $scope.home = {
+        operation: "sale",
         flat: {
-            room_1: false
+            rooms_1_1: false,
+            rooms_2_2: false,
+            rooms_3_3: false,
+            rooms_4_4: false
         }
-    }
+    };
 
 
     /** Обробник евента скрола контента */
