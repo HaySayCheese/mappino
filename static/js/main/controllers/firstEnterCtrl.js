@@ -42,8 +42,40 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
             rooms_1_1: false,
             rooms_2_2: false,
             rooms_3_3: false,
-            rooms_4_4: false
+            rooms_4_0: false
         }
+    };
+
+
+    $scope.isYo = function(obj, positives) {
+        var _obj = $scope.home[obj],
+            _objLength = 0,
+            pos_count = 0,
+            neg_count = 0;
+
+        // Calc positve checkbox checked
+        for (var a = 0; a <= positives.length; a++) {
+            for (var p in _obj) {
+                if (_obj.hasOwnProperty(p) && p == positives[a] && _obj[p])
+                    pos_count++;
+            }
+        }
+
+        // Calc negative checkbox checked
+        for (var n in _obj) {
+            if (_obj.hasOwnProperty(n)) {
+                if (!positives[1] && n != positives[0] && !_obj[n])
+                    neg_count++;
+                else if (positives[1] && n != positives[1] && !_obj[n])
+                    neg_count++;
+            }
+
+            _objLength++;
+        }
+
+        // If alles gute return true )
+        if (pos_count == positives.length && neg_count == (_objLength - positives.length))
+            return true;
     };
 
 
