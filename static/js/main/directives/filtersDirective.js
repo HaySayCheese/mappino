@@ -40,7 +40,7 @@ app.directive('fCheckboxes', function () {
                     checkboxes[color] = false;
                 }
 
-            })
+            });
         }
     };
 });
