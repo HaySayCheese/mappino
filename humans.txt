@@ -1,4 +1,8 @@
 /* TEAM */
-    Back-end developer: Dmitriy Chizhevsky
-    Front-end developer: Sergei Meketyuk
-    Creative ideas and marketing: Vitaliy Pavlinsky
+    Co-founder and lead back-end developer: Dima Chizhevsky
+    Co-founder and lead front-end developer: Sergei Meketyuk
+    Ideas and marketing: Nastia Panfilova
+    Ideas: Vitaliy Pavlinsky
+
+
+/* Project was made with love to Ukraine, Earth and any people on it. */
