@@ -3,7 +3,7 @@
 
     <!-- Sale flat -->
     <div class="row" ng-show="home.operation == 'sale'">
-        <div class="col-md-3 col-md-offset-3">
+        <div class="col-xs-6 col-md-3 col-sm-offset-0 col-md-offset-3">
             <div class="checkbox home-checkbox">
                 <input f-checkbox id="sale_flat_1_1" type="checkbox" name="rooms_count_from=1&rooms_count_to=1" ng-model="home.flat.rooms_1_1">
                 <label for="sale_flat_1_1">
@@ -16,7 +16,7 @@
             </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-xs-6">
             <div class="checkbox home-checkbox">
                 <input f-checkbox id="sale_flat_2_2" type="checkbox" name="rooms_count_from=2&rooms_count_to=2" ng-model="home.flat.rooms_2_2">
                 <label for="sale_flat_2_2">2-комнатную</label>
@@ -64,44 +64,52 @@
 
 
     <!-- Suggests -->
-    <div class="suggests-header text-muted">
+    <div class="suggests-header text-muted" ng-show="home.flat.rooms_1_1 || home.flat.rooms_2_2 || home.flat.rooms_3_3 || home.flat.rooms_4_0">
         <hr/>
         Возможно вам будет интересно
     </div>
-    <div class="col-md-3 col-md-offset-3">
-        <div class="checkbox home-checkbox"
-             ng-show="home.flat.rooms_1_1
-                        || (home.flat.rooms_1_1 && home.flat.rooms_2_2)
-                        || (home.flat.rooms_1_1 && home.flat.rooms_3_3)
-                        || (home.flat.rooms_1_1 && home.flat.rooms_4_0)">
-            <input f-checkbox id="house_1_1" type="checkbox" name="rooms_count_from=1&rooms_count_to=1" ng-model="home.house.rooms_1_1">
-            <label for="house_1_1">Дом, 1 комн.</label>
-        </div>
-        <div class="checkbox home-checkbox"
-             ng-show="home.flat.rooms_2_2 || home.flat.rooms_3_3
-                        || (home.flat.rooms_1_1 && home.flat.rooms_2_2)
-                        || (home.flat.rooms_2_2 && home.flat.rooms_3_3)
-                        || (home.flat.rooms_2_2 && home.flat.rooms_4_0)">
-            <input f-checkbox id="house_2_2" type="checkbox" name="rooms_count_from=2&rooms_count_to=2" ng-model="home.house.rooms_2_2">
-            <label for="house_2_2">Дом, 2 комн.</label>
+    <div class="row">
+        <div class="col-xs-12 col-md-6 col-sm-offset-0 col-md-offset-3">
+            <div class="row">
+                <div class="col-xs-6" ng-show="isYo('flat', ['rooms_1_1'])
+                                                        || isYo('flat', ['rooms_1_1', 'rooms_2_2'])
+                                                        || isYo('flat', ['rooms_1_1', 'rooms_3_3'])
+                                                        || isYo('flat', ['rooms_1_1', 'rooms_4_0'])">
+                    <div class="checkbox home-checkbox">
+                        <input f-checkbox id="house_1_1" type="checkbox" name="rooms_count_from=1&rooms_count_to=1" ng-model="home.house.rooms_1_1">
+                        <label for="house_1_1">Дом, 1 комн.</label>
+                    </div>
+                </div>
+                <div class="col-xs-6" ng-show="isYo('flat', ['rooms_2_2']) || isYo('flat', ['rooms_3_3'])
+                                                        || isYo('flat', ['rooms_1_1', 'rooms_2_2'])
+                                                        || isYo('flat', ['rooms_2_2', 'rooms_3_3'])
+                                                        || isYo('flat', ['rooms_2_2', 'rooms_4_0'])">
+                    <div class="checkbox home-checkbox">
+                        <input f-checkbox id="house_2_2" type="checkbox" name="rooms_count_from=2&rooms_count_to=2" ng-model="home.house.rooms_2_2">
+                        <label for="house_2_2">Дом, 2 комн.</label>
+                    </div>
+                </div>
+                <div class="col-xs-6" ng-show="isYo('flat', ['rooms_2_2']) || isYo('flat', ['rooms_3_3']) || isYo('flat', ['rooms_4_0'])
+                                                        || isYo('flat', ['rooms_1_1', 'rooms_3_3'])
+                                                        || isYo('flat', ['rooms_2_2', 'rooms_3_3'])
+                                                        || isYo('flat', ['rooms_3_3', 'rooms_4_0'])">
+                    <div class="checkbox home-checkbox">
+                        <input f-checkbox id="house_3_3" type="checkbox" name="rooms_count_from=3&rooms_count_to=3" ng-model="home.house.rooms_3_3">
+                        <label for="house_3_3">Дом, 3 комн.</label>
+                    </div>
+                </div>
+                <div class="col-xs-6" ng-show="isYo('flat', ['rooms_4_0'])
+                                                        || isYo('flat', ['rooms_1_1', 'rooms_4_0'])
+                                                        || isYo('flat', ['rooms_2_2', 'rooms_4_0'])
+                                                        || isYo('flat', ['rooms_2_2', 'rooms_4_0'])">
+                    <div class="checkbox home-checkbox">
+                        <input f-checkbox id="house_4_0" type="checkbox" name="rooms_count_from=4" ng-model="home.house.rooms_4_0">
+                        <label for="house_4_0">Дом, 4 и больше</label>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="checkbox home-checkbox"
-             ng-show="home.flat.rooms_2_2 || home.flat.rooms_3_3 || home.flat.rooms_4_0
-                        || (home.flat.rooms_1_1 && home.flat.rooms_3_3)
-                        || (home.flat.rooms_2_2 && home.flat.rooms_3_3)
-                        || (home.flat.rooms_3_3 && home.flat.rooms_4_0)">
-            <input f-checkbox id="house_3_3" type="checkbox" name="rooms_count_from=3&rooms_count_to=3" ng-model="home.house.rooms_3_3">
-            <label for="house_3_3">Дом, 3 комн.</label>
-        </div>
-        <div class="checkbox home-checkbox"
-             ng-show="home.flat.rooms_4_4
-                        || (home.flat.rooms_1_1 && home.flat.rooms_4_0)
-                        || (home.flat.rooms_2_2 && home.flat.rooms_4_4)
-                        || (home.flat.rooms_3_3 && home.flat.rooms_4_0)">
-            <input f-checkbox id="house_4_0" type="checkbox" name="rooms_count_from=4" ng-model="home.house.rooms_4_0">
-            <label for="house_4_0">Дом, 4 и больше</label>
-        </div>
-    </div>
+
+
 </div>
