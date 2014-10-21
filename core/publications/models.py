@@ -3908,3 +3908,38 @@ class LandsHeads(AbstractHeadModel):
 	body = models.ForeignKey(LandsBodies)
 	sale_terms = models.OneToOneField(LandsSaleTerms)
 	rent_terms = models.OneToOneField(LandsRentTerms)
+
+
+
+HEAD_MODELS = {
+    OBJECTS_TYPES.flat():       FlatsHeads,
+    OBJECTS_TYPES.apartments(): ApartmentsHeads,
+    OBJECTS_TYPES.house():      HousesHeads,
+    OBJECTS_TYPES.cottage():    CottagesHeads,
+    OBJECTS_TYPES.room():       RoomsHeads,
+
+    OBJECTS_TYPES.trade():      TradesHeads,
+    OBJECTS_TYPES.office():     OfficesHeads,
+    OBJECTS_TYPES.warehouse():  WarehousesHeads,
+    OBJECTS_TYPES.business():   BusinessesHeads,
+    OBJECTS_TYPES.catering():   CateringsHeads,
+
+    OBJECTS_TYPES.garage():     GaragesHeads,
+    OBJECTS_TYPES.land():       LandsHeads,
+}
+PHOTOS_MODELS = {
+    OBJECTS_TYPES.flat():       FlatsPhotos,
+    OBJECTS_TYPES.apartments(): ApartmentsPhotos,
+    OBJECTS_TYPES.house():      HousesPhotos,
+    OBJECTS_TYPES.cottage():    CottagesPhotos,
+    OBJECTS_TYPES.room():       RoomsPhotos,
+
+    OBJECTS_TYPES.trade():      TradesPhotos,
+    OBJECTS_TYPES.office():     OfficesPhotos,
+    OBJECTS_TYPES.warehouse():  WarehousesPhotos,
+    OBJECTS_TYPES.business():   BusinessesPhotos,
+    OBJECTS_TYPES.catering():   CateringsPhotos,
+
+    OBJECTS_TYPES.garage():     GaragesPhotos,
+    OBJECTS_TYPES.land():       LandsPhotos,
+}
