@@ -26,17 +26,19 @@ SUPPORT_EMAIL =  MANAGERS[0][1]
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '(dev)mappino',
-        'USER': 'mappino',
+        'NAME': '(dev)mappino-db',
+        'USER': '(dev)mappino',
         'PASSWORD': '123123',
-        'HOST': '146.185.129.95',
+        'HOST': '127.0.0.1',
+        'PORT': 5555,
     },
     'markers_index': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '(dev)mappino',
-        'USER': 'mappino',
+        'NAME': '(dev)mappino-index-db',
+        'USER': '(dev)mappino',
         'PASSWORD': '123123',
-        'HOST': '146.185.129.95',
+        'HOST': '127.0.0.1',
+        'PORT': 5555,
     }
 }
 DATABASE_ROUTERS = ['core.database_router.Router', ]
@@ -115,7 +117,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
 
     # todo: add initialisation app here
-    'core',
+    #'core',
     'core.users',
     'core.billing',
     'core.publications',
