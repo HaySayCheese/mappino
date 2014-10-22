@@ -1,6 +1,4 @@
 # coding=utf-8
-from django.conf import settings
-
 from django.db import models, connections
 from django.db.models import Q
 from djorm_pgarray.fields import BigIntegerArrayField
@@ -72,7 +70,7 @@ class AbstractBaseIndex(models.Model):
 
 
     @classmethod
-    def publication_add_min_queryset(cls):  # virtual
+    def min_add_queryset(cls):  # virtual
         """
         :return:
             Мінімальний QuerySet моделі, до якої прив’язаний індекс.
@@ -89,10 +87,7 @@ class AbstractBaseIndex(models.Model):
 
     @classmethod
     def min_remove_queryset(cls):
-        return cls.objects.all().only(
-            'lat',
-            'lng',
-        )
+        raise Exception('Abstract method was called.')
 
 
     @staticmethod
@@ -500,7 +495,7 @@ class FlatsSaleIndexAbstract(AbstractBaseIndex):
 
 
     @classmethod
-    def publication_add_min_queryset(cls):
+    def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.flat()]
         return model.objects.all().only(
             'degree_lat',
@@ -528,6 +523,21 @@ class FlatsSaleIndexAbstract(AbstractBaseIndex):
 
             'sale_terms__price',
             'sale_terms__currency_sid'
+        )
+
+
+    @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.flat()]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
         )
 
 
@@ -616,7 +626,7 @@ class FlatsRentIndexAbstract(AbstractBaseIndex):
 
 
     @classmethod
-    def publication_add_min_queryset(cls):
+    def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.flat()]
         return model.objects.all().only(
             'degree_lat',
@@ -644,6 +654,21 @@ class FlatsRentIndexAbstract(AbstractBaseIndex):
             'rent_terms__persons_count'
             'rent_terms__family'
             'rent_terms__foreigners'
+        )
+
+
+    @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.flat()]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
         )
 
 
@@ -726,7 +751,7 @@ class HousesSaleIndexAbstract(AbstractBaseIndex):
 
 
     @classmethod
-    def publication_add_min_queryset(cls):
+    def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.house()]
         return model.objects.all().only(
             'degree_lat',
@@ -752,6 +777,21 @@ class HousesSaleIndexAbstract(AbstractBaseIndex):
 
             'sale_terms__price',
             'sale_terms__currency_sid'
+        )
+
+
+    @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.house()]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
         )
 
 
@@ -834,7 +874,7 @@ class HousesRentIndexAbstract(AbstractBaseIndex):
 
 
     @classmethod
-    def publication_add_min_queryset(cls):
+    def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.house()]
         return model.objects.all().only(
             'degree_lat',
@@ -859,6 +899,21 @@ class HousesRentIndexAbstract(AbstractBaseIndex):
             'rent_terms__persons_count'
             'rent_terms__family'
             'rent_terms__foreigners'
+        )
+
+
+    @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.house()]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
         )
 
 
@@ -942,7 +997,7 @@ class RoomsSaleIndexAbstract(AbstractBaseIndex):
 
 
     @classmethod
-    def publication_add_min_queryset(cls):
+    def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.room()]
         return model.objects.all().only(
             'degree_lat',
@@ -1056,7 +1111,7 @@ class RoomsRentIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def publication_add_min_queryset(cls):
+    def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.room()]
         return model.objects.all().only(
             'degree_lat',
@@ -1119,7 +1174,7 @@ class RoomsRentIndex(AbstractBaseIndex):
 
 # -- commercial real estate
 
-class TradesIndex(AbstractBaseIndex):
+class TradesSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -1134,7 +1189,7 @@ class TradesIndex(AbstractBaseIndex):
 
 
     class Meta:
-        db_table = 'index_trades'
+        db_table = 'index_trades_sale'
 
 
     @classmethod
@@ -1167,7 +1222,7 @@ class TradesIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def publication_add_min_queryset(cls):
+    def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.trade()]
         return model.objects.all().only(
             'degree_lat',
@@ -1224,7 +1279,13 @@ class TradesIndex(AbstractBaseIndex):
 
 
 
-class OfficesIndex(AbstractBaseIndex):
+class TradesRentIndex(TradesSaleIndex):
+    class Meta:
+        db_table = 'index_trades_rent'
+
+
+
+class OfficesSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -1237,7 +1298,7 @@ class OfficesIndex(AbstractBaseIndex):
 
 
     class Meta:
-        db_table = 'index_offices'
+        db_table = 'index_offices_sale'
 
 
     @classmethod
@@ -1268,7 +1329,7 @@ class OfficesIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def publication_add_min_queryset(cls):
+    def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.office()]
         return model.objects.all().only(
             'degree_lat',
@@ -1321,7 +1382,13 @@ class OfficesIndex(AbstractBaseIndex):
 
 
 
-class WarehousesIndex(AbstractBaseIndex):
+class OfficesRentIndex(OfficesSaleIndex):
+    class Meta:
+        db_table = 'index_offices_rent'
+
+
+
+class WarehousesSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -1335,7 +1402,7 @@ class WarehousesIndex(AbstractBaseIndex):
 
 
     class Meta:
-        db_table = 'index_warehouses'
+        db_table = 'index_warehouses_sale'
 
 
     @classmethod
@@ -1367,7 +1434,7 @@ class WarehousesIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def publication_add_min_queryset(cls):
+    def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.warehouse()]
         return model.objects.all().only(
             'degree_lat',
@@ -1422,13 +1489,19 @@ class WarehousesIndex(AbstractBaseIndex):
 
 
 
-class BusinessesIndex(AbstractBaseIndex):
+class  WarehousesRentIndex(WarehousesSaleIndex):
+    class Meta:
+        db_table = 'index_warehouses_rent'
+
+
+
+class BusinessesSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
 
 
     class Meta:
-        db_table = 'index_businesses'
+        db_table = 'index_businesses_sale'
 
 
     @classmethod
@@ -1451,7 +1524,7 @@ class BusinessesIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def publication_add_min_queryset(cls):
+    def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.business()]
         return model.objects.all().only(
             'degree_lat',
@@ -1488,7 +1561,13 @@ class BusinessesIndex(AbstractBaseIndex):
 
 
 
-class CateringsIndex(AbstractBaseIndex):
+class BusinessesRentIndex(BusinessesSaleIndex):
+    class Meta:
+        db_table = 'index_businesses_rent'
+
+
+
+class CateringsSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -1503,7 +1582,7 @@ class CateringsIndex(AbstractBaseIndex):
 
 
     class Meta:
-        db_table = 'index_caterings'
+        db_table = 'index_caterings_sale'
 
 
     @classmethod
@@ -1536,7 +1615,7 @@ class CateringsIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def publication_add_min_queryset(cls):
+    def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.catering()]
         return model.objects.all().only(
             'degree_lat',
@@ -1594,7 +1673,13 @@ class CateringsIndex(AbstractBaseIndex):
 
 
 
-class GaragesIndex(AbstractBaseIndex):
+class CateringsRentIndex(CateringsSaleIndex):
+    class Meta:
+        db_table = 'index_caterings_rent'
+
+
+
+class GaragesSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     total_area = models.FloatField(db_index=True)
@@ -1603,7 +1688,7 @@ class GaragesIndex(AbstractBaseIndex):
 
 
     class Meta:
-        db_table = 'index_garages'
+        db_table = 'index_garages_sale'
 
 
     @classmethod
@@ -1630,7 +1715,7 @@ class GaragesIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def publication_add_min_queryset(cls):
+    def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.garage()]
         return model.objects.all().only(
             'degree_lat',
@@ -1676,7 +1761,13 @@ class GaragesIndex(AbstractBaseIndex):
 
 
 
-class LandsIndex(AbstractBaseIndex):
+class GaragesRentIndex(GaragesSaleIndex):
+    class Meta:
+        db_table = 'index_garages_rent'
+
+
+
+class LandsSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     total_area = models.FloatField(db_index=True)
@@ -1687,7 +1778,7 @@ class LandsIndex(AbstractBaseIndex):
 
 
     class Meta:
-        db_table = 'index_lands'
+        db_table = 'index_lands_sale'
 
 
     @classmethod
@@ -1716,7 +1807,7 @@ class LandsIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def publication_add_min_queryset(cls):
+    def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.land()]
         return model.objects.all().only(
             'degree_lat',
@@ -1766,7 +1857,13 @@ class LandsIndex(AbstractBaseIndex):
 
 
 
-#-- index handler
+class LandsRentIndex(LandsSaleIndex):
+    class Meta:
+        db_table = 'index_lands_rent'
+
+
+
+# -- index handler
 class SegmentsIndex(models.Model):
     index_db_name = 'markers_index'
     min_zoom = 1
@@ -1776,24 +1873,33 @@ class SegmentsIndex(models.Model):
     # static members
     grid = Grid(min_zoom, max_zoom)
 
-    sale_indexes = {
+    living_sale_indexes = {
         OBJECTS_TYPES.flat(): FlatsSaleIndexAbstract,
         OBJECTS_TYPES.house(): HousesSaleIndexAbstract,
         OBJECTS_TYPES.room(): RoomsSaleIndexAbstract,
     }
-    rent_indexes = {
+    living_rent_indexes = {
         OBJECTS_TYPES.flat(): FlatsRentIndexAbstract,
         OBJECTS_TYPES.house(): HousesRentIndexAbstract,
         OBJECTS_TYPES.room(): RoomsRentIndex,
     }
-    commercial_indexes = {
-        OBJECTS_TYPES.trade(): TradesIndex,
-        OBJECTS_TYPES.office(): OfficesIndex,
-        OBJECTS_TYPES.warehouse(): WarehousesIndex,
-        OBJECTS_TYPES.business(): BusinessesIndex,
-        OBJECTS_TYPES.catering(): CateringsIndex,
-        OBJECTS_TYPES.garage(): GaragesIndex,
-        OBJECTS_TYPES.land(): LandsIndex,
+    commercial_sale_indexes = {
+        OBJECTS_TYPES.trade(): TradesSaleIndex,
+        OBJECTS_TYPES.office(): OfficesSaleIndex,
+        OBJECTS_TYPES.warehouse(): WarehousesSaleIndex,
+        OBJECTS_TYPES.business(): BusinessesSaleIndex,
+        OBJECTS_TYPES.catering(): CateringsSaleIndex,
+        OBJECTS_TYPES.garage(): GaragesSaleIndex,
+        OBJECTS_TYPES.land(): LandsSaleIndex,
+    }
+    commercial_rent_indexes = {
+        OBJECTS_TYPES.trade(): TradesRentIndex,
+        OBJECTS_TYPES.office(): OfficesRentIndex,
+        OBJECTS_TYPES.warehouse(): WarehousesRentIndex,
+        OBJECTS_TYPES.business(): BusinessesRentIndex,
+        OBJECTS_TYPES.catering(): CateringsRentIndex,
+        OBJECTS_TYPES.garage(): GaragesRentIndex,
+        OBJECTS_TYPES.land(): LandsRentIndex,
     }
 
 
@@ -1810,26 +1916,36 @@ class SegmentsIndex(models.Model):
 
 
     @classmethod
-    def add_record(cls, tid, hid):
-        index = cls.commercial_indexes.get(tid)
+    def add_record(cls, tid, hid, for_sale, for_rent):
+        if for_sale and for_rent:
+            raise InvalidArgument('Object can or for_sale or for_rent but not both.')
+
+
+        if for_sale:
+            index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
+        else:
+            index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
+
         if index is None:
-            index = cls.sale_indexes.get(tid)
-            if index is None:
-                index = cls.rent_indexes.get(tid)
-                if index is None:
-                    raise ValueError('Invalid tid')
+            return InvalidArgument('No index such tid.')
 
-        record = index.publication_add_min_queryset().filter(id=hid)[:1][0]
 
+        record = index.min_add_queryset().filter(id=hid)[:1][0]
         lat, lng = cls.record_lat_lng(record)
         lat, lng = cls.grid.normalize_lat_lng(lat, lng)
 
 
+        # Можливий такий випадок, коли при знятті оголошення з публікації чи видаленні,
+        # інформація з індексу не видалилась.
+        # Для запобігання дублікату запису в індексі слід видалити всі записи із id=hid.
+        index.objects.filter(publication_id=record.id).delete()
+
+
         # todo: add transaction here (find a way to combine custom sql and django orm to perform a transaction)
         if record.for_sale:
-            cls.sale_indexes[record.tid].add(record, using=cls.index_db_name)
+            cls.living_sale_indexes[record.tid].add(record, using=cls.index_db_name)
         else:
-            cls.rent_indexes[record.tid].add(record, using=cls.index_db_name)
+            cls.living_rent_indexes[record.tid].add(record, using=cls.index_db_name)
 
         cursor = cls.cursor()
         cursor.execute('BEGIN;')
@@ -1857,62 +1973,70 @@ class SegmentsIndex(models.Model):
             )
         cursor.execute('END;')
         cursor.close()
+        # todo: transaction end
 
 
     @classmethod
-    def remove_record(cls, tid, hid):
-        if settings.DEBUG:
-            return
+    def remove_record(cls, tid, hid, for_sale, for_rent):
+        if for_sale and for_rent:
+            raise InvalidArgument('Object can or for_sale or for_rent but not both.')
 
-        # todo: даний метод потребує перевірки на реальному сервері postgres >=9.3
-        # todo: даний метод потребує тестів
 
-        index = cls.commercial_indexes.get(tid)
+        if for_sale:
+            index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
+        else:
+            index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
+
         if index is None:
-            index = cls.sale_indexes.get(tid)
-            if index is None:
-                index = cls.rent_indexes.get(tid)
-                if index is None:
-                    raise ValueError('Invalid tid')
+            return InvalidArgument('No index such tid.')
+
+
+        record = index.min_remove_queryset().filter(id=hid)[:1][0]
+        lat, lng = cls.record_lat_lng(record)
+        lat, lng = cls.grid.normalize_lat_lng(lat, lng)
 
 
         # todo: add transaction here (find a way to combine custom sql and django orm to perform a transaction)
-        try:
-            index_record = index.min_remove_queryset().filter(id=hid)[:1][0]
-        except IndexError:
-            # оглошення немає в індексі
-            return
-
         cursor = cls.cursor()
         cursor.execute('BEGIN;')
-        for zoom, x, y in cls.grid.segments_digests(index_record.lat, index_record.lng):
+        for zoom, x, y in cls.grid.segments_digests(lat, lng):
 
             # Removing of the id from the index
-            cursor.execute(
-                "SELECT array_remove(ids, {id}) FROM {table};"
+            query = "UPDATE index_all_segments SET ids=( " \
+                    "   SELECT array_remove( " \
+                    "       (SELECT ids FROM index_all_segments " \
+                    "           WHERE tid='{tid}' AND zoom='{zoom}' AND x='{x}' AND y='{y}' " \
+                    "           LIMIT 1" \
+                    "       ), 1::bigint)" \
+                    "   )" \
+                    "WHERE tid='{tid}' AND zoom='{zoom}' AND x='{x}' AND y='{y}'; " \
                 .format(
-                    table=cls._meta.db_table,
-                    id=index_record.id,
-                ))
+                table=cls._meta.db_table,
+                tid=tid,
+                zoom=zoom,
+                x=x,
+                y=y,
+            )
+
+            cursor.execute(query)
 
             # If segment digest contains no more ids - remove it too
             cursor.execute(
-                "DELETE FROM {table}"
-                "   WHERE tid='{tid}' AND zoom='{zoom}' AND x='{x}' AND y='{y}' AND array_length('ids', 1) = 0;"
+                "DELETE FROM {table} "
+                "   WHERE tid='{tid}' AND zoom='{zoom}' AND x='{x}' AND y='{y}' "
+                "       AND array_length(ids, 1) = 0;"
                 .format(
                     table=cls._meta.db_table,
-                    id=index_record.id,
                     tid=tid,
                     zoom=zoom,
                     x=x,
                     y=y,
-                )
-            )
+                ))
         cursor.execute('END;')
         cursor.close()
 
-
         index.remove(hid, using=cls.index_db_name)
+        # todo: transaction end
 
 
     @classmethod
@@ -1923,12 +2047,12 @@ class SegmentsIndex(models.Model):
 
         # Помітки for_sale та for_rent ставляться лише для житлової нерухомості
         if 'for_sale' in filters:
-            index = cls.sale_indexes[tid]
+            index = cls.living_sale_indexes[tid]
         elif 'for_rent' in filters:
-            index = cls.rent_indexes[tid]
+            index = cls.living_rent_indexes[tid]
         else:
             # інакше — це точно комерційна нерухомість.
-            index = cls.commercial_indexes[tid]
+            index = cls.commercial_sale_indexes[tid]
 
 
         # Підготувати SQL-запит на вибірку записів, попередньо відфільтрувавши за вхідними умовами.
@@ -2011,11 +2135,11 @@ class SegmentsIndex(models.Model):
         # Фільтруєм і формуєм маркери.
         # (Помітки for_sale та for_rent ставляться лише для житлової нерухомості)
         if 'for_sale' in filters:
-            index = cls.sale_indexes[tid]
+            index = cls.living_sale_indexes[tid]
         elif 'for_rent' in filters:
-            index = cls.rent_indexes[tid]
+            index = cls.living_rent_indexes[tid]
         else:
-            index = cls.commercial_indexes[tid]
+            index = cls.commercial_sale_indexes[tid]
 
         markers = index.min_queryset().filter(publication_id__in=publications_ids)
         return {
