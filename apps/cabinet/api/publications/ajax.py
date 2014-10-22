@@ -215,7 +215,14 @@ class Publications(object):
 			# Кастомний сигнал відправляєтсья, оскільки стандартний post-save
 			# не містить необхідної інформації (tid).
 			# todo: позбавитись цього сигналу, або винести його в інше місце
-			record_updated.send(None, tid=tid, hid=head.id, hash_id=head.hash_id)
+			record_updated.send(
+				sender = None,
+				tid = tid,
+				hid = head.id,
+				hash_id = head.hash_id,
+				for_sale = head.for_sale,
+				for_rent = head.for_rent,
+			)
 
 			if return_value is not None:
 				response = copy.deepcopy(self.update_codes['OK']) # note: deep copy here

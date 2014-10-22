@@ -18,8 +18,7 @@ urlpatterns = patterns('apps',
     url(r'', include('apps.cabinet.api.stats.ajax_urls')),
     url(r'', include('apps.cabinet.api.search.ajax_urls')),
     url(r'', include('apps.cabinet.api.support.ajax_urls')),
-
-
+    url(r'', include('apps.cabinet.api.billing.ajax_urls')),
     url(r'', include('apps.cabinet.api.settings.ajax_urls')),
 
 

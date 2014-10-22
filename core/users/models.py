@@ -3,22 +3,22 @@ import random
 import string
 import uuid
 
+import phonenumbers
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.utils.timezone import now
-from django.contrib.auth.models import AbstractBaseUser
-from django.contrib.auth.tests.custom_user import CustomUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models, transaction
-import phonenumbers
 
+from core.billing.models import RealtorsAccounts
 import exceptions
-from core.users.classes import UserAvatar
-from core.users import constants
 from collective.exceptions import EmptyArgument
+from core.users.classes import Avatar, Publications
+from core.users import constants
 
 
 
-class UsersManager(CustomUserManager):
+class UsersManager(BaseUserManager):
     def create_user(self, email, mobile_phone, password=None):
         if not email:
             raise EmptyArgument('User must have an email.')
@@ -33,9 +33,7 @@ class UsersManager(CustomUserManager):
             user.set_password(password)
             user.save(using=self._db)
 
-            # creating preferences record for the user
             Preferences.objects.create(user=user)
-
             return user
 
 
@@ -52,7 +50,7 @@ class UsersManager(CustomUserManager):
 class Users(AbstractBaseUser):
     # hash_id використовується для передачі ссилок на клієнт.
     # Передача id у відкритому вигляді небезпечна тим, що:
-    #   * полегшує повний перебір записів з таблиці по інкременту, а значить — полегшує ddos.
+    # * полегшує повний перебір записів з таблиці по інкременту, а значить — полегшує ddos.
     #   * відкриває внутрішню структуру таблиць в БД і наяні зв’язки.
     hash_id = models.TextField(unique=True, default=lambda: uuid.uuid4().hex)
     is_active = models.BooleanField(default=False)
@@ -87,7 +85,7 @@ class Users(AbstractBaseUser):
     class Meta:
         db_table = "users"
         unique_together = (
-        ('mobile_phone', 'add_mobile_phone'),
+            ('mobile_phone', 'add_mobile_phone'),
         )
 
 
@@ -142,9 +140,9 @@ class Users(AbstractBaseUser):
 
     def contacts_dict(self):
         contacts = {
-        'first_name': self.first_name,
-        'last_name': self.last_name,
-        'avatar_url': self.avatar().url(),
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'avatar_url': self.avatar().url(),
         }
 
         preferences = self.preferences()
@@ -182,8 +180,16 @@ class Users(AbstractBaseUser):
         return Preferences.by_user(self.id)
 
 
+    def account(self):
+        return RealtorsAccounts.by_user(self.id)
+
+
     def avatar(self):
-        return UserAvatar(self)
+        return Avatar(self)
+
+
+    def publications(self):
+        return Publications(self)
 
 
 
@@ -286,7 +292,7 @@ class AccessRestoreTokens(models.Model):
 # Фіча повинна буде реалізована в наступному релізі
 #
 # class PersonalPagesAliases(models.Model):
-# 	class Meta:
+# class Meta:
 # 		db_table = "users_personal_page_aliases"
 #
 #

@@ -9,7 +9,7 @@ import phonenumbers
 from apps.classes import CabinetView
 from collective.exceptions import RuntimeException
 from collective.methods.request_data_getters import angular_post_parameters
-from core.users.classes import UserAvatar
+from core.users.classes import Avatar
 from core.users.constants import Preferences
 from core.users.models import Users
 
@@ -576,11 +576,11 @@ class AccountManager(object):
 				# updating
 				request.user.avatar().update(image)
 
-			except UserAvatar.TooLargeImage:
+			except Avatar.TooLargeImage:
 				return HttpResponse(json.dumps(self.post_codes['too_large']), content_type='application/json')
-			except UserAvatar.TooSmallImage:
+			except Avatar.TooSmallImage:
 				return HttpResponse(json.dumps(self.post_codes['too_small']), content_type='application/json')
-			except UserAvatar.InvalidImageFormat:
+			except Avatar.InvalidImageFormat:
 				return HttpResponse(json.dumps(self.post_codes['unsupported_type']), content_type='application/json')
 			except RuntimeException:
 				return HttpResponse(json.dumps(self.post_codes['unknown_error']), content_type='application/json')

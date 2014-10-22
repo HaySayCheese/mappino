@@ -27,7 +27,7 @@ class SearchManager(object):
 
 
         self.connections = Queue.Queue()
-        for i in xrange(settings.ESTIMATE_THREADS_COUNT):
+        for i in xrange(settings.PROCESSES_PER_NODE_COUNT):
             self.connections.put(self.__new_connection())
 
         # signals initialisation
