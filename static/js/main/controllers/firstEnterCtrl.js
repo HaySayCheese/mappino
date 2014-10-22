@@ -31,12 +31,15 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
         scrollableBlockImage = $(".img-holder"),
         headerLinksBlock = scrollableBlock.find(".header-links");
 
-    dropdown.selectpicker({
-        style: 'btn-default btn-lg'
-    });
+    $timeout(function() {
+        dropdown.selectpicker({
+            style: 'btn-default btn-lg'
+        });
+    }, 500);
 
 
     $scope.home = {
+        type: 1,
         operation: "sale",
         flat: {
             rooms_1_1: false,
