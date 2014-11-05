@@ -58,7 +58,7 @@ app.factory('Markers', function(Queries, $rootScope) {
                 }
             }
 
-            if (zoom >= 14)
+            if (zoom <= 14)
                 stringFilters += "&zoom=" + zoom;
 
             clearTimeout(requestTimeout);
