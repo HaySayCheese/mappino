@@ -28,6 +28,7 @@ app.factory('Markers', function(Queries, $rootScope) {
          *
          * @param {object}      filters  Фільтри
          * @param {string}      viewport Вюпорт карти
+         * @param {string}      zoom     Зум карти
          * @param {string}      panel    Колір панелі фільтрів
          * @param {function}    callback
          */
@@ -88,53 +89,49 @@ app.factory('Markers', function(Queries, $rootScope) {
         add: function(tid, panel, data, callback) {
             var that = this;
 
-            for (var d_key in data) {
+            for (var marker in data) {
                 var lat = "", lng = "", latLng = "";
 
-                if (data.hasOwnProperty(d_key)) {
+                if (data.hasOwnProperty(marker)) {
 
-                    if (!_.keys(data[d_key]).length)
+                    if (!_.keys(data[marker]).length)
                         return;
 
-                    for (var c_key in data[d_key]) {
-                        if (data[d_key].hasOwnProperty(c_key)) {
-                            lat = d_key.split(";")[0] + "." + c_key.split(":")[0];
-                            lng = d_key.split(";")[1] + "." + c_key.split(":")[1];
-                            latLng = lat + ";" + lng;
+                    lat = marker.split(":")[0];
+                    lng = marker.split(":")[1];
+                    latLng = marker.split(":")[0] + ";" + marker.split(":")[1];
 
-                            lat = parseFloat(lat);
-                            lng = parseFloat(lng);
+                    lat = parseFloat(lat);
+                    lng = parseFloat(lng);
 
-                            if (panel != "red" && markers["red"][latLng]) {
-                                return;
-                            } else if (panel != "blue" && markers["blue"][latLng]) {
-                                return;
-                            } else if (panel != "green" && markers["green"][latLng]) {
-                                return;
-                            } else if (panel != "yellow" && markers["yellow"][latLng]) {
-                                return;
-                            } else if(!markers[panel][latLng]) {
-                                that.createMarkerObject(data[d_key][c_key], tid, panel, latLng);
-                            } else {
-                                return;
-                            }
+                    if (panel != "red" && markers["red"][latLng]) {
+                        return;
+                    } else if (panel != "blue" && markers["blue"][latLng]) {
+                        return;
+                    } else if (panel != "green" && markers["green"][latLng]) {
+                        return;
+                    } else if (panel != "yellow" && markers["yellow"][latLng]) {
+                        return;
+                    } else if(!markers[panel][latLng]) {
+                        that.createMarkerObject(data[marker], tid, panel, latLng);
+                    } else {
+                        return;
+                    }
 
 
-                            if (lat > minLat && lng < maxLng){
-                                if (lat > nePoint.lat)
-                                    nePoint.lat = lat;
+                    if (lat > minLat && lng < maxLng){
+                        if (lat > nePoint.lat)
+                            nePoint.lat = lat;
 
-                                if (lng < nePoint.lng)
-                                    nePoint.lng = lng;
-                            }
-                            if (lat < maxLat && lng > minLng){
-                                if (lat < swPoint.lat)
-                                    swPoint.lat = lat;
+                        if (lng < nePoint.lng)
+                            nePoint.lng = lng;
+                    }
+                    if (lat < maxLat && lng > minLng){
+                        if (lat < swPoint.lat)
+                            swPoint.lat = lat;
 
-                                if (lng > swPoint.lng)
-                                    swPoint.lng = lng;
-                            }
-                        }
+                        if (lng > swPoint.lng)
+                            swPoint.lng = lng;
                     }
                 }
             }

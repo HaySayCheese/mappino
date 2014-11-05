@@ -240,15 +240,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
             mapIsLoaded = true;
 
-            //if ($scope.filters.map.zoom < 15 && !$rootScope.subdommain) {
-            //    Markers.clearPanelMarkers("red");
-            //    Markers.clearPanelMarkers("blue");
-            //    Markers.clearPanelMarkers("green");
-            //    Markers.clearPanelMarkers("yellow");
-            //
-            //    return;
-            //}
-
             loadData($scope.filters.red, "red", false);
             loadData($scope.filters.blue, "blue", false);
             loadData($scope.filters.green, "green", false);
@@ -329,17 +320,21 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
                 if (key == "city" || key == "zoom" || key == "latLng")
                     $scope.filters.map[key] = searchParameters[key];
+
+                //console.log($scope.filters)
             }
         }
 
-        if ($scope.filters.blue.b_type_sid == null || $scope.filters.green.g_type_sid == null || $scope.filters.yellow.y_type_sid == null)
-            createFiltersForPanels("red", 0, false);
+        //if ($scope.filters.blue.b_type_sid == null || $scope.filters.green.g_type_sid == null || $scope.filters.yellow.y_type_sid == null)
+        //    createFiltersForPanels("red", 0, false);
 
         $scope.filtersParsed = true;
 
         $timeout(function() {
             $scope.templateLoaded = true;
         }, 1000);
+
+        console.log($scope.filters)
 
         initializeMap();
     };
