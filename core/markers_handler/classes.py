@@ -15,7 +15,7 @@ class Grid(object):
 
     def segments_digests(self, lat, lng):
         result = []
-        for zoom in xrange(start=self.min_zoom, stop=self.max_zoom + 1):
+        for zoom in xrange(self.min_zoom, self.max_zoom + 1):
             x, y = self.segment_xy(lat, lng, zoom)
             result.append(
                 (zoom, x, y, )
