@@ -2075,7 +2075,7 @@ class SegmentsIndex(models.Model):
                 "   JOIN {segments_index_table} " \
                 "       ON zoom = '{zoom}' AND " \
                 "          (x >= {ne_segment_x} AND x <= {sw_segment_x}) AND " \
-                "          (y >= {ne_segment_y} AND y <= {sw_segment_y}) " \
+                "          (y <= {ne_segment_y} AND y >= {sw_segment_y}) " \
                 "   WHERE publication_id = ANY(ids) {where_condition}" \
                 "   GROUP BY ids, x, y;" \
             .format(
@@ -2173,12 +2173,12 @@ class SegmentsIndex(models.Model):
         ne_lat, ne_lng = cls.grid.normalize_lat_lng(ne_lat, ne_lng)
         sw_lat, sw_lng = cls.grid.normalize_lat_lng(sw_lat, sw_lng)
 
-        # # розширимо сегмент, щоб захопити суміжні області
-        # ne_lat += 1
-        # ne_lng -= 1
-        #
-        # sw_lat -= 1
-        # sw_lng += 1
+        # розширимо сегмент, щоб захопити суміжні області
+        ne_lat += 1
+        ne_lng -= 1
+
+        sw_lat -= 1
+        sw_lng += 1
 
         # Повертаємо координатний прямокутник таким чином, щоб ne точно був на своєму місці.
         # Таким чином уберігаємось від випадків, коли координати передані некоректно,
