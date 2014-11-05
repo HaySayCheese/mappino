@@ -149,13 +149,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
         loadData(newValue, "yellow", true)
     });
-    $rootScope.$on("first-enter-change", function(event, data) {
-        $scope.filters.map.zoom = data[1];
-        $scope.filters.map.latLng = data[0];
-        $scope.filters.map.city = data[2];
-
-        map.panTo($scope.filters.map.latLng);
-        map.setZoom($scope.filters.map.zoom);
+    $rootScope.$on("first-enter-done", function(event, data) {
+        $scope.parseSearchParametersFromUrl();
     });
 
 
@@ -245,14 +240,14 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
             mapIsLoaded = true;
 
-            if ($scope.filters.map.zoom < 15 && !$rootScope.subdommain) {
-                Markers.clearPanelMarkers("red");
-                Markers.clearPanelMarkers("blue");
-                Markers.clearPanelMarkers("green");
-                Markers.clearPanelMarkers("yellow");
-
-                return;
-            }
+            //if ($scope.filters.map.zoom < 15 && !$rootScope.subdommain) {
+            //    Markers.clearPanelMarkers("red");
+            //    Markers.clearPanelMarkers("blue");
+            //    Markers.clearPanelMarkers("green");
+            //    Markers.clearPanelMarkers("yellow");
+            //
+            //    return;
+            //}
 
             loadData($scope.filters.red, "red", false);
             loadData($scope.filters.blue, "blue", false);
@@ -421,8 +416,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Функція яка ініціює загрузку даних
      */
     function loadData(filters, panel, timeout) {
-        if ($rootScope.subdommain.length && $scope.filters.map.zoom < 15)
-            return;
+        //if ($rootScope.subdommain.length/* && $scope.filters.map.zoom < 15*/)
+        //    return;
 
         $timeout(function() {
             if (!mapIsLoaded)
@@ -442,13 +437,13 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             if (timeout) {
                 clearTimeout(requestTimeout);
                 requestTimeout = setTimeout(function() {
-                    Markers.load(filters, viewport, panel, function(data) {
+                    Markers.load(filters, viewport, $scope.filters.map.zoom, panel, function(data) {
                         markers = data;
                         placeMarkers();
                     });
                 }, requestTimeoutTime);
             } else {
-                Markers.load(filters, viewport, panel, function(data) {
+                Markers.load(filters, viewport, $scope.filters.map.zoom, panel, function(data) {
                     markers = data;
                     placeMarkers();
                 });

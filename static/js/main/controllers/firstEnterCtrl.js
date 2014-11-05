@@ -3,10 +3,6 @@
 app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScope) {
 
     $rootScope.pageTitle = "Добро пожаловать на Mappino";
-    $scope.firstEnter = {
-        city: $location.search().city || "",
-        latLng: ""
-    };
 
     $scope.$watch(function() {
         return sessionStorage.userName;
@@ -45,13 +41,25 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
 
     $scope.home = {
         type: 1,
-        operation: "sale",
+        operation: 0,
+        city: "",
         flat: {
             rooms_1_1: false,
             rooms_2_2: false,
             rooms_3_3: false,
             rooms_4_0: false
         }
+    };
+
+
+    $scope.startSearch = function() {
+        $location.search("r_type_sid", $scope.home.type);
+        $location.search("r_operation_sid", $scope.home.operation);
+        $location.search("city", $scope.home.city);
+
+        $location.path("/search");
+
+        $rootScope.$emit("first-enter-done");
     };
 
 

@@ -7,11 +7,11 @@ app.directive('fCheckboxes', function () {
         link: function (scope, element) {
 
             var checkboxes = {
-                red:    false,
-                blue:   false,
-                green:  false,
-                yellow: false
-            };
+                    red:    false,
+                    blue:   false,
+                    green:  false,
+                    yellow: false
+                };
 
             var checkboxesElements = angular.element($("[f-checkboxes] [f-checkbox]"));
 
@@ -32,6 +32,10 @@ app.directive('fCheckboxes', function () {
                         }
                     }
                 } else {
+                    var suggestsCheckboxes = $("[f-checkboxes] [f-checkbox][suggest]:checked");
+                    suggestsCheckboxes.attr("checked", null).trigger("click");
+
+
                     var classes = parent.attr("class").split(/\s+/),
                         color = classes[classes.length - 1];
 
@@ -39,7 +43,6 @@ app.directive('fCheckboxes', function () {
                     parent.find("input").attr("checked", null);
                     checkboxes[color] = false;
                 }
-
             });
         }
     };

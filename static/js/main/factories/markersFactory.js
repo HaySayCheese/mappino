@@ -31,7 +31,7 @@ app.factory('Markers', function(Queries, $rootScope) {
          * @param {string}      panel    Колір панелі фільтрів
          * @param {function}    callback
          */
-        load: function(filters, viewport, panel, callback) {
+        load: function(filters, viewport, zoom, panel, callback) {
             var that = this,
                 tid = null,
                 stringFilters = "";
@@ -56,6 +56,9 @@ app.factory('Markers', function(Queries, $rootScope) {
                     }
                 }
             }
+
+            if (zoom < 15)
+                stringFilters += "&zoom=" + zoom;
 
             clearTimeout(requestTimeout);
             requestTimeout = setTimeout(function() {
