@@ -14,7 +14,12 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
         $scope.userIsLogin = !_.isUndefined(newValue);
     });
 
-    var input = document.getElementById('first-enter-autocomplete');
+    var cityInput = document.getElementById('home-autocomplete'),
+    autocomplete = new google.maps.places.Autocomplete(cityInput, {
+        componentRestrictions: {
+            country: "ua"
+        }
+    });
 
     var firstEnterModal = angular.element(".first-enter-modal");
     firstEnterModal.modal();
