@@ -317,7 +317,7 @@ class AbstractBaseIndex(models.Model):
         return markers
 
 
-    @staticmethod
+    @staticmethod # sid
     def apply_trade_building_type_filter(filters, markers):
         building_type = filters.get('building_type_sid')
         if building_type == 1:
@@ -2115,14 +2115,14 @@ class SegmentsIndex(models.Model):
                 "      (x >= {ne_segment_x} AND x <= {sw_segment_x}) AND " \
                 "      (y >= {ne_segment_y} AND y <= {sw_segment_y});" \
             .format(
-            table=cls._meta.db_table,
-            tid=tid,
-            zoom=zoom,
-            ne_segment_x=ne_segment_x,
-            sw_segment_x=sw_segment_x,
-            ne_segment_y=ne_segment_y,
-            sw_segment_y=sw_segment_y,
-        )
+                table=cls._meta.db_table,
+                tid=tid,
+                zoom=zoom,
+                ne_segment_x=ne_segment_x,
+                sw_segment_x=sw_segment_x,
+                ne_segment_y=ne_segment_y,
+                sw_segment_y=sw_segment_y,
+            )
 
         cursor = cls.cursor()
         cursor.execute(query)
@@ -2146,8 +2146,8 @@ class SegmentsIndex(models.Model):
             '{lat}:{lng}'.format(
                 lat=marker.lat,
                 lng=marker.lng
-            ): cls.brief(marker, filters)
-            for marker in cls.apply_filters(filters, markers)
+            ): index.brief(marker, filters)
+            for marker in index.apply_filters(filters, markers)
         }
 
 
