@@ -1982,6 +1982,9 @@ class SegmentsIndex(models.Model):
     def remove_record(cls, tid, hid, for_sale, for_rent):
         if for_sale and for_rent:
             raise InvalidArgument('Object can or for_sale or for_rent but not both.')
+        else:
+            if not for_sale and not for_rent:
+                raise InvalidArgument('Object can be for_sale or for_rent')
 
 
         if for_sale:
@@ -2009,32 +2012,28 @@ class SegmentsIndex(models.Model):
                     "       (SELECT ids FROM index_all_segments " \
                     "           WHERE tid='{tid}' AND zoom='{zoom}' AND x='{x}' AND y='{y}' " \
                     "           LIMIT 1" \
-                    "       ), 1::bigint)" \
+                    "       ), {id}::bigint)" \
                     "   )" \
                     "WHERE tid='{tid}' AND zoom='{zoom}' AND x='{x}' AND y='{y}'; " \
                 .format(
-                table=cls._meta.db_table,
-                tid=tid,
-                zoom=zoom,
-                x=x,
-                y=y,
-            )
-
-            cursor.execute(query)
-
-            # If segment digest contains no more ids - remove it too
-            cursor.execute(
-                "DELETE FROM {table} "
-                "   WHERE tid='{tid}' AND zoom='{zoom}' AND x='{x}' AND y='{y}' "
-                "       AND array_length(ids, 1) = 0;"
-                .format(
                     table=cls._meta.db_table,
+                    id=record.id,
                     tid=tid,
                     zoom=zoom,
                     x=x,
                     y=y,
-                ))
+                )
+
+            cursor.execute(query)
         cursor.execute('END;')
+
+
+        # If segment digest contains no more ids - remove it too
+        cursor.execute(
+            "DELETE FROM {table} WHERE ids = '{{}}';"
+                .format(
+                    table=cls._meta.db_table,
+                ))
         cursor.close()
 
         index.remove(hid, using=cls.index_db_name)
