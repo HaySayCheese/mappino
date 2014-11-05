@@ -1918,8 +1918,10 @@ class SegmentsIndex(models.Model):
     @classmethod
     def add_record(cls, tid, hid, for_sale, for_rent):
         if for_sale and for_rent:
-            raise InvalidArgument('Object can or for_sale or for_rent but not both.')
-
+            raise InvalidArgument('Object can be for_sale or for_rent but not both.')
+        else:
+            if not for_sale and not for_rent:
+                raise InvalidArgument('Object can be for_sale or for_rent')
 
         if for_sale:
             index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
@@ -2113,7 +2115,7 @@ class SegmentsIndex(models.Model):
         query = "SELECT DISTINCT unnest(ids), id FROM {table} " \
                 "   WHERE tid={tid} AND zoom={zoom} AND " \
                 "      (x >= {ne_segment_x} AND x <= {sw_segment_x}) AND " \
-                "      (y >= {ne_segment_y} AND y <= {sw_segment_y});" \
+                "      (y <= {ne_segment_y} AND y >= {sw_segment_y});" \
             .format(
                 table=cls._meta.db_table,
                 tid=tid,
@@ -2172,6 +2174,13 @@ class SegmentsIndex(models.Model):
         ne_lat, ne_lng = cls.grid.normalize_lat_lng(ne_lat, ne_lng)
         sw_lat, sw_lng = cls.grid.normalize_lat_lng(sw_lat, sw_lng)
 
+        # # розширимо сегмент, щоб захопити суміжні області
+        # ne_lat += 1
+        # ne_lng -= 1
+        #
+        # sw_lat -= 1
+        # sw_lng += 1
+
         # Повертаємо координатний прямокутник таким чином, щоб ne точно був на своєму місці.
         # Таким чином уберігаємось від випадків, коли координати передані некоректно,
         # або в залежності від форми Землі сегмент деформується і набирає неправильної форми.
@@ -2185,12 +2194,19 @@ class SegmentsIndex(models.Model):
         sw_segment_x, sw_segment_y = cls.grid.segment_xy(sw_lat, sw_lng, zoom)
 
 
-        # Заглушка від DDos
-        lng_segments_count = sw_segment_x - ne_segment_x if sw_segment_x - ne_segment_x > 0 else 1
-        lat_segments_count = ne_segment_y - sw_segment_y if ne_segment_y - sw_segment_y > 0 else 1
-        total_segments_count = lat_segments_count * lng_segments_count
-        if total_segments_count > 64:
-            raise TooBigTransaction()
+        # # Заглушка від DDos
+        # lng_segments_count = (sw_segment_x - ne_segment_x) / cls.grid.step_on_lng(zoom)
+        # if lng_segments_count == 0:
+        #     lng_segments_count = 1
+        #
+        # lat_segments_count = (ne_segment_y - sw_segment_y) / cls.grid.step_on_lat(zoom)
+        # if lat_segments_count == 0:
+        #     lat_segments_count = 1
+
+
+        # total_segments_count = lat_segments_count * lng_segments_count
+        # if total_segments_count > 64:
+        #     raise TooBigTransaction()
 
         return ne_segment_x, ne_segment_y, \
                sw_segment_x, sw_segment_y
