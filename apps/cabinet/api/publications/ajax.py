@@ -111,16 +111,17 @@ class Publications(object):
 
 
         def get(self, request, *args):
-            if not args:
-                return HttpResponseBadRequest('Not enough parameters.')
+            try:
+                tid, hash_id = args[0].split(':')
+                tid = int(tid)
+                # hash_id doesnt need to be converted to int
+            except (IndexError, ValueError):
+                return HttpResponseBadRequest('Invalid parameters.')
 
-            tid, hid = args[0].split(':')
-            tid = int(tid)
-            # hid doesnt need to be converted to int
 
             model = HEAD_MODELS[tid]
             try:
-                head = model.by_hash_id(hid, select_body=True)
+                head = model.by_hash_id(hash_id, select_body=True)
             except ObjectDoesNotExist:
                 return HttpResponseBadRequest(json.dumps(
                     self.get_codes['invalid_tid']), content_type='application/json')
@@ -140,12 +141,12 @@ class Publications(object):
 
 
         def put(self, request, *args):
-            if not args:
-                return HttpResponseBadRequest('Not enough parameters.')
-
-            tid, hash_id = args[0].split(':')
-            tid = int(tid)
-            # hash_id doesnt need to be converted to int
+            try:
+                tid, hash_id = args[0].split(':')
+                tid = int(tid)
+                # hash_id doesnt need to be converted to int
+            except (IndexError, ValueError):
+                return HttpResponseBadRequest('Invalid parameters.')
 
             try:
                 p = angular_parameters(request, ['f'])
@@ -230,12 +231,12 @@ class Publications(object):
 
 
         def delete(self, request, *args):
-            if not args:
-                return HttpResponseBadRequest('Not enough parameters.')
-
-            tid, hash_id = args[0].split(':')
-            tid = int(tid)
-            # hid doesnt need to be converted to int
+            try:
+                tid, hash_id = args[0].split(':')
+                tid = int(tid)
+                # hash_id doesnt need to be converted to int
+            except (IndexError, ValueError):
+                return HttpResponseBadRequest('Invalid parameters.')
 
             try:
                 model = HEAD_MODELS[tid]
@@ -267,12 +268,12 @@ class Publications(object):
 
 
         def delete(self, request, *args):
-            if not args:
-                return HttpResponseBadRequest('Not enough parameters.')
-
-            tid, hash_id = args[0].split(':')
-            tid = int(tid)
-            # hash_id doesnt need to be converted to int
+            try:
+                tid, hash_id = args[0].split(':')
+                tid = int(tid)
+                # hash_id doesnt need to be converted to int
+            except (IndexError, ValueError):
+                return HttpResponseBadRequest('Invalid parameters.')
 
             try:
                 model = HEAD_MODELS[tid]
@@ -305,12 +306,12 @@ class Publications(object):
 
 
         def put(self, request, *args):
-            if not args:
-                return HttpResponseBadRequest('Not enough parameters.')
-
-            tid, hash_id = args[0].split(':')
-            tid = int(tid)
-            # hash_id doesnt need to be converted to int
+            try:
+                tid, hash_id = args[0].split(':')
+                tid = int(tid)
+                # hash_id doesnt need to be converted to int
+            except (IndexError, ValueError):
+                return HttpResponseBadRequest('Invalid parameters.')
 
 
             model = HEAD_MODELS[tid]
@@ -348,12 +349,12 @@ class Publications(object):
 
 
         def put(self, request, *args):
-            if not args:
-                return HttpResponseBadRequest('Not enough parameters.')
-
-            tid, hash_id = args[0].split(':')
-            tid = int(tid)
-            # hash_id doesnt need to be converted to int
+            try:
+                tid, hash_id = args[0].split(':')
+                tid = int(tid)
+                # hash_id doesnt need to be converted to int
+            except (IndexError, ValueError):
+                return HttpResponseBadRequest('Invalid parameters.')
 
 
             model = HEAD_MODELS[tid]
@@ -405,9 +406,12 @@ class Publications(object):
 
 
         def post(self, request, *args):
-            tid, hash_id = args[0].split(':')
-            tid = int(tid)
-            # hash_id doesnt need to be converted to int
+            try:
+                tid, hash_id = args[0].split(':')
+                tid = int(tid)
+                # hash_id doesnt need to be converted to int
+            except (IndexError, ValueError):
+                return HttpResponseBadRequest('Invalid parameters.')
 
 
             if tid not in OBJECTS_TYPES.values():
@@ -477,10 +481,15 @@ class Publications(object):
 
 
         def delete(self, request, *args):
-            tid, hash_id = args[0].split(':')
-            tid = int(tid)
-            # hash_id doesnt need to be converted to int
-            photo_hash_id = args[1]
+            try:
+                tid, hash_id = args[0].split(':')
+                tid = int(tid)
+                # hash_id doesnt need to be converted to int
+                photo_hash_id = args[1]
+
+            except (IndexError, ValueError):
+                return HttpResponseBadRequest('Invalid parameters.')
+
 
             if tid not in OBJECTS_TYPES.values():
                 return HttpResponseBadRequest(
@@ -541,10 +550,15 @@ class Publications(object):
             Помічає фото з hash_id=photo_hash_id як основне.
             Для даного фото буде згенеровано title_thumb і воно використовуватиметься як початкове у видачі.
             """
-            tid, hash_id = args[0].split(':')
-            tid = int(tid)
-            # hash_id doesnt need to be converted to int
-            photo_hash_id = args[1]
+            try:
+                tid, hash_id = args[0].split(':')
+                tid = int(tid)
+                # hash_id doesnt need to be converted to int
+                photo_hash_id = args[1]
+
+            except (IndexError, ValueError):
+                return HttpResponseBadRequest('Invalid parameters.')
+
 
             if tid not in OBJECTS_TYPES.values():
                 return HttpResponseBadRequest(
