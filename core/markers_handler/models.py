@@ -2193,19 +2193,19 @@ class SegmentsIndex(models.Model):
         sw_segment_x, sw_segment_y = cls.grid.segment_xy(sw_lat, sw_lng, zoom)
 
 
-        # # Заглушка від DDos
-        # lng_segments_count = (sw_segment_x - ne_segment_x) / cls.grid.step_on_lng(zoom)
-        # if lng_segments_count == 0:
-        #     lng_segments_count = 1
-        #
-        # lat_segments_count = (ne_segment_y - sw_segment_y) / cls.grid.step_on_lat(zoom)
-        # if lat_segments_count == 0:
-        #     lat_segments_count = 1
+        # Заглушка від DDos
+        lng_segments_count = (sw_segment_x - ne_segment_x) / cls.grid.step_on_lng(zoom)
+        if lng_segments_count == 0:
+            lng_segments_count = 1
+
+        lat_segments_count = (ne_segment_y - sw_segment_y) / cls.grid.step_on_lat(zoom)
+        if lat_segments_count == 0:
+            lat_segments_count = 1
 
 
-        # total_segments_count = lat_segments_count * lng_segments_count
-        # if total_segments_count > 64:
-        #     raise TooBigTransaction()
+        total_segments_count = lat_segments_count * lng_segments_count
+        if total_segments_count > 64:
+            raise TooBigTransaction()
 
         return ne_segment_x, ne_segment_y, \
                sw_segment_x, sw_segment_y
