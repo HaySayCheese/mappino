@@ -90,7 +90,7 @@ class RealtorsContacts(View):
         # Це зроблено для того, щоб інкапсулювати логіку біллінга в одному модулі і не розмазувати її по всім в’юхам.
         # process_contacts_request() ніби виступає обробником події запиту контактів,
         # а будуть зняті гроші з рієлтора чи ні - питання цього методу.
-        realtor.account().process_contacts_request(request)
+        realtor.account.process_contacts_request(request)
 
 
         response = copy.deepcopy(self.get_codes['OK']) # WARN: deep copy here

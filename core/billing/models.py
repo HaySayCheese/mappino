@@ -1,20 +1,17 @@
 # coding=utf-8
 from decimal import Decimal
 
-from django.conf import settings
+from datetime import timedelta
+from django.core.exceptions import SuspiciousOperation
 from django.db import models, transaction
-from django.db.models import F
 from django.utils.timezone import now
 
-from collective.exceptions import RuntimeException
 from core.billing.abstract_models import Account, Transactions
 from core.billing.constants import \
     TARIFF_PLANS_IDS as PLANS, \
     REALTORS_TRANSACTIONS_TYPES
-from core.billing.exceptions import TooFrequent, InsufficientFunds
-from core.email_backend import email_sender
-from core.utils.jinja2_integration import templates
-from mappino.wsgi import redis_connections
+from core.billing.exceptions import InsufficientFunds
+from core.email_backend.utils import ManagersNotifier
 
 
 
@@ -41,7 +38,7 @@ class RealtorsTransactions(Transactions):
 
 
 class RealtorsAccounts(Account):
-    user = models.ForeignKey('users.Users')
+    user = models.OneToOneField('users.Users')
 
     class Meta:
         db_table = 'billing_accounts_realtors'
@@ -52,113 +49,36 @@ class RealtorsAccounts(Account):
     #
     class PayAsYouGo(object):
         sid = PLANS.pay_as_you_go()
+        free_publications_count = 2
 
         class Price(object):
             @staticmethod
             def per_contacts_request():
-                return 2.0
+                # Translators: currency may be different in different countries.
+                # ToDo: provide different currency to different country
+                return 2.00 # UAH, note: decimal digits are required!
 
-
-        @staticmethod
-        def email_managers_about_insufficient_funds(user, no_more_than_one_per_day=True):
-            """
-            Відправить менеджерам mappino (!) повідомлення про те,
-            що у користувача недостатньо коштів для сплати наступного клієнта.
-            """
-            def send():
-                managers = settings.MANAGERS
-                if not managers:
-                    raise RuntimeException(
-                        'There is no one manager email was specified in settings. '
-                        'Email about insufficient funds can not be sent.'
-                    )
-                manager_email = managers[0][1]
-
-
-                t = templates.get_template('email/billing/managers/payg_insufficient_funds.html')
-                email_sender.send_html_email(
-                    subject = u'Нестача коштів на рахунку клієнта',
-                    html = t.render({
-                        'user': user,
-                    }),
-                    addresses_list=[manager_email, ],
-                    from_name='mappino-billing'
-                )
-
-
-            if settings.DEBUG:
-                no_more_than_one_per_day = False
-
-            # if email about this user was sent today - no more emails
-            if no_more_than_one_per_day:
-                redis = redis_connections['cache']
-                key = 'email_payg_ins.funds_{user_id}_{date}'.format(
-                    user_id = user.id,
-                    date = now().strftime('%d.%m')
-                )
-
-                if not redis.exists(key):
-                    send()
-                    redis.setex(key, 60*60*24, '1') # one day
-
-            else:
-                send()
+            # ...
+            # other payment operations in this tariff plan goes here
+            # ...
 
 
     class Fixed(object):
         sid = PLANS.realtor()
 
         class Price(object):
-            @staticmethod
-            def per_month():
-                return 100.0
+            @classmethod
+            def per_month(cls):
+                # Translators: currency may be different in different countries.
+                # ToDo: provide different currency to different country
+                return 100.00 # UAH, note: decimal digits are required!
 
 
-        @staticmethod
-        def email_managers_about_insufficient_funds(user, no_more_than_one_per_day=True):
-            """
-            Відправить менеджерам mappino (!) повідомлення про те,
-            що у користувача недостатньо коштів для сплати місячної заборгованості.
-            """
-            def send():
-                managers = settings.MANAGERS
-                if not managers:
-                    raise RuntimeException(
-                        'There is no one manager email was specified in settings. '
-                        'Email about insufficient funds can not be sent.'
-                    )
-                manager_email = managers[0][1]
-
-
-                t = templates.get_template('email/billing/managers/fixed_insufficient_funds.html')
-                email_sender.send_html_email(
-                    subject = u'Нестача коштів на рахунку клієнта',
-                    html = t.render({
-                        'user': user,
-                    }),
-                    addresses_list=[manager_email, ],
-                    from_name='mappino-billing'
-                )
-
-
-            if settings.DEBUG:
-                no_more_than_one_per_day = False
-
-            # if email about this user was sent today - no more emails
-            if no_more_than_one_per_day:
-                redis = redis_connections['cache']
-                key = 'email_fixed_ins.funds_{user_id}_{date}'.format(
-                    user_id = user.id,
-                    date = now().strftime('%d.%m')
-                )
-
-                if not redis.exists(key):
-                    send()
-                    redis.setex(key, 60*60*24, '1') # one day
-
-            else:
-                send()
-
+            @classmethod
+            def per_day(cls):
+                # Translators: currency may be different in different countries.
+                # ToDo: provide different currency to different country
+                return cls.per_month() / 31 # UAH, note: decimal digits are required!
 
     #
     # account logic
@@ -181,37 +101,64 @@ class RealtorsAccounts(Account):
         return cls.objects.filter(user_id=user_id)[:1][0]
 
 
-    @classmethod
-    def process_fixed_realtors_plans(cls):
+    def transactions(self):
         """
-        Викликається раз в годину для оновлення боргу користувачів, що знаходяться на безлімі.
+        :return: QuerySet with all transactions of this account
+        """
+        return RealtorsTransactions.transactions().filter(account=self)
 
-        Нарахування боргу за використані дні здійснюється погодинно, але,
-        оскільки аудиторія відвідує оголошення лише вдень, то за нічні години нараховувати борг не слід.
-        Разом з тим, місячна вартість тарифу всеодно буде списана.
+
+    def last_fixed_payment_transaction(self):
         """
-        start_hour = 8
-        end_hour = 20
-        current_time = now()
-        if not start_hour <= current_time.hour < end_hour: # ! строго менше нуля, інакше виникає лишня година
+        :return: last fixed month payment for this account.
+        If no such payment was due — returns None.
+
+        This method is used for charging realtors for the month payment.
+        """
+        try:
+            return self.transactions().filter(
+                type_sid=REALTORS_TRANSACTIONS_TYPES.fixed_payment()
+            ).only(
+                'id', 'amount', 'datetime'
+                # type_sid не запитується тому, що ітак зрозуміло, що транзакція буде типу "місячний платіж".
+            )[:1][0]
+
+        except IndexError:
+            # No one transaction is exists
+            return None
+
+
+    def process_contacts_request(self, request):
+        # Даний метод викликається під час кожного запиту контактів, незалежно від тарифного плану рієлтора.
+        # Всі перевірки, в тому числі і тарифного плану, здійснюються в даному методі.
+
+        # Якщо рієлтор не знаходиться на pay as you go — виходимо.
+        if self.tariff_plan_sid != self.PayAsYouGo.sid:
             return
 
 
-        hour_price = RealtorsAccounts.Fixed.Price.per_month() / 31 / (end_hour - start_hour)
-        for account in cls.objects.filter(tariff_plan_sid = cls.Fixed.sid).only('user'):
-            with transaction.atomic():
-                if account.user.publications().paid_count() > 0:
-                    account.debt += Decimal(hour_price)
-                    account.save()
+        # Якщо в користувача менше оголошень, ніж максимально дозволена безкоштовна к-сть -
+        # не стягувати платні
+        if self.user.publications.total_count() <= self.PayAsYouGo.free_publications_count:
+            return
 
 
-            # if current_time.day == 1:
-            account.__charge_fixed_payment()
+        # todo: додати перевірку запиту на предмет хакінгу тут
+
+        self.__charge_for_contacts_request()
+
+        # todo: кинути захисну куку після вдалого запиту.
 
 
+    def process_fixed_payment(self):
+        # Даний метод викликається під час місячного зйому палетежів, незалежно від тарифного плану рієлтора.
+        # Всі перевірки, в тому числі і тарифного плану, здійснюються в даному методі.
 
-    def transactions(self):
-        return RealtorsTransactions.transactions().filter(account=self)
+        # Якщо рієлтор не знаходиться на фіксованому тарифному плані — виходимо.
+        if self.tariff_plan_sid != self.Fixed.sid:
+            return
+
+        self.__charge_for_days_used()
 
 
     def change_tariff_plan(self, new_plan_sid):
@@ -222,11 +169,6 @@ class RealtorsAccounts(Account):
         if self.tariff_plan_sid == new_plan_sid:
             # Спроба змінити тариф на такий самий, як вже активовано.
             return
-
-
-        timeout = self.timeout_to_next_tariff_change()
-        if timeout > 0:
-            raise TooFrequent('Tariff plan was changed recently.', timeout)
 
 
         with transaction.atomic():
@@ -242,71 +184,6 @@ class RealtorsAccounts(Account):
             self.save()
 
 
-    def process_contacts_request(self, request):
-        # Даний метод викликається під час кожного запиту контактів рієлтора.
-        # Перед викликом даного методу не відбувається перевірок на якому тарифному плані знаходиться рієлтор.
-        # Всі такі перевірки здійснюються в даному методі.
-
-        # Якщо рієлтор не знаходиться на pay as you go - виходимо.
-        if self.tariff_plan_sid != self.PayAsYouGo.sid:
-            return
-
-
-        # todo: додати перевірку запиту тут
-        # todo: додати запит в чергу на обробку
-
-
-        self.__charge_for_contacts_request()
-
-        # todo: кинути захисну куку після вдалого запиту.
-
-
-    def days_used_price(self):
-        """
-        Викликається при переході з безлімітного тарифного плану на pay as you go.
-        Повертає сумму яку буде списано з рахунку рієлтора при переході на pay as yo go за формулою:
-        Поточна дата - Дата активації безліму * платня за день.
-
-        Таким чином, при зміні тарфиу з безліму на pay as you go платня за використані дні в режимі бізлім
-        всеодно буде знята в момент зміни тарифу.
-
-        Такий підхід дозволяє уберегтись від шахрайства, коли тариф з безліму змінюється на pay as you go
-        в останній день перед зняттям плати за безлім з метою, щоб платня за безлім знята не була.
-        """
-        if self.tariff_plan_sid != self.Fixed.sid:
-            return 0.0
-
-        if self.tariff_changed is None:
-            return 0.0
-
-
-        hours_delta = int((now() - self.tariff_changed).total_seconds() / 60 / 60)
-        if hours_delta == 0:
-            return 0.0
-
-
-        price_per_hour = self.Fixed.Price.per_month() / 31 / 24
-        total_price = hours_delta * price_per_hour
-        total_price = round(total_price, 2)
-        return total_price
-
-
-    def timeout_to_next_tariff_change(self):
-        """
-        Повертає таймаут в секундах, який необхідно витримати до наступної зміни тарифу.
-        """
-        if self.tariff_changed is None:
-            return 0
-
-
-        min_timeout = 60 * 60 # one hour
-        delta = int((now() - self.tariff_changed).total_seconds())
-
-        if delta < min_timeout:
-            return min_timeout - delta
-        return 0
-
-
     def __charge_for_contacts_request(self):
         """
         Спише з рахунку плату за один запит контактів.
@@ -319,63 +196,65 @@ class RealtorsAccounts(Account):
 
 
         try:
-            self.__charge(price * -1, transaction_type) # price should be negative
+            balance = self.__charge(price * -1, transaction_type) # price must be negative
+
+            # Якщо коштів на рахунку - не вистачає для ще одного запиту контактів -
+            # згенерувати подію, аналогічну до нестачі коштів на рахунку.
+            if balance < self.PayAsYouGo.Price.per_contacts_request():
+                raise InsufficientFunds()
+
         except InsufficientFunds:
             # В mappino працюють справжні люди.
             # Ми не надсилаємо сухих емейлів про нестачу коштів і не вимикаємо зразу все, що можна.
             # В людей бувають різні випадки чому рахунок не поповнено. Це — наша лояльність.
             #
             # В даному випадку повідомлення буде надіслано менеджеру,
-            # який спробує розібратись із тим чому рахунок не поповнено і,за потреби, допоможе це зробити .
-            self.PayAsYouGo.email_managers_about_insufficient_funds(self.user, no_more_than_one_per_day=True)
+            # який спробує розібратись із тим чому рахунок не поповнено і,за потреби, допоможе це зробити.
+            ManagersNotifier.realtor_insufficient_funds_on_payg(self.user, no_more_than_one_per_day=True)
 
 
     def __charge_for_days_used(self):
         """
-        Викликається при переході з фіксованого тарифу на pay as you go.
-        Спише з рахунку сумму за використані дні за формулою:
-        Поточна дата - Дата останньої зміни рахунку * Ціну за день
+        Спише з рахунку рієлтора плату за використані дні з момент останнього фіксованого платежу.
         """
-        price = self.days_used_price()
-        if price <= 0:
-            return
 
-        transaction_type = REALTORS_TRANSACTIONS_TYPES.delta_for_days_used()
+        last_transaction = self.last_fixed_payment_transaction()
+        if last_transaction:
+            previous_payment_date = last_transaction.datetime
+        else:
+            # if no transactions - payment should be taken for days from the account creation
+            previous_payment_date = self.created
 
-        # note: якщо не вистачає коштів на зміну тарифу - менеджера повідомляти не треба,
-        # користувачу ітак буде показано повідомлення, що не вистачає коштів.
-        self.__charge(price * -1, transaction_type) # price should be negative
+        # Платня знімаєтсья за повний вчорашній день.
+        # Поточний день увійде в наступний платіж.
+        boundary_date = (now() - timedelta(days=1)).replace(hour=23, minute=59, second=59)
 
 
-    def __charge_fixed_payment(self):
-        """
-        Викликаєтсья 1 раз в місяць для погашення заборгованості, що накопичилась на рахунку,
-        за час використання безлімітного тарифного плану.
-        """
-        price = float(self.debt)
-        if price <= 0:
-            return
+        used_hours = (boundary_date - previous_payment_date).total_seconds() / 60 / 60
+        hour_rate = self.Fixed.Price.per_day() / 24
+
+
+        amount = round(hour_rate * used_hours)
+        if amount <= 0:
+            raise SuspiciousOperation()
+
 
         transaction_type = REALTORS_TRANSACTIONS_TYPES.fixed_payment()
 
-
-        try:
-            with transaction.atomic():
-                self.__charge(price * -1, transaction_type) # price should be negative
-                self.debt = 0
-                self.save()
-        except InsufficientFunds:
+        # amount must be negative
+        balance = self.__charge(amount * -1, transaction_type, allow_balance_less_than_zero=True)
+        if balance <= 0:
             # В mappino працюють справжні люди.
             # Ми не надсилаємо сухих емейлів про нестачу коштів і не вимикаємо зразу все, що можна.
             # В людей бувають різні випадки чому рахунок не поповнено. Це — наша лояльність.
             #
             # В даному випадку повідомлення буде надіслано менеджеру,
-            # який спробує розібратись із тим чому рахунок не поповнено і,за потреби, допоможе це зробити .
-            self.Fixed.email_managers_about_insufficient_funds(self.user, no_more_than_one_per_day=True)
+            # який спробує розібратись із тим чому рахунок не поповнено і,за потреби, допоможе це зробити.
+            ManagersNotifier.realtor_insufficient_funds_on_fixed(self.user, no_more_than_one_per_day=True)
 
 
-    def __charge(self, amount, transaction_type_sid):
-        if self.balance < abs(amount):
+    def __charge(self, amount, transaction_type_sid, allow_balance_less_than_zero=False):
+        if self.balance < abs(amount) and not allow_balance_less_than_zero:
             raise InsufficientFunds('Insufficient funds.')
 
 
@@ -383,4 +262,6 @@ class RealtorsAccounts(Account):
             RealtorsTransactions.new(self, amount, transaction_type_sid)
             self.balance += Decimal(amount)
             self.save()
+
+            return self.balance
 

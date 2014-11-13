@@ -5,8 +5,9 @@ from django.db import models
 FREE_PUBLICATIONS_COUNT = 2.0
 
 class Account(models.Model):
+    created = models.DateTimeField(auto_created=True)
     balance = models.DecimalField(max_digits=20, decimal_places=2, default=0)
-    debt = models.DecimalField(max_digits=20, decimal_places=5, default=0)
+    debt = models.DecimalField(max_digits=20, decimal_places=5, default=0) # todo: remove this field
     tariff_plan_sid = models.PositiveSmallIntegerField()
     tariff_changed = models.DateTimeField(default=None, null=True)
 

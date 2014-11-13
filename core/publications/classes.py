@@ -3,7 +3,6 @@ from django.core import serializers
 
 from apps.cabinet.api.dirtags.models import DirTags
 from collective.exceptions import RuntimeException, InvalidArgument
-from core.billing.abstract_models import FREE_PUBLICATIONS_COUNT
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 
 
@@ -699,29 +698,6 @@ class Publications(object):
         self.user = user
 
 
-    def paid_count(self):
-        """
-        За замовчуванням, декілька оголошень, що були опубліковані найраніше,
-        вважаються безкоштовними для користувача.
-        Даний метод повертає к-сть платних оголошень для поточного користувача.
-        """
-        count = 0
-        for model in HEAD_MODELS.values():
-            count += model.objects.filter(owner=self.user, is_paid=True).count()
-        return count
-
-
-    def free_count(self):
-        """
-        За замовчуванням, декілька оголошень, що були опубліковані найраніше,
-        вважаються безкоштовними для користувача.
-        Даний метод повертає к-сть таких оголошень для поточного користувача.
-        """
-        count = 0
-        for model in HEAD_MODELS.values():
-            count += model.objects.filter(owner=self.user, is_paid=False).count()
-        return count
-
 
     def total_count(self):
         """
@@ -731,32 +707,3 @@ class Publications(object):
         for model in HEAD_MODELS.values():
             count += model.objects.filter(owner=self.user).count()
         return count
-
-
-    def update_free_publications(self):
-        """
-        За замовчуванням, декілька оголошень, що були опубліковані найраніше,
-        вважаються безкоштовними для користувача.
-        Даний метод призначений відновити цю к-сть оголошень, вибравши найстаріші оголошення.
-        Наприклад, після видалення одного з оголошень.
-        """
-        while self.free_count() < FREE_PUBLICATIONS_COUNT:
-            oldest_record = None
-            for model in HEAD_MODELS.values():
-                try:
-                    record = model.objects.filter(is_paid=True).only('created').order_by('created')[:1][0]
-                except IndexError:
-                    continue
-
-                if oldest_record is None:
-                    oldest_record = record
-                else:
-                    if record.created < oldest_record.created:
-                        oldest_record = record
-
-            if oldest_record is None:
-                # user have no publications at all
-                return
-
-            oldest_record.is_paid = False
-            oldest_record.save()

@@ -18,9 +18,10 @@ ADMINS = (
     ('Dima Chizhevsky', 'dima@mappino.com'),
 )
 MANAGERS = (
-    ('Dima Chizhevsky', 'support@mappino.com')
+    ('Dima Chizhevsky', 'support@mappino.com'),
 )
 SUPPORT_EMAIL =  MANAGERS[0][1]
+BILLING_MANAGER_EMAIL = MANAGERS[0][1]
 
 
 DATABASES = {
@@ -192,7 +193,6 @@ STATICFILES_FINDERS = (
 
 
 PROCESSES_PER_NODE_COUNT = 3
-THIS_NODE_HANDLES_BILLING = True
 
 
 ROOT_URLCONF = 'mappino.urls'

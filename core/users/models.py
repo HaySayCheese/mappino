@@ -34,6 +34,7 @@ class UsersManager(BaseUserManager):
             user.save(using=self._db)
 
             Preferences.objects.create(user=user)
+            RealtorsAccounts.new(user)
             return user
 
 
@@ -180,6 +181,7 @@ class Users(AbstractBaseUser):
         return Preferences.by_user(self.id)
 
 
+    @property
     def account(self):
         return RealtorsAccounts.by_user(self.id)
 
@@ -188,6 +190,7 @@ class Users(AbstractBaseUser):
         return Avatar(self)
 
 
+    @property
     def publications(self):
         return Publications(self)
 

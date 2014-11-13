@@ -6,7 +6,6 @@ from PIL import Image
 from django.conf import settings
 
 from collective.exceptions import RuntimeException
-from core.billing.abstract_models import FREE_PUBLICATIONS_COUNT
 from core.users.exceptions import InvalidImageFormat, TooSmallImage
 import core.publications.constants
 
@@ -101,32 +100,6 @@ class Publications(object):
         self.user = user
 
 
-    def paid_count(self):
-        """
-        За поточною тарифною моделлю, декілька оголошень, що були опубліковані найраніше,
-        вважаються безкоштовними для користувача.
-
-        Даний метод повертає к-сть платних оголошень, які є в користувача.
-        """
-        count = 0
-        for model in core.publications.constants.HEAD_MODELS.values():
-            count += model.objects.filter(owner=self.user, is_paid=True).count()
-        return count
-
-
-    def free_count(self):
-        """
-        За поточною тарифною моделлю, декілька оголошень, що були опубліковані найраніше,
-        вважаються безкоштовними для користувача.
-
-        Даний метод повертає к-сть безкоштовних оголошень, які є в користувача.
-        """
-        count = 0
-        for model in core.publications.constants.HEAD_MODELS.values():
-            count += model.objects.filter(owner=self.user, is_paid=False).count()
-        return count
-
-
     def total_count(self):
         """
         Повертає загальну к-сть оголошень всіх типів для поточного користувача.
@@ -135,36 +108,6 @@ class Publications(object):
         for model in core.publications.constants.HEAD_MODELS.values():
             count += model.objects.filter(owner=self.user).count()
         return count
-
-
-    def ensure_free_publications(self):
-        """
-        За поточною тарифною моделлю, декілька оголошень, що були опубліковані найраніше,
-        вважаються безкоштовними для користувача.
-
-        Даний метод призначений відновити цю к-сть оголошень, вибравши декілька найстаріших.
-        Наприклад, після видалення одного з оголошень.
-        """
-        while self.free_count() < FREE_PUBLICATIONS_COUNT:
-            oldest_record = None
-            for model in core.publications.constants.HEAD_MODELS.values():
-                try:
-                    record = model.objects.filter(is_paid=True).only('created').order_by('created')[:1][0]
-                except IndexError:
-                    continue
-
-                if oldest_record is None:
-                    oldest_record = record
-                else:
-                    if record.created < oldest_record.created:
-                        oldest_record = record
-
-            if oldest_record is None:
-                # user have no publications at all
-                return
-
-            oldest_record.is_paid = False
-            oldest_record.save()
 
 
     def turn_off_paid_publications(self):

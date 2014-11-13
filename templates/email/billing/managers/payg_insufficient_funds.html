@@ -1,0 +1,41 @@
+{#
+    Даний шаблон відправляється менеджеру на пошту
+    з метою повідомити, що у такого-то користувача не вистачає коштів для сплати наступного клієнта.
+#}
+<div>
+    Ахтунг!<br/>
+    <br/>
+    На рахунку користувача не вистачає коштів для сплати наступного зацікавленого клієнта.<br/>
+    <br/>
+    Інформація про користувача: <br/>
+    ID: {{ realtor.id }}; <br/>
+    ПІБ: {{ realtor.full_name() }}; <br/>
+    email: {{ realtor.email }}; <br/>
+    Моб. телефон: {{ realtor.mobile_phone }}; <br/>
+
+    {% if realtor.add_mobile_phone %}
+        Додатковий моб. телефон: {{ realtor.add_mobile_phone }}; <br/>
+    {% endif %}
+
+    {% if realtor.work_email %}
+        Робоча пошта: {{ realtor.work_email }}; <br/>
+    {% endif %}
+
+    {% if realtor.skype %}
+        Skype: {{ realtor.skype }}; <br/>
+    {% endif %}
+
+    {% if realtor.landline_phone %}
+        Стац. телефон: {{ realtor.landline_phone }}; <br/>
+    {% endif %}
+
+    {% if realtor.add_landline_phone %}
+        Дод. стац. телефон: {{ realtor.add_landline_phone }}; <br/>
+    {% endif %}
+
+    <br/><br/>
+    {% set account = realtor.account %} {# caching #}
+    ID рахунку: {{ account.id }}; <br/>
+    Поточний баланс: {{ account.balance }}; <br/>
+    Тарифний план: pay as you go; <br/>
+</div>

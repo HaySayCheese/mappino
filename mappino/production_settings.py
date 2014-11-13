@@ -21,6 +21,7 @@ MANAGERS = (
     ('Dima Chizhevsky', 'support@mappino.com')
 )
 SUPPORT_EMAIL =  MANAGERS[0][1]
+BILLING_MANAGER_EMAIL = MANAGERS[0][1]
 
 
 # Configuration for emails about server error.
