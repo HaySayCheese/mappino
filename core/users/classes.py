@@ -100,21 +100,22 @@ class Publications(object):
         self.user = user
 
 
-    def total_count(self):
+    @staticmethod
+    def turn_off_publications():
+        for model in core.publications.constants.HEAD_MODELS.values():
+            for publication in model.all_published().only('id'):
+                publication.unpublish()
+
+
+    def total_count(self, exclude_deleted=False):
         """
         Повертає загальну к-сть оголошень всіх типів для поточного користувача.
         """
         count = 0
         for model in core.publications.constants.HEAD_MODELS.values():
-            count += model.objects.filter(owner=self.user).count()
+            query = model.objects.filter(owner=self.user)
+            if exclude_deleted:
+                query = query.exclude(state_sid=core.publications.constants.OBJECT_STATES.deleted())
+
+            count += query.count()
         return count
-
-
-    def turn_off_paid_publications(self):
-        """
-        Зніме всі платні та опубліковані оголошення з публікації.
-        Присвоїть всім їм статус "Вимкнено за відсутністю коштів на рахунку".
-        """
-        for model in core.publications.constants.HEAD_MODELS.values():
-            for publication in model.objects.filter(owner=self.user, is_paid=True).only('id'):
-                publication.turn_off_for_non_payment()

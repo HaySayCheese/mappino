@@ -11,7 +11,6 @@ import datetime
 import redis_lock
 
 from collective.exceptions import InvalidArgument, RuntimeException
-from core.billing.abstract_models import FREE_PUBLICATIONS_COUNT
 from core.currencies import currencies_manager as currencies
 from core.currencies.constants import CURRENCIES as currencies_constants
 from core.publications import models_signals
@@ -138,9 +137,6 @@ class AbstractHeadModel(models.Model):
     pos_lng = models.TextField(null=True)
     address = models.TextField(null=True)
 
-    #-- other
-    is_paid = models.BooleanField()
-
 
     @classmethod
     def new(cls, owner, for_sale=False, for_rent=False):
@@ -153,9 +149,6 @@ class AbstractHeadModel(models.Model):
             for_sale = for_sale,
             for_rent = for_rent,
             state_sid = OBJECT_STATES.unpublished(),
-
-            # За поточною тарифною моделлю, декілька найстаріших оголошень вважаються безкоштовними для користувача.
-            is_paid = owner.publications().free_count() >= FREE_PUBLICATIONS_COUNT,
         )
 
         # По сигналу про створення запису запускається його індексація в sphinx
@@ -278,6 +271,8 @@ class AbstractHeadModel(models.Model):
         self.check_required_fields()
         self.body.check_required_fields()
 
+        # if self.owner.account.
+
         # sender=None для того, щоб django-orm не витягував автоматично дані з БД,
         # які, швидше за все, не знадобляться в подальшій обробці.
         models_signals.before_publish.send(
@@ -325,35 +320,6 @@ class AbstractHeadModel(models.Model):
         )
 
         self.state_sid = OBJECT_STATES.unpublished()
-        self.published = None
-        self.deleted = None
-        self.save(force_update=True)
-
-        # sender=None для того, щоб django-orm не витягував автоматично дані з БД,
-        # які, швидше за все, не знадобляться в подальшій обробці.
-        models_signals.unpublished.send(
-            sender = None,
-            tid = self.tid,
-            hid = self.id,
-            hash_id = self.hash_id,
-            for_sale = self.for_sale,
-            for_rent = self.for_rent,
-        )
-
-
-    def turn_off_for_non_payment(self):
-        # Moves the publication to unpublished publications.
-        # and marks it as disabled for non payment.
-        models_signals.before_unpublish.send(
-            sender = None,
-            tid = self.tid,
-            hid = self.id,
-            hash_id = self.hash_id,
-            for_sale = self.for_sale,
-            for_rent = self.for_rent,
-        )
-
-        self.state_sid = OBJECT_STATES.disabled_for_non_payment()
         self.published = None
         self.deleted = None
         self.save(force_update=True)

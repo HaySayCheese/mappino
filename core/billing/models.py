@@ -10,7 +10,7 @@ from core.billing.abstract_models import Account, Transactions
 from core.billing.constants import \
     TARIFF_PLANS_IDS as PLANS, \
     REALTORS_TRANSACTIONS_TYPES
-from core.billing.exceptions import InsufficientFunds
+from core.billing.exceptions import InsufficientFunds, PAYGInsufficientFunds, FixedInsufficientFunds
 from core.email_backend.utils import ManagersNotifier
 
 
@@ -101,6 +101,22 @@ class RealtorsAccounts(Account):
         return cls.objects.filter(user_id=user_id)[:1][0]
 
 
+    @classmethod
+    def all_with_pay_as_you_go_plan(cls):
+        """
+        :returns: all accounts on pay as you go tariff plan
+        """
+        return cls.objects.filter(tariff_plan_sid=cls.PayAsYouGo.sid)
+
+
+    @classmethod
+    def all_with_fixed_plan(cls):
+        """
+        :returns: all accounts on fixed tariff plan
+        """
+        return cls.objects.filter(tariff_plan_sid=cls.Fixed.sid)
+
+
     def transactions(self):
         """
         :return: QuerySet with all transactions of this account
@@ -128,6 +144,30 @@ class RealtorsAccounts(Account):
             return None
 
 
+    def check_may_publish_publications(self):
+        """
+        :returns None if user of this account may publish publications or raise corresponding exception.
+        :raises
+            PAYGInsufficientFunds - if user is on the pay as yo go tariff plan
+                and balance of his account is less than minimal payment for contacts request.
+
+            FixedInsufficientFunds - if user is on the fixed tariff plan
+                and balance of his account is less than zero (user has the debt).
+        """
+        if self.tariff_plan_sid == self.PayAsYouGo.sid:
+            if self.balance < self.PayAsYouGo.Price.per_contacts_request():
+                raise PAYGInsufficientFunds()
+
+
+        elif self.tariff_plan_sid == self.Fixed.sid:
+            if self.balance <= 0:
+                raise FixedInsufficientFunds()
+
+        else:
+            raise RuntimeError('Invalid or unknown tariff plan sid.')
+
+
+
     def process_contacts_request(self, request):
         # Даний метод викликається під час кожного запиту контактів, незалежно від тарифного плану рієлтора.
         # Всі перевірки, в тому числі і тарифного плану, здійснюються в даному методі.
@@ -140,6 +180,7 @@ class RealtorsAccounts(Account):
         # Якщо в користувача менше оголошень, ніж максимально дозволена безкоштовна к-сть -
         # не стягувати платні
         if self.user.publications.total_count() <= self.PayAsYouGo.free_publications_count:
+            # todo: add logger record here
             return
 
 
@@ -156,6 +197,10 @@ class RealtorsAccounts(Account):
 
         # Якщо рієлтор не знаходиться на фіксованому тарифному плані — виходимо.
         if self.tariff_plan_sid != self.Fixed.sid:
+            return
+
+        if self.user.publications.total_count(exclude_deleted=True) == 0:
+            # todo: add logger record here
             return
 
         self.__charge_for_days_used()
@@ -211,6 +256,7 @@ class RealtorsAccounts(Account):
             # В даному випадку повідомлення буде надіслано менеджеру,
             # який спробує розібратись із тим чому рахунок не поповнено і,за потреби, допоможе це зробити.
             ManagersNotifier.realtor_insufficient_funds_on_payg(self.user, no_more_than_one_per_day=True)
+            # todo: add logger record here
 
 
     def __charge_for_days_used(self):
@@ -236,7 +282,10 @@ class RealtorsAccounts(Account):
 
         amount = round(hour_rate * used_hours)
         if amount <= 0:
-            raise SuspiciousOperation()
+            raise SuspiciousOperation(
+                'Used amount by this realtor is zero or less than zero. '
+                'There is too short period of time was gone from the last transaction (or account creating date).'
+            )
 
 
         transaction_type = REALTORS_TRANSACTIONS_TYPES.fixed_payment()
@@ -251,6 +300,7 @@ class RealtorsAccounts(Account):
             # В даному випадку повідомлення буде надіслано менеджеру,
             # який спробує розібратись із тим чому рахунок не поповнено і,за потреби, допоможе це зробити.
             ManagersNotifier.realtor_insufficient_funds_on_fixed(self.user, no_more_than_one_per_day=True)
+            # todo: add logger record here
 
 
     def __charge(self, amount, transaction_type_sid, allow_balance_less_than_zero=False):
@@ -262,6 +312,8 @@ class RealtorsAccounts(Account):
             RealtorsTransactions.new(self, amount, transaction_type_sid)
             self.balance += Decimal(amount)
             self.save()
+
+            # todo: add logger record here
 
             return self.balance
 

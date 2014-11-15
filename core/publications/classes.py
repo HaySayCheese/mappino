@@ -3,7 +3,7 @@ from django.core import serializers
 
 from apps.cabinet.api.dirtags.models import DirTags
 from collective.exceptions import RuntimeException, InvalidArgument
-from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
+from core.publications.constants import OBJECTS_TYPES
 
 
 
@@ -691,19 +691,3 @@ class UnpublishedFormatter(object):
 
 
         return data
-
-
-class Publications(object):
-    def __init__(self, user):
-        self.user = user
-
-
-
-    def total_count(self):
-        """
-        Повертає загальну к-сть оголошень всіх типів для поточного користувача.
-        """
-        count = 0
-        for model in HEAD_MODELS.values():
-            count += model.objects.filter(owner=self.user).count()
-        return count

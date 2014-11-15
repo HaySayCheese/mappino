@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, Validat
 from django.http.response import HttpResponse, HttpResponseBadRequest
 
 from apps.classes import CabinetView
+from collective.http.responses import HttpJsonResponse
 from core.publications import classes
 from core.publications.abstract_models import PhotosModel
 from core.publications.models_signals import record_updated
@@ -21,6 +22,7 @@ from core.publications.update_methods.business import update_business
 from core.publications.update_methods.caterings import update_catering
 from core.publications.update_methods.garages import update_garage
 from core.publications.update_methods.lands import update_land
+from core.billing import exceptions as billing_exceptions
 from collective.methods.request_data_getters import angular_parameters
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS
 
@@ -302,6 +304,13 @@ class Publications(object):
             'incomplete_or_invalid_pub': {
                 'code': 2,
             },
+
+            'pay_as_you_go_insufficient_funds': {
+                'code': 30,
+            },
+            'fixed_insufficient_funds': {
+                'code': 50,
+            },
         }
 
 
@@ -325,6 +334,18 @@ class Publications(object):
             # check owner
             if head.owner.id != request.user.id:
                 raise PermissionDenied()
+
+
+            try:
+                # billing constraints check
+                request.user.account.check_may_publish_publications()
+
+            except billing_exceptions.PAYGInsufficientFunds:
+                return HttpJsonResponse(self.put_codes['pay_as_you_go_insufficient_funds'])
+
+            except billing_exceptions.FixedInsufficientFunds:
+                return HttpJsonResponse(self.put_codes['fixed_insufficient_funds'])
+
 
             try:
                 head.publish()

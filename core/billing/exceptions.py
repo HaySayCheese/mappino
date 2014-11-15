@@ -7,3 +7,9 @@ class TooFrequent(Exception):
 
 
 class InsufficientFunds(Exception): pass
+
+
+class PAYGInsufficientFunds(InsufficientFunds): pass
+
+
+class FixedInsufficientFunds(InsufficientFunds): pass

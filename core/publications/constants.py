@@ -95,7 +95,6 @@ class ObjectStates(AbstractConstant):
             'published': 0,
             'unpublished': 1,
             'deleted': 2,
-            'disabled_for_non_payment': 3, # вимкнені за неуплату
 
             # todo: розібратись із цим  #'in_verification_queue': 100,  #'robot_verification': 101,
             #'robot_verification_failed': 102,
@@ -115,10 +114,6 @@ class ObjectStates(AbstractConstant):
 
     def deleted(self):
         return self.ids['deleted']
-
-
-    def disabled_for_non_payment(self):
-        return self.ids['disabled_for_non_payment']
 
 OBJECT_STATES = ObjectStates()
 
