@@ -155,7 +155,8 @@ class RealtorsAccounts(Account):
                 and balance of his account is less than zero (user has the debt).
         """
         if self.tariff_plan_sid == self.PayAsYouGo.sid:
-            if self.balance < self.PayAsYouGo.Price.per_contacts_request():
+            if self.balance < self.PayAsYouGo.Price.per_contacts_request() and \
+                self.user.publications.total_count(exclude_deleted=True) > 2:
                 raise PAYGInsufficientFunds()
 
 
