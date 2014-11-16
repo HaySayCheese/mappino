@@ -1,15 +1,20 @@
 #coding=utf-8
 import copy
 import hashlib
-import datetime
 
+import datetime
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
+from django.http.response import HttpResponseBadRequest, HttpResponse
+from django.views.generic import View
 
 from apps.classes import CabinetView
 from collective.http.responses import HttpJsonResponseBadRequest, HttpJsonResponse
 from collective.methods.request_data_getters import angular_parameters
 from core.billing.constants import TARIFF_PLANS_IDS as PLANS
 from core.billing.exceptions import TooFrequent, InsufficientFunds
+from core.billing.liqpay import LiqPay
+from core.billing.models import RealtorsOrders
 
 
 
@@ -171,3 +176,128 @@ class Billing(object):
                     'message': 'OK',
                     'code': 0
                 })
+
+
+
+        class Orders(CabinetView):
+            post_codes = {
+                'ok': {
+                    'message': 'OK',
+                    'code': 0,
+                },
+                'invalid_amount': {
+                    'message': '"amount" is invalid or absent.',
+                    'code': 1,
+                },
+            }
+
+            @classmethod
+            def post(cls, request, *args):
+                """
+                Creates new order with amount = "amount".
+
+                :returns:
+                    HttpJsonResponseBadRequest if amount is absent or invalid.
+                    HttpJsonResponse with status "ok" if order was created.
+                """
+
+                try:
+                    amount = float(request.POST['amount'])
+                    amount = round(amount, 2)
+                except (IndexError, ValueError):
+                    return HttpJsonResponseBadRequest(cls.post_codes['invalid_amount'])
+
+
+                realtor = request.user
+                order = realtor.account.add_order(amount)
+
+                response = copy.deepcopy(cls.post_codes['ok'])
+                response['order'] = {
+                    'public_key': settings.LIQPAY_PUBLIC_KEY,
+                    'amount': amount,
+                    'currency': 'UAH', # translators: create a method to convert currency for different countries
+                    'description': u'Пополнение счета на mappino.com.ua', # translators: change language
+                    'order_id': order.hash_id,
+                    'server_url': settings.REDIRECT_DOMAIN_URL + '/callback/api/cabinet/billing/realtor/order/',
+                    'result_url': '', # todo add thanks page
+                    'language': 'ru' , # translators: change language
+                    'sandbox': 1 if settings.DEBUG else 1 # todo: change "else 0"
+                }
+
+                liqpay = LiqPay(settings.LIQPAY_PUBLIC_KEY, settings.LIQPAY_PRIVATE_KEY)
+                signature = liqpay.cnb_signature(response['order'])
+                response['order']['signature'] = signature
+                return HttpJsonResponse(response)
+
+
+
+        class OrdersCallback(View):
+            """
+            This class is used for notifications about orders statuses from LiqPay.
+            for details see: https://www.liqpay.com/ru/doc#callback
+            """
+
+            @classmethod
+            def post(cls, request, *args):
+                try:
+                    public_key = request.POST['public_key']
+                except IndexError:
+                    return HttpResponseBadRequest('"public_key" is absent.')
+
+                if public_key != settings.LIQPAY_PUBLIC_KEY:
+                    # todo: add log record here
+                    return HttpResponse(
+                        'Order with such parameters does not exist '
+                        'or was not processed by the payment back-end.'
+
+                        # This message is some obfuscated to not help the hacker
+                        # to resolve this issue.
+                    )
+
+
+                try:
+                    amount = request.POST['amount']
+                    amount = float(amount)
+                    if amount <= 0:
+                        raise ValueError('"amount" can\'t be equal or less than zero.')
+
+                except (IndexError, ValueError):
+                    return HttpResponseBadRequest('"amount" is absent.')
+
+
+                try:
+                    order_id = request.POST['order_id']
+                except IndexError:
+                    return HttpResponseBadRequest('"order_id" is absent.')
+
+                # Check if request wth such parameters was processed by liqpay.
+                # If no - this may be brute force of the orders hash ids
+                # to confirm the request without real payment.
+                #
+                # Ideally hosts which sends such requests should be banned for some time.
+
+                liqpay = LiqPay(settings.LIQPAY_PUBLIC_KEY, settings.LIQPAY_PRIVATE_KEY)
+                response = liqpay.api("payment/status", {
+                    "order_id": order_id
+                })
+
+                if response['result'] != 'ok':
+                    # todo: add host ban after second invalid attempt from same host.
+                    return HttpResponse(
+                        'Order with such parameters does not exist '
+                        'or was not processed by the payment back-end.'
+                    )
+
+
+                try:
+                    order = RealtorsOrders.objects.get(hash_id=order_id)
+                except ObjectDoesNotExist:
+                    return HttpResponse(
+                        'Order with such parameters does not exist '
+                        'or was not processed by the payment back-end.'
+                    )
+
+                order.accept()
+                return HttpResponse('OK')
+
+

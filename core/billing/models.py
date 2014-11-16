@@ -6,7 +6,7 @@ from django.core.exceptions import SuspiciousOperation
 from django.db import models, transaction
 from django.utils.timezone import now
 
-from core.billing.abstract_models import Account, Transactions
+from core.billing.abstract_models import Account, Transactions, Orders
 from core.billing.constants import \
     TARIFF_PLANS_IDS as PLANS, \
     REALTORS_TRANSACTIONS_TYPES
@@ -80,6 +80,7 @@ class RealtorsAccounts(Account):
                 # ToDo: provide different currency to different country
                 return cls.per_month() / 31 # UAH, note: decimal digits are required!
 
+
     #
     # account logic
     #
@@ -122,6 +123,14 @@ class RealtorsAccounts(Account):
         :return: QuerySet with all transactions of this account
         """
         return RealtorsTransactions.transactions().filter(account=self)
+
+
+    def orders(self):
+        return RealtorsOrders.orders().filter(account=self)
+
+
+    def add_order(self, amount):
+        return RealtorsOrders.new(self, amount)
 
 
     def last_fixed_payment_transaction(self):
@@ -318,3 +327,18 @@ class RealtorsAccounts(Account):
 
             return self.balance
 
+
+
+class RealtorsOrders(Orders):
+    account = models.ForeignKey(RealtorsAccounts)
+
+    class Meta:
+        db_table = 'billing_orders_realtors'
+
+
+    @classmethod
+    def new(cls, account, amount):
+        return cls.objects.create(
+            amount = amount,
+            account = account
+        )
