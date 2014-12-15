@@ -1,8 +1,14 @@
 'use strict';
 
-app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScope) {
+app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScope, $anchorScroll) {
 
     $rootScope.pageTitle = "Добро пожаловать на Mappino";
+
+    /* За замовчуванням, фонове зображенян має бути на всю фонову область. */
+    $(window).on('resize', function(){
+        $('.img-holder.top').css('height', window.innerHeight + 'px');
+    }).resize();
+
 
     $scope.$watch(function() {
         return sessionStorage.userName;
@@ -84,7 +90,7 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
     };
 
     /**
-     * Викликаєтсья при кліку на кнопку "Искать".
+     * Викликається при кліку на кнопку "Искать".
      * Перевіряє чи поле вводу міста не пусте, і, кщо все ок —
      * перекидає користувача на сторінку пошуку.
      */
@@ -103,7 +109,22 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
         $rootScope.$emit("first-enter-done");
     };
 
+    /**
+     * Використовується для простановки року у футері.
+     * @returns {number}
+     */
+    $scope.currentYear = function(){
+        return new Date().getFullYear();
+    };
 
+    /**
+     * Використовується для переходу по якорям.
+     * @param id — id якоря, до якого слід перейти.
+     */
+    $scope.scrollTo = function(id) {
+      $location.hash(id);
+      $anchorScroll();
+   };
 
 
 
