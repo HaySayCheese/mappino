@@ -17,6 +17,18 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
         }
     });
 
+    /* Google autocomplete після вибору міста із запропонованих підказок не оновлює scope,
+     * через що на сторінку пошуку подається не повна адреса, а лише її частина,
+     * та, яка була введена вручну користувачем, і на яку angular зміг зреагувати по ng-change.
+     *
+     * Даний код змушує ангулар оновлювати scope кожного разу при виборі нового місця. */
+    google.maps.event.addListener(autocomplete, 'place_changed', function() {
+        $scope.$apply(function(){
+            $scope.home.city = autocomplete.getPlace().formatted_address;
+        });
+    });
+
+
     var firstEnterModal = angular.element(".first-enter-modal");
     firstEnterModal.modal();
 
@@ -43,6 +55,8 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
         type: 1,
         operation: 0,
         city: "",
+        cityRequired: false, // якщо true — контрол вводу міста на формі підсвітиться,
+                             // і з’явиться повідомлення про те, що місто є необхідним полем.
         flat: {
             rooms_1_1: false,
             rooms_2_2: false,
@@ -51,8 +65,35 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
         }
     };
 
+    /**
+     * Використовується для заповнення строки пошуку даними з підказок під полем.
+     * @param city — строка, яку слід вставити в поле.
+     */
+    $scope.fillSearchSuggest = function(city){
+        $scope.home.city = city;
+    };
 
-    $scope.startSearch = function() {
+    /**
+     * Викликається кожного разу при зміні строки вводу міста.
+     * Використовується для скидання флагу required після кожної зміни поля,
+     * щоб коли користувач починає вводити місто, привести поле в стандартний вигляд,
+     * навіть, якщо на попередньому етапі воно було підсвіченим.
+     */
+    $scope.cityInputChanged = function(){
+        $scope.home.cityRequired = false;
+    };
+
+    /**
+     * Викликаєтсья при кліку на кнопку "Искать".
+     * Перевіряє чи поле вводу міста не пусте, і, кщо все ок —
+     * перекидає користувача на сторінку пошуку.
+     */
+    $scope.startSearch = function(){
+        if (! $scope.home.city){
+            $scope.home.cityRequired = true; // контроли будуть підсвічені автоматично.
+            return;
+        }
+
         $location.search("r_type_sid", $scope.home.type);
         $location.search("r_operation_sid", $scope.home.operation);
         $location.search("city", $scope.home.city);
@@ -61,6 +102,10 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
 
         $rootScope.$emit("first-enter-done");
     };
+
+
+
+
 
 
     $scope.isYo = function(obj, positives) {
