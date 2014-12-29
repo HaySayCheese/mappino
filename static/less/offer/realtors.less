@@ -1,0 +1,130 @@
+@import "../components/bootstrap";
+@import "../components/variables";
+
+
+body {
+    position: relative;
+}
+
+.wrapper {
+    position: relative;
+    overflow-x: hidden;
+
+    .header-links {
+        height: 70px;
+        padding: 12px 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        line-height: 45px;
+
+        &.panel {
+            background: #ffffff;
+            border-bottom: 1px solid @gray-lighter;
+
+            .btn {
+                visibility: visible;
+            }
+
+            a:not(.btn) {
+                color: @gray-light !important;
+                text-shadow: none;
+            }
+        }
+
+        .btn {
+            border-radius: 0;
+            visibility: hidden;
+        }
+
+        a:not(.btn) {
+            color: #ffffff !important;
+            font-size: @font-size-h4;
+            text-decoration: none;
+            margin-left: 15px;
+            text-shadow: ~"0px 0px 5px rgba(0, 0, 0, 0.4)";
+
+            &.active {
+                color: @nice-blue !important;
+            }
+        }
+    }
+
+    .img-holder {
+        position: relative;
+
+        &.main, > img{
+            min-height: 500px;
+            background-position: center;
+        }
+    }
+
+    .image-caption {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+
+        color: #ffffff;
+
+        .translate(-50%, -50%);
+        text-shadow: ~"0px 0px 5px rgba(0, 0, 0, 0.4)";
+    }
+
+    .brand{
+        padding-top: 25px;
+        font-size: 4em;
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.70);
+    }
+    .slogan{
+        padding-top: 15px;
+        font-size: 1.4em;
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.70);
+        color: rgba(255, 255, 255, 0.95);
+    }
+
+    section {
+        background: #ffffff;
+        .box-shadow(~"0px 0px 15px rgba(0, 0, 0, .4)");
+        .clearfix();
+
+        h1 {
+            margin-top: 100px;
+            font-size: 45px;
+            color: @gray-dark;
+        }
+        p {
+            margin-top: 50px;
+            line-height: @line-height-large + 0.1;
+            font-size: 20px;
+        }
+        &.with-padding {
+            padding: 50px 40px;
+        }
+
+        &.with-padding-bottom {
+            padding-bottom: 60px;
+        }
+
+        .section-image {
+            position: relative;
+
+            img {
+                display: inline-block;
+            }
+        }
+
+
+        .hint{
+            font-size: 1.2em;
+            color: darken(@btn-success-bg, 10%);
+        }
+    }
+
+}
+
+.btn.section-btn {
+    color: #ffffff !important;
+    text-decoration: none;
+}
