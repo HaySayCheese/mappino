@@ -128,3 +128,92 @@ body {
     color: #ffffff !important;
     text-decoration: none;
 }
+
+
+.animated {
+    -webkit-animation-duration: .3s;
+    animation-duration: .3s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+@-webkit-keyframes slideInDown {
+    0% {
+        .opacity(0);
+        .translate(0, -300px);
+    }
+    100% {
+        .opacity(100);
+        .translate(0, 0);
+    }
+}
+@keyframes slideInDown {
+    0% {
+        .opacity(0);
+        .translate(0, -300px);
+    }
+    100% {
+        .opacity(100);
+        .translate(0, 0);
+    }
+}
+.slideInDown {
+    -webkit-animation-name: slideInDown;
+    animation-name: slideInDown;
+}
+
+
+
+@-webkit-keyframes slideOutUp {
+    0% {
+        .opacity(100);
+        .translate(0, 0);
+    }
+    100% {
+        .opacity(0);
+        .translate(0, -300px);
+    }
+}
+@keyframes slideOutUp {
+    0% {
+        .opacity(100);
+        .translate(0, 0);
+    }
+    100% {
+        .opacity(0);
+        .translate(0, -300px);
+    }
+}
+.slideOutUp {
+    -webkit-animation-name: slideOutUp;
+    animation-name: slideOutUp;
+}
+
+
+
+@-webkit-keyframes fadeInDown {
+    0% {
+        .opacity(0);
+        .translate(0, -2000px);
+    }
+    100% {
+        .opacity(100);
+        .translate(0, 0);
+    }
+}
+
+@keyframes fadeInDown {
+    0% {
+        .opacity(0);
+        .translate(0, -2000px);
+    }
+    100% {
+        .opacity(100);
+        .translate(0, 0);
+    }
+}
+
+.fadeInDown {
+    -webkit-animation-name: fadeInDown;
+    animation-name: fadeInDown;
+}
