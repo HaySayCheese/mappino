@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.http.response import HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from core.utils.jinja2_integration import templates
 
@@ -11,14 +12,17 @@ def home(request):
 
 
 
-@ensure_csrf_cookie
-def promo(request):
-    template = templates.get_template('main/promo-pages/promo.html')
+def offer(request):
+    return HttpResponseRedirect('/offer/realtors/')
+
+
+
+def offer_for_realtors(request):
+    template = templates.get_template('main/offer/realtors.html')
     return HttpResponse(content=template.render())
 
 
 
-@ensure_csrf_cookie
-def realtors_promo(request):
-    template = templates.get_template('main/promo-pages/realtors.html')
+def offer_for_agencies(request):
+    template = templates.get_template('main/offer/agencies.html')
     return HttpResponse(content=template.render())

@@ -111,6 +111,7 @@ CELERY_RESULT_BACKEND = BROKER_URL
 
 
 INSTALLED_APPS = (
+    'south',
     'compressor',
 
     'django.contrib.auth',
@@ -118,7 +119,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
 
     # todo: add initialisation app here
-    #'core',
+    'core',
     'core.users',
     'core.billing',
     'core.publications',
@@ -153,6 +154,8 @@ SECRET_KEY = '*m9ye0^!5otq35^(rb1^5mau92$6xen5!y69c$9e20yr0etexi'
 SMS_GATE_LOGIN = passwords.SMS_GATE_LOGIN
 SMS_GATE_PASSWORD = passwords.SMS_GATE_PASSWORD
 MANDRILL_API_KEY = passwords.MANDRILL_API_KEY
+LIQPAY_PUBLIC_KEY = passwords.LIQPAY_PUBLIC_KEY
+LIQPAY_PRIVATE_KEY = passwords.LIQPAY_PRIVATE_KEY
 
 
 SESSION_COOKIE_AGE = 60*60*24*14 # 14 days

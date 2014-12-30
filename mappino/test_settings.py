@@ -38,7 +38,7 @@ MANDRILL_API_KEY = passwords.MANDRILL_API_KEY
 DATABASES = {
 	'default': {
 		'ENGINE':'django.db.backends.sqlite3',
-		'NAME': 'memory:(dev)mappino',
+		'NAME': 'memory:mappino33',
 	}
 }
 REDIS_DATABASES = {
@@ -63,6 +63,7 @@ REDIS_DATABASES = {
 	    'PORT': 6379,
     }
 }
+ENABLE_SPHINX_SEARCH = False
 SPHINX_SEARCH = {
 	'HOST': '185.14.186.102',
     'PORT': 9306
@@ -88,18 +89,19 @@ CELERY_RESULT_BACKEND = BROKER_URL
 SUPPORT_EMAIL = 'Dima.Chizhevsky@gmail.com'
 
 INSTALLED_APPS = (
-	'django.contrib.auth',
-	'django.contrib.contenttypes',
-	'django.contrib.sessions',
+	 'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
 
+    'core',
     'core.users',
     'core.publications',
-    'core.markers_servers',
+    'core.markers_handler',
+    'core.billing',
     'core.search',
     'core.support',
-
-    'apps.cabinet.api.dirtags',
-	'apps.main.api.correspondence',
+    'core.escaped_fragments_manager',  # 'apps.cabinet.api.dirtags',
+    'apps.main.api.correspondence',
 )
 MIDDLEWARE_CLASSES = (
 	'django.contrib.sessions.middleware.SessionMiddleware',
@@ -126,6 +128,7 @@ USE_L10N = False
 USE_TZ = True
 
 
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATIC_URL = 'http://localhost/mappino_static/'
@@ -133,47 +136,6 @@ STATIC_URL = 'http://localhost/mappino_static/'
 MEDIA_URL = 'http://localhost/mappino_media/'
 MEDIA_ROOT = '/media/work/web-projects/mappino/media/'
 
-LOGGING = {
-	'version': 1,
-	'disable_existing_loggers': True,
-	'formatters': {
-		'simple': {
-			'format': '%(levelname)s: %(asctime)s - %(message)s',
-		    'datefmt': '%Y-%m-%d %H:%M:%S'
-			},
-		},
-	'handlers': {
-		'mail_admins': {
-			'level': 'WARNING',
-			'class': 'django.utils.log.AdminEmailHandler',
-		},
-	    'sms_dispatcher_limits_file': {
-			'level': 'INFO',
-	        'class': 'logging.handlers.TimedRotatingFileHandler',
-	        'filename': 'logs/sms_dispatcher/limits.log',
-	        'when': 'W6',
-	        'backupCount': 24,
-	        'formatter': 'simple'
-	    },
-	    'sms_dispatcher_sender_file': {
-			'level': 'INFO',
-	        'class': 'logging.handlers.TimedRotatingFileHandler',
-	        'filename': 'logs/sms_dispatcher/sended.log',
-	        'when': 'D',
-	        'backupCount': 60,
-	        'formatter': 'simple'
-	    },
-	},
-	'loggers': {
-		'mappino.sms_dispatcher.limits': {
-			'handlers': ['sms_dispatcher_limits_file', 'mail_admins'],
-			'level': 'INFO',
-		    'propagate': False,
-		},
-	    'mappino.sms_dispatcher.sender': {
-			'handlers': ['sms_dispatcher_sender_file', 'mail_admins'],
-			'level': 'INFO',
-		    'propagate': False,
-		},
-	}
-}
+COMPRESS_ENABLED = False
+# COMPRESS_STORAGE = 'comprsessor.storage.GzipCompressorFileStorage'
+COMPRESS_ROOT = MEDIA_ROOT + 'compress'

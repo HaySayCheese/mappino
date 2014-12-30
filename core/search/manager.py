@@ -10,7 +10,7 @@ from core.publications.constants import OBJECTS_TYPES
 from core.search.tasks import update_house_index, update_flat_index, update_apartments_index, \
     update_cottage_index, update_room_index, update_trade_index, update_office_index, update_warehouse_index, \
     update_business_index, update_catering_index, update_garage_index, update_land_index
-from mappino.celery import app
+from mappino.celery_integration import app
 from mappino.wsgi import redis_connections
 
 

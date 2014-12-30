@@ -130,6 +130,7 @@ CELERY_RESULT_BACKEND = BROKER_URL
 
 
 INSTALLED_APPS = (
+    'south',
 	'compressor',
 
 	'core',

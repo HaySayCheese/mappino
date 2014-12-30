@@ -1,7 +1,7 @@
 #coding=utf-8
 from celery.exceptions import Reject
 from core.users.models import Users
-from mappino.celery import app
+from mappino.celery_integration import app
 
 
 @app.task

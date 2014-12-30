@@ -13,7 +13,7 @@ from core.search.utils import sale_terms_index_data, living_rent_terms_index_dat
 	flat_body_index_data, apartments_body_index_data, room_body_index_data, commercial_rent_terms_index_data, trades_body_index_data, office_body_index_data, \
 	warehouse_body_index_data, business_body_index_data, catering_body_index_data, garage_body_index_data, \
 	land_body_index_data
-from mappino.celery import app
+from mappino.celery_integration import app
 
 
 class SphinxUpdateIndexTask(Task):
