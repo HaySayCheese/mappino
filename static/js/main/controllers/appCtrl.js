@@ -147,7 +147,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
         { name: "business", id: 8, title: "Готовый бизнес",
             filters: [
                 "operation_sid",
-                "price_from", "price_to", "currency_sid",
+                "price_from", "price_to", "currency_sid"
             ]
         },
         { name: "catering", id: 9, title: "Обьекты общепита",
@@ -194,8 +194,15 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
         name: "UAH",
         title: "Грн."
     }];
-
-
+    $rootScope.opeartionTypes = {
+        sale: 0,
+        rent: 1
+    };
+    $rootScope.rentTypes = {
+        undefined: 0,
+        daily: 1,
+        monthly: 2
+    };
     $rootScope.loadings = {
         markers: false
     };

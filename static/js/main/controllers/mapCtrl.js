@@ -32,7 +32,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         map: {
             city: "",
             zoom: parseInt(6),
-            latLng: "48.455935, 34.41285"
+            latLng: "48.455935, 34.41285" // translate: для інших країн має бути інший початковий регіон
         },
 
         base: {
@@ -149,7 +149,22 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
         loadData(newValue, "yellow", true)
     });
-    $rootScope.$on("first-enter-done", function(event, data) {
+
+
+    $rootScope.$on("first-enter-done", function(event, data){
+        $location.search('r_operation_sid', data.type);
+
+        if (data.operation == 'sale'){
+            $location.search('r_operation_sid', $rootScope.opeartionTypes.sale);
+
+        } else if (data.operation == 'rent'){
+            $location.search('r_operation_sid', $rootScope.opeartionTypes.rent);
+
+        } else if (data.operation == 'daily'){
+            $location.search('r_operation_sid', $rootScope.opeartionTypes.rent);
+            $location.search('r_period_sid', $rootScope.rentTypes.daily);
+        }
+
         $scope.parseSearchParametersFromUrl();
     });
 
@@ -185,13 +200,16 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 if (filters.hasOwnProperty(key) && key != (prefix + "type_sid"))
                     delete filters[key];
             }
-            var searchParameters = $location.search();
 
+
+            var searchParameters = $location.search();
             for (var s_key in searchParameters) {
                 if (searchParameters.hasOwnProperty(s_key))
                     if (s_key.match(new RegExp('^' + prefix, 'm')))
                         $location.search(s_key, null)
             }
+
+
             parseFiltersCollectionAndUpdateUrl(filters);
             parseFiltersCollectionAndUpdateUrl($scope.filters.map);
         }

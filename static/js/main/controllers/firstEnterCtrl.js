@@ -1,22 +1,38 @@
 'use strict';
 
-app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScope, $anchorScroll) {
 
-    $rootScope.pageTitle = "Добро пожаловать на Mappino";
+app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScope, $anchorScroll, $window) {
+    $rootScope.pageTitle = "Добро пожаловать на mappino"; // translate
 
-    /* За замовчуванням, фонове зображенян має бути на всю фонову область. */
+
+
+    /*
+     * $scope variables initialisation
+     */
+    $scope.home = {
+        type: 1,
+        operation: 'sale',
+        city: "",
+
+        /* якщо true — контрол вводу міста на формі підсвітиться,
+         * і з’явиться повідомлення про те, що "місто" є необхідним полем.*/
+        cityRequired: false
+    };
+
+
+
+    /*
+     * Controls initialisation
+     */
+
+    /* За замовчуванням, фонове зображення має бути на всю висоту вікна браузера. */
     $(window).on('resize', function(){
-        $('.img-holder.top').css('height', window.innerHeight + 'px');
-    }).resize();
+        $('.img-holder.top').css('height', $window.innerHeight + 'px');
+    }).resize(); // перший виклик ініціює івент
 
 
-    $scope.$watch(function() {
-        return sessionStorage.userName;
-    }, function(newValue) {
-        $scope.userIsLogin = !_.isUndefined(newValue);
-    });
-
-    var cityInput = document.getElementById('home-autocomplete'),
+    /* autocomplete */
+    var cityInput = document.getElementById('home-location-autocomplete'),
     autocomplete = new google.maps.places.Autocomplete(cityInput, {
         componentRestrictions: {
             country: "ua"
@@ -27,7 +43,8 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
      * через що на сторінку пошуку подається не повна адреса, а лише її частина,
      * та, яка була введена вручну користувачем, і на яку angular зміг зреагувати по ng-change.
      *
-     * Даний код змушує ангулар оновлювати scope кожного разу при виборі нового місця. */
+     * Даний код змушує ангулар оновлювати scope кожного разу при виборі нового місця.
+     */
     google.maps.event.addListener(autocomplete, 'place_changed', function() {
         $scope.$apply(function(){
             $scope.home.city = autocomplete.getPlace().formatted_address;
@@ -35,41 +52,27 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
     });
 
 
-    var firstEnterModal = angular.element(".first-enter-modal");
+    /* modal initialisation */
+    var firstEnterModal = angular.element(".first-enter-modal"),
+        dropdown = angular.element(".type-selectpicker");
     firstEnterModal.modal();
 
-
-    ga('send', 'pageview', {
-        'page': '#!/first-enter',
-        'title': $rootScope.pageTitle
-    });
-
-
-    var scrollableBlock = $(".modal-content"),
-        dropdown        = $(".type-selectpicker"),
-        scrollableBlockImage = $(".img-holder"),
-        headerLinksBlock = scrollableBlock.find(".header-links");
 
     $timeout(function() {
         dropdown.selectpicker({
             style: 'btn-default btn-lg'
         });
+
+        /* таймаут необхідний, оскільки в процесі рендеру сторінки
+         * фокус декілька разів переходить з рук в руки */
+        cityInput.focus();
     }, 500);
 
 
-    $scope.home = {
-        type: 1,
-        operation: 0,
-        city: "",
-        cityRequired: false, // якщо true — контрол вводу міста на формі підсвітиться,
-                             // і з’явиться повідомлення про те, що місто є необхідним полем.
-        flat: {
-            rooms_1_1: false,
-            rooms_2_2: false,
-            rooms_3_3: false,
-            rooms_4_0: false
-        }
-    };
+
+    /*
+     * $scope logic
+     */
 
     /**
      * Використовується для заповнення строки пошуку даними з підказок під полем.
@@ -100,13 +103,12 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
             return;
         }
 
-        $location.search("r_type_sid", $scope.home.type);
-        $location.search("r_operation_sid", $scope.home.operation);
-        $location.search("city", $scope.home.city);
 
+        $rootScope.$emit("first-enter-done", {
+            operation: $scope.home.operation,
+            type: $scope.home.type
+        });
         $location.path("/search");
-
-        $rootScope.$emit("first-enter-done");
     };
 
     /**
@@ -125,94 +127,4 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
       $location.hash(id);
       $anchorScroll();
    };
-
-
-
-
-    $scope.isYo = function(obj, positives) {
-        var _obj = $scope.home[obj],
-            _objLength = 0,
-            pos_count = 0,
-            neg_count = 0;
-
-        // Calc positve checkbox checked
-        for (var a = 0; a <= positives.length; a++) {
-            for (var p in _obj) {
-                if (_obj.hasOwnProperty(p) && p == positives[a] && _obj[p])
-                    pos_count++;
-            }
-        }
-
-        // Calc negative checkbox checked
-        for (var n in _obj) {
-            if (_obj.hasOwnProperty(n)) {
-                if (!positives[1] && n != positives[0] && !_obj[n])
-                    neg_count++;
-                else if (positives[1] && n != positives[1] && !_obj[n])
-                    neg_count++;
-            }
-
-            _objLength++;
-        }
-
-        // If alles gute return true )
-        if (pos_count == positives.length && neg_count == (_objLength - positives.length))
-            return true;
-    };
-
-
-    /** Обробник евента скрола контента */
-    scrollableBlock.scroll(function() {
-        var scrollTop = scrollableBlock.scrollTop();
-
-        setTimeout(function() {
-            $(".image-caption")
-                .find("h1")
-                .css("opacity", (100 / (scrollTop / 7)) - 1.2)
-                .parent()
-                .find("img")
-                .css("opacity", (100 / (scrollTop / 9)) - 2);
-        }, 100);
-
-
-
-        /** Navbar */
-        if (scrollTop > $(window).height() - 70) {
-            headerLinksBlock.removeClass("slideOutUp").addClass("slideInDown panel");
-        } else if (headerLinksBlock.hasClass("panel") && !headerLinksBlock.hasClass("slideOutUp")) {
-            headerLinksBlock
-                .removeClass("slideInDown")
-                .addClass("slideOutUp")
-
-                .delay(300).queue(function(next) {
-                    $(this).removeClass("slideOutUp panel");
-                    next();
-                })
-                .addClass("slideInDown")
-                .delay(250).queue(function(next) {
-                    $(this).removeClass("slideInDown");
-
-                    next();
-                });
-        }
-
-        /** Markers */
-        var sections = $("section"),
-            markers = $(".tablet-marker");
-
-        if (scrollTop > sections[0].offsetTop - 150) {
-            $.each(markers, function(i, el) {
-                setTimeout(function() {
-                    $(el).addClass("fadeInDown");
-                }, 300 + (i * 300));
-            });
-        }
-    });
-
-
-
-    function firstEnterDone() {
-        $location.path("/search");
-    }
-
 });
