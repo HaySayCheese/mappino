@@ -21,4 +21,3 @@ python-redis-lock
 kombu
 django_compressor
 django-redis-cache
-South
