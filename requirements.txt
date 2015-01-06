@@ -13,7 +13,7 @@ pysqlite
 pytz
 redis
 httplib2
-googleapiclient
+google-api-python-client
 oauth2client
 pyOpenSSL
 billiard

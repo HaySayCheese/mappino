@@ -4,7 +4,7 @@ from django.conf.urls import patterns, url, include
 urlpatterns = patterns('apps',
     # templates
     url(r'', include('apps.main.templates_ajax.ajax_urls')),
-	url(r'', include('apps.cabinet.templates_ajax.ajax_urls')),
+    url(r'', include('apps.cabinet.templates_ajax.ajax_urls')),
 
 
     # API for main pages
@@ -24,9 +24,10 @@ urlpatterns = patterns('apps',
 
     # flat pages
     url(r'^$', 'main.views.home'),
-    url(r'^search/$', 'main.views.search'),
-    url(r'^promo/$', 'main.views.promo'),
-    url(r'^promo/realtors/$', 'main.views.realtors_promo'),
+
+    url(r'^offer/$', 'main.views.offer'),
+    url(r'^offer/realtors/$', 'main.views.offer_for_realtors'),
+    # url(r'^offer/agencies/$', 'main.views.offer_for_agencies'), # todo
 
 
     url(r'^cabinet/$', 'cabinet.views.main'),

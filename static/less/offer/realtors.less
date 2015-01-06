@@ -31,6 +31,11 @@ body {
             a:not(.btn) {
                 color: @gray-light !important;
                 text-shadow: none;
+
+                &.active {
+                    text-decoration: none;
+                    color: @nice-blue !important;
+                }
             }
         }
 
@@ -44,10 +49,10 @@ body {
             font-size: @font-size-h4;
             text-decoration: none;
             margin-left: 15px;
-            text-shadow: ~"0px 0px 5px rgba(0, 0, 0, 0.4)";
+            text-shadow: ~"0px 1px 1px rgba(0, 0, 0, 0.3)";
 
             &.active {
-                color: @nice-blue !important;
+                text-decoration: underline;
             }
         }
     }
