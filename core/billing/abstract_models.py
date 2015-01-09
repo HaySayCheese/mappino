@@ -8,9 +8,8 @@ from django.utils.timezone import now
 
 
 class Account(models.Model):
-    created = models.DateTimeField(auto_created=True)
+    created = models.DateTimeField(auto_now_add=True)
     balance = models.DecimalField(max_digits=20, decimal_places=2, default=0)
-    debt = models.DecimalField(max_digits=20, decimal_places=2, default=0) # todo: remove this field
     tariff_plan_sid = models.PositiveSmallIntegerField()
     tariff_changed = models.DateTimeField(default=None, null=True)
 
@@ -31,6 +30,7 @@ class Transactions(models.Model):
     @classmethod
     def transactions(cls):
         return cls.objects.all().order_by('-datetime')
+
 
 
 class Orders(models.Model):
