@@ -1,12 +1,12 @@
 # coding=utf-8
 import os
-from psycopg2cffi import compat
+#from psycopg2cffi import compat
 from mappino import passwords
 
 
 
 # cffi hook (needed by pypy)
-compat.register()
+#compat.register()
 
 
 DEBUG = True
@@ -47,20 +47,20 @@ DATABASE_ROUTERS = ['core.database_router.Router', ]
 
 REDIS_DATABASES = {
     'throttle': {
-        'HOST': '95.85.40.162',
-        'PORT': 6381,
+        'HOST': 'e.m1.binno.com.ua',
+        'PORT': 6379,
     },
     'steady': {
-        'HOST': '95.85.40.162',
-        'PORT': 6381,
+        'HOST': 'e.m1.binno.com.ua',
+        'PORT': 6379,
     },
     'cache': {
-        'HOST': '95.85.40.162',
-        'PORT': 6381,
+        'HOST': 'e.m1.binno.com.ua',
+        'PORT': 6379,
     },
     'celery': {
-        'HOST': '95.85.40.162',
-        'PORT': 6381,
+        'HOST': 'e.m1.binno.com.ua',
+        'PORT': 6379,
     },
 }
 

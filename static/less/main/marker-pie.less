@@ -1,0 +1,85 @@
+/*
+  make each pie piece a rectangle twice as high as it is wide.
+  move the transform origin to the middle of the left side.
+  Also ensure that overflow is set to hidden.
+*/
+.marker-pie {
+    position:absolute;
+    width:100px;
+    height:200px;
+    overflow:hidden;
+    left:150px;
+    -moz-transform-origin:left center;
+    -ms-transform-origin:left center;
+    -o-transform-origin:left center;
+    -webkit-transform-origin:left center;
+    transform-origin:left center;
+
+    &:before {
+        .size(100px, 200px);
+        content:"";
+        position:absolute;
+        left:-100px;
+        border-radius:100px 0 0 100px;
+        .transform-origin(right center);
+    }
+
+    &.red {
+        background-color: #fb6262;
+    }
+    &.blue {
+        background-color: #4996cc;
+    }
+    &.green {
+        background-color: #71c187;
+    }
+    &.yellow {
+        background-color: #ffc63e;
+    }
+}
+
+
+
+.pie[data-start="30"] {
+    -moz-transform: rotate(30deg); /* Firefox */
+    -ms-transform: rotate(30deg); /* IE */
+    -webkit-transform: rotate(30deg); /* Safari and Chrome */
+    -o-transform: rotate(30deg); /* Opera */
+    transform:rotate(30deg);
+}
+.pie[data-start="60"] {
+    -moz-transform: rotate(60deg); /* Firefox */
+    -ms-transform: rotate(60deg); /* IE */
+    -webkit-transform: rotate(60deg); /* Safari and Chrome */
+    -o-transform: rotate(60deg); /* Opera */
+    transform:rotate(60deg);
+}
+.pie[data-start="100"] {
+    -moz-transform: rotate(100deg); /* Firefox */
+    -ms-transform: rotate(100deg); /* IE */
+    -webkit-transform: rotate(100deg); /* Safari and Chrome */
+    -o-transform: rotate(100deg); /* Opera */
+    transform:rotate(100deg);
+}
+
+.pie[data-value="30"]:BEFORE {
+    -moz-transform: rotate(31deg); /* Firefox */
+    -ms-transform: rotate(31deg); /* IE */
+    -webkit-transform: rotate(31deg); /* Safari and Chrome */
+    -o-transform: rotate(31deg); /* Opera */
+    transform:rotate(31deg);
+}
+.pie[data-value="40"]:BEFORE {
+    -moz-transform: rotate(41deg); /* Firefox */
+    -ms-transform: rotate(41deg); /* IE */
+    -webkit-transform: rotate(41deg); /* Safari and Chrome */
+    -o-transform: rotate(41deg); /* Opera */
+    transform:rotate(41deg);
+}
+.pie[data-value="260"]:BEFORE {
+    -moz-transform: rotate(260deg); /* Firefox */
+    -ms-transform: rotate(260deg); /* IE */
+    -webkit-transform: rotate(260deg); /* Safari and Chrome */
+    -o-transform: rotate(260deg); /* Opera */
+    transform:rotate(260deg);
+}

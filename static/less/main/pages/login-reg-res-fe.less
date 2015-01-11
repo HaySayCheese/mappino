@@ -225,6 +225,20 @@
                 .btn-success.active{
                     border: none !important;
                 }
+
+                .btn:not(.active):not(.selectpicker) {
+                    color: @gray-dark;
+                    background-color: #f5f5f5;
+
+                    border-color: #d2d2d2;
+
+                    &:not(:first-child) {
+                        border-left: none;
+                    }
+                    &:not(:last-child) {
+                        border-right: none;
+                    }
+                }
             }
             .btn{
                 // За замовчуванням .btn має 14рх висоти,
