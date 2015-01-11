@@ -1,85 +1,120 @@
+
+//
+// Load core variables and mixins
+// --------------------------------------------------
+
+@import "../components/variables";
+@import "../components/mixins";
+
+
+
 /*
   make each pie piece a rectangle twice as high as it is wide.
   move the transform origin to the middle of the left side.
   Also ensure that overflow is set to hidden.
 */
-.marker-pie {
-    position:absolute;
-    width:100px;
-    height:200px;
-    overflow:hidden;
-    left:150px;
-    -moz-transform-origin:left center;
-    -ms-transform-origin:left center;
-    -o-transform-origin:left center;
-    -webkit-transform-origin:left center;
-    transform-origin:left center;
+.marker-chart {
+    //padding: 5px 5px 5px 20px;
+    width: 56px;
+    height: 56px;
 
-    &:before {
-        .size(100px, 200px);
-        content:"";
-        position:absolute;
-        left:-100px;
-        border-radius:100px 0 0 100px;
-        .transform-origin(right center);
-    }
+    background: #fff;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    //.box-shadow(~"0 0 5px @{gray-light}")
 
-    &.red {
-        background-color: #fb6262;
-    }
-    &.blue {
-        background-color: #4996cc;
-    }
-    &.green {
-        background-color: #71c187;
-    }
-    &.yellow {
-        background-color: #ffc63e;
+
+    .marker-chart-container {
+        .square(26px);
+        padding: 3px 0;
+        position: absolute;
+        left: 12px;
+        top: 12px;
+        z-index: 9999;
+
+        text-align: center;
+        font-size: 14px;
+
+        background: #fff;
+        border-radius: 50%;
     }
 }
 
 
 
-.pie[data-start="30"] {
-    -moz-transform: rotate(30deg); /* Firefox */
-    -ms-transform: rotate(30deg); /* IE */
-    -webkit-transform: rotate(30deg); /* Safari and Chrome */
-    -o-transform: rotate(30deg); /* Opera */
-    transform:rotate(30deg);
-}
-.pie[data-start="60"] {
-    -moz-transform: rotate(60deg); /* Firefox */
-    -ms-transform: rotate(60deg); /* IE */
-    -webkit-transform: rotate(60deg); /* Safari and Chrome */
-    -o-transform: rotate(60deg); /* Opera */
-    transform:rotate(60deg);
-}
-.pie[data-start="100"] {
-    -moz-transform: rotate(100deg); /* Firefox */
-    -ms-transform: rotate(100deg); /* IE */
-    -webkit-transform: rotate(100deg); /* Safari and Chrome */
-    -o-transform: rotate(100deg); /* Opera */
-    transform:rotate(100deg);
+
+/*
+  make each pie piece a rectangle twice as high as it is wide.
+  move the transform origin to the middle of the left side.
+  Also ensure that overflow is set to hidden.
+*/
+.pie {
+    position: absolute;
+    width: 25px;
+    height: 50px;
+    overflow: hidden;
+    left: 25px;
+    .transform-origin(left center);
 }
 
-.pie[data-value="30"]:BEFORE {
-    -moz-transform: rotate(31deg); /* Firefox */
-    -ms-transform: rotate(31deg); /* IE */
-    -webkit-transform: rotate(31deg); /* Safari and Chrome */
-    -o-transform: rotate(31deg); /* Opera */
-    transform:rotate(31deg);
+.pie:before {
+    content: "";
+    position: absolute;
+    width: 25px;
+    height: 50px;
+    left: -25px;
+    border-radius: 25px 0 0 25px;
+    .transform-origin(right center);
 }
-.pie[data-value="40"]:BEFORE {
-    -moz-transform: rotate(41deg); /* Firefox */
-    -ms-transform: rotate(41deg); /* IE */
-    -webkit-transform: rotate(41deg); /* Safari and Chrome */
-    -o-transform: rotate(41deg); /* Opera */
-    transform:rotate(41deg);
+
+
+.pie.red:after,
+.pie.red:before {
+    background-color: #fb6262;
+    border-bottom: 2px solid #fff;
+    border-right: 2px solid #fff;
 }
-.pie[data-value="260"]:BEFORE {
-    -moz-transform: rotate(260deg); /* Firefox */
-    -ms-transform: rotate(260deg); /* IE */
-    -webkit-transform: rotate(260deg); /* Safari and Chrome */
-    -o-transform: rotate(260deg); /* Opera */
-    transform:rotate(260deg);
+.pie.blue:after,
+.pie.blue:before {
+    background-color: #4996cc;
+    border-right: 2px solid #fff;
 }
+.pie.green:after,
+.pie.green:before {
+    background-color: #71c187;
+    border-right: 2px solid #fff;
+}
+
+.pie.yellow:after,
+.pie.yellow:before {
+    background-color: #ffc63e;
+    border-right: 2px solid #fff;
+}
+
+.pie[data-start="90"] {
+    .rotate(90deg);
+}
+.pie[data-start="180"] {
+    .rotate(180deg);
+}
+.pie[data-start="270"] {
+    .rotate(270deg);
+}
+
+
+.pie[data-value="90"]:before {
+    .rotate(90deg);
+}
+/*
+NOTE: you could also apply custom classes (i.e. .s0 .v30)
+but if the CSS3 attr() function proposal ever gets implemented,
+then all the above custom piece rules could be replaced with
+the following:
+
+.pie[data-start] {
+   transform:rotate(attr(data-start,deg,0);
+}
+.pie[data-value]:BEFORE {
+   transform:rotate(attr(data-value,deg,0);
+}
+*/

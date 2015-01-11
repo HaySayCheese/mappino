@@ -94,15 +94,20 @@ app.factory('Markers', function(Queries, $rootScope) {
 
                 if (data.hasOwnProperty(marker)) {
 
-                    if (!_.keys(data[marker]).length)
-                        return;
-
                     lat = marker.split(":")[0];
                     lng = marker.split(":")[1];
                     latLng = marker.split(":")[0] + ";" + marker.split(":")[1];
 
                     lat = parseFloat(lat);
                     lng = parseFloat(lng);
+
+
+                    if (!_.keys(data[marker]).length) {
+                        that.createPieObject(data[marker], tid, panel, latLng);
+                        _.isFunction(callback) && callback();
+                        return;
+                    }
+
 
                     if (panel != "red" && markers["red"][latLng]) {
                         return;
@@ -150,6 +155,25 @@ app.factory('Markers', function(Queries, $rootScope) {
                 labelContent: data.d0 + "</br>" + data.d1,
                 labelAnchor: new google.maps.Point(0, 40),
                 labelClass: "marker-label"
+            });
+        },
+
+        createPieObject: function(realty_count, tid, panel, latLng) {
+            console.log(latLng)
+            markers[panel][latLng] = new MarkerWithLabel({
+                position: new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
+                icon: '/static/img/markers/red-normal.png',
+                labelInBackground: true,
+                labelContent:
+                    "<div>" +
+                        "<div class='marker-chart-container'>" + realty_count + "</div>" +
+                        "<div class='pie red' data-start='0' data-value='90'></div>" +
+                        "<div class='pie blue' data-start='90' data-value='90'></div>" +
+                        "<div class='pie green' data-start='180' data-value='90'></div>" +
+                        "<div class='pie yellow' data-start='270' data-value='90'></div>" +
+                    "</div>",
+                labelAnchor: new google.maps.Point(0, 40),
+                labelClass: "marker-chart"
             });
         },
 

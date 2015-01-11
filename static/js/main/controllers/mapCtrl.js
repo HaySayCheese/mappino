@@ -531,8 +531,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Функція яка ініціює загрузку даних
      */
     function loadData(filters, panel, timeout) {
-        //if ($rootScope.subdommain.length/* && $scope.filters.map.zoom < 15*/)
-        //    return;
 
         $timeout(function() {
             if (!mapIsLoaded)
@@ -571,9 +569,12 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Функція яка розставляє маркери
      */
     function placeMarkers() {
+        console.log("place")
         for (var panel in markers) {
+            console.log(panel)
             if (markers.hasOwnProperty(panel)) {
                 for (var marker in markers[panel]) {
+                    console.log(marker)
                     if (markers[panel].hasOwnProperty(marker)) {
                         markers[panel][marker].setMap(map);
 
