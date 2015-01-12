@@ -14,12 +14,6 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
             yellow: {},
             compared: {}
         },
-        markersCount = {
-            red:    0,
-            blue:   0,
-            green:  0,
-            yellow: 0
-        },
         pieMarkersLoaded = {
             red:    false,
             blue:   false,
@@ -89,15 +83,12 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
 
             Queries.Map.getMarkers(tid, stringFilters, viewport).success(function(data) {
                 that.clearPanelMarkers(panel);
-                that.clearMarkersCount();
                 that.add(tid, panel, data, function() {
                     _.isFunction(callback) && callback(markers);
                 });
 
                 clearTimeout(requestTimeout);
                 $rootScope.loadings.markers = false;
-
-                console.log(markersCount)
             });
         },
 
@@ -121,7 +112,6 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
 
                     if (!_.keys(data[marker]).length) {
                         pieMarkersLoaded[panel] = true;
-                        console.log(pieMarkersLoaded)
 
                         for (var pieMarker in data) {
                             lat = pieMarker.split(":")[0];
@@ -205,8 +195,6 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
         },
 
         createPieObject: function(marker, panel, latLng) {
-            console.log(markers[panel])
-
             var red_percent_in_deg  = (360 / 100 * ((marker.red_publication_count / marker.publication_count) * 100)),
                 blue_percent_in_deg = (360 / 100 * ((marker.blue_publication_count / marker.publication_count) * 100)),
                 sizeOfPieChart = marker.publication_count < 100 ? "small" :
@@ -290,15 +278,6 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                     markers[panel][marker].setMap(null);
                     delete markers[panel][marker];
                 }
-            }
-        },
-
-        clearMarkersCount: function() {
-            markersCount = {
-                red:    false,
-                blue:   false,
-                green:  false,
-                yellow: false
             }
         }
 
