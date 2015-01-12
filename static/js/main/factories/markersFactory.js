@@ -1,11 +1,30 @@
 'use strict';
 
-app.factory('Markers', function(Queries, $rootScope) {
+app.factory('Markers', function(Queries, $rootScope, $interval) {
     var markers = {
             red: {},
             blue: {},
             green: {},
             yellow: {}
+        },
+        tempPieMarkers = {
+            red: {},
+            blue: {},
+            green: {},
+            yellow: {},
+            compared: {}
+        },
+        markersCount = {
+            red:    0,
+            blue:   0,
+            green:  0,
+            yellow: 0
+        },
+        pieMarkersLoaded = {
+            red:    false,
+            blue:   false,
+            green:  false,
+            yellow: false
         },
         maxLat = 90,
         minLat = -90,
@@ -19,7 +38,8 @@ app.factory('Markers', function(Queries, $rootScope) {
             lat: maxLat,
             lng: minLng
         },
-        requestTimeout = null;
+        requestTimeout = null,
+        pieMarkerInterval = null;
 
     return {
 
@@ -43,6 +63,7 @@ app.factory('Markers', function(Queries, $rootScope) {
                     if (key.toString().substring(2) == "type_sid") {
                         if (filters[key] == null || filters[key] == "undefined") {
                             that.clearPanelMarkers(panel);
+                            pieMarkersLoaded[panel] = true;
                             return;
                         }
 
@@ -68,12 +89,15 @@ app.factory('Markers', function(Queries, $rootScope) {
 
             Queries.Map.getMarkers(tid, stringFilters, viewport).success(function(data) {
                 that.clearPanelMarkers(panel);
+                that.clearMarkersCount();
                 that.add(tid, panel, data, function() {
                     _.isFunction(callback) && callback(markers);
                 });
 
                 clearTimeout(requestTimeout);
                 $rootScope.loadings.markers = false;
+
+                console.log(markersCount)
             });
         },
 
@@ -94,20 +118,42 @@ app.factory('Markers', function(Queries, $rootScope) {
 
                 if (data.hasOwnProperty(marker)) {
 
+
+                    if (!_.keys(data[marker]).length) {
+                        pieMarkersLoaded[panel] = true;
+                        console.log(pieMarkersLoaded)
+
+                        for (var pieMarker in data) {
+                            lat = pieMarker.split(":")[0];
+                            lng = pieMarker.split(":")[1];
+                            latLng = pieMarker.split(":")[0] + ";" + pieMarker.split(":")[1];
+
+                            lat = parseFloat(lat);
+                            lng = parseFloat(lng);
+
+                            tempPieMarkers[panel][latLng] = { publication_count: data[pieMarker] };
+                        }
+
+                        clearInterval(pieMarkerInterval);
+                        pieMarkerInterval = setInterval(function() {
+                            if (pieMarkersLoaded.red && pieMarkersLoaded.blue && pieMarkersLoaded.yellow && pieMarkersLoaded.green) {
+                                that.comparePieMarkers();
+                                _.isFunction(callback) && callback();
+                                clearInterval(pieMarkerInterval)
+                            }
+                        }, 200);
+
+                        return;
+                    }
+
+
+
                     lat = marker.split(":")[0];
                     lng = marker.split(":")[1];
                     latLng = marker.split(":")[0] + ";" + marker.split(":")[1];
 
                     lat = parseFloat(lat);
                     lng = parseFloat(lng);
-
-
-                    if (!_.keys(data[marker]).length) {
-                        that.createPieObject(data[marker], tid, panel, latLng);
-                        _.isFunction(callback) && callback();
-                        return;
-                    }
-
 
                     if (panel != "red" && markers["red"][latLng]) {
                         return;
@@ -158,23 +204,84 @@ app.factory('Markers', function(Queries, $rootScope) {
             });
         },
 
-        createPieObject: function(realty_count, tid, panel, latLng) {
-            console.log(latLng)
+        createPieObject: function(marker, panel, latLng) {
+            console.log(markers[panel])
+
+            var red_percent_in_deg  = (360 / 100 * ((marker.red_publication_count / marker.publication_count) * 100)),
+                blue_percent_in_deg = (360 / 100 * ((marker.blue_publication_count / marker.publication_count) * 100)),
+                sizeOfPieChart = marker.publication_count < 100 ? "small" :
+                                    marker.publication_count >= 100 && marker.publication_count < 1000 ? "medium" :
+                                        marker.publication_count >= 1000 && marker.publication_count < 10000 ? "large" : "super-big";
+
+
             markers[panel][latLng] = new MarkerWithLabel({
                 position: new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
+                type: "pie-marker",
                 icon: '/static/img/markers/red-normal.png',
                 labelInBackground: true,
                 labelContent:
+                    "<style>" +
+                        ".pie.red:before {" +
+                            "transform: rotate(" + red_percent_in_deg + "deg);" +
+                        "}"+
+                        ".pie.blue {" +
+                            "transform: rotate(" + red_percent_in_deg + "deg);" +
+                        "}"+
+                        ".pie.blue:before {" +
+                            "transform: rotate(" + blue_percent_in_deg + "deg);" +
+                        "}"+
+                    "</style>"+
                     "<div>" +
-                        "<div class='marker-pie-chart-inner'>" + 123 + "</div>" +
-                        "<div class='pie red' data-start='0' data-value='90'></div>" +
-                        "<div class='pie blue' data-start='90' data-value='90'></div>" +
-                        "<div class='pie green' data-start='180' data-value='90'></div>" +
-                        "<div class='pie yellow' data-start='270' data-value='90'></div>" +
+                        "<div class='marker-pie-chart-inner'>" + marker.publication_count + "</div>" +
+                        "<div class='pie red'></div>" +
+                        "<div class='pie blue'></div>" +
+                        "<div class='pie green'></div>" +
+                        "<div class='pie yellow'></div>" +
                     "</div>",
                 labelAnchor: new google.maps.Point(0, 40),
-                labelClass: "marker-pie-chart medium"
+                labelClass: "marker-pie-chart " + sizeOfPieChart
+
             });
+        },
+
+        comparePieMarkers: function() {
+            for (var panel in tempPieMarkers) {
+                for (var marker in tempPieMarkers[panel]) {
+                    if (panel == "red") {
+                        if (tempPieMarkers["blue"][marker]) {
+                            tempPieMarkers["compared"][marker] = {
+                                publication_count:      tempPieMarkers[panel][marker].publication_count + tempPieMarkers["blue"][marker].publication_count,
+                                red_publication_count:  tempPieMarkers[panel][marker].publication_count,
+                                blue_publication_count: tempPieMarkers["blue"][marker].publication_count
+                            };
+
+                            delete tempPieMarkers[panel][marker];
+                            delete tempPieMarkers["blue"][marker];
+
+                            //console.log(tempPieMarkers["compared"])
+                            //console.log(tempPieMarkers)
+                        }
+
+                    }
+                }
+            }
+
+            for (var comparedMarker in tempPieMarkers["compared"]) {
+                var comparedMarkerPanel = tempPieMarkers["compared"][comparedMarker].red_publication_count ? "red" :
+                                            tempPieMarkers["compared"][comparedMarker].blue_publication_count ? "blue" :
+                                                tempPieMarkers["compared"][comparedMarker].green_publication_count ? "green":
+                                                    tempPieMarkers["compared"][comparedMarker].yellow_publication_count ? "yellow" : null;
+
+                this.createPieObject(tempPieMarkers["compared"][comparedMarker], comparedMarkerPanel, comparedMarker);
+            }
+
+            tempPieMarkers = {
+                red: {},
+                blue: {},
+                green: {},
+                yellow: {},
+                compared: {}
+            }
         },
 
         clearPanelMarkers: function(panel) {
@@ -183,6 +290,15 @@ app.factory('Markers', function(Queries, $rootScope) {
                     markers[panel][marker].setMap(null);
                     delete markers[panel][marker];
                 }
+            }
+        },
+
+        clearMarkersCount: function() {
+            markersCount = {
+                red:    false,
+                blue:   false,
+                green:  false,
+                yellow: false
             }
         }
 

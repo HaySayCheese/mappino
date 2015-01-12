@@ -50,7 +50,7 @@
 
         &:after,
         &:before {
-            border-right: 2px solid #fff;
+            border-right: 1px solid #fff;
         }
 
         /*
@@ -98,7 +98,7 @@
             .square(@smallMarkerChartInnerSize);
             padding-top: 2px;
             left:   @smallMarkerChartInnerSize / 2 - 1; // Why -1? I'm don't know :)
-            top:    @smallMarkerChartInnerSize / 2;
+            top:    @smallMarkerChartInnerSize / 2 - 1;
         }
 
         .pie {
@@ -163,20 +163,29 @@
 }
 
 
-.pie[data-start="90"] {
-    .rotate(90deg);
-}
-.pie[data-start="180"] {
-    .rotate(180deg);
-}
-.pie[data-start="270"] {
-    .rotate(270deg);
-}
+//.pie[data-start="90"] {
+//    .rotate(90deg);
+//}
+//.pie[data-start="180"] {
+//    .rotate(180deg);
+//}
+//.pie[data-start="270"] {
+//    .rotate(270deg);
+//}
+//
+//
+//.pie[data-value="90"]:before {
+//    .rotate(90deg);
+//}
 
 
-.pie[data-value="90"]:before {
-    .rotate(90deg);
-}
+//.pie[data-start] {
+//    transform: rotate(attr(data-start));
+//}
+//.pie[data-value]:before {
+//    transform: rotate(attr(data-value));
+//}
+
 /*
 NOTE: you could also apply custom classes (i.e. .s0 .v30)
 but if the CSS3 attr() function proposal ever gets implemented,

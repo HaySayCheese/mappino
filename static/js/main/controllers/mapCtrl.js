@@ -569,24 +569,26 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Функція яка розставляє маркери
      */
     function placeMarkers() {
-        console.log("place")
         for (var panel in markers) {
-            console.log(panel)
             if (markers.hasOwnProperty(panel)) {
                 for (var marker in markers[panel]) {
-                    console.log(marker)
                     if (markers[panel].hasOwnProperty(marker)) {
                         markers[panel][marker].setMap(map);
 
                         (function() {
                             var marker1 = markers[panel][marker];
 
-                            google.maps.event.addListener(marker1, 'click', function() {
-                                $location.path("/publication/" + marker1.tid + ":" + marker1.id);
+                            if (marker1.type != "pie-marker")
+                                google.maps.event.addListener(marker1, 'click', function() {
+                                    $location.path("/publication/" + marker1.tid + ":" + marker1.id);
 
-                                if (!$scope.$$phase)
-                                    $scope.$apply();
-                            });
+                                    if (!$scope.$$phase)
+                                        $scope.$apply();
+                                });
+                            else
+                                google.maps.event.addListener(marker1, 'click', function() {
+                                    map.setZoom(map.getZoom() + 1);
+                                });
                         })();
 
                     }
