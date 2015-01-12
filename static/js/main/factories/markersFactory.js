@@ -166,14 +166,14 @@ app.factory('Markers', function(Queries, $rootScope) {
                 labelInBackground: true,
                 labelContent:
                     "<div>" +
-                        "<div class='marker-chart-container'>" + realty_count + "</div>" +
+                        "<div class='marker-pie-chart-inner'>" + 123 + "</div>" +
                         "<div class='pie red' data-start='0' data-value='90'></div>" +
                         "<div class='pie blue' data-start='90' data-value='90'></div>" +
                         "<div class='pie green' data-start='180' data-value='90'></div>" +
                         "<div class='pie yellow' data-start='270' data-value='90'></div>" +
                     "</div>",
                 labelAnchor: new google.maps.Point(0, 40),
-                labelClass: "marker-chart"
+                labelClass: "marker-pie-chart medium"
             });
         },
 
