@@ -121,7 +121,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                             lat = parseFloat(lat);
                             lng = parseFloat(lng);
 
-                            tempPieMarkers[panel][latLng] = { publication_count: data[pieMarker] };
+                            tempPieMarkers[panel][latLng] = { publication_count: parseInt(data[pieMarker]) };
                         }
 
                         clearInterval(pieMarkerInterval);
@@ -195,17 +195,20 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
         },
 
         createPieObject: function(marker, panel, latLng) {
-            var red_percent_in_deg  = (360 / 100 * ((marker.red_publication_count / marker.publication_count) * 100)),
-                blue_percent_in_deg = (360 / 100 * ((marker.blue_publication_count / marker.publication_count) * 100)),
+            var red_percent_in_deg      = (360 / 100 * ((marker.red_publication_count / marker.publication_count) * 100))   || 0,
+                blue_percent_in_deg     = (360 / 100 * ((marker.blue_publication_count / marker.publication_count) * 100))  || 0,
+                green_percent_in_deg    = (360 / 100 * ((marker.green_publication_count / marker.publication_count) * 100)) || 0,
                 sizeOfPieChart = marker.publication_count < 100 ? "small" :
                                     marker.publication_count >= 100 && marker.publication_count < 1000 ? "medium" :
                                         marker.publication_count >= 1000 && marker.publication_count < 10000 ? "large" : "super-big";
 
+            console.log(red_percent_in_deg)
+            console.log(blue_percent_in_deg)
+            console.log(green_percent_in_deg)
 
             markers[panel][latLng] = new MarkerWithLabel({
                 position: new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
                 type: "pie-marker",
-                icon: '/static/img/markers/red-normal.png',
                 labelInBackground: true,
                 labelContent:
                     "<style>" +
@@ -218,6 +221,12 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                         ".pie.blue:before {" +
                             "transform: rotate(" + blue_percent_in_deg + "deg);" +
                         "}"+
+                        ".pie.green {" +
+                            "transform: rotate(" + (blue_percent_in_deg + red_percent_in_deg) + "deg);" +
+                        "}"+
+                        ".pie.green:before {" +
+                            "transform: rotate(" + green_percent_in_deg + "deg);" +
+                        "}"+
                     "</style>"+
                     "<div>" +
                         "<div class='marker-pie-chart-inner'>" + marker.publication_count + "</div>" +
@@ -226,7 +235,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                         "<div class='pie green'></div>" +
                         "<div class='pie yellow'></div>" +
                     "</div>",
-                labelAnchor: new google.maps.Point(0, 40),
+                labelAnchor: new google.maps.Point(30, 45),
                 labelClass: "marker-pie-chart " + sizeOfPieChart
 
             });
@@ -236,20 +245,33 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
             for (var panel in tempPieMarkers) {
                 for (var marker in tempPieMarkers[panel]) {
                     if (panel == "red") {
+                        tempPieMarkers["compared"][marker] = {
+                            publication_count:          tempPieMarkers["red"][marker].publication_count,
+                            red_publication_count:      tempPieMarkers["red"][marker].publication_count,
+                            blue_publication_count:     0,
+                            green_publication_count:    0,
+                            yellow_publication_count:   0
+                        };
+
                         if (tempPieMarkers["blue"][marker]) {
-                            tempPieMarkers["compared"][marker] = {
-                                publication_count:      tempPieMarkers[panel][marker].publication_count + tempPieMarkers["blue"][marker].publication_count,
-                                red_publication_count:  tempPieMarkers[panel][marker].publication_count,
-                                blue_publication_count: tempPieMarkers["blue"][marker].publication_count
-                            };
+                            tempPieMarkers["compared"][marker].publication_count = tempPieMarkers["compared"][marker].publication_count + tempPieMarkers["blue"][marker].publication_count;
+                            tempPieMarkers["compared"][marker].blue_publication_count = tempPieMarkers["blue"][marker].publication_count;
 
-                            delete tempPieMarkers[panel][marker];
                             delete tempPieMarkers["blue"][marker];
-
-                            //console.log(tempPieMarkers["compared"])
-                            //console.log(tempPieMarkers)
                         }
+                        if (tempPieMarkers["green"][marker]) {
+                            tempPieMarkers["compared"][marker].publication_count = tempPieMarkers["compared"][marker].publication_count + tempPieMarkers["green"][marker].publication_count;
+                            tempPieMarkers["compared"][marker].green_publication_count = tempPieMarkers["green"][marker].publication_count;
 
+                            delete tempPieMarkers["green"][marker];
+                        }
+                        if (tempPieMarkers["yellow"][marker]) {
+                            tempPieMarkers["compared"][marker].publication_count = tempPieMarkers[panel][marker].publication_count + tempPieMarkers["yellow"][marker].publication_count;
+                            tempPieMarkers["compared"][marker].yellow_publication_count = tempPieMarkers["yellow"][marker].publication_count;
+
+                            delete tempPieMarkers["yellow"][marker];
+                        }
+                        delete tempPieMarkers[panel][marker];
                     }
                 }
             }
@@ -262,6 +284,8 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
 
                 this.createPieObject(tempPieMarkers["compared"][comparedMarker], comparedMarkerPanel, comparedMarker);
             }
+
+            console.log(tempPieMarkers["compared"])
 
             tempPieMarkers = {
                 red: {},

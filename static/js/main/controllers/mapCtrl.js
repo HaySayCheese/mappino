@@ -586,8 +586,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                                         $scope.$apply();
                                 });
                             else
-                                google.maps.event.addListener(marker1, 'click', function() {
+                                google.maps.event.addListener(marker1, 'click', function(e) {
                                     map.setZoom(map.getZoom() + 1);
+                                    map.setCenter(marker1.getPosition());
                                 });
                         })();
 
