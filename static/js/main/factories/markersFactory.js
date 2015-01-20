@@ -128,8 +128,14 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                         pieMarkerInterval = setInterval(function() {
                             if (pieMarkersLoaded.red && pieMarkersLoaded.blue && pieMarkersLoaded.yellow && pieMarkersLoaded.green) {
                                 that.comparePieMarkers();
+                                pieMarkersLoaded = {
+                                    red:    false,
+                                    blue:   false,
+                                    green:  false,
+                                    yellow: false
+                                }
                                 _.isFunction(callback) && callback();
-                                clearInterval(pieMarkerInterval)
+                                clearInterval(pieMarkerInterval);
                             }
                         }, 200);
 
@@ -198,6 +204,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
             var red_percent_in_deg      = (360 / 100 * ((marker.red_publication_count / marker.publication_count) * 100))   || 0,
                 blue_percent_in_deg     = (360 / 100 * ((marker.blue_publication_count / marker.publication_count) * 100))  || 0,
                 green_percent_in_deg    = (360 / 100 * ((marker.green_publication_count / marker.publication_count) * 100)) || 0,
+                yellow_percent_in_deg   = (360 / 100 * ((marker.yellow_publication_count / marker.publication_count) * 100)) || 0,
                 sizeOfPieChart = marker.publication_count < 100 ? "small" :
                                     marker.publication_count >= 100 && marker.publication_count < 1000 ? "medium" :
                                         marker.publication_count >= 1000 && marker.publication_count < 10000 ? "large" : "super-big";
@@ -205,6 +212,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
             console.log(red_percent_in_deg)
             console.log(blue_percent_in_deg)
             console.log(green_percent_in_deg)
+            console.log(yellow_percent_in_deg)
 
             markers[panel][latLng] = new MarkerWithLabel({
                 position: new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
@@ -226,6 +234,12 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                         "}"+
                         ".pie.green:before {" +
                             "transform: rotate(" + green_percent_in_deg + "deg);" +
+                        "}"+
+                        ".pie.yellow {" +
+                            "transform: rotate(" + (yellow_percent_in_deg + green_percent_in_deg + blue_percent_in_deg) + "deg);" +
+                        "}"+
+                        ".pie.yellow:before {" +
+                            "transform: rotate(" + yellow_percent_in_deg + "deg);" +
                         "}"+
                     "</style>"+
                     "<div>" +
@@ -266,7 +280,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                             delete tempPieMarkers["green"][marker];
                         }
                         if (tempPieMarkers["yellow"][marker]) {
-                            tempPieMarkers["compared"][marker].publication_count = tempPieMarkers[panel][marker].publication_count + tempPieMarkers["yellow"][marker].publication_count;
+                            tempPieMarkers["compared"][marker].publication_count = tempPieMarkers["compared"][marker].publication_count + tempPieMarkers["yellow"][marker].publication_count;
                             tempPieMarkers["compared"][marker].yellow_publication_count = tempPieMarkers["yellow"][marker].publication_count;
 
                             delete tempPieMarkers["yellow"][marker];
