@@ -128,12 +128,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                         pieMarkerInterval = setInterval(function() {
                             if (pieMarkersLoaded.red && pieMarkersLoaded.blue && pieMarkersLoaded.yellow && pieMarkersLoaded.green) {
                                 that.comparePieMarkers();
-                                pieMarkersLoaded = {
-                                    red:    false,
-                                    blue:   false,
-                                    green:  false,
-                                    yellow: false
-                                }
+                                that.resetPieMarkersLoaded();
                                 _.isFunction(callback) && callback();
                                 clearInterval(pieMarkerInterval);
                             }
@@ -209,10 +204,6 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                                     marker.publication_count >= 100 && marker.publication_count < 1000 ? "medium" :
                                         marker.publication_count >= 1000 && marker.publication_count < 10000 ? "large" : "super-big";
 
-            console.log(red_percent_in_deg)
-            console.log(blue_percent_in_deg)
-            console.log(green_percent_in_deg)
-            console.log(yellow_percent_in_deg)
 
             markers[panel][latLng] = new MarkerWithLabel({
                 position: new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
@@ -299,15 +290,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                 this.createPieObject(tempPieMarkers["compared"][comparedMarker], comparedMarkerPanel, comparedMarker);
             }
 
-            console.log(tempPieMarkers["compared"])
-
-            tempPieMarkers = {
-                red: {},
-                blue: {},
-                green: {},
-                yellow: {},
-                compared: {}
-            }
+            this.clearTempPieMarkers();
         },
 
         clearPanelMarkers: function(panel) {
@@ -316,6 +299,27 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                     markers[panel][marker].setMap(null);
                     delete markers[panel][marker];
                 }
+            }
+        },
+
+
+        resetPieMarkersLoaded: function() {
+            pieMarkersLoaded = {
+                red:    false,
+                blue:   false,
+                green:  false,
+                yellow: false
+            }
+        },
+
+
+        clearTempPieMarkers: function() {
+            tempPieMarkers = {
+                red: {},
+                blue: {},
+                green: {},
+                yellow: {},
+                compared: {}
             }
         }
 
