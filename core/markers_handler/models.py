@@ -22,13 +22,13 @@ class AbstractBaseIndex(models.Model):
 
     Абсолютна більшість полів даної таблиці індексуються B-Tree індексом (в django за замовчуванням).
     Перенасичення таблиці індексами в даному випадку не розглядається як проблема, оскільки
-        * передбачається, що всі похідні таблиці (тобто всі індеки для кожного з типів)
+        * передбачається, що всі похідні таблиці (тобто всі індекси для кожного з типів)
           будуть обслуговуватись окремим сервером PostgreSQL в якому буде вимкнено ACID,
           за рахунок чого, вставка в дані таблиці повинна відбуватись досить швидко.
 
           Дані в індексі дублюватимуть дані з основних таблиць, тому втрата навіть всього індексу
           не веде до проблем, оскільки індекс в будь-який момент може бути перебудований
-          ціної декількох годин процесрного часу.
+          ціної декількох годин процесорного часу.
 
         * неможливо з необхідним рівнем достовірності спрогнозувати які саме фільтри
           буде використовувати середньо-статистинчий користувач. Як наслідок — для забепечення ефективної
@@ -1906,8 +1906,8 @@ class SegmentsIndex(models.Model):
     # fields
     tid = models.SmallIntegerField(db_index=True)
     zoom = models.SmallIntegerField(db_index=True)
-    x = models.SmallIntegerField(db_index=True)
-    y = models.SmallIntegerField(db_index=True)
+    x = models.IntegerField(db_index=True)
+    y = models.IntegerField(db_index=True)
     ids = BigIntegerArrayField()
 
 
@@ -1929,7 +1929,7 @@ class SegmentsIndex(models.Model):
             index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
 
         if index is None:
-            return InvalidArgument('No index such tid.')
+            return InvalidArgument('No index class for such tid.')
 
 
         record = index.min_add_queryset().filter(id=hid)[:1][0]
@@ -1944,10 +1944,7 @@ class SegmentsIndex(models.Model):
 
 
         # todo: add transaction here (find a way to combine custom sql and django orm to perform a transaction)
-        if record.for_sale:
-            cls.living_sale_indexes[record.tid].add(record, using=cls.index_db_name)
-        else:
-            cls.living_rent_indexes[record.tid].add(record, using=cls.index_db_name)
+        index.add(record, using=cls.index_db_name)
 
         cursor = cls.cursor()
         cursor.execute('BEGIN;')
@@ -2098,8 +2095,8 @@ class SegmentsIndex(models.Model):
         step_per_lng = cls.grid.step_on_lng(zoom)
         return {
             '{lat}:{lng}'.format(
-                lat=y * step_per_lat + (step_per_lat / 2) - 90,  # денормалізація широти
-                lng=x * step_per_lng + (step_per_lng / 2) - 180,  # денормалізація довготи
+                lat=y * step_per_lat + (step_per_lat / 2) - step_per_lat - 90,  # денормалізація широти
+                lng=x * step_per_lng + (step_per_lng / 2) - step_per_lng - 180,  # денормалізація довготи
             ): count
             for count, x, y in selected_data
         }
