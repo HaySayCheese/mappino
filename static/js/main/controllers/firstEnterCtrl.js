@@ -13,6 +13,7 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
         type: 1,
         operation: 'sale',
         city: "",
+        latLng: "",
 
         /* якщо true — контрол вводу міста на формі підсвітиться,
          * і з’явиться повідомлення про те, що "місто" є необхідним полем.*/
@@ -45,7 +46,13 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
      *
      * Даний код змушує ангулар оновлювати scope кожного разу при виборі нового місця.
      */
+    var geocoder = new google.maps.Geocoder();
     google.maps.event.addListener(autocomplete, 'place_changed', function() {
+        geocoder.geocode( { 'address': autocomplete.getPlace().formatted_address}, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK)
+                $scope.home.latLng = results[0].geometry.location.lat() + "," + results[0].geometry.location.lng();
+        });
+
         $scope.$apply(function(){
             $scope.home.city = autocomplete.getPlace().formatted_address;
         });
@@ -80,6 +87,11 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
      */
     $scope.fillSearchSuggest = function(city){
         $scope.home.city = city;
+
+        geocoder.geocode( { 'address': city }, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK)
+                $scope.home.latLng = results[0].geometry.location.lat() + "," + results[0].geometry.location.lng();
+        });
     };
 
     /**
@@ -106,8 +118,11 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
 
         $rootScope.$emit("first-enter-done", {
             operation: $scope.home.operation,
-            type: $scope.home.type
+            type: $scope.home.type,
+            latLng: $scope.home.latLng
         });
+
+        console.log($scope.home.latLng)
         $location.path("/search");
     };
 

@@ -221,6 +221,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         // updating of the type dd
         $('[name="r_type_sid"]').val(data.type);
 
+        map.panTo(new google.maps.LatLng(data.latLng.split(",")[0], data.latLng.split(",")[1]));
+        map.setZoom(15);
+
 
         initTypeSidWatchers(); // restore default type_sid change logic.
     });
