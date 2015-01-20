@@ -200,6 +200,12 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                 blue_percent_in_deg     = Math.round(360 / 100 * ((marker.blue_publication_count / marker.publication_count) * 100))  || 0,
                 green_percent_in_deg    = Math.round(360 / 100 * ((marker.green_publication_count / marker.publication_count) * 100)) || 0,
                 yellow_percent_in_deg   = Math.round(360 / 100 * ((marker.yellow_publication_count / marker.publication_count) * 100)) || 0,
+
+                redAdditionalClass      = red_percent_in_deg > 180 ? 'full' : '',
+                blueAdditionalClass     = blue_percent_in_deg > 180 ? 'full' : '',
+                greenAdditionalClass    = green_percent_in_deg > 180 ? 'full' : '',
+                yellowAdditionalClass   = yellow_percent_in_deg > 180 ? 'full' : '',
+
                 sizeOfPieChart = marker.publication_count < 100 ? "small" :
                                     marker.publication_count >= 100 && marker.publication_count < 1000 ? "medium" :
                                         marker.publication_count >= 1000 && marker.publication_count < 10000 ? "large" : "super-big";
@@ -240,10 +246,10 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                     "</style>"+
                     "<div>" +
                         "<div class='marker-pie-chart-inner'>" + marker.publication_count + "</div>" +
-                        "<div class='pie red'></div>" +
-                        "<div class='pie blue full'></div>" +
-                        "<div class='pie green'></div>" +
-                        "<div class='pie yellow'></div>" +
+                        "<div class='pie red " + redAdditionalClass + "'></div>" +
+                        "<div class='pie blue " + blueAdditionalClass + "'></div>" +
+                        "<div class='pie green " + greenAdditionalClass +"'></div>" +
+                        "<div class='pie yellow " + yellowAdditionalClass + "'></div>" +
                     "</div>",
                 labelAnchor: new google.maps.Point(30, 45),
                 labelClass: "marker-pie-chart " + sizeOfPieChart
