@@ -196,14 +196,16 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
         },
 
         createPieObject: function(marker, panel, latLng) {
-            var red_percent_in_deg      = (360 / 100 * ((marker.red_publication_count / marker.publication_count) * 100))   || 0,
-                blue_percent_in_deg     = (360 / 100 * ((marker.blue_publication_count / marker.publication_count) * 100))  || 0,
-                green_percent_in_deg    = (360 / 100 * ((marker.green_publication_count / marker.publication_count) * 100)) || 0,
-                yellow_percent_in_deg   = (360 / 100 * ((marker.yellow_publication_count / marker.publication_count) * 100)) || 0,
+            var red_percent_in_deg      = Math.round(360 / 100 * ((marker.red_publication_count / marker.publication_count) * 100))   || 0,
+                blue_percent_in_deg     = Math.round(360 / 100 * ((marker.blue_publication_count / marker.publication_count) * 100))  || 0,
+                green_percent_in_deg    = Math.round(360 / 100 * ((marker.green_publication_count / marker.publication_count) * 100)) || 0,
+                yellow_percent_in_deg   = Math.round(360 / 100 * ((marker.yellow_publication_count / marker.publication_count) * 100)) || 0,
                 sizeOfPieChart = marker.publication_count < 100 ? "small" :
                                     marker.publication_count >= 100 && marker.publication_count < 1000 ? "medium" :
                                         marker.publication_count >= 1000 && marker.publication_count < 10000 ? "large" : "super-big";
 
+            console.log(red_percent_in_deg)
+            console.log(blue_percent_in_deg)
 
             markers[panel][latLng] = new MarkerWithLabel({
                 position: new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
@@ -211,6 +213,9 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                 labelInBackground: true,
                 labelContent:
                     "<style>" +
+                        ".pie.red {" +
+                            "transform: rotate(0deg);" +
+                        "}"+
                         ".pie.red:before {" +
                             "transform: rotate(" + red_percent_in_deg + "deg);" +
                         "}"+
@@ -236,7 +241,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                     "<div>" +
                         "<div class='marker-pie-chart-inner'>" + marker.publication_count + "</div>" +
                         "<div class='pie red'></div>" +
-                        "<div class='pie blue'></div>" +
+                        "<div class='pie blue full'></div>" +
                         "<div class='pie green'></div>" +
                         "<div class='pie yellow'></div>" +
                     "</div>",

@@ -48,9 +48,21 @@
             .transform-origin(right center);
         }
 
-        &:after,
-        &:before {
+        &:after(:not(.full)),
+        &:before(:not(.full)) {
             border-right: 1px solid #fff;
+        }
+
+        &.full {
+            .transform-origin(center center);
+
+            &:before {
+                left: 0;
+            }
+            &:after {
+                content: "";
+                position: absolute;
+            }
         }
 
         /*
@@ -98,19 +110,35 @@
             .square(@smallMarkerChartInnerSize);
             padding-top: 2px;
             left:   @smallMarkerChartInnerSize / 2 - 1; // Why -1? I'm don't know :)
-            top:    @smallMarkerChartInnerSize / 2 - 1;
+            top:    @smallMarkerChartInnerSize / 2;
         }
 
         .pie {
-            width:  @smallPieWidth;
-            height: @smallPieHeight;
-            left:   @smallPieWidth;
+            .size(@smallPieWidth, @smallPieHeight);
+            left: @smallPieWidth;
 
             &:before {
-                width:  @smallPieWidth;
-                height: @smallPieHeight;
-                left:   -@smallPieWidth;
-                border-radius: @smallPieWidth 0 0 @smallPieWidth;
+                .size(@smallPieWidth, @smallPieHeight);
+                left: -@smallPieWidth;
+
+                &:not(.full) {
+                    border-radius: @smallPieWidth 0 0 @smallPieWidth;
+                }
+            }
+
+            &.full {
+                .square(@smallPieHeight);
+                left: 0;
+
+                &:before {
+                    left: 0;
+                }
+
+                &:after {
+                    .size(@smallPieWidth, @smallPieHeight);
+                    left: @smallPieWidth;
+                    border-radius:0 @smallPieWidth @smallPieWidth 0;
+                }
             }
         }
     }
@@ -125,15 +153,31 @@
         }
 
         .pie {
-            width:  @mediumPieWidth;
-            height: @mediumPieHeight;
+            .size(@mediumPieWidth, @mediumPieHeight);
             left:   @mediumPieWidth;
 
             &:before {
-                width:  @mediumPieWidth;
-                height: @mediumPieHeight;
-                left:   -@mediumPieWidth;
-                border-radius: @mediumPieWidth 0 0 @mediumPieWidth;
+                .size(@mediumPieWidth, @mediumPieHeight);
+                left: -@mediumPieWidth;
+
+                &:not(.full) {
+                    border-radius: @mediumPieWidth 0 0 @mediumPieWidth;
+                }
+            }
+
+            &.full {
+                .square(@mediumPieHeight);
+                left: 0;
+
+                &:before {
+                    left: 0;
+                }
+
+                &:after {
+                    .size(@mediumPieWidth, @mediumPieHeight);
+                    left: @mediumPieWidth;
+                    border-radius:0 @mediumPieWidth @mediumPieWidth 0;
+                }
             }
         }
     }
@@ -148,15 +192,31 @@
         }
 
         .pie {
-            width:  @largePieWidth;
-            height: @largePieHeight;
-            left:   @largePieWidth;
+            .size(@largePieWidth, @largePieHeight);
+            left: @largePieWidth;
 
             &:before {
-                width:  @largePieWidth;
-                height: @largePieHeight;
+                .size(@largePieWidth, @largePieHeight);
                 left:   -@largePieWidth;
-                border-radius: @largePieWidth 0 0 @largePieWidth;
+
+                &:not(.full) {
+                    border-radius: @largePieWidth 0 0 @largePieWidth;
+                }
+            }
+
+            &.full {
+                .square(@largePieHeight);
+                left: 0;
+
+                &:before {
+                    left: 0;
+                }
+
+                &:after {
+                    .size(@largePieWidth, @largePieHeight);
+                    left: @largePieWidth;
+                    border-radius:0 @largePieWidth @largePieWidth 0;
+                }
             }
         }
     }
