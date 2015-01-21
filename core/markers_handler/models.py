@@ -2039,7 +2039,10 @@ class SegmentsIndex(models.Model):
 
     @classmethod
     def estimate_count(cls, tid, ne_lat, ne_lng, sw_lat, sw_lng, zoom, filters):
-        ne_segment_x, ne_segment_y, sw_segment_x, sw_segment_y = \
+        ne_segment_x, \
+        ne_segment_y, \
+        sw_segment_x, \
+        sw_segment_y = \
             cls.prepare_request_processing(ne_lat, ne_lng, sw_lat, sw_lng, zoom)
 
 
@@ -2071,20 +2074,22 @@ class SegmentsIndex(models.Model):
         query = "SELECT count(publication_id), x, y FROM {index_table}" \
                 "   JOIN {segments_index_table} " \
                 "       ON zoom = '{zoom}' AND " \
-                "          (x >= {ne_segment_x} AND x <= {sw_segment_x}) AND " \
-                "          (y <= {ne_segment_y} AND y >= {sw_segment_y}) " \
+                "          (x >= {ne_segment_x} AND x < {sw_segment_x}) AND " \
+                "          (y <= {ne_segment_y} AND y > {sw_segment_y}) AND " \
+                "           tid = {tid} "\
                 "   WHERE publication_id = ANY(ids) {where_condition}" \
                 "   GROUP BY ids, x, y;" \
             .format(
-            index_table=index._meta.db_table,
-            segments_index_table=cls._meta.db_table,
-            zoom=zoom,
-            ne_segment_x=ne_segment_x,
-            sw_segment_x=sw_segment_x,
-            ne_segment_y=ne_segment_y,
-            sw_segment_y=sw_segment_y,
-            where_condition=' AND ' + where if where else '',
-        )
+                index_table=index._meta.db_table,
+                segments_index_table=cls._meta.db_table,
+                zoom=zoom,
+                ne_segment_x=ne_segment_x,
+                sw_segment_x=sw_segment_x,
+                ne_segment_y=ne_segment_y,
+                sw_segment_y=sw_segment_y,
+                tid=tid,
+                where_condition=' AND ' + where if where else '',
+            )
 
         cursor = cls.cursor()
         cursor.execute(query)
