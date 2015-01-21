@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Markers', function(Queries, $rootScope, $interval) {
+app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
     var markers = {
             red: {},
             blue: {},
@@ -196,22 +196,22 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
         },
 
         createPieObject: function(marker, panel, latLng) {
-            var red_percent_in_deg      = Math.round(360 / 100 * ((marker.red_publication_count / marker.publication_count) * 100))   || 0,
-                blue_percent_in_deg     = Math.round(360 / 100 * ((marker.blue_publication_count / marker.publication_count) * 100))  || 0,
-                green_percent_in_deg    = Math.round(360 / 100 * ((marker.green_publication_count / marker.publication_count) * 100)) || 0,
-                yellow_percent_in_deg   = Math.round(360 / 100 * ((marker.yellow_publication_count / marker.publication_count) * 100)) || 0,
+            var _uuid = uuid.new(),
 
-                redAdditionalClass      = red_percent_in_deg > 180 ? 'full' : '',
-                blueAdditionalClass     = blue_percent_in_deg > 180 ? 'full' : '',
-                greenAdditionalClass    = green_percent_in_deg > 180 ? 'full' : '',
-                yellowAdditionalClass   = yellow_percent_in_deg > 180 ? 'full' : '',
+                red_percent_in_deg      = Math.round((360 / 100 * ((marker.red_publication_count / marker.publication_count) * 100))      || 0),
+                blue_percent_in_deg     = Math.round((360 / 100 * ((marker.blue_publication_count / marker.publication_count) * 100))     || 0),
+                green_percent_in_deg    = Math.round((360 / 100 * ((marker.green_publication_count / marker.publication_count) * 100))    || 0),
+                yellow_percent_in_deg   = Math.round((360 / 100 * ((marker.yellow_publication_count / marker.publication_count) * 100))   || 0),
+
+                redAdditionalClass      = red_percent_in_deg > 180 ? ' full' : '',
+                blueAdditionalClass     = blue_percent_in_deg > 180 ? ' full' : '',
+                greenAdditionalClass    = green_percent_in_deg > 180 ? ' full' : '',
+                yellowAdditionalClass   = yellow_percent_in_deg > 180 ? ' full' : '',
 
                 sizeOfPieChart = marker.publication_count < 100 ? "small" :
                                     marker.publication_count >= 100 && marker.publication_count < 1000 ? "medium" :
                                         marker.publication_count >= 1000 && marker.publication_count < 10000 ? "large" : "super-big";
 
-            console.log(red_percent_in_deg)
-            console.log(blue_percent_in_deg)
 
             markers[panel][latLng] = new MarkerWithLabel({
                 position: new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
@@ -219,41 +219,40 @@ app.factory('Markers', function(Queries, $rootScope, $interval) {
                 labelInBackground: true,
                 labelContent:
                     "<style>" +
-                        ".pie.red {" +
+                        "." + _uuid + ".pie.red {" +
                             "transform: rotate(0deg);" +
                         "}"+
-                        ".pie.red:before {" +
+                        "." + _uuid + ".pie.red:before {" +
                             "transform: rotate(" + red_percent_in_deg + "deg);" +
                         "}"+
-                        ".pie.blue {" +
+                        "." + _uuid + ".pie.blue {" +
                             "transform: rotate(" + red_percent_in_deg + "deg);" +
                         "}"+
-                        ".pie.blue:before {" +
+                        "." + _uuid + ".pie.blue:before {" +
                             "transform: rotate(" + blue_percent_in_deg + "deg);" +
                         "}"+
-                        ".pie.green {" +
+                        "." + _uuid + ".pie.green {" +
                             "transform: rotate(" + (blue_percent_in_deg + red_percent_in_deg) + "deg);" +
                         "}"+
-                        ".pie.green:before {" +
+                        "." + _uuid + ".pie.green:before {" +
                             "transform: rotate(" + green_percent_in_deg + "deg);" +
                         "}"+
-                        ".pie.yellow {" +
+                        "." + _uuid + ".pie.yellow {" +
                             "transform: rotate(" + (yellow_percent_in_deg + green_percent_in_deg + blue_percent_in_deg) + "deg);" +
                         "}"+
-                        ".pie.yellow:before {" +
+                        "." + _uuid + ".pie.yellow:before {" +
                             "transform: rotate(" + yellow_percent_in_deg + "deg);" +
                         "}"+
                     "</style>"+
                     "<div>" +
                         "<div class='marker-pie-chart-inner'>" + marker.publication_count + "</div>" +
-                        "<div class='pie red " + redAdditionalClass + "'></div>" +
-                        "<div class='pie blue " + blueAdditionalClass + "'></div>" +
-                        "<div class='pie green " + greenAdditionalClass +"'></div>" +
-                        "<div class='pie yellow " + yellowAdditionalClass + "'></div>" +
+                        "<div class='" + _uuid + " pie red" + redAdditionalClass + "'></div>" +
+                        "<div class='" + _uuid + " pie blue" + blueAdditionalClass + "'></div>" +
+                        "<div class='" + _uuid + " pie green" + greenAdditionalClass + "'></div>" +
+                        "<div class='" + _uuid + " pie yellow" + yellowAdditionalClass + "'></div>" +
                     "</div>",
                 labelAnchor: new google.maps.Point(30, 45),
                 labelClass: "marker-pie-chart " + sizeOfPieChart
-
             });
         },
 
