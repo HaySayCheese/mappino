@@ -216,7 +216,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             markers[panel][latLng] = new MarkerWithLabel({
                 position: new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
                 type: "pie-marker",
-                labelInBackground: true,
+                labelInBackground: false,
                 labelContent:
                     "<style>" +
                         "." + _uuid + ".pie.red {" +
@@ -257,7 +257,6 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
         },
 
         comparePieMarkers: function() {
-            console.log(tempPieMarkers)
             for (var panel in tempPieMarkers) {
                 for (var marker in tempPieMarkers[panel]) {
                     if (panel == "red") {
@@ -271,19 +270,19 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                             };
 
                         if (tempPieMarkers["blue"][marker]) {
-                            tempPieMarkers["compared"][marker].publication_count = tempPieMarkers["compared"][marker].publication_count + tempPieMarkers["blue"][marker].publication_count;
+                            tempPieMarkers["compared"][marker].publication_count += tempPieMarkers["blue"][marker].publication_count;
                             tempPieMarkers["compared"][marker].blue_publication_count = tempPieMarkers["blue"][marker].publication_count;
 
                             delete tempPieMarkers["blue"][marker];
                         }
                         else if (tempPieMarkers["green"][marker]) {
-                            tempPieMarkers["compared"][marker].publication_count = tempPieMarkers["compared"][marker].publication_count + tempPieMarkers["green"][marker].publication_count;
+                            tempPieMarkers["compared"][marker].publication_count += tempPieMarkers["green"][marker].publication_count;
                             tempPieMarkers["compared"][marker].green_publication_count = tempPieMarkers["green"][marker].publication_count;
 
                             delete tempPieMarkers["green"][marker];
                         }
                         else if (tempPieMarkers["yellow"][marker]) {
-                            tempPieMarkers["compared"][marker].publication_count = tempPieMarkers["compared"][marker].publication_count + tempPieMarkers["yellow"][marker].publication_count;
+                            tempPieMarkers["compared"][marker].publication_count += tempPieMarkers["yellow"][marker].publication_count;
                             tempPieMarkers["compared"][marker].yellow_publication_count = tempPieMarkers["yellow"][marker].publication_count;
 
                             delete tempPieMarkers["yellow"][marker];
@@ -303,19 +302,19 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                             };
 
                         if (tempPieMarkers["red"][marker]) {
-                            tempPieMarkers["compared"][marker].publication_count = tempPieMarkers["compared"][marker].publication_count + tempPieMarkers["red"][marker].publication_count;
+                            tempPieMarkers["compared"][marker].publication_count += tempPieMarkers["red"][marker].publication_count;
                             tempPieMarkers["compared"][marker].red_publication_count = tempPieMarkers["red"][marker].publication_count;
 
                             delete tempPieMarkers["red"][marker];
                         }
                         else if (tempPieMarkers["green"][marker]) {
-                            tempPieMarkers["compared"][marker].publication_count = tempPieMarkers["compared"][marker].publication_count + tempPieMarkers["green"][marker].publication_count;
+                            tempPieMarkers["compared"][marker].publication_count += tempPieMarkers["green"][marker].publication_count;
                             tempPieMarkers["compared"][marker].green_publication_count = tempPieMarkers["green"][marker].publication_count;
 
                             delete tempPieMarkers["green"][marker];
                         }
                         else if (tempPieMarkers["yellow"][marker]) {
-                            tempPieMarkers["compared"][marker].publication_count = tempPieMarkers["compared"][marker].publication_count + tempPieMarkers["yellow"][marker].publication_count;
+                            tempPieMarkers["compared"][marker].publication_count += tempPieMarkers["yellow"][marker].publication_count;
                             tempPieMarkers["compared"][marker].yellow_publication_count = tempPieMarkers["yellow"][marker].publication_count;
 
                             delete tempPieMarkers["yellow"][marker];
