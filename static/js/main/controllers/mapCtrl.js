@@ -108,7 +108,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         },
 
         red: {
-            r_type_sid: 0
+            r_type_sid: 1
         },
 
         blue: {
