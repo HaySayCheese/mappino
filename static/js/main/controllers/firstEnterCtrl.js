@@ -10,7 +10,7 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
      * $scope variables initialisation
      */
     $scope.home = {
-        type: 1,
+        type: 0,
         operation: 'sale',
         city: "",
         latLng: "",
