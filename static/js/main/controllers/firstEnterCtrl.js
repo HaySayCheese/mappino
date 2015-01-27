@@ -34,7 +34,7 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
 
     /* autocomplete */
     var cityInput = document.getElementById('home-location-autocomplete'),
-    autocomplete = new google.maps.places.Autocomplete(cityInput, {
+    first_enter_autocomplete = new google.maps.places.Autocomplete(cityInput, {
         componentRestrictions: {
             country: "ua"
         }
@@ -47,14 +47,14 @@ app.controller('FirstEnterCtrl', function($scope, $location, $timeout, $rootScop
      * Даний код змушує ангулар оновлювати scope кожного разу при виборі нового місця.
      */
     var geocoder = new google.maps.Geocoder();
-    google.maps.event.addListener(autocomplete, 'place_changed', function() {
-        geocoder.geocode( { 'address': autocomplete.getPlace().formatted_address}, function(results, status) {
+    google.maps.event.addListener(first_enter_autocomplete, 'place_changed', function() {
+        geocoder.geocode( { 'address': first_enter_autocomplete.getPlace().formatted_address}, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK)
                 $scope.home.latLng = results[0].geometry.location.lat() + "," + results[0].geometry.location.lng();
         });
 
         $scope.$apply(function(){
-            $scope.home.city = autocomplete.getPlace().formatted_address;
+            $scope.home.city = first_enter_autocomplete.getPlace().formatted_address;
         });
     });
 
