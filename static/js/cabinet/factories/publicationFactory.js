@@ -8,18 +8,15 @@ app.factory('Publication', function($rootScope, Queries, $location, lrNotifier, 
         publicationsCount = $rootScope.publicationsCount,
 
         publicationTypes = $rootScope.publicationTypes = [
-            { name: "house",     id: 0,  title: "Дома" },
-            { name: "flat",      id: 1,  title: "Квартиры" },
-            { name: "apartments",id: 2,  title: "Аппартаментов" },
-            { name: "cottage",   id: 3,  title: "Коттеджа" },
-            { name: "room",      id: 4,  title: "Комнаты" },
-            { name: "trade",     id: 5,  title: "Торгового помещения" },
-            { name: "office",    id: 6,  title: "Офиса" },
+            { name: "flat",      id: 0,  title: "Квартиры" },
+            { name: "house",     id: 1,  title: "Дома" },
+            { name: "room",      id: 2,  title: "Комнаты" },
+            { name: "land",      id: 3, title: "Земельного участка" },
+            { name: "garage",    id: 4, title: "Гаража" },
+            { name: "office",    id: 5,  title: "Офиса" },
+            { name: "trade",     id: 6,  title: "Торгового помещения" },
             { name: "warehouse", id: 7,  title: "Склада" },
-            { name: "business",  id: 8,  title: "Готового бизнеса" },
-            { name: "catering",  id: 9,  title: "Обьекта общепита" },
-            { name: "garage",    id: 10, title: "Гаража" },
-            { name: "land",      id: 11, title: "Земельного участка" }
+            { name: "business",  id: 8,  title: "Готового бизнеса" }
         ];
 
     return {
