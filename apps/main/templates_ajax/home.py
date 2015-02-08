@@ -8,6 +8,14 @@ from core.utils.jinja2_integration import templates
 
 @ensure_csrf_cookie
 @condition(last_modified_func=static_template_last_modified)
+def homepage_template(request):
+    t = templates.get_template('main/home/home.html')
+    return HttpResponse(t.render())
+
+
+
+@ensure_csrf_cookie
+@condition(last_modified_func=static_template_last_modified)
 def suggests_template(request):
     t = templates.get_template('main/home/checkboxes/suggests.html')
     return HttpResponse(t.render())
