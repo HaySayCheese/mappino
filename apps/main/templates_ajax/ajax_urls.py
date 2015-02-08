@@ -3,7 +3,6 @@ from django.conf.urls import patterns, url
 urlpatterns = patterns('apps.main.templates_ajax',
 
     # homepage
-    url(r'^ajax/template/main/home$', 'home.homepage_template'),
     url(r'^ajax/template/main/home/suggests/$', 'home.suggests_template'),
     url(r'^ajax/template/main/home/types/$', 'home.types_template'),
 

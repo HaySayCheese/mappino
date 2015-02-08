@@ -6,7 +6,15 @@ from core.utils.jinja2_integration import templates
 
 
 @ensure_csrf_cookie
-def home(request):
+def homepage(request):
+    template = templates.get_template('main/home/home.html')
+    return HttpResponse(content=template.render())
+
+
+
+@ensure_csrf_cookie
+def home(request): # fixme: rename to the map
+    # todo: there is map here, bu must be houmepage
     template = templates.get_template('main/home.html')
     return HttpResponse(content=template.render())
 
