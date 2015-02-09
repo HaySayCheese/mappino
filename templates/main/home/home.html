@@ -1,24 +1,18 @@
 <!DOCTYPE html>
-<html ng-app="Mappino.Home">
+<html>
 <head>
     <title>Mappino</title>
     <meta name="verify-reformal" content="a136a27e8d6dc3e9909629f0"/>
 
     {% compress css %}
-        <link rel="stylesheet" href="{{ static }}css/home/home.min.css"/>
+        <link rel="stylesheet" href="{{ static }}css/home/base.min.css"/>
     {% endcompress %}
 
 
     <script src="http://yandex.st/jquery/2.1.1/jquery.min.js"></script>
     <script src="http://yandex.st/modernizr/2.7.1/modernizr.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js"></script>
     <script src="http://yandex.st/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
-    <script src="http://yandex.st/angularjs/1.2.16/angular.min.js"></script>
-
-    {% compress js %}
-        <script type="text/javascript" src="{{ static }}js/libs/jquery.imageScroll.min.js"></script>
-    {% endcompress %}
     {% compress js %}
         <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select-1.5.4.min.js"></script>
     {% endcompress %}
@@ -43,63 +37,86 @@
         <div class="header-links">
             <div class="row">
                 <div class="col-sm-12 col-lg-10 col-lg-offset-1">
-                    <a href="/home/realtors/" class="pull-right">Войти</a>
-                    <a href="/home/" class="pull-right">Регистрация</a>
+                    <a href="#!/account/login" class="pull-right">Войти</a>
+                    <a href="#!/account/registration" class="pull-right">Регистрация</a>
                 </div>
             </div>
         </div>
 
 
-
-        <div class="img-holder" data-cover-ratio="1" data-image="{{ static }}img/home/kiev-bg-medium.jpg">
+        <div class="img-holder top">
             <div class="image-caption">
                 <div class="brand">mappino</div>
-                <div class="slogan">Возможно, самый удобный поисковик недвижимости</div>
+                <div class="slogan">Возможно, самый удобный сервис поиска недвижимости</div>
             </div>
         </div>
 
-        <div class="search-form">
+        <section class="search-form">
+            <a id="search"></a>
+            <div class="row">
+                <div class="col-xs-12 col-sm-8 col-md-6 search-filters">
+                    <h3 class="text-center margin-md">Я ищу</h3>
+                    <div class="text-center">
+                        <div class="row">
+                            <div class="col-xs-10 col-xs-offset-1">
+                                <select class="type-selectpicker text-left" name="r_type_sid" data-width="100%"
+                                        ng-options="type.id as type.title for type in publicationTypes"
+                                        ng-model="home.type">
+                                </select>
+                            </div>
+                            <div class="form-group col-xs-10 col-xs-offset-1">
+                                <div class="btn-group btn-group-justified choices" data-toggle="buttons">
+                                    <label class="btn btn-lg btn-success active" ng-click="home.operation = 'sale'">
+                                        <input type="radio" name="home.operation[]" ng-model="home.operation" value="'sale'"
+                                               ng-checked="home.operation == 'sale'">На продажу
+                                    </label>
+                                    <label class="btn btn-lg btn-success" ng-click="home.operation = 'rent'">
+                                        <input type="radio" name="home.operation[]" ng-model="home.operation" value="'rent'"
+                                               ng-checked="home.operation == 'rent'">В аренду
+                                    </label>
+                                    <label class="btn btn-lg btn-success" ng-click="home.operation = 'daily'" ng-if="home.type < 5">
+                                        <input type="radio" name="home.operation[]" ng-model="home.operation" value="'daily'"
+                                               ng-checked="home.operation == 'daily'">Посуточно
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-10 col-xs-offset-1">
+                                <input type="text" id="home-location-autocomplete"
+                                       class="form-control input-lg text-center search-city"
+                                       ng-class="{required: home.cityRequired}"
+                                       ng-model="home.city"
+                                       ng-change="cityInputChanged()"/>
+                                <div class="help-text text-center" ng-hide="home.cityRequired">
+                                    <i>
+                                        Например,
+                                        <a href ng-click="fillSearchSuggest('Черновцы, Черновицкая область, Украина')">Черновцы</a>
+                                        или
+                                        <a href ng-click="fillSearchSuggest('Черновицкая область, Украина')">Черновицкая область</a>
+                                    </i>
+                                </div>
+                                <div class="error required text-center" ng-show="home.cityRequired">
+                                    <i>
+                                        Пожалуйста, укажите город, или регион, <br/>
+                                        в котором необходимо произвести поиск
+                                    </i>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary search-btn" ng-click="startSearch()">Найти</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        </div>
-
-{#        <section class="light-gray home-filters-pattern" ng-controller="FiltersCtrl">#}
-{#            <div class="row">#}
-{#                <div class="col-lg-12 col-lg-10 col-lg-offset-1">#}
-{#                    <div class="home-filters">#}
-{#                        <h3 class="text-center margin-md">Я ищу</h3>#}
-{#                        <div class="text-center">#}
-{#                            <div class="col-sm-6 col-sm-offset-3 col-lg-4 col-lg-offset-4">#}
-{#                                <select class="type-selectpicker" name="r_type_sid" data-width="100%">#}
-{#                                    <option value="">Виберите тип</option>#}
-{#                                </select>#}
-{#                            </div>#}
-{#                            <div class="form-group col-md-6 col-md-offset-3">#}
-{#                                <div class="btn-group btn-group-justified" data-toggle="buttons">#}
-{#                                    <label class="btn btn-lg btn-success active">#}
-{#                                        <input type="radio" name="operatio" id="for_sale" checked>На продажу#}
-{#                                    </label>#}
-{#                                    <label class="btn btn-lg btn-success">#}
-{#                                        <input type="radio" name="operatio" id="for_rent">В аренду#}
-{#                                    </label>#}
-{#                                    <label class="btn btn-lg btn-success">#}
-{#                                        <input type="radio" name="operatio" id="daily">Посуточно#}
-{#                                    </label>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                            <div class="form-group col-md-6 col-md-offset-3">#}
-{#                                <input class="form-control input-lg" type="text"/>#}
-{#                                <div class="help-text text-center text-muted"><i>Например, <u>Черновцы</u> или <u>Черновицкая область</u></i></div>#}
-{#                            </div>#}
-{#                            <div ng-include="'ajax/template/main/home/types/'"></div>#}
-{#                            <div ng-include="'ajax/template/main/home/suggests/'"></div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        </section>#}
+        <section>
+            <div class="row text-center">
+                <div class="col-xs-12">
+                    <div class="scroll-down-btn">&nbsp;</div>
+                </div>
+            </div>
+        </section>
 
 
-        <div class="img-holder" data-cover-ratio="0.5" data-height="600" data-image="{{ static }}img/home/home-bg-2.jpg"></div>
         <section class="with-padding">
             <div class="row">
                 <div class="col-sm-12 col-lg-10 col-lg-offset-1">
@@ -108,7 +125,8 @@
                             <h2 class="with-margin-bottom">Знакомый регион</h2>
                             <p>
                                 Искать недвижимость на карте гораздо удобнее и быстрее.
-                                Так у Вас появляеться возможность в первую очередь просматривать предложения из интересных Вам регионов.
+                                Так у Вас появляеться возможность в первую очередь просматривать
+                                предложения из интересных Вам регионов.
                                 Например:
                             </p>
 
@@ -118,7 +136,8 @@
                                 </div>
                                 <div class="col-xs-11">
                                     <p>
-                                        Вы можете начать поиск новой квартиры в знакомом Вам регионе или вблизи от работы.
+                                        Вы можете начать поиск новой квартиры в знакомом Вам регионе,
+                                        или вблизи от места работы.
                                     </p>
                                 </div>
                             </div>
@@ -129,7 +148,8 @@
                                 </div>
                                 <div class="col-xs-11">
                                     <p>
-                                        Или подыскать новый офис вблизи от станции метро или остановки общественного транспорта.
+                                        Или подыскать новый офис вблизи от станции метро
+                                        или остановки общественного транспорта.
                                     </p>
                                 </div>
                             </div>
@@ -140,8 +160,8 @@
                                 </div>
                                 <div class="col-xs-11">
                                     <p>
-                                        Отправляясь в командировку в незнакомый город Вам будет намного легче найти жилье вблизи от
-                                        предполагаемого места работы зная всего лишь название улицы.
+                                        Отправляясь в командировку в незнакомый город,
+                                        Вам будет намного легче найти жилье вблизи от места работы.
                                     </p>
                                 </div>
                             </div>
@@ -152,11 +172,12 @@
                                 </div>
                                 <div class="col-xs-11">
                                     <p>
-                                        А отправляясь на экскурсию во Львов, Ужгород или любой другой турристический город или городок
+                                        А отправляясь в путишествие в какой-нибудь турристический город
                                         Вы сможете найти посутчное жилье вблизи от найболее интересных Вам объектов.
                                     </p>
                                     <div class="text-center with-padding-top">
-                                        <a class="btn btn-success btn-lg section-btn" href="/search">Попробовать</a>
+                                        <a class="btn btn-primary btn-lg section-btn" href="#"
+                                           ng-click="scrollTo('search')">Попробовать сейчас</a>
                                     </div>
                                 </div>
                             </div>
@@ -178,12 +199,12 @@
         </section>
 
 
-        <div class="img-holder" data-cover-ratio="0.5" data-height="600" data-image="{{ static }}img/home/home-bg-1.jpg"></div>
+        <div class="img-holder more-middle"></div>
         <section>
             <div class="row">
                 <div class="col-sm-12 col-lg-10 col-lg-offset-1 text-center">
                     <div class="row">
-                        <h2 class="with-margin">Экономьте время</h2>
+                        <h2 class="with-margin">Поиск недвижимости по новому</h2>
 
                         <div class="col-xs-1 col-xs-offset-1">
                             <div class="col-xs-2 text-right">
@@ -192,19 +213,26 @@
                         </div>
                         <div class="col-xs-8">
                             <p>
-                                Чтобы просматривать объявления было немного удобнее мы придумали сопособ как
-                                отделить разнотипные предложения между собой — маркеры разных цветов.
-                                В Вашем распоряжении 4 цвета которыми Вы можете обозначить маркеры
-                                самых разных критериев и скомбинировать самые разные условия. Например:
+                                Чтобы просматривать объявления было немного удобнее, <br/>
+                                мы придумали сопособ как разделить разнотипные предложения между собой — <br/>
+                                маркеры разных цветов.
                             </p>
                             <p>
-                                Вы можете одновременно просматривать предложения о квартирах, домах,
-                                и комнатах, которые сдаються посуточно, назначив каждому типу свой цвет.
+                                В Вашем распоряжении 4 цвета, которыми Вы можете обозначить <br/>
+                                объявления самых разных критериев. Например,
+                                если Вы ищете жилье посуточно —
+                                Вы можете одновременно просматривать предложения о квартирах, домах
+                                и комнатах, назначив каждому типу свой цвет.
                             </p>
                             <p>
-                                Или, если Вас интересует только  определенный тип недвижимости — Вы можете
-                                разделить предлагаемые объявления по ценовому диапазону: до определенной
-                                суммы — один цвет маркера, больше — другой.
+                                Или, если Вас интересует только определенный тип недвижимости — Вы можете
+                                разделить предлагаемые объявления по цене, жилой площади и многих других параметрах.
+                            </p>
+                            <p class="text-center">
+                                <br/>
+                                <br/>
+                                <a href="#" class="btn btn-primary btn-lg section-btn"
+                                   ng-click="scrollTo('search')">Попробуйте! Это очень просто и удобно</a>
                             </p>
                         </div>
                         <div class="col-xs-2">
@@ -221,37 +249,35 @@
         </section>
 
 
-        <div class="img-holder" data-cover-ratio="0.5" data-height="600" data-image="{{ static }}img/home/home-bg-3.jpg"></div>
+        <div class="img-holder bottom"></div>
         <section class="with-padding-bottom">
             <div class="row">
                 <div class="col-sm-12 col-lg-10 col-lg-offset-1 text-center">
-                    <h2 class="with-margin">Попробуйте сейчас</h2>
-                    <p>
-                        <a class="btn btn-success btn-lg section-btn" href="/search">Начать поиск</a>
-                        <br/>
-                        <a class="btn btn-primary btn-lg section-btn" href="/cabinet">Подать обьявление</a>
-                    </p>
-
-                    <div class="col-xs-6 col-xs-offset-3">
+                    <h2 class="with-margin">Рекламодателям</h2>
+                    <div class="col-xs-8 col-xs-offset-2">
                         <p>
-                            Любые два обьявления в месяц - бесплатно. Всегда. <br/>
+                            Если Вы хотите разместить объявление о продаже или аренде недвижмости
+                            на нашем сайте — Вы можете свободно это сделать.
+                            Любые два обьявления, кроме объявлений посуточной аренды,  — бесплатно. <br/>
+                            Всегда.
+                            <br/><br/>
+                        </p>
+                        <p>
+                            <a class="btn btn-primary btn-lg section-btn" href="/cabinet">Подать обьявление</a>
+                        </p>
+                        <p>
                             <a href="/home/realtors">Больше информации для риелторов и рекламодателей.</a>
                         </p>
                     </div>
                 </div>
             </div>
+            <div class="row footer">
+                <div class="col-xs-12 text-center">
+                    binno &copy; [[ currentYear() ]]
+                </div>
+            </div>
         </section>
 
     </div>
-
-
-    {% compress js %}
-        <script type="text/javascript" src="{{ static }}js/home/app.js"></script>
-
-        <script type="text/javascript" src="{{ static }}js/home/directives/filtersDirective.js"></script>
-
-        <script type="text/javascript" src="{{ static }}js/home/controllers/filtersCtrl.js"></script>
-    {% endcompress %}
-
 </body>
 </html>
