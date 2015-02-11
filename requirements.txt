@@ -1,4 +1,12 @@
-Django
+# Packages that should be installed on ubuntu before requirements install
+# libmysqlclient-dev
+# libpq-dev
+# libsqlite3-dev
+# python-dev (for python environment) | pypy-dev (for pypy-environment)
+
+
+
+Django==1.6
 Jinja2
 MySQL-python
 Pillow
@@ -13,7 +21,7 @@ pysqlite
 pytz
 redis
 httplib2
-googleapiclient
+google-api-python-client
 oauth2client
 pyOpenSSL
 billiard
@@ -21,3 +29,4 @@ python-redis-lock
 kombu
 django_compressor
 django-redis-cache
+djorm-pgarray
