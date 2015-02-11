@@ -1,71 +1,91 @@
 "use strict";
 
-$(document).ready(function() {
+$(function() {
+
+    var home = {
+            type: 0,
+            operation: 'sale',
+            city: "",
+            latLng: "",
+
+            /* якщо true — контрол вводу міста на формі підсвітиться,
+             * і з’явиться повідомлення про те, що "місто" є необхідним полем.*/
+            cityRequired: false
+        },
+        cityInput = document.getElementById('home-location-autocomplete'),
+        dropdown = $(".type-selectpicker"),
+        first_enter_autocomplete = new google.maps.places.Autocomplete(cityInput, {
+            componentRestrictions: {
+                country: "ua"
+            }
+        }),
+        geocoder = new google.maps.Geocoder();
 
 
-    var scrollableBlock = $(document),
-        dropdown        = $(".type-selectpicker"),
-        scrollableBlockImage = scrollableBlock.find(".img-holder"),
-        headerLinksBlock = scrollableBlock.find(".header-links");
+    setCurrentYearToFooter();
 
+
+    /**
+     * dropdown initialize
+     **/
     dropdown.selectpicker({
         style: 'btn-default btn-lg'
     });
+    cityInput.focus();
 
-    scrollableBlockImage.imageScroll({
-        container: $('.wrapper'),
-        touch: Modernizr.touch
+
+    /**
+     * За замовчуванням, фонове зображення має бути на всю висоту вікна браузера
+     **/
+    $(window).on('resize', function() {
+        $('.img-holder.top').css('height', $(window).height() + 'px');
+    }).resize();
+
+    $(cityInput).change(function(e) {
+        if (e.currentTarget.value) {
+            $(".city-empty").hide();
+        } else {
+            $(".city-empty").show();
+        }
+
     });
 
 
 
+    /**
+     * autocomplete 'place_changed' event handler
+     **/
+    google.maps.event.addListener(first_enter_autocomplete, 'place_changed', function() {
+        geocoder.geocode( { 'address': first_enter_autocomplete.getPlace().formatted_address}, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK)
+                home.latLng = results[0].geometry.location.lat() + "," + results[0].geometry.location.lng();
+        });
 
-    /** РћР±СЂРѕР±РЅРёРє РµРІРµРЅС‚Р° СЃРєСЂРѕР»Р° РєРѕРЅС‚РµРЅС‚Р° */
-    scrollableBlock.scroll(function() {
-        var scrollTop = scrollableBlock.scrollTop();
-
-        setTimeout(function() {
-            $(".image-caption")
-                .find("h1")
-                .css("opacity", (100 / (scrollTop / 7)) - 1.2)
-                .parent()
-                .find("img")
-                .css("opacity", (100 / (scrollTop / 9)) - 2);
-        }, 100);
-
-
-
-        /** Navbar */
-        if (scrollTop > $(window).height() - 70) {
-            headerLinksBlock.removeClass("slideOutUp").addClass("slideInDown panel");
-        } else if (headerLinksBlock.hasClass("panel") && !headerLinksBlock.hasClass("slideOutUp")) {
-                headerLinksBlock
-                    .removeClass("slideInDown")
-                    .addClass("slideOutUp")
-
-                    .delay(300).queue(function(next) {
-                        $(this).removeClass("slideOutUp panel");
-                        next();
-                    })
-                    .addClass("slideInDown")
-                    .delay(250).queue(function(next) {
-                        $(this).removeClass("slideInDown");
-
-                        next();
-                    });
-        }
-
-        /** Markers */
-        var sections = $("section"),
-            markers = $(".tablet-marker");
-
-        if (scrollTop > sections[0].offsetTop - 150) {
-            $.each(markers, function(i, el) {
-                setTimeout(function() {
-                    $(el).addClass("fadeInDown");
-                }, 300 + (i * 300));
-            });
-        }
+        home.city = first_enter_autocomplete.getPlace().formatted_address;
     });
 
+
+    /**
+     * Використовується для заповнення строки пошуку даними з підказок під полем.
+     * @param city — строка, яку слід вставити в поле.
+     */
+    $("[data-suggest]").click(function(e) {
+        var city = $(e.currentTarget).data("suggest");
+        home.city = city;
+        $(cityInput).val(city).change();
+
+        geocoder.geocode( { 'address': city }, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK)
+                home.latLng = results[0].geometry.location.lat() + "," + results[0].geometry.location.lng();
+        });
+
+        e.preventDefault();
+    });
+
+
+
+    function setCurrentYearToFooter() {
+        var fy = $('.footer-year');
+        fy.text(fy.text() + new Date().getFullYear());
+    }
 });

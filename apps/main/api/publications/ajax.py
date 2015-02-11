@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding=utf-8
 import json
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.generic import View
@@ -7,57 +7,58 @@ from core.publications import classes
 from core.publications.constants import HEAD_MODELS
 
 
+
 class DetailedView(View):
-	codes = {
-	    'invalid_parameters': {
-		    'code': 1
-	    },
-	    'unpublished': {
-		    'code': 2
-	    }
-	}
-
-	def __init__(self):
-		super(DetailedView, self).__init__()
-		self.formatter = classes.PublishedDataSource()
+    codes = {
+        'invalid_parameters': {
+            'code': 1
+        },
+        'unpublished': {
+        '   code': 2
+        }
+    }
 
 
-	def get(self, request, *args):
-		try:
-			tid, hash_hid = args[0].split(':')
-			tid = int(tid)
-		except (ValueError, IndexError):
-			return HttpResponseBadRequest(
-				json.dumps(self.codes['invalid_parameters']), content_type='application/json')
-
-		try:
-			model = HEAD_MODELS[tid]
-			publication = model.objects.filter(hash_id=hash_hid).only(
-				'for_sale', 'for_rent', 'body', 'sale_terms', 'rent_terms')[:1][0]
-		except IndexError:
-			return HttpResponseBadRequest(
-				json.dumps(self.codes['invalid_parameters']), content_type='application/json')
-
-		# Якщо оголошення не опубліковано — заборонити показ.
-		if not publication.is_published():
-			return HttpResponse(
-				json.dumps(self.codes['unpublished']), content_type='application/json')
+    def __init__(self):
+        super(DetailedView, self).__init__()
+        self.formatter = classes.PublishedDataSource()
 
 
-		description = self.formatter.format(tid, publication)
+    def get(self, request, *args):
+        try:
+            tid, hash_hid = args[0].split(':')
+            tid = int(tid)
+        except (ValueError, IndexError):
+            return HttpResponseBadRequest(
+                json.dumps(self.codes['invalid_parameters']), content_type='application/json')
 
-		photos = publication.photos()
-		if photos:
-			description['head']['photos'] = []
-			for photo in photos:
-				if photo.is_title:
-					description['head']['title_photo'] = photo.url() + photo.title_thumbnail_name()
-				description['head']['photos'].append(photo.url() + photo.image_name())
+        try:
+            model = HEAD_MODELS[tid]
+            publication = model.objects.filter(hash_id=hash_hid).only(
+                'for_sale', 'for_rent', 'body', 'sale_terms', 'rent_terms')[:1][0]
+        except IndexError:
+            return HttpResponseBadRequest(
+                json.dumps(self.codes['invalid_parameters']), content_type='application/json')
+
+        # Якщо оголошення не опубліковано — заборонити показ.
+        if not publication.is_published():
+            return HttpResponse(
+                json.dumps(self.codes['unpublished']), content_type='application/json')
+
+        description = self.formatter.format(tid, publication)
+
+        photos = publication.photos()
+        if photos:
+            description['head']['photos'] = []
+            for photo in photos:
+                if photo.is_title:
+                    description['head']['title_photo'] = photo.url() + photo.title_thumbnail_name()
+                description['head']['photos'].append(photo.url() + photo.image_name())
 
 
-		# Деякі із полів, згенерованих генератором видачі можуть бути пустими.
-		# Для уникнення їх появи на фронті їх слід видалити із словника опису.
-		description = dict((k, v) for k, v in description.iteritems() if (v is not None) and (v != ""))
-		return HttpResponse(json.dumps(description), content_type='application/json')
+        # Деякі із полів, згенерованих генератором видачі можуть бути пустими.
+        # Для уникнення їх появи на фронті їх слід видалити із словника опису.
+        description = dict((k, v) for k, v in description.iteritems() if (v is not None) and (v != ""))
+        return HttpResponse(json.dumps(description), content_type='application/json')
 
 

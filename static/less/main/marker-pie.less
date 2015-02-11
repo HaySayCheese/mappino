@@ -1,0 +1,223 @@
+
+//
+// Load core variables and mixins
+// --------------------------------------------------
+
+@import "../components/variables";
+@import "../components/mixins";
+
+
+/*
+    Variables
+*/
+@smallPieWidth:  25px;
+@smallPieHeight: 50px;
+@smallMarkerChartInnerSize: @smallPieWidth;
+
+
+@mediumPieWidth:  33px;
+@mediumPieHeight: 66px;
+@mediumMarkerChartInnerSize: @mediumPieWidth;
+
+
+@largePieWidth:  50px;
+@largePieHeight: 100px;
+@largeMarkerChartInnerSize: @largePieWidth;
+
+/*
+    Pie chart container
+*/
+.marker-pie-chart {
+    background: #fff;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    .box-shadow(~"0 0 5px @{gray-light}");
+
+
+    /*
+        Part of pie chart in container (red/blue/green/yellow)
+    */
+    .pie {
+        position: absolute;
+        overflow: hidden;
+        .transform-origin(left center);
+
+        &:before {
+            content: "";
+            position: absolute;
+            .transform-origin(right center);
+        }
+
+        &:after(:not(.full)),
+        &:before(:not(.full)) {
+            border-right: 1px solid #fff;
+        }
+
+        &.full {
+            .transform-origin(center center);
+
+            &:before {
+                left: 0;
+            }
+            &:after {
+                content: "";
+                position: absolute;
+            }
+        }
+
+        /*
+            Colors of pie chart part
+        */
+        &.red:after,
+        &.red:before {
+            background-color: #fb6262;
+        }
+        &.blue:after,
+        &.blue:before {
+            background-color: #4996cc;
+        }
+        &.green:after,
+        &.green:before {
+            background-color: #71c187;
+        }
+        &.yellow:after,
+        &.yellow:before {
+            background-color: #ffc63e;
+        }
+    }
+
+
+    /*
+        Inner circle in pie chart which shows the number of publications
+    */
+    .marker-pie-chart-inner {
+        position: absolute;
+        z-index: 9999;
+        text-align: center;
+        font-size: 14px;
+        background: #fff;
+        border-radius: 50%;
+    }
+
+
+    /*
+        Sizes of pie chart
+    */
+    &.small {
+        .square(@smallPieHeight + 6);
+
+        .marker-pie-chart-inner {
+            .square(@smallMarkerChartInnerSize);
+            padding-top: 3px;
+            left:   @smallMarkerChartInnerSize / 2 - 1; // Why -1? I'm don't know :)
+            top:    @smallMarkerChartInnerSize / 2;
+        }
+
+        .pie {
+            .size(@smallPieWidth, @smallPieHeight);
+            left: @smallPieWidth;
+
+            &:before {
+                .size(@smallPieWidth, @smallPieHeight);
+                left: -@smallPieWidth;
+
+                &:not(.full) {
+                    border-radius: @smallPieWidth 0 0 @smallPieWidth;
+                }
+            }
+
+            &.full {
+                .square(@smallPieHeight);
+                left: 0;
+
+                &:before {
+                    left: 0;
+                }
+
+                &:after {
+                    .size(@smallPieWidth, @smallPieHeight);
+                    left: @smallPieWidth;
+                    border-radius:0 @smallPieWidth @smallPieWidth 0;
+                }
+            }
+        }
+    }
+    &.medium {
+        .square(@mediumPieHeight + 6);
+
+        .marker-pie-chart-inner {
+            .square(@mediumMarkerChartInnerSize);
+            padding-top: 6px;
+            left:   @mediumMarkerChartInnerSize / 2 - 1; // Why -1? I'm don't know :)
+            top:    @mediumMarkerChartInnerSize / 2;
+        }
+
+        .pie {
+            .size(@mediumPieWidth, @mediumPieHeight);
+            left:   @mediumPieWidth;
+
+            &:before {
+                .size(@mediumPieWidth, @mediumPieHeight);
+                left: -@mediumPieWidth;
+
+                &:not(.full) {
+                    border-radius: @mediumPieWidth 0 0 @mediumPieWidth;
+                }
+            }
+
+            &.full {
+                .square(@mediumPieHeight);
+                left: 0;
+
+                &:before {
+                    left: 0;
+                }
+
+                &:after {
+                    .size(@mediumPieWidth, @mediumPieHeight);
+                    left: @mediumPieWidth;
+                    border-radius:0 @mediumPieWidth @mediumPieWidth 0;
+                }
+            }
+        }
+    }
+    &.large {
+        .square(@largePieHeight + 6);
+
+        .marker-pie-chart-inner {
+            .square(@largeMarkerChartInnerSize);
+            padding-top: 15px;
+            left:   @largeMarkerChartInnerSize / 2 - 1; // Why -1? I'm don't know :)
+            top:    @largeMarkerChartInnerSize / 2;
+        }
+
+        .pie {
+            .size(@largePieWidth, @largePieHeight);
+            left: @largePieWidth;
+
+            &:before {
+                .size(@largePieWidth, @largePieHeight);
+                left:   -@largePieWidth;
+
+                &:not(.full) {
+                    border-radius: @largePieWidth 0 0 @largePieWidth;
+                }
+            }
+
+            &.full {
+                .square(@largePieHeight);
+                left: 0;
+
+                &:before {
+                    left: 0;
+                }
+
+                &:after {
+                    .size(@largePieWidth, @largePieHeight);
+                    left: @largePieWidth;
+                    border-radius:0 @largePieWidth @largePieWidth 0;
+                }
+            }
+        }
+    }
+}

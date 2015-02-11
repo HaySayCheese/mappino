@@ -4,7 +4,8 @@ from itertools import ifilter
 from django.db import connection
 
 from apps.cabinet.api.dirtags.models import DirTags
-from core.publications.constants import HEAD_MODELS, OBJECTS_TYPES, OBJECT_STATES
+from core.publications.constants import OBJECTS_TYPES, OBJECT_STATES, HEAD_MODELS
+
 
 
 def briefs_of_tag(tag):

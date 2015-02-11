@@ -25,20 +25,20 @@
         <div class="panel-group" id="markers-accordion">
             <div class="panel panel-danger">
                 <div class="panel-heading red-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#redMarkersPanel">
+                    <h4 class="panel-title" ng-show="filters.red.r_type_sid == null">
+                        <b>Виберите тип</b>
+                    </h4>
                     <h4 class="panel-title" ng-hide="filters.red.r_type_sid == null">
                         <b>[[ publicationTypes[filters.red.r_type_sid].title ]] </b>
                         <small ng-show="filters.red.r_price_from && filters.red.r_price_to">([[ filters.red.r_price_from ]] - [[ filters.red.r_price_to ]] [[ currencyTypes[filters.red.r_currency_sid].title ]])</small>
                         <small ng-show="filters.red.r_price_from && !filters.red.r_price_to">(от [[ filters.red.r_price_from ]] [[ currencyTypes[filters.red.r_currency_sid].title ]])</small>
                         <small ng-show="!filters.red.r_price_from && filters.red.r_price_to">(до [[ filters.red.r_price_to ]] [[ currencyTypes[filters.red.r_currency_sid].title ]])</small>
                     </h4>
-                    <h4 class="panel-title" ng-show="filters.red.r_type_sid == null">
-                        <b>Виберите тип</b>
-                    </h4>
                 </div>
                 <div id="redMarkersPanel" class="panel-collapse collapse in">
                     <div class="panel-body">
                         <div ng-if="filtersParsed">
-                            <form class="form-horizontal" novalidate ng-show="templateLoaded">
+                            <form class="form-horizontal" novalidate>
                                 <div class="row form-group">
                                     <div class="col-sm-12">
                                         <label class="col-sm-3 control-label">Тип:</label>
@@ -52,28 +52,30 @@
                                     </div>
                                 </div>
                             </form>
-                            <div ng-include="'ajax/template/main/filters/red/' + [[ filters.red.r_type_sid ]] + '/'" ng-show="templateLoaded" ng-if="filters.red.r_type_sid != null"></div>
-                            <div class="sidebar-loader" ng-hide="templateLoaded"></div>
+                            <div ng-if="filters.red.r_type_sid != null"
+                                 ng-include="'ajax/template/main/filters/red/' + [[ filters.red.r_type_sid ]] + '/'"
+                                 onload="status.redTemplateIsLoaded = true;"></div>
+                            <div class="sidebar-loader" ng-hide="status.redTemplateIsLoaded || filters.red.r_type_sid == null"></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="panel panel-primary">
                 <div class="panel-heading blue-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#blueMarkersPanel">
+                    <h4 class="panel-title" ng-show="filters.blue.b_type_sid == null">
+                        <b>Виберите тип</b>
+                    </h4>
                     <h4 class="panel-title" ng-hide="filters.blue.b_type_sid == null">
                         <b>[[ publicationTypes[filters.blue.b_type_sid].title ]] </b>
                         <small ng-show="filters.blue.b_price_from && filters.blue.b_price_to">([[ filters.blue.b_price_from ]] - [[ filters.blue.b_price_to ]] [[ currencyTypes[filters.blue.b_currency_sid].title ]])</small>
                         <small ng-show="filters.blue.b_price_from && !filters.blue.b_price_to">(от [[ filters.blue.b_price_from ]] [[ currencyTypes[filters.blue.b_currency_sid].title ]])</small>
                         <small ng-show="!filters.blue.b_price_from && filters.blue.b_price_to">(до [[ filters.blue.b_price_to ]] [[ currencyTypes[filters.blue.b_currency_sid].title ]])</small>
                     </h4>
-                    <h4 class="panel-title" ng-show="filters.blue.b_type_sid == null">
-                        <b>Виберите тип</b>
-                    </h4>
                 </div>
                 <div id="blueMarkersPanel" class="panel-collapse collapse">
                     <div class="panel-body">
                         <div ng-if="filtersParsed">
-                            <form class="form-horizontal" novalidate ng-show="templateLoaded">
+                            <form class="form-horizontal" novalidate>
                                 <div class="row form-group">
                                     <div class="col-sm-12">
                                         <label class="col-sm-3 control-label">Тип:</label>
@@ -87,28 +89,30 @@
                                     </div>
                                 </div>
                             </form>
-                            <div ng-include="'ajax/template/main/filters/blue/' + [[ filters.blue.b_type_sid ]] + '/'" ng-show="templateLoaded" ng-if="filters.blue.b_type_sid != null"></div>
-                            <div class="sidebar-loader" ng-hide="templateLoaded"></div>
+                            <div ng-if="filters.blue.b_type_sid != null"
+                                 ng-include="'ajax/template/main/filters/blue/' + [[ filters.blue.b_type_sid ]] + '/'"
+                                 onload="status.blueTemplateIsLoaded = true;"></div>
+                            <div class="sidebar-loader" ng-hide="status.blueTemplateIsLoaded || filters.blue.b_type_sid == null"></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="panel panel-success">
                 <div class="panel-heading green-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#greenMarkersPanel">
+                    <h4 class="panel-title" ng-show="filters.green.g_type_sid == null">
+                        <b>Виберите тип</b>
+                    </h4>
                     <h4 class="panel-title" ng-hide="filters.green.g_type_sid == null">
                         <b>[[ publicationTypes[filters.green.g_type_sid].title ]] </b>
                         <small ng-show="filters.green.g_price_from && filters.green.g_price_to">([[ filters.green.g_price_from ]] - [[ filters.green.g_price_to ]] [[ currencyTypes[filters.green.g_currency_sid].title ]])</small>
                         <small ng-show="filters.green.g_price_from && !filters.green.g_price_to">(от [[ filters.green.g_price_from ]] [[ currencyTypes[filters.green.g_currency_sid].title ]])</small>
                         <small ng-show="!filters.green.g_price_from && filters.green.g_price_to">(до [[ filters.green.g_price_to ]] [[ currencyTypes[filters.green.g_currency_sid].title ]])</small>
                     </h4>
-                    <h4 class="panel-title" ng-show="filters.green.g_type_sid == null">
-                        <b>Виберите тип</b>
-                    </h4>
                 </div>
                 <div id="greenMarkersPanel" class="panel-collapse collapse">
                     <div class="panel-body">
                         <div ng-if="filtersParsed">
-                            <form class="form-horizontal" novalidate ng-show="templateLoaded">
+                            <form class="form-horizontal" novalidate>
                                 <div class="row form-group">
                                     <div class="col-sm-12">
                                         <label class="col-sm-3 control-label">Тип:</label>
@@ -122,28 +126,30 @@
                                     </div>
                                 </div>
                             </form>
-                            <div ng-include="'ajax/template/main/filters/green/' + [[ filters.green.g_type_sid ]] + '/'" ng-show="templateLoaded" ng-if="filters.green.g_type_sid != null"></div>
-                            <div class="sidebar-loader" ng-hide="templateLoaded"></div>
+                            <div ng-if="filters.green.g_type_sid != null"
+                                 ng-include="'ajax/template/main/filters/green/' + [[ filters.green.g_type_sid ]] + '/'"
+                                 onload="status.greenTemplateIsLoaded = true;"></div>
+                            <div class="sidebar-loader" ng-hide="status.greenTemplateIsLoaded|| filters.green.g_type_sid == null"></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="panel panel-warning">
                 <div class="panel-heading yellow-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#yellowMarkersPanel">
+                    <h4 class="panel-title" ng-show="filters.yellow.y_type_sid == null">
+                        <b>Виберите тип</b>
+                    </h4>
                     <h4 class="panel-title" ng-hide="filters.yellow.y_type_sid == null">
                         <b>[[ publicationTypes[filters.yellow.y_type_sid].title ]] </b>
                         <small ng-show="filters.yellow.y_price_from && filters.yellow.y_price_to">([[ filters.yellow.y_price_from ]] - [[ filters.yellow.y_price_to ]] [[ currencyTypes[filters.yellow.y_currency_sid].title ]])</small>
                         <small ng-show="filters.yellow.y_price_from && !filters.yellow.y_price_to">(от [[ filters.yellow.y_price_from ]] [[ currencyTypes[filters.yellow.y_currency_sid].title ]])</small>
                         <small ng-show="!filters.yellow.y_price_from && filters.yellow.y_price_to">(до [[ filters.yellow.y_price_to ]] [[ currencyTypes[filters.yellow.y_currency_sid].title ]])</small>
                     </h4>
-                    <h4 class="panel-title" ng-show="filters.yellow.y_type_sid == null">
-                        <b>Виберите тип</b>
-                    </h4>
                 </div>
                 <div id="yellowMarkersPanel" class="panel-collapse collapse">
                     <div class="panel-body">
                         <div ng-if="filtersParsed">
-                            <form class="form-horizontal" novalidate ng-show="templateLoaded">
+                            <form class="form-horizontal" novalidate>
                                 <div class="row form-group">
                                     <div class="col-sm-12">
                                         <label class="col-sm-3 control-label">Тип:</label>
@@ -157,8 +163,10 @@
                                     </div>
                                 </div>
                             </form>
-                            <div ng-include="'ajax/template/main/filters/yellow/' + [[ filters.yellow.y_type_sid ]] + '/'" ng-show="templateLoaded" ng-if="filters.yellow.y_type_sid != null"></div>
-                            <div class="sidebar-loader" ng-hide="templateLoaded"></div>
+                            <div ng-if="filters.yellow.y_type_sid != null"
+                                 ng-include="'ajax/template/main/filters/yellow/' + [[ filters.yellow.y_type_sid ]] + '/'"
+                                 onload="status.yellowTemplateIsLoaded = true;"></div>
+                            <div class="sidebar-loader" ng-hide="status.yellowTemplateIsLoaded || filters.yellow.y_type_sid == null"></div>
                         </div>
                     </div>
                 </div>

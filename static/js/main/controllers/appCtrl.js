@@ -5,25 +5,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
     $rootScope.pageTitle = "Mappino";
 
     $rootScope.publicationTypes = [
-        { name: "house", id: 0, title: "Дома",
-            filters: [
-                "operation_sid",    // Загальні
-                "period_sid",       // Тільки в оренді
-                "price_from", "price_to", "currency_sid", // Загальні
-                "persons_count_from", "persons_count_to", // Тільки в оренді
-                "new_buildings",    // Тільки в продажі
-                "secondary_market",
-                "family",           // Тільки в оренді
-                "foreigners",
-                "rooms_count_from", "rooms_count_to",     // Тільки в продажі
-                "floors_count_from", "floors_count_to",
-                "electricity", "hot_water",
-                "gas", "cold_water",
-                "sewerage",         // Тільки в продажі
-                "heating_type_sid"
-            ]
-        },
-        { name: "flat", id: 1, title: "Квартиры",
+        { name: "flat", id: 0, title: "Квартиры",
             filters: [
                 "operation_sid",    // Загальні
                 "period_sid",       // Тільки в оренді
@@ -45,29 +27,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
                 "heating_type_sid"  // Тільки в продажі
             ]
         },
-        { name: "apartments",id: 2, title: "Аппартаменты",
-            filters: [
-                "operation_sid",    // Загальні
-                "period_sid",       // Тільки в оренді
-                "price_from", "price_to", "currency_sid", // Загальні
-                "persons_count_from", "persons_count_to", // Тільки в оренді
-                "new_buildings",    // Тільки в продажі
-                "secondary_market",
-                "family",           // Тільки в оренді
-                "foreigners",
-                "rooms_count_from", "rooms_count_to",     // Тільки в продажі
-                "total_area_from", "total_area_to",
-                "floor_from", "floor_to",
-                "mansard",
-                "ground",
-                "planing_sid",
-                "lift", "electricity",
-                "hot_water", "cold_water",
-                "gas",
-                "heating_type_sid"  // Тільки в продажі
-            ]
-        },
-        { name: "cottage", id: 3, title: "Коттеджы",
+        { name: "house", id: 1, title: "Дома",
             filters: [
                 "operation_sid",    // Загальні
                 "period_sid",       // Тільки в оренді
@@ -85,7 +45,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
                 "heating_type_sid"
             ]
         },
-        { name: "room", id: 4, title: "Комнаты",
+        { name: "room", id: 2, title: "Комнаты",
             filters: [
                 "operation_sid",    // Загальні
                 "period_sid",       // Тільки в оренді
@@ -106,7 +66,35 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
                 "heating_type_sid"  // Тільки в продажі
             ]
         },
-        { name: "trade", id: 5, title: "Торговые помещения",
+        { name: "land", id: 3, title: "Земельные участки",
+            filters: [
+                "operation_sid",
+                "price_from", "price_to", "currency_sid",
+                "area_from", "area_to",
+                "gas", "electricity",
+                "water", "sewerage"
+            ]
+        },
+        { name: "garage", id: 4, title: "Гаражи",
+            filters: [
+                "operation_sid",
+                "price_from", "price_to", "currency_sid",
+                "total_area_from", "total_area_to"
+            ]
+        },
+        { name: "office", id: 5, title: "Офисы",
+            filters: [
+                "operation_sid",
+                "price_from", "price_to", "currency_sid",
+                "new_buildings",
+                "secondary_market",
+                "total_area_from", "total_area_to",
+                "cabinets_count_from", "cabinets_count_to",
+                "security", "kitchen",
+                "hot_water", "cold_water"
+            ]
+        },
+        { name: "trade", id: 6, title: "Торговые помещения",
             filters: [
                 "operation_sid",
                 "price_from", "price_to", "currency_sid",
@@ -118,18 +106,6 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
                 "gas", "electricity",
                 "hot_water", "cold_water",
                 "sewerage"
-            ]
-        },
-        { name: "office", id: 6, title: "Офисы",
-            filters: [
-                "operation_sid",
-                "price_from", "price_to", "currency_sid",
-                "new_buildings",
-                "secondary_market",
-                "total_area_from", "total_area_to",
-                "cabinets_count_from", "cabinets_count_to",
-                "security", "kitchen",
-                "hot_water", "cold_water"
             ]
         },
         { name: "warehouse", id: 7, title: "Склады",
@@ -147,37 +123,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
         { name: "business", id: 8, title: "Готовый бизнес",
             filters: [
                 "operation_sid",
-                "price_from", "price_to", "currency_sid",
-            ]
-        },
-        { name: "catering", id: 9, title: "Обьекты общепита",
-            filters: [
-                "operation_sid",
-                "price_from", "price_to", "currency_sid",
-                "new_buildings",
-                "secondary_market",
-                "total_area_from", "total_area_to",
-                "halls_area_from", "halls_area_to",
-                "halls_count_from", "halls_count_to",
-                "building_type_sid",
-                "gas", "electricity",
-                "hot_water", "cold_water"
-            ]
-        },
-        { name: "garage", id: 10, title: "Гаражи",
-            filters: [
-                "operation_sid",
-                "price_from", "price_to", "currency_sid",
-                "total_area_from", "total_area_to"
-            ]
-        },
-        { name: "land", id: 11, title: "Земельные участки",
-            filters: [
-                "operation_sid",
-                "price_from", "price_to", "currency_sid",
-                "area_from", "area_to",
-                "gas", "electricity",
-                "water", "sewerage"
+                "price_from", "price_to", "currency_sid"
             ]
         }
     ];
@@ -194,8 +140,15 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
         name: "UAH",
         title: "Грн."
     }];
-
-
+    $rootScope.opeartionTypes = {
+        sale: 0,
+        rent: 1
+    };
+    $rootScope.rentTypes = {
+        undefined: 0,
+        daily: 1,
+        monthly: 2
+    };
     $rootScope.loadings = {
         markers: false
     };

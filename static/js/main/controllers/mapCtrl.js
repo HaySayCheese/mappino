@@ -24,15 +24,31 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         requestTimeoutTime = 1500,
         mapIsLoaded = false;
 
+
+    $scope.status = {
+        //// Will be set to "true" only when user is begins to search from the homepage.
+        //// After processing of his request it should be set to "false" again.
+        //homepageRequestIsProcessing: false,
+
+        redTemplateIsLoaded: false,
+        blueTemplateIsLoaded: false,
+        greenTemplateIsLoaded: false,
+        yellowTemplateIsLoaded: false,
+
+        redPanelFiltersAreParsed: false,
+        bluePanelFiltersAreParsed: false,
+        greenPanelFiltersAreParsed: false,
+        yellowPanelFiltersAreParsed: false
+    };
+
     /**
      * Фільтри
      **/
     $scope.filters = {
-
         map: {
             city: "",
             zoom: parseInt(6),
-            latLng: "48.455935, 34.41285"
+            latLng: "48.455935, 34.41285" // translate: для інших країн має бути інший початковий регіон
         },
 
         base: {
@@ -112,18 +128,36 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     /**
      * Слідкуємо за зміною типа нерухомості на панелі і грузимо темплейт
      */
-    $scope.$watch("filters.red.r_type_sid", function(newValue) {
-        createFiltersForPanels("red", newValue, true);
-    });
-    $scope.$watch("filters.blue.b_type_sid", function(newValue) {
-        createFiltersForPanels("blue", newValue, true);
-    });
-    $scope.$watch("filters.green.g_type_sid", function(newValue) {
-        createFiltersForPanels("green", newValue, true);
-    });
-    $scope.$watch("filters.yellow.y_type_sid", function(newValue) {
-        createFiltersForPanels("yellow", newValue, true);
-    });
+    function destroyTypeSidWatchers(){
+        if ($scope.hasOwnProperty('destroyRedPanelSidWatcher')){
+            $scope.destroyRedPanelSidWatcher();
+        }
+        if ($scope.hasOwnProperty('destroyBluePanelSidWatcher')){
+            $scope.destroyBluePanelSidWatcher();
+        }
+        if ($scope.hasOwnProperty('destroyGreenPanelSidWatcher')){
+            $scope.destroyGreenPanelSidWatcher();
+        }
+        if ($scope.hasOwnProperty('destroyYellowPanelSidWatcher')){
+            $scope.destroyYellowPanelSidWatcher();
+        }
+    }
+
+    function initTypeSidWatchers(){
+        $scope.destroyRedPanelSidWatcher = $scope.$watch("filters.red.r_type_sid", function(){
+            createFiltersForPanels("red", true);
+        });
+        $scope.destroyBluePanelSidWatcher = $scope.$watch("filters.blue.b_type_sid", function(){
+            createFiltersForPanels("blue", true);
+        });
+        $scope.destroyGreenPanelSidWatcher = $scope.$watch("filters.green.g_type_sid", function(){
+            createFiltersForPanels("green", true);
+        });
+        $scope.destroyYellowPanelSidWatcher = $scope.$watch("filters.yellow.y_type_sid", function(){
+            createFiltersForPanels("yellow", true);
+        });
+    }
+    initTypeSidWatchers();
 
 
     /**
@@ -149,13 +183,49 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
         loadData(newValue, "yellow", true)
     });
-    $rootScope.$on("first-enter-change", function(event, data) {
-        $scope.filters.map.zoom = data[1];
-        $scope.filters.map.latLng = data[0];
-        $scope.filters.map.city = data[2];
 
-        map.panTo($scope.filters.map.latLng);
-        map.setZoom($scope.filters.map.zoom);
+
+    $rootScope.$on("first-enter-done", function(event, data){
+        destroyTypeSidWatchers(); // prevent default type_sid change logic.
+
+        // restore filters to defaults
+        $scope.filters['red'].r_type_sid = null;
+        $scope.filters['blue'].b_type_sid = null;
+        $scope.filters['green'].g_type_sid = null;
+        $scope.filters['yellow'].y_type_sid = null;
+
+        createFiltersForPanels('red', true);
+        createFiltersForPanels('blue', true);
+        createFiltersForPanels('green', true);
+        createFiltersForPanels('yellow', true);
+
+
+        // applying homepage filters
+        if (data.operation == 'sale'){
+            $scope.filters['red'].r_operation_sid = $rootScope.opeartionTypes.sale;
+
+        } else if (data.operation == 'rent'){
+            $scope.filters['red'].r_operation_sid = $rootScope.opeartionTypes.rent;
+
+        } else if (data.operation == 'daily'){
+            $scope.filters['red'].r_operation_sid = $rootScope.opeartionTypes.rent;
+            $scope.filters['red'].r_period_sid = 2;
+        }
+
+        // type sid must be update last
+        // so all others filters will be updated to this moment
+        // and angular will process them correct
+        $scope.filters["red"].r_type_sid = data.type;
+        createFiltersForPanels('red', false);
+
+        // updating of the type dd
+        $('[name="r_type_sid"]').val(data.type);
+
+        map.panTo(new google.maps.LatLng(data.latLng.split(",")[0], data.latLng.split(",")[1]));
+        map.setZoom(15);
+
+
+        initTypeSidWatchers(); // restore default type_sid change logic.
     });
 
 
@@ -174,40 +244,88 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     /**
      * Функція створення обєкта з фільтрами
      */
-    function createFiltersForPanels(panel, tid, clear) {
+    function createFiltersForPanels(panel_color, clear_previous_filters) {
+        if ($scope.status.homepageRequestIsProcessing){
+            // When the user begins from the homepage —
+            // we need to set some of the filters to the selected values, often different from the defaults.
+            //
+            // When called automatically on type_sid change this method will restore default filters values,
+            // and it will broke some logic needed after passing homepage.
+            //
+            // So wee need to prevent this method execution if type_sid was changed manually
+            // on homepage event processing.
+            return;
+        }
+
+
+
+        // todo: add comments
+
+
         var baseFilters = $scope.filters.base,
-            filters     = $scope.filters[panel],
-            types       = $rootScope.publicationTypes,
-            prefix      = panel.toString().substring(0, 1) + "_";
+            filters = $scope.filters[panel_color],
+            prefix = panel_color.toString().substring(0, 1) + "_",
+            types = $rootScope.publicationTypes,
+            tid = filters[prefix + 'type_sid'];
 
-        $scope.templateLoaded = false;
-        $timeout(function() {
-            $scope.templateLoaded = true;
-        }, 1000);
 
-        if (clear) {
+
+
+        // todo: це треба поміняти негайно.
+        // таймаут не дає ніякої гарантії, шо темплейт загрузиться за цей час.
+        // це дуже-дуже банальний підхід.
+        //$scope.templateLoaded = false;
+        //$timeout(function() {
+        //    $scope.templateLoaded = true;
+        //}, 1000);
+
+        if (clear_previous_filters) {
+
+            // Removing filters from internal object
             for (var key in filters) {
-                if (filters.hasOwnProperty(key) && key != (prefix + "type_sid"))
-                    delete filters[key];
-            }
-            var searchParameters = $location.search();
+                if (key == prefix + "type_sid"){
+                    // This key must be present in all cases.
+                    // By this key Angular will determine what type of object is loaded into panel
+                    // (or should be loaded into panel)
+                    continue;
+                }
 
+                if (filters.hasOwnProperty(key)) {
+                    delete filters[key];
+                }
+            }
+
+            // Removing filters from the url.
+            // (url should be modified to give the user ability to share it with others)
+            var searchParameters = $location.search();
             for (var s_key in searchParameters) {
                 if (searchParameters.hasOwnProperty(s_key))
-                    if (s_key.match(new RegExp('^' + prefix, 'm')))
+                    if (s_key.match(new RegExp('^' + prefix, 'm'))) {
                         $location.search(s_key, null)
+                    }
             }
+
+
             parseFiltersCollectionAndUpdateUrl(filters);
             parseFiltersCollectionAndUpdateUrl($scope.filters.map);
         }
 
-        if (filters[prefix + "type_sid"] === null)
-            return;
 
-        for (var i = 0; i < types[tid].filters.length; i++) {
-            if (!filters[[prefix + types[tid].filters[i]]])
-                filters[prefix + types[tid].filters[i]] = baseFilters[types[tid].filters[i]];
+
+        if (tid !== null) {
+            // Some object type was selected.
+            // Lets update filters fields for it.
+
+            for (var i=0; i<types[tid].filters.length; i++) {
+                var filterName = prefix + types[tid].filters[i];
+
+                if (!filters[filterName])
+                    filters[filterName] = baseFilters[types[tid].filters[i]];
+            }
         }
+
+
+
     }
 
 
@@ -244,15 +362,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             parseFiltersCollectionAndUpdateUrl($scope.filters.map);
 
             mapIsLoaded = true;
-
-            if ($scope.filters.map.zoom < 15 && !$rootScope.subdommain) {
-                Markers.clearPanelMarkers("red");
-                Markers.clearPanelMarkers("blue");
-                Markers.clearPanelMarkers("green");
-                Markers.clearPanelMarkers("yellow");
-
-                return;
-            }
 
             loadData($scope.filters.red, "red", false);
             loadData($scope.filters.blue, "blue", false);
@@ -334,17 +443,21 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
                 if (key == "city" || key == "zoom" || key == "latLng")
                     $scope.filters.map[key] = searchParameters[key];
+
+                //console.log($scope.filters)
             }
         }
 
-        if ($scope.filters.blue.b_type_sid == null || $scope.filters.green.g_type_sid == null || $scope.filters.yellow.y_type_sid == null)
-            createFiltersForPanels("red", 0, false);
+        //if ($scope.filters.blue.b_type_sid == null || $scope.filters.green.g_type_sid == null || $scope.filters.yellow.y_type_sid == null)
+        //    createFiltersForPanels("red", 0, false);
 
         $scope.filtersParsed = true;
 
-        $timeout(function() {
-            $scope.templateLoaded = true;
-        }, 1000);
+        //$timeout(function() {
+        //    $scope.templateLoaded = true;
+        //}, 1000);
+
+        console.log($scope.filters)
 
         initializeMap();
     };
@@ -421,8 +534,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Функція яка ініціює загрузку даних
      */
     function loadData(filters, panel, timeout) {
-        if ($rootScope.subdommain.length && $scope.filters.map.zoom < 15)
-            return;
 
         $timeout(function() {
             if (!mapIsLoaded)
@@ -442,13 +553,13 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             if (timeout) {
                 clearTimeout(requestTimeout);
                 requestTimeout = setTimeout(function() {
-                    Markers.load(filters, viewport, panel, function(data) {
+                    Markers.load(filters, viewport, $scope.filters.map.zoom, panel, function(data) {
                         markers = data;
                         placeMarkers();
                     });
                 }, requestTimeoutTime);
             } else {
-                Markers.load(filters, viewport, panel, function(data) {
+                Markers.load(filters, viewport, $scope.filters.map.zoom, panel, function(data) {
                     markers = data;
                     placeMarkers();
                 });
@@ -470,12 +581,18 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                         (function() {
                             var marker1 = markers[panel][marker];
 
-                            google.maps.event.addListener(marker1, 'click', function() {
-                                $location.path("/publication/" + marker1.tid + ":" + marker1.id);
+                            if (marker1.type != "pie-marker")
+                                google.maps.event.addListener(marker1, 'click', function() {
+                                    $location.path("/publication/" + marker1.tid + ":" + marker1.id);
 
-                                if (!$scope.$$phase)
-                                    $scope.$apply();
-                            });
+                                    if (!$scope.$$phase)
+                                        $scope.$apply();
+                                });
+                            else
+                                google.maps.event.addListener(marker1, 'click', function(e) {
+                                    map.setZoom(map.getZoom() + 1);
+                                    map.setCenter(marker1.getPosition());
+                                });
                         })();
 
                     }
@@ -523,7 +640,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     }
     function initScrollBar() {
         $timeout(function() {
-
             var sidebar = angular.element(".panel-body");
 
             sidebar.perfectScrollbar("destroy");
@@ -539,13 +655,11 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 $timeout(function() {
                     sidebar.scrollTop(0);
                     sidebar.perfectScrollbar("update");
-                    sidebar.perfectScrollbar("update");
                 }, 500);
             });
             $scope.$watch("filters.blue.b_type_sid", function() {
                 $timeout(function() {
                     sidebar.scrollTop(0);
-                    sidebar.perfectScrollbar("update");
                     sidebar.perfectScrollbar("update");
                 }, 500);
             });
@@ -553,13 +667,11 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 $timeout(function() {
                     sidebar.scrollTop(0);
                     sidebar.perfectScrollbar("update");
-                    sidebar.perfectScrollbar("update");
                 }, 500);
             });
             $scope.$watch("filters.yellow.y_type_sid", function() {
                 $timeout(function() {
                     sidebar.scrollTop(0);
-                    sidebar.perfectScrollbar("update");
                     sidebar.perfectScrollbar("update");
                 }, 500);
             });

@@ -2,14 +2,14 @@
 from django.db import models, connections
 from django.db.models import Q
 from djorm_pgarray.fields import BigIntegerArrayField
+
 from collective.exceptions import InvalidArgument
-
 from core.currencies.constants import CURRENCIES
-
+from core.currencies.currencies_manager import convert as convert_price
 from core.markers_handler.classes import Grid
 from core.markers_handler.exceptions import TooBigTransaction
-from core.publications.constants import OBJECTS_TYPES, MARKET_TYPES, FLOOR_TYPES, HEATING_TYPES, LIVING_RENT_PERIODS
-from core.currencies.currencies_manager import convert as convert_price
+from core.publications.constants import \
+    OBJECTS_TYPES, MARKET_TYPES, FLOOR_TYPES, HEATING_TYPES, LIVING_RENT_PERIODS, HEAD_MODELS
 from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
 
@@ -22,15 +22,15 @@ class AbstractBaseIndex(models.Model):
 
     Абсолютна більшість полів даної таблиці індексуються B-Tree індексом (в django за замовчуванням).
     Перенасичення таблиці індексами в даному випадку не розглядається як проблема, оскільки
-        * передбачається, що всі похідні таблиці (тобто всі індеки для кожного з типів)
+        * передбачається, що всі похідні таблиці (тобто всі індекси для кожного з типів)
           будуть обслуговуватись окремим сервером PostgreSQL в якому буде вимкнено ACID,
           за рахунок чого, вставка в дані таблиці повинна відбуватись досить швидко.
 
           Дані в індексі дублюватимуть дані з основних таблиць, тому втрата навіть всього індексу
           не веде до проблем, оскільки індекс в будь-який момент може бути перебудований
-          ціної декількох годин процесрного часу.
+          ціної декількох годин процесорного часу.
 
-        * неможливо з необхідним рівнем достовірності спрогноувати які саме фільтри
+        * неможливо з необхідним рівнем достовірності спрогнозувати які саме фільтри
           буде використовувати середньо-статистинчий користувач. Як наслідок — для забепечення ефективної
           роботи фільтрів за таких умов слід індексувати кожне поле, по якому може йти вибірка.
           Проактивна оптимізація з метою побудови такої системи, яка швидше працює лише за певного,
@@ -60,8 +60,8 @@ class AbstractBaseIndex(models.Model):
 
 
     @classmethod
-    def remove(cls, record, using=None):
-        cls.objects.using(using).filter(publication_id=record.id).delete()
+    def remove(cls, hid, using=None):
+        cls.objects.using(using).filter(publication_id=hid).delete()
 
 
     @classmethod
@@ -71,19 +71,23 @@ class AbstractBaseIndex(models.Model):
 
     @classmethod
     def min_add_queryset(cls):  # virtual
-        return cls.objects.none()
+        """
+        :return:
+            Мінімальний QuerySet моделі, до якої прив’язаний індекс.
+            Тобто, якщо це FlatsSaleIndexAbstract то буде повернуто QuerySet оголошень FlatsHeads,
+            якщо HousesRentIndexAbstract - HousesHeads і т.д.
+
+            Також, даний метод вибирає лише ті поля,
+            які використовуються під час додавання оголошення в індекс.
+            Саме тому даний метод перевизначається у всіх дочірніх індексах,
+            щоб була можливість вказувати специфічний набір полів під конкретний індекс.
+        """
+        raise Exception('Abstract method was called.')
 
 
     @classmethod
     def min_remove_queryset(cls):
-        return cls.objects.all().only(
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
-        )
+        raise Exception('Abstract method was called.')
 
 
     @staticmethod
@@ -313,7 +317,7 @@ class AbstractBaseIndex(models.Model):
         return markers
 
 
-    @staticmethod
+    @staticmethod # sid
     def apply_trade_building_type_filter(filters, markers):
         building_type = filters.get('building_type_sid')
         if building_type == 1:
@@ -492,7 +496,8 @@ class FlatsSaleIndexAbstract(AbstractBaseIndex):
 
     @classmethod
     def min_add_queryset(cls):
-        return cls.objects.all().only(
+        model = HEAD_MODELS[OBJECTS_TYPES.flat()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -510,7 +515,7 @@ class FlatsSaleIndexAbstract(AbstractBaseIndex):
             'body__floor',
             'body__floor_type_sid',
             'body__lift',
-            'body__how_water',
+            'body__hot_water',
             'body__cold_water',
             'body__gas',
             'body__electricity',
@@ -518,6 +523,21 @@ class FlatsSaleIndexAbstract(AbstractBaseIndex):
 
             'sale_terms__price',
             'sale_terms__currency_sid'
+        )
+
+
+    @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.flat()]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
         )
 
 
@@ -607,7 +627,8 @@ class FlatsRentIndexAbstract(AbstractBaseIndex):
 
     @classmethod
     def min_add_queryset(cls):
-        return cls.objects.all().only(
+        model = HEAD_MODELS[OBJECTS_TYPES.flat()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -622,7 +643,7 @@ class FlatsRentIndexAbstract(AbstractBaseIndex):
             'body__floor',
             'body__floor_type_sid',
             'body__lift',
-            'body__how_water',
+            'body__hot_water',
             'body__cold_water',
             'body__gas',
             'body__electricity',
@@ -633,6 +654,21 @@ class FlatsRentIndexAbstract(AbstractBaseIndex):
             'rent_terms__persons_count'
             'rent_terms__family'
             'rent_terms__foreigners'
+        )
+
+
+    @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.flat()]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
         )
 
 
@@ -716,7 +752,8 @@ class HousesSaleIndexAbstract(AbstractBaseIndex):
 
     @classmethod
     def min_add_queryset(cls):
-        return cls.objects.all().only(
+        model = HEAD_MODELS[OBJECTS_TYPES.house()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -731,7 +768,7 @@ class HousesSaleIndexAbstract(AbstractBaseIndex):
             'body__total_area',
             'body__rooms_count',
             'body__floors_count',
-            'body__how_water',
+            'body__hot_water',
             'body__cold_water',
             'body__electricity',
             'body__gas',
@@ -740,6 +777,21 @@ class HousesSaleIndexAbstract(AbstractBaseIndex):
 
             'sale_terms__price',
             'sale_terms__currency_sid'
+        )
+
+
+    @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.house()]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
         )
 
 
@@ -823,7 +875,8 @@ class HousesRentIndexAbstract(AbstractBaseIndex):
 
     @classmethod
     def min_add_queryset(cls):
-        return cls.objects.all().only(
+        model = HEAD_MODELS[OBJECTS_TYPES.house()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -835,7 +888,7 @@ class HousesRentIndexAbstract(AbstractBaseIndex):
             'hash_id',
 
             'body__total_area',
-            'body__how_water',
+            'body__hot_water',
             'body__cold_water',
             'body__gas',
             'body__electricity',
@@ -846,6 +899,21 @@ class HousesRentIndexAbstract(AbstractBaseIndex):
             'rent_terms__persons_count'
             'rent_terms__family'
             'rent_terms__foreigners'
+        )
+
+
+    @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.house()]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
         )
 
 
@@ -930,7 +998,8 @@ class RoomsSaleIndexAbstract(AbstractBaseIndex):
 
     @classmethod
     def min_add_queryset(cls):
-        return cls.objects.all().only(
+        model = HEAD_MODELS[OBJECTS_TYPES.room()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1043,7 +1112,8 @@ class RoomsRentIndex(AbstractBaseIndex):
 
     @classmethod
     def min_add_queryset(cls):
-        return cls.objects.all().only(
+        model = HEAD_MODELS[OBJECTS_TYPES.room()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1058,7 +1128,7 @@ class RoomsRentIndex(AbstractBaseIndex):
             'body__floor',
             'body__floor_type_sid',
             'body__lift',
-            'body__how_water',
+            'body__hot_water',
             'body__cold_water',
             'body__gas',
             'body__electricity',
@@ -1104,7 +1174,7 @@ class RoomsRentIndex(AbstractBaseIndex):
 
 # -- commercial real estate
 
-class TradesIndex(AbstractBaseIndex):
+class TradesSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -1119,7 +1189,7 @@ class TradesIndex(AbstractBaseIndex):
 
 
     class Meta:
-        db_table = 'index_trades'
+        db_table = 'index_trades_sale'
 
 
     @classmethod
@@ -1153,7 +1223,8 @@ class TradesIndex(AbstractBaseIndex):
 
     @classmethod
     def min_add_queryset(cls):
-        return cls.objects.all().only(
+        model = HEAD_MODELS[OBJECTS_TYPES.trade()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1208,7 +1279,13 @@ class TradesIndex(AbstractBaseIndex):
 
 
 
-class OfficesIndex(AbstractBaseIndex):
+class TradesRentIndex(TradesSaleIndex):
+    class Meta:
+        db_table = 'index_trades_rent'
+
+
+
+class OfficesSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -1221,7 +1298,7 @@ class OfficesIndex(AbstractBaseIndex):
 
 
     class Meta:
-        db_table = 'index_offices'
+        db_table = 'index_offices_sale'
 
 
     @classmethod
@@ -1253,7 +1330,8 @@ class OfficesIndex(AbstractBaseIndex):
 
     @classmethod
     def min_add_queryset(cls):
-        return cls.objects.all().only(
+        model = HEAD_MODELS[OBJECTS_TYPES.office()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1304,7 +1382,13 @@ class OfficesIndex(AbstractBaseIndex):
 
 
 
-class WarehousesIndex(AbstractBaseIndex):
+class OfficesRentIndex(OfficesSaleIndex):
+    class Meta:
+        db_table = 'index_offices_rent'
+
+
+
+class WarehousesSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -1318,7 +1402,7 @@ class WarehousesIndex(AbstractBaseIndex):
 
 
     class Meta:
-        db_table = 'index_warehouses'
+        db_table = 'index_warehouses_sale'
 
 
     @classmethod
@@ -1351,7 +1435,8 @@ class WarehousesIndex(AbstractBaseIndex):
 
     @classmethod
     def min_add_queryset(cls):
-        return cls.objects.all().only(
+        model = HEAD_MODELS[OBJECTS_TYPES.warehouse()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1404,13 +1489,19 @@ class WarehousesIndex(AbstractBaseIndex):
 
 
 
-class BusinessesIndex(AbstractBaseIndex):
+class  WarehousesRentIndex(WarehousesSaleIndex):
+    class Meta:
+        db_table = 'index_warehouses_rent'
+
+
+
+class BusinessesSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
 
 
     class Meta:
-        db_table = 'index_businesses'
+        db_table = 'index_businesses_sale'
 
 
     @classmethod
@@ -1434,7 +1525,8 @@ class BusinessesIndex(AbstractBaseIndex):
 
     @classmethod
     def min_add_queryset(cls):
-        return cls.objects.all().only(
+        model = HEAD_MODELS[OBJECTS_TYPES.business()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1469,7 +1561,13 @@ class BusinessesIndex(AbstractBaseIndex):
 
 
 
-class CateringsIndex(AbstractBaseIndex):
+class BusinessesRentIndex(BusinessesSaleIndex):
+    class Meta:
+        db_table = 'index_businesses_rent'
+
+
+
+class CateringsSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -1484,7 +1582,7 @@ class CateringsIndex(AbstractBaseIndex):
 
 
     class Meta:
-        db_table = 'index_caterings'
+        db_table = 'index_caterings_sale'
 
 
     @classmethod
@@ -1518,7 +1616,8 @@ class CateringsIndex(AbstractBaseIndex):
 
     @classmethod
     def min_add_queryset(cls):
-        return cls.objects.all().only(
+        model = HEAD_MODELS[OBJECTS_TYPES.catering()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1574,7 +1673,13 @@ class CateringsIndex(AbstractBaseIndex):
 
 
 
-class GaragesIndex(AbstractBaseIndex):
+class CateringsRentIndex(CateringsSaleIndex):
+    class Meta:
+        db_table = 'index_caterings_rent'
+
+
+
+class GaragesSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     total_area = models.FloatField(db_index=True)
@@ -1583,7 +1688,7 @@ class GaragesIndex(AbstractBaseIndex):
 
 
     class Meta:
-        db_table = 'index_garages'
+        db_table = 'index_garages_sale'
 
 
     @classmethod
@@ -1611,7 +1716,8 @@ class GaragesIndex(AbstractBaseIndex):
 
     @classmethod
     def min_add_queryset(cls):
-        return cls.objects.all().only(
+        model = HEAD_MODELS[OBJECTS_TYPES.garage()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1655,7 +1761,13 @@ class GaragesIndex(AbstractBaseIndex):
 
 
 
-class LandsIndex(AbstractBaseIndex):
+class GaragesRentIndex(GaragesSaleIndex):
+    class Meta:
+        db_table = 'index_garages_rent'
+
+
+
+class LandsSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     total_area = models.FloatField(db_index=True)
@@ -1666,7 +1778,7 @@ class LandsIndex(AbstractBaseIndex):
 
 
     class Meta:
-        db_table = 'index_lands'
+        db_table = 'index_lands_sale'
 
 
     @classmethod
@@ -1696,7 +1808,8 @@ class LandsIndex(AbstractBaseIndex):
 
     @classmethod
     def min_add_queryset(cls):
-        return cls.objects.all().only(
+        model = HEAD_MODELS[OBJECTS_TYPES.land()]
+        return model.objects.all().only(
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1744,7 +1857,13 @@ class LandsIndex(AbstractBaseIndex):
 
 
 
-#-- index handler
+class LandsRentIndex(LandsSaleIndex):
+    class Meta:
+        db_table = 'index_lands_rent'
+
+
+
+# -- index handler
 class SegmentsIndex(models.Model):
     index_db_name = 'markers_index'
     min_zoom = 1
@@ -1754,32 +1873,41 @@ class SegmentsIndex(models.Model):
     # static members
     grid = Grid(min_zoom, max_zoom)
 
-    sale_indexes = {
+    living_sale_indexes = {
         OBJECTS_TYPES.flat(): FlatsSaleIndexAbstract,
         OBJECTS_TYPES.house(): HousesSaleIndexAbstract,
         OBJECTS_TYPES.room(): RoomsSaleIndexAbstract,
     }
-    rent_indexes = {
+    living_rent_indexes = {
         OBJECTS_TYPES.flat(): FlatsRentIndexAbstract,
         OBJECTS_TYPES.house(): HousesRentIndexAbstract,
         OBJECTS_TYPES.room(): RoomsRentIndex,
     }
-    commercial_indexes = {
-        OBJECTS_TYPES.trade(): TradesIndex,
-        OBJECTS_TYPES.office(): OfficesIndex,
-        OBJECTS_TYPES.warehouse(): WarehousesIndex,
-        OBJECTS_TYPES.business(): BusinessesIndex,
-        OBJECTS_TYPES.catering(): CateringsIndex,
-        OBJECTS_TYPES.garage(): GaragesIndex,
-        OBJECTS_TYPES.land(): LandsIndex,
+    commercial_sale_indexes = {
+        OBJECTS_TYPES.trade(): TradesSaleIndex,
+        OBJECTS_TYPES.office(): OfficesSaleIndex,
+        OBJECTS_TYPES.warehouse(): WarehousesSaleIndex,
+        OBJECTS_TYPES.business(): BusinessesSaleIndex,
+        OBJECTS_TYPES.catering(): CateringsSaleIndex,
+        OBJECTS_TYPES.garage(): GaragesSaleIndex,
+        OBJECTS_TYPES.land(): LandsSaleIndex,
+    }
+    commercial_rent_indexes = {
+        OBJECTS_TYPES.trade(): TradesRentIndex,
+        OBJECTS_TYPES.office(): OfficesRentIndex,
+        OBJECTS_TYPES.warehouse(): WarehousesRentIndex,
+        OBJECTS_TYPES.business(): BusinessesRentIndex,
+        OBJECTS_TYPES.catering(): CateringsRentIndex,
+        OBJECTS_TYPES.garage(): GaragesRentIndex,
+        OBJECTS_TYPES.land(): LandsRentIndex,
     }
 
 
     # fields
     tid = models.SmallIntegerField(db_index=True)
     zoom = models.SmallIntegerField(db_index=True)
-    x = models.SmallIntegerField(db_index=True)
-    y = models.SmallIntegerField(db_index=True)
+    x = models.IntegerField(db_index=True)
+    y = models.IntegerField(db_index=True)
     ids = BigIntegerArrayField()
 
 
@@ -1788,26 +1916,35 @@ class SegmentsIndex(models.Model):
 
 
     @classmethod
-    def add_record(cls, tid, hid):
-        index = cls.commercial_indexes.get(tid)
+    def add_record(cls, tid, hid, for_sale, for_rent):
+        if for_sale and for_rent:
+            raise InvalidArgument('Object can be for_sale or for_rent but not both.')
+        else:
+            if not for_sale and not for_rent:
+                raise InvalidArgument('Object can be for_sale or for_rent')
+
+        if for_sale:
+            index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
+        else:
+            index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
+
         if index is None:
-            index = cls.sale_indexes.get(tid)
-            if index is None:
-                index = cls.rent_indexes.get(tid)
-                if index is None:
-                    raise ValueError('Invalid tid')
+            return InvalidArgument('No index class for such tid.')
+
 
         record = index.min_add_queryset().filter(id=hid)[:1][0]
-
         lat, lng = cls.record_lat_lng(record)
         lat, lng = cls.grid.normalize_lat_lng(lat, lng)
 
 
+        # Можливий такий випадок, коли при знятті оголошення з публікації чи видаленні,
+        # інформація з індексу не видалилась.
+        # Для запобігання дублікату запису в індексі слід видалити всі записи із id=hid.
+        index.objects.filter(publication_id=record.id).delete()
+
+
         # todo: add transaction here (find a way to combine custom sql and django orm to perform a transaction)
-        if record.for_sale:
-            cls.sale_indexes[record.tid].add(record, using=cls.index_db_name)
-        else:
-            cls.rent_indexes[record.tid].add(record, using=cls.index_db_name)
+        index.add(record, using=cls.index_db_name)
 
         cursor = cls.cursor()
         cursor.execute('BEGIN;')
@@ -1835,75 +1972,88 @@ class SegmentsIndex(models.Model):
             )
         cursor.execute('END;')
         cursor.close()
+        # todo: transaction end
 
 
     @classmethod
-    def remove_record(cls, tid, hid):
-        # todo: даний метод потребує перевірки на реальному сервері postgres >=9.3
-        # todo: даний метод потребує тестів
+    def remove_record(cls, tid, hid, for_sale, for_rent):
+        if for_sale and for_rent:
+            raise InvalidArgument('Object can or for_sale or for_rent but not both.')
+        else:
+            if not for_sale and not for_rent:
+                raise InvalidArgument('Object can be for_sale or for_rent')
 
-        index = cls.commercial_indexes.get(tid)
+
+        if for_sale:
+            index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
+        else:
+            index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
+
         if index is None:
-            index = cls.sale_indexes.get(tid)
-            if index is None:
-                index = cls.rent_indexes.get(tid)
-                if index is None:
-                    raise ValueError('Invalid tid')
+            return InvalidArgument('No index such tid.')
+
 
         record = index.min_remove_queryset().filter(id=hid)[:1][0]
-
         lat, lng = cls.record_lat_lng(record)
+        lat, lng = cls.grid.normalize_lat_lng(lat, lng)
 
 
         # todo: add transaction here (find a way to combine custom sql and django orm to perform a transaction)
-        if record.for_sale:
-            cls.sale_indexes[record.tid].remove(record, using=cls.index_db_name)
-        else:
-            cls.rent_indexes[record.tid].remove(record, using=cls.index_db_name)
-
         cursor = cls.cursor()
         cursor.execute('BEGIN;')
         for zoom, x, y in cls.grid.segments_digests(lat, lng):
 
             # Removing of the id from the index
-            cursor.execute(
-                "SELECT array_remove(ids, {id}) FROM {table};"
+            query = "UPDATE index_all_segments SET ids=( " \
+                    "   SELECT array_remove( " \
+                    "       (SELECT ids FROM index_all_segments " \
+                    "           WHERE tid='{tid}' AND zoom='{zoom}' AND x='{x}' AND y='{y}' " \
+                    "           LIMIT 1" \
+                    "       ), {id}::bigint)" \
+                    "   )" \
+                    "WHERE tid='{tid}' AND zoom='{zoom}' AND x='{x}' AND y='{y}'; " \
                 .format(
                     table=cls._meta.db_table,
                     id=record.id,
-                ))
-
-            # If segment digest contains no more ids - remove it too
-            cursor.execute(
-                "DELETE FROM {table}"
-                "   WHERE tid='{tid}' AND zoom='{zoom}' AND x='{x}' AND y='{y}' AND array_length('ids', 1) = 0;"
-                .format(
-                    table=cls._meta.db_table,
-                    id=record.id,
-                    tid=record.tid,
+                    tid=tid,
                     zoom=zoom,
                     x=x,
                     y=y,
                 )
-            )
+
+            cursor.execute(query)
         cursor.execute('END;')
+
+
+        # If segment digest contains no more ids - remove it too
+        cursor.execute(
+            "DELETE FROM {table} WHERE ids = '{{}}';"
+                .format(
+                    table=cls._meta.db_table,
+                ))
         cursor.close()
+
+        index.remove(hid, using=cls.index_db_name)
+        # todo: transaction end
 
 
     @classmethod
     def estimate_count(cls, tid, ne_lat, ne_lng, sw_lat, sw_lng, zoom, filters):
-        ne_segment_x, ne_segment_y, sw_segment_x, sw_segment_y = \
+        ne_segment_x, \
+        ne_segment_y, \
+        sw_segment_x, \
+        sw_segment_y = \
             cls.prepare_request_processing(ne_lat, ne_lng, sw_lat, sw_lng, zoom)
 
 
         # Помітки for_sale та for_rent ставляться лише для житлової нерухомості
         if 'for_sale' in filters:
-            index = cls.sale_indexes[tid]
+            index = cls.living_sale_indexes[tid]
         elif 'for_rent' in filters:
-            index = cls.rent_indexes[tid]
+            index = cls.living_rent_indexes[tid]
         else:
             # інакше — це точно комерційна нерухомість.
-            index = cls.commercial_indexes[tid]
+            index = cls.commercial_sale_indexes[tid]
 
 
         # Підготувати SQL-запит на вибірку записів, попередньо відфільтрувавши за вхідними умовами.
@@ -1924,20 +2074,22 @@ class SegmentsIndex(models.Model):
         query = "SELECT count(publication_id), x, y FROM {index_table}" \
                 "   JOIN {segments_index_table} " \
                 "       ON zoom = '{zoom}' AND " \
-                "          (x >= {ne_segment_x} AND x <= {sw_segment_x}) AND " \
-                "          (y >= {ne_segment_y} AND y <= {sw_segment_y}) " \
+                "          (x >= {ne_segment_x} AND x < {sw_segment_x}) AND " \
+                "          (y <= {ne_segment_y} AND y > {sw_segment_y}) AND " \
+                "           tid = {tid} "\
                 "   WHERE publication_id = ANY(ids) {where_condition}" \
                 "   GROUP BY ids, x, y;" \
             .format(
-            index_table=index._meta.db_table,
-            segments_index_table=cls._meta.db_table,
-            zoom=zoom,
-            ne_segment_x=ne_segment_x,
-            sw_segment_x=sw_segment_x,
-            ne_segment_y=ne_segment_y,
-            sw_segment_y=sw_segment_y,
-            where_condition=' AND ' + where if where else '',
-        )
+                index_table=index._meta.db_table,
+                segments_index_table=cls._meta.db_table,
+                zoom=zoom,
+                ne_segment_x=ne_segment_x,
+                sw_segment_x=sw_segment_x,
+                ne_segment_y=ne_segment_y,
+                sw_segment_y=sw_segment_y,
+                tid=tid,
+                where_condition=' AND ' + where if where else '',
+            )
 
         cursor = cls.cursor()
         cursor.execute(query)
@@ -1948,8 +2100,8 @@ class SegmentsIndex(models.Model):
         step_per_lng = cls.grid.step_on_lng(zoom)
         return {
             '{lat}:{lng}'.format(
-                lat=y * step_per_lat + (step_per_lat / 2) - 90,  # денормалізація широти
-                lng=x * step_per_lng + (step_per_lng / 2) - 180,  # денормалізація довготи
+                lat=y * step_per_lat + (step_per_lat / 2) - step_per_lat - 90,  # денормалізація широти
+                lng=x * step_per_lng + (step_per_lng / 2) - step_per_lng - 180,  # денормалізація довготи
             ): count
             for count, x, y in selected_data
         }
@@ -1964,16 +2116,16 @@ class SegmentsIndex(models.Model):
         query = "SELECT DISTINCT unnest(ids), id FROM {table} " \
                 "   WHERE tid={tid} AND zoom={zoom} AND " \
                 "      (x >= {ne_segment_x} AND x <= {sw_segment_x}) AND " \
-                "      (y >= {ne_segment_y} AND y <= {sw_segment_y});" \
+                "      (y <= {ne_segment_y} AND y >= {sw_segment_y});" \
             .format(
-            table=cls._meta.db_table,
-            tid=tid,
-            zoom=zoom,
-            ne_segment_x=ne_segment_x,
-            sw_segment_x=sw_segment_x,
-            ne_segment_y=ne_segment_y,
-            sw_segment_y=sw_segment_y,
-        )
+                table=cls._meta.db_table,
+                tid=tid,
+                zoom=zoom,
+                ne_segment_x=ne_segment_x,
+                sw_segment_x=sw_segment_x,
+                ne_segment_y=ne_segment_y,
+                sw_segment_y=sw_segment_y,
+            )
 
         cursor = cls.cursor()
         cursor.execute(query)
@@ -1986,19 +2138,19 @@ class SegmentsIndex(models.Model):
         # Фільтруєм і формуєм маркери.
         # (Помітки for_sale та for_rent ставляться лише для житлової нерухомості)
         if 'for_sale' in filters:
-            index = cls.sale_indexes[tid]
+            index = cls.living_sale_indexes[tid]
         elif 'for_rent' in filters:
-            index = cls.rent_indexes[tid]
+            index = cls.living_rent_indexes[tid]
         else:
-            index = cls.commercial_indexes[tid]
+            index = cls.commercial_sale_indexes[tid]
 
         markers = index.min_queryset().filter(publication_id__in=publications_ids)
         return {
             '{lat}:{lng}'.format(
                 lat=marker.lat,
                 lng=marker.lng
-            ): cls.brief(marker, filters)
-            for marker in cls.apply_filters(filters, markers)
+            ): index.brief(marker, filters)
+            for marker in index.apply_filters(filters, markers)
         }
 
 
@@ -2023,6 +2175,13 @@ class SegmentsIndex(models.Model):
         ne_lat, ne_lng = cls.grid.normalize_lat_lng(ne_lat, ne_lng)
         sw_lat, sw_lng = cls.grid.normalize_lat_lng(sw_lat, sw_lng)
 
+        # розширимо сегмент, щоб захопити суміжні області
+        ne_lat += 1
+        ne_lng -= 1
+
+        sw_lat -= 1
+        sw_lng += 1
+
         # Повертаємо координатний прямокутник таким чином, щоб ne точно був на своєму місці.
         # Таким чином уберігаємось від випадків, коли координати передані некоректно,
         # або в залежності від форми Землі сегмент деформується і набирає неправильної форми.
@@ -2036,12 +2195,19 @@ class SegmentsIndex(models.Model):
         sw_segment_x, sw_segment_y = cls.grid.segment_xy(sw_lat, sw_lng, zoom)
 
 
-        # Заглушка від DDos
-        lng_segments_count = sw_segment_x - ne_segment_x if sw_segment_x - ne_segment_x > 0 else 1
-        lat_segments_count = ne_segment_y - sw_segment_y if ne_segment_y - sw_segment_y > 0 else 1
-        total_segments_count = lat_segments_count * lng_segments_count
-        if total_segments_count > 64:
-            raise TooBigTransaction()
+        # # Заглушка від DDos
+        # lng_segments_count = (sw_segment_x - ne_segment_x) // cls.grid.step_on_lng(zoom)
+        # if lng_segments_count == 0:
+        #     lng_segments_count = 1
+        #
+        # lat_segments_count = (ne_segment_y - sw_segment_y) // cls.grid.step_on_lat(zoom)
+        # if lat_segments_count == 0:
+        #     lat_segments_count = 1
+        #
+        #
+        # total_segments_count = lat_segments_count * lng_segments_count
+        # if total_segments_count > 128:
+        #     raise TooBigTransaction()
 
         return ne_segment_x, ne_segment_y, \
                sw_segment_x, sw_segment_y

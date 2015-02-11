@@ -2,28 +2,27 @@
 //
 // Load core variables and mixins
 // --------------------------------------------------
-
 @import "../components/variables";
 @import "../components/mixins";
 
 
 html, body, .wrapper, #map {
-    .square(100%)
+    .square(100%);
 }
 
 .marker-label {
-    width: auto;
+    padding: 5px 5px 5px 20px;
     min-width: 80px;
     min-height: 25px;
-    padding: 5px 5px 5px 20px;
-
-    font-size: 10px;
-    font-weight: bold;
-    text-align: center;
-
-    word-break: keep-all;
+    width: auto;
 
     background: #ffffff;
+    text-align: center;
+    word-break: keep-all;
+
+    font-weight: bold;
+
+    font-size: 10px;
     .box-shadow(~"0 0 5px @{gray-light}")
 }
 
@@ -39,10 +38,12 @@ html, body, .wrapper, #map {
     .translate(calc(~'-50% - 160px'), 0);
     .border-bottom-radius(@border-radius-base);
 }
+
 .map-loader {
     padding: 10px 15px 10px 49px;
     background: #ffffff url('../../img/main/markers-loader.gif') 15px center no-repeat;
 }
+
 .map-info {
     padding: 10px 15px 10px 15px;
     background: #ffffff;
@@ -51,7 +52,6 @@ html, body, .wrapper, #map {
 .pac-container {
     z-index: 9999;
 }
-
 
 @-webkit-keyframes fadeInDown {
     0% {
@@ -66,6 +66,7 @@ html, body, .wrapper, #map {
         transform: translateY(0);
     }
 }
+
 @keyframes fadeInDown {
     0% {
         opacity: 0;
@@ -81,11 +82,11 @@ html, body, .wrapper, #map {
         transform: translateY(0);
     }
 }
+
 .fadeInDown {
     -webkit-animation-name: fadeInDown;
     animation-name: fadeInDown;
 }
-
 
 @-webkit-keyframes fadeOutUp {
     0% {

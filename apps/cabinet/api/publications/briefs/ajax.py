@@ -23,7 +23,7 @@ get_codes = {
 @require_http_methods('GET')
 def get(request, tag_id=None, section=None):
 	# section за замовчуванням None для того, щоб розмістити даний параметр за tag_id,
-	# інакше, довелось би писати ще одну функція на віддачу брифів для тегів окремо.
+	# інакше, довелось би писати ще одну функцію на віддачу брифів для тегів окремо.
 	if section is None:
 		return HttpResponseBadRequest(
 			json.dumps(get_codes['invalid_section']), content_type='application/json')

@@ -7,8 +7,8 @@ from apps.main.api.realtors_contacts.ajax import RealtorsContacts
 
 
 urlpatterns = patterns('apps.main.api',
-	# markers output
-	url(r'^ajax/api/markers/$', Markers.as_view()),
+    # markers output
+    url(r'^ajax/api/markers/$', Markers.as_view()),
 
 
     # detailed

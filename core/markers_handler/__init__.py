@@ -1,20 +1,6 @@
 from django.dispatch import receiver
 
-from core.markers_handler.models import \
-    SegmentsIndex, \
-    FlatsSaleIndexAbstract, \
-    HousesSaleIndexAbstract, \
-    RoomsSaleIndexAbstract, \
-    FlatsRentIndexAbstract,\
-    HousesRentIndexAbstract, \
-    RoomsRentIndex, \
-    TradesIndex, \
-    OfficesIndex, \
-    WarehousesIndex, \
-    BusinessesIndex, \
-    CateringsIndex, \
-    GaragesIndex, \
-    LandsIndex
+from core.markers_handler.models import SegmentsIndex
 from core.publications import models_signals
 
 
@@ -23,7 +9,10 @@ from core.publications import models_signals
 def add_publication_marker(sender, **kwargs):
     tid = kwargs['tid']
     hid = kwargs['hid']
-    SegmentsIndex.add_record(tid, hid)
+    for_sale = kwargs.get('for_sale', False)
+    for_rent = kwargs.get('for_rent', False)
+
+    SegmentsIndex.add_record(tid, hid, for_sale, for_rent)
 
 
 
@@ -33,4 +22,7 @@ def add_publication_marker(sender, **kwargs):
 def remove_publication_marker(sender, **kwargs):
     tid = kwargs['tid']
     hid = kwargs['hid']
-    SegmentsIndex.remove_record(tid, hid)
+    for_sale = kwargs.get('for_sale', False)
+    for_rent = kwargs.get('for_rent', False)
+
+    SegmentsIndex.remove_record(tid, hid, for_sale, for_rent)

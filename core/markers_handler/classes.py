@@ -4,8 +4,8 @@ import math
 
 
 class Grid(object):
-    SEGMENTS_PER_VIEWPORT_BY_LAT = 3
-    SEGMENTS_PER_VIEWPORT_BY_LNG = 5
+    SEGMENTS_PER_VIEWPORT_BY_LAT = 6
+    SEGMENTS_PER_VIEWPORT_BY_LNG = 10
 
 
     def __init__(self, min_zoom, max_zoom):
@@ -15,7 +15,7 @@ class Grid(object):
 
     def segments_digests(self, lat, lng):
         result = []
-        for zoom in xrange(start=self.min_zoom, stop=self.max_zoom + 1):
+        for zoom in xrange(self.min_zoom, self.max_zoom + 1):
             x, y = self.segment_xy(lat, lng, zoom)
             result.append(
                 (zoom, x, y, )

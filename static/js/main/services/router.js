@@ -40,6 +40,6 @@ app.config(['$routeProvider', function($routeProvider) {
         })
 
         .otherwise({
-            redirectTo: '/'
+            redirectTo: '/first-enter'
         });
 }]);

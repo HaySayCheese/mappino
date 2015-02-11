@@ -38,4 +38,4 @@ class SEIndexerQueue(models.Model):
 
 	@classmethod
 	def next_queued_publications_pack(cls):
-		return [(p.tid, p.hash_id) for p in cls.objects.all()[:10]]
+		return [(p.tid, p.hash_id) for p in cls.objects.all()]

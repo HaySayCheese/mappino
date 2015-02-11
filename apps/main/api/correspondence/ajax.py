@@ -1,8 +1,7 @@
 #coding=utf-8
 import json
-from django.conf import settings
-from django.core.exceptions import SuspiciousOperation
 
+from django.core.exceptions import SuspiciousOperation
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.generic import View
 
@@ -10,6 +9,7 @@ from apps.main.api.correspondence.utils import send_notification_about_new_messa
 from collective.exceptions import InvalidArgument, InvalidHttpParameter
 from collective.methods.request_data_getters import angular_parameters
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
+
 
 
 class SendMessageFromClient(View):

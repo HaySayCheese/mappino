@@ -100,8 +100,13 @@
             .size(100%, 50px);
             padding: 10px 20px;
 
-            span {
+            div {
+                width: calc(~"100% - 35px");
+                display: inline-block;
                 font-size: @font-size-h3;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
 
