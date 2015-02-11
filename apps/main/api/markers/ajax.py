@@ -88,6 +88,7 @@ class Markers(View):
             response = {}
             for tid in tids:
                 filter_conditions = (cls.filters_parsers[tid])(request)
+                # todo: add markers ids intersection
                 response[tid] = SegmentsIndex.estimate_count(tid, ne_lat, ne_lng, sw_lat, sw_lng, zoom, filter_conditions)
 
         except TooBigTransaction:
@@ -126,6 +127,7 @@ class Markers(View):
             response = {}
             for tid in tids:
                 filter_conditions = (cls.filters_parsers[tid])(request)
+                # todo: add markers ids intersection
                 response[tid] = SegmentsIndex.markers(tid, ne_lat, ne_lng, sw_lat, sw_lng, filter_conditions)
 
         except TooBigTransaction:
