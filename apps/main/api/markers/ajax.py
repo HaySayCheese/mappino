@@ -9,9 +9,10 @@ from core.markers_handler.exceptions import TooBigTransaction
 from core.publications.constants import OBJECTS_TYPES
 
 
+
 class Markers(View):
     get_codes = {
-        'invalid_tid': {
+        'invalid_tids': {
             'code': 1,
         },
         'invalid_coordinates': {
@@ -43,37 +44,38 @@ class Markers(View):
 
     @classmethod
     def get(cls, request, *args):
+        # note:
+        # User will almost never positioning his viewport on the same position twice,
+        # and almost never will generate requests with the same viewport coordinates.
+        # as a result - there is no need to add last modified header to this view.
+
         if 'zoom' in request.GET:
             return cls.__markers_count_per_segment(request)
-
-        return cls.__markers(request)
+        else:
+            return cls.__markers_briefs(request)
 
 
     @classmethod
     def __markers_count_per_segment(cls, request):
-        # todo: add last modified header for a 5m
-
+        """
+        :returns:
+            HttpJsonResponse with estimate markers count for every receiced object type
+            and viewport coords (if request was handled OK), or
+            HttpJsonResponse with error code (if request was not handled properly).
+        """
         try:
-            tid = int(request.GET['tid'])
-            if not tid in OBJECTS_TYPES.values():
-                raise ValueError()
-
-        except (IndexError, ValueError):
-            return HttpJsonResponseBadRequest(cls.get_codes['invalid_tid'])
-
-
-        try:
-            viewport_ne = request.GET['ne']
-            viewport_sw = request.GET['sw']
-
-        except IndexError:
+            ne_lat, \
+            ne_lng, \
+            sw_lat, \
+            sw_lng = cls.__parse_viewport_coordinates(request)
+        except ValueError:
             return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
 
-        ne_lat, ne_lng = viewport_ne.split(':')
-        ne_lat, ne_lng = float(ne_lat), float(ne_lng)
 
-        sw_lat, sw_lng = viewport_sw.split(':')
-        sw_lat, sw_lng = float(sw_lat), float(sw_lng)
+        try:
+            tids = cls.__parse_object_types_ids(request)
+        except ValueError:
+            return HttpJsonResponseBadRequest(cls.get_codes['invalid_tids'])
 
 
         try:
@@ -81,50 +83,112 @@ class Markers(View):
         except (IndexError, ValueError):
             return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
 
-        conditions = (cls.filters_parsers[tid])(request)
-        count = SegmentsIndex.estimate_count(tid, ne_lat, ne_lng, sw_lat, sw_lng, zoom, conditions)
-        return HttpJsonResponse(count)
-
-
-    @classmethod
-    def __markers(cls, request):
-        # todo: add last modified header for a 5m
 
         try:
-            tid = int(request.GET['tid'])
-            if not tid in OBJECTS_TYPES.values():
-                raise ValueError()
-
-        except (IndexError, ValueError):
-            return HttpJsonResponseBadRequest(cls.get_codes['invalid_tid'])
-
-
-        try:
-            viewport_ne = request.GET['ne']
-            viewport_sw = request.GET['sw']
-
-        except IndexError:
-            return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
-
-        try:
-            ne_lat, ne_lng = viewport_ne.split(':')
-            sw_lat, sw_lng = viewport_sw.split(':')
-
-            ne_lat = float(ne_lat)
-            ne_lng = float(ne_lng)
-            sw_lat = float(sw_lat)
-            sw_lng = float(sw_lng)
-
-        except ValueError:
-            return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
-
-
-        try:
-            conditions = (cls.filters_parsers[tid])(request)
-            return HttpJsonResponse(
-                SegmentsIndex.markers(tid, ne_lat, ne_lng, sw_lat, sw_lng, conditions))
+            response = {}
+            for tid in tids:
+                filter_conditions = (cls.filters_parsers[tid])(request)
+                response[tid] = SegmentsIndex.estimate_count(tid, ne_lat, ne_lng, sw_lat, sw_lng, zoom, filter_conditions)
 
         except TooBigTransaction:
             return HttpJsonResponseBadRequest(cls.get_codes['too_big_query'])
         except InvalidArgument:
             return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
+
+
+        # seems to be ok
+        return HttpJsonResponse(count)
+
+
+    @classmethod
+    def __markers_briefs(cls, request):
+        """
+        :returns:
+            HttpJsonResponse with briefs for every receiced object type and viewport coords (if request was handled OK), or
+            HttpJsonResponse with error code (if request was not handled properly).
+        """
+        try:
+            ne_lat, \
+            ne_lng, \
+            sw_lat, \
+            sw_lng = cls.__parse_viewport_coordinates(request)
+        except ValueError:
+            return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
+
+
+        try:
+            tids = cls.__parse_object_types_ids(request)
+        except ValueError:
+            return HttpJsonResponseBadRequest(cls.get_codes['invalid_tids'])
+
+
+        try:
+            response = {}
+            for tid in tids:
+                filter_conditions = (cls.filters_parsers[tid])(request)
+                response[tid] = SegmentsIndex.markers(tid, ne_lat, ne_lng, sw_lat, sw_lng, filter_conditions)
+
+        except TooBigTransaction:
+            return HttpJsonResponseBadRequest(cls.get_codes['too_big_query'])
+        except InvalidArgument:
+            return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
+
+
+        # seems to be ok
+        return HttpJsonResponseBadRequest(cls.get_codes['invalid_tids'])
+
+
+        @staticmethod
+        def __parse_viewport_coordinates(request):
+            """
+            :returns:
+                Parses request for viewport coordinates.
+                Returns ne_lat, ne_lng, sw_lat, sw_lng in tuple
+
+            :raises:
+                ValueError if request contains ivalid data.
+            """
+
+            try:
+                viewport_ne = request.GET['ne']
+                viewport_sw = request.GET['sw']
+
+                ne_lat, ne_lng = viewport_ne.split(':')
+                sw_lat, sw_lng = viewport_sw.split(':')
+
+                ne_lat = float(ne_lat)
+                ne_lng = float(ne_lng)
+                sw_lat = float(sw_lat)
+                sw_lng = float(sw_lng)
+
+            except (IndexError, ValueError):
+                raise ValueError('Invalid viewport coordinates was received.')
+
+            # seems to be ok
+            return ne_lat, ne_lng, sw_lat, sw_lng
+
+
+        @staticmethod
+        def __parse_object_types_ids(request):
+            """
+            :returns:
+                list of object types ids received from the request.
+
+            :raises:
+                ValueError even if one tid wil not pass validation.
+            """
+            tids = request.GET.get('tids', '').split(',')
+            if not tids:
+                raise ValueError('No one object type id was received.')
+
+            # validation
+            for tid in tids:
+                # If ValueError will be genrated after the next line - it's OK, no need to double check for error.
+                # This method raises ValueError in error cases.
+                tid = int(tid)
+
+                if tid not in OBJECTS_TYPES.values():
+                    raise ValueError('Invalid type id received from the client, {}'.format(tid))
+
+            # seems to be ok
+            return tids
