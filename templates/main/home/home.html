@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mappino</title>
+    <title>Добро пожаловать на mappino</title>
     <meta name="verify-reformal" content="a136a27e8d6dc3e9909629f0"/>
 
     {% compress css %}
         <link rel="stylesheet" href="{{ static }}css/home/base.min.css"/>
     {% endcompress %}
+
+    <script src="http://maps.googleapis.com/maps/api/js?v=3.9&key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places"></script>
 
 
     <script src="http://yandex.st/jquery/2.1.1/jquery.min.js"></script>
@@ -59,42 +61,42 @@
                     <div class="text-center">
                         <div class="row">
                             <div class="col-xs-10 col-xs-offset-1">
-                                <select class="type-selectpicker text-left" name="r_type_sid" data-width="100%"
-                                        ng-options="type.id as type.title for type in publicationTypes"
-                                        ng-model="home.type">
+                                <select class="type-selectpicker text-left" name="h_type_sid" data-width="100%">
+                                    <option value="0">Квартиры</option>
+                                    <option value="1">Дома</option>
+                                    <option value="2">Комнаты</option>
+                                    <option value="3">Земельные участки</option>
+                                    <option value="4">Гаражи</option>
+                                    <option value="5">Офисы</option>
+                                    <option value="6">Торговые помещения</option>
+                                    <option value="7">Склады</option>
+                                    <option value="8">Готовый бизнес</option>
                                 </select>
                             </div>
                             <div class="form-group col-xs-10 col-xs-offset-1">
                                 <div class="btn-group btn-group-justified choices" data-toggle="buttons">
-                                    <label class="btn btn-lg btn-success active" ng-click="home.operation = 'sale'">
-                                        <input type="radio" name="home.operation[]" ng-model="home.operation" value="'sale'"
-                                               ng-checked="home.operation == 'sale'">На продажу
+                                    <label class="btn btn-lg btn-success active">
+                                        <input type="radio" name="home.operation[]">На продажу
                                     </label>
-                                    <label class="btn btn-lg btn-success" ng-click="home.operation = 'rent'">
-                                        <input type="radio" name="home.operation[]" ng-model="home.operation" value="'rent'"
-                                               ng-checked="home.operation == 'rent'">В аренду
+                                    <label class="btn btn-lg btn-success">
+                                        <input type="radio" name="home.operation[]">В аренду
                                     </label>
-                                    <label class="btn btn-lg btn-success" ng-click="home.operation = 'daily'" ng-if="home.type < 5">
-                                        <input type="radio" name="home.operation[]" ng-model="home.operation" value="'daily'"
-                                               ng-checked="home.operation == 'daily'">Посуточно
+                                    <label class="btn btn-lg btn-success">
+                                        <input type="radio" name="home.operation[]">Посуточно
                                     </label>
                                 </div>
                             </div>
                             <div class="form-group col-xs-10 col-xs-offset-1">
-                                <input type="text" id="home-location-autocomplete"
-                                       class="form-control input-lg text-center search-city"
-                                       ng-class="{required: home.cityRequired}"
-                                       ng-model="home.city"
-                                       ng-change="cityInputChanged()"/>
-                                <div class="help-text text-center" ng-hide="home.cityRequired">
+                                <input type="text" id="home-location-autocomplete" class="form-control input-lg text-center search-city"/>
+                                <div class="help-text text-center">
                                     <i>
                                         Например,
-                                        <a href ng-click="fillSearchSuggest('Черновцы, Черновицкая область, Украина')">Черновцы</a>
+                                        <a href data-suggest="Черновцы, Черновицкая область, Украина">Черновцы</a>
                                         или
-                                        <a href ng-click="fillSearchSuggest('Черновицкая область, Украина')">Черновицкая область</a>
+                                        <a href data-suggest="Черновицкая область, Украина">Черновицкая область</a>
                                     </i>
                                 </div>
-                                <div class="error required text-center" ng-show="home.cityRequired">
+                                <div class="error required text-center city-empty">
                                     <i>
                                         Пожалуйста, укажите город, или регион, <br/>
                                         в котором необходимо произвести поиск
@@ -273,7 +275,7 @@
             </div>
             <div class="row footer">
                 <div class="col-xs-12 text-center">
-                    binno &copy; [[ currentYear() ]]
+                    binno &copy; <span class="footer-year"></span>
                 </div>
             </div>
         </section>
