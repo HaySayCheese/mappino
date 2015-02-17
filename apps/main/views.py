@@ -13,8 +13,7 @@ def homepage(request):
 
 
 @ensure_csrf_cookie
-def home(request): # fixme: rename to the map
-    # todo: there is map here, bu must be houmepage
+def map(request):
     template = templates.get_template('main/home.html')
     return HttpResponse(content=template.render())
 
