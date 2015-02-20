@@ -164,7 +164,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
         angular.element("body").removeClass("modal-open");
         angular.element(".modal-backdrop").remove();
 
-        $location.path("/search");
+        $location.path("/");
 
         if(!$scope.$$phase)
             $scope.$apply();
@@ -175,12 +175,12 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
      * Логіка підставлення в урл параметрів пошука
      **/
     $scope.$on("$routeChangeSuccess", function() {
-        $scope.urlFiltersPart = $location.url().replace("/search", "");
+        $scope.urlFiltersPart = $location.url().replace("/", "");
         $rootScope.publicationIdPart = $routeParams.id;
 
         angular.element(".modal-backdrop").remove();
 
-        if ($location.path() == "/search")
+        if ($location.path() == "/")
             $rootScope.pageTitle = "Mappino";
     });
 
@@ -197,7 +197,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
         if (next.indexOf("/account/registration") != -1 ||
             next.indexOf("/account/login") != -1 ||
             next.indexOf("/account/restore-access") != -1) {
-            $location.path("/search");
+            $location.path("/");
 
             if(!$scope.$$phase)
                 $scope.$apply();
