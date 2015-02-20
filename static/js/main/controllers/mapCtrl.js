@@ -381,7 +381,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     $scope.parseSearchParametersFromUrl = function() {
         var searchParameters = $location.search();
 
-            $rootScope.sidebarTemplateUrl = "ajax/template/main/sidebar/common/";
+            $rootScope.sidebarTemplateUrl = "/ajax/template/main/sidebar/common/";
 
             $timeout(function() {
                 cityInput = document.getElementById('sidebar-city-input');
@@ -555,13 +555,13 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 requestTimeout = setTimeout(function() {
                     Markers.load(filters, viewport, $scope.filters.map.zoom, panel, function(data) {
                         markers = data;
-                        placeMarkers();
+                        placeMarkers(data);
                     });
                 }, requestTimeoutTime);
             } else {
                 Markers.load(filters, viewport, $scope.filters.map.zoom, panel, function(data) {
                     markers = data;
-                    placeMarkers();
+                    placeMarkers(data);
                 });
             }
         }, 100);
@@ -571,8 +571,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     /**
      * Функція яка розставляє маркери
      */
-    function placeMarkers() {
-        for (var panel in markers) {
+    function placeMarkers(data) {
+        for (var panel in data) {
             if (markers.hasOwnProperty(panel)) {
                 for (var marker in markers[panel]) {
                     if (markers[panel].hasOwnProperty(marker)) {

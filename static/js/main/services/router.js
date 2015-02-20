@@ -3,7 +3,7 @@
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider
 
-        .when('/search', {
+        .when('/', {
             templateUrl: "/ajax/template/main/search/",
             view: "content-view",
             reloadOnSearch: false
@@ -40,6 +40,6 @@ app.config(['$routeProvider', function($routeProvider) {
         })
 
         .otherwise({
-            redirectTo: '/first-enter'
+            redirectTo: '/'
         });
 }]);

@@ -7,6 +7,12 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             green: {},
             yellow: {}
         },
+        tempMarkers = {
+            red: {},
+            blue: {},
+            green: {},
+            yellow: {}
+        },
         tempPieMarkers = {
             red: {},
             blue: {},
@@ -56,8 +62,9 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
 
                     if (key.toString().substring(2) == "type_sid") {
                         if (filters[key] == null || filters[key] == "undefined") {
-                            that.clearPanelMarkers(panel);
-                            pieMarkersLoaded[panel] = true;
+                            that.clearPanelMarkers(panel, function() {
+                                pieMarkersLoaded[panel] = true;
+                            });
                             return;
                         }
 
@@ -82,13 +89,16 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             }, 300);
 
             Queries.Map.getMarkers(tid, stringFilters, viewport).success(function(data) {
-                that.clearPanelMarkers(panel);
-                that.add(tid, panel, data, function() {
-                    _.isFunction(callback) && callback(markers);
-                });
+                that.clearPanelMarkers(panel, function() {
+                    that.add(tid, panel, data, function() {
 
-                clearTimeout(requestTimeout);
-                $rootScope.loadings.markers = false;
+                        _.isFunction(callback) && callback(markers);
+                        console.log(markers)
+                    });
+
+                    clearTimeout(requestTimeout);
+                    $rootScope.loadings.markers = false;
+                });
             });
         },
 
@@ -337,13 +347,19 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             this.clearTempPieMarkers();
         },
 
-        clearPanelMarkers: function(panel) {
+        clearPanelMarkers: function(panel, callback) {
             for (var marker in markers[panel]) {
                 if (markers[panel].hasOwnProperty(marker)) {
                     markers[panel][marker].setMap(null);
                     delete markers[panel][marker];
                 }
             }
+
+            _.isFunction(callback) && callback();
+        },
+
+        findSame: function() {
+
         },
 
 

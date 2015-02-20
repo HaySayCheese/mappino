@@ -12,9 +12,4 @@ app.config(function($interpolateProvider, $locationProvider) {
 
 app.run(function($http, $cookies, $rootScope, $location) {
     $http.defaults.headers.common['X-CSRFToken'] = $cookies.csrftoken;
-
-    $rootScope.$on("$routeChangeStart", function(event, next, current) {
-        if (sessionStorage.userName && next.templateUrl == "/ajax/template/main/first-enter/")
-            $location.path("/search");
-    });
 });

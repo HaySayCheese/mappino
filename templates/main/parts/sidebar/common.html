@@ -53,7 +53,7 @@
                                 </div>
                             </form>
                             <div ng-if="filters.red.r_type_sid != null"
-                                 ng-include="'ajax/template/main/filters/red/' + [[ filters.red.r_type_sid ]] + '/'"
+                                 ng-include="'/ajax/template/main/filters/red/' + [[ filters.red.r_type_sid ]] + '/'"
                                  onload="status.redTemplateIsLoaded = true;"></div>
                             <div class="sidebar-loader" ng-hide="status.redTemplateIsLoaded || filters.red.r_type_sid == null"></div>
                         </div>
@@ -90,7 +90,7 @@
                                 </div>
                             </form>
                             <div ng-if="filters.blue.b_type_sid != null"
-                                 ng-include="'ajax/template/main/filters/blue/' + [[ filters.blue.b_type_sid ]] + '/'"
+                                 ng-include="'/ajax/template/main/filters/blue/' + [[ filters.blue.b_type_sid ]] + '/'"
                                  onload="status.blueTemplateIsLoaded = true;"></div>
                             <div class="sidebar-loader" ng-hide="status.blueTemplateIsLoaded || filters.blue.b_type_sid == null"></div>
                         </div>
@@ -127,7 +127,7 @@
                                 </div>
                             </form>
                             <div ng-if="filters.green.g_type_sid != null"
-                                 ng-include="'ajax/template/main/filters/green/' + [[ filters.green.g_type_sid ]] + '/'"
+                                 ng-include="'/ajax/template/main/filters/green/' + [[ filters.green.g_type_sid ]] + '/'"
                                  onload="status.greenTemplateIsLoaded = true;"></div>
                             <div class="sidebar-loader" ng-hide="status.greenTemplateIsLoaded|| filters.green.g_type_sid == null"></div>
                         </div>
@@ -164,7 +164,7 @@
                                 </div>
                             </form>
                             <div ng-if="filters.yellow.y_type_sid != null"
-                                 ng-include="'ajax/template/main/filters/yellow/' + [[ filters.yellow.y_type_sid ]] + '/'"
+                                 ng-include="'/ajax/template/main/filters/yellow/' + [[ filters.yellow.y_type_sid ]] + '/'"
                                  onload="status.yellowTemplateIsLoaded = true;"></div>
                             <div class="sidebar-loader" ng-hide="status.yellowTemplateIsLoaded || filters.yellow.y_type_sid == null"></div>
                         </div>

@@ -4,7 +4,7 @@ app.factory('Queries', function($http) {
    return {
        Map: {
            getMarkers: function(tid, filters, viewport) {
-               return $http.get('ajax/api/markers/?tid=' + tid + viewport + filters)
+               return $http.get('/ajax/api/markers/?tid=' + tid + viewport + filters)
            },
 
            getRealtorData: function(realtor) {
@@ -16,15 +16,15 @@ app.factory('Queries', function($http) {
            },
 
            getPublicationDescription: function(tid_hid) {
-               return $http.get('ajax/api/detailed/publication/' + tid_hid + '/')
+               return $http.get('/ajax/api/detailed/publication/' + tid_hid + '/')
            },
 
            getPublicationContacts: function(tid_hid) {
-               return $http.get('ajax/api/detailed/publication/' + tid_hid + '/contacts/')
+               return $http.get('/ajax/api/detailed/publication/' + tid_hid + '/contacts/')
            },
 
            sendPublicationMessage: function(tid_hid, message) {
-               return $http.post('ajax/api/notifications/send-message/' + tid_hid + '/', {
+               return $http.post('/ajax/api/notifications/send-message/' + tid_hid + '/', {
                    message: message.text,
                    email: message.email,
                    name: message.name
@@ -32,7 +32,7 @@ app.factory('Queries', function($http) {
            },
 
            sendPublicationCallRequest: function(tid_hid, call_request) {
-               return $http.post('ajax/api/notifications/send-call-request/' + tid_hid + '/', {
+               return $http.post('/ajax/api/notifications/send-call-request/' + tid_hid + '/', {
                    phone_number: call_request.phone,
                    name: call_request.name
                })
@@ -42,18 +42,18 @@ app.factory('Queries', function($http) {
 
        Account: {
            loginUser: function(user) {
-               return $http.post('ajax/api/accounts/login/', {
+               return $http.post('/ajax/api/accounts/login/', {
                    username: user.name,
                    password: user.password
                });
            },
 
            logoutUser: function() {
-               return $http.post('ajax/api/accounts/logout/');
+               return $http.post('/ajax/api/accounts/logout/');
            },
 
            registerUser: function(user) {
-               return $http.post('ajax/api/accounts/registration/', {
+               return $http.post('/ajax/api/accounts/registration/', {
                    'name':             user.name,
                    'surname':          user.surname,
                    'phone-number':     "+380" + user.phoneNumber,
@@ -64,21 +64,21 @@ app.factory('Queries', function($http) {
            },
 
            repeatRegistration: function() {
-               return $http.post('ajax/api/accounts/registration/cancel/');
+               return $http.post('/ajax/api/accounts/registration/cancel/');
            },
 
            repeatSendCode: function() {
-               return $http.post('ajax/api/accounts/registration/resend-sms/');
+               return $http.post('/ajax/api/accounts/registration/resend-sms/');
            },
 
            validateEmail: function(email) {
-               return $http.post('ajax/api/accounts/validate-email/', {
+               return $http.post('/ajax/api/accounts/validate-email/', {
                    email: email
                });
            },
 
            validatePhone: function(phone) {
-               return $http.post('ajax/api/accounts/validate-phone-number/', {
+               return $http.post('/ajax/api/accounts/validate-phone-number/', {
                    number: phone
                });
            },
@@ -86,23 +86,23 @@ app.factory('Queries', function($http) {
 
            // Відправка кода телефона на валідацію
            validatePhoneCode: function(code) {
-               return $http.post('ajax/api/accounts/registration/', {
+               return $http.post('/ajax/api/accounts/registration/', {
                    code: code
                });
            },
 
            getUserName: function() {
-               return $http.get('ajax/api/accounts/on-login-info/');
+               return $http.get('/ajax/api/accounts/on-login-info/');
            },
 
            restoreAccessSendEmail: function(username) {
-               return $http.post('ajax/api/accounts/password-reset/', {
+               return $http.post('/ajax/api/accounts/password-reset/', {
                    username: username
                });
            },
 
            restoreAccessSendPasswords: function(user) {
-               return $http.post('ajax/api/accounts/password-reset/restore/', {
+               return $http.post('/ajax/api/accounts/password-reset/restore/', {
                    'token': user.token,
                    'password': user.password,
                    'password-repeat': user.passwordRepeat
