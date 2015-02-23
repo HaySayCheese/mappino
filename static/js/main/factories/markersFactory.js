@@ -52,7 +52,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
          * Загрузка маркерів
          *
          * @param {object}      filters  Фільтри
-         * @param {string}      viewport Вюпорт карти
+         * @param {object}      viewport Вюпорт карти
          * @param {string}      zoom     Зум карти
          * @param {string}      panel    Колір панелі фільтрів
          * @param {function}    callback

@@ -550,8 +550,10 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 swLng = sswLng.replace(sswLng.substring(sswLng.indexOf(".") + 3, sswLng.length), ""),
                 //viewport = "{ ne:" + neLat + ";" + neLng + ",sw:" + swLat + ";" + swLng + "}";
                 viewport = {
-                    'ne': neLat + ";" + neLng,
-                    'sw': swLat + ";" + swLng
+                    'neLat': neLat,
+                    'neLng': neLng,
+                    'swLat': swLat,
+                    'swLng': swLng
                 };
 
             if (timeout) {
