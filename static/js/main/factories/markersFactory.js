@@ -386,10 +386,10 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                 }
             }
 
-            var tidItem = {};
-            tidItem[tid] = stringFilters;
+            //var tidItem = {};
+            //tidItem[tid] = stringFilters;
             //if (!jsonFilters.filters[tid])
-                jsonFilters.filters.push(tidItem);
+                jsonFilters.filters.push(stringFilters);
 
             console.log("createJsonFiltersFromString")
         },
