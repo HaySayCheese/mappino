@@ -548,7 +548,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 neLng = sneLng.replace(sneLng.substring(sneLng.indexOf(".") + 3, sneLng.length), ""),
                 swLat = sswLat.replace(sswLat.substring(sswLat.indexOf(".") + 3, sswLat.length), ""),
                 swLng = sswLng.replace(sswLng.substring(sswLng.indexOf(".") + 3, sswLng.length), ""),
-                viewport = "ne=" + neLat + ":" + neLng + "&sw=" + swLat + ":" + swLng;
+                viewport = "ne=" + neLat + ":" + neLng + ",sw=" + swLat + ":" + swLng;
 
             if (timeout) {
                 clearTimeout(requestTimeout);

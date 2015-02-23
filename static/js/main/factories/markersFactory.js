@@ -378,7 +378,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                     }
 
                     if (filters[key] !== false && filters[key] !== "false" && filters[key] !== "" && filters[key] !== null) {
-                        var param = "&" + key.toString().substring(2),
+                        var param = "," + key.toString().substring(2),
                             value = "=" + filters[key];
 
                         stringFilters += param + value;
