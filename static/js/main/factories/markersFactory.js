@@ -60,7 +60,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
         load: function(r_filters, b_filters, g_filters, y_filters, viewport, zoom, callback) {
             var that = this,
                 tid = null,
-                stringFilters = "";
+                stringFilters = {};
 
             jsonFilters = {
                 zoom: "",
@@ -357,7 +357,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
 
         createJsonFiltersFromString: function(filters) {
             var that = this,
-                stringFilters = "",
+                stringFilters = {},
                 tid = "";
 
             console.log(filters)
@@ -378,10 +378,10 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                     }
 
                     if (filters[key] !== false && filters[key] !== "false" && filters[key] !== "" && filters[key] !== null) {
-                        var param = "," + key.toString().substring(2),
-                            value = ":" + filters[key];
+                        var param = key.toString().substring(2),
+                            value = filters[key];
 
-                        stringFilters += param + value;
+                        stringFilters[param] = value;
                     }
                 }
             }
