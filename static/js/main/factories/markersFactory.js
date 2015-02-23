@@ -39,7 +39,12 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             lng: minLng
         },
         requestTimeout = null,
-        pieMarkerInterval = null;
+        pieMarkerInterval = null,
+        jsonFilters = {
+            zoom: "",
+            viewport: "",
+            filters: []
+        };
 
     return {
 
@@ -52,43 +57,35 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
          * @param {string}      panel    Колір панелі фільтрів
          * @param {function}    callback
          */
-        load: function(filters, viewport, zoom, panel, callback) {
+        load: function(r_filters, b_filters, g_filters, y_filters, viewport, zoom, callback) {
             var that = this,
                 tid = null,
                 stringFilters = "";
 
-            for (var key in filters) {
-                if (filters.hasOwnProperty(key)) {
+            jsonFilters = {
+                zoom: "",
+                viewport: "",
+                filters: []
+            };
 
-                    if (key.toString().substring(2) == "type_sid") {
-                        if (filters[key] == null || filters[key] == "undefined") {
-                            that.clearPanelMarkers(panel, function() {
-                                pieMarkersLoaded[panel] = true;
-                            });
-                            return;
-                        }
+            jsonFilters.zoom = zoom;
+            jsonFilters.viewport = viewport;
 
-                        tid = filters[key];
-                    }
+            that.createJsonFiltersFromString(r_filters);
+            that.createJsonFiltersFromString(b_filters);
+            that.createJsonFiltersFromString(g_filters);
+            that.createJsonFiltersFromString(y_filters);
 
-                    if (filters[key] !== false && filters[key] !== "false" && filters[key] !== "" && filters[key] !== null) {
-                        var param = "&" + key.toString().substring(2),
-                            value = "=" + filters[key];
-
-                        stringFilters += param + value;
-                    }
-                }
-            }
-
-            if (zoom <= 14)
-                stringFilters += "&zoom=" + zoom;
+            console.log("load");
+            console.log(jsonFilters);
 
             clearTimeout(requestTimeout);
             requestTimeout = setTimeout(function() {
                 $rootScope.loadings.markers = true;
             }, 300);
 
-            Queries.Map.getMarkers(tid, stringFilters, viewport).success(function(data) {
+            console.log(JSON.stringify(jsonFilters))
+            Queries.Map.getMarkers(JSON.stringify(jsonFilters).replace("/\"/g", 'ppp')).success(function(data) {
                 that.clearPanelMarkers(panel, function() {
                     that.add(tid, panel, data, function() {
 
@@ -358,8 +355,43 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             _.isFunction(callback) && callback();
         },
 
-        findSame: function() {
+        createJsonFiltersFromString: function(filters) {
+            var that = this,
+                stringFilters = "",
+                tid = "";
 
+            console.log(filters)
+
+            for (var key in filters) {
+                if (filters.hasOwnProperty(key)) {
+
+                    if (key.toString().substring(2) == "type_sid") {
+                        if (filters[key] == null || filters[key] == "undefined") {
+                            //that.clearPanelMarkers(panel, function () {
+                            //    pieMarkersLoaded[panel] = true;
+                            //});
+                            return;
+                        }
+
+                        tid = filters[key];
+                        console.log(tid)
+                    }
+
+                    if (filters[key] !== false && filters[key] !== "false" && filters[key] !== "" && filters[key] !== null) {
+                        var param = "&" + key.toString().substring(2),
+                            value = "=" + filters[key];
+
+                        stringFilters += param + value;
+                    }
+                }
+            }
+
+            var tidItem = {};
+            tidItem[tid] = stringFilters;
+            //if (!jsonFilters.filters[tid])
+                jsonFilters.filters.push(tidItem);
+
+            console.log("createJsonFiltersFromString")
         },
 
 

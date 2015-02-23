@@ -166,22 +166,22 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        loadData(newValue, "red", true)
+        loadData("red", true)
     });
     $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        loadData(newValue, "blue", true)
+        loadData("blue", true)
     });
     $scope.$watchCollection("filters.green", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        loadData(newValue, "green", true)
+        loadData("green", true)
     });
     $scope.$watchCollection("filters.yellow", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
 
-        loadData(newValue, "yellow", true)
+        loadData("yellow", true)
     });
 
 
@@ -363,10 +363,10 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
             mapIsLoaded = true;
 
-            loadData($scope.filters.red, "red", false);
-            loadData($scope.filters.blue, "blue", false);
-            loadData($scope.filters.green, "green", false);
-            loadData($scope.filters.yellow, "yellow", false);
+            loadData("red", false);
+            //loadData("blue", false);
+            //loadData("green", false);
+            //loadData("yellow", false);
 
             if(!$scope.$$phase)
                 $scope.$apply();
@@ -533,7 +533,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     /**
      * Функція яка ініціює загрузку даних
      */
-    function loadData(filters, panel, timeout) {
+    function loadData(panel, timeout) {
 
         $timeout(function() {
             if (!mapIsLoaded)
@@ -548,18 +548,24 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 neLng = sneLng.replace(sneLng.substring(sneLng.indexOf(".") + 3, sneLng.length), ""),
                 swLat = sswLat.replace(sswLat.substring(sswLat.indexOf(".") + 3, sswLat.length), ""),
                 swLng = sswLng.replace(sswLng.substring(sswLng.indexOf(".") + 3, sswLng.length), ""),
-                viewport = "&ne=" + neLat + ":" + neLng + "&sw=" + swLat + ":" + swLng;
+                viewport = "ne=" + neLat + ":" + neLng + "&sw=" + swLat + ":" + swLng;
 
             if (timeout) {
                 clearTimeout(requestTimeout);
                 requestTimeout = setTimeout(function() {
-                    Markers.load(filters, viewport, $scope.filters.map.zoom, panel, function(data) {
+                    Markers.load($scope.filters.red, $scope.filters.blue,
+                                    $scope.filters.green, $scope.filters.yellow,
+                                    viewport, $scope.filters.map.zoom, function(data) {
+
                         markers = data;
                         placeMarkers(data);
                     });
                 }, requestTimeoutTime);
             } else {
-                Markers.load(filters, viewport, $scope.filters.map.zoom, panel, function(data) {
+                Markers.load($scope.filters.red, $scope.filters.blue,
+                                $scope.filters.green, $scope.filters.yellow,
+                                viewport, $scope.filters.map.zoom, function(data) {
+
                     markers = data;
                     placeMarkers(data);
                 });

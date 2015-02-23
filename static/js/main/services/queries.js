@@ -3,8 +3,8 @@
 app.factory('Queries', function($http) {
    return {
        Map: {
-           getMarkers: function(tid, filters, viewport) {
-               return $http.get('/ajax/api/markers/?tid=' + tid + viewport + filters)
+           getMarkers: function(filters) {
+               return $http.get('/ajax/api/markers/?p=' + filters)
            },
 
            getRealtorData: function(realtor) {
