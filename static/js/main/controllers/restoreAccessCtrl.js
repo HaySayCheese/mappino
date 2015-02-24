@@ -1,13 +1,13 @@
 'use strict';
 
-app.controller('RestoreAccessCtrl', function($scope, $rootScope, $location) {
+app.controller('RestoreAccessCtrl', function($scope, $rootScope, $location, TXT) {
 
     angular.element(".restore-access-modal").modal();
 
     /**
      * Стан вікна восстановлення пароля
      **/
-    $rootScope.pageTitle = "Восстановление пароля - Mappino";
+    $rootScope.pageTitle = "Восстановление пароля - " + TXT.SERVICE_NAME;
     $rootScope.restoreAccessStatePart = "sendEmail";
 
     if ($location.search().token)

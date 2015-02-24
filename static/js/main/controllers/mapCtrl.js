@@ -522,7 +522,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             .replace("/account/registration", "")
             .replace("/account/restore-access", "")
             .replace("/account/login", "")
-            .replace("/first-enter", "")
             .replace("/publication/" + $scope.publicationIdPart, "");
 
         if (!$scope.$$phase)

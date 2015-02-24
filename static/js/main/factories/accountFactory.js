@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Account', function(Queries, $location) {
+app.factory('Account', function(Queries) {
 
     return {
 
