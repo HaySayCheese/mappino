@@ -95,12 +95,12 @@ class Markers(View):
 
         try:
             response = {}
-            for tid, filters in tids_and_filters:
+            for tid, panel, filters in tids_and_filters:
                 filter_conditions = (cls.filters_parsers[tid])(filters)
                 # todo: add markers ids intersection
                 segments = SegmentsIndex.estimate_count(tid, ne_lat, ne_lng, sw_lat, sw_lng, zoom, filter_conditions)
                 if segments:
-                    response[tid] = segments
+                    response[panel] = segments
 
         except TooBigTransaction:
             return HttpJsonResponseBadRequest(cls.get_codes['too_big_query'])
@@ -123,7 +123,7 @@ class Markers(View):
             ne_lat, \
             ne_lng, \
             sw_lat, \
-            sw_lng = cls._parse_viewport_coordinates(params)
+            sw_lng = cls.__parse_viewport_coordinates(params)
         except ValueError:
             return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
 
@@ -136,12 +136,12 @@ class Markers(View):
 
         try:
             response = {}
-            for tid, filters in tids_and_filters:
+            for tid, panel, filters in tids_and_filters:
                 filter_conditions = (cls.filters_parsers[tid])(filters)
                 # todo: add markers ids intersection
                 makers = SegmentsIndex.markers(tid, ne_lat, ne_lng, sw_lat, sw_lng, filter_conditions)
                 if markers:
-                    response[tid] = markers
+                    response[panel] = markers
 
         except TooBigTransaction:
             return HttpJsonResponseBadRequest(cls.get_codes['too_big_query'])
@@ -201,8 +201,9 @@ class Markers(View):
                 if tid not in OBJECTS_TYPES.values():
                     raise ValueError('Invalid type id received from the client, {}'.format(tid))
 
+                panel = filters['panel']
                 parsed_tids_and_filters.append(
-                    (tid, filters, ) # note: tuple here
+                    (tid, panel, filters, ) # note: tuple here
                 )
 
         except (IndexError, ValueError):
