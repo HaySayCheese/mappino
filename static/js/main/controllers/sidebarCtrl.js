@@ -6,8 +6,6 @@ app.controller('SidebarCtrl', function($scope, $rootScope, $cookies, $timeout, $
 
     getUserName();
 
-
-
     /**
      * Дивимся за кукою сесії, якщо вона є то
      * берем куку з іменем юзера якщо і вона є

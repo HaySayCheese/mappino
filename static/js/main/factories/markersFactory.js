@@ -51,10 +51,12 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
         /**
          * Загрузка маркерів
          *
-         * @param {object}      filters  Фільтри
+         * @param {object}      r_filters  Фільтри червоної панелі
+         * @param {object}      b_filters  Фільтри синьої панелі
+         * @param {object}      g_filters  Фільтри зеленої панелі
+         * @param {object}      y_filters  Фільтри жовтої панелі
          * @param {object}      viewport Вюпорт карти
-         * @param {string}      zoom     Зум карти
-         * @param {string}      panel    Колір панелі фільтрів
+         * @param {number}      zoom     Зум карти
          * @param {function}    callback
          */
         load: function(r_filters, b_filters, g_filters, y_filters, viewport, zoom, callback) {
@@ -84,11 +86,10 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                 $rootScope.loadings.markers = true;
             }, 300);
 
-            console.log(JSON.stringify(jsonFilters))
-            Queries.Map.getMarkers(JSON.stringify(jsonFilters).replace("/\"/g", 'ppp')).success(function(data) {
+
+            Queries.Map.getMarkers(JSON.stringify(jsonFilters)).success(function(data) {
                 that.clearPanelMarkers(panel, function() {
                     that.add(tid, panel, data, function() {
-
                         _.isFunction(callback) && callback(markers);
                         console.log(markers)
                     });
@@ -388,10 +389,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
 
             var tidItem = {};
             tidItem[tid] = stringFilters;
-            //if (!jsonFilters.filters[tid])
-                jsonFilters.filters.push(tidItem);
-
-            console.log("createJsonFiltersFromString")
+            jsonFilters.filters.push(tidItem);
         },
 
 

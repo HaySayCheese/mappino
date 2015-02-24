@@ -1,11 +1,11 @@
 'use strict';
 
-app.controller('LoginCtrl', function($scope, $rootScope, $timeout, $location, Account) {
+app.controller('LoginCtrl', function($scope, $rootScope, $timeout, $location, Account, TXT) {
 
     /**
      * Змінні
      **/
-    $rootScope.pageTitle = "Логин - Mappino";
+    $rootScope.pageTitle = "Логин - " + TXT.SERVICE_NAME;
     $scope.showValidationMessages = false;
 
     $scope.user = {

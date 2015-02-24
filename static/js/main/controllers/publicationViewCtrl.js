@@ -1,7 +1,7 @@
 'use strict';
 
 
-app.controller('publicationViewCtrl', function($scope, $rootScope, Queries) {
+app.controller('publicationViewCtrl', function($scope, $rootScope, Queries, TXT) {
     $scope.publicationViewPart = "Detailed";
     $scope.publicationViewDetailedPart = "Description";
 
@@ -19,7 +19,7 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, Queries) {
         $scope.publication = data;
 
         $scope.publicationLoaded = true;
-        $rootScope.pageTitle = data.data.title ? data.data.title + " - Mappino" : "Mappino";
+        $rootScope.pageTitle = data.data.title ? data.data.title + " - " + TXT.SERVICE_NAME : TXT.SERVICE_NAME;
 
         if (data.head && data.head.photos.length)
             preloadImage(data.head.photos[0]);

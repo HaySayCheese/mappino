@@ -1,8 +1,8 @@
 'use strict';
 
-app.controller('RegistrationCtrl', function($scope, $rootScope, $cookieStore) {
+app.controller('RegistrationCtrl', function($scope, $rootScope, $cookieStore, TXT) {
 
-    $rootScope.pageTitle = "Регистрация - Mappino";
+    $rootScope.pageTitle = "Регистрация - " + TXT.SERVICE_NAME;
     angular.element(".registration-modal").modal();
 
     ga('send', 'pageview', {

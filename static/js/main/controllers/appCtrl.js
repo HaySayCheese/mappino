@@ -1,8 +1,8 @@
 'use strict';
 
-app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $routeParams) {
+app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $routeParams, TXT) {
 
-    $rootScope.pageTitle = "Mappino";
+    $rootScope.pageTitle = TXT.SERVICE_NAME;
 
     $rootScope.publicationTypes = [
         { name: "flat", id: 0, title: "Квартиры",
@@ -181,7 +181,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
         angular.element(".modal-backdrop").remove();
 
         if ($location.path() == "/")
-            $rootScope.pageTitle = "Mappino";
+            $rootScope.pageTitle = TXT.SERVICE_NAME;
     });
 
 
