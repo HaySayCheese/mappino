@@ -4,33 +4,33 @@
 
 'use strict';
 
-app.factory('Queries', function($http) {
+app.factory('Queries', function($http, HTTP) {
    return {
        Map: {
            getMarkers: function(filters) {
-               return $http.get('/ajax/api/markers/?p=' + filters)
+               return $http.get(HTTP.MAP.GET_MARKERS.fmt(filters))
            },
 
            getPublicationDescription: function(tid_hid) {
-               return $http.get('/ajax/api/detailed/publication/' + tid_hid + '/')
+               return $http.get(HTTP.MAP.GET_PUBLICATION_DESCRIPTION.fmt(tid_hid))
            },
 
            getPublicationContacts: function(tid_hid) {
-               return $http.get('/ajax/api/detailed/publication/' + tid_hid + '/contacts/')
+               return $http.get(HTTP.MAP.GET_PUBLICATION_CONTACTS.fmt(tid_hid))
            },
 
            sendPublicationMessage: function(tid_hid, message) {
-               return $http.post('/ajax/api/notifications/send-message/' + tid_hid + '/', {
-                   message: message.text,
-                   email: message.email,
-                   name: message.name
+               return $http.post(HTTP.MAP.SEND_PUBLICATION_MESSAGE.fmt(tid_hid), {
+                   name:    message.name,
+                   email:   message.email,
+                   message: message.text
                })
            },
 
            sendPublicationCallRequest: function(tid_hid, call_request) {
-               return $http.post('/ajax/api/notifications/send-call-request/' + tid_hid + '/', {
-                   phone_number: call_request.phone,
-                   name: call_request.name
+               return $http.post(HTTP.MAP.SEND_PUBLICATION_MESSAGE.fmt(tid_hid), {
+                   name:            call_request.name,
+                   phone_number:    call_request.phone
                })
            }
        },
