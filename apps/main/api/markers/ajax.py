@@ -1,4 +1,5 @@
 #coding=utf-8
+import json
 from django.views.generic import View
 
 from apps.main.api.markers.utils import *
@@ -24,6 +25,9 @@ class Markers(View):
         'too_big_query': {
             'code': 4,
         },
+        'invalid_request': {
+            'code': 5,
+        }
     }
 
     filters_parsers =  {
@@ -38,7 +42,6 @@ class Markers(View):
         OBJECTS_TYPES.trade(): parse_trades_filters,
         OBJECTS_TYPES.warehouse(): parse_warehouses_filters,
         OBJECTS_TYPES.business(): parse_businesses_filters,
-        OBJECTS_TYPES.catering(): parse_caterings_filters,
     }
 
 
@@ -47,49 +50,57 @@ class Markers(View):
         # note:
         # User will almost never positioning his viewport on the same position twice,
         # and almost never will generate requests with the same viewport coordinates.
-        # as a result - there is no need to add last modified header to this view.
+        # as a result - there is no need to add last modified header to this view or other cache.
 
-        if 'zoom' in request.GET:
-            return cls.__markers_count_per_segment(request)
+        try:
+            params = json.loads(request.GET.get('p', ''))
+        except ValueError:
+            # json decoder will throw value error on attempt to decode empty string
+            return HttpJsonResponseBadRequest(cls.get_codes['invalid_request'])
+
+        if 'zoom' in params:
+            return cls.__markers_count_per_segment(params)
         else:
-            return cls.__markers_briefs(request)
+            return cls.__markers_briefs(params)
 
 
     @classmethod
-    def __markers_count_per_segment(cls, request):
+    def __markers_count_per_segment(cls, params):
         """
         :returns:
-            HttpJsonResponse with estimate markers count for every receiced object type
-            and viewport coords (if request was handled OK), or
+            HttpJsonResponse with estimate markers count for every received object type
+            and viewport coordinates (if request was handled OK), or
             HttpJsonResponse with error code (if request was not handled properly).
         """
         try:
             ne_lat, \
             ne_lng, \
             sw_lat, \
-            sw_lng = cls.__parse_viewport_coordinates(request)
+            sw_lng = cls.__parse_viewport_coordinates(params)
         except ValueError:
             return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
 
 
         try:
-            tids = cls.__parse_object_types_ids(request)
+            tids_and_filters = cls.__parse_tids_and_filters(params)
         except ValueError:
             return HttpJsonResponseBadRequest(cls.get_codes['invalid_tids'])
 
 
         try:
-            zoom = int(request.GET['zoom'])
+            zoom = int(params['zoom'])
         except (IndexError, ValueError):
-            return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
+            return HttpJsonResponseBadRequest(cls.get_codes['invalid_request'])
 
 
         try:
             response = {}
-            for tid in tids:
-                filter_conditions = (cls.filters_parsers[tid])(request)
+            for tid, filters in tids_and_filters:
+                filter_conditions = (cls.filters_parsers[tid])(filters)
                 # todo: add markers ids intersection
-                response[tid] = SegmentsIndex.estimate_count(tid, ne_lat, ne_lng, sw_lat, sw_lng, zoom, filter_conditions)
+                segments = SegmentsIndex.estimate_count(tid, ne_lat, ne_lng, sw_lat, sw_lng, zoom, filter_conditions)
+                if segments:
+                    response[tid] = segments
 
         except TooBigTransaction:
             return HttpJsonResponseBadRequest(cls.get_codes['too_big_query'])
@@ -98,11 +109,11 @@ class Markers(View):
 
 
         # seems to be ok
-        return HttpJsonResponse(count)
+        return HttpJsonResponse(response)
 
 
     @classmethod
-    def __markers_briefs(cls, request):
+    def __markers_briefs(cls, params):
         """
         :returns:
             HttpJsonResponse with briefs for every receiced object type and viewport coords (if request was handled OK), or
@@ -112,23 +123,25 @@ class Markers(View):
             ne_lat, \
             ne_lng, \
             sw_lat, \
-            sw_lng = cls.__parse_viewport_coordinates(request)
+            sw_lng = cls._parse_viewport_coordinates(params)
         except ValueError:
             return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
 
 
         try:
-            tids = cls.__parse_object_types_ids(request)
+            tids_and_filters = cls._parse_tids_and_filters(params)
         except ValueError:
             return HttpJsonResponseBadRequest(cls.get_codes['invalid_tids'])
 
 
         try:
             response = {}
-            for tid in tids:
-                filter_conditions = (cls.filters_parsers[tid])(request)
+            for tid, filters in tids_and_filters:
+                filter_conditions = (cls.filters_parsers[tid])(filters)
                 # todo: add markers ids intersection
-                response[tid] = SegmentsIndex.markers(tid, ne_lat, ne_lng, sw_lat, sw_lng, filter_conditions)
+                makers = SegmentsIndex.markers(tid, ne_lat, ne_lng, sw_lat, sw_lng, filter_conditions)
+                if markers:
+                    response[tid] = markers
 
         except TooBigTransaction:
             return HttpJsonResponseBadRequest(cls.get_codes['too_big_query'])
@@ -140,57 +153,60 @@ class Markers(View):
         return HttpJsonResponseBadRequest(cls.get_codes['invalid_tids'])
 
 
-        @staticmethod
-        def __parse_viewport_coordinates(request):
-            """
-            :returns:
-                Parses request for viewport coordinates.
-                Returns ne_lat, ne_lng, sw_lat, sw_lng in tuple
+    @staticmethod
+    def __parse_viewport_coordinates(params):
+        """
+        :param params: JSON object (dict in this method) with request parameters.
 
-            :raises:
-                ValueError if request contains ivalid data.
-            """
+        :returns:
+            Parses request's params for viewport coordinates.
+            Returns ne_lat, ne_lng, sw_lat, sw_lng in tuple.
 
-            try:
-                viewport_ne = request.GET['ne']
-                viewport_sw = request.GET['sw']
+        :raises:
+            ValueError if request contains invalid data.
+        """
 
-                ne_lat, ne_lng = viewport_ne.split(':')
-                sw_lat, sw_lng = viewport_sw.split(':')
+        try:
+            viewport = params['viewport']
 
-                ne_lat = float(ne_lat)
-                ne_lng = float(ne_lng)
-                sw_lat = float(sw_lat)
-                sw_lng = float(sw_lng)
+            # todo: переписати назви параметрів в малому регістрі
+            ne_lat = float(viewport['ne_lat'])
+            ne_lng = float(viewport['ne_lng'])
+            sw_lat = float(viewport['sw_lat'])
+            sw_lng = float(viewport['sw_lng'])
 
-            except (IndexError, ValueError):
-                raise ValueError('Invalid viewport coordinates was received.')
+        except (IndexError, ValueError):
+            raise ValueError('Invalid viewport coordinates was received.')
 
-            # seems to be ok
-            return ne_lat, ne_lng, sw_lat, sw_lng
+        # seems to be ok
+        return ne_lat, ne_lng, sw_lat, sw_lng
 
 
-        @staticmethod
-        def __parse_object_types_ids(request):
-            """
-            :returns:
-                list of object types ids received from the request.
+    @staticmethod
+    def __parse_tids_and_filters(params):
+        """
+        :param params: JSON object (dict in this method) with request parameters.
 
-            :raises:
-                ValueError even if one tid wil not pass validation.
-            """
-            tids = request.GET.get('tids', '').split(',')
-            if not tids:
-                raise ValueError('No one object type id was received.')
+        :returns:
+            list of object types ids received from the request.
 
-            # validation
-            for tid in tids:
-                # If ValueError will be genrated after the next line - it's OK, no need to double check for error.
-                # This method raises ValueError in error cases.
-                tid = int(tid)
+        :raises:
+            ValueError even if one tid wil not pass validation.
+        """
 
+        parsed_tids_and_filters = []
+        try:
+            for filters in params['filters']:
+                tid = int(filters['type_sid'])
                 if tid not in OBJECTS_TYPES.values():
                     raise ValueError('Invalid type id received from the client, {}'.format(tid))
 
-            # seems to be ok
-            return tids
+                parsed_tids_and_filters.append(
+                    (tid, filters, ) # note: tuple here
+                )
+
+        except (IndexError, ValueError):
+            raise ValueError('Invalid filters parameters was received.')
+
+        # seems to be ok
+        return parsed_tids_and_filters
