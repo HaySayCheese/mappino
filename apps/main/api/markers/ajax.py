@@ -58,7 +58,13 @@ class Markers(View):
             # json decoder will throw value error on attempt to decode empty string
             return HttpJsonResponseBadRequest(cls.get_codes['invalid_request'])
 
-        if 'zoom' in params:
+
+        try:
+            zoom = int(params['zoom'])
+        except ValueError:
+            return HttpJsonResponseBadRequest(cls.get_codes['invalid_request'])
+
+        if zoom < 14:
             return cls.__markers_count_per_segment(params)
         else:
             return cls.__markers_briefs(params)
@@ -129,7 +135,7 @@ class Markers(View):
 
 
         try:
-            tids_and_filters = cls._parse_tids_and_filters(params)
+            tids_and_filters = cls.__parse_tids_and_filters(params)
         except ValueError:
             return HttpJsonResponseBadRequest(cls.get_codes['invalid_tids'])
 
@@ -139,7 +145,7 @@ class Markers(View):
             for tid, panel, filters in tids_and_filters:
                 filter_conditions = (cls.filters_parsers[tid])(filters)
                 # todo: add markers ids intersection
-                makers = SegmentsIndex.markers(tid, ne_lat, ne_lng, sw_lat, sw_lng, filter_conditions)
+                markers = SegmentsIndex.markers(tid, ne_lat, ne_lng, sw_lat, sw_lng, filter_conditions)
                 if markers:
                     response[panel] = markers
 
@@ -150,7 +156,7 @@ class Markers(View):
 
 
         # seems to be ok
-        return HttpJsonResponseBadRequest(cls.get_codes['invalid_tids'])
+        return HttpJsonResponse(response)
 
 
     @staticmethod
