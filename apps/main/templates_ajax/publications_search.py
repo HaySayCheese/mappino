@@ -11,15 +11,12 @@ from core.utils.jinja2_integration import templates
 __FILTERS_TEMPLATES_PATHS = {
 	OBJECTS_TYPES.house():      'main/parts/filters/houses.html',
 	OBJECTS_TYPES.flat():       'main/parts/filters/flats.html',
-	OBJECTS_TYPES.apartments(): 'main/parts/filters/apartments.html',
-	OBJECTS_TYPES.cottage():    'main/parts/filters/cottages.html',
 	OBJECTS_TYPES.room():       'main/parts/filters/rooms.html',
 
 	OBJECTS_TYPES.trade():      'main/parts/filters/trades.html',
 	OBJECTS_TYPES.office():     'main/parts/filters/offices.html',
 	OBJECTS_TYPES.warehouse():  'main/parts/filters/warehouses.html',
 	OBJECTS_TYPES.business():   'main/parts/filters/businesses.html',
-	OBJECTS_TYPES.catering():   'main/parts/filters/caterings.html',
 	OBJECTS_TYPES.garage():     'main/parts/filters/garages.html',
 	OBJECTS_TYPES.land():       'main/parts/filters/lands.html',
 }

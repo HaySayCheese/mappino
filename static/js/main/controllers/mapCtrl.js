@@ -548,10 +548,10 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 swLat = sswLat.replace(sswLat.substring(sswLat.indexOf(".") + 3, sswLat.length), ""),
                 swLng = sswLng.replace(sswLng.substring(sswLng.indexOf(".") + 3, sswLng.length), ""),
                 viewport = {
-                    'neLat': neLat,
-                    'neLng': neLng,
-                    'swLat': swLat,
-                    'swLng': swLng
+                    'ne_lat': neLat,
+                    'ne_lng': neLng,
+                    'sw_lat': swLat,
+                    'sw_lng': swLng
                 };
 
             if (timeout) {
