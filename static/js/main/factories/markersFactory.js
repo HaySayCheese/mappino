@@ -387,9 +387,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                 }
             }
 
-            var tidItem = {};
-            tidItem[tid] = stringFilters;
-            jsonFilters.filters.push(tidItem);
+            jsonFilters.filters.push(stringFilters);
         },
 
 
