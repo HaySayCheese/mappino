@@ -8,47 +8,35 @@ class ObjectTypes(AbstractConstant):
         super(ObjectTypes, self).__init__()
         self.set_ids({
             # Жилая недвижимость
-            'house': 0,
-            'flat': 1,
-            'apartments': 2,
-            'cottage': 3,
-            'room': 4,
+            'flat': 0,
+            'house': 1,
+            'room': 2,
 
             # Коммерческая недвижимость
-            'trade': 5,
-            'office': 6,
+            'land': 3,
+            'garage': 4,
+            'office': 5,
+            'trade': 6,
             'warehouse': 7,
             'business': 8,
-            'catering': 9,
-
-            # Другая недвижимость
-            'garage': 10,
-            'land': 11,
         })
         self.commercial_estate = [
-            self.ids['trade'],
+            self.ids['land'],
+            self.ids['garage'],
             self.ids['office'],
+            self.ids['trade'],
             self.ids['warehouse'],
             self.ids['business'],
-            self.ids['catering'],
         ]
 
 
     # жилая недвижимость
-    def house(self):
-        return self.ids['house']
-
-
     def flat(self):
         return self.ids['flat']
 
 
-    def apartments(self):
-        return self.ids['apartments']
-
-
-    def cottage(self):
-        return self.ids['cottage']
+    def house(self):
+        return self.ids['house']
 
 
     def room(self):
@@ -56,12 +44,20 @@ class ObjectTypes(AbstractConstant):
 
 
     # ком. недвижимость
-    def trade(self):
-        return self.ids['trade']
+    def land(self):
+        return self.ids['land']
+
+
+    def garage(self):
+        return self.ids['garage']
 
 
     def office(self):
         return self.ids['office']
+
+
+    def trade(self):
+        return self.ids['trade']
 
 
     def warehouse(self):
@@ -70,20 +66,6 @@ class ObjectTypes(AbstractConstant):
 
     def business(self):
         return self.ids['business']
-
-
-    def catering(self):
-        return self.ids['catering']
-
-
-    # другая недвижимость
-    def garage(self):
-        return self.ids['garage']
-
-
-    def land(self):
-        return self.ids['land']
-
 OBJECTS_TYPES = ObjectTypes()
 
 
@@ -363,21 +345,18 @@ class RedLineValues(AbstractConstant):
 RED_LINE_VALUES = RedLineValues()
 
 
-from core.publications.models import FlatsHeads, ApartmentsHeads, HousesHeads, CottagesHeads, RoomsHeads, \
-    TradesHeads, OfficesHeads, WarehousesHeads, BusinessesHeads, CateringsHeads, GaragesHeads, LandsHeads
+from core.publications.models import FlatsHeads, HousesHeads, RoomsHeads, \
+    TradesHeads, OfficesHeads, WarehousesHeads, BusinessesHeads, GaragesHeads, LandsHeads
 
 HEAD_MODELS = {
     OBJECTS_TYPES.flat(): FlatsHeads,
-    OBJECTS_TYPES.apartments(): ApartmentsHeads,
     OBJECTS_TYPES.house(): HousesHeads,
-    OBJECTS_TYPES.cottage(): CottagesHeads,
     OBJECTS_TYPES.room(): RoomsHeads,
 
     OBJECTS_TYPES.trade(): TradesHeads,
     OBJECTS_TYPES.office(): OfficesHeads,
     OBJECTS_TYPES.warehouse(): WarehousesHeads,
     OBJECTS_TYPES.business(): BusinessesHeads,
-    OBJECTS_TYPES.catering(): CateringsHeads,
 
     OBJECTS_TYPES.garage(): GaragesHeads,
     OBJECTS_TYPES.land(): LandsHeads,
@@ -385,21 +364,18 @@ HEAD_MODELS = {
 
 
 
-from core.publications.models import FlatsPhotos, ApartmentsPhotos, HousesPhotos, CottagesPhotos, RoomsPhotos, \
-    TradesPhotos, OfficesPhotos, WarehousesPhotos, BusinessesPhotos, CateringsPhotos, GaragesPhotos, LandsPhotos
+from core.publications.models import FlatsPhotos, HousesPhotos, RoomsPhotos, \
+    TradesPhotos, OfficesPhotos, WarehousesPhotos, BusinessesPhotos, GaragesPhotos, LandsPhotos
 
 PHOTOS_MODELS = {
     OBJECTS_TYPES.flat(): FlatsPhotos,
-    OBJECTS_TYPES.apartments(): ApartmentsPhotos,
     OBJECTS_TYPES.house(): HousesPhotos,
-    OBJECTS_TYPES.cottage(): CottagesPhotos,
     OBJECTS_TYPES.room(): RoomsPhotos,
 
     OBJECTS_TYPES.trade(): TradesPhotos,
     OBJECTS_TYPES.office(): OfficesPhotos,
     OBJECTS_TYPES.warehouse(): WarehousesPhotos,
     OBJECTS_TYPES.business(): BusinessesPhotos,
-    OBJECTS_TYPES.catering(): CateringsPhotos,
 
     OBJECTS_TYPES.garage(): GaragesPhotos,
     OBJECTS_TYPES.land(): LandsPhotos,

@@ -7,24 +7,22 @@ from django.http.response import HttpResponse, HttpResponseBadRequest
 
 from apps.classes import CabinetView
 from collective.http.responses import HttpJsonResponse
+from collective.methods.request_data_getters import angular_parameters
+
 from core.publications import classes
+from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS
 from core.publications.abstract_models import PhotosModel
 from core.publications.models_signals import record_updated
 from core.publications.update_methods.flats import update_flat
-from core.publications.update_methods.apartments import update_apartments
 from core.publications.update_methods.houses import update_house
-from core.publications.update_methods.cottages import update_cottage
 from core.publications.update_methods.offices import update_office
 from core.publications.update_methods.rooms import update_room
 from core.publications.update_methods.trades import update_trade
 from core.publications.update_methods.warehouses import update_warehouse
 from core.publications.update_methods.business import update_business
-from core.publications.update_methods.caterings import update_catering
 from core.publications.update_methods.garages import update_garage
 from core.publications.update_methods.lands import update_land
 from core.billing import exceptions as billing_exceptions
-from collective.methods.request_data_getters import angular_parameters
-from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS
 
 
 
@@ -179,34 +177,35 @@ class Publications(object):
             return_value = None
             try:
                 # Жилая недвижимость
-                if tid == OBJECTS_TYPES.house():
-                    return_value = update_house(head, field, value, tid)
-                elif tid == OBJECTS_TYPES.flat():
+                if tid == OBJECTS_TYPES.flat():
                     return_value = update_flat(head, field, value, tid)
-                elif tid == OBJECTS_TYPES.apartments():
-                    return_value = update_apartments(head, field, value, tid)
-                elif tid == OBJECTS_TYPES.cottage():
-                    return_value = update_cottage(head, field, value, tid)
+
+                elif tid == OBJECTS_TYPES.house():
+                    return_value = update_house(head, field, value, tid)
+
                 elif tid == OBJECTS_TYPES.room():
                     return_value = update_room(head, field, value, tid)
 
                 # Коммерческая недвижимость
-                elif tid == OBJECTS_TYPES.trade():
-                    return_value = update_trade(head, field, value, tid)
-                elif tid == OBJECTS_TYPES.office():
-                    return_value = update_office(head, field, value, tid)
-                elif tid == OBJECTS_TYPES.warehouse():
-                    return_value = update_warehouse(head, field, value, tid)
-                elif tid == OBJECTS_TYPES.business():
-                    return_value = update_business(head, field, value, tid)
-                elif tid == OBJECTS_TYPES.catering():
-                    return_value = update_catering(head, field, value, tid)
-
-                # Другая недвижимость
-                elif tid == OBJECTS_TYPES.garage():
-                    return_value = update_garage(head, field, value, tid)
                 elif tid == OBJECTS_TYPES.land():
                     return_value = update_land(head, field, value, tid)
+
+                elif tid == OBJECTS_TYPES.garage():
+                    return_value = update_garage(head, field, value, tid)
+
+                elif tid == OBJECTS_TYPES.office():
+                    return_value = update_office(head, field, value, tid)
+
+                elif tid == OBJECTS_TYPES.trade():
+                    return_value = update_trade(head, field, value, tid)
+
+                elif tid == OBJECTS_TYPES.warehouse():
+                    return_value = update_warehouse(head, field, value, tid)
+
+                elif tid == OBJECTS_TYPES.business():
+                    return_value = update_business(head, field, value, tid)
+
+
             except ValueError:
                 return HttpResponse(json.dumps(
                     self.update_codes['update_error']), content_type='application/json')

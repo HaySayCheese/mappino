@@ -1489,7 +1489,7 @@ class WarehousesSaleIndex(AbstractBaseIndex):
 
 
 
-class  WarehousesRentIndex(WarehousesSaleIndex):
+class WarehousesRentIndex(WarehousesSaleIndex):
     class Meta:
         db_table = 'index_warehouses_rent'
 
@@ -1567,115 +1567,115 @@ class BusinessesRentIndex(BusinessesSaleIndex):
 
 
 
-class CateringsSaleIndex(AbstractBaseIndex):
-    price = models.FloatField(db_index=True)
-    currency_sid = models.PositiveSmallIntegerField()
-    market_type_sid = models.PositiveSmallIntegerField(db_index=True)
-    halls_area = models.FloatField(db_index=True)
-    total_area = models.FloatField(db_index=True)
-    building_type_sid = models.PositiveSmallIntegerField(db_index=True)
-    hot_water = models.BooleanField(db_index=True)
-    cold_water = models.BooleanField(db_index=True)
-    gas = models.BooleanField(db_index=True)
-    electricity = models.BooleanField(db_index=True)
-    sewerage = models.BooleanField(db_index=True)
-
-
-    class Meta:
-        db_table = 'index_caterings_sale'
-
-
-    @classmethod
-    def add(cls, record, using=None):
-        cls.objects.using(using).create(
-            publication_id=record.id,
-            hash_id=record.hash_id,
-            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
-            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
-
-            market_type_sid=record.body.market_type_sid,
-            halls_area=record.body.halls_area,
-            total_area=record.body.total_area,
-            building_type_sid=record.body.building_type_sid,
-            hot_water=record.body.hot_water,
-            cold_water=record.body.cold_water,
-            gas=record.body.gas,
-            electricity=record.body.electricity,
-            sewerage=record.body.sewerage,
-
-            price=record.sale_terms.price,
-            currency_sid=record.sale_terms.currency_sid,
-        )
-
-
-    @classmethod
-    def min_queryset(cls):
-        return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')  # todo: fixme
-
-
-    @classmethod
-    def min_add_queryset(cls):
-        model = HEAD_MODELS[OBJECTS_TYPES.catering()]
-        return model.objects.all().only(
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
-
-            'id',
-            'hash_id',
-
-            'body__market_type_sid',
-            'body__halls_area',
-            'body__total_area',
-            'body__building_type_sid',
-            'body__hot_water',
-            'body__cold_water',
-            'body__electricity',
-            'body__gas',
-            'body__fire_alarm',
-            'body__security_alarm',
-
-            'sale_terms__price',
-            'sale_terms__currency_sid'
-        )
-
-
-    @classmethod
-    def apply_filters(cls, filters, markers):
-        markers = cls.apply_market_type_filter(filters, markers)
-        markers = cls.apply_price_filter(filters, markers)
-        markers = cls.apply_halls_area_filter(filters, markers)
-        markers = cls.apply_total_area_filter(filters, markers)
-        markers = cls.apply_trade_building_type_filter(filters, markers)
-        markers = cls.apply_electricity_filter(filters, markers)
-        markers = cls.apply_gas_filter(filters, markers)
-        markers = cls.apply_hot_water_filter(filters, markers)
-        markers = cls.apply_cold_water_filter(filters, markers)
-        markers = cls.apply_sewerage_filter(filters, markers)
-        return markers
-
-
-    @classmethod
-    def brief(cls, marker, filters=None):
-        currency = cls.currency_from_filters(filters)
-        price = cls.convert_and_format_price(marker.price, marker.currency_sid, currency)
-        total_area = '{0}'.format(marker.total_area).rstrip('0').rstrip('.')
-
-        return {
-            'id': marker.hash_id,
-            'd0': u'{0} м²'.format(total_area),
-            'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
-        }
-
-
-
-class CateringsRentIndex(CateringsSaleIndex):
-    class Meta:
-        db_table = 'index_caterings_rent'
+# class CateringsSaleIndex(AbstractBaseIndex):
+#     price = models.FloatField(db_index=True)
+#     currency_sid = models.PositiveSmallIntegerField()
+#     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
+#     halls_area = models.FloatField(db_index=True)
+#     total_area = models.FloatField(db_index=True)
+#     building_type_sid = models.PositiveSmallIntegerField(db_index=True)
+#     hot_water = models.BooleanField(db_index=True)
+#     cold_water = models.BooleanField(db_index=True)
+#     gas = models.BooleanField(db_index=True)
+#     electricity = models.BooleanField(db_index=True)
+#     sewerage = models.BooleanField(db_index=True)
+#
+#
+#     class Meta:
+#         db_table = 'index_caterings_sale'
+#
+#
+#     @classmethod
+#     def add(cls, record, using=None):
+#         cls.objects.using(using).create(
+#             publication_id=record.id,
+#             hash_id=record.hash_id,
+#             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
+#             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
+#
+#             market_type_sid=record.body.market_type_sid,
+#             halls_area=record.body.halls_area,
+#             total_area=record.body.total_area,
+#             building_type_sid=record.body.building_type_sid,
+#             hot_water=record.body.hot_water,
+#             cold_water=record.body.cold_water,
+#             gas=record.body.gas,
+#             electricity=record.body.electricity,
+#             sewerage=record.body.sewerage,
+#
+#             price=record.sale_terms.price,
+#             currency_sid=record.sale_terms.currency_sid,
+#         )
+#
+#
+#     @classmethod
+#     def min_queryset(cls):
+#         return cls.objects.all().only(
+#             'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')  # todo: fixme
+#
+#
+#     @classmethod
+#     def min_add_queryset(cls):
+#         model = HEAD_MODELS[OBJECTS_TYPES.catering()]
+#         return model.objects.all().only(
+#             'degree_lat',
+#             'degree_lng',
+#             'segment_lat',
+#             'segment_lng',
+#             'pos_lat',
+#             'pos_lng',
+#
+#             'id',
+#             'hash_id',
+#
+#             'body__market_type_sid',
+#             'body__halls_area',
+#             'body__total_area',
+#             'body__building_type_sid',
+#             'body__hot_water',
+#             'body__cold_water',
+#             'body__electricity',
+#             'body__gas',
+#             'body__fire_alarm',
+#             'body__security_alarm',
+#
+#             'sale_terms__price',
+#             'sale_terms__currency_sid'
+#         )
+#
+#
+#     @classmethod
+#     def apply_filters(cls, filters, markers):
+#         markers = cls.apply_market_type_filter(filters, markers)
+#         markers = cls.apply_price_filter(filters, markers)
+#         markers = cls.apply_halls_area_filter(filters, markers)
+#         markers = cls.apply_total_area_filter(filters, markers)
+#         markers = cls.apply_trade_building_type_filter(filters, markers)
+#         markers = cls.apply_electricity_filter(filters, markers)
+#         markers = cls.apply_gas_filter(filters, markers)
+#         markers = cls.apply_hot_water_filter(filters, markers)
+#         markers = cls.apply_cold_water_filter(filters, markers)
+#         markers = cls.apply_sewerage_filter(filters, markers)
+#         return markers
+#
+#
+#     @classmethod
+#     def brief(cls, marker, filters=None):
+#         currency = cls.currency_from_filters(filters)
+#         price = cls.convert_and_format_price(marker.price, marker.currency_sid, currency)
+#         total_area = '{0}'.format(marker.total_area).rstrip('0').rstrip('.')
+#
+#         return {
+#             'id': marker.hash_id,
+#             'd0': u'{0} м²'.format(total_area),
+#             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
+#         }
+#
+#
+#
+# class CateringsRentIndex(CateringsSaleIndex):
+#     class Meta:
+#         db_table = 'index_caterings_rent'
 
 
 
@@ -1888,7 +1888,6 @@ class SegmentsIndex(models.Model):
         OBJECTS_TYPES.office(): OfficesSaleIndex,
         OBJECTS_TYPES.warehouse(): WarehousesSaleIndex,
         OBJECTS_TYPES.business(): BusinessesSaleIndex,
-        OBJECTS_TYPES.catering(): CateringsSaleIndex,
         OBJECTS_TYPES.garage(): GaragesSaleIndex,
         OBJECTS_TYPES.land(): LandsSaleIndex,
     }
@@ -1897,7 +1896,6 @@ class SegmentsIndex(models.Model):
         OBJECTS_TYPES.office(): OfficesRentIndex,
         OBJECTS_TYPES.warehouse(): WarehousesRentIndex,
         OBJECTS_TYPES.business(): BusinessesRentIndex,
-        OBJECTS_TYPES.catering(): CateringsRentIndex,
         OBJECTS_TYPES.garage(): GaragesRentIndex,
         OBJECTS_TYPES.land(): LandsRentIndex,
     }

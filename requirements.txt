@@ -9,7 +9,7 @@
 Django==1.6
 Jinja2
 MySQL-python
-Pillow
+Pillow==2.5
 South
 celery
 hiredis

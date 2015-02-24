@@ -56,9 +56,6 @@ def __grab_bank_api():
 
 
 
-
-
-
 def __get_currencies():
 	"""
 	Перегляне кеш redis на наявність поточних курсів.
