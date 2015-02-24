@@ -559,7 +559,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 requestTimeout = setTimeout(function() {
                     Markers.load($scope.filters.red, $scope.filters.blue,
                                     $scope.filters.green, $scope.filters.yellow,
-                                    viewport, $scope.filters.map.zoom, function(data) {
+                                    panel, viewport, $scope.filters.map.zoom, function(data) {
 
                         markers = data;
                         placeMarkers(data);
@@ -568,7 +568,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             } else {
                 Markers.load($scope.filters.red, $scope.filters.blue,
                                 $scope.filters.green, $scope.filters.yellow,
-                                viewport, $scope.filters.map.zoom, function(data) {
+                                panel, viewport, $scope.filters.map.zoom, function(data) {
 
                     markers = data;
                     placeMarkers(data);
