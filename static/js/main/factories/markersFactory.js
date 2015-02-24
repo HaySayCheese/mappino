@@ -59,7 +59,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
          * @param {number}      zoom     Зум карти
          * @param {function}    callback
          */
-        load: function(r_filters, b_filters, g_filters, y_filters, viewport, zoom, callback) {
+        load: function(r_filters, b_filters, g_filters, y_filters, panel, viewport, zoom, callback) {
             var that = this,
                 tid = null,
                 stringFilters = {};
@@ -73,13 +73,10 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             jsonFilters.zoom = zoom;
             jsonFilters.viewport = viewport;
 
-            that.createJsonFiltersFromString(r_filters);
-            that.createJsonFiltersFromString(b_filters);
-            that.createJsonFiltersFromString(g_filters);
-            that.createJsonFiltersFromString(y_filters);
-
-            console.log("load");
-            console.log(jsonFilters);
+            that.createJsonFiltersFromString(r_filters, "red");
+            that.createJsonFiltersFromString(b_filters, "blue");
+            that.createJsonFiltersFromString(g_filters, "green");
+            that.createJsonFiltersFromString(y_filters, "yellow");
 
             clearTimeout(requestTimeout);
             requestTimeout = setTimeout(function() {
@@ -91,7 +88,6 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                 that.clearPanelMarkers(panel, function() {
                     that.add(tid, panel, data, function() {
                         _.isFunction(callback) && callback(markers);
-                        console.log(markers)
                     });
 
                     clearTimeout(requestTimeout);
@@ -116,7 +112,6 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                 var lat = "", lng = "", latLng = "";
 
                 if (data.hasOwnProperty(marker)) {
-
 
                     if (!_.keys(data[marker]).length) {
                         pieMarkersLoaded[panel] = true;
@@ -146,7 +141,6 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                     }
 
 
-
                     lat = marker.split(":")[0];
                     lng = marker.split(":")[1];
                     latLng = marker.split(":")[0] + ";" + marker.split(":")[1];
@@ -169,14 +163,14 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                     }
 
 
-                    if (lat > minLat && lng < maxLng){
+                    if (lat > minLat && lng < maxLng) {
                         if (lat > nePoint.lat)
                             nePoint.lat = lat;
 
                         if (lng < nePoint.lng)
                             nePoint.lng = lng;
                     }
-                    if (lat < maxLat && lng > minLng){
+                    if (lat < maxLat && lng > minLng) {
                         if (lat < swPoint.lat)
                             swPoint.lat = lat;
 
@@ -356,26 +350,23 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             _.isFunction(callback) && callback();
         },
 
-        createJsonFiltersFromString: function(filters) {
+        createJsonFiltersFromString: function(filters, panel) {
             var that = this,
                 stringFilters = {},
                 tid = "";
-
-            console.log(filters)
 
             for (var key in filters) {
                 if (filters.hasOwnProperty(key)) {
 
                     if (key.toString().substring(2) == "type_sid") {
                         if (filters[key] == null || filters[key] == "undefined") {
-                            //that.clearPanelMarkers(panel, function () {
-                            //    pieMarkersLoaded[panel] = true;
-                            //});
+                            that.clearPanelMarkers(panel, function () {
+                                pieMarkersLoaded[panel] = true;
+                            });
                             return;
                         }
 
                         tid = filters[key];
-                        console.log(tid)
                     }
 
                     if (filters[key] !== false && filters[key] !== "false" && filters[key] !== "" && filters[key] !== null) {
@@ -387,7 +378,9 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                 }
             }
 
-            jsonFilters.filters.push(stringFilters);
+            var tidItem = {};
+            tidItem[panel] = stringFilters;
+            jsonFilters.filters.push(tidItem);
         },
 
 
@@ -410,30 +403,5 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                 compared: {}
             }
         }
-
-        /*
-        getRealtorsData: function(realtor, callback) {
-            Queries.Map.getRealtorData(realtor).success(function(data) {
-                _.isFunction(callback) && callback(data);
-            })
-        },
-
-
-        getRealtorsMarkers: function(tid, realtor, callback) {
-            var that = this;
-
-            Queries.Map.getRealtorMarkers(tid, realtor).success(function(data) {
-                that.clearPanelMarkers("red");
-                that.add(tid, "red", data, function() {
-                    _.isFunction(callback) && callback(markers);
-                });
-            })
-        },
-
-        getViewport: function() {
-            return new google.maps.LatLngBounds(new google.maps.LatLng(nePoint.lat, nePoint.lng), new google.maps.LatLng(swPoint.lat, swPoint.lng));
-        }
-        */
     }
-
 });
