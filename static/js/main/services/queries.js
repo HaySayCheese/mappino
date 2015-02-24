@@ -1,3 +1,7 @@
+/**
+ * Файл з описом усіх http запитів
+ **/
+
 'use strict';
 
 app.factory('Queries', function($http) {
