@@ -1,6 +1,6 @@
 /**
  * Файл з описом роутерів.
- * Всі змінні зберігаються в файлі "/services/routes_const.js"
+ * Всі змінні знаходяться в файлі "/services/routes_const.js"
  **/
 
 'use strict';

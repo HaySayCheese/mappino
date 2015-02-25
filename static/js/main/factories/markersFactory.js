@@ -39,7 +39,6 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             lng: minLng
         },
         requestTimeout = null,
-        pieMarkerInterval = null,
         jsonFilters = {
             zoom: "",
             viewport: "",
@@ -55,8 +54,9 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
          * @param {object}      b_filters  Фільтри синьої панелі
          * @param {object}      g_filters  Фільтри зеленої панелі
          * @param {object}      y_filters  Фільтри жовтої панелі
-         * @param {object}      viewport Вюпорт карти
-         * @param {number}      zoom     Зум карти
+         * @param {string}      panel      Панель з якої іде запит
+         * @param {object}      viewport   Вюпорт карти
+         * @param {number}      zoom       Зум карти
          * @param {function}    callback
          */
         load: function(r_filters, b_filters, g_filters, y_filters, panel, viewport, zoom, callback) {
@@ -111,78 +111,41 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                 var lat = "", lng = "", latLng = "";
 
                 if (data.hasOwnProperty(panel)) {
+
                     for (var marker in data[panel]) {
-                        lat = marker.split(":")[0];
-                        lng = marker.split(":")[1];
 
-                        lat = parseFloat(lat);
-                        lng = parseFloat(lng);
+                        if (data[panel].hasOwnProperty(marker)) {
+                            lat = marker.split(":")[0];
+                            lng = marker.split(":")[1];
 
-                        latLng = lat + ";" + lng;
+                            lat = parseFloat(lat);
+                            lng = parseFloat(lng);
+
+                            latLng = lat + ";" + lng;
 
 
-                        // if zoom <=14
-                        if (data[panel][marker].id) {
-                            // markers on zoom <=14 here
-                            if (panel != "red" && markers["red"][latLng]) {
-                                return;
-                            } else if (panel != "blue" && markers["blue"][latLng]) {
-                                return;
-                            } else if (panel != "green" && markers["green"][latLng]) {
-                                return;
-                            } else if (panel != "yellow" && markers["yellow"][latLng]) {
-                                return;
-                            } else if(!markers[panel][latLng]) {
-                                that.createMarkerObject(data[panel][marker], panel, latLng);
+                            // if zoom <=14
+                            if (data[panel][marker].id) {
+                                // create markers on zoom <=14 here
+                                if (panel != "red" && markers["red"][latLng]) {
+                                    return;
+                                } else if (panel != "blue" && markers["blue"][latLng]) {
+                                    return;
+                                } else if (panel != "green" && markers["green"][latLng]) {
+                                    return;
+                                } else if (panel != "yellow" && markers["yellow"][latLng]) {
+                                    return;
+                                } else if(!markers[panel][latLng]) {
+                                    that.createMarkerObject(data[panel][marker], panel, latLng);
+                                } else {
+                                    return;
+                                }
                             } else {
-                                return;
+                                // create markers on zoom >14
+                                tempPieMarkers[panel][latLng] = { publication_count: parseInt(data[panel][marker]) };
                             }
-                        } else {
-                            tempPieMarkers[panel][latLng] = { publication_count: parseInt(data[panel][marker]) };
                         }
                     }
-
-                    if (!_.keys(data[marker]).length) {
-                        //pieMarkersLoaded[panel] = true;
-                        //
-                        //for (var panel in data) {
-                        //    console.log(panel)
-                        //    lat = data[panel].split(":")[0];
-                        //    lng = data[panel].split(":")[1];
-                        //    latLng = data[panel].split(":")[0] + ";" + data[panel].split(":")[1];
-                        //
-                        //    lat = parseFloat(lat);
-                        //    lng = parseFloat(lng);
-                        //
-                        //    tempPieMarkers[panel][latLng] = { publication_count: parseInt(data[pieMarker]) };
-                        //}
-
-                        //clearInterval(pieMarkerInterval);
-                        //pieMarkerInterval = setInterval(function() {
-                        //    if (pieMarkersLoaded.red && pieMarkersLoaded.blue && pieMarkersLoaded.yellow && pieMarkersLoaded.green) {
-                        //        that.comparePieMarkers();
-                        //        that.resetPieMarkersLoaded();
-                        //        _.isFunction(callback) && callback();
-                        //        clearInterval(pieMarkerInterval);
-                        //    }
-                        //}, 200);
-                        //
-                        //return;
-                    }
-
-                    //if (panel != "red" && markers["red"][latLng]) {
-                    //    return;
-                    //} else if (panel != "blue" && markers["blue"][latLng]) {
-                    //    return;
-                    //} else if (panel != "green" && markers["green"][latLng]) {
-                    //    return;
-                    //} else if (panel != "yellow" && markers["yellow"][latLng]) {
-                    //    return;
-                    //} else if(!markers[panel][latLng]) {
-                    //    that.createMarkerObject(data[marker], tid, panel, latLng);
-                    //} else {
-                    //    return;
-                    //}
 
 
                     if (lat > minLat && lng < maxLng) {
@@ -209,13 +172,13 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
 
         createMarkerObject: function(data, panel, latLng) {
             markers[panel][latLng] = new MarkerWithLabel({
-                position: new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
-                id: data.id,
-                icon: '/static/img/markers/' + panel + '-normal.png',
-                labelInBackground: true,
-                labelContent: data.d0 + "</br>" + data.d1,
-                labelAnchor: new google.maps.Point(0, 40),
-                labelClass: "marker-label"
+                id:             data.id,
+                icon:           '/static/img/markers/' + panel + '-normal.png',
+                position:       new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
+                labelClass:     "marker-label",
+                labelAnchor:    new google.maps.Point(0, 40),
+                labelContent:   data.d0 + "</br>" + data.d1,
+                labelInBackground: true
             });
         },
 
