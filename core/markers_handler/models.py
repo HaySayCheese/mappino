@@ -2106,15 +2106,33 @@ class SegmentsIndex(models.Model):
 
 
     @classmethod
-    def markers(cls, tid, ne_lat, ne_lng, sw_lat, sw_lng, filters):
-        zoom = 14
-        ne_segment_x, ne_segment_y, sw_segment_x, sw_segment_y = \
-            cls.prepare_request_processing(ne_lat, ne_lng, sw_lat, sw_lng, zoom)
+    def markers(cls, tid, ne_lat, ne_lng, sw_lat, sw_lng, filters, exclude_ids_list):
+        """
 
+
+        :param tid:
+        :param ne_lat:
+        :param ne_lng:
+        :param sw_lat:
+        :param sw_lng:
+        :param filters:
+        :param exclude_ids_list:
+        :return:
+        """
+
+        zoom = 14 # default zoom for markers briefs
+        ne_segment_x, \
+        ne_segment_y, \
+        sw_segment_x, \
+        sw_segment_y = cls.prepare_request_processing(ne_lat, ne_lng, sw_lat, sw_lng, zoom)
+
+
+        # Cusom SQL is neede here to call PostgreSQL's stored precedure unnest()
+        # Django ORM dows not allow to do that.
         query = "SELECT DISTINCT unnest(ids), id FROM {table} " \
                 "   WHERE tid={tid} AND zoom={zoom} AND " \
-                "      (x >= {ne_segment_x} AND x <= {sw_segment_x}) AND " \
-                "      (y <= {ne_segment_y} AND y >= {sw_segment_y});" \
+                "      (x >= {ne_segment_x} AND x < {sw_segment_x}) AND " \
+                "      (y <= {ne_segment_y} AND y > {sw_segment_y});" \
             .format(
                 table=cls._meta.db_table,
                 tid=tid,
@@ -2125,16 +2143,26 @@ class SegmentsIndex(models.Model):
                 sw_segment_y=sw_segment_y,
             )
 
+
+        # note: custom cursor here
         cursor = cls.cursor()
         cursor.execute(query)
+
         publications_ids = [id for id, _ in cursor.fetchall()]
+        publications_ids = set(publications_ids) - set(exclude_ids_list)
+
         cursor.close()
 
-        if not publications_ids:
-            return {}
 
-        # Фільтруєм і формуєм маркери.
-        # (Помітки for_sale та for_rent ставляться лише для житлової нерухомості)
+        # Little optimization here:
+        # if there are no ids was received
+        # than we do not need to fire additional sql requests
+        if not publications_ids:
+            return {}, publications_ids
+
+
+        # Now we need to get info about publications from the index.
+        # (Only living real estate may have "for_sale" or "for_rent" property)
         if 'for_sale' in filters:
             index = cls.living_sale_indexes[tid]
         elif 'for_rent' in filters:
@@ -2143,13 +2171,16 @@ class SegmentsIndex(models.Model):
             index = cls.commercial_sale_indexes[tid]
 
         markers = index.min_queryset().filter(publication_id__in=publications_ids)
-        return {
+        briefs = {
             '{lat}:{lng}'.format(
                 lat=marker.lat,
                 lng=marker.lng
             ): index.brief(marker, filters)
             for marker in index.apply_filters(filters, markers)
         }
+
+
+        return briefs, publications_ids
 
 
     @classmethod
