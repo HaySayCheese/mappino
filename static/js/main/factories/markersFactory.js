@@ -13,7 +13,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             green: {},
             yellow: {}
         },
-        tempPieMarkers = {
+        pieMarkers = {
             red: {},
             blue: {},
             green: {},
@@ -85,14 +85,12 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
 
 
             Queries.Map.getMarkers(JSON.stringify(jsonFilters)).success(function(data) {
-                that.clearPanelMarkers(panel, function() {
-                    that.add(tid, data, function() {
-                        _.isFunction(callback) && callback(markers);
-                    });
-
-                    clearTimeout(requestTimeout);
-                    $rootScope.loadings.markers = false;
+                that.add(tid, data, function() {
+                    _.isFunction(callback) && callback(markers);
                 });
+
+                clearTimeout(requestTimeout);
+                $rootScope.loadings.markers = false;
             });
         },
 
@@ -123,26 +121,12 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
 
                             latLng = lat + ";" + lng;
 
-
                             // if zoom <=14
-                            if (data[panel][marker].id) {
-                                // create markers on zoom <=14 here
-                                if (panel != "red" && markers["red"][latLng]) {
-                                    return;
-                                } else if (panel != "blue" && markers["blue"][latLng]) {
-                                    return;
-                                } else if (panel != "green" && markers["green"][latLng]) {
-                                    return;
-                                } else if (panel != "yellow" && markers["yellow"][latLng]) {
-                                    return;
-                                } else if(!markers[panel][latLng]) {
-                                    that.createMarkerObject(data[panel][marker], panel, latLng);
-                                } else {
-                                    return;
-                                }
+                            if (data[panel][marker].d1) {
+                                that.createMarkerObject(data[panel][marker], panel, latLng);
                             } else {
                                 // create markers on zoom >14
-                                tempPieMarkers[panel][latLng] = { publication_count: parseInt(data[panel][marker]) };
+                                pieMarkers[panel][latLng] = { publication_count: parseInt(data[panel][marker]) };
                             }
                         }
                     }
@@ -171,6 +155,13 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
 
 
         createMarkerObject: function(data, panel, latLng) {
+            if (markers[panel][latLng]) {
+                console.log("yep")
+                return;
+            } else {
+                console.log("nope")
+            }
+
             markers[panel][latLng] = new MarkerWithLabel({
                 id:             data.id,
                 icon:           '/static/img/markers/' + panel + '-normal.png',
@@ -244,81 +235,52 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
         },
 
         comparePieMarkers: function() {
-            for (var panel in tempPieMarkers) {
-                for (var marker in tempPieMarkers[panel]) {
-                    if (panel == "red") {
-                        if (!tempPieMarkers["compared"][marker])
-                            tempPieMarkers["compared"][marker] = {
-                                publication_count:          tempPieMarkers[panel][marker].publication_count,
-                                red_publication_count:      tempPieMarkers[panel][marker].publication_count,
+            var panels = {
+                red: {},
+                blue: {},
+                green: {},
+                yellow: {}
+            };
+
+            for(var panel in pieMarkers) {
+                if (panel == "compared")
+                    break;
+
+                if (pieMarkers.hasOwnProperty(panel)) {
+                    for (var marker in pieMarkers[panel]) {
+
+                        if (!pieMarkers['compared'][marker] && pieMarkers[panel].hasOwnProperty(marker)) {
+                            var panelName = panel + "_publication_count";
+
+                            pieMarkers["compared"][marker] = {
+                                red_publication_count:      0,
                                 blue_publication_count:     0,
                                 green_publication_count:    0,
                                 yellow_publication_count:   0
                             };
+                            pieMarkers['compared'][marker].publication_count = pieMarkers[panel][marker].publication_count;
+                            pieMarkers['compared'][marker][panelName] = pieMarkers[panel][marker].publication_count;
 
-                        if (tempPieMarkers["blue"][marker]) {
-                            tempPieMarkers["compared"][marker].publication_count += tempPieMarkers["blue"][marker].publication_count;
-                            tempPieMarkers["compared"][marker].blue_publication_count = tempPieMarkers["blue"][marker].publication_count;
+                            for (var _panel in panels) {
+                                if (_panel != panel && panels.hasOwnProperty(_panel) && pieMarkers[_panel][marker] ) {
+                                    var _panelName = _panel + "_publication_count";
 
-                            delete tempPieMarkers["blue"][marker];
-                        }
-                        else if (tempPieMarkers["green"][marker]) {
-                            tempPieMarkers["compared"][marker].publication_count += tempPieMarkers["green"][marker].publication_count;
-                            tempPieMarkers["compared"][marker].green_publication_count = tempPieMarkers["green"][marker].publication_count;
-
-                            delete tempPieMarkers["green"][marker];
-                        }
-                        else if (tempPieMarkers["yellow"][marker]) {
-                            tempPieMarkers["compared"][marker].publication_count += tempPieMarkers["yellow"][marker].publication_count;
-                            tempPieMarkers["compared"][marker].yellow_publication_count = tempPieMarkers["yellow"][marker].publication_count;
-
-                            delete tempPieMarkers["yellow"][marker];
-                        } else {
-                            delete tempPieMarkers["red"][marker];
-                        }
-                    }
-
-                    if (panel == "blue") {
-                        if (!tempPieMarkers["compared"][marker])
-                            tempPieMarkers["compared"][marker] = {
-                                publication_count:          tempPieMarkers["blue"][marker].publication_count,
-                                red_publication_count:      0,
-                                blue_publication_count:     tempPieMarkers["blue"][marker].publication_count,
-                                green_publication_count:    0,
-                                yellow_publication_count:   0
-                            };
-
-                        if (tempPieMarkers["red"][marker]) {
-                            tempPieMarkers["compared"][marker].publication_count += tempPieMarkers["red"][marker].publication_count;
-                            tempPieMarkers["compared"][marker].red_publication_count = tempPieMarkers["red"][marker].publication_count;
-
-                            delete tempPieMarkers["red"][marker];
-                        }
-                        else if (tempPieMarkers["green"][marker]) {
-                            tempPieMarkers["compared"][marker].publication_count += tempPieMarkers["green"][marker].publication_count;
-                            tempPieMarkers["compared"][marker].green_publication_count = tempPieMarkers["green"][marker].publication_count;
-
-                            delete tempPieMarkers["green"][marker];
-                        }
-                        else if (tempPieMarkers["yellow"][marker]) {
-                            tempPieMarkers["compared"][marker].publication_count += tempPieMarkers["yellow"][marker].publication_count;
-                            tempPieMarkers["compared"][marker].yellow_publication_count = tempPieMarkers["yellow"][marker].publication_count;
-
-                            delete tempPieMarkers["yellow"][marker];
-                        } else {
-                            delete tempPieMarkers["blue"][marker];
+                                    pieMarkers["compared"][marker].publication_count += pieMarkers[_panel][marker].publication_count;
+                                    pieMarkers["compared"][marker][_panelName] = pieMarkers[_panel][marker].publication_count;
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            for (var comparedMarker in tempPieMarkers["compared"]) {
-                var comparedMarkerPanel = tempPieMarkers["compared"][comparedMarker].red_publication_count ? "red" :
-                                            tempPieMarkers["compared"][comparedMarker].blue_publication_count ? "blue" :
-                                                tempPieMarkers["compared"][comparedMarker].green_publication_count ? "green":
-                                                    tempPieMarkers["compared"][comparedMarker].yellow_publication_count ? "yellow" : null;
+            for (var comparedMarker in pieMarkers["compared"]) {
+                var comparedMarkerPanel = pieMarkers["compared"][comparedMarker].red_publication_count ? "red" :
+                                            pieMarkers["compared"][comparedMarker].blue_publication_count ? "blue" :
+                                                pieMarkers["compared"][comparedMarker].green_publication_count ? "green":
+                                                    pieMarkers["compared"][comparedMarker].yellow_publication_count ? "yellow" : null;
 
-                this.createPieObject(tempPieMarkers["compared"][comparedMarker], comparedMarkerPanel, comparedMarker);
+                this.createPieObject(pieMarkers["compared"][comparedMarker], comparedMarkerPanel, comparedMarker);
             }
 
             this.clearTempPieMarkers();
@@ -345,9 +307,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
 
                     if (key.toString().substring(2) == "type_sid") {
                         if (filters[key] == null || filters[key] == "undefined") {
-                            that.clearPanelMarkers(panel, function () {
-                                pieMarkersLoaded[panel] = true;
-                            });
+                            pieMarkersLoaded[panel] = true;
                             return;
                         }
 
@@ -369,7 +329,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
 
 
         clearTempPieMarkers: function() {
-            tempPieMarkers = {
+            pieMarkers = {
                 red: {},
                 blue: {},
                 green: {},
