@@ -31,10 +31,6 @@ app.constant('ROUTES', (function () {
         'PUBLICATION': {
             'URL':      '/publication/:id',
             'TEMPLATE': '/ajax/template/main/detailed-dialog/'
-        },
-
-        'VIEWS': {
-            'BASE': 'content-view'
         }
     }
 })());

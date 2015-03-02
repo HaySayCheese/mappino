@@ -4,12 +4,12 @@ $(function() {
 
     var home = {
             type: 0,
-            operation: 'sale',
+            operation: 0,
             city: "",
             latLng: "",
 
-            /* ���� true � ������� ����� ���� �� ���� ����������,
-             * � �������� ����������� ��� ��, �� "����" � ���������� �����.*/
+            /* пїЅпїЅпїЅпїЅ true пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ,
+             * пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ, пїЅпїЅ "пїЅпїЅпїЅпїЅ" пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.*/
             cityRequired: false
         },
         cityInput = document.getElementById('home-location-autocomplete'),
@@ -20,6 +20,11 @@ $(function() {
             }
         }),
         geocoder = new google.maps.Geocoder();
+
+    $(document).find(".img-holder").imageScroll({
+        container: $('.wrapper'),
+        touch: Modernizr.touch
+    });
 
 
     setCurrentYearToFooter();
@@ -32,10 +37,11 @@ $(function() {
         style: 'btn-default btn-lg'
     });
     cityInput.focus();
+    $(".city-empty").hide();
 
 
     /**
-     * �� �������������, ������ ���������� �� ���� �� ��� ������ ���� ��������
+     * пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
      **/
     $(window).on('resize', function() {
         $('.img-holder.top').css('height', $(window).height() + 'px');
@@ -66,8 +72,8 @@ $(function() {
 
 
     /**
-     * ��������������� ��� ���������� ������ ������ ������ � ������� �� �����.
-     * @param city � ������, ��� ��� �������� � ����.
+     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
+     * @param city пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ.
      */
     $("[data-suggest]").click(function(e) {
         var city = $(e.currentTarget).data("suggest");
@@ -84,9 +90,21 @@ $(function() {
 
 
     $("[data-search-btn]").click(function(e) {
-        window.location = "/map";
+        //window.location = "/map";
 
-        e.preventDefault();
+        if (!home.latLng) {
+            $(".city-empty").show();
+            e.preventDefault();
+            return;
+        } else {
+            var type_sid = $(".type-selectpicker").val(),
+                operation_sid = $(".choices input[type='radio']:checked").attr("value");
+
+            !operation_sid ? operation_sid = 0 : null;
+
+            $(".city-empty").hide();
+        }
+        window.location = window.location.href + "map/#!/?r_type_sid=" + type_sid + "&r_operation_sid=" + operation_sid + "&latLng=" + home.latLng + "&zoom=14";
     });
 
 
