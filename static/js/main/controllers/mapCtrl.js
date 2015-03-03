@@ -144,17 +144,17 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     }
 
     function initTypeSidWatchers(){
-        $scope.destroyRedPanelSidWatcher = $scope.$watch("filters.red.r_type_sid", function(){
-            createFiltersForPanels("red", true);
+        $scope.destroyRedPanelSidWatcher = $scope.$watch("filters.red.r_type_sid", function(newValue, oldValue) {
+            !oldValue && newValue ? createFiltersForPanels("red", true) : null;
         });
-        $scope.destroyBluePanelSidWatcher = $scope.$watch("filters.blue.b_type_sid", function(){
-            createFiltersForPanels("blue", true);
+        $scope.destroyBluePanelSidWatcher = $scope.$watch("filters.blue.b_type_sid", function(newValue, oldValue) {
+            !oldValue && newValue ? createFiltersForPanels("blue", true) : null;
         });
-        $scope.destroyGreenPanelSidWatcher = $scope.$watch("filters.green.g_type_sid", function(){
-            createFiltersForPanels("green", true);
+        $scope.destroyGreenPanelSidWatcher = $scope.$watch("filters.green.g_type_sid", function(newValue, oldValue) {
+            !oldValue && newValue ? createFiltersForPanels("green", true) : null;
         });
-        $scope.destroyYellowPanelSidWatcher = $scope.$watch("filters.yellow.y_type_sid", function(){
-            createFiltersForPanels("yellow", true);
+        $scope.destroyYellowPanelSidWatcher = $scope.$watch("filters.yellow.y_type_sid", function(newValue, oldValue) {
+            !oldValue && newValue ? createFiltersForPanels("yellow", true) : null;
         });
     }
     initTypeSidWatchers();
@@ -165,6 +165,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      */
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
+
+        console.log(newValue)
 
         loadData("red", true)
     });
@@ -182,50 +184,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         parseFiltersCollectionAndUpdateUrl(newValue);
 
         loadData("yellow", true)
-    });
-
-
-    $rootScope.$on("first-enter-done", function(event, data){
-        destroyTypeSidWatchers(); // prevent default type_sid change logic.
-
-        // restore filters to defaults
-        $scope.filters['red'].r_type_sid = null;
-        $scope.filters['blue'].b_type_sid = null;
-        $scope.filters['green'].g_type_sid = null;
-        $scope.filters['yellow'].y_type_sid = null;
-
-        createFiltersForPanels('red', true);
-        createFiltersForPanels('blue', true);
-        createFiltersForPanels('green', true);
-        createFiltersForPanels('yellow', true);
-
-
-        // applying homepage filters
-        if (data.operation == 'sale'){
-            $scope.filters['red'].r_operation_sid = $rootScope.opeartionTypes.sale;
-
-        } else if (data.operation == 'rent'){
-            $scope.filters['red'].r_operation_sid = $rootScope.opeartionTypes.rent;
-
-        } else if (data.operation == 'daily'){
-            $scope.filters['red'].r_operation_sid = $rootScope.opeartionTypes.rent;
-            $scope.filters['red'].r_period_sid = 2;
-        }
-
-        // type sid must be update last
-        // so all others filters will be updated to this moment
-        // and angular will process them correct
-        $scope.filters["red"].r_type_sid = data.type;
-        createFiltersForPanels('red', false);
-
-        // updating of the type dd
-        $('[name="r_type_sid"]').val(data.type);
-
-        map.panTo(new google.maps.LatLng(data.latLng.split(",")[0], data.latLng.split(",")[1]));
-        map.setZoom(15);
-
-
-        initTypeSidWatchers(); // restore default type_sid change logic.
     });
 
 
