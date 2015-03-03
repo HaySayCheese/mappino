@@ -3,24 +3,24 @@
 $(function() {
 
     var home = {
-            type: 0,
-            operation: 0,
             city: "",
             latLng: "",
-
-            /* пїЅпїЅпїЅпїЅ true пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ,
-             * пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ, пїЅпїЅ "пїЅпїЅпїЅпїЅ" пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.*/
             cityRequired: false
         },
+        cityIsEmptyMessageText = $(".city-empty").hide(),
         cityInput = document.getElementById('home-location-autocomplete'),
-        dropdown = $(".type-selectpicker"),
-        first_enter_autocomplete = new google.maps.places.Autocomplete(cityInput, {
+        citySelect = $(".type-selectpicker"),
+        cityAutocomplete = new google.maps.places.Autocomplete(cityInput, {
             componentRestrictions: {
                 country: "ua"
             }
         }),
         geocoder = new google.maps.Geocoder();
 
+
+    /**
+     * Init 'imageScroll' parallax plugin
+     **/
     $(document).find(".img-holder").imageScroll({
         container: $('.wrapper'),
         touch: Modernizr.touch
@@ -31,50 +31,46 @@ $(function() {
 
 
     /**
-     * dropdown initialize
+     * city dropdown initialize
      **/
-    dropdown.selectpicker({
+    citySelect.selectpicker({
         style: 'btn-default btn-lg'
     });
     cityInput.focus();
-    $(".city-empty").hide();
 
 
     /**
-     * пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * set '$('.img-holder.top')' div to height of window if he is resize
      **/
     $(window).on('resize', function() {
         $('.img-holder.top').css('height', $(window).height() + 'px');
     }).resize();
 
+
+    /**
+     * show/hide message when city input is null
+     **/
     $(cityInput).change(function(e) {
-        if (e.currentTarget.value) {
-            $(".city-empty").hide();
-        } else {
-            $(".city-empty").show();
-        }
-
+        e.currentTarget.value ? cityIsEmptyMessageText.hide() : cityIsEmptyMessageText.show();
     });
-
 
 
     /**
      * autocomplete 'place_changed' event handler
      **/
-    google.maps.event.addListener(first_enter_autocomplete, 'place_changed', function() {
-        geocoder.geocode( { 'address': first_enter_autocomplete.getPlace().formatted_address}, function(results, status) {
+    google.maps.event.addListener(cityAutocomplete, 'place_changed', function() {
+        geocoder.geocode( { 'address': cityAutocomplete.getPlace().formatted_address}, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK)
                 home.latLng = results[0].geometry.location.lat() + "," + results[0].geometry.location.lng();
         });
 
-        home.city = first_enter_autocomplete.getPlace().formatted_address;
+        home.city = cityAutocomplete.getPlace().formatted_address;
     });
 
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
-     * @param city пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ.
-     */
+     * city suggests handler
+     **/
     $("[data-suggest]").click(function(e) {
         var city = $(e.currentTarget).data("suggest");
         home.city = city;
@@ -89,6 +85,9 @@ $(function() {
     });
 
 
+    /**
+     * search button click handler
+     **/
     $("[data-search-btn]").click(function(e) {
         //window.location = "/map";
 
