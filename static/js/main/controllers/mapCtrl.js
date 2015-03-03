@@ -133,22 +133,18 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      **/
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
-
         loadData("red", true)
     });
     $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
-
         loadData("blue", true)
     });
     $scope.$watchCollection("filters.green", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
-
         loadData("green", true)
     });
     $scope.$watchCollection("filters.yellow", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
-
         loadData("yellow", true)
     });
 
@@ -219,9 +215,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                     filters[filterName] = baseFilters[types[tid].filters[i]];
             }
         }
-
-
-
     }
 
 

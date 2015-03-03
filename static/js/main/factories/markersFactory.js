@@ -70,10 +70,10 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                 filters: []
             };
 
+
             jsonFilters.zoom = zoom;
             jsonFilters.viewport = viewport;
 
-            console.log(r_filters.r_type_sid)
             if (!_.isNull(r_filters.r_type_sid)) {
                 that.createJsonFiltersFromString(r_filters, "red");
                 that.clearPanelMarkers("red");
@@ -92,7 +92,6 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             requestTimeout = setTimeout(function() {
                 $rootScope.loadings.markers = true;
             }, 300);
-
 
             Queries.Map.getMarkers(JSON.stringify(jsonFilters)).success(function(data) {
                 that.add(tid, data, function() {

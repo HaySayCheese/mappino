@@ -104,7 +104,7 @@ $(function() {
 
             $(".city-empty").hide();
         }
-        window.location = window.location.href + "map/#!/?r_type_sid=" + type_sid + "&r_operation_sid=" + operation_sid + "&latLng=" + home.latLng + "&zoom=14";
+        window.location = window.location.href + "map/#!/?city=" + home.city + "&r_type_sid=" + type_sid + "&r_operation_sid=" + operation_sid + "&latLng=" + home.latLng + "&zoom=14";
     });
 
 
