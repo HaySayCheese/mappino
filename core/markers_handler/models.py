@@ -2036,7 +2036,7 @@ class SegmentsIndex(models.Model):
 
 
     @classmethod
-    def estimate_count(cls, tid, ne_lat, ne_lng, sw_lat, sw_lng, zoom, filters):
+    def estimate_count(cls, tid, ne_lat, ne_lng, sw_lat, sw_lng, zoom, filters, exclude_ids_list):
         ne_segment_x, \
         ne_segment_y, \
         sw_segment_x, \
@@ -2069,7 +2069,7 @@ class SegmentsIndex(models.Model):
         except ValueError:
             where = ''  # no WHERE condition is found
 
-        query = "SELECT count(publication_id), x, y FROM {index_table}" \
+        query = "SELECT array_agg(publication_id), x, y FROM {index_table}" \
                 "   JOIN {segments_index_table} " \
                 "       ON zoom = '{zoom}' AND " \
                 "          (x >= {ne_segment_x} AND x < {sw_segment_x}) AND " \
@@ -2094,15 +2094,29 @@ class SegmentsIndex(models.Model):
         selected_data = cursor.fetchall()
         cursor.close()
 
+
+        # intersecting received ids
+        filtered_data = list()
+        publications_ids = set()
+        for ids, x, y in selected_data:
+            ids = set(ids) - set(exclude_ids_list)
+            filtered_data.append((ids, x, y, )) # note: tuple here
+            publications_ids = publications_ids.union(ids)
+
+
         step_per_lat = cls.grid.step_on_lat(zoom)
         step_per_lng = cls.grid.step_on_lng(zoom)
-        return {
-            '{lat}:{lng}'.format(
-                lat=y * step_per_lat + (step_per_lat / 2) - step_per_lat - 90,  # денормалізація широти
-                lng=x * step_per_lng + (step_per_lng / 2) - step_per_lng - 180,  # денормалізація довготи
-            ): count
-            for count, x, y in selected_data
-        }
+        segments = dict()
+        for ids, x, y in filtered_data:
+            if len(ids) > 0:
+                segments.update({
+                    '{lat}:{lng}'.format(
+                        lat=y * step_per_lat + (step_per_lat / 2) - step_per_lat - 90,  # денормалізація широти
+                        lng=x * step_per_lng + (step_per_lng / 2) - step_per_lng - 180,  # денормалізація довготи
+                    ): len(ids)
+                })
+
+        return segments, publications_ids
 
 
     @classmethod
