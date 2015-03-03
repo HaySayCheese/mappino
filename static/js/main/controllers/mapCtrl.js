@@ -24,23 +24,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         requestTimeoutTime = 1500,
         mapIsLoaded = false;
 
-
-    $scope.status = {
-        //// Will be set to "true" only when user is begins to search from the homepage.
-        //// After processing of his request it should be set to "false" again.
-        //homepageRequestIsProcessing: false,
-
-        redTemplateIsLoaded: false,
-        blueTemplateIsLoaded: false,
-        greenTemplateIsLoaded: false,
-        yellowTemplateIsLoaded: false,
-
-        redPanelFiltersAreParsed: false,
-        bluePanelFiltersAreParsed: false,
-        greenPanelFiltersAreParsed: false,
-        yellowPanelFiltersAreParsed: false
-    };
-
     /**
      * Фільтри
      **/
@@ -127,22 +110,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
     /**
      * Слідкуємо за зміною типа нерухомості на панелі і грузимо темплейт
-     */
-    function destroyTypeSidWatchers(){
-        if ($scope.hasOwnProperty('destroyRedPanelSidWatcher')){
-            $scope.destroyRedPanelSidWatcher();
-        }
-        if ($scope.hasOwnProperty('destroyBluePanelSidWatcher')){
-            $scope.destroyBluePanelSidWatcher();
-        }
-        if ($scope.hasOwnProperty('destroyGreenPanelSidWatcher')){
-            $scope.destroyGreenPanelSidWatcher();
-        }
-        if ($scope.hasOwnProperty('destroyYellowPanelSidWatcher')){
-            $scope.destroyYellowPanelSidWatcher();
-        }
-    }
-
+     **/
     function initTypeSidWatchers(){
         $scope.destroyRedPanelSidWatcher = $scope.$watch("filters.red.r_type_sid", function(newValue, oldValue) {
             !oldValue && newValue ? createFiltersForPanels("red", true) : null;
@@ -162,11 +130,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
     /**
      * Слідкуємо за зміною фільттрів. Динамічно оновлюємо урл
-     */
+     **/
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
-
-        console.log(newValue)
 
         loadData("red", true)
     });
@@ -189,7 +155,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
     /**
      * Функція встановлення мінімального зума карти для пошуку обєктів
-     */
+     **/
     $scope.setMinimumZoom = function() {
         $scope.filters.map.zoom = 15;
 
@@ -201,41 +167,13 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
     /**
      * Функція створення обєкта з фільтрами
-     */
+     **/
     function createFiltersForPanels(panel_color, clear_previous_filters) {
-        if ($scope.status.homepageRequestIsProcessing){
-            // When the user begins from the homepage —
-            // we need to set some of the filters to the selected values, often different from the defaults.
-            //
-            // When called automatically on type_sid change this method will restore default filters values,
-            // and it will broke some logic needed after passing homepage.
-            //
-            // So wee need to prevent this method execution if type_sid was changed manually
-            // on homepage event processing.
-            return;
-        }
-
-
-
-        // todo: add comments
-
-
         var baseFilters = $scope.filters.base,
             filters = $scope.filters[panel_color],
             prefix = panel_color.toString().substring(0, 1) + "_",
             types = $rootScope.publicationTypes,
             tid = filters[prefix + 'type_sid'];
-
-
-
-
-        // todo: це треба поміняти негайно.
-        // таймаут не дає ніякої гарантії, шо темплейт загрузиться за цей час.
-        // це дуже-дуже банальний підхід.
-        //$scope.templateLoaded = false;
-        //$timeout(function() {
-        //    $scope.templateLoaded = true;
-        //}, 1000);
 
         if (clear_previous_filters) {
 
@@ -288,8 +226,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
 
     /**
-     * Код карти
-     */
+     * google map initialize function
+     **/
     function initializeMap() {
 
         /**
@@ -333,11 +271,17 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
 
     /**
-     * Парсимо строку пошука (все шо після '?')
-     * Оновлюємо колекцію фільтрів '$scope.filters'
-     */
+     * Pars url search parameters
+     * and update filters '$scope.filters'
+     **/
     $scope.parseSearchParametersFromUrl = function() {
         var searchParameters = $location.search();
+
+        searchParameters['r_type_sid'] ? createFiltersForPanels("red", false) :
+            searchParameters['b_type_sid'] ? createFiltersForPanels("blue", false) :
+                searchParameters['g_type_sid'] ? createFiltersForPanels("green", false) :
+                    searchParameters['y_type_sid'] ? createFiltersForPanels("yellow", false) : null;
+
 
             $rootScope.sidebarTemplateUrl = "/ajax/template/main/sidebar/common/";
 
@@ -401,21 +345,13 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
                 if (key == "city" || key == "zoom" || key == "latLng")
                     $scope.filters.map[key] = searchParameters[key];
-
-                //console.log($scope.filters)
             }
         }
 
         //if ($scope.filters.blue.b_type_sid == null || $scope.filters.green.g_type_sid == null || $scope.filters.yellow.y_type_sid == null)
-        //    createFiltersForPanels("red", 0, false);
+        //    createFiltersForPanels("red", false);
 
         $scope.filtersParsed = true;
-
-        //$timeout(function() {
-        //    $scope.templateLoaded = true;
-        //}, 1000);
-
-        console.log($scope.filters)
 
         initializeMap();
     };
@@ -425,7 +361,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Встановлення оффсета для карти
      *
      * юзається для рієлторів, не видаляти!!
-     */
+     **/
     function offsetCenter(latlng, offsetx, offsety) {
 
         var scale = Math.pow(2, map.getZoom()),
@@ -451,9 +387,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
 
     /**
-     * Парсимо колекцію з фільтрами '$scope.filters'
-     * Оновлюємо строку пошука все шо після '?')
-     */
+     * Pars collection of filters '$scope.filters'
+     * and update url search parameters
+     **/
     function parseFiltersCollectionAndUpdateUrl(filters) {
         for (var key in filters) {
             if (filters.hasOwnProperty(key)) {
@@ -474,16 +410,23 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             }
         }
 
-        // частина урла яка додається до ссилок
+        createUrlFiltersPart();
+
+        if (!$scope.$$phase)
+            $scope.$apply();
+    }
+
+
+    /**
+     * function which removes part of dialog's url
+     * and leaves only a part of filters url
+     **/
+    function createUrlFiltersPart() {
         $scope.urlFiltersPart = $location.url()
-            .replace("/search", "")
             .replace("/account/registration", "")
             .replace("/account/restore-access", "")
             .replace("/account/login", "")
             .replace("/publication/" + $scope.publicationIdPart, "");
-
-        if (!$scope.$$phase)
-            $scope.$apply();
     }
 
 
@@ -541,7 +484,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      */
     function placeMarkers(data) {
         for (var panel in data) {
-            if (markers.hasOwnProperty(panel)) {
+            if (data.hasOwnProperty(panel)) {
                 for (var marker in markers[panel]) {
                     if (markers[panel].hasOwnProperty(marker)) {
                         markers[panel][marker].setMap(map);
@@ -618,30 +561,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
             angular.element(window).resize(function() {
                 sidebar.perfectScrollbar("update")
-            });
-            $scope.$watch("filters.red.r_type_sid", function() {
-                $timeout(function() {
-                    sidebar.scrollTop(0);
-                    sidebar.perfectScrollbar("update");
-                }, 500);
-            });
-            $scope.$watch("filters.blue.b_type_sid", function() {
-                $timeout(function() {
-                    sidebar.scrollTop(0);
-                    sidebar.perfectScrollbar("update");
-                }, 500);
-            });
-            $scope.$watch("filters.green.g_type_sid", function() {
-                $timeout(function() {
-                    sidebar.scrollTop(0);
-                    sidebar.perfectScrollbar("update");
-                }, 500);
-            });
-            $scope.$watch("filters.yellow.y_type_sid", function() {
-                $timeout(function() {
-                    sidebar.scrollTop(0);
-                    sidebar.perfectScrollbar("update");
-                }, 500);
             });
 
         }, 1000);

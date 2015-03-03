@@ -73,10 +73,20 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             jsonFilters.zoom = zoom;
             jsonFilters.viewport = viewport;
 
-            that.createJsonFiltersFromString(r_filters, "red");
-            that.createJsonFiltersFromString(b_filters, "blue");
-            that.createJsonFiltersFromString(g_filters, "green");
-            that.createJsonFiltersFromString(y_filters, "yellow");
+            console.log(r_filters.r_type_sid)
+            if (!_.isNull(r_filters.r_type_sid)) {
+                that.createJsonFiltersFromString(r_filters, "red");
+                that.clearPanelMarkers("red");
+            } else if(!_.isNull(b_filters.b_type_sid)) {
+                that.createJsonFiltersFromString(b_filters, "blue");
+                that.clearPanelMarkers("blue");
+            } else if(!_.isNull(g_filters.g_type_sid)) {
+                that.createJsonFiltersFromString(g_filters, "green");
+                that.clearPanelMarkers("green");
+            } else if(!_.isNull(y_filters.y_type_sid)) {
+                that.createJsonFiltersFromString(y_filters, "yellow");
+                that.clearPanelMarkers("yellow");
+            }
 
             clearTimeout(requestTimeout);
             requestTimeout = setTimeout(function() {
