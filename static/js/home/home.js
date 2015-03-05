@@ -36,6 +36,12 @@ $(function() {
      **/
     citySelect.selectpicker({
         style: 'btn-default btn-lg'
+    }).on("change", function() {
+        var dailyBtn = $(".choices .btn input[value='2']").parent();
+
+        this.value > 2 ?
+            dailyBtn.attr("disabled", true) :
+            dailyBtn.attr("disabled", false) ;
     });
     cityInput.focus();
 
@@ -60,7 +66,9 @@ $(function() {
      * autocomplete 'place_changed' event handler
      **/
     google.maps.event.addListener(cityAutocomplete, 'place_changed', function() {
-        geocoder.geocode( { 'address': cityAutocomplete.getPlace().formatted_address}, function(results, status) {
+        geocoder.geocode({
+            'address': cityAutocomplete.getPlace().formatted_address
+        }, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK)
                 home.latLng = results[0].geometry.location.lat() + "," + results[0].geometry.location.lng();
         });
@@ -77,7 +85,9 @@ $(function() {
         home.city = city;
         $(cityInput).val(city).change();
 
-        geocoder.geocode( { 'address': city }, function(results, status) {
+        geocoder.geocode({
+            'address': city
+        }, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK)
                 home.latLng = results[0].geometry.location.lat() + "," + results[0].geometry.location.lng();
         });
