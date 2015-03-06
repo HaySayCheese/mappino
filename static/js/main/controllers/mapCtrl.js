@@ -107,6 +107,13 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         }
     };
 
+    $scope.status = {
+        redTemplateIsLoaded: false,
+        blueTemplateIsLoaded: false,
+        greenTemplateIsLoaded: false,
+        yellowTemplateIsLoaded: false
+    };
+
 
     /**
      * Слідкуємо за зміною типа нерухомості на панелі і грузимо темплейт
@@ -230,6 +237,11 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             center: new google.maps.LatLng($scope.filters.map.latLng.split(",")[0], $scope.filters.map.latLng.split(",")[1]),
             zoom: parseInt($scope.filters.map.zoom),
             mapTypeId: google.maps.MapTypeId.ROADMAP,
+            panControl: false,
+            zoomControlOptions: {
+                style: google.maps.ZoomControlStyle.LARGE,
+                position: google.maps.ControlPosition.LEFT_CENTER
+            },
             mapTypeControl: false,
             streetViewControl: false
         };

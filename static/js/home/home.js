@@ -28,6 +28,7 @@ $(function() {
     });
 
 
+    placeMarkers();
     setCurrentYearToFooter();
 
 
@@ -108,13 +109,27 @@ $(function() {
             return;
         } else {
             var type_sid = $(".type-selectpicker").val(),
-                operation_sid = $(".choices input[type='radio']:checked").attr("value");
+                operation_sid = $(".choices input[type='radio']:checked").attr("value"),
+                period_sid = null;
 
             !operation_sid ? operation_sid = 0 : null;
 
+            if (operation_sid == 2) {
+                operation_sid = 1;
+                period_sid = 1;
+            }
+
+
             $(".city-empty").hide();
         }
-        window.location = window.location.href + "map/#!/?city=" + home.city + "&r_type_sid=" + type_sid + "&r_operation_sid=" + operation_sid + "&latLng=" + home.latLng + "&zoom=14";
+        window.location =
+            window.location.href +
+            "map/#!/?city=" + home.city +
+            "&r_type_sid=" + type_sid +
+            "&r_operation_sid=" + operation_sid +
+            "&latLng=" + home.latLng +
+            "&zoom=14" +
+            (period_sid ? "&r_period_sid=" + period_sid : "");
     });
 
 
@@ -124,6 +139,30 @@ $(function() {
         }, '500');
         return false;
     });
+
+
+
+    function placeMarkers() {
+        var sections = $("section"),
+            markers = $(".tablet-marker"),
+            scrollTop = 0;
+
+        $(document).scroll(function() {
+            scrollTop = $(document).scrollTop();
+
+
+            if (scrollTop > sections[2].offsetTop - 150) {
+                console.log("fsfs")
+                $.each(markers, function(i, el) {
+                    setTimeout(function() {
+                        $(el).addClass("fadeInDown");
+                    }, 300 + (i * 300));
+                });
+            }
+        });
+
+
+    }
 
 
     function setCurrentYearToFooter() {

@@ -121,8 +121,8 @@ body {
         }
     }
     .btn {
-        // За замовчуванням .btn має 14рх висоти,
-        // через що шрифт в кнопці дд виглядає на 2рх меншим.
+        // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ .btn пїЅпїЅ 14пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ,
+        // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 2пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
         font-size: 16px !important;
     }
 
@@ -131,7 +131,7 @@ body {
     }
 
     .filter-option {
-        // Вирівнювання тексту в дд з типами об’єктів
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅб’єпїЅпїЅпїЅ
         text-align: center !important;
         color: @gray-darker;
     }
@@ -283,4 +283,69 @@ section {
             display: block;
         }
     }
+}
+
+.tablet-marker {
+    .size(36px, 49px);
+    position: absolute;
+    z-index: 9999;
+
+    background: url("../../img/home/red-marker.png") center center no-repeat;
+
+    &[class*='m-'] {
+        .translate(0, -3000px);
+    }
+    &.m-1 {
+        top: 140px;
+        left: 150px;
+    }
+    &.m-2 {
+        top: 130px;
+        left: 220px;
+    }
+    &.m-3 {
+        top: 230px;
+        left: 220px;
+    }
+    &.m-4 {
+        top: 165px;
+        left: 320px;
+    }
+    &.m-5 {
+        top: 230px;
+        left: 290px;
+    }
+}
+
+.animated {
+    -webkit-animation-duration: .3s;
+    animation-duration: .3s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+@-webkit-keyframes fadeInDown {
+    0% {
+        .opacity(0);
+        .translate(0, -2000px);
+    }
+    100% {
+        .opacity(100);
+        .translate(0, 0);
+    }
+}
+
+@keyframes fadeInDown {
+    0% {
+        .opacity(0);
+        .translate(0, -2000px);
+    }
+    100% {
+        .opacity(100);
+        .translate(0, 0);
+    }
+}
+
+.fadeInDown {
+    -webkit-animation-name: fadeInDown;
+    animation-name: fadeInDown;
 }
