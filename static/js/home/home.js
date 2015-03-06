@@ -118,6 +118,14 @@ $(function() {
     });
 
 
+    $("[data-scroll-top]").on('click', function() {
+        $("html, body").animate({
+            scrollTop:0
+        }, '500');
+        return false;
+    });
+
+
     function setCurrentYearToFooter() {
         var fy = $('.footer-year');
         fy.text(fy.text() + new Date().getFullYear());
