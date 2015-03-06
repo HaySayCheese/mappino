@@ -5,6 +5,9 @@
 # python-dev (for python environment) | pypy-dev (for pypy-environment)
 
 
+# for deployment
+# gunicorn
+
 # for python2.7
 # psycopg2
 
