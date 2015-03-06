@@ -1,0 +1,47 @@
+.map-home-btn {
+    position: absolute;
+    top: 30px;
+    left: 13px;
+
+    z-index: 9999;
+
+    .square(40px);
+    overflow: hidden;
+
+    padding: 10px 0 10px 40px;
+    background-color: @nice-blue;
+    color: #fff;
+
+    text-decoration: none;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 16px;
+
+    .box-shadow(~"0 0 15px rgba(0, 0, 0, 0.4)");
+    .transition(~"all 0.3s ease");
+
+    &:before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 10px;
+
+        content: "\e079";
+
+        font-weight: normal;
+        font-style: normal;
+        font-size: 20px;
+        font-family: 'Glyphicons Halflings';
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    &:hover, &:active, &:focus {
+        color: #fff;
+    }
+    &:hover {
+        .size(140px, 40px);
+
+    }
+}
