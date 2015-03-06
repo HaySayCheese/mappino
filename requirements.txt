@@ -5,6 +5,12 @@
 # python-dev (for python environment) | pypy-dev (for pypy-environment)
 
 
+# for python2.7
+# psycopg2
+
+# for pypy
+psycopg2cffi
+
 
 Django==1.6
 Jinja2
@@ -16,7 +22,6 @@ hiredis
 mandrill
 mmh3
 phonenumbers
-psycopg2cffi
 pysqlite
 pytz
 redis
