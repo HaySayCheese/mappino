@@ -1,4 +1,4 @@
-function ZoomControl(div, map) {
+function BMapZoomControl(div, map) {
 
     var container = div;
     var zoomOut = document.createElement('div');
@@ -28,7 +28,7 @@ function ZoomControl(div, map) {
     container.appendChild(zoomIn);
 
     zoomInText.innerHTML                = '<strong>+</strong>';
-    zoomInText.style.fontSize           = '30px';
+    zoomInText.style.fontSize           = '28px';
     zoomInText.style.textAlign          = 'center';
     zoomInText.style.color              = "#ffffff";
     zoomIn.appendChild(zoomInText);
@@ -42,10 +42,11 @@ function ZoomControl(div, map) {
     container.appendChild(zoomOut);
 
     zoomOutText.innerHTML               = '<strong>-</strong>';
-    zoomOutText.style.fontSize          = '30px';
+    zoomOutText.style.fontSize          = '28px';
     zoomOutText.style.textAlign         = 'center';
     zoomOutText.style.color             = "#ffffff";
     zoomOutText.style.marginBottom      = "5px";
+    zoomOutText.style.lineHeight        = "35px";
     zoomOut.appendChild(zoomOutText);
 
 

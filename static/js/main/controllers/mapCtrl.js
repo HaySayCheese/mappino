@@ -247,7 +247,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
          * b-zoom-control
          **/
         var zoomControlDiv  = document.createElement('div'),
-            zoomControl     = new ZoomControl(zoomControlDiv, map);
+            zoomControl     = new BMapZoomControl(zoomControlDiv, map);
 
         zoomControlDiv.index = 1;
         map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(zoomControlDiv);
