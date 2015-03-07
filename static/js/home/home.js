@@ -152,7 +152,6 @@ $(function() {
 
 
             if (scrollTop > sections[2].offsetTop - 150) {
-                console.log("fsfs")
                 $.each(markers, function(i, el) {
                     setTimeout(function() {
                         $(el).addClass("fadeInDown");
