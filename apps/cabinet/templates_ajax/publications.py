@@ -33,12 +33,6 @@ def unpublished_form_template(request, tid):
 	elif tid == OBJECTS_TYPES.flat():
 		return HttpResponse(templates.get_template(
 			'cabinet/publications/unpublished/flat.html').render())
-	elif tid == OBJECTS_TYPES.apartments():
-		return HttpResponse(templates.get_template(
-			'cabinet/publications/unpublished/apartments.html').render())
-	elif tid == OBJECTS_TYPES.cottage():
-		return HttpResponse(templates.get_template(
-			'cabinet/publications/unpublished/cottage.html').render())
 	elif tid == OBJECTS_TYPES.room():
 		return HttpResponse(templates.get_template(
 			'cabinet/publications/unpublished/room.html').render())
@@ -56,9 +50,6 @@ def unpublished_form_template(request, tid):
 	elif tid == OBJECTS_TYPES.business():
 		return HttpResponse(templates.get_template(
 			'cabinet/publications/unpublished/business.html').render())
-	elif tid == OBJECTS_TYPES.catering():
-		return HttpResponse(templates.get_template(
-			'cabinet/publications/unpublished/catering.html').render())
 
 	# Другая недвижимость
 	elif tid == OBJECTS_TYPES.garage():

@@ -12,9 +12,7 @@ class PublishedDataSource(object):
         self.data_generators = {
             # living
             OBJECTS_TYPES.flat():       self.compose_flat_description,
-            OBJECTS_TYPES.apartments(): self.compose_apartments_description,
             OBJECTS_TYPES.house():      self.compose_house_description,
-            OBJECTS_TYPES.cottage():    self.compose_cottage_description,
             OBJECTS_TYPES.room():       self.compose_room_description,
 
             # commercial
@@ -22,7 +20,6 @@ class PublishedDataSource(object):
             OBJECTS_TYPES.office():     self.compose_office_description,
             OBJECTS_TYPES.warehouse():  self.compose_warehouse_description,
             OBJECTS_TYPES.business():   self.compose_business_description,
-            OBJECTS_TYPES.catering():   self.compose_catering_description,
 
             # other
             OBJECTS_TYPES.garage():     self.compose_garage_description,
@@ -133,92 +130,7 @@ class PublishedDataSource(object):
 
 
     @staticmethod
-    def compose_apartments_description(p):
-        description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
-            'market_type': p.body.print_market_type(),
-            'building_type': p.body.print_building_type(),
-            'build_year': p.body.print_build_year(),
-            'flat_type': p.body.print_flat_type(),
-            'rooms_planning': p.body.print_rooms_planning() ,
-            'condition': p.body.print_condition(),
-
-            'floor': p.body.print_floor(),
-            'floors_count': p.body.print_floors_count(),
-
-            'total_area': p.body.print_total_area() or u'неизвестно',
-            'living_area': p.body.print_living_area() or u'неизвестно',
-            'kitchen_area': p.body.print_kitchen_area(),
-
-            'rooms_count': p.body.print_rooms_count() or u'неизвестно',
-            'bedrooms_count': p.body.print_bedrooms_count(),
-            'vcs_count': p.body.print_vcs_count(),
-            'balconies_count': p.body.print_balconies_count(),
-            'loggias_count': p.body.print_loggias_count(),
-            'ceiling_height': p.body.print_ceiling_height(),
-
-            'facilities': p.body.print_facilities() or u'неизвестно',
-            'communications': p.body.print_communications(),
-            'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
-        }
-
-        if p.for_sale:
-            description.update({
-                'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms()
-            })
-        if p.for_rent:
-            description.update({
-                'rent_price': p.rent_terms.print_price(),
-                'rent_terms': p.rent_terms.print_terms(),
-                'rent_facilities': p.rent_terms.print_facilities()
-            })
-        return description
-
-
-    @staticmethod
     def compose_house_description(p):
-        description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
-            'market_type': p.body.print_market_type(),
-            'condition': p.body.print_condition(),
-
-            'total_area': p.body.print_total_area() or u'неизвестно',
-            'living_area': p.body.print_living_area() or u'неизвестно',
-            'kitchen_area': p.body.print_kitchen_area(),
-
-            'floors_count': p.body.print_floors_count() or u'неизвестно',
-            'rooms_count': p.body.print_rooms_count() or u'неизвестно',
-            'bedrooms_count': p.body.print_bedrooms_count(),
-            'vcs_count': p.body.print_vcs_count(),
-
-            'facilities': p.body.print_facilities(),
-            'communications': p.body.print_communications(),
-            'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
-        }
-
-        if p.for_sale:
-            description.update({
-                'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms()
-            })
-        if p.for_rent:
-            description.update({
-                'rent_price': p.rent_terms.print_price(),
-                'rent_terms': p.rent_terms.print_terms(),
-                'rent_facilities': p.rent_terms.print_facilities()
-            })
-        return description
-
-
-    @staticmethod
-    def compose_cottage_description(p):
         description = {
             'title': p.body.print_title(),
             'description': p.body.print_description(),
@@ -429,46 +341,6 @@ class PublishedDataSource(object):
             'facilities': p.body.print_facilities(),
             'communications': p.body.print_communications(),
             'buildings': p.body.print_add_buildings(),
-            'showplaces': p.body.print_showplaces()
-        }
-
-        if p.for_sale:
-            description.update({
-                'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms(),
-            })
-        if p.for_rent:
-            description.update({
-                'rent_price': p.rent_terms.print_price(),
-                'rent_terms': p.rent_terms.print_terms(),
-            })
-        return description
-
-
-    @staticmethod
-    def compose_catering_description(p):
-        description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
-            'market_type': p.body.print_market_type(),
-            'building_type': p.body.print_building_type(),
-            'build_year': p.body.print_build_year(),
-            'condition': p.body.print_condition() or u'неизвестно',
-
-            'floor': p.body.print_floor(),
-            'floors_count': p.body.print_floors_count(),
-
-            'halls_count': p.body.print_halls_count() or u'неизвестно',
-            'halls_area': p.body.print_halls_area() or u'неизвестно',
-            'total_area': p.body.print_total_area() or u'неизвестно',
-
-            'vcs_count': p.body.print_vcs_count(),
-            'ceiling_height': p.body.print_ceiling_height(),
-
-            'facilities': p.body.print_facilities(),
-            'communications': p.body.print_communications(),
-            'buildings': p.body.print_provided_add_buildings(),
             'showplaces': p.body.print_showplaces()
         }
 
