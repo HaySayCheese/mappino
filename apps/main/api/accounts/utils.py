@@ -118,8 +118,16 @@ class MobilePhoneChecker(object):
 			# todo: suspicious operation
 			return
 
+		# In case when user decided to cancel his registration (for example if he doesn't received sms from us)
+		# we need to remove his data from our database.
+		user_id = cls._redis.hget(record_id, 'id')
+
 		cls._redis.delete(record_id)
 		response.delete_cookie(cls._cookie_name)
+
+        # User's id is needed into the previous function to delete the users fro mthe database.
+        # This method has nothing with database, so deleting a user here will bad a code style.
+		return user_id
 
 
 	@classmethod
