@@ -1,5 +1,5 @@
 # Packages that should be installed on ubuntu before requirements install
-# libmysqlclient-dev libpq-dev libsqlite3-dev libjpeg libjpeg-dev libfreetype6 libfreetype6-dev zlib1g-dev
+# libmysqlclient-dev libpq-dev libsqlite3-dev libjpeg-dev libfreetype6 libfreetype6-dev zlib1g-dev
 
 # python-dev (for python environment) | pypy-dev (for pypy-environment)
 
@@ -37,7 +37,6 @@ kombu
 django_compressor
 django-redis-cache
 djorm-pgarray
-ffi
 amqp
 anyjson
 six
