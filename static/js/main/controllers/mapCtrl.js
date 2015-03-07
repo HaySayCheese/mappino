@@ -234,18 +234,25 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
          * Карта
          **/
         var mapOptions = {
-            center: new google.maps.LatLng($scope.filters.map.latLng.split(",")[0], $scope.filters.map.latLng.split(",")[1]),
-            zoom: parseInt($scope.filters.map.zoom),
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            panControl: false,
-            zoomControlOptions: {
-                style: google.maps.ZoomControlStyle.LARGE,
-                position: google.maps.ControlPosition.LEFT_CENTER
-            },
-            mapTypeControl: false,
-            streetViewControl: false
-        };
+                center: new google.maps.LatLng($scope.filters.map.latLng.split(",")[0], $scope.filters.map.latLng.split(",")[1]),
+                zoom: parseInt($scope.filters.map.zoom),
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                disableDefaultUI: true
+            };
+
         map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+
+        /**
+         * b-zoom-control
+         **/
+        var zoomControlDiv  = document.createElement('div'),
+            zoomControl     = new ZoomControl(zoomControlDiv, map);
+
+        zoomControlDiv.index = 1;
+        map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(zoomControlDiv);
+
+
 
         /**
          * Інші екземпляри
