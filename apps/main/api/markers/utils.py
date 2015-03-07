@@ -1,5 +1,5 @@
 #coding=utf-8
-import exceptions
+import collective.exceptions as exceptions
 
 
 OPERATION_SID_SALE = 0
