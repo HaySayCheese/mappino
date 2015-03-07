@@ -1,24 +1,26 @@
 #coding=utf-8
 import copy
 import json
-from django.http.response import HttpResponseRedirect
+import phonenumbers
 
-from apps.classes import AnonymousOnlyView, AuthenticatedOnlyView
-from collective.methods.request_data_getters import angular_post_parameters
-from core.email_backend import email_sender
-from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
-from core.users import tasks
-from apps.main.api.accounts.utils import MobilePhoneChecker
-from core.users.models import Users, AccessRestoreTokens
+from django.http.response import HttpResponseRedirect
+from django.http import HttpResponseBadRequest, HttpResponse
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import transaction
-from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.generic import View
+
+from apps.classes import AnonymousOnlyView, AuthenticatedOnlyView
+from apps.main.api.accounts.utils import MobilePhoneChecker
+from collective.methods.request_data_getters import angular_post_parameters
+from collective.http.responses import HttpJsonResponse
+from core.email_backend import email_sender
+from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
+from core.users import tasks
+from core.users.models import Users, AccessRestoreTokens
 from core.utils.jinja2_integration import templates
-import phonenumbers
 from phonenumbers import NumberParseException
 
 
@@ -272,8 +274,15 @@ class RegistrationManager(object):
 
 
 		def post(self, request, *args):
-			response = HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
-			MobilePhoneChecker.cancel_check(request, response)
+			response = HttpJsonResponse(self.post_codes['OK'])
+
+			# In case when user decided to cancel his registration
+			# (for example if he doesn't received sms from us)
+		    # we need to remove his data from our database too.
+			# to do this wee ned his id.
+			user_id = MobilePhoneChecker.cancel_check(request, response)
+			Users.objects.filter(id=user_id).delete()
+
 			return response
 
 
