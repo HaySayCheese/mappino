@@ -56,10 +56,6 @@ class SearchManager(object):
                 task = update_house_index.apply_async([hid, ], countdown=self.update_interval)
             elif tid == OBJECTS_TYPES.flat():
                 task = update_flat_index.apply_async([hid, ], countdown=self.update_interval)
-            elif tid == OBJECTS_TYPES.apartments():
-                task = update_apartments_index.apply_async([hid, ], countdown=self.update_interval)
-            elif tid == OBJECTS_TYPES.cottage():
-                task = update_cottage_index.apply_async([hid, ], countdown=self.update_interval)
             elif tid == OBJECTS_TYPES.room():
                 task = update_room_index.apply_async([hid, ], countdown=self.update_interval)
 
@@ -71,8 +67,6 @@ class SearchManager(object):
                 task = update_warehouse_index.apply_async([hid, ], countdown=self.update_interval)
             elif tid == OBJECTS_TYPES.business():
                 task = update_business_index.apply_async([hid, ], countdown=self.update_interval)
-            elif tid == OBJECTS_TYPES.catering():
-                task = update_catering_index.apply_async([hid, ], countdown=self.update_interval)
 
             elif tid == OBJECTS_TYPES.garage():
                 task = update_garage_index.apply_async([hid, ], countdown=self.update_interval)
