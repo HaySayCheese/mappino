@@ -197,7 +197,7 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
         if (next.indexOf("/account/registration") != -1 ||
             next.indexOf("/account/login") != -1 ||
             next.indexOf("/account/restore-access") != -1) {
-            $location.path("/");
+            $location.path("/map");
 
             if(!$scope.$$phase)
                 $scope.$apply();

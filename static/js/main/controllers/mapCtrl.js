@@ -285,7 +285,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         searchParameters['r_type_sid'] ? createFiltersForPanels("red", false) :
             searchParameters['b_type_sid'] ? createFiltersForPanels("blue", false) :
                 searchParameters['g_type_sid'] ? createFiltersForPanels("green", false) :
-                    searchParameters['y_type_sid'] ? createFiltersForPanels("yellow", false) : null;
+                    searchParameters['y_type_sid'] ? createFiltersForPanels("yellow", false) : createFiltersForPanels("red", false);
 
 
             $rootScope.sidebarTemplateUrl = "/ajax/template/main/sidebar/common/";
