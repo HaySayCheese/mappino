@@ -1,7 +1,7 @@
 <div class="bwb sidebar" ng-controller="SidebarCtrl" ng-cloak>
     <div class="sidebar-header">
 
-        <div class="bwb-header text-right" ng-show="!userName || userName === ''">
+        <div class="sidebar-header-links" ng-show="!userName || userName === ''">
             <a ng-href="/cabinet/#!/publications/all?cp">Подать обьявление</a>
             <span class="text-muted">&#8226;</span>
             <a ng-href="#!/account/registration[[ urlFiltersPart ]]">Регистрация</a>
@@ -9,7 +9,7 @@
             <a ng-href="#!/account/login[[ urlFiltersPart ]]">Войти</a>
         </div>
 
-        <div class="bwb-header text-right" ng-show="userName && userName !== ''">
+        <div class="sidebar-header-links" ng-show="userName && userName !== ''">
             <a ng-href="/cabinet/#!/publications/all?cp">Подать обьявление</a>
             <span class="text-muted">&#8226;</span>
             <a ng-href="/cabinet/">[[ userName ]]</a>
@@ -21,7 +21,7 @@
             <input id="sidebar-city-input" type="text" placeholder="Введите местоположение" class="form-control sidebar-city-input input-lg text-center" select-on-click ng-model="filters.map.city">
         </div>
     </div>
-    <div class="bwb-body sidebar-body">
+    <div class="sidebar-body">
         <div class="panel-group" id="markers-accordion">
             <div class="panel panel-danger">
                 <div class="panel-heading red-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#redMarkersPanel">
@@ -173,11 +173,11 @@
             </div>
         </div>
     </div>
-    <div class="bwb-footer">
-        <div class="bwb-footer-text">
+    <div class="sidebar-footer">
+        <div class="sidebar-footer-text">
             <a href="mailto:info@mappino.com">info@mappino.com</a> &copy; 2014.
         </div>
-        <div class="bwb-si">
+        <div class="sidebar-footer-social-links">
             <a href="https://vk.com/mappino"></a>
             <!--<a href="http://facebook.com"></a>-->
             <!--<a href="http://twitter.com"></a>-->
