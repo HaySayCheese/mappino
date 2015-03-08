@@ -37,82 +37,82 @@ EMAIL_USE_TLS = True
 SERVER_EMAIL = 'wall-e@mappino.com'
 
 
-EVE_M1_INTERNAL_IP = '10.129.177.252'
-HUL_M1_INTERNAL_IP = '10.129.178.15'
+
+HUL1_INTERNAL_IP = '10.133.187.144'
+EVE1_INTERNAL_IP = '10.133.187.40'
 
 
 DATABASES = {
-	'default': {
-		'ENGINE':'django.db.backends.postgresql_psycopg2',
-		'NAME': 'mappino-db',
-		'USER': 'mappino',
-		'PASSWORD': passwords.DB_PASSWORD,
-		'HOST': EVE_M1_INTERNAL_IP,
-	    'PORT': 6432, # pg_bounce is used
-	},
-    'markers_index': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'index-db', # todo: create separate database for indexes
+    'default': {
+        'ENGINE':'django.db.backends.postgresql_psycopg2',
+        'NAME': 'mappino',
         'USER': 'mappino',
         'PASSWORD': passwords.DB_PASSWORD,
-        'HOST': EVE_M1_INTERNAL_IP,
-        'PORT': 6432, # pg_bounce is used
+        'HOST': EVE1_INTERNAL_IP,
+    'PORT': 5432, # pg_bounce is used
+    },
+    'markers_index': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'mappino-indexes', # todo: create separate database for indexes
+        'USER': 'mappino',
+        'PASSWORD': passwords.INDEX_DB_PASSWORD,
+        'HOST': EVE1_INTERNAL_IP,
+        'PORT': 5432, # pg_bounce is used
     }
 }
 DATABASE_ROUTERS = ['core.database_router.Router', ]
 
 
 REDIS_DATABASES = {
-	'throttle': {
-		'HOST': HUL_M1_INTERNAL_IP,
-	    'PORT': 6379,
-	},
+    'throttle': {
+        'HOST': HUL1_INTERNAL_IP,
+        'PORT': 6379,
+    },
     'steady': {
-	    'HOST': HUL_M1_INTERNAL_IP,
-	    'PORT': 6379,
+        'HOST': HUL1_INTERNAL_IP,
+        'PORT': 6379,
     },
     'cache': {
-	    'HOST': HUL_M1_INTERNAL_IP,
-	    'PORT': 6380, # NOTE: redis-cache is on the different port
+        'HOST': HUL1_INTERNAL_IP,
+        'PORT': 6379,
     },
     'celery': {
-	    'HOST': HUL_M1_INTERNAL_IP,
-	    'PORT': 6379,
+        'HOST': HUL1_INTERNAL_IP,
+        'PORT': 6379,
     },
 }
 
-
 SPHINX_SEARCH_DATABASE = {
-	'HOST': HUL_M1_INTERNAL_IP,
+    'HOST': HUL1_INTERNAL_IP,
     'PORT': 9306
 }
-ENABLE_SPHINX_SEARCH = not DEBUG
+ENABLE_SPHINX_SEARCH = True
 
 
 CACHES = {
-	'default': {
-		# Даний кеш нуявно використовується django-compressor для зберігання імен опрацьованих файлів.
+    'default': {
+        # Даний кеш неявно використовується django-compressor для зберігання імен опрацьованих файлів.
 
-		'BACKEND': 'redis_cache.RedisCache',
-	    'LOCATION': '{0}:{1}'.format(
-		    REDIS_DATABASES['cache']['HOST'],
-		    REDIS_DATABASES['cache']['PORT']
-	    ),
-	    'OPTIONS': {
-		    'DB': 0,
-	        'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
-	        'CONNECTION_POOL_CLASS_KWARGS': {
-		        'max_connections': 10,
-	            'timeout': 20
-	        }
-	    }
-	}
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '{0}:{1}'.format(
+            REDIS_DATABASES['cache']['HOST'],
+            REDIS_DATABASES['cache']['PORT']
+        ),
+        'OPTIONS': {
+            'DB': 0,
+            'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
+            'CONNECTION_POOL_CLASS_KWARGS': {
+                'max_connections': 10,
+                'timeout': 20
+            }
+        }
+    }
 }
 
 
 BROKER_URL = 'redis://{0}:{1}/0'.format(
-	REDIS_DATABASES['celery']['HOST'],
-	REDIS_DATABASES['celery']['PORT']
+    REDIS_DATABASES['celery']['HOST'],
+    REDIS_DATABASES['celery']['PORT']
 )
 BROKER_TRANSPORT_OPTIONS = {
     # If a task is not acknowledged within the Visibility Timeout
@@ -131,9 +131,13 @@ CELERY_RESULT_BACKEND = BROKER_URL
 
 INSTALLED_APPS = (
     'south',
-	'compressor',
+#	'compressor',
 
-	'core',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+
+    'core',
     'core.users',
     'core.billing',
     'core.publications',
@@ -142,17 +146,17 @@ INSTALLED_APPS = (
     'core.support',
     'core.escaped_fragments_manager',
 
-	'apps.cabinet.api.dirtags',
-	'apps.main.api.correspondence',
+    'apps.cabinet.api.dirtags',
+    'apps.main.api.correspondence',
 )
 
 
 MIDDLEWARE_CLASSES = (
-	'django.middleware.common.BrokenLinkEmailsMiddleware',
-	'django.contrib.sessions.middleware.SessionMiddleware',
-	'django.middleware.common.CommonMiddleware',
-	'django.contrib.auth.middleware.AuthenticationMiddleware',
-	'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.common.BrokenLinkEmailsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'middlewares.auto_prolong_session.AutoProlongSession', # custom
 )
@@ -177,10 +181,9 @@ USE_TZ = True
 
 
 ALLOWED_HOSTS = (
-	'mappino.com', 'www.mappino.com',
-	'mappino.com.ua', 'www.mappino.com.ua',
-
-	'188.226.198.224',
+    'm.w.ua1.binno.com.ua',
+    'mappino.com', 'www.mappino.com',
+    'mappino.com.ua', 'www.mappino.com.ua',
 )
 MAIN_DOMAIN_URL = 'http://mappino.com.ua'
 
@@ -197,7 +200,7 @@ SERVE_STATIC_FILES = False
 MEDIA_URL = 'http://mappino.com.ua/media/'
 MEDIA_ROOT = 'media/'
 
-COMPRESS_ENABLED = True
+COMPRESS_ENABLED = False
 COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
 
 
