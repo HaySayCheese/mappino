@@ -119,7 +119,7 @@ class SearchManager(object):
             if tid in results:
                 results[tid].append(hid)
             else:
-                results[tid] = [hid]
+                results[tid] = [hid] # note list here
 
         # Пошук по ярликам:
         # Якщо пошуковий запит співпадає по icontains з назвою якого-небудь ярлика користувача,
@@ -152,8 +152,8 @@ class SearchManager(object):
 
 
         return MySQLdb.connect(
-            host = settings.SPHINX_SEARCH['HOST'],
-            port = settings.SPHINX_SEARCH['PORT'],
+            host = settings.SPHINX_SEARCH_DATABASE['HOST'],
+            port = settings.SPHINX_SEARCH_DATABASE['PORT'],
 
             use_unicode = True,
             charset = 'utf8',

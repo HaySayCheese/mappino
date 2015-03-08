@@ -39,8 +39,8 @@ class SphinxUpdateIndexTask(Task):
 
 	def connect(self):
 		self.connection = MySQLdb.connect(
-			host = settings.SPHINX_SEARCH['HOST'],
-			port = settings.SPHINX_SEARCH['PORT'],
+			host = settings.SPHINX_SEARCH_DATABASE['HOST'],
+			port = settings.SPHINX_SEARCH_DATABASE['PORT'],
 
 		    use_unicode = True,
 		    charset = 'utf8',
@@ -69,7 +69,7 @@ class SphinxUpdateIndexTask(Task):
 			execute()
 		except Exception:
 			# Якщо втрачено з’єднання - спробувати повторно з’єднатись.
-			# OperationalError може свідчити і про інші помилки,
+			# Exception може свідчити і про інші помилки,
 			# тож не варто перехоплювати дану викл. ситуацію більше одного разу.
 			self.connect()
 			execute()
