@@ -38,11 +38,19 @@ $(function() {
     citySelect.selectpicker({
         style: 'btn-default btn-lg'
     }).on("change", function() {
-        var dailyBtn = $(".choices .btn input[value='2']").parent();
+        var dailyBtn = $(".choices .btn input[value='2']").parent(),
+            rentBtn = $(".choices .btn input[value='1']").parent();
 
-        this.value > 2 ?
-            dailyBtn.attr("disabled", true) :
-            dailyBtn.attr("disabled", false) ;
+        if (this.value > 2) {
+            dailyBtn.attr("disabled", true);
+
+            if (dailyBtn.hasClass('active')) {
+                dailyBtn.removeClass('active');
+                rentBtn.addClass('active');
+            }
+        } else {
+            dailyBtn.attr("disabled", false)
+        }
     });
     cityInput.focus();
 
