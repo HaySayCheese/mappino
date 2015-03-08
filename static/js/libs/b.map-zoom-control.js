@@ -1,10 +1,11 @@
 /**
  * Create a custom google map zoom control
  *
- * @param {HTMLDivElement}  div - Empty div
+ * @param {Element}  div - Empty div
  * @param {google.maps.Map} map - Google Map object
+ * @param {google.maps.ControlPosition} position - Google Map ControlPosition object
  */
-function BMapZoomControl(div, map) {
+function BMapZoomControl(div, map, position) {
 
     var container       = div;
 
@@ -42,13 +43,12 @@ function BMapZoomControl(div, map) {
     };
 
 
-
     // Set CSS for the controls
     container.index                     = 1;
 
     container.style.width               = options.container.width;
     container.style.height              = options.container.height;
-    container.style.margin              = '0 0 10px 15px';
+    container.style.margin              = '10px 15px 10px 15px';
     container.style.cursor              = options.container.cursor;
     container.style.fontFamily          = options.container.fontFamily;
     container.style.boxShadow           = options.container.boxShadow;
@@ -132,4 +132,7 @@ function BMapZoomControl(div, map) {
         if(zoom != 0)
             map.setZoom(--zoom);
     });
+
+
+    map.controls[google.maps.ControlPosition[position]].push(div);
 }
