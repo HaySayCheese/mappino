@@ -20,8 +20,6 @@
 
     text-decoration: none;
 
-    text-overflow: ellipsis;
-    white-space: nowrap;
     font-size: 16px;
 
     .box-shadow(~"0 0 15px rgba(0, 0, 0, 0.4)");
@@ -31,13 +29,13 @@
         position: absolute;
         top: 0;
         left: 0;
-        margin: 10px;
+        margin: 11px;
 
-        content: "\e079";
+        content: "\e021";
 
         font-weight: normal;
         font-style: normal;
-        font-size: 20px;
+        font-size: 18px;
         font-family: 'Glyphicons Halflings';
         line-height: 1;
         -webkit-font-smoothing: antialiased;
@@ -47,6 +45,12 @@
         color: #fff;
     }
     &:hover {
-        .size(140px, 40px);
+        width: 140px;
+        background-color: #3286DC;
+    }
+
+    span {
+        width: 100px;
+        float: left;
     }
 }

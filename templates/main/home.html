@@ -32,7 +32,7 @@
         <script type="text/javascript" src="{{ static }}js/libs/perfect-scrollbar-0.4.10.min.js"></script>
 
         <script type="text/javascript" src="{{ static }}js/libs/utils/fmt.js"></script>
-        <script type="text/javascript" src="{{ static }}js/libs/b-zoom-control.js"></script>
+        <script type="text/javascript" src="{{ static }}js/libs/b.map-zoom-control.js"></script>
     {% endcompress %}
 
     <script>
@@ -50,7 +50,7 @@
     <div class="wrapper" ng-controller="MapCtrl" ng-init="parseSearchParametersFromUrl()" ng-cloak>
 
         <a href="/" class="map-home-btn">
-            На главную
+            <span>На главную</span>
         </a>
         <div id="map"></div>
 
