@@ -31,6 +31,7 @@ $(function() {
 
     placeMarkers();
     setCurrentYearToFooter();
+    checkUserRegistered();
 
 
     /**
@@ -138,6 +139,36 @@ $(function() {
         }, '500');
         return false;
     });
+
+
+    function logout() {
+        $.post('/ajax/api/accounts/logout/')
+    }
+
+
+
+    function checkUserRegistered() {
+        if (getCookie("sessionid") && sessionStorage.userName) {
+            $(".unregistered-user").hide();
+            $(".registered-user").show().find(".user-name").text(sessionStorage.userName)
+        } else {
+            $(".registered-user").hide();
+            $(".unregistered-user").show();
+        }
+
+    }
+
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i<ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1);
+            if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+        }
+        return "";
+    }
 
 
 

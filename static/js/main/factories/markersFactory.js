@@ -173,7 +173,6 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                 labelContent:   data.d0 + "</br>" + data.d1,
                 labelInBackground: true
             });
-            markers[panel][latLng].setOpacity(1.0);
         },
 
         createPieObject: function(marker, panel, latLng) {

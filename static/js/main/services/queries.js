@@ -29,7 +29,7 @@ app.factory('Queries', function($http, HTTP_URL) {
            },
 
            sendPublicationCallRequest: function(tid_hid, call_request) {
-               return $http.post(HTTP_URL.MAP.SEND_PUBLICATION_MESSAGE.fmt(tid_hid), {
+               return $http.post(HTTP_URL.MAP.SEND_PUBLICATION_CALL_REQUEST.fmt(tid_hid), {
                    name:            call_request.name,
                    phone_number:    call_request.phone
                })
