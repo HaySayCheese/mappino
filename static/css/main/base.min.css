@@ -7707,6 +7707,9 @@ body,
   -webkit-box-shadow: 0 0 5px #999999;
   box-shadow: 0 0 5px #999999;
 }
+.gmnoprint {
+  opacity: 1 !important;
+}
 .map-home-btn {
   position: absolute;
   top: 30px;
