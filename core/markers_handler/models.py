@@ -1,4 +1,5 @@
 # coding=utf-8
+from celery.tests.app.test_app import Object
 from django.db import models, connections
 from django.db.models import Q
 from djorm_pgarray.fields import BigIntegerArrayField
@@ -459,6 +460,10 @@ class FlatsSaleIndexAbstract(AbstractBaseIndex):
     heating_type_sid = models.PositiveSmallIntegerField(db_index=True)
 
 
+    # constants
+    tid = OBJECTS_TYPES.flat()
+
+
     class Meta:
         db_table = 'index_flats_sale'
 
@@ -564,6 +569,7 @@ class FlatsSaleIndexAbstract(AbstractBaseIndex):
         price = cls.convert_and_format_price(marker.price, marker.currency_sid, currency)
 
         return {
+            'tid': cls.tid,
             'id': marker.hash_id,
             'd0': u'Комнат: {0}'.format(marker.rooms_count) if marker.rooms_count else 'Комнат: не указано',
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
@@ -587,6 +593,10 @@ class FlatsRentIndexAbstract(AbstractBaseIndex):
     cold_water = models.BooleanField(db_index=True)
     gas = models.BooleanField(db_index=True)
     electricity = models.BooleanField(db_index=True)
+
+
+    # constants
+    tid = OBJECTS_TYPES.flat()
 
 
     class Meta:
@@ -695,6 +705,7 @@ class FlatsRentIndexAbstract(AbstractBaseIndex):
         price = cls.convert_and_format_price(marker.price, marker.currency_sid, currency)
 
         return {
+            'tid': cls.tid,
             'id': marker.hash_id,
             'd0': u'Мест: {0}'.format(marker.persons_count) if marker.persons_count else 'Мест: не указано',
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
@@ -715,6 +726,9 @@ class HousesSaleIndexAbstract(AbstractBaseIndex):
     electricity = models.BooleanField(db_index=True)
     sewerage = models.BooleanField(db_index=True)
     heating_type_sid = models.PositiveSmallIntegerField(db_index=True)
+
+
+    tid = OBJECTS_TYPES.house()
 
 
     class Meta:
@@ -818,6 +832,7 @@ class HousesSaleIndexAbstract(AbstractBaseIndex):
         total_area = '{0}'.format(marker.total_area).rstrip('0').rstrip('.')
 
         return {
+            'tid': cls.tid,
             'id': marker.hash_id,
             'd0': u'{0} м²'.format(total_area),
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
@@ -838,6 +853,10 @@ class HousesRentIndexAbstract(AbstractBaseIndex):
     cold_water = models.BooleanField(db_index=True)
     gas = models.BooleanField(db_index=True)
     electricity = models.BooleanField(db_index=True)
+
+
+    # cosntants
+    tid = OBJECTS_TYPES.house()
 
 
     class Meta:
@@ -938,6 +957,7 @@ class HousesRentIndexAbstract(AbstractBaseIndex):
         price = cls.convert_and_format_price(marker.price, marker.currency_sid, currency)
 
         return {
+            'tid': cls.tid,
             'id': marker.hash_id,
             'd0': u'Мест {0}'.format(marker.persons_count),
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
@@ -959,6 +979,10 @@ class RoomsSaleIndexAbstract(AbstractBaseIndex):
     gas = models.BooleanField(db_index=True)
     electricity = models.BooleanField(db_index=True)
     heating_type_sid = models.PositiveSmallIntegerField(db_index=True)
+
+
+    #constants
+    tid = OBJECTS_TYPES.room()
 
 
     class Meta:
@@ -1050,6 +1074,7 @@ class RoomsSaleIndexAbstract(AbstractBaseIndex):
         total_area = '{0:.2f}'.format(marker.total_area).rstrip('0').rstrip('.')
 
         return {
+            'tid': cls.tid,
             'id': marker.hash_id,
             'd0': u'Площадь: {0} м²'.format(total_area),
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
@@ -1072,6 +1097,10 @@ class RoomsRentIndex(AbstractBaseIndex):
     cold_water = models.BooleanField(db_index=True)
     gas = models.BooleanField(db_index=True)
     electricity = models.BooleanField(db_index=True)
+
+
+    # constants
+    tid = OBJECTS_TYPES.room()
 
 
     class Meta:
@@ -1165,6 +1194,7 @@ class RoomsRentIndex(AbstractBaseIndex):
         price = cls.convert_and_format_price(marker.price, marker.currency_sid, currency)
 
         return {
+            'tid': cls.tid,
             'id': marker.hash_id,
             'd0': u'Мест: {0}'.format(marker.persons_count) if marker.persons_count else 'Мест: не указано',
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
@@ -1186,6 +1216,10 @@ class TradesSaleIndex(AbstractBaseIndex):
     gas = models.BooleanField(db_index=True)
     electricity = models.BooleanField(db_index=True)
     sewerage = models.BooleanField(db_index=True)
+
+
+    # constants
+    tid = OBJECTS_TYPES.trades()
 
 
     class Meta:
@@ -1272,6 +1306,7 @@ class TradesSaleIndex(AbstractBaseIndex):
         total_area = '{0}'.format(marker.total_area).rstrip('0').rstrip('.')
 
         return {
+            'tid': cls.tid,
             'id': marker.hash_id,
             'd0': u'{0} м²'.format(total_area),
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
@@ -1295,6 +1330,10 @@ class OfficesSaleIndex(AbstractBaseIndex):
     cold_water = models.BooleanField(db_index=True)
     security = models.BooleanField(db_index=True)
     kitchen = models.BooleanField(db_index=True)
+
+
+    # constants
+    tid = OBJECTS_TYPES.office()
 
 
     class Meta:
@@ -1375,6 +1414,7 @@ class OfficesSaleIndex(AbstractBaseIndex):
         total_area = '{0}'.format(marker.total_area).rstrip('0').rstrip('.')
 
         return {
+            'tid': cls.tid,
             'id': marker.hash_id,
             'd0': u'{0} м²'.format(total_area),
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
@@ -1399,6 +1439,10 @@ class WarehousesSaleIndex(AbstractBaseIndex):
     gas = models.BooleanField(db_index=True)
     security_alarm = models.BooleanField(db_index=True)
     fire_alarm = models.BooleanField(db_index=True)
+
+
+    # constants
+    tid = OBJECTS_TYPES.warehouse()
 
 
     class Meta:
@@ -1500,6 +1544,10 @@ class BusinessesSaleIndex(AbstractBaseIndex):
     currency_sid = models.PositiveSmallIntegerField()
 
 
+    # constants
+    tid = OBJECTS_TYPES.business()
+
+
     class Meta:
         db_table = 'index_businesses_sale'
 
@@ -1554,6 +1602,7 @@ class BusinessesSaleIndex(AbstractBaseIndex):
         price = cls.convert_and_format_price(marker.price, marker.currency_sid, currency)
 
         return {
+            'tid': cls.tid,
             'id': marker.hash_id,
             'd0': u'',
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
@@ -1687,6 +1736,10 @@ class GaragesSaleIndex(AbstractBaseIndex):
     pit = models.BooleanField(db_index=True)
 
 
+    # constants
+    tid = OBJECTS_TYPES.garage()
+
+
     class Meta:
         db_table = 'index_garages_sale'
 
@@ -1754,6 +1807,7 @@ class GaragesSaleIndex(AbstractBaseIndex):
         total_area = '{0}'.format(marker.total_area).rstrip('0').rstrip('.')
 
         return {
+            'tid': cls.tid,
             'id': marker.hash_id,
             'd0': u'{0} м²'.format(total_area),
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
@@ -1775,6 +1829,10 @@ class LandsSaleIndex(AbstractBaseIndex):
     electricity = models.BooleanField(db_index=True)
     gas = models.BooleanField(db_index=True)
     sewerage = models.BooleanField(db_index=True)
+
+
+    # constants
+    tid = OBJECTS_TYPES.land()
 
 
     class Meta:
@@ -1850,6 +1908,7 @@ class LandsSaleIndex(AbstractBaseIndex):
         total_area = '{0}'.format(marker.total_area).rstrip('0').rstrip('.')
 
         return {
+            'tid': cls.tid,
             'id': marker.hash_id,
             'd0': u'{0} м²'.format(total_area),
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
