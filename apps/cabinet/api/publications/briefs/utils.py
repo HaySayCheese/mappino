@@ -78,16 +78,7 @@ def get_sections_counters(user_id):
 	# sections
 	query = """
 	SELECT SUM(published) AS count FROM (
-		SELECT count(*) AS published FROM o_apartments_heads
-			WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
-
-		UNION ALL SELECT count(*) AS published FROM o_business_heads
-			WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
-
-		UNION ALL SELECT count(*) AS published FROM o_caterings_heads
-			WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
-
-		UNION ALL SELECT count(*) AS published FROM o_cottages_heads
+		SELECT count(*) AS published FROM o_business_heads
 			WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS published FROM o_flats_heads
@@ -116,16 +107,7 @@ def get_sections_counters(user_id):
 	) AS published
 
 	UNION ALL SELECT SUM(unpublished) FROM(
-		SELECT count(*) AS unpublished FROM o_apartments_heads
-			WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
-
-		UNION ALL SELECT count(*) AS unpublished FROM o_business_heads
-			WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
-
-		UNION ALL SELECT count(*) AS unpublished FROM o_caterings_heads
-			WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
-
-		UNION ALL SELECT count(*) AS unpublished FROM o_cottages_heads
+		SELECT count(*) AS unpublished FROM o_business_heads
 			WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS unpublished FROM o_flats_heads
@@ -154,16 +136,7 @@ def get_sections_counters(user_id):
 	) AS unpublished
 
 	UNION ALL SELECT SUM(deleted) FROM(
-		SELECT count(*) AS deleted FROM o_apartments_heads
-			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
-
-		UNION ALL SELECT count(*) AS deleted FROM o_business_heads
-			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
-
-		UNION ALL SELECT count(*) AS deleted FROM o_caterings_heads
-			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
-
-		UNION ALL SELECT count(*) AS deleted FROM o_cottages_heads
+		SELECT count(*) AS deleted FROM o_business_heads
 			WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
 
 		UNION ALL SELECT count(*) AS deleted FROM o_flats_heads

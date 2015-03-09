@@ -335,15 +335,16 @@ class Publications(object):
                 raise PermissionDenied()
 
 
-            try:
-                # billing constraints check
-                request.user.account.check_may_publish_publications()
-
-            except billing_exceptions.PAYGInsufficientFunds:
-                return HttpJsonResponse(self.put_codes['pay_as_you_go_insufficient_funds'])
-
-            except billing_exceptions.FixedInsufficientFunds:
-                return HttpJsonResponse(self.put_codes['fixed_insufficient_funds'])
+            # todo: enable billing check back
+            # try:
+            #     # billing constraints check
+            #     request.user.account.check_may_publish_publications()
+            #
+            # except billing_exceptions.PAYGInsufficientFunds:
+            #     return HttpJsonResponse(self.put_codes['pay_as_you_go_insufficient_funds'])
+            #
+            # except billing_exceptions.FixedInsufficientFunds:
+            #     return HttpJsonResponse(self.put_codes['fixed_insufficient_funds'])
 
 
             try:
