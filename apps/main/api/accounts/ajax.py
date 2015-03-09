@@ -474,7 +474,7 @@ class AccessRestoreManager(object):
 			record = AccessRestoreTokens.new(user)
 			html = templates.get_template('email/access_restore/new_token.html').render({
 				'token_url': '{domain}{url}?token={token_id}'.format(
-					domain = settings.REDIRECT_DOMAIN,
+					domain = settings.REDIRECT_DOMAIN_URL,
 				    url = '/accounts/access-restore/redirect/',
 				    token_id = record.token
 				)
@@ -503,7 +503,7 @@ class AccessRestoreManager(object):
 
 
 			url = '{domain}{url}?token={token_id}'.format(
-				domain = settings.REDIRECT_DOMAIN,
+				domain = settings.REDIRECT_DOMAIN_URL,
 				url = '#!/account/restore-access',
 				token_id = token
 			)

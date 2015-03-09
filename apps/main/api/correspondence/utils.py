@@ -23,7 +23,7 @@ class NewClients(object):
 			'client_name': name,
 		    'publication': {
 			    'title': publication.body.title,
-		        'url': settings.REDIRECT_DOMAIN + '/cabinet/#!/publications/published/{0}:{1}'.format(
+		        'url': settings.REDIRECT_DOMAIN_URL + '/cabinet/#!/publications/published/{0}:{1}'.format(
 			        tid, publication.hash_id)
 		    },
 		    'message': message
@@ -53,7 +53,7 @@ class CallRequests(object):
 		    'phone_number': number,
 		    'publication': {
 			    'title': publication.body.title,
-		        'url': settings.REDIRECT_DOMAIN + '/cabinet/#!/publications/published/{0}:{1}'.format(
+		        'url': settings.REDIRECT_DOMAIN_URL + '/cabinet/#!/publications/published/{0}:{1}'.format(
 			        tid, publication.hash_id)
 		    },
 		})
