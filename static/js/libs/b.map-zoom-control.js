@@ -21,7 +21,7 @@ function BMapZoomControl(div, map, position) {
             width:      '40px',
             height:     '80px',
             cursor:     'pointer',
-            boxShadow:  '0 0 15px rgba(0, 0, 0, 0.4)',
+            boxShadow:  '0 0 13px rgba(0, 0, 0, 0.4)',
             fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif"
         },
         zoomControl: {
