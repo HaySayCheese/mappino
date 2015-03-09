@@ -49,15 +49,15 @@ DATABASES = {
         'USER': 'mappino',
         'PASSWORD': passwords.DB_PASSWORD,
         'HOST': EVE1_INTERNAL_IP,
-    'PORT': 5432, # pg_bounce is used
+    'PORT': 6432, # pg_bounce is used
     },
     'markers_index': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mappino-indexes', # todo: create separate database for indexes
+        'NAME': 'mappino-indexes',
         'USER': 'mappino',
         'PASSWORD': passwords.INDEX_DB_PASSWORD,
-        'HOST': EVE1_INTERNAL_IP,
-        'PORT': 5432, # pg_bounce is used
+        'HOST': EVE1_INTERNAL_IP, # todo: create separate database for indexes
+        'PORT': 6432, # pg_bounce is used
     }
 }
 DATABASE_ROUTERS = ['core.database_router.Router', ]
