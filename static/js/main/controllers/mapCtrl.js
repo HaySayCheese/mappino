@@ -302,13 +302,16 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 google.maps.event.addListener(autocomplete, 'place_changed', function() {
                     var place = autocomplete.getPlace();
 
-                    if (!place.geometry) {
+                    if (!place.geometry)
                         return;
-                    }
 
                     if (place.geometry.viewport) {
-                        map.panTo(place.geometry.location);
-                        map.setZoom(15);
+                        if (place.types[0] == "administrative_area_level_1")
+                            map.fitBounds(place.geometry.viewport);
+                        else {
+                            map.panTo(place.geometry.location);
+                            map.setZoom(15);
+                        }
                     } else {
                         map.panTo(place.geometry.location);
                         map.setZoom(15);

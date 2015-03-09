@@ -5,6 +5,7 @@ $(function() {
 
     var home = {
             city: "",
+            zoom: 15,
             latLng: "",
             cityRequired: false
         },
@@ -75,14 +76,9 @@ $(function() {
      * autocomplete 'place_changed' event handler
      **/
     google.maps.event.addListener(cityAutocomplete, 'place_changed', function() {
-        geocoder.geocode({
-            'address': cityAutocomplete.getPlace().formatted_address
-        }, function(results, status) {
-            if (status == google.maps.GeocoderStatus.OK)
-                home.latLng = results[0].geometry.location.lat() + "," + results[0].geometry.location.lng();
-        });
+        var place = cityAutocomplete.getPlace();
 
-        home.city = cityAutocomplete.getPlace().formatted_address;
+        geocode(place)
     });
 
 
@@ -94,12 +90,7 @@ $(function() {
         home.city = city;
         $(cityInput).val(city).change();
 
-        geocoder.geocode({
-            'address': city
-        }, function(results, status) {
-            if (status == google.maps.GeocoderStatus.OK)
-                home.latLng = results[0].geometry.location.lat() + "," + results[0].geometry.location.lng();
-        });
+        geocode(city);
 
         e.preventDefault();
     });
@@ -136,7 +127,7 @@ $(function() {
             "&r_type_sid=" + type_sid +
             "&r_operation_sid=" + operation_sid +
             "&latLng=" + home.latLng +
-            "&zoom=14" +
+            "&zoom=" + home.zoom +
             (period_sid ? "&r_period_sid=" + period_sid : "");
     });
 
@@ -147,6 +138,30 @@ $(function() {
         }, '500');
         return false;
     });
+
+
+
+    function geocode(place) {
+        if (place.formatted_address)
+            place = place.formatted_address;
+
+        geocoder.geocode({
+            'address': place
+        }, function(results, status) {
+            console.log(results)
+            if (results[0].types[0] == "administrative_area_level_1")
+                home.zoom = 8;
+            else
+                home.zoom = 15;
+
+            if (status == google.maps.GeocoderStatus.OK) {
+                home.city = results[0].formatted_address;
+                home.latLng = results[0].geometry.location.lat() + "," + results[0].geometry.location.lng();
+            }
+        });
+
+        console.log(home)
+    }
 
 
 
