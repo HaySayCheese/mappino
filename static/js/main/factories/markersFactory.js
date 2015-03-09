@@ -108,7 +108,6 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
         /**
          * Додання маркерів в масив
          *
-         * @param {number}     tid    Тип обєкта
          * @param {Array}      data   Масив який вертає сервер
          * @param {function}   callback
          */

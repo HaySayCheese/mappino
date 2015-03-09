@@ -201,9 +201,11 @@ $(function() {
         geocoder.geocode({
             'address': place
         }, function(results, status) {
-            console.log(results)
+            //console.log(results[0].types[0])
             if (results[0].types[0] == "administrative_area_level_1")
                 home.zoom = 8;
+            else if (results[0].types[0] == "country")
+                home.zoom = 6;
             else
                 home.zoom = 15;
 
