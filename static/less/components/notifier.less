@@ -1,16 +1,20 @@
 
-.notification-collection {
+.notifier {
     position: absolute;
-    top: 0px;
+    top: 0;
     right: 50%;
-    list-style: none;
-    margin: 0;
-    padding: 0;
     z-index: 9999 !important;
 
-    .translate(50%, 0);
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
 
-    .notification-item {
+        .translate(50%, 0);
+    }
+
+
+    li {
         min-width: 250px;
         padding: 6px 20px;
 
@@ -36,4 +40,6 @@
             animation: 0.5s fadeOutUp;
         }
     }
+
+
 }

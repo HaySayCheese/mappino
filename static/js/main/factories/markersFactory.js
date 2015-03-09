@@ -73,19 +73,15 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             jsonFilters.zoom = zoom;
             jsonFilters.viewport = viewport;
 
-            if (!_.isNull(r_filters.r_type_sid)) {
+            if (!_.isNull(r_filters.r_type_sid))
                 that.createJsonFiltersFromString(r_filters, "red");
-                that.clearPanelMarkers("red");
-            } else if(!_.isNull(b_filters.b_type_sid)) {
+            else if(!_.isNull(b_filters.b_type_sid))
                 that.createJsonFiltersFromString(b_filters, "blue");
-                that.clearPanelMarkers("blue");
-            } else if(!_.isNull(g_filters.g_type_sid)) {
+            else if(!_.isNull(g_filters.g_type_sid))
                 that.createJsonFiltersFromString(g_filters, "green");
-                that.clearPanelMarkers("green");
-            } else if(!_.isNull(y_filters.y_type_sid)) {
+            else if(!_.isNull(y_filters.y_type_sid))
                 that.createJsonFiltersFromString(y_filters, "yellow");
-                that.clearPanelMarkers("yellow");
-            }
+
 
             clearTimeout(requestTimeout);
             requestTimeout = setTimeout(function() {
@@ -93,6 +89,12 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             }, 300);
 
             Queries.Map.getMarkers(JSON.stringify(jsonFilters)).success(function(data) {
+                that.clearPanelMarkers("red");
+                that.clearPanelMarkers("blue");
+                that.clearPanelMarkers("green");
+                that.clearPanelMarkers("yellow");
+
+
                 that.add(data, function() {
                     _.isFunction(callback) && callback(markers);
                 });
@@ -166,7 +168,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             markers[panel][latLng] = new MarkerWithLabel({
                 id:             data.id,
                 tid:            data.tid,
-                icon:           "http://127.0.0.1/mappino_static/img/markers/red-normal.png",//'/static/img/markers/' + panel + '-normal.png',
+                icon:           '/static/img/markers/' + panel + '-normal.png',
                 position:       new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
                 labelClass:     "marker-label",
                 labelAnchor:    new google.maps.Point(0, 39),
@@ -196,6 +198,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             markers[panel][latLng] = new MarkerWithLabel({
                 position: new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
                 type: "pie-marker",
+                icon: '/static/img/markers/transparent-marker.png',
                 labelInBackground: false,
                 labelContent:
                     "<style>" +
@@ -232,7 +235,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                         "<div class='" + _uuid + " pie yellow" + yellowAdditionalClass + "'></div>" +
                     "</div>",
                 labelAnchor: new google.maps.Point(30, 45),
-                labelClass: "marker-pie-chart " + sizeOfPieChart
+                labelClass: "marker-pie-chart " + sizeOfPieChart,
             });
         },
 
