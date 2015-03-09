@@ -1219,7 +1219,7 @@ class TradesSaleIndex(AbstractBaseIndex):
 
 
     # constants
-    tid = OBJECTS_TYPES.trades()
+    tid = OBJECTS_TYPES.trade()
 
 
     class Meta:
