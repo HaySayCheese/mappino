@@ -3,17 +3,20 @@ import re
 
 
 def format_text(value):
-	# додати крапку, якщо немає.
-	if value[-1] != '.':
-		value += '.'
+    # додати крапку, якщо немає.
+    if value[-1] != '.':
+        value += '.'
 
-	# Замінити всі подвійні/потрійні і т.д. пробіли одним,
-	# відсікти всі зайві пробіли справа.
-	value = re.sub(' +', ' ', value).strip()
+    # Замінити всі подвійні/потрійні і т.д. пробіли одним,
+    # відсікти всі зайві пробіли справа.
+    value = re.sub(' +', ' ', value).strip()
 
-	return value
+    return value
 
 
 def format_title(value):
-	value = format_text(value)
-	return value.capitalize()
+    value = format_text(value)
+    if value[-1] == '.':
+        value = value[:-1]
+
+    return value.capitalize()

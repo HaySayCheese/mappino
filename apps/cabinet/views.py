@@ -6,7 +6,7 @@ from core.utils.jinja2_integration import templates
 @ensure_csrf_cookie
 def main(request):
 	if not request.user.is_authenticated():
-		return HttpResponseRedirect('/#!/account/login')
+		return HttpResponseRedirect('/map/#!/account/login')
 
 	template = templates.get_template('cabinet/cabinet.html')
 	return HttpResponse(content=template.render())
