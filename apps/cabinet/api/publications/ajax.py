@@ -347,11 +347,11 @@ class Publications(object):
             #     return HttpJsonResponse(self.put_codes['fixed_insufficient_funds'])
 
 
-            # try:
-            head.publish()
-            # except ValidationError:
-            #     return HttpResponseBadRequest(json.dumps(
-            #         self.put_codes['incomplete_or_invalid_pub']), content_type='application/json')
+            try:
+                head.publish()
+            except ValidationError:
+                return HttpResponseBadRequest(json.dumps(
+                    self.put_codes['incomplete_or_invalid_pub']), content_type='application/json')
 
             # seems to be ok
             return HttpResponse(json.dumps(
