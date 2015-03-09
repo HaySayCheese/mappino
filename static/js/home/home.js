@@ -141,8 +141,19 @@ $(function() {
     });
 
 
+
+    $(".logout").on("click", function(e) {
+        logout();
+        e.preventDefault();
+    });
+
     function logout() {
-        $.post('/ajax/api/accounts/logout/')
+        $.post('/ajax/api/accounts/logout/').success(function() {
+            delCookie('sessionid');
+            delete sessionStorage.userName;
+
+            checkUserRegistered();
+        });
     }
 
 
@@ -168,6 +179,9 @@ $(function() {
             if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
         }
         return "";
+    }
+    function delCookie(name) {
+        document.cookie = name + "=" + "; expires=Thu, 01 Jan 1970 00:00:01 GMT";
     }
 
 
