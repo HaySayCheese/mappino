@@ -40,3 +40,5 @@ djorm-pgarray
 amqp
 anyjson
 six
+mock
+nose
