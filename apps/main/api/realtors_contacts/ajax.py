@@ -83,6 +83,7 @@ class RealtorsContacts(View):
         preferences = realtor.preferences()
 
 
+        # todo: enable billing check
         # process_contacts_request() зніме платню з рієлтора згідно з умовами тарифного плану.
         # Даний метод викликається під час будь-якого запиту контактів і для будь-якого рієлтора,
         # незалежно від того, на якому тарифному плані він знаходиться.
@@ -90,7 +91,7 @@ class RealtorsContacts(View):
         # Це зроблено для того, щоб інкапсулювати логіку біллінга в одному модулі і не розмазувати її по всім в’юхам.
         # process_contacts_request() ніби виступає обробником події запиту контактів,
         # а будуть зняті гроші з рієлтора чи ні - питання цього методу.
-        realtor.account.process_contacts_request(request)
+        # realtor.account.process_contacts_request(request)
 
 
         response = copy.deepcopy(self.get_codes['OK']) # WARN: deep copy here
