@@ -135,7 +135,7 @@ $(function() {
 
     $("[data-scroll-top]").on('click', function() {
         $("html, body").animate({
-            scrollTop:0
+            scrollTop: 0
         }, '500');
         return false;
     });
@@ -146,6 +146,14 @@ $(function() {
         logout();
         e.preventDefault();
     });
+
+
+    $(".scroll-down-btn").on("click", function() {
+        $("html, body").animate({
+            scrollTop: $(window).height()
+        }, '500');
+    });
+
 
     function logout() {
         $.post('/ajax/api/accounts/logout/').success(function() {

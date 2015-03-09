@@ -201,6 +201,34 @@ body {
             top: @begin-top;
         }
     }
+    @-webkit-keyframes frames {
+        65% {
+            border-color: @begin-border-color;
+            top: @begin-top;
+        }
+        69% {
+            border-color: @end-border-color;
+            top: @end-top;
+        }
+        73% {
+            border-color: @begin-border-color;
+            top: @begin-top;
+        }
+
+
+        74% {
+            border-color: @begin-border-color;
+            top: @begin-top;
+        }
+        80% {
+            border-color: @end-border-color;
+            top: @end-top;
+        }
+        84% {
+            border-color: @begin-border-color;
+            top: @begin-top;
+        }
+    }
 
     position: absolute;
     top: @begin-top;
@@ -209,11 +237,12 @@ body {
     height: 25px;
     width: 25px;
 
+    cursor: pointer;
+
     border-left: 4px solid @begin-border-color;
     border-bottom: 4px solid @begin-border-color;
     .rotate(-45deg);
-    animation: frames 4s;
-    animation-iteration-count: infinite;
+    .animation(frames 4s infinite);
 }
 section {
     .clearfix();
