@@ -61,7 +61,6 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
          */
         load: function(r_filters, b_filters, g_filters, y_filters, panel, viewport, zoom, callback) {
             var that = this,
-                tid = null,
                 stringFilters = {};
 
             jsonFilters = {
@@ -94,7 +93,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             }, 300);
 
             Queries.Map.getMarkers(JSON.stringify(jsonFilters)).success(function(data) {
-                that.add(tid, data, function() {
+                that.add(data, function() {
                     _.isFunction(callback) && callback(markers);
                 });
 
@@ -111,7 +110,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
          * @param {Array}      data   Масив який вертає сервер
          * @param {function}   callback
          */
-        add: function(tid, data, callback) {
+        add: function(data, callback) {
             var that = this;
 
             for (var panel in data) {
@@ -163,23 +162,18 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
         },
 
 
-        createMarkerObject: function(data, panel, latLng) {
-            if (markers[panel][latLng]) {
-                console.log("yep")
-                return;
-            } else {
-                console.log("nope")
-            }
-
+        createMarkerObject: function(data, panel, latLng, tid) {
             markers[panel][latLng] = new MarkerWithLabel({
                 id:             data.id,
-                icon:           '/static/img/markers/' + panel + '-normal.png',
+                tid:            data.tid,
+                icon:           "http://127.0.0.1/mappino_static/img/markers/red-normal.png",//'/static/img/markers/' + panel + '-normal.png',
                 position:       new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
                 labelClass:     "marker-label",
-                labelAnchor:    new google.maps.Point(0, 40),
+                labelAnchor:    new google.maps.Point(0, 39),
                 labelContent:   data.d0 + "</br>" + data.d1,
                 labelInBackground: true
             });
+            markers[panel][latLng].setOpacity(1.0);
         },
 
         createPieObject: function(marker, panel, latLng) {
