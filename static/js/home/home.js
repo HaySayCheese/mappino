@@ -135,14 +135,33 @@ $(function() {
 
     $("[data-scroll-top]").on('click', function() {
         $("html, body").animate({
-            scrollTop:0
+            scrollTop: 0
         }, '500');
         return false;
     });
 
 
+
+    $(".logout").on("click", function(e) {
+        logout();
+        e.preventDefault();
+    });
+
+
+    $(".scroll-down-btn").on("click", function() {
+        $("html, body").animate({
+            scrollTop: $(window).height()
+        }, '500');
+    });
+
+
     function logout() {
-        $.post('/ajax/api/accounts/logout/')
+        $.post('/ajax/api/accounts/logout/').success(function() {
+            delCookie('sessionid');
+            delete sessionStorage.userName;
+
+            checkUserRegistered();
+        });
     }
 
 
@@ -169,6 +188,9 @@ $(function() {
         }
         return "";
     }
+    function delCookie(name) {
+        document.cookie = name + "=" + "; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+    }
 
 
 
@@ -179,9 +201,11 @@ $(function() {
         geocoder.geocode({
             'address': place
         }, function(results, status) {
-            console.log(results)
+            //console.log(results[0].types[0])
             if (results[0].types[0] == "administrative_area_level_1")
                 home.zoom = 8;
+            else if (results[0].types[0] == "country")
+                home.zoom = 6;
             else
                 home.zoom = 15;
 

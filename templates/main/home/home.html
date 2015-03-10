@@ -42,7 +42,7 @@
             </div>
             <div class="row registered-user">
                 <div class="col-sm-12 col-lg-10 col-lg-offset-1">
-                    <a href="/map/#!/" class="pull-right">Выйти</a>
+                    <a href="/map/#!/" class="pull-right logout">Выйти</a>
                     <a href="/cabinet/" class="pull-right user-name">[[ user_name ]]</a>
                     <a href="/cabinet/#!/publications/all?cp" class="pull-right">Подать обьявление</a>
                 </div>
@@ -50,13 +50,14 @@
         </div>
 
 
-        <div class="img-holder top" data-cover-ratio="1" data-image="{{ static }}img/home/kiev-bg-medium.jpg">
-            <div class="image-caption">
-                <div class="brand">mappino</div>
-                <div class="slogan">Возможно, самый удобный сервис поиска недвижимости</div>
-            </div>
+        <div class="image-caption">
+            <div class="brand">mappino</div>
+            <div class="slogan">Возможно, самый удобный сервис поиска недвижимости</div>
         </div>
 
+
+
+        <div class="img-holder top" data-cover-ratio="1" data-image="{{ static }}img/home/kiev-bg-medium.jpg"></div>
         <section class="search-form">
             <a id="search"></a>
             <div class="row">
@@ -91,7 +92,7 @@
                                 </div>
                             </div>
                             <div class="form-group col-xs-10 col-xs-offset-1">
-                                <input type="text" id="home-location-autocomplete" class="form-control input-lg text-center search-city"/>
+                                <input type="text" id="home-location-autocomplete" class="form-control input-lg text-center search-city" autocomplete="off"/>
                                 <div class="help-text text-center">
                                     <i>
                                         Например,
@@ -262,7 +263,7 @@
                         <p>
                             Если Вы хотите разместить объявление о продаже или аренде недвижмости
                             на нашем сайте — Вы можете свободно это сделать.
-                            Любые два обьявления, кроме объявлений посуточной аренды,  — бесплатно. <br/>
+                            Любое объявление, кроме объявлений посуточной аренды,  — бесплатно. <br/>
                             Всегда.
                             <br/><br/>
                         </p>
@@ -270,7 +271,7 @@
                             <a class="btn btn-primary btn-lg section-btn" href="/cabinet">Подать обьявление</a>
                         </p>
                         <p>
-                            <a href="/offer/realtors">Больше информации для риелторов и рекламодателей.</a>
+                            <a href="/offer/realtors">Больше информации для риелторов и рекламодателей</a>
                         </p>
                     </div>
                 </div>

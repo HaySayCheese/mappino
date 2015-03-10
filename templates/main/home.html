@@ -56,11 +56,18 @@
 
         <ng-view></ng-view>
 
+
         <div ng-include="sidebarTemplateUrl"></div>
 
-        <div lr-notification-stack-container="mainChannel">
-            [[ notification.message ]]
+
+        <div lr-notification-stack-container="mainChannel" class="notifier">
+            <ul>
+                <li ng-class="notification.level" ng-repeat="notification in lrNotifierCtrl.notifications" ng-click="lrNotifierCtrl.removeNotification(notification)">
+                    [[ notification.message ]]
+                </li>
+            </ul>
         </div>
+
 
         <div class="map-loader" ng-show="loadings.markers && filters.map.zoom >= 15 && sidebarIsVisible">
             Загрузка обьектов
