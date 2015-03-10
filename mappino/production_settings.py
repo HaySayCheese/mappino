@@ -9,7 +9,7 @@ from psycopg2cffi import compat
 compat.register()
 
 
-DEBUG = False
+DEBUG = True
 SMS_DEBUG = DEBUG
 TEMPLATE_DEBUG = DEBUG
 
@@ -99,7 +99,7 @@ CACHES = {
             REDIS_DATABASES['cache']['PORT']
         ),
         'OPTIONS': {
-            'DB': 0,
+            'DB': 15,
             'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
             'CONNECTION_POOL_CLASS_KWARGS': {
                 'max_connections': 10,
@@ -131,7 +131,7 @@ CELERY_RESULT_BACKEND = BROKER_URL
 
 INSTALLED_APPS = (
     'south',
-#	'compressor',
+    'compressor',
 
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -202,6 +202,7 @@ MEDIA_ROOT = 'media/'
 
 COMPRESS_ENABLED = False
 COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
+COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.SlimItFilter']
 
 
 PROCESSES_PER_NODE_COUNT = 3
