@@ -9,14 +9,20 @@
     {% endcompress %}
 
     <script src="http://maps.googleapis.com/maps/api/js?v=3.9&key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places"></script>
-    <script src="http://yandex.st/jquery/2.1.1/jquery.min.js"></script>
+
+
+    <script src="http://yandex.st/jquery/2.1.3/jquery.min.js"></script>
     <script src="http://yandex.st/modernizr/2.7.1/modernizr.min.js"></script>
     <script src="http://yandex.st/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+    <script src="http://yandex.st/angularjs/1.3.8/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular-cookies.min.js"></script>
 
     {% compress js %}
         <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select-1.5.4.min.js"></script>
         <script type="text/javascript" src="{{ static }}js/libs/jquery.imageScroll.min.js"></script>
-        <script type="text/javascript" src="{{ static }}js/home/home.js"></script>
+
+        <!--<script type="text/javascript" src="{{ static }}js/home/home.js"></script>-->
     {% endcompress %}
 
     <script>
@@ -29,21 +35,20 @@
         ga('send', 'pageview');
     </script>
 </head>
-<body>
-
+<body ng-app="mappino.home" ng-controller="HomeController">
     <div class="wrapper">
 
         <div class="header-links">
-            <div class="row unregistered-user">
+            <div class="row" ng-hide="user.name">
                 <div class="col-sm-12 col-lg-10 col-lg-offset-1">
                     <a href="/map/#!/account/login" class="pull-right">Войти</a>
                     <a href="/map/#!/account/registration" class="pull-right">Регистрация</a>
                 </div>
             </div>
-            <div class="row registered-user">
+            <div class="row" ng-show="user.name">
                 <div class="col-sm-12 col-lg-10 col-lg-offset-1">
-                    <a href="/map/#!/" class="pull-right logout">Выйти</a>
-                    <a href="/cabinet/" class="pull-right user-name">[[ user_name ]]</a>
+                    <a href="#" class="pull-right" ng-click="logout()">Выйти</a>
+                    <a href="/cabinet/" class="pull-right">[[ user.name ]]</a>
                     <a href="/cabinet/#!/publications/all?cp" class="pull-right">Подать обьявление</a>
                 </div>
             </div>
@@ -66,7 +71,7 @@
                     <div class="text-center">
                         <div class="row">
                             <div class="col-xs-10 col-xs-offset-1">
-                                <select class="type-selectpicker text-left" name="h_type_sid" data-width="100%">
+                                <select class="type-selectpicker text-left" data-width="100%" ng-model="filters.type_sid">
                                     <option value="0">Квартиры</option>
                                     <option value="1">Дома</option>
                                     <option value="2">Комнаты</option>
@@ -80,35 +85,38 @@
                             </div>
                             <div class="form-group col-xs-10 col-xs-offset-1">
                                 <div class="btn-group btn-group-justified choices" data-toggle="buttons">
-                                    <label class="btn btn-lg btn-success active">
+                                    <label class="btn btn-lg btn-success" ng-class="{ active: filters.operation_sid === 0 }"
+                                           ng-click="filters.operation_sid = 0">
                                         <input type="radio" name="home.operation" value="0">На продажу
                                     </label>
-                                    <label class="btn btn-lg btn-success">
+                                    <label class="btn btn-lg btn-success" ng-class="{ active: filters.operation_sid === 1 }"
+                                           ng-click="filters.operation_sid = 1">
                                         <input type="radio" name="home.operation" value="1">В аренду
                                     </label>
-                                    <label class="btn btn-lg btn-success">
+                                    <label class="btn btn-lg btn-success" ng-class="{ active: filters.operation_sid === 2 }"
+                                           ng-click="filters.operation_sid = 2" ng-disabled="filters.type_sid > 2">
                                         <input type="radio" name="home.operation" value="2">Посуточно
                                     </label>
                                 </div>
                             </div>
                             <div class="form-group col-xs-10 col-xs-offset-1">
-                                <input type="text" id="home-location-autocomplete" class="form-control input-lg text-center search-city" autocomplete="off"/>
+                                <input type="text" id="home-location-autocomplete" class="form-control input-lg text-center search-city" autocomplete="off" ng-model="filters.city"/>
                                 <div class="help-text text-center">
                                     <i>
                                         Например,
-                                        <a href data-suggest="Черновцы, Черновицкая область, Украина">Черновцы</a>
+                                        <a href ng-click="setRegion('Черновцы, Черновицкая область, Украина')">Черновцы</a>
                                         или
-                                        <a href data-suggest="Черновицкая область, Украина">Черновицкая область</a>
+                                        <a href ng-click="setRegion('Черновицкая область, Украина')">Черновицкая область</a>
                                     </i>
                                 </div>
-                                <div class="error required text-center city-empty">
+                                <div class="error required text-center" ng-show="errors.badRegion">
                                     <i>
                                         Пожалуйста, укажите город, или регион, <br/>
                                         в котором необходимо произвести поиск
                                     </i>
                                 </div>
                             </div>
-                            <button data-search-btn class="btn btn-primary search-btn">Найти</button>
+                            <button class="btn btn-primary search-btn" ng-click="search()">Найти</button>
                         </div>
                     </div>
                 </div>
@@ -118,7 +126,7 @@
         <section>
             <div class="row text-center">
                 <div class="col-xs-12">
-                    <div class="scroll-down-btn">&nbsp;</div>
+                    <div class="scroll-down-btn" ng-click="scrollTo('bottom')">&nbsp;</div>
                 </div>
             </div>
         </section>
@@ -183,7 +191,7 @@
                                         Вы сможете найти посутчное жилье вблизи от найболее интересных Вам объектов.
                                     </p>
                                     <div class="text-center with-padding-top">
-                                        <a href="#" class="btn btn-primary btn-lg section-btn" data-scroll-top>Попробовать сейчас</a>
+                                        <a href="#" class="btn btn-primary btn-lg section-btn" ng-click="scrollTo('top')">Попробовать сейчас</a>
                                     </div>
                                 </div>
                             </div>
@@ -237,7 +245,7 @@
                             <p class="text-center">
                                 <br/>
                                 <br/>
-                                <a href="#" class="btn btn-primary btn-lg section-btn" data-scroll-top>Попробуйте! Это очень просто и удобно</a>
+                                <a href="#" class="btn btn-primary btn-lg section-btn" ng-click="scrollTo('top')">Попробуйте! Это очень просто и удобно</a>
                             </p>
                         </div>
                         <div class="col-xs-2">
@@ -284,5 +292,10 @@
         </section>
 
     </div>
+
+    {% compress js %}
+        <script type="text/javascript" src="{{ static }}js/home/app.js"></script>
+        <script type="text/javascript" src="{{ static }}js/home/controllers/home-controller.js"></script>
+    {% endcompress %}
 </body>
 </html>

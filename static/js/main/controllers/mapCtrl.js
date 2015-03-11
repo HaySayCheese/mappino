@@ -11,6 +11,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Змінні
      **/
     var map,
+        _tempViewportFromHomePage,
         markers = [],
         cityInput,// = document.getElementById('sidebar-city-input'),
         autocomplete,
@@ -230,17 +231,37 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      **/
     function initializeMap() {
 
+        // якщо з головної приходить вюпорт в локалстор
+        var bounds = {};
+        if (_tempViewportFromHomePage) {
+            var c = _tempViewportFromHomePage.replace( /[\s()]/g, '' ).split( ','),
+                sw = new google.maps.LatLng(+c[0], +c[1]),
+                ne = new google.maps.LatLng(+c[2], +c[3]);
+
+            bounds = new google.maps.LatLngBounds(sw, ne);
+            console.log(bounds)
+        }
+
+
         /**
          * Карта
          **/
         var mapOptions = {
-                center: new google.maps.LatLng($scope.filters.map.latLng.split(",")[0], $scope.filters.map.latLng.split(",")[1]),
-                zoom: parseInt($scope.filters.map.zoom),
+                //center: bounds.getCenter() || new google.maps.LatLng($scope.filters.map.latLng.split(",")[0], $scope.filters.map.latLng.split(",")[1]),
+                //zoom: parseInt($scope.filters.map.zoom),
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 disableDefaultUI: true
             };
 
         map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+        if (_tempViewportFromHomePage) {
+            map.fitBounds(bounds);
+        } else {
+            map.panTo(new google.maps.LatLng($scope.filters.map.latLng.split(",")[0], $scope.filters.map.latLng.split(",")[1]));
+            map.setZoom(parseInt($scope.filters.map.zoom));
+        }
+
 
 
         /**
@@ -306,12 +327,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                         return;
 
                     if (place.geometry.viewport) {
-                        if (place.types[0] == "administrative_area_level_1")
-                            map.fitBounds(place.geometry.viewport);
-                        else {
-                            map.panTo(place.geometry.location);
-                            map.setZoom(15);
-                        }
+                        map.fitBounds(place.geometry.viewport);
                     } else {
                         map.panTo(place.geometry.location);
                         map.setZoom(15);
@@ -326,6 +342,14 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                     }, 0);
                 });
             }, 2000);
+
+
+        // якщо в урлі нема параметра з координатами то берем з локалстора
+        // те що передали з головної
+        if (!searchParameters['latLng'] && localStorage._tempViewportFromHomePage) {
+            _tempViewportFromHomePage = localStorage._tempViewportFromHomePage;
+            delete localStorage._tempViewportFromHomePage;
+        }
 
 
         for (var key in searchParameters) {
