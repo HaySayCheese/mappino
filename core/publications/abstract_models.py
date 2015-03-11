@@ -387,7 +387,9 @@ class AbstractHeadModel(models.Model):
             raise SuspiciousOperation('Attempt to delete publication that was not moved to trash.')
 
         owner = self.owner
-        is_paid = self.is_paid
+
+        # todo: enable me back whe billing will be completed
+        # is_paid = self.is_paid
 
         # @deleted_permanently needs id of the publication as a parameter,
         # but the id will be None after deleting.
@@ -404,10 +406,11 @@ class AbstractHeadModel(models.Model):
         super(AbstractHeadModel, self).delete()
 
 
-        # Поновити к-сть безкоштовних оголошень,
-        # якщо оголошення, яке видалили, було безкоштовним.
-        if not is_paid:
-            owner.publications().ensure_free_publications()
+        # todo: enable me back whe billing will be completed
+        # # Поновити к-сть безкоштовних оголошень,
+        # # якщо оголошення, яке видалили, було безкоштовним.
+        # if not is_paid:
+        #     owner.publications().ensure_free_publications()
 
 
     def check_required_fields(self):
