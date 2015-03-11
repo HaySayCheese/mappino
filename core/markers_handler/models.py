@@ -1046,7 +1046,7 @@ class RoomsSaleIndexAbstract(AbstractBaseIndex):
             'body__total_area',
             'body__floor',
             'body__floor_type_sid',
-            'body__lift'
+            'body__lift',
             'body__hot_water',
             'body__cold_water',
             'body__electricity',
