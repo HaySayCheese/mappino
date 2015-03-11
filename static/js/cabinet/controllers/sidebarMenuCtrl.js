@@ -45,11 +45,6 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     $location.search().cp ? $scope.creatingPublication = true : $scope.creatingPublication = false;
 
 
-    $scope.goToSearch = function() {
-        window.location = "/#!/search";
-    };
-
-
     /**
      * Створення нового оголошенн
      */
