@@ -60,6 +60,13 @@ class AbstractBaseIndex(models.Model):
         abstract = True
 
 
+    class Filters:
+        class RoomsPlanning:
+            any = 0
+            free = 1
+            preliminary = 2
+
+
     @classmethod
     def remove(cls, hid, using=None):
         cls.objects.using(using).filter(publication_id=hid).delete()
@@ -310,10 +317,10 @@ class AbstractBaseIndex(models.Model):
     @staticmethod  # sid
     def apply_rooms_planning_filter(filters, markers):
         rooms_planning_sid = filters.get('rooms_planning_sid')
-        if rooms_planning_sid == 1:
+        if rooms_planning_sid == cls.Filters.Planning.free:
             markers = markers.filter(rooms_planning_sid=FLAT_ROOMS_PLANNINGS.free())
-        elif rooms_planning_sid == 2:
-            markers = markers.exclude(rooms_planning_sid=FLAT_ROOMS_PLANNINGS.free())
+        elif rooms_planning_sid == cls.Filters.Planning.preliminary:
+            markers = markers.exclude(rooms_planning_sid=FLAT_ROOMS_PLANNINGS.free()) # note: exclude here!
 
         return markers
 
@@ -443,7 +450,7 @@ class AbstractBaseIndex(models.Model):
 
 
 
-class FlatsSaleIndexAbstract(AbstractBaseIndex):
+class FlatsSaleIndexAbstract(AbstractBaseIndex): # todo: rename me, i am not an abstract
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
@@ -533,7 +540,7 @@ class FlatsSaleIndexAbstract(AbstractBaseIndex):
 
     @classmethod
     def min_remove_queryset(cls):
-        model = HEAD_MODELS[OBJECTS_TYPES.flat()]
+        model = HEAD_MODELS[cls.tid]
         return model.objects.all().only(
             'id',
 
@@ -669,7 +676,7 @@ class FlatsRentIndexAbstract(AbstractBaseIndex):
 
     @classmethod
     def min_remove_queryset(cls):
-        model = HEAD_MODELS[OBJECTS_TYPES.flat()]
+        model = HEAD_MODELS[cls.tid]
         return model.objects.all().only(
             'id',
 
@@ -796,7 +803,7 @@ class HousesSaleIndexAbstract(AbstractBaseIndex):
 
     @classmethod
     def min_remove_queryset(cls):
-        model = HEAD_MODELS[OBJECTS_TYPES.house()]
+        model = HEAD_MODELS[cls.tid]
         return model.objects.all().only(
             'id',
 
@@ -923,7 +930,7 @@ class HousesRentIndexAbstract(AbstractBaseIndex):
 
     @classmethod
     def min_remove_queryset(cls):
-        model = HEAD_MODELS[OBJECTS_TYPES.house()]
+        model = HEAD_MODELS[cls.tid]
         return model.objects.all().only(
             'id',
 
@@ -1052,6 +1059,21 @@ class RoomsSaleIndexAbstract(AbstractBaseIndex):
 
 
     @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[cls.tid]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+        )
+
+
+    @classmethod
     def apply_filters(cls, filters, markers):
         markers = cls.apply_price_filter(filters, markers)
         markers = cls.apply_market_type_filter(filters, markers)
@@ -1172,6 +1194,21 @@ class RoomsRentIndex(AbstractBaseIndex):
 
 
     @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[cls.tid]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+        )
+
+
+    @classmethod
     def apply_filters(cls, filters, markers):
         markers = cls.apply_living_rent_period_filter(filters, markers)
         markers = cls.apply_price_filter(filters, markers)
@@ -1285,6 +1322,21 @@ class TradesSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[cls.tid]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+        )
+
+
+    @classmethod
     def apply_filters(cls, filters, markers):
         markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_price_filter(filters, markers)
@@ -1391,6 +1443,21 @@ class OfficesSaleIndex(AbstractBaseIndex):
 
             'sale_terms__price',
             'sale_terms__currency_sid'
+        )
+
+
+    @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[cls.tid]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
         )
 
 
@@ -1506,6 +1573,21 @@ class WarehousesSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[cls.tid]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+        )
+
+
+    @classmethod
     def apply_filters(cls, filters, markers):
         markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_price_filter(filters, markers)
@@ -1587,6 +1669,21 @@ class BusinessesSaleIndex(AbstractBaseIndex):
 
             'sale_terms__price',
             'sale_terms__currency_sid'
+        )
+
+
+    @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[cls.tid]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
         )
 
 
@@ -1791,6 +1888,21 @@ class GaragesSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[cls.tid]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+        )
+
+
+    @classmethod
     def apply_filters(cls, filters, markers):
         markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_price_filter(filters, markers)
@@ -1886,6 +1998,21 @@ class LandsSaleIndex(AbstractBaseIndex):
 
             'sale_terms__price',
             'sale_terms__currency_sid'
+        )
+
+
+    @classmethod
+    def min_remove_queryset(cls):
+        model = HEAD_MODELS[cls.tid]
+        return model.objects.all().only(
+            'id',
+
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
         )
 
 
@@ -2104,11 +2231,12 @@ class SegmentsIndex(models.Model):
 
 
         # Помітки for_sale та for_rent ставляться лише для житлової нерухомості
-        if 'for_sale' in filters:
-            index = cls.living_sale_indexes[tid]
-        elif 'for_rent' in filters:
-            index = cls.living_rent_indexes[tid]
-        else:
+        try:
+            if 'for_sale' in filters:
+                index = cls.living_sale_indexes[tid]
+            elif 'for_rent' in filters:
+                index = cls.living_rent_indexes[tid]
+        except KeyError:
             # інакше — це точно комерційна нерухомість.
             index = cls.commercial_sale_indexes[tid]
 
