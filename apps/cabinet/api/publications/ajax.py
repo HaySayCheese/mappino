@@ -4,6 +4,7 @@ import json
 
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.http.response import HttpResponse, HttpResponseBadRequest
+
 from apps.classes import CabinetView
 from collective.methods.request_data_getters import angular_parameters
 from core.publications import classes
