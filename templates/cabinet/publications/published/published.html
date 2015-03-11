@@ -181,15 +181,17 @@
                 [[ publication.data.showplaces ]]
             </div>
         </div>
+    </div>
 
+
+    <div class="row">
+        <h3 id="photos-section">Фотографии</h3>
         <div class="col-sm-6 col-lg-6" ng-repeat="photo in publication.head.photos | orderBy: 'is_title': true">
             <div class="uploaded-photo" ng-class="{ 'main-photo': photo.is_title }">
                 <img ng-src="[[ photo.thumbnail ]]"/>
             </div>
         </div>
-
     </div>
-
 
     <div class="row" ng-show="tags.length">
         <h3 id="pub-tags-section">Ярлыки</h3>
