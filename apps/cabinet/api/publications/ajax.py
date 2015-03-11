@@ -4,11 +4,8 @@ import json
 
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.http.response import HttpResponse, HttpResponseBadRequest
-
 from apps.classes import CabinetView
-from collective.http.responses import HttpJsonResponse
 from collective.methods.request_data_getters import angular_parameters
-
 from core.publications import classes
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS
 from core.publications.abstract_models import PhotosModel
@@ -22,8 +19,6 @@ from core.publications.update_methods.warehouses import update_warehouse
 from core.publications.update_methods.business import update_business
 from core.publications.update_methods.garages import update_garage
 from core.publications.update_methods.lands import update_land
-from core.billing import exceptions as billing_exceptions
-
 
 
 class Publications(object):
