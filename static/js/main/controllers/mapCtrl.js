@@ -123,53 +123,14 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
 
     /**
-     * Слідкуємо за зміною типа нерухомості на панелі і створюємо
-     * для неї фільтри в залежності від вибраного типа нерухомості
-     **/
-    //$scope.$watch("filters.red.r_type_sid", function(newValue, oldValue) {
-    //    $scope.status.redTemplateIsLoaded = false;
-    //    if (!oldValue && newValue) {
-    //        createFiltersForPanels("red", false);
-    //    } else {
-    //        createFiltersForPanels("red", true);
-    //    }
-    //});
-    //$scope.$watch("filters.blue.b_type_sid", function(newValue, oldValue) {
-    //    $scope.status.blueTemplateIsLoaded = false;
-    //    if (!oldValue && newValue) {
-    //        createFiltersForPanels("blue", false);
-    //    } else {
-    //        createFiltersForPanels("blue", true);
-    //    }
-    //});
-    //$scope.$watch("filters.green.g_type_sid", function(newValue, oldValue) {
-    //    $scope.status.greenTemplateIsLoaded = false;
-    //    if (!oldValue && newValue) {
-    //        createFiltersForPanels("green", false);
-    //    } else {
-    //        createFiltersForPanels("green", true);
-    //    }
-    //});
-    //$scope.$watch("filters.yellow.y_type_sid", function(newValue, oldValue) {
-    //    $scope.status.yellowTemplateIsLoaded = false;
-    //    if (!oldValue && newValue) {
-    //        createFiltersForPanels("yellow", false);
-    //    } else {
-    //        createFiltersForPanels("yellow", true);
-    //    }
-    //});
-
-
-    /**
      * Слідкуємо за зміною фільтрів, оновлюємо урл та грузимо
      * дані в залежності від фільтрів
      **/
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
         // Якщо для цієї панелі ще не було обрано тип нерухомості
         // то створюємо фільтри для неї за типом
-        if (!oldValue.r_type_sid && newValue.r_type_sid) {
-            createFiltersForPanels("red", false);
-        } else {
+        if (oldValue.r_type_sid !== newValue.r_type_sid) {
+            $scope.status.redTemplateIsLoaded = false;
             createFiltersForPanels("red", true);
         }
         // Парсимо фільтри, оновлюємо урл і грузимо дані
@@ -177,27 +138,24 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         loadData(true);
     });
     $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
-        if (!oldValue.r_type_sid && newValue.r_type_sid) {
-            createFiltersForPanels("blue", false);
-        } else {
+        if (oldValue.b_type_sid !== newValue.b_type_sid) {
+            $scope.status.blueTemplateIsLoaded = false;
             createFiltersForPanels("blue", true);
         }
         parseFiltersCollectionAndUpdateUrl(newValue);
         loadData(true);
     });
     $scope.$watchCollection("filters.green", function(newValue, oldValue) {
-        if (!oldValue.r_type_sid && newValue.r_type_sid) {
-            createFiltersForPanels("green", false);
-        } else {
+        if (oldValue.g_type_sid !== newValue.g_type_sid) {
+            $scope.status.greenTemplateIsLoaded = false;
             createFiltersForPanels("green", true);
         }
         parseFiltersCollectionAndUpdateUrl(newValue);
         loadData(true);
     });
     $scope.$watchCollection("filters.yellow", function(newValue, oldValue) {
-        if (!oldValue.r_type_sid && newValue.r_type_sid) {
-            createFiltersForPanels("yellow", false);
-        } else {
+        if (oldValue.y_type_sid !== newValue.y_type_sid) {
+            $scope.status.yellowTemplateIsLoaded = false;
             createFiltersForPanels("yellow", true);
         }
         parseFiltersCollectionAndUpdateUrl(newValue);
@@ -630,6 +588,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 sidebar.perfectScrollbar("update");
             });
 
-        }, 1000);
+        }, 500);
     }
 });
