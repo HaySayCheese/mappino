@@ -170,10 +170,7 @@
                     <div class="form-group without-margin-bottom">
                         <label class="col-sm-6 col-lg-4 control-label"><span class="required-star">*</span>Высота потолка:</label>
                         <div class="col-sm-6">
-                            <div class="input-group">
-                                <input type="text" class="form-control" name="ceiling_height" ng-model="publication.body.ceiling_height" allow-only-number required>
-                                <span class="input-group-addon">м<sup>2</sup></span>
-                            </div>
+                            <input type="text" class="form-control" name="ceiling_height" ng-model="publication.body.ceiling_height" allow-only-number required>
                             <span class="input-has-error" ng-show="form.publication.ceiling_height.$error.incorrect">Высота потолка указана неверно.</span>
                         </div>
                     </div>
