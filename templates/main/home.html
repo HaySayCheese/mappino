@@ -30,6 +30,7 @@
         <script type="text/javascript" src="{{ static }}js/libs/angular-notifier.min.js"></script>
         <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select-1.5.4.min.js"></script>
         <script type="text/javascript" src="{{ static }}js/libs/perfect-scrollbar-0.4.10.min.js"></script>
+        <script type="text/javascript" src="{{ static }}js/libs/ngProgress.min.js"></script>
 
         <script type="text/javascript" src="{{ static }}js/libs/utils/fmt.js"></script>
         <script type="text/javascript" src="{{ static }}js/libs/b.map-zoom-control.js"></script>
@@ -67,15 +68,6 @@
                 </li>
             </ul>
         </div>
-
-
-        <div class="map-loader" ng-show="loadings.markers && filters.map.zoom >= 15 && sidebarIsVisible">
-            Загрузка обьектов
-        </div>
-
-        <!--<div class="map-info" ng-show="filters.map.zoom < 15 && !subdommain.length && sidebarIsVisible">-->
-            <!--Масштаб слишком большой. Попробуйте <a href ng-click="setMinimumZoom()">немного уменьшить</a>-->
-        <!--</div>-->
     </div>
 
 

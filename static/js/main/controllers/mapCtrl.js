@@ -5,7 +5,7 @@
  * СПЛОШНА МАГІЯ, МІСТІКА І ЇМ ПОДІБНЕ
  */
 
-app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile, $rootScope, Markers) {
+app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile, $rootScope, ngProgress, Markers) {
 
     /**
      * Змінні
@@ -475,6 +475,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Функція яка ініціює загрузку даних
      */
     function loadData(timeout) {
+        ngProgress.start();
 
         $timeout(function() {
             if (!mapIsLoaded) {
@@ -506,6 +507,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
                         markers = data;
                         placeMarkers(data);
+                        ngProgress.complete();
                     });
                 }, requestTimeoutTime);
             } else {
@@ -515,6 +517,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
                     markers = data;
                     placeMarkers(data);
+                    ngProgress.complete();
                 });
             }
         }, 100);
