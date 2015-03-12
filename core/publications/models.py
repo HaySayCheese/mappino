@@ -1596,6 +1596,25 @@ class RoomsRentTerms(LivingRentTermsModel):
         db_table = 'o_rooms_rent_terms'
 
 
+    def check_required_fields(self):
+        """
+        Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
+        Не перевіряє інформацію в полях на коректність, оскільки передбачається,
+        що некоректні дані не можуть потрапити в БД через обробники зміни даних.
+
+        Даний метод перевизначає аналогічний метод класу LivingRentTermsModel,
+        оскільки той не проводить перевірку кполя "к-сть місць", а для кімнат
+        дана характеристика є важливою.
+
+        Дану перевірку неможна включити в базовий метод через те,
+        що тоді вона пошириться в тому числі і на квартири, а там к-сть місць не є обов’язковою.
+        """
+        if self.price is None:
+            raise EmptyRentPrice('Rent price is None.')
+        if self.persons_count is None:
+            raise EmptyPersonsCount('Persons count is None.')
+
+
 
 class RoomsBodies(BodyModel):
     class Meta:
@@ -1700,8 +1719,6 @@ class RoomsBodies(BodyModel):
             raise EmptyTotalArea('Total area is None.')
         if self.living_area is None:
             raise EmptyLivingArea('Living area is None.')
-        if self.persons_count is None:
-            raise EmptyPersonsCount('Persons count is None.')
 
 
     # output
