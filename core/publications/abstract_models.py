@@ -15,7 +15,8 @@ from core.currencies import currencies_manager as currencies
 from core.currencies.constants import CURRENCIES as currencies_constants
 from core.publications import models_signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
-from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, EmptyRentPrice
+from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
+    EmptyRentPrice, EmptyPersonsCount
 from core.users.models import Users
 from mappino.wsgi import redis_connections
 

@@ -182,6 +182,19 @@ class AbstractBaseIndex(models.Model):
 
 
     @staticmethod  # range
+    def apply_area_filter(filters, markers):
+        a_min = filters.get('area_from')
+        if a_min is not None:
+            markers = markers.filter(area__gte=a_min)
+
+        a_max = filters.get('area_to')
+        if a_max is not None:
+            markers = markers.filter(area__lte=a_max)
+
+        return markers
+
+
+    @staticmethod  # range
     def apply_total_area_filter(filters, markers):
         ta_min = filters.get('total_area_from')
         if ta_min is not None:
@@ -314,12 +327,12 @@ class AbstractBaseIndex(models.Model):
         return markers
 
 
-    @staticmethod  # sid
-    def apply_rooms_planning_filter(filters, markers):
+    @classmethod  # sid
+    def apply_rooms_planning_filter(cls, filters, markers):
         rooms_planning_sid = filters.get('rooms_planning_sid')
-        if rooms_planning_sid == cls.Filters.Planning.free:
+        if rooms_planning_sid == cls.Filters.RoomsPlanning.free:
             markers = markers.filter(rooms_planning_sid=FLAT_ROOMS_PLANNINGS.free())
-        elif rooms_planning_sid == cls.Filters.Planning.preliminary:
+        elif rooms_planning_sid == cls.Filters.RoomsPlanning.preliminary:
             markers = markers.exclude(rooms_planning_sid=FLAT_ROOMS_PLANNINGS.free()) # note: exclude here!
 
         return markers
@@ -588,7 +601,9 @@ class FlatsRentIndexAbstract(AbstractBaseIndex):
     period_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
-    persons_count = models.PositiveSmallIntegerField(db_index=True)
+
+    # flats may have no persons count specified.
+    persons_count = models.PositiveSmallIntegerField(db_index=True, null=True, blank=True)
     family = models.BooleanField(db_index=True)
     foreigners = models.BooleanField(db_index=True)
 
@@ -666,10 +681,10 @@ class FlatsRentIndexAbstract(AbstractBaseIndex):
             'body__electricity',
 
             'rent_terms__price',
-            'rent_terms__currency_sid'
-            'rent_terms__period_sid'
-            'rent_terms__persons_count'
-            'rent_terms__family'
+            'rent_terms__currency_sid',
+            'rent_terms__period_sid',
+            'rent_terms__persons_count',
+            'rent_terms__family',
             'rent_terms__foreigners'
         )
 
@@ -851,15 +866,17 @@ class HousesRentIndexAbstract(AbstractBaseIndex):
     period_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
-    persons_count = models.PositiveSmallIntegerField(db_index=True)
+
+    # houses may not have persons count set
+    persons_count = models.PositiveSmallIntegerField(db_index=True, null=True, blank=True)
     total_area = models.FloatField(db_index=True)
     family = models.BooleanField(db_index=True)
     foreigners = models.BooleanField(db_index=True)
-    lift = models.BooleanField(db_index=True)
     hot_water = models.BooleanField(db_index=True)
     cold_water = models.BooleanField(db_index=True)
     gas = models.BooleanField(db_index=True)
     electricity = models.BooleanField(db_index=True)
+    sewerage = models.BooleanField(db_index=True)
 
 
     # cosntants
@@ -890,6 +907,7 @@ class HousesRentIndexAbstract(AbstractBaseIndex):
             cold_water=record.body.cold_water,
             gas=record.body.gas,
             electricity=record.body.electricity,
+            sewerage=record.body.sewerage,
         )
 
 
@@ -918,13 +936,14 @@ class HousesRentIndexAbstract(AbstractBaseIndex):
             'body__cold_water',
             'body__gas',
             'body__electricity',
+            'body__sewerage',
 
-            'rent_terms__period_sid'
+            'rent_terms__period_sid',
             'rent_terms__price',
-            'rent_terms__currency_sid'
-            'rent_terms__persons_count'
-            'rent_terms__family'
-            'rent_terms__foreigners'
+            'rent_terms__currency_sid',
+            'rent_terms__persons_count',
+            'rent_terms__family',
+            'rent_terms__foreigners',
         )
 
 
@@ -1054,7 +1073,7 @@ class RoomsSaleIndexAbstract(AbstractBaseIndex):
             'body__heating_type_sid',
 
             'sale_terms__price',
-            'sale_terms__currency_sid'
+            'sale_terms__currency_sid',
         )
 
 
@@ -1184,12 +1203,12 @@ class RoomsRentIndex(AbstractBaseIndex):
             'body__gas',
             'body__electricity',
 
-            'rent_terms__period_sid'
+            'rent_terms__period_sid',
             'rent_terms__price',
-            'rent_terms__currency_sid'
-            'rent_terms__persons_count'
-            'rent_terms__family'
-            'rent_terms__foreigners'
+            'rent_terms__currency_sid',
+            'rent_terms__persons_count',
+            'rent_terms__family',
+            'rent_terms__foreigners',
         )
 
 
@@ -1317,7 +1336,7 @@ class TradesSaleIndex(AbstractBaseIndex):
             'body__sewerage',
 
             'sale_terms__price',
-            'sale_terms__currency_sid'
+            'sale_terms__currency_sid',
         )
 
 
@@ -1442,7 +1461,7 @@ class OfficesSaleIndex(AbstractBaseIndex):
             'body__kitchen',
 
             'sale_terms__price',
-            'sale_terms__currency_sid'
+            'sale_terms__currency_sid',
         )
 
 
@@ -1568,7 +1587,7 @@ class WarehousesSaleIndex(AbstractBaseIndex):
             'body__security_alarm',
 
             'sale_terms__price',
-            'sale_terms__currency_sid'
+            'sale_terms__currency_sid',
         )
 
 
@@ -1668,7 +1687,7 @@ class BusinessesSaleIndex(AbstractBaseIndex):
             'hash_id',
 
             'sale_terms__price',
-            'sale_terms__currency_sid'
+            'sale_terms__currency_sid',
         )
 
 
@@ -1883,7 +1902,7 @@ class GaragesSaleIndex(AbstractBaseIndex):
             'body__pit',
 
             'sale_terms__price',
-            'sale_terms__currency_sid'
+            'sale_terms__currency_sid',
         )
 
 
@@ -1936,7 +1955,7 @@ class GaragesRentIndex(GaragesSaleIndex):
 class LandsSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
-    total_area = models.FloatField(db_index=True)
+    area = models.FloatField(db_index=True)
     water = models.BooleanField(db_index=True)
     electricity = models.BooleanField(db_index=True)
     gas = models.BooleanField(db_index=True)
@@ -1959,7 +1978,7 @@ class LandsSaleIndex(AbstractBaseIndex):
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
-            total_area=record.body.total_area,
+            area=record.body.area,
             water=record.body.water,
             electricity=record.body.electricity,
             gas=record.body.gas,
@@ -1973,7 +1992,7 @@ class LandsSaleIndex(AbstractBaseIndex):
     @classmethod
     def min_queryset(cls):
         return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')  # todo: fixme
+            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'area')  # todo: fixme
 
 
     @classmethod
@@ -1990,14 +2009,14 @@ class LandsSaleIndex(AbstractBaseIndex):
             'id',
             'hash_id',
 
-            'body__total_area',
+            'body__area',
             'body__water',
             'body__electricity',
             'body__gas',
             'body__sewerage',
 
             'sale_terms__price',
-            'sale_terms__currency_sid'
+            'sale_terms__currency_sid',
         )
 
 
@@ -2020,7 +2039,7 @@ class LandsSaleIndex(AbstractBaseIndex):
     def apply_filters(cls, filters, markers):
         markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_price_filter(filters, markers)
-        markers = cls.apply_total_area_filter(filters, markers)
+        markers = cls.apply_area_filter(filters, markers)
         markers = cls.apply_water_filter(filters, markers)
         markers = cls.apply_electricity_filter(filters, markers)
         markers = cls.apply_gas_filter(filters, markers)
