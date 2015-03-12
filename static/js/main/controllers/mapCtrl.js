@@ -120,17 +120,37 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Слідкуємо за зміною типа нерухомості на панелі і грузимо темплейт
      **/
     function initTypeSidWatchers(){
-        $scope.destroyRedPanelSidWatcher = $scope.$watch("filters.red.r_type_sid", function(newValue, oldValue) {
-            !oldValue && newValue ? createFiltersForPanels("red", true) : null;
+        $scope.$watch("filters.red.r_type_sid", function(newValue, oldValue) {
+            $scope.status.redTemplateIsLoaded = false;
+            if (!oldValue && newValue) {
+                createFiltersForPanels("red", false);
+            } else {
+                createFiltersForPanels("red", true);
+            }
         });
-        $scope.destroyBluePanelSidWatcher = $scope.$watch("filters.blue.b_type_sid", function(newValue, oldValue) {
-            !oldValue && newValue ? createFiltersForPanels("blue", true) : null;
+        $scope.$watch("filters.blue.b_type_sid", function(newValue, oldValue) {
+            $scope.status.blueTemplateIsLoaded = false;
+            if (!oldValue && newValue) {
+                createFiltersForPanels("blue", false);
+            } else {
+                createFiltersForPanels("blue", true);
+            }
         });
-        $scope.destroyGreenPanelSidWatcher = $scope.$watch("filters.green.g_type_sid", function(newValue, oldValue) {
-            !oldValue && newValue ? createFiltersForPanels("green", true) : null;
+        $scope.$watch("filters.green.g_type_sid", function(newValue, oldValue) {
+            $scope.status.greenTemplateIsLoaded = false;
+            if (!oldValue && newValue) {
+                createFiltersForPanels("green", false);
+            } else {
+                createFiltersForPanels("green", true);
+            }
         });
-        $scope.destroyYellowPanelSidWatcher = $scope.$watch("filters.yellow.y_type_sid", function(newValue, oldValue) {
-            !oldValue && newValue ? createFiltersForPanels("yellow", true) : null;
+        $scope.$watch("filters.yellow.y_type_sid", function(newValue, oldValue) {
+            $scope.status.yellowTemplateIsLoaded = false;
+            if (!oldValue && newValue) {
+                createFiltersForPanels("yellow", false);
+            } else {
+                createFiltersForPanels("yellow", true);
+            }
         });
     }
     initTypeSidWatchers();
@@ -141,19 +161,19 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      **/
     $scope.$watchCollection("filters.red", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
-        loadData("red", true)
+        loadData("red", true);
     });
     $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
-        loadData("blue", true)
+        loadData("blue", true);
     });
     $scope.$watchCollection("filters.green", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
-        loadData("green", true)
+        loadData("green", true);
     });
     $scope.$watchCollection("filters.yellow", function(newValue, oldValue) {
         parseFiltersCollectionAndUpdateUrl(newValue);
-        loadData("yellow", true)
+        loadData("yellow", true);
     });
 
 
@@ -201,7 +221,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             for (var s_key in searchParameters) {
                 if (searchParameters.hasOwnProperty(s_key))
                     if (s_key.match(new RegExp('^' + prefix, 'm'))) {
-                        $location.search(s_key, null)
+                        $location.search(s_key, null);
                     }
             }
 
@@ -429,15 +449,16 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         for (var key in filters) {
             if (filters.hasOwnProperty(key)) {
 
-                if (key.indexOf("type_sid") != -1 && filters[key] === null)
-                    return;
+                if (key.indexOf("type_sid") !== -1 && filters[key] === null) {
+                    return false;
+                }
 
                 if (filters[key] === "0" || filters[key] === 0) {
                     $location.search(key, filters[key]);
                     continue;
                 }
 
-                if (filters[key] == "" || filters[key] === false || filters[key] == "false" || key == "viewport") {
+                if (filters[key] === "" || filters[key] === false || filters[key] === "false" || key === "viewport") {
                     $location.search(key, null);
                 } else {
                     $location.search(key, filters[key]);

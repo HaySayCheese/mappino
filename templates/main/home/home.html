@@ -21,8 +21,6 @@
     {% compress js %}
         <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select-1.5.4.min.js"></script>
         <script type="text/javascript" src="{{ static }}js/libs/jquery.imageScroll.min.js"></script>
-
-        <!--<script type="text/javascript" src="{{ static }}js/home/home.js"></script>-->
     {% endcompress %}
 
     <script>
@@ -293,9 +291,7 @@
 
     </div>
 
-    {% compress js %}
-        <script type="text/javascript" src="{{ static }}js/home/app.js"></script>
-        <script type="text/javascript" src="{{ static }}js/home/controllers/home-controller.js"></script>
-    {% endcompress %}
+    <script type="text/javascript" src="{{ static }}js/home/app.js"></script>
+    <script type="text/javascript" src="{{ static }}js/home/controllers/home-controller.js"></script>
 </body>
 </html>
