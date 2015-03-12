@@ -77,12 +77,12 @@ body {
         text-shadow: ~"0px 0px 5px rgba(0, 0, 0, 0.4)";
     }
 
-    .brand{
+    .brand {
         padding-top: 25px;
         font-size: 4em;
         text-shadow: 0 0 10px rgba(0, 0, 0, 0.70);
     }
-    .slogan{
+    .slogan {
         padding-top: 15px;
         font-size: 1.4em;
         text-shadow: 0 0 10px rgba(0, 0, 0, 0.70);
@@ -132,6 +132,36 @@ body {
 .btn.section-btn {
     color: #ffffff !important;
     text-decoration: none;
+}
+
+
+#questions-accordion {
+    width: 50%;
+    margin: 0 auto;
+
+    .panel-heading {
+        background: #fff;
+        border-right: 5px solid;
+
+        &#headingOne {
+            border-right-color: @red-10;
+        }
+        &#headingTwo {
+            border-right-color: @blue-20;
+        }
+        &#headingThree {
+            border-right-color: @green-10;
+        }
+        &#headingFour {
+            border-right-color: @yellow-10;
+        }
+
+        a {
+            color: @link-color;
+            text-decoration: none;
+            border-bottom: 1px dashed;
+        }
+    }
 }
 
 
@@ -206,7 +236,6 @@ body {
         .translate(0, 0);
     }
 }
-
 @keyframes fadeInDown {
     0% {
         .opacity(0);
@@ -217,7 +246,6 @@ body {
         .translate(0, 0);
     }
 }
-
 .fadeInDown {
     -webkit-animation-name: fadeInDown;
     animation-name: fadeInDown;

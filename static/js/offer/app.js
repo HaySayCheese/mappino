@@ -1,4 +1,4 @@
-var app = app || angular.module("mappino.home", ['ngCookies']);
+var app = app || angular.module("mappino.offer", []);
 
 app.config(function($interpolateProvider) {
     "use strict";
