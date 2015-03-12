@@ -140,26 +140,46 @@ body {
     margin: 0 auto;
 
     .panel-heading {
-        background: #fff;
-        border-right: 5px solid;
-
-        &#headingOne {
-            border-right-color: @red-10;
-        }
-        &#headingTwo {
-            border-right-color: @blue-20;
-        }
-        &#headingThree {
-            border-right-color: @green-10;
-        }
-        &#headingFour {
-            border-right-color: @yellow-10;
-        }
-
         a {
             color: @link-color;
             text-decoration: none;
             border-bottom: 1px dashed;
+        }
+    }
+
+    .panel-red,
+    .panel-blue,
+    .panel-green,
+    .panel-yellow {
+        .panel-heading,
+        .panel-body {
+            background: #fff;
+            border-left: 5px solid;
+        }
+    }
+
+    .panel-red {
+        .panel-heading,
+        .panel-body {
+            border-color: @red-10;
+        }
+    }
+    .panel-blue {
+        .panel-heading,
+        .panel-body {
+            border-color: @blue-20;
+        }
+    }
+    .panel-green {
+        .panel-heading,
+        .panel-body {
+            border-color: @green-10;
+        }
+    }
+    .panel-yellow {
+        .panel-heading,
+        .panel-body {
+            border-color: @yellow-10;
         }
     }
 }
