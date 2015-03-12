@@ -477,7 +477,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
     function loadData(timeout) {
         $timeout(function() {
             ngProgress.start();
-        }, 500);
+        }, 1000);
 
 
         $timeout(function() {
