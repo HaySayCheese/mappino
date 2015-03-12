@@ -359,9 +359,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             // Евент вибору елемента в автокомпліті
             google.maps.event.addListener(autocomplete, 'place_changed', function() {
                 var place = autocomplete.getPlace();
-
-                if (!place.geometry)
+                if (!place.geometry) {
                     return;
+                }
 
                 if (place.geometry.viewport && place.types[0] !== "locality") {
                     map.fitBounds(place.geometry.viewport);
@@ -370,13 +370,27 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                     map.setZoom(BASE_MAP_ZOOM);
                 }
 
+                // Відрізаємо країну від адреса
                 $timeout(function() {
-                    cityInput.value = cityInput.value.substring(0, cityInput.value.lastIndexOf(","));
-                    $scope.filters.map.city = cityInput.value;
-
-                    if(!$scope.$$phase)
-                        $scope.$apply();
+                    for (var i = 0; i < place.address_components.length; i++) {
+                        for (var j = 0; j < place.address_components[i].types.length; j++) {
+                            if (place.address_components[i].types[j] === "country" && place.address_components.length > 1) {
+                                var newAddress = cityInput.value.substring(0, cityInput.value.lastIndexOf(","));
+                                cityInput.value = newAddress;
+                                $scope.filters.map.city = newAddress;
+                                break;
+                            } else {
+                                $scope.filters.map.city = place.formatted_address;
+                                break;
+                            }
+                        }
+                    }
                 }, 0);
+
+                if(!$scope.$$phase)
+                    $scope.$apply();
+
+                parseFiltersCollectionAndUpdateUrl($scope.filters.map);
             });
         }, 2000);
 
