@@ -7,7 +7,7 @@ from core.publications.abstract_models import AbstractHeadModel, BodyModel, Livi
 from core.publications.constants import MARKET_TYPES, OBJECT_CONDITIONS, FLOOR_TYPES, \
     HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, OBJECTS_TYPES
 from core.publications.exceptions import EmptyFloor, EmptyTotalArea, EmptyLivingArea, EmptyRoomsCount, EmptyFloorsCount, \
-    EmptyHallsArea, EmptyHallsCount, EmptyCabinetsCount, EmptyPlotArea, EmptyPersonsCount
+    EmptyHallsArea, EmptyHallsCount, EmptyCabinetsCount, EmptyPlotArea#, EmptyPersonsCount
 from core.publications.objects_constants.apartments import APARTMENTS_BUILDINGS_TYPES, APARTMENTS_FLAT_TYPES, APARTMENTS_ROOMS_PLANNING_TYPES
 from core.publications.objects_constants.cottages import COTTAGE_RENT_TYPES, COTTAGE_SALE_TYPES
 from core.publications.objects_constants.flats import FLAT_BUILDING_TYPES, FLAT_TYPES, FLAT_ROOMS_PLANNINGS
@@ -1700,8 +1700,8 @@ class RoomsBodies(BodyModel):
             raise EmptyTotalArea('Total area is None.')
         if self.living_area is None:
             raise EmptyLivingArea('Living area is None.')
-        if self.persons_count is None:
-            raise EmptyPersonsCount('Persons count is None.')
+        # if self.persons_count is None:
+        #     raise EmptyPersonsCount('Persons count is None.')
 
 
     # output
