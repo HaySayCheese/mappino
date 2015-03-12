@@ -475,7 +475,10 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Функція яка ініціює загрузку даних
      */
     function loadData(timeout) {
-        ngProgress.start();
+        $timeout(function() {
+            ngProgress.start();
+        }, 500);
+
 
         $timeout(function() {
             if (!mapIsLoaded) {
