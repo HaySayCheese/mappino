@@ -86,12 +86,13 @@
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Количество мест:</label>
+                        <label class="col-sm-4 control-label"><span class="required-star">*</span>Количество мест:</label>
                         <div class="col-sm-8">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="rent_persons_count" ng-model="publication.rent_terms.persons_count" allow-only-number/>
+                                <input type="text" class="form-control" name="rent_persons_count" ng-model="publication.rent_terms.persons_count" allow-only-number required/>
                                 <span class="input-group-addon">чел.</span>
                             </div>
+                            <span class="input-has-error" ng-show="form.publication.rent_persons_count.$error.required && showValidationMessages">Укажите, пожалуйста, количество мест.</span>
                             <span class="input-has-error" ng-show="form.publication.rent_persons_count.$error.incorrect">Количество мест указано неверно.</span>
                         </div>
                     </div>

@@ -54,14 +54,12 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
          * @param {object}      b_filters  Фільтри синьої панелі
          * @param {object}      g_filters  Фільтри зеленої панелі
          * @param {object}      y_filters  Фільтри жовтої панелі
-         * @param {string}      panel      Панель з якої іде запит
          * @param {object}      viewport   Вюпорт карти
          * @param {number}      zoom       Зум карти
          * @param {function}    callback
          */
-        load: function(r_filters, b_filters, g_filters, y_filters, panel, viewport, zoom, callback) {
-            var that = this,
-                stringFilters = {};
+        load: function(r_filters, b_filters, g_filters, y_filters, viewport, zoom, callback) {
+            var that = this;
 
             jsonFilters = {
                 zoom: "",
@@ -246,7 +244,7 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                 yellow: {}
             };
 
-            for(var panel in pieMarkers) {
+            for (var panel in pieMarkers) {
                 if (panel == "compared")
                     break;
 
