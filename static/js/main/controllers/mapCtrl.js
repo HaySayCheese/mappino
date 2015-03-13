@@ -1,11 +1,11 @@
-'use strict';
-
 /*
  * ПЛІЗ НЕ МІНЯЙТЕ НІЧО В ЦЬОМУ ФАЙЛІ
  * СПЛОШНА МАГІЯ, МІСТІКА І ЇМ ПОДІБНЕ
  */
 
-app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile, $rootScope, Markers) {
+app.controller('MapCtrl', ['$scope', '$location', '$http', '$timeout', '$compile', '$rootScope', 'Markers',
+    function($scope, $location, $http, $timeout, $compile, $rootScope, Markers) {
+    "use strict";
 
     /**
      * Змінні
@@ -592,4 +592,4 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
         }, 500);
     }
-});
+}]);
