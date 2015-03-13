@@ -1,4 +1,5 @@
 # coding=utf-8
+import math
 from django.db import models, connections
 from django.db.models import Q
 from djorm_pgarray.fields import BigIntegerArrayField
@@ -58,8 +59,8 @@ class AbstractBaseIndex(models.Model):
         abstract = True
 
 
-    class Filters:
-        class RoomsPlanning:
+    class Filters(object):
+        class RoomsPlanning(object):
             any = 0
             free = 1
             preliminary = 2
@@ -2565,7 +2566,7 @@ class SegmentsIndex(models.Model):
             index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
 
         if index is None:
-            return InvalidArgument('No index such tid.')
+            raise InvalidArgument('No index such tid.')
 
 
         record = index.min_remove_queryset().filter(id=hid)[:1][0]
@@ -2621,13 +2622,13 @@ class SegmentsIndex(models.Model):
             cls.prepare_request_processing(ne_lat, ne_lng, sw_lat, sw_lng, zoom)
 
 
-        if for_sale:
+        if 'for_sale' in filters:
             index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
-        else:
+        elif 'for_rent' in filters:
             index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
 
         if index is None:
-            return InvalidArgument('No index such tid.')
+            raise InvalidArgument('No index such tid.')
 
 
         # Підготувати SQL-запит на вибірку записів, попередньо відфільтрувавши за вхідними умовами.
@@ -2645,6 +2646,8 @@ class SegmentsIndex(models.Model):
         except ValueError:
             where = ''  # no WHERE condition is found
 
+        # WARN: x < {sw_segment_x} повинно бути СТРОГО менше, інакше об’єкти дублюються у видачі.
+        # WARN: y > {sw_segment_y} повинно бути СТРОГО більше, інакше об’єкти дублюються у видачі.
         query = "SELECT array_agg(publication_id), x, y FROM {index_table}" \
                 "   JOIN {segments_index_table} " \
                 "       ON zoom = '{zoom}' AND " \
@@ -2719,6 +2722,9 @@ class SegmentsIndex(models.Model):
 
         # Cusom SQL is neede here to call PostgreSQL's stored precedure unnest()
         # Django ORM dows not allow to do that.
+
+        # WARN: x < {sw_segment_x} повинно бути СТРОГО менше, інакше об’єкти дублюються у видачі.
+        # WARN: y > {sw_segment_y} повинно бути СТРОГО більше, інакше об’єкти дублюються у видачі.
         query = "SELECT DISTINCT unnest(ids), id FROM {table} " \
                 "   WHERE tid={tid} AND zoom={zoom} AND " \
                 "      (x >= {ne_segment_x} AND x < {sw_segment_x}) AND " \
@@ -2757,7 +2763,7 @@ class SegmentsIndex(models.Model):
             index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
 
         if index is None:
-            return InvalidArgument('No index such tid.')
+            raise InvalidArgument('No index such tid.')
 
 
 
@@ -2802,6 +2808,19 @@ class SegmentsIndex(models.Model):
         sw_lat -= 1
         sw_lng += 1
 
+
+        # Округляємо передані координати до більшого
+        # Справа у тому, що координати передаються у вигляді числа з плаваючою крапкою,
+        # і часто мають вигляд хх.ууу, а в індексі всі координати в цілих числах.
+        # Якщо не округляти до більшого, то на етапі вибірки координати будуть обрізані до цілого,
+        # шляхом відкидання дробової частини. Через це деякі сегменти карти можуть випадати з видачі.
+        ne_lat = math.ceil(ne_lat)
+        ne_lng = math.floor(ne_lng)
+
+        sw_lat = math.floor(sw_lat)
+        sw_lng = math.ceil(sw_lng)
+
+
         # Повертаємо координатний прямокутник таким чином, щоб ne точно був на своєму місці.
         # Таким чином уберігаємось від випадків, коли координати передані некоректно,
         # або в залежності від форми Землі сегмент деформується і набирає неправильної форми.
@@ -2828,6 +2847,7 @@ class SegmentsIndex(models.Model):
         # total_segments_count = lat_segments_count * lng_segments_count
         # if total_segments_count > 128:
         #     raise TooBigTransaction()
+
 
         return ne_segment_x, ne_segment_y, \
                sw_segment_x, sw_segment_y
