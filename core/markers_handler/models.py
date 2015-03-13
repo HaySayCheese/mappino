@@ -1,5 +1,4 @@
 # coding=utf-8
-from celery.tests.app.test_app import Object
 from django.db import models, connections
 from django.db.models import Q
 from djorm_pgarray.fields import BigIntegerArrayField
@@ -8,7 +7,6 @@ from collective.exceptions import InvalidArgument
 from core.currencies.constants import CURRENCIES
 from core.currencies.currencies_manager import convert as convert_price
 from core.markers_handler.classes import Grid
-from core.markers_handler.exceptions import TooBigTransaction
 from core.publications.constants import \
     OBJECTS_TYPES, MARKET_TYPES, FLOOR_TYPES, HEATING_TYPES, LIVING_RENT_PERIODS, HEAD_MODELS
 from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
@@ -1710,7 +1708,8 @@ class WarehousesRentIndex(WarehousesSaleIndex):
         )
 
 
-class BusinessesSaleIndex(AbstractBaseIndex):
+
+class AbstractBusinessesIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
 
@@ -1719,21 +1718,14 @@ class BusinessesSaleIndex(AbstractBaseIndex):
     tid = OBJECTS_TYPES.business()
 
 
-    class Meta:
-        db_table = 'index_businesses_sale'
+    @classmethod
+    def add(cls, record, using=None):
+        raise Exception('Abstract method was called. This method should be overwritten.')
 
 
     @classmethod
-    def add(cls, record, using=None):
-        cls.objects.using(using).create(
-            publication_id=record.id,
-            hash_id=record.hash_id,
-            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
-            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
-
-            price=record.sale_terms.price,
-            currency_sid=record.sale_terms.currency_sid,
-        )
+    def min_add_queryset(cls):
+        raise Exception('Abstract method was called. This method should be overwritten.')
 
 
     @classmethod
@@ -1743,30 +1735,10 @@ class BusinessesSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        model = HEAD_MODELS[OBJECTS_TYPES.business()]
-        return model.objects.all().only(
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
-
-            'id',
-            'hash_id',
-
-            'sale_terms__price',
-            'sale_terms__currency_sid',
-        )
-
-
-    @classmethod
     def min_remove_queryset(cls):
         model = HEAD_MODELS[cls.tid]
         return model.objects.all().only(
             'id',
-
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1796,9 +1768,79 @@ class BusinessesSaleIndex(AbstractBaseIndex):
 
 
 
-class BusinessesRentIndex(BusinessesSaleIndex):
+class BusinessesSaleIndex(AbstractBusinessesIndex):
+    class Meta:
+        db_table = 'index_businesses_sale'
+
+
+    @classmethod
+    def add(cls, record, using=None):
+        cls.objects.using(using).create(
+            publication_id=record.id,
+            hash_id=record.hash_id,
+            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
+            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
+
+            price=record.sale_terms.price, # note: sale terms here
+            currency_sid=record.sale_terms.currency_sid, # note: sale terms here
+        )
+
+
+    @classmethod
+    def min_add_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.business()]
+        return model.objects.all().only(
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+
+            'id',
+            'hash_id',
+
+            'sale_terms__price', # note: sale terms here
+            'sale_terms__currency_sid', # note: sale terms here
+        )
+
+
+
+class BusinessesRentIndex(AbstractBusinessesIndex):
     class Meta:
         db_table = 'index_businesses_rent'
+
+
+    @classmethod
+    def add(cls, record, using=None):
+        cls.objects.using(using).create(
+            publication_id=record.id,
+            hash_id=record.hash_id,
+            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
+            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
+
+            price=record.rent_terms.price, # note: rent terms here
+            currency_sid=record.rent_terms.currency_sid, # note: rent terms here
+        )
+
+
+    @classmethod
+    def min_add_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.business()]
+        return model.objects.all().only(
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+
+            'id',
+            'hash_id',
+
+            'rent_terms__price', # note: rent terms here
+            'rent_terms__currency_sid', # note: rent terms here
+        )
 
 
 
