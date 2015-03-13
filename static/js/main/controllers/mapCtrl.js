@@ -5,7 +5,7 @@
  * СПЛОШНА МАГІЯ, МІСТІКА І ЇМ ПОДІБНЕ
  */
 
-app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile, $rootScope, ngProgress, Markers) {
+app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile, $rootScope, Markers) {
 
     /**
      * Змінні
@@ -23,8 +23,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                 country: "ua"
             }
         },
-        markersLoaderTimeout,
-        markersLoaderTimeoutTime = 500,
         requestTimeout,
         requestTimeoutTime = 1500,
         mapIsLoaded = false,
@@ -478,16 +476,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Функція яка ініціює загрузку даних
      */
     function loadData(timeout) {
-        markersIsLoaded = false;
-        clearTimeout(markersLoaderTimeout);
-        markersLoaderTimeout = setTimeout(function() {
-            clearTimeout(markersLoaderTimeout);
-            if (!markersIsLoaded)
-                ngProgress.start();
-            console.log(ngProgress.status())
-        }, markersLoaderTimeoutTime);
-
-
         $timeout(function() {
             if (!mapIsLoaded) {
                 return;
@@ -519,8 +507,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                         markers = data;
                         placeMarkers(data);
                         markersIsLoaded = true;
-                        if (ngProgress.status() > 0)
-                            ngProgress.complete();
                     });
                 }, requestTimeoutTime);
             } else {
@@ -531,8 +517,6 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                     markers = data;
                     placeMarkers(data);
                     markersIsLoaded = true;
-                    if (ngProgress.status() > 0)
-                        ngProgress.complete();
                 });
             }
         }, 100);

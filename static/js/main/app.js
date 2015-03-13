@@ -1,4 +1,4 @@
-var app = angular.module('Mappino', ['ngRoute', 'ngCookies', 'ui.mask', 'ngAnimate', 'lrNotifier', 'ngProgress']);
+var app = angular.module('Mappino', ['ngRoute', 'ngCookies', 'ui.mask', 'ngAnimate', 'lrNotifier']);
 
 app.config(function($interpolateProvider, $locationProvider) {
     $interpolateProvider.startSymbol('[[');
