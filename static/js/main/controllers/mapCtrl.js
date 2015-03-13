@@ -27,7 +27,8 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
         markersLoaderTimeoutTime = 500,
         requestTimeout,
         requestTimeoutTime = 1500,
-        mapIsLoaded = false;
+        mapIsLoaded = false,
+        markersIsLoaded = false;
 
     /**
      * Фільтри
@@ -477,12 +478,13 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
      * Функція яка ініціює загрузку даних
      */
     function loadData(timeout) {
-        var markersLoaded = false;
+        markersIsLoaded = false;
         clearTimeout(markersLoaderTimeout);
         markersLoaderTimeout = setTimeout(function() {
             clearTimeout(markersLoaderTimeout);
-            if (!markersLoaded)
+            if (!markersIsLoaded)
                 ngProgress.start();
+            console.log(ngProgress.status())
         }, markersLoaderTimeoutTime);
 
 
@@ -516,8 +518,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
                         markers = data;
                         placeMarkers(data);
-                        markersLoaded = true;
-                        ngProgress.complete();
+                        markersIsLoaded = true;
+                        if (ngProgress.status() > 0)
+                            ngProgress.complete();
                     });
                 }, requestTimeoutTime);
             } else {
@@ -527,8 +530,9 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
                     markers = data;
                     placeMarkers(data);
-                    markersLoaded = true;
-                    ngProgress.complete();
+                    markersIsLoaded = true;
+                    if (ngProgress.status() > 0)
+                        ngProgress.complete();
                 });
             }
         }, 100);
