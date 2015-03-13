@@ -1269,8 +1269,7 @@ class RoomsRentIndex(AbstractBaseIndex):
 
 
 # -- commercial real estate
-
-class TradesSaleIndex(AbstractBaseIndex):
+class AbstractTradesIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -1288,31 +1287,14 @@ class TradesSaleIndex(AbstractBaseIndex):
     tid = OBJECTS_TYPES.trade()
 
 
-    class Meta:
-        db_table = 'index_trades_sale'
+    @classmethod
+    def add(cls, record, using=None):
+        raise Exception('Abstract method was called. This method should be overwritten.')
 
 
     @classmethod
-    def add(cls, record, using=None):
-        cls.objects.using(using).create(
-            publication_id=record.id,
-            hash_id=record.hash_id,
-            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
-            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
-
-            market_type_sid=record.body.market_type_sid,
-            halls_area=record.body.total_area,
-            total_area=record.body.total_area,
-            building_type_sid=record.body.building_type_sid,
-            hot_water=record.body.hot_water,
-            cold_water=record.body.cold_water,
-            gas=record.body.gas,
-            electricity=record.body.electricity,
-            sewerage=record.body.sewerage,
-
-            price=record.sale_terms.price,
-            currency_sid=record.sale_terms.currency_sid,
-        )
+    def min_add_queryset(cls):
+        raise Exception('Abstract method was called. This method should be overwritten.')
 
 
     @classmethod
@@ -1322,40 +1304,10 @@ class TradesSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        model = HEAD_MODELS[OBJECTS_TYPES.trade()]
-        return model.objects.all().only(
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
-
-            'id',
-            'hash_id',
-
-            'body__market_type_sid',
-            'body__halls_area',
-            'body__total_area',
-            'body__building_type_sid',
-            'body__hot_water',
-            'body__cold_water',
-            'body__electricity',
-            'body__gas',
-            'body__sewerage',
-
-            'sale_terms__price',
-            'sale_terms__currency_sid',
-        )
-
-
-    @classmethod
     def min_remove_queryset(cls):
         model = HEAD_MODELS[cls.tid]
         return model.objects.all().only(
             'id',
-
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1395,9 +1347,117 @@ class TradesSaleIndex(AbstractBaseIndex):
 
 
 
-class TradesRentIndex(TradesSaleIndex):
+class TradesSaleIndex(AbstractTradesIndex):
+    class Meta:
+        db_table = 'index_trades_sale'
+
+
+    @classmethod
+    def add(cls, record, using=None):
+        cls.objects.using(using).create(
+            publication_id=record.id,
+            hash_id=record.hash_id,
+            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
+            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
+
+            market_type_sid=record.body.market_type_sid,
+            halls_area=record.body.total_area,
+            total_area=record.body.total_area,
+            building_type_sid=record.body.building_type_sid,
+            hot_water=record.body.hot_water,
+            cold_water=record.body.cold_water,
+            gas=record.body.gas,
+            electricity=record.body.electricity,
+            sewerage=record.body.sewerage,
+
+            price=record.sale_terms.price, # note: sale terms here
+            currency_sid=record.sale_terms.currency_sid, # note: sale terms here
+        )
+
+
+    @classmethod
+    def min_add_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.trade()]
+        return model.objects.all().only(
+            'id',
+            'hash_id',
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+
+            'body__market_type_sid',
+            'body__halls_area',
+            'body__total_area',
+            'body__building_type_sid',
+            'body__hot_water',
+            'body__cold_water',
+            'body__electricity',
+            'body__gas',
+            'body__sewerage',
+
+            'sale_terms__price', # note: sale terms here
+            'sale_terms__currency_sid', # note: sale terms here
+        )
+
+
+
+class TradesRentIndex(AbstractTradesIndex):
     class Meta:
         db_table = 'index_trades_rent'
+
+
+    @classmethod
+    def add(cls, record, using=None):
+        cls.objects.using(using).create(
+            publication_id=record.id,
+            hash_id=record.hash_id,
+            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
+            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
+
+            market_type_sid=record.body.market_type_sid,
+            halls_area=record.body.total_area,
+            total_area=record.body.total_area,
+            building_type_sid=record.body.building_type_sid,
+            hot_water=record.body.hot_water,
+            cold_water=record.body.cold_water,
+            gas=record.body.gas,
+            electricity=record.body.electricity,
+            sewerage=record.body.sewerage,
+
+            price=record.rent_terms.price, # note: rent terms here
+            currency_sid=record.rent_terms.currency_sid, # note: rent terms here
+        )
+
+
+    @classmethod
+    def min_add_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.trade()]
+        return model.objects.all().only(
+            'id',
+            'hash_id',
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+
+            'body__market_type_sid',
+            'body__halls_area',
+            'body__total_area',
+            'body__building_type_sid',
+            'body__hot_water',
+            'body__cold_water',
+            'body__electricity',
+            'body__gas',
+            'body__sewerage',
+
+            'rent_terms__price', # note: rent terms here
+            'rent_terms__currency_sid', # note: rent terms here
+        )
 
 
 
@@ -2561,15 +2621,13 @@ class SegmentsIndex(models.Model):
             cls.prepare_request_processing(ne_lat, ne_lng, sw_lat, sw_lng, zoom)
 
 
-        # Помітки for_sale та for_rent ставляться лише для житлової нерухомості
-        try:
-            if 'for_sale' in filters:
-                index = cls.living_sale_indexes[tid]
-            elif 'for_rent' in filters:
-                index = cls.living_rent_indexes[tid]
-        except KeyError:
-            # інакше — це точно комерційна нерухомість.
-            index = cls.commercial_sale_indexes[tid]
+        if for_sale:
+            index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
+        else:
+            index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
+
+        if index is None:
+            return InvalidArgument('No index such tid.')
 
 
         # Підготувати SQL-запит на вибірку записів, попередньо відфільтрувавши за вхідними умовами.
@@ -2693,14 +2751,15 @@ class SegmentsIndex(models.Model):
             return {}, publications_ids
 
 
-        # Now we need to get info about publications from the index.
-        # (Only living real estate may have "for_sale" or "for_rent" property)
         if 'for_sale' in filters:
-            index = cls.living_sale_indexes[tid]
+            index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
         elif 'for_rent' in filters:
-            index = cls.living_rent_indexes[tid]
-        else:
-            index = cls.commercial_sale_indexes[tid]
+            index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
+
+        if index is None:
+            return InvalidArgument('No index such tid.')
+
+
 
         markers = index.min_queryset().filter(publication_id__in=publications_ids)
         briefs = {
