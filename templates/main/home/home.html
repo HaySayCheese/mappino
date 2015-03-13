@@ -291,7 +291,9 @@
 
     </div>
 
-    <script type="text/javascript" src="{{ static }}js/home/app.js"></script>
-    <script type="text/javascript" src="{{ static }}js/home/controllers/home-controller.js"></script>
+    {% compress js %}
+        <script type="text/javascript" src="{{ static }}js/home/app.js"></script>
+        <script type="text/javascript" src="{{ static }}js/home/controllers/home-controller.js"></script>
+    {% endcompress %}
 </body>
 </html>
