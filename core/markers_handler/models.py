@@ -1588,6 +1588,14 @@ class OfficesRentIndex(AbstractOfficesIndex):
 
 
 class AbstractWarehousesIndex(AbstractBaseIndex):
+    """
+    Sale index and rent index of the warehouses contains the same field and the same logic,
+    but must use different tables. For this approach we can't simply create sale index,
+    and than inherit rent index from it. (Django will generate inappropriate inheritance scheme).
+
+    So abstract index was developed and both sale and rent indexes was derived from it.
+    """
+
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
