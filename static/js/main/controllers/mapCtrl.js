@@ -514,9 +514,10 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                                     $scope.filters.green, $scope.filters.yellow,
                                     viewport, $scope.filters.map.zoom, function(data) {
 
+                        markersLoaded = true;
+
                         markers = data;
                         placeMarkers(data);
-                        markersLoaded = true;
 
                         // Loader should be shown after every filters change.
                         // If "timeout" was set - than this method was called from filters panel.
@@ -529,13 +530,14 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                                 $scope.filters.green, $scope.filters.yellow,
                                 viewport, $scope.filters.map.zoom, function(data) {
 
+                    markersLoaded = true;
+
                     markers = data;
                     placeMarkers(data);
 
-                    markersLoaded = true;
-
                     // If "timeout" was not set - than this method was called after map dragging.
-                    // Loader should be shown only if request was performed more than 1.5s.
+                    // Loader should be shown only if request was performed more than 1.5s ago
+                    // and progress was started.
                     if (ngProgress.status() > 0){
                         ngProgress.complete();
                     }
