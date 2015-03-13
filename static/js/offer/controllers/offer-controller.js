@@ -1,5 +1,5 @@
-app.controller('OfferController', ['$scope', '$timeout',
-    function($scope, $timeout) {
+app.controller('OfferController', ['$timeout',
+    function($timeout) {
         "use strict";
 
         var scrollableBlock     = $(document),
