@@ -74,6 +74,10 @@ class AbstractBaseIndex(models.Model):
 
     @classmethod
     def min_queryset(cls):  # virtual
+        """
+        :returns:
+            minimum queryset needed for marker brief performing.
+        """
         return cls.objects.none()
 
 
@@ -183,6 +187,10 @@ class AbstractBaseIndex(models.Model):
 
     @staticmethod  # range
     def apply_area_filter(filters, markers):
+        # This filter si similar to the total area.
+        # Some objects types has attribute "area" instead of "total_area",
+        # so we need method to process them.
+
         a_min = filters.get('area_from')
         if a_min is not None:
             markers = markers.filter(area__gte=a_min)
@@ -196,6 +204,10 @@ class AbstractBaseIndex(models.Model):
 
     @staticmethod  # range
     def apply_total_area_filter(filters, markers):
+        # This filter si similar to the total area.
+        # Some objects types has attribute "total_area" instead of "area",
+        # so we need method to process them.
+
         ta_min = filters.get('total_area_from')
         if ta_min is not None:
             markers = markers.filter(total_area__gte=ta_min)
@@ -1844,10 +1856,17 @@ class BusinessesRentIndex(BusinessesSaleIndex):
 
 
 
-class GaragesSaleIndex(AbstractBaseIndex):
+class GaragesIndexAbstract(AbstractBaseIndex):
+    """
+    Sale index and rent index of the garages contains the same field and the same logic,
+    but must use different tables. For this approach we can't simply create sale index,
+    and than inherit rent index from it. (Django will generate inappropriate inheritance scheme).
+
+    So abstract index was developed and both sale and rent indexes was derived from it.
+    """
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
-    total_area = models.FloatField(db_index=True)
+    area = models.FloatField(db_index=True)
     ceiling_height = models.FloatField(db_index=True)
     pit = models.BooleanField(db_index=True)
 
@@ -1857,53 +1876,23 @@ class GaragesSaleIndex(AbstractBaseIndex):
 
 
     class Meta:
-        db_table = 'index_garages_sale'
+        abstract = True
 
 
     @classmethod
     def add(cls, record, using=None):
-        cls.objects.using(using).create(
-            publication_id=record.id,
-            hash_id=record.hash_id,
-            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
-            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
+        raise Exception('Abstract method was called. This method should be overwritten.')
 
-            total_area=record.body.total_area,
-            ceiling_height=record.body.ceiling_height,
-            pit=record.body.pit,
 
-            price=record.sale_terms.price,
-            currency_sid=record.sale_terms.currency_sid,
-        )
+    @classmethod
+    def min_add_queryset(cls):
+        raise Exception('Abstract method was called. This method should be overwritten.')
 
 
     @classmethod
     def min_queryset(cls):
         return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')  # todo: fixme
-
-
-    @classmethod
-    def min_add_queryset(cls):
-        model = HEAD_MODELS[OBJECTS_TYPES.garage()]
-        return model.objects.all().only(
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
-
-            'id',
-            'hash_id',
-
-            'body__total_area',
-            'body__ceiling_height',
-            'body__pit',
-
-            'sale_terms__price',
-            'sale_terms__currency_sid',
-        )
+            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'area')  # todo: fixme
 
 
     @classmethod
@@ -1911,7 +1900,6 @@ class GaragesSaleIndex(AbstractBaseIndex):
         model = HEAD_MODELS[cls.tid]
         return model.objects.all().only(
             'id',
-
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1925,7 +1913,7 @@ class GaragesSaleIndex(AbstractBaseIndex):
     def apply_filters(cls, filters, markers):
         markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_price_filter(filters, markers)
-        markers = cls.apply_total_area_filter(filters, markers)
+        markers = cls.apply_area_filter(filters, markers)
         markers = cls.apply_ceiling_height_filter(filters, markers)
         markers = cls.apply_pit_filter(filters, markers)
         return markers
@@ -1935,24 +1923,116 @@ class GaragesSaleIndex(AbstractBaseIndex):
     def brief(cls, marker, filters=None):
         currency = cls.currency_from_filters(filters)
         price = cls.convert_and_format_price(marker.price, marker.currency_sid, currency)
-        total_area = '{0}'.format(marker.total_area).rstrip('0').rstrip('.')
+        area = '{0}'.format(marker.area).rstrip('0').rstrip('.')
 
         return {
             'tid': cls.tid,
             'id': marker.hash_id,
-            'd0': u'{0} м²'.format(total_area),
+            'd0': u'{0} м²'.format(area),
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
         }
 
 
 
-class GaragesRentIndex(GaragesSaleIndex):
+class GaragesSaleIndex(GaragesIndexAbstract):
+    class Meta:
+        db_table = 'index_garages_sale'
+
+
+    @classmethod
+    def min_add_queryset(cls):
+        model = HEAD_MODELS[cls.tid]
+        return model.objects.all().only(
+            'id',
+            'hash_id',
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+
+            'body__area',
+            'body__ceiling_height',
+            'body__pit',
+
+            'sale_terms__price', # note: sale terms here
+            'sale_terms__currency_sid', # note: sale terms here
+        )
+
+
+    @classmethod
+    def add(cls, record, using=None):
+        cls.objects.using(using).create(
+            publication_id=record.id,
+            hash_id=record.hash_id,
+            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
+            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
+
+            area=record.body.area,
+            ceiling_height=record.body.ceiling_height,
+            pit=record.body.pit,
+
+            price=record.sale_terms.price, # note: sale terms here
+            currency_sid=record.sale_terms.currency_sid, # note: sale terms here
+        )
+
+
+
+class GaragesRentIndex(GaragesIndexAbstract):
     class Meta:
         db_table = 'index_garages_rent'
 
 
+    @classmethod
+    def add(cls, record, using=None):
+        cls.objects.using(using).create(
+            publication_id=record.id,
+            hash_id=record.hash_id,
+            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
+            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
-class LandsSaleIndex(AbstractBaseIndex):
+            area=record.body.area,
+            ceiling_height=record.body.ceiling_height,
+            pit=record.body.pit,
+
+            price=record.rent_terms.price, # note: sale terms here
+            currency_sid=record.rent_terms.currency_sid, # note: sale terms here
+        )
+
+
+    @classmethod
+    def min_add_queryset(cls):
+        model = HEAD_MODELS[cls.tid]
+        return model.objects.all().only(
+            'id',
+            'hash_id',
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+
+            'body__area',
+            'body__ceiling_height',
+            'body__pit',
+
+            'rent_terms__price', # note: sale terms here
+            'rent_terms__currency_sid', # note: sale terms here
+        )
+
+
+
+class LandsIndexAbstract(AbstractBaseIndex):
+    """
+    Sale index and rent index of the lands contains the same field and the same logic,
+    but must use different tables. For this approach we can't simply create sale index,
+    and than inherit rent index from it. (Django will generate inappropriate inheritance scheme).
+
+    So abstract index was developed and both sale and rent indexes was derived from it.
+    """
+
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     area = models.FloatField(db_index=True)
@@ -1966,27 +2046,14 @@ class LandsSaleIndex(AbstractBaseIndex):
     tid = OBJECTS_TYPES.land()
 
 
-    class Meta:
-        db_table = 'index_lands_sale'
+    @classmethod
+    def add(cls, record, using=None):
+        raise Exception('Abstract method was called. This method should be overwritten.')
 
 
     @classmethod
-    def add(cls, record, using=None):
-        cls.objects.using(using).create(
-            publication_id=record.id,
-            hash_id=record.hash_id,
-            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
-            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
-
-            area=record.body.area,
-            water=record.body.water,
-            electricity=record.body.electricity,
-            gas=record.body.gas,
-            sewerage=record.body.sewerage,
-
-            price=record.sale_terms.price,
-            currency_sid=record.sale_terms.currency_sid,
-        )
+    def min_add_queryset(cls):
+        raise Exception('Abstract method was called. This method should be overwritten.')
 
 
     @classmethod
@@ -1996,36 +2063,10 @@ class LandsSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        model = HEAD_MODELS[OBJECTS_TYPES.land()]
-        return model.objects.all().only(
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
-
-            'id',
-            'hash_id',
-
-            'body__area',
-            'body__water',
-            'body__electricity',
-            'body__gas',
-            'body__sewerage',
-
-            'sale_terms__price',
-            'sale_terms__currency_sid',
-        )
-
-
-    @classmethod
     def min_remove_queryset(cls):
         model = HEAD_MODELS[cls.tid]
         return model.objects.all().only(
             'id',
-
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -2051,20 +2092,112 @@ class LandsSaleIndex(AbstractBaseIndex):
     def brief(cls, marker, filters=None):
         currency = cls.currency_from_filters(filters)
         price = cls.convert_and_format_price(marker.price, marker.currency_sid, currency)
-        total_area = '{0}'.format(marker.total_area).rstrip('0').rstrip('.')
+        area = '{0}'.format(marker.area).rstrip('0').rstrip('.')
 
         return {
             'tid': cls.tid,
             'id': marker.hash_id,
-            'd0': u'{0} м²'.format(total_area),
+            'd0': u'{0} м²'.format(area),
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
         }
+
+
+
+class LandsSaleIndex(LandsIndexAbstract):
+    class Meta:
+        db_table = 'index_lands_sale'
+
+
+    @classmethod
+    def add(cls, record, using=None):
+        cls.objects.using(using).create(
+            publication_id=record.id,
+            hash_id=record.hash_id,
+            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
+            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
+
+            area=record.body.area,
+            water=record.body.water,
+            electricity=record.body.electricity,
+            gas=record.body.gas,
+            sewerage=record.body.sewerage,
+
+            price=record.sale_terms.price, # note: sale terms here
+            currency_sid=record.sale_terms.currency_sid, # note: sale terms here
+        )
+
+
+    @classmethod
+    def min_add_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.land()]
+        return model.objects.all().only(
+            'id',
+            'hash_id',
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+
+            'body__area',
+            'body__water',
+            'body__electricity',
+            'body__gas',
+            'body__sewerage',
+
+            'sale_terms__price', # note: sale terms here
+            'sale_terms__currency_sid', # note: sale terms here
+        )
 
 
 
 class LandsRentIndex(LandsSaleIndex):
     class Meta:
         db_table = 'index_lands_rent'
+
+
+    @classmethod
+    def add(cls, record, using=None):
+        cls.objects.using(using).create(
+            publication_id=record.id,
+            hash_id=record.hash_id,
+            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
+            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
+
+            area=record.body.area,
+            water=record.body.water,
+            electricity=record.body.electricity,
+            gas=record.body.gas,
+            sewerage=record.body.sewerage,
+
+            price=record.rent_terms.price, # note: rent terms here
+            currency_sid=record.rent_terms.currency_sid, # note: rent terms here
+        )
+
+
+    @classmethod
+    def min_add_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.land()]
+        return model.objects.all().only(
+            'id',
+            'hash_id',
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+
+            'body__area',
+            'body__water',
+            'body__electricity',
+            'body__gas',
+            'body__sewerage',
+
+            'rent_terms__price', # note: rent terms here
+            'rent_terms__currency_sid', # note: rent terms here
+        )
 
 
 
