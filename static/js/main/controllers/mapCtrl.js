@@ -24,7 +24,7 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
             }
         },
         markersLoaderTimeout,
-        markersLoaderTimeoutTime = 500,
+        markersLoaderTimeoutTime = 1500,
         requestTimeout,
         requestTimeoutTime = 1500,
         mapIsLoaded = false;
@@ -517,7 +517,11 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
                         markers = data;
                         placeMarkers(data);
                         markersLoaded = true;
+
+                        // Loader should be shown after every filters change.
+                        // If "timeout" was set - than this method was called from filters panel.
                         ngProgress.complete();
+
                     });
                 }, requestTimeoutTime);
             } else {
@@ -527,8 +531,14 @@ app.controller('MapCtrl', function($scope, $location, $http, $timeout, $compile,
 
                     markers = data;
                     placeMarkers(data);
+
                     markersLoaded = true;
-                    ngProgress.complete();
+
+                    // If "timeout" was not set - than this method was called after map dragging.
+                    // Loader should be shown only if request was performed more than 1.5s.
+                    if (ngProgress.status() > 0){
+                        ngProgress.complete();
+                    }
                 });
             }
         }, 100);
