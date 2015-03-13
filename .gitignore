@@ -2,7 +2,7 @@
 .venv/*
 .venv2/*
 
-mappino/settings.py
+mappino/dev_settings.py
 mappino/passwords.py
 mappino/keys/*
 
@@ -12,6 +12,7 @@ static/CACHE/*
 static/escaped_fragments
 static/escaped_fragments/*
 
+.gitignore
 
 *.pyc
 *.log

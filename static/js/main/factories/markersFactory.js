@@ -1,13 +1,7 @@
-'use strict';
+app.factory('Markers', ['Queries', 'uuid', function(Queries, uuid) {
+    "use strict";
 
-app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
     var markers = {
-            red: {},
-            blue: {},
-            green: {},
-            yellow: {}
-        },
-        tempMarkers = {
             red: {},
             blue: {},
             green: {},
@@ -19,12 +13,6 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             green: {},
             yellow: {},
             compared: {}
-        },
-        pieMarkersLoaded = {
-            red:    false,
-            blue:   false,
-            green:  false,
-            yellow: false
         },
         maxLat = 90,
         minLat = -90,
@@ -62,43 +50,32 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
             var that = this;
 
             jsonFilters = {
-                zoom: "",
-                viewport: "",
+                zoom: zoom,
+                viewport: viewport,
                 filters: []
             };
 
-
-            jsonFilters.zoom = zoom;
-            jsonFilters.viewport = viewport;
-
-            if (!_.isNull(r_filters.r_type_sid))
+            if (!_.isNull(r_filters.r_type_sid)) {
                 that.createJsonFiltersFromString(r_filters, "red");
-            else if(!_.isNull(b_filters.b_type_sid))
+            }
+            if(!_.isNull(b_filters.b_type_sid)) {
                 that.createJsonFiltersFromString(b_filters, "blue");
-            else if(!_.isNull(g_filters.g_type_sid))
+            }
+            if(!_.isNull(g_filters.g_type_sid)) {
                 that.createJsonFiltersFromString(g_filters, "green");
-            else if(!_.isNull(y_filters.y_type_sid))
+            }
+            if(!_.isNull(y_filters.y_type_sid)) {
                 that.createJsonFiltersFromString(y_filters, "yellow");
-
-
-            clearTimeout(requestTimeout);
-            requestTimeout = setTimeout(function() {
-                $rootScope.loadings.markers = true;
-            }, 300);
+            }
 
             Queries.Map.getMarkers(JSON.stringify(jsonFilters)).success(function(data) {
-                that.clearPanelMarkers("red");
-                that.clearPanelMarkers("blue");
-                that.clearPanelMarkers("green");
-                that.clearPanelMarkers("yellow");
-
+                that.clearPanelMarkers("all");
 
                 that.add(data, function() {
                     _.isFunction(callback) && callback(markers);
                 });
 
                 clearTimeout(requestTimeout);
-                $rootScope.loadings.markers = false;
             });
         },
 
@@ -285,14 +262,27 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
                 this.createPieObject(pieMarkers["compared"][comparedMarker], comparedMarkerPanel, comparedMarker);
             }
 
-            this.clearTempPieMarkers();
+            this.clearPieMarkers();
         },
 
         clearPanelMarkers: function(panel, callback) {
-            for (var marker in markers[panel]) {
-                if (markers[panel].hasOwnProperty(marker)) {
-                    markers[panel][marker].setMap(null);
-                    delete markers[panel][marker];
+            if (panel === "all") {
+                for (var _panel in markers) {
+                    if (markers.hasOwnProperty(_panel)) {
+                        for (var _marker in markers[_panel]) {
+                            if (markers[_panel].hasOwnProperty(_marker)) {
+                                markers[_panel][_marker].setMap(null);
+                                delete markers[_panel][_marker];
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (var marker in markers[panel]) {
+                    if (markers[panel].hasOwnProperty(marker)) {
+                        markers[panel][marker].setMap(null);
+                        delete markers[panel][marker];
+                    }
                 }
             }
 
@@ -301,20 +291,10 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
 
         createJsonFiltersFromString: function(filters, panel) {
             var that = this,
-                stringFilters = {},
-                tid = "";
+                stringFilters = {};
 
             for (var key in filters) {
                 if (filters.hasOwnProperty(key)) {
-
-                    if (key.toString().substring(2) == "type_sid") {
-                        if (filters[key] == null || filters[key] == "undefined") {
-                            pieMarkersLoaded[panel] = true;
-                            return;
-                        }
-
-                        tid = filters[key];
-                    }
 
                     if (filters[key] !== false && filters[key] !== "false" && filters[key] !== "" && filters[key] !== null) {
                         var param = key.toString().substring(2),
@@ -330,14 +310,14 @@ app.factory('Markers', function(Queries, $rootScope, $interval, uuid) {
         },
 
 
-        clearTempPieMarkers: function() {
+        clearPieMarkers: function() {
             pieMarkers = {
                 red: {},
                 blue: {},
                 green: {},
                 yellow: {},
                 compared: {}
-            }
+            };
         }
-    }
-});
+    };
+}]);

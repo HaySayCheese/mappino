@@ -149,9 +149,6 @@ app.controller('AppCtrl', function($scope, $rootScope, $location, $cookies, $rou
         daily: 1,
         monthly: 2
     };
-    $rootScope.loadings = {
-        markers: false
-    };
 
     $rootScope.subdommain = "";
 
