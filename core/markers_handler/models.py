@@ -1401,7 +1401,15 @@ class TradesRentIndex(TradesSaleIndex):
 
 
 
-class OfficesSaleIndex(AbstractBaseIndex):
+class AbstractOfficesIndex(AbstractBaseIndex):
+    """
+    Sale index and rent index of the offices contains the same field and the same logic,
+    but must use different tables. For this approach we can't simply create sale index,
+    and than inherit rent index from it. (Django will generate inappropriate inheritance scheme).
+
+    So abstract index was developed and both sale and rent indexes was derived from it.
+    """
+
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -1417,29 +1425,14 @@ class OfficesSaleIndex(AbstractBaseIndex):
     tid = OBJECTS_TYPES.office()
 
 
-    class Meta:
-        db_table = 'index_offices_sale'
+    @classmethod
+    def add(cls, record, using=None):
+        raise Exception('Abstract method was called. This method should be overwritten.')
 
 
     @classmethod
-    def add(cls, record, using=None):
-        cls.objects.using(using).create(
-            publication_id=record.id,
-            hash_id=record.hash_id,
-            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
-            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
-
-            market_type_sid=record.body.market_type_sid,
-            total_area=record.body.total_area,
-            cabinets_count=record.body.cabinets_count,
-            hot_water=record.body.hot_water,
-            cold_water=record.body.cold_water,
-            security=record.body.security,
-            kitchen=record.body.kitchen,
-
-            price=record.sale_terms.price,
-            currency_sid=record.sale_terms.currency_sid,
-        )
+    def min_add_queryset(cls):
+        raise Exception('Abstract method was called. This method should be overwritten.')
 
 
     @classmethod
@@ -1449,38 +1442,10 @@ class OfficesSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        model = HEAD_MODELS[OBJECTS_TYPES.office()]
-        return model.objects.all().only(
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
-
-            'id',
-            'hash_id',
-
-            'body__market_type_sid',
-            'body__total_area',
-            'body__cabinets_count',
-            'body__hot_water',
-            'body__cold_water',
-            'body__security',
-            'body__kitchen',
-
-            'sale_terms__price',
-            'sale_terms__currency_sid',
-        )
-
-
-    @classmethod
     def min_remove_queryset(cls):
         model = HEAD_MODELS[cls.tid]
         return model.objects.all().only(
             'id',
-
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -1518,9 +1483,107 @@ class OfficesSaleIndex(AbstractBaseIndex):
 
 
 
-class OfficesRentIndex(OfficesSaleIndex):
+class OfficesSaleIndex(AbstractOfficesIndex):
+    class Meta:
+        db_table = 'index_offices_sale'
+
+
+    @classmethod
+    def add(cls, record, using=None):
+        cls.objects.using(using).create(
+            publication_id=record.id,
+            hash_id=record.hash_id,
+            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
+            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
+
+            market_type_sid=record.body.market_type_sid,
+            total_area=record.body.total_area,
+            cabinets_count=record.body.cabinets_count,
+            hot_water=record.body.hot_water,
+            cold_water=record.body.cold_water,
+            security=record.body.security,
+            kitchen=record.body.kitchen,
+
+            price=record.sale_terms.price, # note: sale terms here
+            currency_sid=record.sale_terms.currency_sid, # note: sale terms here
+        )
+
+
+    @classmethod
+    def min_add_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.office()]
+        return model.objects.all().only(
+            'id',
+            'hash_id',
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+            'body__market_type_sid',
+            'body__total_area',
+            'body__cabinets_count',
+            'body__hot_water',
+            'body__cold_water',
+            'body__security',
+            'body__kitchen',
+
+            'sale_terms__price', # note: sale terms here
+            'sale_terms__currency_sid', # note: sale terms here
+        )
+
+
+
+class OfficesRentIndex(AbstractOfficesIndex):
     class Meta:
         db_table = 'index_offices_rent'
+
+
+    @classmethod
+    def add(cls, record, using=None):
+        cls.objects.using(using).create(
+            publication_id=record.id,
+            hash_id=record.hash_id,
+            lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
+            lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
+
+            market_type_sid=record.body.market_type_sid,
+            total_area=record.body.total_area,
+            cabinets_count=record.body.cabinets_count,
+            hot_water=record.body.hot_water,
+            cold_water=record.body.cold_water,
+            security=record.body.security,
+            kitchen=record.body.kitchen,
+
+            price=record.rent_terms.price, # note: rent terms here
+            currency_sid=record.rent_terms.currency_sid, # note: rent terms here
+        )
+
+
+    @classmethod
+    def min_add_queryset(cls):
+        model = HEAD_MODELS[OBJECTS_TYPES.office()]
+        return model.objects.all().only(
+            'id',
+            'hash_id',
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+            'body__market_type_sid',
+            'body__total_area',
+            'body__cabinets_count',
+            'body__hot_water',
+            'body__cold_water',
+            'body__security',
+            'body__kitchen',
+
+            'rent_terms__price', # note: rent terms here
+            'rent_terms__currency_sid', # note: rent terms here
+        )
 
 
 
