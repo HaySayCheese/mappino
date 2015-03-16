@@ -85,7 +85,7 @@ class AbstractBaseIndex(models.Model):
         """
         :return:
             Мінімальний QuerySet моделі, до якої прив’язаний індекс.
-            Тобто, якщо це FlatsSaleIndexAbstract то буде повернуто QuerySet оголошень FlatsHeads,
+            Тобто, якщо це FlatsSaleIndex то буде повернуто QuerySet оголошень FlatsHeads,
             якщо HousesRentIndexAbstract - HousesHeads і т.д.
 
             Також, даний метод вибирає лише ті поля,
@@ -474,7 +474,7 @@ class AbstractBaseIndex(models.Model):
 
 
 
-class FlatsSaleIndexAbstract(AbstractBaseIndex): # todo: rename me, i am not an abstract
+class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
@@ -534,15 +534,14 @@ class FlatsSaleIndexAbstract(AbstractBaseIndex): # todo: rename me, i am not an 
     def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.flat()]
         return model.objects.all().only(
+            'id',
+            'hash_id',
             'degree_lat',
             'degree_lng',
             'segment_lat',
             'segment_lng',
             'pos_lat',
             'pos_lng',
-
-            'id',
-            'hash_id',
 
             'body__market_type_sid',
             'body__rooms_count',
@@ -567,7 +566,6 @@ class FlatsSaleIndexAbstract(AbstractBaseIndex): # todo: rename me, i am not an 
         model = HEAD_MODELS[cls.tid]
         return model.objects.all().only(
             'id',
-
             'degree_lat',
             'degree_lng',
             'segment_lat',
@@ -608,7 +606,7 @@ class FlatsSaleIndexAbstract(AbstractBaseIndex): # todo: rename me, i am not an 
 
 
 
-class FlatsRentIndexAbstract(AbstractBaseIndex):
+class FlatsRentIndex(AbstractBaseIndex):
     period_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
@@ -665,22 +663,21 @@ class FlatsRentIndexAbstract(AbstractBaseIndex):
     @classmethod
     def min_queryset(cls):
         return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'rooms_count')  # todo: fixme
+            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'persons_count')  # todo: fixme
 
 
     @classmethod
     def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.flat()]
         return model.objects.all().only(
+            'id',
+            'hash_id',
             'degree_lat',
             'degree_lng',
             'segment_lat',
             'segment_lng',
             'pos_lat',
             'pos_lng',
-
-            'id',
-            'hash_id',
 
             'body__total_area',
             'body__floor',
@@ -746,7 +743,7 @@ class FlatsRentIndexAbstract(AbstractBaseIndex):
 
 
 
-class HousesSaleIndexAbstract(AbstractBaseIndex):
+class HousesSaleIndex(AbstractBaseIndex):
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
@@ -873,7 +870,7 @@ class HousesSaleIndexAbstract(AbstractBaseIndex):
 
 
 
-class HousesRentIndexAbstract(AbstractBaseIndex):
+class HousesRentIndex(AbstractBaseIndex):
     period_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
@@ -1002,7 +999,7 @@ class HousesRentIndexAbstract(AbstractBaseIndex):
 
 
 
-class RoomsSaleIndexAbstract(AbstractBaseIndex):
+class RoomsSaleIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -1271,6 +1268,17 @@ class RoomsRentIndex(AbstractBaseIndex):
 
 # -- commercial real estate
 class AbstractTradesIndex(AbstractBaseIndex):
+    """
+    Sale index and rent index of the trades objects contains the same field and the same logic,
+    but must use different tables. For this approach we can't simply create sale index,
+    and than inherit rent index from it. (Django will generate inappropriate inheritance scheme).
+
+    So abstract index was developed and both sale and rent indexes was derived from it.
+    """
+    class Meta:
+        abstract = True
+
+    # fields
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -1282,7 +1290,6 @@ class AbstractTradesIndex(AbstractBaseIndex):
     gas = models.BooleanField(db_index=True)
     electricity = models.BooleanField(db_index=True)
     sewerage = models.BooleanField(db_index=True)
-
 
     # constants
     tid = OBJECTS_TYPES.trade()
@@ -1470,7 +1477,10 @@ class AbstractOfficesIndex(AbstractBaseIndex):
 
     So abstract index was developed and both sale and rent indexes was derived from it.
     """
+    class Meta:
+        abstract = True
 
+    # fields
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -1480,7 +1490,6 @@ class AbstractOfficesIndex(AbstractBaseIndex):
     cold_water = models.BooleanField(db_index=True)
     security = models.BooleanField(db_index=True)
     kitchen = models.BooleanField(db_index=True)
-
 
     # constants
     tid = OBJECTS_TYPES.office()
@@ -1656,7 +1665,10 @@ class AbstractWarehousesIndex(AbstractBaseIndex):
 
     So abstract index was developed and both sale and rent indexes was derived from it.
     """
+    class Meta:
+        abstract = True
 
+    # fields
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -1849,10 +1861,12 @@ class AbstractBusinessesIndex(AbstractBaseIndex):
 
     So abstract index was developed and both sale and rent indexes was derived from it.
     """
+    class Meta:
+        abstract = True
 
+    # fields
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
-
 
     # constants
     tid = OBJECTS_TYPES.business()
@@ -2104,19 +2118,18 @@ class AbstractGaragesIndex(AbstractBaseIndex):
 
     So abstract index was developed and both sale and rent indexes was derived from it.
     """
+    class Meta:
+        abstract = True
+
+    # fields
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     area = models.FloatField(db_index=True)
     ceiling_height = models.FloatField(db_index=True)
     pit = models.BooleanField(db_index=True)
 
-
     # constants
     tid = OBJECTS_TYPES.garage()
-
-
-    class Meta:
-        abstract = True
 
 
     @classmethod
@@ -2272,7 +2285,10 @@ class AbstractLandsIndex(AbstractBaseIndex):
 
     So abstract index was developed and both sale and rent indexes was derived from it.
     """
+    class Meta:
+        abstract = True
 
+    # fields
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     area = models.FloatField(db_index=True)
@@ -2280,7 +2296,6 @@ class AbstractLandsIndex(AbstractBaseIndex):
     electricity = models.BooleanField(db_index=True)
     gas = models.BooleanField(db_index=True)
     sewerage = models.BooleanField(db_index=True)
-
 
     # constants
     tid = OBJECTS_TYPES.land()
@@ -2452,13 +2467,13 @@ class SegmentsIndex(models.Model):
     grid = Grid(min_zoom, max_zoom)
 
     living_sale_indexes = {
-        OBJECTS_TYPES.flat(): FlatsSaleIndexAbstract,
-        OBJECTS_TYPES.house(): HousesSaleIndexAbstract,
-        OBJECTS_TYPES.room(): RoomsSaleIndexAbstract,
+        OBJECTS_TYPES.flat(): FlatsSaleIndex,
+        OBJECTS_TYPES.house(): HousesSaleIndex,
+        OBJECTS_TYPES.room(): RoomsSaleIndex,
     }
     living_rent_indexes = {
-        OBJECTS_TYPES.flat(): FlatsRentIndexAbstract,
-        OBJECTS_TYPES.house(): HousesRentIndexAbstract,
+        OBJECTS_TYPES.flat(): FlatsRentIndex,
+        OBJECTS_TYPES.house(): HousesRentIndex,
         OBJECTS_TYPES.room(): RoomsRentIndex,
     }
     commercial_sale_indexes = {
@@ -2745,7 +2760,10 @@ class SegmentsIndex(models.Model):
         cursor.execute(query)
 
         publications_ids = [id for id, _ in cursor.fetchall()]
-        publications_ids = set(publications_ids) - set(exclude_ids_list)
+
+        # Пересікання дублікатів вимкнено, оскільки дублікатом слід вважати
+
+        # publications_ids = set(publications_ids) - set(exclude_ids_list)
 
         cursor.close()
 
@@ -2801,7 +2819,7 @@ class SegmentsIndex(models.Model):
         ne_lat, ne_lng = cls.grid.normalize_lat_lng(ne_lat, ne_lng)
         sw_lat, sw_lng = cls.grid.normalize_lat_lng(sw_lat, sw_lng)
 
-        # розширимо сегмент, щоб захопити суміжні області
+        # # розширимо сегмент, щоб захопити суміжні області
         ne_lat += 1
         ne_lng -= 1
 
@@ -2819,6 +2837,17 @@ class SegmentsIndex(models.Model):
 
         sw_lat = math.floor(sw_lat)
         sw_lng = math.ceil(sw_lng)
+
+
+        # На великих масштабах буває так, що координати збігаються,
+        # а у вибірці стоїть умова <= && > , і якщо координати однакові, вибірка, логічно, не спрацьовує.
+        if ne_lat == sw_lat:
+            ne_lat -= 1
+            sw_lat += 1
+
+        if ne_lng == sw_lng:
+            ne_lng -= 1
+            sw_lng += 1
 
 
         # Повертаємо координатний прямокутник таким чином, щоб ne точно був на своєму місці.
