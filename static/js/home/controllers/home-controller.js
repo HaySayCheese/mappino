@@ -108,6 +108,26 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies',
         }).resize();
 
 
+        /**
+         * Анімація падаючих маркерів на планшет
+         **/
+        $(document).scroll(function() {
+            var scrollTop = $(this).scrollTop();
+
+            /** Markers */
+            var sections = $("section"),
+                markers = $(".tablet-marker");
+
+            if (scrollTop > sections[1].offsetTop - 50) {
+                $.each(markers, function(i, el) {
+                    setTimeout(function() {
+                        $(el).addClass("fadeInDown");
+                    }, 300 + (i * 300));
+                });
+            }
+        });
+
+
 
         /**
          * Перевіряємо чи користувач уже авторизований на сайті
