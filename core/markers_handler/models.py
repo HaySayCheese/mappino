@@ -527,7 +527,7 @@ class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
     @classmethod
     def min_queryset(cls):
         return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'rooms_count')  # todo: fixme
+            'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'rooms_count')  # todo: fixme
 
 
     @classmethod
@@ -663,7 +663,7 @@ class FlatsRentIndex(AbstractBaseIndex):
     @classmethod
     def min_queryset(cls):
         return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'persons_count')  # todo: fixme
+            'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'persons_count')  # todo: fixme
 
 
     @classmethod
@@ -791,7 +791,7 @@ class HousesSaleIndex(AbstractBaseIndex):
     @classmethod
     def min_queryset(cls):
         return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')
+            'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')
 
 
     @classmethod
@@ -922,7 +922,7 @@ class HousesRentIndex(AbstractBaseIndex):
     @classmethod
     def min_queryset(cls):
         return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'persons_count')
+            'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'persons_count')
 
 
     @classmethod
@@ -1051,7 +1051,7 @@ class RoomsSaleIndex(AbstractBaseIndex):
     @classmethod
     def min_queryset(cls):
         return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')
+            'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')
 
 
     @classmethod
@@ -1185,7 +1185,7 @@ class RoomsRentIndex(AbstractBaseIndex):
     @classmethod
     def min_queryset(cls):
         return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'persons_count')
+            'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'persons_count')
 
 
     @classmethod
@@ -1308,7 +1308,7 @@ class AbstractTradesIndex(AbstractBaseIndex):
     @classmethod
     def min_queryset(cls):
         return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')
+            'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')
 
 
     @classmethod
@@ -1508,7 +1508,7 @@ class AbstractOfficesIndex(AbstractBaseIndex):
     @classmethod
     def min_queryset(cls):
         return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')
+            'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')
 
 
     @classmethod
@@ -1698,7 +1698,7 @@ class AbstractWarehousesIndex(AbstractBaseIndex):
     @classmethod
     def min_queryset(cls):
         return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'halls_area')  # todo: fixme
+            'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'halls_area')  # todo: fixme
 
 
     @classmethod
@@ -1885,7 +1885,7 @@ class AbstractBusinessesIndex(AbstractBaseIndex):
     @classmethod
     def min_queryset(cls):
         return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid')
+            'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid')
 
 
     @classmethod
@@ -2145,7 +2145,7 @@ class AbstractGaragesIndex(AbstractBaseIndex):
     @classmethod
     def min_queryset(cls):
         return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'area')  # todo: fixme
+            'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'area')  # todo: fixme
 
 
     @classmethod
@@ -2314,7 +2314,7 @@ class AbstractLandsIndex(AbstractBaseIndex):
     @classmethod
     def min_queryset(cls):
         return cls.objects.all().only(
-            'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'area')  # todo: fixme
+            'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'area')  # todo: fixme
 
 
     @classmethod
@@ -2634,7 +2634,7 @@ class SegmentsIndex(models.Model):
         ne_segment_y, \
         sw_segment_x, \
         sw_segment_y = \
-            cls.prepare_request_processing(ne_lat, ne_lng, sw_lat, sw_lng, zoom)
+            cls.normalize_viewport_coordinates(ne_lat, ne_lng, sw_lat, sw_lng, zoom)
 
 
         if 'for_sale' in filters:
@@ -2714,29 +2714,38 @@ class SegmentsIndex(models.Model):
 
 
     @classmethod
-    def markers(cls, tid, ne_lat, ne_lng, sw_lat, sw_lng, filters, exclude_ids_list):
+    def markers(cls, tid, ne_segment_x, ne_segment_y, sw_segment_x, sw_segment_y, zoom, filters, excluded_ids_list):
         """
+        :param tid: object type id.
+        :param ne_segment_x: normalized X coordinate of the north east corner of the viewport.
+        :param ne_segment_y: normalized Y coordinate of the north east corner of the viewport.
+        :param sw_segment_x: normalized X coordinate of the south west corner of the viewport.
+        :param sw_segment_y: normalized Y coordinate of the south west corner of the viewport.
+        :param zoom: zoom level. (by default should be 14)
 
-
-        :param tid:
-        :param ne_lat:
-        :param ne_lng:
-        :param sw_lat:
-        :param sw_lng:
         :param filters:
-        :param exclude_ids_list:
-        :return:
+            dict that contains info about what kind of markers should be included into output.
+            For more details see "utils.py" of markers package.
+
+        :param excluded_ids_list:
+            list of publications ids that should be excluded from output on current iteration.
+
+        :returns:
+            dict with markers briefs and their positions and
+            list with all publications ids that was included into briefs, to prevent duplicates on next iteration.
         """
 
-        zoom = 14 # default zoom for markers briefs
-        ne_segment_x, \
-        ne_segment_y, \
-        sw_segment_x, \
-        sw_segment_y = cls.prepare_request_processing(ne_lat, ne_lng, sw_lat, sw_lng, zoom)
+        if 'for_sale' in filters:
+            index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
+        elif 'for_rent' in filters:
+            index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
+
+        if index is None:
+            raise InvalidArgument('No index for such tid.')
 
 
-        # Cusom SQL is neede here to call PostgreSQL's stored precedure unnest()
-        # Django ORM dows not allow to do that.
+        # Custom SQL is needed here to call PostgreSQL's stored procedure "unnest(...)"
+        # Django ORM doesn't allow to do that.
 
         # WARN: x < {sw_segment_x} повинно бути СТРОГО менше, інакше об’єкти дублюються у видачі.
         # WARN: y > {sw_segment_y} повинно бути СТРОГО більше, інакше об’єкти дублюються у видачі.
@@ -2754,48 +2763,35 @@ class SegmentsIndex(models.Model):
                 sw_segment_y=sw_segment_y,
             )
 
-
-        # note: custom cursor here
-        cursor = cls.cursor()
+        cursor = cls.cursor() # note: custom cursor here
         cursor.execute(query)
 
-        publications_ids = [id for id, _ in cursor.fetchall()]
-
-        # Пересікання дублікатів вимкнено, оскільки дублікатом слід вважати
-
-        # publications_ids = set(publications_ids) - set(exclude_ids_list)
-
+        in_index_publications_ids = [id for id, _ in cursor.fetchall()]
         cursor.close()
 
 
         # Little optimization here:
-        # if there are no ids was received
-        # than we do not need to fire additional sql requests
-        if not publications_ids:
-            return {}, publications_ids
+        # if no ids was received from the index than we do not need to fire additional sql requests
+        if not in_index_publications_ids:
+            return {}, []
 
 
-        if 'for_sale' in filters:
-            index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
-        elif 'for_rent' in filters:
-            index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
-
-        if index is None:
-            raise InvalidArgument('No index such tid.')
+        # dropping publications ids, that was already excluded on previous iterations
+        # (conversion to set is needed to prevent duplicated ids into sql query)
+        in_index_publications_ids = set(in_index_publications_ids) - set(excluded_ids_list)
 
 
-
-        markers = index.min_queryset().filter(publication_id__in=publications_ids)
-        briefs = {
-            '{lat}:{lng}'.format(
-                lat=marker.lat,
-                lng=marker.lng
-            ): index.brief(marker, filters)
-            for marker in index.apply_filters(filters, markers)
-        }
+        markers = index.min_queryset().filter(publication_id__in=in_index_publications_ids)
+        filtered_markers = index.apply_filters(filters, markers)
 
 
-        return briefs, publications_ids
+        briefs, processed_ids = dict(), list()
+        for marker in filtered_markers:
+            coordinates = '{lat}:{lng}'.format(lat=marker.lat, lng=marker.lng)
+            briefs[coordinates] = index.brief(marker, filters)
+            processed_ids.append(marker.publication_id)
+
+        return briefs, processed_ids
 
 
     @classmethod
@@ -2815,7 +2811,7 @@ class SegmentsIndex(models.Model):
 
 
     @classmethod
-    def prepare_request_processing(cls, ne_lat, ne_lng, sw_lat, sw_lng, zoom):
+    def normalize_viewport_coordinates(cls, ne_lat, ne_lng, sw_lat, sw_lng, zoom):
         ne_lat, ne_lng = cls.grid.normalize_lat_lng(ne_lat, ne_lng)
         sw_lat, sw_lng = cls.grid.normalize_lat_lng(sw_lat, sw_lng)
 
