@@ -2629,14 +2629,7 @@ class SegmentsIndex(models.Model):
 
 
     @classmethod
-    def estimate_count(cls, tid, ne_lat, ne_lng, sw_lat, sw_lng, zoom, filters, exclude_ids_list):
-        ne_segment_x, \
-        ne_segment_y, \
-        sw_segment_x, \
-        sw_segment_y = \
-            cls.normalize_viewport_coordinates(ne_lat, ne_lng, sw_lat, sw_lng, zoom)
-
-
+    def estimate_count(cls, tid, ne_segment_x, ne_segment_y, sw_segment_x, sw_segment_y, zoom, filters, excluded_ids_list):
         if 'for_sale' in filters:
             index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
         elif 'for_rent' in filters:
@@ -2693,7 +2686,7 @@ class SegmentsIndex(models.Model):
         filtered_data = list()
         publications_ids = set()
         for ids, x, y in selected_data:
-            ids = set(ids) - set(exclude_ids_list)
+            ids = set(ids) - set(excluded_ids_list)
             filtered_data.append((ids, x, y, )) # note: tuple here
             publications_ids = publications_ids.union(ids)
 
