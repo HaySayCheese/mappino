@@ -9,7 +9,7 @@ from core.utils.jinja2_integration import templates
 @ensure_csrf_cookie
 @condition(last_modified_func=static_template_last_modified)
 def login_template(request):
-	t =  templates.get_template('main/parts/accounts/login.html')
+	t = templates.get_template('main/parts/accounts/login.html')
 	return HttpResponse(content=t.render())
 
 
@@ -17,7 +17,7 @@ def login_template(request):
 @ensure_csrf_cookie
 @condition(last_modified_func=static_template_last_modified)
 def registration_template(request):
-	t =  templates.get_template('main/parts/accounts/registration.html')
+	t = templates.get_template('main/parts/accounts/registration.html')
 	return HttpResponse(content=t.render())
 
 
@@ -25,5 +25,5 @@ def registration_template(request):
 @ensure_csrf_cookie
 @condition(last_modified_func=static_template_last_modified)
 def access_restore_template(request):
-	t =  templates.get_template('main/parts/accounts/access_restore.html')
+	t = templates.get_template('main/parts/accounts/access_restore.html')
 	return HttpResponse(content=t.render())

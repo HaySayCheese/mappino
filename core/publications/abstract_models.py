@@ -152,10 +152,10 @@ class AbstractHeadModel(models.Model):
             state_sid = OBJECT_STATES.unpublished(),
         )
 
-        # По сигналу про створення запису запускається його індексація в sphinx
+        # По сигналу про створення запису відбувається оновлення індексу маркерів та
+        # запускається індексація запису в sphinx.
         models_signals.created.send(
-            sender=None,
-            tid=cls.tid, hid=model.id, hash_id=model.hash_id, for_sale=for_sale, for_rent=for_rent)
+            sender=None, tid=cls.tid, hid=model.id, hash_id=model.hash_id, for_sale=for_sale, for_rent=for_rent)
 
         return model
 

@@ -89,7 +89,7 @@ class Markers(View):
 
 
         try:
-            tids_and_filters = cls.__parse_tids_and_filters(params)
+            tids_panels_and_filters = cls.__parse_tids_panels_and_filters(params)
         except ValueError:
             return HttpJsonResponseBadRequest(cls.get_codes['invalid_tids'])
 
@@ -100,14 +100,29 @@ class Markers(View):
             return HttpJsonResponseBadRequest(cls.get_codes['invalid_request'])
 
 
-        try:
-            response = {}
-            already_present_ids = [] # list is more efficient here than the set.
-                                     # all the received ids will be already unique.
+        # all markers should be displayed on a same viewport coordinates,
+        # so we can calculate and prepare it only once per all requested object types.
+        ne_segment_x, \
+        ne_segment_y, \
+        sw_segment_x, \
+        sw_segment_y = SegmentsIndex.normalize_viewport_coordinates(ne_lat, ne_lng, sw_lat, sw_lng, zoom)
 
+
+        # we need to prevent duplicates in output,
+        # so we should exclude already used markers from every next iteration.
+        # ids of different object types may be the same
+        # (tables are different and sequences for ids are different too),
+        # so we need to handle ids per tid.
+        excluded_ids_per_tid = {
+            tid: [] for tid, _, _ in tids_panels_and_filters
+        }
+
+
+        response = {}
+        try:
             # Generating unique set of markers counters for all panels.
             # All the markers ids will be intersected to prevent counters duplication on front-end.
-            for tid, panel, filters in tids_and_filters:
+            for tid, panel, filters in tids_panels_and_filters:
 
                 # Generating of the filters objects.
                 # This object is used to perform filtering based on parameters
@@ -117,15 +132,18 @@ class Markers(View):
                 # Segments generation.
                 # This method will also return ids (not hash ids) of the publications from the viewport.
                 # This ids will be used on next iterations to exclude duplicates.
-                segments, received_ids = SegmentsIndex.estimate_count(
-                    tid, ne_lat, ne_lng, sw_lat, sw_lng, zoom, filter_conditions, already_present_ids)
+                segments, used_ids = SegmentsIndex.estimate_count(
+                    tid, ne_segment_x, ne_segment_y, sw_segment_x, sw_segment_y, zoom,
+                    filter_conditions, excluded_ids_per_tid[tid])
 
                 if segments:
                     response[panel] = segments
 
                 # on the next iteration we need to receive only ids
                 # that was not received on previous iterations
-                already_present_ids += received_ids
+                # (prevent duplication)
+                excluded_ids_per_tid[tid] += used_ids
+
 
         except TooBigTransaction:
             return HttpJsonResponseBadRequest(cls.get_codes['too_big_query'])
@@ -154,37 +172,56 @@ class Markers(View):
 
 
         try:
-            tids_and_filters = cls.__parse_tids_and_filters(params)
+            tids_panels_and_filters = cls.__parse_tids_panels_and_filters(params)
         except ValueError:
             return HttpJsonResponseBadRequest(cls.get_codes['invalid_tids'])
 
 
+        # by default, markers are shown on a 14 zoom level.
+        # at this point zoom parameter received from the client will be ignored.
+        zoom = 14
+
+        # all markers should be displayed on a same viewport coordinates,
+        # so we can calculate and prepare it only once per all requested object types.
+        ne_segment_x, \
+        ne_segment_y, \
+        sw_segment_x, \
+        sw_segment_y = SegmentsIndex.normalize_viewport_coordinates(ne_lat, ne_lng, sw_lat, sw_lng, zoom)
+
+        # we need to prevent duplicates in output,
+        # so we should exclude already used markers from every next iteration.
+        # ids of different object types may be the same
+        # (tables are different and sequences for ids are different too),
+        # so we need to handle ids per tid.
+        excluded_ids_per_tid = {
+            tid: [] for tid, _, _ in tids_panels_and_filters
+        }
+
+
+        response = {}
         try:
-            response = {}
-            already_present_ids = [] # list is more efficient here than the set.
-                                     # all the received ids will be already unique.
-
-            # Generating unique set of markers briefs for all panels.
-            # All the markers ids will be intersected to prevent markers duplication on front-end.
-            for tid, panel, filters in tids_and_filters:
-
+            for tid, panel, filters in tids_panels_and_filters:
                 # Generating of the filters objects.
                 # This object is used to perform filtering based on parameters
-                # that was spcified on front-end.
+                # that was specified on front-end.
                 filter_conditions = (cls.filters_parsers[tid])(filters)
+
 
                 # Generating of the briefs.
                 # This method will also return ids (not hash ids) of the publications from the viewport.
                 # This ids will be used on next iterations to exclude duplicates.
-                briefs, received_ids = SegmentsIndex.markers(
-                    tid, ne_lat, ne_lng, sw_lat, sw_lng, filter_conditions, already_present_ids)
+                briefs, used_ids = SegmentsIndex.markers(
+                    tid, ne_segment_x, ne_segment_y, sw_segment_x, sw_segment_y, zoom,
+                    filter_conditions, excluded_ids_per_tid[tid])
 
                 if briefs:
                     response[panel] = briefs
 
                 # on the next iteration we need to receive only ids
                 # that was not received on previous iterations
-                already_present_ids += received_ids
+                # (prevent duplication)
+                excluded_ids_per_tid[tid] += used_ids
+
 
         except TooBigTransaction:
             return HttpJsonResponseBadRequest(cls.get_codes['too_big_query'])
@@ -224,7 +261,7 @@ class Markers(View):
 
 
     @staticmethod
-    def __parse_tids_and_filters(params):
+    def __parse_tids_panels_and_filters(params):
         """
         :param params: JSON object (dict in this method) with request parameters.
 
