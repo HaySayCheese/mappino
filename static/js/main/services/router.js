@@ -3,14 +3,19 @@
  * Всі змінні знаходяться в файлі "/services/routes_const.js"
  **/
 
-'use strict';
-
 
 app.config(['$routeProvider', 'ROUTES', function($routeProvider, ROUTES) {
+    'use strict';
+
     $routeProvider
 
-        .when(ROUTES.MAIN.URL, {
-            templateUrl:    ROUTES.MAIN.TEMPLATE,
+        .when(ROUTES.SEARCH.URL, {
+            templateUrl:    ROUTES.SEARCH.TEMPLATE,
+            reloadOnSearch: false
+        })
+
+        .when(ROUTES.REALTOR.URL, {
+            templateUrl:    ROUTES.REALTOR.TEMPLATE,
             reloadOnSearch: false
         })
 
@@ -35,6 +40,6 @@ app.config(['$routeProvider', 'ROUTES', function($routeProvider, ROUTES) {
         })
 
         .otherwise({
-            redirectTo: ROUTES.MAIN.URL
+            redirectTo: ROUTES.SEARCH.URL
         });
 }]);

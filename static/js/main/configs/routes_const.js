@@ -3,13 +3,17 @@
  **/
 
 
-'use strict';
-
-
 app.constant('ROUTES', (function () {
+    'use strict';
+
     return {
-        'MAIN': {
-            'URL':      '/',
+        'SEARCH': {
+            'URL':      '/search',
+            'TEMPLATE': '/ajax/template/main/search/'
+        },
+
+        'REALTOR': {
+            'URL':      '/realtor/:realtorName',
             'TEMPLATE': '/ajax/template/main/search/'
         },
 
@@ -32,5 +36,5 @@ app.constant('ROUTES', (function () {
             'URL':      '/publication/:id',
             'TEMPLATE': '/ajax/template/main/detailed-dialog/'
         }
-    }
+    };
 })());

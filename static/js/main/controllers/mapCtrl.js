@@ -3,8 +3,8 @@
  * СПЛОШНА МАГІЯ, МІСТІКА І ЇМ ПОДІБНЕ
  */
 
-app.controller('MapCtrl', ['$scope', '$location', '$http', '$timeout', '$compile', '$rootScope', 'Markers',
-    function($scope, $location, $http, $timeout, $compile, $rootScope, Markers) {
+app.controller('MapCtrl', ['$scope', '$location', '$http', '$timeout', '$compile', '$rootScope', '$route', 'Markers',
+    function($scope, $location, $http, $timeout, $compile, $rootScope, $route, Markers) {
     "use strict";
 
     /**
@@ -299,101 +299,104 @@ app.controller('MapCtrl', ['$scope', '$location', '$http', '$timeout', '$compile
      * Парсимо строку з фільтрами та розкладаємо їх по створених обєктах.
      **/
     $scope.parseSearchParametersFromUrl = function() {
-        var searchParameters = $location.search();
+        // Якщо це не сторінка ріелтора то створюємо фільтри
+        if (true) {
+            var searchParameters = $location.search();
+            $rootScope.sidebarTemplateUrl = "/ajax/template/main/sidebar/common/";
 
-        searchParameters['r_type_sid'] ? createFiltersForPanels("red", false) :
-            searchParameters['b_type_sid'] ? createFiltersForPanels("blue", false) :
-                searchParameters['g_type_sid'] ? createFiltersForPanels("green", false) :
-                    searchParameters['y_type_sid'] ? createFiltersForPanels("yellow", false) : createFiltersForPanels("red", false);
+            searchParameters['r_type_sid'] ? createFiltersForPanels("red", false) :
+                searchParameters['b_type_sid'] ? createFiltersForPanels("blue", false) :
+                    searchParameters['g_type_sid'] ? createFiltersForPanels("green", false) :
+                        searchParameters['y_type_sid'] ? createFiltersForPanels("yellow", false) : createFiltersForPanels("red", false);
 
 
-        $rootScope.sidebarTemplateUrl = "/ajax/template/main/sidebar/common/";
+            $timeout(function() {
+                cityInput = document.getElementById('sidebar-city-input');
+                autocomplete = new google.maps.places.Autocomplete(cityInput, autocompleteOptions);
+                autocomplete.bindTo('bounds', map);
 
+                // Евент вибору елемента в автокомпліті
+                google.maps.event.addListener(autocomplete, 'place_changed', function() {
+                    var place = autocomplete.getPlace();
+                    if (!place.geometry) {
+                        return;
+                    }
 
-        $timeout(function() {
-            cityInput = document.getElementById('sidebar-city-input');
-            autocomplete = new google.maps.places.Autocomplete(cityInput, autocompleteOptions);
-            autocomplete.bindTo('bounds', map);
+                    if (place.geometry.viewport && place.types[0] !== "locality") {
+                        map.fitBounds(place.geometry.viewport);
+                    } else {
+                        map.panTo(place.geometry.location);
+                        map.setZoom(BASE_MAP_ZOOM);
+                    }
 
-            // Евент вибору елемента в автокомпліті
-            google.maps.event.addListener(autocomplete, 'place_changed', function() {
-                var place = autocomplete.getPlace();
-                if (!place.geometry) {
-                    return;
-                }
-
-                if (place.geometry.viewport && place.types[0] !== "locality") {
-                    map.fitBounds(place.geometry.viewport);
-                } else {
-                    map.panTo(place.geometry.location);
-                    map.setZoom(BASE_MAP_ZOOM);
-                }
-
-                // Відрізаємо країну від адреса
-                $timeout(function() {
-                    for (var i = 0; i < place.address_components.length; i++) {
-                        for (var j = 0; j < place.address_components[i].types.length; j++) {
-                            if (place.address_components[i].types[j] === "country" && place.address_components.length > 1) {
-                                var newAddress = cityInput.value.substring(0, cityInput.value.lastIndexOf(","));
-                                cityInput.value = newAddress;
-                                $scope.filters.map.city = newAddress;
-                                break;
-                            } else {
-                                $scope.filters.map.city = place.formatted_address;
-                                break;
+                    // Відрізаємо країну від адреса
+                    $timeout(function() {
+                        for (var i = 0; i < place.address_components.length; i++) {
+                            for (var j = 0; j < place.address_components[i].types.length; j++) {
+                                if (place.address_components[i].types[j] === "country" && place.address_components.length > 1) {
+                                    var newAddress = cityInput.value.substring(0, cityInput.value.lastIndexOf(","));
+                                    cityInput.value = newAddress;
+                                    $scope.filters.map.city = newAddress;
+                                    break;
+                                } else {
+                                    $scope.filters.map.city = place.formatted_address;
+                                    break;
+                                }
                             }
                         }
-                    }
-                }, 0);
+                    }, 0);
 
-                if(!$scope.$$phase)
-                    $scope.$apply();
+                    if(!$scope.$$phase)
+                        $scope.$apply();
 
-                parseFiltersCollectionAndUpdateUrl($scope.filters.map);
-            });
-        }, 2000);
-
-
-        // якщо в урлі нема параметра з координатами то берем з локалстора
-        // те що передали з головної
-        if (!searchParameters['latLng'] && localStorage._tempViewportFromHomePage) {
-            _tempViewportFromHomePage = localStorage._tempViewportFromHomePage;
-            delete localStorage._tempViewportFromHomePage;
-        }
+                    parseFiltersCollectionAndUpdateUrl($scope.filters.map);
+                });
+            }, 2000);
 
 
-        for (var key in searchParameters) {
-            if (searchParameters.hasOwnProperty(key)) {
-
-                if (key.toString() === "token")
-                    continue;
-
-                if (key.toString().indexOf("_sid") != -1)
-                    searchParameters[key] = parseInt(searchParameters[key]);
-
-
-                if (/^r_/.test(key.toString()))
-                    $scope.filters.red[key] = searchParameters[key];
-
-
-                if (/^b_/.test(key.toString()))
-                    $scope.filters.blue[key] = searchParameters[key];
-
-
-                if (/^g_/.test(key.toString()))
-                    $scope.filters.green[key] = searchParameters[key];
-
-
-                if (/^y_/.test(key.toString()))
-                    $scope.filters.yellow[key] = searchParameters[key];
-
-
-                if (key === "city" || key === "zoom" || key === "latLng")
-                    $scope.filters.map[key] = searchParameters[key];
+            // якщо в урлі нема параметра з координатами то берем з локалстора
+            // те що передали з головної
+            if (!searchParameters['latLng'] && localStorage._tempViewportFromHomePage) {
+                _tempViewportFromHomePage = localStorage._tempViewportFromHomePage;
+                delete localStorage._tempViewportFromHomePage;
             }
-        }
 
-        $scope.filtersParsed = true;
+
+            for (var key in searchParameters) {
+                if (searchParameters.hasOwnProperty(key)) {
+
+                    if (key.toString() === "token")
+                        continue;
+
+                    if (key.toString().indexOf("_sid") != -1)
+                        searchParameters[key] = parseInt(searchParameters[key]);
+
+
+                    if (/^r_/.test(key.toString()))
+                        $scope.filters.red[key] = searchParameters[key];
+
+
+                    if (/^b_/.test(key.toString()))
+                        $scope.filters.blue[key] = searchParameters[key];
+
+
+                    if (/^g_/.test(key.toString()))
+                        $scope.filters.green[key] = searchParameters[key];
+
+
+                    if (/^y_/.test(key.toString()))
+                        $scope.filters.yellow[key] = searchParameters[key];
+
+
+                    if (key === "city" || key === "zoom" || key === "latLng")
+                        $scope.filters.map[key] = searchParameters[key];
+                }
+            }
+
+            $scope.filtersParsed = true;
+        } else if (false) {
+            $rootScope.sidebarTemplateUrl = "/ajax/template/main/sidebar/realtors/";
+        }
 
         initializeMap();
     };
@@ -452,23 +455,8 @@ app.controller('MapCtrl', ['$scope', '$location', '$http', '$timeout', '$compile
             }
         }
 
-        createUrlFiltersPart();
-
         if (!$scope.$$phase)
             $scope.$apply();
-    }
-
-
-    /**
-     * Зберігаємо частину урл з фільтрами для підміни в разі
-     * закриття діалогів
-     **/
-    function createUrlFiltersPart() {
-        $scope.urlFiltersPart = $location.url()
-            .replace("/account/registration", "")
-            .replace("/account/restore-access", "")
-            .replace("/account/login", "")
-            .replace("/publication/" + $scope.publicationIdPart, "");
     }
 
 
@@ -536,18 +524,19 @@ app.controller('MapCtrl', ['$scope', '$location', '$http', '$timeout', '$compile
                         (function() {
                             var marker1 = markers[panel][marker];
 
-                            if (marker1.type != "pie-marker")
+                            if (marker1.type !== "pie-marker")
                                 google.maps.event.addListener(marker1, 'click', function() {
                                     $location.path("/publication/" + marker1.tid + ":" + marker1.id);
 
                                     if (!$scope.$$phase)
                                         $scope.$apply();
                                 });
-                            else
+                            else {
                                 google.maps.event.addListener(marker1, 'click', function(e) {
                                     map.setZoom(map.getZoom() + 1);
                                     map.setCenter(marker1.getPosition());
                                 });
+                            }
                         })();
                     }
                 }

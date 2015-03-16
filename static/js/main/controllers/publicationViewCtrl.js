@@ -1,7 +1,7 @@
 'use strict';
 
 
-app.controller('publicationViewCtrl', function($scope, $rootScope, Queries, TXT) {
+app.controller('publicationViewCtrl', function($scope, $rootScope, $routeParams, Queries, TXT) {
     $scope.publicationViewPart = "Detailed";
     $scope.publicationViewDetailedPart = "Description";
 
@@ -13,16 +13,13 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, Queries, TXT)
     publicationViewModal.modal();
 
 
-    Queries.Map.getPublicationDescription($rootScope.publicationIdPart).success(function(data) {
+    Queries.Map.getPublicationDescription($routeParams.id).success(function(data) {
         data.code === 2 ? $scope.publicationViewPart = "PublicationNF" : $scope.publicationViewPart = "Detailed";
 
         $scope.publication = data;
 
         $scope.publicationLoaded = true;
         $rootScope.pageTitle = data.data.title ? data.data.title + " - " + TXT.SERVICE_NAME : TXT.SERVICE_NAME;
-
-        if (data.head && data.head.photos.length)
-            preloadImage(data.head.photos[0]);
 
         ga('send', 'event', 'publication:dialog:detailed', 'data_requested', $rootScope.publicationIdPart, 0);
 
@@ -32,12 +29,6 @@ app.controller('publicationViewCtrl', function($scope, $rootScope, Queries, TXT)
         });
     });
 
-
-
-    function preloadImage(image) {
-        var img = new Image();
-        img.src = image;
-    }
 
     $scope.changeBasePart = function() {
         $scope.publicationViewPart = $scope.publicationViewPart == "Detailed" ? "Photos" : "Detailed";

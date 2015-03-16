@@ -138,7 +138,7 @@ app.factory('Markers', ['Queries', 'uuid', function(Queries, uuid) {
         },
 
 
-        createMarkerObject: function(data, panel, latLng, tid) {
+        createMarkerObject: function(data, panel, latLng) {
             markers[panel][latLng] = new MarkerWithLabel({
                 id:             data.id,
                 tid:            data.tid,
