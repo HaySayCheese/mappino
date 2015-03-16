@@ -191,6 +191,9 @@
                 <img ng-src="[[ photo.thumbnail ]]"/>
             </div>
         </div>
+        <div class="detailed-empty text-muted" ng-show="!publication.head.photos.length">
+            <span>В данном объявлении нет фотографий</span>
+        </div>
     </div>
 
     <div class="row" ng-show="tags.length">
