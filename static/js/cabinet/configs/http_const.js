@@ -8,26 +8,45 @@ app.constant('HTTP_URL', (function () {
     'use strict';
 
     return {
-        'MAP': {
-            'GET_MARKERS':                  '/ajax/api/markers/?p={0}',
-            'GET_PUBLICATION_CONTACTS':     '/ajax/api/detailed/publication/{0}/contacts/',
-            'GET_PUBLICATION_DESCRIPTION':  '/ajax/api/detailed/publication/{0}/',
-            'SEND_PUBLICATION_MESSAGE':     '/ajax/api/notifications/send-message/{0}/',
-            'SEND_PUBLICATION_CALL_REQUEST':'/ajax/api/notifications/send-call-request/{0}/'
+        'TAGS': {
+            'GET_TAGS':     '/ajax/api/cabinet/dirtags/',
+            'CREATE_TAG':   '/ajax/api/cabinet/dirtags/',
+            'REMOVE_TAG':   '/ajax/api/cabinet/dirtags/{0}/',
+            'UPDATE_TAG':   '/ajax/api/cabinet/dirtags/{0}/'
         },
 
-        'ACCOUNT': {
-            'LOGIN':                        '/ajax/api/accounts/login/',
-            'LOGOUT':                       '/ajax/api/accounts/logout/',
-            'REGISTRATION':                 '/ajax/api/accounts/registration/',
-            'REPEAT_REGISTRATION':          '/ajax/api/accounts/registration/cancel/',
-            'REPEAT_SEND_CODE':             '/ajax/api/accounts/registration/resend-sms/',
-            'VALIDATE_EMAIL':               '/ajax/api/accounts/validate-email/',
-            'VALIDATE_PHONE_NUMBER':        '/ajax/api/accounts/validate-phone-number/',
-            'VALIDATE_PHONE_CODE':          '/ajax/api/accounts/registration/',
-            'GET_USER_NAME':                '/ajax/api/accounts/on-login-info/',
-            'RESTORE_ACCESS_SEND_EMAIL':    '/ajax/api/accounts/password-reset/',
-            'RESTORE_ACCESS_SEND_PASSWORD': '/ajax/api/accounts/password-reset/restore/'
+        'BRIEFS': {
+            'GET_BRIEFS':   '/ajax/api/cabinet/publications/briefs/{0}',
+            'SEARCH':       '/ajax/api/cabinet/search/?q={0}'
+        },
+
+        'PUBLICATIONS': {
+            'GET_PUBLICATIONS':             '/ajax/api/cabinet/publications/{0}:{1}/',
+            'GET_CHART_DATA':               '/ajax/api/cabinet/stats/publications/{0}:{1}/visits/?count={2}',
+            'CREATE_PUBLICATION':           '/ajax/api/cabinet/publications/',
+            'PUBLISH_PUBLICATION':          '/ajax/api/cabinet/publications/{0}:{1}/publish/',
+            'UNPUBLISH_PUBLICATION':        '/ajax/api/cabinet/publications/{0}:{1}/unpublish/',
+            'TO_TRASH_PUBLICATION':         '/ajax/api/cabinet/publications/{0}:{1}/',
+            'REMOVE_PUBLICATION':           '/ajax/api/cabinet/publications/{0}:{1}/delete-permanent/',
+            'CHECK_PUBLICATION_FIELD':      '/ajax/api/cabinet/publications/{0}:{1}/',
+            'UPLOAD_PUBLICATION_PHOTOS':    '/ajax/api/cabinet/publications/{0}:{1}/photos/',
+            'REMOVE_PUBLICATION_PHOTO':     '/ajax/api/cabinet/publications/{0}:{1}/photos/{2}/',
+            'SET_MAIN_PUBLICATION_PHOTO':   '/ajax/api/cabinet/publications/{0}:{1}/photos/{2}/title/',
+            'GET_PUBLICATIONS_COUNT':       '/ajax/api/cabinet/publications/counters/'
+        },
+
+        'SETTINGS': {
+            'GET_SETTINGS':         '/ajax/api/cabinet/account/',
+            'CHECK_SETTING_FIELD':  '/ajax/api/cabinet/account/',
+            'UPLOAD_USER_PHOTO':    '/ajax/api/cabinet/account/photo/',
+            'LOGOUT_USER':          '/ajax/api/accounts/logout/'
+        },
+
+        'SUPPORT': {
+            'GET_TICKETS':          '/ajax/api/cabinet/support/tickets/',
+            'GET_TICKET_DATA':      '/ajax/api/cabinet/support/tickets/{0}/messages/',
+            'CREATE_TICKET':        '/ajax/api/cabinet/support/tickets/',
+            'SEND_TICKET_MESSAGE':  '/ajax/api/cabinet/support/tickets/{0}/messages/'
         }
     };
 })());
