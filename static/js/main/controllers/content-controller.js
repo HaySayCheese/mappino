@@ -1,10 +1,5 @@
-/*
- * ПЛІЗ НЕ МІНЯЙТЕ НІЧО В ЦЬОМУ ФАЙЛІ
- * СПЛОШНА МАГІЯ, МІСТІКА І ЇМ ПОДІБНЕ
- */
-
-app.controller('ContentController', ['$scope', '$location', '$http', '$timeout', '$compile', '$rootScope', '$route', 'Markers', 'FiltersFactory',
-    function($scope, $location, $http, $timeout, $compile, $rootScope, $route, Markers, FiltersFactory) {
+app.controller('ContentController', ['$scope', '$location', '$http', '$timeout', '$rootScope', 'MarkersFactory', 'FiltersFactory', 'LoadedValues',
+    function($scope, $location, $http, $timeout, $rootScope, MarkersFactory, FiltersFactory, LoadedValues) {
         "use strict";
 
 
@@ -21,21 +16,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
                 }
             },
             requestTimeout,
-            requestTimeoutTime = 1500,
-            mapIsLoaded = false,
-            markersIsLoaded = false;
-
-
-        $scope.filters = FiltersFactory.getFilters();
-
-
-        /* Стан загрузки темплейта для панелі */
-        $scope.status = {
-            redTemplateIsLoaded:    false,
-            blueTemplateIsLoaded:   false,
-            greenTemplateIsLoaded:  false,
-            yellowTemplateIsLoaded: false
-        };
+            requestTimeoutTime = 1500;
 
 
         /**
@@ -46,7 +27,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
             // Якщо для цієї панелі ще не було обрано тип нерухомості
             // то створюємо фільтри для неї за типом
             if (oldValue.r_t_sid !== newValue.r_t_sid) {
-                $scope.status.redTemplateIsLoaded = false;
+                LoadedValues.sidebar.templates.red = false;
                 FiltersFactory.createFiltersForPanel("red", true);
             }
             // Парсимо фільтри, оновлюємо урл і грузимо дані
@@ -56,7 +37,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
 
         $scope.$watchCollection("filters.blue", function(newValue, oldValue) {
             if (oldValue.b_t_sid !== newValue.b_t_sid) {
-                $scope.status.blueTemplateIsLoaded = false;
+                LoadedValues.sidebar.templates.blue = false;
                 FiltersFactory.createFiltersForPanel("blue", true);
             }
             FiltersFactory.updateUrlFromFilters(newValue);
@@ -65,7 +46,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
 
         $scope.$watchCollection("filters.green", function(newValue, oldValue) {
             if (oldValue.g_t_sid !== newValue.g_t_sid) {
-                $scope.status.greenTemplateIsLoaded = false;
+                LoadedValues.sidebar.templates.green = false;
                 FiltersFactory.createFiltersForPanel("green", true);
             }
             FiltersFactory.updateUrlFromFilters(newValue);
@@ -74,7 +55,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
 
         $scope.$watchCollection("filters.yellow", function(newValue, oldValue) {
             if (oldValue.y_t_sid !== newValue.y_t_sid) {
-                $scope.status.yellowTemplateIsLoaded = false;
+                LoadedValues.sidebar.templates.yellow = false;
                 FiltersFactory.createFiltersForPanel("yellow", true);
             }
             FiltersFactory.updateUrlFromFilters(newValue);
@@ -90,7 +71,9 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
 
         $scope.runApplication = function() {
             FiltersFactory.updateFiltersFromUrl();
-            $scope.filtersParsed = true;
+            $scope.filters = FiltersFactory.getFilters();
+
+            LoadedValues.filters.parsed = true;
             initializeMap();
         };
 
@@ -99,9 +82,12 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
         function initializeMap() {
 
             // якщо з головної приходить вюпорт в локалстор
-            var bounds = {};
-            if (!$location.search('l') && localStorage._tempViewportFromHomePage) {
-                var tempViewportFromHomePage = localStorage._tempViewportFromHomePage;
+            var bounds = {},
+                tempViewportFromHomePage,
+                searchParameters = $location.search();
+
+            if (!searchParameters['l'] && localStorage._tempViewportFromHomePage) {
+                tempViewportFromHomePage = localStorage._tempViewportFromHomePage;
 
                 var c = tempViewportFromHomePage.replace( /[\s()]/g, '' ).split( ','),
                     sw = new google.maps.LatLng(+c[0], +c[1]),
@@ -121,7 +107,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
 
             map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
-            if (_tempViewportFromHomePage) {
+            if (tempViewportFromHomePage) {
                 map.fitBounds(bounds);
             } else {
                 map.panTo(new google.maps.LatLng($scope.filters.map.l.split(",")[0], $scope.filters.map.l.split(",")[1]));
@@ -135,9 +121,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
                 zoomControl     = new BMapZoomControl(zoomControlDiv, map, 'LEFT_BOTTOM');
 
 
-            /**
-             * Евенти карти
-             **/
+            /* Евенти карти */
             google.maps.event.addListener(map, 'idle', function() {
                 $scope.filters.map.z = map.getZoom();
                 $scope.filters.map.l = map.getCenter().toUrlValue();
@@ -145,7 +129,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
 
                 FiltersFactory.updateUrlFromFilters($scope.filters.map);
 
-                mapIsLoaded = true;
+                LoadedValues.map.loaded = true;
 
                 loadData(false);
 
@@ -236,47 +220,29 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
          */
         function loadData(timeout) {
             $timeout(function() {
-                if (!mapIsLoaded) {
+                if (!LoadedValues.map.loaded) {
                     return;
                 }
 
-                var sneLat = $scope.filters.map.v.getNorthEast().lat().toString(),
-                    sneLng = $scope.filters.map.v.getNorthEast().lng().toString(),
-                    sswLat = $scope.filters.map.v.getSouthWest().lat().toString(),
-                    sswLng = $scope.filters.map.v.getSouthWest().lng().toString();
-
-                var neLat = sneLat.replace(sneLat.substring(sneLat.indexOf(".") + 3, sneLat.length), ""),
-                    neLng = sneLng.replace(sneLng.substring(sneLng.indexOf(".") + 3, sneLng.length), ""),
-                    swLat = sswLat.replace(sswLat.substring(sswLat.indexOf(".") + 3, sswLat.length), ""),
-                    swLng = sswLng.replace(sswLng.substring(sswLng.indexOf(".") + 3, sswLng.length), ""),
-                    viewport = {
-                        'ne_lat': neLat,
-                        'ne_lng': neLng,
-                        'sw_lat': swLat,
-                        'sw_lng': swLng
-                    },
+                var formattedViewport = FiltersFactory.getFormattedViewport(),
                     zoom = $scope.filters.map.z;
 
                 if (timeout) {
                     clearTimeout(requestTimeout);
                     requestTimeout = setTimeout(function() {
-                        Markers.load($scope.filters.red, $scope.filters.blue,
-                                        $scope.filters.green, $scope.filters.yellow,
-                                        viewport, zoom, function(data) {
+                        MarkersFactory.load($scope.filters.red, $scope.filters.blue, $scope.filters.green,
+                            $scope.filters.yellow,  formattedViewport, zoom, function(data) {
 
                             markers = data;
                             placeMarkers(data);
-                            markersIsLoaded = true;
                         });
                     }, requestTimeoutTime);
                 } else {
-                    Markers.load($scope.filters.red, $scope.filters.blue,
-                                    $scope.filters.green, $scope.filters.yellow,
-                                    viewport, zoom, function(data) {
+                    MarkersFactory.load($scope.filters.red, $scope.filters.blue, $scope.filters.green,
+                        $scope.filters.yellow, formattedViewport, zoom, function(data) {
 
                         markers = data;
                         placeMarkers(data);
-                        markersIsLoaded = true;
                     });
                 }
             }, 100);

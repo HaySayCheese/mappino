@@ -52,7 +52,14 @@
         <a href="/" class="map-home-btn">
             <span>На главную</span>
         </a>
+
         <div id="map"></div>
+
+        <div class="change-language-panel">
+            <select map-change-language name="change-language" data-width="100%">
+                <option value="0">Русский</option>
+            </select>
+        </div>
 
         <ng-view></ng-view>
 
@@ -97,6 +104,7 @@
     <script type="text/javascript" src="{{ static }}js/main/directives/allowOnlyNumber.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/directives/allowOnlyNumberWithoutDot.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/directives/selectpicker-directive.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/directives/map-change-language-directive.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/directives/perfect-scrollbar-directive.js"></script>
 </body>
 </html>

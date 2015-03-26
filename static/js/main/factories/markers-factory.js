@@ -1,4 +1,4 @@
-app.factory('Markers', ['Queries', 'uuid', function(Queries, uuid) {
+app.factory('MarkersFactory', ['Queries', 'uuid', function(Queries, uuid) {
     "use strict";
 
     var markers = {

@@ -1,11 +1,13 @@
-app.controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$location', '$timeout', 'Account', 'PublicationTypesFactory', 'FiltersFactory',
-    function($scope, $rootScope, $cookies, $location, $timeout, Account, PublicationTypesFactory, FiltersFactory) {
+app.controller('SidebarController', ['$scope', '$cookies', '$location', '$timeout', 'Account', 'PublicationTypesFactory', 'FiltersFactory', 'LoadedValues',
+    function($scope, $cookies, $location, $timeout, Account, PublicationTypesFactory, FiltersFactory, LoadedValues) {
         'use strict';
 
 
         $scope.userName = "";
-        $scope.publicationTypes = PublicationTypesFactory.getPublicationTypes();
-        $scope.sidebarTemplateUrl = FiltersFactory.getSidebarTemplateUrl();
+        $scope.publicationTypes         = PublicationTypesFactory.getPublicationTypes();
+        $scope.sidebarTemplateUrl       = FiltersFactory.getSidebarTemplateUrl();
+        $scope.sidebarTemplateLoaded    = LoadedValues.sidebar.templates;
+        $scope.filtersParsed            = LoadedValues.filters.parsed;
 
         getUserName();
 

@@ -86,7 +86,6 @@ app.factory('FiltersFactory', ['$location', 'PublicationTypesFactory', function(
             y_t_sid: null
         }
     };
-    var _tempViewportFromHomePage;
 
     return {
         /**
@@ -215,6 +214,26 @@ app.factory('FiltersFactory', ['$location', 'PublicationTypesFactory', function(
                     }
                 }
             }
+        },
+
+
+        getFormattedViewport: function() {
+            var sneLat = filters.map.v.getNorthEast().lat().toString(),
+                sneLng = filters.map.v.getNorthEast().lng().toString(),
+                sswLat = filters.map.v.getSouthWest().lat().toString(),
+                sswLng = filters.map.v.getSouthWest().lng().toString();
+
+            var neLat = sneLat.replace(sneLat.substring(sneLat.indexOf(".") + 3, sneLat.length), ""),
+                neLng = sneLng.replace(sneLng.substring(sneLng.indexOf(".") + 3, sneLng.length), ""),
+                swLat = sswLat.replace(sswLat.substring(sswLat.indexOf(".") + 3, sswLat.length), ""),
+                swLng = sswLng.replace(sswLng.substring(sswLng.indexOf(".") + 3, sswLng.length), "");
+
+            return {
+                'ne_lat': neLat,
+                'ne_lng': neLng,
+                'sw_lat': swLat,
+                'sw_lng': swLng
+            };
         },
 
 

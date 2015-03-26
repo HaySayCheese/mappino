@@ -1,0 +1,30 @@
+//
+// Load core variables and mixins
+// --------------------------------------------------
+@import "../../components/variables";
+@import "../../components/mixins.less";
+
+.change-language-panel {
+    position: absolute;
+    bottom: 30px;
+    left: 15px;
+
+    z-index: 9999;
+
+    .size(120px, 38px);
+    .box-shadow(~"0 0 15px rgba(0, 0, 0, 0.4)");
+
+    .selectpicker {
+        margin: 0;
+
+        .caret:before {
+            top: -6px;
+        }
+    }
+
+    .dropdown-menu {
+        border: none;
+        margin-bottom: -1px;
+        .box-shadow(~"0 -1px 15px rgba(0, 0, 0, 0.4)");
+    }
+}
