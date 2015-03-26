@@ -1,4 +1,4 @@
-<div class="modal publication-view-modal fade" ng-controller="publicationViewCtrl">
+<div class="modal publication-view-modal fade" ng-controller="PublicationViewController">
     <div class="modal-dialog" ng-switch on="publicationViewPart">
 
 
@@ -53,7 +53,7 @@
 
                 <div class="publication-content-body" ng-switch on="publicationViewDetailedPart">
 
-                    <div ng-switch-when="Contacts" ng-controller="PublicationViewContactsCtrl">
+                    <div ng-switch-when="Contacts" ng-controller="PublicationViewContactsController">
                         <div class="contacts-loading" ng-hide="contactsLoaded"></div>
 
                         <div ng-show="contactsLoaded">

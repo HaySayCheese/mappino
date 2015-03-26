@@ -45,9 +45,9 @@
         ga('send', 'pageview');
     </script>
 </head>
-<body ng-controller="AppCtrl">
+<body ng-controller="AppController">
 
-    <div class="wrapper" ng-controller="MapCtrl" ng-init="parseSearchParametersFromUrl()" ng-cloak>
+    <div class="wrapper" ng-controller="ContentController" ng-init="runApplication()">
 
         <a href="/" class="map-home-btn">
             <span>На главную</span>
@@ -57,7 +57,7 @@
         <ng-view></ng-view>
 
 
-        <div ng-include="sidebarTemplateUrl"></div>
+        <div ng-controller="SidebarController" ng-include="sidebarTemplateUrl"></div>
 
 
         <div lr-notification-stack-container="mainChannel" class="notifier">
@@ -79,21 +79,24 @@
     <script type="text/javascript" src="{{ static }}js/main/services/router.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/services/queries.js"></script>
 
-    <script type="text/javascript" src="{{ static }}js/main/factories/uuid.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/factories/markersFactory.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/factories/accountFactory.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/factories/uuid-generator-factory.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/factories/markers-factory.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/factories/account-factory.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/factories/publication-types-factory.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/factories/filters-factory.js"></script>
 
-    <script type="text/javascript" src="{{ static }}js/main/controllers/appCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/controllers/mapCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/controllers/sidebarCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/controllers/loginCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/controllers/registrationCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/controllers/restoreAccessCtrl.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/controllers/publicationViewCtrl.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/controllers/app-controller.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/controllers/content-controller.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/controllers/sidebar-controller.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/controllers/login-controller.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/controllers/registration-controller.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/controllers/restore-access-controller.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/controllers/publication-view-controller.js"></script>
 
     <script type="text/javascript" src="{{ static }}js/main/directives/selectOnClick.js"></script>
-    <script type="text/javascript" src="{{ static }}js/main/directives/focusOnLoad.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/directives/allowOnlyNumber.js"></script>
     <script type="text/javascript" src="{{ static }}js/main/directives/allowOnlyNumberWithoutDot.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/directives/selectpicker-directive.js"></script>
+    <script type="text/javascript" src="{{ static }}js/main/directives/perfect-scrollbar-directive.js"></script>
 </body>
 </html>

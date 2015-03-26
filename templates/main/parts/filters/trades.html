@@ -5,7 +5,7 @@
         <div class="col-sm-12">
             <label class="col-sm-3 control-label">Операция:</label>
             <div class="col-sm-9">
-                <select name="{{ current_panel_prefix }}_operation_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid">
+                <select selectpicker name="{{ current_panel_prefix }}_operation_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid">
                     <option value="0">Продажа</option>
                     <option value="1">Аренда</option>
                 </select>
@@ -24,7 +24,7 @@
                 <input class="form-control" type="text" name="{{ current_panel_prefix }}_price_to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_price_to" allow-only-number/>
             </div>
             <div class="col-sm-3">
-                <select name="{{ current_panel_prefix }}_currency_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_currency_sid">
+                <select selectpicker name="{{ current_panel_prefix }}_currency_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_currency_sid">
                     <option value="2">Грн.</option>
                     <option value="0">Дол.</option>
                     <option value="1">Евро</option>
@@ -78,7 +78,7 @@
         <div class="col-sm-12">
             <label class="col-sm-3 control-label">Здание:</label>
             <div class="col-sm-9">
-                <select name="{{ current_panel_prefix }}_building_type_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_building_type_sid">
+                <select selectpicker name="{{ current_panel_prefix }}_building_type_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_building_type_sid">
                     <option value="0">Не учитывать</option>
                     <option value="1">ТРЦ</option>
                     <option value="2">Бизнес-центр</option>

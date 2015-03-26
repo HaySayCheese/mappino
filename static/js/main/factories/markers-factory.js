@@ -55,16 +55,16 @@ app.factory('Markers', ['Queries', 'uuid', function(Queries, uuid) {
                 filters: []
             };
 
-            if (!_.isNull(r_filters.r_type_sid)) {
+            if (!_.isNull(r_filters.r_t_sid)) {
                 that.createJsonFiltersFromString(r_filters, "red");
             }
-            if(!_.isNull(b_filters.b_type_sid)) {
+            if(!_.isNull(b_filters.b_t_sid)) {
                 that.createJsonFiltersFromString(b_filters, "blue");
             }
-            if(!_.isNull(g_filters.g_type_sid)) {
+            if(!_.isNull(g_filters.g_t_sid)) {
                 that.createJsonFiltersFromString(g_filters, "green");
             }
-            if(!_.isNull(y_filters.y_type_sid)) {
+            if(!_.isNull(y_filters.y_t_sid)) {
                 that.createJsonFiltersFromString(y_filters, "yellow");
             }
 
