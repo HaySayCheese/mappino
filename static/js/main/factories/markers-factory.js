@@ -222,7 +222,7 @@ app.factory('MarkersFactory', ['Queries', 'uuid', function(Queries, uuid) {
             };
 
             for (var panel in pieMarkers) {
-                if (panel == "compared")
+                if (panel === "compared")
                     break;
 
                 if (pieMarkers.hasOwnProperty(panel)) {

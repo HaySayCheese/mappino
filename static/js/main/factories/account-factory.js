@@ -75,7 +75,7 @@ app.factory('Account', ['Queries', function(Queries) {
         checkEmail: function(email, callback) {
             Queries.Account.validateEmail(email).success(function(data) {
                 _.isFunction(callback) && callback(data);
-            })
+            });
         },
 
 
@@ -88,7 +88,7 @@ app.factory('Account', ['Queries', function(Queries) {
         checkPhone: function(phone, callback) {
             Queries.Account.validatePhone(phone).success(function(data) {
                 _.isFunction(callback) && callback(data);
-            })
+            });
         },
 
 
@@ -101,7 +101,7 @@ app.factory('Account', ['Queries', function(Queries) {
         restoreAccessSendEmail: function(email, callback) {
             Queries.Account.restoreAccessSendEmail(email).success(function(data) {
                 _.isFunction(callback) && callback(data);
-            })
+            });
         },
 
 
@@ -114,7 +114,7 @@ app.factory('Account', ['Queries', function(Queries) {
         restoreAccessSendPasswords: function(passwords, callback) {
             Queries.Account.restoreAccessSendPasswords(passwords).success(function(data) {
                 _.isFunction(callback) && callback(data);
-            })
+            });
         },
 
 
@@ -140,8 +140,8 @@ app.factory('Account', ['Queries', function(Queries) {
         logoutUser: function(callback) {
             Queries.Account.logoutUser().success(function(data) {
                 _.isFunction(callback) && callback(data);
-            })
+            });
         }
 
-    }
+    };
 }]);
