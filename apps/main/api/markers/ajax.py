@@ -126,7 +126,7 @@ class Markers(View):
 
                 # Generating of the filters objects.
                 # This object is used to perform filtering based on parameters
-                # that was spcified on front-end.
+                # that was specified on front-end.
                 filter_conditions = (cls.filters_parsers[tid])(filters)
 
                 # Segments generation.
@@ -275,7 +275,7 @@ class Markers(View):
         parsed_tids_and_filters = []
         try:
             for filters in params['filters']:
-                tid = int(filters['type_sid'])
+                tid = int(filters['t_sid'])
                 if tid not in OBJECTS_TYPES.values():
                     raise ValueError('Invalid type id received from the client, {}'.format(tid))
 
