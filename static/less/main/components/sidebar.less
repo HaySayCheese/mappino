@@ -52,6 +52,12 @@
             border-bottom: 1px dashed #ccc;
             border-radius: 0;
             .box-shadow(none);
+
+            &:focus {
+                //border-bottom: none;
+                .transition(~"box-shadow 0.1s ease");
+                .box-shadow(~"0 0 6px rgba(0, 0, 0, 0.3)");
+            }
         }
     }
 }
