@@ -48,7 +48,7 @@ function BMapZoomControl(div, map, position) {
 
     container.style.width               = options.container.width;
     container.style.height              = options.container.height;
-    container.style.margin              = '10px 15px 60px 15px';
+    container.style.margin              = '10px 15px 10px 15px';
     container.style.cursor              = options.container.cursor;
     container.style.fontFamily          = options.container.fontFamily;
     container.style.boxShadow           = options.container.boxShadow;
