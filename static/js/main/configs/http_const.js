@@ -3,10 +3,9 @@
  **/
 
 
-'use strict';
-
-
 app.constant('HTTP_URL', (function () {
+    'use strict';
+
     return {
         'MAP': {
             'GET_MARKERS':                  '/ajax/api/markers/?p={0}',
@@ -29,5 +28,5 @@ app.constant('HTTP_URL', (function () {
             'RESTORE_ACCESS_SEND_EMAIL':    '/ajax/api/accounts/password-reset/',
             'RESTORE_ACCESS_SEND_PASSWORD': '/ajax/api/accounts/password-reset/restore/'
         }
-    }
+    };
 })());
