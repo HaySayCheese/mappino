@@ -1,6 +1,5 @@
-'use strict';
-
-app.factory('Account', function(Queries) {
+app.factory('Account', ['Queries', function(Queries) {
+    'use strict';
 
     return {
 
@@ -145,4 +144,4 @@ app.factory('Account', function(Queries) {
         }
 
     }
-});
+}]);
