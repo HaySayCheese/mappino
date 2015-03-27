@@ -178,17 +178,17 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies',
                 return false;
             } else {
                 var searchString =
-                    "map/#!/?city=" +       $scope.filters.city +
-                    "&r_type_sid=" +        $scope.filters.type_sid +
-                    "&r_operation_sid=" +   ($scope.filters.operation_sid === 2 ? 1 : $scope.filters.operation_sid);
+                    "map/#!/?c=" + $scope.filters.city +
+                    "&r_t_sid="  + $scope.filters.type_sid +
+                    "&r_op_sid=" + ($scope.filters.operation_sid === 2 ? 1 : $scope.filters.operation_sid);
 
                 if ($scope.map.latLng) {
-                    searchString += "&latLng=" + $scope.map.latLng;
-                    searchString += "&zoom=" + $scope.map.zoom;
+                    searchString += "&l=" + $scope.map.latLng;
+                    searchString += "&z=" + $scope.map.zoom;
                 }
 
                 if ($scope.filters.period_sid) {
-                    searchString += "&r_period_sid=" + $scope.filters.period_sid;
+                    searchString += "&r_pr_sid=" + $scope.filters.period_sid;
                 }
 
                 window.location = window.location.href + searchString;
