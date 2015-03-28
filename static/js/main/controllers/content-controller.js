@@ -77,21 +77,30 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
             LoadedValues.filters.parsed = true;
 
             $scope.$on("$routeChangeSuccess", function() {
-                onceInitMap();
+                onceInitMapAndAutocomplete();
             });
         };
 
 
 
 
-        var onceInitMap = _.once(initializeMap);
-        function initializeMap() {
+        var onceInitMapAndAutocomplete = _.once(function() {
+            initializeMap();
+            initializeAutocomplete();
+        });
 
-            // якщо з головної приходить вюпорт в локалстор
-            var bounds = {},
-                tempViewportFromHomePage,
-                zoom    = $route.current.params.zoom    || $scope.filters.z,
-                latLng  = $route.current.params.latLng  || $scope.filters.l;
+
+
+        function initializeMap() {
+            var zoom    = $scope.filters.map.z,
+                latLng  = $scope.filters.map.l,
+                bounds = {},
+                tempViewportFromHomePage;
+
+            if ($route.current && $route.current.params.zoom && $route.current.params.latLng) {
+                zoom    = $route.current.params.zoom;
+                latLng  = $route.current.params.latLng;
+            }
 
 
             if (localStorage._tempViewportFromHomePage) {
@@ -102,7 +111,6 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
                     ne = new google.maps.LatLng(+c[2], +c[3]);
 
                 bounds = new google.maps.LatLngBounds(sw, ne);
-
                 delete localStorage._tempViewportFromHomePage;
             }
 
@@ -147,7 +155,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
         }
 
 
-        $scope.initializeAutocomplete = function() {
+        function initializeAutocomplete() {
             $timeout(function() {
                 cityInput       = document.getElementById('sidebar-city-input');
                 autocomplete    = new google.maps.places.Autocomplete(cityInput, autocompleteOptions);
@@ -191,7 +199,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
                     FiltersFactory.updateMapParametersInUrl();
                 });
             });
-        };
+        }
 
 
         /**

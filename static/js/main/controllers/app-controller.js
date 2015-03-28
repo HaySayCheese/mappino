@@ -2,33 +2,10 @@ app.controller('AppController', ['$scope', '$rootScope', '$location', '$cookies'
     function($scope, $rootScope, $location, $cookies, $routeParams, $route, TXT, ROUTES) {
         'use strict';
 
-        var latLngAndZoom = '',
-            params = '';
+        var params = '';
 
         $rootScope.latLngAndZoom = '';
         $rootScope.searchUrlPart = '';
-        $rootScope.currencyTypes = [{
-            id: 0,
-            name: "USD",
-            title: "Дол."
-        }, {
-            id: 1,
-            name: "EUR",
-            title: "Евро"
-        }, {
-            id: 2,
-            name: "UAH",
-            title: "Грн."
-        }];
-        $rootScope.opeartionTypes = {
-            sale: 0,
-            rent: 1
-        };
-        $rootScope.rentTypes = {
-            undefined: 0,
-            daily: 1,
-            monthly: 2
-        };
 
 
         /**

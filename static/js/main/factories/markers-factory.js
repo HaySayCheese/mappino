@@ -1,4 +1,4 @@
-app.factory('MarkersFactory', ['Queries', 'uuid', function(Queries, uuid) {
+app.factory('MarkersFactory', ['Queries', function(Queries) {
     "use strict";
 
     var markers = {
@@ -80,12 +80,16 @@ app.factory('MarkersFactory', ['Queries', 'uuid', function(Queries, uuid) {
         },
 
 
+
         /**
-         * Додання маркерів в масив
+         * @description Parse response data and push to markers array
          *
-         * @param {Array}      data   Масив який вертає сервер
-         * @param {function}   callback
-         */
+         * @example
+         * MarkersFactory.add(<responseData>, callback);
+         *
+         * @param {Array} data          - Markers response
+         * @param {Function} callback   - Callback
+         **/
         add: function(data, callback) {
             var that = this;
 
@@ -138,21 +142,44 @@ app.factory('MarkersFactory', ['Queries', 'uuid', function(Queries, uuid) {
         },
 
 
-        createMarkerObject: function(data, panel, latLng) {
+
+        /**
+         * @description Create marker object for google map
+         *
+         * @example
+         * MarkersFactory.createMarkerObject(<latLng>, 'red', <latLng>);
+         *
+         * @param {Object} marker   - Marker data
+         * @param {String} panel    - Name of panel color
+         * @param {String} latLng   - String latLng coordinates
+         **/
+        createMarkerObject: function(marker, panel, latLng) {
             markers[panel][latLng] = new MarkerWithLabel({
-                id:             data.id,
-                tid:            data.tid,
+                id:             marker.id,
+                tid:            marker.tid,
                 icon:           '/static/img/markers/' + panel + '-normal.png',
                 position:       new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
                 labelClass:     "marker-label",
                 labelAnchor:    new google.maps.Point(0, 39),
-                labelContent:   data.d0 + "</br>" + data.d1,
+                labelContent:   marker.d0 + "</br>" + marker.d1,
                 labelInBackground: true
             });
         },
 
+
+
+        /**
+         * @description Create pie marker object for google map
+         *
+         * @example
+         * MarkersFactory.createPieObject(<latLng>, 'red', <latLng>);
+         *
+         * @param {Object} marker   - Marker data
+         * @param {String} panel    - Name of panel color
+         * @param {String} latLng   - String latLng coordinates
+         **/
         createPieObject: function(marker, panel, latLng) {
-            var _uuid = uuid.new(),
+            var _uuid = _.uniqueId('pie-marker-'),
 
                 red_percent_in_deg      = Math.round((360 / 100 * ((marker.red_publication_count / marker.publication_count) * 100))      || 0),
                 blue_percent_in_deg     = Math.round((360 / 100 * ((marker.blue_publication_count / marker.publication_count) * 100))     || 0),
@@ -212,6 +239,8 @@ app.factory('MarkersFactory', ['Queries', 'uuid', function(Queries, uuid) {
                 labelClass: "marker-pie-chart " + sizeOfPieChart,
             });
         },
+
+
 
         comparePieMarkers: function() {
             var panels = {
@@ -289,9 +318,19 @@ app.factory('MarkersFactory', ['Queries', 'uuid', function(Queries, uuid) {
             _.isFunction(callback) && callback();
         },
 
+
+
+        /**
+         * @description Create JSON filters from string for Dima )
+         *
+         * @example
+         * MarkersFactory.createJsonFiltersFromString(<stringFilters>, 'red');
+         *
+         * @param {String} filters  - Filters string
+         * @param {String} panel    - Name of panel color
+         **/
         createJsonFiltersFromString: function(filters, panel) {
-            var that = this,
-                stringFilters = {};
+            var stringFilters = {};
 
             for (var key in filters) {
                 if (filters.hasOwnProperty(key)) {

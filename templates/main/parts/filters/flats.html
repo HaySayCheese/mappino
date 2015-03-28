@@ -5,9 +5,9 @@
         <div class="col-sm-12">
             <label class="col-sm-3 control-label">Операция:</label>
             <div class="col-sm-9">
-                <select selectpicker name="{{ current_panel_prefix }}_op_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_op_sid">
-                    <option value="0">Продажа</option>
-                    <option value="1">Аренда</option>
+                <select selectpicker name="{{ current_panel_prefix }}_op_sid" data-width="100%"
+                        ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_op_sid"
+                        ng-options="operation.id as operation.title for operation in operationTypes">
                 </select>
             </div>
         </div>
@@ -17,10 +17,9 @@
         <div class="col-sm-12">
             <label class="col-sm-3 control-label">Срок:</label>
             <div class="col-sm-9">
-                <select selectpicker name="{{ current_panel_prefix }}_pr_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_pr_sid">
-                    <option value="0">Не учитывать</option>
-                    <option value="1">Посуточно</option>
-                    <option value="2">Помесячно</option>
+                <select selectpicker name="{{ current_panel_prefix }}_op_sid" data-width="100%"
+                        ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_pr_sid"
+                        ng-options="rentType.id as rentType.title for rentType in rentTypes">
                 </select>
             </div>
         </div>
@@ -37,10 +36,9 @@
                 <input class="form-control" type="text" name="{{ current_panel_prefix }}_p_max" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_p_max" allow-only-number/>
             </div>
             <div class="col-sm-3">
-                <select selectpicker name="{{ current_panel_prefix }}_cu_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_cu_sid">
-                    <option value="2">Грн.</option>
-                    <option value="0">Дол.</option>
-                    <option value="1">Евро</option>
+                <select selectpicker name="{{ current_panel_prefix }}_cu_sid" data-width="100%"
+                        ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_cu_sid"
+                        ng-options="currency.id as currency.title for currency in currencyTypes">
                 </select>
             </div>
         </div>

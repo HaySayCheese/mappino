@@ -11,7 +11,7 @@ app.factory('FiltersFactory', ['$location', '$route', 'base64', 'PublicationType
             map: {
                 c: "",                      // city
                 z: parseInt(6),             // zoom
-                l: "48.455935,34.41285",   // latLng
+                l: "48.455935,34.41285",    // latLng
                 v: null                     // viewport
             },
 
@@ -282,6 +282,13 @@ app.factory('FiltersFactory', ['$location', '$route', 'base64', 'PublicationType
             },
 
 
+
+            /**
+             * @description Update url map parameters (latLng and zoom)
+             *
+             * @example
+             * FiltersFactory.updateMapParametersInUrl();
+             **/
             updateMapParametersInUrl: function() {
                 $route.updateParams({
                     zoom:   filters.map.z,
@@ -290,6 +297,15 @@ app.factory('FiltersFactory', ['$location', '$route', 'base64', 'PublicationType
             },
 
 
+
+            /**
+             * @description Return a formatted viewport for Dima )
+             *
+             * @example
+             * FiltersFactory.getFormattedViewport();
+             *
+             * @returns {Object} - Formatted viewport
+             **/
             getFormattedViewport: function() {
                 var sneLat = filters.map.v.getNorthEast().lat().toString(),
                     sneLng = filters.map.v.getNorthEast().lng().toString(),
@@ -310,10 +326,29 @@ app.factory('FiltersFactory', ['$location', '$route', 'base64', 'PublicationType
             },
 
 
+
+            /**
+             * @description Return all filters object
+             *
+             * @example
+             * FiltersFactory.getFilters();
+             *
+             * @returns {Object} - Filters object
+             **/
             getFilters: function() {
                 return filters;
             },
 
+
+
+            /**
+             * @description Return sidebar template url
+             *
+             * @example
+             * FiltersFactory.getSidebarTemplateUrl();
+             *
+             * @returns {String} - Sidebar template url
+             **/
             getSidebarTemplateUrl: function() {
                 // todo: написати логіку для віддачі урла для ріелторів
                 return "/ajax/template/main/sidebar/common/";
