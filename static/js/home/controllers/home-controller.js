@@ -187,9 +187,7 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
                     searchString += "&r_pr_sid=" + $scope.filters.period_sid;
                 }
 
-                console.log(window.location.href + path + searchString)
-                console.log(window.location.href + path + base64.urlencode(searchString))
-                //window.location = window.location.href + path + base64.urlencode(searchString);
+                window.location = window.location.href + path + base64.urlencode(searchString);
             }
         };
 
