@@ -1,4 +1,4 @@
-<div class="modal restore-access-modal fade" ng-controller="RestoreAccessCtrl">
+<div class="modal restore-access-modal fade" ng-controller="RestoreAccessController">
     <div class="modal-dialog">
         <div class="modal-content content-blue">
             <div class="modal-header header-blue">
@@ -8,7 +8,7 @@
             <div class="modal-body modal-body-wtp">
                 <div class="row" ng-switch on="restoreAccessStatePart">
 
-                    <div class="col-sm-12 text-center" ng-switch-when="sendEmail" ng-controller="RestoreAccessSendMailCtrl">
+                    <div class="col-sm-12 text-center" ng-switch-when="sendEmail" ng-controller="RestoreAccessSendMailController">
                         <p class="col-sm-8 col-sm-offset-2 text-justify">
                             Пожалуйста, введите номер моб. телефона или адрес эл. почты,
                             которыми Вы ранее пользовались для входа в учетную запись. <br/><br/>
@@ -19,7 +19,7 @@
                         <form action="" name="restoreAccessForm" novalidate>
                             <div class="col-sm-6 col-sm-offset-3 top-margin">
                                 <div class="form-group">
-                                    <input type="text" class="form-control" name="login" placeholder="Моб телефон или Email" ng-model="user.login" focus-on-load required>
+                                    <input type="text" class="form-control" name="login" placeholder="Моб телефон или Email" ng-model="user.login" autofocus required>
 
                                     <span class="input-icon">
                                         <span class="input-icon-error" ng-show="showValidationMessages && restoreAccessForm.login.$error.required"
@@ -57,13 +57,13 @@
                     </div>
 
 
-                    <div class="col-sm-12 text-center" ng-switch-when="changePassword" ng-controller="RestoreAccessChangePasswordCtrl">
+                    <div class="col-sm-12 text-center" ng-switch-when="changePassword" ng-controller="RestoreAccessChangePasswordController">
                         <h2>Восстановление пароля</h2>
 
                         <form action="" name="restoreAccessForm" novalidate>
                             <div class="col-sm-6 col-sm-offset-3 top-margin">
                                 <div class="form-group">
-                                    <input type="password" class="form-control" name="password" placeholder="Новый пароль" ng-model="user.password" focus-on-load required>
+                                    <input type="password" class="form-control" name="password" placeholder="Новый пароль" ng-model="user.password" autofocus required>
 
                                     <span class="input-icon">
                                         <span class="input-icon-error" ng-show="showValidationMessages && restoreAccessForm.password.$error.required"

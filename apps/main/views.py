@@ -12,7 +12,7 @@ def homepage(request):
 
 @ensure_csrf_cookie
 def map(request):
-    template = templates.get_template('main/home.html')
+    template = templates.get_template('main/map.html')
     return HttpResponse(content=template.render())
 
 

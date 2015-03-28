@@ -1,9 +1,13 @@
-app.controller('SidebarCtrl', ['$scope', '$rootScope', '$cookies', '$location', '$timeout', 'Account',
-    function($scope, $rootScope, $cookies, $location, $timeout, Account) {
+app.controller('SidebarController', ['$scope', '$cookies', '$location', '$timeout', 'Account', 'PublicationTypesFactory', 'FiltersFactory', 'LoadedValues',
+    function($scope, $cookies, $location, $timeout, Account, PublicationTypesFactory, FiltersFactory, LoadedValues) {
         'use strict';
 
 
         $scope.userName = "";
+        $scope.publicationTypes         = PublicationTypesFactory.getPublicationTypes();
+        $scope.sidebarTemplateUrl       = FiltersFactory.getSidebarTemplateUrl();
+        $scope.sidebarTemplateLoaded    = LoadedValues.sidebar.templates;
+        $scope.filtersParsed            = LoadedValues.filters.parsed;
 
         getUserName();
 
@@ -56,14 +60,6 @@ app.controller('SidebarCtrl', ['$scope', '$rootScope', '$cookies', '$location', 
                 }
             });
         }
-
-
-        $timeout(function() {
-            angular.element(".type-selectpicker").selectpicker({
-                style: 'btn-default btn-md',
-                container: angular.element("body")
-            });
-        }, 50);
 
 
 

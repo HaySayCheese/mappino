@@ -1,11 +1,11 @@
-<form class="form-horizontal" novalidate ng-init="initPlugins()">
+<form class="form-horizontal" novalidate>
     <h4 class="section-header">Основное</h4>
 
     <div class="row form-group">
         <div class="col-sm-12">
             <label class="col-sm-3 control-label">Операция:</label>
             <div class="col-sm-9">
-                <select name="{{ current_panel_prefix }}_operation_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid">
+                <select selectpicker name="{{ current_panel_prefix }}_op_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_op_sid">
                     <option value="0">Продажа</option>
                     <option value="1">Аренда</option>
                 </select>
@@ -18,13 +18,13 @@
         <div class="col-sm-12">
             <label class="col-sm-3 control-label">Цена:</label>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_price_from" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_price_from" allow-only-number/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_p_min" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_p_min" allow-only-number/>
             </div>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_price_to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_price_to" allow-only-number/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_p_max" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_p_max" allow-only-number/>
             </div>
             <div class="col-sm-3">
-                <select name="{{ current_panel_prefix }}_currency_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_currency_sid">
+                <select selectpicker name="{{ current_panel_prefix }}_cu_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_cu_sid">
                     <option value="2">Грн.</option>
                     <option value="0">Дол.</option>
                     <option value="1">Евро</option>
@@ -38,10 +38,10 @@
         <div class="col-sm-12">
             <label class="col-sm-6 control-label">Общая площадь:</label>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_total_area_from" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_total_area_from" allow-only-number/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_t_a_min" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_t_a_min" allow-only-number/>
             </div>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_total_area_to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_total_area_to" allow-only-number/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_t_a_max" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_t_a_max" allow-only-number/>
             </div>
         </div>
     </div>
@@ -51,10 +51,10 @@
         <div class="col-sm-12">
             <label class="col-sm-6 control-label">Высота потолков:</label>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_ceiling_height_from" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_ceiling_height_from" allow-only-number/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_c_h_min" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_c_h_min" allow-only-number/>
             </div>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_ceiling_height_to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_ceiling_height_to" allow-only-number/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_c_h_max" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_c_h_max" allow-only-number/>
             </div>
         </div>
     </div>

@@ -5,7 +5,7 @@
 
 
 
-app.factory('Queries', function($http, HTTP_URL) {
+app.factory('Queries', ['$http','HTTP_URL', function($http, HTTP_URL) {
     'use strict';
 
     return {
@@ -109,4 +109,4 @@ app.factory('Queries', function($http, HTTP_URL) {
             }
         }
     };
-});
+}]);

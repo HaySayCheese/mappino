@@ -52,6 +52,12 @@
             border-bottom: 1px dashed #ccc;
             border-radius: 0;
             .box-shadow(none);
+
+            &:focus {
+                //border-bottom: none;
+                .transition(~"box-shadow 0.1s ease");
+                .box-shadow(~"0 0 6px rgba(0, 0, 0, 0.3)");
+            }
         }
     }
 }
@@ -263,4 +269,26 @@
             font-size: @font-size-h3;
         }
     }
+}
+
+
+
+.animated {
+    animation-duration: 1s;
+    animation-fill-mode: both;
+}
+@keyframes fadeInRight {
+    0% {
+        opacity: 0;
+        transform: translate3d(100%, 0, 0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.fadeInRight {
+    animation-name: fadeInRight;
 }

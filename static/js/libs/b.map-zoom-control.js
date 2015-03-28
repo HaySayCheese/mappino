@@ -18,26 +18,26 @@ function BMapZoomControl(div, map, position) {
 
     var options = {
         container: {
-            width:      '40px',
-            height:     '80px',
+            width:      '38px',
+            height:     '76px',
             cursor:     'pointer',
             boxShadow:  '0 0 13px rgba(0, 0, 0, 0.4)',
             fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif"
         },
         zoomControl: {
-            divider:                '1px solid #3281D7',
+            divider:                '1px solid #d9d9d9',
             transition:             "background-color 0.1s ease",
-            backgroundColor:        '#318CE1',
-            backgroundColorHover:   '#3286DC',
+            backgroundColor:        '#fafafa',
+            backgroundColorHover:   '#f0f0f0',
             label: {
-                color:      '#ffffff',
-                fontSize:   '28px'
+                color:      '#b0b0b0',
+                fontSize:   '16px'
             },
             zoomIn: {
-                html: '<strong>+</strong>'
+                html: "<span class='glyphicon glyphicon-plus'></span>"
             },
             zoomOut: {
-                html: '<strong>-</strong>'
+                html: "<span class='glyphicon glyphicon-minus'></span>"
             }
         }
     };
@@ -70,6 +70,7 @@ function BMapZoomControl(div, map, position) {
     zoomInLabel.style.fontSize          = options.zoomControl.label.fontSize;
     zoomInLabel.style.textAlign         = 'center';
     zoomInLabel.style.color             = options.zoomControl.label.color;
+    zoomInLabel.style.lineHeight        = "38px";
     zoomInLabel.style.msUserSelect      = "none";
     zoomInLabel.style.mozUserSelect     = "none";
     zoomInLabel.style.webkitUserSelect  = "none";
@@ -90,7 +91,7 @@ function BMapZoomControl(div, map, position) {
     zoomOutLabel.style.fontSize         = options.zoomControl.label.fontSize;
     zoomOutLabel.style.textAlign        = 'center';
     zoomOutLabel.style.color            = options.zoomControl.label.color;
-    zoomOutLabel.style.lineHeight       = "35px";
+    zoomOutLabel.style.lineHeight       = "38px";
     zoomOutLabel.style.msUserSelect     = "none";
     zoomOutLabel.style.mozUserSelect    = "none";
     zoomOutLabel.style.webkitUserSelect = "none";
