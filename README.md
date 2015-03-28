@@ -1,4 +1,4 @@
-# mappino #
+# mappino RC1 #
 
 
 ## Deploy check list ##
