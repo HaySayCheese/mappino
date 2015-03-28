@@ -143,7 +143,7 @@ class AbstractBaseIndex(models.Model):
 
     @staticmethod  # range
     def apply_price_filter(filters, markers):
-        currency = filters.get('cu_sid')
+        currency = int(filters.get('cu_sid'))
         if (currency is None) or (currency not in CURRENCIES.values()):
             raise InvalidArgument('filters does not contains or contains invalid currency_sid.')
 
@@ -317,7 +317,7 @@ class AbstractBaseIndex(models.Model):
 
     @staticmethod  # sid
     def apply_living_rent_period_filter(filters, markers):
-        period = filters.get('pr_sid')
+        period = int(filters.get('pr_sid'))
         if period == 1:
             markers = markers.filter(period_sid=LIVING_RENT_PERIODS.daily())
 
@@ -340,7 +340,8 @@ class AbstractBaseIndex(models.Model):
 
     @classmethod  # sid
     def apply_rooms_planning_filter(cls, filters, markers):
-        rooms_planning_sid = filters.get('pl_sid')
+        rooms_planning_sid = int(filters.get('pl_sid'))
+
         if rooms_planning_sid == cls.Filters.RoomsPlanning.free:
             markers = markers.filter(rooms_planning_sid=FLAT_ROOMS_PLANNINGS.free())
         elif rooms_planning_sid == cls.Filters.RoomsPlanning.preliminary:
@@ -351,7 +352,8 @@ class AbstractBaseIndex(models.Model):
 
     @staticmethod # sid
     def apply_trade_building_type_filter(filters, markers):
-        building_type = filters.get('b_t_sid')
+        building_type = int(filters.get('b_t_sid'))
+
         if building_type == 1:
             markers = markers.filter(building_type_sid=TRADE_BUILDING_TYPES.entertainment())
         elif building_type == 2:
@@ -364,7 +366,8 @@ class AbstractBaseIndex(models.Model):
 
     @staticmethod  # sid
     def apply_heating_type_filter(filters, markers):
-        heating = filters.get('h_t_sid')
+        heating = int(filters.get('h_t_sid'))
+
         if heating == 1:
             markers = markers.filter(heating_type_sid=HEATING_TYPES.central())
         elif heating == 2:
