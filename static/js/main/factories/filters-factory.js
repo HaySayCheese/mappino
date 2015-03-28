@@ -144,6 +144,8 @@ app.factory('FiltersFactory', ['$location', '$route', 'base64', 'PublicationType
              * FiltersFactory.updateFiltersFromUrl();
              **/
             updateFiltersFromUrl: function() {
+                var searchParameters = '';
+
                 /* Дешифруємо фільтри з урла */
                 if (_.keys($location.search()).length !== 0) {
                     var encodedString   = base64.urldecode(_.keys($location.search())[0]),
@@ -156,9 +158,9 @@ app.factory('FiltersFactory', ['$location', '$route', 'base64', 'PublicationType
                         keys.push(formattedArray[i].split(':')[0]);
                         values.push(formattedArray[i].split(':')[1]);
                     }
-                }
 
-                var searchParameters = _.object(keys, values);
+                    searchParameters = _.object(keys, values);
+                }
                 /* кінець дешифратора :) */
 
 
