@@ -1,21 +1,14 @@
 #coding=utf-8
-from django.db import models
-
 from core.currencies.constants import CURRENCIES
-from core.publications.abstract_models import AbstractHeadModel, BodyModel, LivingRentTermsModel, \
-    CommercialRentTermsModel, PhotosModel, SaleTermsModel, CommercialHeadModel, AbstractModel
-from core.publications.constants import MARKET_TYPES, OBJECT_CONDITIONS, FLOOR_TYPES, \
-    HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, OBJECTS_TYPES
-from core.publications.exceptions import EmptyFloor, EmptyTotalArea, EmptyLivingArea, EmptyRoomsCount, EmptyFloorsCount, \
-    EmptyHallsArea, EmptyHallsCount, EmptyCabinetsCount, EmptyPlotArea#, EmptyPersonsCount
-from core.publications.objects_constants.apartments import APARTMENTS_BUILDINGS_TYPES, APARTMENTS_FLAT_TYPES, APARTMENTS_ROOMS_PLANNING_TYPES
-from core.publications.objects_constants.cottages import COTTAGE_RENT_TYPES, COTTAGE_SALE_TYPES
-from core.publications.objects_constants.flats import FLAT_BUILDING_TYPES, FLAT_TYPES, FLAT_ROOMS_PLANNINGS
-from core.publications.objects_constants.garages import GARAGE_DRIVE_WAYS
-from core.publications.objects_constants.houses import HOUSE_RENT_TYPES, HOUSE_SALE_TYPES
-from core.publications.objects_constants.lands import LAND_DRIVEWAYS
-from core.publications.objects_constants.rooms import ROOMS_BUILDINGS_TYPES, ROOMS_ROOMS_PLANNING_TYPES, ROOMS_WC_LOCATION
-from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
+from core.publications.abstract_models import *
+from core.publications.constants import *
+from core.publications.exceptions import *
+from core.publications.objects_constants.flats import *
+from core.publications.objects_constants.garages import *
+from core.publications.objects_constants.houses import *
+from core.publications.objects_constants.lands import *
+from core.publications.objects_constants.rooms import *
+from core.publications.objects_constants.trades import *
 
 
 
