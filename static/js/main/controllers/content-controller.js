@@ -258,40 +258,10 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
 
 
 
-        var uniqueMarkers = {
-            red:    {},
-            blue:   {},
-            green:  {},
-            yellow: {}
-        };
-        function intersectionMarkers(data) {
-            for (var s_panel in data) {
-                for (var s_marker in data[s_panel]) {
-                    if (!uniqueMarkers[s_panel][s_marker]) {
-                        uniqueMarkers[s_panel][s_marker] = data[s_panel][s_marker];
-                        console.log("push")
-                    }
-                }
-            }
-            for (var u_panel in uniqueMarkers) {
-                for (var u_marker in uniqueMarkers[u_panel]) {
-                    if (!data[u_panel][u_marker]) {
-                        delete uniqueMarkers[u_panel][u_marker];
-                        console.log("delete")
-                    }
-                }
-            }
-            console.log(uniqueMarkers)
-            return uniqueMarkers;
-        }
-
-
         /**
          * Функція яка розставляє маркери
          */
         function placeMarkers(data) {
-            data = intersectionMarkers(data);
-
             for (var panel in data) {
                 if (data.hasOwnProperty(panel)) {
                     for (var marker in markers[panel]) {
