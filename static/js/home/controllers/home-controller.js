@@ -178,7 +178,7 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
                 $scope.errors.badRegion = true;
                 return false;
             } else {
-                var path = "map/#!/" + ($scope.map.latLng ? $scope.map.latLng + "/" + $scope.map.zoom : '48.455935,34.41285/6/') + "search/?";
+                var path = "map/#!/" + ($scope.map.latLng ? $scope.map.latLng + "/" + $scope.map.zoom : '48.455935,34.41285/6') + "/search/?";
                 var searchString = "c=" + $scope.filters.city +
                     "&r_t_sid="  + $scope.filters.type_sid +
                     "&r_op_sid=" + ($scope.filters.operation_sid === 2 ? 1 : $scope.filters.operation_sid);
