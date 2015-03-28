@@ -1,5 +1,5 @@
-app.controller('ContentController', ['$scope', '$location', '$http', '$timeout', '$rootScope', 'MarkersFactory', 'FiltersFactory', 'LoadedValues',
-    function($scope, $location, $http, $timeout, $rootScope, MarkersFactory, FiltersFactory, LoadedValues) {
+app.controller('ContentController', ['$scope', '$location', '$http', '$timeout', '$rootScope', '$route', 'MarkersFactory', 'FiltersFactory', 'LoadedValues',
+    function($scope, $location, $http, $timeout, $rootScope, $route, MarkersFactory, FiltersFactory, LoadedValues) {
         "use strict";
 
 
@@ -23,6 +23,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
          * Слідкуємо за зміною фільтрів, оновлюємо урл та грузимо
          * дані в залежності від фільтрів
          **/
+        var blueWatchCount = 0;
         $scope.$watchCollection("filters.red", function(newValue, oldValue) {
             // Якщо для цієї панелі ще не було обрано тип нерухомості
             // то створюємо фільтри для неї за типом
@@ -74,19 +75,26 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
             $scope.filters = FiltersFactory.getFilters();
 
             LoadedValues.filters.parsed = true;
-            initializeMap();
+
+            $scope.$on("$routeChangeSuccess", function() {
+                onceInitMap();
+            });
         };
 
 
 
+
+        var onceInitMap = _.once(initializeMap);
         function initializeMap() {
 
             // якщо з головної приходить вюпорт в локалстор
             var bounds = {},
                 tempViewportFromHomePage,
-                searchParameters = $location.search();
+                zoom    = $route.current.params.zoom    || $scope.filters.z,
+                latLng  = $route.current.params.latLng  || $scope.filters.l;
 
-            if (!searchParameters['l'] && localStorage._tempViewportFromHomePage) {
+
+            if (localStorage._tempViewportFromHomePage) {
                 tempViewportFromHomePage = localStorage._tempViewportFromHomePage;
 
                 var c = tempViewportFromHomePage.replace( /[\s()]/g, '' ).split( ','),
@@ -110,8 +118,8 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
             if (tempViewportFromHomePage) {
                 map.fitBounds(bounds);
             } else {
-                map.panTo(new google.maps.LatLng($scope.filters.map.l.split(",")[0], $scope.filters.map.l.split(",")[1]));
-                map.setZoom(parseInt($scope.filters.map.z));
+                map.panTo(new google.maps.LatLng(latLng.split(",")[0], latLng.split(",")[1]));
+                map.setZoom(parseInt(zoom));
             }
 
 
@@ -127,7 +135,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
                 $scope.filters.map.l = map.getCenter().toUrlValue();
                 $scope.filters.map.v = map.getBounds();
 
-                FiltersFactory.updateUrlFromFilters($scope.filters.map);
+                FiltersFactory.updateMapParametersInUrl();
 
                 LoadedValues.map.loaded = true;
 
@@ -180,7 +188,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
                     if(!$scope.$$phase)
                         $scope.$apply();
 
-                    FiltersFactory.updateUrlFromFilters($scope.filters.map);
+                    FiltersFactory.updateMapParametersInUrl();
                 });
             });
         };
@@ -249,10 +257,41 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
         }
 
 
+
+        var uniqueMarkers = {
+            red:    {},
+            blue:   {},
+            green:  {},
+            yellow: {}
+        };
+        function intersectionMarkers(data) {
+            for (var s_panel in data) {
+                for (var s_marker in data[s_panel]) {
+                    if (!uniqueMarkers[s_panel][s_marker]) {
+                        uniqueMarkers[s_panel][s_marker] = data[s_panel][s_marker];
+                        console.log("push")
+                    }
+                }
+            }
+            for (var u_panel in uniqueMarkers) {
+                for (var u_marker in uniqueMarkers[u_panel]) {
+                    if (!data[u_panel][u_marker]) {
+                        delete uniqueMarkers[u_panel][u_marker];
+                        console.log("delete")
+                    }
+                }
+            }
+            console.log(uniqueMarkers)
+            return uniqueMarkers;
+        }
+
+
         /**
          * Функція яка розставляє маркери
          */
         function placeMarkers(data) {
+            data = intersectionMarkers(data);
+
             for (var panel in data) {
                 if (data.hasOwnProperty(panel)) {
                     for (var marker in markers[panel]) {
@@ -264,7 +303,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
 
                                 if (marker1.type !== "pie-marker")
                                     google.maps.event.addListener(marker1, 'click', function() {
-                                        $location.path("/publication/" + marker1.tid + ":" + marker1.id);
+                                        $location.path("/" + $scope.filters.map.l + "/" + $scope.filters.map.z + "/publication/" + marker1.tid + ":" + marker1.id + "/");
 
                                         if (!$scope.$$phase)
                                             $scope.$apply();

@@ -1,5 +1,5 @@
-app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies',
-    function($scope, $timeout, $http, $cookies) {
+app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'base64',
+    function($scope, $timeout, $http, $cookies, base64) {
         "use strict";
 
         $scope.user = {
@@ -170,6 +170,7 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies',
         /**
          * Формування фільтрів в урл та переадресація на сторінку пошука
          **/
+        // todo: need fix
         $scope.search = function() {
             geocode($scope.filters.city);
 
@@ -177,21 +178,18 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies',
                 $scope.errors.badRegion = true;
                 return false;
             } else {
-                var searchString =
-                    "map/#!/?c=" + $scope.filters.city +
+                var path = "map/#!/" + ($scope.map.latLng ? $scope.map.latLng + "/" + $scope.map.zoom : '48.455935,34.41285/6/') + "search/?";
+                var searchString = "c=" + $scope.filters.city +
                     "&r_t_sid="  + $scope.filters.type_sid +
                     "&r_op_sid=" + ($scope.filters.operation_sid === 2 ? 1 : $scope.filters.operation_sid);
-
-                if ($scope.map.latLng) {
-                    searchString += "&l=" + $scope.map.latLng;
-                    searchString += "&z=" + $scope.map.zoom;
-                }
 
                 if ($scope.filters.period_sid) {
                     searchString += "&r_pr_sid=" + $scope.filters.period_sid;
                 }
 
-                window.location = window.location.href + searchString;
+                console.log(window.location.href + path + searchString)
+                console.log(window.location.href + path + base64.urlencode(searchString))
+                //window.location = window.location.href + path + base64.urlencode(searchString);
             }
         };
 

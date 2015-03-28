@@ -1,7 +1,12 @@
-app.controller('AppController', ['$scope', '$rootScope', '$location', '$cookies', '$routeParams', 'TXT', 'ROUTES',
-    function($scope, $rootScope, $location, $cookies, $routeParams, TXT, ROUTES) {
+app.controller('AppController', ['$scope', '$rootScope', '$location', '$cookies', '$routeParams', '$route', 'TXT', 'ROUTES',
+    function($scope, $rootScope, $location, $cookies, $routeParams, $route, TXT, ROUTES) {
         'use strict';
 
+        var latLngAndZoom = '',
+            params = '';
+
+        $rootScope.latLngAndZoom = '';
+        $rootScope.searchUrlPart = '';
         $rootScope.currencyTypes = [{
             id: 0,
             name: "USD",
@@ -26,7 +31,6 @@ app.controller('AppController', ['$scope', '$rootScope', '$location', '$cookies'
         };
 
 
-
         /**
          * При закритті діалога додає параметри пошука в урл
          **/
@@ -34,7 +38,7 @@ app.controller('AppController', ['$scope', '$rootScope', '$location', '$cookies'
             angular.element("body").removeClass("modal-open");
             angular.element(".modal-backdrop").remove();
 
-            $location.path(ROUTES.SEARCH.URL);
+            $location.url($rootScope.latLngAndZoom + "/search/" + $rootScope.searchUrlPart );
 
             if(!$scope.$$phase) {
                 $scope.$apply();
@@ -46,19 +50,13 @@ app.controller('AppController', ['$scope', '$rootScope', '$location', '$cookies'
         /**
          * Логіка підставлення в урл параметрів пошука
          **/
-        $scope.$on("$routeChangeSuccess", function() {
-            $scope.urlFiltersPart = $location.url()
-                .replace(ROUTES.REGISTRATION.URL, "")
-                .replace(ROUTES.RESTORE_ACCESS.URL, "")
-                .replace(ROUTES.LOGIN.URL, "")
-                .replace(ROUTES.SEARCH.URL, "")
-                .replace("/publication/" + $routeParams.id, "");
+        $scope.$on("$routeChangeSuccess", function(event, next, current) {
+            params = $route.current.params;
+
+            $rootScope.latLngAndZoom = "/" + params.latLng + "/" + params.zoom;
+            $rootScope.searchUrlPart = "?" + _.keys($location.search())[0];
 
             angular.element(".modal-backdrop").remove();
-
-            if ($location.path() === ROUTES.SEARCH.URL) {
-                $rootScope.pageTitle = TXT.SERVICE_NAME;
-            }
         });
 
 
@@ -68,19 +66,20 @@ app.controller('AppController', ['$scope', '$rootScope', '$location', '$cookies'
          * якщо юзер уже залогінений
          **/
         $scope.$on("$locationChangeStart", function(event, next, current) {
-            if (!$cookies.sessionid) {
-                return;
-            }
+            // todo: fix this
+            //if (!$cookies.sessionid) {
+            //    return;
+            //}
 
-            if (next.indexOf(ROUTES.REGISTRATION.URL)   != -1 ||
-                next.indexOf(ROUTES.LOGIN.URL)          != -1 ||
-                next.indexOf(ROUTES.RESTORE_ACCESS.URL) != -1) {
-                $location.path(ROUTES.SEARCH.URL + $scope.urlFiltersPart);
-
-                if(!$scope.$$phase) {
-                    $scope.$apply();
-                }
-            }
+            //if (next.indexOf(ROUTES.REGISTRATION.URL)   != -1 ||
+            //    next.indexOf(ROUTES.LOGIN.URL)          != -1 ||
+            //    next.indexOf(ROUTES.RESTORE_ACCESS.URL) != -1) {
+            //    $location.path(ROUTES.SEARCH.URL + $scope.urlFiltersPart);
+            //
+            //    if(!$scope.$$phase) {
+            //        $scope.$apply();
+            //    }
+            //}
         });
     }
 ]);
