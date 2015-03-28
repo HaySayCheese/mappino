@@ -4,9 +4,9 @@
         <div class="sidebar-header-links" ng-show="!userName || userName === ''">
             <a ng-href="/cabinet/#!/publications/all?cp">Подать обьявление</a>
             <span class="text-muted">&#8226;</span>
-            <a ng-href="#!/account/registration">Регистрация</a>
+            <a ng-href="#![[ latLngAndZoom ]]/account/registration/[[ searchUrlPart ]]">Регистрация</a>
             <span class="text-muted">&#8226;</span>
-            <a ng-href="#!/account/login[[ urlFiltersPart ]]">Войти</a>
+            <a ng-href="#![[ latLngAndZoom ]]/account/login/[[ searchUrlPart ]]">Войти</a>
         </div>
 
         <div class="sidebar-header-links" ng-show="userName && userName !== ''">
@@ -17,7 +17,7 @@
             <a href ng-click="logoutUser()">Выйти</a>
         </div>
 
-        <div class="sidebar-header-city-search" ng-init="initializeAutocomplete()">
+        <div class="sidebar-header-city-search">
             <input id="sidebar-city-input" type="text" placeholder="Введите местоположение" class="form-control sidebar-city-input input-lg text-center" ng-model="filters.map.c">
         </div>
     </div>

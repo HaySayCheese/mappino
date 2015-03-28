@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="Mappino">
+<html ng-app="Mappino" ng-controller="AppController">
 <head>
     <title ng-bind="pageTitle"></title>
     <link rel="author" href="/humans.txt" />
@@ -30,6 +30,7 @@
         <script type="text/javascript" src="{{ static }}js/libs/angular-notifier.min.js"></script>
         <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select-1.5.4.min.js"></script>
         <script type="text/javascript" src="{{ static }}js/libs/perfect-scrollbar-0.4.10.min.js"></script>
+        <script type="text/javascript" src="{{ static }}js/libs/angular-utf8-base64.min.js"></script>
 
         <script type="text/javascript" src="{{ static }}js/libs/utils/fmt.js"></script>
         <script type="text/javascript" src="{{ static }}js/libs/b.map-zoom-control.js"></script>
@@ -45,7 +46,7 @@
         ga('send', 'pageview');
     </script>
 </head>
-<body ng-controller="AppController">
+<body>
 
     <div class="wrapper" ng-controller="ContentController" ng-init="runApplication()">
 
@@ -88,10 +89,12 @@
         <script type="text/javascript" src="{{ static }}js/main/services/router.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/services/queries.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/main/factories/uuid-generator-factory.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/factories/markers-factory.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/factories/account-factory.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/factories/publication-types-factory.js"></script>
+        <script type="text/javascript" src="{{ static }}js/main/factories/operation-types-factory.js"></script>
+        <script type="text/javascript" src="{{ static }}js/main/factories/currency-types-factory.js"></script>
+        <script type="text/javascript" src="{{ static }}js/main/factories/rent-types-factory.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/factories/filters-factory.js"></script>
 
         <script type="text/javascript" src="{{ static }}js/main/controllers/app-controller.js"></script>
@@ -101,7 +104,7 @@
         <script type="text/javascript" src="{{ static }}js/main/controllers/registration-controller.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/controllers/restore-access-controller.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/controllers/publication-view-controller.js"></script>
-}
+
         <script type="text/javascript" src="{{ static }}js/main/directives/allowOnlyNumber.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/directives/allowOnlyNumberWithoutDot.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/directives/selectpicker-directive.js"></script>

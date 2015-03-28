@@ -1,10 +1,15 @@
-app.controller('SidebarController', ['$scope', '$cookies', '$location', '$timeout', 'Account', 'PublicationTypesFactory', 'FiltersFactory', 'LoadedValues',
-    function($scope, $cookies, $location, $timeout, Account, PublicationTypesFactory, FiltersFactory, LoadedValues) {
+app.controller('SidebarController', ['$scope', '$cookies', '$timeout', 'Account', 'PublicationTypesFactory',
+    'OperationTypesFactory', 'CurrencyTypesFactory', 'RentTypesFactory', 'FiltersFactory', 'LoadedValues',
+    function($scope, $cookies, $timeout, Account, PublicationTypesFactory, OperationTypesFactory,
+             CurrencyTypesFactory, RentTypesFactory, FiltersFactory, LoadedValues) {
         'use strict';
 
 
         $scope.userName = "";
         $scope.publicationTypes         = PublicationTypesFactory.getPublicationTypes();
+        $scope.operationTypes           = OperationTypesFactory.getOperationTypes();
+        $scope.currencyTypes            = CurrencyTypesFactory.getCurrencyTypes();
+        $scope.rentTypes                = RentTypesFactory.getRentTypes();
         $scope.sidebarTemplateUrl       = FiltersFactory.getSidebarTemplateUrl();
         $scope.sidebarTemplateLoaded    = LoadedValues.sidebar.templates;
         $scope.filtersParsed            = LoadedValues.filters.parsed;
