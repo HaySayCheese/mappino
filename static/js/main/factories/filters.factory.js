@@ -160,8 +160,6 @@ app.factory('FiltersFactory', ['$rootScope', '$location', '$route', 'base64', 'P
                     }
 
                     searchParameters = _.object(keys, values);
-                    console.log($location.search());
-                    console.log(searchParameters);
                 }
                 /* кінець дешифратора :) */
 
