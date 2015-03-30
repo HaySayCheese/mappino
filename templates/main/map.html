@@ -80,6 +80,11 @@
 
 
     {% compress js %}
+        <script type="text/javascript" src="{{ static }}js/_modules/binno/utils/angular/directives/perfect-scrollbar.directive.js"></script>
+        <script type="text/javascript" src="{{ static }}js/_modules/binno/utils/angular/directives/selectpicker.directive.js"></script>
+        <script type="text/javascript" src="{{ static }}js/_modules/binno/utils/angular/directives/allow-only-number.directive.js"></script>
+
+
         <script type="text/javascript" src="{{ static }}js/main/app.js"></script>
 
         <script type="text/javascript" src="{{ static }}js/main/configs/values.js"></script>
@@ -105,11 +110,7 @@
         <script type="text/javascript" src="{{ static }}js/main/controllers/restore-access-controller.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/controllers/publication-view-controller.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/main/directives/allowOnlyNumber.js"></script>
-        <script type="text/javascript" src="{{ static }}js/main/directives/allowOnlyNumberWithoutDot.js"></script>
-        <script type="text/javascript" src="{{ static }}js/main/directives/selectpicker-directive.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/directives/map-change-language-directive.js"></script>
-        <script type="text/javascript" src="{{ static }}js/main/directives/perfect-scrollbar-directive.js"></script>
     {% endcompress %}
 </body>
 </html>

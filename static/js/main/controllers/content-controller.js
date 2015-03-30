@@ -76,18 +76,8 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
 
             LoadedValues.filters.parsed = true;
 
-            $scope.$on("$routeChangeSuccess", function() {
-                onceInitMapAndAutocomplete();
-            });
-        };
-
-
-
-
-        var onceInitMapAndAutocomplete = _.once(function() {
             initializeMap();
-            initializeAutocomplete();
-        });
+        };
 
 
 
@@ -155,7 +145,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
         }
 
 
-        function initializeAutocomplete() {
+        $scope.initializeAutocomplete = function() {
             $timeout(function() {
                 cityInput       = document.getElementById('sidebar-city-input');
                 autocomplete    = new google.maps.places.Autocomplete(cityInput, autocompleteOptions);
@@ -198,8 +188,8 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
 
                     FiltersFactory.updateMapParametersInUrl();
                 });
-            });
-        }
+            }, 1000);
+        };
 
 
         /**

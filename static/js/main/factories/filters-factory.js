@@ -162,6 +162,7 @@ app.factory('FiltersFactory', ['$location', '$route', 'base64', 'PublicationType
                     searchParameters = _.object(keys, values);
                 }
                 /* кінець дешифратора :) */
+                console.log(searchParameters);
 
 
                 for (var key in searchParameters) {

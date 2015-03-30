@@ -15,7 +15,7 @@ app.controller('AppController', ['$scope', '$rootScope', '$location', '$cookies'
             angular.element("body").removeClass("modal-open");
             angular.element(".modal-backdrop").remove();
 
-            $location.url($rootScope.latLngAndZoom + "/search/" + $rootScope.searchUrlPart );
+            $location.url($rootScope.latLngAndZoom + "/search/" + ($rootScope.searchUrlPart ? $rootScope.searchUrlPart : ''));
 
             if(!$scope.$$phase) {
                 $scope.$apply();
@@ -34,6 +34,8 @@ app.controller('AppController', ['$scope', '$rootScope', '$location', '$cookies'
             $rootScope.searchUrlPart = "?" + _.keys($location.search())[0];
 
             angular.element(".modal-backdrop").remove();
+
+            $rootScope.pageTitle = TXT.SERVICE_NAME;
         });
 
 

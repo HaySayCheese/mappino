@@ -1,12 +1,12 @@
 # coding=utf-8
 import os
-from psycopg2cffi import compat
+#from psycopg2cffi import compat
 from mappino import passwords
 
 
 
 # cffi hook (needed by pypy)
-compat.register()
+#compat.register()
 
 
 DEBUG = True
@@ -23,8 +23,6 @@ MANAGERS = (
 SUPPORT_EMAIL =  MANAGERS[0][1]
 BILLING_MANAGER_EMAIL = MANAGERS[0][1]
 
-
-HUL1_PUBLIC_IP = '128.199.59.244'
 
 DATABASES = {
     'default': {
@@ -49,29 +47,29 @@ DATABASE_ROUTERS = ['core.database_router.Router', ]
 
 REDIS_DATABASES = {
     'throttle': {
-        'HOST': HUL1_PUBLIC_IP,
-        'PORT': 6380, # the real port is 6379, 6380 is set for dev
+        'HOST': 'm.e1.binno.com.ua',
+        'PORT': 6379,
     },
     'steady': {
-        'HOST': HUL1_PUBLIC_IP,
-        'PORT': 6380,
+        'HOST': 'm.e1.binno.com.ua',
+        'PORT': 6379,
     },
     'cache': {
-        'HOST': HUL1_PUBLIC_IP,
-        'PORT': 6380,
+        'HOST': 'm.e1.binno.com.ua',
+        'PORT': 6379,
     },
     'celery': {
-        'HOST': HUL1_PUBLIC_IP,
-        'PORT': 6380,
+        'HOST': 'm.e1.binno.com.ua',
+        'PORT': 6379,
     },
 }
 
 
 SPHINX_SEARCH_DATABASE = {
-    'HOST': HUL1_PUBLIC_IP,
-    'PORT': 9307 # the real port is 9306. 9307 is set for dev suite.
+    'HOST': '95.85.40.162',
+    'PORT': 9306
 }
-ENABLE_SPHINX_SEARCH = True
+ENABLE_SPHINX_SEARCH = not DEBUG
 
 
 CACHES = {

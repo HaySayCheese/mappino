@@ -1,13 +1,16 @@
-app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'base64',
-    function($scope, $timeout, $http, $cookies, base64) {
+app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'base64', 'UserService',
+    function($scope, $timeout, $http, $cookies, base64, UserService) {
         "use strict";
 
-        $scope.user = {
-            name: ''
-        };
+        UserService.checkIfLoginIn(function() {
+            $scope.user = {
+                name: UserService.getUserName()
+            };
+        });
+
         $scope.map = {
-            zoom: 15,
-            latLng: ''
+            zoom: 6,
+            latLng: '48.455935,34.41285'
         };
         $scope.filters = {
             city:           '',
@@ -19,9 +22,7 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
             badRegion: false
         };
 
-        var imgHolder   = $('.img-holder'),
-            citySelect  = $(".type-selectpicker"),
-            cityInput   = document.getElementById('home-location-autocomplete'),
+        var cityInput   = document.getElementById('home-location-autocomplete'),
             cityAutocomplete = new google.maps.places.Autocomplete(cityInput, {
                 componentRestrictions: {
                     country: "ua"
@@ -29,10 +30,6 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
             }),
             geocoder = new google.maps.Geocoder();
 
-
-
-        initPlugins();
-        checkIfTheUserIsAuthorized();
 
 
         /**
@@ -66,45 +63,12 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
 
 
         /**
-         * Дивимся за кукою сесії, якщо вона є то
-         * берем куку з іменем юзера якщо і вона є
-         **/
-        $scope.$watch(function() {
-            return $cookies.sessionid;
-        }, function(value) {
-            if (sessionStorage.userName) {
-                $scope.user.name = sessionStorage.userName;
-            }
-            if (!$cookies.sessionid) {
-                delete sessionStorage.userName;
-
-            }
-        });
-
-
-
-        /**
-         * Дивимся за параметром в сесії з іменем юзера,
-         * якщо її нема то видаляєм куку сесії
-         **/
-        $scope.$watch(function() {
-            return sessionStorage.userName;
-        }, function(value) {
-            if (value) {
-                $scope.user.name = sessionStorage.userName;
-            } else {
-                $scope.user.name = "";
-                delete $cookies.sessionid;
-            }
-        });
-
-
-
-        /**
          * Підганяємо першу картінку на сторінці по висоті вікна
          **/
         $(window).on('resize', function() {
-            $('.img-holder.top').css('height', $(window).height() + 'px');
+            if ($(window).height() > 500) {
+                $('.img-holder.top').css('height', $(window).height() + 'px');
+            }
         }).resize();
 
 
@@ -130,28 +94,13 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
 
 
         /**
-         * Перевіряємо чи користувач уже авторизований на сайті
-         **/
-        function checkIfTheUserIsAuthorized() {
-            $http.get('/ajax/api/accounts/on-login-info/')
-                .success(function(data) {
-                    sessionStorage.userName = data.user.name + " " + data.user.surname;
-                    $scope.user.name = sessionStorage.userName;
-                })
-                .error(function() {
-                    $scope.user.name = "";
-                    delete $cookies.sessionid;
-                });
-        }
-
-
-
-        /**
          * Логаут користувача
          **/
         $scope.logout = function(e) {
-            $http.post('/ajax/api/accounts/logout/').success(function() {
-                delete $cookies.sessionid;
+            UserService.logoutUser(function() {
+                $scope.user = {
+                    name: UserService.getUserName()
+                };
             });
             event.preventDefault();
         };
@@ -230,20 +179,6 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
                 } else {
                     $scope.errors.badRegion = true;
                 }
-            });
-        }
-
-
-
-        function initPlugins() {
-            $timeout(function() {
-                imgHolder.imageScroll({
-                    container: $('.wrapper'),
-                    touch: Modernizr.touch
-                });
-                citySelect.selectpicker({
-                    style: 'btn-default btn-lg'
-                });
             });
         }
     }
