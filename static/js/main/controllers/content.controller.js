@@ -130,8 +130,9 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
 
                 loadData(false);
 
-                if(!$scope.$$phase)
+                if(!$scope.$$phase) {
                     $scope.$apply();
+                }
             });
         }
 
@@ -147,6 +148,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
                 // Евент вибору елемента в автокомпліті
                 google.maps.event.addListener(autocomplete, 'place_changed', function() {
                     var place = autocomplete.getPlace();
+
                     if (!place.geometry) {
                         return;
                     }
@@ -175,8 +177,9 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
                         }
                     }, 0);
 
-                    if(!$scope.$$phase)
+                    if(!$scope.$$phase) {
                         $scope.$apply();
+                    }
 
                     FiltersFactory.updateUrlFromFilters();
                 });
@@ -280,6 +283,5 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
                 }
             }
         }
-
     }
 ]);
