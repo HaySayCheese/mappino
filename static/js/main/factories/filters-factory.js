@@ -3,8 +3,8 @@
  *
  * todo: write description here
  **/
-app.factory('FiltersFactory', ['$location', '$route', 'base64', 'PublicationTypesFactory',
-    function($location, $route, base64, PublicationTypesFactory) {
+app.factory('FiltersFactory', ['$rootScope', '$location', '$route', 'base64', 'PublicationTypesFactory',
+    function($rootScope, $location, $route, base64, PublicationTypesFactory) {
         "use strict";
 
         var filters = {
@@ -144,13 +144,13 @@ app.factory('FiltersFactory', ['$location', '$route', 'base64', 'PublicationType
              * FiltersFactory.updateFiltersFromUrl();
              **/
             updateFiltersFromUrl: function() {
-                var searchParameters = '';
+                var searchParameters = $location.search();
 
                 /* Дешифруємо фільтри з урла */
                 if (_.keys($location.search()).length !== 0) {
                     var encodedString   = base64.urldecode(_.keys($location.search())[0]),
-                        formattedString = encodedString.replace(/&/g, ",").replace(/=/g, ":"),
-                        formattedArray  = formattedString.split(',');
+                        formattedString = encodedString.replace(/&/g, ";").replace(/=/g, ":"),
+                        formattedArray  = formattedString.split(';');
                     var keys = [],
                         values = [];
 
@@ -160,9 +160,11 @@ app.factory('FiltersFactory', ['$location', '$route', 'base64', 'PublicationType
                     }
 
                     searchParameters = _.object(keys, values);
+                    console.log($location.search());
+                    console.log(searchParameters);
                 }
                 /* кінець дешифратора :) */
-                console.log(searchParameters);
+
 
 
                 for (var key in searchParameters) {
@@ -198,7 +200,7 @@ app.factory('FiltersFactory', ['$location', '$route', 'base64', 'PublicationType
                             filters.yellow[key] = searchParameters[key];
                         }
 
-                        if (_.include(['c'], key)) {
+                        if (_.include(['c', 'l', 'z'], key)) {
                             filters.map[key] = searchParameters[key];
                         }
                     }
@@ -271,7 +273,7 @@ app.factory('FiltersFactory', ['$location', '$route', 'base64', 'PublicationType
                             // якщо фільтер пустий і цей фільтр є zoom/latLng/viewport то не пишемо його в параметри
                             // тому що ці фільтри треба писати в $routeParams а не $location.search()
                             // а якщо не пустий і відрізняється від стандарного то пишем в $location.search()
-                            if (_.include(['', null], filters[filtersObject][filter]) || _.include(['z', 'l', 'v'], filter)) {
+                            if (_.include(['', null], filters[filtersObject][filter]) || _.include(['v'], filter)) {
                                 // todo: причесати
                             } else if (filters[filtersObject][filter] !== filters.base[filter.substr(2, filter.length)]) {
                                 searchParameters += (searchParameters.length !== 0 ? '&' : '') + filter + '=' + filters[filtersObject][filter];
@@ -281,22 +283,8 @@ app.factory('FiltersFactory', ['$location', '$route', 'base64', 'PublicationType
                 }
 
                 //$location.search(searchParameters);
+                $rootScope.searchUrlPart = base64.urlencode(searchParameters);
                 $location.search(base64.urlencode(searchParameters));
-            },
-
-
-
-            /**
-             * @description Update url map parameters (latLng and zoom)
-             *
-             * @example
-             * FiltersFactory.updateMapParametersInUrl();
-             **/
-            updateMapParametersInUrl: function() {
-                $route.updateParams({
-                    zoom:   filters.map.z,
-                    latLng: filters.map.l
-                });
             },
 
 

@@ -19,11 +19,11 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
             requestTimeoutTime = 1500;
 
 
+
         /**
          * Слідкуємо за зміною фільтрів, оновлюємо урл та грузимо
          * дані в залежності від фільтрів
          **/
-        var blueWatchCount = 0;
         $scope.$watchCollection("filters.red", function(newValue, oldValue) {
             // Якщо для цієї панелі ще не було обрано тип нерухомості
             // то створюємо фільтри для неї за типом
@@ -62,12 +62,9 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
             FiltersFactory.updateUrlFromFilters(newValue);
             loadData(true);
         });
-
         $scope.$watchCollection('status', function() {
             $rootScope.$broadcast('updatePerfectScrollbar');
         });
-
-
 
 
         $scope.runApplication = function() {
@@ -84,13 +81,8 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
         function initializeMap() {
             var zoom    = $scope.filters.map.z,
                 latLng  = $scope.filters.map.l,
-                bounds = {},
+                bounds  = {},
                 tempViewportFromHomePage;
-
-            if ($route.current && $route.current.params.zoom && $route.current.params.latLng) {
-                zoom    = $route.current.params.zoom;
-                latLng  = $route.current.params.latLng;
-            }
 
 
             if (localStorage._tempViewportFromHomePage) {
@@ -121,7 +113,6 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
             }
 
 
-
             /* b-zoom-control */
             var zoomControlDiv  = document.createElement('div'),
                 zoomControl     = new BMapZoomControl(zoomControlDiv, map, 'LEFT_BOTTOM');
@@ -133,7 +124,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
                 $scope.filters.map.l = map.getCenter().toUrlValue();
                 $scope.filters.map.v = map.getBounds();
 
-                FiltersFactory.updateMapParametersInUrl();
+                FiltersFactory.updateUrlFromFilters();
 
                 LoadedValues.map.loaded = true;
 
@@ -143,6 +134,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
                     $scope.$apply();
             });
         }
+
 
 
         $scope.initializeAutocomplete = function() {
@@ -186,7 +178,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
                     if(!$scope.$$phase)
                         $scope.$apply();
 
-                    FiltersFactory.updateMapParametersInUrl();
+                    FiltersFactory.updateUrlFromFilters();
                 });
             }, 1000);
         };
@@ -271,7 +263,7 @@ app.controller('ContentController', ['$scope', '$location', '$http', '$timeout',
 
                                 if (marker1.type !== "pie-marker")
                                     google.maps.event.addListener(marker1, 'click', function() {
-                                        $location.path("/" + $scope.filters.map.l + "/" + $scope.filters.map.z + "/publication/" + marker1.tid + ":" + marker1.id + "/");
+                                        $location.path("/publication/" + marker1.tid + ":" + marker1.id + "/");
 
                                         if (!$scope.$$phase)
                                             $scope.$apply();

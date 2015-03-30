@@ -36,7 +36,8 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
          * autocomplete 'place_changed' event handler
          **/
         google.maps.event.addListener(cityAutocomplete, 'place_changed', function() {
-            geocode(cityAutocomplete.getPlace());
+            var place = cityAutocomplete.getPlace();
+            geocode(place);
         });
 
 
@@ -127,8 +128,10 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
                 $scope.errors.badRegion = true;
                 return false;
             } else {
-                var path = "map/#!/" + ($scope.map.latLng ? $scope.map.latLng + "/" + $scope.map.zoom : '48.455935,34.41285/6') + "/search/?";
+                var path = "map/#!/search/?";
                 var searchString = "c=" + $scope.filters.city +
+                    "&z=15" +
+                    "&l=" +  $scope.map.latLng +
                     "&r_t_sid="  + $scope.filters.type_sid +
                     "&r_op_sid=" + ($scope.filters.operation_sid === 2 ? 1 : $scope.filters.operation_sid);
 
@@ -137,6 +140,7 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
                 }
 
                 window.location = window.location.href + path + base64.urlencode(searchString);
+                //window.location = window.location.href + searchString;
             }
         };
 

@@ -8,7 +8,7 @@ app.constant('ROUTES', (function () {
 
     return {
         'SEARCH': {
-            'URL':      '/:latLng/:zoom/search/',
+            'URL':      '/search/',
             'TEMPLATE': '/ajax/template/main/search/'
         },
 
@@ -18,22 +18,22 @@ app.constant('ROUTES', (function () {
         },
 
         'LOGIN': {
-            'URL':      '/:latLng/:zoom/account/login/',
+            'URL':      '/account/login/',
             'TEMPLATE': '/ajax/template/main/accounts/login/'
         },
 
         'REGISTRATION': {
-            'URL':      '/:latLng/:zoom/account/registration/',
+            'URL':      '/account/registration/',
             'TEMPLATE': '/ajax/template/main/accounts/registration/'
         },
 
         'RESTORE_ACCESS': {
-            'URL':      '/:latLng/:zoom/account/restore-access/',
+            'URL':      '/account/restore-access/',
             'TEMPLATE': '/ajax/template/main/accounts/access-restore/'
         },
 
         'PUBLICATION': {
-            'URL':      '/:latLng/:zoom/publication/:id/',
+            'URL':      '/publication/:id/',
             'TEMPLATE': '/ajax/template/main/detailed-dialog/'
         }
     };

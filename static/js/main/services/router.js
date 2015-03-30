@@ -40,6 +40,6 @@ app.config(['$routeProvider', 'ROUTES', function($routeProvider, ROUTES) {
         })
 
         .otherwise({
-            redirectTo: '/48.455935,34.41285/6/search/'
+            redirectTo: ROUTES.SEARCH.URL
         });
 }]);

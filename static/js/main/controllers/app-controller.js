@@ -4,7 +4,6 @@ app.controller('AppController', ['$scope', '$rootScope', '$location', '$cookies'
 
         var params = '';
 
-        $rootScope.latLngAndZoom = '';
         $rootScope.searchUrlPart = '';
 
 
@@ -15,7 +14,16 @@ app.controller('AppController', ['$scope', '$rootScope', '$location', '$cookies'
             angular.element("body").removeClass("modal-open");
             angular.element(".modal-backdrop").remove();
 
-            $location.url($rootScope.latLngAndZoom + "/search/" + ($rootScope.searchUrlPart ? $rootScope.searchUrlPart : ''));
+            $location.path("/search/").search($rootScope.searchUrlPart);
+
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+
+
+        angular.element(document).on('show.bs.modal', function (e) {
+            $location.search($rootScope.searchUrlPart);
 
             if(!$scope.$$phase) {
                 $scope.$apply();
@@ -30,8 +38,7 @@ app.controller('AppController', ['$scope', '$rootScope', '$location', '$cookies'
         $scope.$on("$routeChangeSuccess", function(event, next, current) {
             params = $route.current.params;
 
-            $rootScope.latLngAndZoom = "/" + params.latLng + "/" + params.zoom;
-            $rootScope.searchUrlPart = "?" + _.keys($location.search())[0];
+            $rootScope.publicationIdPart = params.id;
 
             angular.element(".modal-backdrop").remove();
 
@@ -46,19 +53,19 @@ app.controller('AppController', ['$scope', '$rootScope', '$location', '$cookies'
          **/
         $scope.$on("$locationChangeStart", function(event, next, current) {
             // todo: fix this
-            //if (!$cookies.sessionid) {
-            //    return;
-            //}
+            if (!$cookies.sessionid) {
+                return;
+            }
 
-            //if (next.indexOf(ROUTES.REGISTRATION.URL)   != -1 ||
-            //    next.indexOf(ROUTES.LOGIN.URL)          != -1 ||
-            //    next.indexOf(ROUTES.RESTORE_ACCESS.URL) != -1) {
-            //    $location.path(ROUTES.SEARCH.URL + $scope.urlFiltersPart);
-            //
-            //    if(!$scope.$$phase) {
-            //        $scope.$apply();
-            //    }
-            //}
+            if (next.indexOf(ROUTES.REGISTRATION.URL)   != -1 ||
+                next.indexOf(ROUTES.LOGIN.URL)          != -1 ||
+                next.indexOf(ROUTES.RESTORE_ACCESS.URL) != -1) {
+                $location.path(ROUTES.SEARCH.URL + $scope.searchUrlPart);
+
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            }
         });
     }
 ]);
