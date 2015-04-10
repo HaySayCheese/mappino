@@ -13,10 +13,11 @@ app.controller('RegistrationController', ['$scope', '$rootScope', '$cookieStore'
         /**
          * Стан вікна реєстрації
          **/
-        if ($cookieStore.get("mcheck"))
+        if ($cookieStore.get("mcheck")) {
             $rootScope.registrationStatePart = "codeCheck";
-        else
+        } else {
             $rootScope.registrationStatePart = "registration";
+        }
     }
 ]);
 
@@ -27,8 +28,8 @@ app.controller('RegistrationController', ['$scope', '$rootScope', '$cookieStore'
 /**
  * Контроллер який відповідає за форму реєстрації
  **/
-app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies', 'Account',
-    function($scope, $rootScope, $cookies, Account) {
+app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies', 'Account', 'MAuthService',
+    function($scope, $rootScope, $cookies, Account, MAuthService) {
         "use strict";
 
         /**
@@ -48,10 +49,10 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
          * Колекція змінних полів
          **/
         $scope.user = {
-            name:  "",
-            surname:   "",
-            email: "",
-            phoneNumber: "",
+            name:           "",
+            surname:        "",
+            email:          "",
+            phoneNumber:    "",
             password:       "",
             passwordRepeat: ""
         };
@@ -74,7 +75,7 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
             tooltip.tooltip({
                 container: registrationModal.find(".modal-dialog"),
                 animation: false
-            })
+            });
         });
 
 
@@ -90,8 +91,9 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
          * Валідація пошти при вводі даних в поле
          **/
         $scope.$watch("user.email", function(newValue, oldValue) {
-            if (oldValue !== newValue)
+            if (oldValue !== newValue) {
                 validateEmail();
+            }
         });
 
 
@@ -99,8 +101,9 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
          * Валідація телефона при вводі даних в поле
          **/
         $scope.$watch("user.phoneNumber", function(newValue, oldValue) {
-            if (oldValue !== newValue)
+            if (oldValue !== newValue) {
                 validatePhone();
+            }
         });
 
 
@@ -124,19 +127,21 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
          * Клік по кнопці реєстрації
          **/
         $scope.submitRegistration = function() {
-
             $scope.showValidationMessages   = true;
             $scope.showValidationEmail      = true;
             $scope.showValidationPhone      = true;
 
-            if (!$scope.validated.email)
+            if (!$scope.validated.email) {
                 sendEmailToValidate();
+            }
 
-            if (!$scope.validated.phone)
+            if (!$scope.validated.phone) {
                 sendPhoneToValidate();
+            }
 
-            if ($scope.registrationForm.$valid)
+            if ($scope.registrationForm.$valid) {
                 registerUser();
+            }
         };
 
 
@@ -144,26 +149,32 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
          * Логіка валідації пошти
          **/
         function validateEmail() {
-
             $scope.registrationForm.email.$setValidity("free", true);
             $scope.registrationForm.email.$setValidity("email", true);
-
             $scope.registrationForm.email.$setValidity("isOk", false);
 
-            if (arguments[0])
-                var code = arguments[0];
 
-            if (!$scope.user.email && $scope.user.email === "")
+            var code = null;
+            if (arguments[0]) {
+                code = arguments[0];
+            }
+
+
+            if (!$scope.user.email && $scope.user.email === "") {
                 return;
+            }
 
-            if (code === 0)
+            if (code === 0) {
                 $scope.registrationForm.email.$setValidity("free", true);
+            }
 
-            if (code === 1)
+            if (code === 1) {
                 $scope.registrationForm.email.$setValidity("email", false);
+            }
 
-            if (code === 2)
+            if (code === 2) {
                 $scope.registrationForm.email.$setValidity("free", false);
+            }
 
             $scope.showValidationEmail = true;
         }
@@ -173,11 +184,11 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
          * Відправка пошти на валідацію
          **/
         function sendEmailToValidate() {
-
             $scope.registrationForm.email.$setValidity("isOk", false);
 
-            if (!$scope.user.email || $scope.user.email === "")
+            if (!$scope.user.email || $scope.user.email === "") {
                 return;
+            }
 
             $scope.validated.email = false;
 
@@ -197,30 +208,35 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
          * Логіка валідація телефона
          **/
         function validatePhone() {
-
             $scope.registrationForm.phoneNumber.$setValidity("free", true);
             $scope.registrationForm.phoneNumber.$setValidity("phone", true);
             $scope.registrationForm.phoneNumber.$setValidity("code", true);
-
             $scope.registrationForm.phoneNumber.$setValidity("isOk", false);
 
-            if (arguments[0])
-                var code = arguments[0];
+            var code = null;
+            if (arguments[0]) {
+                code = arguments[0];
+            }
 
-            if (!$scope.user.phoneNumber && $scope.user.phoneNumber === "")
+            if (!$scope.user.phoneNumber && $scope.user.phoneNumber === "") {
                 return;
+            }
 
-            if (code === 0)
+            if (code === 0) {
                 $scope.registrationForm.phoneNumber.$setValidity("free", true);
+            }
 
-            if (code === 1)
+            if (code === 1) {
                 $scope.registrationForm.phoneNumber.$setValidity("phone", false);
+            }
 
-            if (code === 2)
+            if (code === 2) {
                 $scope.registrationForm.phoneNumber.$setValidity("code", false);
+            }
 
-            if (code === 3)
+            if (code === 3) {
                 $scope.registrationForm.phoneNumber.$setValidity("free", false);
+            }
 
             $scope.showValidationPhone = true;
         }
@@ -230,11 +246,11 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
          * Відправка телефона на валідацію
          **/
         function sendPhoneToValidate() {
-
             $scope.registrationForm.phoneNumber.$setValidity("isOk", false);
 
-            if (!$scope.user.phoneNumber || $scope.user.phoneNumber === "")
+            if (!$scope.user.phoneNumber || $scope.user.phoneNumber === "") {
                 return;
+            }
 
             $scope.validated.phone = false;
 
@@ -254,10 +270,11 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
          * Валідація пароля
          **/
         function validatePassword() {
-            if ($scope.user.password != $scope.user.passwordRepeat && $scope.user.passwordRepeat.length)
+            if ($scope.user.password !== $scope.user.passwordRepeat && $scope.user.passwordRepeat.length) {
                 $scope.registrationForm.passwordRepeat.$setValidity("match", false);
-            else
+            } else {
                 $scope.registrationForm.passwordRepeat.$setValidity("match", true);
+            }
         }
 
 
@@ -265,13 +282,14 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
          * Функція відправки введених даних
          **/
         function registerUser() {
-
             registrationBtn.button('loading');
 
-            Account.register($scope.user, function(data) {
+            MAuthService.register($scope.user, function() {
                 registrationBtn.button('reset');
 
                 $rootScope.registrationStatePart = "codeCheck";
+            }, function() {
+                registrationBtn.button('reset');
             });
         }
     }

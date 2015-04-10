@@ -1,11 +1,11 @@
-app.controller('SidebarController', ['$scope', '$cookies', '$timeout', 'Account', 'PublicationTypesFactory',
-    'OperationTypesFactory', 'CurrencyTypesFactory', 'RentTypesFactory', 'FiltersFactory', 'LoadedValues',
-    function($scope, $cookies, $timeout, Account, PublicationTypesFactory, OperationTypesFactory,
-             CurrencyTypesFactory, RentTypesFactory, FiltersFactory, LoadedValues) {
+app.controller('SidebarController', ['$scope', '$cookies', '$timeout', 'PublicationTypesFactory',
+    'OperationTypesFactory', 'CurrencyTypesFactory', 'RentTypesFactory', 'FiltersFactory', 'LoadedValues', 'BAuthService',
+    function($scope, $cookies, $timeout, PublicationTypesFactory, OperationTypesFactory,
+             CurrencyTypesFactory, RentTypesFactory, FiltersFactory, LoadedValues, BAuthService) {
         'use strict';
 
 
-        $scope.userName = "";
+        $scope.userName                 = "";
         $scope.publicationTypes         = PublicationTypesFactory.getPublicationTypes();
         $scope.operationTypes           = OperationTypesFactory.getOperationTypes();
         $scope.currencyTypes            = CurrencyTypesFactory.getCurrencyTypes();
@@ -14,23 +14,20 @@ app.controller('SidebarController', ['$scope', '$cookies', '$timeout', 'Account'
         $scope.sidebarTemplateLoaded    = LoadedValues.sidebar.templates;
         $scope.filtersParsed            = LoadedValues.filters.parsed;
 
-        getUserName();
+
+
+        $scope.logoutUser = function() {
+            BAuthService.logout(function() {
+                $scope.userName = '';
+            });
+        };
 
 
 
-        /**
-         * Дивимся за кукою сесії, якщо вона є то
-         * берем куку з іменем юзера якщо і вона є
-         **/
-        $scope.$watch(function() {
-            return $cookies.sessionid;
-        }, function(newValue, oldValue) {
-
-            if (sessionStorage.userName)
-                $scope.userName = sessionStorage.userName;
-
-            if (!$cookies.sessionid)
-                delete sessionStorage.userName;
+        BAuthService.tryLogin(function(response) {
+            $scope.userName = response.fullName;
+        }, function() {
+            $scope.userName = '';
         });
 
 
@@ -42,39 +39,7 @@ app.controller('SidebarController', ['$scope', '$cookies', '$timeout', 'Account'
         $scope.$watch(function() {
             return sessionStorage.userName;
         }, function(newValue, oldValue) {
-            if (newValue)
-                $scope.userName = sessionStorage.userName;
-            else {
-                $scope.userName = "";
-                delete $cookies.sessionid;
-            }
+            $scope.userName = BAuthService.getUserName();
         });
-
-
-
-        /**
-         * Отримання імені користувача по кукі
-         **/
-        function getUserName() {
-            Account.getUserName(function(data) {
-                if (data !== "error") {
-                    sessionStorage.userName = data.user.name + " " + data.user.surname;
-                } else {
-                    $scope.userName = "";
-                    delete $cookies.sessionid;
-                }
-            });
-        }
-
-
-
-        /**
-         * Логаут юзера
-         **/
-        $scope.logoutUser = function() {
-            Account.logoutUser(function(data) {
-                $cookies.remove('sessionid');
-            });
-        };
     }
 ]);

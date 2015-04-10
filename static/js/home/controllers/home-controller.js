@@ -1,10 +1,10 @@
-app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'base64', 'UserService',
-    function($scope, $timeout, $http, $cookies, base64, UserService) {
+app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'base64', 'MAuthService',
+    function($scope, $timeout, $http, $cookies, base64, MAuthService) {
         "use strict";
 
-        UserService.checkIfLoginIn(function() {
+        MAuthService.tryLogin(function() {
             $scope.user = {
-                name: UserService.getUserName()
+                name: MAuthService.getUserName()
             };
         });
 
@@ -98,7 +98,7 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
          * Логаут користувача
          **/
         $scope.logout = function(e) {
-            UserService.logoutUser(function() {
+            UserService.logout(function() {
                 $scope.user = {
                     name: UserService.getUserName()
                 };
