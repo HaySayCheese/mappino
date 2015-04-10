@@ -1,4 +1,4 @@
-angular.module('binno.utils.angular.directives.allowOnlyNumber', [])
+angular.module('mappino.directives.allowOnlyNumber', [])
     .directive('allowOnlyNumber', function () {
         return function(scope, element, attrs) {
 

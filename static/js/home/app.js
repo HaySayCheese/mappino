@@ -1,12 +1,12 @@
-var app = app || angular.module("mappino.home", [
-            'ngCookies',
-            'ab-base64',
-            'binno.utils.angular.services.user',
+var app = angular.module("mappino.pages.home", [
+    'ngCookies',
+    'ab-base64',
 
-            'binno.utils.angular.directives.selectpicker',
-            'binno.utils.angular.directives.imageScroll'
-        ]
-    );
+    'mappino.services.auth',
+
+    'mappino.directives.selectpicker',
+    'mappino.directives.imageScroll'
+]);
 
 
 

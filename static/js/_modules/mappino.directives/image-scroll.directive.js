@@ -1,4 +1,4 @@
-angular.module('binno.utils.angular.directives.imageScroll', [])
+angular.module('mappino.directives.imageScroll', [])
     .directive('imageScroll', ['$timeout', function($timeout) {
         "use strict";
 

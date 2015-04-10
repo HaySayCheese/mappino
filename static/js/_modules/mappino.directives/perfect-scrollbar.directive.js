@@ -1,4 +1,4 @@
-angular.module('binno.utils.angular.directives.perfectScrollbar', [])
+angular.module('mappino.directives.perfectScrollbar', [])
     .directive('perfectScrollbar', ['$timeout', '$rootScope', function($timeout, $rootScope) {
         "use strict";
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="mappino.pages.home" ng-controller="HomeController">
 <head>
     <title>Добро пожаловать на mappino</title>
     <meta name="verify-reformal" content="a136a27e8d6dc3e9909629f0"/>
@@ -35,7 +35,7 @@
         ga('send', 'pageview');
     </script>
 </head>
-<body ng-app="mappino.home" ng-controller="HomeController">
+<body>
     <div class="wrapper">
 
         <div class="header-links">
@@ -294,10 +294,10 @@
     </div>
 
     {% compress js %}
-        <script type="text/javascript" src="{{ static }}js/_modules/binno/utils/angular/services/user.service.js"></script>
+        <script type="text/javascript" src="{{ static }}js/_modules/mappino.services/auth.service.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/_modules/binno/utils/angular/directives/image-scroll.directive.js"></script>
-        <script type="text/javascript" src="{{ static }}js/_modules/binno/utils/angular/directives/selectpicker.directive.js"></script>
+        <script type="text/javascript" src="{{ static }}js/_modules/mappino.directives/image-scroll.directive.js"></script>
+        <script type="text/javascript" src="{{ static }}js/_modules/mappino.directives/selectpicker.directive.js"></script>
 
 
 

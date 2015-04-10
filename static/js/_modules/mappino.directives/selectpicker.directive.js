@@ -1,4 +1,4 @@
-angular.module('binno.utils.angular.directives.selectpicker', [])
+angular.module('mappino.directives.selectpicker', [])
     .directive('selectpicker', ['$timeout', function($timeout) {
         "use strict";
 
