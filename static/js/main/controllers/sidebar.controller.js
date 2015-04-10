@@ -39,7 +39,7 @@ app.controller('SidebarController', ['$scope', '$cookies', '$timeout', 'Publicat
         $scope.$watch(function() {
             return sessionStorage.userName;
         }, function(newValue, oldValue) {
-            $scope.userName = BAuthService.getUserName();
+            $scope.userName = BAuthService.getUserParam('fullName');
         });
     }
 ]);

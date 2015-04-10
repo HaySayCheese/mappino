@@ -29,7 +29,6 @@ angular.module('mappino.services.auth', ['ngCookies']).
                     '3':        'Неверная пара логин - пароль'
                 },
                 'FATAL':        'Fatal login error',
-                'UNDEFINED':    'Undefined login error code',
                 'BAD_COOKIE':   'User cookie is bad'
             }
         };
@@ -42,14 +41,14 @@ angular.module('mappino.services.auth', ['ngCookies']).
              * @description
              *  Login user
              *
-             *  Call successCallback when user is logged and
+             *  Calls successCallback when user is logged and
              *  return formatted user object (name, surname and fullName)
-             *  by calling '_formattedUserObject(<response_user>)'
+             *  by calling '_formattedResponseUserObject(<response_user>)'
              *
-             *  Call errorCallback when response code !== 0 and
-             *  return message from:
+             *  Calls errorCallback when response code !== 0 and
+             *  returns message from:
              *  - 'ERRORS.LOGIN.CODES[<response_error_code>]' or
-             *  - 'ERRORS.LOGIN[<'FATAL'||'UNDEFINED'||'BAD_COOKIE'>]'
+             *  - 'ERRORS.LOGIN[<'FATAL'||'BAD_COOKIE'>]'
              *
              * @param {object} user                     - User object
              * @param {string} user.name                - User name
@@ -67,13 +66,13 @@ angular.module('mappino.services.auth', ['ngCookies']).
                     success(function(response) {
                         if (response.code === 0) {
                             that._saveInStorage(response.user);
-                            _.isFunction(successCallback) && successCallback(that._formattedUserObject(response.user));
+                            _.isFunction(successCallback) && successCallback(that._formattedResponseUserObject(response.user));
                         }
 
                         if (response.code !== 0) {
                             _.isFunction(errorCallback) && errorCallback({
                                 'code':     response.code,
-                                'message':  ERRORS.LOGIN.CODES[response.code] || ERRORS.LOGIN.UNDEFINED
+                                'message':  ERRORS.LOGIN.CODES[response.code]
                             });
                         }
                     }).
@@ -158,7 +157,7 @@ angular.module('mappino.services.auth', ['ngCookies']).
                 $http.get(URL.GET_USER_NAME).
                     success(function(response) {
                         that._saveInStorage(response.user);
-                        _.isFunction(successCallback) && successCallback(that._formattedUserObject(response.user));
+                        _.isFunction(successCallback) && successCallback(that._formattedResponseUserObject(response.user));
                     }).
                     error(function() {
                         that._removeFromStorage();
@@ -173,19 +172,28 @@ angular.module('mappino.services.auth', ['ngCookies']).
             /**
              * @public
              * @description
-             *  Returns user name from storage
+             *  Returns user object param value by param name from storage
              *
-             *  @returns {string} - User name
+             *  @param {string} param - Name of user param in storage (name, surname or fullName)
+             *
+             *  @returns {string} - Returns user param value by param name
              **/
-            getUserName: function() {
-                return localStorage.userName || sessionStorage.userName || null;
+            getUserParam: function(param) {
+                // todo: додати провірку по назві параметра
+                if (localStorage && localStorage.user) {
+                    return (JSON.parse(localStorage.user))[param];
+                } else if (sessionStorage && sessionStorage.user) {
+                    return (JSON.parse(sessionStorage.user))[param];
+                } else {
+                    return null;
+                }
             },
 
 
 
-            /***********************************
-             * All private methods starts here *
-             ***********************************/
+            /*********************************
+             * All private methods goes here *
+             *********************************/
 
             /**
              * @private
@@ -198,10 +206,10 @@ angular.module('mappino.services.auth', ['ngCookies']).
              **/
             _saveInStorage: function(user) {
                 if (sessionStorage) {
-                    sessionStorage.userName = user.name + " " + user.surname;
+                    sessionStorage.user = JSON.stringify(this._formattedResponseUserObject(user));
                 }
                 if (localStorage) {
-                    localStorage.userName = user.name + " " + user.surname;
+                    localStorage.user = JSON.stringify(this._formattedResponseUserObject(user));
                 }
             },
 
@@ -213,13 +221,14 @@ angular.module('mappino.services.auth', ['ngCookies']).
              *  Remove user name from local and session stores
              **/
             _removeFromStorage: function() {
-                if (sessionStorage.userName) {
-                    delete sessionStorage.userName;
-                }
-                if (localStorage.userName) {
-                    delete localStorage.userName;
-                }
                 $cookieStore.remove('sessionid');
+
+                if (localStorage && localStorage.user) {
+                    delete localStorage.user;
+                }
+                if (sessionStorage && sessionStorage.user) {
+                    delete sessionStorage.user;
+                }
             },
 
 
@@ -235,7 +244,7 @@ angular.module('mappino.services.auth', ['ngCookies']).
              *
              * @returns {object} Formatted user object (name, surname and fullName)
              **/
-            _formattedUserObject: function(user) {
+            _formattedResponseUserObject: function(user) {
                 if (_.isEmpty(user)) {
                     return false;
                 }
