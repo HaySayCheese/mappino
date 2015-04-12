@@ -4,9 +4,7 @@ var app = angular.module("mappino.pages.home", [
     'underscore',
 
     '_modules.bAuth',
-
-    'mappino.directives.selectpicker',
-    'mappino.directives.imageScroll'
+    '_modules.bDirectives'
 ]);
 
 

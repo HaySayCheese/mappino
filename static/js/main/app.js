@@ -8,10 +8,7 @@ var app = angular.module('mappino.pages.map', [
     'underscore',
 
     '_modules.bAuth',
-
-    'mappino.directives.selectpicker',
-    'mappino.directives.perfectScrollbar',
-    'mappino.directives.allowOnlyNumber'
+    '_modules.bDirectives'
 ]);
 
 app.config(['$interpolateProvider', '$locationProvider',
