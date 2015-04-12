@@ -1,8 +1,9 @@
 var app = angular.module("mappino.pages.home", [
     'ngCookies',
     'ab-base64',
+    'underscore',
 
-    'mappino.services.auth',
+    '_modules.bAuth',
 
     'mappino.directives.selectpicker',
     'mappino.directives.imageScroll'

@@ -37,7 +37,7 @@ app.controller('SidebarController', ['$scope', '$cookies', '$timeout', 'Publicat
          * то видаляєм куку сесії
          **/
         $scope.$watch(function() {
-            return sessionStorage.userName;
+            return sessionStorage.user;
         }, function(newValue, oldValue) {
             $scope.userName = BAuthService.getUserParam('fullName');
         });

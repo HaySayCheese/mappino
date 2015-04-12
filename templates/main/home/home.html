@@ -41,8 +41,8 @@
         <div class="header-links">
             <div class="row" ng-hide="user.name">
                 <div class="col-sm-12 col-lg-10 col-lg-offset-1">
-                    <a href="/map/#!/[[map.latLng]]/[[map.zoom]]/account/login" class="pull-right">Войти</a>
-                    <a href="/map/#!/[[map.latLng]]/[[map.zoom]]/account/registration" class="pull-right">Регистрация</a>
+                    <a href="/map/#!/account/login" class="pull-right">Войти</a>
+                    <a href="/map/#!/account/registration" class="pull-right">Регистрация</a>
                 </div>
             </div>
             <div class="row" ng-show="user.name">
@@ -294,7 +294,9 @@
     </div>
 
     {% compress js %}
-        <script type="text/javascript" src="{{ static }}js/_modules/mappino.services/auth.service.js"></script>
+        <script type="text/javascript" src="{{ static }}js/_modules/underscore/underscore.module.js"></script>
+
+        <script type="text/javascript" src="{{ static }}js/_modules/bAuth/bAuth.module.js"></script>
 
         <script type="text/javascript" src="{{ static }}js/_modules/mappino.directives/image-scroll.directive.js"></script>
         <script type="text/javascript" src="{{ static }}js/_modules/mappino.directives/selectpicker.directive.js"></script>
