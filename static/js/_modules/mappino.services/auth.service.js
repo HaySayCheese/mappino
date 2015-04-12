@@ -2,7 +2,7 @@
  * @module Auth
  * @description
  *  // todo: add module description
- * @version 0.5.0
+ * @version 0.6.0
  * @license // todo: add license
  **/
 angular.module('mappino.services.auth', ['ngCookies']).
@@ -30,6 +30,12 @@ angular.module('mappino.services.auth', ['ngCookies']).
                 },
                 'FATAL':        'Fatal login error',
                 'BAD_COOKIE':   'User cookie is bad'
+            },
+            'EMAIL': {
+                'CODES': {
+                    '1':        'Некоректная эл. почта',
+                    '2':        'Указанная эл. почта уже используется'
+                }
             }
         };
 
@@ -164,6 +170,44 @@ angular.module('mappino.services.auth', ['ngCookies']).
                         _.isFunction(errorCallback) && errorCallback({
                             'message': ERRORS.LOGIN.BAD_COOKIE
                         });
+                    });
+            },
+
+
+
+            /**
+             * @public
+             * @description
+             *  Validate email address on server
+             *
+             *  Calls successCallback when email address is correct and free
+             *
+             *  Calls errorCallback when response code !== 0 and
+             *  returns message from:
+             *  - 'ERRORS.EMAIL.CODES[<response_error_code>]'
+             *
+             * @param {string} email                    - Email address
+             * @param {function()} [successCallback]    - Success callback
+             * @param {function()} [errorCallback]      - Error callback
+             **/
+            validateEmail: function(email, successCallback, errorCallback) {
+                $http.post(URL.VALIDATE_EMAIL, {
+                        email: email
+                    }).
+                    success(function(response) {
+                        if (response.code === 0) {
+                            _.isFunction(successCallback) && successCallback();
+                        }
+
+                        if (response.code !== 0) {
+                            _.isFunction(errorCallback) && errorCallback({
+                                'code':     response.code,
+                                'message':  ERRORS.EMAIL.CODES[response.code]
+                            });
+                        }
+                    }).
+                    error(function() {
+                        _.isFunction(errorCallback) && errorCallback();
                     });
             },
 

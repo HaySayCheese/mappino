@@ -28,8 +28,8 @@ app.controller('RegistrationController', ['$scope', '$rootScope', '$cookieStore'
 /**
  * Контроллер який відповідає за форму реєстрації
  **/
-app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies', 'Account', 'MAuthService',
-    function($scope, $rootScope, $cookies, Account, MAuthService) {
+app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies', 'Account', 'BAuthService',
+    function($scope, $rootScope, $cookies, Account, BAuthService) {
         "use strict";
 
         /**
@@ -192,14 +192,12 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
 
             $scope.validated.email = false;
 
-            Account.checkEmail($scope.user.email, function(data) {
-                validateEmail(data.code);
+            BAuthService.validateEmail($scope.user.email, function() {
+                $scope.registrationForm.email.$setValidity("isOk", true);
 
-                if (data.code === 0) {
-                    $scope.registrationForm.email.$setValidity("isOk", true);
-
-                    $scope.validated.email = true;
-                }
+                $scope.validated.email = true;
+            }, function(response) {
+                validateEmail(response.code);
             });
         }
 

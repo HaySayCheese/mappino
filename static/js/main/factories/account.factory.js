@@ -73,11 +73,11 @@ app.factory('Account', ['Queries', function(Queries) {
          * @param {object}      email  Обєкт з поштою користувача
          * @param {function}    callback
          */
-        checkEmail: function(email, callback) {
-            Queries.Account.validateEmail(email).success(function(data) {
-                _.isFunction(callback) && callback(data);
-            });
-        },
+        //checkEmail: function(email, callback) {
+        //    Queries.Account.validateEmail(email).success(function(data) {
+        //        _.isFunction(callback) && callback(data);
+        //    });
+        //},
 
 
         /**
