@@ -86,11 +86,11 @@ app.factory('Account', ['Queries', function(Queries) {
          * @param {object}      phone  Обєкт з номером користувача
          * @param {function}    callback
          */
-        checkPhone: function(phone, callback) {
-            Queries.Account.validatePhone(phone).success(function(data) {
-                _.isFunction(callback) && callback(data);
-            });
-        },
+        //checkPhone: function(phone, callback) {
+        //    Queries.Account.validatePhone(phone).success(function(data) {
+        //        _.isFunction(callback) && callback(data);
+        //    });
+        //},
 
 
         /**

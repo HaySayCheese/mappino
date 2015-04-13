@@ -194,7 +194,6 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
 
             BAuthService.validateEmail($scope.user.email, function() {
                 $scope.registrationForm.email.$setValidity("isOk", true);
-
                 $scope.validated.email = true;
             }, function(response) {
                 validateEmail(response.code);
@@ -252,14 +251,11 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
 
             $scope.validated.phone = false;
 
-            Account.checkPhone($scope.user.phoneNumber, function(data) {
-                validatePhone(data.code);
-
-                if (data.code === 0) {
-                    $scope.registrationForm.phoneNumber.$setValidity("isOk", true);
-
-                    $scope.validated.phone = true;
-                }
+            BAuthService.validatePhone($scope.user.phoneNumber, function() {
+                $scope.registrationForm.phoneNumber.$setValidity("isOk", true);
+                $scope.validated.phone = true;
+            }, function(response) {
+                validatePhone(response.code);
             });
         }
 
@@ -282,9 +278,8 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
         function registerUser() {
             registrationBtn.button('loading');
 
-            MAuthService.register($scope.user, function() {
+            BAuthService.register($scope.user, function() {
                 registrationBtn.button('reset');
-
                 $rootScope.registrationStatePart = "codeCheck";
             }, function() {
                 registrationBtn.button('reset');
