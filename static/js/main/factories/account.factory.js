@@ -9,11 +9,11 @@ app.factory('Account', ['Queries', function(Queries) {
          * @param {object}      user  Обєкт з іменем та паролем користувача
          * @param {function}    callback
          */
-        login: function(user, callback) {
-            Queries.Account.loginUser(user).success(function(data) {
-                _.isFunction(callback) && callback(data);
-            });
-        },
+        //login: function(user, callback) {
+        //    Queries.Account.loginUser(user).success(function(data) {
+        //        _.isFunction(callback) && callback(data);
+        //    });
+        //},
 
 
         /**
@@ -22,11 +22,11 @@ app.factory('Account', ['Queries', function(Queries) {
          * @param {object}      user  Обєкт з іменем та паролем користувача
          * @param {function}    callback
          */
-        register: function(user, callback) {
-            Queries.Account.registerUser(user).success(function(data) {
-                _.isFunction(callback) && callback(data);
-            });
-        },
+        //register: function(user, callback) {
+        //    Queries.Account.registerUser(user).success(function(data) {
+        //        _.isFunction(callback) && callback(data);
+        //    });
+        //},
 
 
         /**
@@ -36,6 +36,7 @@ app.factory('Account', ['Queries', function(Queries) {
          */
         repeatRegister: function(callback) {
             Queries.Account.repeatRegistration().success(function(data) {
+                console.log(data)
                 _.isFunction(callback) && callback(data);
             });
         },
@@ -72,11 +73,11 @@ app.factory('Account', ['Queries', function(Queries) {
          * @param {object}      email  Обєкт з поштою користувача
          * @param {function}    callback
          */
-        checkEmail: function(email, callback) {
-            Queries.Account.validateEmail(email).success(function(data) {
-                _.isFunction(callback) && callback(data);
-            });
-        },
+        //checkEmail: function(email, callback) {
+        //    Queries.Account.validateEmail(email).success(function(data) {
+        //        _.isFunction(callback) && callback(data);
+        //    });
+        //},
 
 
         /**
@@ -85,11 +86,11 @@ app.factory('Account', ['Queries', function(Queries) {
          * @param {object}      phone  Обєкт з номером користувача
          * @param {function}    callback
          */
-        checkPhone: function(phone, callback) {
-            Queries.Account.validatePhone(phone).success(function(data) {
-                _.isFunction(callback) && callback(data);
-            });
-        },
+        //checkPhone: function(phone, callback) {
+        //    Queries.Account.validatePhone(phone).success(function(data) {
+        //        _.isFunction(callback) && callback(data);
+        //    });
+        //},
 
 
         /**
@@ -123,13 +124,13 @@ app.factory('Account', ['Queries', function(Queries) {
          *
          * @param {function}    callback
          */
-        getUserName: function(callback) {
-            Queries.Account.getUserName().success(function(data) {
-                _.isFunction(callback) && callback(data);
-            }).error(function() {
-                _.isFunction(callback) && callback("error");
-            });
-        },
+        //getUserName: function(callback) {
+        //    Queries.Account.getUserName().success(function(data) {
+        //        _.isFunction(callback) && callback(data);
+        //    }).error(function() {
+        //        _.isFunction(callback) && callback("error");
+        //    });
+        //},
 
 
         /**
@@ -137,11 +138,11 @@ app.factory('Account', ['Queries', function(Queries) {
          *
          * @param {function}    callback
          */
-        logoutUser: function(callback) {
-            Queries.Account.logoutUser().success(function(data) {
-                _.isFunction(callback) && callback(data);
-            });
-        }
+        //logoutUser: function(callback) {
+        //    Queries.Account.logoutUser().success(function(data) {
+        //        _.isFunction(callback) && callback(data);
+        //    });
+        //}
 
     };
 }]);

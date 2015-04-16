@@ -1,0 +1,53 @@
+//
+// Load core variables and mixins
+// --------------------------------------------------
+@import "../../../components/variables";
+@import "../../../components/mixins.less";
+
+@import "_over-map-control";
+
+
+.show-sidebar-button {
+    ._over-map-control;
+
+    top: 30px;
+    right: 25px;
+
+    padding: 10px;
+
+    text-align: center;
+    font-size: 15px;
+
+    opacity: 0;
+    z-index: 1000;
+
+
+
+    &.animated {
+        animation-duration: 1s;
+        animation-fill-mode: both;
+    }
+    @keyframes fadeIn {
+        50% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+    &.fadeIn {
+        animation-name: fadeIn;
+    }
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+        70% {
+            opacity: 0;
+        }
+    }
+
+    &.fadeOut {
+        animation-name: fadeOut;
+    }
+}

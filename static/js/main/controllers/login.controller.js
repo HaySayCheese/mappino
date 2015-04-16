@@ -1,5 +1,5 @@
-app.controller('LoginController', ['$scope', '$rootScope', '$timeout', '$location', 'Account', 'TXT',
-    function($scope, $rootScope, $timeout, $location, Account, TXT) {
+app.controller('LoginController', ['$scope', '$rootScope', '$timeout', '$location', 'TXT', 'BAuthService',
+    function($scope, $rootScope, $timeout, $location, TXT, BAuthService) {
         "use strict";
 
         /**
@@ -26,6 +26,7 @@ app.controller('LoginController', ['$scope', '$rootScope', '$timeout', '$locatio
         });
 
 
+
         /**
          * Ініціалізація тултіпів
          **/
@@ -37,6 +38,7 @@ app.controller('LoginController', ['$scope', '$rootScope', '$timeout', '$locatio
         });
 
 
+
         /**
          * Якщо в полях є дані і юзер змфнює їх
          * то забирати повідомлення про помилку
@@ -46,45 +48,28 @@ app.controller('LoginController', ['$scope', '$rootScope', '$timeout', '$locatio
         });
 
 
+
         /**
          * Клік по кнопці входу
          **/
         $scope.submitLogin = function() {
-
             $scope.showValidationMessages = true;
 
-            if ((!$scope.user.name || $scope.user.name === "") || (!$scope.user.password || $scope.user.password === ""))
+            if ((!$scope.user.name || $scope.user.name === "") || (!$scope.user.password || $scope.user.password === "")) {
                 return;
+            }
 
             loginBtn.button("loading");
 
-            Account.login($scope.user, function(data) {
+            BAuthService.login($scope.user, function () {
                 loginBtn.button("reset");
+                loginModal.modal('hide');
+                window.location = "/cabinet/";
+            }, function () {
+                $scope.loginForm.password.$setValidity("login", false);
 
-                validateLoginForm(data);
+                loginBtn.button("reset");
             });
         };
-
-
-        /**
-         * Логіка валідаці форми логіну
-         **/
-        function validateLoginForm() {
-
-            if (arguments[0])
-                var code = arguments[0].code,
-                    user = arguments[0].user;
-
-            if (code === 0) {
-                sessionStorage.userName = user.name + " " + user.surname;
-
-                loginModal.modal('hide');
-
-                window.location = "/cabinet/";
-            }
-
-            if (code === 3)
-                $scope.loginForm.password.$setValidity("login", false);
-        }
     }
 ]);

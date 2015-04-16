@@ -1,0 +1,24 @@
+//
+// Load core variables and mixins
+// --------------------------------------------------
+@import "../../../components/variables";
+@import "../../../components/mixins.less";
+
+
+._over-map-control {
+    .square(38px);
+    position: absolute;
+
+    z-index: 1050;
+    cursor: pointer;
+
+
+    color: #b0b0b0;
+    background-color: #fff;
+
+    text-decoration: none;
+
+    .user-select(none);
+    .box-shadow(~"0 0 15px rgba(0, 0, 0, 0.4)");
+    .transition(~"all 0.2s ease");
+}

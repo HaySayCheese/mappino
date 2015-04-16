@@ -1,20 +1,26 @@
-<div class="sidebar animated fadeInRight" ng-init="initializeAutocomplete()">
+<div id="sidebar" class="sidebar animated fadeInRight" ng-init="initializeAutocomplete()">
     <div class="sidebar-header">
 
-        <div class="sidebar-header-links" ng-show="!userName || userName === ''">
-            <a ng-href="/cabinet/#!/publications/all?cp">Подать обьявление</a>
-            <span class="text-muted">&#8226;</span>
-            <a ng-href="#!/account/registration/">Регистрация</a>
-            <span class="text-muted">&#8226;</span>
-            <a ng-href="#!/account/login/">Войти</a>
-        </div>
+        <div class="sidebar-header-links">
+            <ul ng-show="!userName || userName === ''">
+                <li><a cabinet-link ng-href="/cabinet/#!/publications/all?cp">Подать обьявление</a></li>
+                <li class="divider">&#8226;</li>
+                <li><a ng-href="#!/account/registration/">Регистрация</a></li>
+                <li class="divider">&#8226;</li>
+                <li><a ng-href="#!/account/login/">Войти</a></li>
+            </ul>
 
-        <div class="sidebar-header-links" ng-show="userName && userName !== ''">
-            <a ng-href="/cabinet/#!/publications/all?cp">Подать обьявление</a>
-            <span class="text-muted">&#8226;</span>
-            <a ng-href="/cabinet/">[[ userName ]]</a>
-            <span class="text-muted">&#8226;</span>
-            <a href ng-click="logoutUser()">Выйти</a>
+            <ul ng-show="userName && userName !== ''">
+                <li><a cabinet-link ng-href="/cabinet/#!/publications/all?cp">Подать обьявление</a></li>
+                <li class="divider">&#8226;</li>
+                <li><a cabinet-link ng-href="/cabinet/">[[ userName ]]</a></li>
+                <li class="divider">&#8226;</li>
+                <li><a href ng-click="logoutUser()">Выйти</a></li>
+            </ul>
+
+            <div class="sidebar-collapse-btn" ng-click="collapseSidebar()">
+                <span class="glyphicon glyphicon-resize-small"></span>
+            </div>
         </div>
 
         <div class="sidebar-header-city-search">

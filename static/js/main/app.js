@@ -1,23 +1,31 @@
-var app = angular.module('Mappino', [
+var app = angular.module('mappino.pages.map', [
     'ngRoute',
     'ngCookies',
     'ngAnimate',
     'ui.mask',
     'lrNotifier',
     'ab-base64',
+    'underscore',
 
-    'binno.utils.angular.directives.selectpicker',
-    'binno.utils.angular.directives.perfectScrollbar',
-    'binno.utils.angular.directives.allowOnlyNumber'
+    '_modules.bAuth',
+    '_modules.bDirectives'
 ]);
 
-app.config(['$interpolateProvider', '$locationProvider', function($interpolateProvider, $locationProvider) {
-    $interpolateProvider.startSymbol('[[');
-    $interpolateProvider.endSymbol(']]');
+app.config(['$interpolateProvider', '$locationProvider',
+    function($interpolateProvider, $locationProvider) {
+        "use strict";
 
-    $locationProvider.hashPrefix('!');
-}]);
+        $interpolateProvider.startSymbol('[[');
+        $interpolateProvider.endSymbol(']]');
 
-app.run(['$http', '$cookies', function($http, $cookies) {
-    $http.defaults.headers.common['X-CSRFToken'] = $cookies.csrftoken;
-}]);
+        $locationProvider.hashPrefix('!');
+    }
+]);
+
+app.run(['$http', '$cookies',
+    function($http, $cookies) {
+        "use strict";
+
+        $http.defaults.headers.common['X-CSRFToken'] = $cookies.csrftoken;
+    }
+]);

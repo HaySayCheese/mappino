@@ -15,7 +15,7 @@
 
                                 <div class="row form-group">
                                     <div class="col-xs-6">
-                                        <input type="text" class="form-control" placeholder="Имя" name="name" ng-model="user.name" autofocus required>
+                                        <input type="text" class="form-control" placeholder="Имя" name="name" ng-model="user.name" autofocus required autocomplete="name">
 
                                         <span class="input-icon">
                                             <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.name.$error.required"
@@ -23,7 +23,7 @@
                                         </span>
                                     </div>
                                     <div class="col-xs-6">
-                                        <input type="text" class="form-control" placeholder="Фамилия" name="surname" ng-model="user.surname" required>
+                                        <input type="text" class="form-control" placeholder="Фамилия" name="surname" ng-model="user.surname" required autocomplete="surname">
 
                                         <span class="input-icon">
                                             <span class="input-icon-error" ng-show="showValidationMessages && registrationForm.surname.$error.required"
@@ -34,7 +34,7 @@
 
 
                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Эл. почта" name="email" ng-model="user.email" required>
+                                    <input type="text" class="form-control" placeholder="Эл. почта" name="email" ng-model="user.email" required autocomplete="email">
 
                                     <span class="input-icon">
                                         <span class="input-icon-error" ng-show="showValidationEmail && registrationForm.email.$error.required"
@@ -52,7 +52,7 @@
 
 
                                 <div class="form-group">
-                                    <input type="text" class="form-control" ui-mask="+38 (099) 99 - 99 - 999" name="phoneNumber" ng-model="user.phoneNumber" required>
+                                    <input type="text" class="form-control" ui-mask="+38 (099) 99 - 99 - 999" name="phoneNumber" ng-model="user.phoneNumber" required autocomplete="phoneNumber">
 
                                     <span class="input-icon">
                                         <span class="input-icon-error" ng-show="showValidationPhone && registrationForm.phoneNumber.$error.required"
@@ -100,7 +100,7 @@
                                 <div class="form-group">
                                     <button class="btn btn-success btn-block" type="submit" data-loading-text="Отправка данных..." ng-click="submitRegistration()">Зарегистрироватся</button>
                                 </div>
-                                <a ng-href="#![[ latLngAndZoom ]]/account/login/[[ searchUrlPart ]]">Уже есть аккаунт?</a>
+                                <a ng-href="#!/account/login/">Уже есть аккаунт?</a>
                             </div>
                         </form>
 

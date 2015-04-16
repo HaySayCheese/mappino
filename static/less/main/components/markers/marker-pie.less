@@ -3,8 +3,8 @@
 // Load core variables and mixins
 // --------------------------------------------------
 
-@import "../../components/variables";
-@import "../../components/mixins";
+@import "../../../components/variables";
+@import "../../../components/mixins";
 
 
 /*
@@ -12,7 +12,7 @@
 */
 @smallPieWidth:  25px;
 @smallPieHeight: 50px;
-@smallMarkerChartInnerSize: @smallPieWidth;
+@smallMarkerChartInnerSize: 36px;
 
 
 @mediumPieWidth:  33px;
@@ -108,9 +108,9 @@
 
         .marker-pie-chart-inner {
             .square(@smallMarkerChartInnerSize);
-            padding-top: 3px;
-            left:   @smallMarkerChartInnerSize / 2 - 1; // Why -1? I'm don't know :)
-            top:    @smallMarkerChartInnerSize / 2;
+            line-height: @smallMarkerChartInnerSize;
+            left:   (@smallPieHeight - @smallMarkerChartInnerSize) / 2; // Why -1? I'm don't know :)
+            top:    (@smallPieHeight - @smallMarkerChartInnerSize) / 2;
         }
 
         .pie {

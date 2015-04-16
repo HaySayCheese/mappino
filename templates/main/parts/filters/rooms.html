@@ -1,5 +1,5 @@
 <form class="form-horizontal" novalidate>
-    <h4 class="section-header">Основное</h4>
+    <h5 class="section-header">Основное</h5>
 
     <div class="row form-group">
         <div class="col-sm-12">
@@ -63,10 +63,10 @@
         <div class="col-sm-12">
             <label class="col-sm-6 control-label">Количество комнат:</label>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_r_c_min" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_r_c_min" allow-only-number-without-dot/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_r_c_min" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_r_c_min" allow-only-number/>
             </div>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_r_c_max" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_r_c_max" allow-only-number-without-dot/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_r_c_max" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_r_c_max" allow-only-number/>
             </div>
         </div>
     </div>
@@ -76,10 +76,10 @@
         <div class="col-sm-12">
             <label class="col-sm-6 control-label">Количество мест:</label>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_p_c_min" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_p_c_min" allow-only-number-without-dot/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_p_c_min" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_p_c_min" allow-only-number/>
             </div>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_p_c_max" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_p_c_max" allow-only-number-without-dot/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_p_c_max" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_p_c_max" allow-only-number/>
             </div>
         </div>
     </div>
@@ -102,10 +102,10 @@
         <div class="col-sm-12">
             <label class="col-sm-6 control-label">Этаж:</label>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_f_min" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_f_min" allow-only-number-without-dot/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_f_min" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_f_min" allow-only-number/>
             </div>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_f_max" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_f_max" allow-only-number-without-dot/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_f_max" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_f_max" allow-only-number/>
             </div>
         </div>
     </div>
@@ -139,7 +139,7 @@
 
 
     <div class="row form-group">
-        <h4 class="section-header">Удобства</h4>
+        <h5 class="section-header">Удобства</h5>
         <div class="col-sm-6">
             <div class="checkbox">
                 <input id="{{ current_panel_prefix }}_lft" type="checkbox" name="{{ current_panel_prefix }}_lft" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_lft">
