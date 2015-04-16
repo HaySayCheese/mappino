@@ -67,7 +67,7 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
          * Підганяємо першу картінку на сторінці по висоті вікна
          **/
         $(window).on('resize', function() {
-            if ($(window).height() > 500) {
+            if ($(window).height() > 300) {
                 $('.img-holder.top').css('height', $(window).height() + 'px');
             }
         }).resize();
