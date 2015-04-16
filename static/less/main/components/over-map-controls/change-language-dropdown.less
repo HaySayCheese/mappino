@@ -1,18 +1,18 @@
 //
 // Load core variables and mixins
 // --------------------------------------------------
-@import "../../components/variables";
-@import "../../components/mixins.less";
+@import "../../../components/variables";
+@import "../../../components/mixins.less";
+
+@import "_over-map-control";
 
 .change-language-panel {
-    position: absolute;
+    ._over-map-control;
+
+    width: 120px;
+
     bottom: 30px;
     left: 15px;
-
-    z-index: 9999;
-
-    .size(120px, 38px);
-    .box-shadow(~"0 0 15px rgba(0, 0, 0, 0.4)");
 
     .selectpicker {
         margin: 0;

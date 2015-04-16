@@ -1,6 +1,6 @@
-app.controller('SidebarController', ['$scope', '$cookies', '$timeout', 'PublicationTypesFactory',
+app.controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$timeout', 'PublicationTypesFactory',
     'OperationTypesFactory', 'CurrencyTypesFactory', 'RentTypesFactory', 'FiltersFactory', 'LoadedValues', 'BAuthService',
-    function($scope, $cookies, $timeout, PublicationTypesFactory, OperationTypesFactory,
+    function($scope, $rootScope, $cookies, $timeout, PublicationTypesFactory, OperationTypesFactory,
              CurrencyTypesFactory, RentTypesFactory, FiltersFactory, LoadedValues, BAuthService) {
         'use strict';
 
@@ -29,6 +29,38 @@ app.controller('SidebarController', ['$scope', '$cookies', '$timeout', 'Publicat
         }, function() {
             $scope.userName = '';
         });
+
+
+
+        $scope.collapseSidebar = function() {
+            angular.element('.sidebar')
+                .removeClass('fadeInRight')
+                .addClass('fadeOutRight');
+
+            angular.element('.show-sidebar-button')
+                .removeClass('fadeOut')
+                .addClass('fadeIn');
+        };
+
+        $rootScope.toggleSidebar = function() {
+            angular.element('.sidebar')
+                .removeClass('fadeOutRight')
+                .addClass('fadeInRight');
+
+            angular.element('.show-sidebar-button')
+                .removeClass('fadeIn')
+                .addClass('fadeOut');
+        };
+
+
+
+        $timeout(function() {
+            var hammerSidebar = new Hammer(document.getElementById('sidebar'));
+
+            hammerSidebar.on("swiperight", function(ev) {
+                $scope.collapseSidebar();
+            });
+        }, 3000); // todo: fix it
 
 
 

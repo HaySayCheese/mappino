@@ -236,7 +236,7 @@ app.factory('MarkersFactory', ['Queries', function(Queries) {
                         "<div class='" + _uuid + " pie yellow" + yellowAdditionalClass + "'></div>" +
                     "</div>",
                 labelAnchor: new google.maps.Point(30, 45),
-                labelClass: "marker-pie-chart " + sizeOfPieChart,
+                labelClass: "marker-pie-chart " + sizeOfPieChart
             });
         },
 

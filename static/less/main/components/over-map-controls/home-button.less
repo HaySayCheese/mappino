@@ -1,49 +1,50 @@
 //
 // Load core variables and mixins
 // --------------------------------------------------
-@import "../../components/variables";
-@import "../../components/mixins.less";
+@import "../../../components/variables";
+@import "../../../components/mixins.less";
 
-.map-home-btn {
-    position: absolute;
+@import "_over-map-control";
+
+
+.home-button {
+    ._over-map-control;
+
     top: 30px;
-    left: 13px;
-
-    z-index: 9999;
-
-    .square(38px);
-    overflow: hidden;
+    left: 15px;
 
     padding: 9px 0 9px 40px;
-    background-color: @blue-30;
-    color: #fff;
 
-    text-decoration: none;
+    overflow: hidden;
 
     font-size: 16px;
 
-    .box-shadow(~"0 0 15px rgba(0, 0, 0, 0.4)");
-    .transition(~"width 0.3s ease");
+    color: #fff;
+    background-color: @blue-30;
+
 
     &:before {
         position: absolute;
         top: 0;
         left: 0;
-        margin: 11px;
+        margin: 12px;
 
         content: "\e021";
 
         font-weight: normal;
         font-style: normal;
-        font-size: 18px;
+        font-size: 16px;
         font-family: 'Glyphicons Halflings';
         line-height: 1;
         -webkit-font-smoothing: antialiased;
     }
 
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
         color: #fff;
     }
+
     &:hover {
         width: 140px;
         background-color: #3286DC;
