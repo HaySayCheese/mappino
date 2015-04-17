@@ -40,60 +40,6 @@ app.factory('Queries', ['$http','HTTP_URL', function($http, HTTP_URL) {
 
 
         Account: {
-            loginUser: function(user) {
-                return $http.post(HTTP_URL.ACCOUNT.LOGIN, {
-                    username: user.name,
-                    password: user.password
-                });
-            },
-
-            logoutUser: function() {
-                return $http.post(HTTP_URL.ACCOUNT.LOGOUT);
-            },
-
-            registerUser: function(user) {
-                return $http.post(HTTP_URL.ACCOUNT.REGISTRATION, {
-                    'name':             user.name,
-                    'surname':          user.surname,
-                    'phone-number':     "+380" + user.phoneNumber,
-                    'email':            user.email,
-                    'password':         user.password,
-                    'password-repeat':  user.passwordRepeat
-                });
-            },
-
-            repeatRegistration: function() {
-                return $http.post(HTTP_URL.ACCOUNT.REPEAT_REGISTRATION);
-            },
-
-            repeatSendCode: function() {
-                return $http.post(HTTP_URL.ACCOUNT.REPEAT_SEND_CODE);
-            },
-
-            validateEmail: function(email) {
-                return $http.post(HTTP_URL.ACCOUNT.VALIDATE_EMAIL, {
-                    email: email
-                });
-            },
-
-            validatePhone: function(phone) {
-                return $http.post(HTTP_URL.ACCOUNT.VALIDATE_PHONE_NUMBER, {
-                    number: phone
-                });
-            },
-
-
-            // Відправка кода телефона на валідацію
-            validatePhoneCode: function(code) {
-                return $http.post(HTTP_URL.ACCOUNT.VALIDATE_PHONE_CODE, {
-                    code: code
-                });
-            },
-
-            getUserName: function() {
-                return $http.get(HTTP_URL.ACCOUNT.GET_USER_NAME);
-            },
-
             restoreAccessSendEmail: function(username) {
                 return $http.post(HTTP_URL.ACCOUNT.RESTORE_ACCESS_SEND_EMAIL, {
                     username: username

@@ -278,7 +278,7 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
         function registerUser() {
             registrationBtn.button('loading');
 
-            BAuthService.register($scope.user, function() {
+            BAuthService.registration($scope.user, function() {
                 registrationBtn.button('reset');
                 $rootScope.registrationStatePart = "codeCheck";
             }, function() {
@@ -295,8 +295,8 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
 /**
  * Контроллер який відповідає за форму введення коду підтвердження
  **/
-app.controller("RegistrationUserCodeCheckController", ['$scope', '$cookies', '$rootScope', 'TXT',
-    function($scope, $cookies, $rootScope, TXT) {
+app.controller("RegistrationUserCodeCheckController", ['$scope', '$cookies', '$rootScope', 'TXT', 'BAuthService',
+    function($scope, $cookies, $rootScope, TXT, BAuthService) {
         "use strict";
 
         /**
@@ -338,7 +338,7 @@ app.controller("RegistrationUserCodeCheckController", ['$scope', '$cookies', '$r
          * Функція повторної реєстрації
          **/
         $scope.repeatRegistration = function() {
-            Account.repeatRegister(function() {
+            BAuthService.cancelRegistration(function() {
                 $rootScope.registrationStatePart = "registration";
             });
         };
@@ -348,11 +348,10 @@ app.controller("RegistrationUserCodeCheckController", ['$scope', '$cookies', '$r
          * Функція повторної відправки кода
          **/
         $scope.repeatSendCode = function(e) {
-            Account.repeatSendCode(function(data) {
-                if (data.code === 0)
-                    $scope.codeSend = true;
-                else
-                    $scope.codeSendBefore = true;
+            BAuthService.resendSMSCode(function() {
+                $scope.codeSend = true;
+            }, function() {
+                $scope.codeSendBefore = true;
             });
         };
 
@@ -361,25 +360,26 @@ app.controller("RegistrationUserCodeCheckController", ['$scope', '$cookies', '$r
          * Відправка кода на валідацію
          **/
         function sendCodeToValidate() {
-
             registrationBtn.button('loading');
 
-            Account.checkPhoneCode($scope.codeCheck, function(data) {
+            BAuthService.validateSMSCode($scope.codeCheck, function() {
+                registrationBtn.button('reset');
+                registrationModal.modal('hide');
+                window.location = "/cabinet/";
+            }, function(response) {
                 registrationBtn.button('reset');
 
-                attempt = data.attempts;
-                max_attempts = data.max_attempts;
-
-                validateAttempts(data);
+                validateAttempts(response);
             });
-
         }
 
 
         /**
          * Валідація спроб вводу кода
          **/
-        function validateAttempts() {
+        function validateAttempts(response) {
+            attempt = response.attempts;
+            max_attempts = response.max_attempts;
 
             if (attempt && (attempt === max_attempts)) {
                 $rootScope.registrationStatePart = "registration";
@@ -387,23 +387,12 @@ app.controller("RegistrationUserCodeCheckController", ['$scope', '$cookies', '$r
                 return;
             }
 
-            if (arguments[0])
-                var code = arguments[0].code,
-                    user = arguments[0].user;
-
             tooltip.tooltip('destroy');
             tooltip.tooltip({
                 container: registrationModal.find(".modal-dialog"),
                 animation: false,
                 title: "Некорректный код. Попытка " +  attempt + " из " +  max_attempts + "."
             });
-
-            if (code == 0) {
-                sessionStorage.userName = user.name + " " + user.surname;
-                registrationModal.modal('hide');
-
-                window.location = "/cabinet/";
-            }
 
             $scope.incorrectCode = true;
         }

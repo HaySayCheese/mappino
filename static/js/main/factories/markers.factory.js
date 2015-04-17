@@ -154,10 +154,16 @@ app.factory('MarkersFactory', ['Queries', function(Queries) {
          * @param {String} latLng   - String latLng coordinates
          **/
         createMarkerObject: function(marker, panel, latLng) {
+            var markerIcon = new google.maps.MarkerImage('http://127.0.0.1/mappino_static/img/markers/' + panel + '-normal.png',
+                new google.maps.Size(36, 49),
+                null,
+                null,
+                new google.maps.Size(36, 49));
+
             markers[panel][latLng] = new MarkerWithLabel({
                 id:             marker.id,
                 tid:            marker.tid,
-                icon:           '/static/img/markers/' + panel + '-normal.png',
+                icon:           markerIcon,
                 position:       new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
                 labelClass:     "marker-label",
                 labelAnchor:    new google.maps.Point(0, 39),
