@@ -163,7 +163,7 @@ app.factory('MarkersFactory', ['Queries', function(Queries) {
             markers[panel][latLng] = new MarkerWithLabel({
                 id:             marker.id,
                 tid:            marker.tid,
-                icon:           markerIcon,
+                icon:           '/static/img/markers/' + panel + '-normal.png',
                 position:       new google.maps.LatLng(latLng.split(";")[0], latLng.split(";")[1]),
                 labelClass:     "marker-label",
                 labelAnchor:    new google.maps.Point(0, 39),
