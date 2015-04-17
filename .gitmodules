@@ -1,3 +1,3 @@
 [submodule "static/js/_modules"]
 	path = static/js/_modules
-	url = git@github.com:SerhiiMeketiuk/_modules.git
+	url = https://github.com/SerhiiMeketiuk/_modules.git
