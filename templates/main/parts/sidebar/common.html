@@ -1,7 +1,6 @@
 <div id="sidebar" class="sidebar animated fadeInRight" ng-init="initializeAutocomplete()">
     <div class="sidebar-header">
-
-        <div class="sidebar-header-links">
+        <div class="links">
             <ul ng-show="!userName || userName === ''">
                 <li><a cabinet-link ng-href="/cabinet/#!/publications/all?cp">Подать обьявление</a></li>
                 <li class="divider">&#8226;</li>
@@ -18,13 +17,13 @@
                 <li><a href ng-click="logoutUser()">Выйти</a></li>
             </ul>
 
-            <div class="sidebar-collapse-btn" ng-click="collapseSidebar()">
+            <div class="collapse-sidebar-button" ng-click="collapseSidebar()" title="Свернуть панель фильтров">
                 <span class="glyphicon glyphicon-resize-small"></span>
             </div>
         </div>
 
-        <div class="sidebar-header-city-search">
-            <input id="sidebar-city-input" type="text" placeholder="Введите местоположение" class="form-control sidebar-city-input input-lg text-center" ng-model="filters.map.c">
+        <div class="place-autocomplete">
+            <input id="sidebar-city-input" type="text" placeholder="Введите местоположение" class="form-control input-lg text-center" ng-model="filters.map.c">
         </div>
     </div>
     <div class="sidebar-body">
@@ -184,10 +183,10 @@
         </div>
     </div>
     <div class="sidebar-footer">
-        <div class="sidebar-footer-text">
+        <div class="text">
             <a href="mailto:info@mappino.com">info@mappino.com</a> &copy; 2014.
         </div>
-        <div class="sidebar-footer-social-links">
+        <div class="social-links">
             <a href="https://vk.com/mappino"></a>
             <!--<a href="http://facebook.com"></a>-->
             <!--<a href="http://twitter.com"></a>-->

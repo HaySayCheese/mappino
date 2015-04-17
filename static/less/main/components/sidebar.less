@@ -19,8 +19,8 @@
     background: #ffffff;
     .box-shadow(~"0 0 15px rgba(0, 0, 0, 0.4)");
 
-    .sidebar-body,
-    .sidebar-footer {
+    > .sidebar-body,
+    > .sidebar-footer {
         display: block;
         padding: 10px;
     }
@@ -43,6 +43,7 @@
     &.fadeInRight {
         animation-name: fadeInRight;
     }
+
     @keyframes fadeOutRight {
         0% {
             opacity: 1;
@@ -53,7 +54,6 @@
             transform: translate3d(120%, 0, 0);
         }
     }
-
     &.fadeOutRight {
         animation-name: fadeOutRight;
     }
@@ -62,7 +62,7 @@
 .sidebar-header {
     display: block;
 
-    .sidebar-header-links {
+    > .links {
         .size(100%, 38px);
 
         background: #f2f1ef;
@@ -87,7 +87,7 @@
             color: #b0b0b0;
         }
 
-        .sidebar-collapse-btn {
+        > .collapse-sidebar-button {
             .square(38px);
             padding: 11px 0;
             float: right;
@@ -108,7 +108,7 @@
         }
     }
 
-    .sidebar-header-city-search {
+    > .place-autocomplete {
         display: block;
         height: 80px;
 
@@ -117,14 +117,13 @@
         background: white;
         text-align: center;
 
-        .sidebar-city-input {
+        > .form-control {
             border: none;
             border-bottom: 1px dashed #ccc;
             border-radius: 0;
             .box-shadow(none);
 
             &:focus {
-                //border-bottom: none;
                 .transition(~"box-shadow 0.1s ease");
                 .box-shadow(~"0 0 6px rgba(0, 0, 0, 0.3)");
             }
@@ -314,12 +313,12 @@
     line-height: 36px;
     .clearfix();
 
-    .sidebar-footer-text {
+    > .text {
         color: lighten(@gray, 10%);
         float: left;
     }
 
-    .sidebar-footer-social-links {
+    > .social-links {
         float: right;
         .clearfix();
 

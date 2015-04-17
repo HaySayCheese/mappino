@@ -9,10 +9,15 @@
 
 .zoom-control-buttons {
     ._over-map-control;
+    ._over-map-control.-white;
 
     height: 76px;
 
     margin: 0 0 5px 15px;
+
+    &:hover {
+        background-color: #fff !important;
+    }
 
 
     > .zoom-in-button,
@@ -25,6 +30,10 @@
         font-size: 12px;
 
         .transition(~"all 0.2s ease");
+
+        &:hover {
+            background-color: #f9f9f9;
+        }
     }
 
     > .zoom-in-button {

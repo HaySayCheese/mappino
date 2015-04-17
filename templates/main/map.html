@@ -53,9 +53,9 @@
     <div class="wrapper" ng-controller="ContentController" ng-init="runApplication()">
 
         <a href="/" class="home-button">
-            <span>На главную</span>
+            <span class="title">На главную</span>
         </a>
-        <div class="show-sidebar-button animated" ng-click="toggleSidebar()">
+        <div class="show-sidebar-button animated" ng-click="toggleSidebar()" title="Развернуть панель фильтров">
             <span class="glyphicon glyphicon-menu-hamburger"></span>
         </div>
 
@@ -73,7 +73,7 @@
         <div ng-controller="SidebarController" ng-include="sidebarTemplateUrl"></div>
 
 
-        <div lr-notification-stack-container="mainChannel" class="notifier">
+        <div lr-notification-stack-container="mainChannel" class="notifier" ng-cloak>
             <ul>
                 <li ng-class="notification.level" ng-repeat="notification in lrNotifierCtrl.notifications" ng-click="lrNotifierCtrl.removeNotification(notification)">
                     [[ notification.message ]]
