@@ -74,7 +74,7 @@
   font-size: @carousel-control-font-size;
   color: @carousel-control-color;
   text-align: center;
-  text-shadow: @carousel-text-shadow;
+  //text-shadow: @carousel-text-shadow;
   // We can't have this transition here because WebKit cancels the carousel
   // animation if you trip this while in the middle of another animation.
 
@@ -106,14 +106,15 @@
     top: 50%;
     z-index: 5;
     display: inline-block;
+    .translate(0, -50%);
   }
   .icon-prev,
   .glyphicon-chevron-left {
-    left: 50%;
+    left: 30%;
   }
   .icon-next,
   .glyphicon-chevron-right {
-    right: 50%;
+    right: 30%;
   }
   .icon-prev,
   .icon-next {

@@ -1,50 +1,55 @@
-<div class="sidebar" ng-controller="SidebarCtrl" ng-cloak>
+<div id="sidebar" class="sidebar animated fadeInRight" ng-init="initializeAutocomplete()">
     <div class="sidebar-header">
+        <div class="links">
+            <ul ng-show="!userName || userName === ''">
+                <li><a cabinet-link ng-href="/cabinet/#!/publications/all?cp">Подать обьявление</a></li>
+                <li class="divider">&#8226;</li>
+                <li><a ng-href="#!/account/registration/">Регистрация</a></li>
+                <li class="divider">&#8226;</li>
+                <li><a ng-href="#!/account/login/">Войти</a></li>
+            </ul>
 
-        <div class="sidebar-header-links" ng-show="!userName || userName === ''">
-            <a ng-href="/cabinet/#!/publications/all?cp">Подать обьявление</a>
-            <span class="text-muted">&#8226;</span>
-            <a ng-href="#!/account/registration">Регистрация</a>
-            <span class="text-muted">&#8226;</span>
-            <a ng-href="#!/account/login[[ urlFiltersPart ]]">Войти</a>
+            <ul ng-show="userName && userName !== ''">
+                <li><a cabinet-link ng-href="/cabinet/#!/publications/all?cp">Подать обьявление</a></li>
+                <li class="divider">&#8226;</li>
+                <li><a cabinet-link ng-href="/cabinet/">[[ userName ]]</a></li>
+                <li class="divider">&#8226;</li>
+                <li><a href ng-click="logoutUser()">Выйти</a></li>
+            </ul>
+
+            <div class="collapse-sidebar-button" ng-click="collapseSidebar()" title="Свернуть панель фильтров">
+                <span class="glyphicon glyphicon-resize-small"></span>
+            </div>
         </div>
 
-        <div class="sidebar-header-links" ng-show="userName && userName !== ''">
-            <a ng-href="/cabinet/#!/publications/all?cp">Подать обьявление</a>
-            <span class="text-muted">&#8226;</span>
-            <a ng-href="/cabinet/">[[ userName ]]</a>
-            <span class="text-muted">&#8226;</span>
-            <a href ng-click="logoutUser()">Выйти</a>
-        </div>
-
-        <div class="sidebar-header-city-search">
-            <input id="sidebar-city-input" type="text" placeholder="Введите местоположение" class="form-control sidebar-city-input input-lg text-center" select-on-click ng-model="filters.map.city">
+        <div class="place-autocomplete">
+            <input id="sidebar-city-input" type="text" placeholder="Введите местоположение" class="form-control input-lg text-center" ng-model="filters.map.c">
         </div>
     </div>
     <div class="sidebar-body">
         <div class="panel-group" id="markers-accordion">
             <div class="panel panel-danger">
                 <div class="panel-heading red-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#redMarkersPanel">
-                    <h4 class="panel-title" ng-show="filters.red.r_type_sid == null">
+                    <h4 class="panel-title" ng-show="filters.red.r_t_sid == null">
                         <b>Виберите тип</b>
                     </h4>
-                    <h4 class="panel-title" ng-hide="filters.red.r_type_sid == null">
-                        <b>[[ publicationTypes[filters.red.r_type_sid].title ]] </b>
-                        <small ng-show="filters.red.r_price_from && filters.red.r_price_to">([[ filters.red.r_price_from ]] - [[ filters.red.r_price_to ]] [[ currencyTypes[filters.red.r_currency_sid].title ]])</small>
-                        <small ng-show="filters.red.r_price_from && !filters.red.r_price_to">(от [[ filters.red.r_price_from ]] [[ currencyTypes[filters.red.r_currency_sid].title ]])</small>
-                        <small ng-show="!filters.red.r_price_from && filters.red.r_price_to">(до [[ filters.red.r_price_to ]] [[ currencyTypes[filters.red.r_currency_sid].title ]])</small>
+                    <h4 class="panel-title" ng-hide="filters.red.r_t_sid == null">
+                        <b>[[ publicationTypes[filters.red.r_t_sid].title ]] </b>
+                        <small ng-show="filters.red.r_p_min && filters.red.r_p_max">([[ filters.red.r_p_min ]] - [[ filters.red.r_p_max ]] [[ currencyTypes[filters.red.r_cu_sid].title ]])</small>
+                        <small ng-show="filters.red.r_p_min && !filters.red.r_p_max">(от [[ filters.red.r_p_min ]] [[ currencyTypes[filters.red.r_cu_sid].title ]])</small>
+                        <small ng-show="!filters.red.r_p_min && filters.red.r_p_max">(до [[ filters.red.r_p_max ]] [[ currencyTypes[filters.red.r_cu_sid].title ]])</small>
                     </h4>
                 </div>
                 <div id="redMarkersPanel" class="panel-collapse collapse in">
-                    <div class="panel-body">
+                    <div class="panel-body" perfect-scrollbar>
                         <div ng-if="filtersParsed">
                             <form class="form-horizontal" novalidate>
                                 <div class="row form-group">
                                     <div class="col-sm-12">
                                         <label class="col-sm-3 control-label">Тип:</label>
                                         <div class="col-sm-9">
-                                            <select class="type-selectpicker" name="r_type_sid" data-width="100%" data-panel="red"
-                                                    ng-model="filters.red.r_type_sid"
+                                            <select selectpicker name="r_t_sid" data-width="100%" data-panel="red"
+                                                    ng-model="filters.red.r_t_sid"
                                                     ng-options="type.id as type.title for type in publicationTypes">
                                                 <option value="">Виберите тип</option>
                                             </select>
@@ -52,37 +57,37 @@
                                     </div>
                                 </div>
                             </form>
-                            <div ng-if="filters.red.r_type_sid != null"
-                                 ng-include="'/ajax/template/main/filters/red/' + [[ filters.red.r_type_sid ]] + '/'"
-                                 onload="status.redTemplateIsLoaded = true;"
-                                 ng-show="status.redTemplateIsLoaded"></div>
-                            <div class="sidebar-loader" ng-hide="status.redTemplateIsLoaded || filters.red.r_type_sid == null"></div>
+                            <div ng-if="filters.red.r_t_sid != null"
+                                 ng-include="'/ajax/template/main/filters/red/' + [[ filters.red.r_t_sid ]] + '/'"
+                                 onload="sidebarTemplateLoaded.red = true;"
+                                 ng-show="sidebarTemplateLoaded.red"></div>
+                            <div class="sidebar-loader" ng-hide="sidebarTemplateLoaded.red || filters.red.r_t_sid == null"></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="panel panel-primary">
                 <div class="panel-heading blue-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#blueMarkersPanel">
-                    <h4 class="panel-title" ng-show="filters.blue.b_type_sid == null">
+                    <h4 class="panel-title" ng-show="filters.blue.b_t_sid == null">
                         <b>Виберите тип</b>
                     </h4>
-                    <h4 class="panel-title" ng-hide="filters.blue.b_type_sid == null">
-                        <b>[[ publicationTypes[filters.blue.b_type_sid].title ]] </b>
-                        <small ng-show="filters.blue.b_price_from && filters.blue.b_price_to">([[ filters.blue.b_price_from ]] - [[ filters.blue.b_price_to ]] [[ currencyTypes[filters.blue.b_currency_sid].title ]])</small>
-                        <small ng-show="filters.blue.b_price_from && !filters.blue.b_price_to">(от [[ filters.blue.b_price_from ]] [[ currencyTypes[filters.blue.b_currency_sid].title ]])</small>
-                        <small ng-show="!filters.blue.b_price_from && filters.blue.b_price_to">(до [[ filters.blue.b_price_to ]] [[ currencyTypes[filters.blue.b_currency_sid].title ]])</small>
+                    <h4 class="panel-title" ng-hide="filters.blue.b_t_sid == null">
+                        <b>[[ publicationTypes[filters.blue.b_t_sid].title ]] </b>
+                        <small ng-show="filters.blue.b_p_min && filters.blue.b_p_max">([[ filters.blue.b_p_min ]] - [[ filters.blue.b_p_max ]] [[ currencyTypes[filters.blue.b_cu_sid].title ]])</small>
+                        <small ng-show="filters.blue.b_p_min && !filters.blue.b_p_max">(от [[ filters.blue.b_p_min ]] [[ currencyTypes[filters.blue.b_cu_sid].title ]])</small>
+                        <small ng-show="!filters.blue.b_p_min && filters.blue.b_p_max">(до [[ filters.blue.b_p_max ]] [[ currencyTypes[filters.blue.b_cu_sid].title ]])</small>
                     </h4>
                 </div>
                 <div id="blueMarkersPanel" class="panel-collapse collapse">
-                    <div class="panel-body">
+                    <div class="panel-body" perfect-scrollbar>
                         <div ng-if="filtersParsed">
                             <form class="form-horizontal" novalidate>
                                 <div class="row form-group">
                                     <div class="col-sm-12">
                                         <label class="col-sm-3 control-label">Тип:</label>
                                         <div class="col-sm-9">
-                                            <select class="type-selectpicker" name="b_type_sid" data-width="100%" data-panel="blue"
-                                                    ng-model="filters.blue.b_type_sid"
+                                            <select selectpicker name="b_t_sid" data-width="100%" data-panel="blue"
+                                                    ng-model="filters.blue.b_t_sid"
                                                     ng-options="type.id as type.title for type in publicationTypes">
                                                 <option value="">Виберите тип</option>
                                             </select>
@@ -90,37 +95,37 @@
                                     </div>
                                 </div>
                             </form>
-                            <div ng-if="filters.blue.b_type_sid != null"
-                                 ng-include="'/ajax/template/main/filters/blue/' + [[ filters.blue.b_type_sid ]] + '/'"
-                                 onload="status.blueTemplateIsLoaded = true;"
-                                 ng-show="status.blueTemplateIsLoaded"></div>
-                            <div class="sidebar-loader" ng-hide="status.blueTemplateIsLoaded || filters.blue.b_type_sid == null"></div>
+                            <div ng-if="filters.blue.b_t_sid != null"
+                                 ng-include="'/ajax/template/main/filters/blue/' + [[ filters.blue.b_t_sid ]] + '/'"
+                                 onload="sidebarTemplateLoaded.blue = true;"
+                                 ng-show="sidebarTemplateLoaded.blue"></div>
+                            <div class="sidebar-loader" ng-hide="sidebarTemplateLoaded.blue || filters.blue.b_t_sid == null"></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="panel panel-success">
                 <div class="panel-heading green-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#greenMarkersPanel">
-                    <h4 class="panel-title" ng-show="filters.green.g_type_sid == null">
+                    <h4 class="panel-title" ng-show="filters.green.g_t_sid == null">
                         <b>Виберите тип</b>
                     </h4>
-                    <h4 class="panel-title" ng-hide="filters.green.g_type_sid == null">
-                        <b>[[ publicationTypes[filters.green.g_type_sid].title ]] </b>
-                        <small ng-show="filters.green.g_price_from && filters.green.g_price_to">([[ filters.green.g_price_from ]] - [[ filters.green.g_price_to ]] [[ currencyTypes[filters.green.g_currency_sid].title ]])</small>
-                        <small ng-show="filters.green.g_price_from && !filters.green.g_price_to">(от [[ filters.green.g_price_from ]] [[ currencyTypes[filters.green.g_currency_sid].title ]])</small>
-                        <small ng-show="!filters.green.g_price_from && filters.green.g_price_to">(до [[ filters.green.g_price_to ]] [[ currencyTypes[filters.green.g_currency_sid].title ]])</small>
+                    <h4 class="panel-title" ng-hide="filters.green.g_t_sid == null">
+                        <b>[[ publicationTypes[filters.green.g_t_sid].title ]] </b>
+                        <small ng-show="filters.green.g_p_min && filters.green.g_p_max">([[ filters.green.g_p_min ]] - [[ filters.green.g_p_max ]] [[ currencyTypes[filters.green.g_cu_sid].title ]])</small>
+                        <small ng-show="filters.green.g_p_min && !filters.green.g_p_max">(от [[ filters.green.g_p_min ]] [[ currencyTypes[filters.green.g_cu_sid].title ]])</small>
+                        <small ng-show="!filters.green.g_p_min && filters.green.g_p_max">(до [[ filters.green.g_p_max ]] [[ currencyTypes[filters.green.g_cu_sid].title ]])</small>
                     </h4>
                 </div>
                 <div id="greenMarkersPanel" class="panel-collapse collapse">
-                    <div class="panel-body">
+                    <div class="panel-body" perfect-scrollbar>
                         <div ng-if="filtersParsed">
                             <form class="form-horizontal" novalidate>
                                 <div class="row form-group">
                                     <div class="col-sm-12">
                                         <label class="col-sm-3 control-label">Тип:</label>
                                         <div class="col-sm-9">
-                                            <select class="type-selectpicker" name="g_type_sid" data-width="100%" data-panel="green"
-                                                    ng-model="filters.green.g_type_sid"
+                                            <select selectpicker name="g_t_sid" data-width="100%" data-panel="green"
+                                                    ng-model="filters.green.g_t_sid"
                                                     ng-options="type.id as type.title for type in publicationTypes">
                                                 <option value="">Виберите тип</option>
                                             </select>
@@ -128,37 +133,37 @@
                                     </div>
                                 </div>
                             </form>
-                            <div ng-if="filters.green.g_type_sid != null"
-                                 ng-include="'/ajax/template/main/filters/green/' + [[ filters.green.g_type_sid ]] + '/'"
-                                 onload="status.greenTemplateIsLoaded = true;"
-                                 ng-show="status.greenTemplateIsLoaded"></div>
-                            <div class="sidebar-loader" ng-hide="status.greenTemplateIsLoaded || filters.green.g_type_sid == null"></div>
+                            <div ng-if="filters.green.g_t_sid != null"
+                                 ng-include="'/ajax/template/main/filters/green/' + [[ filters.green.g_t_sid ]] + '/'"
+                                 onload="sidebarTemplateLoaded.green = true;"
+                                 ng-show="sidebarTemplateLoaded.green"></div>
+                            <div class="sidebar-loader" ng-hide="sidebarTemplateLoaded.green || filters.green.g_t_sid == null"></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="panel panel-warning">
                 <div class="panel-heading yellow-markers-panel-icon" data-toggle="collapse" data-parent="#markers-accordion" href="#yellowMarkersPanel">
-                    <h4 class="panel-title" ng-show="filters.yellow.y_type_sid == null">
+                    <h4 class="panel-title" ng-show="filters.yellow.y_t_sid == null">
                         <b>Виберите тип</b>
                     </h4>
-                    <h4 class="panel-title" ng-hide="filters.yellow.y_type_sid == null">
-                        <b>[[ publicationTypes[filters.yellow.y_type_sid].title ]] </b>
-                        <small ng-show="filters.yellow.y_price_from && filters.yellow.y_price_to">([[ filters.yellow.y_price_from ]] - [[ filters.yellow.y_price_to ]] [[ currencyTypes[filters.yellow.y_currency_sid].title ]])</small>
-                        <small ng-show="filters.yellow.y_price_from && !filters.yellow.y_price_to">(от [[ filters.yellow.y_price_from ]] [[ currencyTypes[filters.yellow.y_currency_sid].title ]])</small>
-                        <small ng-show="!filters.yellow.y_price_from && filters.yellow.y_price_to">(до [[ filters.yellow.y_price_to ]] [[ currencyTypes[filters.yellow.y_currency_sid].title ]])</small>
+                    <h4 class="panel-title" ng-hide="filters.yellow.y_t_sid == null">
+                        <b>[[ publicationTypes[filters.yellow.y_t_sid].title ]] </b>
+                        <small ng-show="filters.yellow.y_p_min && filters.yellow.y_p_max">([[ filters.yellow.y_p_min ]] - [[ filters.yellow.y_p_max ]] [[ currencyTypes[filters.yellow.y_cu_sid].title ]])</small>
+                        <small ng-show="filters.yellow.y_p_min && !filters.yellow.y_p_max">(от [[ filters.yellow.y_p_min ]] [[ currencyTypes[filters.yellow.y_cu_sid].title ]])</small>
+                        <small ng-show="!filters.yellow.y_p_min && filters.yellow.y_p_max">(до [[ filters.yellow.y_p_max ]] [[ currencyTypes[filters.yellow.y_cu_sid].title ]])</small>
                     </h4>
                 </div>
                 <div id="yellowMarkersPanel" class="panel-collapse collapse">
-                    <div class="panel-body">
+                    <div class="panel-body" perfect-scrollbar>
                         <div ng-if="filtersParsed">
                             <form class="form-horizontal" novalidate>
                                 <div class="row form-group">
                                     <div class="col-sm-12">
                                         <label class="col-sm-3 control-label">Тип:</label>
                                         <div class="col-sm-9">
-                                            <select class="type-selectpicker" name="y_type_sid" data-width="100%" data-panel="yellow"
-                                                    ng-model="filters.yellow.y_type_sid"
+                                            <select selectpicker name="y_t_sid" data-width="100%" data-panel="yellow"
+                                                    ng-model="filters.yellow.y_t_sid"
                                                     ng-options="type.id as type.title for type in publicationTypes">
                                                 <option value="">Виберите тип</option>
                                             </select>
@@ -166,11 +171,11 @@
                                     </div>
                                 </div>
                             </form>
-                            <div ng-if="filters.yellow.y_type_sid != null"
-                                 ng-include="'/ajax/template/main/filters/yellow/' + [[ filters.yellow.y_type_sid ]] + '/'"
-                                 onload="status.yellowTemplateIsLoaded = true;"
-                                 ng-show="status.yellowTemplateIsLoaded"></div>
-                            <div class="sidebar-loader" ng-hide="status.yellowTemplateIsLoaded || filters.yellow.y_type_sid == null"></div>
+                            <div ng-if="filters.yellow.y_t_sid != null"
+                                 ng-include="'/ajax/template/main/filters/yellow/' + [[ filters.yellow.y_t_sid ]] + '/'"
+                                 onload="sidebarTemplateLoaded.yellow = true;"
+                                 ng-show="sidebarTemplateLoaded.yellow"></div>
+                            <div class="sidebar-loader" ng-hide="sidebarTemplateLoaded.yellow || filters.yellow.y_t_sid == null"></div>
                         </div>
                     </div>
                 </div>
@@ -178,10 +183,10 @@
         </div>
     </div>
     <div class="sidebar-footer">
-        <div class="sidebar-footer-text">
+        <div class="text">
             <a href="mailto:info@mappino.com">info@mappino.com</a> &copy; 2014.
         </div>
-        <div class="sidebar-footer-social-links">
+        <div class="social-links">
             <a href="https://vk.com/mappino"></a>
             <!--<a href="http://facebook.com"></a>-->
             <!--<a href="http://twitter.com"></a>-->

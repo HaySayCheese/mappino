@@ -5,14 +5,22 @@
 
 // Dropdown arrow/caret
 .caret {
+
   display: inline-block;
   width: 0;
   height: 0;
   margin-left: 2px;
   vertical-align: middle;
-  border-top:   @caret-width-base solid;
-  border-right: @caret-width-base solid transparent;
-  border-left:  @caret-width-base solid transparent;
+
+  &:before {
+    content: "\e114";
+    position: absolute;
+    top: -5px;
+    right: -3px;
+    color: #b0b0b0;
+    font-family: 'Glyphicons Halflings';
+    font-size: 12px;
+  }
 }
 
 // The dropdown wrapper (div)
@@ -41,7 +49,7 @@
   background-color: @dropdown-bg;
   border: 1px solid @dropdown-fallback-border; // IE8 fallback
   border: 1px solid @dropdown-border;
-  .border-bottom-radius(@border-radius-base);
+  //.border-bottom-radius(@border-radius-base);
   .box-shadow(0 2px 3px rgba(0,0,0,.2));
   background-clip: padding-box;
 
@@ -164,10 +172,8 @@
 .dropup,
 .navbar-fixed-bottom .dropdown {
   // Reverse the caret
-  .caret {
-    border-top: 0;
-    border-bottom: @caret-width-base solid;
-    content: "";
+  .caret:before {
+    content: "\e113";
   }
   // Different positioning for bottom up menu
   .dropdown-menu {

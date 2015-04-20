@@ -1,0 +1,30 @@
+//
+// Load core variables and mixins
+// --------------------------------------------------
+@import "../../../components/variables";
+@import "../../../components/mixins.less";
+
+@import "_over-map-control";
+
+.change-language-panel {
+    ._over-map-control;
+
+    width: 120px;
+
+    bottom: 30px;
+    left: 15px;
+
+    .selectpicker {
+        margin: 0;
+
+        .caret:before {
+            top: -6px;
+        }
+    }
+
+    .dropdown-menu {
+        border: none;
+        margin-bottom: -1px;
+        .box-shadow(~"0 -1px 15px rgba(0, 0, 0, 0.4)");
+    }
+}

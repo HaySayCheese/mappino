@@ -45,6 +45,12 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     $location.search().cp ? $scope.creatingPublication = true : $scope.creatingPublication = false;
 
 
+
+    $scope.returnToMap = function() {
+        window.location = localStorage.lastMapUrl || sessionStorage.lastMapUrl || 'map/#!/';
+    };
+
+
     /**
      * Створення нового оголошенн
      */

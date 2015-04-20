@@ -1,61 +1,59 @@
-<form class="form-horizontal" novalidate ng-init="initPlugins()">
-    <h4 class="section-header">Основное</h4>
+<form class="form-horizontal" novalidate>
+    <h5 class="section-header">Основные критерии поиска</h5>
 
     <div class="row form-group">
         <div class="col-sm-12">
             <label class="col-sm-3 control-label">Операция:</label>
             <div class="col-sm-9">
-                <select name="{{ current_panel_prefix }}_operation_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid">
-                    <option value="0">Продажа</option>
-                    <option value="1">Аренда</option>
+                <select selectpicker name="{{ current_panel_prefix }}_op_sid" data-width="100%"
+                        ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_op_sid"
+                        ng-options="operation.id as operation.title for operation in operationTypes">
                 </select>
             </div>
         </div>
     </div>
 
-    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid == 1">
+    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 1">
         <div class="col-sm-12">
             <label class="col-sm-3 control-label">Срок:</label>
             <div class="col-sm-9">
-                <select name="{{ current_panel_prefix }}_period_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_period_sid">
-                    <option value="0">Не учитывать</option>
-                    <option value="1">Посуточно</option>
-                    <option value="2">Помесячно</option>
+                <select selectpicker name="{{ current_panel_prefix }}_op_sid" data-width="100%"
+                        ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_pr_sid"
+                        ng-options="rentType.id as rentType.title for rentType in rentTypes">
                 </select>
             </div>
         </div>
     </div>
 
 
-    <div class="row form-group" ng-class="{ 'without-margin-bottom': filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid == 0 }">
+    <div class="row form-group" ng-class="{ 'without-margin-bottom': filters.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 0 }">
         <div class="col-sm-12">
             <label class="col-sm-3 control-label">Цена:</label>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_price_from" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_price_from" allow-only-number/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_p_min" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_p_min" allow-only-number/>
             </div>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_price_to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_price_to" allow-only-number/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_p_max" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_p_max" allow-only-number/>
             </div>
             <div class="col-sm-3">
-                <select name="{{ current_panel_prefix }}_currency_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_currency_sid">
-                    <option value="2">Грн.</option>
-                    <option value="0">Дол.</option>
-                    <option value="1">Евро</option>
+                <select selectpicker name="{{ current_panel_prefix }}_cu_sid" data-width="100%"
+                        ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_cu_sid"
+                        ng-options="currency.id as currency.title for currency in currencyTypes">
                 </select>
             </div>
         </div>
     </div>
 
 
-    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid == 0">
+    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 0">
         <div class="col-sm-9 col-sm-offset-3">
             <div class="checkbox">
-                <input id="{{ current_panel_prefix }}_new_buildings" type="checkbox" name="{{ current_panel_prefix }}_new_buildings" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_new_buildings">
-                <label for="{{ current_panel_prefix }}_new_buildings">Новостройки</label>
+                <input id="{{ current_panel_prefix }}_n_b" type="checkbox" name="{{ current_panel_prefix }}_n_b" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_n_b">
+                <label for="{{ current_panel_prefix }}_n_b">Новостройки</label>
             </div>
             <div class="checkbox">
-                <input id="{{ current_panel_prefix }}_secondary_market" type="checkbox" name="{{ current_panel_prefix }}_secondary_market" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_secondary_market">
-                <label for="{{ current_panel_prefix }}_secondary_market">Вторичный рынок</label>
+                <input id="{{ current_panel_prefix }}_s_m" type="checkbox" name="{{ current_panel_prefix }}_s_m" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_s_m">
+                <label for="{{ current_panel_prefix }}_s_m">Вторичный рынок</label>
             </div>
         </div>
     </div>
@@ -65,102 +63,102 @@
         <div class="col-sm-12">
             <label class="col-sm-6 control-label">Общая площадь:</label>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_total_area_from" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_total_area_from" allow-only-number/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_t_a_min" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_t_a_min" allow-only-number/>
             </div>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_total_area_to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_total_area_to" allow-only-number/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_t_a_max" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_t_a_max" allow-only-number/>
             </div>
         </div>
     </div>
 
 
-    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid == 0">
+    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 0">
         <div class="col-sm-12">
             <label class="col-sm-6 control-label">Количество комнат:</label>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_rooms_count_from" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_rooms_count_from" allow-only-number-without-dot/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_r_c_min" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_r_c_min" allow-only-number/>
             </div>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_rooms_count_to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_rooms_count_to" allow-only-number-without-dot/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_r_c_max" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_r_c_max" allow-only-number/>
             </div>
         </div>
     </div>
 
 
-    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid == 0">
+    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 0">
         <div class="col-sm-12">
             <label class="col-sm-6 control-label">Количество этажей:</label>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_floors_count_from" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_floors_count_from" allow-only-number-without-dot/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_f_c_min" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_f_c_min" allow-only-number/>
             </div>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_floors_count_to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_floors_count_to" allow-only-number-without-dot/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_f_c_max" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_f_c_max" allow-only-number/>
             </div>
         </div>
     </div>
 
 
-    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid == 1">
+    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 1">
         <div class="col-sm-12">
             <label class="col-sm-6 control-label">Количество мест:</label>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_persons_count_from" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_persons_count_from" allow-only-number-without-dot/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_p_c_min" placeholder="От" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_p_c_min" allow-only-number/>
             </div>
             <div class="col-sm-3">
-                <input class="form-control" type="text" name="{{ current_panel_prefix }}_persons_count_to" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_persons_count_to" allow-only-number-without-dot/>
+                <input class="form-control" type="text" name="{{ current_panel_prefix }}_p_c_max" placeholder="До" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_p_c_max" allow-only-number/>
             </div>
         </div>
     </div>
 
 
-    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid == 1">
+    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 1">
         <div class="col-sm-9 col-sm-offset-3">
             <div class="checkbox">
-                <input id="{{ current_panel_prefix }}_rent_family" type="checkbox" name="{{ current_panel_prefix }}_rent_family" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_rent_family">
-                <label for="{{ current_panel_prefix }}_rent_family">Подходит для семей с детьми</label>
+                <input id="{{ current_panel_prefix }}_fml" type="checkbox" name="{{ current_panel_prefix }}_fml" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_fml">
+                <label for="{{ current_panel_prefix }}_fml">Подходит для семей с детьми</label>
             </div>
             <div class="checkbox">
-                <input id="{{ current_panel_prefix }}_rent_foreigners" type="checkbox" name="{{ current_panel_prefix }}_rent_foreigners" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_rent_foreigners">
-                <label for="{{ current_panel_prefix }}_rent_foreigners">Размещение иностранцев</label>
+                <input id="{{ current_panel_prefix }}_frg" type="checkbox" name="{{ current_panel_prefix }}_frg" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_frg">
+                <label for="{{ current_panel_prefix }}_frg">Размещение иностранцев</label>
             </div>
         </div>
     </div>
 
 
     <div class="row form-group">
-        <h4 class="section-header">Удобства</h4>
+        <h5 class="section-header">Удобства</h5>
         <div class="col-sm-6">
             <div class="checkbox">
                 <input id="{{ current_panel_prefix }}_gas" type="checkbox" name="{{ current_panel_prefix }}_gas" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_gas">
                 <label for="{{ current_panel_prefix }}_gas">Газ</label>
             </div>
             <div class="checkbox">
-                <input id="{{ current_panel_prefix }}_electricity" type="checkbox" name="{{ current_panel_prefix }}_electricity" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_electricity">
-                <label for="{{ current_panel_prefix }}_electricity">Электричество</label>
+                <input id="{{ current_panel_prefix }}_elt" type="checkbox" name="{{ current_panel_prefix }}_elt" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_elt">
+                <label for="{{ current_panel_prefix }}_elt">Электричество</label>
             </div>
-            <div class="checkbox" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid == 0">
-                <input id="{{ current_panel_prefix }}_sewerage" type="checkbox" name="{{ current_panel_prefix }}_sewerage" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_sewerage">
-                <label for="{{ current_panel_prefix }}_sewerage">Канализация</label>
+            <div class="checkbox" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 0">
+                <input id="{{ current_panel_prefix }}_swg" type="checkbox" name="{{ current_panel_prefix }}_swg" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_swg">
+                <label for="{{ current_panel_prefix }}_swg">Канализация</label>
             </div>
         </div>
         <div class="col-sm-6">
             <div class="checkbox">
-                <input id="{{ current_panel_prefix }}_hot_water" type="checkbox" name="{{ current_panel_prefix }}_hot_water" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_hot_water">
-                <label for="{{ current_panel_prefix }}_hot_water">Гар. вода</label>
+                <input id="{{ current_panel_prefix }}_h_w" type="checkbox" name="{{ current_panel_prefix }}_h_w" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_h_w">
+                <label for="{{ current_panel_prefix }}_h_w">Гар. вода</label>
             </div>
             <div class="checkbox">
-                <input id="{{ current_panel_prefix }}_cold_water" type="checkbox" name="{{ current_panel_prefix }}_cold_water" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_cold_water">
-                <label for="{{ current_panel_prefix }}_cold_water">Хол. вода</label>
+                <input id="{{ current_panel_prefix }}_c_w" type="checkbox" name="{{ current_panel_prefix }}_c_w" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_c_w">
+                <label for="{{ current_panel_prefix }}_c_w">Хол. вода</label>
             </div>
         </div>
     </div>
 
 
-    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_operation_sid == 0">
+    <div class="row form-group" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 0">
         <div class="col-sm-12">
             <label class="col-sm-3 control-label">Отопление:</label>
             <div class="col-sm-9">
-                <select name="{{ current_panel_prefix }}_heating_type_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_heating_type_sid">
+                <select selectpicker name="{{ current_panel_prefix }}_h_t_sid" data-width="100%" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_h_t_sid">
                     <option value="0">Не учитывать</option>
                     <option value="1">Есть</option>
                     <option value="2">Нет</option>

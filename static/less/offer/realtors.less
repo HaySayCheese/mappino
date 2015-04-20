@@ -135,15 +135,21 @@ body {
 }
 
 
-#questions-accordion {
+.panel-group {
     width: 50%;
     margin: 0 auto;
+
+    &.left-side {
+        margin-left: 0;
+        margin-top: -50px;
+    }
 
     .panel-heading {
         a {
             color: @link-color;
             text-decoration: none;
             border-bottom: 1px dashed;
+            line-height: 1.5;
         }
     }
 

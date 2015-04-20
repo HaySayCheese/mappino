@@ -1,4 +1,4 @@
-<div class="modal login-modal fade" ng-controller="LoginCtrl">
+<div class="modal login-modal fade" ng-controller="LoginController">
     <div class="modal-dialog">
         <div class="modal-content content-blue">
             <div class="modal-header header-blue">
@@ -14,7 +14,7 @@
                         <form name="loginForm" autocomplete="off" novalidate>
                             <div class="col-sm-10 col-sm-offset-1 top-margin">
                                 <div class="form-group">
-                                    <input type="text" class="form-control" name="name" placeholder="Моб. телефон или эл. почта" ng-model="user.name" focus-on-load required>
+                                    <input type="text" class="form-control" name="name" placeholder="Моб. телефон или эл. почта" ng-model="user.name" autofocus required>
 
                                     <span class="input-icon">
                                         <span class="input-icon-error" ng-show="showValidationMessages && loginForm.name.$error.required"
@@ -35,8 +35,8 @@
                                 <div class="form-group">
                                     <button class="btn btn-success btn-block" type="submit" data-loading-text="Отправка данных..." ng-click="submitLogin()">Войти</button>
                                 </div>
-                                <a ng-href="#!/account/registration[[ urlFiltersPart ]]">Создать аккаунт</a><br/>
-                                <a ng-href="#!/account/restore-access[[ urlFiltersPart ]]">Не удается войти?</a>
+                                <a ng-href="#!/account/registration/">Создать аккаунт</a><br/>
+                                <a ng-href="#!/account/restore-access/">Не удается войти?</a>
                             </div>
                         </form>
 

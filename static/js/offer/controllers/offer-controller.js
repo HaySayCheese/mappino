@@ -5,12 +5,34 @@ app.controller('OfferController', ['$timeout',
         var scrollableBlock     = $(document),
             imgHolder           = scrollableBlock.find(".img-holder"),
             mainImage           = scrollableBlock.find(".img-holder.main"),
-            headerLinksBlock    = scrollableBlock.find(".header-links");
+            headerLinksBlock    = scrollableBlock.find(".header-links"),
+            accordeons          = $('.panel-group');
 
 
         initPlugins();
         initNavbar();
 
+
+
+        var showInterval;
+        accordeons.on('show.bs.collapse', function () {
+            showInterval = setInterval(function() {
+                imgHolder.imageScroll('refresh');
+            }, 0);
+        });
+        accordeons.on('shown.bs.collapse', function () {
+            clearInterval(showInterval);
+        });
+
+        var hideInterval;
+        accordeons.on('hide.bs.collapse', function () {
+            hideInterval = setInterval(function() {
+                imgHolder.imageScroll('refresh');
+            }, 0);
+        });
+        accordeons.on('hidden.bs.collapse', function () {
+            clearInterval(hideInterval);
+        });
 
 
         function initPlugins() {

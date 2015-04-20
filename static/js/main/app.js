@@ -1,12 +1,31 @@
-var app = angular.module('Mappino', ['ngRoute', 'ngCookies', 'ui.mask', 'ngAnimate', 'lrNotifier']);
+var app = angular.module('mappino.pages.map', [
+    'ngRoute',
+    'ngCookies',
+    'ngAnimate',
+    'ui.mask',
+    'lrNotifier',
+    'ab-base64',
+    'underscore',
 
-app.config(function($interpolateProvider, $locationProvider) {
-    $interpolateProvider.startSymbol('[[');
-    $interpolateProvider.endSymbol(']]');
+    '_modules.bAuth',
+    '_modules.bDirectives'
+]);
 
-    $locationProvider.hashPrefix('!');
-});
+app.config(['$interpolateProvider', '$locationProvider',
+    function($interpolateProvider, $locationProvider) {
+        "use strict";
 
-app.run(function($http, $cookies) {
-    $http.defaults.headers.common['X-CSRFToken'] = $cookies.csrftoken;
-});
+        $interpolateProvider.startSymbol('[[');
+        $interpolateProvider.endSymbol(']]');
+
+        $locationProvider.hashPrefix('!');
+    }
+]);
+
+app.run(['$http', '$cookies',
+    function($http, $cookies) {
+        "use strict";
+
+        $http.defaults.headers.common['X-CSRFToken'] = $cookies.csrftoken;
+    }
+]);
