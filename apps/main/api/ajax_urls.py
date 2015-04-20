@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 from apps.main.api.correspondence.ajax import SendMessageFromClient, SendCallRequestFromClient
 from apps.main.api.markers.ajax import Markers
-from apps.main.api.publications.ajax import DetailedView
+from apps.main.api.publications.ajax import DetailedView, Claims
 from apps.main.api.realtors_contacts.ajax import RealtorsContacts
 # from apps.main.api.realtors_pages.ajax import RealtorsData, RealtorsMarkers
 
@@ -19,6 +19,10 @@ urlpatterns = patterns('apps.main.api',
     # correspondence
     url(r'^ajax/api/notifications/send-message/(\d+:\w+)/$', SendMessageFromClient.as_view()),
     url(r'^ajax/api/notifications/send-call-request/(\d+:\w+)/$', SendCallRequestFromClient.as_view()),
+
+
+    # claims
+    url(r'^ajax/api/publications/(\d+:\w+)/claims/$', Claims.List.as_view()),
 
 
     # # realtors pages

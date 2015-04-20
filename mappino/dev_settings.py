@@ -22,6 +22,7 @@ MANAGERS = (
 )
 SUPPORT_EMAIL =  MANAGERS[0][1]
 BILLING_MANAGER_EMAIL = MANAGERS[0][1]
+MODERATORS = MANAGERS[0][1]
 
 
 HUL1_PUBLIC_IP = '128.199.59.244'
@@ -71,7 +72,7 @@ SPHINX_SEARCH_DATABASE = {
     'HOST': HUL1_PUBLIC_IP,
     'PORT': 9307 # the real port is 9306. 9307 is set for dev suite.
 }
-ENABLE_SPHINX_SEARCH = True
+ENABLE_SPHINX_SEARCH = False
 
 
 CACHES = {
@@ -125,6 +126,7 @@ INSTALLED_APPS = (
     'core.users',
     'core.billing',
     'core.publications',
+    'core.claims',
     'core.markers_handler',
     'core.search',
     'core.support',
