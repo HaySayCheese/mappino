@@ -1,10 +1,11 @@
+'use strict'
+
 ###*
 # @class
 # @description todo: add desc
 # @version 0.8.2
 # @license todo: add license
 ###
-'use strict'
 class BAuthService
     constructor: (@http, @cookieStore) ->
         @URL =
@@ -25,6 +26,10 @@ class BAuthService
                     '3':        'Неверная пара логин - пароль'
                 'FATAL':        'Fatal login error'
                 'BAD_COOKIE':   'User cookie is bad'
+            'RESTORE_ACCESS':
+                'CODES':
+                    '1':        'Запрос уже в очереди. Сообщение на почту отправлено повторно.'
+                    '2':        'Пользователя с такими данными нету'
             'EMAIL':
                 'CODES':
                     '1':        'Некоректная эл. почта'
@@ -244,6 +249,59 @@ class BAuthService
         request = @http.post @URL.RESEND_SMS_CODE, {}
 
         request.success -> _.isFunction(successCallback) && successCallback()
+        request.error -> _.isFunction(errorCallback) && errorCallback()
+
+
+
+    ###*
+    # @public
+    # @description Restore access - send email
+    #
+    # @param {string} username               - User email or phone number
+    # @param {function()} [successCallback]  - Success callback
+    # @param {function()} [errorCallback]    - Error callback
+    ###
+    restoreAccessSendEmail: (username, successCallback, errorCallback) ->
+        request = @http.post @URL.RESTORE_ACCESS_SEND_EMAIL,
+            'username': username
+
+        request.success (response) ->
+            if response.code is 0
+                _.isFunction(successCallback) && successCallback()
+            if response.code isnt 0
+                _.isFunction(errorCallback) && errorCallback
+                    'code':     response.code
+                    'message':  self.ERRORS.RESTORE_ACCESS.CODES[response.code]
+
+        request.error -> _.isFunction(errorCallback) && errorCallback()
+
+
+
+    ###*
+    # @public
+    # @description Restore access - send password
+    #
+    # @param {object} user                  - User object
+    # @param {string} user.password         - User password
+    # @param {string} user.passwordRepeat   - User password repeat
+    # @param {string} token                 - Token
+    # @param {function()} [successCallback] - Success callback
+    # @param {function()} [errorCallback]   - Error callback
+    ###
+    restoreAccessSendPassword: (user, token, successCallback, errorCallback) ->
+        request = @http.post @URL.RESTORE_ACCESS_SEND_PASSWORD,
+            'token':            user.token,
+            'password':         user.password,
+            'password-repeat':  user.passwordRepeat
+
+        request.success (response) ->
+            if response.code is 0
+                _.isFunction(successCallback) && successCallback()
+            if response.code isnt 0
+                _.isFunction(errorCallback) && errorCallback
+                    'code':     response.code
+                    'message':  ''
+
         request.error -> _.isFunction(errorCallback) && errorCallback()
 
 

@@ -1,11 +1,11 @@
+'use strict'
+
 ###*
 # @class
 # @description todo: add desc
 # @version 0.0.1
 # @license todo: add license
 ###
-'use strict'
-
 class BTypesService
     ###*
     # @public

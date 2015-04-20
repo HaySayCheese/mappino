@@ -28,8 +28,8 @@ app.controller('RegistrationController', ['$scope', '$rootScope', '$cookieStore'
 /**
  * Контроллер який відповідає за форму реєстрації
  **/
-app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies', 'Account', 'BAuthService',
-    function($scope, $rootScope, $cookies, Account, BAuthService) {
+app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies', 'BAuthService',
+    function($scope, $rootScope, $cookies, BAuthService) {
         "use strict";
 
         /**

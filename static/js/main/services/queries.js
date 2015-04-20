@@ -36,23 +36,6 @@ app.factory('Queries', ['$http','HTTP_URL', function($http, HTTP_URL) {
                     phone_number:    call_request.phone
                 });
             }
-        },
-
-
-        Account: {
-            restoreAccessSendEmail: function(username) {
-                return $http.post(HTTP_URL.ACCOUNT.RESTORE_ACCESS_SEND_EMAIL, {
-                    username: username
-                });
-            },
-
-            restoreAccessSendPasswords: function(user) {
-                return $http.post(HTTP_URL.ACCOUNT.RESTORE_ACCESS_SEND_PASSWORD, {
-                    'token': user.token,
-                    'password': user.password,
-                    'password-repeat': user.passwordRepeat
-                });
-            }
         }
     };
 }]);

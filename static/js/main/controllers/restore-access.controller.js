@@ -29,8 +29,8 @@ app.controller('RestoreAccessController', ['$scope', '$rootScope', '$location', 
 /**
  * Контроллер який відповідає відправку мила юзеру
  **/
-app.controller('RestoreAccessSendMailController', ['$scope', '$rootScope', 'Account',
-    function($scope, $rootScope, Account) {
+app.controller('RestoreAccessSendMailController', ['$scope', '$rootScope', 'BAuthService',
+    function($scope, $rootScope, BAuthService) {
         "use strict";
 
         /**
@@ -79,16 +79,11 @@ app.controller('RestoreAccessSendMailController', ['$scope', '$rootScope', 'Acco
 
             restoreAccessBtn.button('loading');
 
-            Account.restoreAccessSendEmail($scope.user.login, function(data) {
+            BAuthService.restoreAccessSendEmail($scope.user.login, function() {
                 restoreAccessBtn.button('reset');
-
-                if (data.code === 0) {
-                    $rootScope.restoreAccessStatePart = "emailSendMessage";
-
-                    return
-                }
-
-                validateLogin(data.code);
+                $rootScope.restoreAccessStatePart = "emailSendMessage";
+            }, function(response) {
+                validateLogin(response.code);
             });
         };
 
@@ -96,11 +91,7 @@ app.controller('RestoreAccessSendMailController', ['$scope', '$rootScope', 'Acco
         /**
          * Логіка валідації логіна
          **/
-        function validateLogin() {
-
-            if (arguments[0])
-                var code = arguments[0];
-
+        function validateLogin(code) {
             if (!$scope.user.login && $scope.user.login === "")
                 return;
 
@@ -115,8 +106,6 @@ app.controller('RestoreAccessSendMailController', ['$scope', '$rootScope', 'Acco
                 $scope.restoreAccessForm.login.$setValidity("login", false);
                 $scope.restoreAccessForm.login.$setValidity("token", true);
             }
-
-
         }
 
     }
@@ -129,8 +118,8 @@ app.controller('RestoreAccessSendMailController', ['$scope', '$rootScope', 'Acco
 /**
  * Контроллер який відповідає за зміну пароля
  **/
-app.controller('RestoreAccessChangePasswordController', ['$scope', '$rootScope', '$location', 'Account',
-    function($scope, $rootScope, $location, Account) {
+app.controller('RestoreAccessChangePasswordController', ['$scope', '$rootScope', '$location', 'BAuthService',
+    function($scope, $rootScope, $location, BAuthService) {
         "use strict";
 
         /**
@@ -182,21 +171,16 @@ app.controller('RestoreAccessChangePasswordController', ['$scope', '$rootScope',
 
             restoreAccessBtn.button('loading');
 
-            Account.restoreAccessSendPasswords($scope.user, function(data) {
+            BAuthService.restoreAccessSendPassword($scope.user, $scope.user.token, function() {
                 restoreAccessBtn.button('reset');
-
-                if (data.code === 0)
-                    sessionStorage.userName = data.user.name + " " + data.user.surname;
-
-                if (data.code === 1) {
-                    $rootScope.restoreAccessStatePart = "invalidTokenMessage";
-                    return;
-                }
-
                 $location.search("token", null);
                 $location.path("/search");
+            }, function(response) {
+                restoreAccessBtn.button('reset');
+                if (response.code === 1) {
+                    $rootScope.restoreAccessStatePart = "invalidTokenMessage";
+                }
             });
-
         };
 
 
