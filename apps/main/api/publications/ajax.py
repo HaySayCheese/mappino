@@ -1,6 +1,6 @@
 # coding=utf-8
 import json
-from collective.http.responses import HttpJsonResponseBadRequest, HttpJsonResponse
+from collective.http.responses import HttpJsonResponseBadRequest, HttpJsonResponse, HttpJsonResponseNotFound
 from collective.methods.request_data_getters import angular_post_parameters
 from core.claims.classes import ClaimsManager
 from django.http import HttpResponseBadRequest, HttpResponse
@@ -90,7 +90,7 @@ class Claims(object):
             def invalid_publication_tid():
                 return HttpJsonResponseBadRequest({
                     'code': 2,
-                    'message': 'Request doesn\'t contains parameter "publication_tid",'
+                    'message': 'Request doesn\'t contains parameter "publication_tid", '
                                'or it is invalid. '
                 })
 
@@ -99,7 +99,7 @@ class Claims(object):
             def invalid_publication_hid():
                 return HttpJsonResponseBadRequest({
                     'code': 3,
-                    'message': 'Request doesn\'t contains parameter "publication_hid",'
+                    'message': 'Request doesn\'t contains parameter "publication_hid", '
                                'or it is invalid. '
                 })
 
@@ -108,7 +108,7 @@ class Claims(object):
             def invalid_claim_tid():
                 return HttpJsonResponseBadRequest({
                     'code': 4,
-                    'message': 'Request doesn\'t contains parameter "claim_tid",'
+                    'message': 'Request doesn\'t contains parameter "claim_tid", '
                                'or it is invalid. '
                 })
 
@@ -117,14 +117,14 @@ class Claims(object):
             def invalid_user_email():
                 return HttpJsonResponseBadRequest({
                     'code': 5,
-                    'message': 'Request doesn\'t contains parameter "user_email",'
+                    'message': 'Request doesn\'t contains parameter "email", '
                                'or it is invalid. '
                 })
 
 
             @staticmethod
             def publication_does_not_exists():
-                return HttpJsonResponseBadRequest({
+                return HttpJsonResponseNotFound({
                     'code': 6,
                     'message': 'Publication with received params does not exists.'
                 })
@@ -145,8 +145,7 @@ class Claims(object):
             except (IndexError, ):
                 return cls.PostResponses.invalid_publication_hid()
 
-
-            post_params = angular_post_parameters(request, ['claim_tid', 'email', ])
+            post_params = angular_post_parameters(request)
             try:
                 claim_tid = int(post_params['claim_tid'])
             except (KeyError, ValueError):

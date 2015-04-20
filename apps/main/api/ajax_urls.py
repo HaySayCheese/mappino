@@ -22,7 +22,7 @@ urlpatterns = patterns('apps.main.api',
 
 
     # claims
-    url(r'^ajax/api/publications/(\d+:\w+)/claims/$', Claims.List.as_view()),
+    url(r'^ajax/api/publications/(\d+):(\w+)/claims/$', Claims.List.as_view()),
 
 
     # # realtors pages

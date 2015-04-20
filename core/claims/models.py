@@ -18,19 +18,19 @@ class PublicationsClaims(models.Model):
         @staticmethod
         def owner_is_and_intermediary():
             # todo: translates must goes here
-            return "оголошення подано від посередника."
+            return u"оголошення подано від посередника"
 
 
         @staticmethod
         def untruthful_content():
             # todo: translates must goes here
-            return "оголошення містить неправдивий контент."
+            return u"оголошення містить неправдивий контент"
 
 
         @staticmethod
         def photos_do_not_correspond_to_reality():
             # todo: translates must goes here
-            return "фото не відповідають дійсності."
+            return u"фото не відповідають дійсності"
 
 
     #
@@ -70,5 +70,5 @@ class PublicationsClaims(models.Model):
             publication_hid = publication_hid,
             owner_id = owner_id,
             claim_tid = claim_tid,
-            message = custom_message
+            message = message
         )
