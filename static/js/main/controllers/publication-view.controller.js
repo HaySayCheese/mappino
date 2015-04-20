@@ -3,8 +3,8 @@ app.controller('PublicationViewController', ['$scope', '$rootScope', '$routePara
     function($scope, $rootScope, $routeParams, Queries, TXT) {
         "use strict";
 
-        $scope.publicationViewPart = "Detailed";
-        $scope.publicationViewDetailedPart = "Description";
+        $scope.publicationBasePart = "Detailed";
+        $scope.publicationDetailedPart = "Description";
 
         $scope.publicationLoaded = false;
         $scope.publication = {};
@@ -15,7 +15,7 @@ app.controller('PublicationViewController', ['$scope', '$rootScope', '$routePara
 
 
         Queries.Map.getPublicationDescription($routeParams.id).success(function(data) {
-            data.code === 2 ? $scope.publicationViewPart = "PublicationNF" : $scope.publicationViewPart = "Detailed";
+            data.code !== 0 ? $scope.publicationBasePart = "PublicationNotFound" : $scope.publicationBasePart = "Detailed";
 
             $scope.publication = data;
 
@@ -31,12 +31,12 @@ app.controller('PublicationViewController', ['$scope', '$rootScope', '$routePara
         });
 
 
-        $scope.changeBasePart = function() {
-            $scope.publicationViewPart = $scope.publicationViewPart == "Detailed" ? "Photos" : "Detailed";
+        $scope.changeBasePart = function(part) {
+            $scope.publicationBasePart = part;
         };
 
-        $scope.changeDetailedPart = function() {
-            $scope.publicationViewDetailedPart = $scope.publicationViewDetailedPart == "Contacts" ? "Description" : "Contacts";
+        $scope.changeDetailedPart = function(part) {
+            $scope.publicationDetailedPart = part;
         };
     }
 ]);

@@ -1,5 +1,5 @@
 <div class="modal publication-view-modal fade" ng-controller="PublicationViewController">
-    <div class="modal-dialog" ng-switch on="publicationViewPart">
+    <div class="modal-dialog" ng-switch on="publicationBasePart">
 
 
 
@@ -22,7 +22,7 @@
                 <a class="right carousel-control" ng-href="#publication-view-carousel" data-slide="next" ng-click="$event.preventDefault()">
                     <span class="glyphicon glyphicon-chevron-right"></span>
                 </a>
-                <div class="btn btn-success close-photos-btn" ng-click="changeBasePart()">Вернуться к описанию</div>
+                <div class="btn btn-success close-photos-btn" ng-click="changeBasePart('Detailed')">Вернуться к описанию</div>
             </div>
         </div>
 
@@ -30,9 +30,9 @@
         <div class="modal-content content-white" ng-switch-when="Detailed" itemscope itemtype="http://schema.org/RealStateAgent">
 
             <div class="publication-photo pull-left">
-                <div class="photo" ng-show="publication.head.title_photo" ng-click="changeBasePart()">
+                <div class="photo" ng-show="publication.head.title_photo" ng-click="changeBasePart('Photos')">
                     <div class="overlay"></div>
-                    <img ng-src="[[ publication.head.title_photo ]]" ng-click="changeBasePart()" itemprop="image"/>
+                    <img ng-src="[[ publication.head.title_photo ]]" ng-click="changeBasePart('Photos')" itemprop="image"/>
                 </div>
 
                 <div class="no-photo" ng-hide="publication.head.title_photo">
@@ -47,88 +47,13 @@
 
             <div class="publication-content pull-right">
                 <div class="publication-content-header">
-                    <div ng-show="publicationViewDetailedPart == 'Description'" title="[[ publication.data.title ]]">[[ publication.data.title ]]</div>
+                    <div ng-show="publicationDetailedPart == 'Description'" title="[[ publication.data.title ]]">[[ publication.data.title ]]</div>
                     <img class="close" src="{{ static }}img/main/publication-view/detailed-close.png" data-dismiss="modal"/>
                 </div>
 
-                <div class="publication-content-body" ng-switch on="publicationViewDetailedPart">
-
-                    <div ng-switch-when="Contacts" ng-controller="PublicationViewContactsController">
-                        <div class="contacts-loading" ng-hide="contactsLoaded"></div>
-
-                        <div ng-show="contactsLoaded">
-                            <div class="user-photo">
-                                <img ng-src="[[ user.contacts.avatar_url ]]" ng-show="user.contacts.avatar_url"/>
-                                <img src="{{ static }}img/main/publication-view/no-user.png" ng-hide="user.contacts.avatar_url"/>
-                            </div>
-                            <div class="user-name">
-                                [[ user.contacts.first_name ]] [[ user.contacts.last_name ]]
-                            </div>
-                            <div class="user-phones">
-                                <div ng-show="user.contacts.mobile_phone || user.contacts.add_mobile_phone">
-                                    <span ng-show="user.contacts.mobile_phone">
-                                        Моб. телефон: [[ user.contacts.mobile_phone ]]
-                                    </span>
-                                    <span ng-show="user.contacts.mobile_phone && user.contacts.add_mobile_phone">,</span>
-                                    <span ng-show="user.contacts.add_mobile_phone">
-                                        <span ng-hide="user.contacts.mobile_phone">Моб. телефон:</span> [[ user.contacts.add_mobile_phone ]]
-                                    </span>
-                                </div>
-                                <div ng-show="user.contacts.landline_phone || user.contacts.add_landline_phone">
-                                    <span ng-show="user.contacts.landline_phone">
-                                        Роб. телефон: [[ user.contacts.landline_phone ]]
-                                    </span>
-                                    <span ng-show="user.contacts.landline_phone && user.contacts.add_landline_phone">,</span>
-                                    <span ng-show="user.contacts.add_landline_phone">
-                                        <span ng-hide="user.contacts.landline_phone">Роб. телефон:</span> [[ user.contacts.add_landline_phone ]]
-                                    </span>
-                                </div>
-                                <div ng-show="user.contacts.email">
-                                    Эл. почта: [[ user.contacts.email ]]
-                                </div>
-                                <div ng-show="user.contacts.skype">
-                                    Skype: [[ user.contacts.skype ]]
-                                </div>
-                            </div>
-                            <div class="user-btns" ng-hide="sendingMessage || sendingCallRequest">
-                                <div class="btn btn-primary btn-block" ng-show="user.preferences.allow_call_requests" ng-click="sendingCallRequest = true">Заказать обратный звонок</div>
-                                <div class="btn btn-default btn-block" ng-show="user.preferences.allow_messaging" ng-click="sendingMessage = true">Оставить сообщение</div>
-                            </div>
-
-                            <div class="user-message" ng-show="sendingMessage">
-
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="row">
-                                            <div class="col-sm-5">
-                                                <input type="text" class="form-control" placeholder="Имя"ng-model="message.name">
-                                            </div>
-                                            <div class="col-sm-7">
-                                                <input type="text" class="form-control" placeholder="Эл. почта" ng-model="message.email">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <textarea class="form-control" rows="2" placeholder="Введите текст сообщения" ng-model="message.text"></textarea>
-                                <div class="btn btn-default" ng-click="cancelSendMessage()">Отмена</div>
-                                <div class="btn btn-primary pull-right send-btn" ng-click="sendMessage()" data-loading-text="Отправка данных..." ng-disabled="!message.text || !message.email">Отправить сообщение</div>
-                            </div>
-
-                            <div class="user-call-request" ng-show="sendingCallRequest">
-                                <form name="sendCallRequestForm" autocomplete="off" novalidate>
-                                    <input type="text" class="form-control" placeholder="Имя"ng-model="call_request.name">
-                                    <input type="text" class="form-control" placeholder="Телефон" ng-model="call_request.phone" allow-only-number-without-dot>
-                                    <button type="submit" class="btn btn-primary send-btn" ng-click="sendCallRequest()" data-loading-text="Отправка данных..." ng-disabled="!call_request.name || !call_request.phone">Заказать обратный звонок</button>
-                                    <div class="btn btn-default" ng-click="cancelSendCallRequest()">Отмена</div>
-                                </form>
-                            </div>
-
-                        </div>
-                    </div>
-
-
-
+                <div class="publication-content-body" ng-switch on="publicationDetailedPart">
                     <div class="publication-loading" ng-hide="publicationLoaded"></div>
+
 
                     <div ng-switch-when="Description" ng-show="publicationLoaded">
                         <div class="description" ng-show="publication.data.description">
@@ -293,21 +218,142 @@
                             [[ publication.data.showplaces ]]
                         </div>
                     </div>
+
+
+                    <div ng-switch-when="Contacts" ng-controller="PublicationViewContactsController">
+                        <div class="contacts-loading" ng-hide="contactsLoaded"></div>
+
+                        <div ng-show="contactsLoaded">
+                            <div class="user-photo">
+                                <img ng-src="[[ user.contacts.avatar_url ]]" ng-show="user.contacts.avatar_url"/>
+                                <img src="{{ static }}img/main/publication-view/no-user.png" ng-hide="user.contacts.avatar_url"/>
+                            </div>
+                            <div class="user-name">
+                                [[ user.contacts.first_name ]] [[ user.contacts.last_name ]]
+                            </div>
+                            <div class="user-phones">
+                                <div ng-show="user.contacts.mobile_phone || user.contacts.add_mobile_phone">
+                                    <span ng-show="user.contacts.mobile_phone">
+                                        Моб. телефон: [[ user.contacts.mobile_phone ]]
+                                    </span>
+                                    <span ng-show="user.contacts.mobile_phone && user.contacts.add_mobile_phone">,</span>
+                                    <span ng-show="user.contacts.add_mobile_phone">
+                                        <span ng-hide="user.contacts.mobile_phone">Моб. телефон:</span> [[ user.contacts.add_mobile_phone ]]
+                                    </span>
+                                </div>
+                                <div ng-show="user.contacts.landline_phone || user.contacts.add_landline_phone">
+                                    <span ng-show="user.contacts.landline_phone">
+                                        Роб. телефон: [[ user.contacts.landline_phone ]]
+                                    </span>
+                                    <span ng-show="user.contacts.landline_phone && user.contacts.add_landline_phone">,</span>
+                                    <span ng-show="user.contacts.add_landline_phone">
+                                        <span ng-hide="user.contacts.landline_phone">Роб. телефон:</span> [[ user.contacts.add_landline_phone ]]
+                                    </span>
+                                </div>
+                                <div ng-show="user.contacts.email">
+                                    Эл. почта: [[ user.contacts.email ]]
+                                </div>
+                                <div ng-show="user.contacts.skype">
+                                    Skype: [[ user.contacts.skype ]]
+                                </div>
+                            </div>
+                            <div class="user-btns" ng-hide="sendingMessage || sendingCallRequest">
+                                <div class="btn btn-primary btn-block" ng-show="user.preferences.allow_call_requests" ng-click="sendingCallRequest = true">Заказать обратный звонок</div>
+                                <div class="btn btn-default btn-block" ng-show="user.preferences.allow_messaging" ng-click="sendingMessage = true">Оставить сообщение</div>
+                            </div>
+
+                            <div class="user-message" ng-show="sendingMessage">
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="row">
+                                            <div class="col-sm-5">
+                                                <input type="text" class="form-control" placeholder="Имя"ng-model="message.name">
+                                            </div>
+                                            <div class="col-sm-7">
+                                                <input type="text" class="form-control" placeholder="Эл. почта" ng-model="message.email">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <textarea class="form-control" rows="2" placeholder="Введите текст сообщения" ng-model="message.text"></textarea>
+                                <div class="btn btn-default" ng-click="cancelSendMessage()">Отмена</div>
+                                <div class="btn btn-primary pull-right send-btn" ng-click="sendMessage()" data-loading-text="Отправка данных..." ng-disabled="!message.text || !message.email">Отправить сообщение</div>
+                            </div>
+
+                            <div class="user-call-request" ng-show="sendingCallRequest">
+                                <form name="sendCallRequestForm" autocomplete="off" novalidate>
+                                    <input type="text" class="form-control" placeholder="Имя"ng-model="call_request.name">
+                                    <input type="text" class="form-control" placeholder="Телефон" ng-model="call_request.phone" allow-only-number-without-dot>
+                                    <button type="submit" class="btn btn-primary send-btn" ng-click="sendCallRequest()" data-loading-text="Отправка данных..." ng-disabled="!call_request.name || !call_request.phone">Заказать обратный звонок</button>
+                                    <div class="btn btn-default" ng-click="cancelSendCallRequest()">Отмена</div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div ng-switch-when="Claim">
+                        <div class="row">
+                            <div class="col-xs-8 col-xs-offset-2">
+                                <select selectpicker name="claim-selectpicker" data-width="100%">
+                                    <option value="1">Объявление от посредника</option>
+                                    <option value="2">Объявление содержит неправдивый контент</option>
+                                    <option value="3">Фото не соответствует действительности</option>
+                                    <option value="0">Другая причина</option>
+                                </select>
+                                <textarea class="form-control" name="another-reason" cols="30" rows="3"
+                                          placeholder="Пожалуйста, укажите причину жалобы, по возможности указав как можно больше деталей."></textarea>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <input class="form-control" type="text" placeholder="Эл. почта"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 text-center">
+                                        <button class="btn btn-success">Отправить</button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 text-center">
+                                        <button class="btn btn-default">Отмена</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
                 <div class="publication-content-footer">
                     <div class="btn-group btn-group-justified">
-                        <a type="button" class="btn btn-success btn-xlg" ng-click="changeDetailedPart()">
-                            <span ng-show="publicationViewDetailedPart == 'Contacts'">< Вернуться к описанию</span>
-                            <span ng-show="publicationViewDetailedPart == 'Description'">Показать контакты</span>
+                        <a type="button" class="btn btn-success btn-xlg"
+                           ng-click="changeDetailedPart(publicationDetailedPart === 'Description' ? 'Contacts' : 'Description')">
+                            <span ng-show="publicationDetailedPart === 'Contacts'">
+                                <span class="glyphicon glyphicon-menu-left"></span>
+                                Вернуться к описанию
+                            </span>
+                            <span ng-show="publicationDetailedPart === 'Description' || publicationDetailedPart === 'Claim'">
+                                Показать контакты
+                            </span>
                         </a>
-                        <!--<a type="button" class="btn btn-primary btn-xlg print-btn" title="Распечатать"></a>-->
+                        <a type="button" class="btn btn-primary btn-xlg" title="Добавить в избранное">
+                            Следующее объявление
+                        </a>
+                        <a type="button" class="btn btn-orange btn-xlg" title="Добавить в избранное">
+                            <span class="glyphicon glyphicon-star-empty"></span>
+                        </a>
+                        <a type="button" class="btn btn-danger btn-xlg" title="Пожаловатся"
+                           ng-click="changeDetailedPart('Claim')">
+                            <span class="glyphicon glyphicon-thumbs-down"></span>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
 
 
-        <div class="modal-content content-white text-center" ng-switch-when="PublicationNF">
+        <div class="modal-content content-white text-center" ng-switch-when="PublicationNotFound">
             <img src="{{ static }}img/promo/logo.png" alt=""/>
             <h2>К сожалению, объявление снято с публикации.</h2>
         </div>
