@@ -7,6 +7,7 @@ var app = angular.module('mappino.pages.map', [
     'ab-base64',
     'underscore',
 
+    '_modules.bTypes',
     '_modules.bAuth',
     '_modules.bDirectives'
 ]);
