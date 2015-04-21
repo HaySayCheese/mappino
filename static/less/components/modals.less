@@ -58,6 +58,24 @@
             background: @blue-40;
         }
     }
+
+    &.-white {
+        .modal-header,
+        .modal-body,
+        .modal-footer {
+            //color: #ffffff;
+            //a {
+            //    color: #fff !important;
+            //}
+        }
+        .modal-header,
+        .modal-body {
+            background-color: #fff;
+        }
+        .modal-footer {
+            background: #fff;
+        }
+    }
 }
 
 // Actual modal
@@ -67,10 +85,6 @@
     background-clip: padding-box;
     // Remove focus outline from opened modal
     outline: none;
-
-    &.content-white {
-        background-color: @modal-content-bg;
-    }
 }
 
 // Modal background

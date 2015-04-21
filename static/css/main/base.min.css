@@ -5651,15 +5651,19 @@ button.close {
 .modal-dialog.-blue .modal-footer {
   background: #3075b5;
 }
+.modal-dialog.-white .modal-header,
+.modal-dialog.-white .modal-body {
+  background-color: #fff;
+}
+.modal-dialog.-white .modal-footer {
+  background: #fff;
+}
 .modal-content {
   position: relative;
   -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
   box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
   background-clip: padding-box;
   outline: none;
-}
-.modal-content.content-white {
-  background-color: #ffffff;
 }
 .modal-backdrop {
   position: fixed;
@@ -7991,279 +7995,44 @@ fieldset[disabled] .restore-access-modal .btn-success.active {
 .publication-view-modal .modal-dialog {
   width: 1000px;
 }
-.publication-view-modal .content-white {
-  width: 1000px;
-  height: 600px;
-}
-.publication-view-modal .publication-photo {
-  width: 300px;
-  height: 600px;
+.publication-view-header {
   position: relative;
-  cursor: pointer;
+  padding: 0;
 }
-.publication-view-modal .publication-photo .photo > .overlay {
-  width: 300px;
-  height: 600px;
-  position: absolute;
-  z-index: 100;
-  background-color: transparent;
-  background-image: url("../../img/main/publication-view/fool-size.png");
-  background-repeat: no-repeat;
-  background-position: center center;
-  opacity: 0;
-  filter: alpha(opacity=0);
-  -webkit-transition: all 0.2s linear;
-  transition: all 0.2s linear;
+.publication-view-header > .title-photo {
+  width: 1000px;
+  height: 350px;
 }
-.publication-view-modal .publication-photo .photo:hover .overlay {
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 1;
-  filter: alpha(opacity=100);
+.publication-view-header > .title-photo > .photo {
+  width: 1000px;
+  height: 350px;
 }
-.publication-view-modal .publication-photo > .counter {
-  width: 65px;
-  height: 65px;
-  padding: 10px;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  z-index: 90;
-  text-align: center;
-  color: #ffffff;
-  background-color: rgba(79, 170, 160, 0.9);
-}
-.publication-view-modal .publication-photo > .counter:before,
-.publication-view-modal .publication-photo > .counter:after {
-  content: " ";
-  width: 32px;
-  height: 32px;
-  position: absolute;
-}
-.publication-view-modal .publication-photo > .counter:before {
-  top: -32px;
-  left: 0;
-  background-color: rgba(79, 170, 160, 0.4);
-}
-.publication-view-modal .publication-photo > .counter:after {
-  bottom: 0;
-  right: -32px;
-  background-color: rgba(79, 170, 160, 0.6);
-}
-.publication-view-modal .publication-photo .no-photo {
+.publication-view-header > .title-photo > .photo-overlay {
   width: 100%;
   height: 100%;
-  cursor: default;
-  position: relative;
-  background: #ededed url("../../img/main/publication-view/no-photo.png") center center no-repeat;
-}
-.publication-view-modal .publication-photo .no-photo > .text {
   position: absolute;
-  top: 70%;
-  left: 50%;
-  -webkit-transform: translate(-50%, 0);
-  -ms-transform: translate(-50%, 0);
-  transform: translate(-50%, 0);
-  text-align: center;
-  color: #999999;
+  top: 0;
 }
-.publication-view-modal .publication-content {
-  width: 700px;
-  height: 600px;
+.publication-view-header > .over-photo-block {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 30px 100px 18px;
+  background-color: rgba(16, 90, 186, 0.5);
 }
-.publication-view-modal .publication-content .publication-content-header {
-  width: 100%;
-  height: 50px;
-  padding: 10px 20px;
+.publication-view-header > .over-photo-block > .title {
+  color: #fff;
+  text-shadow: 0 0 18px #0a2311;
+  font-size: 18px;
 }
-.publication-view-modal .publication-content .publication-content-header div {
-  width: calc(100% - 35px);
-  display: inline-block;
-  font-size: 24px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.publication-view-modal .publication-content .publication-content-body {
-  width: 100%;
-  height: calc(100% - 115px);
-  padding: 10px 20px 25px 20px;
-  overflow-y: auto;
-  line-height: 120%;
-}
-.publication-view-modal .publication-content .publication-content-body .user-photo,
-.publication-view-modal .publication-content .publication-content-body .user-name,
-.publication-view-modal .publication-content .publication-content-body .user-phones {
-  display: block;
-  text-align: center;
-}
-.publication-view-modal .publication-content .publication-content-body .user-photo img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 1px solid #eeeeee;
-}
-.publication-view-modal .publication-content .publication-content-body .user-name {
-  margin-top: 20px;
-  font-size: 24px;
-}
-.publication-view-modal .publication-content .publication-content-body .user-phones {
-  padding: 10px 0;
-  color: #999999;
+.publication-view-header > .over-photo-block > .address {
+  color: #dadada;
   font-size: 14px;
 }
-.publication-view-modal .publication-content .publication-content-body .user-btns {
-  width: 250px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-.publication-view-modal .publication-content .publication-content-body .user-btns :last-child {
-  border-bottom: 2px dashed #b18ccb;
-}
-.publication-view-modal .publication-content .publication-content-body .user-message,
-.publication-view-modal .publication-content .publication-content-body .user-call-request {
-  width: 50%;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px dashed #eeeeee;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-.publication-view-modal .publication-content .publication-content-body .user-message .btn,
-.publication-view-modal .publication-content .publication-content-body .user-call-request .btn {
-  margin-top: 5px;
-}
-.publication-view-modal .publication-content .publication-content-body .user-message > textarea,
-.publication-view-modal .publication-content .publication-content-body .user-call-request > textarea {
-  margin-top: 10px;
-}
-.publication-view-modal .publication-content .publication-content-body .user-call-request {
-  padding: 10px 50px 0 50px;
-  text-align: center;
-}
-.publication-view-modal .publication-content .publication-content-body .user-call-request .form-control {
-  margin-bottom: 10px;
-}
-.publication-view-modal .publication-content .publication-content-body .section-header {
-  font-weight: bold;
-}
-.publication-view-modal .publication-content .publication-content-body .description {
-  padding-bottom: 20px;
-  text-align: justify;
-}
-.publication-view-modal .publication-content .publication-content-body .properties {
-  margin-bottom: 20px;
-}
-.publication-view-modal .publication-content .publication-content-body .properties:before,
-.publication-view-modal .publication-content .publication-content-body .properties:after {
-  content: " ";
-  display: table;
-}
-.publication-view-modal .publication-content .publication-content-body .properties:after {
-  clear: both;
-}
-.publication-view-modal .publication-content .publication-content-body .properties:before,
-.publication-view-modal .publication-content .publication-content-body .properties:after {
-  content: " ";
-  display: table;
-}
-.publication-view-modal .publication-content .publication-content-body .properties:after {
-  clear: both;
-}
-.publication-view-modal .publication-content .publication-content-body .properties .padding-top > td {
-  padding-top: 18px;
-}
-.publication-view-modal .publication-content .publication-content-body .properties > .left {
-  width: 46%;
-  float: left;
-}
-.publication-view-modal .publication-content .publication-content-body .properties > .right {
-  width: 54%;
-  float: right;
-}
-.publication-view-modal .publication-content .publication-content-body .other-properties {
-  display: block;
-  margin-top: 10px;
-}
-.publication-view-modal .publication-content .publication-content-body .property-price {
-  font-size: 18px;
-  font-weight: bold;
-  line-height: 20px;
-  margin-top: 20px;
-}
-.publication-view-modal .publication-content .publication-content-body .publication-loading,
-.publication-view-modal .publication-content .publication-content-body .contacts-loading {
-  display: block;
-  height: 12px;
-  background: url("../../img/main/publication-view/ajax-loader.gif") center center no-repeat;
-}
-.publication-view-modal .publication-content .publication-content-body tr > td:first-child {
-  text-align: right;
-}
-.publication-view-modal .publication-content .publication-content-body tr > td:last-child {
-  padding-left: 10px;
-}
-.publication-view-modal .publication-content .publication-content-footer {
+.publication-view-body > .tabs {
   width: 100%;
-  height: 65px;
-}
-.publication-view-modal .publication-content .publication-content-footer .btn {
-  text-decoration: none !important;
-  border-radius: 0;
-}
-.publication-view-modal .publication-content .publication-content-footer .btn:nth-child(1) {
-  width: 285px;
-}
-.publication-view-modal .publication-content .publication-content-footer .btn:nth-child(2) {
-  width: 285px;
-}
-.publication-view-modal .publication-content .publication-content-footer .btn:nth-child(3) {
-  width: 65px;
-}
-.publication-view-modal .publication-content .publication-content-footer .btn:nth-child(4) {
-  width: 65px;
-}
-.publication-view-modal .photos-modal {
-  width: 900px;
-  height: auto;
-  min-height: 500px;
-  background: #999999;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-.publication-view-modal .photos-modal .close-photos-btn {
-  position: absolute;
-  bottom: 0px;
-  left: 50%;
-  -webkit-transform: translate(-50%, 0);
-  -ms-transform: translate(-50%, 0);
-  transform: translate(-50%, 0);
-  border-radius: 0px;
-}
-@media (min-height: 500px) and (max-height: 800px) {
-  .publication-view-modal .photos-modal img {
-    height: 600px;
-  }
-}
-.publication-view-modal .carousel {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-.publication-view-modal .carousel .carousel-inner {
-  width: 100%;
-  height: 100%;
-}
-.publication-view-modal .carousel .item {
-  width: 100%;
-  height: 100%;
-}
-.publication-view-modal .carousel .item > img {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+  height: 60px;
 }
 html,
 body,
