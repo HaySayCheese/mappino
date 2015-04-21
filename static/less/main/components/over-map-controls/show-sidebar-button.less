@@ -24,8 +24,7 @@
 
 
     &.animated {
-        animation-duration: 1s;
-        animation-fill-mode: both;
+        .animation(1s both);
     }
     @keyframes fadeIn {
         50% {
@@ -35,9 +34,19 @@
             opacity: 1;
         }
     }
+    @-webkit-keyframes fadeIn {
+        50% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
     &.fadeIn {
         animation-name: fadeIn;
+        -webkit-animation-name: fadeIn;
     }
+
     @keyframes fadeOut {
         0% {
             opacity: 1;
@@ -46,8 +55,16 @@
             opacity: 0;
         }
     }
-
+    @-webkit-keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+        70% {
+            opacity: 0;
+        }
+    }
     &.fadeOut {
         animation-name: fadeOut;
+        -webkit-animation-name: fadeOut;
     }
 }
