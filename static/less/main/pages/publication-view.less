@@ -2,8 +2,8 @@
 // Load core variables and mixins
 // --------------------------------------------------
 
-@import "../../components/variables";
-@import "../../components/mixins";
+@import "../../components/bootstrap/variables";
+@import "../../components/bootstrap/mixins";
 
 @modal-width: 1000px;
 
@@ -18,18 +18,31 @@
     position: relative;
     padding: 0;
 
-    > .publication-close {
+    .add-to-bookmark,
+    .publication-close,
+    .slider-resize {
         .carousel-control;
         .carousel-control.right;
 
-        top: 30px;
-        text-align: center;
-        text-shadow: 0 0 7px rgba(0, 0, 0, 0.8);
-
         > .glyphicon {
-            top: 50%;
-            .translate(0, -50%);
+            .carousel-control.glyphicon;
         }
+    }
+
+    .add-to-bookmark {
+        bottom: 20px;
+        left: 50px;
+        font-size: 50px;
+
+        &.added {
+            color: #ff9524;
+        }
+        &.added:hover {
+            color: #ff9524;
+        }
+    }
+    .publication-close {
+        top: 20px;
     }
 
     .title-photo {
@@ -48,7 +61,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        padding: 30px 50px 18px;
+        padding: 30px 120px 20px;
 
         > .title,
         > .address {
@@ -68,7 +81,19 @@
 }
 
 .publication-view-body {
-    > .tabs {
-        .size(100%, 60px);
-    }
+    padding: 0 0 500px;
+
+    //.add-to-bookmark,
+    //.claim-on-publication {
+    //    .square(44px);
+    //    float: right;
+    //    font-size: 26px;
+    //    text-align: center;
+    //
+    //    > .glyphicon {
+    //        top: 50%;
+    //        color: @gray-light;
+    //        .translate(0, -50%);
+    //    }
+    //}
 }

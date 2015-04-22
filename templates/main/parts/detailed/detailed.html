@@ -3,8 +3,11 @@
         <div class="modal-content">
 
             <div class="modal-header publication-view-header">
-                <a href="" class="publication-close" data-dismiss="modal" role="button">
+                <a href="#" class="publication-close" data-dismiss="modal" role="button">
                     <span class="glyphicon glyphicon-remove"></span>
+                </a>
+                <a href="#" class="add-to-bookmark" role="button">
+                    <span class="glyphicon glyphicon-star-empty"></span>
                 </a>
 
                 <div id="publication-slider" class="carousel slide" data-ride="carousel">
@@ -15,24 +18,22 @@
                         </div>
                     </div>
 
-                    <a class="left carousel-control" href="#publication-slider" role="button" data-slide="prev" ng-click="$event.preventDefault()">
-                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                    <a href="#" class="slider-resize" role="button" ng-click="$event.preventDefault()">
+                        <span class="glyphicon glyphicon-fullscreen"></span>
                     </a>
-                    <a class="right carousel-control" href="#publication-slider" role="button" data-slide="next" ng-click="$event.preventDefault()">
-                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-                    </a>
+
+                    <!--<a class="left carousel-control" href="#publication-slider" role="button" data-slide="prev" ng-click="$event.preventDefault()">-->
+                        <!--<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>-->
+                    <!--</a>-->
+                    <!--<a class="right carousel-control" href="#publication-slider" role="button" data-slide="next" ng-click="$event.preventDefault()">-->
+                        <!--<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>-->
+                    <!--</a>-->
                 </div>
 
-
-
-
-                <!--<div class="title-photo">-->
-                    <!--<img src="{{ static }}img/home/home-bg-3.jpg" alt="" class="photo"/>-->
-                    <!--<div class="photo-overlay"></div>-->
-                <!--</div>-->
-
                 <div class="over-photo-block">
-                    <div class="title" ng-bind="publication.data.title"></div>
+                    <div class="title">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    </div>
                     <div class="address">
                         Lorem ipsum dolor sit amet, consectetur.
                     </div>
@@ -42,7 +43,15 @@
 
             <div class="modal-body publication-view-body">
                 <div class="tabs">
+                    <ul class="tabs-list">
+                        <li class="tab -blue active">Описание</li>
+                        <li class="tab -green">Контакты продавца</li>
+                        <li class="tab -violet">Похожие объекты поблизости</li>
+                    </ul>
 
+                    <!--<a href="#" class="add-to-bookmark" role="button" ng-click="$event.preventDefault()">-->
+                        <!--<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>-->
+                    <!--</a>-->
                 </div>
             </div>
         </div>
