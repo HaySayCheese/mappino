@@ -3,15 +3,36 @@
         <div class="modal-content">
 
             <div class="modal-header publication-view-header">
-                <div class="title-photo">
-                    <img src="{{ static }}img/home/home-bg-3.jpg" alt="" class="photo"/>
-                    <div class="photo-overlay"></div>
+                <a href="" class="publication-close" data-dismiss="modal" role="button">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </a>
+
+                <div id="publication-slider" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner" role="listbox">
+                        <div class="item active">
+                            <img src="{{ static }}img/home/home-bg-1.jpg" alt="" class="title-photo"/>
+                            <div class="photo-overlay"></div>
+                        </div>
+                    </div>
+
+                    <a class="left carousel-control" href="#publication-slider" role="button" data-slide="prev" ng-click="$event.preventDefault()">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                    </a>
+                    <a class="right carousel-control" href="#publication-slider" role="button" data-slide="next" ng-click="$event.preventDefault()">
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                    </a>
                 </div>
 
+
+
+
+                <!--<div class="title-photo">-->
+                    <!--<img src="{{ static }}img/home/home-bg-3.jpg" alt="" class="photo"/>-->
+                    <!--<div class="photo-overlay"></div>-->
+                <!--</div>-->
+
                 <div class="over-photo-block">
-                    <div class="title">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    </div>
+                    <div class="title" ng-bind="publication.data.title"></div>
                     <div class="address">
                         Lorem ipsum dolor sit amet, consectetur.
                     </div>

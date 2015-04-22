@@ -18,21 +18,29 @@
     position: relative;
     padding: 0;
 
-    > .title-photo {
+    > .publication-close {
+        .carousel-control;
+        .carousel-control.right;
+
+        top: 30px;
+        text-align: center;
+        text-shadow: 0 0 7px rgba(0, 0, 0, 0.8);
+
+        > .glyphicon {
+            top: 50%;
+            .translate(0, -50%);
+        }
+    }
+
+    .title-photo {
         .size(@modal-width, 350px);
-
-        > .photo {
-            .size(@modal-width, 350px);
-        }
-
-        > .photo-overlay {
-            .square(100%);
-            position: absolute;
-            top: 0;
-            //background: #323a47;
-            //opacity: .4;
-            //#gradient .vertical(rgba(67, 74, 84, 0), rgba(67, 74, 84, 0.9), 60%, 100%)
-        }
+        max-height: 350px;
+    }
+    .photo-overlay {
+        .square(100%);
+        position: absolute;
+        top: 0;
+        #gradient .vertical-three-colors(rgba(19, 32, 46, 0.1), rgba(19, 32, 46, 0.2), 65%, rgba(19, 32, 46, 0.6));
     }
 
     > .over-photo-block {
@@ -40,12 +48,15 @@
         left: 0;
         right: 0;
         bottom: 0;
-        padding: 30px 100px 18px;
-        background-color: rgba(16, 90, 186, 0.5);
+        padding: 30px 50px 18px;
+
+        > .title,
+        > .address {
+            text-shadow: 0 0 7px rgba(0, 0, 0, 0.8);
+        }
 
         > .title {
             color: #fff;
-            text-shadow: 0 0 18px #0a2311;
             font-size: @font-size-h4;
         }
 
