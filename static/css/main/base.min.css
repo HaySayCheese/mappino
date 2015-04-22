@@ -7383,7 +7383,7 @@ td.visible-print {
   width: 38px;
   height: 38px;
   position: absolute;
-  z-index: 1050;
+  z-index: 1010;
   cursor: pointer;
   text-decoration: none;
   -webkit-user-select: none;
@@ -7414,7 +7414,7 @@ td.visible-print {
   width: 38px;
   height: 38px;
   position: absolute;
-  z-index: 1050;
+  z-index: 1010;
   cursor: pointer;
   text-decoration: none;
   -webkit-user-select: none;
@@ -7480,7 +7480,7 @@ td.visible-print {
   width: 38px;
   height: 38px;
   position: absolute;
-  z-index: 1050;
+  z-index: 1010;
   cursor: pointer;
   text-decoration: none;
   -webkit-user-select: none;
@@ -7538,7 +7538,7 @@ td.visible-print {
   width: 38px;
   height: 38px;
   position: absolute;
-  z-index: 1050;
+  z-index: 1010;
   cursor: pointer;
   text-decoration: none;
   -webkit-user-select: none;
@@ -7558,7 +7558,6 @@ td.visible-print {
   text-align: center;
   font-size: 15px;
   opacity: 0;
-  z-index: 1000;
 }
 .show-sidebar-button.-white {
   color: #b0b0b0;
@@ -7625,7 +7624,7 @@ td.visible-print {
   width: 38px;
   height: 38px;
   position: absolute;
-  z-index: 1050;
+  z-index: 1010;
   cursor: pointer;
   text-decoration: none;
   -webkit-user-select: none;
@@ -8053,6 +8052,8 @@ fieldset[disabled] .restore-access-modal .btn-success.active {
   transform: translate(-50%, -50%);
 }
 .publication-view-header .add-to-bookmark {
+  width: 50px;
+  height: 50px;
   bottom: 20px;
   left: 50px;
   font-size: 50px;
