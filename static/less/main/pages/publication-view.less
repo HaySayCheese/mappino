@@ -141,19 +141,35 @@
     overflow: hidden;
     .transition(~"max-height 0.3s ease");
 
-    //.add-to-bookmark,
-    //.claim-on-publication {
-    //    .square(44px);
-    //    float: right;
-    //    font-size: 26px;
-    //    text-align: center;
-    //
-    //    > .glyphicon {
-    //        top: 50%;
-    //        color: @gray-light;
-    //        .translate(0, -50%);
-    //    }
-    //}
+    .claim-on-publication {
+        .square(44px);
+        position: relative;
+        padding: 10px 0 10px 44px;
+        float: right;
+        color: @gray;
+        text-decoration: none;
+        overflow: hidden;
+        .transition(~"width 0.2s ease");
+
+        &.active {
+            border-bottom: 4px solid @nice-red;
+        }
+
+        &:hover {
+            width: 150px !important;
+        }
+
+        &:before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 12px;
+            content: "\e126";
+            font-family: 'Glyphicons Halflings';
+            font-size: 18px;
+            line-height: 1;
+        }
+    }
 
     > .body-view {
         padding: 30px 50px;
@@ -210,4 +226,15 @@
         font-size: @font-size-h4;
         margin-bottom: 10px;
     }
+
+
+    /* Claim view */
+    .bootstrap-select {
+        margin: 0;
+
+        .dropdown-toggle.selectpicker {
+            border: 1px solid #cccccc !important;
+        }
+    }
+
 }

@@ -11,6 +11,12 @@ app.controller('PublicationViewController', ['$scope', '$rootScope', '$routePara
 
         $scope.sliderOpened = false;
 
+        $scope.claim = {
+            reason: 1,
+            email: '',
+            reasonName: ''
+        };
+
 
         var publicationViewModal = angular.element(".publication-view-modal");
         publicationViewModal.modal();
