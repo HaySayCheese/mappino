@@ -139,6 +139,7 @@ INSTALLED_APPS = (
 
     'core',
     'core.users',
+    'core.ban',
     'core.billing',
     'core.publications',
     'core.claims',

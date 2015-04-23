@@ -73,7 +73,7 @@ SPHINX_SEARCH_DATABASE = {
     'PORT': 9307 # the real port is 9306. 9307 is set for dev suite.
 }
 ENABLE_SPHINX_SEARCH = False
-
+#
 
 CACHES = {
     'default': {
@@ -124,6 +124,7 @@ INSTALLED_APPS = (
     # todo: add initialisation app here
     'core',
     'core.users',
+    'core.ban',
     'core.billing',
     'core.publications',
     'core.claims',
