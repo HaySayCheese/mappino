@@ -9,6 +9,8 @@ app.controller('PublicationViewController', ['$scope', '$rootScope', '$routePara
         $scope.publicationLoaded = false;
         $scope.publication = {};
 
+        $scope.sliderOpened = false;
+
 
         var publicationViewModal = angular.element(".publication-view-modal");
         publicationViewModal.modal();
@@ -31,9 +33,22 @@ app.controller('PublicationViewController', ['$scope', '$rootScope', '$routePara
         });
 
 
-        $scope.changeBasePart = function(part) {
-            $scope.publicationBasePart = part;
+        $scope.toggleSlider = function() {
+            var modalDialog = angular.element('.modal-dialog');
+
+            if (modalDialog.hasClass('slider-opened')) {
+                $scope.sliderOpened = false;
+                modalDialog.removeClass('slider-opened');
+                modalDialog.find('.title-photo').height('350px')
+            } else {
+                $scope.sliderOpened = true;
+                modalDialog.addClass('slider-opened');
+                modalDialog.find('.title-photo').height(modalDialog.find('.title-photo img').height())
+            }
+
+            event.preventDefault();
         };
+
 
         $scope.changeDetailedPart = function(part) {
             $scope.publicationDetailedPart = part;
@@ -49,8 +64,13 @@ app.controller('PublicationViewContactsController', ['$scope', '$rootScope', '$t
         "use strict";
 
         $scope.contactsLoaded = false;
-        $scope.message = {};
-        $scope.call_request = {
+        $scope.seller = {};
+        $scope.seller.message = {
+            name: '',
+            email: '',
+            message: ''
+        };
+        $scope.seller.call_request = {
             name: "",
             phone: ""
         };
@@ -58,7 +78,7 @@ app.controller('PublicationViewContactsController', ['$scope', '$rootScope', '$t
         var channel = lrNotifier('mainChannel');
 
         Queries.Map.getPublicationContacts($rootScope.publicationIdPart).success(function(data) {
-            $scope.user = data;
+            $scope.seller = data;
             $scope.contactsLoaded = true;
 
             ga('send', 'event', 'publication:dialog:contacts', 'contacts_requested', $rootScope.publicationIdPart, 0);
@@ -66,9 +86,9 @@ app.controller('PublicationViewContactsController', ['$scope', '$rootScope', '$t
 
 
         $scope.sendCallRequest = function() {
-
             var btn = angular.element(".send-btn").button("loading");
-            Queries.Map.sendPublicationCallRequest($rootScope.publicationIdPart, $scope.call_request).success(function(data) {
+
+            Queries.Map.sendPublicationCallRequest($rootScope.publicationIdPart, $scope.seller.call_request).success(function(data) {
                 btn.button("reset");
 
                 $scope.cancelSendCallRequest();
@@ -88,9 +108,9 @@ app.controller('PublicationViewContactsController', ['$scope', '$rootScope', '$t
 
 
         $scope.sendMessage = function() {
-
             var btn = angular.element(".send-btn").button("loading");
-            Queries.Map.sendPublicationMessage($rootScope.publicationIdPart, $scope.message).success(function(data) {
+
+            Queries.Map.sendPublicationMessage($rootScope.publicationIdPart, $scope.seller.message).success(function(data) {
                 btn.button("reset");
 
                 $scope.cancelSendMessage();
@@ -109,16 +129,20 @@ app.controller('PublicationViewContactsController', ['$scope', '$rootScope', '$t
         };
 
         $scope.cancelSendCallRequest = function() {
-            $scope.call_request = {
-                name: "",
-                phone: ""
+            $scope.seller.call_request = {
+                name: '',
+                phone: ''
             };
-            $scope.sendingCallRequest = false;
+            $scope.seller.sendingCallRequest = false;
         };
 
         $scope.cancelSendMessage = function() {
-            $scope.sendingMessage = false;
-            $scope.message = "";
+            $scope.seller.sendingMessage = false;
+            $scope.seller.message = {
+                name: '',
+                email: '',
+                message: ''
+            };
         };
     }
 ]);

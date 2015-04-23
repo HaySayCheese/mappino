@@ -12,22 +12,27 @@
 
                 <div id="publication-slider" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner" role="listbox">
-                        <div class="item active">
-                            <img src="{{ static }}img/home/home-bg-1.jpg" alt="" class="title-photo"/>
+                        <div class="item title-photo active">
+                            <img src="{{ static }}img/home/home-bg-1.jpg" alt=""/>
                             <div class="photo-overlay"></div>
                         </div>
                     </div>
 
-                    <a href="#" class="slider-resize" role="button" ng-click="$event.preventDefault()">
+                    <a href="#" class="slider-resize to-full" role="button" ng-click="toggleSlider()">
                         <span class="glyphicon glyphicon-fullscreen"></span>
                     </a>
+                    <a href="#" class="slider-resize to-small" role="button" ng-click="toggleSlider()">
+                        <span class="glyphicon glyphicon-resize-small"></span>
+                    </a>
 
-                    <!--<a class="left carousel-control" href="#publication-slider" role="button" data-slide="prev" ng-click="$event.preventDefault()">-->
-                        <!--<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>-->
-                    <!--</a>-->
-                    <!--<a class="right carousel-control" href="#publication-slider" role="button" data-slide="next" ng-click="$event.preventDefault()">-->
-                        <!--<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>-->
-                    <!--</a>-->
+                    <a class="left carousel-control" href="#publication-slider" role="button" data-slide="prev"
+                       ng-click="$event.preventDefault()">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                    </a>
+                    <a class="right carousel-control" href="#publication-slider" role="button" data-slide="next"
+                       ng-click="$event.preventDefault()">
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                    </a>
                 </div>
 
                 <div class="over-photo-block">
@@ -41,17 +46,277 @@
             </div>
 
 
+
             <div class="modal-body publication-view-body">
                 <div class="tabs">
                     <ul class="tabs-list">
-                        <li class="tab -blue active">Описание</li>
-                        <li class="tab -green">Контакты продавца</li>
+                        <li class="tab -blue"
+                            ng-click="publicationDetailedPart = 'Description'"
+                            ng-class="{ active: publicationDetailedPart === 'Description' }">Описание
+                        </li>
+                        <li class="tab -green"
+                            ng-click="publicationDetailedPart = 'Contacts'"
+                            ng-class="{ active: publicationDetailedPart === 'Contacts' }">Контакты продавца
+                        </li>
                         <li class="tab -violet">Похожие объекты поблизости</li>
                     </ul>
 
                     <!--<a href="#" class="add-to-bookmark" role="button" ng-click="$event.preventDefault()">-->
                         <!--<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>-->
                     <!--</a>-->
+                </div>
+
+                <div class="body-view" ng-switch on="publicationDetailedPart">
+                    <div ng-switch-when="Description">
+                        <div class="publication-loading" ng-hide="publicationLoaded"></div>
+
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <div class="text-property" ng-show="publication.data.description">
+                                    [[ publication.data.description ]]
+                                </div>
+                                <div class="text-property price-property" ng-show="publication.data.sale_price">
+                                    <span>Продажа:</span>
+                                    <span class="price">[[ publication.data.sale_price ]]</span>
+                                </div>
+                                <div class="text-property" ng-show="publication.data.sale_terms">
+                                    [[ publication.data.sale_terms ]]
+                                </div>
+                                <div class="text-property price-property" ng-show="publication.data.rent_price">
+                                    <span>Аренда:</span>
+                                    <span class="price">[[ publication.data.rent_price ]]</span>
+                                </div>
+                                <div class="text-property" ng-show="publication.data.rent_terms">
+                                    [[ publication.data.rent_terms ]]
+                                </div>
+                                <div class="text-property" ng-show="publication.data.facilities">
+                                    <span>Удобства:</span> [[ publication.data.facilities ]]
+                                </div>
+                                <div class="text-property" ng-show="publication.data.rent_facilities">
+                                    <span>Удобства аренды:</span> [[ publication.data.rent_facilities ]]
+                                </div>
+                                <div class="text-property" ng-show="publication.data.communications">
+                                    <span>Коммуникации:</span> [[ publication.data.communications ]]
+                                </div>
+                                <div class="text-property" ng-show="publication.data.buildings">
+                                    <span>Дополнительные постройки:</span> [[ publication.data.buildings ]]
+                                </div>
+                            </div>
+
+                            <div class="col-xs-4">
+                                <ul class="properties-list">
+                                    <li ng-show="publication.data.market_type">
+                                        <span>Тип рынка:</span> [[ publication.data.market_type ]]
+                                    </li>
+                                    <li ng-show="publication.data.building_type">
+                                        <span>Тип здания:</span> [[ publication.data.building_type ]]
+                                    </li>
+                                    <li ng-show="publication.data.build_year">
+                                        <span>Год постройки:</span> [[ publication.data.build_year ]]
+                                    </li>
+                                    <li ng-show="publication.data.age">
+                                        <span>Возраст бизнеса:</span> [[ publication.data.age ]]
+                                    </li>
+                                    <li ng-show="publication.data.flat_type">
+                                        <span>Тип квартиры:</span> [[ publication.data.flat_type ]]
+                                    </li>
+                                    <li ng-show="publication.data.rooms_planning">
+                                        <span>Планировка:</span> [[ publication.data.rooms_planning ]]
+                                    </li>
+                                    <li ng-show="publication.data.total_area">
+                                        <span>Общая площадь:</span> [[ publication.data.total_area ]]
+                                    </li>
+                                    <li ng-show="publication.data.area">
+                                        <span>Площадь:</span> [[ publication.data.area ]]
+                                    </li>
+                                    <li ng-show="publication.data.living_area">
+                                        <span>Жилая площадь:</span> [[ publication.data.living_area ]]
+                                    </li>
+                                    <li ng-show="publication.data.kitchen_area">
+                                        <span>Площадь кухни:</span> [[ publication.data.kitchen_area ]]
+                                    </li>
+                                    <li ng-show="publication.data.halls_area">
+                                        <span>Площадь залов:</span> [[ publication.data.halls_area ]]
+                                    </li>
+                                    <li ng-show="publication.data.plot_area">
+                                        <span>Площадь участка:</span> [[ publication.data.plot_area ]]
+                                    </li>
+                                    <li ng-show="publication.data.driveways">
+                                        <span>Подъездные пути:</span> [[ publication.data.driveways ]]
+                                    </li>
+                                    <li ng-show="publication.data.share">
+                                        <span>Долевое участие:</span> [[ publication.data.share ]]
+                                    </li>
+                                    <li ng-show="publication.data.floor">
+                                        <span>Этаж:</span> [[ publication.data.floor ]]
+                                    </li>
+                                    <li ng-show="publication.data.floors_count">
+                                        <span>Этажей:</span> [[ publication.data.floors_count ]]
+                                    </li>
+                                    <li ng-show="publication.data.condition">
+                                        <span>Состояние:</span> [[ publication.data.condition ]]
+                                    </li>
+                                    <li ng-show="publication.data.monthly_cost">
+                                        <span>Расходы / мес.:</span> [[ publication.data.monthly_cost ]]
+                                    </li>
+                                    <li ng-show="publication.data.annual_receipts">
+                                        <span>Год. выручка:</span> [[ publication.data.annual_receipts ]]
+                                    </li>
+                                    <li ng-show="publication.data.rooms_count">
+                                        <span>Кол-во комнат:</span> [[ publication.data.rooms_count ]]
+                                    </li>
+                                    <li ng-show="publication.data.bedrooms_count">
+                                        <span>Кол-во спален:</span> [[ publication.data.bedrooms_count ]]
+                                    </li>
+                                    <li ng-show="publication.data.halls_count">
+                                        <span>Кол-во залов:</span> [[ publication.data.halls_count ]]
+                                    </li>
+                                    <li ng-show="publication.data.vcs_count">
+                                        <span>Кол-во сан. узлов:</span> [[ publication.data.vcs_count ]]
+                                    </li>
+                                    <li ng-show="publication.data.balconies_count">
+                                        <span>Кол-во балконов:</span> [[ publication.data.balconies_count ]]
+                                    </li>
+                                    <li ng-show="publication.data.loggias_count">
+                                        <span>Кол-во лоджий:</span> [[ publication.data.loggias_count ]]
+                                    </li>
+                                    <li ng-show="publication.data.cabinets_count">
+                                        <span>Кол-во кабинетов:</span> [[ publication.data.cabinets_count ]]
+                                    </li>
+                                    <li ng-show="publication.data.ceiling_height">
+                                        <span>Высота потолков:</span> [[ publication.data.ceiling_height ]]
+                                    </li>
+                                    <li ng-show="publication.data.workers_count">
+                                        <span>Работников:</span> [[ publication.data.workers_count ]]
+                                    </li>
+                                    <li ng-show="publication.data.pit">
+                                        <span>Яма:</span> [[ publication.data.pit ]]
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-switch-when="Contacts" ng-controller="PublicationViewContactsController">
+                        <div class="contacts-loading" ng-hide="contactsLoaded"></div>
+
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <div class="seller-photo" ng-show="contactsLoaded">
+                                    <img ng-src="[[ seller.contacts.avatar_url ]]" ng-show="seller.contacts.avatar_url"/>
+                                    <img src="{{ static }}img/main/publication-view/no-user.png" ng-hide="seller.contacts.avatar_url"/>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-4">
+                                <div class="seller-name">
+                                    [[ seller.contacts.first_name ]] [[ seller.contacts.last_name ]]
+                                </div>
+                                <div class="seller-phones">
+                                    <div ng-show="seller.contacts.mobile_phone || seller.contacts.add_mobile_phone">
+                                        <span ng-show="seller.contacts.mobile_phone">
+                                            <b>Моб. телефон:</b> [[ seller.contacts.mobile_phone ]]
+                                        </span>
+                                        <span ng-show="seller.contacts.mobile_phone && seller.contacts.add_mobile_phone">,</span>
+                                        <span ng-show="seller.contacts.add_mobile_phone">
+                                            <span ng-hide="seller.contacts.mobile_phone">
+                                                <b>Моб. телефон:</b>
+                                            </span>
+                                            [[ seller.contacts.add_mobile_phone ]]
+                                        </span>
+                                    </div>
+                                    <div ng-show="seller.contacts.landline_phone || seller.contacts.add_landline_phone">
+                                        <span ng-show="seller.contacts.landline_phone">
+                                            <b>Роб. телефон:</b> [[ seller.contacts.landline_phone ]]
+                                        </span>
+                                        <span ng-show="seller.contacts.landline_phone && seller.contacts.add_landline_phone">,</span>
+                                        <span ng-show="seller.contacts.add_landline_phone">
+                                            <span ng-hide="seller.contacts.landline_phone">
+                                                <b>Роб. телефон:</b>
+                                            </span>
+                                            [[ seller.contacts.add_landline_phone ]]
+                                        </span>
+                                    </div>
+                                    <div ng-show="seller.contacts.email">
+                                        <b>Эл. почта:</b> [[ seller.contacts.email ]]
+                                    </div>
+                                    <div ng-show="seller.contacts.skype">
+                                        <b>Skype:</b> [[ seller.contacts.skype ]]
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-4">
+                                <div class="seller-buttons" ng-hide="seller.sendingMessage || seller.sendingCallRequest">
+                                    <div class="btn btn-primary btn-block" ng-show="seller.preferences.allow_call_requests"
+                                         ng-click="seller.sendingCallRequest = true">Заказать обратный звонок
+                                    </div>
+                                    <div class="btn btn-default btn-block" ng-show="seller.preferences.allow_messaging"
+                                         ng-click="seller.sendingMessage = true">Оставить сообщение
+                                    </div>
+                                </div>
+
+
+
+                                <div class="seller-call-request" ng-show="seller.sendingCallRequest">
+                                    <div class="row form-group">
+                                        <div class="col-xs-12">
+                                            <input type="text" class="form-control" placeholder="Имя"
+                                                   ng-model="seller.call_request.name">
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <div class="col-xs-12">
+                                            <input type="text" class="form-control" placeholder="Телефон"
+                                                   ng-model="seller.call_request.phone" allow-only-number>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="btn btn-default pull-left" ng-click="cancelSendCallRequest()">Отмена</div>
+                                            <div class="btn btn-primary pull-right send-btn" ng-click="sendCallRequest()"
+                                                 data-loading-text="Отправка данных..."
+                                                 ng-disabled="!seller.call_request.name || !seller.call_request.phone">Заказать обратный звонок
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="seller-message" ng-show="seller.sendingMessage">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="row form-group">
+                                                <div class="col-xs-5">
+                                                    <input type="text" class="form-control" placeholder="Имя"
+                                                           ng-model="seller.message.name">
+                                                </div>
+                                                <div class="col-xs-7">
+                                                    <input type="text" class="form-control" placeholder="Эл. почта"
+                                                           ng-model="seller.message.email">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <div class="col-xs-12">
+                                            <textarea class="form-control" rows="2" placeholder="Введите текст сообщения"
+                                                      ng-model="seller.message.message"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="btn btn-default pull-left" ng-click="cancelSendMessage()">Отмена</div>
+                                            <div class="btn btn-primary pull-right send-btn" ng-click="sendMessage()"
+                                                 data-loading-text="Отправка данных..."
+                                                 ng-disabled="!seller.message.message || !seller.message.email">Отправить сообщение
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

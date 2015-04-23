@@ -26,7 +26,7 @@ app.factory('Queries', ['$http','HTTP_URL', function($http, HTTP_URL) {
                 return $http.post(HTTP_URL.MAP.SEND_PUBLICATION_MESSAGE.fmt(tid_hid), {
                     name:    message.name,
                     email:   message.email,
-                    message: message.text
+                    message: message.message
                 });
             },
 
