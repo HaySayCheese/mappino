@@ -85,25 +85,24 @@
 
 
     {% compress js %}
-        <!-- Underscore module -->
+        <!-- bModules -->
         <script type="text/javascript" src="{{ static }}js/_modules/underscore/underscore.module.js"></script>
-
-        <!-- Mappino modules -->
         <script type="text/javascript" src="{{ static }}js/_modules/bTypes/bTypes.module.js"></script>
         <script type="text/javascript" src="{{ static }}js/_modules/bAuth/bAuth.module.js"></script>
         <script type="text/javascript" src="{{ static }}js/_modules/bDirectives/bDirectives.module.js"></script>
 
 
-        <!-- Mappino main module logic -->
+        <!-- Mappino module -->
         <script type="text/javascript" src="{{ static }}js/main/app.js"></script>
 
         <script type="text/javascript" src="{{ static }}js/main/configs/values.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/configs/routes_const.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/configs/http_const.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/main/services/router.js"></script>
+        <script type="text/javascript" src="{{ static }}js/main/services/router/router.service.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/services/queries.js"></script>
 
+        <script type="text/javascript" src="{{ static }}js/main/services/publication/publication.service.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/factories/markers.factory.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/factories/filters.factory.js"></script>
 

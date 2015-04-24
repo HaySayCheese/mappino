@@ -36,12 +36,8 @@
                 </div>
 
                 <div class="over-photo-block">
-                    <div class="title">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    </div>
-                    <div class="address">
-                        Lorem ipsum dolor sit amet, consectetur.
-                    </div>
+                    <div class="title">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</div>
+                    <div class="address">Lorem ipsum dolor sit amet, consectetur.</div>
                 </div>
             </div>
 
@@ -51,13 +47,16 @@
                 <div class="tabs">
                     <ul class="tabs-list">
                         <li class="tab -blue" ng-click="publicationDetailedPart = 'Description'"
-                            ng-class="{ active: publicationDetailedPart === 'Description' }">Описание
+                            ng-class="{ active: publicationDetailedPart === 'Description' }">
+                            Описание
                         </li>
                         <li class="tab -green" ng-click="publicationDetailedPart = 'Contacts'"
-                            ng-class="{ active: publicationDetailedPart === 'Contacts' }">Контакты продавца
+                            ng-class="{ active: publicationDetailedPart === 'Contacts' }">
+                            Контакты продавца
                         </li>
                         <li class="tab -violet" ng-click="publicationDetailedPart = 'Similar'"
-                            ng-class="{ active: publicationDetailedPart === 'Similar' }">Похожие объекты поблизости
+                            ng-class="{ active: publicationDetailedPart === 'Similar' }">
+                            Похожие объекты поблизости
                         </li>
                     </ul>
 
@@ -270,7 +269,7 @@
                                     <div class="row form-group">
                                         <div class="col-xs-12">
                                             <input type="text" class="form-control" placeholder="Телефон"
-                                                   ng-model="seller.call_request.phone" allow-only-number>
+                                                   ng-model="seller.call_request.phone_number" allow-only-number>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -278,7 +277,7 @@
                                             <div class="btn btn-default pull-left" ng-click="cancelSendCallRequest()">Отмена</div>
                                             <div class="btn btn-primary pull-right send-btn" ng-click="sendCallRequest()"
                                                  data-loading-text="Отправка данных..."
-                                                 ng-disabled="!seller.call_request.name || !seller.call_request.phone">Заказать обратный звонок
+                                                 ng-disabled="!seller.call_request.name || !seller.call_request.phone_number">Заказать обратный звонок
                                             </div>
                                         </div>
                                     </div>
@@ -320,6 +319,37 @@
                         </div>
                     </div>
 
+                    <div ng-switch-when="Similar" ng-controller="PublicationViewSimilarController">
+                        <div class="row">
+                            <div class="col-sm-6 col-md-4">
+                                <a href="#" target="_blank" class="thumbnail">
+                                    <img src="" alt="">
+                                    <div class="caption">
+                                        <h4>Thumbnail label</h4>
+                                        <p>gsagagagas</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-sm-6 col-md-4">
+                                <a href="#" target="_blank" class="thumbnail">
+                                    <img src="" alt="">
+                                    <div class="caption">
+                                        <h4>Thumbnail label</h4>
+                                        <p>gsagagagas</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-sm-6 col-md-4">
+                                <a href="#" target="_blank" class="thumbnail">
+                                    <img src="" alt="">
+                                    <div class="caption">
+                                        <h4>Thumbnail label</h4>
+                                        <p>gsagagagas</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
                     <div ng-switch-when="Claim">
                         <div class="row">
@@ -334,20 +364,19 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="row form-group">
+                                <div class="row form-group" ng-show="claim.reason === '0'">
                                     <div class="col-xs-12">
                                         <textarea class="form-control" name="another-reason" cols="30" rows="3"
-                                                  ng-show="claim.reason === '0'" ng-model="claim.reasonName"
+                                                  ng-model="claim.reasonName"
                                                   placeholder="Пожалуйста, укажите причину жалобы, по возможности указав как можно больше деталей."></textarea>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-8">
-                                        <input class="form-control" type="text" placeholder="Эл. почта" ng-model="reason.email"/>
+                                        <input class="form-control" type="text" placeholder="Эл. почта" ng-model="claim.email"/>
                                     </div>
                                     <div class="col-xs-4 text-center">
-                                        <button class="btn btn-success btn-block"
-                                                ng-disabled="claim.reason === '0' && !claim.reasonName && !claim.email">Отправить</button>
+                                        <button class="btn btn-success btn-block" ng-disabled="claimFieldsIsNull()">Отправить</button>
                                     </div>
                                 </div>
                             </div>

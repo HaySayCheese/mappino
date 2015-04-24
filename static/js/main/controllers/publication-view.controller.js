@@ -1,15 +1,12 @@
 
-app.controller('PublicationViewController', ['$scope', '$rootScope', '$routeParams', 'Queries', 'TXT',
-    function($scope, $rootScope, $routeParams, Queries, TXT) {
+app.controller('PublicationViewController', ['$scope', '$rootScope', '$routeParams', 'TXT', 'MPublicationService',
+    function($scope, $rootScope, $routeParams, TXT, MPublicationService) {
         "use strict";
 
-        $scope.publicationBasePart = "Detailed";
         $scope.publicationDetailedPart = "Description";
 
         $scope.publicationLoaded = false;
         $scope.publication = {};
-
-        $scope.sliderOpened = false;
 
         $scope.claim = {
             reason: 1,
@@ -18,17 +15,27 @@ app.controller('PublicationViewController', ['$scope', '$rootScope', '$routePara
         };
 
 
+
+        $scope.claimFieldsIsNull = function() {
+            if ($scope.claim.reason === '0') {
+                return ($scope.claim.email.length === 0 || $scope.claim.reasonName.length === 0)
+            } else {
+                return $scope.claim.email.length === 0
+            }
+        };
+
+
+
         var publicationViewModal = angular.element(".publication-view-modal");
         publicationViewModal.modal();
 
 
-        Queries.Map.getPublicationDescription($routeParams.id).success(function(data) {
-            data.code !== 0 ? $scope.publicationBasePart = "PublicationNotFound" : $scope.publicationBasePart = "Detailed";
 
-            $scope.publication = data;
+        MPublicationService.getPublicationData($routeParams.id, function(response) {
+            $scope.publication = response;
 
             $scope.publicationLoaded = true;
-            $rootScope.pageTitle = data.data.title ? data.data.title + " - " + TXT.SERVICE_NAME : TXT.SERVICE_NAME;
+            $rootScope.pageTitle = response.data.title ? response.data.title + " - " + TXT.SERVICE_NAME : TXT.SERVICE_NAME;
 
             ga('send', 'event', 'publication:dialog:detailed', 'data_requested', $rootScope.publicationIdPart, 0);
 
@@ -36,24 +43,26 @@ app.controller('PublicationViewController', ['$scope', '$rootScope', '$routePara
                 'page': '#!/publication/' + $rootScope.publicationIdPart,
                 'title': $rootScope.pageTitle
             });
+        }, function() {
+            $scope.publicationBasePart = "PublicationNotFound"
         });
+
 
 
         $scope.toggleSlider = function() {
             var modalDialog = angular.element('.modal-dialog');
 
             if (modalDialog.hasClass('slider-opened')) {
-                $scope.sliderOpened = false;
                 modalDialog.removeClass('slider-opened');
                 modalDialog.find('.title-photo').height('350px')
             } else {
-                $scope.sliderOpened = true;
                 modalDialog.addClass('slider-opened');
                 modalDialog.find('.title-photo').height(modalDialog.find('.title-photo img').height())
             }
 
             event.preventDefault();
         };
+
 
 
         $scope.changeDetailedPart = function(part) {
@@ -64,9 +73,17 @@ app.controller('PublicationViewController', ['$scope', '$rootScope', '$routePara
 
 
 
+app.controller('PublicationViewSimilarController', ['$scope',
+    function($scope) {
 
-app.controller('PublicationViewContactsController', ['$scope', '$rootScope', '$timeout', 'Queries', 'lrNotifier',
-    function($scope, $rootScope, $timeout, Queries, lrNotifier) {
+    }
+]);
+
+
+
+
+app.controller('PublicationViewContactsController', ['$scope', '$rootScope', '$timeout', 'lrNotifier', 'MPublicationService',
+    function($scope, $rootScope, $timeout, lrNotifier, MPublicationService) {
         "use strict";
 
         $scope.contactsLoaded = false;
@@ -78,23 +95,25 @@ app.controller('PublicationViewContactsController', ['$scope', '$rootScope', '$t
         };
         $scope.seller.call_request = {
             name: "",
-            phone: ""
+            phone_number: ""
         };
 
         var channel = lrNotifier('mainChannel');
 
-        Queries.Map.getPublicationContacts($rootScope.publicationIdPart).success(function(data) {
-            $scope.seller = data;
+        MPublicationService.getPublicationContacts($rootScope.publicationIdPart, function(response) {
+            $scope.seller = response;
             $scope.contactsLoaded = true;
 
             ga('send', 'event', 'publication:dialog:contacts', 'contacts_requested', $rootScope.publicationIdPart, 0);
+        }, function() {
+            // error callback
         });
 
 
         $scope.sendCallRequest = function() {
             var btn = angular.element(".send-btn").button("loading");
 
-            Queries.Map.sendPublicationCallRequest($rootScope.publicationIdPart, $scope.seller.call_request).success(function(data) {
+            MPublicationService.sendCallRequestToSeller($rootScope.publicationIdPart, $scope.seller.call_request, function(response) {
                 btn.button("reset");
 
                 $scope.cancelSendCallRequest();
@@ -105,7 +124,7 @@ app.controller('PublicationViewContactsController', ['$scope', '$rootScope', '$t
                 channel.info("Запрос на обратный звонок успешно отправлен");
 
                 ga('send', 'event', 'publication:dialog:contacts', 'call_request_sent', $rootScope.publicationIdPart, 0);
-            }).error(function() {
+            }, function() {
                 $scope.cancelSendCallRequest();
                 btn.button("reset");
                 channel.info("При запросе обратного звонка возникла ошибка");
@@ -116,7 +135,7 @@ app.controller('PublicationViewContactsController', ['$scope', '$rootScope', '$t
         $scope.sendMessage = function() {
             var btn = angular.element(".send-btn").button("loading");
 
-            Queries.Map.sendPublicationMessage($rootScope.publicationIdPart, $scope.seller.message).success(function(data) {
+            MPublicationService.sendMessageToSeller($rootScope.publicationIdPart, $scope.seller.message, function(response) {
                 btn.button("reset");
 
                 $scope.cancelSendMessage();
@@ -127,7 +146,7 @@ app.controller('PublicationViewContactsController', ['$scope', '$rootScope', '$t
                 channel.info("Сообщение успешно отправлено");
 
                 ga('send', 'event', 'publication:dialog:contacts', 'message_sent', $rootScope.publicationIdPart, 0);
-            }).error(function() {
+            }, function() {
                 $scope.cancelSendMessage();
                 btn.button("reset");
                 channel.info("При отправке сообщения возникла ошибка");
