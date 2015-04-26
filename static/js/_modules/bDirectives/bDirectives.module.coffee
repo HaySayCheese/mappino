@@ -56,7 +56,7 @@ angular.module '_modules.bDirectives', ['underscore']
         link: (scope, element) ->
             $timeout () ->
                 angular.element(element).selectpicker
-                    style: 'btn-default btn-md'
+                    style: '-gray'
                     container: angular.element 'body'
     ]
 

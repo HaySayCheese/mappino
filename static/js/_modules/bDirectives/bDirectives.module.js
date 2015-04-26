@@ -50,7 +50,7 @@
         link: function(scope, element) {
           return $timeout(function() {
             return angular.element(element).selectpicker({
-              style: 'btn-default btn-md',
+              style: '-gray',
               container: angular.element('body')
             });
           });

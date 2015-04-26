@@ -249,10 +249,10 @@
 
                             <div class="col-xs-4">
                                 <div class="seller-buttons" ng-hide="seller.sendingMessage || seller.sendingCallRequest">
-                                    <div class="btn btn-primary btn-block" ng-show="seller.preferences.allow_call_requests"
+                                    <div class="btn -blue -block" ng-show="seller.preferences.allow_call_requests"
                                          ng-click="seller.sendingCallRequest = true">Заказать обратный звонок
                                     </div>
-                                    <div class="btn btn-default btn-block" ng-show="seller.preferences.allow_messaging"
+                                    <div class="btn -gray -block" ng-show="seller.preferences.allow_messaging"
                                          ng-click="seller.sendingMessage = true">Оставить сообщение
                                     </div>
                                 </div>
@@ -274,8 +274,8 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-12">
-                                            <div class="btn btn-default pull-left" ng-click="cancelSendCallRequest()">Отмена</div>
-                                            <div class="btn btn-primary pull-right send-btn" ng-click="sendCallRequest()"
+                                            <div class="btn -gray pull-left" ng-click="cancelSendCallRequest()">Отмена</div>
+                                            <div class="btn -blue pull-right send-btn" ng-click="sendCallRequest()"
                                                  data-loading-text="Отправка данных..."
                                                  ng-disabled="!seller.call_request.name || !seller.call_request.phone_number">Заказать обратный звонок
                                             </div>
@@ -307,8 +307,8 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-12">
-                                            <div class="btn btn-default pull-left" ng-click="cancelSendMessage()">Отмена</div>
-                                            <div class="btn btn-primary pull-right send-btn" ng-click="sendMessage()"
+                                            <div class="btn -gray pull-left" ng-click="cancelSendMessage()">Отмена</div>
+                                            <div class="btn -blue pull-right send-btn" ng-click="sendMessage()"
                                                  data-loading-text="Отправка данных..."
                                                  ng-disabled="!seller.message.message || !seller.message.email">Отправить сообщение
                                             </div>
@@ -376,7 +376,7 @@
                                         <input class="form-control" type="text" placeholder="Эл. почта" ng-model="claim.email"/>
                                     </div>
                                     <div class="col-xs-4 text-center">
-                                        <button class="btn btn-success btn-block" ng-disabled="claimFieldsIsNull()">Отправить</button>
+                                        <button class="btn -green -block" ng-disabled="claimFieldsIsNull()">Отправить</button>
                                     </div>
                                 </div>
                             </div>
