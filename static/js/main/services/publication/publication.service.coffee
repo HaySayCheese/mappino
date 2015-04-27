@@ -3,7 +3,7 @@
 ###*
 # @class
 # @description todo: add desc
-# @version 0.0.1
+# @version 0.1.0
 # @license todo: add license
 ###
 class MPublicationService
