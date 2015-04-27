@@ -1,4 +1,4 @@
-app.controller('LoginController', ['$scope', '$rootScope', '$timeout', '$location', 'TXT', 'BAuthService',
+angular.module('mappino.pages.map').controller('LoginController', ['$scope', '$rootScope', '$timeout', '$location', 'TXT', 'BAuthService',
     function($scope, $rootScope, $timeout, $location, TXT, BAuthService) {
         "use strict";
 

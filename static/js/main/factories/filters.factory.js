@@ -3,7 +3,7 @@
  *
  * todo: write description here
  **/
-app.factory('FiltersFactory', ['$rootScope', '$location', '$route', 'base64', 'BTypesService',
+angular.module('mappino.pages.map').factory('FiltersFactory', ['$rootScope', '$location', '$route', 'base64', 'BTypesService',
     function($rootScope, $location, $route, base64, BTypesService) {
         "use strict";
 

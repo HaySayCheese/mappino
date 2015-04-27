@@ -5,7 +5,7 @@
 
 
 
-app.factory('Queries', ['$http','HTTP_URL', function($http, HTTP_URL) {
+angular.module('mappino.pages.map').factory('Queries', ['$http','HTTP_URL', function($http, HTTP_URL) {
     'use strict';
 
     return {

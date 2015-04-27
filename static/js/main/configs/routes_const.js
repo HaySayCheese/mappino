@@ -3,7 +3,7 @@
  **/
 
 
-app.constant('ROUTES', (function () {
+angular.module('mappino.pages.map').constant('ROUTES', (function () {
     'use strict';
 
     return {

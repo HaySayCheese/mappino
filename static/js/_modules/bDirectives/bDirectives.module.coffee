@@ -63,6 +63,20 @@ angular.module '_modules.bDirectives', ['underscore']
 
 
     ##
+    # Change language on map selectpicker (dropdown) directive
+    ##
+    .directive 'selectpicker', ['$timeout', ($timeout) ->
+        restrict: 'A'
+
+        link: (scope, element) ->
+            $timeout () ->
+                angular.element(element).selectpicker
+                    style: '-gray'
+    ]
+
+
+
+    ##
     # jQuery perfectScrollbar (scroll) directive
     ##
     .directive 'perfectScrollbar', ['$timeout', '$rootScope', ($timeout, $rootScope) ->

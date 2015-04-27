@@ -1,4 +1,4 @@
-app.factory('MarkersFactory', ['Queries', function(Queries) {
+angular.module('mappino.pages.map').factory('MarkersFactory', ['Queries', function(Queries) {
     "use strict";
 
     var markers = {

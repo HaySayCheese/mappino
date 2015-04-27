@@ -1,4 +1,4 @@
-app.controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$timeout', 'BTypesService',
+angular.module('mappino.pages.map').controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$timeout', 'BTypesService',
     'FiltersFactory', 'LoadedValues', 'BAuthService',
     function($scope, $rootScope, $cookies, $timeout, BTypesService, FiltersFactory, LoadedValues, BAuthService) {
         'use strict';

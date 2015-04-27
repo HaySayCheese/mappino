@@ -1,4 +1,4 @@
-app.controller('ContentController', ['$scope', '$location', '$http', '$timeout', '$rootScope', '$route', 'MarkersFactory', 'FiltersFactory', 'LoadedValues',
+angular.module('mappino.pages.map').controller('ContentController', ['$scope', '$location', '$http', '$timeout', '$rootScope', '$route', 'MarkersFactory', 'FiltersFactory', 'LoadedValues',
     function($scope, $location, $http, $timeout, $rootScope, $route, MarkersFactory, FiltersFactory, LoadedValues) {
         "use strict";
 

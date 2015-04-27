@@ -3,7 +3,7 @@
  **/
 
 
-app.constant('HTTP_URL', (function () {
+angular.module('mappino.pages.map').constant('HTTP_URL', (function () {
     'use strict';
 
     return {

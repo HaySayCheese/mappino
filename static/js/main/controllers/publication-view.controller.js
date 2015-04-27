@@ -1,5 +1,5 @@
 
-app.controller('PublicationViewController', ['$scope', '$rootScope', '$routeParams', 'TXT', 'MPublicationService',
+angular.module('mappino.pages.map').controller('PublicationViewController', ['$scope', '$rootScope', '$routeParams', 'TXT', 'MPublicationService',
     function($scope, $rootScope, $routeParams, TXT, MPublicationService) {
         "use strict";
 
@@ -73,7 +73,7 @@ app.controller('PublicationViewController', ['$scope', '$rootScope', '$routePara
 
 
 
-app.controller('PublicationViewSimilarController', ['$scope',
+angular.module('mappino.pages.map').controller('PublicationViewSimilarController', ['$scope',
     function($scope) {
 
     }
@@ -82,7 +82,7 @@ app.controller('PublicationViewSimilarController', ['$scope',
 
 
 
-app.controller('PublicationViewContactsController', ['$scope', '$rootScope', '$timeout', 'lrNotifier', 'MPublicationService',
+angular.module('mappino.pages.map').controller('PublicationViewContactsController', ['$scope', '$rootScope', '$timeout', 'lrNotifier', 'MPublicationService',
     function($scope, $rootScope, $timeout, lrNotifier, MPublicationService) {
         "use strict";
 

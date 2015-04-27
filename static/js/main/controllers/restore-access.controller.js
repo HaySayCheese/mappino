@@ -1,5 +1,5 @@
 
-app.controller('RestoreAccessController', ['$scope', '$rootScope', '$location', 'TXT',
+angular.module('mappino.pages.map').controller('RestoreAccessController', ['$scope', '$rootScope', '$location', 'TXT',
     function($scope, $rootScope, $location, TXT) {
         "use strict";
 
@@ -29,7 +29,7 @@ app.controller('RestoreAccessController', ['$scope', '$rootScope', '$location', 
 /**
  * Контроллер який відповідає відправку мила юзеру
  **/
-app.controller('RestoreAccessSendMailController', ['$scope', '$rootScope', 'BAuthService',
+angular.module('mappino.pages.map').controller('RestoreAccessSendMailController', ['$scope', '$rootScope', 'BAuthService',
     function($scope, $rootScope, BAuthService) {
         "use strict";
 
@@ -118,7 +118,7 @@ app.controller('RestoreAccessSendMailController', ['$scope', '$rootScope', 'BAut
 /**
  * Контроллер який відповідає за зміну пароля
  **/
-app.controller('RestoreAccessChangePasswordController', ['$scope', '$rootScope', '$location', 'BAuthService',
+angular.module('mappino.pages.map').controller('RestoreAccessChangePasswordController', ['$scope', '$rootScope', '$location', 'BAuthService',
     function($scope, $rootScope, $location, BAuthService) {
         "use strict";
 

@@ -2,11 +2,11 @@
  * Файл з загальними змінними
  **/
 
-app.value('TXT', {
+angular.module('mappino.pages.map').value('TXT', {
     'SERVICE_NAME': 'Mappino'
 });
 
-app.value('LoadedValues', {
+angular.module('mappino.pages.map').value('LoadedValues', {
     'sidebar': {
         'templates': {
             'red':      false,
