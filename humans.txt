@@ -1,6 +1,6 @@
 /* TEAM */
     Co-founder and lead back-end developer: Dima Chizhevsky
-    Co-founder and lead front-end developer: Sergei Meketyuk
+    Co-founder and lead front-end developer: Serhii Meketiuk
     Ideas and marketing: Nastia Panfilova
     Ideas: Vitaliy Pavlinsky
 

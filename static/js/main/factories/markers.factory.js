@@ -1,4 +1,4 @@
-angular.module('mappino.pages.map').factory('MarkersFactory', ['Queries', function(Queries) {
+angular.module('mappino.pages.map').factory('MarkersFactory', ['$http', function($http) {
     "use strict";
 
     var markers = {
@@ -68,7 +68,7 @@ angular.module('mappino.pages.map').factory('MarkersFactory', ['Queries', functi
                 that.createJsonFiltersFromString(y_filters, "yellow");
             }
 
-            Queries.Map.getMarkers(JSON.stringify(jsonFilters)).success(function(data) {
+            $http.get('/ajax/api/markers/?p=' + JSON.stringify(jsonFilters)).success(function(data) {
                 that.clearPanelMarkers("all");
 
                 that.add(data, function() {

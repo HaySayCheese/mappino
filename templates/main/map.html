@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html ng-app="mappino.pages.map" ng-controller="AppController">
 <head>
-    <title ng-bind="pageTitle"></title>
-    <link rel="author" href="/humans.txt" />
+    <title ng-bind="pageTitle">Mappino</title>
+    <link rel="author" href="/humans.txt"/>
 
     {# перевірка для яндекс.вебмастер #}
     <meta name='yandex-verification' content='546bbc19b208a750' />
@@ -49,12 +49,12 @@
     </script>
 </head>
 <body>
-
     <div class="wrapper" ng-controller="ContentController" ng-init="runApplication()">
 
         <a href="/" class="home-button">
             <span class="title">На главную</span>
         </a>
+
         <div class="show-sidebar-button animated" ng-click="toggleSidebar()" title="Развернуть панель фильтров">
             <span class="glyphicon glyphicon-menu-hamburger"></span>
         </div>
@@ -69,9 +69,7 @@
 
         <ng-view></ng-view>
 
-
         <div ng-controller="SidebarController" ng-include="sidebarTemplateUrl"></div>
-
 
         <div lr-notification-stack-container="mainChannel" class="notifier" ng-cloak>
             <ul>
@@ -85,8 +83,9 @@
 
 
     {% compress js %}
-        <!-- bModules -->
         <script type="text/javascript" src="{{ static }}js/_modules/underscore/underscore.module.js"></script>
+
+        <!-- bModules -->
         <script type="text/javascript" src="{{ static }}js/_modules/bTypes/bTypes.module.js"></script>
         <script type="text/javascript" src="{{ static }}js/_modules/bAuth/bAuth.module.js"></script>
         <script type="text/javascript" src="{{ static }}js/_modules/bDirectives/bDirectives.module.js"></script>
@@ -95,12 +94,10 @@
         <!-- Mappino module -->
         <script type="text/javascript" src="{{ static }}js/main/app/app.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/main/configs/values.js"></script>
-        <script type="text/javascript" src="{{ static }}js/main/configs/routes_const.js"></script>
-        <script type="text/javascript" src="{{ static }}js/main/configs/http_const.js"></script>
+        <script type="text/javascript" src="{{ static }}js/main/configs/values/values.config.js"></script>
+        <script type="text/javascript" src="{{ static }}js/main/configs/router/router.config.js"></script>
 
         <script type="text/javascript" src="{{ static }}js/main/services/router/router.service.js"></script>
-        <script type="text/javascript" src="{{ static }}js/main/services/queries.js"></script>
 
         <script type="text/javascript" src="{{ static }}js/main/services/publication/publication.service.js"></script>
         <script type="text/javascript" src="{{ static }}js/main/factories/markers.factory.js"></script>
