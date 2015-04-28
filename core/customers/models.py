@@ -14,12 +14,14 @@ class Customers(models.Model):
         self.hash_id = self.__create_hash_id()
         super(Customers, self).save(*args, **kwargs)
 
+
+    # Todo: Note used from utils
     def __create_hash_id(self):
         """
         :returns:
              str object that contains sha256 generated from phone_number and uuid4
         """
-        hash_object = hashlib.sha256
+        hash_object = hashlib.sha256()
         hash_object.update(str(uuid.uuid4())+self.phone_number)
         return str(hash_object.digest())
 
