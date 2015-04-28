@@ -9,11 +9,16 @@ class BaseCustomException(Exception):
 	"""
 	pass
 
+
 class InvalidValue(BaseCustomException): pass
+
+
 class DuplicateValue(InvalidValue): pass
 
 
 class InvalidArgument(InvalidValue): pass
+
+
 class EmptyArgument(InvalidArgument): pass
 
 
@@ -30,11 +35,14 @@ class ResourceThrottled(SuspiciousOperation): pass
 class AlreadyExist(Exception):
 	pass
 
+
 class ObjectAlreadyExist(AlreadyExist):
 	pass
 
+
 class RecordAlreadyExists(AlreadyExist):
 	pass
+
 
 class RecordDoesNotExists(Exception):
 	pass
@@ -42,7 +50,6 @@ class RecordDoesNotExists(Exception):
 
 class ParseError(Exception):
 	pass
-
 
 
 class IntervalError(Exception):
