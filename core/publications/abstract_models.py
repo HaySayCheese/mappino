@@ -1,23 +1,22 @@
 #coding=utf-8
 import uuid
-
 import datetime
-from collective.utils import generate_sha256_unique_id
-from core.publications.handlers import PublicationsPhotosHandler
-from django.db.utils import DatabaseError
 
-import os
+from django.db.utils import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.db import models, transaction
 from django.utils.timezone import now
+
+from collective.utils import generate_sha256_unique_id
 from collective.exceptions import InvalidArgument, RuntimeException
+from core.users.models import Users
+from core.publications.handlers import PublicationsPhotosHandler
 from core.currencies import currencies_manager as currencies
 from core.currencies.constants import CURRENCIES as currencies_constants
 from core.publications import models_signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
     EmptyRentPrice
-from core.users.models import Users
 
 
 class AbstractModel(models.Model):
@@ -26,7 +25,6 @@ class AbstractModel(models.Model):
 
     #-- constraints
     max_price_symbols_count = 18
-
 
     @classmethod
     def new(cls):
@@ -439,35 +437,8 @@ class AbstractHeadModel(models.Model):
         #-- body
         self.body.check_required_fields()
 
-
-    # def photos_json(self):
-    #     result = {
-    #         'photos': [],
-    #     }
-    #
-    #     for photo in self.photos_model.objects.filter(hid=self.id).order_by('-is_title'):
-    #         if photo.is_title:
-    #             result['title_photo'] = photo.url() + photo.title_thumbnail_name()
-    #             result['photos'].append(photo.url() + photo.image_name())
-    #         else:
-    #             result['photos'].append(photo.url() + photo.image_name())
-    #     return result
-
-
-    def photos_dict(self):
-        return []
-        #
-        # return [{
-        #     'id': p.hash_id,
-        #     'image': p.url() + p.image_name(),
-        #     'thumbnail': p.url() + p.big_thumbnail_name(),
-        #     'is_title': p.is_title
-        # } for p in self.photos_model.objects.filter(hid = self.id).order_by('-is_title')]
-
-
     def photos(self):
         return self.photos_model.objects.filter(publication = self.id).order_by('-is_title', '-created')
-
 
     def title_photo(self):
         photos = self.photos()
@@ -475,16 +446,6 @@ class AbstractHeadModel(models.Model):
             return None
 
         return photos[0]
-
-
-    # def title_small_thumbnail_url(self):
-    #     title_photo = self.photos_model.objects.filter(hid=self.id).filter(is_title=True)[:1]
-    #     if not title_photo:
-    #         return None
-    #
-    #     photo = title_photo[0]
-    #     return photo.url() + photo.small_thumbnail_name()
-
 
     def is_published(self):
         return self.state_sid == OBJECT_STATES.published()
@@ -499,7 +460,6 @@ class CommercialHeadModel(AbstractHeadModel):
         abstract = True
 
 
-
 class BodyModel(AbstractModel):
     class Meta:
         abstract = True
@@ -510,7 +470,6 @@ class BodyModel(AbstractModel):
     #-- fields
     title = models.TextField(null=True, max_length=max_title_length)
     description = models.TextField(null=True)
-
 
     def check_required_fields(self):
         """
@@ -524,14 +483,12 @@ class BodyModel(AbstractModel):
             raise EmptyDescription('Description is empty')
         self.check_extended_fields()
 
-
     def check_extended_fields(self):
         """
         Abstract.
         Призначений для валідації моделей, унаслідуваних від поточної.
         """
         return
-
 
 
 class SaleTermsModel(AbstractModel):
@@ -830,10 +787,10 @@ class PhotosModel(AbstractModel):
             # because all the filenames are unique (based on uuid4)
             # and exists only now in this context.
 
-            cls.photos_handler.remove(original_image_url)
-            cls.photos_handler.remove(photo_url)
-            cls.photos_handler.remove(big_thumb_url)
-            cls.photos_handler.remove(small_thumb_url)
+            cls.photos_handler.remove_photo_from_google_cloud_storage(original_image_url)
+            cls.photos_handler.remove_photo_from_google_cloud_storage(photo_url)
+            cls.photos_handler.remove_photo_from_google_cloud_storage(big_thumb_url)
+            cls.photos_handler.remove_photo_from_google_cloud_storage(small_thumb_url)
 
             # ...
             # other images deletion should go here
