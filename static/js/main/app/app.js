@@ -2,13 +2,19 @@
 (function() {
   var app;
 
-  app = angular.module('mappino.pages.map', ['ngRoute', 'ngCookies', 'ngAnimate', 'ui.mask', 'lrNotifier', 'ab-base64', 'underscore', '_modules.bTypes', '_modules.bAuth', '_modules.bDirectives']);
+  app = angular.module('mappino.pages.map', ['ngRoute', 'ngCookies', 'ngAnimate', 'ngResource', 'ui.mask', 'lrNotifier', 'ab-base64', 'underscore', '_modules.bTypes', '_modules.bAuth', '_modules.bDirectives']);
 
   app.config([
     '$interpolateProvider', '$locationProvider', function(interpolateProvider, locationProvider) {
       interpolateProvider.startSymbol('[[');
       interpolateProvider.endSymbol(']]');
       return locationProvider.hashPrefix('!');
+    }
+  ]);
+
+  app.config([
+    '$resourceProvider', function(resourceProvider) {
+      return resourceProvider.defaults.stripTrailingSlashes = false;
     }
   ]);
 

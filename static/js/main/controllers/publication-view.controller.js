@@ -15,15 +15,28 @@ angular.module('mappino.pages.map').controller('PublicationViewController', ['$s
         };
 
 
-        $scope.addToFavorites = function() {
+        $scope.toggleFavorites = function($event) {
             var tid = $rootScope.publicationIdPart.split(':')[0],
                 hid = $rootScope.publicationIdPart.split(':')[1];
 
-            MFavoritesService.add(tid, hid, function(response) {
-                console.log(response);
-            });
+            if ($scope.publication.data.added_to_favorites) {
+                MFavoritesService.remove(tid, hid, function(response) {
+                    $scope.publication.data.added_to_favorites = false;
+                    console.log(response);
+                }, function() {
+                    // error callback
+                });
+            } else {
+                MFavoritesService.add(tid, hid, function(response) {
+                    $scope.publication.data.added_to_favorites = true;
+                    console.log(response);
+                }, function() {
+                    // error callback
+                });
+            }
 
-            event.preventDefault();
+
+            $event.preventDefault();
         };
 
 

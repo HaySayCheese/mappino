@@ -2,6 +2,7 @@ app = angular.module('mappino.pages.map', [
     'ngRoute'
     'ngCookies'
     'ngAnimate'
+    'ngResource'
 
     'ui.mask'
     'lrNotifier'
@@ -21,6 +22,10 @@ app.config(['$interpolateProvider', '$locationProvider',
         interpolateProvider.endSymbol ']]'
 
         locationProvider.hashPrefix '!'
+])
+
+app.config(['$resourceProvider', (resourceProvider) ->
+    resourceProvider.defaults.stripTrailingSlashes = false
 ])
 
 

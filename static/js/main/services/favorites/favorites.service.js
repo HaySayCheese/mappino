@@ -11,9 +11,19 @@
   var MFavoritesService;
 
   MFavoritesService = (function() {
-    function MFavoritesService(http1) {
-      this.http = http1;
-      this.bookmarks = [];
+    function MFavoritesService(resource1) {
+      this.resource = resource1;
+      this.favorites = this.resource("/ajax/api/favorites/", null, {
+        add: {
+          method: "POST"
+        },
+        get: {
+          method: "GET"
+        },
+        remove: {
+          method: "DELETE"
+        }
+      });
     }
 
 
@@ -29,11 +39,13 @@
 
     MFavoritesService.prototype.add = function(tid, hid, successCallback, errorCallback) {
       var request;
-      request = this.http.post("/ajax/api/favorites/", {
-        'tid': tid,
-        'hid': hid
+      request = this.favorites.add({
+        params: {
+          'tid': tid,
+          'hid': hid
+        }
       });
-      request.success(function(response) {
+      return request.$promise.then(function(response) {
         if (response.code === 0) {
           _.isFunction(successCallback) && successCallback();
         }
@@ -42,8 +54,73 @@
             'code': response.code
           });
         }
+      }, function() {
+        return _.isFunction(errorCallback) && errorCallback();
       });
-      return request.error(function() {
+    };
+
+
+    /**
+     * @public
+     * @description Get all favorites
+    #
+     * @param {(string|number)} tid              - Publication type id
+     * @param {(string|number)} hid              - Publication hash id
+     * @param {function()} [successCallback]     - Success callback
+     * @param {function()} [errorCallback]       - Error callback
+     */
+
+    MFavoritesService.prototype.get = function(tid, hid, successCallback, errorCallback) {
+      var request;
+      request = this.favorites.get({
+        params: {
+          'tid': tid,
+          'hid': hid
+        }
+      });
+      return request.$promise.then(function(response) {
+        if (response.code === 0) {
+          _.isFunction(successCallback) && successCallback();
+        }
+        if (response.code !== 0) {
+          return _.isFunction(errorCallback) && errorCallback({
+            'code': response.code
+          });
+        }
+      }, function() {
+        return _.isFunction(errorCallback) && errorCallback();
+      });
+    };
+
+
+    /**
+     * @public
+     * @description Remove publication from favorites
+    #
+     * @param {(string|number)} tid              - Publication type id
+     * @param {(string|number)} hid              - Publication hash id
+     * @param {function()} [successCallback]     - Success callback
+     * @param {function()} [errorCallback]       - Error callback
+     */
+
+    MFavoritesService.prototype.remove = function(tid, hid, successCallback, errorCallback) {
+      var request;
+      request = this.favorites.remove({
+        params: {
+          'tid': tid,
+          'hid': hid
+        }
+      });
+      return request.$promise.then(function(response) {
+        if (response.code === 0) {
+          _.isFunction(successCallback) && successCallback();
+        }
+        if (response.code !== 0) {
+          return _.isFunction(errorCallback) && errorCallback({
+            'code': response.code
+          });
+        }
+      }, function() {
         return _.isFunction(errorCallback) && errorCallback();
       });
     };
@@ -53,8 +130,8 @@
   })();
 
   angular.module('mappino.pages.map').factory('MFavoritesService', [
-    '$http', function(http) {
-      return new MFavoritesService(http);
+    '$resource', function(resource) {
+      return new MFavoritesService(resource);
     }
   ]);
 
