@@ -16,8 +16,11 @@ class FlatsPhotos(PhotosModel):
     class Meta:
         db_table = 'img_flats_photos'
 
-    destination_dir_name = 'flats/'
-    hid = models.ForeignKey('FlatsHeads', db_index=True)
+    # fields
+    publication = models.ForeignKey('FlatsHeads')
+
+    # class variables
+    tid = OBJECTS_TYPES.flat()
 
 
 class FlatsSaleTerms(SaleTermsModel):
@@ -798,8 +801,11 @@ class HousesPhotos(PhotosModel):
     class Meta:
         db_table = 'img_houses_photos'
 
-    destination_dir_name = 'houses/'
-    hid = models.ForeignKey('HousesHeads', db_index=True)
+    # fields
+    publication = models.ForeignKey('HousesHeads', db_index=True)
+
+    # class variables
+    tid = OBJECTS_TYPES.house()
 
 
 
@@ -1573,8 +1579,11 @@ class RoomsPhotos(PhotosModel):
     class Meta:
         db_table = 'img_rooms_photos'
 
-    destination_dir_name = 'rooms/'
-    hid = models.ForeignKey('RoomsHeads', db_index=True)
+    # fields
+    publication = models.ForeignKey('RoomsHeads', db_index=True)
+
+    # photos
+    tid = OBJECTS_TYPES.room()
 
 
 
@@ -1927,9 +1936,11 @@ class TradesPhotos(PhotosModel):
     class Meta:
         db_table = 'img_trades_photos'
 
-    destination_dir_name = 'trades/'
-    hid = models.ForeignKey('TradesHeads', db_index=True)
+    # fields
+    publication = models.ForeignKey('TradesHeads')
 
+    # class variables
+    tid = OBJECTS_TYPES.trade()
 
 
 class TradesBodies(BodyModel):
@@ -2297,9 +2308,11 @@ class OfficesPhotos(PhotosModel):
     class Meta:
         db_table = 'img_offices_photos'
 
-    destination_dir_name = 'offices/'
-    hid = models.ForeignKey('OfficesHeads', db_index=True)
+    # fields
+    publication = models.ForeignKey('OfficesHeads')
 
+    # class variables
+    tid = OBJECTS_TYPES.office()
 
 
 class OfficesBodies(BodyModel):
@@ -2616,8 +2629,11 @@ class WarehousesPhotos(PhotosModel):
     class Meta:
         db_table = 'img_warehouses_photos'
 
-    destination_dir_name = 'warehouses/'
-    hid = models.ForeignKey('WarehousesHeads', db_index=True)
+    # fields
+    publication = models.ForeignKey('WarehousesHeads')
+
+    # class variables
+    tid = OBJECTS_TYPES.warehouse()
 
 
 
@@ -2905,8 +2921,11 @@ class BusinessesPhotos(PhotosModel):
     class Meta:
         db_table = 'img_business_photos'
 
-    destination_dir_name = 'businesses/'
-    hid = models.ForeignKey('BusinessesHeads', db_index=True)
+    # fields
+    publication = models.ForeignKey('BusinessesHeads')
+
+    # class variables
+    tid = OBJECTS_TYPES.business()
 
 
 
@@ -3305,358 +3324,6 @@ class BusinessesHeads(CommercialHeadModel):
     rent_terms = models.OneToOneField(BusinessesRentTerms)
 
 
-# class CateringsSaleTerms(SaleTermsModel):
-# 	class Meta:
-# 		db_table = 'o_caterings_sale_terms'
-#
-#
-# class CateringsRentTerms(CommercialRentTermsModel):
-# 	class Meta:
-# 		db_table = 'o_caterings_rent_terms'
-#
-#
-# class CateringsPhotos(PhotosModel):
-# 	class Meta:
-# 		db_table = 'img_caterings_photos'
-#
-# 	destination_dir_name = 'caterings/'
-# 	hid = models.ForeignKey('CateringsHeads', db_index=True)
-#
-#
-# class CateringsBodies(BodyModel):
-# 	class Meta:
-# 		db_table = 'o_caterings_bodies'
-#
-# 	substitutions = {
-# 		'market_type': {
-# 			MARKET_TYPES.new_building(): u'новостройка',
-# 			MARKET_TYPES.secondary_market(): u'вторичный',
-# 		},
-# 		'building_type': {
-# 			TRADE_BUILDING_TYPES.residential(): u'жилое',
-# 			TRADE_BUILDING_TYPES.entertainment(): u'ТРЦ',
-# 			TRADE_BUILDING_TYPES.business(): u'бизнес-центр',
-# 			TRADE_BUILDING_TYPES.administrative(): u'административное',
-# 			TRADE_BUILDING_TYPES.separate(): u'отдельное',
-# 		},
-# 		'condition': {
-# 			OBJECT_CONDITIONS.cosmetic_repair(): u'косметический ремонт',
-# 			OBJECT_CONDITIONS.living(): u'жилое',
-# 			OBJECT_CONDITIONS.euro_repair(): u'евроремонт',
-# 			OBJECT_CONDITIONS.design_repair(): u'дизайнерский ремонт',
-# 			OBJECT_CONDITIONS.cosmetic_repair_needed(): u'требуется косметический ремонт',
-# 			OBJECT_CONDITIONS.unfinished_repair(): u'неоконченный ремонт',
-# 			OBJECT_CONDITIONS.for_finishing(): u'под чистовую отделку',
-# 		},
-# 		'floor_types': {
-# 			FLOOR_TYPES.mansard(): u'мансарда',
-# 			FLOOR_TYPES.ground(): u'цоколь'
-# 		},
-# 	}
-#
-#
-# 	market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
-# 	building_type_sid = models.SmallIntegerField(default=TRADE_BUILDING_TYPES.entertainment())
-# 	build_year = models.PositiveSmallIntegerField(null=True)
-# 	condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
-#
-# 	floor = models.SmallIntegerField(null=True) # номер поверху
-# 	floor_type_sid = models.SmallIntegerField(default=FLOOR_TYPES.floor()) # тип поверху: мансарда, цоколь, звичайний поверх і т.д
-# 	floors_count = models.SmallIntegerField(null=True)
-# 	mansard = models.BooleanField(default=False) # мансарда
-# 	ground = models.BooleanField(default=False) # цокольний поверх
-# 	lower_floor = models.BooleanField(default=False) # підвал
-#
-# 	halls_count = models.PositiveSmallIntegerField(null=True)
-# 	halls_area = models.FloatField(null=True)
-# 	total_area = models.FloatField(null=True)
-# 	closed_area = models.BooleanField(default=False)
-#
-# 	vcs_count = models.PositiveSmallIntegerField(null=True)
-# 	ceiling_height = models.FloatField(null=True) # висота стелі
-#
-# 	# Опалення
-# 	heating_type_sid = models.SmallIntegerField(default=HEATING_TYPES.central())
-# 	custom_heating_type = models.TextField(null=True) # якщо нічого не вказано в heating_type_sid
-# 	# якщо вибрано ідивідуальний тип опалення в heating_type_sid
-# 	ind_heating_type_sid = models.SmallIntegerField(default=INDIVIDUAL_HEATING_TYPES.gas())
-# 	custom_ind_heating_type = models.TextField(null=True) # якщо нічого не вказано в ind_heating_type_sid
-#
-# 	# Інші зручності
-# 	electricity = models.BooleanField(default=False)
-# 	gas = models.BooleanField(default=False)
-# 	sewerage = models.BooleanField(default=False)
-#
-# 	hot_water = models.BooleanField(default=False)
-# 	cold_water = models.BooleanField(default=False)
-# 	ventilation = models.BooleanField(default=False)
-#
-# 	security_alarm = models.BooleanField(default=False)
-# 	fire_alarm = models.BooleanField(default=False)
-# 	security = models.BooleanField(default=False)
-#
-# 	add_facilities = models.TextField(null=True) # дод. відомості про зручності
-#
-# 	# Комунікації
-# 	phone = models.BooleanField(default=False)
-# 	phone_lines_count = models.PositiveSmallIntegerField(null=True)
-# 	internet = models.BooleanField(default=False)
-# 	mobile_coverage = models.BooleanField(default=False) # покриття моб. операторами
-# 	cable_tv = models.BooleanField(default=False) # кабельне / супутникове тб
-# 	lan = models.BooleanField(default=False)
-#
-# 	# Дод. будівлі
-# 	parking = models.BooleanField(default=False) # гараж / паркомісце
-# 	open_air = models.BooleanField(default=False)
-# 	add_buildings = models.TextField(null=True)
-#
-# 	# Поряд знаходиться
-# 	transport_stop = models.BooleanField(default=False)
-# 	market = models.BooleanField(default=False)
-# 	cafe = models.BooleanField(default=False)
-# 	bank = models.BooleanField(default=False)
-# 	cash_machine = models.BooleanField(default=False)
-# 	entertainment = models.BooleanField(default=False) # розважальні установи
-# 	add_showplaces = models.TextField(null=True)
-#
-#
-# 	# validation
-# 	def check_extended_fields(self):
-# 		if self.floor_type_sid == FLOOR_TYPES.floor() and self.floor is None:
-# 			raise EmptyFloor('Floor is None.')
-# 		if self.halls_count is None:
-# 			raise EmptyHallsCount('Halls count is None.')
-# 		if self.halls_area is None:
-# 			raise EmptyHallsArea('Halls area is None.')
-#
-#
-# 	# output
-# 	def print_title(self):
-# 		if self.title is None:
-# 			return u''
-# 		return self.title
-#
-#
-# 	def print_description(self):
-# 		if self.description is None:
-# 			return u''
-# 		return self.description
-#
-#
-# 	def print_market_type(self):
-# 		return self.substitutions['market_type'][self.market_type_sid]
-#
-#
-# 	def print_building_type(self):
-# 		return self.substitutions['building_type'][self.building_type_sid]
-#
-#
-# 	def print_condition(self):
-# 		return self.substitutions['condition'][self.condition_sid]
-#
-#
-# 	#-- output numeric fields
-# 	def print_build_year(self):
-# 		if self.build_year is None:
-# 			return u''
-# 		return unicode(self.build_year) + u' г.'
-#
-#
-# 	def print_floor(self):
-# 		# Поле "этаж" пропущено в floor_types умисно, щоб воно зайвий раз не потрапляло у видачу.
-# 		floor_type = self.substitutions['floor_types'].get(self.floor_type_sid, u'')
-# 		if floor_type:
-# 			return floor_type
-# 		return unicode(self.floor)
-#
-#
-# 	def print_floors_count(self):
-# 		if not self.floors_count:
-# 			return u''
-#
-# 		floors = u''
-# 		if self.ground:
-# 			floors += u', цоколь'
-# 		if self.lower_floor:
-# 			floors += u', подвал'
-# 		if self.mansard:
-# 			floors += u', мансарда'
-#
-# 		if floors and self.floors_count:
-# 			return unicode(self.floors_count) + u' (' + floors[2:] + u')'
-# 		return unicode(self.floors_count)
-#
-#
-# 	def print_halls_count(self):
-# 		if self.halls_count is None:
-# 			return u''
-# 		return unicode(self.halls_count)
-#
-#
-# 	def print_halls_area(self):
-# 		if self.halls_area is None:
-# 			return u''
-# 		return "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м²'
-#
-#
-# 	def print_total_area(self):
-# 		if self.total_area is None:
-# 			return u''
-#
-# 		total_area = "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
-# 		if self.closed_area:
-# 			total_area += u' (закрытая терр.)'
-# 		return total_area
-#
-#
-# 	def print_vcs_count(self):
-# 		if self.vcs_count is None:
-# 			return u''
-# 		return unicode(self.vcs_count)
-#
-#
-# 	def print_ceiling_height(self):
-# 		if self.ceiling_height is None:
-# 			return u''
-#
-# 		if self.ceiling_height == int(self.ceiling_height):
-# 			return unicode(int(self.ceiling_height)) + u' м'
-# 		return unicode(self.ceiling_height) + u' м'
-#
-#
-# 	#-- output formatted strings
-# 	def print_facilities(self):
-# 		facilities = u''
-#
-# 		# Опалення (пункт "невідомо" не виводиться)
-# 		if self.heating_type_sid == HEATING_TYPES.none():
-# 			facilities += u'отопление отсутствует'
-# 		elif self.heating_type_sid == HEATING_TYPES.central():
-# 			facilities += u'центральное отопление'
-# 		elif self.heating_type_sid == HEATING_TYPES.individual():
-# 			facilities += u'индивидуальное отопление'
-# 			if self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.electricity():
-# 				facilities += u' (электричество)'
-# 			elif self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.gas():
-# 				facilities += u' (газ)'
-# 			elif self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.firewood():
-# 				facilities += u' (дрова)'
-# 			elif self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.other():
-# 				if self.custom_ind_heating_type is not None:
-# 					facilities += u' ('+self.custom_ind_heating_type + u')'
-# 		elif self.heating_type_sid == HEATING_TYPES.other():
-# 			facilities += u'отопление: ' + self.custom_heating_type
-#
-# 		if self.electricity:
-# 			facilities += u', электричество'
-# 		if self.gas:
-# 			facilities += u', газ'
-# 		if self.sewerage:
-# 			facilities += u', канализация'
-# 		if self.hot_water:
-# 			facilities += u', гарячая вода'
-# 		if self.cold_water:
-# 			facilities += u', холодная вода'
-# 		if self.ventilation:
-# 			facilities += u', вентиляция'
-#
-# 		if self.security_alarm and self.fire_alarm:
-# 			facilities += u', охранная и пожарная сигнализации'
-# 		else:
-# 			if self.security_alarm:
-# 				facilities += u', охранная сигнализация'
-# 			if self.fire_alarm:
-# 				facilities += u', пожарная сигнализация'
-#
-# 		if self.security:
-# 			facilities += u', охрана'
-#
-# 		if self.add_facilities:
-# 			facilities = facilities + '. ' + self.add_facilities
-#
-# 		if facilities[:2] == u', ':
-# 			facilities = facilities[2:]
-# 		return facilities if facilities else u''
-#
-#
-# 	def print_add_facilities(self):
-# 		if self.add_facilities is None:
-# 			return u''
-# 		return self.add_facilities
-#
-#
-# 	def print_communications(self):
-# 		communications = u''
-# 		if self.phone:
-# 			communications += u', телефон'
-# 			if self.phone_lines_count:
-# 				communications += u' (количество линий - ' + unicode(self.phone_lines_count) + u')'
-#
-# 		if self.internet:
-# 			communications += u', интернет'
-# 		if self.mobile_coverage:
-# 			communications += u', покрытие мобильными операторами'
-# 		if self.cable_tv:
-# 			communications += u', кабельное телевидение'
-# 		if self.lan:
-# 			communications += u', локальная сеть'
-#
-# 		if communications:
-# 			return communications[2:] + u"."
-# 		return u''
-#
-#
-# 	def print_provided_add_buildings(self):
-# 		buildings = u''
-# 		if self.parking:
-# 			buildings += u', парковка'
-# 		if self.open_air:
-# 			buildings += u', открытая площадка'
-#
-# 		if self.add_buildings:
-# 			buildings += u'. ' + self.add_buildings
-#
-# 		if buildings:
-# 			return buildings[2:]
-# 		return buildings[2:] if buildings else u''
-#
-#
-# 	def print_showplaces(self):
-# 		showplaces = u''
-# 		if self.transport_stop:
-# 			showplaces += u', остановка общ. транспорта'
-# 		if self.bank:
-# 			showplaces += u', отделения банка'
-# 		if self.cash_machine:
-# 			showplaces += u', банкомат'
-# 		if self.cafe:
-# 			showplaces += u', кафе / ресторан'
-# 		if self.market:
-# 			showplaces += u', рынок / супермаркет'
-# 		if self.entertainment:
-# 			showplaces += u', развлекательные заведения'
-#
-# 		if self.add_showplaces:
-# 			showplaces += '. ' + self.add_showplaces
-#
-# 		if showplaces:
-# 			return showplaces[2:]
-# 		return u''
-#
-#
-#
-# class CateringsHeads(CommercialHeadModel):
-# 	class Meta:
-# 		db_table = 'o_caterings_heads'
-#
-# 	tid = OBJECTS_TYPES.catering()
-# 	photos_model = CateringsPhotos
-#
-# 	body = models.ForeignKey(CateringsBodies)
-# 	sale_terms = models.OneToOneField(CateringsSaleTerms)
-# 	rent_terms = models.OneToOneField(CateringsRentTerms)
-
-
 
 class GaragesSaleTerms(SaleTermsModel):
     class Meta:
@@ -3674,8 +3341,11 @@ class GaragesPhotos(PhotosModel):
     class Meta:
         db_table = 'img_garages_photos'
 
-    destination_dir_name = 'garages/'
-    hid = models.ForeignKey('GaragesHeads', db_index=True)
+    # fields
+    publication = models.ForeignKey('GaragesHeads')
+
+    # class variables
+    tid = OBJECTS_TYPES.garage()
 
 
 
@@ -3821,8 +3491,11 @@ class LandsPhotos(PhotosModel):
     class Meta:
         db_table = 'img_lands_photos'
 
-    destination_dir_name = 'lands/'
-    hid = models.ForeignKey('LandsHeads', db_index=True)
+    # fields
+    publication = models.ForeignKey('LandsHeads')
+
+    # class variables
+    tid = OBJECTS_TYPES.land()
 
 
 

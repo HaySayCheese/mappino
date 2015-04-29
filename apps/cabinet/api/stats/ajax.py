@@ -1,15 +1,17 @@
+# coding=utf
 import json
 
 from datetime import timedelta
+
 from django.core.exceptions import SuspiciousOperation
 from django.utils.timezone import now
 from django.http.response import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.cache import cache_control
 
-from apps.cabinet.api.stats.ga import auth
 from apps.classes import CabinetView
 from collective.exceptions import RuntimeException
 from collective.methods.request_data_getters import GET_parameter
+from core.google_api_auth import init_google_analytics
 from core.publications.constants import HEAD_MODELS
 
 
@@ -81,7 +83,7 @@ class Stats(object):
 			]
 
 
-			service = auth.initialize_service()
+			service = init_google_analytics()
 			views_data = service.data().ga().get(
 				ids='ga:86963950',
 				start_date = (current_date - timedelta(days=count)).strftime('%Y-%m-%d'),
