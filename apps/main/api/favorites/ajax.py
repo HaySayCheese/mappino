@@ -29,7 +29,7 @@ class FavoritesView(View):
         except:
             return cls.__empty_customer_hash_id_cookie()
         try:
-            customer = Customers.objects.get(hash_id=customer_hash_id).only('id')
+            customer = Customers.objects.get(hash_id=customer_hash_id)
         except ObjectDoesNotExist:
             return cls.__invalid_customers_hash_id()
 
@@ -96,7 +96,6 @@ class FavoritesView(View):
 
         @staticmethod
         def publication_does_not_exist(tid, hash_id):
-
             response = HttpJsonResponseNotFound({
                 'code': 1,
                 'message': "Publication with id='{tid}:{hash_id}' is not in favorites.".format(tid=tid, hash_id=hash_id)
