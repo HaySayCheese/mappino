@@ -22,7 +22,7 @@ MANAGERS = (
 )
 SUPPORT_EMAIL =  MANAGERS[0][1]
 BILLING_MANAGER_EMAIL = MANAGERS[0][1]
-
+MODERATORS = MANAGERS[0][1]
 
 # Configuration for emails about server error.
 # This is used only for django-internal email sending mechanism,
@@ -139,10 +139,12 @@ INSTALLED_APPS = (
 
     'core',
     'core.users',
+    'core.ban',
     'core.customers',
     'core.favorites',
     'core.billing',
     'core.publications',
+    'core.claims',
     'core.markers_handler',
     'core.search',
     'core.support',

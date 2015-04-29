@@ -24,7 +24,7 @@ class Favorites(models.Model):
         publications_ids = json.loads(record.publications_ids)
         publications_ids.append("{tid}:{hash_id}".format(tid=tid, hash_id=hash_id))
         publications_ids = set(publications_ids)
-        record.publications_ids = json.dumps(publications_ids)
+        record.publications_ids = json.dumps(list(publications_ids))
         record.save()
 
     @classmethod

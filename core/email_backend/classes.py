@@ -26,18 +26,18 @@ class EmailDispatcher(object):
             subject = u''
 
         message = {
-        'from_email': from_email,
-        'from_name': from_name,
-        'to': [{
-               'type': 'to',
-               'email': address,
-               } for address in addresses_list],
-        'subject': subject,
-        'html': html,
+            'from_email': from_email,
+            'from_name': from_name,
+            'to': [{
+                   'type': 'to',
+                   'email': address,
+                   } for address in addresses_list],
+            'subject': subject,
+            'html': html,
         }
         if reply_to is not None:
             message['headers'] = {
-            'Reply-To': reply_to
+                'Reply-To': reply_to
             }
 
         if not self.__send_email(message):
@@ -53,9 +53,13 @@ class EmailDispatcher(object):
 
 
         try:
-            return send()
+            if not send():
+                raise Exception() # lets try one more attempt
+            else:
+                return True
+
         except (mandrill.Error, IndexError):
-            # if error occurred - lets try one more attempt
+            # if exception occurred - lets try one more attempt
             self.__connect_to_mandrill()
             return send()
 

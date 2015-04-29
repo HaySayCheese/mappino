@@ -1,6 +1,8 @@
-from django.db import models
 import hashlib
 import uuid
+
+from django.db import models
+from collective.utils import generate_sha256_unique_id
 
 
 class Customers(models.Model):
@@ -10,18 +12,8 @@ class Customers(models.Model):
     class Meta:
         db_table = 'customers'
 
-    def save(self, *args, **kwargs):
-        self.hash_id = self.__create_hash_id()
-        super(Customers, self).save(*args, **kwargs)
-
-
-    # Todo: Note used from utils
-    def __create_hash_id(self):
-        """
-        :returns:
-             str object that contains sha256 generated from phone_number and uuid4
-        """
-        hash_object = hashlib.sha256()
-        hash_object.update(str(uuid.uuid4())+self.phone_number)
-        return str(hash_object.digest())
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        self.hash_id = generate_sha256_unique_id(self.phone_number)
+        super(Customers, self).save(force_insert, force_update, using, update_fields)
 

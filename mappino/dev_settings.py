@@ -22,7 +22,10 @@ MANAGERS = (
 )
 SUPPORT_EMAIL =  MANAGERS[0][1]
 BILLING_MANAGER_EMAIL = MANAGERS[0][1]
+MODERATORS = MANAGERS[0][1]
 
+
+HUL1_PUBLIC_IP = '128.199.59.244'
 
 DATABASES = {
     'default': {
@@ -47,30 +50,30 @@ DATABASE_ROUTERS = ['core.database_router.Router', ]
 
 REDIS_DATABASES = {
     'throttle': {
-        'HOST': 'm.e1.binno.com.ua',
-        'PORT': 6379,
+        'HOST': HUL1_PUBLIC_IP,
+        'PORT': 6380, # the real port is 6379, 6380 is set for dev
     },
     'steady': {
-        'HOST': 'm.e1.binno.com.ua',
-        'PORT': 6379,
+        'HOST': HUL1_PUBLIC_IP,
+        'PORT': 6380,
     },
     'cache': {
-        'HOST': 'm.e1.binno.com.ua',
-        'PORT': 6379,
+        'HOST': HUL1_PUBLIC_IP,
+        'PORT': 6380,
     },
     'celery': {
-        'HOST': 'm.e1.binno.com.ua',
-        'PORT': 6379,
+        'HOST': HUL1_PUBLIC_IP,
+        'PORT': 6380,
     },
 }
 
 
 SPHINX_SEARCH_DATABASE = {
-    'HOST': '95.85.40.162',
-    'PORT': 9306
+    'HOST': HUL1_PUBLIC_IP,
+    'PORT': 9307 # the real port is 9306. 9307 is set for dev suite.
 }
-ENABLE_SPHINX_SEARCH = not DEBUG
-
+ENABLE_SPHINX_SEARCH = False
+#
 
 CACHES = {
     'default': {
@@ -121,10 +124,12 @@ INSTALLED_APPS = (
     # todo: add initialisation app here
     'core',
     'core.users',
+    'core.ban',
     'core.customers',
     'core.favorites',
     'core.billing',
     'core.publications',
+    'core.claims',
     'core.markers_handler',
     'core.search',
     'core.support',

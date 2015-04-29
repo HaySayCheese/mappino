@@ -3,6 +3,8 @@ import copy
 import json
 import phonenumbers
 
+from phonenumbers import NumberParseException
+
 from django.http.response import HttpResponseRedirect
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.conf import settings
@@ -21,7 +23,7 @@ from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 from core.users import tasks
 from core.users.models import Users, AccessRestoreTokens
 from core.utils.jinja2_integration import templates
-from phonenumbers import NumberParseException
+from core.ban.classes import BanHandler
 
 
 class RegistrationManager(object):
@@ -33,9 +35,9 @@ class RegistrationManager(object):
 			'invalid': {
 				'code': 1
 			},
-		    'already_in_use': {
-			    'code': 2
-		    }
+			'already_in_use': {
+				'code': 2
+			}
 		}
 
 		def post(self, request, *args):
@@ -65,36 +67,42 @@ class RegistrationManager(object):
 
 	class MobilePhoneValidation(AnonymousOnlyView):
 		post_codes = {
+			# todo: refactor this
+			# todo: add messages to this responses
+
 			'OK': {
 				'code': 0
 			},
 			'invalid': {
 				'code': 1
 			},
-		    'only_ua':{
-			    'code': 2,
-		    },
+			'only_ua':{
+				'code': 2,
+			},
 			 'already_in_use': {
-			    'code': 3
-		    }
+				'code': 3
+			},
+			'banned': {
+				'code': 4,
+			}
 		}
 
 		ua_phone_codes = [
 			'91', # Тримоб
 			'99', # MTC
 			'95', # MTC
-		    '66', # MTC
-		    '50', # MTC
-		    '39', # Київстар
-		    '68', # Київстар
-		    '98', # Київстар
-		    '97', # Київстар
-		    '96', # Київстар
-		    '67', # Київстар
-		    '94', # Інтертелеком
-		    '92', # PEOPLEnet
-		    '93', # life :)
-		    '63', # life :)
+			'66', # MTC
+			'50', # MTC
+			'39', # Київстар
+			'68', # Київстар
+			'98', # Київстар
+			'97', # Київстар
+			'96', # Київстар
+			'67', # Київстар
+			'94', # Інтертелеком
+			'92', # PEOPLEnet
+			'93', # life :)
+			'63', # life :)
 		]
 
 
@@ -118,6 +126,10 @@ class RegistrationManager(object):
 			if not Users.mobile_phone_number_is_free(number):
 				return HttpResponse(json.dumps(self.post_codes['already_in_use']), content_type='application/json')
 
+			# is number banned?
+			if BanHandler.contains_number(number):
+				return HttpResponse(json.dumps(self.post_codes['banned']), content_type='application/json')
+
 			# seems to be ok
 			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
 
@@ -126,41 +138,44 @@ class RegistrationManager(object):
 	class Registration(AnonymousOnlyView):
 		post_codes = {
 			'OK': {
-			    'code': 0,
-		    },
-		    'first_name_empty': {
-			    'code': 1,
-		    },
-		    'last_name_empty': {
-			    'code': 2,
-		    },
-		    'phone_empty': {
-			    'code': 3,
-		    },
-		    'email_empty': {
-			    'code': 4,
-		    },
-		    'password_empty': {
-			    'code': 5,
-		    },
-		    'password_repeat_empty': {
-			    'code': 6,
-		    },
-		    'passwords_not_match': {
-			    'code': 7,
-		    },
+				'code': 0,
+			},
+			'first_name_empty': {
+				'code': 1,
+			},
+			'last_name_empty': {
+				'code': 2,
+			},
+			'phone_empty': {
+				'code': 3,
+			},
+			'email_empty': {
+				'code': 4,
+			},
+			'password_empty': {
+				'code': 5,
+			},
+			'password_repeat_empty': {
+				'code': 6,
+			},
+			'passwords_not_match': {
+				'code': 7,
+			},
+			'phone_banned': {
+				'code': 8,
+			},
 
-		    # --
-		    'invalid_code_check': {
-			    'code': 100,
-		    },
+			# --
+			'invalid_code_check': {
+				'code': 100,
+			},
 
-		    # --
-		    'in_check_queue': {
-			    # користувач з такими даними вже зареєстрований
-		        # і знаходиться на етапі перевірки коду моб. телефону.
-			    'code': 200,
-		    }
+			# --
+			'in_check_queue': {
+				# користувач з такими даними вже зареєстрований
+				# і знаходиться на етапі перевірки коду моб. телефону.
+				'code': 200,
+			}
 		}
 
 
@@ -191,7 +206,7 @@ class RegistrationManager(object):
 			else:
 				try:
 					check_results = angular_post_parameters(request,
-					        ['name', 'surname', 'phone-number', 'email', 'password', 'password-repeat'])
+							['name', 'surname', 'phone-number', 'email', 'password', 'password-repeat'])
 				except ValueError as e:
 					return HttpResponseBadRequest(e.message)
 
@@ -210,6 +225,12 @@ class RegistrationManager(object):
 				if not phone_number:
 					return HttpResponseBadRequest(
 						json.dumps(self.post_codes['phone_empty']), content_type='application/json')
+
+				# check if number was banned
+				if BanHandler.contains_number(
+						phonenumbers.format_number(phone_number, phonenumbers.PhoneNumberFormat.E164)):
+					return HttpResponseBadRequest(
+						json.dumps(self.post_codes['phone_banned']), content_type='application/json')
 
 				email = check_results.get('email', '')
 				if not email:
@@ -278,7 +299,7 @@ class RegistrationManager(object):
 
 			# In case when user decided to cancel his registration
 			# (for example if he doesn't received sms from us)
-		    # we need to remove his data from our database too.
+			# we need to remove his data from our database too.
 			# to do this wee ned his id.
 			user_id = MobilePhoneChecker.cancel_check(request, response)
 			Users.objects.filter(id=user_id).delete()
@@ -313,17 +334,20 @@ class LoginManager(object):
 	class Login(AnonymousOnlyView):
 		post_codes = {
 			'OK': {
-			    'code': 0,
-		    },
+				'code': 0,
+			},
 			'username_empty': {
 				'code': 1,
 			},
-		    'password_empty': {
-			    'code': 2,
-		    },
-		    'invalid_attempt': {
-			    'code': 3,
-		    },
+			'password_empty': {
+				'code': 2,
+			},
+			'invalid_attempt': {
+				'code': 3,
+			},
+			'account_disabled': {
+				'code': 4,
+			}
 		}
 
 
@@ -349,6 +373,13 @@ class LoginManager(object):
 				phone_number = phonenumbers.parse(username, 'UA')
 				if phonenumbers.is_valid_number(phone_number):
 					username = phonenumbers.format_number(phone_number, phonenumbers.PhoneNumberFormat.E164)
+
+				# check if phone number was not banned
+				if BanHandler.contains_number(phone_number):
+					return HttpResponse(
+						json.dumps(self.post_codes['account_disabled']), content_type='application/json')
+
+
 				user = Users.objects.filter(mobile_phone=username).only('id')[:1]
 				if user:
 					user = user[0]
@@ -372,6 +403,10 @@ class LoginManager(object):
 					response = HttpResponse(content_type='application/json')
 					return self.login_user_without_password(user, request, response)
 
+				else:
+					return HttpResponse(
+						json.dumps(self.post_codes['account_disabled']), content_type='application/json')
+
 			return HttpResponse(
 				json.dumps(self.post_codes['invalid_attempt']), content_type='application/json')
 
@@ -392,8 +427,8 @@ class LoginManager(object):
 	class Logout(AuthenticatedOnlyView):
 		post_codes = {
 			'OK': {
-			    'code': 0,
-		    },
+				'code': 0,
+			},
 		}
 
 
@@ -406,8 +441,8 @@ class LoginManager(object):
 	class OnLogin(AuthenticatedOnlyView):
 		post_codes = {
 			'OK': {
-			    'code': 0,
-		    },
+				'code': 0,
+			},
 		}
 
 
@@ -422,7 +457,7 @@ class LoginManager(object):
 	def on_login_data(user):
 		return {
 			'name': user.first_name,
-		    'surname': user.last_name,
+			'surname': user.last_name,
 		}
 
 
@@ -436,9 +471,9 @@ class AccessRestoreManager(object):
 			'invalid_username': {
 				'code': 1,
 			},
-		    'invalid_attempt': {
+			'invalid_attempt': {
 				'code': 2,
-		    },
+			},
 		}
 
 
@@ -475,14 +510,14 @@ class AccessRestoreManager(object):
 			html = templates.get_template('email/access_restore/new_token.html').render({
 				'token_url': '{domain}{url}?token={token_id}'.format(
 					domain = settings.REDIRECT_DOMAIN_URL,
-				    url = '/accounts/access-restore/redirect/',
-				    token_id = record.token
+					url = '/accounts/access-restore/redirect/',
+					token_id = record.token
 				)
 			})
 			email_sender.send_html_email(
 				subject=u'Восстановление пароля', # tr
-			    html=html,
-			    addresses_list=[record.user.email],
+				html=html,
+				addresses_list=[record.user.email],
 			)
 
 			return HttpResponse(json.dumps(self.post_codes['OK']), content_type='application/json')
@@ -518,12 +553,12 @@ class AccessRestoreManager(object):
 			'invalid_token': {
 				'code': 1,
 			},
-		    'invalid_password_or_repeat': {
-			    'code': 2,
-		    },
-		    'passwords_not_match': {
-			    'code': 3,
-		    }
+			'invalid_password_or_repeat': {
+				'code': 2,
+			},
+			'passwords_not_match': {
+				'code': 3,
+			}
 		}
 
 
@@ -573,17 +608,17 @@ class Contacts(View):
 	get_codes = {
 		'OK': {
 			'code': 0,
-		    'contacts': None, # WARN: owner's contacts here
+			'contacts': None, # WARN: owner's contacts here
 		},
-	    'invalid_parameters': {
-		    'code': 1
-	    },
-	    'invalid_tid': {
-		    'code': 2
-	    },
-	    'invalid_hid': {
-		    'code': 3
-	    },
+		'invalid_parameters': {
+			'code': 1
+		},
+		'invalid_tid': {
+			'code': 2
+		},
+		'invalid_hid': {
+			'code': 3
+		},
 	}
 
 
