@@ -98,8 +98,7 @@ class MFavoritesService
 
 
 
-
-
+# angular service create
 angular
     .module('mappino.pages.map')
     .factory 'MFavoritesService', ['$resource', (resource) -> new MFavoritesService(resource)]
