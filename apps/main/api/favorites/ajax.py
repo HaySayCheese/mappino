@@ -11,10 +11,11 @@ class FavoritesView(View):
 
     @classmethod
     def get(cls, request):
-        customer_hash_id = request.COOKIES.get_signed(cls.customer_hash_id_cookie_name)
-        if not customer_hash_id:
-            return cls.__empty_customer_hash_id_cookie()
 
+        try:
+            customer_hash_id = request.COOKIES['customer_hash_id']
+        except:
+            return cls.__empty_customer_hash_id_cookie()
         favorite = Favorites.objects.\
             filter(customer_hash_id=customer_hash_id).\
             only('publications_ids')[:1][0]
@@ -24,7 +25,6 @@ class FavoritesView(View):
     @classmethod
     def post(cls, request, *args):
 
-        # customer_hash_id = request.COOKIES.get_signed(cls.customer_hash_id_cookie_name
         try:
             customer_hash_id = request.COOKIES['customer_hash_id']
         except:
@@ -50,10 +50,10 @@ class FavoritesView(View):
 
     @classmethod
     def delete(cls, request, *args):
-        customer_hash_id = request.COOKIES.get_signed(cls.customer_hash_id_cookie_name)
-        if not customer_hash_id:
+        try:
+            customer_hash_id = request.COOKIES['customer_hash_id']
+        except:
             return cls.__empty_customer_hash_id_cookie()
-
         try:
             customer = Customers.objects.get(hash_id=customer_hash_id).only('id')
         except ObjectDoesNotExist:

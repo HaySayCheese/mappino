@@ -121,6 +121,8 @@ INSTALLED_APPS = (
     # todo: add initialisation app here
     'core',
     'core.users',
+    'core.customers',
+    'core.favorites',
     'core.billing',
     'core.publications',
     'core.markers_handler',
