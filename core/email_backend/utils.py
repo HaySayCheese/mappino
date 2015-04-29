@@ -109,3 +109,24 @@ class ManagersNotifier(object):
             addresses_list=[settings.BILLING_MANAGER_EMAIL, ],
             from_name='mappino-billing',
         )
+
+
+class ModeratorsNotifier(object):
+    from_name = 'moderators notifier'
+
+
+    @classmethod
+    def publication_claimed(cls, tid, hash_id, owner, message):
+        template = templates.get_template('email/internal/publications_moderating/claim.html')
+        email_sender.send_html_email(
+            subject = u'Скарга на оголошення',
+            html = template.render({
+                'tid': tid,
+                'hash_id': hash_id,
+                'owner': owner,
+                'message': message,
+                'domain': settings.DOMAIN_URL,
+            }),
+            addresses_list=[settings.MODERATORS, ],
+            from_name=cls.from_name,
+        )

@@ -3,7 +3,7 @@ from apps.main.api.correspondence.ajax import SendMessageFromClient, SendCallReq
 from apps.main.api.customers.ajax import CustomersView
 from apps.main.api.favorites.ajax import FavoritesView
 from apps.main.api.markers.ajax import Markers
-from apps.main.api.publications.ajax import DetailedView
+from apps.main.api.publications.ajax import DetailedView, Claims
 from apps.main.api.realtors_contacts.ajax import RealtorsContacts
 # from apps.main.api.realtors_pages.ajax import RealtorsData, RealtorsMarkers
 
@@ -25,6 +25,10 @@ urlpatterns = patterns('apps.main.api',
 
     #customers_authorized
     url(r'^ajax/api/customer_authorise/$', CustomersView.as_view()),
+
+    # claims
+    url(r'^ajax/api/publications/(\d+):(\w+)/claims/$', Claims.List.as_view()),
+
 
     # # realtors pages
     # url(r'^ajax/api/realtors-pages/([A-z]+)/data/$', RealtorsData.as_view()),

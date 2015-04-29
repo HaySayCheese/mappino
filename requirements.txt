@@ -42,4 +42,4 @@ anyjson
 six
 mock
 nose
-rjsmin # js minifier
+#rjsmin # js minifier
