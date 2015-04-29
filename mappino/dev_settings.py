@@ -1,12 +1,12 @@
 # coding=utf-8
 import os
-from psycopg2cffi import compat
+#from psycopg2cffi import compat
 from mappino import passwords
 
 
 
 # cffi hook (needed by pypy)
-compat.register()
+#compat.register()
 
 
 DEBUG = True
@@ -125,6 +125,8 @@ INSTALLED_APPS = (
     'core',
     'core.users',
     'core.ban',
+    'core.customers',
+    'core.favorites',
     'core.billing',
     'core.publications',
     'core.claims',

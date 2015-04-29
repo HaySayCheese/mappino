@@ -1,0 +1,156 @@
+//
+// Carousel
+// --------------------------------------------------
+
+
+// Wrapper for the slide container and indicators
+.carousel {
+  position: relative;
+}
+
+.carousel-inner {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+
+  > .item {
+    display: none;
+    position: relative;
+    .transition(.6s ease-in-out left);
+
+    // Account for jankitude on images
+    > img,
+    > a > img {
+      .img-responsive();
+      line-height: 1;
+    }
+  }
+
+  > .active,
+  > .next,
+  > .prev { display: block; }
+
+  > .active {
+    left: 0;
+  }
+
+  > .next,
+  > .prev {
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+
+  > .next {
+    left: 100%;
+  }
+  > .prev {
+    left: -100%;
+  }
+  > .next.left,
+  > .prev.right {
+    left: 0;
+  }
+
+  > .active.left {
+    left: -100%;
+  }
+  > .active.right {
+    left: 100%;
+  }
+
+}
+
+// Left/right controls for nav
+// ---------------------------
+
+.carousel-control {
+    position: absolute;
+    bottom: 20px;
+    z-index: 2000;
+    .square(@carousel-control-width);
+    font-size: @carousel-control-font-size;
+    color: @carousel-control-color;
+    text-align: center;
+    border-radius: 50%;
+    cursor: pointer;
+    .opacity(0.8);
+    text-shadow: 0 0 7px rgba(0, 0, 0, 0.8);
+    // We can't have this transition here because WebKit cancels the carousel
+    // animation if you trip this while in the middle of another animation.
+
+    &.left {
+        right: 100px;
+    }
+    &.right {
+        right: 30px;
+    }
+
+    &:hover,
+    &:focus {
+        outline: none;
+        color: @carousel-control-color;
+        text-decoration: none;
+        .opacity(1);
+    }
+
+    .glyphicon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: 5;
+        display: inline-block;
+        .translate(-50%, -50%);
+    }
+}
+
+
+// Optional captions
+// -----------------------------
+// Hidden by default for smaller viewports
+.carousel-caption {
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  bottom: 20px;
+  z-index: 10;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  color: @carousel-caption-color;
+  text-align: center;
+  text-shadow: @carousel-text-shadow;
+  & .btn {
+    text-shadow: none; // No shadow for button elements in carousel-caption
+  }
+}
+
+
+// Scale up controls for tablets and up
+@media screen and (min-width: @screen-sm-min) {
+
+  // Scale up the controls a smidge
+  .carousel-control {
+    .glyphicons-chevron-left,
+    .glyphicons-chevron-right,
+    .icon-prev,
+    .icon-next {
+      width: 30px;
+      height: 30px;
+      margin-top: -15px;
+      margin-left: -15px;
+      font-size: 30px;
+    }
+  }
+
+  // Show and left align the captions
+  .carousel-caption {
+    left: 20%;
+    right: 20%;
+    padding-bottom: 30px;
+  }
+
+  // Move up the indicators
+  .carousel-indicators {
+    bottom: 40px;
+  }
+}

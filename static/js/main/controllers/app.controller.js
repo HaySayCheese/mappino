@@ -1,4 +1,4 @@
-app.controller('AppController', ['$scope', '$rootScope', '$location', '$cookies', '$routeParams', '$route', 'TXT', 'ROUTES',
+angular.module('mappino.pages.map').controller('AppController', ['$scope', '$rootScope', '$location', '$cookies', '$routeParams', '$route', 'TXT', 'ROUTES',
     function($scope, $rootScope, $location, $cookies, $routeParams, $route, TXT, ROUTES) {
         'use strict';
 

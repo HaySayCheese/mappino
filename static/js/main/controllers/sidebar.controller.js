@@ -1,15 +1,14 @@
-app.controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$timeout', 'PublicationTypesFactory',
-    'OperationTypesFactory', 'CurrencyTypesFactory', 'RentTypesFactory', 'FiltersFactory', 'LoadedValues', 'BAuthService',
-    function($scope, $rootScope, $cookies, $timeout, PublicationTypesFactory, OperationTypesFactory,
-             CurrencyTypesFactory, RentTypesFactory, FiltersFactory, LoadedValues, BAuthService) {
+angular.module('mappino.pages.map').controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$timeout', 'BTypesService',
+    'FiltersFactory', 'LoadedValues', 'BAuthService',
+    function($scope, $rootScope, $cookies, $timeout, BTypesService, FiltersFactory, LoadedValues, BAuthService) {
         'use strict';
 
 
         $scope.userName                 = "";
-        $scope.publicationTypes         = PublicationTypesFactory.getPublicationTypes();
-        $scope.operationTypes           = OperationTypesFactory.getOperationTypes();
-        $scope.currencyTypes            = CurrencyTypesFactory.getCurrencyTypes();
-        $scope.rentTypes                = RentTypesFactory.getRentTypes();
+        $scope.publicationTypes         = BTypesService.getPublicationTypes();
+        $scope.operationTypes           = BTypesService.getOperationTypes();
+        $scope.currencyTypes            = BTypesService.getCurrencyTypes();
+        $scope.rentTypes                = BTypesService.getRentalPeriodTypes();
         $scope.sidebarTemplateUrl       = FiltersFactory.getSidebarTemplateUrl();
         $scope.sidebarTemplateLoaded    = LoadedValues.sidebar.templates;
         $scope.filtersParsed            = LoadedValues.filters.parsed;

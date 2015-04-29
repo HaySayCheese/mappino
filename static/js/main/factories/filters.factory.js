@@ -3,8 +3,8 @@
  *
  * todo: write description here
  **/
-app.factory('FiltersFactory', ['$rootScope', '$location', '$route', 'base64', 'PublicationTypesFactory',
-    function($rootScope, $location, $route, base64, PublicationTypesFactory) {
+angular.module('mappino.pages.map').factory('FiltersFactory', ['$rootScope', '$location', '$route', 'base64', 'BTypesService',
+    function($rootScope, $location, $route, base64, BTypesService) {
         "use strict";
 
         var filters = {
@@ -90,7 +90,7 @@ app.factory('FiltersFactory', ['$rootScope', '$location', '$route', 'base64', 'P
 
         return {
             /**
-             * @description Create filters collection for panel from 'PublicationTypes.filters'
+             * @description Create filters collection for panel
              *
              * @example
              * FiltersFactory.createFiltersForPanel('red', true/false);
@@ -122,9 +122,9 @@ app.factory('FiltersFactory', ['$rootScope', '$location', '$route', 'base64', 'P
                 }
 
 
-                // Створюємо набір фільтрів для панелі за набором з 'PublicationTypes'
+                // Створюємо набір фільтрів для панелі за набором
                 if (!_.isNull(type_sid)) {
-                    var availableTypeFilters = PublicationTypesFactory.getAvailableTypeFiltersById(type_sid);
+                    var availableTypeFilters = _.where(BTypesService.getPublicationTypes(), { 'id': type_sid })[0].filters;
 
                     for (var i = 0; i < availableTypeFilters.length; i++) {
                         var filterName = panelColorPrefix + availableTypeFilters[i];

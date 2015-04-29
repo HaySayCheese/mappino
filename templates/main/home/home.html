@@ -86,15 +86,15 @@
                             </div>
                             <div class="form-group col-xs-10 col-xs-offset-1">
                                 <div class="btn-group btn-group-justified choices" data-toggle="buttons">
-                                    <label class="btn btn-lg btn-success" ng-class="{ active: filters.operation_sid === 0 }"
+                                    <label class="btn -blue -large" ng-class="{ active: filters.operation_sid === 0 }"
                                            ng-click="filters.operation_sid = 0">
                                         <input type="radio" name="home.operation" value="0">На продажу
                                     </label>
-                                    <label class="btn btn-lg btn-success" ng-class="{ active: filters.operation_sid === 1 }"
+                                    <label class="btn -blue -large" ng-class="{ active: filters.operation_sid === 1 }"
                                            ng-click="filters.operation_sid = 1">
                                         <input type="radio" name="home.operation" value="1">В аренду
                                     </label>
-                                    <label class="btn btn-lg btn-success" ng-class="{ active: filters.operation_sid === 2 }"
+                                    <label class="btn -blue -large" ng-class="{ active: filters.operation_sid === 2 }"
                                            ng-click="filters.operation_sid = 2" ng-disabled="filters.type_sid > 2">
                                         <input type="radio" name="home.operation" value="2">Посуточно
                                     </label>
@@ -118,7 +118,7 @@
                                     </i>
                                 </div>
                             </div>
-                            <button class="btn btn-primary search-btn" ng-click="search()">Найти</button>
+                            <button class="btn -blue search-btn" ng-click="search()">Найти</button>
                         </div>
                     </div>
                 </div>
@@ -193,7 +193,7 @@
                                         Вы сможете найти посутчное жилье вблизи от найболее интересных Вам объектов.
                                     </p>
                                     <div class="text-center with-padding-top">
-                                        <a href="#" class="btn btn-primary btn-lg section-btn" ng-click="scrollTo('top')">Попробовать сейчас</a>
+                                        <a href="#" class="btn -blue -large section-btn" ng-click="scrollTo('top')">Попробовать сейчас</a>
                                     </div>
                                 </div>
                             </div>
@@ -247,7 +247,7 @@
                             <p class="text-center">
                                 <br/>
                                 <br/>
-                                <a href="#" class="btn btn-primary btn-lg section-btn" ng-click="scrollTo('top')">Попробуйте! Это очень просто и удобно</a>
+                                <a href="#" class="btn -blue -large section-btn" ng-click="scrollTo('top')">Попробуйте! Это очень просто и удобно</a>
                             </p>
                         </div>
                         <div class="col-xs-2">
@@ -277,7 +277,7 @@
                             <br/><br/>
                         </p>
                         <p>
-                            <a class="btn btn-primary btn-lg section-btn" href="/cabinet">Подать обьявление</a>
+                            <a class="btn -blue -large section-btn" href="/cabinet">Подать обьявление</a>
                         </p>
                         <p>
                             <a href="/offer/realtors">Больше информации для риелторов и рекламодателей</a>

@@ -1,0 +1,140 @@
+//
+// Buttons
+// --------------------------------------------------
+
+
+// Core styles
+// --------------------------------------------------
+
+.btn {
+    display: inline-block;
+    margin-bottom: 0; // For input.btn
+    border: 1px solid transparent;
+    background-image: none;
+    vertical-align: middle;
+    text-align: center;
+    white-space: nowrap; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
+    font-weight: @btn-font-weight;
+    cursor: pointer;
+    .button-size(@padding-base-vertical; @padding-base-horizontal; @font-size-base; @line-height-base; 0px);
+    .transition(~"all 0.1s ease");
+    .user-select(none);
+
+    &:focus {
+        .tab-focus();
+    }
+
+    &:hover,
+    &:focus {
+        color: @btn-gray-color;
+        text-decoration: none;
+    }
+
+    &:active,
+    &.active {
+        outline: 0;
+        background-image: none;
+    }
+
+    &.disabled,
+    &[disabled],
+    fieldset[disabled] & {
+        cursor: not-allowed;
+        pointer-events: none; // Future-proof disabling of clicks
+        .opacity(.65);
+        .box-shadow(none);
+    }
+
+
+    // Button colors
+    // --------------------------------------------------
+    &.-gray {
+        .button-variant(@btn-gray-color; @btn-gray-bg);
+    }
+    &.-blue {
+        .button-variant(@btn-blue-color; @btn-blue-bg);
+    }
+    &.-green {
+        .button-variant(@btn-green-color; @btn-green-bg);
+    }
+
+
+    // Button Sizes
+    // --------------------------------------------------
+    &.-x-large {
+        height: 65px;
+        // line-height: ensure even-numbered height of button next to large input
+        .button-size(@padding-xlarge-vertical; @padding-xlarge-horizontal; @font-size-large; @line-height-large; 0);
+    }
+    &.-large {
+        // line-height: ensure even-numbered height of button next to large input
+        .button-size(@padding-large-vertical; @padding-large-horizontal; @font-size-base + 2; @line-height-large; 0);
+    }
+    &.-small {
+        // line-height: ensure proper height of button next to small input
+        .button-size(@padding-small-vertical; @padding-small-horizontal; @font-size-small; @line-height-small; 0);
+    }
+
+
+    // Block button
+    // --------------------------------------------------
+    &.-block {
+        display: block;
+        padding-right: 0;
+        padding-left: 0;
+        width: 100%;
+
+        & + & {
+            margin-top: 5px;
+        }
+    }
+
+    // Specificity overrides
+    input[type="submit"],
+    input[type="reset"],
+    input[type="button"] {
+        &.-block {
+            width: 100%;
+        }
+    }
+
+
+
+    // Link buttons
+    // -------------------------
+    &.-link {
+        border-radius: 0;
+        color: @link-color;
+        text-decoration: none !important;
+        font-weight: normal;
+        cursor: pointer;
+
+        &,
+        &:active,
+        &[disabled],
+        fieldset[disabled] & {
+            background-color: transparent;
+            .box-shadow(none);
+        }
+        &,
+        &:hover,
+        &:focus,
+        &:active {
+            border-color: transparent;
+        }
+        &:hover,
+        &:focus {
+            background-color: transparent;
+            color: @link-hover-color;
+            text-decoration: underline;
+        }
+        &[disabled],
+        fieldset[disabled] & {
+            &:hover,
+            &:focus {
+                color: @btn-link-disabled-color;
+                text-decoration: none;
+            }
+        }
+    }
+}

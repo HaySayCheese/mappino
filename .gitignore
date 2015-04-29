@@ -8,8 +8,6 @@ mappino/keys/*
 
 static/CACHE
 static/CACHE/*
-static/js/_modules
-static/js/_modules/*
 
 static/escaped_fragments
 static/escaped_fragments/*

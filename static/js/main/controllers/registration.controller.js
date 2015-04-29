@@ -1,4 +1,4 @@
-app.controller('RegistrationController', ['$scope', '$rootScope', '$cookieStore', 'TXT',
+angular.module('mappino.pages.map').controller('RegistrationController', ['$scope', '$rootScope', '$cookieStore', 'TXT',
     function($scope, $rootScope, $cookieStore, TXT) {
         "use strict";
 
@@ -28,8 +28,8 @@ app.controller('RegistrationController', ['$scope', '$rootScope', '$cookieStore'
 /**
  * Контроллер який відповідає за форму реєстрації
  **/
-app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies', 'Account', 'BAuthService',
-    function($scope, $rootScope, $cookies, Account, BAuthService) {
+angular.module('mappino.pages.map').controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies', 'BAuthService',
+    function($scope, $rootScope, $cookies, BAuthService) {
         "use strict";
 
         /**
@@ -295,7 +295,7 @@ app.controller('RegistrationUserController', ['$scope', '$rootScope', '$cookies'
 /**
  * Контроллер який відповідає за форму введення коду підтвердження
  **/
-app.controller("RegistrationUserCodeCheckController", ['$scope', '$cookies', '$rootScope', 'TXT', 'BAuthService',
+angular.module('mappino.pages.map').controller("RegistrationUserCodeCheckController", ['$scope', '$cookies', '$rootScope', 'TXT', 'BAuthService',
     function($scope, $cookies, $rootScope, TXT, BAuthService) {
         "use strict";
 
