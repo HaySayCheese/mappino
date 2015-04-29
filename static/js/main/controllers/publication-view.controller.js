@@ -28,7 +28,7 @@ angular.module('mappino.pages.map').controller('PublicationViewController', ['$s
                 });
             } else {
                 MFavoritesService.add(tid, hid, function(response) {
-                    $scope.publication.data.added_to_favorites = true;
+                    $scope.publication.added_to_favorites = true;
                     console.log(response);
                 }, function() {
                     // error callback

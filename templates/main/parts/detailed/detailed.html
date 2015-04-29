@@ -6,10 +6,10 @@
                 <a href="#" class="publication-close" data-dismiss="modal" role="button">
                     <span class="glyphicon glyphicon-remove"></span>
                 </a>
-                <a ng-href class="add-to-bookmark" role="button">
-                    <span class="glyphicon glyphicon-star-empty"
-                            ng-class="{ 'active': publication.added_to_favorites }"
-                            ng-click="toggleFavorite($event)"></span>
+                <a ng-href class="add-to-bookmark" role="button" ng-class="{ 'added': publication.added_to_favorites }">
+                    <span class="glyphicon"
+                          ng-class="{ 'glyphicon-star': publication.added_to_favorites, 'glyphicon-star-empty': !publication.added_to_favorites }"
+                          ng-click="toggleFavorite($event)"></span>
                 </a>
 
                 <div id="publication-slider" class="carousel slide" data-ride="carousel">
