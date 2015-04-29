@@ -8,14 +8,15 @@
                 </a>
                 <a ng-href class="add-to-bookmark" role="button">
                     <span class="glyphicon glyphicon-star-empty"
-                            ng-class="{ 'active': publication.data.added_to_favorites }"
+                            ng-class="{ 'active': publication.added_to_favorites }"
                             ng-click="toggleFavorite($event)"></span>
                 </a>
 
                 <div id="publication-slider" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner" role="listbox">
                         <div class="item title-photo active">
-                            <img src="{{ static }}img/home/home-bg-1.jpg" alt=""/>
+                            <!--<img src="{{ static }}img/home/home-bg-1.jpg" alt=""/>-->
+                            <img ng-src="[[ publication.photos[0] ]]" alt=""/>
                             <div class="photo-overlay"></div>
                         </div>
                     </div>
@@ -38,8 +39,8 @@
                 </div>
 
                 <div class="over-photo-block">
-                    <div class="title">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</div>
-                    <div class="address">Lorem ipsum dolor sit amet, consectetur.</div>
+                    <div class="title">[[ publication.title ]]</div>
+                    <div class="address">[[ publication.address ]]</div>
                 </div>
             </div>
 
@@ -75,125 +76,125 @@
 
                         <div class="row">
                             <div class="col-xs-8">
-                                <div class="text-property" ng-show="publication.data.description">
-                                    [[ publication.data.description ]]
+                                <div class="text-property" ng-show="publication.description">
+                                    [[ publication.description ]]
                                 </div>
-                                <div class="text-property price-property" ng-show="publication.data.sale_price">
+                                <div class="text-property price-property" ng-show="publication.sale_price">
                                     <span>Продажа:</span>
-                                    <span class="price">[[ publication.data.sale_price ]]</span>
+                                    <span class="price">[[ publication.sale_price ]]</span>
                                 </div>
-                                <div class="text-property" ng-show="publication.data.sale_terms">
-                                    [[ publication.data.sale_terms ]]
+                                <div class="text-property" ng-show="publication.sale_terms">
+                                    [[ publication.sale_terms ]]
                                 </div>
-                                <div class="text-property price-property" ng-show="publication.data.rent_price">
+                                <div class="text-property price-property" ng-show="publication.rent_price">
                                     <span>Аренда:</span>
-                                    <span class="price">[[ publication.data.rent_price ]]</span>
+                                    <span class="price">[[ publication.rent_price ]]</span>
                                 </div>
-                                <div class="text-property" ng-show="publication.data.rent_terms">
-                                    [[ publication.data.rent_terms ]]
+                                <div class="text-property" ng-show="publication.rent_terms">
+                                    [[ publication.rent_terms ]]
                                 </div>
-                                <div class="text-property" ng-show="publication.data.facilities">
-                                    <span>Удобства:</span> [[ publication.data.facilities ]]
+                                <div class="text-property" ng-show="publication.facilities">
+                                    <span>Удобства:</span> [[ publication.facilities ]]
                                 </div>
-                                <div class="text-property" ng-show="publication.data.rent_facilities">
-                                    <span>Удобства аренды:</span> [[ publication.data.rent_facilities ]]
+                                <div class="text-property" ng-show="publication.rent_facilities">
+                                    <span>Удобства аренды:</span> [[ publication.rent_facilities ]]
                                 </div>
-                                <div class="text-property" ng-show="publication.data.communications">
-                                    <span>Коммуникации:</span> [[ publication.data.communications ]]
+                                <div class="text-property" ng-show="publication.communications">
+                                    <span>Коммуникации:</span> [[ publication.communications ]]
                                 </div>
-                                <div class="text-property" ng-show="publication.data.buildings">
-                                    <span>Дополнительные постройки:</span> [[ publication.data.buildings ]]
+                                <div class="text-property" ng-show="publication.buildings">
+                                    <span>Дополнительные постройки:</span> [[ publication.buildings ]]
                                 </div>
                             </div>
 
                             <div class="col-xs-4">
                                 <ul class="properties-list">
-                                    <li ng-show="publication.data.market_type">
-                                        <span>Тип рынка:</span> [[ publication.data.market_type ]]
+                                    <li ng-show="publication.market_type">
+                                        <span>Тип рынка:</span> [[ publication.market_type ]]
                                     </li>
-                                    <li ng-show="publication.data.building_type">
-                                        <span>Тип здания:</span> [[ publication.data.building_type ]]
+                                    <li ng-show="publication.building_type">
+                                        <span>Тип здания:</span> [[ publication.building_type ]]
                                     </li>
-                                    <li ng-show="publication.data.build_year">
-                                        <span>Год постройки:</span> [[ publication.data.build_year ]]
+                                    <li ng-show="publication.build_year">
+                                        <span>Год постройки:</span> [[ publication.build_year ]]
                                     </li>
-                                    <li ng-show="publication.data.age">
-                                        <span>Возраст бизнеса:</span> [[ publication.data.age ]]
+                                    <li ng-show="publication.age">
+                                        <span>Возраст бизнеса:</span> [[ publication.age ]]
                                     </li>
-                                    <li ng-show="publication.data.flat_type">
-                                        <span>Тип квартиры:</span> [[ publication.data.flat_type ]]
+                                    <li ng-show="publication.flat_type">
+                                        <span>Тип квартиры:</span> [[ publication.flat_type ]]
                                     </li>
-                                    <li ng-show="publication.data.rooms_planning">
-                                        <span>Планировка:</span> [[ publication.data.rooms_planning ]]
+                                    <li ng-show="publication.rooms_planning">
+                                        <span>Планировка:</span> [[ publication.rooms_planning ]]
                                     </li>
-                                    <li ng-show="publication.data.total_area">
-                                        <span>Общая площадь:</span> [[ publication.data.total_area ]]
+                                    <li ng-show="publication.total_area">
+                                        <span>Общая площадь:</span> [[ publication.total_area ]]
                                     </li>
-                                    <li ng-show="publication.data.area">
-                                        <span>Площадь:</span> [[ publication.data.area ]]
+                                    <li ng-show="publication.area">
+                                        <span>Площадь:</span> [[ publication.area ]]
                                     </li>
-                                    <li ng-show="publication.data.living_area">
-                                        <span>Жилая площадь:</span> [[ publication.data.living_area ]]
+                                    <li ng-show="publication.living_area">
+                                        <span>Жилая площадь:</span> [[ publication.living_area ]]
                                     </li>
-                                    <li ng-show="publication.data.kitchen_area">
-                                        <span>Площадь кухни:</span> [[ publication.data.kitchen_area ]]
+                                    <li ng-show="publication.kitchen_area">
+                                        <span>Площадь кухни:</span> [[ publication.kitchen_area ]]
                                     </li>
-                                    <li ng-show="publication.data.halls_area">
-                                        <span>Площадь залов:</span> [[ publication.data.halls_area ]]
+                                    <li ng-show="publication.halls_area">
+                                        <span>Площадь залов:</span> [[ publication.halls_area ]]
                                     </li>
-                                    <li ng-show="publication.data.plot_area">
-                                        <span>Площадь участка:</span> [[ publication.data.plot_area ]]
+                                    <li ng-show="publication.plot_area">
+                                        <span>Площадь участка:</span> [[ publication.plot_area ]]
                                     </li>
-                                    <li ng-show="publication.data.driveways">
-                                        <span>Подъездные пути:</span> [[ publication.data.driveways ]]
+                                    <li ng-show="publication.driveways">
+                                        <span>Подъездные пути:</span> [[ publication.driveways ]]
                                     </li>
-                                    <li ng-show="publication.data.share">
-                                        <span>Долевое участие:</span> [[ publication.data.share ]]
+                                    <li ng-show="publication.share">
+                                        <span>Долевое участие:</span> [[ publication.share ]]
                                     </li>
-                                    <li ng-show="publication.data.floor">
-                                        <span>Этаж:</span> [[ publication.data.floor ]]
+                                    <li ng-show="publication.floor">
+                                        <span>Этаж:</span> [[ publication.floor ]]
                                     </li>
-                                    <li ng-show="publication.data.floors_count">
-                                        <span>Этажей:</span> [[ publication.data.floors_count ]]
+                                    <li ng-show="publication.floors_count">
+                                        <span>Этажей:</span> [[ publication.floors_count ]]
                                     </li>
-                                    <li ng-show="publication.data.condition">
-                                        <span>Состояние:</span> [[ publication.data.condition ]]
+                                    <li ng-show="publication.condition">
+                                        <span>Состояние:</span> [[ publication.condition ]]
                                     </li>
-                                    <li ng-show="publication.data.monthly_cost">
-                                        <span>Расходы / мес.:</span> [[ publication.data.monthly_cost ]]
+                                    <li ng-show="publication.monthly_cost">
+                                        <span>Расходы / мес.:</span> [[ publication.monthly_cost ]]
                                     </li>
-                                    <li ng-show="publication.data.annual_receipts">
-                                        <span>Год. выручка:</span> [[ publication.data.annual_receipts ]]
+                                    <li ng-show="publication.annual_receipts">
+                                        <span>Год. выручка:</span> [[ publication.annual_receipts ]]
                                     </li>
-                                    <li ng-show="publication.data.rooms_count">
-                                        <span>Кол-во комнат:</span> [[ publication.data.rooms_count ]]
+                                    <li ng-show="publication.rooms_count">
+                                        <span>Кол-во комнат:</span> [[ publication.rooms_count ]]
                                     </li>
-                                    <li ng-show="publication.data.bedrooms_count">
-                                        <span>Кол-во спален:</span> [[ publication.data.bedrooms_count ]]
+                                    <li ng-show="publication.bedrooms_count">
+                                        <span>Кол-во спален:</span> [[ publication.bedrooms_count ]]
                                     </li>
-                                    <li ng-show="publication.data.halls_count">
-                                        <span>Кол-во залов:</span> [[ publication.data.halls_count ]]
+                                    <li ng-show="publication.halls_count">
+                                        <span>Кол-во залов:</span> [[ publication.halls_count ]]
                                     </li>
-                                    <li ng-show="publication.data.vcs_count">
-                                        <span>Кол-во сан. узлов:</span> [[ publication.data.vcs_count ]]
+                                    <li ng-show="publication.vcs_count">
+                                        <span>Кол-во сан. узлов:</span> [[ publication.vcs_count ]]
                                     </li>
-                                    <li ng-show="publication.data.balconies_count">
-                                        <span>Кол-во балконов:</span> [[ publication.data.balconies_count ]]
+                                    <li ng-show="publication.balconies_count">
+                                        <span>Кол-во балконов:</span> [[ publication.balconies_count ]]
                                     </li>
-                                    <li ng-show="publication.data.loggias_count">
-                                        <span>Кол-во лоджий:</span> [[ publication.data.loggias_count ]]
+                                    <li ng-show="publication.loggias_count">
+                                        <span>Кол-во лоджий:</span> [[ publication.loggias_count ]]
                                     </li>
-                                    <li ng-show="publication.data.cabinets_count">
-                                        <span>Кол-во кабинетов:</span> [[ publication.data.cabinets_count ]]
+                                    <li ng-show="publication.cabinets_count">
+                                        <span>Кол-во кабинетов:</span> [[ publication.cabinets_count ]]
                                     </li>
-                                    <li ng-show="publication.data.ceiling_height">
-                                        <span>Высота потолков:</span> [[ publication.data.ceiling_height ]]
+                                    <li ng-show="publication.ceiling_height">
+                                        <span>Высота потолков:</span> [[ publication.ceiling_height ]]
                                     </li>
-                                    <li ng-show="publication.data.workers_count">
-                                        <span>Работников:</span> [[ publication.data.workers_count ]]
+                                    <li ng-show="publication.workers_count">
+                                        <span>Работников:</span> [[ publication.workers_count ]]
                                     </li>
-                                    <li ng-show="publication.data.pit">
-                                        <span>Яма:</span> [[ publication.data.pit ]]
+                                    <li ng-show="publication.pit">
+                                        <span>Яма:</span> [[ publication.pit ]]
                                     </li>
                                 </ul>
                             </div>

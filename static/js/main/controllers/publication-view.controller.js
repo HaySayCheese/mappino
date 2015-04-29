@@ -19,9 +19,9 @@ angular.module('mappino.pages.map').controller('PublicationViewController', ['$s
             var tid = $rootScope.publicationIdPart.split(':')[0],
                 hid = $rootScope.publicationIdPart.split(':')[1];
 
-            if ($scope.publication.data.added_to_favorites) {
+            if ($scope.publication.added_to_favorites) {
                 MFavoritesService.remove(tid, hid, function(response) {
-                    $scope.publication.data.added_to_favorites = false;
+                    $scope.publication.added_to_favorites = false;
                     console.log(response);
                 }, function() {
                     // error callback
@@ -56,7 +56,7 @@ angular.module('mappino.pages.map').controller('PublicationViewController', ['$s
 
 
         MPublicationService.getPublicationData($routeParams.id, function(response) {
-            $scope.publication = response;
+            $scope.publication = response.data;
 
             $scope.publicationLoaded = true;
             $rootScope.pageTitle = response.data.title ? response.data.title + " - " + TXT.SERVICE_NAME : TXT.SERVICE_NAME;

@@ -40,10 +40,8 @@
     MFavoritesService.prototype.add = function(tid, hid, successCallback, errorCallback) {
       var request;
       request = this.favorites.add({
-        params: {
-          'tid': tid,
-          'hid': hid
-        }
+        'tid': tid,
+        'hid': hid
       });
       return request.$promise.then(function(response) {
         if (response.code === 0) {

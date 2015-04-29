@@ -14,6 +14,7 @@ class MFavoritesService
             remove: method: "DELETE"
 
 
+
     ###*
     # @public
     # @description Add publication to favorites
@@ -25,9 +26,9 @@ class MFavoritesService
     ###
     add: (tid, hid, successCallback, errorCallback) ->
         request = @favorites.add
-            params:
-                'tid': tid
-                'hid': hid
+            'tid': tid
+            'hid': hid
+
 
         request.$promise.then(
             (response) ->
@@ -39,6 +40,7 @@ class MFavoritesService
 
             () -> _.isFunction(errorCallback) && errorCallback()
         )
+
 
 
     ###*
