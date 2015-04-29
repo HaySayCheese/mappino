@@ -88,10 +88,10 @@ angular.module '_modules.bDirectives', ['underscore']
                     wheelSpeed: 20
                     useKeyboard: false
 
-            angular.element(window).resize () ->
+            angular.element(window).resize ->
                 angular.element(element).perfectScrollbar 'update'
 
-            $rootScope.$on 'updatePerfectScrollbar', () ->
+            $rootScope.$on 'updatePerfectScrollbar', ->
                 $timeout () ->
                     angular.element(element).perfectScrollbar 'update'
                 , 50

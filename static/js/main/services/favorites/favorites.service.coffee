@@ -7,11 +7,8 @@
 # @license todo: add license
 ###
 class MFavoritesService
-    constructor: (@resource) ->
-        @favorites = @resource "/ajax/api/favorites/", null,
-            add:    method: "POST"
-            get:    method: "GET"
-            remove: method: "DELETE"
+    constructor: (@$resource) ->
+        @favorites = @$resource "/ajax/api/favorites/:id"
 
 
 
@@ -19,16 +16,12 @@ class MFavoritesService
     # @public
     # @description Add publication to favorites
     #
-    # @param {(string|number)} tid              - Publication type id
-    # @param {(string|number)} hid              - Publication hash id
-    # @param {function()} [successCallback]     - Success callback
-    # @param {function()} [errorCallback]       - Error callback
+    # @param {string} pid                   - Publication id ('tid:hid') as string
+    # @param {function()} [successCallback] - Success callback
+    # @param {function()} [errorCallback]   - Error callback
     ###
-    add: (tid, hid, successCallback, errorCallback) ->
-        request = @favorites.add
-            'tid': tid
-            'hid': hid
-
+    add: (pid, successCallback, errorCallback) ->
+        request = @favorites.save 'id': pid
 
         request.$promise.then(
             (response) ->
@@ -47,16 +40,11 @@ class MFavoritesService
     # @public
     # @description Get all favorites
     #
-    # @param {(string|number)} tid              - Publication type id
-    # @param {(string|number)} hid              - Publication hash id
     # @param {function()} [successCallback]     - Success callback
     # @param {function()} [errorCallback]       - Error callback
     ###
-    get: (tid, hid, successCallback, errorCallback) ->
-        request = @favorites.get
-            'tid': tid
-            'hid': hid
-
+    get: (successCallback, errorCallback) ->
+        request = @favorites.query()
 
         request.$promise.then(
             (response) ->
@@ -75,15 +63,12 @@ class MFavoritesService
     # @public
     # @description Remove publication from favorites
     #
-    # @param {(string|number)} tid              - Publication type id
-    # @param {(string|number)} hid              - Publication hash id
-    # @param {function()} [successCallback]     - Success callback
-    # @param {function()} [errorCallback]       - Error callback
+    # @param {string} pid                   - Publication id ('tid:hid') as string
+    # @param {function()} [successCallback] - Success callback
+    # @param {function()} [errorCallback]   - Error callback
     ###
-    remove: (tid, hid, successCallback, errorCallback) ->
-        request = @favorites.remove
-            'tid': tid
-            'hid': hid
+    remove: (pid, successCallback, errorCallback) ->
+        request = @favorites.remove 'id': pid
 
         request.$promise.then(
             (response) ->
@@ -101,4 +86,4 @@ class MFavoritesService
 # angular service create
 angular
     .module('mappino.pages.map')
-    .factory 'MFavoritesService', ['$resource', (resource) -> new MFavoritesService(resource)]
+    .factory 'MFavoritesService', ['$resource', ($resource) -> new MFavoritesService($resource)]

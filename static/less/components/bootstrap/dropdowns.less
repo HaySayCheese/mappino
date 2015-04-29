@@ -5,87 +5,86 @@
 
 // Dropdown arrow/caret
 .caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
 
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-left: 2px;
-  vertical-align: middle;
-
-  &:before {
-    content: "\e114";
-    position: absolute;
-    top: -5px;
-    right: -3px;
-    color: #b0b0b0;
-    font-family: 'Glyphicons Halflings';
-    font-size: 12px;
-  }
+    &:before {
+        content: "\e114";
+        position: absolute;
+        top: -5px;
+        right: -3px;
+        color: #b0b0b0;
+        font-family: 'Glyphicons Halflings';
+        font-size: 12px;
+    }
 }
 
 // The dropdown wrapper (div)
 .dropdown {
-  position: relative;
+    position: relative;
 }
 
 // Prevent the focus on the dropdown toggle when closing dropdowns
 .dropdown-toggle:focus {
-  outline: 0;
+    outline: 0;
 }
 
 // The dropdown menu (ul)
 .dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: @zindex-dropdown;
-  display: none; // none by default, but block on "open" of the menu
-  float: left;
-  min-width: 160px;
-  padding: 5px 0;
-  margin: -1px 0 0; // override default ul
-  list-style: none;
-  font-size: @font-size-base;
-  background-color: @dropdown-bg;
-  border: 1px solid @dropdown-fallback-border; // IE8 fallback
-  border: 1px solid @dropdown-border;
-  //.border-bottom-radius(@border-radius-base);
-  .box-shadow(0 2px 3px rgba(0,0,0,.2));
-  background-clip: padding-box;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: @zindex-dropdown;
+    display: none; // none by default, but block on "open" of the menu
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: -1px 0 0; // override default ul
+    list-style: none;
+    font-size: @font-size-base;
+    background-color: @dropdown-bg;
+    border: 1px solid @dropdown-fallback-border; // IE8 fallback
+    border: 1px solid @dropdown-border;
+    //.border-bottom-radius(@border-radius-base);
+    .box-shadow(0 2px 3px rgba(0,0,0,.2));
+    background-clip: padding-box;
 
-  // Aligns the dropdown menu to right
-  &.pull-right {
-    right: 0;
-    left: auto;
-  }
+    // Aligns the dropdown menu to right
+    &.pull-right {
+        right: 0;
+        left: auto;
+    }
 
-  // Dividers (basically an hr) within the dropdown
-  .divider {
-    .nav-divider(@dropdown-divider-bg);
-  }
+    // Dividers (basically an hr) within the dropdown
+    .divider {
+        .nav-divider(@dropdown-divider-bg);
+    }
 
-  // Links within the dropdown menu
-  > li > a {
-    display: block;
-    padding: 3px 20px;
-    clear: both;
-    font-weight: normal;
-    line-height: @line-height-base;
-    color: @dropdown-link-color;
-    white-space: nowrap; // prevent links from randomly breaking onto new lines
-    text-decoration: none;
-  }
+    // Links within the dropdown menu
+    > li > a {
+        display: block;
+        padding: 6px 20px;
+        clear: both;
+        font-weight: normal;
+        line-height: @line-height-base;
+        color: @dropdown-link-color;
+        white-space: nowrap; // prevent links from randomly breaking onto new lines
+        text-decoration: none;
+    }
 }
 
 // Hover/Focus state
 .dropdown-menu > li > a {
-  &:hover,
-  &:focus {
-    text-decoration: none;
-    color: @dropdown-link-hover-color;
-    background-color: @dropdown-link-hover-bg;
-    outline: none;
-  }
+    &:hover,
+    &:focus {
+        text-decoration: none;
+        color: @dropdown-link-hover-color;
+        background-color: @dropdown-link-hover-bg;
+        outline: none;
+    }
 }
 
 // Active state
