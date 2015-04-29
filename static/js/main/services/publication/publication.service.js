@@ -117,16 +117,16 @@
      * @description Seller call request
     #
      * @param {string} id_part                           - Publication type_id:hash_id
-     * @param {object} merchant                          - Merchant object
-     * @param {string} merchant.name                     - Merchant name
-     * @param {(string|number)} merchant.phone_number    - Merchant phone number
+     * @param {object} customer                          - Customer object
+     * @param {string} customer.name                     - Customer name
+     * @param {(string|number)} customer.phone_number    - Customer phone number
      * @param {function()} [successCallback]             - Success callback
      * @param {function()} [errorCallback]               - Error callback
      */
 
-    MPublicationService.prototype.sendCallRequestToSeller = function(id_part, merchant, successCallback, errorCallback) {
+    MPublicationService.prototype.sendCallRequestToSeller = function(id_part, customer, successCallback, errorCallback) {
       var request;
-      request = this.http.post("/ajax/api/notifications/send-call-request/" + id_part + "/", merchant);
+      request = this.http.post("/ajax/api/notifications/send-call-request/" + id_part + "/", customer);
       request.success(function(response) {
         if (response.code === 0) {
           _.isFunction(successCallback) && successCallback(response);
@@ -148,9 +148,9 @@
      * @description Seller call request
     #
      * @param {string} id_part                           - Publication type_id:hash_id
-     * @param {object} merchant                          - Merchant object
-     * @param {string} merchant.name                     - Merchant name
-     * @param {(string|number)} merchant.phone_number    - Merchant phone number
+     * @param {object} customer                          - Customer object
+     * @param {string} customer.name                     - Customer name
+     * @param {(string|number)} customer.phone_number    - Customer phone number
      * @param {function()} [successCallback]             - Success callback
      * @param {function()} [errorCallback]               - Error callback
      */

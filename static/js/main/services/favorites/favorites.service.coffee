@@ -14,6 +14,7 @@ class MFavoritesService
             remove: method: "DELETE"
 
 
+
     ###*
     # @public
     # @description Add publication to favorites
@@ -25,9 +26,9 @@ class MFavoritesService
     ###
     add: (tid, hid, successCallback, errorCallback) ->
         request = @favorites.add
-            params:
-                'tid': tid
-                'hid': hid
+            'tid': tid
+            'hid': hid
+
 
         request.$promise.then(
             (response) ->
@@ -41,6 +42,7 @@ class MFavoritesService
         )
 
 
+
     ###*
     # @public
     # @description Get all favorites
@@ -52,9 +54,9 @@ class MFavoritesService
     ###
     get: (tid, hid, successCallback, errorCallback) ->
         request = @favorites.get
-            params:
-                'tid': tid
-                'hid': hid
+            'tid': tid
+            'hid': hid
+
 
         request.$promise.then(
             (response) ->
@@ -80,9 +82,8 @@ class MFavoritesService
     ###
     remove: (tid, hid, successCallback, errorCallback) ->
         request = @favorites.remove
-            params:
-                'tid': tid
-                'hid': hid
+            'tid': tid
+            'hid': hid
 
         request.$promise.then(
             (response) ->

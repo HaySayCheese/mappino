@@ -94,15 +94,15 @@ class MPublicationService
     # @description Seller call request
     #
     # @param {string} id_part                           - Publication type_id:hash_id
-    # @param {object} merchant                          - Merchant object
-    # @param {string} merchant.name                     - Merchant name
-    # @param {(string|number)} merchant.phone_number    - Merchant phone number
+    # @param {object} customer                          - Customer object
+    # @param {string} customer.name                     - Customer name
+    # @param {(string|number)} customer.phone_number    - Customer phone number
     # @param {function()} [successCallback]             - Success callback
     # @param {function()} [errorCallback]               - Error callback
     ###
-    sendCallRequestToSeller: (id_part, merchant, successCallback, errorCallback) ->
+    sendCallRequestToSeller: (id_part, customer, successCallback, errorCallback) ->
         request = @http.post "/ajax/api/notifications/send-call-request/#{id_part}/",
-            merchant
+            customer
 
         request.success (response) ->
             if response.code is 0
@@ -120,9 +120,9 @@ class MPublicationService
     # @description Seller call request
     #
     # @param {string} id_part                           - Publication type_id:hash_id
-    # @param {object} merchant                          - Merchant object
-    # @param {string} merchant.name                     - Merchant name
-    # @param {(string|number)} merchant.phone_number    - Merchant phone number
+    # @param {object} customer                          - Customer object
+    # @param {string} customer.name                     - Customer name
+    # @param {(string|number)} customer.phone_number    - Customer phone number
     # @param {function()} [successCallback]             - Success callback
     # @param {function()} [errorCallback]               - Error callback
     ###
