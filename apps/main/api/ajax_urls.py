@@ -24,7 +24,7 @@ urlpatterns = patterns('apps.main.api',
     url(r'^ajax/api/favorites/$', FavoritesView.as_view()),
 
     #customers_authorized
-    url(r'^ajax/api/favorites/$', CustomersView.as_view()),
+    url(r'^ajax/api/customer_authorise/$', CustomersView.as_view()),
 
     # # realtors pages
     # url(r'^ajax/api/realtors-pages/([A-z]+)/data/$', RealtorsData.as_view()),
