@@ -1,4 +1,4 @@
-angular.module('mappino.pages.map').factory('MarkersFactory', ['$http', function($http) {
+angular.module('mappino.pages.map').factory('MarkersFactory', ['$http', 'MMarkersService', function($http, MMarkersService) {
     "use strict";
 
     var markers = {
@@ -54,6 +54,8 @@ angular.module('mappino.pages.map').factory('MarkersFactory', ['$http', function
                 viewport: viewport,
                 filters: []
             };
+
+            MMarkersService.load()
 
             if (!_.isNull(r_filters.r_t_sid)) {
                 that.createJsonFiltersFromString(r_filters, "red");

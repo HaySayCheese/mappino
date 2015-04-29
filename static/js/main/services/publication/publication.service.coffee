@@ -142,6 +142,6 @@ class MPublicationService
 
 
 
-
-mappinoMapModule = angular.module 'mappino.pages.map'
-mappinoMapModule.factory 'MPublicationService', ['$http', (http) -> new MPublicationService(http)]
+angular
+    .module('mappino.pages.map')
+    .factory 'MPublicationService', ['$http', (http) -> new MPublicationService(http)]
