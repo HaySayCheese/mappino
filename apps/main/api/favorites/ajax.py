@@ -98,10 +98,13 @@ class FavoritesView(View):
 
         @staticmethod
         def publication_does_not_exist(tid, hash_id):
-            return HttpJsonResponseNotFound({
+
+            response = HttpJsonResponseNotFound({
                 'code': 1,
                 'message': "Publication with id='{tid}:{hash_id}' is not in favorites.".format(tid=tid, hash_id=hash_id)
             })
+            response.delete_cookie('customer_hash_id')
+            return response
 
     class Get(object):
         @staticmethod
