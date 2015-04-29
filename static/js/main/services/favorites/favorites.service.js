@@ -52,7 +52,7 @@
             'code': response.code
           });
         }
-      }, function() {
+      }, function(response) {
         return _.isFunction(errorCallback) && errorCallback();
       });
     };
@@ -83,7 +83,7 @@
             'code': response.code
           });
         }
-      }, function() {
+      }, function(response) {
         return _.isFunction(errorCallback) && errorCallback();
       });
     };
@@ -114,7 +114,7 @@
             'code': response.code
           });
         }
-      }, function() {
+      }, function(response) {
         return _.isFunction(errorCallback) && errorCallback();
       });
     };
