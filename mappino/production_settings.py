@@ -139,6 +139,8 @@ INSTALLED_APPS = (
 
     'core',
     'core.users',
+    'core.customers',
+    'core.favorites',
     'core.billing',
     'core.publications',
     'core.markers_handler',
