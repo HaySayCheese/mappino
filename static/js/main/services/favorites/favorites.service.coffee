@@ -54,9 +54,9 @@ class MFavoritesService
     ###
     get: (tid, hid, successCallback, errorCallback) ->
         request = @favorites.get
-            params:
-                'tid': tid
-                'hid': hid
+            'tid': tid
+            'hid': hid
+
 
         request.$promise.then(
             (response) ->
@@ -82,9 +82,8 @@ class MFavoritesService
     ###
     remove: (tid, hid, successCallback, errorCallback) ->
         request = @favorites.remove
-            params:
-                'tid': tid
-                'hid': hid
+            'tid': tid
+            'hid': hid
 
         request.$promise.then(
             (response) ->

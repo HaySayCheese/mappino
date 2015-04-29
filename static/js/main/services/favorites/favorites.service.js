@@ -71,10 +71,8 @@
     MFavoritesService.prototype.get = function(tid, hid, successCallback, errorCallback) {
       var request;
       request = this.favorites.get({
-        params: {
-          'tid': tid,
-          'hid': hid
-        }
+        'tid': tid,
+        'hid': hid
       });
       return request.$promise.then(function(response) {
         if (response.code === 0) {
@@ -104,10 +102,8 @@
     MFavoritesService.prototype.remove = function(tid, hid, successCallback, errorCallback) {
       var request;
       request = this.favorites.remove({
-        params: {
-          'tid': tid,
-          'hid': hid
-        }
+        'tid': tid,
+        'hid': hid
       });
       return request.$promise.then(function(response) {
         if (response.code === 0) {
