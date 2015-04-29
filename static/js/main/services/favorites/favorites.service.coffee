@@ -38,7 +38,7 @@ class MFavoritesService
                     _.isFunction(errorCallback) && errorCallback
                         'code': response.code
 
-            () -> _.isFunction(errorCallback) && errorCallback()
+            (response) -> _.isFunction(errorCallback) && errorCallback()
         )
 
 
@@ -66,7 +66,7 @@ class MFavoritesService
                     _.isFunction(errorCallback) && errorCallback
                         'code': response.code
 
-            () -> _.isFunction(errorCallback) && errorCallback()
+            (response) -> _.isFunction(errorCallback) && errorCallback()
         )
 
 
@@ -93,7 +93,7 @@ class MFavoritesService
                     _.isFunction(errorCallback) && errorCallback
                         'code': response.code
 
-            () -> _.isFunction(errorCallback) && errorCallback()
+            (response) -> _.isFunction(errorCallback) && errorCallback()
         )
 
 
