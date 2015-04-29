@@ -1,6 +1,6 @@
 
-angular.module('mappino.pages.map').controller('PublicationViewController', ['$scope', '$rootScope', '$routeParams', 'TXT', 'MPublicationService',
-    function($scope, $rootScope, $routeParams, TXT, MPublicationService) {
+angular.module('mappino.pages.map').controller('PublicationViewController', ['$scope', '$rootScope', '$routeParams', 'TXT', 'MPublicationService', 'MFavoritesService',
+    function($scope, $rootScope, $routeParams, TXT, MPublicationService, MFavoritesService) {
         "use strict";
 
         $scope.publicationDetailedPart = "Description";
@@ -12,6 +12,18 @@ angular.module('mappino.pages.map').controller('PublicationViewController', ['$s
             reason: 1,
             email: '',
             reasonName: ''
+        };
+
+
+        $scope.addToFavorites = function() {
+            var tid = $rootScope.publicationIdPart.split(':')[0],
+                hid = $rootScope.publicationIdPart.split(':')[1];
+
+            MFavoritesService.add(tid, hid, function(response) {
+                console.log(response);
+            });
+
+            event.preventDefault();
         };
 
 

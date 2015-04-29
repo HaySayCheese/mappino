@@ -126,9 +126,9 @@ class MPublicationService
     # @param {function()} [successCallback]             - Success callback
     # @param {function()} [errorCallback]               - Error callback
     ###
-    sendMessageToSeller: (id_part, merchant, successCallback, errorCallback) ->
+    sendMessageToSeller: (id_part, customer, successCallback, errorCallback) ->
         request = @http.post "/ajax/api/notifications/send-message/#{id_part}/",
-            merchant
+            customer
 
         request.success (response) ->
             if response.code is 0
