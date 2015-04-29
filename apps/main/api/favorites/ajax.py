@@ -11,7 +11,6 @@ class FavoritesView(View):
 
     @classmethod
     def get(cls, request):
-
         try:
             customer_hash_id = request.COOKIES['customer_hash_id']
         except:
