@@ -15,7 +15,7 @@ angular.module('mappino.pages.map').controller('PublicationViewController', ['$s
         };
 
 
-        $scope.toggleFavorites = function($event) {
+        $scope.toggleFavorite = function($event) {
             var tid = $rootScope.publicationIdPart.split(':')[0],
                 hid = $rootScope.publicationIdPart.split(':')[1];
 
@@ -34,7 +34,6 @@ angular.module('mappino.pages.map').controller('PublicationViewController', ['$s
                     // error callback
                 });
             }
-
 
             $event.preventDefault();
         };
