@@ -24,7 +24,7 @@ urlpatterns = patterns('apps.main.api',
     url(r'^ajax/api/favorites/$', FavoritesView.as_view()),
 
     #customers_authorized
-    url(r'^ajax/api/customer_authorise/$', CustomersView.as_view()),
+    url(r'^ajax/api/customers/authorise/$', CustomersView.as_view()),
 
     # claims
     url(r'^ajax/api/publications/(\d+):(\w+)/claims/$', Claims.List.as_view()),
