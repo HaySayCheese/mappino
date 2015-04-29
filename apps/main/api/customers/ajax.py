@@ -18,7 +18,7 @@ class CustomersView(View):
                     'customer_hash_id': customer_hash_id
                 }
             })
-            response.set_cookie("customer_hash_id")
+            response.set_signed_cookie("customer_hash_id",customer_hash_id)
             return response
 
         @staticmethod
