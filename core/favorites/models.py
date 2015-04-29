@@ -63,3 +63,8 @@ class Favorites(models.Model):
 
         check_value = "{tid}:{hash_id}".format(tid=tid, hash_id=hash_id)
         return check_value in json.loads(record.publications_ids)
+
+
+    @classmethod
+    def something(cls):
+        return
