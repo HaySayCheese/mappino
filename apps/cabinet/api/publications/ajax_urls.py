@@ -1,3 +1,4 @@
+#coding=utf-8
 from apps.cabinet.api.publications.ajax import Publications
 from django.conf.urls import patterns, url
 
@@ -11,7 +12,7 @@ urlpatterns = patterns('apps.cabinet.api',
 
 
 	# photos
-    url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/$', Publications.UploadPhoto.as_view()),
+    url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/photos/$', Publications.UploadPhoto.as_view()),
     url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/(\w+)/$', Publications.Photos.as_view()),
     url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/(\w+)/title/$', Publications.PhotoTitle.as_view()),
 

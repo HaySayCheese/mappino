@@ -28,3 +28,10 @@ class EmptyFloorsCount(ValidationError): pass
 class EmptyPersonsCount(ValidationError): pass
 class EmptyCabinetsCount(ValidationError): pass
 class EmptyHallsCount(ValidationError): pass
+
+
+class PhotosHandlerExceptions(object):
+    class ImageIsTooLarge(Exception): pass
+    class ImageIsTooSmall(Exception): pass
+    class UnsupportedImageType(Exception): pass
+    class ProcessingFailed(Exception): pass

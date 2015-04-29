@@ -12,7 +12,7 @@ urlpatterns = patterns('apps.main.api',
 
 
     # detailed
-    url(r'^ajax/api/detailed/publication/(\d+:\w+)/$', DetailedView.as_view()),
+    url(r'^ajax/api/detailed/publication/(\d+):(\w+)/$', DetailedView.as_view()),
     url(r'^ajax/api/detailed/publication/(\d+:\w+)/contacts/$', RealtorsContacts.as_view()),
 
 
