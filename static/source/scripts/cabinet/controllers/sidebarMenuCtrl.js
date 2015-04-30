@@ -6,7 +6,6 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
      * Ініціалізкація компонентів
      */
     initScrollBar();
-    initDropDown();
 
 
     /**
@@ -202,16 +201,6 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
     }
 
 
-    /**
-     * Ініціалізація дропдауна
-     */
-    function initDropDown() {
-        $timeout(function() {
-            angular.element("select[name='typeSelect']").selectpicker({
-                style: 'btn-success btn-md'
-            });
-        }, 0);
-    }
 
     /**
      * Ініціалізація скролбара

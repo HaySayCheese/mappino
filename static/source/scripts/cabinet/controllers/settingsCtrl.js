@@ -93,7 +93,7 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
      */
     function initDropdowns() {
         angular.element("select").selectpicker({
-            style: 'btn-default btn-md'
+            style: '-gray'
         });
     }
 
