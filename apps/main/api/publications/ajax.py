@@ -175,6 +175,3 @@ class Claims(object):
 
             except ClaimsManager.PublicationDoesNotExists:
                 return cls.PostResponses.publication_does_not_exists()
-
-
-
