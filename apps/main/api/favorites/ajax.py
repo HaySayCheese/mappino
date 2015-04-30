@@ -72,7 +72,7 @@ class FavoritesListView(FavoritesBaseView, View):
 
         try:
             params = angular_parameters(request, ['id'])
-            tid, hid = params['id'].split(':')
+            tid, hash_id = params['id'].split(':')
             tid = int(tid)
         except ValueError:
             return cls.CommonResponses.absent_publications_id()
