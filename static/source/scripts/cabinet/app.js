@@ -1,4 +1,14 @@
-var app = angular.module('MappinoCabinet', ['ngRoute', 'ngCookies', 'ngAnimate', 'angularFileUpload', 'lrNotifier', 'ui.mask', 'googlechart']);
+var app = angular.module('MappinoCabinet', [
+    'ngRoute',
+    'ngCookies',
+    'ngAnimate',
+    'angularFileUpload',
+    'lrNotifier',
+    'ui.mask',
+    'googlechart',
+
+    '_modules.bDirectives'
+]);
 
 app.config(function($interpolateProvider, $locationProvider, $httpProvider) {
 

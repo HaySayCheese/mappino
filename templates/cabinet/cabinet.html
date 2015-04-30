@@ -49,8 +49,8 @@
 
         <div class="sidebar-menu" ng-controller="SidebarMenuCtrl">
             <div class="sidebar-menu-header">
-                <a href class="btn -blue -x-large logo-btn pull-left btn-icon-marker" ng-click="returnToMap()"></a>
-                <div class="btn -green -x-large pull-right" ng-click="creatingPublication = true">Новое обьявление</div>
+                <a href class="btn -blue -x-large logo-btn pull-left" ng-click="returnToMap()"></a>
+                <div class="btn -green -x-large create-publication-btn pull-right" ng-click="creatingPublication = true">Новое обьявление</div>
             </div>
 
             <div class="sidebar-menu-body">
@@ -70,7 +70,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <select name="typeSelect" data-width="100%" ng-model="newPublication.tid">
+                        <select selectpicker name="typeSelect" data-width="100%" ng-model="newPublication.tid">
                             <option value="[[ type.id ]]" ng-repeat="type in publicationTypes">[[ type.title ]]</option>
                         </select>
                     </div>
@@ -234,6 +234,13 @@
 
 
     {% compress js %}
+        <script type="text/javascript" src="{{ static }}source/scripts/_modules/underscore/underscore.module.js"></script>
+
+        <!-- bModules -->
+        <script type="text/javascript" src="{{ static }}source/scripts/_modules/bTypes/bTypes.module.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/_modules/bAuth/bAuth.module.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/_modules/bDirectives/bDirectives.module.js"></script>
+
         <script type="text/javascript" src="{{ static }}source/scripts/cabinet/app.js"></script>
 
         <script type="text/javascript" src="{{ static }}source/scripts/cabinet/configs/values.js"></script>
