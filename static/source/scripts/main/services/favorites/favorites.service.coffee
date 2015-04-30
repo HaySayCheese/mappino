@@ -6,7 +6,7 @@
 # @version 0.1.0
 # @license todo: add license
 ###
-class MFavoritesServices
+class MFavoritesService
     constructor: (@$resource) ->
         @favorites = @$resource "/ajax/api/favorites/:id"
 
