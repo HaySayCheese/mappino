@@ -1,6 +1,9 @@
+# coding=utf-8
 import json
-from core.favorites.exceptions import InvalidCustomer
+
 from django.db import models
+
+from core.favorites.exceptions import InvalidCustomer
 from core.customers.models import Customers
 
 
