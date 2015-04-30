@@ -14,11 +14,11 @@
 
                 <div id="publication-slider" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner" role="listbox">
-                        <div class="item title-photo active">
-                            <img ng-src="[[ publication.photos[0] ]]" alt=""/>
-                            <div class="photo-overlay"></div>
-                        </div>
-                        <div class="item" ng-repeat="photo in publication.photos">
+                        <!--<div class="item title-photo active">-->
+                            <!--<img ng-src="[[ publication.photos[0] ]]" alt=""/>-->
+                            <!--<div class="photo-overlay"></div>-->
+                        <!--</div>-->
+                        <div class="item" ng-repeat="photo in publication.photos" ng-class="{ 'active': $index === 0  }">
                             <img ng-src="[[ photo ]]" alt=""/>
                             <div class="photo-overlay"></div>
                         </div>
@@ -31,12 +31,12 @@
                         <span class="glyphicon glyphicon-resize-small"></span>
                     </a>
 
-                    <a ng-href class="left carousel-control" href="#publication-slider" role="button" data-slide="prev"
-                       ng-click="$event.preventDefault()">
+                    <a class="left carousel-control" href="#publication-slider" role="button" data-slide="prev"
+                       ng-click="$('#publication-slider').carousel('prev'); $event.preventDefault()">
                         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
                     </a>
-                    <a ng-href class="right carousel-control" href="#publication-slider" role="button" data-slide="next"
-                       ng-click="$event.preventDefault()">
+                    <a class="right carousel-control" href="#publication-slider" role="button" data-slide="next"
+                       ng-click="$('#publication-slider').carousel('next'); $event.preventDefault()">
                         <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                     </a>
                 </div>
