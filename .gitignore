@@ -6,6 +6,8 @@ mappino/dev_settings.py
 mappino/passwords.py
 mappino/keys/*
 
+node_modules
+
 static/CACHE
 static/CACHE/*
 

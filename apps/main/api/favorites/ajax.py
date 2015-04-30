@@ -1,3 +1,5 @@
+# coding=utf-8
+from core.favorites.exceptions import InvalidCustomer
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import View
 
@@ -7,85 +9,128 @@ from core.customers.models import Customers
 from core.favorites.models import Favorites
 
 
-class FavoritesView(View):
+class FavoritesBaseView(object):
+    # This cookie is used to distinguish customers one from another.
+    # The value in this cookie is the hash digest that uniquely identifies the customer.
     customer_hash_id_cookie_name = 'customer_hash_id'
 
-    @classmethod
-    def get(cls, request):
+    class CommonResponses(object):
+        """
+        Contains common response serializers for several descendant views.
+        """
+        @staticmethod
+        def empty_customer_hash_id_cookie():
+            return HttpJsonResponseBadRequest({
+                'code': 1,
+                'message': "Unauthorized user. Customer cookie is missed."
+            })
 
+        @staticmethod
+        def invalid_customers_hash_id():
+            return HttpJsonResponseBadRequest({
+                'code': 2,
+                'message': "Invalid customer id. There is no customers with this customers hash id."
+            })
+
+        @staticmethod
+        def absent_publications_id():
+            return HttpJsonResponseBadRequest({
+                'code': 3,
+                'message': '"tid" or "hash_id" for publication is absent.'
+            })
+
+
+class FavoritesListView(FavoritesBaseView, View):
+    @classmethod
+    def get(cls, request, *args):
         try:
             customer_hash_id = request.get_signed_cookie(cls.customer_hash_id_cookie_name)
-        except:
-            return cls.__empty_customer_hash_id_cookie()
-        favorite = Favorites.objects.\
-            filter(customer_hash_id=customer_hash_id).\
-            only('publications_ids')[:1][0]
+        except Exception:
+            return cls.CommonResponses.empty_customer_hash_id_cookie()
+
+        try:
+            favorite = Favorites.objects\
+                           .filter(customer_hash_id=customer_hash_id)\
+                           .only('publications_ids')[:1][0]
+        except IndexError:
+            return cls.CommonResponses.invalid_customers_hash_id()
 
         return cls.Get.ok(favorite)
 
-    @classmethod
-    def delete(cls, request, *args):
-        try:
-            customer_hash_id = request.get_signed_cookie(cls.customer_hash_id_cookie_name)
-        except:
-            return cls.__empty_customer_hash_id_cookie()
-        try:
-            customer = Customers.objects.get(hash_id=customer_hash_id)
-        except ObjectDoesNotExist:
-            return cls.__invalid_customers_hash_id()
-
-        favorite = Favorites.objects.get_or_create(customer_id=customer.id)
-
-
-        try:
-            params = angular_parameters(request, ['tid', 'hid'])
-        except ValueError:
-            return cls.__absent_publications_ids()
-
-        tid = params['tid']
-        hash_id = params['hid']
-
-
-        if favorite.exist(customer.id, tid, hash_id):
-            favorite.remove(customer.id, tid, hash_id)
-            return cls.Delete.ok()
-        else:
-            return cls.Delete.publication_does_not_exist(tid,hash_id)
 
     @classmethod
     def post(cls, request, *args):
-
         try:
             customer_hash_id = request.get_signed_cookie(cls.customer_hash_id_cookie_name)
-        except:
-            return cls.__empty_customer_hash_id_cookie()
-        try:
-            customer = Customers.objects.get(hash_id=customer_hash_id)
-        except ObjectDoesNotExist:
-            return cls.__invalid_customers_hash_id()
+        except Exception:
+            return cls.CommonResponses.empty_customer_hash_id_cookie()
 
-        favorite = Favorites.objects.get_or_create(customer_id=customer.id)[0]
+        try:
+            customer_id = Customers.objects.filter(hash_id=customer_hash_id).values_list('id')[0][0]
+        except ObjectDoesNotExist:
+            return cls.CommonResponses.invalid_customers_hash_id()
 
         try:
             params = angular_parameters(request, ['tid', 'hid'])
+            tid = params['tid']
+            hash_id = params['hid']
         except ValueError:
-            return cls.__absent_publications_ids()
-
-        tid = params['tid']
-        hash_id = params['hid']
-
-        favorite.add(customer.id, tid, hash_id)
-
-        return cls.Post.ok(favorite)
+            return cls.CommonResponses.absent_publications_id()
 
 
-    class Post(object):
+        favorite = Favorites.objects.get_or_create(customer_id=customer_id)[0]
+        favorite.add(customer_id, tid, hash_id)
+        return cls.Post.ok()
+
+
+    class Get(object):
         @staticmethod
         def ok(favorite):
             return HttpJsonResponse({
                 'code': 0,
                 'message': 'OK',
+                'data': {
+                    'publications_ids': favorite.publication_ids,
+                }
             })
+
+
+    class Post(object):
+        @staticmethod
+        def ok():
+            return HttpJsonResponse({
+                'code': 0,
+                'message': 'OK',
+                })
+
+
+class FavoritesView(FavoritesBaseView, View):
+    @classmethod
+    def delete(cls, request, *args):
+        tid, hash_id = int(args[0]), args[1]
+
+        try:
+            customer_hash_id = request.get_signed_cookie(cls.customer_hash_id_cookie_name)
+        except Exception:
+            return cls.CommonResponses.empty_customer_hash_id_cookie()
+
+        try:
+            customer_id = Customers.objects.filter(hash_id=customer_hash_id).values_list('id')[0][0]
+        except IndexError:
+            return cls.CommonResponses.invalid_customers_hash_id()
+
+
+        favorite = Favorites.objects.get_or_create(customer_id=customer_id)[0]
+
+        try:
+            if favorite.remove(customer_id, tid, hash_id):
+                return cls.Delete.ok()
+            else:
+                return cls.Delete.publication_does_not_exist(tid, hash_id)
+
+        except InvalidCustomer:
+            return cls.CommonResponses.invalid_customers_hash_id()
+
 
     class Delete(object):
         @staticmethod
@@ -104,56 +149,3 @@ class FavoritesView(View):
             response.delete_cookie('customer_hash_id')
             return response
 
-    class Get(object):
-        @staticmethod
-        def ok(favorite):
-            return HttpJsonResponse({
-                'code': 0,
-                'message': 'OK',
-                'data': {
-                    'publications_ids': favorite.publication_ids,
-                }
-            })
-
-    @staticmethod
-    def __absent_customer_hash_id_cookie():
-        return HttpJsonResponseBadRequest({
-            'code': 1,
-            'message': "Cookie with customer hash id is absent."
-        })
-
-
-
-    @staticmethod
-    def __absent_publications_ids():
-        return HttpJsonResponseBadRequest({
-            'code': 2,
-            'message': "Type for publication is absent (tid) "
-        })
-
-    # def __absent_publications_type_id():
-    #     return HttpJsonResponseBadRequest({
-    #         'code': 2,
-    #         'message': "Type for publication is absent (tid) "
-    #     })
-    #
-    # @staticmethod
-    # def __absent_publications_hash_id():
-    #     return HttpJsonResponseBadRequest({
-    #         'code': 3,
-    #         'message': "Publication hash id is absent (hid) "
-    #     })
-
-    @staticmethod
-    def __empty_customer_hash_id_cookie():
-        return HttpJsonResponseBadRequest({
-            'code': 1,
-            'message': "Unauthorized user. Missed customer hash id cookie."
-        })
-
-    @staticmethod
-    def __invalid_customers_hash_id():
-        return HttpJsonResponseBadRequest({
-            'code':2,
-            'message': "Invalid id. There are no customers with such customers_hash_id"
-        })

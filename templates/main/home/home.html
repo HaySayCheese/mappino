@@ -7,23 +7,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
     {% compress css %}
-        <link rel="stylesheet" href="{{ static }}css/home/base.min.css"/>
+        <link rel="stylesheet" href="{{ static }}build/styles/home/base.min.css"/>
     {% endcompress %}
 
     <script src="http://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places"></script>
 
 
     <script src="http://yandex.st/jquery/2.1.3/jquery.min.js"></script>
-    <script src="http://yandex.st/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script src="http://yandex.st/underscore/1.6.0/underscore-min.js"></script>
+    <script src="http://yandex.st/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
-    <script src="http://yandex.st/angularjs/1.3.8/angular.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular-cookies.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0-rc.1/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0-rc.1/angular-cookies.min.js"></script>
 
     {% compress js %}
-        <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select-1.5.4.min.js"></script>
-        <script type="text/javascript" src="{{ static }}js/libs/jquery.imageScroll.min.js"></script>
-        <script type="text/javascript" src="{{ static }}js/libs/angular-utf8-base64.min.js"></script>
+        <script type="text/javascript" src="{{ static }}source/vendors/bootstrap-select-1.5.4.min.js"></script>
+        <script type="text/javascript" src="{{ static }}source/vendors/jquery.imageScroll.min.js"></script>
+        <script type="text/javascript" src="{{ static }}source/vendors/angular-utf8-base64.min.js"></script>
     {% endcompress %}
 
     <script>
@@ -63,7 +63,7 @@
 
 
 
-        <div image-scroll class="img-holder top" data-cover-ratio="1" data-image="{{ static }}img/home/kiev-bg-medium.jpg"></div>
+        <div image-scroll class="img-holder top" data-cover-ratio="1" data-image="{{ static }}build/images/home/kiev-bg-medium.jpg"></div>
         <section class="search-form">
             <a id="search"></a>
             <div class="row">
@@ -200,7 +200,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="section-image">
-                                <img src="{{ static }}img/home/tablet.jpg" alt=""/>
+                                <img src="{{ static }}build/images/home/tablet.jpg" alt=""/>
 
                                 <div class="tablet-marker m-1 animated"></div>
                                 <div class="tablet-marker m-2 animated"></div>
@@ -215,7 +215,7 @@
         </section>
 
 
-        <div image-scroll class="img-holder more-middle" data-cover-ratio="0.5" data-image="{{ static }}img/home/home-bg-2.jpg"></div>
+        <div image-scroll class="img-holder more-middle" data-cover-ratio="0.5" data-image="{{ static }}build/images/home/home-bg-2.jpg"></div>
         <section>
             <div class="row">
                 <div class="col-sm-12 col-lg-10 col-lg-offset-1 text-center">
@@ -257,14 +257,14 @@
                         </div>
                     </div>
                     <div class="row">
-                        <img src="{{ static }}img/home/browser.jpg" alt=""/>
+                        <img src="{{ static }}build/images/home/browser.jpg" alt=""/>
                     </div>
                 </div>
             </div>
         </section>
 
 
-        <div image-scroll class="img-holder bottom" data-cover-ratio="0.5" data-image="{{ static }}img/home/home-bg-3.jpg"></div>
+        <div image-scroll class="img-holder bottom" data-cover-ratio="0.5" data-image="{{ static }}build/images/home/home-bg-3.jpg"></div>
         <section class="with-padding-bottom">
             <div class="row">
                 <div class="col-sm-12 col-lg-10 col-lg-offset-1 text-center">
@@ -295,15 +295,15 @@
     </div>
 
     {% compress js %}
-        <script type="text/javascript" src="{{ static }}js/_modules/underscore/underscore.module.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/_modules/underscore/underscore.module.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/_modules/bAuth/bAuth.module.js"></script>
-        <script type="text/javascript" src="{{ static }}js/_modules/bDirectives/bDirectives.module.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/_modules/bAuth/bAuth.module.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/_modules/bDirectives/bDirectives.module.js"></script>
 
 
-        <script type="text/javascript" src="{{ static }}js/home/app.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/home/app.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/home/controllers/home-controller.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/home/controllers/home-controller.js"></script>
     {% endcompress %}
 </body>
 </html>
