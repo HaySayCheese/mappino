@@ -6,7 +6,12 @@ from collective.exceptions import RuntimeException
 from core.publications.constants import OBJECTS_TYPES
 
 
-class AdminPublishedDataSource(object):
+class CabinetPublishedDataSource(object):
+    """
+    This class is used to perform output for published publications in cabinet.
+    This class does not perform json responses, but only returns dicts with necessary data.
+    """
+
     def __init__(self):
         self.data_generators = {
             # living
@@ -26,26 +31,30 @@ class AdminPublishedDataSource(object):
         }
 
 
-    def format(self, tid, p):
+    def format(self, tid, publication_head):
         """
+        :type tid: int
         :param tid: type id of the publication.
-        :param p: head-record of the publication.
+
+        :type publication_head: AbstractHeadModel
+        :param publication_head: head-record of the publication.
+
+        :rtype: dict
         :return:
             dict with two main sections:
                 head - all system information about publication, such as photos and tags.
                 data - formatted text information about publication.
-        :raises:
-            InvalidArgument: p is incorrect.
-            RuntimeException: broken list of data generators.
+
+        :raise: RuntimeException - broken list of data generators.
         """
-        generator = self.data_generators.get(tid, None)
-        if generator is None:
+        data_generator = self.data_generators.get(tid, None)
+        if data_generator is None:
             raise RuntimeException('Missed formatter.')
 
         # noinspection PyCallingNonCallable
         result = {
-            'head': self.base_generator(p, tid),
-            'data': generator(p),
+            'head': self.base_generator(publication_head, tid),
+            'data': data_generator(publication_head),
         }
 
         # clearing the results from all empty and None entries, that potentially can occurs
@@ -56,25 +65,22 @@ class AdminPublishedDataSource(object):
 
 
     @staticmethod
-    def base_generator(p, tid):
+    def base_generator(publication_head, tid):
         """
-        :param p: head-record of the publication.
+        :param publication_head: head-record of the publication.
         :param tid: type id of the record.
         :return: dictionary with common data for all types of publication,
                  such as photos and tags.
         """
-        result = {
-            'state_sid': p.state_sid,
+        tags = DirTags.contains_publications(tid, [publication_head.id])
+
+        return {
+            'state_sid': publication_head.state_sid,
+            'tags': {
+                tag.id: True for tag in tags
+            },
             'photos': {}
-            # 'photos': p.photos_dict(),
         }
-
-        tags = DirTags.contains_publications(tid, [p.id])
-        result['tags'] = {
-            tag.id: True for tag in tags
-        }
-
-        return result
 
 
     @staticmethod
@@ -424,53 +430,34 @@ class PublishedDataSource(object):
         }
 
 
-    def format(self, tid, p):
+    def format(self, tid, publication_head):
         """
-        :type tid int
+        :type tid: int
         :param tid: type id of the publication.
 
-        :param p: head-record of the publication.
+        :type publication_head: AbstractHeadModel
+        :param publication_head: head-record of the publication.
 
+        :rtype: dict
         :return:
             dict with two main sections:
                 head - all system information about publication, such as photos and tags.
                 data - formatted text information about publication.
 
-        :raises:
-            InvalidArgument: p is incorrect.
-            RuntimeException: broken list of data generators.
+        :raise: RuntimeException - broken list of data generators.
         """
-        description_generator = self.data_generators.get(tid, None)
-        if description_generator is None:
-            raise RuntimeException('Missed formatter.')
+        data = {
+            'photos': [photo.photo_url for photo in publication_head.photos().only('photo_url')]
+        }
 
-        result = dict()
-        result.update(self.base_generator(p, tid))
-
+        description_generator = self.data_generators[tid]
         # noinspection PyCallingNonCallable
-        result.update(description_generator(p))
+        data.update(description_generator(publication_head))
 
         # clearing the results from all empty and None entries, that potentially can occurs
-        result.update((k, v) for k, v in result.iteritems() if v is not None)
+        data = {k: v for k, v in data.iteritems() if v}
 
-        return result
-
-
-    @staticmethod
-    def base_generator(p, tid):
-        """
-        :param p: head-record of the publication.
-        :param tid: type id of the record.
-        :return: dictionary with common data for all types of publication.
-        """
-        return {
-            'state_sid': p.state_sid,
-            'tags': {
-                # on a frontend tags are handled as boolean values,
-                # so with tag id we need to send fake boolean True value.
-                tag.id: True for tag in DirTags.contains_publications(tid, [p.id])
-            }
-        }
+        return data
 
 
     @staticmethod

@@ -70,8 +70,6 @@ class DetailedView(View):
 
 
         description = self.formatter.format(tid, publication)
-        description['photos'] = [photo.photo_url for photo in publication.photos()]
-
         return self.GetResponses.ok(description)
 
 
