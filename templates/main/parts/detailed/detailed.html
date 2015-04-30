@@ -15,8 +15,11 @@
                 <div id="publication-slider" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner" role="listbox">
                         <div class="item title-photo active">
-                            <!--<img src="{{ static }}img/home/home-bg-1.jpg" alt=""/>-->
                             <img ng-src="[[ publication.photos[0] ]]" alt=""/>
+                            <div class="photo-overlay"></div>
+                        </div>
+                        <div class="item" ng-repeat="photo in publication.photos">
+                            <img ng-src="[[ photo ]]" alt=""/>
                             <div class="photo-overlay"></div>
                         </div>
                     </div>

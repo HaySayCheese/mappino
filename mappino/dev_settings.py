@@ -30,7 +30,7 @@ HUL1_PUBLIC_IP = '128.199.59.244'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '(dev:hsc)mappino-db',
+        'NAME': '(dev)mappino-db',
         'USER': '(dev)mappino',
         'PASSWORD': '123123',
         'HOST': '127.0.0.1',

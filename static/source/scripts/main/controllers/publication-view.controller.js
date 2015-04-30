@@ -21,7 +21,6 @@ angular.module('mappino.pages.map').controller('PublicationViewController', ['$s
             if ($scope.publication.added_to_favorites) {
                 MFavoritesService.remove(pid, function(response) {
                     $scope.publication.added_to_favorites = false;
-                    console.log(response);
                 }, function() {
                     // error callback
                 });
