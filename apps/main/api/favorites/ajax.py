@@ -1,4 +1,5 @@
 # coding=utf-8
+from core.favorites.exceptions import InvalidCustomer
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import View
 
@@ -120,10 +121,15 @@ class FavoritesView(FavoritesBaseView, View):
 
 
         favorite = Favorites.objects.get_or_create(customer_id=customer_id)[0]
-        if favorite.remove(customer_id, tid, hash_id):
-            return cls.Delete.ok()
-        else:
-            return cls.Delete.publication_does_not_exist(tid, hash_id)
+
+        try:
+            if favorite.remove(customer_id, tid, hash_id):
+                return cls.Delete.ok()
+            else:
+                return cls.Delete.publication_does_not_exist(tid, hash_id)
+
+        except InvalidCustomer:
+            return cls.CommonResponses.invalid_customers_hash_id()
 
 
     class Delete(object):
