@@ -1,1 +1,0 @@
-String.prototype.fmt||(String.prototype.fmt=function(){var t=arguments;return this.replace(/{(\d+)}/g,function(n,r){return"undefined"!=typeof t[r]?t[r]:n})});
