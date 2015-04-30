@@ -77,7 +77,7 @@ angular.module('mappino.pages.map').controller('PublicationViewController', ['$s
 
             if (modalDialog.hasClass('slider-opened')) {
                 modalDialog.removeClass('slider-opened');
-                modalDialog.find('.title-photo').height('350px')
+                modalDialog.find('.title-photo').height('350px');
             } else {
                 modalDialog.addClass('slider-opened');
                 modalDialog.find('.title-photo').height(modalDialog.find('.title-photo img').height())
