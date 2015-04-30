@@ -4,7 +4,7 @@
     <title ng-bind="pageTitle"></title>
 
     {% compress css %}
-        <link rel="stylesheet" href="{{ static }}css/cabinet/base.min.css"/>
+        <link rel="stylesheet" href="{{ static }}build/styles/cabinet/base.min.css"/>
     {% endcompress %}
 
     <script type="text/javascript"
@@ -22,16 +22,16 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular-animate.min.js"></script>
 
     {% compress js %}
-        <script type="text/javascript" src="{{ static }}js/libs/bootstrap-select-1.5.4.min.js"></script>
-        <script type="text/javascript" src="{{ static }}js/libs/perfect-scrollbar-0.4.10.min.js"></script>
+        <script type="text/javascript" src="{{ static }}build/vendors/bootstrap-select-1.5.4.min.js"></script>
+        <script type="text/javascript" src="{{ static }}build/vendors/perfect-scrollbar-0.4.10.min.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/libs/angular-file-upload-shim-1.4.0.min.js"></script>
-        <script type="text/javascript" src="{{ static }}js/libs/angular-ui-mask.min.js"></script>
-        <script type="text/javascript" src="{{ static }}js/libs/angular-file-upload-1.4.0.min.js"></script>
-        <script type="text/javascript" src="{{ static }}js/libs/angular-notifier.min.js"></script>
-        <script type="text/javascript" src="{{ static }}js/libs/angular-google-charts.min.js"></script>
+        <script type="text/javascript" src="{{ static }}build/vendors/angular-file-upload-shim-1.4.0.min.js"></script>
+        <script type="text/javascript" src="{{ static }}build/vendors/angular-ui-mask.min.js"></script>
+        <script type="text/javascript" src="{{ static }}build/vendors/angular-file-upload-1.4.0.min.js"></script>
+        <script type="text/javascript" src="{{ static }}build/vendors/angular-notifier.min.js"></script>
+        <script type="text/javascript" src="{{ static }}build/vendors/angular-google-charts.min.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/libs/utils/fmt.js"></script>
+        <script type="text/javascript" src="{{ static }}build/vendors/utils/fmt.js"></script>
     {% endcompress %}
 
     <script>
@@ -49,8 +49,8 @@
 
         <div class="sidebar-menu" ng-controller="SidebarMenuCtrl">
             <div class="sidebar-menu-header">
-                <a href class="btn btn-primary btn-xlg logo-btn pull-left btn-icon-marker" ng-click="returnToMap()"></a>
-                <div class="btn btn-success btn-xlg pull-right" ng-click="creatingPublication = true">Новое обьявление</div>
+                <a href class="btn -blue -x-large logo-btn pull-left btn-icon-marker" ng-click="returnToMap()"></a>
+                <div class="btn -green -x-large pull-right" ng-click="creatingPublication = true">Новое обьявление</div>
             </div>
 
             <div class="sidebar-menu-body">
@@ -75,8 +75,8 @@
                         </select>
                     </div>
                     <div class='btn-group btn-group-justified'>
-                        <div class='btn btn-cancel btn-block' ng-click='closeCreatingPublication()'>Отмена</div>
-                        <div class='btn btn-success btn-block btn-creating'
+                        <div class='btn -gray btn-block' ng-click='closeCreatingPublication()'>Отмена</div>
+                        <div class='btn -green btn-block btn-creating'
                              ng-disabled="!newPublication.for_sale && !newPublication.for_rent"
                              data-loading-text='Создание...'
                              ng-click='createPublication()'>Создать</div>
@@ -138,8 +138,8 @@
                         <span>Пример: </span>
                         <span class='label' style='background-color: [[ newTag.selected_color ]]'>[[ newTag.title ]]</span>
                         <div class='btn-group btn-group-justified'>
-                            <div class='btn btn-cancel btn-block' ng-click='closeTagDialog()'>Отмена</div>
-                            <div class='btn btn-success btn-block btn-creating' data-loading-text='Создание...' ng-click='createTag()'>Создать</div>
+                            <div class='btn -gray btn-block' ng-click='closeTagDialog()'>Отмена</div>
+                            <div class='btn -green btn-block btn-creating' data-loading-text='Создание...' ng-click='createTag()'>Создать</div>
                         </div>
                     </div>
 
@@ -234,37 +234,37 @@
 
 
     {% compress js %}
-        <script type="text/javascript" src="{{ static }}js/cabinet/app.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/app.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/cabinet/configs/values.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/configs/routes_const.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/configs/http_const.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/configs/values.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/configs/routes_const.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/configs/http_const.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/cabinet/services/router.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/services/queries.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/services/router.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/services/queries.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/cabinet/controllers/appCtrl.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/appCtrl.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/cabinet/factories/tagsFactory.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/factories/briefsFactory.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/factories/publicationFactory.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/factories/settingsFactory.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/factories/supportFactory.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/factories/tagsFactory.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/factories/briefsFactory.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/factories/publicationFactory.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/factories/settingsFactory.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/factories/supportFactory.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/cabinet/filters/toHtml.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/filters/toHtml.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarMenuCtrl.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarItemListCtrl.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/controllers/sidebarItemDetailedCtrl.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/controllers/settingsCtrl.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/controllers/supportCtrl.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/controllers/noPublicationCtrl.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/controllers/noTicketsCtrl.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/sidebarMenuCtrl.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/sidebarItemListCtrl.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/sidebarItemDetailedCtrl.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/settingsCtrl.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/supportCtrl.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/noPublicationCtrl.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/noTicketsCtrl.js"></script>
 
-        <script type="text/javascript" src="{{ static }}js/cabinet/directives/selectOnClick.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/directives/focusOnLoad.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/directives/allowOnlyNumber.js"></script>
-        <script type="text/javascript" src="{{ static }}js/cabinet/directives/allowOnlyNumberWithoutDot.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/directives/selectOnClick.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/directives/focusOnLoad.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/directives/allowOnlyNumber.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/directives/allowOnlyNumberWithoutDot.js"></script>
     {% endcompress %}
 </body>
 </html>

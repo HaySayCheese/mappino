@@ -62,7 +62,7 @@
                     <div class="col-sm-4 col-lg-4">
                         <div class="user-photo-block text-center">
                             <img class="photo" ng-src="[[ user.account.avatar_url ]]" ng-show="user.account.avatar_url"/>
-                            <img class="photo" ng-src="{{ static }}img/cabinet/sidebar-item-detailed/no-user.png" ng-show="!user.account.avatar_url"/>
+                            <img class="photo" ng-src="{{ static }}build/images/cabinet/sidebar-item-detailed/no-user.png" ng-show="!user.account.avatar_url"/>
 
                             <a href="" ng-show="!uploadingAvatar" ng-click="openPhotoDialog()">Сменить</a>
                             <div class="avatar-loader" ng-show="uploadingAvatar"></div>
