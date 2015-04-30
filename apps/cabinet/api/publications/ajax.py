@@ -104,7 +104,7 @@ class Publications(object):
 
         def __init__(self):
             super(Publications.RUD, self).__init__()
-            self.published_formatter = classes.PublishedDataSource()
+            self.published_formatter = classes.CabinetPublishedDataSource()
             self.unpublished_formatter = classes.UnpublishedFormatter()
 
 
