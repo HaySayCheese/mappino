@@ -403,10 +403,6 @@ class PublishedDataSource(object):
 
 
 class UnpublishedFormatter(object):
-    def __init__(self):
-        super(UnpublishedFormatter, self).__init__()
-
-
     @classmethod
     def format(cls, tid, record):
         head = serializers.serialize(
@@ -448,13 +444,20 @@ class UnpublishedFormatter(object):
             tag.id: True for tag in DirTags.contains_publications(tid, [record.id])
         }
 
+        # photos = [
+        #     {
+        #         'is_title': photo.is_title,
+        #         'thumbnail_url': photo.big_thumb_url,
+        #     } for photo in pu
+        # ]
+
         data = {
             'head': head,
             'body': body,
             'sale_terms': sale_terms,
             'rent_terms': rent_terms,
-            'photos': record.photos_dict(),
             'tags': tags,
+            'photos': []
         }
         return cls.format_output_data(data)
 
