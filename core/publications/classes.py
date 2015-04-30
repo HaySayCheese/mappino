@@ -1,9 +1,407 @@
-#coding=utf-8
+# coding=utf-8
 from django.core import serializers
 
 from apps.cabinet.api.dirtags.models import DirTags
 from collective.exceptions import RuntimeException
 from core.publications.constants import OBJECTS_TYPES
+
+
+class AdminPublishedDataSource(object):
+    def __init__(self):
+        self.data_generators = {
+            # living
+            OBJECTS_TYPES.flat():       self.compose_flat_description,
+            OBJECTS_TYPES.house():      self.compose_house_description,
+            OBJECTS_TYPES.room():       self.compose_room_description,
+
+            # commercial
+            OBJECTS_TYPES.trade():      self.compose_trade_description,
+            OBJECTS_TYPES.office():     self.compose_office_description,
+            OBJECTS_TYPES.warehouse():  self.compose_warehouse_description,
+            OBJECTS_TYPES.business():   self.compose_business_description,
+
+            # other
+            OBJECTS_TYPES.garage():     self.compose_garage_description,
+            OBJECTS_TYPES.land():       self.compose_land_description,
+        }
+
+
+    def format(self, tid, p):
+        """
+        :param tid: type id of the publication.
+        :param p: head-record of the publication.
+        :return:
+            dict with two main sections:
+                head - all system information about publication, such as photos and tags.
+                data - formatted text information about publication.
+        :raises:
+            InvalidArgument: p is incorrect.
+            RuntimeException: broken list of data generators.
+        """
+        generator = self.data_generators.get(tid, None)
+        if generator is None:
+            raise RuntimeException('Missed formatter.')
+
+        # noinspection PyCallingNonCallable
+        result = {
+            'head': self.base_generator(p, tid),
+            'data': generator(p),
+        }
+
+        # clearing the results from all empty and None entries, that potentially can occurs
+        result['head'].update((k, v) for k, v in result['head'].iteritems() if v is not None)
+        result['data'].update((k, v) for k, v in result['data'].iteritems() if v is not None)
+
+        return result
+
+
+    @staticmethod
+    def base_generator(p, tid):
+        """
+        :param p: head-record of the publication.
+        :param tid: type id of the record.
+        :return: dictionary with common data for all types of publication,
+                 such as photos and tags.
+        """
+        result = {
+            'state_sid': p.state_sid,
+            'photos': {}
+            # 'photos': p.photos_dict(),
+        }
+
+        tags = DirTags.contains_publications(tid, [p.id])
+        result['tags'] = {
+            tag.id: True for tag in tags
+        }
+
+        return result
+
+
+    @staticmethod
+    def compose_flat_description(p):
+        description = {
+            'title': p.body.print_title(),
+            'description': p.body.print_description(),
+
+            'market_type': p.body.print_market_type(),
+            'building_type': p.body.print_building_type(),
+            'build_year': p.body.print_build_year(),
+            'flat_type': p.body.print_flat_type(),
+            'rooms_planning': p.body.print_rooms_planning() ,
+            'condition': p.body.print_condition(),
+
+            'floor': p.body.print_floor(),
+            'floors_count': p.body.print_floors_count(),
+
+            'total_area': p.body.print_total_area() or u'неизвестно',
+            'living_area': p.body.print_living_area() or u'неизвестно',
+            'kitchen_area': p.body.print_kitchen_area(),
+
+            'rooms_count': p.body.print_rooms_count() or u'неизвестно',
+            'bedrooms_count': p.body.print_bedrooms_count(),
+            'vcs_count': p.body.print_vcs_count(),
+            'balconies_count': p.body.print_balconies_count(),
+            'loggias_count': p.body.print_loggias_count(),
+            'ceiling_height': p.body.print_ceiling_height(),
+
+            'facilities': p.body.print_facilities() or u'неизвестно',
+            'communications': p.body.print_communications(),
+            'buildings': p.body.print_provided_add_buildings(),
+            'showplaces': p.body.print_showplaces()
+        }
+
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+                'sale_terms': p.sale_terms.print_add_terms()
+            })
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+                'rent_facilities': p.rent_terms.print_facilities()
+            })
+        return description
+
+
+    @staticmethod
+    def compose_house_description(p):
+        description = {
+            'title': p.body.print_title(),
+            'description': p.body.print_description(),
+
+            'market_type': p.body.print_market_type(),
+            'condition': p.body.print_condition(),
+
+            'total_area': p.body.print_total_area() or u'неизвестно',
+            'living_area': p.body.print_living_area() or u'неизвестно',
+            'kitchen_area': p.body.print_kitchen_area(),
+
+            'floors_count': p.body.print_floors_count() or u'неизвестно',
+            'rooms_count': p.body.print_rooms_count() or u'неизвестно',
+            'bedrooms_count': p.body.print_bedrooms_count(),
+            'vcs_count': p.body.print_vcs_count(),
+
+            'facilities': p.body.print_facilities(),
+            'communications': p.body.print_communications(),
+            'buildings': p.body.print_provided_add_buildings(),
+            'showplaces': p.body.print_showplaces()
+        }
+
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+                'sale_terms': p.sale_terms.print_add_terms()
+            })
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+                'rent_facilities': p.rent_terms.print_facilities()
+            })
+        return description
+
+
+    @staticmethod
+    def compose_room_description(p):
+        description = {
+            'title': p.body.print_title(),
+            'description': p.body.print_description(),
+
+            'market_type': p.body.print_market_type(),
+            'building_type': p.body.print_building_type(),
+
+
+            'build_year': p.body.print_build_year(),
+            'rooms_planning': p.body.print_rooms_planning(),
+            'condition': p.body.print_condition(),
+
+            'floor': p.body.print_floor(),
+            'floors_count': p.body.print_floors_count(),
+
+            'total_area': p.body.print_total_area() or u'неизвестно',
+            'living_area': p.body.print_living_area() or u'неизвестно',
+            'kitchen_area': p.body.print_kitchen_area(),
+
+            'rooms_count': p.body.print_rooms_count() or u'неизвестно',
+            'facilities': p.body.print_facilities(),
+            'communications': p.body.print_communications(),
+            'buildings': p.body.print_provided_add_buildings(),
+            'showplaces': p.body.print_showplaces()
+        }
+
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+                'sale_terms': p.sale_terms.print_add_terms()
+            })
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+                'rent_facilities': p.rent_terms.print_facilities()
+            })
+        return description
+
+
+    @staticmethod
+    def compose_trade_description(p):
+        description = {
+            'title': p.body.print_title(),
+            'description': p.body.print_description(),
+
+            'market_type': p.body.print_market_type(),
+            'building_type': p.body.print_building_type(),
+            'build_year': p.body.print_build_year(),
+            'condition': p.body.print_condition() or u'неизвестно',
+
+            'floor': p.body.print_floor(),
+            'floors_count': p.body.print_floors_count(),
+
+            'halls_count': p.body.print_halls_count() or u'неизвестно',
+            'halls_area': p.body.print_halls_area() or u'неизвестно',
+            'total_area': p.body.print_total_area() or u'неизвестно',
+
+            'vcs_count': p.body.print_vcs_count(),
+            'ceiling_height': p.body.print_ceiling_height(),
+
+            'facilities': p.body.print_facilities(),
+            'communications': p.body.print_communications(),
+            'buildings': p.body.print_provided_add_buildings(),
+            'showplaces': p.body.print_showplaces()
+        }
+
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+                'sale_terms': p.sale_terms.print_add_terms(),
+            })
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+            })
+        return description
+
+
+    @staticmethod
+    def compose_office_description(p):
+        description = {
+            'title': p.body.print_title(),
+            'description': p.body.print_description(),
+
+            'market_type': p.body.print_market_type(),
+            'building_type': p.body.print_building_type(),
+            'build_year': p.body.print_build_year(),
+            'condition': p.body.print_condition() or u'неизвестно',
+
+            'floor': p.body.print_floor() or u'неизвестно',
+            'floors_count': p.body.print_floors_count(),
+            'cabinets_count': p.body.print_cabinets_count() or u'неизвестно',
+            'total_area': p.body.print_total_area(),
+            'vcs_count': p.body.print_vcs_count(),
+            'ceiling_height': p.body.print_ceiling_height(),
+
+            'facilities': p.body.print_facilities(),
+            'communications': p.body.print_communications(),
+            'buildings': p.body.print_provided_add_buildings(),
+            'showplaces': p.body.print_showplaces()
+        }
+
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+                'sale_terms': p.sale_terms.print_add_terms(),
+            })
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+                'rent_facilities': p.rent_terms.print_facilities()
+            })
+        return description
+
+
+    @staticmethod
+    def compose_warehouse_description(p):
+        description = {
+            'title': p.body.print_title(),
+            'description': p.body.print_description(),
+
+            'market_type': p.body.print_market_type(),
+            'halls_area': p.body.print_halls_area(),
+            'plot_area': p.body.print_plot_area(),
+            'driveways': p.body.print_driveways(),
+
+            'facilities': p.body.print_facilities(),
+            'communications': p.body.print_communications(),
+            'buildings': p.body.print_provided_add_buildings(),
+            'showplaces': p.body.print_showplaces()
+        }
+
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+                'sale_terms': p.sale_terms.print_add_terms(),
+            })
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+            })
+        return description
+
+
+    @staticmethod
+    def compose_business_description(p):
+        description = {
+            'title': p.body.print_title(),
+            'description': p.body.print_description(),
+
+            'monthly_cost': p.body.print_monthly_cost(),
+            'annual_receipts': p.body.print_annual_receipts(),
+            'age': p.body.print_age(),
+            'workers_count': p.body.print_workers_count(),
+            'share': p.body.print_share(),
+            'building_type': p.body.print_building_type(),
+            'build_year': p.body.print_build_year(),
+            'condition': p.body.print_condition() or u'неизвестно',
+            'floor': p.body.print_floor(),
+            'floors_count': p.body.print_floors_count(),
+
+            'total_area': p.body.print_total_area() or u'неизвестно',
+            'plot_area': p.body.print_plot_area(),
+            'halls_area': p.body.print_halls_area(),
+
+            'facilities': p.body.print_facilities(),
+            'communications': p.body.print_communications(),
+            'buildings': p.body.print_add_buildings(),
+            'showplaces': p.body.print_showplaces()
+        }
+
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+                'sale_terms': p.sale_terms.print_add_terms(),
+            })
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+            })
+        return description
+
+
+    @staticmethod
+    def compose_garage_description(p):
+        description = {
+            'title': p.body.print_title(),
+            'description': p.body.print_description(),
+            'market_type': p.body.print_market_type(),
+            'area': p.body.print_area() or u'неизвестно',
+            'ceiling_height': p.body.print_ceiling_height() or u'неизвестно',
+            'pit': u'есть' if p.body.pit else u'',
+            'driveways': p.body.print_driveways(),
+            'facilities': p.body.print_facilities(),
+        }
+
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+                'sale_terms': p.sale_terms.print_add_terms(),
+            })
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+            })
+        return description
+
+
+    @staticmethod
+    def compose_land_description(p):
+        description = {
+            'title': p.body.print_title(),
+            'description': p.body.print_description(),
+            'area': p.body.print_area() or u'неизвестно',
+            'driveways': p.body.print_driveways(),
+            'facilities': p.body.print_facilities(),
+            'buildings': p.body.print_provided_add_buildings(),
+            'showplaces': p.body.print_showplaces()
+        }
+
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+                'sale_terms': p.sale_terms.print_add_terms(),
+            })
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+            })
+        return description
+
 
 
 class PublishedDataSource(object):
