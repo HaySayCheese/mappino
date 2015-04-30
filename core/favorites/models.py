@@ -1,4 +1,5 @@
 import json
+from core.favorites.exceptions import InvalidCustomer
 from django.db import models
 from core.customers.models import Customers
 
@@ -31,21 +32,37 @@ class Favorites(models.Model):
     def remove(cls, customer_id, tid, hash_id):
         """
         Removes publication from customer's favorites.
-        :param customer_id (int):
-        :param tid (int): type of publications, for example : 0 for flat, 1 for house
-        :param hash_id (string): publication's hash_id.
+
+        :type customer_id int, unicode
+        :param customer_id: real id of the customer.
+
+        :type tid int
+        :param tid: type of the publication.
+
+        :type hash_id unicode, str
+        :param hash_id: publication's hash_id
+
+        :returns
+            True - if publication with exact id was deleted from the favorites publication of the customer.
+            False - if no such publication is exist in customer's favorites.
         """
         try:
             record = Favorites.objects.filter(customer_id=customer_id).only('publications_ids')[:1][0]
+        except IndexError:
+            raise InvalidCustomer('No customer with such id.')
 
-            publications_ids = json.loads(record.publications_ids)
 
+        publications_ids = json.loads(record.publications_ids)
+        try:
             publications_ids.remove("{tid}:{hash_id}".format(tid=tid, hash_id=hash_id))
-            record.publications_ids = json.dumps(publications_ids)
-            record.save()
+        except ValueError:
+            return False
 
-        except Exception:
-            pass  # note :Have to return our own exceptions
+
+        record.publications_ids = json.dumps(publications_ids)
+        record.save()
+        return True
+
 
     @classmethod
     def exist(cls, customer_id, tid, hash_id):
