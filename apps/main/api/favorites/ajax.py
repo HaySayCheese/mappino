@@ -7,6 +7,7 @@ from collective.http.responses import *
 from collective.methods.request_data_getters import angular_parameters
 from core.customers.models import Customers
 from core.favorites.models import Favorites
+from core.publications.models import HEAD_MODELS
 
 
 class FavoritesBaseView(object):
@@ -50,11 +51,13 @@ class FavoritesListView(FavoritesBaseView, View):
 
         try:
             favorite = Favorites.objects\
-                           .filter(customer_hash_id=customer_hash_id)\
+                           .filter(customer__hash_id=customer_hash_id)\
                            .only('publications_ids')[:1][0]
         except IndexError:
             return cls.CommonResponses.invalid_customers_hash_id()
 
+
+        publications_info = cls.get_information_about_publication(favorite)
         return cls.Get.ok(favorite)
 
 
@@ -81,6 +84,23 @@ class FavoritesListView(FavoritesBaseView, View):
         favorite = Favorites.objects.get_or_create(customer_id=customer_id)[0]
         favorite.add(customer_id, tid, hash_id)
         return cls.Post.ok()
+
+    @classmethod
+    def get_information_about_publication(cls,favorite):
+        try:
+            publications_ids = json.loads(favorite.publications_ids)
+            list_with_publications_ids = [publication_ids.split(":",2) for publication_ids in publications_ids]
+            list_with_publications_ids = [[int(publication_ids[0]),publication_ids[1]] for publication_ids in list_with_publications_ids]
+            list_with_publication_info = []
+            for publication_ids in list_with_publications_ids:
+                publication_model = HEAD_MODELS[publication_ids[0]]
+                publication = publication_model.objects.get(hash_id = publication_ids[1])
+                photo = publication.photos()
+                list_with_publication_info.append(publication.body.title)
+
+        except Exception as e:
+            pass
+        return list_with_publication_info
 
 
     class Get(object):
