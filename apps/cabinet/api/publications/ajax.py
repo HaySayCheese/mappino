@@ -5,11 +5,13 @@ import json
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.http.response import HttpResponse, HttpResponseBadRequest
 
-from apps.classes import CabinetView
+from collective.http.responses import HttpJsonResponseBadRequest, HttpJsonResponse
 from collective.methods.request_data_getters import angular_parameters
+
+from apps.classes import CabinetView
 from core.publications import classes
+from core.publications.exceptions import PhotosHandlerExceptions
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS
-from core.publications.abstract_models import PhotosModel
 from core.publications.models_signals import record_updated
 from core.publications.update_methods.flats import update_flat
 from core.publications.update_methods.houses import update_house
@@ -393,91 +395,128 @@ class Publications(object):
 
 
     class UploadPhoto(CabinetView):
-        post_codes = {
-            'OK': {
-                'code': 0,
-                'image': None,  # image data here
-            },
-            'invalid_tid': {
-                'code': 1,
-            },
-            'invalid_hid': {
-                'code': 2,
-            },
-            'empty_request': {
-                'code': 3,
-            },
-            'too_large': {
-                'code': 4,
-            },
-            'too_small': {
-                'code': 5,
-            },
-            'unsupported_type': {
-                'code': 6,
-            },
-            'unknown_error': {
-                'code': 7,
-            },
-        }
+        class PostResponses(object):
+            @staticmethod
+            def ok(photo):
+                return HttpJsonResponse({
+                    'code': 0,
+                    'message': 'OK',
+                    'data': {
+                        'hash_id': photo.hash_id,
+                        'is_title': photo.check_is_title(),
+                        'thumbnail': photo.big_thumb_url,
+                    }
+                })
 
 
-        def post(self, request, *args):
+            @staticmethod
+            def invalid_tid():
+                return HttpJsonResponseBadRequest({
+                    'code': 1,
+                    'message': 'request does not contains param "tid", or it is invalid.'
+                })
+
+
+            @staticmethod
+            def invalid_hash_id():
+                return HttpJsonResponseBadRequest({
+                    'code': 2,
+                    'message': 'request does not contains param "hash_id" or it is invalid.'
+                })
+
+
+            @staticmethod
+            def image_is_absent():
+                return HttpJsonResponseBadRequest({
+                    'code': 3,
+                    'message': 'request does not contains image file "file". '
+                })
+
+
+            @staticmethod
+            def image_is_too_large():
+                return HttpJsonResponseBadRequest({
+                    'code': 4,
+                    'message': 'request contains image that is greater than max. allowable.'
+                })
+
+
+            @staticmethod
+            def image_is_too_small():
+                return HttpJsonResponseBadRequest({
+                    'code': 5,
+                    'message': 'request contains image that is smaller than min. allowable.'
+                })
+
+
+            @staticmethod
+            def unsupported_image_type():
+                return HttpJsonResponseBadRequest({
+                    'code': 6,
+                    'message': 'request contains image of unsupported type.'
+                })
+
+            # ...
+            # other response handlers goes here
+            # ...
+
+
+            @staticmethod
+            def unknown_error():
+                return HttpJsonResponseBadRequest({
+                    'code': 100,
+                    'message': 'unknown error occurred.'
+                })
+
+
+        @classmethod
+        def post(cls, request, *args):
             try:
-                tid, hash_id = args[0].split(':')
-                tid = int(tid)
-                # hash_id doesnt need to be converted to int
+                hash_id = args[1]
+            except IndexError:
+                return cls.PostResponses.invalid_hash_id()
+
+            try:
+                tid = int(args[0])
+                model = HEAD_MODELS[tid]
+                photos_model = PHOTOS_MODELS[tid]
             except (IndexError, ValueError):
-                return HttpResponseBadRequest('Invalid parameters.')
+                return cls.PostResponses.invalid_tid()
 
 
-            if tid not in OBJECTS_TYPES.values():
-                return HttpResponseBadRequest(
-                    json.dumps(self.post_codes['invalid_tid']), content_type='application/json')
+            try:
+                image = request.FILES['file']
+            except IndexError:
+                return cls.PostResponses.image_is_absent()
 
-            model = HEAD_MODELS[tid]
+
             try:
                 publication = model.objects.filter(hash_id=hash_id).only('id', 'owner')[:1][0]
             except IndexError:
-                return HttpResponseBadRequest(
-                    json.dumps(self.post_codes['invalid_hid']), content_type='application/json')
-
+                return cls.PostResponses.invalid_hash_id()
 
             # check owner
             if publication.owner.id != request.user.id:
+                # no http response is needed here.
+                # django will generate special error response automatically.
                 raise PermissionDenied()
 
-
             # process image
-            photos_model = PHOTOS_MODELS[tid]
             try:
-                image_data = photos_model.handle_uploaded(request, publication)
-            except PhotosModel.NoFileInRequest:
-                return HttpResponseBadRequest(
-                    json.dumps(self.post_codes['empty_request']), content_type='application/json')
+                photo_record = photos_model.add(image, publication)
+                return cls.PostResponses.ok(photo_record)
 
-            except PhotosModel.ImageIsTooLarge:
-                return HttpResponseBadRequest(
-                    json.dumps(self.post_codes['too_large']), content_type='application/json')
+            except PhotosHandlerExceptions.ImageIsTooLarge:
+                return cls.PostResponses.image_is_too_large()
 
-            except PhotosModel.ImageIsTooSmall:
-                return HttpResponseBadRequest(
-                    json.dumps(self.post_codes['too_small']), content_type='application/json')
+            except PhotosHandlerExceptions.ImageIsTooSmall:
+                return cls.PostResponses.image_is_too_small()
 
-            except PhotosModel.UnsupportedImageType:
-                return HttpResponseBadRequest(
-                    json.dumps(self.post_codes['unsupported_type']), content_type='application/json')
+            except PhotosHandlerExceptions.UnsupportedImageType:
+                return cls.PostResponses.unsupported_image_type()
 
-            except PhotosModel.ProcessingFailed:
-                return HttpResponseBadRequest(
-                    json.dumps(self.post_codes['unknown_error']), content_type='application/json')
-
-
-            # seems to be OK
-            response = copy.deepcopy(self.post_codes['OK'])  # WARN: deep copy is needed here.
-            response['image'] = image_data
-            response['title_url'] = publication.title_small_thumbnail_url()
-            return HttpResponse(json.dumps(response), content_type='application/json')
+            except PhotosHandlerExceptions.ProcessingFailed:
+                return cls.PostResponses.unknown_error()
 
 
     class Photos(CabinetView):

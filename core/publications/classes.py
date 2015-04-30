@@ -2,9 +2,8 @@
 from django.core import serializers
 
 from apps.cabinet.api.dirtags.models import DirTags
-from collective.exceptions import RuntimeException, InvalidArgument
+from collective.exceptions import RuntimeException
 from core.publications.constants import OBJECTS_TYPES
-
 
 
 class PublishedDataSource(object):
@@ -29,34 +28,32 @@ class PublishedDataSource(object):
 
     def format(self, tid, p):
         """
+        :type tid int
         :param tid: type id of the publication.
+
         :param p: head-record of the publication.
+
         :return:
             dict with two main sections:
                 head - all system information about publication, such as photos and tags.
                 data - formatted text information about publication.
+
         :raises:
             InvalidArgument: p is incorrect.
             RuntimeException: broken list of data generators.
         """
-
-        if tid not in OBJECTS_TYPES.values():
-            raise InvalidArgument('@p is absent in OBJECT_TYPES.')
-
-
-        generator = self.data_generators.get(tid, None)
-        if generator is None:
+        description_generator = self.data_generators.get(tid, None)
+        if description_generator is None:
             raise RuntimeException('Missed formatter.')
 
+        result = dict()
+        result.update(self.base_generator(p, tid))
+
         # noinspection PyCallingNonCallable
-        result = {
-            'head': self.base_generator(p, tid),
-            'data': generator(p),
-        }
+        result.update(description_generator(p))
 
         # clearing the results from all empty and None entries, that potentially can occurs
-        result['head'].update((k, v) for k, v in result['head'].iteritems() if v is not None)
-        result['data'].update((k, v) for k, v in result['data'].iteritems() if v is not None)
+        result.update((k, v) for k, v in result.iteritems() if v is not None)
 
         return result
 
@@ -66,20 +63,16 @@ class PublishedDataSource(object):
         """
         :param p: head-record of the publication.
         :param tid: type id of the record.
-        :return: dictionary with common data for all types of publication,
-                 such as photos and tags.
+        :return: dictionary with common data for all types of publication.
         """
-        result = {
+        return {
             'state_sid': p.state_sid,
-            'photos': p.photos_dict(),
+            'tags': {
+                # on a frontend tags are handled as boolean values,
+                # so with tag id we need to send fake boolean True value.
+                tag.id: True for tag in DirTags.contains_publications(tid, [p.id])
+            }
         }
-
-        tags = DirTags.contains_publications(tid, [p.id])
-        result['tags'] = {
-            tag.id: True for tag in tags
-        }
-
-        return result
 
 
     @staticmethod
