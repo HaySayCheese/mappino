@@ -1,14 +1,16 @@
 # coding=utf-8
 from django.views.generic import View
 
+from apps.classes import CustomerView
 from collective.http.responses import HttpJsonResponseBadRequest, HttpJsonResponse, HttpJsonResponseNotFound
 from collective.methods.request_data_getters import angular_post_parameters
+from core.favorites.models import Favorites
 from core.claims.classes import ClaimsManager
 from core.publications import classes
 from core.publications.constants import HEAD_MODELS
 
 
-class DetailedView(View):
+class DetailedView(CustomerView):
     # this is a description generator for the publications.
     formatter = classes.PublishedDataSource()
 
@@ -69,7 +71,20 @@ class DetailedView(View):
             return self.GetResponses.publication_is_unpublished()
 
 
+
         description = self.formatter.format(tid, publication)
+
+        # check if this publication is listed in customers favorites
+        description['added_to_favorites'] = False
+
+        try:
+            customer = self.get_customer_queryset(request)[0]
+            if Favorites.exist(customer.id, tid, hash_id):
+                description['added_to_favorites'] = True
+        except IndexError:
+            pass
+
+
         return self.GetResponses.ok(description)
 
 
