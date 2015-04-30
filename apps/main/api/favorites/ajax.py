@@ -71,9 +71,9 @@ class FavoritesListView(FavoritesBaseView, View):
             return cls.CommonResponses.invalid_customers_hash_id()
 
         try:
-            params = angular_parameters(request, ['tid', 'hid'])
-            tid = params['tid']
-            hash_id = params['hid']
+            params = angular_parameters(request, ['id'])
+            tid, hid = params['id'].split(':')
+            tid = int(tid)
         except ValueError:
             return cls.CommonResponses.absent_publications_id()
 
