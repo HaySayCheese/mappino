@@ -265,9 +265,8 @@ class PublicationsPhotosHandler(object):
     @classmethod
     def remove_photo_from_google_cloud_storage(cls, bucket_file_path):
         """
-        :type bucket_file_path str
+        :type bucket_file_path str, unicode
         :param bucket_file_path:
-        :return:
         """
         try:
             root_index = bucket_file_path.index(cls.bucket_root_path)
