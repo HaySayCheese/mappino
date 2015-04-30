@@ -81,7 +81,7 @@ gulp.task('Copy:Fonts', function() {
 
 /** Task Copy:Images: Copy images to build folder **/
 gulp.task('Copy:Images', function() {
-    gulp.src(PATHS.SOURCE.IMAGES + '/**/*.{png,jpg,jpeg}')
+    gulp.src(PATHS.SOURCE.IMAGES + '/**/*.{png,jpg,jpeg,gif}')
         .pipe(gulp.dest(PATHS.BUILD.IMAGES));
 });
 
