@@ -1,0 +1,367 @@
+
+//
+// Load core variables and mixins
+// --------------------------------------------------
+
+@import "../../components/bootstrap/variables";
+@import "../../components/bootstrap/mixins.less";
+
+
+// блок меню
+.sidebar-menu {
+    .size(280px, 100%);
+    float: left;
+
+    .sidebar-menu-header {
+        .size(100%, 65px);
+        background: @nice-blue;
+
+        .logo-btn {
+            width: 65px;
+            border-right-color: darken(@nice-blue, 5%);
+            background-image: url("../../images/cabinet/sidebar-menu/marker.png");
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+
+        .create-publication-btn {
+            width: 215px;
+        }
+    }
+
+    .sidebar-menu-body {
+        .size(100%, calc(~"100% - 65px"));
+        position: relative;
+        overflow: hidden;
+        background: #2e3b42;
+    }
+
+    .new-pub-panel {
+        .size(100%, auto);
+        padding: 15px;
+        background: #f5f3ef;
+
+        .bootstrap-select {
+            margin-bottom: 0;
+        }
+
+        .checkbox {
+            margin: 0 10px 5px 20px;
+
+            + .checkbox {
+                margin-top: 0;
+            }
+        }
+    }
+}
+
+
+// блок меню з заголовком і списком пунктів
+.menu-block {
+    display: block;
+
+    &:not(:nth-child(2)) {
+        margin-top: 30px;
+    }
+
+    &:nth-child(4) {
+        padding-bottom: 30px;
+    }
+
+    .tags-loader {
+        .size(100%, 12px);
+        display: block;
+
+        background: url("../../images/cabinet/loaders/sidebar-menu-loader.gif") center center no-repeat;
+    }
+
+    // панель створення/редагування тегів
+    .tag-edit-panel {
+        .size(100%, auto);
+        position: relative;
+
+        padding: 5px 15px 15px 15px;
+        margin-top: 8px;
+
+        color: #9095a2;
+        background: #F8F8F8;
+
+        &.state-edit:after,
+        &.state-create:after {
+            content: " ";
+
+            position: absolute;
+            top: -8px;
+
+            width: 0;
+            height: 0;
+
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid #f5f3ef;
+        }
+        &.state-edit:after {
+            left: 30%;
+        }
+        &.state-create:after {
+            left: 80%;
+        }
+
+        .form-group {
+            margin-top: 15px;
+        }
+
+        .pick-color-box {
+            display: block;
+
+            margin-bottom: 15px;
+
+            .color-item {
+                .square(20px);
+                display: inline-block;
+
+                cursor: pointer;
+                border: 1px solid #E0E0E0;
+                //border-radius: @border-radius-small;
+                .box-shadow(~"inset 0 0 0 2px #ffffff");
+
+                &:not(:last-child) {
+                    margin-right: 10px;
+                }
+            }
+        }
+
+        .btn-group {
+            margin-top: 20px;
+        }
+
+        .input-has-error {
+            display: inline-block;
+            margin: 5px 0;
+            color: #f3a047;
+            font-size: 12px;
+        }
+    }
+
+    .tags-empty {
+        .size(calc(~"100% - 70px"), 100px);
+        position: relative;
+
+        margin: 35px;
+
+        text-align: center;
+        font-size: @font-size-base;
+
+        color: @gray-light;
+        border: 2px dashed @gray-light;
+        border-radius: 15px;
+
+        span {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            .translate(0, -50%);
+        }
+    }
+}
+// заголовок меню
+.menu-block-header {
+    display: block;
+    position: relative;
+
+    padding: 15px 35px 15px 80px;
+    margin-bottom: 20px;
+
+    color: @gray-light;
+    background: #29343a;
+
+    font-size: @font-size-large;
+
+    &:after {
+        content: " ";
+
+        position: absolute;
+        top: 100%;
+        left: 35px;
+
+        width: 0;
+        height: 0;
+
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 8px solid #29343a;
+    }
+
+    &.icon-pubs,
+    &.icon-tags,
+    &.icon-user {
+        background-position: 28px center;
+        background-repeat: no-repeat;
+    }
+    &.icon-pubs {
+        background-image: url("../../images/cabinet/sidebar-menu/pubs.png");
+    }
+    &.icon-tags {
+        background-image: url("../../images/cabinet/sidebar-menu/tags.png");
+    }
+    &.icon-user {
+        background-image: url("../../images/cabinet/sidebar-menu/user.png");
+    }
+
+    .edit-tag-btn {
+        position: absolute;
+        top: 17px;
+        right: 17px;
+
+        padding: 4px 9px;
+        margin-top: -2px;
+
+        cursor: pointer;
+        font-size: @font-size-small;
+
+        background: #2e3b42;
+        border-radius: @border-radius-large;
+        .transition(~"background 0.1s ease");
+
+        &:hover,
+        &:focus {
+            background: darken(#2e3b42, 2%);
+        }
+    }
+}
+
+// список пунктів меню
+.menu-block-list {
+    display: block;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+
+    .menu-block-list-controls {
+        position: absolute;
+        top: calc(~"50% - (16px / 2)");
+        right: 10px;
+    }
+    .menu-block-list-controls .menu-icon {
+        height: 16px;
+        margin-right: 5px;
+        cursor: pointer;
+
+        .opacity(0);
+
+        &:hover,
+        &:focus {
+            .opacity(1) !important;
+        }
+    }
+
+    &.tags-list li {
+        &:hover,
+        &:focus {
+            .badge {
+                .opacity(0)
+            }
+        }
+    }
+
+    li {
+        position: relative;
+        .opacity(0.6);
+        .transition(~"opacity 0.1s ease");
+
+        &:hover,
+        &:focus {
+            .opacity(0.8);
+
+            .menu-block-list-controls .menu-icon {
+                .opacity(0.8);
+            }
+        }
+        &.active {
+            .opacity(1);
+        }
+    }
+
+    a {
+        display: block;
+        position: relative;
+        padding: 7px 50px 7px 35px;
+
+        color: #babec1;
+        font-size: 16px;
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        text-decoration: none;
+
+        .badge {
+            min-width: 30px;
+            position: absolute;
+            top: 8px;
+            right: 15px;
+        }
+    }
+
+    .menu-icon {
+        .square(16px);
+
+        display: inline-block;
+        margin-bottom: -2px;
+        margin-right: 10px;
+
+        background-size: 16px;
+        background-position: center center;
+        background-repeat: no-repeat;
+
+        &.icon-add {
+            background-image: url("../../images/cabinet/sidebar-menu/add.png");
+        }
+        &.icon-all-pubs {
+            background-image: url("../../images/cabinet/sidebar-menu/all-pubs.png");
+        }
+        &.icon-published-pubs {
+            background-image: url("../../images/cabinet/sidebar-menu/published-pubs.png");
+        }
+        &.icon-unpublished-pubs {
+            background-image: url("../../images/cabinet/sidebar-menu/unpublished-pubs.png");
+        }
+        &.icon-deleted-pubs {
+            background-image: url("../../images/cabinet/sidebar-menu/deleted-pubs.png");
+        }
+
+
+        &.icon-support {
+            background-image: url("../../images/cabinet/sidebar-menu/support.png");
+        }
+        &.icon-settings {
+            background-image: url("../../images/cabinet/sidebar-menu/settings.png");
+        }
+
+        &.icon-edit {
+            background-image: url("../../images/cabinet/sidebar-menu/edit.png");
+        }
+        &.icon-delete {
+            background-image: url("../../images/cabinet/sidebar-menu/del.png");
+        }
+    }
+
+    .tag-icon {
+        .square(16px);
+        display: inline-block;
+
+        margin-bottom: -2px;
+        margin-right: 10px;
+
+        border-width: 3px;
+        border-style: solid;
+        border-color: transparent;
+
+        border-radius: 50%;
+        background: transparent;
+    }
+}

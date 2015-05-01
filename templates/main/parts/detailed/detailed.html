@@ -6,33 +6,36 @@
                 <a href="#" class="publication-close" data-dismiss="modal" role="button">
                     <span class="glyphicon glyphicon-remove"></span>
                 </a>
-                <a ng-href class="add-to-bookmark" role="button">
-                    <span class="glyphicon glyphicon-star-empty"
-                            ng-class="{ 'active': publication.added_to_favorites }"
-                            ng-click="toggleFavorite($event)"></span>
+                <a ng-href class="add-to-bookmark" role="button" ng-class="{ 'added': publication.added_to_favorites }">
+                    <span class="glyphicon"
+                          ng-class="{ 'glyphicon-star': publication.added_to_favorites, 'glyphicon-star-empty': !publication.added_to_favorites }"
+                          ng-click="toggleFavorite($event)"></span>
                 </a>
 
                 <div id="publication-slider" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner" role="listbox">
                         <div class="item title-photo active">
-                            <!--<img src="{{ static }}img/home/home-bg-1.jpg" alt=""/>-->
                             <img ng-src="[[ publication.photos[0] ]]" alt=""/>
+                            <div class="photo-overlay"></div>
+                        </div>
+                        <div class="item" ng-repeat="photo in publication.photos">
+                            <img ng-src="[[ photo ]]" alt=""/>
                             <div class="photo-overlay"></div>
                         </div>
                     </div>
 
-                    <a href="#" class="slider-resize to-full" role="button" ng-click="toggleSlider()">
+                    <a ng-href class="slider-resize to-full" role="button" ng-click="toggleSlider()">
                         <span class="glyphicon glyphicon-fullscreen"></span>
                     </a>
-                    <a href="#" class="slider-resize to-small" role="button" ng-click="toggleSlider()">
+                    <a ng-href class="slider-resize to-small" role="button" ng-click="toggleSlider()">
                         <span class="glyphicon glyphicon-resize-small"></span>
                     </a>
 
-                    <a class="left carousel-control" href="#publication-slider" role="button" data-slide="prev"
+                    <a ng-href class="left carousel-control" href="#publication-slider" role="button" data-slide="prev"
                        ng-click="$event.preventDefault()">
                         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
                     </a>
-                    <a class="right carousel-control" href="#publication-slider" role="button" data-slide="next"
+                    <a ng-href class="right carousel-control" href="#publication-slider" role="button" data-slide="next"
                        ng-click="$event.preventDefault()">
                         <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                     </a>
@@ -208,7 +211,7 @@
                             <div class="col-xs-4">
                                 <div class="seller-photo" ng-show="contactsLoaded">
                                     <img ng-src="[[ seller.contacts.avatar_url ]]" ng-show="seller.contacts.avatar_url"/>
-                                    <img src="{{ static }}img/main/publication-view/no-user.png" ng-hide="seller.contacts.avatar_url"/>
+                                    <img src="{{ static }}build/images/main/publication-view/no-user.png" ng-hide="seller.contacts.avatar_url"/>
                                 </div>
                             </div>
 

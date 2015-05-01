@@ -1,0 +1,48 @@
+//
+// Load core variables and mixins
+// --------------------------------------------------
+
+@import "../bootstrap/variables";
+@import "../bootstrap/mixins";
+
+
+.tabs {
+    .size(100%, 44px);
+    padding: 0 50px;
+    background: #f2f1ef;
+    border-bottom: 1px solid #e5e1d9;
+}
+
+
+
+.tabs-list {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    .clearfix();
+
+    > .tab {
+        padding: 10px 25px;
+        margin-bottom: -1px;
+        float: left;
+        cursor: pointer;
+        border-bottom: 4px solid rgba(0,0,0,0);
+        .transition(~"all 0.2s ease");
+
+        &.-blue.active,
+        &.-blue:hover:not(.active) {
+            border-bottom-color: @nice-blue;
+        }
+
+        &.-green.active,
+        &.-green:hover:not(.active) {
+            border-bottom-color: @nice-green;
+        }
+
+        &.-violet.active,
+        &.-violet:hover:not(.active) {
+            border-bottom-color: @nice-violet;
+        }
+    }
+}

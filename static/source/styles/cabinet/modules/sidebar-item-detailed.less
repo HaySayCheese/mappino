@@ -1,0 +1,263 @@
+
+//
+// Load core variables and mixins
+// --------------------------------------------------
+
+@import "../../components/bootstrap/variables";
+@import "../../components/bootstrap/mixins.less";
+
+/**
+* sidebar-item-detailed styles
+**/
+.sidebar-item-detailed {
+    .size(calc(~"100% - 580px"), 100%);
+    float: left;
+
+    .sidebar-item-detailed-header {
+        .size(100%, 65px);
+        background: #ffffff;
+        border-bottom: 1px solid @gray-lighter;
+
+        .publication-controls {
+            display: inline-block;
+            position: relative;
+
+            .btn:not(:first-child) {
+                margin-left: -4px;
+            }
+
+            .publish-btn,
+            .new-ticket-btn {
+                color: @nice-green !important;
+            }
+        }
+
+        .btn-link {
+            &:hover,
+            &:focus,
+            &:active {
+                color: darken(@nice-green, 10%) !important;
+                > * {
+                    &:after {
+                        .opacity(1);
+                    }
+                }
+            }
+            &:not(.btn-exit) {
+                color: #c2c2c2;
+                border-right: 1px solid @gray-lighter;
+            }
+        }
+
+        .bootstrap-select {
+            margin: 0;
+        }
+
+        &.without-sidebar-list {
+            .size(calc(~"100% + 300px"), 65px);
+        }
+    }
+
+    .sidebar-item-detailed-body {
+        .size(100%, calc(~"100% - 65px"));
+        position: relative;
+        overflow: hidden;
+        background: #ffffff;
+
+        .detailed-container {
+            .square(100%);
+            position: relative;
+            overflow: hidden;
+
+            div[class*='col-'].ng-scope {
+                padding-bottom: 30px;
+            }
+
+            @media (min-width: 1920px) {
+                padding: 0 100px;
+            }
+        }
+
+        &.without-sidebar-list {
+            .size(calc(~"100% + 300px"), calc(~"100% - 65px"));
+        }
+    }
+
+    h3 {
+        padding: 10px 0;
+        font-weight: bold;
+        border-bottom: 1px solid @gray-lighter;
+
+        &:not(:first-child) {
+            margin-top: 40px;
+        }
+
+        @media (max-width: @screen-md-max) {
+            padding-left: 15px;
+        }
+    }
+    h4 {
+        padding: 10px 0 0 30px;
+        font-weight: bold;
+        color: @gray-light;
+    }
+
+    .input-has-error {
+        display: inline-block;
+        margin: 5px 0;
+        color: #f3a047;
+        font-size: 12px;
+    }
+
+    .form-horizontal .form-group {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .load-detailed {
+        .size(100%, 12px);
+        display: block;
+        margin: 35px 0;
+        background: url("../../images/cabinet/loaders/sidebar-list-and-detailed-loader.gif") center center no-repeat;
+    }
+
+    .detailed-empty {
+        .size(250px, 150px);
+        position: relative;
+        margin-top: 35px;
+
+        text-align: center;
+        font-size: @font-size-base;
+
+        border: 2px dashed @gray-lighter;
+        border-radius: 15px;
+        .center-block();
+
+        span {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            .translate(0, -50%);
+        }
+    }
+
+    .required-star {
+        color: @nice-red;
+        margin-right: 5px;
+    }
+
+    .without-margin-bottom {
+        margin-bottom: 0;
+    }
+
+    #publication-map {
+        .size(100%, 400px);
+        display: block;
+        border: 1px solid @gray-lighter;
+    }
+
+    .chart-block {
+        .size(100%, 300px);
+        padding: 0 20px;
+    }
+
+    .modal-dialog {
+        z-index: 1050;
+    }
+
+    form > .row:last-child {
+        margin-bottom: 50px;
+    }
+
+    .input-group-addon {
+        min-width: 70px;
+    }
+
+    .row-margin-top-sm {
+        @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
+            margin-top: 5px;
+        }
+        @media (min-width: @screen-md-min) and (max-width: @screen-md-max) {
+            margin-top: 5px;
+        }
+    }
+
+    .other-properties {
+        display: block;
+        margin-top: 10px;
+    }
+    .section-header {
+        font-weight: bold;
+    }
+    .property-price {
+        font-size: @font-size-h4;
+        font-weight: bold;
+        line-height: @line-height-computed;
+        margin-top: 20px;
+    }
+
+    table > tr {
+        > td:first-child {
+            text-align: right;
+        }
+        > td:last-child {
+            padding-left: 10px;
+        }
+    }
+
+    .img-hint-padding {
+        &.left-bottom {
+            margin: 0 0 22px 25px;
+        }
+        &.right-bottom {
+            margin: 0 22px 25px 0;
+        }
+    }
+
+    .btn-icon-sections,
+    .btn-icon-exit,
+    .btn-icon-remove {
+        .square(16px);
+        position: relative;
+        display: inline-block;
+        background-repeat: no-repeat;
+        background-position: center top;
+
+        &:after {
+            content: " ";
+            .square(16px;);
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            background-repeat: no-repeat;
+            background-position: center -16px;
+
+            .opacity(0);
+            .transition(~"opacity 0.2s ease");
+        }
+    }
+    .btn-icon-sections {
+        background-image: url("../../images/cabinet/sidebar-item-detailed/sections.png");
+        &:after {
+            background-image: url("../../images/cabinet/sidebar-item-detailed/sections.png");
+        }
+    }
+    .btn-icon-exit {
+        background-image: url("../../images/cabinet/sidebar-item-detailed/exit.png");
+        &:after {
+            background-image: url("../../images/cabinet/sidebar-item-detailed/exit.png");
+        }
+    }
+    .btn-icon-remove {
+        background-image: url("../../images/cabinet/sidebar-item-detailed/trash.png");
+        &:after {
+            background-image: url("../../images/cabinet/sidebar-item-detailed/trash.png");
+        }
+    }
+
+
+    @import "../pages/settings";
+    @import "../pages/support";
+}

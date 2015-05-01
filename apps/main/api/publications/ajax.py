@@ -1,25 +1,48 @@
 # coding=utf-8
-import json
-from collective.http.responses import HttpJsonResponseBadRequest, HttpJsonResponse, HttpJsonResponseNotFound
-from collective.methods.request_data_getters import angular_post_parameters
-from core.claims.classes import ClaimsManager
-from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.generic import View
 
+from apps.classes import CustomerView
+from collective.http.responses import HttpJsonResponseBadRequest, HttpJsonResponse, HttpJsonResponseNotFound
+from collective.methods.request_data_getters import angular_post_parameters
+from core.favorites.models import Favorites
+from core.claims.classes import ClaimsManager
 from core.publications import classes
 from core.publications.constants import HEAD_MODELS
 
 
+class DetailedView(CustomerView):
+    # this is a description generator for the publications.
+    formatter = classes.PublishedDataSource()
 
-class DetailedView(View):
-    codes = {
-        'invalid_parameters': {
-            'code': 1
-        },
-        'unpublished': {
-        '   code': 2
-        }
-    }
+    class GetResponses(object):
+        @staticmethod
+        def ok(data):
+            return HttpJsonResponse({
+                'code': 0,
+                'message': 'OK',
+                'data': data,
+            })
+
+        @staticmethod
+        def invalid_tid_hid():
+            return HttpJsonResponseBadRequest({
+                'code': 1,
+                'message': 'Request contains invalid "tid" or "hid" or does not contains them at all.'
+            })
+
+        @staticmethod
+        def no_such_publication():
+            return HttpJsonResponseNotFound({
+                'code': 1,
+                'message': 'There is no publication with exact id.'
+            })
+
+        @staticmethod
+        def publication_is_unpublished():
+            return HttpJsonResponse({
+                'code': 2,
+                'message': 'This publication was unpublished.'
+            })
 
 
     def __init__(self):
@@ -28,41 +51,41 @@ class DetailedView(View):
 
 
     def get(self, request, *args):
-        try:
-            tid, hash_hid = args[0].split(':')
-            tid = int(tid)
-        except (ValueError, IndexError):
-            return HttpResponseBadRequest(
-                json.dumps(self.codes['invalid_parameters']), content_type='application/json')
+        tid, hash_id = int(args[0]), args[1]
 
         try:
             model = HEAD_MODELS[tid]
-            publication = model.objects.filter(hash_id=hash_hid).only(
-                'for_sale', 'for_rent', 'body', 'sale_terms', 'rent_terms')[:1][0]
-        except IndexError:
-            return HttpResponseBadRequest(
-                json.dumps(self.codes['invalid_parameters']), content_type='application/json')
+        except KeyError:
+            return self.GetResponses.invalid_tid_hid()
 
-        # Якщо оголошення не опубліковано — заборонити показ.
+        try:
+            publication = model.objects\
+                .filter(hash_id=hash_id)\
+                .only('for_sale', 'for_rent', 'body', 'sale_terms', 'rent_terms')[:1][0]
+        except IndexError:
+            return self.GetResponses.no_such_publication()
+
+        # check if publication is published,
+        # otherwise we must not show it
         if not publication.is_published():
-            return HttpResponse(
-                json.dumps(self.codes['unpublished']), content_type='application/json')
+            return self.GetResponses.publication_is_unpublished()
+
+
 
         description = self.formatter.format(tid, publication)
 
-        photos = publication.photos()
-        if photos:
-            description['head']['photos'] = []
-            for photo in photos:
-                if photo.is_title:
-                    description['head']['title_photo'] = photo.url() + photo.title_thumbnail_name()
-                description['head']['photos'].append(photo.url() + photo.image_name())
+        # check if this publication is listed in customers favorites
+        description['added_to_favorites'] = False
+
+        try:
+            customer = self.get_customer_queryset(request)[0]
+            if Favorites.exist(customer.id, tid, hash_id):
+                description['added_to_favorites'] = True
+        except IndexError:
+            pass
 
 
-        # Деякі із полів, згенерованих генератором видачі можуть бути пустими.
-        # Для уникнення їх появи на фронті їх слід видалити із словника опису.
-        description = dict((k, v) for k, v in description.iteritems() if (v is not None) and (v != ""))
-        return HttpResponse(json.dumps(description), content_type='application/json')
+        return self.GetResponses.ok(description)
 
 
 class Claims(object):
@@ -175,6 +198,3 @@ class Claims(object):
 
             except ClaimsManager.PublicationDoesNotExists:
                 return cls.PostResponses.publication_does_not_exists()
-
-
-

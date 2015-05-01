@@ -9,24 +9,24 @@
                     <li ng-repeat="section in publicationSections"><a href ng-click="scrollToHeader(section.href)">[[ section.title ]]</a></li>
                 </ul>
             </div>
-            <div class="btn btn-xlg btn-link publish-btn" data-loading-text="Отправка данных..." ng-show="publication.head.state_sid === 1" ng-click="publishPublication()">
+            <div class="btn -x-large -link publish-btn" data-loading-text="Отправка данных..." ng-show="publication.head.state_sid === 1" ng-click="publishPublication()">
                 Опубликовать
             </div>
-            <div class="btn btn-xlg btn-link publish-btn" data-loading-text="Отправка данных..." ng-show="publication.head.state_sid === 0" ng-click="unpublishPublication()">
+            <div class="btn -x-large -link publish-btn" data-loading-text="Отправка данных..." ng-show="publication.head.state_sid === 0" ng-click="unpublishPublication()">
                 Редактировать
             </div>
-            <div class="btn btn-xlg btn-link publish-btn" data-loading-text="Отправка данных..." ng-show="publication.head.state_sid === 2" ng-click="toUnpublishedPublication()">
+            <div class="btn -x-large -link publish-btn" data-loading-text="Отправка данных..." ng-show="publication.head.state_sid === 2" ng-click="toUnpublishedPublication()">
                 В неопубликованные
             </div>
-            <div class="btn btn-xlg btn-link remove-btn" data-loading-text="Удаление..." ng-show="publication.head.state_sid !== 2" ng-click="toTrashPublication()">
+            <div class="btn -x-large -link remove-btn" data-loading-text="Удаление..." ng-show="publication.head.state_sid !== 2" ng-click="toTrashPublication()">
                 <span class="btn-icon-remove"></span>
             </div>
-            <div class="btn btn-xlg btn-link remove-btn" data-loading-text="Удаление..." ng-show="publication.head.state_sid === 2" ng-click="removePublication()">
+            <div class="btn -x-large -link remove-btn" data-loading-text="Удаление..." ng-show="publication.head.state_sid === 2" ng-click="removePublication()">
                 <span class="btn-icon-remove"></span>
             </div>
         </div>
 
-        <div class="btn btn-link btn-xlg btn-exit pull-right" ng-click="logoutFromCabinet()">
+        <div class="btn -link -x-large btn-exit pull-right" ng-click="logoutFromCabinet()">
             <span class="btn-icon-exit"></span>
         </div>
     </div>

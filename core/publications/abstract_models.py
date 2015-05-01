@@ -1,24 +1,22 @@
 #coding=utf-8
 import uuid
+import datetime
 
-import os
-from PIL import Image
-from django.conf import settings
+from django.db.utils import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.db import models, transaction
 from django.utils.timezone import now
-import datetime
-import redis_lock
 
+from collective.utils import generate_sha256_unique_id
 from collective.exceptions import InvalidArgument, RuntimeException
+from core.users.models import Users
+from core.publications.handlers import PublicationsPhotosHandler
 from core.currencies import currencies_manager as currencies
 from core.currencies.constants import CURRENCIES as currencies_constants
 from core.publications import models_signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
-    EmptyRentPrice, EmptyPersonsCount
-from core.users.models import Users
-from mappino.wsgi import redis_connections
+    EmptyRentPrice
 
 
 class AbstractModel(models.Model):
@@ -27,7 +25,6 @@ class AbstractModel(models.Model):
 
     #-- constraints
     max_price_symbols_count = 18
-
 
     @classmethod
     def new(cls):
@@ -440,42 +437,15 @@ class AbstractHeadModel(models.Model):
         #-- body
         self.body.check_required_fields()
 
-
-    def photos_json(self):
-        result = {
-            'photos': [],
-        }
-
-        for photo in self.photos_model.objects.filter(hid=self.id).order_by('-is_title'):
-            if photo.is_title:
-                result['title_photo'] = photo.url() + photo.title_thumbnail_name()
-                result['photos'].append(photo.url() + photo.image_name())
-            else:
-                result['photos'].append(photo.url() + photo.image_name())
-        return result
-
-
-    def photos_dict(self):
-        return [{
-            'id': p.hash_id,
-            'image': p.url() + p.image_name(),
-            'thumbnail': p.url() + p.big_thumbnail_name(),
-            'is_title': p.is_title
-        } for p in self.photos_model.objects.filter(hid = self.id).order_by('-is_title')]
-
-
     def photos(self):
-        return self.photos_model.objects.filter(hid = self.id).order_by('-is_title')
+        return self.photos_model.objects.filter(publication = self.id).order_by('-is_title', '-created')
 
-
-    def title_small_thumbnail_url(self):
-        title_photo = self.photos_model.objects.filter(hid=self.id).filter(is_title=True)[:1]
-        if not title_photo:
+    def title_photo(self):
+        photos = self.photos()
+        if not photos:
             return None
 
-        photo = title_photo[0]
-        return photo.url() + photo.small_thumbnail_name()
-
+        return photos[0]
 
     def is_published(self):
         return self.state_sid == OBJECT_STATES.published()
@@ -490,7 +460,6 @@ class CommercialHeadModel(AbstractHeadModel):
         abstract = True
 
 
-
 class BodyModel(AbstractModel):
     class Meta:
         abstract = True
@@ -501,7 +470,6 @@ class BodyModel(AbstractModel):
     #-- fields
     title = models.TextField(null=True, max_length=max_title_length)
     description = models.TextField(null=True)
-
 
     def check_required_fields(self):
         """
@@ -515,14 +483,12 @@ class BodyModel(AbstractModel):
             raise EmptyDescription('Description is empty')
         self.check_extended_fields()
 
-
     def check_extended_fields(self):
         """
         Abstract.
         Призначений для валідації моделей, унаслідуваних від поточної.
         """
         return
-
 
 
 class SaleTermsModel(AbstractModel):
@@ -765,391 +731,129 @@ class CommercialRentTermsModel(AbstractModel):
 
 
 class PhotosModel(AbstractModel):
-    class NoFileInRequest(Exception): pass
-    class ImageIsTooLarge(Exception): pass
-    class ImageIsTooSmall(Exception): pass
-    class UnsupportedImageType(Exception): pass
-    class ProcessingFailed(Exception): pass
+    # todo: inherit this model from the special model to prevent manual tid handling
+    tid = None # note: override to real tid
 
+    # class variables
+    photos_handler = PublicationsPhotosHandler
 
-    #-- constraints
-    destination_dir_name = '' # @override
-    photos_dir = 'models/photos/'
-    extension = '.jpg'
-
-    # Only "uid" is stored into database. No full paths to images are stored.
-    # Therefor to distinguish images they are marked with suffixes.
-    original_photo_suffix  = 'or'
-    photo_suffix = 'p'
-    # watermark_suffix = 'w'
-    title_thumbnail_suffix = 't'
-    big_thumbnail_suffix = 'bth'
-    small_thumbnail_suffix = 'sth'
-
-
-    #-- size constraints
-    min_image_size = [300, 300]
-    max_image_size = [900, 1000]
-
-    title_thumb_size = [300, 600]
-    big_thumb_size = [300, 188]
-    small_thumb_size = [50, 50]
-
-
-    #-- fields
-    #
-    # hash_id використовується для передачі ссилок на клієнт.
-    # Передача id у відкритому вигляді небезпечна тим, що:
-    #   * полегшує повний перебір записів з таблиці по інкременту, а значить — полегшує ddos.
-    #   * відкриває внутрішню структуру таблиць в БД і наяні зв’язки.
-    hash_id = models.TextField(unique=True, default=lambda: uuid.uuid4().hex)
-
-    hid = None # @override FK()
-    uid = models.TextField(db_index=True)
-    # Розширення оригіналу зберігається,
-    # оскільки неможливо передбачити формат зображення,
-    # яке буде завантажене користувачем.
-    original_extension = models.CharField(max_length=5)
+    # fields
+    publication = None # note: override to FK(PublicationHeadModel)
+    hash_id = models.TextField(db_index=True)
+    original_image_url = models.TextField()
+    photo_url = models.TextField()
+    big_thumb_url = models.TextField()
+    small_thumb_url = models.TextField()
     is_title = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         abstract = True
+        unique_together = (('hid', 'is_title'), )
 
+    @classmethod
+    def by_publication(cls, publication_id):
+        return cls.objects.filter(hid=publication_id).order_by('-created', '-is_title')
 
-    def original_image_name(self):
-        return self.uid + self.original_photo_suffix + self.original_extension
+    @classmethod
+    def add(cls, img, publication_head):
+        """
+        Processes image "img", generates all needed thumbnails and slides,
+        and uploads it to the google cloud storage.
 
+        :param img: file object that represents an image.
+        :param publication_head: head record of the publication.
+        :returns: record of this model with newly created publication.
+        """
+        original_image_url, \
+        photo_url, \
+        big_thumb_url, \
+        small_thumb_url = cls.photos_handler.process_and_upload_to_gcs(cls.tid, img)
 
-    def image_name(self):
-        return self.uid + self.photo_suffix + self.extension
+        try:
+            return cls.objects.create(
+                publication = publication_head,
+                original_image_url = original_image_url,
+                photo_url = photo_url,
+                big_thumb_url = big_thumb_url,
+                small_thumb_url = small_thumb_url,
+            )
 
+        except DatabaseError:
+            # Images are already uploaded to the cloud storage,
+            # so we need to remove them now.
+            #
+            # Otherwise we will loose possibility to do this in the future,
+            # because all the filenames are unique (based on uuid4)
+            # and exists only now in this context.
 
-    def title_thumbnail_name(self):
-        return self.uid + self.title_thumbnail_suffix + self.extension
+            cls.photos_handler.remove_photo_from_google_cloud_storage(original_image_url)
+            cls.photos_handler.remove_photo_from_google_cloud_storage(photo_url)
+            cls.photos_handler.remove_photo_from_google_cloud_storage(big_thumb_url)
+            cls.photos_handler.remove_photo_from_google_cloud_storage(small_thumb_url)
 
+            # ...
+            # other images deletion should go here
+            # ...
 
-    # def watermark_name(self):
-    # 	return self.uid + self.__watermark_suffix + self.__extension
+            raise cls.UnknownError('Database error.')
 
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        # This method is overridden to automatically save hash_id for the photo.
+        self.hash_id = generate_sha256_unique_id(str(self.id))
+        super(PhotosModel, self).save(
+            force_insert, force_update, using, update_fields)
 
-    def big_thumbnail_name(self):
-        return self.uid + self.big_thumbnail_suffix + self.extension
+    def delete(self, using=None):
+        raise RuntimeError('This method is overridden to prevent inappropriate photo deletion. Use "remove()" instead.')
 
+    def remove(self):
+        """
+        Removes all the photos and thumbs from google cloud storage
+        """
+        self.photos_handler.remove_photo_from_google_cloud_storage(self.original_image_url)
+        self.photos_handler.remove_photo_from_google_cloud_storage(self.photo_url)
+        self.photos_handler.remove_photo_from_google_cloud_storage(self.big_thumb_url)
+        self.photos_handler.remove_photo_from_google_cloud_storage(self.small_thumb_url)
 
-    def small_thumbnail_name(self):
-        return self.uid + self.small_thumbnail_suffix + self.extension
+    def check_is_title(self):
+        """
+        Photo may by considered as title photo in 2 cases:
 
+        1. There are no photos of this publication that are marked as title.
+        In such case title is photo is the first created photo for this publication.
 
-    def info(self):
-        return {
-            'id': self.hash_id, # WARN: hash_id here
-            'image': self.url() + self.image_name(),
-            'thumbnail': self.url() + self.big_thumbnail_name(),
+        2. There is one publication that is marked as title,
+        and all other publications are not marked as title.
 
-            'is_title': self.is_title
-        }
+        There is another case when two or more photos are marked as title.
+        If it is happened - then system is broken)
+
+        :returns:
+            True - if photo is marked as title for it's publication,
+            False - in all other cases.
+
+        :raises:
+            RuntimeError - when system detects that two or more photos of one publication
+                           are marked as title.
+        """
+
+        # check if system is not broken
+        photos_of_its_publication = self.publication.photos()
+        if photos_of_its_publication.filter(is_title=True).count() > 1:
+            raise RuntimeError('There are two or more photos of one publications are marked as title')
+
+        # check if current photo is marked as title
+        if self.is_title:
+            return True
+
+        # check if current photo was created first
+        return self.created <= photos_of_its_publication[0].created
 
 
     def mark_as_title(self):
-        # remove previous title image
-        destination_dir = self.destination_dir()
-        try:
-            title_photo = self._default_manager.filter(hid=self.hid, is_title=True).only('uid')[:1][0]
-            path = os.path.join(destination_dir, title_photo.title_thumbnail_name())
-            if os.path.exists(path):
-                os.remove(path)
-        except IndexError:
-            pass
-
-        # create new title image
-        image = Image.open(os.path.join(destination_dir, self.original_image_name()))
-
-        # the image is scaled/cropped vertically or horizontally depending on the ratio
-        image_ratio = image.size[0] / float(image.size[1])
-        ratio = self.title_thumb_size[0] / float(self.title_thumb_size[1])
-        if ratio > image_ratio:
-            image = image.resize(
-                (self.title_thumb_size[0], self.title_thumb_size[0] * image.size[1] / image.size[0]), Image.ANTIALIAS)
-            box = (0, (image.size[1] - self.title_thumb_size[1]) / 2, image.size[0], (image.size[1] + self.title_thumb_size[1]) / 2)
-            image = image.crop(box)
-
-        elif ratio < image_ratio:
-            image = image.resize(
-                (self.title_thumb_size[1] * image.size[0] / image.size[1], self.title_thumb_size[1]), Image.ANTIALIAS)
-            box = ((image.size[0] - self.title_thumb_size[0]) / 2, 0, (image.size[0] + self.title_thumb_size[0]) / 2, image.size[1])
-            image = image.crop(box)
-
-        else:
-            image = image.resize((self.title_thumb_size[0], self.title_thumb_size[1]), Image.ANTIALIAS)
-
-
-        # saving
-        name = self.uid + self.title_thumbnail_suffix + self.extension
-        path = os.path.join(destination_dir, name)
-        image.save(path, 'JPEG', quality=100)
-        with transaction.atomic():
-            self._default_manager.filter(hid=self.hid).update(is_title=False)
-            self.is_title = True
-            self.save()
-
-
-    def remove(self):
-        destination_dir = self.destination_dir()
-        try:
-            os.remove(os.path.join(destination_dir, self.original_image_name()))
-        except Exception: pass
-
-        try:
-            os.remove(os.path.join(destination_dir, self.image_name()))
-        except Exception: pass
-
-        try:
-            os.remove(os.path.join(destination_dir, self.title_thumbnail_name()))
-        except Exception: pass
-
-        try:
-            os.remove(os.path.join(destination_dir, self.big_thumbnail_name()))
-        except Exception: pass
-
-        try:
-            os.remove(os.path.join(destination_dir, self.small_thumbnail_name()))
-        except Exception: pass
-
-        # WARN: enable it if watermark is present
-        # try:
-        # 	os.remove(os.path.join(destination_dir, self.watermark_name()))
-        # except Exception: pass
-
-        # caching params so they wold not be None after record removing
-        hid = self.hid
-        is_title = self.is_title
-
-
-        try:
-            # race condition: if client will generate several requests for deleting one photo
-            # if deleting will fail - than seems that this photo was removed already
-            super(PhotosModel, self).delete()
-        except:
-            pass
-
-        if is_title:
-            # generate new title photo
-            photos = self.__class__.objects.filter(hid=hid)[:1] # hack here
-            if photos:
-                photos[0].mark_as_title()
-                return photos[0]
-
-
-    def delete(self, using=None):
-        raise RuntimeException('Method disabled. Use "remove" instead.')
-
-
-    @classmethod
-    @transaction.atomic
-    def handle_uploaded(cls, request, publication):
-        destination_dir = cls.destination_dir()
-
-
-        # check if destination dir is exists
-        if not os.path.exists(destination_dir):
-            os.makedirs(destination_dir)
-            if not os.path.exists(destination_dir):
-                raise RuntimeException("Can't create dir for photo upload.")
-
-
-        # check if request is not empty
-        img_file = request.FILES.get('file')
-        if (img_file is None) or (not img_file):
-            raise cls.NoFileInRequest()
-
-        # check file size
-        if img_file.size >  1024 * 1024 * 5: # 5mb
-            img_file.close()
-            raise cls.ImageIsTooLarge()
-
-        # check file type
-        if 'image/' not in img_file.content_type:
-            img_file.close()
-            raise cls.UnsupportedImageType('Not an image.')
-
-        # exclude .gif
-        # pillow sometimes generates incorrect thumbs from .gif
-        if 'gif' in img_file.content_type:
-            img_file.close()
-            raise cls.UnsupportedImageType('.gif')
-
-
-        # original photo saving
-        uid = unicode(publication.id) + unicode(uuid.uuid4())
-        while cls.objects.filter(uid=uid).count() > 0:
-            uid = unicode(publication.id) + unicode(uuid.uuid4())
-
-        original_ext = (os.path.splitext(img_file.name)[1]).lower()
-        original_name = uid + cls.original_photo_suffix + original_ext
-        original_path = os.path.join(destination_dir, original_name)
-
-        with open(original_path, 'wb+') as original_img:
-            for chunk in img_file.chunks():
-                original_img.write(chunk)
-        try:
-            image = Image.open(original_path)
-        except IOError:
-            os.remove(original_path)
-            raise RuntimeException('Unknown I/O error.')
-
-
-        # big photo generation
-        if image.mode != "RGB":
-            image = image.convert("RGB")
-
-        width, height = image.size
-        if width < cls.min_image_size[0] or height < cls.min_image_size[1]:
-            os.remove(original_path)
-            raise cls.ImageIsTooSmall()
-        elif width > cls.max_image_size[0] or height > cls.max_image_size[1]:
-            image.thumbnail(cls.max_image_size, Image.ANTIALIAS)
-        else:
-            # Всеодно виконати операцію над зображенням, інакше PIL не збереже файл.
-            # Розміри зображення при цьому слід залишити без змін, щоб уникнути небажаного розширення.
-            image.thumbnail(image.size, Image.ANTIALIAS)
-
-
-        image_name = uid + cls.photo_suffix + cls.extension
-        image_path = os.path.join(destination_dir, image_name)
-        try:
-            image.save(image_path, 'JPEG', quality=100)
-        except Exception as e:
-            os.remove(original_path)
-            raise e
-
-
-        # ...
-        # watermark_name = original_uid + 'wm.jpg'
-        # watermark_path = os.path.join(destination_dir, watermark_name)
-        # todo: генерація зображення з водяним знаком
-        # ...
-
-
-        # big thumbnail generation
-        if width < cls.big_thumb_size[0] or height < cls.big_thumb_size[1]:
-            os.remove(original_path)
-            os.remove(image_path)
-            raise cls.ImageIsTooSmall()
-        image.thumbnail(cls.big_thumb_size, Image.ANTIALIAS)
-
-
-        big_thumb_name = uid + cls.big_thumbnail_suffix + cls.extension
-        big_thumb_path = os.path.join(destination_dir, big_thumb_name)
-
-        # the image is scaled/cropped vertically or horizontally depending on the ratio
-        image_ratio = image.size[0] / float(image.size[1])
-        ratio = cls.big_thumb_size[0] / float(cls.big_thumb_size[1])
-        if ratio > image_ratio:
-            image = image.resize(
-                (cls.big_thumb_size[0], cls.big_thumb_size[0] * image.size[1] / image.size[0]), Image.ANTIALIAS)
-            box = (0, (image.size[1] - cls.big_thumb_size[1]) / 2, image.size[0], (image.size[1] + cls.big_thumb_size[1]) / 2)
-            image = image.crop(box)
-
-        elif ratio < image_ratio:
-            image = image.resize(
-                (cls.big_thumb_size[1] * image.size[0] / image.size[1], cls.big_thumb_size[1]), Image.ANTIALIAS)
-            box = ((image.size[0] - cls.big_thumb_size[0]) / 2, 0, (image.size[0] + cls.big_thumb_size[0]) / 2, image.size[1])
-            image = image.crop(box)
-        else:
-            image = image.resize((cls.big_thumb_size[0], cls.big_thumb_size[1]), Image.ANTIALIAS)
-
-        try:
-            image.save(big_thumb_path, 'JPEG', quality=100)
-        except Exception as e:
-            os.remove(original_path)
-            os.remove(image_path)
-            raise e
-
-
-        # small thumbnail generation
-        if width < cls.small_thumb_size[0] or height < cls.small_thumb_size[1]:
-            os.remove(original_path)
-            os.remove(image_path)
-            os.remove(big_thumb_path)
-            raise cls.ImageIsTooSmall()
-
-
-        # the image is scaled/cropped vertically or horizontally depending on the ratio
-        image_ratio = image.size[0] / float(image.size[1])
-        ratio = cls.small_thumb_size[0] / float(cls.small_thumb_size[1])
-        if ratio > image_ratio:
-            image = image.resize(
-                (cls.small_thumb_size[0], cls.small_thumb_size[0] * image.size[1] / image.size[0]), Image.ANTIALIAS)
-            box = (0, (image.size[1] - cls.small_thumb_size[1]) / 2, image.size[0], (image.size[1] + cls.small_thumb_size[1]) / 2)
-            image = image.crop(box)
-
-        elif ratio < image_ratio:
-            image = image.resize(
-                (cls.small_thumb_size[1] * image.size[0] / image.size[1], cls.small_thumb_size[1]), Image.ANTIALIAS)
-            box = ((image.size[0] - cls.small_thumb_size[0]) / 2, 0, (image.size[0] + cls.small_thumb_size[0]) / 2, image.size[1])
-            image = image.crop(box)
-        else:
-            image = image.resize((cls.small_thumb_size[0], cls.small_thumb_size[1]), Image.ANTIALIAS)
-
-
-        # saving
-        small_thumb_name = uid + cls.small_thumbnail_suffix + cls.extension
-        small_thumb_path = os.path.join(destination_dir, small_thumb_name)
-        try:
-            image.save(small_thumb_path, 'JPEG', quality=98)
-        except Exception as e:
-            os.remove(original_path)
-            os.remove(image_path)
-            os.remove(big_thumb_path)
-            os.remove(small_thumb_path)
-            raise e
-
-
-        # saving to DB
-        try:
-            record = cls.objects.create(
-                hid = publication,
-                uid = uid,
-                original_extension = original_ext,
-                is_title = False,
-            )
-            record.save()
-        except Exception as e:
-            os.remove(original_path)
-            os.remove(image_path)
-            os.remove(big_thumb_path)
-            os.remove(small_thumb_path)
-            raise e
-
-
-        # Формування головного фото
-        if cls.objects.filter(hid_id=publication.id, is_title=True).count() == 0:
-            # Якщо в оголошення немає головного фото — вибрати перше з черги на завантаження.
-            #
-            # Тут виникає race condition тому, що збереження фото в БД відбувається не зразу,
-            # і перевірка повертає 0, але потім, коли всі обрробники проходять цю перевірку,
-            # створюється декілька записів з головним фото.
-            # Для уникнення цього створено глобальний lock на редіс.
-
-            # Для кожного оголошення повинен існувати власний lock на завантаження.
-            lock_name = 'pub_{0}:{0}_photo_upload'.format(publication.tid, publication.id)
-
-            # expire використовується для розмикання dead-lock'ів, якщо раптом даний обробник впаде.
-            lock = redis_lock.Lock(redis_connections['steady'], lock_name, expire=60*3)
-
-            if lock.acquire(blocking=False):
-                record.mark_as_title()
-                lock.release()
-
-
-        return record.info()
-
-
-    @classmethod
-    def url(cls):
-        return settings.MEDIA_URL + cls.photos_dir + cls.destination_dir_name
-
-
-    @classmethod
-    def destination_dir(cls):
-        return os.path.join(settings.MEDIA_ROOT, cls.photos_dir, cls.destination_dir_name)
+        """
+        Sets this photo as title photo for it's publication.
+        """
+        self.publication.photos().update(is_title=False)
+        self.is_title = True
