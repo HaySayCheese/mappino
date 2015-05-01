@@ -1,7 +1,10 @@
-from core.viewed_publications.exceptions import InvalidPublication, InvalidCustomer
-from core.viewed_publications.models import ViewedPublicationsForPublication, ViewedPublicationsForCustomer
+from core.viewed_publications.models import ViewedPublicationsForPublication
+from core.viewed_publications.exceptions import InvalidPublication
+from core.viewed_publications.models import ViewedPublicationsForCustomer
+from core.viewed_publications.exceptions import InvalidCustomer
 
-class VisewedPublicationHandler(object):
+
+class ViewedPublicationHandler(object):
     pass
 
     @staticmethod
