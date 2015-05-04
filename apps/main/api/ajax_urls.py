@@ -5,6 +5,7 @@ from apps.main.api.favorites.ajax import FavoritesListView, FavoritesView
 from apps.main.api.markers.ajax import Markers
 from apps.main.api.publications.ajax import DetailedView, Claims
 from apps.main.api.realtors_contacts.ajax import RealtorsContacts
+from apps.main.api.viewed_publications.ajax import ViewedPublicationsView
 
 
 urlpatterns = patterns('apps.main.api',
@@ -22,6 +23,11 @@ urlpatterns = patterns('apps.main.api',
     # favorites
     url(r'^ajax/api/favorites/$', FavoritesListView.as_view()),
     url(r'^ajax/api/favorites/(\d+):(\w+)/$', FavoritesView.as_view()),
+
+    #viewed
+    url(r'^ajax/api/viewed/$', ViewedPublicationsView.as_view()),
+    url(r'^ajax/api/viewed/(\d+):(\w+)/$', ViewedPublicationsView.as_view()),
+
 
     # customers
     url(r'^ajax/api/customers/authorise/$', CustomersView.as_view()),

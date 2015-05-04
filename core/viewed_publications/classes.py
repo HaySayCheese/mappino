@@ -1,74 +1,73 @@
-from core.viewed_publications.models import ViewedPublicationsForPublication
+from django.core.serializers import json
+from django.db import transaction
+
+from collective.utils import generate_publication_digest
+from core.viewed_publications.models import ViewedPublicationsByPublication
 from core.viewed_publications.exceptions import InvalidPublication
-from core.viewed_publications.models import ViewedPublicationsForCustomer
-from core.viewed_publications.exceptions import InvalidCustomer
+from core.viewed_publications.models import ViewedPublicationsByCustomer
 
 
 class ViewedPublicationHandler(object):
     pass
 
     @staticmethod
-    def remove(tid,hid):
+    def remove(tid, hash_id):
         '''
         Get all customers id that saw have seen this publication before
         Remove publication from  viewed list for all customers
-        :param tid:
-        :param hid:
-        :return:
         '''
-        #We store publication
-        publication_ids = "{tid}:{hid}".format(tid,hid)
 
-        try:
-            pbl_for_pbl = ViewedPublicationsForPublication.objects.filter(publication_ids=publication_ids)[:1][0]
-        except IndexError:
-            raise InvalidPublication
-        #Get ids of all customers that have  already seen this publication
-        customers_ids_that_see_publication = pbl_for_pbl.customers_ids
+        publication_id = generate_publication_digest(tid, hash_id)
+        with transaction.atomic():
+            try:
+                pbl_by_pbl = ViewedPublicationsByPublication.objects.filter(publication_ids=publication_id)[:1][0]
+            except IndexError:
+                raise InvalidPublication()
 
-        #Delete publication object from model ViewedPublicationsForPublications.
-        #We do not need it now
-        pbl_for_pbl.remove(publication_ids)
+            #Get ids of all customers that have  already seen this publication
+            customers_ids_that_see_publication = pbl_by_pbl.get_customers_ids()
+
+            #Delete publication object from model ViewedPublicationsForPublications.
+            #We do not need it now
 
 
-        publications_for_customer = ViewedPublicationsForCustomer.objects.\
-            filter(customers_ids__in=customers_ids_that_see_publication)
+            pbl_by_pbl.delete()
 
-        #In some cases there are no users, that see this publication
-        #So we have to check this
-        if publications_for_customer:
-            for publication_for_customer in publications_for_customer:
-                publication_for_customer.remove(publication_for_customer.customer,tid,hid)
+            # publications_for_customer = ViewedPublicationsByCustomer.objects.\
+            # filter(customers_ids__in=customers_ids_that_see_publication)
+            try:
+                publications_for_customer = ViewedPublicationsByCustomer.objects.\
+                    filter(customer_id__in=customers_ids_that_see_publication)
+            except Exception as e:
+                pass
+            #In some cases there are no users, that see this publication
+            #So we have to check this
+
+
+            if publications_for_customer:
+                for publication_for_customer in publications_for_customer:
+                    try:
+                        publication_for_customer.remove(publication_for_customer.customer,tid,hash_id)
+                    except Exception as e:
+                        pass
 
         return True
 
     @staticmethod
-    def add(customer_id,tid,hid):
-        '''
-        Add viewed publications to 2 models. ViewedPublicationsForPublication and ViewedPublicationsForCustomer
-        :param customer_id (int):
-        :param tid (int):
-        :param hid (str):
-        :return:
-        '''
+    def add(customer_id, publication_id):
+        """
+        Adds viewed publications to 2 models: ViewedPublicationsByPublication and ViewedPublicationsByCustomer.
+        this is needed for optimisation purposes: one model is optimised for customers lookups, and the other
+        is optimised for publications lookups.
 
-        publication_ids = "{tid}:{hid}".format(tid=tid,hid=hid)
-        try:
-            pbl_for_pbl = ViewedPublicationsForPublication.objects.filter(publication_ids=publication_ids)[:1][0]
-        except IndexError:
-            raise InvalidPublication
+        :type hash_id unicode, str
+        :type tid int
+        :type customer_id int
+        """
+        with transaction.atomic():
+            ViewedPublicationsByPublication.add(customer_id, publication_id)
+            ViewedPublicationsByCustomer.add(customer_id, publication_id)
 
-        pbl_for_pbl.add(customer_id,publication_ids)
-
-        #Get ids of all customers that have  already seen this publication
-
-        try:
-            publications_for_customer = ViewedPublicationsForCustomer.objects.\
-                filter(customer=customer_id).only('publications_ids')[:1][0]
-        except IndexError:
-            raise InvalidCustomer
-
-        publications_for_customer.add(customer_id,tid,hid)
 
 
 
