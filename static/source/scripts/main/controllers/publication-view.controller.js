@@ -14,6 +14,10 @@ angular.module('mappino.pages.map').controller('PublicationViewController', ['$s
             reasonName: ''
         };
 
+        var carousel = $('#publication-slider').carousel({
+            interval: false
+        });
+
 
         $scope.toggleFavorite = function($event) {
             var pid = $rootScope.publicationIdPart;
@@ -27,7 +31,6 @@ angular.module('mappino.pages.map').controller('PublicationViewController', ['$s
             } else {
                 MFavoritesService.add(pid, function(response) {
                     $scope.publication.added_to_favorites = true;
-                    console.log(response);
                 }, function() {
                     // error callback
                 });
@@ -71,15 +74,22 @@ angular.module('mappino.pages.map').controller('PublicationViewController', ['$s
 
 
 
+        carousel.on('slid.bs.carousel', function () {
+            var modalDialog = angular.element('.modal-dialog');
+            modalDialog.find('.item').height(modalDialog.find('.item.active img').height());
+        });
+
+
+
         $scope.toggleSlider = function() {
             var modalDialog = angular.element('.modal-dialog');
 
             if (modalDialog.hasClass('slider-opened')) {
                 modalDialog.removeClass('slider-opened');
-                modalDialog.find('.title-photo').height('350px');
+                modalDialog.find('.item').height('350px');
             } else {
                 modalDialog.addClass('slider-opened');
-                modalDialog.find('.title-photo').height(modalDialog.find('.title-photo img').height())
+                modalDialog.find('.item').height(modalDialog.find('.item.active img').height())
             }
 
             event.preventDefault();

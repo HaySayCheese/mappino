@@ -12,12 +12,12 @@ class CustomersView(View):
         @staticmethod
         def ok(customer_hash_id):
             response = HttpJsonResponse({
-                'code': 0,
-                'message': "OK",
-                'data': {
-                    'customer_hash_id': customer_hash_id
-                }
-            })
+                    'code': 0,
+                    'message': "OK",
+                    'data': {
+                        'customer_hash_id': customer_hash_id
+                    }
+                })
             response.set_signed_cookie("customer_hash_id",customer_hash_id)
             return response
 
