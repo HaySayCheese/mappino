@@ -1,18 +1,12 @@
 var gulp        = require('gulp'),
-    path        = require('path'),
     del         = require('del'),
     runSequence = require('run-sequence'),
     rename      = require("gulp-rename"),
 
-    less        = require('gulp-less'),
+    sass        = require('gulp-sass'),
     minifyCSS   = require('gulp-minify-css'),
 
-    typeScript  = require('typescript-compiler'),
-
-    ngAnnotate  = require('gulp-ng-annotate'),
-
-    uglify      = require('gulp-uglify'),
-    merge       = require('merge2');
+    uglify      = require('gulp-uglify');
 
 
 
@@ -77,44 +71,17 @@ gulp.task('Copy', ['Copy:Fonts', 'Copy:Images', 'Copy:Libs']);
 
 
 
-/** Task Less:Home: Compile 'source/styles/home/base.less' **/
-gulp.task('Less:Home', function () {
-    return gulp.src(PATHS.SOURCE.STYLES + '/home/base.less')
-        .pipe(less())
+/** Task Sass:Main: Compile 'source/styles/main/base.scss' **/
+gulp.task('Sass:Main:Map', function () {
+    return gulp.src(PATHS.SOURCE.STYLES + '/main/map/base.scss')
+        .pipe(sass())
         .pipe(minifyCSS())
         .pipe(rename(COMPILED_CSS_FILE_NAME))
-        .pipe(gulp.dest(PATHS.BUILD.STYLES + '/home/'));
+        .pipe(gulp.dest(PATHS.BUILD.STYLES + '/main/map/'));
 });
 
-/** Task Less:Offer: Compile 'source/styles/offer/base.less' **/
-gulp.task('Less:Offer', function () {
-    return gulp.src(PATHS.SOURCE.STYLES + '/offer/base.less')
-        .pipe(less())
-        .pipe(minifyCSS())
-        .pipe(rename(COMPILED_CSS_FILE_NAME))
-        .pipe(gulp.dest(PATHS.BUILD.STYLES + '/offer/'));
-});
-
-/** Task Less:Main: Compile 'source/styles/main/base.less' **/
-gulp.task('Less:Main', function () {
-    return gulp.src(PATHS.SOURCE.STYLES + '/main/base.less')
-        .pipe(less())
-        .pipe(minifyCSS())
-        .pipe(rename(COMPILED_CSS_FILE_NAME))
-        .pipe(gulp.dest(PATHS.BUILD.STYLES + '/main/'));
-});
-
-/** Task Less:Cabinet: Compile 'source/styles/cabinet/base.less' **/
-gulp.task('Less:Cabinet', function () {
-    return gulp.src(PATHS.SOURCE.STYLES + '/cabinet/base.less')
-        .pipe(less())
-        .pipe(minifyCSS())
-        .pipe(rename(COMPILED_CSS_FILE_NAME))
-        .pipe(gulp.dest(PATHS.BUILD.STYLES + '/cabinet/'));
-});
-
-/** Task Less: Run all 'Less:*' tasks **/
-gulp.task('Less', ['Less:Main', 'Less:Home', 'Less:Offer', 'Less:Cabinet']);
+/** Task Sass: Run all 'Sass:*' tasks **/
+gulp.task('Sass', ['Sass:Main:Map']);
 
 
 
@@ -134,26 +101,26 @@ gulp.task('Less', ['Less:Main', 'Less:Home', 'Less:Offer', 'Less:Cabinet']);
 
 
 
-/** Task Watch:Less:Home - (use 'gulp Watch:Home' to run watchers) **/
-gulp.task('Watch:Less:Home', function() {
-    gulp.watch(PATHS.SOURCE.STYLES + '/home/**', function() {
-        gulp.run('Less:Home');
-    });
-});
-
-/** Task Watch:Less:Main - (use 'gulp Watch:Main' to run watchers) **/
-gulp.task('Watch:Less:Main', function() {
-    gulp.watch(PATHS.SOURCE.STYLES + '/main/**', function() {
-        gulp.run('Less:Main');
-    });
-});
-
-/** Task Watch:Less:Cabinet - (use 'gulp Watch:Cabinet' to run watchers) **/
-gulp.task('Watch:Less:Cabinet', function() {
-    gulp.watch(PATHS.SOURCE.STYLES + '/cabinet/**', function() {
-        gulp.run('Less:Cabinet');
-    });
-});
+///** Task Watch:Less:Home - (use 'gulp Watch:Home' to run watchers) **/
+//gulp.task('Watch:Less:Home', function() {
+//    gulp.watch(PATHS.SOURCE.STYLES + '/home/**', function() {
+//        gulp.run('Less:Home');
+//    });
+//});
+//
+///** Task Watch:Less:Main - (use 'gulp Watch:Main' to run watchers) **/
+//gulp.task('Watch:Less:Main', function() {
+//    gulp.watch(PATHS.SOURCE.STYLES + '/main/**', function() {
+//        gulp.run('Less:Main');
+//    });
+//});
+//
+///** Task Watch:Less:Cabinet - (use 'gulp Watch:Cabinet' to run watchers) **/
+//gulp.task('Watch:Less:Cabinet', function() {
+//    gulp.watch(PATHS.SOURCE.STYLES + '/cabinet/**', function() {
+//        gulp.run('Less:Cabinet');
+//    });
+//});
 
 
 
@@ -166,5 +133,5 @@ gulp.task('Watch:Less:Cabinet', function() {
 
 /** default task (use 'gulp' to build project) **/
 gulp.task('default', function(callback) {
-    runSequence('Clean', ['Copy', 'Less'], callback);
+    runSequence('Clean', ['Copy', 'Sass'], callback);
 });

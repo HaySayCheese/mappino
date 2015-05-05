@@ -54,7 +54,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
      * Створення нового оголошенн
      */
     $scope.createPublication = function() {
-        var btn = angular.element(".new-pub-panel .btn-group-justified > .btn-success").button("loading");
+        var btn = angular.element(".new-pub-toggle .btn-group-justified > .btn-success").button("loading");
 
         Publication.create($scope.newPublication, function(data) {
             $scope.creatingPublication = false;
@@ -100,7 +100,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
             $scope.editingTag = _.clone(arguments[0]);
 
             var e = arguments[1],
-                htmlText = "<div class='tag-edit-panel state-edit'>" +
+                htmlText = "<div class='tag-edit-toggle state-edit'>" +
                                 "<div class='form-group'>" +
                                     "<input type='text' class='form-control' ng-model='editingTag.title' required>" +
                                     "<span class='input-has-error' ng-show='tagNameDuplicated'>Такое имя уже используеться</span>" +
@@ -186,7 +186,7 @@ app.controller('SidebarMenuCtrl', function($scope, $rootScope, $timeout, $locati
         initBaseTagParameters();
 
         $scope.creatingTag = false;
-        angular.element(".tag-edit-panel.state-edit").remove();
+        angular.element(".tag-edit-toggle.state-edit").remove();
     };
 
 

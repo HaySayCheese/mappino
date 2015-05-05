@@ -1,0 +1,50 @@
+.tabs-navigation-panel {
+    @include size(400px, 48px);
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    overflow: hidden;
+
+    z-index: 20;
+
+    background: #fff;
+
+    @extend .z-depth-1;
+
+
+    > .tabs {
+        width: 250px !important;
+        float: left !important;
+
+        .tab {
+            text-transform: none !important;
+        }
+
+        &.nothing-selected {
+            .indicator {
+                height: 0 !important;
+                @include transition(height 0.3s ease)
+            }
+        }
+    }
+
+
+
+    > .user-block {
+        @include size(auto, 100%);
+        @include justify-content(flex-end);
+
+        padding: 0 10px;
+        float: right;
+
+        color: color("blue-grey", "lighten-2");
+        font-size: 0.9rem;
+
+        > img {
+            @include square(32px);
+            margin-left: 10px;
+            border-radius: 50%;
+        }
+    }
+}

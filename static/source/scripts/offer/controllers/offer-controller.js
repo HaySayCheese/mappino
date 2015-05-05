@@ -6,7 +6,7 @@ app.controller('OfferController', ['$timeout',
             imgHolder           = scrollableBlock.find(".img-holder"),
             mainImage           = scrollableBlock.find(".img-holder.main"),
             headerLinksBlock    = scrollableBlock.find(".header-links"),
-            accordeons          = $('.panel-group');
+            accordeons          = $('.toggle-group');
 
 
         initPlugins();
@@ -50,9 +50,9 @@ app.controller('OfferController', ['$timeout',
 
                 /* Navigation bar logic */
                 if (scrollTop > mainImage.innerHeight() - headerLinksBlock.innerHeight()) {
-                    headerLinksBlock.removeClass("slideOutUp").addClass("slideInDown panel");
+                    headerLinksBlock.removeClass("slideOutUp").addClass("slideInDown toggle");
 
-                } else if (headerLinksBlock.hasClass("panel") && !headerLinksBlock.hasClass("slideOutUp")){
+                } else if (headerLinksBlock.hasClass("toggle") && !headerLinksBlock.hasClass("slideOutUp")){
                     headerLinksBlock
                         .removeClass("slideInDown")
                         .addClass("slideOutUp")
