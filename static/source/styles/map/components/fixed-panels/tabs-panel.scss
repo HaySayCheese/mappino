@@ -1,0 +1,45 @@
+@import "fixed-panel";
+
+.tabs-panel {
+    @extend ._fixed-panel;
+
+    @include size(400px, 48px);
+    right: 10px;
+
+
+    > .tabs {
+        width: 250px !important;
+        float: left !important;
+
+        .tab {
+            text-transform: none !important;
+        }
+
+        &.nothing-selected {
+            .indicator {
+                height: 0 !important;
+                @include transition(height 0.3s ease)
+            }
+        }
+    }
+
+
+
+    > .user-block {
+        @include size(auto, 100%);
+        @include justify-content(flex-end);
+
+        padding: 0 10px;
+        float: right;
+
+        color: color("blue-grey", "lighten-2");
+        font-size: 0.9rem;
+        cursor: pointer;
+
+        > img {
+            @include square(32px);
+            margin-left: 10px;
+            border-radius: 50%;
+        }
+    }
+}

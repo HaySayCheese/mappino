@@ -1,0 +1,6 @@
+@import "sliding-panel";
+
+
+.auth-panel {
+    @extend ._sliding-panel;
+}

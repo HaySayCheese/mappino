@@ -1,0 +1,39 @@
+._drop-panel {
+    position: absolute;
+    top: 58px;
+    z-index: 15;
+
+    background: #fff;
+
+    @extend .z-depth-1;
+
+
+    &.opened {
+        @include animation(bounceInDown 0.8s both);
+    }
+    &.closing {
+        @include animation(bounceOutUp 0.8s both);
+    }
+    &.closed {
+        @include translate3d(0, 2000px, 0);
+    }
+}
+
+
+
+
+@keyframes bounceInDown {
+    0%, 60%, 75%, 90%, 100% {
+        transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    }
+    0% {    @include translate3d(0, -2000px, 0); }
+    60% {   @include translate3d(0, 25px, 0); }
+    75% {   @include translate3d(0, -10px, 0); }
+    90% {   @include translate3d(0, 5px, 0); }
+    100% {  @include translate3d(0, 0, 0); }
+}
+@keyframes bounceOutUp {
+    20% {       @include translate3d(0, -10px, 0); }
+    40%, 45% {  @include translate3d(0, 20px, 0); }
+    100% {      @include translate3d(0, -2000px, 0); }
+}

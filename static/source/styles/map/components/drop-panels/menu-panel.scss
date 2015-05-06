@@ -1,0 +1,8 @@
+@import "drop-panel";
+
+.menu-panel {
+    @extend ._drop-panel;
+
+    @include size(400px, 200px);
+    left: 10px;
+}

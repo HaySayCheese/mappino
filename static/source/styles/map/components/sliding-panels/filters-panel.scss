@@ -1,0 +1,5 @@
+@import "sliding-panel";
+
+.filters-panel {
+    @extend ._sliding-panel;
+}

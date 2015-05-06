@@ -1,0 +1,32 @@
+//
+// Materialize include
+// --------------------------------------------------
+@import "../_common/materialize";
+
+
+//
+// Components include
+// --------------------------------------------------
+@import "components/fixed-panels/search-panel";
+@import "components/fixed-panels/tabs-panel";
+
+
+@import "components/sliding-panels/filters-panel";
+@import "components/sliding-panels/favorites-panel";
+@import "components/sliding-panels/auth-panel";
+
+
+@import "components/drop-panels/menu-panel";
+@import "components/drop-panels/user-panel";
+
+
+
+//
+// Pages include
+// --------------------------------------------------
+
+
+html, body, .wrapper, #map {
+    @include square(100%);
+    overflow: hidden;
+}

@@ -1,0 +1,6 @@
+@import "sliding-panel";
+
+
+.favorites-panel {
+    @extend ._sliding-panel;
+}
