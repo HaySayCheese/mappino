@@ -26,3 +26,14 @@ def generate_sha256_unique_id(value, salt=None):
     hash_object.update(salt)
 
     return hash_object.hexdigest()
+
+
+def generate_publication_digest(tid, hash_id):
+    """
+    :type tid int
+    :type hash_id unicode, str
+    :returns: publication digest based on tid and hash id.
+    """
+    return "{tid}:{hash_id}".format(tid=tid, hash_id=hash_id)
+
+
