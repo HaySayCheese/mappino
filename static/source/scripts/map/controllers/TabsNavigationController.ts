@@ -14,8 +14,7 @@ module pages.map {
 
         constructor(
             private $scope,
-            private $timeout,
-            private slidingPanelsHandler: modules.Panels.ISlidingPanelsHandler) {
+            private $timeout) {
             // -
 
             // Materialize: init .tabs()

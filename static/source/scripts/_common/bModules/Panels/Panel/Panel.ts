@@ -1,5 +1,5 @@
 
-module modules.Panels {
+module bModules.Panels {
 
     export class Panel {
         config: Object = {

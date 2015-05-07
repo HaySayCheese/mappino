@@ -13,12 +13,6 @@ module pages.map {
         'ui.router',
         //'lrNotifier',
         //'ab-base64',
-        //
-        //'underscore',
-        //
-        //'_modules.bTypes',
-        //'_modules.bAuth',
-        //'_modules.bDirectives'
     ]);
 
 
@@ -33,11 +27,19 @@ module pages.map {
 
 
     /** Module services */
-    app.service('DropPanelsHandler', modules.Panels.DropPanelsHandler);
-    app.service('SlidePanelsHandler', modules.Panels.SlidingPanelsHandler);
+    app.service('DropPanelsHandler', bModules.Panels.DropPanelsHandler);
+    app.service('SlidePanelsHandler', bModules.Panels.SlidingPanelsHandler);
+
+    app.service('RealtyTypesService', bModules.Types.RealtyTypesService);
+
+
+    app.service('FiltersService', FiltersService);
+
 
     /** Module controllers */
     app.controller('AppController', AppController);
     app.controller('TabsNavigationController', TabsNavigationController);
+    app.controller('FiltersPanelController', FiltersPanelController);
     app.controller('MapController', MapController);
+    app.controller('PlaceAutocompleteController', PlaceAutocompleteController);
 }

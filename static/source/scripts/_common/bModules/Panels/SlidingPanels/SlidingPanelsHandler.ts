@@ -1,7 +1,7 @@
 /// <reference path='_references.ts' />
 
 
-module modules.Panels {
+module bModules.Panels {
     'use strict';
 
     export class SlidingPanelsHandler implements ISlidingPanelsHandler {

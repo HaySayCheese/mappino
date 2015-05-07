@@ -7,10 +7,6 @@
 
     > .property-list-item {
         @include size(100px, auto);
-        //display: block;
-        //float: right;
-        //overflow: hidden;
-
         margin-bottom: 5px;
 
         cursor: pointer;
@@ -34,7 +30,6 @@
 
         > img {
             @include size(96px, 72px);
-            //float: right;
         }
 
 

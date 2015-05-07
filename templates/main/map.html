@@ -45,7 +45,7 @@
 
 
         <!-- Fixed search panel panel -->
-        <div class="search-panel">
+        <div class="search-panel" ng-controller="PlaceAutocompleteController">
             <a class="btn-flat btn-menu valign-wrapper"
                     ng-click="appCtrl.dropPanelsHandler.open('menu')"
                     ng-hide="appCtrl.dropPanelsHandler.isOpened('menu')">
@@ -56,7 +56,7 @@
                     ng-show="appCtrl.dropPanelsHandler.isOpened('menu')">
                 <i class="mdi-navigation-close valign"></i>
             </a>
-            <input placeholder="Введите местоположение" type="text">
+            <input id="place-autocomplete" placeholder="Введите местоположение" type="text">
             <a class="btn-flat btn-search valign-wrapper">
                 <i class="mdi-action-search valign"></i>
             </a>
@@ -111,8 +111,44 @@
 
 
         <!-- Sliding panels -->
-        <div class="filters-panel closed">
-            <h1>Filters</h1>
+        <div class="filters-panel closed" ng-controller="FiltersPanelController as fpCtrl">
+            <div class="filters-panel-header">
+                <div class="btn-flat header-btn right" ng-click="appCtrl.slidingPanelsHandler.close('filters')">
+                    <i class="mdi-navigation-close"></i>
+                </div>
+            </div>
+            <ul class="collapsible" data-collapsible="accordion">
+                <li>
+                    <div class="collapsible-header red-header active">
+                        <i class="mdi-maps-place"></i>Квартиры
+                    </div>
+                    <div class="collapsible-body">
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <select ng-model="filters.red.t_sid" ng-options="realtyType.id as realtyType.title for realtyType in realtyTypes">
+                                    <option value="" selected>Виберите тип</option>
+                                    <!--<option value="1">Option 1</option>-->
+                                    <!--<option value="2">Option 2</option>-->
+                                    <!--<option value="3">Option 3</option>-->
+                                </select>
+                                <!--<label>Materialize Select</label>-->
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="collapsible-header blue-header">
+                        <i class="mdi-maps-place"></i>Виберите тип
+                    </div>
+                    <div class="collapsible-body"><p>Lorem ipsum dolor sit amet.</p></div>
+                </li>
+                <li>
+                    <div class="collapsible-header green-header">
+                        <i class="mdi-maps-place"></i>Виберите тип
+                    </div>
+                    <div class="collapsible-body"><p>Lorem ipsum dolor sit amet.</p></div>
+                </li>
+            </ul>
         </div>
 
         <div class="favorites-panel closed">

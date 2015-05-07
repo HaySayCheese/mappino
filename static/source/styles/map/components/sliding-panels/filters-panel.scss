@@ -2,4 +2,37 @@
 
 .filters-panel {
     @extend ._sliding-panel;
+
+    .filters-panel-header {
+        @extend ._sliding-panel-header;
+    }
+
+    .collapsible {
+        margin: 0;
+        border-top: 0;
+        border-left: 0;
+        border-right: 0;
+        box-shadow: none;
+
+
+
+        .collapsible-header {
+            color: #fff;
+            border-bottom: none;
+        }
+        .red-header {
+            background: #fb6262;
+        }
+        .blue-header {
+            background: #4996cc;
+        }
+        .green-header {
+            background: #71c187;
+        }
+        .collapsible-body {
+            height: 500px;
+            border-bottom: none;
+        }
+    }
+
 }

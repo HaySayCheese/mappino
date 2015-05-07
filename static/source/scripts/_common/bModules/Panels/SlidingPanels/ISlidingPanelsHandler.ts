@@ -1,7 +1,7 @@
 /// <reference path='_references.ts' />
 
 
-module modules.Panels {
+module bModules.Panels {
     export interface ISlidingPanelsHandler extends IDropPanelsHandler {
         // -
     }

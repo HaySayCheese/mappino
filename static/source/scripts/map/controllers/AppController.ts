@@ -14,8 +14,8 @@ module pages.map {
 
         constructor(
             private $scope,
-            private dropPanelsHandler: modules.Panels.IDropPanelsHandler,
-            private slidingPanelsHandler: modules.Panels.ISlidingPanelsHandler) {
+            private dropPanelsHandler: bModules.Panels.IDropPanelsHandler,
+            private slidingPanelsHandler: bModules.Panels.ISlidingPanelsHandler) {
             // -
         }
     }

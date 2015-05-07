@@ -1,7 +1,7 @@
 /// <reference path='_references.ts' />
 
 
-module modules.Panels {
+module bModules.Panels {
     export interface IDropPanelsHandler {
         open(panel_name: string, state?: number): void
         close(panel_name: string): void

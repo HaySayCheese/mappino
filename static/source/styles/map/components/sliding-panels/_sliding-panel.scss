@@ -21,6 +21,27 @@
     &.closed {
         @include translate3d(3000px, 0, 0);
     }
+
+
+    > ._sliding-panel-header {
+        @include size(100%, 48px);
+
+        > .header-btn {
+            @include square(48px);
+            line-height: 48px;
+            padding: 0;
+            text-align: center;
+            color: $primary-color;
+
+            &.right {
+                border-left: 1px solid color("blue-grey", "lighten-4");
+            }
+
+            > i {
+                @include square(48px);
+            }
+        }
+    }
 }
 
 

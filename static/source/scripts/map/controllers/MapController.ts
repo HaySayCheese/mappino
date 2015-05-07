@@ -12,8 +12,8 @@ module pages.map {
         ];
 
         constructor(private $scope) {
-            $scope.$on('$routeChangeSuccess', function(prevent, current) {
-                console.log(current.params);
+            $scope.$on('$stateChangeSuccess', function(prevent, current) {
+                console.log(current);
                 //console.log(this.map);
             });
 

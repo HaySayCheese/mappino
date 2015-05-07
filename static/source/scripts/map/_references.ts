@@ -14,9 +14,10 @@
 
 
 // ####################
-// bModules import
+// _modules import
 // ####################
-/// <reference path='_modules/Panels/_references.ts' />
+/// <reference path='../_common/bModules/Panels/_references.ts' />
+/// <reference path='../_common/bModules/Types/_references.ts' />
 
 
 
@@ -41,7 +42,9 @@
 // ####################
 /// <reference path='controllers/AppController.ts' />
 /// <reference path='controllers/TabsNavigationController.ts' />
+/// <reference path='controllers/FiltersPanelController.ts' />
 /// <reference path='controllers/MapController.ts' />
+/// <reference path='controllers/PlaceAutocompleteController.ts' />
 
 
 
