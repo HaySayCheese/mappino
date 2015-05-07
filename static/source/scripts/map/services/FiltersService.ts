@@ -110,7 +110,7 @@ module pages.map {
                 this.updateUrlFromPanelsFilters();
             }
 
-            console.log(this._filters)
+            console.log('update method: filters updated')
         }
 
 
@@ -120,14 +120,14 @@ module pages.map {
 
 
 
-        private createFiltersForPanel(panel_color, clear_previously) {
+        private createFiltersForPanel(panel_color) {
             var self = this,
                 panel_prefix        = panel_color.toString().substring(0, 1) + "_",
                 type_sid            = this._filters['panels'][panel_color][panel_prefix + 't_sid'],
                 location_search     = this.$location.search();
 
 
-            if (clear_previously) {
+            if (_.isNull(type_sid)) {
                 // Очищаємо обєкт з фільтрами
                 this._filters['panels'][panel_color] = {};
 
@@ -202,19 +202,19 @@ module pages.map {
                 _.isUndefined(location_search['g_t_sid']) && _.isUndefined(location_search['y_t_sid'])) {
                 // -
                 filters_panels['red']['r_t_sid'] = 0;
-                this.createFiltersForPanel("red", false);
+                this.createFiltersForPanel("red");
             }
             if (!_.isUndefined(location_search['r_t_sid'])) {
-                this.createFiltersForPanel("red", false);
+                this.createFiltersForPanel("red");
             }
             if (!_.isUndefined(location_search['b_t_sid'])) {
-                this.createFiltersForPanel("blue", false);
+                this.createFiltersForPanel("blue");
             }
             if (!_.isUndefined(location_search['g_t_sid'])) {
-                this.createFiltersForPanel("green", false);
+                this.createFiltersForPanel("green");
             }
             if (!_.isUndefined(location_search['y_t_sid'])) {
-                this.createFiltersForPanel("yellow", false);
+                this.createFiltersForPanel("yellow");
             }
 
             this.$timeout(() => this.$rootScope.$broadcast('pages.map.FiltersService.UpdatedFromUrl', this._filters));
@@ -286,7 +286,6 @@ module pages.map {
             }
 
             console.log('update panels filters in url')
-            console.log(location_search)
 
             this.$location.search(location_search);
 
