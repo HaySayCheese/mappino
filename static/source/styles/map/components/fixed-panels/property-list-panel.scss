@@ -1,0 +1,45 @@
+.property-list-panel {
+    @include size(100px, 85px);
+    position: fixed;
+    top: 58px;
+    right: 10px;
+    bottom: 15px;
+
+    > .property-list-item {
+        @include size(100px, auto);
+        //display: block;
+        //float: right;
+        //overflow: hidden;
+
+        margin-bottom: 5px;
+
+        cursor: pointer;
+
+        border: 2px solid #fff;
+        background: #fff;
+
+        @extend .z-depth-1;
+        @include transition(width .2s ease);
+
+
+        &:first-child {
+            margin-top: 10px;
+        }
+
+        //&:hover {
+        //    width: 200px;
+        //}
+
+
+
+        > img {
+            @include size(96px, 72px);
+            //float: right;
+        }
+
+
+        > .description {
+            font-size: 0.9rem;
+        }
+    }
+}
