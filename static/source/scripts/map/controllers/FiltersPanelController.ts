@@ -24,9 +24,9 @@ module pages.map {
 
             $scope.realtyTypes = realtyTypesService.realty_types;
 
-            this.filters = $scope.filters = filtersService.panels;
+            this.filters = $scope.filters = filtersService.filters['panels'];
 
-            console.log(filtersService.panels)
+            //console.log(filtersService.panels)
         }
     }
 }

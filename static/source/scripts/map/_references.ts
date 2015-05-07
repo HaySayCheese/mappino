@@ -1,7 +1,7 @@
 // ####################
 // Declarations import
 // ####################
-
+/// <reference path='../_common/definitions/underscore.d.ts' />
 /// <reference path='../_common/definitions/google.maps.d.ts' />
 /// <reference path='../_common/definitions/jquery.d.ts' />
 /// <reference path='../_common/definitions/angular.d.ts' />

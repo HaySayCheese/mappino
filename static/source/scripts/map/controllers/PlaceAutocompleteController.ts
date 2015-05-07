@@ -5,31 +5,40 @@ module pages.map {
     'use strict';
 
     export class PlaceAutocompleteController {
-        autocomplete: any;
+        private _autocompleteInput: any;
+        private _autocomplete: any;
+
 
         public static $inject = [
             '$scope',
             'FiltersService'
         ];
 
-        constructor(private $scope, private filtersService: FiltersService) {
-            google.maps.event.addDomListener(window, "load", () => this.initAutocomplete());
+        constructor(private $scope,
+                    private filtersService: FiltersService) {
+            // -
+            this._autocompleteInput = document.getElementById("place-autocomplete");
+
+
+            /** Listen events */
+            google.maps.event.addDomListener(window, "load", () => this.initAutocomplete(this));
+
+            $scope.$on('pages.map.FiltersService.UpdatedFromUrl', (event, filters) => {
+                this._autocompleteInput.value = filters['map']['c'];
+            });
         }
 
 
 
-        private initAutocomplete() {
-            var self = this;
-
-            this.autocomplete = new google.maps.places.Autocomplete(<HTMLInputElement>document.getElementById("place-autocomplete"), {
+        private initAutocomplete(self) {
+            self._autocomplete = new google.maps.places.Autocomplete(<HTMLInputElement>this._autocompleteInput, {
                 componentRestrictions: {
                     country: "ua"
                 }
             });
 
-            google.maps.event.addListener(this.autocomplete, 'place_changed', function() {
-                console.log('change')
-                self.filtersService.mapp({ c: self.autocomplete.getPlace().formatted_address });
+            google.maps.event.addListener(self._autocomplete, 'place_changed', function() {
+                self.filtersService.update('map', 'c', self._autocomplete.getPlace().formatted_address);
             });
         }
     }
