@@ -34,6 +34,7 @@ module pages.map {
 
 
     app.service('FiltersService', FiltersService);
+    app.service('MarkersService', MarkersService);
 
 
     /** Module controllers */

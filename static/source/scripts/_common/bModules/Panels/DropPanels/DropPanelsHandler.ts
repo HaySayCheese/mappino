@@ -41,7 +41,7 @@ module bModules.Panels {
                 if (panel_name === panels[i].panel_name) {
                     panels[i].state = state;
 
-                    this.$rootScope.$broadcast('_modules.Panels.DropPanels.PanelOpened', {
+                    this.$rootScope.$broadcast('bModules.Panels.DropPanels.PanelOpened', {
                         panel_name: panel_name,
                         state: state,
                         is_opened: state !== this.close_state_sid
@@ -59,7 +59,7 @@ module bModules.Panels {
                 if (panel_name === panels[i].panel_name) {
                     panels[i].state = this.close_state_sid;
 
-                    this.$rootScope.$broadcast('_modules.Panels.DropPanels.PanelClosed', {
+                    this.$rootScope.$broadcast('bModules.Panels.DropPanels.PanelClosed', {
                         panel_name: panel_name,
                         state: this.close_state_sid,
                         is_opened: false

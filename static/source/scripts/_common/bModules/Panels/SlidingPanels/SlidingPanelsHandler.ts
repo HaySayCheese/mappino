@@ -63,7 +63,7 @@ module bModules.Panels {
                 if (panel_name === panels[i].panel_name) {
                     panels[i].state = state;
 
-                    this.$rootScope.$broadcast('_modules.Panels.SlidingPanels.PanelSwitchState', {
+                    this.$rootScope.$broadcast('bModules.Panels.SlidingPanels.PanelSwitchState', {
                         panel_name: panel_name,
                         state: state,
                         is_opened: state !== this.close_state_sid
@@ -98,7 +98,7 @@ module bModules.Panels {
                     break;
             }
 
-            this.$rootScope.$broadcast('_modules.Panels.SlidingPanels.PanelOpened', {
+            this.$rootScope.$broadcast('bModules.Panels.SlidingPanels.PanelOpened', {
                 panel_name: panel_name,
                 state: state,
                 is_opened: state !== this.close_state_sid
@@ -120,7 +120,7 @@ module bModules.Panels {
                     break;
             }
 
-            this.$rootScope.$broadcast('_modules.Panels.SlidingPanels.PanelClosed', {
+            this.$rootScope.$broadcast('bModules.Panels.SlidingPanels.PanelClosed', {
                 panel_name: panel_name,
                 state: this.close_state_sid,
                 is_opened: false

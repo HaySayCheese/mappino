@@ -11,6 +11,11 @@
 
 
 
+// ####################
+// Interfaces import
+// ####################
+/// <reference path='interfaces/IFiltersService.ts' />
+
 
 
 // ####################
@@ -34,6 +39,7 @@
 // Services import
 // ####################
 /// <reference path='services/FiltersService.ts' />
+/// <reference path='services/MarkersService.ts' />
 
 
 

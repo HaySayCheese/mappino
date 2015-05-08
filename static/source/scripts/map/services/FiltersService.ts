@@ -1,10 +1,10 @@
-
+/// <reference path='../_references.ts' />
 
 
 module pages.map {
     'use strict';
 
-    export class FiltersService {
+    export class FiltersService implements IFiltersService {
         private _filters: Object = {
             map: {
                 c: null,    // city
@@ -82,6 +82,11 @@ module pages.map {
                 grd:    true    // ground
             }
         };
+        private _filters_for_load_markers: Object = {
+            zoom: null,
+            viewport: null,
+            filters: []
+        };
 
         public static $inject = [
             '$rootScope',
@@ -90,10 +95,11 @@ module pages.map {
             'RealtyTypesService'
         ];
 
-        constructor(private $rootScope: angular.IRootScopeService,
-                    private $timeout: angular.ITimeoutService,
-                    private $location: angular.ILocationService,
-                    private realtyTypesService: bModules.Types.RealtyTypesService) {
+        constructor(
+            private $rootScope: angular.IRootScopeService,
+            private $timeout: angular.ITimeoutService,
+            private $location: angular.ILocationService,
+            private realtyTypesService: bModules.Types.RealtyTypesService) {
             // -
             this.updateFiltersFromUrl();
             this.updateUrlFromPanelsFilters();
@@ -110,13 +116,37 @@ module pages.map {
                 this.updateUrlFromPanelsFilters();
             }
 
-            console.log('update method: filters updated')
+            this.createFormattedObjectForLoadMarkers(filter_name, filter_value);
+
+            this.$timeout(() => this.$rootScope.$broadcast('pages.map.FiltersService.FiltersUpdated', this._filters));
         }
 
 
-        get filters() {
+        public get filters() {
             return this._filters;
         }
+
+
+
+        //public createStringFromFilters() {
+        //    var location_search = {},
+        //        filters_panels = this._filters['panels'];
+        //
+        //    for (var key in filters_panels) {
+        //        if (filters_panels.hasOwnProperty(key)) {
+        //
+        //            if (filters[key] !== false && filters[key] !== "false" && filters[key] !== "" && filters[key] !== null) {
+        //                var param = key.toString().substring(2),
+        //                    value = filters[key];
+        //
+        //                location_search[param] = value;
+        //            }
+        //        }
+        //    }
+        //    location_search['panel'] = panel;
+        //
+        //    jsonFilters.filters.push(location_search);
+        //}
 
 
 
@@ -157,6 +187,8 @@ module pages.map {
                     }
                 }
             }
+
+            this.$timeout(() => this.$rootScope.$broadcast('pages.map.FiltersService.FiltersUpdated', this._filters));
         }
 
 
@@ -218,8 +250,6 @@ module pages.map {
             }
 
             this.$timeout(() => this.$rootScope.$broadcast('pages.map.FiltersService.UpdatedFromUrl', this._filters));
-
-            console.log(this._filters)
         }
 
 
@@ -229,63 +259,71 @@ module pages.map {
 
             for (var filter in filters_map) {
                 if (filters_map.hasOwnProperty(filter) && !_.include(['v'], filter)) {
-                    console.log('update map filters in url')
                     this.$location.search(filter, filters_map[filter]);
 
                     if (!this.$rootScope.$$phase)
                         this.$rootScope.$apply();
                 }
             }
+
+            //this._filters_for_load_markers['zoom'] = filters_map['z'];
+            //this._filters_for_load_markers['viewport'] = filters_map['v'];
+
+            console.info('updateUrlFromMapFilters method: map filters updated')
         }
 
 
 
         private updateUrlFromPanelsFilters() {
             var location_search = '',
-                filters_panels = this._filters['panels'];
+                filters_panels = this._filters['panels'],
+                _formattedPanelFilters = {};
 
             for (var panel in filters_panels) {
                 if (filters_panels.hasOwnProperty(panel)) {
+                    _formattedPanelFilters = {
+                        panel: panel
+                    };
+
                     for (var filter in filters_panels[panel]) {
                         if (filters_panels[panel].hasOwnProperty(filter)) {
 
                             if (filter.indexOf("t_sid") !== -1 && _.isNull(filters_panels[panel][filter])) {
+                                _formattedPanelFilters = null;
                                 continue;
                             }
+
+                            if (_.include(['', null], filters_panels[panel][filter])) {
+                                continue;
+                            }
+
+
+                            _formattedPanelFilters[filter.substr(2, filter.length)] = filters_panels[panel][filter];
+
+
+                            if (filters_panels[panel][filter] === this._filters['base'][filter.substr(2, filter.length)]) {
+                                continue;
+                            }
+
 
                             // i love js
-                            if (_.include(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], filters_panels[panel][filter])) {
-                                filters_panels[panel][filter] = parseInt(filters_panels[panel][filter]);
-                            }
+                            //if (_.include(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], filters_panels[panel][filter])) {
+                            //    filters_panels[panel][filter] = parseInt(filters_panels[panel][filter]);
+                            //}
 
-                            // _.include(['true', true, 'false', false], panel_filters[filter])
-                            // - примусово записуємо булеве значення в урл (по дефолту ангулар не пише буль в урл)
-                            //
-                            // panel_filters[filter] !== filters.base[filter.substr(2, filter.length)]
-                            // - провіряємо чи значення фільтра в урлі !== значенню фільтра в базовому наборі
-                            // таким чином скорочуємо сам урл не засоряючи його фільтрами які вже є в памяті
-                            // геніально :)
-                            if (_.include(['true', true, 'false', false], filters_panels[panel][filter]) &&
-                                filters_panels[panel][filter] !== this._filters['base'][filter.substr(2, filter.length)]) {
-                                // -
-                                location_search += (location_search.length !== 0 ? '&' : '') + filter + '=' + filters_panels[panel][filter];
-                                continue;
-                            }
-
-                            // якщо фільтер пустий і цей фільтр є zoom/latLng/viewport то не пишемо його в параметри
-                            // тому що ці фільтри треба писати в $routeParams а не $location.search()
-                            // а якщо не пустий і відрізняється від стандарного то пишем в $location.search()
-                            if (_.include(['', null], filters_panels[panel][filter])) {
-                                // todo: причесати
-                            } else if (filters_panels[panel][filter] !== this._filters['base'][filter.substr(2, filter.length)]) {
-                                location_search += (location_search.length !== 0 ? '&' : '') + filter + '=' + filters_panels[panel][filter];
-                            }
+                            location_search += (location_search.length !== 0 ? '&' : '') + filter + '=' + filters_panels[panel][filter];
                         }
                     }
+
+                    if (!_.isNull(_formattedPanelFilters))
+                        this._filters_for_load_markers['filters'].push(_formattedPanelFilters);
                 }
             }
 
-            console.log('update panels filters in url')
+
+
+
+            console.info('updateUrlFromPanelsFilters method: panels filters updated');
 
             this.$location.search(location_search);
 
@@ -293,6 +331,45 @@ module pages.map {
                 this.$rootScope.$apply();
             //$rootScope.searchUrlPart = base64.urlencode(location_search);
             //$location.search(base64.urlencode(location_search));
+        }
+
+
+
+        private createFormattedObjectForLoadMarkers(filter_name: string, filter_value: any) {
+            switch (filter_name) {
+                case 'z':
+                    this._filters_for_load_markers['zoom'] = filter_value;
+                    break;
+                case 'v':
+                    this.createFormattedViewportForLoadMarkers();
+            }
+
+            this.$timeout(() => this.$rootScope.$broadcast('pages.map.FiltersService.CreatedFormattedFilters', this._filters_for_load_markers));
+        }
+
+
+
+        private createFormattedViewportForLoadMarkers() {
+            var filters_map = this._filters['map'];
+
+            var sneLat = filters_map['v'].getNorthEast().lat().toString(),
+                sneLng = filters_map['v'].getNorthEast().lng().toString(),
+                sswLat = filters_map['v'].getSouthWest().lat().toString(),
+                sswLng = filters_map['v'].getSouthWest().lng().toString();
+
+            var neLat = sneLat.replace(sneLat.substring(sneLat.indexOf(".") + 3, sneLat.length), ""),
+                neLng = sneLng.replace(sneLng.substring(sneLng.indexOf(".") + 3, sneLng.length), ""),
+                swLat = sswLat.replace(sswLat.substring(sswLat.indexOf(".") + 3, sswLat.length), ""),
+                swLng = sswLng.replace(sswLng.substring(sswLng.indexOf(".") + 3, sswLng.length), "");
+
+            this._filters_for_load_markers['viewport'] = {
+                'ne_lat': neLat,
+                'ne_lng': neLng,
+                'sw_lat': swLat,
+                'sw_lng': swLng
+            };
+
+            console.log(this._filters_for_load_markers)
         }
     }
 }

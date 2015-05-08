@@ -25,8 +25,6 @@ module pages.map {
             $scope.realtyTypes = realtyTypesService.realty_types;
 
             this.filters = $scope.filters = filtersService.filters['panels'];
-
-            //console.log(filtersService.panels)
         }
     }
 }

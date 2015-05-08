@@ -9,13 +9,20 @@ module pages.map {
 
         public static $inject = [
             '$scope',
-            'FiltersService'
+            'FiltersService',
+            'MarkersService'
         ];
 
         constructor(private $scope,
-                    private filtersService: FiltersService) {
+                    private filtersService: FiltersService,
+                    private markersService: MarkersService) {
             // -
+            var self = this;
             google.maps.event.addDomListener(window, "load", () => this.initMap(this));
+
+            $scope.$on('pages.map.MarkersService.MarkersDone', function() {
+                markersService.place(self._map)
+            })
         }
 
 
@@ -30,7 +37,7 @@ module pages.map {
 
             google.maps.event.addListener(self._map, 'idle', function() {
                 self.filtersService.update('map', 'z', self._map.getZoom());
-                self.filtersService.update('map', 'v', self._map.getBounds().toUrlValue());
+                self.filtersService.update('map', 'v', self._map.getBounds());
                 self.filtersService.update('map', 'l', self._map.getCenter().toUrlValue());
             });
         }
