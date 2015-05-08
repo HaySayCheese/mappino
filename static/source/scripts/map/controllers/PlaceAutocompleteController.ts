@@ -11,10 +11,12 @@ module pages.map {
 
         public static $inject = [
             '$scope',
+            '$rootScope',
             'FiltersService'
         ];
 
         constructor(private $scope,
+                    private $rootScope: angular.IRootScopeService,
                     private filtersService: FiltersService) {
             // -
             this._autocompleteInput = document.getElementById("place-autocomplete");
@@ -39,6 +41,8 @@ module pages.map {
 
             google.maps.event.addListener(self._autocomplete, 'place_changed', function() {
                 self.filtersService.update('map', 'c', self._autocomplete.getPlace().formatted_address);
+
+                self.$rootScope.$broadcast('pages.map.PlaceAutocompleteController.PlaceChanged', self._autocomplete.getPlace());
             });
         }
     }

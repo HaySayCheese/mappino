@@ -22,6 +22,10 @@ module pages.map {
 
             $scope.$on('pages.map.MarkersService.MarkersDone', function() {
                 markersService.place(self._map)
+            });
+
+            $scope.$on('pages.map.PlaceAutocompleteController.PlaceChanged', function(event, place) {
+                self.positioningMap(place);
             })
         }
 
@@ -40,6 +44,20 @@ module pages.map {
                 self.filtersService.update('map', 'v', self._map.getBounds());
                 self.filtersService.update('map', 'l', self._map.getCenter().toUrlValue());
             });
+        }
+
+
+
+        private positioningMap(place: any) {
+            if (!place.geometry)
+                return;
+
+            if (place.geometry.viewport) {
+                this._map.fitBounds(place.geometry.viewport);
+            } else {
+                this._map.setCenter(place.geometry.location);
+                this._map.setZoom(17);
+            }
         }
     }
 }
