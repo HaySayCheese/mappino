@@ -7,7 +7,12 @@ var gulp        = require('gulp'),
     less        = require('gulp-less'),
     minifyCSS   = require('gulp-minify-css'),
 
-    uglify      = require('gulp-uglify');
+    typeScript  = require('typescript-compiler'),
+
+    ngAnnotate  = require('gulp-ng-annotate'),
+
+    uglify      = require('gulp-uglify'),
+    merge       = require('merge2');
 
 
 
@@ -18,14 +23,16 @@ var PATHS = {
         FONTS:      './static/build/fonts/',
         IMAGES:     './static/build/images/',
         STYLES:     './static/build/styles/',
-        VENDORS:    './static/build/vendors/'
+        SCRIPTS:    './static/build/scripts/',
+        LIBRARIES:  './static/build/libs/'
     },
     SOURCE: {
         PATH:       './static/source/',
         FONTS:      './static/source/fonts/',
         IMAGES:     './static/source/images/',
         STYLES:     './static/source/styles/',
-        VENDORS:    './static/source/vendors/'
+        SCRIPTS:    './static/source/scripts/',
+        LIBRARIES:  './static/source/libs/'
     }
 };
 
@@ -38,6 +45,38 @@ gulp.task('Clean', function(cb) {
 
 
 
+
+
+
+/** Task Copy:Fonts: Copy fonts to build folder **/
+gulp.task('Copy:Fonts', function() {
+    gulp.src(PATHS.SOURCE.FONTS + '/**/*.{ttf,woff,woff2,eot,svg}')
+        .pipe(gulp.dest(PATHS.BUILD.FONTS));
+});
+
+/** Task Copy:Images: Copy images to build folder **/
+gulp.task('Copy:Images', function() {
+    gulp.src(PATHS.SOURCE.IMAGES + '/**/*.{png,jpg,jpeg,gif}')
+        .pipe(gulp.dest(PATHS.BUILD.IMAGES));
+});
+
+/** Task Copy:Libs: Copy Libs to build folder **/
+gulp.task('Copy:Libs', function() {
+    gulp.src(PATHS.SOURCE.LIBRARIES + '/**/*.{js,ts,coffee}')
+        .pipe(uglify())
+        .pipe(gulp.dest(PATHS.BUILD.LIBRARIES));
+});
+
+/** Task Copy: Run all 'Copy:*' tasks **/
+gulp.task('Copy', ['Copy:Fonts', 'Copy:Images', 'Copy:Libs']);
+
+
+
+
+
+
+
+
 /** Task Less:Home: Compile 'source/styles/home/base.less' **/
 gulp.task('Less:Home', function () {
     return gulp.src(PATHS.SOURCE.STYLES + '/home/base.less')
@@ -45,6 +84,15 @@ gulp.task('Less:Home', function () {
         .pipe(minifyCSS())
         .pipe(rename(COMPILED_CSS_FILE_NAME))
         .pipe(gulp.dest(PATHS.BUILD.STYLES + '/home/'));
+});
+
+/** Task Less:Offer: Compile 'source/styles/offer/base.less' **/
+gulp.task('Less:Offer', function () {
+    return gulp.src(PATHS.SOURCE.STYLES + '/offer/base.less')
+        .pipe(less())
+        .pipe(minifyCSS())
+        .pipe(rename(COMPILED_CSS_FILE_NAME))
+        .pipe(gulp.dest(PATHS.BUILD.STYLES + '/offer/'));
 });
 
 /** Task Less:Main: Compile 'source/styles/main/base.less' **/
@@ -66,34 +114,7 @@ gulp.task('Less:Cabinet', function () {
 });
 
 /** Task Less: Run all 'Less:*' tasks **/
-gulp.task('Less', ['Less:Main', 'Less:Home', 'Less:Cabinet']);
-
-
-
-
-
-
-/** Task Copy:Fonts: Copy fonts to build folder **/
-gulp.task('Copy:Fonts', function() {
-    gulp.src(PATHS.SOURCE.FONTS + '/**/*.{ttf,woff,woff2,eot,svg}')
-        .pipe(gulp.dest(PATHS.BUILD.FONTS));
-});
-
-/** Task Copy:Images: Copy images to build folder **/
-gulp.task('Copy:Images', function() {
-    gulp.src(PATHS.SOURCE.IMAGES + '/**/*.{png,jpg,jpeg,gif}')
-        .pipe(gulp.dest(PATHS.BUILD.IMAGES));
-});
-
-/** Task Copy:Vendors: Copy vendors to build folder **/
-gulp.task('Copy:Vendors', function() {
-    gulp.src(PATHS.SOURCE.VENDORS + '/**/*.{js,ts,coffee}')
-        .pipe(uglify())
-        .pipe(gulp.dest(PATHS.BUILD.VENDORS));
-});
-
-/** Task Copy: Run all 'Copy:*' tasks **/
-gulp.task('Copy', ['Copy:Fonts', 'Copy:Images', 'Copy:Vendors']);
+gulp.task('Less', ['Less:Main', 'Less:Home', 'Less:Offer', 'Less:Cabinet']);
 
 
 
@@ -101,26 +122,41 @@ gulp.task('Copy', ['Copy:Fonts', 'Copy:Images', 'Copy:Vendors']);
 
 
 
-/** Task Watch:Home: (use 'gulp Watch:Home' to run watchers) **/
-gulp.task('Watch:Home', function() {
+///** Task TypeScript:Common - Compile 'source/scripts/common/*' **/
+//gulp.task('TypeScript:Common', function() {
+//    typeScript.compile(['static/source/scripts/common/**/*.ts'], ['--out', 'static/source/scripts/common/']);
+//});
+//
+//
+
+
+
+
+
+
+/** Task Watch:Less:Home - (use 'gulp Watch:Home' to run watchers) **/
+gulp.task('Watch:Less:Home', function() {
     gulp.watch(PATHS.SOURCE.STYLES + '/home/**', function() {
         gulp.run('Less:Home');
     });
 });
 
-/** Task Watch:Main: (use 'gulp Watch:Main' to run watchers) **/
-gulp.task('Watch:Home', function() {
+/** Task Watch:Less:Main - (use 'gulp Watch:Main' to run watchers) **/
+gulp.task('Watch:Less:Main', function() {
     gulp.watch(PATHS.SOURCE.STYLES + '/main/**', function() {
         gulp.run('Less:Main');
     });
 });
 
-/** Task Watch:Cabinet: (use 'gulp Watch:Cabinet' to run watchers) **/
-gulp.task('Watch:Cabinet', function() {
+/** Task Watch:Less:Cabinet - (use 'gulp Watch:Cabinet' to run watchers) **/
+gulp.task('Watch:Less:Cabinet', function() {
     gulp.watch(PATHS.SOURCE.STYLES + '/cabinet/**', function() {
         gulp.run('Less:Cabinet');
     });
 });
+
+
+
 
 
 
