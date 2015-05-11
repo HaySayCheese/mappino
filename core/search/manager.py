@@ -2,9 +2,11 @@
 import Queue
 import MySQLdb
 
+
 from django.conf import settings
 
 from apps.cabinet.api.dirtags import DirTags
+from core import redis_connections
 from core.publications import models_signals
 from core.publications.constants import OBJECTS_TYPES
 from core.search.tasks import \
@@ -13,7 +15,6 @@ from core.search.tasks import \
     update_garage_index, update_land_index
 
 from mappino.celery_integration import app
-from mappino.wsgi import redis_connections
 
 
 

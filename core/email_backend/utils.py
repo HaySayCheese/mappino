@@ -2,9 +2,10 @@
 from django.conf import settings
 from django.utils.timezone import now
 
+from core import redis_connections
 from core.email_backend import email_sender
 from core.utils.jinja2_integration import templates
-from mappino.wsgi import redis_connections
+
 
 
 

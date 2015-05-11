@@ -3,9 +3,9 @@ import urllib
 import datetime
 
 from collective.exceptions import InvalidArgument, ResourceThrottled
+from core import redis_connections
 from core.constants import GLOBAL_REDIS_PREFIXES
 from mappino import settings
-from mappino.wsgi import redis_connections
 
 
 class BaseSMSSender(object):
