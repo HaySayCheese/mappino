@@ -14,11 +14,10 @@
 psycopg2cffi
 
 
-Django==1.7
+Django
 Jinja2
 MySQL-python
 Pillow==2.5
-South
 celery
 hiredis
 mandrill
