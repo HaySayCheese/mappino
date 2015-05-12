@@ -26,12 +26,12 @@ class UsersManager(BaseUserManager):
             raise EmptyArgument('User must have phone number.')
 
         with transaction.atomic():
-            user = self.model(
+            user = self.create(
                 email=self.normalize_email(email),
                 mobile_phone=mobile_phone,
             )
             user.set_password(password)
-            user.save(using=self._db)
+            user.save()
 
             Preferences.objects.create(user=user)
             RealtorsAccounts.new(user)
@@ -258,7 +258,7 @@ class AccessRestoreTokens(models.Model):
 
     user = models.ForeignKey(Users)
     token = models.TextField(unique=True)
-    created = models.DateTimeField(default=now())
+    created = models.DateTimeField(default=now)
 
 
     @classmethod

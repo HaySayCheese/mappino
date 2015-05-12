@@ -51,7 +51,7 @@ class Orders(models.Model):
         unique = True
     )
     amount = models.DecimalField(max_digits=20, decimal_places=2)
-    created = models.DateTimeField(default=now())
+    created = models.DateTimeField(default=now)
     status = models.SmallIntegerField(default=Constants.States.new)
 
 

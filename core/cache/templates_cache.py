@@ -4,8 +4,8 @@ import datetime
 
 from django.conf import settings
 from django.utils.timezone import now
-from mappino.wsgi import redis_connections
 
+from core import redis_connections
 
 
 redis = redis_connections['cache']

@@ -8,17 +8,16 @@
 # gunicorn
 
 # for python2.7
-psycopg2
+# psycopg2
 
 # for pypy
-# psycopg2cffi
+psycopg2cffi
 
 
-Django==1.6
+Django
 Jinja2
 MySQL-python
 Pillow==2.5
-South
 celery
 hiredis
 mandrill

@@ -1,9 +1,9 @@
+#coding=utf-8
 from django.conf.urls import patterns, url
 from apps.main.api.correspondence.ajax import SendMessageFromClient, SendCallRequestFromClient
 from apps.main.api.customers.ajax import CustomersView
 from apps.main.api.favorites.ajax import FavoritesListView, FavoritesView
-from apps.main.api.markers.ajax import Markers
-from apps.main.api.publications.ajax import DetailedView, Claims
+from apps.main.api.publications_and_markers.ajax import Markers, DetailedView, Claims
 from apps.main.api.realtors_contacts.ajax import RealtorsContacts
 from apps.main.api.viewed_publications.ajax import ViewedPublicationsView
 

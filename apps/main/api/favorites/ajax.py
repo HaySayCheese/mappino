@@ -80,8 +80,11 @@ class FavoritesListView(FavoritesBaseView, View):
         except ValueError:
             return cls.CommonResponses.absent_publications_id()
 
+        try:
+            favorite = Favorites.objects.get_or_create(customer_id=customer_id)[0]
+        except IndexError:
+            return cls.CommonResponses.invalid_customers_hash_id()
 
-        favorite = Favorites.objects.get_or_create(customer_id=customer_id)[0]
         favorite.add(customer_id, tid, hash_id)
         return cls.Post.ok()
 

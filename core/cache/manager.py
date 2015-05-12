@@ -1,5 +1,6 @@
+#coding=utf-8
 from collective.exceptions import InvalidArgument
-from mappino.wsgi import redis_connections
+from core import redis_connections
 
 
 class AbstractCacheManager(object):
