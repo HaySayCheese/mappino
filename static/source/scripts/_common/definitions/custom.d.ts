@@ -1,4 +1,5 @@
 interface JQuery {
-    tabs: any
-    material_select: any
+    tabs:               any
+    material_select:    any
+    parallax:           any
 }

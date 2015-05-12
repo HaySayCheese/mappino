@@ -62,17 +62,6 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
         });
 
 
-
-        /**
-         * Підганяємо першу картінку на сторінці по висоті вікна
-         **/
-        $(window).on('resize', function() {
-            if ($(window).height() > 300) {
-                $('.img-holder.top').css('height', $(window).height() + 'px');
-            }
-        }).resize();
-
-
         /**
          * Анімація падаючих маркерів на планшет
          **/
@@ -142,15 +131,6 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
                 window.location = window.location.href + path + base64.urlencode(searchString);
                 //window.location = window.location.href + searchString;
             }
-        };
-
-
-
-        $scope.scrollTo = function(to) {
-            $("html, body").animate({
-                scrollTop: to === 'top' ? 0 : $(window).height()
-            }, '500');
-            event.preventDefault();
         };
 
 
