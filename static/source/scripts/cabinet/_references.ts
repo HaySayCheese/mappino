@@ -42,7 +42,7 @@
 // Controllers import
 // ####################
 /// <reference path='controllers/LoginController.ts' />
-/// <reference path='controllers/AdminController.ts' />
+/// <reference path='controllers/CabinetController.ts' />
 
 
 
