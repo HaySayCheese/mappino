@@ -7,8 +7,8 @@ from core.utils.jinja2_integration import templates
 
 @ensure_csrf_cookie
 def admin(request):
-	if not request.user.is_authenticated():
-		return HttpResponseRedirect(reverse('admin/login'))
+	# if not request.user.is_authenticated():
+	# 	return HttpResponseRedirect(reverse('admin/login'))
 
 	template = templates.get_template('admin/admin.html')
 	return HttpResponse(content=template.render())
