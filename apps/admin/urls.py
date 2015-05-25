@@ -3,8 +3,7 @@ from django.conf.urls import patterns, url, include
 
 
 urlpatterns = patterns('apps.admin',
-
-    # templates
-    url(r'^admin/$', 'templates.admin', name='admin'),
-    url(r'^admin/login/$', 'templates.login', name='admin/login'),
+    # flat pages
+    url(r'^admin/$', 'views.admin', name='admin'),
+    url(r'^admin/login/$', 'views.login', name='admin/login'),
 )
