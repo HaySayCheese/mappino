@@ -3,6 +3,8 @@
 // --------------------------------------------------
 @import "../_common/materialize";
 
+@import "pages/login";
+
 
 html,
 body,
@@ -10,16 +12,7 @@ body,
     @include square(100%);
 }
 
+
 .wrapper {
     background-color: color("blue-grey", "lighten-4");
-
-
-    .login-panel {
-        @include size(400px, auto);
-        padding: 30px 50px;
-        margin: 0 auto;
-        background-color: #fff;
-
-        @extend .z-depth-1;
-    }
 }

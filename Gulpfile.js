@@ -26,7 +26,7 @@ var PATHS = {
         IMAGES:     './static/source/images/',
         STYLES:     './static/source/styles/',
         SCRIPTS:    './static/source/scripts/',
-        LIBRARIES:  './static/source/libs/'
+        LIBRARIES:  './static/source/scripts/libs/'
     }
 };
 
