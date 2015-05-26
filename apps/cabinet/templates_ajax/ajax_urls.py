@@ -4,6 +4,12 @@ from django.conf.urls import patterns, url
 urlpatterns = patterns('apps.cabinet.templates_ajax',
     url(r'^ajax/template/cabinet/briefs/$', 'publications.briefs_template'),
 
+    # settings
+    url(r'^ajax/template/cabinet/settings/$', 'settings.settings_template'),
+
+
+
+
 
     # url(r'^ajax/template/cabinet/publications/$', 'publications.publications_panel_template'),
 
@@ -18,8 +24,7 @@ urlpatterns = patterns('apps.cabinet.templates_ajax',
     url(r'^ajax/template/cabinet/publications/published/$', 'publications.published_form_template'),
 
 
-    # settings
-    url(r'^ajax/template/cabinet/settings/$', 'settings.settings_template'),
+
 
 
     # support
