@@ -10,7 +10,7 @@ from core.utils.jinja2_integration import templates
 @ensure_csrf_cookie
 # @condition(last_modified_func=static_template_last_modified)
 def briefs_template(request):
-	t = templates.get_template('cabinet/_common/briefs.html')
+	t = templates.get_template('cabinet/_common/briefs/briefs.html')
 	return HttpResponse(t.render())
 
 #
