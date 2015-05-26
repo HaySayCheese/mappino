@@ -10,16 +10,9 @@ from core.utils.jinja2_integration import templates
 @ensure_csrf_cookie
 # @condition(last_modified_func=static_template_last_modified)
 def briefs(request):
-    t = templates.get_template('cabinet/_common/publications/briefs.html')
-    return HttpResponse(t.render())
-
-
-# @ensure_csrf_cookie
-# @condition(last_modified_func=static_template_last_modified)
-# def publications_panel_template(request):
-# 	t = templates.get_template('cabinet/publications/publications.html')
-# 	return HttpResponse(t.render())
-
+    return HttpResponse(
+        templates.get_template('cabinet/_common/publications/briefs.html').render()
+    )
 
 
 @ensure_csrf_cookie
