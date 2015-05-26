@@ -2,11 +2,15 @@ var gulp        = require('gulp'),
     del         = require('del'),
     runSequence = require('run-sequence'),
     rename      = require("gulp-rename"),
+    concat      = require('gulp-concat'),
 
     sass        = require('gulp-sass'),
     minifyCSS   = require('gulp-minify-css'),
 
-    uglify      = require('gulp-uglify');
+    ts          = require('gulp-typescript'),
+
+    uglify      = require('gulp-uglify'),
+    sourcemaps  = require('gulp-sourcemaps');
 
 
 
@@ -57,7 +61,9 @@ gulp.task('Copy:Images', function() {
 /** Task Copy:Libs: Copy Libs to build folder **/
 gulp.task('Copy:Libs', function() {
     gulp.src(PATHS.SOURCE.LIBRARIES + '/**/*.{js,ts,coffee}')
+        .pipe(sourcemaps.init())
         .pipe(uglify())
+        .pipe(sourcemaps.write('/maps'))
         .pipe(gulp.dest(PATHS.BUILD.LIBRARIES));
 });
 
@@ -70,18 +76,26 @@ gulp.task('Copy', ['Copy:Fonts', 'Copy:Images', 'Copy:Libs']);
 
 
 
-
-/** Task Sass:Main: Compile 'source/styles/main/base.scss' **/
-gulp.task('Sass:Main:Map', function () {
-    return gulp.src(PATHS.SOURCE.STYLES + '/main/map/base.scss')
+/** Task Sass:Landing: Compile 'source/styles/landing/base.scss' **/
+gulp.task('Sass:Landing', function () {
+    return gulp.src(PATHS.SOURCE.STYLES + '/landing/base.scss')
         .pipe(sass())
         .pipe(minifyCSS())
         .pipe(rename(COMPILED_CSS_FILE_NAME))
-        .pipe(gulp.dest(PATHS.BUILD.STYLES + '/main/map/'));
+        .pipe(gulp.dest(PATHS.BUILD.STYLES + '/landing/'));
+});
+
+/** Task Sass:Map: Compile 'source/styles/map/base.scss' **/
+gulp.task('Sass:Map', function () {
+    return gulp.src(PATHS.SOURCE.STYLES + '/map/base.scss')
+        .pipe(sass())
+        .pipe(minifyCSS())
+        .pipe(rename(COMPILED_CSS_FILE_NAME))
+        .pipe(gulp.dest(PATHS.BUILD.STYLES + '/map/'));
 });
 
 /** Task Sass: Run all 'Sass:*' tasks **/
-gulp.task('Sass', ['Sass:Main:Map']);
+gulp.task('Sass', ['Sass:Landing', 'Sass:Map']);
 
 
 
@@ -89,38 +103,38 @@ gulp.task('Sass', ['Sass:Main:Map']);
 
 
 
-///** Task TypeScript:Common - Compile 'source/scripts/common/*' **/
-//gulp.task('TypeScript:Common', function() {
-//    typeScript.compile(['static/source/scripts/common/**/*.ts'], ['--out', 'static/source/scripts/common/']);
-//});
-//
-//
+/** Task TypeScript:Landing - Compile 'source/scripts/landing/*' **/
+gulp.task('TypeScript:Landing', function() {
+    return gulp.src(PATHS.SOURCE.SCRIPTS + '/landing/_references.ts')
+        .pipe(sourcemaps.init())
+        .pipe(ts({
+            noImplicitAny: false,
+            target: 'ES5',
+            sortOutput: true,
+            out: 'landing.js'
+        }))
+        .pipe(uglify())
+        .pipe(sourcemaps.write('/'))
+        .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/landing/'));
+});
 
+/** Task TypeScript:Map - Compile 'source/scripts/map/*' **/
+gulp.task('TypeScript:Map', function() {
+    return gulp.src(PATHS.SOURCE.SCRIPTS + '/map/_references.ts')
+        .pipe(sourcemaps.init())
+        .pipe(ts({
+            noImplicitAny: false,
+            target: 'ES5',
+            sortOutput: true,
+            out: 'map.js'
+        }))
+        .pipe(uglify())
+        .pipe(sourcemaps.write('/'))
+        .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/map/'));
+});
 
-
-
-
-
-///** Task Watch:Less:Home - (use 'gulp Watch:Home' to run watchers) **/
-//gulp.task('Watch:Less:Home', function() {
-//    gulp.watch(PATHS.SOURCE.STYLES + '/home/**', function() {
-//        gulp.run('Less:Home');
-//    });
-//});
-//
-///** Task Watch:Less:Main - (use 'gulp Watch:Main' to run watchers) **/
-//gulp.task('Watch:Less:Main', function() {
-//    gulp.watch(PATHS.SOURCE.STYLES + '/main/**', function() {
-//        gulp.run('Less:Main');
-//    });
-//});
-//
-///** Task Watch:Less:Cabinet - (use 'gulp Watch:Cabinet' to run watchers) **/
-//gulp.task('Watch:Less:Cabinet', function() {
-//    gulp.watch(PATHS.SOURCE.STYLES + '/cabinet/**', function() {
-//        gulp.run('Less:Cabinet');
-//    });
-//});
+/** Task TypeScript: Run all 'TypeScript:*' tasks **/
+gulp.task('TypeScript', ['TypeScript:Landing', 'TypeScript:Map']);
 
 
 
@@ -133,5 +147,5 @@ gulp.task('Sass', ['Sass:Main:Map']);
 
 /** default task (use 'gulp' to build project) **/
 gulp.task('default', function(callback) {
-    runSequence('Clean', ['Copy', 'Sass'], callback);
+    runSequence('Clean', ['Copy', 'Sass', 'TypeScript'], callback);
 });

@@ -1,9 +1,10 @@
-._sliding-panel {
-    @include size(400px, 600px);
+%_right-sliding-panel {
+    @include size(400px, auto);
 
     position: absolute;
     top: 58px;
     right: 10px;
+    bottom: 15px;
 
     z-index: 10;
 
@@ -23,7 +24,7 @@
     }
 
 
-    > ._sliding-panel-header {
+    > %_sliding-panel-header {
         @include size(100%, 48px);
 
         > .header-btn {
