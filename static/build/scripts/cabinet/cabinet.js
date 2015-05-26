@@ -127,7 +127,7 @@ var pages;
                         $stateProvider
                             .state('publications', {
                             url: "/publications/",
-                            templateUrl: '/ajax/template/cabinet/briefs/'
+                            templateUrl: '/ajax/template/cabinet/publications/briefs/'
                         })
                             .state('publication_view', {
                             url: "/publication/:id/view/",
