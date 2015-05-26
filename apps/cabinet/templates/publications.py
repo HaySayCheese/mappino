@@ -9,7 +9,7 @@ from core.utils.jinja2_integration import templates
 
 @ensure_csrf_cookie
 # @condition(last_modified_func=static_template_last_modified)
-def briefs_template(request):
+def briefs(request):
     t = templates.get_template('cabinet/_common/publications/briefs.html')
     return HttpResponse(t.render())
 
@@ -24,7 +24,7 @@ def briefs_template(request):
 
 @ensure_csrf_cookie
 # @condition(last_modified_func=static_template_last_modified)
-def unpublished_form_template(request, tid):
+def unpublished_form(request, tid):
     tid = int(tid)
 
 
@@ -84,7 +84,7 @@ def unpublished_form_template(request, tid):
 
 @ensure_csrf_cookie
 # @condition(last_modified_func=static_template_last_modified)
-def unpublished_map_template(request):
+def unpublished_map(request):
     return HttpResponse(
         templates.get_template('cabinet/publications/_common/unpublished/parts/map.html')
     )
@@ -92,7 +92,7 @@ def unpublished_map_template(request):
 
 @ensure_csrf_cookie
 # @condition(last_modified_func=static_template_last_modified)
-def unpublished_photos_template(request):
+def unpublished_photos(request):
     return HttpResponse(
         templates.get_template('cabinet/publications/_common/unpublished/parts/photos.html')
     )
@@ -100,7 +100,7 @@ def unpublished_photos_template(request):
 
 @ensure_csrf_cookie
 # @condition(last_modified_func=static_template_last_modified)
-def published_form_template(request):
+def published_form(request):
     return HttpResponse(
         templates.get_template('cabinet/publications/_common/published/published.html')
     )
