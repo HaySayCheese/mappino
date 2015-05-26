@@ -22,7 +22,7 @@ urlpatterns = patterns('apps',
         url(r'^cabinet/$', 'cabinet.views.main'),
 
         # templates
-        url(r'', include('apps.cabinet.templates_ajax.ajax_urls')),
+        url(r'', include('apps.cabinet.templates.ajax_urls')),
 
         # API
         url(r'', include('apps.cabinet.api.dirtags.ajax_urls')),
