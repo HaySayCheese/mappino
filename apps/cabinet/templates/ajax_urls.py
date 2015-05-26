@@ -1,6 +1,7 @@
 # coding=utf-8
 from django.conf.urls import patterns, url
 
+
 urlpatterns = patterns('apps.cabinet',
     # briefs
     url(r'^ajax/template/cabinet/publications/briefs/$', 'templates.publications.briefs'),
