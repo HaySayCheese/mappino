@@ -19,7 +19,7 @@ def briefs(request):
 # @condition(last_modified_func=static_template_last_modified)
 def publication(request):
     return HttpResponse(
-        templates.get_template('cabinet/_common/publications/publications.html').render()
+        templates.get_template('cabinet/_common/publications/publication.html').render()
     )
 
 
