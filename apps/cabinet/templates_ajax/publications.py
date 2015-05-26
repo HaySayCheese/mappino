@@ -86,7 +86,7 @@ def unpublished_form_template(request, tid):
 @ensure_csrf_cookie
 @condition(last_modified_func=static_template_last_modified)
 def unpublished_map_template(request):
-	t = templates.get_template('cabinet/publications/unpublished/parts/map.html')
+	t = templates.get_template('cabinet/publications/_common/unpublished/parts/map.html')
 	return HttpResponse(t.render())
 
 
@@ -94,7 +94,7 @@ def unpublished_map_template(request):
 @ensure_csrf_cookie
 @condition(last_modified_func=static_template_last_modified)
 def unpublished_photos_template(request):
-	t = templates.get_template('cabinet/publications/unpublished/parts/photos.html')
+	t = templates.get_template('cabinet/publications/_common/unpublished/parts/photos.html')
 	return HttpResponse(t.render())
 
 
@@ -102,13 +102,13 @@ def unpublished_photos_template(request):
 @ensure_csrf_cookie
 @condition(last_modified_func=static_template_last_modified)
 def published_form_template(request):
-	t = templates.get_template('cabinet/publications/published/published.html')
+	t = templates.get_template('cabinet/publications/_common/published/published.html')
 	return HttpResponse(t.render())
 
 
 
-@ensure_csrf_cookie
-@condition(last_modified_func=static_template_last_modified)
-def no_pubs_hint(request):
-	t = templates.get_template('cabinet/publications/hints/no_publications.html')
-	return HttpResponse(t.render())
+# @ensure_csrf_cookie
+# @condition(last_modified_func=static_template_last_modified)
+# def no_pubs_hint(request):
+# 	t = templates.get_template('cabinet/publications/hints/no_publications.html')
+# 	return HttpResponse(t.render())
