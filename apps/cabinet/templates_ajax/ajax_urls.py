@@ -1,7 +1,11 @@
+# coding=utf-8
 from django.conf.urls import patterns, url
 
 urlpatterns = patterns('apps.cabinet.templates_ajax',
-    url(r'^ajax/template/cabinet/publications/$', 'publications.publications_panel_template'),
+    url(r'^ajax/template/cabinet/briefs/$', 'publications.briefs_template'),
+
+
+    # url(r'^ajax/template/cabinet/publications/$', 'publications.publications_panel_template'),
 
 
     # unpublished forms

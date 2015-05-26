@@ -7,12 +7,18 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from core.utils.jinja2_integration import templates
 
 
-
 @ensure_csrf_cookie
-@condition(last_modified_func=static_template_last_modified)
-def publications_panel_template(request):
-	t = templates.get_template('cabinet/publications/publications.html')
+# @condition(last_modified_func=static_template_last_modified)
+def briefs_template(request):
+	t = templates.get_template('cabinet/_common/briefs.html')
 	return HttpResponse(t.render())
+
+#
+# @ensure_csrf_cookie
+# @condition(last_modified_func=static_template_last_modified)
+# def publications_panel_template(request):
+# 	t = templates.get_template('cabinet/publications/publications.html')
+# 	return HttpResponse(t.render())
 
 
 
