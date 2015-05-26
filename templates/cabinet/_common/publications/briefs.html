@@ -1,0 +1,74 @@
+<div ng-controller="BriefsController as briefsCtrl">
+    <div class="row">
+        <div class="col s12 m12 l6">
+            <div class="card x-large">
+                <div class="card-image">
+                    <img src="http://lorempixel.com/900/500/city" class="responsive-img">
+                    <!--<span class="card-title">Card Title</span>-->
+                </div>
+                <div class="card-content">
+                    <div class="card-label green lighten-4">
+                        <i class="mdi-action-done left"></i>Опубликовано
+                    </div>
+                    <h5>
+                        Lorem ipsum dolor sit amet.
+                    </h5>
+                    <p>I am a very simple card. I am good at containing small bits of information.
+                        I am convenient because I require little markup to use effectively.</p>
+                </div>
+                <div class="card-action">
+                    <a href ui-sref="publication_edit({ id: '2' })" class="left">Редактировать</a>
+                    <a href ui-sref="publication_view({ id: '2' })" class="right">Просмотреть</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m12 l6">
+            <div class="card x-large new-publication center-align">
+                <div class="valign-wrapper">
+                    <div class="valign">
+                        <i class="mdi-action-note-add large"></i>
+                        <div class="row">
+                            <h4>
+                                Добавить новое объявление
+                            </h4>
+                        </div>
+
+                        <div class="row">
+                            <div class="col s12 m8 l6 offset-m2 offset-l3">
+                                <div class="row">
+                                    <select ng-model="filters.red.t_sid" ng-options="realtyType.id as realtyType.title for realtyType in realtyTypes">
+                                        <option value="" selected>Виберите тип объявления</option>
+                                        <!--<option value="1">Option 1</option>-->
+                                        <!--<option value="2">Option 2</option>-->
+                                        <!--<option value="3">Option 3</option>-->
+                                    </select>
+                                </div>
+                                <div class="row">
+                                    <div class="col s6">
+                                        <input type="checkbox" id="sale" checked/>
+                                        <label for="sale">Продажа</label>
+                                    </div>
+                                    <div class="col s6">
+                                        <input type="checkbox" id="rent" />
+                                        <label for="rent">Аренда</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col s12">
+                                        <a class="waves-effect waves-light btn btn-large teal lighten-1">
+                                            <i class="mdi-content-add left"></i>Создать объявление
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -28,6 +28,7 @@
 // Configs import
 // ####################
 /// <reference path='configs/ProvidersConfigs.ts' />
+/// <reference path='configs/RoutersConfigs.ts' />
 /// <reference path='configs/ApplicationConfigs.ts' />
 
 
@@ -43,6 +44,7 @@
 // ####################
 /// <reference path='controllers/LoginController.ts' />
 /// <reference path='controllers/CabinetController.ts' />
+/// <reference path='controllers/BriefsController.ts' />
 
 
 

@@ -1,0 +1,17 @@
+<div class="publication-view" ng-controller="PublicationController as pubCtrl">
+
+    <div ng-show="showPublication">
+        <div ng-if='publicationLoaded'>
+            <div ng-include="publicationTemplateUrl"></div>
+        </div>
+    </div>
+
+
+    <div class="preloader-wrapper big active" ng-show="loadings.publication">
+        <div class="spinner-layer spinner-blue-only">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div>
+        </div>
+    </div>
+</div>

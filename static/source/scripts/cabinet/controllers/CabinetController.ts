@@ -4,7 +4,11 @@
 module pages.cabinet {
     export class CabinetController {
 
-        constructor() {
+        private $inject = [
+            '$timeout'
+        ];
+
+        constructor(private $timeout: angular.ITimeoutService) {
             $(".button-collapse").sideNav();
         }
 

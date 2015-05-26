@@ -190,7 +190,6 @@ var bModules;
                 this.panels = [];
                 this.close_state_sid = 0;
                 this.open_state_sid = 1;
-                this.panels.push(new Panels.SlidingPanel(angular.element('.publication-panel'), 'publication'));
                 this.panels.push(new Panels.SlidingPanel(angular.element('.filters-panel'), 'filters'));
                 this.panels.push(new Panels.SlidingPanel(angular.element('.favorites-panel'), 'favorites'));
                 this.panels.push(new Panels.SlidingPanel(angular.element('.auth-panel'), 'auth'));
@@ -203,18 +202,20 @@ var bModules;
                     parseInt(this.$state.params['favorites']) !== this.close_state_sid) {
                     // -
                     this.$state.go('base', { favorites: this.close_state_sid });
+                    return;
                 }
                 if (parseInt(this.$state.params['filters']) !== this.close_state_sid &&
                     parseInt(this.$state.params['auth']) !== this.close_state_sid) {
                     // -
                     this.$state.go('base', { auth: this.close_state_sid });
+                    return;
                 }
                 if (parseInt(this.$state.params['favorites']) !== this.close_state_sid &&
                     parseInt(this.$state.params['auth']) !== this.close_state_sid) {
                     // -
                     this.$state.go('base', { auth: this.close_state_sid });
+                    return;
                 }
-                this.switchState('publication', parseInt(this.$state.params['publication']));
                 this.switchState('filters', parseInt(this.$state.params['filters']));
                 this.switchState('favorites', parseInt(this.$state.params['favorites']));
                 this.switchState('auth', parseInt(this.$state.params['auth']));
@@ -242,9 +243,6 @@ var bModules;
             SlidingPanelsHandler.prototype.open = function (panel_name, state) {
                 if (state === void 0) { state = this.open_state_sid; }
                 switch (panel_name) {
-                    case 'publication':
-                        this.$state.go('base', { publication: state });
-                        break;
                     case 'filters':
                         this.$state.go('base', { filters: state, favorites: this.close_state_sid, auth: this.close_state_sid });
                         break;
@@ -263,9 +261,6 @@ var bModules;
             };
             SlidingPanelsHandler.prototype.close = function (panel_name) {
                 switch (panel_name) {
-                    case 'publication':
-                        this.$state.go('base', { publication: this.close_state_sid });
-                        break;
                     case 'filters':
                         this.$state.go('base', { filters: this.close_state_sid });
                         break;
@@ -294,6 +289,7 @@ var bModules;
 /// <reference path='SlidingPanel.ts' />
 /// <reference path='ISlidingPanelsHandler.ts' />
 /// <reference path='SlidingPanelsHandler.ts' /> 
+/// <reference path='../../definitions/angular.d.ts' />
 /// <reference path='Panel/Panel.ts' />
 /// <reference path='DropPanels/_references.ts' />
 /// <reference path='SlidingPanels/_references.ts' /> 
@@ -425,7 +421,7 @@ var pages;
                 app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($stateProvider, $urlRouterProvider, $locationProvider) {
                         //
                         // For any unmatched url, redirect to /state1
-                        $urlRouterProvider.otherwise("/0/1/0/0/");
+                        $urlRouterProvider.otherwise("/0/1/0/gdsg/");
                         //
                         // Now set up the states
                         $stateProvider
@@ -552,16 +548,18 @@ var pages;
                 };
                 // -
                 this.updateFiltersFromUrl();
+                this.updateUrlFromPanelsFilters();
             }
-            FiltersService.prototype.update = function (filter_object_name, filters_object) {
+            FiltersService.prototype.update = function (filter_object, filter_name, filter_value) {
                 var _this = this;
-                for (var filter in filters_object) {
-                    if (filters_object.hasOwnProperty(filter)) {
-                        this._filters[filter_object_name][filter] = filters_object[filter];
-                    }
+                this._filters[filter_object][filter_name] = filter_value;
+                if (filter_object === 'map') {
+                    this.updateUrlFromMapFilters();
                 }
-                this.updateUrlFromFilters();
-                this.createFormattedObjectForLoadMarkers();
+                else {
+                    this.updateUrlFromPanelsFilters();
+                }
+                this.createFormattedObjectForLoadMarkers(filter_name, filter_value);
                 this.$timeout(function () { return _this.$rootScope.$broadcast('pages.map.FiltersService.FiltersUpdated', _this._filters); });
             };
             Object.defineProperty(FiltersService.prototype, "filters", {
@@ -571,6 +569,25 @@ var pages;
                 enumerable: true,
                 configurable: true
             });
+            //public createStringFromFilters() {
+            //    var location_search = {},
+            //        filters_panels = this._filters['panels'];
+            //
+            //    for (var key in filters_panels) {
+            //        if (filters_panels.hasOwnProperty(key)) {
+            //
+            //            if (filters[key] !== false && filters[key] !== "false" && filters[key] !== "" && filters[key] !== null) {
+            //                var param = key.toString().substring(2),
+            //                    value = filters[key];
+            //
+            //                location_search[param] = value;
+            //            }
+            //        }
+            //    }
+            //    location_search['panel'] = panel;
+            //
+            //    jsonFilters.filters.push(location_search);
+            //}
             FiltersService.prototype.createFiltersForPanel = function (panel_color) {
                 var _this = this;
                 var self = this, panel_prefix = panel_color.toString().substring(0, 1) + "_", type_sid = this._filters['panels'][panel_color][panel_prefix + 't_sid'], location_search = this.$location.search();
@@ -654,49 +671,44 @@ var pages;
                 }
                 this.$timeout(function () { return _this.$rootScope.$broadcast('pages.map.FiltersService.UpdatedFromUrl', _this._filters); });
             };
-            FiltersService.prototype.updateUrlFromFilters = function () {
-                var location_search = '', map_filters = this._filters['map'], panels_filters = this._filters['panels'], _formattedPanelFilters = {};
-                // reset to empty object
-                this._filters_for_load_markers = {
-                    zoom: null,
-                    viewport: null,
-                    filters: []
-                };
-                // create location search from map filters
-                for (var map_filter in map_filters) {
-                    if (map_filters.hasOwnProperty(map_filter) && !_.include(['v'], map_filter)) {
-                        if (!map_filters[map_filter]) {
-                            continue;
-                        }
-                        if (!_.include(['', null], map_filters[map_filter])) {
-                            location_search += (location_search.length !== 0 ? '&' : '') + map_filter + '=' + map_filters[map_filter];
-                        }
+            FiltersService.prototype.updateUrlFromMapFilters = function () {
+                var filters_map = this._filters['map'];
+                for (var filter in filters_map) {
+                    if (filters_map.hasOwnProperty(filter) && !_.include(['v'], filter)) {
+                        this.$location.search(filter, filters_map[filter]);
+                        if (!this.$rootScope.$$phase)
+                            this.$rootScope.$apply();
                     }
                 }
-                // create location search from panels filters
-                for (var panel in panels_filters) {
-                    if (panels_filters.hasOwnProperty(panel)) {
+                //this._filters_for_load_markers['zoom'] = filters_map['z'];
+                //this._filters_for_load_markers['viewport'] = filters_map['v'];
+                console.info('updateUrlFromMapFilters method: map filters updated');
+            };
+            FiltersService.prototype.updateUrlFromPanelsFilters = function () {
+                var location_search = '', filters_panels = this._filters['panels'], _formattedPanelFilters = {};
+                for (var panel in filters_panels) {
+                    if (filters_panels.hasOwnProperty(panel)) {
                         _formattedPanelFilters = {
                             panel: panel
                         };
-                        for (var panel_filter in panels_filters[panel]) {
-                            if (panels_filters[panel].hasOwnProperty(panel_filter)) {
-                                if (panel_filter.indexOf("t_sid") !== -1 && _.isNull(panels_filters[panel][panel_filter])) {
+                        for (var filter in filters_panels[panel]) {
+                            if (filters_panels[panel].hasOwnProperty(filter)) {
+                                if (filter.indexOf("t_sid") !== -1 && _.isNull(filters_panels[panel][filter])) {
                                     _formattedPanelFilters = null;
                                     continue;
                                 }
-                                if (_.include(['', null], panels_filters[panel][panel_filter])) {
+                                if (_.include(['', null], filters_panels[panel][filter])) {
                                     continue;
                                 }
-                                _formattedPanelFilters[panel_filter.substr(2, panel_filter.length)] = panels_filters[panel][panel_filter];
-                                if (panels_filters[panel][panel_filter] === this._filters['base'][panel_filter.substr(2, panel_filter.length)]) {
+                                _formattedPanelFilters[filter.substr(2, filter.length)] = filters_panels[panel][filter];
+                                if (filters_panels[panel][filter] === this._filters['base'][filter.substr(2, filter.length)]) {
                                     continue;
                                 }
                                 // i love js
                                 //if (_.include(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], filters_panels[panel][filter])) {
                                 //    filters_panels[panel][filter] = parseInt(filters_panels[panel][filter]);
                                 //}
-                                location_search += (location_search.length !== 0 ? '&' : '') + panel_filter + '=' + panels_filters[panel][panel_filter];
+                                location_search += (location_search.length !== 0 ? '&' : '') + filter + '=' + filters_panels[panel][filter];
                             }
                         }
                         if (!_.isNull(_formattedPanelFilters))
@@ -707,11 +719,18 @@ var pages;
                 this.$location.search(location_search);
                 if (!this.$rootScope.$$phase)
                     this.$rootScope.$apply();
+                //$rootScope.searchUrlPart = base64.urlencode(location_search);
+                //$location.search(base64.urlencode(location_search));
             };
-            FiltersService.prototype.createFormattedObjectForLoadMarkers = function () {
+            FiltersService.prototype.createFormattedObjectForLoadMarkers = function (filter_name, filter_value) {
                 var _this = this;
-                this._filters_for_load_markers['zoom'] = this._filters['map']['z'];
-                this.createFormattedViewportForLoadMarkers();
+                switch (filter_name) {
+                    case 'z':
+                        this._filters_for_load_markers['zoom'] = filter_value;
+                        break;
+                    case 'v':
+                        this.createFormattedViewportForLoadMarkers();
+                }
                 this.$timeout(function () { return _this.$rootScope.$broadcast('pages.map.FiltersService.CreatedFormattedFilters', _this._filters_for_load_markers); });
             };
             FiltersService.prototype.createFormattedViewportForLoadMarkers = function () {
@@ -744,84 +763,98 @@ var pages;
     (function (map_1) {
         'use strict';
         var MarkersService = (function () {
-            function MarkersService($rootScope, $http, $timeout, slidingPanelsHandler) {
+            function MarkersService($rootScope, $http, $q, $timeout) {
                 this.$rootScope = $rootScope;
                 this.$http = $http;
+                this.$q = $q;
                 this.$timeout = $timeout;
-                this.slidingPanelsHandler = slidingPanelsHandler;
                 this._response_markers = {
-                    red: {},
-                    blue: {},
-                    green: {}
+                    red: {
+                        '47.8125:25.87522': 1
+                    }
                 };
-                this._markers = {
-                    red: {},
-                    blue: {},
-                    green: {}
+                this._markers_to_remove = {
+                    red: {}
+                };
+                this._markers_to_place = {
+                    red: {}
                 };
                 // -
                 var self = this;
                 $rootScope.$on('pages.map.FiltersService.CreatedFormattedFilters', function (event, formatted_filters) {
                     self._filters_for_load_markers = formatted_filters;
+                    console.log(JSON.stringify(self._filters_for_load_markers));
                     self.load();
                 });
             }
             MarkersService.prototype.load = function () {
                 var self = this;
-                this.$http.get('/ajax/api/markers/?p=' + JSON.stringify(this._filters_for_load_markers)).success(function (response) {
-                    self.clearResponseMarkersObject();
+                if (this._load_markers_canceler)
+                    this._load_markers_canceler.resolve();
+                this._load_markers_canceler = this.$q.defer();
+                this.$http.get('/ajax/api/markers/?p=' + JSON.stringify(this._filters_for_load_markers), {
+                    timeout: this._load_markers_canceler.promise
+                }).success(function (response) {
                     self._response_markers = response;
-                    self.$timeout(function () { return self.$rootScope.$broadcast('pages.map.MarkersService.MarkersIsLoaded'); });
+                    self.intersection(response);
                 });
             };
-            MarkersService.prototype.place = function (map) {
+            MarkersService.prototype.intersection = function (_new_response_markers) {
                 var _this = this;
-                // видаляємо маркери з карти яких нема в відповіді з сервера
-                for (var panel in this._markers) {
-                    if (this._markers.hasOwnProperty(panel)) {
-                        for (var marker in this._markers[panel]) {
-                            if (this._markers[panel].hasOwnProperty(marker)) {
-                                if (!this._response_markers[panel][marker]) {
-                                    this._markers[panel][marker].setMap(null);
-                                    console.log('deleted: ' + this._markers[panel][marker]);
-                                    delete this._markers[panel][marker];
+                var self = this;
+                self._markers_to_place['red'] = {};
+                self._response_markers['red']['47.8125111:25.87522'] = 1;
+                console.log(self._response_markers);
+                console.log(_new_response_markers);
+                // find unique
+                for (var panel in _new_response_markers) {
+                    if (_new_response_markers.hasOwnProperty(panel)) {
+                        for (var marker in _new_response_markers[panel]) {
+                            if (_new_response_markers[panel].hasOwnProperty(marker)) {
+                                if (_.isUndefined(self._response_markers[panel][marker])) {
+                                    self._markers_to_place[panel][marker] = _new_response_markers[panel][marker];
+                                    //self._response_markers[panel][marker] = _new_response_markers[panel][marker];
+                                    console.log(self._markers_to_place);
                                 }
-                                console.log(this._markers);
                             }
                         }
                     }
                 }
-                // додаємо новві маркери на карту
-                for (var panel in this._response_markers) {
-                    if (this._response_markers.hasOwnProperty(panel)) {
-                        for (var marker in this._response_markers[panel]) {
-                            if (this._response_markers[panel].hasOwnProperty(marker)) {
-                                if (!this._markers[panel][marker]) {
-                                    this._markers[panel][marker] = new google.maps.Marker({
-                                        position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
-                                        map: map,
-                                        title: 'Hello World!'
-                                    });
-                                    this._markers[panel][marker].setMap(map);
-                                    console.log('added: ' + this._markers[panel][marker]);
+                // find old
+                for (var panel in self._response_markers) {
+                    if (self._response_markers.hasOwnProperty(panel)) {
+                        for (var marker in self._response_markers[panel]) {
+                            if (self._response_markers[panel].hasOwnProperty(marker)) {
+                                if (_.isUndefined(_new_response_markers[panel][marker])) {
+                                    self._markers_to_remove[panel][marker] = self._response_markers[panel][marker];
+                                    console.log(self._markers_to_remove);
                                 }
-                                console.log(this._markers);
                             }
                         }
                     }
                 }
-                this.$timeout(function () { return _this.$rootScope.$broadcast('pages.map.MarkersService.MarkersPlaced'); });
+                this.$timeout(function () { return _this.$rootScope.$broadcast('pages.map.MarkersService.MarkersDone'); });
             };
-            MarkersService.prototype.clearResponseMarkersObject = function () {
-                this._response_markers = {
-                    red: {},
-                    blue: {},
-                    green: {}
-                };
+            MarkersService.prototype.place = function (map) {
+                for (var panel in this._markers_to_place) {
+                    if (this._markers_to_place.hasOwnProperty(panel)) {
+                        for (var marker in this._markers_to_place[panel]) {
+                            if (this._markers_to_place[panel].hasOwnProperty(marker)) {
+                                var _marker = new google.maps.Marker({
+                                    position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
+                                    map: map,
+                                    title: 'Hello World!'
+                                });
+                                console.log('place');
+                            }
+                        }
+                    }
+                }
             };
             MarkersService.$inject = [
                 '$rootScope',
                 '$http',
+                '$q',
                 '$timeout'
             ];
             return MarkersService;
@@ -933,7 +966,7 @@ var pages;
                 // -
                 var self = this;
                 google.maps.event.addDomListener(window, "load", function () { return _this.initMap(_this); });
-                $scope.$on('pages.map.MarkersService.MarkersIsLoaded', function () {
+                $scope.$on('pages.map.MarkersService.MarkersDone', function () {
                     markersService.place(self._map);
                 });
                 $scope.$on('pages.map.PlaceAutocompleteController.PlaceChanged', function (event, place) {
@@ -948,11 +981,9 @@ var pages;
                     disableDefaultUI: true
                 });
                 google.maps.event.addListener(self._map, 'idle', function () {
-                    self.filtersService.update('map', {
-                        z: self._map.getZoom(),
-                        v: self._map.getBounds(),
-                        l: self._map.getCenter().toUrlValue()
-                    });
+                    self.filtersService.update('map', 'z', self._map.getZoom());
+                    self.filtersService.update('map', 'v', self._map.getBounds());
+                    self.filtersService.update('map', 'l', self._map.getCenter().toUrlValue());
                 });
             };
             MapController.prototype.positioningMap = function (place) {
@@ -962,7 +993,7 @@ var pages;
                     this._map.fitBounds(place.geometry.viewport);
                 }
                 else {
-                    this._map.panTo(place.geometry.location);
+                    this._map.setCenter(place.geometry.location);
                     this._map.setZoom(17);
                 }
             };
@@ -989,10 +1020,9 @@ var pages;
                 this.$rootScope = $rootScope;
                 this.filtersService = filtersService;
                 // -
-                var self = this;
                 this._autocompleteInput = document.getElementById("place-autocomplete");
                 /** Listen events */
-                google.maps.event.addDomListener(window, "load", function () { return _this.initAutocomplete(self); });
+                google.maps.event.addDomListener(window, "load", function () { return _this.initAutocomplete(_this); });
                 $scope.$on('pages.map.FiltersService.UpdatedFromUrl', function (event, filters) {
                     _this._autocompleteInput.value = filters['map']['c'];
                 });
@@ -1004,13 +1034,8 @@ var pages;
                     }
                 });
                 google.maps.event.addListener(self._autocomplete, 'place_changed', function () {
-                    self.filtersService.update('map', {
-                        c: self._autocomplete.getPlace().formatted_address
-                    });
+                    self.filtersService.update('map', 'c', self._autocomplete.getPlace().formatted_address);
                     self.$rootScope.$broadcast('pages.map.PlaceAutocompleteController.PlaceChanged', self._autocomplete.getPlace());
-                    //
-                    //if (!self.$scope.$$phase)
-                    //    self.$scope.$apply();
                 });
             };
             PlaceAutocompleteController.$inject = [
