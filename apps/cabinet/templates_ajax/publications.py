@@ -10,7 +10,7 @@ from core.utils.jinja2_integration import templates
 @ensure_csrf_cookie
 # @condition(last_modified_func=static_template_last_modified)
 def briefs_template(request):
-	t = templates.get_template('cabinet/_common/publication/briefs.html')
+	t = templates.get_template('cabinet/_common/publications/briefs.html')
 	return HttpResponse(t.render())
 
 #
@@ -23,7 +23,7 @@ def briefs_template(request):
 
 
 @ensure_csrf_cookie
-@condition(last_modified_func=static_template_last_modified)
+# @condition(last_modified_func=static_template_last_modified)
 def unpublished_form_template(request, tid):
 	if not tid:
 		return HttpResponseBadRequest('@tid is invalid')
