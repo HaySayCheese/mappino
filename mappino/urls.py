@@ -20,7 +20,7 @@ urlpatterns = patterns('apps',
     url(r'', include('apps.cabinet.api.support.ajax_urls')),
     url(r'', include('apps.cabinet.api.billing.ajax_urls')),
     url(r'', include('apps.cabinet.api.settings.ajax_urls')),
-
+    url(r'', include('apps.cabinet.api.photographers.ajax_urls')),
 
     # flat pages
     url(r'^$', 'main.views.homepage'),

@@ -18,9 +18,10 @@ ADMINS = (
     ('Dima Chizhevsky', 'dima@mappino.com'),
 )
 MANAGERS = (
-    ('Dima Chizhevsky', 'support@mappino.com'),
+    ('Dima Chizhevsky', 'support@mappino.com', 'bloodlustwolf43@gmail.com'),
 )
-SUPPORT_EMAIL =  MANAGERS[0][1]
+SUPPORT_EMAIL =  MANAGERS[0][2]
+MANAGER_EMAIL = SUPPORT_EMAIL
 BILLING_MANAGER_EMAIL = MANAGERS[0][1]
 MODERATORS = MANAGERS[0][1]
 

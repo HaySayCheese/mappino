@@ -58,7 +58,7 @@ class FavoritesListView(FavoritesBaseView, View):
 
 
         publications_info = cls.get_information_about_publication(favorite)
-        return cls.Get.ok(favorite)
+        return cls.Get.ok(publications_info)
 
 
     @classmethod
@@ -89,33 +89,38 @@ class FavoritesListView(FavoritesBaseView, View):
         return cls.Post.ok()
 
     @classmethod
-    def get_information_about_publication(cls,favorite):
+    def get_information_about_publication(cls, favorite):
+        list_with_publications_info = []
         try:
             publications_ids = json.loads(favorite.publications_ids)
             list_with_publications_ids = [publication_ids.split(":",2) for publication_ids in publications_ids]
             list_with_publications_ids = [[int(publication_ids[0]),publication_ids[1]] for publication_ids in list_with_publications_ids]
-            list_with_publication_info = []
             for publication_ids in list_with_publications_ids:
                 publication_model = HEAD_MODELS[publication_ids[0]]
                 publication = publication_model.objects.get(hash_id = publication_ids[1])
-                photo = publication.photos()
-                list_with_publication_info.append(publication.body.title)
-
-        except Exception as e:
+                photos = publication.photos()
+                list_with_publications_info.append({
+                    "id": publication_ids,
+                    "title": publication.body.title,
+                    "photos": photos
+                })
+        except IndexError:
             pass
-        return list_with_publication_info
+
+        return list_with_publications_info
 
 
     class Get(object):
         @staticmethod
-        def ok(favorite):
-            return HttpJsonResponse({
-                'code': 0,
-                'message': 'OK',
-                'data': {
-                    'publications_ids': favorite.publication_ids,
-                }
-            })
+        def ok(publications_info):
+            try:
+                return HttpJsonResponse({
+                    'code': 0,
+                    'message': 'OK',
+                    'data' : publications_info
+                    })
+            except Exception as e:
+                pass
 
 
     class Post(object):
