@@ -31,51 +31,51 @@ def unpublished_form_template(request, tid):
 	# living realty
 	if tid == OBJECTS_TYPES.house():
 		return HttpResponse(
-            templates.get_template('cabinet/publications/unpublished/house.html').render()
+            templates.get_template('cabinet/_common/publications/unpublished/house.html').render()
         )
 
 	elif tid == OBJECTS_TYPES.flat():
 		return HttpResponse(
-            templates.get_template('cabinet/publications/unpublished/flat.html').render()
+            templates.get_template('cabinet/_common/publications/unpublished/flat.html').render()
         )
 
 	elif tid == OBJECTS_TYPES.room():
 		return HttpResponse(
-            templates.get_template('cabinet/publications/unpublished/room.html').render()
+            templates.get_template('cabinet/_common/publications/unpublished/room.html').render()
         )
 
 
 	# commercial realty
 	elif tid == OBJECTS_TYPES.trade():
 		return HttpResponse(
-            templates.get_template('cabinet/publications/unpublished/trade.html').render()
+            templates.get_template('cabinet/_common/publications/unpublished/trade.html').render()
         )
 
 	elif tid == OBJECTS_TYPES.office():
 		return HttpResponse(
-            templates.get_template('cabinet/publications/unpublished/office.html').render()
+            templates.get_template('cabinet/_common/publications/unpublished/office.html').render()
         )
 
 	elif tid == OBJECTS_TYPES.warehouse():
 		return HttpResponse(
-            templates.get_template('cabinet/publications/unpublished/warehouse.html').render()
+            templates.get_template('cabinet/_common/publications/unpublished/warehouse.html').render()
         )
 
 	elif tid == OBJECTS_TYPES.business():
 		return HttpResponse(
-            templates.get_template('cabinet/publications/unpublished/business.html').render()
+            templates.get_template('cabinet/_common/publications/unpublished/business.html').render()
         )
 
 
-	# other
+	# other realty
 	elif tid == OBJECTS_TYPES.garage():
 		return HttpResponse(
-            templates.get_template('cabinet/publications/unpublished/garage.html').render()
+            templates.get_template('cabinet/_common/publications/unpublished/garage.html').render()
         )
 
 	elif tid == OBJECTS_TYPES.land():
 		return HttpResponse(
-            templates.get_template('cabinet/publications/unpublished/land.html').render()
+            templates.get_template('cabinet/_common/publications/unpublished/land.html').render()
         )
 
 
