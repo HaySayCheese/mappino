@@ -1,9 +1,9 @@
 /// <reference path='_references.ts' />
 
-module pages.admin {
+module pages.cabinet {
     'use strict';
 
-    var app: angular.IModule = angular.module('mappino.pages.home', [
+    var app: angular.IModule = angular.module('mappino.pages.cabinet', [
         'ngCookies'
     ]);
 
@@ -22,5 +22,5 @@ module pages.admin {
 
     /** Module controllers */
     app.controller('LoginController', LoginController);
-    app.controller('AdminController', AdminController);
+    app.controller('CabinetController', CabinetController);
 }

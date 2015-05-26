@@ -3,16 +3,33 @@
 // --------------------------------------------------
 @import "../_common/materialize";
 
+// override materialize components
+@import "components/card";
+
+
 @import "pages/login";
 
 
 html,
-body,
-.wrapper {
+body {
     @include square(100%);
 }
 
 
+body {
+    background-color: color("blue-grey", "lighten-5");
+}
+
+
 .wrapper {
-    background-color: color("blue-grey", "lighten-4");
+    padding: 20px;
+
+}
+
+.nav-wrapper {
+    padding: 0 20px;
+
+    .hide-on-med-and-down {
+        margin-left: 200px;
+    }
 }

@@ -1,7 +1,7 @@
 /// <reference path='../_references.ts' />
 
 
-module pages.admin {
+module pages.cabinet {
     export class AdminAuthService {
 
         public static $inject = [
