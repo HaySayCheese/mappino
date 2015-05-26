@@ -17,6 +17,14 @@ def briefs(request):
 
 @ensure_csrf_cookie
 # @condition(last_modified_func=static_template_last_modified)
+def publication(request):
+    return HttpResponse(
+        templates.get_template('cabinet/_common/publications/publications.html').render()
+    )
+
+
+@ensure_csrf_cookie
+# @condition(last_modified_func=static_template_last_modified)
 def unpublished_form(request, tid):
     tid = int(tid)
 

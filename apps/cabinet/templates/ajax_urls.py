@@ -3,7 +3,8 @@ from django.conf.urls import patterns, url
 
 urlpatterns = patterns('apps.cabinet',
     # briefs
-    url(r'^ajax/template/cabinet/publications/briefs/$', 'templates.publications.briefs_template'),
+    url(r'^ajax/template/cabinet/publications/briefs/$', 'templates.publications.briefs'),
+    url(r'^ajax/template/cabinet/publications/publication/$', 'templates.publications.publication'),
 
 
     # unpublished publications forms

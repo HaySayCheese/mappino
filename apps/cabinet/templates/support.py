@@ -9,7 +9,7 @@ from core.utils.jinja2_integration import templates
 
 @ensure_csrf_cookie
 # @condition(last_modified_func=static_template_last_modified)
-def support_template(request):
+def support(request):
 	t = templates.get_template('cabinet/_common/support/support.html')
 	return HttpResponse(t.render())
 
@@ -17,14 +17,14 @@ def support_template(request):
 
 @ensure_csrf_cookie
 # @condition(last_modified_func=static_template_last_modified)
-def ticket_template(request):
+def ticket(request):
 	t = templates.get_template('cabinet/_common/support/ticket.html')
 	return HttpResponse(t.render())
 
 
 
-@ensure_csrf_cookie
-# @condition(last_modified_func=static_template_last_modified)
-def no_tickets_hint(request):
-	t = templates.get_template('cabinet/_common/support/hints/no-tickets.html')
-	return HttpResponse(t.render())
+# @ensure_csrf_cookie
+# # @condition(last_modified_func=static_template_last_modified)
+# def no_tickets_hint(request):
+# 	t = templates.get_template('cabinet/_common/support/hints/no-tickets.html')
+# 	return HttpResponse(t.render())
