@@ -29,6 +29,12 @@ class EmptyPersonsCount(ValidationError): pass
 class EmptyCabinetsCount(ValidationError): pass
 class EmptyHallsCount(ValidationError): pass
 
+class IncorrectFloorsCount(ValidationError): pass
+class IncorrectBedRoomsCount(ValidationError): pass
+
+class IncorrectLivingArea(ValidationError): pass
+class IncorrectKitchenArea(ValidationError): pass
+
 
 class PhotosHandlerExceptions(object):
     class ImageIsTooLarge(Exception): pass

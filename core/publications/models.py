@@ -149,12 +149,27 @@ class FlatsBodies(BodyModel):
     def check_extended_fields(self):
         if self.floor_type_sid == FLOOR_TYPES.floor() and self.floor is None:
             raise EmptyFloor('Floor is None.')
+        if self.floors_count is not None and self.floors_count<self.floor:
+            raise IncorrectFloorsCount('FloorsCount bigger than Floor')
+
         if self.total_area is None:
             raise EmptyTotalArea('Total area is None.')
         if self.living_area is None:
             raise EmptyLivingArea('Living area is None.')
-        if self.rooms_count is None:
+
+        if self.living_area>self.total_area:
+            raise IncorrectLivingArea('Living area is bigger than Total area ')
+        if self.kitchen_area and self.kitchen_area>self.total_area:
+            raise IncorrectKitchenArea('Kitchen area is bigger than Total area')
+
+        if self.rooms_count is None :
             raise EmptyRoomsCount('Rooms count is None.')
+        if self.bedrooms_count and self.bedrooms_count>self.rooms_count:
+            raise IncorrectBedRoomsCount('There are more bedrooms than rooms')
+
+
+
+
 
 
     #-- output
