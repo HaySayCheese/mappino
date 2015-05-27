@@ -21,21 +21,7 @@ urlpatterns = patterns('apps',
 
 
     # cabinet
-        # flatpages
-        url(r'^cabinet/$', 'cabinet.views.main'),
-        url(r'^cabinet/login/$', 'cabinet.views.login'),
-
-        # templates
-        url(r'', include('apps.cabinet.templates.ajax_urls')),
-
-        # API
-        url(r'', include('apps.cabinet.api.dirtags.ajax_urls')),
-        url(r'', include('apps.cabinet.api.publications.ajax_urls')),
-        url(r'', include('apps.cabinet.api.stats.ajax_urls')),
-        url(r'', include('apps.cabinet.api.search.ajax_urls')),
-        url(r'', include('apps.cabinet.api.support.ajax_urls')),
-        url(r'', include('apps.cabinet.api.billing.ajax_urls')),
-        url(r'', include('apps.cabinet.api.settings.ajax_urls')),
+    url(r'', include('apps.cabinet.urls')),
 
 
     # core
