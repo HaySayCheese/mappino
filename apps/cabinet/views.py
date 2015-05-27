@@ -12,7 +12,7 @@ def cabinet(request):
         return HttpResponseForbidden()
 
     # permissions check
-    if not user.is_staff and not user.is_superuser:
+    if user.is_regular_user():
         return HttpResponseForbidden()
 
     template = templates.get_template('cabinet/users/users.html')
