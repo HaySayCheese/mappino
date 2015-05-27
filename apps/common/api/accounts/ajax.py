@@ -332,6 +332,17 @@ class RegistrationManager(object):
 
 class LoginManager(object):
     class Login(AnonymousOnlyView):
+        class PostResponses(object):
+            @staticmethod
+            def ok():
+                return HttpJsonResponse({
+                    'code': 0,
+                    'message': 'OK',
+                })
+
+
+
+
         post_codes = {
             'OK': {
                 'code': 0,
