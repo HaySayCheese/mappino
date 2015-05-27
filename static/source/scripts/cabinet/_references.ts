@@ -1,13 +1,7 @@
 // ####################
 // Declarations import
 // ####################
-/// <reference path='../_common/definitions/underscore.d.ts' />
-/// <reference path='../_common/definitions/google.maps.d.ts' />
-/// <reference path='../_common/definitions/jquery.d.ts' />
-/// <reference path='../_common/definitions/angular.d.ts' />
-/// <reference path='../_common/definitions/angular-cookies.d.ts' />
-/// <reference path='../_common/definitions/angular-ui-router.d.ts' />
-/// <reference path='../_common/definitions/custom.d.ts' />
+/// <reference path='../_common/definitions/_references.ts' />
 
 
 
@@ -21,6 +15,7 @@
 // _modules import
 // ####################
 /// <reference path='../_common/bModules/Types/_references.ts' />
+/// <reference path='../_common/bModules/Auth/_references.ts' />
 
 
 
@@ -35,7 +30,7 @@
 // ####################
 // Services import
 // ####################
-/// <reference path='services/AdminAuthService.ts' />
+/// <reference path='services/PublicationsService.ts' />
 
 
 
@@ -45,6 +40,7 @@
 /// <reference path='controllers/LoginController.ts' />
 /// <reference path='controllers/CabinetController.ts' />
 /// <reference path='controllers/BriefsController.ts' />
+/// <reference path='controllers/PublicationController.ts' />
 
 
 

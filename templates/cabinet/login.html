@@ -1,52 +1,50 @@
-<!DOCTYPE html>
-<html ng-app="mappino.pages.home">
-<head>
-    <title>admin</title>
+{% extends "cabinet/_common/base.html" %}
 
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    {% compress css %}
-        <link rel="stylesheet" href="{{ static }}build/styles/admin/base.min.css"/>
-    {% endcompress %}
+{% block navbar %}
+{% endblock %}
 
-    <script src="http://yandex.st/jquery/2.1.3/jquery.min.js"></script>
-    <script src="http://yandex.st/underscore/1.6.0/underscore-min.js"></script>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0-rc.1/angular.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0-rc.1/angular-cookies.min.js"></script>
 
-    {% compress js %}
-        <script src="{{ static }}build/libs/materialize.js"></script>
-    {% endcompress %}
-</head>
-<body ng-controller="LoginController as loginCtrl">
+{% block wrapper %}
     <div class="wrapper valign-wrapper">
+        <div ng-controller="LoginController as loginCtrl" class="center-block valign">
 
-        <div class="login-panel valign">
-            <div class="row">
-                <div class="input-field col s12">
-                    <input id="username" type="text">
-                    <label for="username">Логин</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12">
-                    <input id="password" type="password">
-                    <label for="password">Пароль</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col s12 right">
-                    <a class="waves-effect waves-light btn right" ng-click="loginCtrl.login()">Войти</a>
-                </div>
+            <div class="login-panel">
+                <form name="loginForm" novalidate>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="username" type="text" name="username"
+                                   ng-model="user.username"
+                                   ng-class="{ invalid: loginForm.username.$dirty && !user.username, valid: user.username }"
+                                   required>
+                            <label for="username">Логин</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="password" type="password" name="password"
+                                   ng-model="user.password"
+                                   ng-class="{ invalid: loginForm.password.$dirty && !user.password, valid: user.password }"
+                                   required>
+                            <label for="password">Пароль</label>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="user.invalid">
+                        <div class="col s12 center-align">
+                            <span class="red-text">Попытка входа не удалась</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s12 right">
+                            <button class="waves-effect waves-light btn right"
+                               ng-disabled="!user.username || !user.password"
+                               ng-class="{ 'blue lighten-1': user.username && user.password }"
+                               ng-click="loginCtrl.login()">Войти</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-
-
     </div>
-
-    {% compress js %}
-        <script type="text/javascript" src="{{ static }}build/scripts/admin.js"></script>
-    {% endcompress %}
-</body>
-</html>
+{% endblock %}

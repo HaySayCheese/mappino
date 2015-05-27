@@ -1,10 +1,10 @@
 /// <reference path='_references.ts' />
 
 
-module binno.auth {
+module bModules.Auth {
     'use strict';
 
-    var bAuth: angular.IModule = angular.module('binno.auth', ['ngCookies']);
+    var bAuth: angular.IModule = angular.module('bModules.Auth', ['ngCookies']);
 
-    bAuth.factory('AuthService', AuthService);
+    bAuth.service('AuthService', AuthService);
 }

@@ -11,7 +11,8 @@
 
 
 html,
-body {
+body,
+.wrapper {
     @include square(100%);
 }
 

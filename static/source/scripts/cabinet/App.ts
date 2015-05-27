@@ -5,7 +5,9 @@ module pages.cabinet {
 
     var app: angular.IModule = angular.module('mappino.pages.cabinet', [
         'ngCookies',
-        'ui.router'
+        'ui.router',
+        'bModules.Types',
+        'bModules.Auth'
     ]);
 
 
@@ -21,13 +23,14 @@ module pages.cabinet {
 
 
     /** Module services */
-    app.service('RealtyTypesService', bModules.Types.RealtyTypesService);
+    // -
 
-    app.service('AdminAuthService', AdminAuthService);
+    app.service('PublicationsService', PublicationsService);
 
 
     /** Module controllers */
     app.controller('LoginController', LoginController);
     app.controller('CabinetController', CabinetController);
     app.controller('BriefsController', BriefsController);
+    app.controller('PublicationController', PublicationController);
 }

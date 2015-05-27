@@ -1,11 +1,7 @@
 /// <reference path='../_references.ts' />
 
-/**
- * The main TodoMVC app module.
- *
- * @type {angular.module}
- */
-module binno.auth {
+
+module bModules.Auth {
 
     export class AuthService {
         http :any;
@@ -19,15 +15,19 @@ module binno.auth {
 
         constructor(
             private $http:      angular.IHttpService,
-            private $cookies:   angular.cookies.ICookiesService
-        ) {
-            this.http = $http;
-
-            this.test()
+            private $cookies:   angular.cookies.ICookiesService) {
+            // -
         }
 
-        private test() {
-            this.http.post()
+
+
+        public login(user: Object, callback: Function) {
+            this.$http.post('/ajax/api/accounts/login/', user)
+                .then((response) => {
+                    callback(response);
+                }, () => {
+                    // - error
+                });
         }
     }
 

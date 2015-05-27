@@ -3,29 +3,36 @@
 
 module pages.cabinet {
     export class LoginController {
-        private admin: Object = {
-            username: '',
-            password: ''
-        };
 
         public static $inject = [
             '$scope',
-            'AdminAuthService'
+            'AuthService'
         ];
 
         constructor(
-            private $scope: angular.IScope,
-            private adminAuthService: AdminAuthService) {
+            private $scope: any,
+            private authService: bModules.Auth.AuthService) {
             // -
+            $scope.user = {
+                username: '',
+                password: '',
+                invalid: false
+            };
         }
 
 
         private login() {
-            this.adminAuthService.login(this.admin, (response) => {
-                if (response.code !== 0) {
-                    console.log('!ok');
+            var self = this;
+
+            if (!this.$scope.user.username || !this.$scope.user.password) {
+                return;
+            }
+
+            this.authService.login(this.$scope.user, (response) => {
+                if (response.data.code !== 0) {
+                    self.$scope.user.invalid = true;
                 } else {
-                    console.log('ok');
+                    window.location.pathname = '/cabinet/';
                 }
             });
         }
