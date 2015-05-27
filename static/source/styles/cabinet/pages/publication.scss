@@ -1,0 +1,55 @@
+section {
+    padding: 1px 40px 40px 40px;
+    margin: 15px 0 15px;
+
+    background-color: #fff;
+    border-radius: 3px;
+
+    @extend .z-depth-1;
+
+
+    @media screen and (max-width: 700px) {
+        @include size(100%, auto);
+        padding: 1px 20px 20px 20px;
+        margin: 0;
+
+        box-shadow: none;
+        border-radius: 0;
+        border-bottom: 1px solid color('grey', 'lighten-2')
+    }
+
+
+    &.medium {
+        @include size(700px, auto);
+    }
+
+
+
+    h5 {
+        margin-bottom: 30px;
+        margin-top: 30px;
+
+        @media screen and (max-width: 700px) {
+            margin-top: 15px;
+            font-size: 1.3rem;
+        }
+    }
+
+
+    .required-star {
+        margin-right: 5px;
+        color: color('red', 'base');
+    }
+
+
+
+    .user-photo {
+        @include square(180px);
+        border-radius: 50%;
+        overflow: hidden;
+
+        img {
+            @include square(180px);
+        }
+    }
+}

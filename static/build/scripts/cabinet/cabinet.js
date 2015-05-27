@@ -121,16 +121,57 @@ var bModules;
             function AuthService($http, $cookies) {
                 this.$http = $http;
                 this.$cookies = $cookies;
+                this._user = {
+                    name: '',
+                    surname: '',
+                    full_name: ''
+                };
                 // -
             }
             AuthService.prototype.login = function (user, callback) {
+                var self = this;
                 this.$http.post('/ajax/api/accounts/login/', user)
                     .then(function (response) {
-                    callback(response);
+                    if (response.data['code'] === 0) {
+                        self._user = {
+                            name: response.data['user'].name,
+                            surname: response.data['user'].surname,
+                            full_name: response.data['user'].name + ' ' + response.data['user'].surname
+                        };
+                        self.saveToStorages(self._user);
+                        callback(response);
+                    }
+                    else {
+                        self.removeFromStorages();
+                        callback(response);
+                    }
                 }, function () {
                     // - error
                 });
             };
+            AuthService.prototype.saveToStorages = function (user) {
+                console.log(user);
+                if (localStorage) {
+                    localStorage['user'] = JSON.stringify(user);
+                }
+            };
+            AuthService.prototype.removeFromStorages = function () {
+                if (localStorage && localStorage['user']) {
+                    delete localStorage['user'];
+                }
+            };
+            Object.defineProperty(AuthService.prototype, "user", {
+                //private getFromStorages() {
+                //    if (localStorage && localStorage['user']) {
+                //        localStorage['user'] = JSON.stringify(this.user);
+                //    }
+                //}
+                get: function () {
+                    return this._user;
+                },
+                enumerable: true,
+                configurable: true
+            });
             // $inject annotation.
             AuthService.$inject = [
                 '$http',
@@ -247,10 +288,20 @@ var pages;
                 var self = this;
                 this.$http.post('/ajax/api/cabinet/publications/', publication)
                     .then(function (response) {
-                    self.$state.go('publication_edit', { id: publication['tid'] + ":" + response['id'] });
-                    _.isFunction(callback) && callback(response);
+                    self.$state.go('publication_edit', { id: publication['tid'] + ":" + response.data['data']['id'] });
+                    callback(response);
                 }, function () {
                     // error
+                });
+            };
+            PublicationsService.prototype.loadPublicationData = function (publication, callback) {
+                var self = this;
+                this.$http.get('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/')
+                    .then(function (response) {
+                    console.log(response);
+                    callback(response);
+                }, function () {
+                    // -
                 });
             };
             PublicationsService.$inject = [
@@ -332,15 +383,16 @@ var pages;
                 this.publicationsService = publicationsService;
                 // -
                 $scope.new_publication = {
-                    t_sid: 0,
-                    sale: true,
-                    rent: false
+                    tid: 0,
+                    for_sale: true,
+                    for_rent: false
                 };
                 $scope.realtyTypes = realtyTypesService.realty_types;
                 $timeout(function () { return $('select').material_select(); });
             }
             BriefsController.prototype.createPublication = function () {
                 this.publicationsService.create(this.$scope.new_publication, function () {
+                    // - create callback
                 });
             };
             BriefsController.$inject = [
@@ -360,16 +412,35 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var PublicationController = (function () {
-            function PublicationController($scope, $timeout) {
+            function PublicationController($scope, $timeout, $state, publicationsService) {
+                // -
                 this.$scope = $scope;
                 this.$timeout = $timeout;
-                // -
-                $timeout(function () { return $('select').material_select(); });
-                $scope.publicationTemplateUrl = '/ajax/template/cabinet/publications/unpublished/2/';
+                this.$state = $state;
+                this.publicationsService = publicationsService;
+                this._publication = {};
+                this._publication['tid'] = $state.params['id'].split(':')[0];
+                this._publication['hid'] = $state.params['id'].split(':')[1];
+                $scope.showPublication = true;
+                $scope.publicationLoaded = true;
+                $scope.publication = {};
+                $scope.publicationTemplateUrl = '/ajax/template/cabinet/publications/unpublished/' + this._publication['tid'] + '/';
+                this.loadPublicationData();
             }
+            PublicationController.prototype.loadPublicationData = function () {
+                var _this = this;
+                this.$scope.publicationLoaded = false;
+                this.publicationsService.loadPublicationData(this._publication, function (response) {
+                    _this.$scope.publicationLoaded = true;
+                    _this.$scope.publication = response.data;
+                });
+                this.$timeout(function () { return $('select').material_select(); }, 3000);
+            };
             PublicationController.$inject = [
                 '$scope',
-                '$timeout'
+                '$timeout',
+                '$state',
+                'PublicationsService'
             ];
             return PublicationController;
         })();

@@ -3,6 +3,7 @@
 
 module pages.cabinet {
     export class PublicationsService {
+        private publication: Object;
 
         public static $inject = [
             '$http',
@@ -15,17 +16,33 @@ module pages.cabinet {
             // -
         }
 
+
+
         public create(publication: Object, callback: Function) {
             var self = this;
 
             this.$http.post('/ajax/api/cabinet/publications/', publication)
                 .then((response) => {
-                    self.$state.go('publication_edit', { id: publication['tid'] + ":" + response['id'] });
+                    self.$state.go('publication_edit', { id: publication['tid'] + ":" + response.data['data']['id'] });
 
-                    _.isFunction(callback) && callback(response);
+                    callback(response);
                 }, () => {
                     // error
                 });
+        }
+
+
+
+        public loadPublicationData(publication: Object, callback: Function) {
+            var self = this;
+
+            this.$http.get('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/')
+                .then((response) => {
+                    console.log(response)
+                    callback(response)
+                }, () => {
+                    // -
+                })
         }
 
     }
