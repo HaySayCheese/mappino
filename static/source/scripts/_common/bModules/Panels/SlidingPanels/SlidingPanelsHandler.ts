@@ -17,6 +17,7 @@ module bModules.Panels {
         ];
 
         constructor(private $rootScope: angular.IRootScopeService, private $state: angular.ui.IStateService) {
+            this.panels.push(new SlidingPanel(angular.element('.publication-panel'), 'publication'));
             this.panels.push(new SlidingPanel(angular.element('.filters-panel'), 'filters'));
             this.panels.push(new SlidingPanel(angular.element('.favorites-panel'), 'favorites'));
             this.panels.push(new SlidingPanel(angular.element('.auth-panel'), 'auth'));
@@ -33,22 +34,20 @@ module bModules.Panels {
                 parseInt(this.$state.params['favorites']) !== this.close_state_sid) {
                 // -
                 this.$state.go('base', { favorites: this.close_state_sid });
-                return;
             }
             if (parseInt(this.$state.params['filters']) !== this.close_state_sid &&
                 parseInt(this.$state.params['auth']) !== this.close_state_sid) {
                 // -
                 this.$state.go('base', { auth: this.close_state_sid });
-                return;
             }
             if (parseInt(this.$state.params['favorites']) !== this.close_state_sid &&
                 parseInt(this.$state.params['auth']) !== this.close_state_sid) {
                 // -
                 this.$state.go('base', { auth: this.close_state_sid });
-                return;
             }
 
 
+            this.switchState('publication', parseInt(this.$state.params['publication']));
             this.switchState('filters', parseInt(this.$state.params['filters']));
             this.switchState('favorites', parseInt(this.$state.params['favorites']));
             this.switchState('auth', parseInt(this.$state.params['auth']));
@@ -87,6 +86,9 @@ module bModules.Panels {
 
         public open(panel_name: string, state: number = this.open_state_sid) {
             switch (panel_name) {
+                case 'publication':
+                    this.$state.go('base', { publication: state });
+                    break;
                 case 'filters':
                     this.$state.go('base', { filters: state, favorites: this.close_state_sid, auth: this.close_state_sid });
                     break;
@@ -109,6 +111,9 @@ module bModules.Panels {
 
         public close(panel_name: string) {
             switch (panel_name) {
+                case 'publication':
+                    this.$state.go('base', { publication: this.close_state_sid });
+                    break;
                 case 'filters':
                     this.$state.go('base', { filters: this.close_state_sid });
                     break;

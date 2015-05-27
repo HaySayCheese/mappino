@@ -102,21 +102,19 @@ module pages.map {
             private realtyTypesService: bModules.Types.RealtyTypesService) {
             // -
             this.updateFiltersFromUrl();
-            this.updateUrlFromPanelsFilters();
         }
 
 
 
-        public update(filter_object: string, filter_name: string, filter_value: any) {
-            this._filters[filter_object][filter_name] = filter_value;
-
-            if (filter_object === 'map') {
-                this.updateUrlFromMapFilters();
-            } else {
-                this.updateUrlFromPanelsFilters();
+        public update(filter_object_name: string, filters_object: Object) {
+            for (var filter in filters_object) {
+                if (filters_object.hasOwnProperty(filter)) {
+                    this._filters[filter_object_name][filter] = filters_object[filter];
+                }
             }
 
-            this.createFormattedObjectForLoadMarkers(filter_name, filter_value);
+            this.updateUrlFromFilters();
+            this.createFormattedObjectForLoadMarkers();
 
             this.$timeout(() => this.$rootScope.$broadcast('pages.map.FiltersService.FiltersUpdated', this._filters));
         }
@@ -125,28 +123,6 @@ module pages.map {
         public get filters() {
             return this._filters;
         }
-
-
-
-        //public createStringFromFilters() {
-        //    var location_search = {},
-        //        filters_panels = this._filters['panels'];
-        //
-        //    for (var key in filters_panels) {
-        //        if (filters_panels.hasOwnProperty(key)) {
-        //
-        //            if (filters[key] !== false && filters[key] !== "false" && filters[key] !== "" && filters[key] !== null) {
-        //                var param = key.toString().substring(2),
-        //                    value = filters[key];
-        //
-        //                location_search[param] = value;
-        //            }
-        //        }
-        //    }
-        //    location_search['panel'] = panel;
-        //
-        //    jsonFilters.filters.push(location_search);
-        //}
 
 
 
@@ -254,54 +230,57 @@ module pages.map {
 
 
 
-        private updateUrlFromMapFilters() {
-            var filters_map = this._filters['map'];
+        private updateUrlFromFilters() {
+            var location_search = '',
+                map_filters     = this._filters['map'],
+                panels_filters  = this._filters['panels'],
+                _formattedPanelFilters = {};
 
-            for (var filter in filters_map) {
-                if (filters_map.hasOwnProperty(filter) && !_.include(['v'], filter)) {
-                    this.$location.search(filter, filters_map[filter]);
 
-                    if (!this.$rootScope.$$phase)
-                        this.$rootScope.$apply();
+            // reset to empty object
+            this._filters_for_load_markers = {
+                zoom: null,
+                viewport: null,
+                filters: []
+            };
+
+
+            // create location search from map filters
+            for (var map_filter in map_filters) {
+                if (map_filters.hasOwnProperty(map_filter) && !_.include(['v'], map_filter)) {
+                    if (!map_filters[map_filter]) {
+                        continue;
+                    }
+                    if (!_.include(['', null], map_filters[map_filter])) {
+                        location_search += (location_search.length !== 0 ? '&' : '') + map_filter + '=' + map_filters[map_filter];
+                    }
                 }
             }
 
-            //this._filters_for_load_markers['zoom'] = filters_map['z'];
-            //this._filters_for_load_markers['viewport'] = filters_map['v'];
-
-            console.info('updateUrlFromMapFilters method: map filters updated')
-        }
-
-
-
-        private updateUrlFromPanelsFilters() {
-            var location_search = '',
-                filters_panels = this._filters['panels'],
-                _formattedPanelFilters = {};
-
-            for (var panel in filters_panels) {
-                if (filters_panels.hasOwnProperty(panel)) {
+            // create location search from panels filters
+            for (var panel in panels_filters) {
+                if (panels_filters.hasOwnProperty(panel)) {
                     _formattedPanelFilters = {
                         panel: panel
                     };
 
-                    for (var filter in filters_panels[panel]) {
-                        if (filters_panels[panel].hasOwnProperty(filter)) {
+                    for (var panel_filter in panels_filters[panel]) {
+                        if (panels_filters[panel].hasOwnProperty(panel_filter)) {
 
-                            if (filter.indexOf("t_sid") !== -1 && _.isNull(filters_panels[panel][filter])) {
+                            if (panel_filter.indexOf("t_sid") !== -1 && _.isNull(panels_filters[panel][panel_filter])) {
                                 _formattedPanelFilters = null;
                                 continue;
                             }
 
-                            if (_.include(['', null], filters_panels[panel][filter])) {
+                            if (_.include(['', null], panels_filters[panel][panel_filter])) {
                                 continue;
                             }
 
 
-                            _formattedPanelFilters[filter.substr(2, filter.length)] = filters_panels[panel][filter];
+                            _formattedPanelFilters[panel_filter.substr(2, panel_filter.length)] = panels_filters[panel][panel_filter];
 
 
-                            if (filters_panels[panel][filter] === this._filters['base'][filter.substr(2, filter.length)]) {
+                            if (panels_filters[panel][panel_filter] === this._filters['base'][panel_filter.substr(2, panel_filter.length)]) {
                                 continue;
                             }
 
@@ -311,17 +290,16 @@ module pages.map {
                             //    filters_panels[panel][filter] = parseInt(filters_panels[panel][filter]);
                             //}
 
-                            location_search += (location_search.length !== 0 ? '&' : '') + filter + '=' + filters_panels[panel][filter];
+                            location_search += (location_search.length !== 0 ? '&' : '') + panel_filter + '=' + panels_filters[panel][panel_filter];
                         }
                     }
 
                     if (!_.isNull(_formattedPanelFilters))
                         this._filters_for_load_markers['filters'].push(_formattedPanelFilters);
+
+
                 }
             }
-
-
-
 
             console.info('updateUrlFromPanelsFilters method: panels filters updated');
 
@@ -329,20 +307,13 @@ module pages.map {
 
             if (!this.$rootScope.$$phase)
                 this.$rootScope.$apply();
-            //$rootScope.searchUrlPart = base64.urlencode(location_search);
-            //$location.search(base64.urlencode(location_search));
         }
 
 
 
-        private createFormattedObjectForLoadMarkers(filter_name: string, filter_value: any) {
-            switch (filter_name) {
-                case 'z':
-                    this._filters_for_load_markers['zoom'] = filter_value;
-                    break;
-                case 'v':
-                    this.createFormattedViewportForLoadMarkers();
-            }
+        private createFormattedObjectForLoadMarkers() {
+            this._filters_for_load_markers['zoom'] = this._filters['map']['z'];
+            this.createFormattedViewportForLoadMarkers();
 
             this.$timeout(() => this.$rootScope.$broadcast('pages.map.FiltersService.CreatedFormattedFilters', this._filters_for_load_markers));
         }

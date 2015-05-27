@@ -1,7 +1,5 @@
-@import "fixed-panel";
-
 .tabs-panel {
-    @extend ._fixed-panel;
+    @extend %_fixed-panel;
 
     @include size(400px, 48px);
     right: 10px;
@@ -35,6 +33,11 @@
         color: color("blue-grey", "lighten-2");
         font-size: 0.9rem;
         cursor: pointer;
+
+        &:hover {
+            background-color: #fafafa;
+        }
+
 
         > img {
             @include square(32px);

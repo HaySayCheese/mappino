@@ -1,13 +1,10 @@
-@import "fixed-panel";
-
-
 $search_panel_width:    600px;
 $btn_menu_width:        50px;
 $btn_search_width:      50px;
 
 
 .search-panel {
-    @extend ._fixed-panel;
+    @extend %_fixed-panel;
 
     @include size($search_panel_width, 48px);
     left: 10px;
@@ -32,6 +29,10 @@ $btn_search_width:      50px;
         line-height: 48px;
         text-align: center;
         color: $primary-color;
+
+        &:hover {
+            background-color: #fafafa;
+        }
     }
 
     .btn-menu {

@@ -1,19 +1,30 @@
-@import "sliding-panel";
-
 .filters-panel {
-    @extend ._sliding-panel;
+    @extend %_right-sliding-panel;
 
-    .filters-panel-header {
-        @extend ._sliding-panel-header;
+    > .filters-panel-header {
+        @extend %_sliding-panel-header;
+
+
+        > .header-btn {
+            &:hover {
+                background-color: #fafafa;
+            }
+        }
     }
 
     .collapsible {
+        height: calc(100% - 48px);
+
         margin: 0;
         border-top: 0;
         border-left: 0;
         border-right: 0;
         box-shadow: none;
 
+
+        li.active {
+            //min-height: calc(100% - 90px);
+        }
 
 
         .collapsible-header {
@@ -30,7 +41,7 @@
             background: #71c187;
         }
         .collapsible-body {
-            height: 500px;
+            height: calc(100% - 183px);
             border-bottom: none;
         }
     }

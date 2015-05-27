@@ -20,7 +20,7 @@ module pages.map {
             var self = this;
             google.maps.event.addDomListener(window, "load", () => this.initMap(this));
 
-            $scope.$on('pages.map.MarkersService.MarkersDone', function() {
+            $scope.$on('pages.map.MarkersService.MarkersIsLoaded', function() {
                 markersService.place(self._map)
             });
 
@@ -40,9 +40,11 @@ module pages.map {
             });
 
             google.maps.event.addListener(self._map, 'idle', function() {
-                self.filtersService.update('map', 'z', self._map.getZoom());
-                self.filtersService.update('map', 'v', self._map.getBounds());
-                self.filtersService.update('map', 'l', self._map.getCenter().toUrlValue());
+                self.filtersService.update('map', {
+                    z: self._map.getZoom(),
+                    v: self._map.getBounds(),
+                    l: self._map.getCenter().toUrlValue()
+                });
             });
         }
 
@@ -55,7 +57,7 @@ module pages.map {
             if (place.geometry.viewport) {
                 this._map.fitBounds(place.geometry.viewport);
             } else {
-                this._map.setCenter(place.geometry.location);
+                this._map.panTo(place.geometry.location);
                 this._map.setZoom(17);
             }
         }

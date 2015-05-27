@@ -10,7 +10,7 @@ module pages.map {
             app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
                 //
                 // For any unmatched url, redirect to /state1
-                $urlRouterProvider.otherwise("/0/1/0/gdsg/");
+                $urlRouterProvider.otherwise("/0/1/0/0/");
                 //
                 // Now set up the states
                 $stateProvider

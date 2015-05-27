@@ -8,7 +8,7 @@ module pages.home {
 
         constructor(private app: angular.IModule) {
             app.config(['$interpolateProvider', '$locationProvider',
-                function($interpolateProvider, $locationProvider) {
+                ($interpolateProvider, $locationProvider) => {
                     $interpolateProvider.startSymbol('[[');
                     $interpolateProvider.endSymbol(']]');
                 }

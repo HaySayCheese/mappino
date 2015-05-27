@@ -19,11 +19,12 @@ module pages.map {
                     private $rootScope: angular.IRootScopeService,
                     private filtersService: FiltersService) {
             // -
+            var self = this;
             this._autocompleteInput = document.getElementById("place-autocomplete");
 
 
             /** Listen events */
-            google.maps.event.addDomListener(window, "load", () => this.initAutocomplete(this));
+            google.maps.event.addDomListener(window, "load", () => this.initAutocomplete(self));
 
             $scope.$on('pages.map.FiltersService.UpdatedFromUrl', (event, filters) => {
                 this._autocompleteInput.value = filters['map']['c'];
@@ -40,9 +41,14 @@ module pages.map {
             });
 
             google.maps.event.addListener(self._autocomplete, 'place_changed', function() {
-                self.filtersService.update('map', 'c', self._autocomplete.getPlace().formatted_address);
+                self.filtersService.update('map', {
+                    c: self._autocomplete.getPlace().formatted_address
+                });
 
                 self.$rootScope.$broadcast('pages.map.PlaceAutocompleteController.PlaceChanged', self._autocomplete.getPlace());
+                //
+                //if (!self.$scope.$$phase)
+                //    self.$scope.$apply();
             });
         }
     }
