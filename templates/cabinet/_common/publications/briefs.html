@@ -37,26 +37,23 @@
                         <div class="row">
                             <div class="col s12 m8 l6 offset-m2 offset-l3">
                                 <div class="row">
-                                    <select ng-model="filters.red.t_sid" ng-options="realtyType.id as realtyType.title for realtyType in realtyTypes">
+                                    <select ng-model="new_publication.t_sid" ng-options="realtyType.id as realtyType.title for realtyType in realtyTypes">
                                         <option value="" selected>Виберите тип объявления</option>
-                                        <!--<option value="1">Option 1</option>-->
-                                        <!--<option value="2">Option 2</option>-->
-                                        <!--<option value="3">Option 3</option>-->
                                     </select>
                                 </div>
                                 <div class="row">
                                     <div class="col s6">
-                                        <input type="checkbox" id="sale" checked/>
+                                        <input type="checkbox" id="sale" ng-model="new_publication.sale" />
                                         <label for="sale">Продажа</label>
                                     </div>
                                     <div class="col s6">
-                                        <input type="checkbox" id="rent" />
+                                        <input type="checkbox" id="rent" ng-model="new_publication.rent" />
                                         <label for="rent">Аренда</label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col s12">
-                                        <a class="waves-effect waves-light btn btn-large teal lighten-1">
+                                        <a class="waves-effect waves-light btn btn-large teal lighten-1" ng-click="briefsCtrl.createPublication()">
                                             <i class="mdi-content-add left"></i>Создать объявление
                                         </a>
                                     </div>

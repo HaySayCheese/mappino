@@ -7,16 +7,32 @@ module pages.cabinet {
         public static $inject = [
             '$scope',
             '$timeout',
-            'RealtyTypesService'
+            'RealtyTypesService',
+            'PublicationsService'
         ];
 
         constructor(
             private $scope: any,
             private $timeout: angular.ITimeoutService,
-            private realtyTypesService: bModules.Types.RealtyTypesService) {
+            private realtyTypesService: bModules.Types.RealtyTypesService,
+            private publicationsService: PublicationsService) {
             // -
+            $scope.new_publication = {
+                t_sid: 0,
+                sale: true,
+                rent: false
+            };
             $scope.realtyTypes = realtyTypesService.realty_types;
+
             $timeout(() => $('select').material_select());
+        }
+
+
+
+        private createPublication() {
+            this.publicationsService.create(this.$scope.new_publication, () => {
+
+            });
         }
 
     }

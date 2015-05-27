@@ -1,3 +1,11 @@
+/// <reference path='angular.d.ts' />
+/// <reference path='angular-cookies.d.ts' />
+/// <reference path='angular-ui-router.d.ts' />
+/// <reference path='custom.d.ts' />
+/// <reference path='google.maps.d.ts' />
+/// <reference path='jquery.d.ts' />
+/// <reference path='underscore.d.ts' />
+/// <reference path='../_references.ts' />
 var bModules;
 (function (bModules) {
     var Types;
@@ -91,7 +99,63 @@ var bModules;
         Types.RealtyTypesService = RealtyTypesService;
     })(Types = bModules.Types || (bModules.Types = {}));
 })(bModules || (bModules = {}));
-/// <reference path='RealtyTypesService.ts' /> 
+/// <reference path='_references.ts' />
+var bModules;
+(function (bModules) {
+    var Types;
+    (function (Types) {
+        'use strict';
+        var bTypes = angular.module('bModules.Types', []);
+        bTypes.service('RealtyTypesService', Types.RealtyTypesService);
+    })(Types = bModules.Types || (bModules.Types = {}));
+})(bModules || (bModules = {}));
+/// <reference path='../../definitions/_references.ts' />
+/// <reference path='services/RealtyTypesService.ts' />
+/// <reference path='Types.ts' /> 
+/// <reference path='../_references.ts' />
+var bModules;
+(function (bModules) {
+    var Auth;
+    (function (Auth) {
+        var AuthService = (function () {
+            function AuthService($http, $cookies) {
+                this.$http = $http;
+                this.$cookies = $cookies;
+                // -
+            }
+            AuthService.prototype.login = function (user, callback) {
+                this.$http.post('/ajax/api/accounts/login/', user)
+                    .then(function (response) {
+                    callback(response);
+                }, function () {
+                    // - error
+                });
+            };
+            // $inject annotation.
+            AuthService.$inject = [
+                '$http',
+                '$cookieStore'
+            ];
+            return AuthService;
+        })();
+        Auth.AuthService = AuthService;
+    })(Auth = bModules.Auth || (bModules.Auth = {}));
+})(bModules || (bModules = {}));
+/// <reference path='_references.ts' />
+var bModules;
+(function (bModules) {
+    var Auth;
+    (function (Auth) {
+        'use strict';
+        var bAuth = angular.module('bModules.Auth', ['ngCookies']);
+        bAuth.service('AuthService', Auth.AuthService);
+    })(Auth = bModules.Auth || (bModules.Auth = {}));
+})(bModules || (bModules = {}));
+/// <reference path='../../definitions/jquery.d.ts' />
+/// <reference path='../../definitions/angular.d.ts' />
+/// <reference path='../../definitions/angular-cookies.d.ts' />
+/// <reference path='services/AuthService.ts' />
+/// <reference path='Auth.ts' />
 /// <reference path='../_references.ts' />
 var pages;
 (function (pages) {
@@ -173,23 +237,29 @@ var pages;
 (function (pages) {
     var cabinet;
     (function (cabinet) {
-        var AdminAuthService = (function () {
-            function AdminAuthService($http) {
+        var PublicationsService = (function () {
+            function PublicationsService($http, $state) {
                 this.$http = $http;
+                this.$state = $state;
                 // -
             }
-            AdminAuthService.prototype.login = function (admin, callback) {
-                this.$http.post('/api/admin/login/', admin)
+            PublicationsService.prototype.create = function (publication, callback) {
+                var self = this;
+                this.$http.post('/ajax/api/cabinet/publications/', publication)
                     .then(function (response) {
-                    callback(response);
+                    self.$state.go('publication_edit', { id: publication['tid'] + ":" + response['id'] });
+                    _.isFunction(callback) && callback(response);
+                }, function () {
+                    // error
                 });
             };
-            AdminAuthService.$inject = [
-                '$http'
+            PublicationsService.$inject = [
+                '$http',
+                '$state'
             ];
-            return AdminAuthService;
+            return PublicationsService;
         })();
-        cabinet.AdminAuthService = AdminAuthService;
+        cabinet.PublicationsService = PublicationsService;
     })(cabinet = pages.cabinet || (pages.cabinet = {}));
 })(pages || (pages = {}));
 /// <reference path='../_references.ts' />
@@ -198,28 +268,33 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var LoginController = (function () {
-            function LoginController($scope, adminAuthService) {
+            function LoginController($scope, authService) {
                 this.$scope = $scope;
-                this.adminAuthService = adminAuthService;
-                this.admin = {
-                    username: '',
-                    password: ''
-                };
+                this.authService = authService;
                 // -
+                $scope.user = {
+                    username: '',
+                    password: '',
+                    invalid: false
+                };
             }
             LoginController.prototype.login = function () {
-                this.adminAuthService.login(this.admin, function (response) {
-                    if (response.code !== 0) {
-                        console.log('!ok');
+                var self = this;
+                if (!this.$scope.user.username || !this.$scope.user.password) {
+                    return;
+                }
+                this.authService.login(this.$scope.user, function (response) {
+                    if (response.data.code !== 0) {
+                        self.$scope.user.invalid = true;
                     }
                     else {
-                        console.log('ok');
+                        window.location.pathname = '/cabinet/';
                     }
                 });
             };
             LoginController.$inject = [
                 '$scope',
-                'AdminAuthService'
+                'AuthService'
             ];
             return LoginController;
         })();
@@ -250,22 +325,55 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var BriefsController = (function () {
-            function BriefsController($scope, $timeout, realtyTypesService) {
+            function BriefsController($scope, $timeout, realtyTypesService, publicationsService) {
                 this.$scope = $scope;
                 this.$timeout = $timeout;
                 this.realtyTypesService = realtyTypesService;
+                this.publicationsService = publicationsService;
                 // -
+                $scope.new_publication = {
+                    t_sid: 0,
+                    sale: true,
+                    rent: false
+                };
                 $scope.realtyTypes = realtyTypesService.realty_types;
                 $timeout(function () { return $('select').material_select(); });
             }
+            BriefsController.prototype.createPublication = function () {
+                this.publicationsService.create(this.$scope.new_publication, function () {
+                });
+            };
             BriefsController.$inject = [
                 '$scope',
                 '$timeout',
-                'RealtyTypesService'
+                'RealtyTypesService',
+                'PublicationsService'
             ];
             return BriefsController;
         })();
         cabinet.BriefsController = BriefsController;
+    })(cabinet = pages.cabinet || (pages.cabinet = {}));
+})(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var cabinet;
+    (function (cabinet) {
+        var PublicationController = (function () {
+            function PublicationController($scope, $timeout) {
+                this.$scope = $scope;
+                this.$timeout = $timeout;
+                // -
+                $timeout(function () { return $('select').material_select(); });
+                $scope.publicationTemplateUrl = '/ajax/template/cabinet/publications/unpublished/2/';
+            }
+            PublicationController.$inject = [
+                '$scope',
+                '$timeout'
+            ];
+            return PublicationController;
+        })();
+        cabinet.PublicationController = PublicationController;
     })(cabinet = pages.cabinet || (pages.cabinet = {}));
 })(pages || (pages = {}));
 /// <reference path='_references.ts' />
@@ -276,7 +384,9 @@ var pages;
         'use strict';
         var app = angular.module('mappino.pages.cabinet', [
             'ngCookies',
-            'ui.router'
+            'ui.router',
+            'bModules.Types',
+            'bModules.Auth'
         ]);
         /** Providers configuration create */
         new cabinet.ProvidersConfigs(app);
@@ -285,24 +395,19 @@ var pages;
         /** Application configuration create */
         new cabinet.ApplicationConfigs(app);
         /** Module services */
-        app.service('RealtyTypesService', bModules.Types.RealtyTypesService);
-        app.service('AdminAuthService', cabinet.AdminAuthService);
+        // -
+        app.service('PublicationsService', cabinet.PublicationsService);
         /** Module controllers */
         app.controller('LoginController', cabinet.LoginController);
         app.controller('CabinetController', cabinet.CabinetController);
         app.controller('BriefsController', cabinet.BriefsController);
+        app.controller('PublicationController', cabinet.PublicationController);
     })(cabinet = pages.cabinet || (pages.cabinet = {}));
 })(pages || (pages = {}));
 // ####################
 // Declarations import
 // ####################
-/// <reference path='../_common/definitions/underscore.d.ts' />
-/// <reference path='../_common/definitions/google.maps.d.ts' />
-/// <reference path='../_common/definitions/jquery.d.ts' />
-/// <reference path='../_common/definitions/angular.d.ts' />
-/// <reference path='../_common/definitions/angular-cookies.d.ts' />
-/// <reference path='../_common/definitions/angular-ui-router.d.ts' />
-/// <reference path='../_common/definitions/custom.d.ts' />
+/// <reference path='../_common/definitions/_references.ts' />
 // ####################
 // Interfaces import
 // ####################
@@ -310,6 +415,7 @@ var pages;
 // _modules import
 // ####################
 /// <reference path='../_common/bModules/Types/_references.ts' />
+/// <reference path='../_common/bModules/Auth/_references.ts' />
 // ####################
 // Configs import
 // ####################
@@ -319,13 +425,14 @@ var pages;
 // ####################
 // Services import
 // ####################
-/// <reference path='services/AdminAuthService.ts' />
+/// <reference path='services/PublicationsService.ts' />
 // ####################
 // Controllers import
 // ####################
 /// <reference path='controllers/LoginController.ts' />
 /// <reference path='controllers/CabinetController.ts' />
 /// <reference path='controllers/BriefsController.ts' />
+/// <reference path='controllers/PublicationController.ts' />
 // ####################
 // App init
 // ####################

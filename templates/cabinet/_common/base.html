@@ -23,7 +23,8 @@
 </head>
 <body ng-controller="CabinetController as cabinetCtrl">
 
-    <div class="navbar-fixed">
+    {% block navbar %}
+        <div class="navbar-fixed">
         <nav>
             <div class="nav-wrapper">
                 <a href="/" class="brand-logo">mappino</a>
@@ -65,14 +66,21 @@
             </div>
         </nav>
     </div>
+    {% endblock %}
 
 
-    <div class="wrapper">
-        <div ui-view>
 
 
+    {% block wrapper %}
+        <div class="wrapper">
+            <div ui-view>
+
+
+            </div>
         </div>
-    </div>
+    {% endblock %}
+
+
 
     {% compress js %}
         <script type="text/javascript" src="{{ static }}build/scripts/cabinet/cabinet.js"></script>

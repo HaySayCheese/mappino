@@ -1,3 +1,5 @@
+/// <reference path='../_references.ts' />
+
 
 module bModules.Types {
     export class RealtyTypesService {
