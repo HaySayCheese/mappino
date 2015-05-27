@@ -108,6 +108,22 @@ class Publication(CabinetView):
             })
 
 
+    class DeleteResponses(object):
+        @staticmethod
+        def ok():
+            return HttpJsonResponse({
+                'code': 0,
+                'message': 'OK',
+            })
+
+        @staticmethod
+        def invalid_parameters():
+            return HttpResponseBadRequest({
+                'code': 1,
+                'message': 'Request does not contains valid parameters or one of them is incorrect.'
+            })
+
+
     def __init__(self):
         super(Publication, self).__init__()
         self.published_formatter = classes.CabinetPublishedDataSource()
@@ -218,77 +234,37 @@ class Publication(CabinetView):
         return self.PutResponses.ok(returned_value)
 
 
+    def delete(self, request, *args):
+        try:
+            tid, hash_id = args[:]
+            tid = int(tid)
+            # hash_id doesnt need to be converted to int
+
+            model = HEAD_MODELS[tid]
+        except (IndexError, ValueError):
+            return self.DeleteResponses.invalid_parameters()
 
 
-
-    class RUD(CabinetView):
-        delete_codes = {
-            'OK': {
-                'code': 0,
-            },
-            'invalid_hid': {
-                'code': 1,
-            },
-        }
-        def delete(self, request, *args):
-            try:
-                tid, hash_id = args[0].split(':')
-                tid = int(tid)
-                # hash_id doesnt need to be converted to int
-            except (IndexError, ValueError):
-                return HttpResponseBadRequest('Invalid parameters.')
-
-            try:
-                model = HEAD_MODELS[tid]
-                head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
-            except IndexError:
-                return HttpResponseBadRequest(json.dumps(
-                    self.delete_codes['invalid_hid']), content_type='application/json')
+        try:
+            head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
+        except IndexError:
+            return self.DeleteResponses.invalid_parameters()
 
 
-            # check owner
-            if head.owner.id != request.user.id:
-                raise PermissionDenied()
+        # check owner
+        if head.owner.id != request.user.id:
+            raise PermissionDenied()
 
+
+        if not 'permanent' in request.path:
             # note: no real deletion here.
             # all publications that was deleted are situated in trash
             head.mark_as_deleted()
-            return HttpResponse(json.dumps(self.delete_codes['OK']), content_type='application/json')
-
-
-    class PermanentDelete(CabinetView):
-        delete_codes = {
-            'OK': {
-                'code': 0,
-            },
-            'invalid_hid': {
-                'code': 1,
-            },
-        }
-
-
-        def delete(self, request, *args):
-            try:
-                tid, hash_id = args[0].split(':')
-                tid = int(tid)
-                # hash_id doesnt need to be converted to int
-            except (IndexError, ValueError):
-                return HttpResponseBadRequest('Invalid parameters.')
-
-            try:
-                model = HEAD_MODELS[tid]
-                head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
-            except IndexError:
-                return HttpResponseBadRequest(json.dumps(
-                    self.delete_codes['invalid_hid']), content_type='application/json')
-
-
-            # check owner
-            if head.owner.id != request.user.id:
-                raise PermissionDenied()
-
+        else:
             head.delete_permanent()
-            return HttpResponse(json.dumps(self.delete_codes['OK']), content_type='application/json')
+
+        return self.DeleteResponses.ok()
+
 
 
     class Publish(CabinetView):
