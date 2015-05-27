@@ -4,11 +4,7 @@
 module bModules.Auth {
 
     export class AuthService {
-        private _user: Object = {
-            name:       '',
-            surname:    '',
-            full_name:  ''
-        };
+        private _user: Object;
 
         // $inject annotation.
         public static $inject = [
@@ -21,6 +17,7 @@ module bModules.Auth {
             private $http:      angular.IHttpService,
             private $cookies:   angular.cookies.ICookiesService) {
             // -
+            this.getUserByCookie();
         }
 
 
@@ -31,12 +28,7 @@ module bModules.Auth {
             this.$http.post('/ajax/api/accounts/login/', user)
                 .then((response) => {
                     if (response.data['code'] === 0) {
-                        self._user = {
-                            name:       response.data['user'].name,
-                            surname:    response.data['user'].surname,
-                            full_name:  response.data['user'].name + ' ' + response.data['user'].surname
-                        };
-                        self.saveToStorages(self._user);
+                        self.updateUserData(response.data['user']);
                         callback(response);
                     } else {
                         self.removeFromStorages();
@@ -45,6 +37,31 @@ module bModules.Auth {
                 }, () => {
                     // - error
                 });
+        }
+
+
+
+        private getUserByCookie() {
+            var self = this;
+
+            this.$http.get('/ajax/api/accounts/on-login-info/')
+                .then((response) => {
+                    if (response.data['code'] === 0) {
+                        self.updateUserData(response.data['user']);
+                    } else {
+                        self.removeFromStorages();
+                    }
+                }, () => {
+                    // - error
+                })
+        }
+
+
+
+        private updateUserData(user: Object) {
+            this._user = user;
+            this._user['full_name'] = user['name'] + ' ' + user['surname'];
+            this.saveToStorages(user);
         }
 
 
@@ -67,14 +84,20 @@ module bModules.Auth {
 
         //private getFromStorages() {
         //    if (localStorage && localStorage['user']) {
-        //        localStorage['user'] = JSON.stringify(this.user);
+        //        this._user = JSON.parse(localStorage['user']);
         //    }
         //}
 
 
 
-        get user() {
+        public get user() {
             return this._user;
+        }
+
+        public set user(user: Object) {
+            for (var key in user) {
+                this._user[key] = user[key];
+            }
         }
     }
 

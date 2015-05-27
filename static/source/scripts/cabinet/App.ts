@@ -33,4 +33,5 @@ module pages.cabinet {
     app.controller('CabinetController', CabinetController);
     app.controller('BriefsController', BriefsController);
     app.controller('PublicationController', PublicationController);
+    app.controller('SettingsController', SettingsController);
 }

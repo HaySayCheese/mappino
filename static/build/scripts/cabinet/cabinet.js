@@ -121,24 +121,15 @@ var bModules;
             function AuthService($http, $cookies) {
                 this.$http = $http;
                 this.$cookies = $cookies;
-                this._user = {
-                    name: '',
-                    surname: '',
-                    full_name: ''
-                };
                 // -
+                this.getUserByCookie();
             }
             AuthService.prototype.login = function (user, callback) {
                 var self = this;
                 this.$http.post('/ajax/api/accounts/login/', user)
                     .then(function (response) {
                     if (response.data['code'] === 0) {
-                        self._user = {
-                            name: response.data['user'].name,
-                            surname: response.data['user'].surname,
-                            full_name: response.data['user'].name + ' ' + response.data['user'].surname
-                        };
-                        self.saveToStorages(self._user);
+                        self.updateUserData(response.data['user']);
                         callback(response);
                     }
                     else {
@@ -148,6 +139,25 @@ var bModules;
                 }, function () {
                     // - error
                 });
+            };
+            AuthService.prototype.getUserByCookie = function () {
+                var self = this;
+                this.$http.get('/ajax/api/accounts/on-login-info/')
+                    .then(function (response) {
+                    if (response.data['code'] === 0) {
+                        self.updateUserData(response.data['user']);
+                    }
+                    else {
+                        self.removeFromStorages();
+                    }
+                }, function () {
+                    // - error
+                });
+            };
+            AuthService.prototype.updateUserData = function (user) {
+                this._user = user;
+                this._user['full_name'] = user['name'] + ' ' + user['surname'];
+                this.saveToStorages(user);
             };
             AuthService.prototype.saveToStorages = function (user) {
                 console.log(user);
@@ -163,11 +173,16 @@ var bModules;
             Object.defineProperty(AuthService.prototype, "user", {
                 //private getFromStorages() {
                 //    if (localStorage && localStorage['user']) {
-                //        localStorage['user'] = JSON.stringify(this.user);
+                //        this._user = JSON.parse(localStorage['user']);
                 //    }
                 //}
                 get: function () {
                     return this._user;
+                },
+                set: function (user) {
+                    for (var key in user) {
+                        this._user[key] = user[key];
+                    }
                 },
                 enumerable: true,
                 configurable: true
@@ -358,13 +373,21 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var CabinetController = (function () {
-            function CabinetController($timeout) {
+            function CabinetController($timeout, authService) {
                 this.$timeout = $timeout;
-                this.$inject = [
-                    '$timeout'
-                ];
+                this.authService = authService;
+                // -
+                var self = this;
+                //$timeout(() => {
+                //    self.authService.user = { full_name: 'fsafaf' };
+                //    console.log(self.authService.user)
+                //}, 4000);
                 $(".button-collapse").sideNav();
             }
+            CabinetController.$inject = [
+                '$timeout',
+                'AuthService'
+            ];
             return CabinetController;
         })();
         cabinet.CabinetController = CabinetController;
@@ -447,6 +470,25 @@ var pages;
         cabinet.PublicationController = PublicationController;
     })(cabinet = pages.cabinet || (pages.cabinet = {}));
 })(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var cabinet;
+    (function (cabinet) {
+        var SettingsController = (function () {
+            function SettingsController($timeout) {
+                this.$timeout = $timeout;
+                // -
+                $timeout(function () { return $('select').material_select(); });
+            }
+            SettingsController.$inject = [
+                '$timeout',
+            ];
+            return SettingsController;
+        })();
+        cabinet.SettingsController = SettingsController;
+    })(cabinet = pages.cabinet || (pages.cabinet = {}));
+})(pages || (pages = {}));
 /// <reference path='_references.ts' />
 var pages;
 (function (pages) {
@@ -473,6 +515,7 @@ var pages;
         app.controller('CabinetController', cabinet.CabinetController);
         app.controller('BriefsController', cabinet.BriefsController);
         app.controller('PublicationController', cabinet.PublicationController);
+        app.controller('SettingsController', cabinet.SettingsController);
     })(cabinet = pages.cabinet || (pages.cabinet = {}));
 })(pages || (pages = {}));
 // ####################
@@ -504,6 +547,7 @@ var pages;
 /// <reference path='controllers/CabinetController.ts' />
 /// <reference path='controllers/BriefsController.ts' />
 /// <reference path='controllers/PublicationController.ts' />
+/// <reference path='controllers/SettingsController.ts' />
 // ####################
 // App init
 // ####################

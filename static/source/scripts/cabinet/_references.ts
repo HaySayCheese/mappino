@@ -41,6 +41,7 @@
 /// <reference path='controllers/CabinetController.ts' />
 /// <reference path='controllers/BriefsController.ts' />
 /// <reference path='controllers/PublicationController.ts' />
+/// <reference path='controllers/SettingsController.ts' />
 
 
 

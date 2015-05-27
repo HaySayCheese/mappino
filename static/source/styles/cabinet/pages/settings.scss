@@ -1,0 +1,27 @@
+.settings-page {
+    .user-block {
+
+        .user-photo {
+            @include square(180px);
+            overflow: hidden;
+            margin-bottom: 10px;
+
+            border-radius: 50%;
+
+
+            img {
+                @include square(180px);
+            }
+        }
+    }
+
+
+    .col .col {
+        padding: 0;
+    }
+
+    .row .row {
+        margin-bottom: 0;
+    }
+}
+

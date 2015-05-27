@@ -5,15 +5,16 @@
 
 // override materialize components
 @import "components/card";
+@import "components/section";
 
 
 @import "pages/login";
-@import "pages/publication";
+@import "pages/settings";
 
 
 html,
 body,
-.wrapper {
+main {
     @include square(100%);
 }
 

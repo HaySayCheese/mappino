@@ -1,6 +1,8 @@
 section {
-    padding: 1px 40px 20px 40px;
-    margin: 15px 0 15px;
+    display: block;
+    position: relative;
+    padding: 20px 40px 20px 40px;
+    margin: 20px 0 20px;
 
     background-color: #fff;
     border-radius: 3px;
@@ -9,8 +11,8 @@ section {
 
 
     @media screen and (max-width: 700px) {
-        @include size(100%, auto);
-        padding: 1px 20px 20px 20px;
+        @include size(100% !important, auto);
+        padding: 20px 20px 20px 20px;
         margin: 0;
 
         box-shadow: none;
@@ -27,18 +29,12 @@ section {
 
     h5 {
         margin-bottom: 30px;
-        margin-top: 30px;
+        //margin-top: 30px;
 
         @media screen and (max-width: 700px) {
             margin-top: 15px;
             font-size: 1.3rem;
         }
-    }
-
-
-    .required-star {
-        margin-right: 5px;
-        color: color('red', 'base');
     }
 
 }
