@@ -11,11 +11,17 @@ def cabinet(request):
     if not user.is_authenticated():
         return HttpResponseForbidden()
 
-    # permissions check
-    if user.is_regular_user():
-        return HttpResponseForbidden()
 
-    template = templates.get_template('cabinet/users/users.html')
+    if user.is_moderator:
+        template = templates.get_template('cabinet/moderators/moderators.html')
+
+    elif user.is_manager:
+        template = templates.get_template('cabinet/managers/managers.html')
+
+    else:
+        template = templates.get_template('cabinet/users/users.html')
+
+
     return HttpResponse(content=template.render())
 
 
