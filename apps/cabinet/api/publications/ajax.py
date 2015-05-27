@@ -24,7 +24,45 @@ from core.publications.update_methods.garages import update_garage
 from core.publications.update_methods.lands import update_land
 
 
-class Publications(object):
+class Publications(CabinetView):
+    class PostResponses(object):
+        @staticmethod
+        def ok(publication_hash_id):
+            return HttpJsonResponse({
+                'code': 0,
+                'message': 'OK',
+                'data': {
+                    'id': publication_hash_id,
+                }
+            })
+
+        @staticmethod
+        def invalid_parameters():
+            return HttpJsonResponse({
+                'code': 1,
+                'message': 'Request does not contains valid parameters or one of them is incorrect.',
+            })
+
+
+    @classmethod
+    def post(cls, request):
+        try:
+            params = angular_parameters(request, ['tid', 'for_sale', 'for_rent'])
+
+            tid = params['tid']
+            is_sale = params['for_sale']
+            is_rent = params['for_rent']
+
+            model = HEAD_MODELS[tid]
+        except (ValueError, KeyError):
+            return cls.PostResponses.invalid_parameters()
+
+
+        record = model.new(request.user, is_sale, is_rent)
+        return cls.PostResponses.ok(record.hash_id)
+
+
+
     class Create(CabinetView):
         post_codes = {
             'OK': {

@@ -4,7 +4,7 @@ from django.conf.urls import patterns, url
 
 
 urlpatterns = patterns('apps.cabinet.api',
-	url(r'^ajax/api/cabinet/publications/$', Publications.Create.as_view()),
+	url(r'^ajax/api/cabinet/publications/$', Publications.as_view()),
 	url(r'^ajax/api/cabinet/publications/(\d+:\w+)/$', Publications.RUD.as_view()),
     url(r'^ajax/api/cabinet/publications/(\d+:\w+)/delete-permanent/$', Publications.PermanentDelete.as_view()),
     url(r'^ajax/api/cabinet/publications/(\d+:\w+)/publish/$', Publications.Publish.as_view()),
