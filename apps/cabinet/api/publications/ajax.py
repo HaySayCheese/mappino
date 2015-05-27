@@ -267,42 +267,57 @@ class Publication(CabinetView):
 
 
 
-    class Publish(CabinetView):
-        put_codes = {
-            'OK': {
-                'code': 0,
-            },
-            'invalid_hid': {
-                'code': 1,
-            },
-            'incomplete_or_invalid_pub': {
-                'code': 2,
-            },
+    class PublishUnpublishing(CabinetView):
+        class PutResponses(object):
+            @staticmethod
+            def ok():
+                return HttpJsonResponse({
+                    'code': 0,
+                    'message': 'OK'
+                })
 
-            'pay_as_you_go_insufficient_funds': {
-                'code': 30,
-            },
-            'fixed_insufficient_funds': {
-                'code': 50,
-            },
-        }
+            @staticmethod
+            def invalid_publication():
+                return HttpJsonResponse({
+                    'code': 1,
+                    'message': 'publication does not pass validation.'
+                })
 
+        # put_codes = {
+        #     'OK': {
+        #         'code': 0,
+        #     },
+        #     'invalid_hid': {
+        #         'code': 1,
+        #     },
+        #     'incomplete_or_invalid_pub': {
+        #         'code': 2,
+        #     },
+        #
+        #     'pay_as_you_go_insufficient_funds': {
+        #         'code': 30,
+        #     },
+        #     'fixed_insufficient_funds': {
+        #         'code': 50,
+        #     },
+        # }
 
-        def put(self, request, *args):
+        @classmethod
+        def put(cls, request, operation, *args):
             try:
-                tid, hash_id = args[0].split(':')
+                tid, hash_id = args[:]
                 tid = int(tid)
                 # hash_id doesnt need to be converted to int
+
+                model = HEAD_MODELS[tid]
             except (IndexError, ValueError):
                 return HttpResponseBadRequest('Invalid parameters.')
 
 
-            model = HEAD_MODELS[tid]
             try:
                 head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
             except IndexError:
-                return HttpResponseBadRequest(json.dumps(
-                    self.put_codes['invalid_hid']), content_type='application/json')
+                return cls.PutResponses.ok()
 
 
             # check owner
@@ -310,65 +325,16 @@ class Publication(CabinetView):
                 raise PermissionDenied()
 
 
-            # todo: enable billing check back
-            # try:
-            #     # billing constraints check
-            #     request.user.account.check_may_publish_publications()
-            #
-            # except billing_exceptions.PAYGInsufficientFunds:
-            #     return HttpJsonResponse(self.put_codes['pay_as_you_go_insufficient_funds'])
-            #
-            # except billing_exceptions.FixedInsufficientFunds:
-            #     return HttpJsonResponse(self.put_codes['fixed_insufficient_funds'])
+            if operation == 'unpublish':
+                head.unpublish()
+                return cls.PutResponses.ok()
 
-
-            try:
-                head.publish()
-            except ValidationError:
-                return HttpResponseBadRequest(json.dumps(
-                    self.put_codes['incomplete_or_invalid_pub']), content_type='application/json')
-
-            # seems to be ok
-            return HttpResponse(json.dumps(
-                self.put_codes['OK']), content_type='application/json')
-
-
-    class Unpublish(CabinetView):
-        put_codes = {
-            'OK': {
-                'code': 0,
-            },
-            'invalid_hid': {
-                'code': 1,
-            },
-        }
-
-
-        def put(self, request, *args):
-            try:
-                tid, hash_id = args[0].split(':')
-                tid = int(tid)
-                # hash_id doesnt need to be converted to int
-            except (IndexError, ValueError):
-                return HttpResponseBadRequest('Invalid parameters.')
-
-
-            model = HEAD_MODELS[tid]
-            try:
-                head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
-            except IndexError:
-                return HttpResponseBadRequest(json.dumps(
-                    self.put_codes['invalid_hid']), content_type='application/json')
-
-
-            # check owner
-            if head.owner.id != request.user.id:
-                raise PermissionDenied()
-
-            # seems to be ok
-            head.unpublish()
-            return HttpResponse(json.dumps(
-                self.put_codes['OK']), content_type='application/json')
+            elif operation == 'publish':
+                try:
+                    head.publish()
+                    return cls.PutResponses.ok()
+                except ValidationError:
+                    return cls.PutResponses.invalid_publication()
 
 
     class UploadPhoto(CabinetView):
