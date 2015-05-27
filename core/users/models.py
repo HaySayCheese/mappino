@@ -134,6 +134,12 @@ class Users(AbstractBaseUser):
                 cls.objects.filter(add_mobile_phone=number).count() == 0)
 
 
+    def is_regular_user(self):
+        if self.is_moderator or self.is_manager:
+            return False
+        return True
+
+
     def full_name(self):
         return u'{0} {1}'.format(self.first_name, self.last_name)
 
