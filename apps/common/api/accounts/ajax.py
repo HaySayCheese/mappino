@@ -1,8 +1,8 @@
 #coding=utf-8
 import copy
 import json
-import phonenumbers
 
+import phonenumbers
 from phonenumbers import NumberParseException
 
 from django.http.response import HttpResponseRedirect
@@ -15,7 +15,7 @@ from django.db import transaction
 from django.views.generic import View
 
 from apps.classes import AnonymousOnlyView, AuthenticatedOnlyView
-from apps.main.api.accounts.utils import MobilePhoneChecker
+from apps.common.api.accounts.utils import MobilePhoneChecker
 from collective.methods.request_data_getters import angular_post_parameters
 from collective.http.responses import HttpJsonResponse
 from core.email_backend import email_sender

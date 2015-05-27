@@ -3,6 +3,11 @@ from django.conf.urls import patterns, url, include
 
 
 urlpatterns = patterns('apps',
+    # common
+
+        # accounts API
+        url(r'', include('apps.common.api.accounts.urls')),
+
 
     # main
         # flatpages
