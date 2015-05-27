@@ -3,6 +3,10 @@ from django.conf.urls import patterns, url
 
 
 urlpatterns = patterns('apps.cabinet',
+    # accounts
+    url(r'^ajax/template/cabinet/login/$', 'templates.login.login'),
+
+
     # briefs
     url(r'^ajax/template/cabinet/publications/briefs/$', 'templates.publications.briefs'),
     url(r'^ajax/template/cabinet/publications/publication/$', 'templates.publications.publication'),
