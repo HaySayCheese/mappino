@@ -56,6 +56,9 @@ class Users(AbstractBaseUser):
     hash_id = models.TextField(unique=True, default=lambda: uuid.uuid4().hex)
     is_active = models.BooleanField(default=False)
 
+    is_moderator = models.BooleanField(default=False)
+    is_manager = models.BooleanField(default=False)
+
 
     # required
     first_name = models.TextField()
