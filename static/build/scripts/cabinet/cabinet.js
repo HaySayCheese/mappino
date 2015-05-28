@@ -489,6 +489,24 @@ var pages;
         cabinet.SettingsController = SettingsController;
     })(cabinet = pages.cabinet || (pages.cabinet = {}));
 })(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var cabinet;
+    (function (cabinet) {
+        var SupportController = (function () {
+            function SupportController($timeout) {
+                this.$timeout = $timeout;
+                // -
+            }
+            SupportController.$inject = [
+                '$timeout',
+            ];
+            return SupportController;
+        })();
+        cabinet.SupportController = SupportController;
+    })(cabinet = pages.cabinet || (pages.cabinet = {}));
+})(pages || (pages = {}));
 /// <reference path='_references.ts' />
 var pages;
 (function (pages) {
@@ -516,6 +534,7 @@ var pages;
         app.controller('BriefsController', cabinet.BriefsController);
         app.controller('PublicationController', cabinet.PublicationController);
         app.controller('SettingsController', cabinet.SettingsController);
+        app.controller('SupportController', cabinet.SupportController);
     })(cabinet = pages.cabinet || (pages.cabinet = {}));
 })(pages || (pages = {}));
 // ####################
@@ -548,6 +567,7 @@ var pages;
 /// <reference path='controllers/BriefsController.ts' />
 /// <reference path='controllers/PublicationController.ts' />
 /// <reference path='controllers/SettingsController.ts' />
+/// <reference path='controllers/SupportController.ts' />
 // ####################
 // App init
 // ####################
