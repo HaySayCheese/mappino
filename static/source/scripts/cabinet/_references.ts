@@ -42,6 +42,7 @@
 /// <reference path='controllers/BriefsController.ts' />
 /// <reference path='controllers/PublicationController.ts' />
 /// <reference path='controllers/SettingsController.ts' />
+/// <reference path='controllers/SupportController.ts' />
 
 
 
