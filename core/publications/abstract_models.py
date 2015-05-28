@@ -1,6 +1,7 @@
 #coding=utf-8
 import uuid
 import datetime
+# from django.contrib.postgres.fields.array import ArrayField
 
 from django.db.utils import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
@@ -176,16 +177,21 @@ class AbstractHeadModel(models.Model):
 
     @classmethod
     def by_hash_id(cls, head_id, select_body=False, select_sale=False, select_rent=False, select_owner=False):
-        query = cls.objects.filter(hash_id = head_id).only('id')
-        if select_body:
-            query = query.only('id', 'body').select_related('body')
-        if select_sale:
-            query = query.only('id', 'sale_terms').select_related('sale_terms')
-        if select_rent:
-            query = query.only('id', 'rent_terms').select_related('rent_terms')
-        if select_owner:
-            query = query.only('id', 'owner').select_related('owner')
-        return query[:1][0]
+        try:
+            query = cls.objects.filter(hash_id = head_id).only('id')
+
+            if select_body:
+                query = query.only('id', 'body').select_related('body')
+            if select_sale:
+                query = query.only('id', 'sale_terms').select_related('sale_terms')
+            if select_rent:
+                query = query.only('id', 'rent_terms').select_related('rent_terms')
+            if select_owner:
+                query = query.only('id', 'owner').select_related('owner')
+            return query[:1][0]
+
+        except IndexError:
+            raise ObjectDoesNotExist()
 
 
     @classmethod
@@ -523,6 +529,7 @@ class LivingRentTermsModel(AbstractModel):
     currency_sid = models.SmallIntegerField(default=currencies_constants.dol())
     is_contract = models.BooleanField(default=False)
     period_sid = models.SmallIntegerField(default=LIVING_RENT_PERIODS.monthly())
+    # days_reserved = ArrayField(models.DateField)
     persons_count = models.SmallIntegerField(null=True)
 
     family = models.BooleanField(default=False)
@@ -800,7 +807,8 @@ class PhotosModel(AbstractModel):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         # This method is overridden to automatically save hash_id for the photo.
-        self.hash_id = generate_sha256_unique_id(str(self.id))
+        if not self.hash_id:
+            self.hash_id = generate_sha256_unique_id(str(self.id))
         super(PhotosModel, self).save(
             force_insert, force_update, using, update_fields)
 
