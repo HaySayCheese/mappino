@@ -9,8 +9,8 @@ urlpatterns = patterns('apps.cabinet.api',
 
 	# single
 	url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/((permanent/)?)$', Publication.as_view()), # note: optional parameter "permanent"
-    url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/publish/$', Publication.PublishUnpublishing.as_view(), {'operation': 'publish'}),
-    url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/unpublish/$', Publication.PublishUnpublishing.as_view(), {'operation': 'unpublish'}),
+    url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/publish/$', Publication.PublishUnpublish.as_view(), {'operation': 'publish'}),
+    url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/unpublish/$', Publication.PublishUnpublish.as_view(), {'operation': 'unpublish'}),
 
         # photos
         url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/photos/$', Publication.UploadPhoto.as_view()),

@@ -267,7 +267,7 @@ class Publication(CabinetView):
 
 
 
-    class PublishUnpublishing(CabinetView):
+    class PublishUnpublish(CabinetView):
         class PutResponses(object):
             @staticmethod
             def ok():
@@ -283,24 +283,6 @@ class Publication(CabinetView):
                     'message': 'publication does not pass validation.'
                 })
 
-        # put_codes = {
-        #     'OK': {
-        #         'code': 0,
-        #     },
-        #     'invalid_hid': {
-        #         'code': 1,
-        #     },
-        #     'incomplete_or_invalid_pub': {
-        #         'code': 2,
-        #     },
-        #
-        #     'pay_as_you_go_insufficient_funds': {
-        #         'code': 30,
-        #     },
-        #     'fixed_insufficient_funds': {
-        #         'code': 50,
-        #     },
-        # }
 
         @classmethod
         def put(cls, request, operation, *args):
