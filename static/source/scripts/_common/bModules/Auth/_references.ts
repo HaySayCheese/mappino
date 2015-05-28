@@ -5,4 +5,5 @@
 
 
 /// <reference path='services/AuthService.ts' />
+/// <reference path='services/SettingsService.ts' />
 /// <reference path='Auth.ts' />

@@ -7,4 +7,5 @@ module bModules.Auth {
     var bAuth: angular.IModule = angular.module('bModules.Auth', ['ngCookies']);
 
     bAuth.service('AuthService', AuthService);
+    bAuth.service('SettingsService', SettingsService);
 }
