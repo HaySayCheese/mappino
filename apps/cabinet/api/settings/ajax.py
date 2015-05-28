@@ -106,7 +106,6 @@ class AccountView(CabinetView):
         }
 
 
-    @classmethod
     def get(cls, request):
         return cls.GetResponses.ok(request.user)
 
