@@ -42,9 +42,9 @@
                     </li>
                 </ul>
                 <ul class="right hide-on-med-and-down">
-                    <li ui-sref-active="settings">
+                    <li ui-sref-active="active">
                         <a href ui-sref="settings">
-                            <i class="mdi-social-mood left"></i>Meketiuk Serhii
+                            <i class="mdi-social-mood left"></i>[[ cabinetCtrl.authService.user['full_name'] ]]
                         </a>
                     </li>
                 </ul>
@@ -72,12 +72,11 @@
 
 
     {% block wrapper %}
-        <div class="wrapper">
+        <main>
             <div ui-view>
-
-
+                <!-- view template included here -->
             </div>
-        </div>
+        </main>
     {% endblock %}
 
 

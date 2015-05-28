@@ -37,17 +37,17 @@
                         <div class="row">
                             <div class="col s12 m8 l6 offset-m2 offset-l3">
                                 <div class="row">
-                                    <select ng-model="new_publication.t_sid" ng-options="realtyType.id as realtyType.title for realtyType in realtyTypes">
+                                    <select ng-model="new_publication.tid" ng-options="realtyType.id as realtyType.title for realtyType in realtyTypes">
                                         <option value="" selected>Виберите тип объявления</option>
                                     </select>
                                 </div>
                                 <div class="row">
                                     <div class="col s6">
-                                        <input type="checkbox" id="sale" ng-model="new_publication.sale" />
+                                        <input type="checkbox" id="sale" ng-model="new_publication.for_sale" />
                                         <label for="sale">Продажа</label>
                                     </div>
                                     <div class="col s6">
-                                        <input type="checkbox" id="rent" ng-model="new_publication.rent" />
+                                        <input type="checkbox" id="rent" ng-model="new_publication.for_rent" />
                                         <label for="rent">Аренда</label>
                                     </div>
                                 </div>

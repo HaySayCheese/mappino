@@ -122,15 +122,71 @@ var bModules;
                 this.$http = $http;
                 this.$cookies = $cookies;
                 // -
+                this.getUserByCookie();
             }
             AuthService.prototype.login = function (user, callback) {
+                var self = this;
                 this.$http.post('/ajax/api/accounts/login/', user)
                     .then(function (response) {
-                    callback(response);
+                    if (response.data['code'] === 0) {
+                        self.updateUserData(response.data['user']);
+                        callback(response);
+                    }
+                    else {
+                        self.removeFromStorages();
+                        callback(response);
+                    }
                 }, function () {
                     // - error
                 });
             };
+            AuthService.prototype.getUserByCookie = function () {
+                var self = this;
+                this.$http.get('/ajax/api/accounts/on-login-info/')
+                    .then(function (response) {
+                    if (response.data['code'] === 0) {
+                        self.updateUserData(response.data['user']);
+                    }
+                    else {
+                        self.removeFromStorages();
+                    }
+                }, function () {
+                    // - error
+                });
+            };
+            AuthService.prototype.updateUserData = function (user) {
+                this._user = user;
+                this._user['full_name'] = user['name'] + ' ' + user['surname'];
+                this.saveToStorages(user);
+            };
+            AuthService.prototype.saveToStorages = function (user) {
+                console.log(user);
+                if (localStorage) {
+                    localStorage['user'] = JSON.stringify(user);
+                }
+            };
+            AuthService.prototype.removeFromStorages = function () {
+                if (localStorage && localStorage['user']) {
+                    delete localStorage['user'];
+                }
+            };
+            Object.defineProperty(AuthService.prototype, "user", {
+                //private getFromStorages() {
+                //    if (localStorage && localStorage['user']) {
+                //        this._user = JSON.parse(localStorage['user']);
+                //    }
+                //}
+                get: function () {
+                    return this._user;
+                },
+                set: function (user) {
+                    for (var key in user) {
+                        this._user[key] = user[key];
+                    }
+                },
+                enumerable: true,
+                configurable: true
+            });
             // $inject annotation.
             AuthService.$inject = [
                 '$http',
@@ -247,10 +303,20 @@ var pages;
                 var self = this;
                 this.$http.post('/ajax/api/cabinet/publications/', publication)
                     .then(function (response) {
-                    self.$state.go('publication_edit', { id: publication['tid'] + ":" + response['id'] });
-                    _.isFunction(callback) && callback(response);
+                    self.$state.go('publication_edit', { id: publication['tid'] + ":" + response.data['data']['id'] });
+                    callback(response);
                 }, function () {
                     // error
+                });
+            };
+            PublicationsService.prototype.loadPublicationData = function (publication, callback) {
+                var self = this;
+                this.$http.get('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/')
+                    .then(function (response) {
+                    console.log(response);
+                    callback(response);
+                }, function () {
+                    // -
                 });
             };
             PublicationsService.$inject = [
@@ -307,13 +373,21 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var CabinetController = (function () {
-            function CabinetController($timeout) {
+            function CabinetController($timeout, authService) {
                 this.$timeout = $timeout;
-                this.$inject = [
-                    '$timeout'
-                ];
+                this.authService = authService;
+                // -
+                var self = this;
+                //$timeout(() => {
+                //    self.authService.user = { full_name: 'fsafaf' };
+                //    console.log(self.authService.user)
+                //}, 4000);
                 $(".button-collapse").sideNav();
             }
+            CabinetController.$inject = [
+                '$timeout',
+                'AuthService'
+            ];
             return CabinetController;
         })();
         cabinet.CabinetController = CabinetController;
@@ -332,15 +406,16 @@ var pages;
                 this.publicationsService = publicationsService;
                 // -
                 $scope.new_publication = {
-                    t_sid: 0,
-                    sale: true,
-                    rent: false
+                    tid: 0,
+                    for_sale: true,
+                    for_rent: false
                 };
                 $scope.realtyTypes = realtyTypesService.realty_types;
                 $timeout(function () { return $('select').material_select(); });
             }
             BriefsController.prototype.createPublication = function () {
                 this.publicationsService.create(this.$scope.new_publication, function () {
+                    // - create callback
                 });
             };
             BriefsController.$inject = [
@@ -360,20 +435,58 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var PublicationController = (function () {
-            function PublicationController($scope, $timeout) {
+            function PublicationController($scope, $timeout, $state, publicationsService) {
+                // -
                 this.$scope = $scope;
                 this.$timeout = $timeout;
-                // -
-                $timeout(function () { return $('select').material_select(); });
-                $scope.publicationTemplateUrl = '/ajax/template/cabinet/publications/unpublished/2/';
+                this.$state = $state;
+                this.publicationsService = publicationsService;
+                this._publication = {};
+                this._publication['tid'] = $state.params['id'].split(':')[0];
+                this._publication['hid'] = $state.params['id'].split(':')[1];
+                $scope.showPublication = true;
+                $scope.publicationLoaded = true;
+                $scope.publication = {};
+                $scope.publicationTemplateUrl = '/ajax/template/cabinet/publications/unpublished/' + this._publication['tid'] + '/';
+                this.loadPublicationData();
             }
+            PublicationController.prototype.loadPublicationData = function () {
+                var _this = this;
+                this.$scope.publicationLoaded = false;
+                this.publicationsService.loadPublicationData(this._publication, function (response) {
+                    _this.$scope.publicationLoaded = true;
+                    _this.$scope.publication = response.data;
+                });
+                this.$timeout(function () { return $('select').material_select(); }, 3000);
+            };
             PublicationController.$inject = [
                 '$scope',
-                '$timeout'
+                '$timeout',
+                '$state',
+                'PublicationsService'
             ];
             return PublicationController;
         })();
         cabinet.PublicationController = PublicationController;
+    })(cabinet = pages.cabinet || (pages.cabinet = {}));
+})(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var cabinet;
+    (function (cabinet) {
+        var SettingsController = (function () {
+            function SettingsController($timeout) {
+                this.$timeout = $timeout;
+                // -
+                $timeout(function () { return $('select').material_select(); });
+            }
+            SettingsController.$inject = [
+                '$timeout',
+            ];
+            return SettingsController;
+        })();
+        cabinet.SettingsController = SettingsController;
     })(cabinet = pages.cabinet || (pages.cabinet = {}));
 })(pages || (pages = {}));
 /// <reference path='_references.ts' />
@@ -402,6 +515,7 @@ var pages;
         app.controller('CabinetController', cabinet.CabinetController);
         app.controller('BriefsController', cabinet.BriefsController);
         app.controller('PublicationController', cabinet.PublicationController);
+        app.controller('SettingsController', cabinet.SettingsController);
     })(cabinet = pages.cabinet || (pages.cabinet = {}));
 })(pages || (pages = {}));
 // ####################
@@ -433,6 +547,7 @@ var pages;
 /// <reference path='controllers/CabinetController.ts' />
 /// <reference path='controllers/BriefsController.ts' />
 /// <reference path='controllers/PublicationController.ts' />
+/// <reference path='controllers/SettingsController.ts' />
 // ####################
 // App init
 // ####################

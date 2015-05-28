@@ -18,9 +18,9 @@ module pages.cabinet {
             private publicationsService: PublicationsService) {
             // -
             $scope.new_publication = {
-                t_sid: 0,
-                sale: true,
-                rent: false
+                tid:        0,
+                for_sale:   true,
+                for_rent:   false
             };
             $scope.realtyTypes = realtyTypesService.realty_types;
 
@@ -31,7 +31,7 @@ module pages.cabinet {
 
         private createPublication() {
             this.publicationsService.create(this.$scope.new_publication, () => {
-
+                // - create callback
             });
         }
 
