@@ -206,7 +206,6 @@ class AccountView(CabinetView):
         if not name:
             return self.PostResponses.value_required()
 
-
         if not user.first_name == name:
             user.first_name = name
             user.save()
@@ -260,7 +259,7 @@ class AccountView(CabinetView):
             return self.PostResponses.ok()
 
         if user.work_email == email:
-            # no validation add DB write
+            # no validation and DB write
             return self.PostResponses.ok()
 
         try:
@@ -286,6 +285,7 @@ class AccountView(CabinetView):
             phone = phonenumbers.parse(phone)
             if not phonenumbers.is_valid_number(phone):
                 raise ValidationError('Invalid number.')
+
         except (phonenumbers.NumberParseException, ValidationError):
             return self.PostResponses.invalid_phone()
 
@@ -314,12 +314,15 @@ class AccountView(CabinetView):
 
             return self.PostResponses.ok()
 
+
         try:
             phone = phonenumbers.parse(phone)
             if not phonenumbers.is_valid_number(phone):
                 raise ValidationError('Invalid number.')
+
         except (phonenumbers.NumberParseException, ValidationError):
             return self.PostResponses.invalid_phone()
+
 
         phone = phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.E164)
         if user.add_mobile_phone == phone:
@@ -327,7 +330,7 @@ class AccountView(CabinetView):
             return self.PostResponses.ok()
 
         # check for duplicates
-        if user.mobile_phone == phone:
+        if user.mobile_phone == phone or not user.mobile_phone_number_is_free(phone):
             return self.PostResponses.duplicated_phone()
 
         if not user.add_landline_phone == phone:
@@ -347,7 +350,7 @@ class AccountView(CabinetView):
             return self.PostResponses.ok()
 
         # check for duplicates
-        if user.add_landline_phone:
+        if user.add_landline_phone or not user.mobile_phone_number_is_free(phone):
             return self.PostResponses.duplicated_phone()
 
         if not user.landline_phone == phone:
@@ -367,7 +370,7 @@ class AccountView(CabinetView):
             return self.PostResponses.ok()
 
         # check for duplicates
-        if user.landline_phone == phone:
+        if user.landline_phone == phone or not user.mobile_phone_number_is_free(phone):
             return self.PostResponses.duplicated_phone()
 
         if not user.add_landline_phone == phone:
