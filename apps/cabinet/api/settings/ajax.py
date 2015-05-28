@@ -46,8 +46,8 @@ class AccountView(CabinetView):
                 'message': 'OK',
                 'data': {
                     'account': {
-                        'first_name': user.first_name,
-                        'last_name': user.last_name,
+                        'name': user.first_name,
+                        'surname': user.last_name,
                         'email': user.email,
                         'work_email': user.work_email or '',
                         'skype': user.skype or '',
