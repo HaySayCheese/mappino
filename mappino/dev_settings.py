@@ -138,6 +138,7 @@ INSTALLED_APPS = (
     'core.markers_handler',
     'core.search',
     'core.support',
+    'core.publications.publications_to_check',
     'core.escaped_fragments_manager',
 
     # todo: shift this apps into core

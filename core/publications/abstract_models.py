@@ -18,6 +18,8 @@ from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, L
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
     EmptyRentPrice
 
+from publications_to_check.models import PublicationsToCheck
+
 
 class AbstractModel(models.Model):
     class Meta:
@@ -266,10 +268,14 @@ class AbstractHeadModel(models.Model):
         if self.deleted is not None:
             raise SuspiciousOperation('Attempt to publish deleted publication.')
 
-        self.check_required_fields()
-        self.body.check_required_fields()
+        is_suspicious = self.check_required_fields()
 
-        # if self.owner.account.
+
+        PublicationsToCheck.add(
+            publication_type_id = self.tid,
+            publication_hash_id = self.hash_id,
+            is_suspicious = is_suspicious
+        )
 
         # sender=None для того, щоб django-orm не витягував автоматично дані з БД,
         # які, швидше за все, не знадобляться в подальшій обробці.
@@ -298,6 +304,7 @@ class AbstractHeadModel(models.Model):
             for_sale = self.for_sale,
             for_rent = self.for_rent,
         )
+
 
 
     def unpublish(self):
@@ -435,7 +442,7 @@ class AbstractHeadModel(models.Model):
             self.rent_terms.check_required_fields()
 
         #-- body
-        self.body.check_required_fields()
+        return self.body.check_required_fields()
 
     def photos(self):
         return self.photos_model.objects.filter(publication = self.id).order_by('-is_title', '-created')
@@ -473,15 +480,27 @@ class BodyModel(AbstractModel):
 
     def check_required_fields(self):
         """
-        Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
-        Не перевіряє інформацію в полях на коректність, оскільки передбачається,
-        що некоректні дані не можуть потрапити в БД через обробники зміни даних.
+        Check if required fields is not None. If None - generate Exception
+        Check some fields on adequacy. If adequacy - return True in other way - False
         """
         if (self.title is None) or (not self.title):
             raise EmptyTitle('Title is empty')
         if (self.description is None) or (not self.description):
             raise EmptyDescription('Description is empty')
         self.check_extended_fields()
+
+        return self.check_fields_on_adequacy()
+
+
+
+
+
+    def check_fields_on_adequacy(self):
+        """
+            Abstract
+            Each child will override this method
+        """
+        return
 
     def check_extended_fields(self):
         """
