@@ -77,6 +77,20 @@ class AccountView(CabinetView):
             })
 
 
+    class PostResponses(object):
+        @staticmethod
+        def ok():
+            pass
+
+
+        @staticmethod
+        def invalid_parameters():
+            return HttpResponseBadRequest({
+                'code': 1,
+                'message': 'Request contains invalid parameters or one of them is invalid.'
+            })
+
+
     def __init__(self):
         super(AccountView, self).__init__()
         self.update_methods = {
@@ -106,27 +120,27 @@ class AccountView(CabinetView):
         }
 
 
+    @classmethod
     def get(cls, request):
         return cls.GetResponses.ok(request.user)
 
 
-    def post(self, request, *args):
+    def post(self, request):
         try:
             params = angular_post_parameters(request)
-            field = params.get('f', '')
-            value = params.get('v', '')
-        except ValueError:
-            return HttpResponseBadRequest('Invalid or absent parameter @field or @value.')
-
-        if field == '':
-            return HttpResponseBadRequest('Invalid or absent parameter @field')
-            # (value can be empty)
+            field = params['f']
+            value = params.get('v', '') # value can be empty
+        except (ValueError, KeyError):
+            return self.PostResponses.invalid_parameters()
 
 
-        update_method = self.update_methods.get(field)
-        if update_method is None:
-            return HttpResponseBadRequest('Invalid parameter @field.')
-        return update_method(request.user, value)
+        try:
+            update_method = self.update_methods.get(field)
+            return update_method(request.user, value)
+
+        except KeyError:
+            return self.PostResponses.invalid_parameters()
+
 
 
     def update_first_name(self, user, name):
