@@ -104,7 +104,7 @@ textarea.materialize-textarea {
     color: $input-border-color;
     position: absolute;
     top: 0.8rem;
-    left: $gutter-width / 2;
+    left: 0; //$gutter-width / 2;
     font-size: 1rem;
     cursor: text;
     @include transition(.2s ease-out);

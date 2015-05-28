@@ -197,6 +197,39 @@ var bModules;
         Auth.AuthService = AuthService;
     })(Auth = bModules.Auth || (bModules.Auth = {}));
 })(bModules || (bModules = {}));
+/// <reference path='../_references.ts' />
+var bModules;
+(function (bModules) {
+    var Auth;
+    (function (Auth) {
+        var SettingsService = (function () {
+            function SettingsService($http) {
+                this.$http = $http;
+                // -
+            }
+            SettingsService.prototype.load = function (callback) {
+                var self = this;
+                this.$http.get('/ajax/api/cabinet/account/')
+                    .then(function (response) {
+                    if (response.data['code'] === 0) {
+                        self._settings = response.data['data'];
+                        callback(self._settings);
+                    }
+                    else {
+                        callback(response);
+                    }
+                }, function () {
+                    // - error
+                });
+            };
+            SettingsService.$inject = [
+                '$http'
+            ];
+            return SettingsService;
+        })();
+        Auth.SettingsService = SettingsService;
+    })(Auth = bModules.Auth || (bModules.Auth = {}));
+})(bModules || (bModules = {}));
 /// <reference path='_references.ts' />
 var bModules;
 (function (bModules) {
@@ -205,12 +238,14 @@ var bModules;
         'use strict';
         var bAuth = angular.module('bModules.Auth', ['ngCookies']);
         bAuth.service('AuthService', Auth.AuthService);
+        bAuth.service('SettingsService', Auth.SettingsService);
     })(Auth = bModules.Auth || (bModules.Auth = {}));
 })(bModules || (bModules = {}));
 /// <reference path='../../definitions/jquery.d.ts' />
 /// <reference path='../../definitions/angular.d.ts' />
 /// <reference path='../../definitions/angular-cookies.d.ts' />
 /// <reference path='services/AuthService.ts' />
+/// <reference path='services/SettingsService.ts' />
 /// <reference path='Auth.ts' />
 /// <reference path='../_references.ts' />
 var pages;
@@ -476,13 +511,23 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var SettingsController = (function () {
-            function SettingsController($timeout) {
+            function SettingsController($scope, $timeout, settingsService) {
+                this.$scope = $scope;
                 this.$timeout = $timeout;
+                this.settingsService = settingsService;
                 // -
                 $timeout(function () { return $('select').material_select(); });
+                settingsService.load(function (response) {
+                    $scope.user = response;
+                    $timeout(function () {
+                        angular.element('.settings-page input').change();
+                    });
+                });
             }
             SettingsController.$inject = [
+                '$scope',
                 '$timeout',
+                'SettingsService'
             ];
             return SettingsController;
         })();
