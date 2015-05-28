@@ -80,43 +80,102 @@ class AccountView(CabinetView):
     class PostResponses(object):
         @staticmethod
         def ok():
-            pass
+            return HttpJsonResponse({
+                'code': 0,
+                'message': 'OK',
+            })
+
+
+        @staticmethod
+        def value_required():
+            return HttpJsonResponse({
+                'code': 1,
+                'message': 'Value is required.'
+            })
+
+
+        @staticmethod
+        def invalid_value():
+            return HttpJsonResponse({
+                'code': 2,
+                'message': 'Value is invalid.'
+            })
+
+
+        @staticmethod
+        def invalid_email():
+            return HttpJsonResponse({
+                'code': 10,
+                'message': 'Email is invalid.'
+            })
+
+
+        @staticmethod
+        def duplicated_email():
+            return HttpJsonResponse({
+                'code': 11,
+                'message': 'Email is duplicated.'
+            })
+
+
+        @staticmethod
+        def duplicated_email():
+            return HttpJsonResponse({
+                'code': 11,
+                'message': 'Email is duplicated.'
+            })
+
+
+        @staticmethod
+        def invalid_phone():
+            return HttpJsonResponse({
+                'code': 20,
+                'message': 'Invalid phone.'
+            })
+
+
+        @staticmethod
+        def duplicated_phone():
+            return HttpJsonResponse({
+                'code': 21,
+                'message': 'Duplicated phone.'
+            })
 
 
         @staticmethod
         def invalid_parameters():
-            return HttpResponseBadRequest({
-                'code': 1,
-                'message': 'Request contains invalid parameters or one of them is invalid.'
+            return HttpJsonResponse({
+                'code': 100,
+                'message': 'Request does not contains parameters or one of them is invalid.'
             })
 
 
     def __init__(self):
         super(AccountView, self).__init__()
         self.update_methods = {
-            'name': self.update_first_name,
-            'surname': self.update_last_name,
-            'email': self.update_email,
-            'work_email': self.update_work_email,
-            'mobile_phone': self.update_mobile_phone_number,
-            'add_mobile_phone': self.update_add_mobile_phone_number,
-            'landline_phone': self.update_landline_phone_number,
-            'add_landline_phone': self.update_add_landline_phone_number,
-            'skype': self.update_skype,
+            'name': self.__update_first_name,
+            'surname': self.__update_last_name,
+            'email': self.__update_email,
+            'work_email': self.__update_work_email,
+            'mobile_phone': self.__update_mobile_phone_number,
+            'add_mobile_phone': self.__update_add_mobile_phone_number,
+            'landline_phone': self.__update_landline_phone_number,
+            'add_landline_phone': self.__update_add_landline_phone_number,
+            'skype': self.__update_skype,
 
     
-            'allow_call_requests': self.update_allow_call_request,
-            'send_call_request_notifications_to_sid': self.update_send_call_request_notifications_to_sid,
+            'allow_call_requests': self.__update_allow_call_request,
+            'send_call_request_notifications_to_sid': self.__update_send_call_request_notifications_to_sid,
 
-            'allow_messaging': self.update_allow_messaging,
-            'send_message_notifications_to_sid': self.update_send_message_notifications_to_sid,
+            'allow_messaging': self.__update_allow_messaging,
+            'send_message_notifications_to_sid': self.__update_send_message_notifications_to_sid,
 
-            'hide_email': self.update_hide_email,
-            'hide_mobile_phone_number': self.update_hide_mobile_phone,
-            'hide_add_mobile_phone_number': self.update_hide_add_mobile_phone,
-            'hide_landline_phone_number': self.update_hide_landline_phone,
-            'hide_add_landline_phone_number': self.update_hide_add_landline_phone,
-            'hide_skype': self.update_hide_skype,
+            'hide_email': self.__update_hide_email,
+            'hide_mobile_phone_number': self.__update_hide_mobile_phone,
+            'hide_add_mobile_phone_number': self.__update_hide_add_mobile_phone,
+            'hide_landline_phone_number': self.__update_hide_landline_phone,
+            'hide_add_landline_phone_number': self.__update_hide_add_landline_phone,
+            'hide_skype': self.__update_hide_skype,
         }
 
 
@@ -143,434 +202,354 @@ class AccountView(CabinetView):
 
 
 
-    def update_first_name(self, user, name):
+    def __update_first_name(self, user, name):
         if not name:
-            return HttpResponse(
-                json.dumps(self.post_codes['value_required']), content_type='application/json')
+            return self.PostResponses.value_required()
+
 
         if not user.first_name == name:
             user.first_name = name
             user.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_last_name(self, user, name):
+    def __update_last_name(self, user, name):
         if not name:
-            return HttpResponse(
-                json.dumps(self.post_codes['value_required']), content_type='application/json')
+            return self.PostResponses.value_required()
 
         if not user.last_name == name:
             user.last_name = name
             user.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_email(self, user, email):
+    def __update_email(self, user, email):
         if not email:
-            return HttpResponse(
-                json.dumps(self.post_codes['value_required']), content_type='application/json')
+            return self.PostResponses.value_required()
 
         if user.email == email:
-            # no validation add DB write
-            return HttpResponse(
-                json.dumps(self.post_codes['OK']), content_type='application/json')
+            # no validation and DB write
+            return self.PostResponses.ok()
 
         try:
             validate_email(email)
         except ValidationError:
-            return HttpResponse(
-                json.dumps(self.post_codes['invalid_email']), content_type='application/json')
+            return self.PostResponses.invalid_email()
+
 
         # check for duplicates
         if not Users.email_is_free(email):
-            return HttpResponse(
-                json.dumps(self.post_codes['duplicated_email']), content_type='application/json')
+            return self.PostResponses.duplicated_email()
+
 
         # todo: add email normalization here
         user.email = email
         user.save()
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_work_email(self, user, email):
+    def __update_work_email(self, user, email):
         if not email:
             # work email may be empty
             if user.work_email:
                 user.work_email = ''
                 user.save()
 
-            return HttpResponse(
-                json.dumps(self.post_codes['OK']), content_type='application/json')
+            return self.PostResponses.ok()
 
         if user.work_email == email:
             # no validation add DB write
-            return HttpResponse(
-                json.dumps(self.post_codes['OK']), content_type='application/json')
+            return self.PostResponses.ok()
 
         try:
             validate_email(email)
         except ValidationError:
-            return HttpResponse(
-                json.dumps(self.post_codes['invalid_email']), content_type='application/json')
+            return self.PostResponses.invalid_email()
 
         # check for duplicates
         if not Users.email_is_free(email):
-            return HttpResponse(
-                json.dumps(self.post_codes['duplicated_email']), content_type='application/json')
+            return self.PostResponses.duplicated_email()
 
         # todo: add email normalization here
         user.work_email = email
         user.save()
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_mobile_phone_number(self, user, phone):
+    def __update_mobile_phone_number(self, user, phone):
         if not phone:
-            return HttpResponse(
-                json.dumps(self.post_codes['value_required']), content_type='application/json')
+            return self.PostResponses.value_required()
 
         try:
             phone = phonenumbers.parse(phone)
             if not phonenumbers.is_valid_number(phone):
                 raise ValidationError('Invalid number.')
         except (phonenumbers.NumberParseException, ValidationError):
-            return HttpResponse(json.dumps(
-                self.post_codes['invalid_phone']), content_type='application/json')
+            return self.PostResponses.invalid_phone()
 
         phone = phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.E164)
         if user.mobile_phone == phone:
             # already the same
-            return HttpResponse(
-                json.dumps(self.post_codes['OK']), content_type='application/json')
+            return self.PostResponses.ok()
 
         # check for duplicates
         if not user.mobile_phone_number_is_free(phone):
-            return HttpResponse(
-                json.dumps(self.post_codes['duplicated_phone']), content_type='application/json')
+            return self.PostResponses.duplicated_phone()
 
         if not user.mobile_phone == phone:
             user.mobile_phone = phone
             user.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_add_mobile_phone_number(self, user, phone):
+    def __update_add_mobile_phone_number(self, user, phone):
         if not phone:
             # add mobile phone may be empty
             if user.add_mobile_phone:
                 user.add_mobile_phone = ''
                 user.save()
 
-            return HttpResponse(
-                json.dumps(self.post_codes['OK']), content_type='application/json')
+            return self.PostResponses.ok()
 
         try:
             phone = phonenumbers.parse(phone)
             if not phonenumbers.is_valid_number(phone):
                 raise ValidationError('Invalid number.')
         except (phonenumbers.NumberParseException, ValidationError):
-            return HttpResponse(
-                json.dumps(self.post_codes['invalid_phone']), content_type='application/json')
+            return self.PostResponses.invalid_phone()
 
         phone = phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.E164)
         if user.add_mobile_phone == phone:
             # already the same
-            return HttpResponse(
-                json.dumps(self.post_codes['OK']), content_type='application/json')
+            return self.PostResponses.ok()
 
         # check for duplicates
         if user.mobile_phone == phone:
-            return HttpResponse(
-                json.dumps(self.post_codes['duplicated_phone']), content_type='application/json')
+            return self.PostResponses.duplicated_phone()
 
         if not user.add_landline_phone == phone:
             user.add_mobile_phone = phone
             user.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_landline_phone_number(self, user, phone):
+    def __update_landline_phone_number(self, user, phone):
         if not phone:
             # landline phone may be empty
             if user.landline_phone:
                 user.landline_phone = ''
                 user.save()
 
-            return HttpResponse(
-                json.dumps(self.post_codes['OK']), content_type='application/json')
+            return self.PostResponses.ok()
 
         # check for duplicates
         if user.add_landline_phone:
-            return HttpResponse(
-                json.dumps(self.post_codes['duplicated_phone']), content_type='application/json')
+            return self.PostResponses.duplicated_phone()
 
         if not user.landline_phone == phone:
             user.landline_phone = phone
             user.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_add_landline_phone_number(self, user, phone):
+    def __update_add_landline_phone_number(self, user, phone):
         if not phone:
             # add landline phone may be empty
             if user.add_landline_phone:
                 user.add_landline_phone = ''
                 user.save()
 
-            return HttpResponse(
-                json.dumps(self.post_codes['OK']), content_type='application/json')
+            return self.PostResponses.ok()
 
         # check for duplicates
         if user.landline_phone == phone:
-            return HttpResponse(
-                json.dumps(self.post_codes['duplicated_phone']), content_type='application/json')
+            return self.PostResponses.duplicated_phone()
 
         if not user.add_landline_phone == phone:
             user.add_landline_phone = phone
             user.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_skype(self, user, login):
+    def __update_skype(self, user, login):
         if not user.skype == login:
             user.skype = login
             user.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_allow_call_request(self, user, allow):
+    def __update_allow_call_request(self, user, allow):
         if allow not in (True, False):
-            return HttpResponse(
-                json.dumps(self.post_codes['invalid_value']), content_type='application/json')
+            return self.PostResponses.invalid_value()
 
         preferences = user.preferences()
         if not preferences.allow_call_requests == allow:
             preferences.allow_call_requests = allow
             preferences.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_send_call_request_notifications_to_sid(self, user, sid):
+    def __update_send_call_request_notifications_to_sid(self, user, sid):
         sid = int(sid)
         if sid not in Preferences.call_requests.values():
-            return HttpResponse(
-                json.dumps(self.post_codes['invalid_value']), content_type='application/json')
+            return self.PostResponses.invalid_value()
 
         preferences = user.preferences()
         if not preferences.send_call_request_notifications_to_sid == sid:
             preferences.send_call_request_notifications_to_sid = sid
             preferences.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_allow_messaging(self, user, allow):
+    def __update_allow_messaging(self, user, allow):
         if allow not in (True, False):
-            return HttpResponse(
-                json.dumps(self.post_codes['invalid_value']), content_type='application/json')
+            return self.PostResponses.invalid_value()
 
         preferences = user.preferences()
         if not preferences.allow_messaging == allow:
             preferences.allow_messaging = allow
             preferences.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_send_message_notifications_to_sid(self, user, sid):
+    def __update_send_message_notifications_to_sid(self, user, sid):
         sid = int(sid)
         if sid not in Preferences.messaging.values():
-            return HttpResponse(
-                json.dumps(self.post_codes['invalid_value']), content_type='application/json')
+            return self.PostResponses.invalid_value()
 
         preferences = user.preferences()
         if not preferences.send_message_notifications_to_sid == sid:
             preferences.send_message_notifications_to_sid = sid
             preferences.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_hide_email(self, user, hide):
+    def __update_hide_email(self, user, hide):
         if hide not in (True, False):
-            return HttpResponse(
-                json.dumps(self.post_codes['invalid_value']), content_type='application/json')
+            return self.PostResponses.invalid_value()
 
         preferences = user.preferences()
         if not preferences.hide_email == hide:
             preferences.hide_email = hide
             preferences.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_hide_mobile_phone(self, user, hide):
+    def __update_hide_mobile_phone(self, user, hide):
         if hide not in (True, False):
-            return HttpResponse(
-                json.dumps(self.post_codes['invalid_value']), content_type='application/json')
+            return self.PostResponses.invalid_value()
 
         preferences = user.preferences()
         if not preferences.hide_mobile_phone_number == hide:
             preferences.hide_mobile_phone_number = hide
             preferences.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_hide_add_mobile_phone(self, user, hide):
+    def __update_hide_add_mobile_phone(self, user, hide):
         if hide not in (True, False):
-            return HttpResponse(
-                json.dumps(self.post_codes['invalid_value']), content_type='application/json')
+            return self.PostResponses.invalid_value()
 
         preferences = user.preferences()
         if not preferences.hide_add_mobile_phone_number == hide:
             preferences.hide_add_mobile_phone_number = hide
             preferences.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_hide_landline_phone(self, user, hide):
+    def __update_hide_landline_phone(self, user, hide):
         if hide not in (True, False):
-            return HttpResponse(
-                json.dumps(self.post_codes['invalid_value']), content_type='application/json')
+            return self.PostResponses.invalid_value()
 
         preferences = user.preferences()
         if not preferences.hide_landline_phone == hide:
             preferences.hide_landline_phone = hide
             preferences.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_hide_add_landline_phone(self, user, hide):
+    def __update_hide_add_landline_phone(self, user, hide):
         if hide not in (True, False):
-            return HttpResponse(
-                json.dumps(self.post_codes['invalid_value']), content_type='application/json')
+            return self.PostResponses.invalid_value()
 
         preferences = user.preferences()
         if not preferences.hide_add_landline_phone == hide:
             preferences.hide_add_landline_phone = hide
             preferences.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
-    def update_hide_skype(self, user, hide):
+    def __update_hide_skype(self, user, hide):
         if hide not in (True, False):
-            return HttpResponse(
-                json.dumps(self.post_codes['invalid_value']), content_type='application/json')
+            return self.PostResponses.invalid_value()
 
         preferences = user.preferences()
         if not preferences.hide_skype == hide:
             preferences.hide_skype = hide
             preferences.save()
 
-        return HttpResponse(
-            json.dumps(self.post_codes['OK']), content_type='application/json')
-
-
-    def update_alias(self, user, alias):
-        raise Exception('NOT IMPLEMENTED') # issue 203
-
-        # if user.alias == alias:
-        # 	return
-        #
-        # if not alias:
-        # 	user.alias = ''
-        # 	user.save()
-        # 	return
-        #
-        # try:
-        # 	Users.validate_alias(alias, user)
-        #
-        # except users_exceptions.AliasAlreadyTaken:
-        # 	return HttpResponse(
-        # 		json.dumps(self.post_codes['nickname_already_taken']), content_type='application/json')
-        #
-        # except users_exceptions.TooShortAlias:
-        # 	return HttpResponse(
-        # 		json.dumps(self.post_codes['nickname_to_short']), content_type='application/json')
-        #
-        # user.alias = alias
-        # user.save()
-        # return HttpResponse(
-        # 	json.dumps(self.post_codes['OK']), content_type='application/json')
+        return self.PostResponses.ok()
 
 
 
-class AccountManager(object):
+class AvatarUpdate(CabinetView):
+    post_codes = {
+        'OK': {
+            'code': 0
+        },
+        'too_large': {
+            'code': 1
+        },
+        'too_small': {
+            'code': 2,
+        },
+        'unsupported_type': {
+            'code': 3
+        },
 
+        'unknown_error': {
+            'code': 100
+        }
+    }
 
+    def post(self, request, *args):
+        # check if request is not empty
+        image = request.FILES.get('file')
+        if image is None:
+            return HttpResponseBadRequest('No image found in request.')
 
-	class AvatarUpdate(CabinetView):
-		post_codes = {
-			'OK': {
-				'code': 0
-			},
-		    'too_large': {
-			    'code': 1
-		    },
-		    'too_small': {
-			    'code': 2,
-		    },
-		    'unsupported_type': {
-			    'code': 3
-		    },
+        try:
+            # updating
+            request.user.avatar().update(image)
 
-		    'unknown_error': {
-			    'code': 100
-		    }
-		}
+        except Avatar.TooLargeImage:
+            return HttpResponse(json.dumps(self.post_codes['too_large']), content_type='application/json')
+        except Avatar.TooSmallImage:
+            return HttpResponse(json.dumps(self.post_codes['too_small']), content_type='application/json')
+        except Avatar.InvalidImageFormat:
+            return HttpResponse(json.dumps(self.post_codes['unsupported_type']), content_type='application/json')
+        except RuntimeException:
+            return HttpResponse(json.dumps(self.post_codes['unknown_error']), content_type='application/json')
 
-		def post(self, request, *args):
-			# check if request is not empty
-			image = request.FILES.get('file')
-			if image is None:
-				return HttpResponseBadRequest('No image found in request.')
-
-			try:
-				# updating
-				request.user.avatar().update(image)
-
-			except Avatar.TooLargeImage:
-				return HttpResponse(json.dumps(self.post_codes['too_large']), content_type='application/json')
-			except Avatar.TooSmallImage:
-				return HttpResponse(json.dumps(self.post_codes['too_small']), content_type='application/json')
-			except Avatar.InvalidImageFormat:
-				return HttpResponse(json.dumps(self.post_codes['unsupported_type']), content_type='application/json')
-			except RuntimeException:
-				return HttpResponse(json.dumps(self.post_codes['unknown_error']), content_type='application/json')
-
-			# seems to be ok
-			response = deepcopy(self.post_codes['OK'])
-			response.update({
-				'url': request.user.avatar().url()
-			})
-			return HttpResponse(json.dumps(response), content_type='application/json')
+        # seems to be ok
+        response = deepcopy(self.post_codes['OK'])
+        response.update({
+            'url': request.user.avatar().url()
+        })
+        return HttpResponse(json.dumps(response), content_type='application/json')
