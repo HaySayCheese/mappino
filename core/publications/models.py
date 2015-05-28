@@ -167,9 +167,39 @@ class FlatsBodies(BodyModel):
         if self.bedrooms_count and self.bedrooms_count>self.rooms_count:
             raise IncorrectBedRoomsCount('There are more bedrooms than rooms')
 
+    def check_fields_on_adequacy(self):
+        """
+            I will check some parameters of publication on adequacy
+            If check failed, i will return False.
+        :return: True or False
+        """
+        #Operator have to check publication with higher priority if:
 
+        #There are less than 10 square meter per room,
+        if self.total_area/self.rooms_count<=10:
+            return False
 
+        #Too more floors in house. 48 floors - the higher skyscraper in Ukraine,
+        if self.floors_count and self.floors_count>=45:
+            return False
 
+        #Too much toilets,
+        if self.vcs_count and self.vcs_count>self.rooms_count/2:
+            return False
+
+        #Too much balconies
+        if self.balconies_count and self.balconies_count>self.rooms_count:
+            return False
+
+        #Minimum living area for 1 person
+        if self.living_area<6:
+            return False
+
+        #Too much loggias
+        if self.loggias_count and self.loggias_count>self.rooms_count:
+            return False
+
+        return True
 
 
     #-- output
