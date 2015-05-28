@@ -1,3 +1,4 @@
+# coding=utf-8
 from apps.cabinet.api.settings.ajax import AccountView
 from django.conf.urls import patterns, url
 
