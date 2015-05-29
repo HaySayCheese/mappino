@@ -10,7 +10,7 @@ class PublicationsToCheck(models.Model):
     publication_type_id = models.IntegerField()
     is_suspicious = models.BooleanField(db_index=True, default=False)
     date_added = models.DateTimeField(db_index=True)
-    moderated_by = models.ForeignKey(Users)
+    moderated_by = models.ForeignKey(Users, null=True)
     date_moderated = models.DateTimeField(db_index=True, null=True)
 
     class Meta:
@@ -51,23 +51,51 @@ class PublicationsToCheck(models.Model):
 
         try:
             #We will check if moderator finished last publication that he took
-            return cls.objects.filter(
-                moderated_by = moderator_id,
-                date_moderated = None)[:1][0]
+            return cls.objects.\
+                filter(moderated_by = moderator_id,date_moderated = None).\
+                order_by('is_suspicious','date_added')[:1][0]
 
         except IndexError:
             pass
 
 
         try:
-            #todo Check waht will be first. update or limit.
-            return PublicationsToCheck.objects\
-                .filter(date_moderated = None)\
-                .order_by('is_suspicious', 'date_added')\
-                .update(moderated_by = moderator_id)[:1]
+             # We have to take last record that was added in table by a set of parameters
+             # While this record is taking we locked him for other users using method update
+            if PublicationsToCheck.objects.filter(id__in=cls.objects.filter(date_moderated = None)\
+                    .order_by('is_suspicious', 'date_added')[:1]).update(moderated_by = moderator_id):
+
+                # Update return 1. We get our last locked record
+                return cls.objects.get(moderated_by = moderator_id,date_moderated = None)
+
+            # If Update return 0 - there are no methods to moderate, so we go out
+            return False
+
+        except IndexError:
+            # return cls.objects.none()
+            pass
+
+
+
+
+        try:
+            if PublicationsToCheck.objects.\
+                    filter(id__in=cls.objects.filter(date_moderated = None)\
+                    .order_by('is_suspicious', 'date_added')[:1]).\
+                    update(moderated_by = moderator_id):
+
+
+                return cls.objects.get(moderated_by = moderator_id,date_moderated = None)
+
+
+            return False
 
         except IndexError:
             return cls.objects.none()
+
+
+
+
 
 
 
