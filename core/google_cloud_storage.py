@@ -10,10 +10,11 @@ class GoogleCSPhotoUploader(object):
 
 
     @classmethod
-    def upload_photo_to_google_cloud_storage(cls, path, cache_control_seconds=8035200):
+    def upload_photo_to_google_cloud_storage(cls, path, cloud_path, cache_control_seconds=8035200):
         """
         Uploads file from "file_path" to the google cloud storage.
 
+        :param cloud_path:
         :type path: str, unicode
         :param path: path to the file that should be uploaded.
 
@@ -23,7 +24,7 @@ class GoogleCSPhotoUploader(object):
         image = open(path)
         media = MediaIoBaseUpload(io.BytesIO(image.read()), 'image/jpg')
         metadata = {
-            'name': cls.bucket + path,
+            'name': cloud_path,
             'cacheControl': cache_control_seconds,
             'predefinedAcl': 'publicRead',
         }
@@ -31,7 +32,7 @@ class GoogleCSPhotoUploader(object):
         storage = init_google_cloud_storage()
         resp = storage.objects().insert(
             bucket = cls.bucket,
-            name = cls.bucket + path,
+            name = cloud_path,
             body = metadata,
             media_body = media
         ).execute()
@@ -40,7 +41,7 @@ class GoogleCSPhotoUploader(object):
             return '{domain}/{bucket}/{path}'.format(
                 domain = 'https://storage.googleapis.com',
                 bucket = cls.bucket,
-                path = cls.bucket + path,
+                path = cloud_path
             )
 
         else:

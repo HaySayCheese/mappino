@@ -203,10 +203,13 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
             os.remove(big_thumb_path)
             raise e
 
-        original_image_bucket_path = cls.upload_photo_to_google_cloud_storage(tid, original_image_path)
-        photo_bucket_path = cls.upload_photo_to_google_cloud_storage(tid, photo_path)
-        big_thumb_bucket_path = cls.upload_photo_to_google_cloud_storage(tid, big_thumb_path)
-        small_thumb_bucket_path = cls.upload_photo_to_google_cloud_storage(tid, small_thumb_path)
+
+        raise Exception('"upload_photo_to_google_cloud_storage" signature was changed')
+
+        original_image_bucket_path = cls.upload_photo_to_google_cloud_storage(tid, original_image_path, )
+        photo_bucket_path = cls.upload_photo_to_google_cloud_storage(tid, photo_path, )
+        big_thumb_bucket_path = cls.upload_photo_to_google_cloud_storage(tid, big_thumb_path, )
+        small_thumb_bucket_path = cls.upload_photo_to_google_cloud_storage(tid, small_thumb_path, )
 
         # seems to be ok,
         # lets remove temporary images after uploading to the google cloud storage

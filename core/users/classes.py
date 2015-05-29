@@ -11,10 +11,12 @@ from core.users.exceptions import AvatarExceptions
 
 class Avatar(GoogleCSPhotoUploader):
     avatar_suffix = '_processed'
-    avatar_size = (180, 180)
+    avatar_size = 180
 
     original_image_suffix = '_original'
     min_original_image_size = avatar_size
+
+    bucket_path = GoogleCSPhotoUploader.bucket + '/users/photos/'
 
 
     def __init__(self, user):
@@ -22,7 +24,10 @@ class Avatar(GoogleCSPhotoUploader):
 
 
     def update(self, image):
-        return self.process_and_upload_to_gcs(image)
+        url =  self.process_and_upload_to_gcs(image)
+        self.user.avatar_url = url
+        self.user.save()
+        return url
 
 
     def url(self):
@@ -82,20 +87,31 @@ class Avatar(GoogleCSPhotoUploader):
             raise AvatarExceptions.ProcessingFailed('Unknown I/O error.')
 
         image_width, image_height = image.size
-        avatar_width, avatar_height, = cls.avatar_size
+        avatar_width, avatar_height, = cls.avatar_size, cls.avatar_size
+
 
         # checking if received image is bigger than minimum allowed size.
-        if image_width < cls.min_original_image_size[0] or image_height < cls.min_original_image_size[1]:
+        if image_width < cls.min_original_image_size or image_height < cls.min_original_image_size:
             os.remove(original_image_path)
             raise AvatarExceptions.ImageIsTooSmall()
 
-        elif image_width > avatar_width or image_height > avatar_height:
-            image.thumbnail(cls.avatar_size, Image.ANTIALIAS)
 
+        # the image is scaled/cropped vertically or horizontally depending on the ratio
+        image_ratio = avatar_width / float(avatar_height)
+        ratio = 1
+        if ratio > image_ratio:
+            image = image.resize(
+                (image.size, cls.avatar_size * image.size[1] / image.size[0]), Image.ANTIALIAS)
+            box = (0, (image.size[1] - cls.avatar_size) / 2, image.size[0], (image.size[1] + cls.avatar_size) / 2)
+            image = image.crop(box)
+
+        elif ratio < image_ratio:
+            image = image.resize(
+                (cls.avatar_size * image.size[0] / image.size[1], cls.avatar_size), Image.ANTIALIAS)
+            box = ((image.size[0] - cls.avatar_size) / 2, 0, (image.size[0] + cls.avatar_size) / 2, image.size[1])
+            image = image.crop(box)
         else:
-            # Всеодно виконати операцію над зображенням, інакше PIL не збереже файл.
-            # Розміри зображення при цьому слід залишити без змін, щоб уникнути небажаного розширення.
-            image.thumbnail(image.size, Image.ANTIALIAS)
+            image = image.resize((cls.avatar_size, cls.avatar_size), Image.ANTIALIAS)
 
 
         photo_name = '{uid}{photo_suffix}.jpg'.format(uid=uid, photo_suffix=cls.avatar_suffix)
@@ -109,7 +125,7 @@ class Avatar(GoogleCSPhotoUploader):
             raise e
 
 
-        avatar_bucket_path = cls.upload_photo_to_google_cloud_storage(original_image_path),
+        avatar_bucket_path = cls.upload_photo_to_google_cloud_storage(photo_path, cls.bucket_path + photo_name)
 
         # seems to be ok,
         # lets remove temporary images after uploading to the google cloud storage

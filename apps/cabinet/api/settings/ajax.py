@@ -562,7 +562,7 @@ class AvatarUpdate(CabinetView):
             return self.PostResponses.invalid_parameters()
 
         try:
-            request.user.avatar().update(image)
+            request.user.avatar.update(image)
 
         except AvatarExceptions.ImageIsTooLarge:
             return self.PostResponses.too_large()
@@ -577,4 +577,4 @@ class AvatarUpdate(CabinetView):
             return self.PostResponses.invalid_parameters()
 
         # seems to be ok
-        return self.PostResponses.ok(request.user.avatar().url())
+        return self.PostResponses.ok(request.user.avatar.url())
