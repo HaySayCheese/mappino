@@ -469,6 +469,7 @@ class LoginManager(object):
         return {
             'name': user.first_name,
             'surname': user.last_name,
+            'avatar': user.avatar.url(),
         }
 
 
