@@ -17,7 +17,7 @@ class AccountView(CabinetView):
     class GetResponses(object):
         @staticmethod
         def ok(user):
-            preferences = user.preferences()
+            preferences = user.preferences
 
             # Дані з фронтенду приходять у міжнародному форматі.
             # Віддати їх треба в національному форматі щоб помістити дані в маску вводу.
