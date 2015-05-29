@@ -6,12 +6,12 @@ module pages.cabinet {
 
         public static $inject = [
             '$timeout',
-            'AuthService'
+            'SettingsService'
         ];
 
         constructor(
             private $timeout: angular.ITimeoutService,
-            private authService: bModules.Auth.AuthService) {
+            private settingsService: bModules.Auth.SettingsService) {
             // -
             var self = this;
             //$timeout(() => {

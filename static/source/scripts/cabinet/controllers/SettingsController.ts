@@ -7,21 +7,15 @@ module pages.cabinet {
         public static $inject = [
             '$scope',
             '$timeout',
-            'FileUploader',
             'SettingsService'
         ];
 
         constructor(
             private $scope: any,
             private $timeout: angular.ITimeoutService,
-            private FileUploader: any,
             private settingsService: bModules.Auth.SettingsService) {
             // -
             $scope.settingsIsLoaded = false;
-            $scope.uploader = new FileUploader({
-                url: '/ajax/api/cabinet/account/photo/',
-                autoUpload: true
-            });
 
             $timeout(() => $('select').material_select());
 
@@ -33,7 +27,7 @@ module pages.cabinet {
                 $scope.user = response;
                 $scope.settingsIsLoaded = true;
                 $timeout(() => {
-                    angular.element('.settings-page input').change()
+                    angular.element(".settings-page input:not([type='file'])").change()
                 });
             });
         }
@@ -50,6 +44,15 @@ module pages.cabinet {
 
         private initInputsChange() {
             var self = this;
+
+            angular.element(".settings-page input[type='file']").bind('change', (event) => {
+                self.settingsService.uploadAvatar(event.target['files'][0], (response) => {
+                    self.$scope.imageFatal      = response.code === 1;
+                    self.$scope.imageTooLarge   = response.code === 2;
+                    self.$scope.ImageTooSmall   = response.code === 3;
+                    self.$scope.ImageUndefined  = response.code === 4;
+                });
+            });
 
             angular.element(".settings-page input[type='text'], .settings-page input[type='tel'], .settings-page input[type='email']").bind("focusout", function(e) {
                 var name  = e.currentTarget['name'],

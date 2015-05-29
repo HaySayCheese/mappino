@@ -6,12 +6,19 @@
             <div class="row">
                 <div class="col s12 m6 center">
                     <div class="user-photo center-block">
-                        <img src="http://lorempixel.com/900/500/city" alt=""/>
-                        <input id="photo-field" type="file" nv-file-select uploader="uploader"/>
+                        <img ng-src="[[ user.account.avatar ]]" alt=""/>
+                        <input id="photo-field" name="avatar" type="file"/>
                     </div>
+
                     <a href="#" ng-click="settingsCtrl.changePhoto($event)">
                         <i class="mdi-editor-mode-edit"></i> Сменить фото
                     </a>
+
+                    <div class="image-errors">
+                        <span class="input-has-error text-center" ng-show="imageTooLarge">Слишком большое изображение <br/> (ограничение в 5 мб.)</span>
+                        <span class="input-has-error text-center" ng-show="imageTooSmall">Слишком малое изображение <br/>(<200px по одной из сторон)</span>
+                        <span class="input-has-error text-center" ng-show="imageUndefined">Неподдерживаемый тип</span>
+                    </div>
                 </div>
 
 

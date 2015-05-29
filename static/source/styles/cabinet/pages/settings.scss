@@ -4,7 +4,7 @@
         .user-photo {
             @include square(180px);
             overflow: hidden;
-            margin-top: 60px;
+            margin-top: 20px;
             margin-bottom: 10px;
 
             border-radius: 50%;
@@ -21,6 +21,16 @@
 
         #photo-field {
             visibility: hidden;
+        }
+
+        .image-errors {
+            margin-top: 20px;
+
+            .input-has-error {
+                position: relative;
+                margin-top: 0px;
+            }
+
         }
     }
 

@@ -7,7 +7,7 @@ module pages.cabinet {
         'ngCookies',
         'ui.router',
         'ui.mask',
-        'angularFileUpload',
+        'ngFileUpload',
         'bModules.Types',
         'bModules.Auth'
     ]);

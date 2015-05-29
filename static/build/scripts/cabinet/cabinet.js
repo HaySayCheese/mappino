@@ -118,13 +118,9 @@ var bModules;
     var Auth;
     (function (Auth) {
         var AuthService = (function () {
-            function AuthService($http, $cookies) {
+            function AuthService($http, settingsService) {
                 this.$http = $http;
-                this.$cookies = $cookies;
-                this._user = {
-                    name: '',
-                    surname: ''
-                };
+                this.settingsService = settingsService;
                 // -
                 this.getUserByCookie();
             }
@@ -133,11 +129,11 @@ var bModules;
                 this.$http.post('/ajax/api/accounts/login/', user)
                     .then(function (response) {
                     if (response.data['code'] === 0) {
-                        self.update(response.data['user']);
+                        self.settingsService.update(response.data['user']);
                         callback(response);
                     }
                     else {
-                        self.removeFromStorages();
+                        self.settingsService.clearDataByUser();
                         callback(response);
                     }
                 }, function () {
@@ -149,48 +145,18 @@ var bModules;
                 this.$http.get('/ajax/api/accounts/on-login-info/')
                     .then(function (response) {
                     if (response.data['code'] === 0) {
-                        self.update(response.data['user']);
+                        self.settingsService.update(response.data['user']);
                     }
                     else {
-                        self.removeFromStorages();
+                        self.settingsService.clearDataByUser();
                     }
                 }, function () {
                     // - error
                 });
             };
-            AuthService.prototype.update = function (user) {
-                for (var key in user) {
-                    this._user[key] = user[key];
-                }
-                this._user['full_name'] = this._user['name'] + ' ' + this._user['surname'];
-                this.saveToStorages(this._user);
-            };
-            AuthService.prototype.saveToStorages = function (user) {
-                if (localStorage) {
-                    localStorage['user'] = JSON.stringify(user);
-                }
-            };
-            AuthService.prototype.removeFromStorages = function () {
-                if (localStorage && localStorage['user']) {
-                    delete localStorage['user'];
-                }
-            };
-            Object.defineProperty(AuthService.prototype, "user", {
-                //private getFromStorages() {
-                //    if (localStorage && localStorage['user']) {
-                //        this._user = JSON.parse(localStorage['user']);
-                //    }
-                //}
-                get: function () {
-                    return this._user;
-                },
-                enumerable: true,
-                configurable: true
-            });
-            // $inject annotation.
             AuthService.$inject = [
                 '$http',
-                '$cookieStore'
+                'SettingsService'
             ];
             return AuthService;
         })();
@@ -203,9 +169,36 @@ var bModules;
     var Auth;
     (function (Auth) {
         var SettingsService = (function () {
-            function SettingsService($http, authService) {
+            function SettingsService($http, Upload) {
                 this.$http = $http;
-                this.authService = authService;
+                this.Upload = Upload;
+                this._user = {
+                    account: {
+                        name: '',
+                        surname: '',
+                        full_name: '',
+                        avatar: '',
+                        add_landline_phone: '',
+                        add_mobile_phone: '',
+                        email: '',
+                        landline_phone: '',
+                        mobile_phone: '',
+                        skype: '',
+                        work_email: '',
+                    },
+                    preferences: {
+                        allow_call_requests: true,
+                        allow_messaging: true,
+                        hide_add_landline_phone_number: true,
+                        hide_add_mobile_phone_number: true,
+                        hide_email: true,
+                        hide_landline_phone_number: true,
+                        hide_mobile_phone_number: true,
+                        hide_skype: true,
+                        send_call_request_notifications_to_sid: 0,
+                        send_message_notifications_to_sid: 0
+                    }
+                };
                 // -
             }
             SettingsService.prototype.load = function (callback) {
@@ -213,8 +206,9 @@ var bModules;
                 this.$http.get('/ajax/api/cabinet/account/')
                     .then(function (response) {
                     if (response.data['code'] === 0) {
-                        self.authService.update(response.data['data']);
-                        callback(self.authService.user);
+                        self.update(response.data['data']['account']);
+                        self.update(response.data['data']['preferences']);
+                        callback(self._user);
                     }
                     else {
                         callback(response);
@@ -230,16 +224,61 @@ var bModules;
                     field['v'] = response.data['value'] ? response.data['value'] : field['v'];
                     var _field = {};
                     _field[field['f']] = field['v'];
-                    self.authService.update(_field);
+                    self.update(_field);
                     callback(field['v'], response.data['code']);
                 });
             };
-            SettingsService.prototype.uploadPhoto = function (photo) {
-                this.$http;
+            SettingsService.prototype.uploadAvatar = function (avatar, callback) {
+                var self = this;
+                this.Upload.upload({
+                    url: '/ajax/api/cabinet/account/photo/',
+                    file: avatar
+                }).success(function (response) {
+                    if (response.code === 0) {
+                        callback(response);
+                        console.log(response);
+                        self.update({ avatar: response.data['url'] });
+                    }
+                    else {
+                        callback(response);
+                    }
+                });
+            };
+            SettingsService.prototype.update = function (user) {
+                for (var key in user) {
+                    if (this._user['account'][key] != undefined) {
+                        this._user['account'][key] = user[key];
+                        if (key === 'name' || key === 'surname') {
+                            this._user['account']['full_name'] = this._user['account']['name'] + ' ' + this._user['account']['surname'];
+                        }
+                    }
+                    if (this._user['preferences'][key] != undefined) {
+                        this._user['preferences'][key] = user[key];
+                    }
+                }
+                this.saveToStorages(this._user);
+                console.log(this._user);
+            };
+            Object.defineProperty(SettingsService.prototype, "user", {
+                get: function () {
+                    return this._user;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            SettingsService.prototype.clearDataByUser = function () {
+                if (localStorage && localStorage['user']) {
+                    delete localStorage['user'];
+                }
+            };
+            SettingsService.prototype.saveToStorages = function (user) {
+                if (localStorage) {
+                    localStorage['user'] = JSON.stringify(user);
+                }
             };
             SettingsService.$inject = [
                 '$http',
-                'AuthService'
+                'Upload'
             ];
             return SettingsService;
         })();
@@ -424,9 +463,9 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var CabinetController = (function () {
-            function CabinetController($timeout, authService) {
+            function CabinetController($timeout, settingsService) {
                 this.$timeout = $timeout;
-                this.authService = authService;
+                this.settingsService = settingsService;
                 // -
                 var self = this;
                 //$timeout(() => {
@@ -437,7 +476,7 @@ var pages;
             }
             CabinetController.$inject = [
                 '$timeout',
-                'AuthService'
+                'SettingsService'
             ];
             return CabinetController;
         })();
@@ -527,24 +566,19 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var SettingsController = (function () {
-            function SettingsController($scope, $timeout, FileUploader, settingsService) {
+            function SettingsController($scope, $timeout, settingsService) {
                 this.$scope = $scope;
                 this.$timeout = $timeout;
-                this.FileUploader = FileUploader;
                 this.settingsService = settingsService;
                 // -
                 $scope.settingsIsLoaded = false;
-                $scope.uploader = new FileUploader({
-                    url: '/ajax/api/cabinet/account/photo/',
-                    autoUpload: true
-                });
                 $timeout(function () { return $('select').material_select(); });
                 this.initInputsChange();
                 settingsService.load(function (response) {
                     $scope.user = response;
                     $scope.settingsIsLoaded = true;
                     $timeout(function () {
-                        angular.element('.settings-page input').change();
+                        angular.element(".settings-page input:not([type='file'])").change();
                     });
                 });
             }
@@ -554,6 +588,14 @@ var pages;
             };
             SettingsController.prototype.initInputsChange = function () {
                 var self = this;
+                angular.element(".settings-page input[type='file']").bind('change', function (event) {
+                    self.settingsService.uploadAvatar(event.target['files'][0], function (response) {
+                        self.$scope.imageFatal = response.code === 1;
+                        self.$scope.imageTooLarge = response.code === 2;
+                        self.$scope.ImageTooSmall = response.code === 3;
+                        self.$scope.ImageUndefined = response.code === 4;
+                    });
+                });
                 angular.element(".settings-page input[type='text'], .settings-page input[type='tel'], .settings-page input[type='email']").bind("focusout", function (e) {
                     var name = e.currentTarget['name'], value = e.currentTarget['value'].replace(/\s+/g, " ");
                     if (!self.$scope.form.user[name].$dirty)
@@ -586,7 +628,6 @@ var pages;
             SettingsController.$inject = [
                 '$scope',
                 '$timeout',
-                'FileUploader',
                 'SettingsService'
             ];
             return SettingsController;
@@ -622,7 +663,7 @@ var pages;
             'ngCookies',
             'ui.router',
             'ui.mask',
-            'angularFileUpload',
+            'ngFileUpload',
             'bModules.Types',
             'bModules.Auth'
         ]);
