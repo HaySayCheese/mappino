@@ -1,17 +1,14 @@
 # coding=utf-8
 import os
-import io
 import uuid
 
 from PIL import Image
-from googleapiclient.http import MediaIoBaseUpload
 from django.conf import settings
-
-from core.google_api_auth import init_google_cloud_storage
 from core.publications.exceptions import PhotosHandlerExceptions
+from core.google_cloud_storage import GoogleCSPhotoUploader
 
 
-class PublicationsPhotosHandler(object):
+class PublicationsPhotosHandler(GoogleCSPhotoUploader):
     """
     This class handles photo processing for the publications.
     Allows to create thumbnails and slides for the publications
@@ -222,59 +219,3 @@ class PublicationsPhotosHandler(object):
                photo_bucket_path, \
                big_thumb_bucket_path, \
                small_thumb_bucket_path
-
-
-    @classmethod
-    def upload_photo_to_google_cloud_storage(cls, tid, file_path):
-        """
-        Uploads file from "file_path" to the google cloud storage.
-
-        :param tid: type id is needed to decide in what directory to put uploaded photo.
-        :param file_path: path to the file that should be uploaded.
-        """
-
-        filename = os.path.split(file_path)[1]
-        bucket_filename = os.path.join(cls.bucket_root_path, str(tid), filename)
-
-        image = open(file_path)
-        media = MediaIoBaseUpload(io.BytesIO(image.read()), 'image/jpg')
-        metadata = {
-            'name': bucket_filename,
-            'cacheControl': '8035200', # 3 months
-            'predefinedAcl': 'publicRead',
-        }
-
-        storage = init_google_cloud_storage()
-        resp = storage.objects().insert(
-            bucket = cls.bucket,
-            name = bucket_filename,
-            body = metadata,
-            media_body = media
-        ).execute()
-
-        if 'selfLink' in resp:
-            return '{domain}/{bucket}/{path}'.format(
-                domain = 'https://storage.googleapis.com',
-                bucket = cls.bucket,
-                path = bucket_filename,
-            )
-
-        else:
-            raise RuntimeError('File was not uploaded properly.')
-
-    @classmethod
-    def remove_photo_from_google_cloud_storage(cls, bucket_file_path):
-        """
-        :type bucket_file_path str, unicode
-        :param bucket_file_path:
-        """
-        try:
-            root_index = bucket_file_path.index(cls.bucket_root_path)
-        except ValueError:
-            raise ValueError('It seems that "bucket_file_path" does not contains valid bucket root path.')
-
-        storage = init_google_cloud_storage()
-        storage.objects().delete(
-            bucket_name=cls.bucket,
-            object=bucket_file_path[root_index:]
-        )

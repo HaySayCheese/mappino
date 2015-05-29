@@ -1,18 +1,14 @@
 # coding=utf-8
-import json
 import phonenumbers
-
-from copy import deepcopy
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.http import HttpResponseBadRequest, HttpResponse
 
 from apps.classes import CabinetView
+from core.users.exceptions import AvatarExceptions
 from collective.exceptions import RuntimeException
 from collective.http.responses import HttpJsonResponse
 from collective.methods.request_data_getters import angular_post_parameters
-from core.users.classes import Avatar
 from core.users.constants import Preferences
 from core.users.models import Users
 
@@ -512,47 +508,73 @@ class AccountView(CabinetView):
 
 
 class AvatarUpdate(CabinetView):
-    post_codes = {
-        'OK': {
-            'code': 0
-        },
-        'too_large': {
-            'code': 1
-        },
-        'too_small': {
-            'code': 2,
-        },
-        'unsupported_type': {
-            'code': 3
-        },
+    class PostResponses(object):
+        @staticmethod
+        def ok(url):
+            return HttpJsonResponse({
+                'code': 0,
+                'message': 'OK',
+                'data': {
+                    'url': url,
+                }
+            })
 
-        'unknown_error': {
-            'code': 100
-        }
-    }
+        @staticmethod
+        def invalid_parameters():
+            return HttpJsonResponse({
+                'code': 1,
+                'message': 'Image is too large.',
+            })
 
-    def post(self, request, *args):
+        @staticmethod
+        def too_large():
+            return HttpJsonResponse({
+                'code': 2,
+                'message': 'Image is too large.',
+            })
+
+        @staticmethod
+        def too_small():
+            return HttpJsonResponse({
+                'code': 3,
+                'message': 'Image is too small.',
+            })
+
+        @staticmethod
+        def unsupported_type():
+            return HttpJsonResponse({
+                'code': 4,
+                'message': 'Image has unsupported type.',
+            })
+
+        @staticmethod
+        def unknown_error():
+            return HttpJsonResponse({
+                'code': 100,
+                'message': 'Unknown error.',
+            })
+
+
+    def post(self, request):
         # check if request is not empty
         image = request.FILES.get('file')
         if image is None:
-            return HttpResponseBadRequest('No image found in request.')
+            return self.PostResponses.invalid_parameters()
 
         try:
-            # updating
             request.user.avatar().update(image)
 
-        except Avatar.TooLargeImage:
-            return HttpResponse(json.dumps(self.post_codes['too_large']), content_type='application/json')
-        except Avatar.TooSmallImage:
-            return HttpResponse(json.dumps(self.post_codes['too_small']), content_type='application/json')
-        except Avatar.InvalidImageFormat:
-            return HttpResponse(json.dumps(self.post_codes['unsupported_type']), content_type='application/json')
+        except AvatarExceptions.ImageIsTooLarge:
+            return self.PostResponses.too_large()
+
+        except AvatarExceptions.ImageIsTooSmall:
+            return self.PostResponses.too_small()
+
+        except AvatarExceptions.UnsupportedImageType:
+            return self.PostResponses.unsupported_type()
+
         except RuntimeException:
-            return HttpResponse(json.dumps(self.post_codes['unknown_error']), content_type='application/json')
+            return self.PostResponses.invalid_parameters()
 
         # seems to be ok
-        response = deepcopy(self.post_codes['OK'])
-        response.update({
-            'url': request.user.avatar().url()
-        })
-        return HttpResponse(json.dumps(response), content_type='application/json')
+        return self.PostResponses.ok(request.user.avatar().url())

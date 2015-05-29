@@ -1,121 +1,119 @@
 #coding=utf-8
-import hashlib
-
 import os
+import uuid
+
 from PIL import Image
 from django.conf import settings
 
-from collective.exceptions import RuntimeException
-from core.users.exceptions import InvalidImageFormat, TooSmallImage
-import core.publications.constants
+from core.google_cloud_storage import GoogleCSPhotoUploader
+from core.users.exceptions import AvatarExceptions
 
 
+class Avatar(GoogleCSPhotoUploader):
+    avatar_suffix = '_processed'
+    avatar_size = (180, 180)
 
-class Avatar(object):
-    destination = 'users/avatars/'
-    directory = settings.MEDIA_ROOT + destination
-    size = 180 #px
+    original_image_suffix = '_original'
+    min_original_image_size = avatar_size
 
 
     def __init__(self, user):
         self.user = user
 
 
-    def update(self, file):
-        # check if destination dir is exists
-        if not os.path.exists(self.directory):
-            os.makedirs(self.directory)
-            if not os.path.exists(self.directory):
-                raise RuntimeException("Can't create destination directories.")
-
-        # check file type
-        if 'image/' not in file.content_type:
-            file.close()
-            raise InvalidImageFormat()
-
-        # exclude .gif (pillow sometimes generates incorrect thumbs from .gif)
-        if 'gif' in file.content_type:
-            file.close()
-            raise InvalidImageFormat()
-
-        # saving the image
-        salt = '94034782133244956047'
-        uid_hash = hashlib.sha384(str(self.user.id) + salt).hexdigest()
-
-
-        # Temporary image path is used to save newly uploaded image on the drive,
-        # and to not rewrite existing user avatar before all checks and processing will be executed.
-        temp_image_name = uid_hash + '.tmp.jpg'
-        temp_image_path = os.path.join(self.directory, temp_image_name)
-        with open(temp_image_path, 'wb+') as avatar:
-            for chunk in file.chunks():
-                avatar.write(chunk)
-
-        # processing and scaling
-        try:
-            avatar = Image.open(temp_image_path)
-        except IOError:
-            os.remove(temp_image_path)
-            raise RuntimeException('Unknown I/O error.')
-
-        # check the minimum image size
-        if (avatar.size[0] < self.size) or (avatar.size[1] < self.size):
-            os.remove(temp_image_path)
-            raise TooSmallImage()
-
-        # the image is scaled/cropped vertically or horizontally depending on the ratio
-        image_ratio = avatar.size[0] / float(avatar.size[1])
-        ratio = 1
-        if ratio > image_ratio:
-            avatar = avatar.resize(
-                (self.size, self.size * avatar.size[1] / avatar.size[0]), Image.ANTIALIAS)
-            box = (0, (avatar.size[1] - self.size) / 2, avatar.size[0], (avatar.size[1] + self.size) / 2)
-            avatar = avatar.crop(box)
-
-        elif ratio < image_ratio:
-            avatar = avatar.resize(
-                (self.size * avatar.size[0] / avatar.size[1], self.size), Image.ANTIALIAS)
-            box = ((avatar.size[0] - self.size) / 2, 0, (avatar.size[0] + self.size) / 2, avatar.size[1])
-            avatar = avatar.crop(box)
-        else:
-            avatar = avatar.resize((self.size, self.size), Image.ANTIALIAS)
-
-        # saving
-        image_name = uid_hash + '.jpg'
-        image_path = os.path.join(self.directory, image_name)
-
-        avatar.save(temp_image_path, 'JPEG', quality=100)
-        os.rename(temp_image_path, image_path)
-        self.user.avatar_url = ''.join([settings.MEDIA_URL, self.destination, image_name])
-        self.user.save()
+    def update(self, image):
+        return self.process_and_upload_to_gcs(image)
 
 
     def url(self):
         return self.user.avatar_url
 
 
-
-class Publications(object):
-    def __init__(self, user):
-        self.user = user
-
-
-    @staticmethod
-    def turn_off_publications():
-        for model in core.publications.constants.HEAD_MODELS.values():
-            for publication in model.all_published().only('id'):
-                publication.unpublish()
-
-
-    def total_count(self, exclude_deleted=False):
+    @classmethod
+    def process_and_upload_to_gcs(cls, img):
         """
-        Повертає загальну к-сть оголошень всіх типів для поточного користувача.
-        """
-        count = 0
-        for model in core.publications.constants.HEAD_MODELS.values():
-            query = model.objects.filter(owner=self.user)
-            if exclude_deleted:
-                query = query.exclude(state_sid=core.publications.constants.OBJECT_STATES.deleted())
+        Processes avatar and uploads it to the GCS.
 
-            count += query.count()
-        return count
+        :return:
+            public links to the avatar.
+        """
+
+        # check file size
+        if img.size >  1024 * 1024 * 5: # 5mb
+            img.close()
+            raise AvatarExceptions.ImageIsTooLarge()
+
+        # check file type
+        if 'image/' not in img.content_type:
+            img.close()
+            raise AvatarExceptions.UnsupportedImageType('Not an image.')
+
+        # exclude .gif'name': bucket_filename,
+        # pillow sometimes generates incorrect thumbs from .gif
+        if 'gif' in img.content_type:
+            img.close()
+            raise AvatarExceptions.UnsupportedImageType('.gif')
+
+        # photo processing
+        temporary_dir = os.path.join(settings.BASE_DIR, 'media/')
+        if not os.path.exists(temporary_dir):
+            os.makedirs(temporary_dir)
+
+        # uuid is common for all photos and thumbs
+        uid = unicode(uuid.uuid4())
+
+        # original photo saving
+        original_photo_extension = os.path.splitext(img.name)[1].lower()
+        original_photo_name = uid + cls.original_image_suffix + original_photo_extension
+        original_image_path = os.path.join(temporary_dir, original_photo_name)
+
+        with open(original_image_path, 'wb+') as original_img:
+            for chunk in img.chunks():
+                original_img.write(chunk)
+
+        # avatar photo generation
+        try:
+            image = Image.open(original_image_path)
+            if image.mode != "RGB":
+                image = image.convert("RGB")
+
+        except IOError:
+            os.remove(original_image_path)
+            raise AvatarExceptions.ProcessingFailed('Unknown I/O error.')
+
+        image_width, image_height = image.size
+        avatar_width, avatar_height, = cls.avatar_size
+
+        # checking if received image is bigger than minimum allowed size.
+        if image_width < cls.min_original_image_size[0] or image_height < cls.min_original_image_size[1]:
+            os.remove(original_image_path)
+            raise AvatarExceptions.ImageIsTooSmall()
+
+        elif image_width > avatar_width or image_height > avatar_height:
+            image.thumbnail(cls.avatar_size, Image.ANTIALIAS)
+
+        else:
+            # Всеодно виконати операцію над зображенням, інакше PIL не збереже файл.
+            # Розміри зображення при цьому слід залишити без змін, щоб уникнути небажаного розширення.
+            image.thumbnail(image.size, Image.ANTIALIAS)
+
+
+        photo_name = '{uid}{photo_suffix}.jpg'.format(uid=uid, photo_suffix=cls.avatar_suffix)
+        photo_path = os.path.join(temporary_dir, photo_name)
+
+        try:
+            image.save(photo_path, 'JPEG', quality=100)
+        except Exception as e:
+            os.remove(original_image_path)
+            os.remove(photo_path)
+            raise e
+
+
+        avatar_bucket_path = cls.upload_photo_to_google_cloud_storage(original_image_path)
+
+        # seems to be ok,
+        # lets remove temporary images after uploading to the google cloud storage
+        os.remove(original_image_path)
+        os.remove(photo_path)
+
+        return avatar_bucket_path
