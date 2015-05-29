@@ -109,7 +109,7 @@ class Avatar(GoogleCSPhotoUploader):
             raise e
 
 
-        avatar_bucket_path = cls.upload_photo_to_google_cloud_storage(original_image_path)
+        avatar_bucket_path = cls.upload_photo_to_google_cloud_storage(original_image_path),
 
         # seems to be ok,
         # lets remove temporary images after uploading to the google cloud storage
