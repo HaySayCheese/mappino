@@ -44,7 +44,7 @@ class Avatar(GoogleCSPhotoUploader):
         """
 
         # check file size
-        if img.size >  1024 * 1024 * 5: # 5mb
+        if img.size > 1: # 1024 * 1024 * 5: # 5mb
             img.close()
             raise AvatarExceptions.ImageIsTooLarge()
 
