@@ -4,15 +4,14 @@
 module bModules.Auth {
 
     export class SettingsService {
-        private _settings: Object;
-
 
         public static $inject = [
-            '$http'
+            '$http',
+            'AuthService'
         ];
 
 
-        constructor(private $http:angular.IHttpService) {
+        constructor(private $http:angular.IHttpService, private authService: AuthService) {
             // -
         }
 
@@ -24,14 +23,31 @@ module bModules.Auth {
             this.$http.get('/ajax/api/cabinet/account/')
                 .then((response) => {
                     if (response.data['code'] === 0) {
-                        self._settings = response.data['data'];
-                        callback(self._settings);
+                        self.authService.update(response.data['data']);
+                        callback(self.authService.user);
                     } else {
                         callback(response);
                     }
                 }, () => {
                     // - error
                 });
+        }
+
+
+
+        public check(field: Object, callback: Function) {
+            var self = this;
+
+            this.$http.post('/ajax/api/cabinet/account/', field)
+                .then((response) => {
+                    field['v'] = response.data['value'] ? response.data['value'] : field['v'];
+
+                    var _field = {};
+                    _field[field['f']] = field['v'];
+
+                    self.authService.update(_field);
+                    callback(field['v'], response.data['code']);
+                })
         }
     }
 }

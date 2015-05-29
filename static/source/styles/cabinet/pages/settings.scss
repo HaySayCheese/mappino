@@ -4,14 +4,23 @@
         .user-photo {
             @include square(180px);
             overflow: hidden;
+            margin-top: 60px;
             margin-bottom: 10px;
 
             border-radius: 50%;
+
+            @media #{$small-and-down} {
+                margin-top: 0;
+            }
 
 
             img {
                 @include square(180px);
             }
+        }
+
+        #photo-field {
+            visibility: hidden;
         }
     }
 

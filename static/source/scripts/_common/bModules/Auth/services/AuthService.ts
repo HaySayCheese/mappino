@@ -4,7 +4,10 @@
 module bModules.Auth {
 
     export class AuthService {
-        private _user: Object;
+        private _user: Object = {
+            name: '',
+            surname: ''
+        };
 
         // $inject annotation.
         public static $inject = [
@@ -28,7 +31,7 @@ module bModules.Auth {
             this.$http.post('/ajax/api/accounts/login/', user)
                 .then((response) => {
                     if (response.data['code'] === 0) {
-                        self.updateUserData(response.data['user']);
+                        self.update(response.data['user']);
                         callback(response);
                     } else {
                         self.removeFromStorages();
@@ -47,7 +50,7 @@ module bModules.Auth {
             this.$http.get('/ajax/api/accounts/on-login-info/')
                 .then((response) => {
                     if (response.data['code'] === 0) {
-                        self.updateUserData(response.data['user']);
+                        self.update(response.data['user']);
                     } else {
                         self.removeFromStorages();
                     }
@@ -58,16 +61,18 @@ module bModules.Auth {
 
 
 
-        private updateUserData(user: Object) {
-            this._user = user;
-            this._user['full_name'] = user['name'] + ' ' + user['surname'];
-            this.saveToStorages(user);
+        public update(user: Object) {
+            for (var key in user) {
+                this._user[key] = user[key];
+            }
+
+            this._user['full_name'] = this._user['name'] + ' ' + this._user['surname'];
+            this.saveToStorages(this._user);
         }
 
 
 
         private saveToStorages(user: Object) {
-            console.log(user)
             if (localStorage) {
                 localStorage['user'] = JSON.stringify(user);
             }
@@ -92,12 +97,6 @@ module bModules.Auth {
 
         public get user() {
             return this._user;
-        }
-
-        public set user(user: Object) {
-            for (var key in user) {
-                this._user[key] = user[key];
-            }
         }
     }
 

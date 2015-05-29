@@ -6,6 +6,8 @@ module pages.cabinet {
     var app: angular.IModule = angular.module('mappino.pages.cabinet', [
         'ngCookies',
         'ui.router',
+        'ui.mask',
+        'angularFileUpload',
         'bModules.Types',
         'bModules.Auth'
     ]);

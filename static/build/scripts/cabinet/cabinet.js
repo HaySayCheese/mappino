@@ -121,6 +121,10 @@ var bModules;
             function AuthService($http, $cookies) {
                 this.$http = $http;
                 this.$cookies = $cookies;
+                this._user = {
+                    name: '',
+                    surname: ''
+                };
                 // -
                 this.getUserByCookie();
             }
@@ -129,7 +133,7 @@ var bModules;
                 this.$http.post('/ajax/api/accounts/login/', user)
                     .then(function (response) {
                     if (response.data['code'] === 0) {
-                        self.updateUserData(response.data['user']);
+                        self.update(response.data['user']);
                         callback(response);
                     }
                     else {
@@ -145,7 +149,7 @@ var bModules;
                 this.$http.get('/ajax/api/accounts/on-login-info/')
                     .then(function (response) {
                     if (response.data['code'] === 0) {
-                        self.updateUserData(response.data['user']);
+                        self.update(response.data['user']);
                     }
                     else {
                         self.removeFromStorages();
@@ -154,13 +158,14 @@ var bModules;
                     // - error
                 });
             };
-            AuthService.prototype.updateUserData = function (user) {
-                this._user = user;
-                this._user['full_name'] = user['name'] + ' ' + user['surname'];
-                this.saveToStorages(user);
+            AuthService.prototype.update = function (user) {
+                for (var key in user) {
+                    this._user[key] = user[key];
+                }
+                this._user['full_name'] = this._user['name'] + ' ' + this._user['surname'];
+                this.saveToStorages(this._user);
             };
             AuthService.prototype.saveToStorages = function (user) {
-                console.log(user);
                 if (localStorage) {
                     localStorage['user'] = JSON.stringify(user);
                 }
@@ -178,11 +183,6 @@ var bModules;
                 //}
                 get: function () {
                     return this._user;
-                },
-                set: function (user) {
-                    for (var key in user) {
-                        this._user[key] = user[key];
-                    }
                 },
                 enumerable: true,
                 configurable: true
@@ -203,8 +203,9 @@ var bModules;
     var Auth;
     (function (Auth) {
         var SettingsService = (function () {
-            function SettingsService($http) {
+            function SettingsService($http, authService) {
                 this.$http = $http;
+                this.authService = authService;
                 // -
             }
             SettingsService.prototype.load = function (callback) {
@@ -212,8 +213,8 @@ var bModules;
                 this.$http.get('/ajax/api/cabinet/account/')
                     .then(function (response) {
                     if (response.data['code'] === 0) {
-                        self._settings = response.data['data'];
-                        callback(self._settings);
+                        self.authService.update(response.data['data']);
+                        callback(self.authService.user);
                     }
                     else {
                         callback(response);
@@ -222,8 +223,23 @@ var bModules;
                     // - error
                 });
             };
+            SettingsService.prototype.check = function (field, callback) {
+                var self = this;
+                this.$http.post('/ajax/api/cabinet/account/', field)
+                    .then(function (response) {
+                    field['v'] = response.data['value'] ? response.data['value'] : field['v'];
+                    var _field = {};
+                    _field[field['f']] = field['v'];
+                    self.authService.update(_field);
+                    callback(field['v'], response.data['code']);
+                });
+            };
+            SettingsService.prototype.uploadPhoto = function (photo) {
+                this.$http;
+            };
             SettingsService.$inject = [
-                '$http'
+                '$http',
+                'AuthService'
             ];
             return SettingsService;
         })();
@@ -511,22 +527,66 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var SettingsController = (function () {
-            function SettingsController($scope, $timeout, settingsService) {
+            function SettingsController($scope, $timeout, FileUploader, settingsService) {
                 this.$scope = $scope;
                 this.$timeout = $timeout;
+                this.FileUploader = FileUploader;
                 this.settingsService = settingsService;
                 // -
+                $scope.settingsIsLoaded = false;
+                $scope.uploader = new FileUploader({
+                    url: '/ajax/api/cabinet/account/photo/',
+                    autoUpload: true
+                });
                 $timeout(function () { return $('select').material_select(); });
+                this.initInputsChange();
                 settingsService.load(function (response) {
                     $scope.user = response;
+                    $scope.settingsIsLoaded = true;
                     $timeout(function () {
                         angular.element('.settings-page input').change();
                     });
                 });
             }
+            SettingsController.prototype.changePhoto = function (event) {
+                event.preventDefault();
+                angular.element('#photo-field').click();
+            };
+            SettingsController.prototype.initInputsChange = function () {
+                var self = this;
+                angular.element(".settings-page input[type='text'], .settings-page input[type='tel'], .settings-page input[type='email']").bind("focusout", function (e) {
+                    var name = e.currentTarget['name'], value = e.currentTarget['value'].replace(/\s+/g, " ");
+                    if (!self.$scope.form.user[name].$dirty)
+                        return;
+                    if (name === "mobile_phone" && (value === "+38 (0__) __ - __ - ___" || value[22] === "_"))
+                        return;
+                    self.settingsService.check({ f: name, v: value }, function (newValue, code) {
+                        console.log(newValue);
+                        console.log(code);
+                        if (newValue)
+                            e.currentTarget['value'] = newValue;
+                        self.$scope.form.user[name].$setValidity("incorrect", code !== 10);
+                        self.$scope.form.user[name].$setValidity("duplicated", code !== 11);
+                    });
+                });
+                //angular.element(".sidebar-item-detailed-body input[type='checkbox']").bind("change", function(e) {
+                //    var name  = e.currentTarget.name,
+                //        value = e.currentTarget.checked;
+                //
+                //    Settings.checkInputs({ f: name, v: value }, null);
+                //});
+                //
+                //angular.element(".sidebar-item-detailed-body select").bind('change',function(e) {
+                //    var name  = e.currentTarget.name,
+                //        value = e.currentTarget.value;
+                //
+                //    Settings.checkInputs({ f: name, v: value }, null);
+                //});
+            };
             SettingsController.$inject = [
                 '$scope',
                 '$timeout',
+                'FileUploader',
                 'SettingsService'
             ];
             return SettingsController;
@@ -561,6 +621,8 @@ var pages;
         var app = angular.module('mappino.pages.cabinet', [
             'ngCookies',
             'ui.router',
+            'ui.mask',
+            'angularFileUpload',
             'bModules.Types',
             'bModules.Auth'
         ]);

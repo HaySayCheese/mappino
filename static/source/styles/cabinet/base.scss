@@ -34,7 +34,21 @@ body {
 .nav-wrapper {
     padding: 0 20px;
 
-    .hide-on-med-and-down {
+    .hide-on-med-and-down:not(.right) {
         margin-left: 200px;
     }
+}
+
+
+
+
+
+.input-has-error {
+    position: absolute;
+    margin-top: -25px;
+    font-size: 0.8rem;
+    color: color('red', 'base');
+}
+.ng-invalid {
+    @extend input.invalid;
 }
