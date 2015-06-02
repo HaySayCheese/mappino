@@ -139,16 +139,16 @@ class Support(object):
                 return HttpJsonResponse({
                     'code': 0,
                     'message': 'OK',
-
-                    # todo: move this data into subobjact
-                    'subject': ticket.subject,
-                    'user_avatar': user.avatar.url(),
-#                   'admin_avatar': '', # todo: add admin avatar url here.
-                    'messages': [{
-                        'type_sid': m.type_sid,
-                        'created': m.created.strftime('%Y-%m-%dT%H:%M:00Z'),
-                        'text': m.text,
-                    } for m in ticket.messages()]
+                    'data': {
+                        'subject': ticket.subject,
+                        'user_avatar': user.avatar.url(),
+#                       'admin_avatar': '', # todo: add admin avatar url here.
+                        'messages': [{
+                            'type_sid': m.type_sid,
+                            'created': m.created.strftime('%Y-%m-%dT%H:%M:00Z'),
+                            'text': m.text,
+                        } for m in ticket.messages()]
+                    }
                 })
 
 
