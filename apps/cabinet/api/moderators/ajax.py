@@ -51,7 +51,9 @@ class PublishedPublicationControllerView(View):
 
     @classmethod
     def get(cls, request):
-        return
+        moderator_id = request.user.id
+        return PublicationsToCheck.get_publication_for_moderate(moderator_id)
+
 
 
     class Post(object):
