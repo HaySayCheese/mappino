@@ -9,6 +9,8 @@ from core.publications.constants import HEAD_MODELS
 class PublishedPublicationControllerView(View):
 
 
+
+    # tOdO SAVE MESSAGES!
     @classmethod
     def post(cls, request, is_adequacy, message):
         """
@@ -46,7 +48,6 @@ class PublishedPublicationControllerView(View):
         else:
             PublicationsToCheck.mapped_publication_as_moderated(tid, hash_id)
 
-        return
 
     @classmethod
     def get(cls, request):
