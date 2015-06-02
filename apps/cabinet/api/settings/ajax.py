@@ -388,7 +388,7 @@ class AccountView(CabinetView):
         if allow not in (True, False):
             return self.PostResponses.invalid_value()
 
-        preferences = user.preferences()
+        preferences = user.preferences
         if not preferences.allow_call_requests == allow:
             preferences.allow_call_requests = allow
             preferences.save()
