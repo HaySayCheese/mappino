@@ -122,7 +122,6 @@ var bModules;
                 this.$http = $http;
                 this.settingsService = settingsService;
                 // -
-                this.getUserByCookie();
             }
             AuthService.prototype.login = function (user, callback) {
                 var self = this;
@@ -245,7 +244,7 @@ var bModules;
             };
             SettingsService.prototype.update = function (user) {
                 for (var key in user) {
-                    if (this._user['account'][key] != undefined) {
+                    if (this._user['account'][key] !== undefined) {
                         this._user['account'][key] = user[key];
                         if (key === 'name' || key === 'surname') {
                             this._user['account']['full_name'] = this._user['account']['name'] + ' ' + this._user['account']['surname'];
@@ -391,6 +390,10 @@ var pages;
                             url: "/support/",
                             templateUrl: '/ajax/template/cabinet/support/'
                         })
+                            .state('ticket_view', {
+                            url: "/support/:ticket_id",
+                            templateUrl: '/ajax/template/cabinet/support/ticket/'
+                        })
                             .state('settings', {
                             url: "/settings/",
                             templateUrl: '/ajax/template/cabinet/settings/'
@@ -463,6 +466,63 @@ var pages;
 (function (pages) {
     var cabinet;
     (function (cabinet) {
+        var SupportService = (function () {
+            function SupportService($http, $location) {
+                this.$http = $http;
+                this.$location = $location;
+                // -
+            }
+            SupportService.prototype.createTicket = function (callback) {
+                var self = this;
+                this.$http.post('/ajax/api/cabinet/support/tickets/', null)
+                    .then(function (response) {
+                    _.isFunction(callback) && callback(response.data);
+                }, function () {
+                    // error
+                });
+            };
+            SupportService.prototype.load = function (callback) {
+                var self = this;
+                this.$http.get('/ajax/api/cabinet/support/tickets/')
+                    .then(function (response) {
+                    self._tickets = response['data'];
+                    _.isFunction(callback) && callback(self._tickets);
+                }, function () {
+                    // -
+                });
+            };
+            SupportService.prototype.loadTicketMessages = function (ticket_id, callback) {
+                var self = this;
+                this.$http.get('/ajax/api/cabinet/support/tickets/' + ticket_id + '/messages/')
+                    .then(function (response) {
+                    _.isFunction(callback) && callback(response.data);
+                }, function () {
+                    // -
+                });
+            };
+            SupportService.prototype.sendMessage = function (ticket, callback) {
+                var self = this;
+                this.$http.post('/ajax/api/cabinet/support/tickets/' + ticket['id'] + '/messages/', ticket)
+                    .then(function (response) {
+                    _.isFunction(callback) && callback(response.data);
+                }, function () {
+                    // -
+                });
+            };
+            SupportService.$inject = [
+                '$http',
+                '$location'
+            ];
+            return SupportService;
+        })();
+        cabinet.SupportService = SupportService;
+    })(cabinet = pages.cabinet || (pages.cabinet = {}));
+})(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var cabinet;
+    (function (cabinet) {
         var LoginController = (function () {
             function LoginController($scope, authService) {
                 this.$scope = $scope;
@@ -503,8 +563,9 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var CabinetController = (function () {
-            function CabinetController($timeout, settingsService) {
+            function CabinetController($timeout, authService, settingsService) {
                 this.$timeout = $timeout;
+                this.authService = authService;
                 this.settingsService = settingsService;
                 // -
                 var self = this;
@@ -513,9 +574,11 @@ var pages;
                 //    console.log(self.authService.user)
                 //}, 4000);
                 $(".button-collapse").sideNav();
+                authService.getUserByCookie();
             }
             CabinetController.$inject = [
                 '$timeout',
+                'AuthService',
                 'SettingsService'
             ];
             return CabinetController;
@@ -682,16 +745,84 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var SupportController = (function () {
-            function SupportController($timeout) {
-                this.$timeout = $timeout;
+            function SupportController($scope, $state, supportService) {
+                var _this = this;
+                this.$scope = $scope;
+                this.$state = $state;
+                this.supportService = supportService;
                 // -
+                $scope.ticket = {};
+                $scope.ticketsIsLoaded = false;
+                $scope.ticketFormIsVisible = false;
+                supportService.load(function (response) {
+                    _this._tickets = $scope.tickets = response;
+                    $scope.ticketsIsLoaded = true;
+                });
             }
+            SupportController.prototype.createTicket = function () {
+                var self = this;
+                this.supportService.createTicket(function (response) {
+                    self.$scope.ticket.id = response.id;
+                    self.$scope.ticketFormIsVisible = true;
+                    console.log('fsfsfs');
+                    if (!self.$scope.$$phase) {
+                        self.$scope.$apply();
+                    }
+                });
+            };
+            SupportController.prototype.sendMessage = function () {
+                var _this = this;
+                var self = this;
+                this.supportService.sendMessage(this.$scope.ticket, function (response) {
+                    self.$state.go('ticket_view', { ticket_id: _this.$scope.ticket.id });
+                });
+            };
             SupportController.$inject = [
-                '$timeout',
+                '$scope',
+                '$state',
+                'SupportService'
             ];
             return SupportController;
         })();
         cabinet.SupportController = SupportController;
+    })(cabinet = pages.cabinet || (pages.cabinet = {}));
+})(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var cabinet;
+    (function (cabinet) {
+        var TicketController = (function () {
+            function TicketController($scope, $state, supportService) {
+                this.$scope = $scope;
+                this.$state = $state;
+                this.supportService = supportService;
+                // -
+                $scope.ticket = {};
+                $scope.ticketIsLoaded = false;
+                $scope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+                    console.log(toParams.ticket_id);
+                    supportService.loadTicketMessages(toParams.ticket_id, function (response) {
+                        $scope.ticket = response;
+                        $scope.ticketIsLoaded = true;
+                    });
+                });
+            }
+            TicketController.prototype.sendMessage = function () {
+                var _this = this;
+                var self = this;
+                this.supportService.sendMessage(this.$scope.ticket, function (response) {
+                    self.$state.go('ticket_view', { ticket_id: _this.$scope.ticket.id });
+                });
+            };
+            TicketController.$inject = [
+                '$scope',
+                '$state',
+                'SupportService'
+            ];
+            return TicketController;
+        })();
+        cabinet.TicketController = TicketController;
     })(cabinet = pages.cabinet || (pages.cabinet = {}));
 })(pages || (pages = {}));
 /// <reference path='_references.ts' />
@@ -718,6 +849,7 @@ var pages;
         /** Module services */
         // -
         app.service('PublicationsService', cabinet.PublicationsService);
+        app.service('SupportService', cabinet.SupportService);
         /** Module controllers */
         app.controller('LoginController', cabinet.LoginController);
         app.controller('CabinetController', cabinet.CabinetController);
@@ -725,6 +857,7 @@ var pages;
         app.controller('PublicationController', cabinet.PublicationController);
         app.controller('SettingsController', cabinet.SettingsController);
         app.controller('SupportController', cabinet.SupportController);
+        app.controller('TicketController', cabinet.TicketController);
     })(cabinet = pages.cabinet || (pages.cabinet = {}));
 })(pages || (pages = {}));
 // ####################
@@ -750,6 +883,7 @@ var pages;
 // Services import
 // ####################
 /// <reference path='services/PublicationsService.ts' />
+/// <reference path='services/SupportService.ts' />
 // ####################
 // Controllers import
 // ####################
@@ -759,6 +893,7 @@ var pages;
 /// <reference path='controllers/PublicationController.ts' />
 /// <reference path='controllers/SettingsController.ts' />
 /// <reference path='controllers/SupportController.ts' />
+/// <reference path='controllers/TicketController.ts' />
 // ####################
 // App init
 // ####################

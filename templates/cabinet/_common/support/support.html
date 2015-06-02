@@ -13,25 +13,75 @@
 
 
 
-    <section class="medium center-block">
+    <section class="medium center-block" ng-show="ticketsIsLoaded">
         <h5 class="light-blue-text base">Диалоги</h5>
 
         <div class="row">
-            <div class="col s12 center">
-                <div class="row">
-                    <div class="col s12">
+            <div class="col s12">
+                <div class="row" ng-hide="tickets.length">
+                    <div class="col s12 center">
                         Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                         Dicta ducimus esse facere fugit laborum officia veniam. Magnam molestiae officia sed!
                     </div>
                 </div>
+
+                <div class="row" ng-hide="tickets.length">
+                    <div class="col s12">
+                        <div class="divider"></div>
+                    </div>
+                </div>
+
+                <div class="row" ng-hide="ticketFormIsVisible">
+                    <div class="col s12 center">
+                        <a class="waves-effect waves-light btn" ng-click="supportCtrl.createTicket()">Связаться со службой поддержки</a>
+                    </div>
+                </div>
+
+                <div class="row" ng-show="ticketFormIsVisible">
+                    <div class="col s12">
+                        <form name="form.ticket" novalidate>
+                            <div class="input-field">
+                                <label for="ticket_subject">Тема обращения</label>
+                                <input id="ticket_subject" type="text" name="subject" ng-model="ticket.subject" />
+                            </div>
+                            <div class="input-field">
+                                <label for="ticket_message">Описание обращения</label>
+                                <textarea id="ticket_message" class="materialize-textarea validate" rows="3" name="message" ng-model="ticket.message" required></textarea>
+                                <span class="input-has-error" ng-show="form.ticket.message.$error.required">Укажите, пожалуйста, тему обращения.</span>
+                            </div>
+                            <button class="waves-effect waves-light btn right" ng-disabled="!ticket.message" ng-click="supportCtrl.sendMessage()">
+                                <i class="mdi-content-send right"></i>Отправить
+                            </button>
+                            <a class="waves-effect waves-light btn-flat right" ng-click="ticketFormIsVisible = false;">Отмена</a>
+                        </form>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col s12">
                         <div class="divider"></div>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col s12">
-                        <a class="waves-effect waves-light btn">Связаться со службой поддержки</a>
+                        <h6>Последнии диалоги</h6>
+                        <div class="collection">
+                            <a ng-href="#!/support/ticket/[[ ticket.id ]]" class="collection-item avatar" ng-repeat="ticket in tickets | orderBy: 'created': true">
+                                <img src="http://lorempixel.com/42/42/nature" alt="" class="circle">
+                                <span class="title grey-text text-darken-3" ng-show="ticket.subject">
+                                    [[ ticket.subject ]]
+                                </span>
+                                <span class="title grey-text text-darken-1" ng-hide="ticket.subject">
+                                    Новый диалог
+                                </span>
+                                <p class="grey-text">
+                                    <span>Создано: [[ ticket.created | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                                    <span>Посл. сообщ.: [[ ticket.last_message | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                                </p>
+                                <!--<a href="#!" class="secondary-content"><i class="mdi-action-grade"></i></a>-->
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -40,7 +90,7 @@
 
 
 
-    <section class="medium center-block center-align" ng-show="true">
+    <section class="medium center-block center-align" ng-hide="ticketsIsLoaded">
         <div class="preloader-wrapper big active">
             <div class="spinner-layer spinner-blue">
                 <div class="circle-clipper left">

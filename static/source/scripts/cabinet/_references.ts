@@ -32,6 +32,7 @@
 // Services import
 // ####################
 /// <reference path='services/PublicationsService.ts' />
+/// <reference path='services/SupportService.ts' />
 
 
 
@@ -44,6 +45,7 @@
 /// <reference path='controllers/PublicationController.ts' />
 /// <reference path='controllers/SettingsController.ts' />
 /// <reference path='controllers/SupportController.ts' />
+/// <reference path='controllers/TicketController.ts' />
 
 
 

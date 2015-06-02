@@ -12,10 +12,9 @@ module bModules.Auth {
 
 
         constructor(
-            private $http:      angular.IHttpService,
+            private $http: angular.IHttpService,
             private settingsService: SettingsService) {
             // -
-            this.getUserByCookie();
         }
 
 
@@ -39,7 +38,7 @@ module bModules.Auth {
 
 
 
-        private getUserByCookie() {
+        public getUserByCookie() {
             var self = this;
 
             this.$http.get('/ajax/api/accounts/on-login-info/')

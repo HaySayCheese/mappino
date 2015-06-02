@@ -49,6 +49,7 @@ body {
     font-size: 0.8rem;
     color: color('red', 'base');
 }
+
 .ng-invalid {
     @extend input.invalid;
 }

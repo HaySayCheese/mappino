@@ -8018,6 +8018,13 @@ section {
 .settings-page .row .row {
   margin-bottom: 0; }
 
+.support-page .collection-item {
+  height: auto !important; }
+  .support-page .collection-item p {
+    font-size: 0.8rem; }
+    .support-page .collection-item p span + span {
+      margin-left: 15px; }
+
 html, body, main {
   width: 100%;
   height: 100%; }
