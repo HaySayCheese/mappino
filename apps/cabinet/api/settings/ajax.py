@@ -66,8 +66,9 @@ class AccountView(CabinetView):
                         'hide_skype': preferences.hide_skype,
 
                         # sids
-                        'send_call_request_notifications_to_sid': preferences.send_call_request_notifications_to_sid,
-                        'send_message_notifications_to_sid': preferences.send_message_notifications_to_sid,
+                        #Todo show to Dima
+                        'send_call_request_notifications_to_sid': str(preferences.send_call_request_notifications_to_sid),
+                        'send_message_notifications_to_sid': str(preferences.send_message_notifications_to_sid),
                     }
                 }
             })
