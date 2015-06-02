@@ -7,7 +7,6 @@ from core.favorites.exceptions import InvalidCustomer
 from core.customers.models import Customers
 
 
-
 from core.publications.publications_to_check.models import PublicationsToCheck
 
 class Favorites(models.Model):

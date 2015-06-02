@@ -28,7 +28,7 @@ class FavoritesBaseView(object):
 
         @staticmethod
         def invalid_customers_hash_id():
-            return HttpJsonResponseBadRequest({
+            return HttpJsonResponseBadRequest({ 
                 'code': 2,
                 'message': "Invalid customer id. There is no customers with this customers hash id."
             })

@@ -1,6 +1,5 @@
-import datetime
-
 from django.db import models
+from django.utils.timezone import now
 from core.users.models import Users
 
 
@@ -33,7 +32,7 @@ class PublicationsToCheck(models.Model):
                 publication_type_id = publication_type_id,
                 publication_hash_id = publication_hash_id,
                 is_suspicious = is_suspicious,
-                date_added = datetime.datetime.now()
+                date_added = now()
             )
 
         return record
@@ -61,7 +60,7 @@ class PublicationsToCheck(models.Model):
 
         try:
              # We have to take last record that was added in table by a set of parameters
-             # While this record is taking we locked him for other users using method update
+             # While this record is taking we locked it for other users, using method update
             if PublicationsToCheck.objects.filter(id__in=cls.objects.filter(date_moderated = None)\
                     .order_by('is_suspicious', 'date_added')[:1]).update(moderated_by = moderator_id):
 
@@ -72,26 +71,16 @@ class PublicationsToCheck(models.Model):
             return False
 
         except IndexError:
-            # return cls.objects.none()
-            pass
-
-
-
-
-        try:
-            if PublicationsToCheck.objects.\
-                    filter(id__in=cls.objects.filter(date_moderated = None)\
-                    .order_by('is_suspicious', 'date_added')[:1]).\
-                    update(moderated_by = moderator_id):
-
-
-                return cls.objects.get(moderated_by = moderator_id,date_moderated = None)
-
-
-            return False
-
-        except IndexError:
             return cls.objects.none()
+
+
+
+    @classmethod
+    def mapped_publication_as_moderated(cls, type_id, hash_id):
+
+            cls.objects.filter(publication_type_id = type_id,publication_hash_id = hash_id)\
+            .update(date_moderated = now())
+
 
 
 
