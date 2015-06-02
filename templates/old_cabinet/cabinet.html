@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html ng-app="MappinoCabinet" ng-controller="AppCtrl">
+<head>
+    <title ng-bind="pageTitle"></title>
+
+    {% compress css %}
+        <link rel="stylesheet" href="{{ static }}build/styles/cabinet/base.min.css"/>
+    {% endcompress %}
+
+    <script type="text/javascript"
+            src="http://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places">
+    </script>
+
+
+    <script src="http://yandex.st/jquery/2.1.3/jquery.min.js"></script>
+    <script src="http://yandex.st/underscore/1.6.0/underscore-min.js"></script>
+    <script src="http://yandex.st/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+    <script src="http://yandex.st/angularjs/1.3.8/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular-route.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular-cookies.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular-animate.min.js"></script>
+
+    {% compress js %}
+        <script type="text/javascript" src="{{ static }}build/libs/bootstrap-select-1.5.4.min.js"></script>
+        <script type="text/javascript" src="{{ static }}build/libs/perfect-scrollbar-0.4.10.min.js"></script>
+
+        <script type="text/javascript" src="{{ static }}build/libs/angular-file-upload-shim-1.4.0.min.js"></script>
+    <script type="text/javascript" src="{{ static }}build/libs/angular-ui-mask.min.js"></script>
+        <script type="text/javascript" src="{{ static }}build/libs/angular-file-upload-1.4.0.min.js"></script>
+        <script type="text/javascript" src="{{ static }}build/libs/angular-notifier.min.js"></script>
+        <script type="text/javascript" src="{{ static }}build/libs/angular-google-charts.min.js"></script>
+    {% endcompress %}
+
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-26396742-1', 'mappino.com.ua');
+        ga('send', 'pageview');
+    </script>
+</head>
+<body>
+    <div class="wrapper animated">
+
+        <div class="sidebar-menu" ng-controller="SidebarMenuCtrl">
+            <div class="sidebar-menu-header">
+                <a href class="btn -blue -x-large logo-btn pull-left" ng-click="returnToMap()"></a>
+                <div class="btn -green -x-large create-publication-btn pull-right" ng-click="creatingPublication = true">Новое обьявление</div>
+            </div>
+
+            <div class="sidebar-menu-body">
+
+                <div class="new-pub-panel" ng-show="creatingPublication">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="checkbox pull-left">
+                                <input type="checkbox" id="for_sale" value="sale" ng-model="newPublication.for_sale">
+                                <label for="for_sale">О продаже</label>
+                            </div>
+
+                            <div class="checkbox pull-left">
+                                <input type="checkbox" id="for_rent" value="rent" ng-model="newPublication.for_rent">
+                                <label for="for_rent">Об аренде</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <select selectpicker name="typeSelect" data-width="100%" ng-model="newPublication.tid">
+                            <option value="[[ type.id ]]" ng-repeat="type in publicationTypes">[[ type.title ]]</option>
+                        </select>
+                    </div>
+                    <div class='btn-group btn-group-justified'>
+                        <div class='btn -gray btn-block' ng-click='closeCreatingPublication()'>Отмена</div>
+                        <div class='btn -green btn-block btn-creating'
+                             ng-disabled="!newPublication.for_sale && !newPublication.for_rent"
+                             data-loading-text='Создание...'
+                             ng-click='createPublication()'>Создать</div>
+                    </div>
+                </div>
+
+                <div class="menu-block">
+                    <div class="menu-block-header icon-pubs">Обьявления</div>
+                    <ul class="menu-block-list">
+                        <li ng-class="{ active: routeSection == 'all' }">
+                            <a href="#!/publications/all">
+                                <span class="menu-icon icon-all-pubs"></span>
+                                Все
+                                <span class="badge pull-right"
+                                      ng-hide="publicationsCount['all'] == 0">[[ publicationsCount['all'] ]]</span>
+                            </a>
+                        </li>
+                        <li ng-class="{ active: routeSection == 'published' }">
+                            <a href="#!/publications/published">
+                                <span class="menu-icon icon-published-pubs"></span>
+                                Опубликованные
+                                <span class="badge pull-right"
+                                      ng-hide="publicationsCount['published'] == 0">[[ publicationsCount['published'] ]]</span>
+                            </a>
+                        </li>
+                        <li ng-class="{ active: routeSection == 'unpublished' }">
+                            <a href="#!/publications/unpublished">
+                                <span class="menu-icon icon-unpublished-pubs"></span>
+                                Неопубликованные
+                                <span class="badge pull-right"
+                                      ng-hide="publicationsCount['unpublished'] == 0">[[ publicationsCount['unpublished'] ]]</span>
+                            </a>
+                        </li>
+                        <li ng-class="{ active: routeSection == 'trash' }">
+                            <a href="#!/publications/trash">
+                                <span class="menu-icon icon-deleted-pubs"></span>
+                                Корзина
+                                <span class="badge pull-right"
+                                      ng-hide="publicationsCount['trash'] == 0">[[ publicationsCount['trash'] ]]</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="menu-block">
+                    <div class="menu-block-header icon-tags">
+                        Ярлыки
+                        <div class="edit-tag-btn" ng-click="createEditTagDialog()">создать</div>
+                    </div>
+
+                    <div class='tag-edit-panel state-create' ng-show="creatingTag">
+                        <div class='form-group'>
+                            <input type='text' class='form-control' ng-model='newTag.title' select-on-click required>
+                            <span class='input-has-error' ng-show='tagNameDuplicated'>Такое имя уже используеться</span>
+                        </div>
+                        <div class='pick-color-box text-center'>
+                            <div class='color-item' ng-repeat='color in tagParameters.colors' ng-click='newTag.selected_color = color' style='background-color: [[ color ]]'></div>
+                        </div>
+                        <span>Пример: </span>
+                        <span class='label' style='background-color: [[ newTag.selected_color ]]'>[[ newTag.title ]]</span>
+                        <div class='btn-group btn-group-justified'>
+                            <div class='btn -gray btn-block' ng-click='closeTagDialog()'>Отмена</div>
+                            <div class='btn -green btn-block btn-creating' data-loading-text='Создание...' ng-click='createTag()'>Создать</div>
+                        </div>
+                    </div>
+
+                    <ul class="menu-block-list tags-list">
+                        <li ng-class="{ 'active': routeSection == tag.id }" ng-repeat="tag in tags">
+                            <a href="#!/publications/[[ tag.id ]]">
+                                <span class="tag-icon" style="border-color: [[ tag.color ]]"></span>
+                                [[ tag.title ]]
+                                <span class="badge pull-right" style="color: [[ tag.color ]]"
+                                      ng-hide="publicationsCount[tag.id] == 0">
+                                    [[ publicationsCount[tag.id] ]]
+                                </span>
+                            </a>
+                            <div class="menu-block-list-controls">
+                                <span class="menu-icon icon-edit" ng-click="createEditTagDialog(tag, $event)"></span>
+                                <span class="menu-icon icon-delete" ng-click="removeTag(tag)"></span>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="tags-loader" ng-show="loadings.tags"></div>
+
+                    <div class="tags-empty" ng-show="!tags.length && !loadings.tags && !creatingTag">
+                        <span>У вас пока нет ярлыков</span>
+                    </div>
+                </div>
+
+                <div class="menu-block">
+                    <div class="menu-block-header icon-user">Учетная запись</div>
+                    <ul class="menu-block-list">
+                        <li ng-class="{ 'active': routeBase == 'support' || isSupportPagePart }"><a href="#!/support"><span class="menu-icon icon-support"></span>Онлайн поддержка</a></li>
+                        <li ng-class="{ 'active': routeBase == 'settings' }"><a href="#!/settings"><span class="menu-icon icon-settings"></span>Параметры</a></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="sidebar-item-list" ng-controller="SidebarItemListCtrl" ng-hide="routeBase == 'settings' || routeBase == 'support' || isSupportPagePart">
+            <div class="sidebar-item-list-header">
+                <input type="text" class="form-control" placeholder="Поиск..." ng-model="searchQuery">
+            </div>
+
+            <div class="sidebar-item-list-body">
+
+                <!-- Item -->
+                <div class="sidebar-item-list-item"
+                     ng-class="{ active: publicationId == brief.tid + ':' + brief.id }"
+                     ng-repeat="brief in briefs | orderBy: 'created': true"
+                     ng-click="selectBrief(brief)">
+
+                    <div class="sidebar-item-list-item-img">
+                        <img ng-src="[[ brief.photo_url ]]" ng-show="brief.photo_url"/>
+                        <img ng-src="{{ static }}img/cabinet/sidebar-item-list/no-brief-photo.png" ng-show="!brief.photo_url"/>
+                    </div>
+                    <div class="sidebar-item-list-item-detail">
+                        <div class="sidebar-item-list-item-title" title="[[ brief.title ]]">[[ brief.title ]]
+                            <span class="text-muted" ng-show="!brief.title">Новое объявление</span>
+                        </div>
+                        <div class="sidebar-item-list-item-type">
+                            <span ng-show="brief.for_sale && !brief.for_rent">Продажа</span>
+                            <span ng-show="brief.for_rent && !brief.for_sale">Аренда</span>
+                            <span ng-show="brief.for_sale && brief.for_rent">Продажа и аренда</span>
+                            <span ng-show="brief.for_rent || brief.for_sale">[[ brief.typeTitle ]]</span>
+                        </div>
+                        <div class="sidebar-item-list-item-tags" ng-show="brief.tags.length">
+                            <span class="label" style="background-color: [[ tag.color ]]" ng-repeat="tag in brief.tags">[[ tag.title ]]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="briefs-empty text-muted" ng-show="!loadings.briefs && !briefs.length && briefLoaded">
+                    <span>В данной категории нет обьявлений</span>
+                </div>
+
+                <div class="item-loader" ng-show="loadings.briefs"></div>
+            </div>
+        </div>
+
+
+        <ng-view></ng-view>
+
+
+        <div lr-notification-stack-container="mainChannel" class="notifier">
+            <ul>
+                <li ng-class="notification.level" ng-repeat="notification in lrNotifierCtrl.notifications" ng-click="lrNotifierCtrl.removeNotification(notification)">
+                    [[ notification.message ]]
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+    {% compress js %}
+        <script type="text/javascript" src="{{ static }}source/scripts/_modules/underscore/underscore.module.js"></script>
+
+        <!-- bModules -->
+        <script type="text/javascript" src="{{ static }}source/scripts/_modules/bTypes/bTypes.module.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/_modules/bAuth/bAuth.module.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/_modules/bDirectives/bDirectives.module.js"></script>
+
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/app.js"></script>
+
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/configs/values.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/configs/routes_const.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/configs/http_const.js"></script>
+
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/services/router.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/services/queries.js"></script>
+
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/appCtrl.js"></script>
+
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/factories/tagsFactory.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/factories/briefsFactory.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/factories/publicationFactory.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/factories/settingsFactory.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/factories/supportFactory.js"></script>
+
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/filters/toHtml.js"></script>
+
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/sidebarMenuCtrl.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/sidebarItemListCtrl.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/sidebarItemDetailedCtrl.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/settingsCtrl.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/supportCtrl.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/noPublicationCtrl.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/controllers/noTicketsCtrl.js"></script>
+
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/directives/selectOnClick.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/directives/focusOnLoad.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/directives/allowOnlyNumber.js"></script>
+        <script type="text/javascript" src="{{ static }}source/scripts/cabinet/directives/allowOnlyNumberWithoutDot.js"></script>
+    {% endcompress %}
+</body>
+</html>

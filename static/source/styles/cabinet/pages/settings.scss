@@ -1,0 +1,46 @@
+.settings-page {
+    .user-block {
+
+        .user-photo {
+            @include square(180px);
+            overflow: hidden;
+            margin-top: 20px;
+            margin-bottom: 10px;
+
+            border-radius: 50%;
+
+            @media #{$small-and-down} {
+                margin-top: 0;
+            }
+
+
+            img {
+                @include square(180px);
+            }
+        }
+
+        #photo-field {
+            visibility: hidden;
+        }
+
+        .image-errors {
+            margin-top: 20px;
+
+            .input-has-error {
+                position: relative;
+                margin-top: 0px;
+            }
+
+        }
+    }
+
+
+    .col .col {
+        padding: 0;
+    }
+
+    .row .row {
+        margin-bottom: 0;
+    }
+}
+

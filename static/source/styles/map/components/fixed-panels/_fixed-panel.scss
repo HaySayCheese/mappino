@@ -1,0 +1,11 @@
+%_fixed-panel {
+    position: absolute;
+    top: 10px;
+    z-index: 20;
+
+    overflow: hidden;
+
+    background: #fff;
+
+    @extend .z-depth-1;
+}

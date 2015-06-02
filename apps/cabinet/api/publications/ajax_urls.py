@@ -1,20 +1,21 @@
 #coding=utf-8
-from apps.cabinet.api.publications.ajax import Publications
+from apps.cabinet.api.publications.ajax import Publications, Publication
 from django.conf.urls import patterns, url
 
 
 urlpatterns = patterns('apps.cabinet.api',
-	url(r'^ajax/api/cabinet/publications/$', Publications.Create.as_view()),
-	url(r'^ajax/api/cabinet/publications/(\d+:\w+)/$', Publications.RUD.as_view()),
-    url(r'^ajax/api/cabinet/publications/(\d+:\w+)/delete-permanent/$', Publications.PermanentDelete.as_view()),
-    url(r'^ajax/api/cabinet/publications/(\d+:\w+)/publish/$', Publications.Publish.as_view()),
-    url(r'^ajax/api/cabinet/publications/(\d+:\w+)/unpublish/$', Publications.Unpublish.as_view()),
+    # list
+	url(r'^ajax/api/cabinet/publications/$', Publications.as_view()),
 
+	# single
+	url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/((permanent/)?)$', Publication.as_view()), # note: optional parameter "permanent"
+    url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/publish/$', Publication.PublishUnpublish.as_view(), {'operation': 'publish'}),
+    url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/unpublish/$', Publication.PublishUnpublish.as_view(), {'operation': 'unpublish'}),
 
-	# photos
-    url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/photos/$', Publications.UploadPhoto.as_view()),
-    url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/(\w+)/$', Publications.Photos.as_view()),
-    url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/(\w+)/title/$', Publications.PhotoTitle.as_view()),
+        # photos
+        url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/photos/$', Publication.UploadPhoto.as_view()),
+        url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/(\w+)/$', Publication.Photos.as_view()),
+        url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/(\w+)/title/$', Publication.PhotoTitle.as_view()),
 
 
     url(r'^ajax/api/cabinet/publications/counters/$', 'publications.briefs.ajax.counters'),

@@ -1,0 +1,54 @@
+//
+// Materialize include
+// --------------------------------------------------
+@import "../_common/materialize";
+
+// override materialize components
+@import "components/card";
+@import "components/section";
+
+
+@import "pages/login";
+@import "pages/settings";
+@import "pages/support";
+
+
+
+html,
+body,
+main {
+    @include square(100%);
+}
+
+
+body {
+    background-color: color("blue-grey", "lighten-5");
+}
+
+
+.wrapper {
+    //padding: 20px;
+
+}
+
+.nav-wrapper {
+    padding: 0 20px;
+
+    .hide-on-med-and-down:not(.right) {
+        margin-left: 200px;
+    }
+}
+
+
+
+
+
+.input-has-error {
+    position: absolute;
+    margin-top: -25px;
+    font-size: 0.8rem;
+    color: color('red', 'base');
+}
+.ng-invalid {
+    @extend input.invalid;
+}

@@ -1,0 +1,68 @@
+.publication-panel {
+    @extend %_left-sliding-panel;
+
+
+    > .publication-panel-header {
+        position: relative;
+        overflow: hidden;
+
+        > .over-photo-control {
+            @include square(48px);
+            line-height: 48px;
+
+            position: absolute;
+            right: 0;
+            top: 0;
+
+            cursor: pointer;
+
+            text-align: center;
+            font-size: 1.4rem;
+            color: #fff;
+
+            text-shadow: 0 0 7px rgba(0, 0, 0, 0.8);
+        }
+
+        > img {
+            @include size(auto, 300px);
+        }
+
+        > .over-photo-block {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 30px 80px 20px;
+
+            > .title,
+            > .address {
+                text-shadow: 0 0 7px rgba(0, 0, 0, 0.8);
+            }
+
+            > .title {
+                color: #fff;
+                //font-size: @font-size-h4;
+            }
+
+            > .address {
+                color: #dadada;
+                font-size: 0.8rem;
+            }
+        }
+    }
+
+
+    > .publication-panel-body {
+        table {
+            font-size: 0.85rem;
+
+            td {
+                padding: 0;
+
+                &:first-child {
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+}

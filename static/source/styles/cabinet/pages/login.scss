@@ -1,0 +1,7 @@
+.login-panel {
+    @include size(400px, auto);
+    padding: 30px 50px;
+    background-color: #fff;
+
+    @extend .z-depth-1;
+}

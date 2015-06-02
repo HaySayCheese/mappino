@@ -1,0 +1,22 @@
+@mixin box-shadow-2($args1, $args2) {
+    -webkit-box-shadow: $args1, $args2;
+    -moz-box-shadow: $args1, $args2;
+    box-shadow: $args1, $args2;
+}
+
+@mixin square($size) {
+    width: $size;
+    height: $size;
+}
+
+
+@mixin size($width, $height) {
+    width: $width;
+    height: $height;
+}
+
+
+@mixin calc($property, $expression) {
+    #{$property}: -webkit-calc(#{$expression});
+    #{$property}: calc(#{$expression});
+}

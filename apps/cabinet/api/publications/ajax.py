@@ -24,308 +24,282 @@ from core.publications.update_methods.garages import update_garage
 from core.publications.update_methods.lands import update_land
 
 
-class Publications(object):
-    class Create(CabinetView):
-        post_codes = {
-            'OK': {
+class Publications(CabinetView):
+    class PostResponses(object):
+        @staticmethod
+        def ok(publication_hash_id):
+            return HttpJsonResponse({
                 'code': 0,
-                'id': None,  # note: deep copy here
-            },
-            'invalid_parameters': {
+                'message': 'OK',
+                'data': {
+                    'id': publication_hash_id,
+                }
+            })
+
+        @staticmethod
+        def invalid_parameters():
+            return HttpJsonResponseBadRequest({
                 'code': 1,
-            },
-            'invalid_tid': {
-                'code': 2,
-            },
-        }
+                'message': 'Request does not contains valid parameters or one of them is incorrect.',
+            })
 
 
-        def post(self, request, *args):
-            try:
-                d = angular_parameters(request, ['tid', 'for_sale', 'for_rent'])
-            except ValueError:
-                return HttpResponseBadRequest(json.dumps(
-                    self.post_codes['invalid_parameters']), content_type='application/json')
+    @classmethod
+    def post(cls, request):
+        try:
+            params = angular_parameters(request, ['tid', 'for_sale', 'for_rent'])
 
-            tid = d['tid']
-            if tid not in OBJECTS_TYPES.values():
-                return HttpResponseBadRequest(
-                    json.dumps(self.post_codes['invalid_tid']), content_type='application/json')
-
-            is_sale = d['for_sale']
-            is_rent = d['for_rent']
+            tid = params['tid']
+            is_sale = params['for_sale']
+            is_rent = params['for_rent']
 
             model = HEAD_MODELS[tid]
-            record = model.new(request.user, is_sale, is_rent)
-
-            # seems to be ok
-            response = copy.deepcopy(self.post_codes['OK'])  # Note: deepcopy here
-            response['id'] = record.hash_id
-            return HttpResponse(json.dumps(response), content_type='application/json')
+        except (ValueError, KeyError):
+            return cls.PostResponses.invalid_parameters()
 
 
-    class RUD(CabinetView):
-        get_codes = {
-            'invalid_tid': {
+        record = model.new(request.user, is_sale, is_rent)
+        return cls.PostResponses.ok(record.hash_id)
+
+
+
+class Publication(CabinetView):
+    class GetResponses(object):
+        @staticmethod
+        def ok(publication_data):
+            return HttpJsonResponse({
                 'code': 1,
-            },
-            'invalid_hid': {
-                'code': 2,
-            },
-        }
+                'message': 'OK',
+                'data': publication_data,
+            })
 
-        update_codes = {
-            'OK': {
+
+        @staticmethod
+        def invalid_parameters():
+            return HttpResponseBadRequest({
+                'code': 1,
+                'message': 'Request does not contains valid parameters or one of them is incorrect.'
+            })
+
+
+    class PutResponses(object):
+        @staticmethod
+        def ok(new_value):
+            if new_value:
+                return HttpJsonResponse({
+                    'code': 0,
+                    'message': 'OK',
+                    'data': {
+                        'value': new_value,
+                    }
+                })
+
+            else:
+                return HttpJsonResponse({
+                    'code': 0,
+                    'message': 'OK',
+                })
+
+        @staticmethod
+        def invalid_parameters():
+            return HttpResponseBadRequest({
+                'code': 1,
+                'message': 'Request does not contains valid parameters or one of them is incorrect.'
+            })
+
+
+    class DeleteResponses(object):
+        @staticmethod
+        def ok():
+            return HttpJsonResponse({
                 'code': 0,
-            },
-            'invalid_field': {
+                'message': 'OK',
+            })
+
+        @staticmethod
+        def invalid_parameters():
+            return HttpResponseBadRequest({
                 'code': 1,
-            },
-            'invalid_value': {
-                'code': 2,
-            },
-            'invalid_hid': {
-                'code': 3,
-            },
-            'update_error': {
-                'code': 4,
-            },
-        }
-
-        delete_codes = {
-            'OK': {
-                'code': 0,
-            },
-            'invalid_hid': {
-                'code': 1,
-            },
-        }
+                'message': 'Request does not contains valid parameters or one of them is incorrect.'
+            })
 
 
-        def __init__(self):
-            super(Publications.RUD, self).__init__()
-            self.published_formatter = classes.CabinetPublishedDataSource()
-            self.unpublished_formatter = classes.UnpublishedFormatter()
+    def __init__(self):
+        super(Publication, self).__init__()
+        self.published_formatter = classes.CabinetPublishedDataSource()
+        self.unpublished_formatter = classes.UnpublishedFormatter()
 
 
-        def get(self, request, *args):
-            try:
-                tid, hash_id = args[0].split(':')
-                tid = int(tid)
-                # hash_id doesnt need to be converted to int
-            except (IndexError, ValueError):
-                return HttpResponseBadRequest('Invalid parameters.')
+    def get(self, request, *args):
+        try:
+            tid, hash_id = args[:]
+            tid = int(tid)
+            model = HEAD_MODELS[tid]
 
+        except (IndexError, ValueError, KeyError):
+            return self.GetResponses.invalid_parameters()
+
+
+        try:
+            head = model.by_hash_id(hash_id, select_body=True)
+        except ObjectDoesNotExist:
+            return self.GetResponses.invalid_parameters()
+
+
+        # check owner
+        if head.owner.id != request.user.id:
+            raise PermissionDenied()
+
+
+        # seems to be ok
+        if head.is_published() or head.is_deleted():
+            response = self.published_formatter.format(tid, head)
+        else:
+            response = self.unpublished_formatter.format(tid, head)
+
+        return self.GetResponses.ok(response)
+
+
+    def put(self, request, *args):
+        try:
+            tid, hash_id = args[:]
+            tid = int(tid)
+            model = HEAD_MODELS[tid]
+
+            parameters = angular_parameters(request, ['f'])
+            field = parameters['f']
+            value = parameters['v'] # may be ''
+
+        except (IndexError, ValueError, KeyError):
+            return self.PutResponses.invalid_parameters()
+
+
+        try:
+            head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
+        except IndexError:
+             return self.PutResponses.invalid_parameters()
+
+
+        # check owner
+        if head.owner.id != request.user.id:
+            raise PermissionDenied()
+
+
+        returned_value = None
+
+        # todo: move this into models as a method
+        # Жилая недвижимость
+        if tid == OBJECTS_TYPES.flat():
+            returned_value = update_flat(head, field, value, tid)
+
+        elif tid == OBJECTS_TYPES.house():
+            returned_value = update_house(head, field, value, tid)
+
+        elif tid == OBJECTS_TYPES.room():
+            returned_value = update_room(head, field, value, tid)
+
+        # Коммерческая недвижимость
+        elif tid == OBJECTS_TYPES.land():
+            returned_value = update_land(head, field, value, tid)
+
+        elif tid == OBJECTS_TYPES.garage():
+            returned_value = update_garage(head, field, value, tid)
+
+        elif tid == OBJECTS_TYPES.office():
+            returned_value = update_office(head, field, value, tid)
+
+        elif tid == OBJECTS_TYPES.trade():
+            returned_value = update_trade(head, field, value, tid)
+
+        elif tid == OBJECTS_TYPES.warehouse():
+            returned_value = update_warehouse(head, field, value, tid)
+
+        elif tid == OBJECTS_TYPES.business():
+            returned_value = update_business(head, field, value, tid)
+
+
+        # Відправити сигнал про зміну моделі.
+        # Кастомний сигнал відправляєтсья, оскільки стандартний post-save
+        # не містить необхідної інформації (tid).
+        # todo: move this into the model
+        record_updated.send(
+            sender=None,
+            tid=tid,
+            hid=head.id,
+            hash_id=head.hash_id,
+            for_sale=head.for_sale,
+            for_rent=head.for_rent,
+        )
+
+        return self.PutResponses.ok(returned_value)
+
+
+    def delete(self, request, *args):
+        try:
+            tid, hash_id = args[:]
+            tid = int(tid)
+            # hash_id doesnt need to be converted to int
 
             model = HEAD_MODELS[tid]
-            try:
-                head = model.by_hash_id(hash_id, select_body=True)
-            except ObjectDoesNotExist:
-                return HttpResponseBadRequest(json.dumps(
-                    self.get_codes['invalid_tid']), content_type='application/json')
-
-            # check owner
-            if head.owner.id != request.user.id:
-                raise PermissionDenied()
-
-            # seems to be ok
-            if head.is_published() or head.is_deleted():
-                return HttpResponse(json.dumps(
-                    self.published_formatter.format(tid, head)), content_type='application/json')
-
-            else:
-                return HttpResponse(json.dumps(
-                    self.unpublished_formatter.format(tid, head)), content_type='application/json')
+        except (IndexError, ValueError):
+            return self.DeleteResponses.invalid_parameters()
 
 
-        def put(self, request, *args):
-            try:
-                tid, hash_id = args[0].split(':')
-                tid = int(tid)
-                # hash_id doesnt need to be converted to int
-            except (IndexError, ValueError):
-                return HttpResponseBadRequest('Invalid parameters.')
-
-            try:
-                p = angular_parameters(request, ['f'])
-            except ValueError:
-                return HttpResponseBadRequest(json.dumps(
-                    self.update_codes['invalid_field']), content_type='application/json')
-
-            field = p['f']
-            value = p.get('v', None)
-
-            # value may be empty (''), but must be present in request.
-            if value is None:
-                return HttpResponseBadRequest(json.dumps(
-                    self.update_codes['invalid_value']), content_type='application/json')
-
-            try:
-                model = HEAD_MODELS[tid]
-                head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
-            except IndexError:
-                return HttpResponseBadRequest(json.dumps(
-                    self.update_codes['invalid_hid']), content_type='application/json')
+        try:
+            head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
+        except IndexError:
+            return self.DeleteResponses.invalid_parameters()
 
 
-            # check owner
-            if head.owner.id != request.user.id:
-                raise PermissionDenied()
-
-            return_value = None
-            try:
-                # Жилая недвижимость
-                if tid == OBJECTS_TYPES.flat():
-                    return_value = update_flat(head, field, value, tid)
-
-                elif tid == OBJECTS_TYPES.house():
-                    return_value = update_house(head, field, value, tid)
-
-                elif tid == OBJECTS_TYPES.room():
-                    return_value = update_room(head, field, value, tid)
-
-                # Коммерческая недвижимость
-                elif tid == OBJECTS_TYPES.land():
-                    return_value = update_land(head, field, value, tid)
-
-                elif tid == OBJECTS_TYPES.garage():
-                    return_value = update_garage(head, field, value, tid)
-
-                elif tid == OBJECTS_TYPES.office():
-                    return_value = update_office(head, field, value, tid)
-
-                elif tid == OBJECTS_TYPES.trade():
-                    return_value = update_trade(head, field, value, tid)
-
-                elif tid == OBJECTS_TYPES.warehouse():
-                    return_value = update_warehouse(head, field, value, tid)
-
-                elif tid == OBJECTS_TYPES.business():
-                    return_value = update_business(head, field, value, tid)
+        # check owner
+        if head.owner.id != request.user.id:
+            raise PermissionDenied()
 
 
-            except ValueError:
-                return HttpResponse(json.dumps(
-                    self.update_codes['update_error']), content_type='application/json')
-
-            # Відправити сигнал про зміну моделі.
-            # Кастомний сигнал відправляєтсья, оскільки стандартний post-save
-            # не містить необхідної інформації (tid).
-            # todo: позбавитись цього сигналу, або винести його в інше місце
-            record_updated.send(
-                sender=None,
-                tid=tid,
-                hid=head.id,
-                hash_id=head.hash_id,
-                for_sale=head.for_sale,
-                for_rent=head.for_rent,
-            )
-
-            if return_value is not None:
-                response = copy.deepcopy(self.update_codes['OK'])  # note: deep copy here
-                response['value'] = return_value
-                return HttpResponse(json.dumps(response), content_type='application/json')
-            else:
-                return HttpResponse(json.dumps(self.update_codes['OK']), content_type='application/json')
-
-
-        def delete(self, request, *args):
-            try:
-                tid, hash_id = args[0].split(':')
-                tid = int(tid)
-                # hash_id doesnt need to be converted to int
-            except (IndexError, ValueError):
-                return HttpResponseBadRequest('Invalid parameters.')
-
-            try:
-                model = HEAD_MODELS[tid]
-                head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
-            except IndexError:
-                return HttpResponseBadRequest(json.dumps(
-                    self.delete_codes['invalid_hid']), content_type='application/json')
-
-
-            # check owner
-            if head.owner.id != request.user.id:
-                raise PermissionDenied()
-
+        if not 'permanent' in request.path:
             # note: no real deletion here.
             # all publications that was deleted are situated in trash
             head.mark_as_deleted()
-            return HttpResponse(json.dumps(self.delete_codes['OK']), content_type='application/json')
-
-
-    class PermanentDelete(CabinetView):
-        delete_codes = {
-            'OK': {
-                'code': 0,
-            },
-            'invalid_hid': {
-                'code': 1,
-            },
-        }
-
-
-        def delete(self, request, *args):
-            try:
-                tid, hash_id = args[0].split(':')
-                tid = int(tid)
-                # hash_id doesnt need to be converted to int
-            except (IndexError, ValueError):
-                return HttpResponseBadRequest('Invalid parameters.')
-
-            try:
-                model = HEAD_MODELS[tid]
-                head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
-            except IndexError:
-                return HttpResponseBadRequest(json.dumps(
-                    self.delete_codes['invalid_hid']), content_type='application/json')
-
-
-            # check owner
-            if head.owner.id != request.user.id:
-                raise PermissionDenied()
-
+        else:
             head.delete_permanent()
-            return HttpResponse(json.dumps(self.delete_codes['OK']), content_type='application/json')
+
+        return self.DeleteResponses.ok()
 
 
-    class Publish(CabinetView):
-        put_codes = {
-            'OK': {
-                'code': 0,
-            },
-            'invalid_hid': {
-                'code': 1,
-            },
-            'incomplete_or_invalid_pub': {
-                'code': 2,
-            },
 
-            'pay_as_you_go_insufficient_funds': {
-                'code': 30,
-            },
-            'fixed_insufficient_funds': {
-                'code': 50,
-            },
-        }
+    class PublishUnpublish(CabinetView):
+        class PutResponses(object):
+            @staticmethod
+            def ok():
+                return HttpJsonResponse({
+                    'code': 0,
+                    'message': 'OK'
+                })
+
+            @staticmethod
+            def invalid_publication():
+                return HttpJsonResponse({
+                    'code': 1,
+                    'message': 'publication does not pass validation.'
+                })
 
 
-        def put(self, request, *args):
+        @classmethod
+        def put(cls, request, operation, *args):
             try:
-                tid, hash_id = args[0].split(':')
+                tid, hash_id = args[:]
                 tid = int(tid)
                 # hash_id doesnt need to be converted to int
+
+                model = HEAD_MODELS[tid]
             except (IndexError, ValueError):
                 return HttpResponseBadRequest('Invalid parameters.')
 
 
-            model = HEAD_MODELS[tid]
             try:
                 head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
             except IndexError:
-                return HttpResponseBadRequest(json.dumps(
-                    self.put_codes['invalid_hid']), content_type='application/json')
+                return cls.PutResponses.ok()
 
 
             # check owner
@@ -333,65 +307,16 @@ class Publications(object):
                 raise PermissionDenied()
 
 
-            # todo: enable billing check back
-            # try:
-            #     # billing constraints check
-            #     request.user.account.check_may_publish_publications()
-            #
-            # except billing_exceptions.PAYGInsufficientFunds:
-            #     return HttpJsonResponse(self.put_codes['pay_as_you_go_insufficient_funds'])
-            #
-            # except billing_exceptions.FixedInsufficientFunds:
-            #     return HttpJsonResponse(self.put_codes['fixed_insufficient_funds'])
+            if operation == 'unpublish':
+                head.unpublish()
+                return cls.PutResponses.ok()
 
-
-            try:
-                head.publish()
-            except ValidationError:
-                return HttpResponseBadRequest(json.dumps(
-                    self.put_codes['incomplete_or_invalid_pub']), content_type='application/json')
-
-            # seems to be ok
-            return HttpResponse(json.dumps(
-                self.put_codes['OK']), content_type='application/json')
-
-
-    class Unpublish(CabinetView):
-        put_codes = {
-            'OK': {
-                'code': 0,
-            },
-            'invalid_hid': {
-                'code': 1,
-            },
-        }
-
-
-        def put(self, request, *args):
-            try:
-                tid, hash_id = args[0].split(':')
-                tid = int(tid)
-                # hash_id doesnt need to be converted to int
-            except (IndexError, ValueError):
-                return HttpResponseBadRequest('Invalid parameters.')
-
-
-            model = HEAD_MODELS[tid]
-            try:
-                head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
-            except IndexError:
-                return HttpResponseBadRequest(json.dumps(
-                    self.put_codes['invalid_hid']), content_type='application/json')
-
-
-            # check owner
-            if head.owner.id != request.user.id:
-                raise PermissionDenied()
-
-            # seems to be ok
-            head.unpublish()
-            return HttpResponse(json.dumps(
-                self.put_codes['OK']), content_type='application/json')
+            elif operation == 'publish':
+                try:
+                    head.publish()
+                    return cls.PutResponses.ok()
+                except ValidationError:
+                    return cls.PutResponses.invalid_publication()
 
 
     class UploadPhoto(CabinetView):
