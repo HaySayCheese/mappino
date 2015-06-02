@@ -17,11 +17,7 @@ module pages.cabinet {
             // -
             $scope.settingsIsLoaded = false;
 
-
-
-
             this.initInputsChange();
-
 
             settingsService.load((response) => {
                 $scope.user = response;
@@ -35,6 +31,7 @@ module pages.cabinet {
 
 
 
+        // used in scope, don't remove
         private changePhoto(event) {
             event.preventDefault();
 
@@ -64,20 +61,21 @@ module pages.cabinet {
                 var name  = e.currentTarget['name'],
                     value = e.currentTarget['value'].replace(/\s+/g, " ");
 
-                if (!self.$scope.form.user[name].$dirty)
+                if (!self.$scope.form.user[name].$dirty) {
                     return;
+                }
 
-                if (name === "mobile_phone" && (value === "+38 (0__) __ - __ - ___" || value[22] === "_"))
+                if (name === "mobile_phone" && (value === "+38 (0__) __ - __ - ___" || value[22] === "_")) {
                     return;
+                }
 
                 self.settingsService.check({ f: name, v: value }, (newValue, code) => {
-                    console.log(newValue)
-                    console.log(code)
-                    if (newValue)
+                    if (newValue) {
                         e.currentTarget['value'] = newValue;
+                    }
 
-                    self.$scope.form.user[name].$setValidity("incorrect", code !== 10);
-                    self.$scope.form.user[name].$setValidity("duplicated", code !== 11);
+                    self.$scope.form.user[name].$setValidity("incorrect",   code !== 10);
+                    self.$scope.form.user[name].$setValidity("duplicated",  code !== 11);
                 });
 
             });
@@ -86,14 +84,14 @@ module pages.cabinet {
                 var name  = e.currentTarget['name'],
                     value = e.currentTarget['checked'];
 
-                self.settingsService.check({ f: name, v: value }, null);
+                self.settingsService.check({ f: name, v: value });
             });
 
             angular.element(".settings-page select").bind('change', (e) => {
                 var name  = e.currentTarget['name'],
                     value = e.currentTarget['value'];
 
-                self.settingsService.check({ f: name, v: value }, null);
+                self.settingsService.check({ f: name, v: value });
             });
         }
     }

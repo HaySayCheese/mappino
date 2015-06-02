@@ -208,10 +208,10 @@ var bModules;
                     if (response.data['code'] === 0) {
                         self.update(response.data['data']['account']);
                         self.update(response.data['data']['preferences']);
-                        callback(self._user);
+                        _.isFunction(callback) && callback(self._user);
                     }
                     else {
-                        callback(response);
+                        _.isFunction(callback) && callback(response);
                     }
                 }, function () {
                     // - error
@@ -225,7 +225,7 @@ var bModules;
                     var _field = {};
                     _field[field['f']] = field['v'];
                     self.update(_field);
-                    callback(field['v'], response.data['code']);
+                    _.isFunction(callback) && callback(field['v'], response.data['code']);
                 });
             };
             SettingsService.prototype.uploadAvatar = function (avatar, callback) {
@@ -235,12 +235,11 @@ var bModules;
                     file: avatar
                 }).success(function (response) {
                     if (response.code === 0) {
-                        callback(response);
-                        console.log(response);
                         self.update({ avatar: response.data['url'] });
+                        _.isFunction(callback) && callback(response);
                     }
                     else {
-                        callback(response);
+                        _.isFunction(callback) && callback(response);
                     }
                 });
             };
@@ -257,7 +256,6 @@ var bModules;
                     }
                 }
                 this.saveToStorages(this._user);
-                console.log(this._user);
             };
             Object.defineProperty(SettingsService.prototype, "user", {
                 get: function () {
@@ -624,6 +622,7 @@ var pages;
                     });
                 });
             }
+            // used in scope, don't remove
             SettingsController.prototype.changePhoto = function (event) {
                 event.preventDefault();
                 angular.element('#photo-field').click();
@@ -644,26 +643,27 @@ var pages;
                     .bind("focusout", function (e) {
                     // -
                     var name = e.currentTarget['name'], value = e.currentTarget['value'].replace(/\s+/g, " ");
-                    if (!self.$scope.form.user[name].$dirty)
+                    if (!self.$scope.form.user[name].$dirty) {
                         return;
-                    if (name === "mobile_phone" && (value === "+38 (0__) __ - __ - ___" || value[22] === "_"))
+                    }
+                    if (name === "mobile_phone" && (value === "+38 (0__) __ - __ - ___" || value[22] === "_")) {
                         return;
+                    }
                     self.settingsService.check({ f: name, v: value }, function (newValue, code) {
-                        console.log(newValue);
-                        console.log(code);
-                        if (newValue)
+                        if (newValue) {
                             e.currentTarget['value'] = newValue;
+                        }
                         self.$scope.form.user[name].$setValidity("incorrect", code !== 10);
                         self.$scope.form.user[name].$setValidity("duplicated", code !== 11);
                     });
                 });
                 angular.element(".settings-page input[type='checkbox']").bind("change", function (e) {
                     var name = e.currentTarget['name'], value = e.currentTarget['checked'];
-                    self.settingsService.check({ f: name, v: value }, null);
+                    self.settingsService.check({ f: name, v: value });
                 });
                 angular.element(".settings-page select").bind('change', function (e) {
                     var name = e.currentTarget['name'], value = e.currentTarget['value'];
-                    self.settingsService.check({ f: name, v: value }, null);
+                    self.settingsService.check({ f: name, v: value });
                 });
             };
             SettingsController.$inject = [

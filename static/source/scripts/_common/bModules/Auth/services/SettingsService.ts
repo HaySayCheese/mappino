@@ -46,7 +46,7 @@ module bModules.Auth {
 
 
 
-        public load(callback: Function) {
+        public load(callback?) {
             var self = this;
 
             this.$http.get('/ajax/api/cabinet/account/')
@@ -54,9 +54,10 @@ module bModules.Auth {
                     if (response.data['code'] === 0) {
                         self.update(response.data['data']['account']);
                         self.update(response.data['data']['preferences']);
-                        callback(self._user);
+
+                        _.isFunction(callback) && callback(self._user);
                     } else {
-                        callback(response);
+                        _.isFunction(callback) && callback(response);
                     }
                 }, () => {
                     // - error
@@ -65,7 +66,7 @@ module bModules.Auth {
 
 
 
-        public check(field: Object, callback: Function) {
+        public check(field: Object, callback?) {
             var self = this;
 
             this.$http.post('/ajax/api/cabinet/account/', field)
@@ -76,13 +77,13 @@ module bModules.Auth {
                     _field[field['f']] = field['v'];
 
                     self.update(_field);
-                    callback(field['v'], response.data['code']);
+                    _.isFunction(callback) && callback(field['v'], response.data['code']);
                 })
         }
 
 
 
-        public uploadAvatar(avatar: File, callback: Function) {
+        public uploadAvatar(avatar: File, callback?) {
             var self = this;
 
             this.Upload.upload({
@@ -90,11 +91,10 @@ module bModules.Auth {
                 file: avatar
             }).success((response) => {
                 if (response.code === 0) {
-                    callback(response)
-                    console.log(response)
                     self.update({ avatar: response.data['url'] });
+                    _.isFunction(callback) && callback(response);
                 } else {
-                    callback(response)
+                    _.isFunction(callback) && callback(response)
                 }
             })
         }
@@ -103,7 +103,7 @@ module bModules.Auth {
 
         public update(user: Object) {
             for (var key in user) {
-                if (this._user['account'][key] != undefined) {
+                if (this._user['account'][key] !== undefined) {
                     this._user['account'][key] = user[key];
 
                     if (key === 'name' || key === 'surname') {
@@ -114,11 +114,9 @@ module bModules.Auth {
                 if (this._user['preferences'][key] != undefined) {
                     this._user['preferences'][key] = user[key];
                 }
-
             }
 
             this.saveToStorages(this._user);
-            console.log(this._user)
         }
 
 
