@@ -303,6 +303,48 @@ var bModules;
 /// <reference path='services/SettingsService.ts' />
 /// <reference path='Auth.ts' />
 /// <reference path='../_references.ts' />
+var bModules;
+(function (bModules) {
+    var Directives;
+    (function (Directives) {
+        function OnlyNumber() {
+            return {
+                restrict: 'A',
+                require: 'ngModel',
+                link: function (scope, element, attrs, modelCtrl) {
+                    modelCtrl.$parsers.push(function (inputValue) {
+                        // this next if is necessary for when using ng-required on your input.
+                        // In such cases, when a letter is typed first, this parser will be called
+                        // again, and the 2nd time, the value will be undefined
+                        if (inputValue === undefined)
+                            return '';
+                        var transformedInput = inputValue.replace(/[^0-9]/g, '');
+                        if (transformedInput !== inputValue) {
+                            modelCtrl.$setViewValue(transformedInput);
+                            modelCtrl.$render();
+                        }
+                        return transformedInput;
+                    });
+                }
+            };
+        }
+        Directives.OnlyNumber = OnlyNumber;
+    })(Directives = bModules.Directives || (bModules.Directives = {}));
+})(bModules || (bModules = {}));
+/// <reference path='_references.ts' />
+var bModules;
+(function (bModules) {
+    var Directives;
+    (function (Directives) {
+        'use strict';
+        var bDirectives = angular.module('bModules.Directives', []);
+        bDirectives.directive('onlyNumber', Directives.OnlyNumber);
+    })(Directives = bModules.Directives || (bModules.Directives = {}));
+})(bModules || (bModules = {}));
+/// <reference path='../../definitions/_references.ts' />
+/// <reference path='directives/OnlyNumber.ts' />
+/// <reference path='Directives.ts' /> 
+/// <reference path='../_references.ts' />
 var pages;
 (function (pages) {
     var cabinet;
@@ -578,7 +620,7 @@ var pages;
                     $scope.user = response;
                     $scope.settingsIsLoaded = true;
                     $timeout(function () {
-                        angular.element(".settings-page input:not([type='file'])").change();
+                        angular.element(".settings-page input:not([type='file'], [type='checkbox'])").change();
                     });
                 });
             }
@@ -596,7 +638,11 @@ var pages;
                         self.$scope.ImageUndefined = response.code === 4;
                     });
                 });
-                angular.element(".settings-page input[type='text'], .settings-page input[type='tel'], .settings-page input[type='email']").bind("focusout", function (e) {
+                angular.element(".settings-page input[type='text'], " +
+                    ".settings-page input[type='tel'], " +
+                    ".settings-page input[type='email']")
+                    .bind("focusout", function (e) {
+                    // -
                     var name = e.currentTarget['name'], value = e.currentTarget['value'].replace(/\s+/g, " ");
                     if (!self.$scope.form.user[name].$dirty)
                         return;
@@ -611,12 +657,10 @@ var pages;
                         self.$scope.form.user[name].$setValidity("duplicated", code !== 11);
                     });
                 });
-                //angular.element(".sidebar-item-detailed-body input[type='checkbox']").bind("change", function(e) {
-                //    var name  = e.currentTarget.name,
-                //        value = e.currentTarget.checked;
-                //
-                //    Settings.checkInputs({ f: name, v: value }, null);
-                //});
+                angular.element(".settings-page input[type='checkbox']").bind("change", function (e) {
+                    var name = e.currentTarget['name'], value = e.currentTarget['checked'];
+                    self.settingsService.check({ f: name, v: value }, null);
+                });
                 //
                 //angular.element(".sidebar-item-detailed-body select").bind('change',function(e) {
                 //    var name  = e.currentTarget.name,
@@ -665,7 +709,8 @@ var pages;
             'ui.mask',
             'ngFileUpload',
             'bModules.Types',
-            'bModules.Auth'
+            'bModules.Auth',
+            'bModules.Directives'
         ]);
         /** Providers configuration create */
         new cabinet.ProvidersConfigs(app);
@@ -697,6 +742,7 @@ var pages;
 // ####################
 /// <reference path='../_common/bModules/Types/_references.ts' />
 /// <reference path='../_common/bModules/Auth/_references.ts' />
+/// <reference path='../_common/bModules/Directives/_references.ts' />
 // ####################
 // Configs import
 // ####################

@@ -16,6 +16,7 @@
 // ####################
 /// <reference path='../_common/bModules/Types/_references.ts' />
 /// <reference path='../_common/bModules/Auth/_references.ts' />
+/// <reference path='../_common/bModules/Directives/_references.ts' />
 
 
 

@@ -27,7 +27,7 @@ module pages.cabinet {
                 $scope.user = response;
                 $scope.settingsIsLoaded = true;
                 $timeout(() => {
-                    angular.element(".settings-page input:not([type='file'])").change()
+                    angular.element(".settings-page input:not([type='file'], [type='checkbox'])").change()
                 });
             });
         }
@@ -54,7 +54,12 @@ module pages.cabinet {
                 });
             });
 
-            angular.element(".settings-page input[type='text'], .settings-page input[type='tel'], .settings-page input[type='email']").bind("focusout", function(e) {
+            angular.element(
+                ".settings-page input[type='text'], " +
+                ".settings-page input[type='tel'], " +
+                ".settings-page input[type='email']")
+                .bind("focusout", (e) => {
+                // -
                 var name  = e.currentTarget['name'],
                     value = e.currentTarget['value'].replace(/\s+/g, " ");
 
@@ -76,12 +81,12 @@ module pages.cabinet {
 
             });
 
-            //angular.element(".sidebar-item-detailed-body input[type='checkbox']").bind("change", function(e) {
-            //    var name  = e.currentTarget.name,
-            //        value = e.currentTarget.checked;
-            //
-            //    Settings.checkInputs({ f: name, v: value }, null);
-            //});
+            angular.element(".settings-page input[type='checkbox']").bind("change", (e) => {
+                var name  = e.currentTarget['name'],
+                    value = e.currentTarget['checked'];
+
+                self.settingsService.check({ f: name, v: value }, null);
+            });
             //
             //angular.element(".sidebar-item-detailed-body select").bind('change',function(e) {
             //    var name  = e.currentTarget.name,

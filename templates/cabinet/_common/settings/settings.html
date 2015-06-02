@@ -88,12 +88,12 @@
 
                     <div class="input-field">
                         <label for="user_landline_phone">Раб. телефон</label>
-                        <input id="user_landline_phone" type="tel" class="validate" name="landline_phone" ng-model="user.account.landline_phone" />
+                        <input id="user_landline_phone" type="tel" class="validate" name="landline_phone" ng-model="user.account.landline_phone" only-number />
                     </div>
 
                     <div class="input-field">
                         <label for="user_add_landline_phone">Доп. раб. телефон</label>
-                        <input id="user_add_landline_phone" type="tel" class="validate" name="add_landline_phone" ng-model="user.account.add_landline_phone" />
+                        <input id="user_add_landline_phone" type="tel" class="validate" name="add_landline_phone" ng-model="user.account.add_landline_phone" only-number />
                     </div>
 
                     <div class="input-field">
@@ -113,7 +113,7 @@
                 <div class="col s12">
                     <div class="row">
                         <div class="col s12">
-                            <input id="user_allow_call_requests" type="checkbox" ng-model="user.preferences.allow_call_requests" />
+                            <input id="user_allow_call_requests" type="checkbox" name="allow_call_requests" ng-model="user.preferences.allow_call_requests" />
                             <label for="user_allow_call_requests">Разрешать запрос обратного звонка</label>
                         </div>
                     </div>

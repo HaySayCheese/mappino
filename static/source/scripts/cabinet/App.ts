@@ -8,8 +8,10 @@ module pages.cabinet {
         'ui.router',
         'ui.mask',
         'ngFileUpload',
+
         'bModules.Types',
-        'bModules.Auth'
+        'bModules.Auth',
+        'bModules.Directives'
     ]);
 
 
