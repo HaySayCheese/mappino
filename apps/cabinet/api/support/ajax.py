@@ -142,7 +142,7 @@ class Support(object):
 
                     # todo: move this data into subobjact
                     'subject': ticket.subject,
-                    'user_avatar': user.avatar().url(),
+                    'user_avatar': user.avatar.url(),
 #                   'admin_avatar': '', # todo: add admin avatar url here.
                     'messages': [{
                         'type_sid': m.type_sid,
