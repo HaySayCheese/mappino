@@ -1,0 +1,67 @@
+.ticket-page {
+    section {
+        @media screen and (max-width: 700px) {
+            margin-bottom: 20px;
+
+            border-bottom: none;
+
+            @extend .z-depth-1;
+        }
+    }
+
+    .btn-floating {
+        margin-top: 55px;
+    }
+
+    .message {
+        min-width: 250px;
+        max-width: 500px;
+        display: inline-block;
+        padding: 15px;
+
+        background-color: #fff;
+        border-radius: 3px;
+
+        @extend .z-depth-1;
+
+
+        &.user {
+            float: left;
+
+            .avatar {
+                float: left;
+            }
+
+            .message-text {
+                margin-left: 70px;
+            }
+        }
+
+        &.support {
+            float: right;
+
+            .avatar {
+                float: right;
+            }
+
+            .message-text {
+                margin-right: 70px;
+            }
+        }
+
+
+
+        .avatar {
+            @include square(60px);
+            border-radius: 50%;
+        }
+
+        .message-text {
+            text-align: justify;
+        }
+
+        .message-created {
+            font-size: 0.8rem;
+        }
+    }
+}

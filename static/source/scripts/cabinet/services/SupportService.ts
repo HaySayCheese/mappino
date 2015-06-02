@@ -36,7 +36,7 @@ module pages.cabinet {
 
             this.$http.get('/ajax/api/cabinet/support/tickets/')
                 .then((response) => {
-                    self._tickets = response['data'];
+                    self._tickets = response.data['data'];
                     _.isFunction(callback) && callback(self._tickets)
                 }, () => {
                     // -
@@ -50,7 +50,8 @@ module pages.cabinet {
 
             this.$http.get('/ajax/api/cabinet/support/tickets/' + ticket_id + '/messages/')
                 .then((response) => {
-                    _.isFunction(callback) && callback(response.data)
+                    console.log(response.data)
+                    _.isFunction(callback) && callback(response.data['data'])
                 }, () => {
                     // -
                 })

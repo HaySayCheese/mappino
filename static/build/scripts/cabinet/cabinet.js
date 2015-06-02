@@ -485,7 +485,7 @@ var pages;
                 var self = this;
                 this.$http.get('/ajax/api/cabinet/support/tickets/')
                     .then(function (response) {
-                    self._tickets = response['data'];
+                    self._tickets = response.data['data'];
                     _.isFunction(callback) && callback(self._tickets);
                 }, function () {
                     // -
@@ -495,7 +495,8 @@ var pages;
                 var self = this;
                 this.$http.get('/ajax/api/cabinet/support/tickets/' + ticket_id + '/messages/')
                     .then(function (response) {
-                    _.isFunction(callback) && callback(response.data);
+                    console.log(response.data);
+                    _.isFunction(callback) && callback(response.data['data']);
                 }, function () {
                     // -
                 });
@@ -799,20 +800,25 @@ var pages;
                 this.supportService = supportService;
                 // -
                 $scope.ticket = {};
+                $scope.new_message = {};
                 $scope.ticketIsLoaded = false;
                 $scope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-                    console.log(toParams.ticket_id);
                     supportService.loadTicketMessages(toParams.ticket_id, function (response) {
                         $scope.ticket = response;
+                        $scope.new_message.id = toParams.ticket_id;
                         $scope.ticketIsLoaded = true;
                     });
                 });
             }
             TicketController.prototype.sendMessage = function () {
-                var _this = this;
                 var self = this;
-                this.supportService.sendMessage(this.$scope.ticket, function (response) {
-                    self.$state.go('ticket_view', { ticket_id: _this.$scope.ticket.id });
+                this.supportService.sendMessage(this.$scope.new_message, function (response) {
+                    self.$scope.ticket.messages.unshift({
+                        created: new Date().getTime(),
+                        text: self.$scope.new_message.message,
+                        type_sid: 0
+                    });
+                    self.$scope.new_message.message = '';
                 });
             };
             TicketController.$inject = [

@@ -26,6 +26,12 @@ section {
     }
 
 
+    &.no-bg {
+        padding: 0;
+        background-color: transparent;
+        box-shadow: none;
+    }
+
 
     h5 {
         margin-bottom: 30px;

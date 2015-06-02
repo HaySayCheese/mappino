@@ -67,7 +67,7 @@
                     <div class="col s12">
                         <h6>Последнии диалоги</h6>
                         <div class="collection">
-                            <a ng-href="#!/support/ticket/[[ ticket.id ]]" class="collection-item avatar" ng-repeat="ticket in tickets | orderBy: 'created': true">
+                            <a href ui-sref="ticket_view({ ticket_id: ticket.id })" class="collection-item avatar" ng-repeat="ticket in tickets | orderBy: 'created': true">
                                 <img src="http://lorempixel.com/42/42/nature" alt="" class="circle">
                                 <span class="title grey-text text-darken-3" ng-show="ticket.subject">
                                     [[ ticket.subject ]]
