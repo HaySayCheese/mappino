@@ -401,7 +401,7 @@ class AccountView(CabinetView):
         if sid not in Preferences.call_requests.values():
             return self.PostResponses.invalid_value()
 
-        preferences = user.preferences()
+        preferences = user.preferences
         if not preferences.send_call_request_notifications_to_sid == sid:
             preferences.send_call_request_notifications_to_sid = sid
             preferences.save()
@@ -413,7 +413,7 @@ class AccountView(CabinetView):
         if allow not in (True, False):
             return self.PostResponses.invalid_value()
 
-        preferences = user.preferences()
+        preferences = user.preferences
         if not preferences.allow_messaging == allow:
             preferences.allow_messaging = allow
             preferences.save()
@@ -426,7 +426,7 @@ class AccountView(CabinetView):
         if sid not in Preferences.messaging.values():
             return self.PostResponses.invalid_value()
 
-        preferences = user.preferences()
+        preferences = user.preferences
         if not preferences.send_message_notifications_to_sid == sid:
             preferences.send_message_notifications_to_sid = sid
             preferences.save()
@@ -438,7 +438,7 @@ class AccountView(CabinetView):
         if hide not in (True, False):
             return self.PostResponses.invalid_value()
 
-        preferences = user.preferences()
+        preferences = user.preferences
         if not preferences.hide_email == hide:
             preferences.hide_email = hide
             preferences.save()
@@ -450,7 +450,7 @@ class AccountView(CabinetView):
         if hide not in (True, False):
             return self.PostResponses.invalid_value()
 
-        preferences = user.preferences()
+        preferences = user.preferences
         if not preferences.hide_mobile_phone_number == hide:
             preferences.hide_mobile_phone_number = hide
             preferences.save()
@@ -462,7 +462,7 @@ class AccountView(CabinetView):
         if hide not in (True, False):
             return self.PostResponses.invalid_value()
 
-        preferences = user.preferences()
+        preferences = user.preferences
         if not preferences.hide_add_mobile_phone_number == hide:
             preferences.hide_add_mobile_phone_number = hide
             preferences.save()
@@ -474,7 +474,7 @@ class AccountView(CabinetView):
         if hide not in (True, False):
             return self.PostResponses.invalid_value()
 
-        preferences = user.preferences()
+        preferences = user.preferences
         if not preferences.hide_landline_phone == hide:
             preferences.hide_landline_phone = hide
             preferences.save()
@@ -486,7 +486,7 @@ class AccountView(CabinetView):
         if hide not in (True, False):
             return self.PostResponses.invalid_value()
 
-        preferences = user.preferences()
+        preferences = user.preferences
         if not preferences.hide_add_landline_phone == hide:
             preferences.hide_add_landline_phone = hide
             preferences.save()
@@ -498,7 +498,7 @@ class AccountView(CabinetView):
         if hide not in (True, False):
             return self.PostResponses.invalid_value()
 
-        preferences = user.preferences()
+        preferences = user.preferences
         if not preferences.hide_skype == hide:
             preferences.hide_skype = hide
             preferences.save()
