@@ -614,13 +614,13 @@ var pages;
                 this.settingsService = settingsService;
                 // -
                 $scope.settingsIsLoaded = false;
-                $timeout(function () { return $('select').material_select(); });
                 this.initInputsChange();
                 settingsService.load(function (response) {
                     $scope.user = response;
                     $scope.settingsIsLoaded = true;
                     $timeout(function () {
                         angular.element(".settings-page input:not([type='file'], [type='checkbox'])").change();
+                        $timeout(function () { return $('select').material_select(); });
                     });
                 });
             }
@@ -661,13 +661,10 @@ var pages;
                     var name = e.currentTarget['name'], value = e.currentTarget['checked'];
                     self.settingsService.check({ f: name, v: value }, null);
                 });
-                //
-                //angular.element(".sidebar-item-detailed-body select").bind('change',function(e) {
-                //    var name  = e.currentTarget.name,
-                //        value = e.currentTarget.value;
-                //
-                //    Settings.checkInputs({ f: name, v: value }, null);
-                //});
+                angular.element(".settings-page select").bind('change', function (e) {
+                    var name = e.currentTarget['name'], value = e.currentTarget['value'];
+                    self.settingsService.check({ f: name, v: value }, null);
+                });
             };
             SettingsController.$inject = [
                 '$scope',

@@ -17,7 +17,7 @@ module pages.cabinet {
             // -
             $scope.settingsIsLoaded = false;
 
-            $timeout(() => $('select').material_select());
+
 
 
             this.initInputsChange();
@@ -27,7 +27,8 @@ module pages.cabinet {
                 $scope.user = response;
                 $scope.settingsIsLoaded = true;
                 $timeout(() => {
-                    angular.element(".settings-page input:not([type='file'], [type='checkbox'])").change()
+                    angular.element(".settings-page input:not([type='file'], [type='checkbox'])").change();
+                    $timeout(() => $('select').material_select());
                 });
             });
         }
@@ -87,13 +88,13 @@ module pages.cabinet {
 
                 self.settingsService.check({ f: name, v: value }, null);
             });
-            //
-            //angular.element(".sidebar-item-detailed-body select").bind('change',function(e) {
-            //    var name  = e.currentTarget.name,
-            //        value = e.currentTarget.value;
-            //
-            //    Settings.checkInputs({ f: name, v: value }, null);
-            //});
+
+            angular.element(".settings-page select").bind('change', (e) => {
+                var name  = e.currentTarget['name'],
+                    value = e.currentTarget['value'];
+
+                self.settingsService.check({ f: name, v: value }, null);
+            });
         }
     }
 }

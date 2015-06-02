@@ -137,7 +137,7 @@
                 <div class="col s12">
                     <div class="row">
                         <div class="col s12">
-                            <input id="user_allow_messaging_requests" type="checkbox" ng-model="user.preferences.allow_messaging" />
+                            <input id="user_allow_messaging_requests" type="checkbox" name="allow_messaging" ng-model="user.preferences.allow_messaging" />
                             <label for="user_allow_messaging_requests">Разрешать оставлять сообщения через форму обратной связи</label>
                         </div>
                     </div>
@@ -164,7 +164,8 @@
                 <div class="col s12">
                     <div class="row">
                         <div class="col s12">
-                            <input id="user_hide_email" type="checkbox" ng-model="user.preferences.hide_email" />
+                            <input id="user_hide_email" type="checkbox" name="hide_email"
+                                   ng-model="user.preferences.hide_email" />
                             <label for="user_hide_email">Скрывать почту</label>
                         </div>
                     </div>
@@ -182,35 +183,40 @@
 
             <div class="row">
                 <div class="col s12">
-                    <input id="user_hide_mobile_phone_number" type="checkbox" ng-model="user.preferences.hide_mobile_phone_number" />
+                    <input id="user_hide_mobile_phone_number" type="checkbox" name="hide_mobile_phone_number"
+                           ng-model="user.preferences.hide_mobile_phone_number" />
                     <label for="user_hide_mobile_phone_number">Скрывать основной мобильный телефон</label>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col s12">
-                    <input id="user_hide_add_mobile_phone_number" type="checkbox" ng-model="user.preferences.hide_add_mobile_phone_number" />
+                    <input id="user_hide_add_mobile_phone_number" type="checkbox" name="hide_add_mobile_phone_number"
+                           ng-model="user.preferences.hide_add_mobile_phone_number" />
                     <label for="user_hide_add_mobile_phone_number">Скрывать дополнительный мобильный телефон</label>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col s12">
-                    <input id="user_hide_landline_phone_number" type="checkbox" ng-model="user.preferences.hide_landline_phone_number" />
+                    <input id="user_hide_landline_phone_number" type="checkbox" name="hide_landline_phone_number"
+                           ng-model="user.preferences.hide_landline_phone_number" />
                     <label for="user_hide_landline_phone_number">Скрывать рабочий телефон</label>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col s12">
-                    <input id="user_hide_add_landline_phone_number" type="checkbox" ng-model="user.preferences.hide_add_landline_phone_number" />
+                    <input id="user_hide_add_landline_phone_number" type="checkbox" name="hide_add_landline_phone_number"
+                           ng-model="user.preferences.hide_add_landline_phone_number" />
                     <label for="user_hide_add_landline_phone_number">Скрывать дополнительный рабочий телефон</label>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col s12">
-                    <input id="user_hide_skype" type="checkbox" ng-model="user.preferences.hide_skype" />
+                    <input id="user_hide_skype" type="checkbox" name="hide_skype"
+                           ng-model="user.preferences.hide_skype" />
                     <label for="user_hide_skype">Скрывать skype</label>
                 </div>
             </div>
