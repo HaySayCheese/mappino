@@ -45,7 +45,7 @@
         <div class="row" ng-repeat="message in ticket.messages">
             <div class="col s12">
                 <div class="message valign-wrapper" ng-class="{ 'user' : message.type_sid === 0, 'support' : message.type_sid === 1 }">
-                    <img class="avatar valign" ng-src="[[ ticket.user_avatar ]]" alt=""/>
+                    <img class="avatar valign" ng-src="[[ ticketCtrl.settingsService.user.account.avatar ]]" alt=""/>
                     <div class="message-text">[[ message.text ]]</div>
                     <div class="message-created grey-text right">[[ message.created | date:'dd.MM.yyyy в HH:mm' ]]</div>
                 </div>

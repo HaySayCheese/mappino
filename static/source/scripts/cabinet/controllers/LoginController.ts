@@ -11,7 +11,7 @@ module pages.cabinet {
 
         constructor(
             private $scope: any,
-            private authService: bModules.Auth.AuthService) {
+            private authService: bModules.Auth.IAuthService) {
             // -
             $scope.user = {
                 username: '',

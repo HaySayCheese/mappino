@@ -3,20 +3,20 @@
 
 module bModules.Auth {
 
-    export class SettingsService {
-        private _user: Object = {
+    export class SettingsService implements ISettingsService {
+        private _user: IUser = {
             account: {
-                name:               '',
-                surname:            '',
-                full_name:          '',
-                avatar:             '',
-                add_landline_phone: '',
-                add_mobile_phone:   '',
-                email:              '',
-                landline_phone:     '',
-                mobile_phone:       '',
-                skype:              '',
-                work_email:         '',
+                name:               null,
+                surname:            null,
+                full_name:          null,
+                avatar:             null,
+                add_landline_phone: null,
+                add_mobile_phone:   null,
+                email:              null,
+                landline_phone:     null,
+                mobile_phone:       null,
+                skype:              null,
+                work_email:         null,
             },
             preferences: {
                 allow_call_requests:            true,
@@ -41,12 +41,12 @@ module bModules.Auth {
         constructor(
             private $http:angular.IHttpService,
             private Upload: any) {
-            // -
+            // ---------------------------------------------------------------------------------------------------------
         }
 
 
 
-        public load(callback?) {
+        public load(success_callback?, error_callback?) {
             var self = this;
 
             this.$http.get('/ajax/api/cabinet/account/')
@@ -55,35 +55,41 @@ module bModules.Auth {
                         self.update(response.data['data']['account']);
                         self.update(response.data['data']['preferences']);
 
-                        _.isFunction(callback) && callback(self._user);
+                        _.isFunction(success_callback) && success_callback(self._user);
                     } else {
-                        _.isFunction(callback) && callback(response);
+                        _.isFunction(error_callback) && error_callback(response.data);
                     }
-                }, () => {
-                    // - error
+                }, (response) => {
+                    _.isFunction(error_callback) && error_callback(response.data);
                 });
         }
 
 
 
-        public check(field: Object, callback?) {
+        public check(field: Object, success_callback?, error_callback?) {
             var self = this;
 
             this.$http.post('/ajax/api/cabinet/account/', field)
                 .then((response) => {
-                    field['v'] = response.data['value'] ? response.data['value'] : field['v'];
+                    if (response.data['code'] === 0) {
+                        field['v'] = response.data['value'] ? response.data['value'] : field['v'];
 
-                    var _field = {};
-                    _field[field['f']] = field['v'];
+                        var _field = {};
+                        _field[field['f']] = field['v'];
 
-                    self.update(_field);
-                    _.isFunction(callback) && callback(field['v'], response.data['code']);
+                        self.update(_field);
+                        _.isFunction(success_callback) && success_callback(field['v']);
+                    } else {
+                        _.isFunction(error_callback) && error_callback(response.data);
+                    }
+                }, (response) => {
+                    _.isFunction(error_callback) && error_callback(response.data);
                 })
         }
 
 
 
-        public uploadAvatar(avatar: File, callback?) {
+        public uploadAvatar(avatar: File, success_callback?, error_callback?) {
             var self = this;
 
             this.Upload.upload({
@@ -92,27 +98,29 @@ module bModules.Auth {
             }).success((response) => {
                 if (response.code === 0) {
                     self.update({ avatar: response.data['url'] });
-                    _.isFunction(callback) && callback(response);
+                    _.isFunction(success_callback) && success_callback(response);
                 } else {
-                    _.isFunction(callback) && callback(response)
+                    _.isFunction(error_callback) && error_callback(response)
                 }
+            }).error((response) => {
+                _.isFunction(error_callback) && error_callback(response)
             })
         }
 
 
 
-        public update(user: Object) {
-            for (var key in user) {
-                if (this._user['account'][key] !== undefined) {
-                    this._user['account'][key] = user[key];
+        public update(params: Object) {
+            for (var key in params) {
+                if (this._user.account[key] !== undefined) {
+                    this._user.account[key] = params[key];
 
                     if (key === 'name' || key === 'surname') {
-                        this._user['account']['full_name'] = this._user['account']['name'] + ' ' + this._user['account']['surname'];
+                        this._user.account.full_name = this._user.account.name + ' ' + this._user.account.surname;
                     }
                 }
 
-                if (this._user['preferences'][key] != undefined) {
-                    this._user['preferences'][key] = user[key];
+                if (this._user.preferences[key] != undefined) {
+                    this._user.preferences[key] = params[key];
                 }
             }
 

@@ -3,26 +3,37 @@
 
 module pages.cabinet {
     export class SupportController {
-        private _tickets: Object;
+        private _ticket: ITicket = {
+            id:             null,
+            created:        null,
+            last_message:   null,
+            state_sid:      null,
+            subject:        null,
+            messages:       null
+        };
+        private _tickets: ITicket[];
 
         public static $inject = [
             '$scope',
             '$state',
-            'SupportService'
+            'TicketsService'
         ];
 
         constructor(
             private $scope: any,
             private $state: angular.ui.IStateService,
-            private supportService: SupportService) {
-            // -
-            $scope.ticket = {};
+            private ticketsService: ITicketsService) {
+            // ---------------------------------------------------------------------------------------------------------
+            $scope.ticket   = {};
+            $scope.tickets  = this._tickets = [];
 
             $scope.ticketsIsLoaded      = false;
             $scope.ticketFormIsVisible  = false;
 
-            supportService.load((response) => {
+
+            ticketsService.loadTickets((response) => {
                 this._tickets = $scope.tickets = response;
+
                 $scope.ticketsIsLoaded = true;
             })
         }
@@ -32,11 +43,11 @@ module pages.cabinet {
         private createTicket() {
             var self = this;
 
-            this.supportService.createTicket((response) => {
-                self.$scope.ticket.id = response.id;
+            this.ticketsService.createTicket((response) => {
+                this._ticket.id = self.$scope.ticket.id = response.id;
+
                 self.$scope.ticketFormIsVisible = true;
 
-                console.log('fsfsfs')
                 if (!self.$scope.$$phase) {
                     self.$scope.$apply()
                 }
@@ -48,8 +59,8 @@ module pages.cabinet {
         private sendMessage() {
             var self = this;
 
-            this.supportService.sendMessage(this.$scope.ticket, (response) => {
-                self.$state.go('ticket_view', { ticket_id: this.$scope.ticket.id })
+            this.ticketsService.sendMessage(this._ticket.id, this.$scope.ticket, (response) => {
+                self.$state.go('ticket_view', { ticket_id: this._ticket.id })
             });
         }
     }

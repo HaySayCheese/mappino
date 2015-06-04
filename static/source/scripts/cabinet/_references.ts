@@ -8,6 +8,10 @@
 // ####################
 // Interfaces import
 // ####################
+/// <reference path='interfaces/ITicket.ts' />
+/// <reference path='interfaces/ITicketsService.ts' />
+
+
 
 
 
@@ -20,6 +24,8 @@
 
 
 
+
+
 // ####################
 // Configs import
 // ####################
@@ -28,11 +34,15 @@
 /// <reference path='configs/ApplicationConfigs.ts' />
 
 
+
+
+
 // ####################
 // Services import
 // ####################
 /// <reference path='services/PublicationsService.ts' />
-/// <reference path='services/SupportService.ts' />
+/// <reference path='services/TicketsService.ts' />
+
 
 
 

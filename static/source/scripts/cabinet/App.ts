@@ -30,7 +30,7 @@ module pages.cabinet {
     // -
 
     app.service('PublicationsService', PublicationsService);
-    app.service('SupportService', SupportService);
+    app.service('TicketsService', TicketsService);
 
 
     /** Module controllers */

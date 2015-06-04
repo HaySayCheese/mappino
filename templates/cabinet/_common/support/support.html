@@ -69,12 +69,12 @@
                         <div class="collection">
                             <a href ui-sref="ticket_view({ ticket_id: ticket.id })" class="collection-item avatar" ng-repeat="ticket in tickets | orderBy: 'created': true">
                                 <img src="http://lorempixel.com/42/42/nature" alt="" class="circle">
-                                <span class="title grey-text text-darken-3" ng-show="ticket.subject">
+                                <div class="title grey-text text-darken-3 truncate" ng-show="ticket.subject">
                                     [[ ticket.subject ]]
-                                </span>
-                                <span class="title grey-text text-darken-1" ng-hide="ticket.subject">
+                                </div>
+                                <div class="title grey-text text-darken-1" ng-hide="ticket.subject">
                                     Новый диалог
-                                </span>
+                                </div>
                                 <p class="grey-text">
                                     <span>Создано: [[ ticket.created | date:'dd.MM.yyyy в HH:mm' ]]</span>
                                     <span>Посл. сообщ.: [[ ticket.last_message | date:'dd.MM.yyyy в HH:mm' ]]</span>

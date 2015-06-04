@@ -12,7 +12,7 @@ module pages.cabinet {
 
         constructor(
             private $timeout: angular.ITimeoutService,
-            private authService: bModules.Auth.AuthService,
+            private authService: bModules.Auth.IAuthService,
             private settingsService: bModules.Auth.SettingsService) {
             // -
             var self = this;
