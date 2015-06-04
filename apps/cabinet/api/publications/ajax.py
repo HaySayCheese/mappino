@@ -69,6 +69,7 @@ class Publication(CabinetView):
             return HttpJsonResponse({
                 'code': 0,
                 'message': 'OK',
+                'tuta ?': '?',
                 'data': publication_data,
             })
 
