@@ -1,6 +1,7 @@
 # coding=utf-8
 import copy
 import json
+import re
 
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.http.response import HttpResponse, HttpResponseBadRequest
@@ -69,7 +70,6 @@ class Publication(CabinetView):
             return HttpJsonResponse({
                 'code': 0,
                 'message': 'OK',
-                'tuta ?': '?',
                 'data': publication_data,
             })
 
@@ -129,7 +129,6 @@ class Publication(CabinetView):
         self.published_formatter = classes.CabinetPublishedDataSource()
         self.unpublished_formatter = classes.UnpublishedFormatter()
 
-
     def get(self, request, *args):
         try:
             tid, hash_id = args[0], args[1]
@@ -157,8 +156,20 @@ class Publication(CabinetView):
         else:
             response = self.unpublished_formatter.format(tid, head)
 
+        reg = re.compile('_sid$')
+        response = self.change(response, reg)
+
         return self.GetResponses.ok(response)
 
+    def change(self, some_dict, reg):
+        for key,value in some_dict.iteritems():
+            if isinstance(value,dict):
+                some_dict[key] = self.change(value,reg)
+            else:
+                if reg.search(key):
+                    some_dict[key] = str(value)
+
+        return some_dict
 
     def put(self, request, *args):
         try:
