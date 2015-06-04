@@ -67,7 +67,7 @@ class Publication(CabinetView):
         @staticmethod
         def ok(publication_data):
             return HttpJsonResponse({
-                'code': 1,
+                'code': 0,
                 'message': 'OK',
                 'data': publication_data,
             })
