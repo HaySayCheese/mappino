@@ -69,13 +69,11 @@ module pages.cabinet {
                     return;
                 }
 
-                self.settingsService.check({ f: name, v: value }, (newValue, code) => {
-                    if (newValue) {
-                        e.currentTarget['value'] = newValue;
-                    }
-
-                    self.$scope.form.user[name].$setValidity("incorrect",   code !== 10);
-                    self.$scope.form.user[name].$setValidity("duplicated",  code !== 11);
+                self.settingsService.check({ f: name, v: value }, (newValue) => {
+                    e.currentTarget['value'] = newValue;
+                }, (response) => {
+                    self.$scope.form.user[name].$setValidity("incorrect",   response.code !== 10);
+                    self.$scope.form.user[name].$setValidity("duplicated",  response.code !== 11);
                 });
 
             });

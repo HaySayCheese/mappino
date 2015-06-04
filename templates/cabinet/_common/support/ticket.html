@@ -1,1 +1,109 @@
-ttt
+<div class="ticket-page" ng-controller="TicketController as ticketCtrl">
+    <section class="medium center-block" ng-show="ticketIsLoaded">
+        <!--<h5 class="light-blue-text base">Сообщение</h5>-->
+
+        <form name="form.ticket" novalidate>
+            <div class="row">
+                <div class="col s12">
+                    <div ng-show="ticket.subject">
+                        <span class="grey-text">Тема: </span>[[ ticket.subject ]]
+                    </div>
+                    <div class="input-field" ng-hide="ticket.subject">
+                        <label for="ticket_subject">Тема обращения</label>
+                        <input id="ticket_subject" type="text" name="subject" ng-model="new_message.subject" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" ng-show="ticket.subject">
+                <div class="col s12">
+                    <div class="divider"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col s10">
+                    <div class="input-field">
+                        <label for="ticket_message">Текст сообщение</label>
+                        <textarea id="ticket_message" class="materialize-textarea" rows="3" name="message" ng-model="new_message.message"></textarea>
+                    </div>
+                </div>
+                <div class="col s2">
+                    <button class="btn-floating btn-large waves-effect waves-light right" ng-disabled="!new_message.message" ng-click="ticketCtrl.sendMessage()">
+                        <i class="mdi-content-send"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </section>
+
+
+
+    <section class="medium no-bg center-block" ng-show="ticketIsLoaded">
+        <!--<h5 class="light-blue-text base">Сообщение</h5>-->
+
+        <div class="row" ng-repeat="message in ticket.messages">
+            <div class="col s12">
+                <div class="message valign-wrapper" ng-class="{ 'user' : message.type_sid === 0, 'support' : message.type_sid === 1 }">
+                    <img class="avatar valign" ng-src="[[ ticketCtrl.settingsService.user.account.avatar ]]" alt=""/>
+                    <div class="message-text">[[ message.text ]]</div>
+                    <div class="message-created grey-text right">[[ message.created | date:'dd.MM.yyyy в HH:mm' ]]</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="medium center-block center-align" ng-hide="ticketIsLoaded">
+        <div class="preloader-wrapper big active">
+            <div class="spinner-layer spinner-blue">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+
+            <div class="spinner-layer spinner-red">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+
+            <div class="spinner-layer spinner-yellow">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+
+            <div class="spinner-layer spinner-green">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

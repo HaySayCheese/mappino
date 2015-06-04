@@ -1,3 +1,13 @@
 .support-page {
+    .collection-item {
+        height: auto !important;
 
+        p {
+            font-size: 0.8rem;
+
+            span + span {
+                margin-left: 15px;
+            }
+        }
+    }
 }

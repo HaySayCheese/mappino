@@ -17,17 +17,19 @@ class Support(object):
                 # warn: response code is omitted here and can't be added, because of list format!
                 # todo: add response code and message here
 
-                return HttpJsonResponse([
-                    {
+                return HttpJsonResponse({
+                    'code': 0,
+                    'messages': "OK",
+                    'data': [{
                         'id': ticket.id,
                         'state_sid': ticket.state_sid,
                         'created': ticket.created.strftime('%Y-%m-%dT%H:%M:00Z'),
                         'last_message': ticket.last_message_datetime().strftime('%Y-%m-%dT%H:%M:00Z')
                                             if ticket.last_message_datetime() else '-',
                         'subject': ticket.subject
-
-                    } for ticket in tickets
-                ])
+                             } for ticket in tickets
+                             ]
+                })
 
 
         class Post(object):
@@ -35,7 +37,8 @@ class Support(object):
             def ok(ticket_id):
                 return HttpJsonResponse({
                     'code': 0,
-                    'id': ticket_id,
+                    'messages': "OK",
+                    'data' : {'id': ticket_id},
                 })
 
 
@@ -139,16 +142,16 @@ class Support(object):
                 return HttpJsonResponse({
                     'code': 0,
                     'message': 'OK',
-
-                    # todo: move this data into subobjact
-                    'subject': ticket.subject,
-                    'user_avatar': user.avatar().url(),
-#                   'admin_avatar': '', # todo: add admin avatar url here.
-                    'messages': [{
-                        'type_sid': m.type_sid,
-                        'created': m.created.strftime('%Y-%m-%dT%H:%M:00Z'),
-                        'text': m.text,
-                    } for m in ticket.messages()]
+                    'data': {
+                        'subject': ticket.subject,
+                        'user_avatar': user.avatar.url(),
+#                       'admin_avatar': '', # todo: add admin avatar url here.
+                        'messages': [{
+                            'type_sid': m.type_sid,
+                            'created': m.created.strftime('%Y-%m-%dT%H:%M:00Z'),
+                            'text': m.text,
+                        } for m in ticket.messages()]
+                    }
                 })
 
 

@@ -6,11 +6,13 @@ module pages.cabinet {
 
         public static $inject = [
             '$timeout',
+            'AuthService',
             'SettingsService'
         ];
 
         constructor(
             private $timeout: angular.ITimeoutService,
+            private authService: bModules.Auth.IAuthService,
             private settingsService: bModules.Auth.SettingsService) {
             // -
             var self = this;
@@ -19,7 +21,10 @@ module pages.cabinet {
             //    console.log(self.authService.user)
             //}, 4000);
             $(".button-collapse").sideNav();
+
+            authService.getUserByCookie();
         }
+
 
     }
 }

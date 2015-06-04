@@ -30,6 +30,7 @@ module pages.cabinet {
     // -
 
     app.service('PublicationsService', PublicationsService);
+    app.service('TicketsService', TicketsService);
 
 
     /** Module controllers */
@@ -39,4 +40,5 @@ module pages.cabinet {
     app.controller('PublicationController', PublicationController);
     app.controller('SettingsController', SettingsController);
     app.controller('SupportController', SupportController);
+    app.controller('TicketController', TicketController);
 }

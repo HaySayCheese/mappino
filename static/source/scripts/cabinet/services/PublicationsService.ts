@@ -3,17 +3,17 @@
 
 module pages.cabinet {
     export class PublicationsService {
-        private publication: Object;
 
         public static $inject = [
             '$http',
             '$state'
         ];
 
+
         constructor(
             private $http: angular.IHttpService,
             private $state: angular.ui.IStateService) {
-            // -
+            // ---------------------------------------------------------------------------------------------------------
         }
 
 

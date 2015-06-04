@@ -31,6 +31,11 @@ module pages.cabinet {
                         url: "/support/",
                         templateUrl: '/ajax/template/cabinet/support/'
                     })
+                    .state('ticket_view', {
+                        url: "/support/:ticket_id",
+                        templateUrl: '/ajax/template/cabinet/support/ticket/'
+                    })
+
                     .state('settings', {
                         url: "/settings/",
                         templateUrl: '/ajax/template/cabinet/settings/'
