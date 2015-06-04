@@ -7,7 +7,6 @@ from django.http.response import HttpResponse, HttpResponseBadRequest
 
 from collective.http.responses import HttpJsonResponseBadRequest, HttpJsonResponse
 from collective.methods.request_data_getters import angular_parameters
-
 from apps.classes import CabinetView
 from core.publications import classes
 from core.publications.exceptions import PhotosHandlerExceptions
@@ -132,7 +131,7 @@ class Publication(CabinetView):
 
     def get(self, request, *args):
         try:
-            tid, hash_id = args[:]
+            tid, hash_id = args[0], args[1]
             tid = int(tid)
             model = HEAD_MODELS[tid]
 
