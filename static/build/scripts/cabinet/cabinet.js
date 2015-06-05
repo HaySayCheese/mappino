@@ -531,10 +531,9 @@ var pages;
             }
             PublicationsService.prototype.load = function (success_callback, error_callback) {
                 var _this = this;
-                this.$http.get('/ajax/api/cabinet/publications/briefs/all')
+                this.$http.get('/ajax/api/cabinet/publications/briefs/all/')
                     .then(function (response) {
                     if (response.data['code'] === 0) {
-                        console.log(response.data['data']);
                         _this._publications = response.data['data'];
                         _.isFunction(success_callback) && success_callback(_this._publications);
                     }
@@ -546,23 +545,22 @@ var pages;
                 });
             };
             PublicationsService.prototype.create = function (publication, success_callback, error_callback) {
-                var self = this;
+                var _this = this;
                 this.$http.post('/ajax/api/cabinet/publications/', publication)
                     .then(function (response) {
                     if (response.data['code'] === 0) {
-                        self.$state.go('publication_edit', { id: publication['tid'] + ":" + response.data['data']['id'] });
+                        _this.$state.go('publication_edit', { id: publication['tid'] + ":" + response.data['data']['id'] });
                         _.isFunction(success_callback) && success_callback(response.data);
                     }
                     else {
                         _.isFunction(error_callback) && error_callback(response.data);
                     }
-                }, function () {
+                }, function (response) {
                     _.isFunction(error_callback) && error_callback(response.data);
                 });
             };
             PublicationsService.prototype.loadPublication = function (publication, success_callback, error_callback) {
                 var _this = this;
-                var self = this;
                 this.$http.get('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/')
                     .then(function (response) {
                     if (response.data['code'] === 0) {
@@ -769,13 +767,14 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var BriefsController = (function () {
-            function BriefsController($scope, $timeout, realtyTypesService, publicationsService) {
+            function BriefsController($scope, $rootScope, $timeout, realtyTypesService, publicationsService) {
                 this.$scope = $scope;
+                this.$rootScope = $rootScope;
                 this.$timeout = $timeout;
                 this.realtyTypesService = realtyTypesService;
                 this.publicationsService = publicationsService;
                 // ---------------------------------------------------------------------------------------------------------
-                $scope.publications = [];
+                $scope.briefs = [];
                 $scope.new_publication = {
                     tid: 0,
                     for_sale: true,
@@ -787,17 +786,19 @@ var pages;
             }
             BriefsController.prototype.loadPublications = function () {
                 var _this = this;
+                this.$rootScope.loaders.base = true;
                 this.publicationsService.load(function (response) {
-                    _this.$scope.publications = response;
+                    _this.$scope.briefs = response;
+                    _this.$rootScope.loaders.base = false;
                 });
             };
+            // using in scope
             BriefsController.prototype.createPublication = function () {
-                this.publicationsService.create(this.$scope.new_publication, function () {
-                    // - create callback
-                });
+                this.publicationsService.create(this.$scope.new_publication);
             };
             BriefsController.$inject = [
                 '$scope',
+                '$rootScope',
                 '$timeout',
                 'RealtyTypesService',
                 'PublicationsService'

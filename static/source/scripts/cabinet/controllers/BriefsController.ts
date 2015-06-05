@@ -6,6 +6,7 @@ module pages.cabinet {
 
         public static $inject = [
             '$scope',
+            '$rootScope',
             '$timeout',
             'RealtyTypesService',
             'PublicationsService'
@@ -13,11 +14,12 @@ module pages.cabinet {
 
         constructor(
             private $scope: any,
+            private $rootScope: any,
             private $timeout: angular.ITimeoutService,
             private realtyTypesService: bModules.Types.RealtyTypesService,
             private publicationsService: PublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
-            $scope.publications = [];
+            $scope.briefs = [];
 
             $scope.new_publication = {
                 tid:        0,
@@ -28,23 +30,26 @@ module pages.cabinet {
 
             $timeout(() => $('select').material_select());
 
+
             this.loadPublications();
         }
 
 
 
         private loadPublications() {
+            this.$rootScope.loaders.base = true;
+
             this.publicationsService.load((response) => {
-                this.$scope.publications = response;
+                this.$scope.briefs = response;
+                this.$rootScope.loaders.base = false;
             });
         }
 
 
 
+        // using in scope
         private createPublication() {
-            this.publicationsService.create(this.$scope.new_publication, () => {
-                // - create callback
-            });
+            this.publicationsService.create(this.$scope.new_publication);
         }
 
     }
