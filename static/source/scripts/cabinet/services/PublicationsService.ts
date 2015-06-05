@@ -4,6 +4,7 @@
 module pages.cabinet {
     export class PublicationsService {
         private _publication: Object;
+        private _publications: Object;
 
         public static $inject = [
             '$http',
@@ -19,22 +20,42 @@ module pages.cabinet {
 
 
 
-        public create(publication: Object, callback: Function) {
-            var self = this;
-
-            this.$http.post('/ajax/api/cabinet/publications/', publication)
+        public load(success_callback?, error_callback?) {
+            this.$http.get('/ajax/api/cabinet/publications/briefs/all')
                 .then((response) => {
-                    self.$state.go('publication_edit', { id: publication['tid'] + ":" + response.data['data']['id'] });
-
-                    callback(response);
-                }, () => {
-                    // error
+                    if (response.data['code'] === 0) {
+                        console.log(response.data['data']);
+                        this._publications = response.data['data'];
+                        _.isFunction(success_callback) && success_callback(this._publications)
+                    } else {
+                        _.isFunction(error_callback) && error_callback(response.data)
+                    }
+                }, (response) => {
+                    _.isFunction(error_callback) && error_callback(response.data)
                 });
         }
 
 
 
-        public load(publication: Object, success_callback?, error_callback?) {
+        public create(publication: Object, success_callback?, error_callback?) {
+            var self = this;
+
+            this.$http.post('/ajax/api/cabinet/publications/', publication)
+                .then((response) => {
+                    if (response.data['code'] === 0) {
+                        self.$state.go('publication_edit', { id: publication['tid'] + ":" + response.data['data']['id'] });
+                        _.isFunction(success_callback) && success_callback(response.data)
+                    } else {
+                        _.isFunction(error_callback) && error_callback(response.data)
+                    }
+                }, () => {
+                    _.isFunction(error_callback) && error_callback(response.data)
+                });
+        }
+
+
+
+        public loadPublication(publication: Object, success_callback?, error_callback?) {
             var self = this;
 
             this.$http.get('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/')
@@ -47,7 +68,6 @@ module pages.cabinet {
                     } else {
                         _.isFunction(error_callback) && error_callback(response.data)
                     }
-
                 }, (response) => {
                     _.isFunction(error_callback) && error_callback(response.data)
                 })

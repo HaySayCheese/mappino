@@ -16,7 +16,9 @@ module pages.cabinet {
             private $timeout: angular.ITimeoutService,
             private realtyTypesService: bModules.Types.RealtyTypesService,
             private publicationsService: PublicationsService) {
-            // -
+            // ---------------------------------------------------------------------------------------------------------
+            $scope.publications = [];
+
             $scope.new_publication = {
                 tid:        0,
                 for_sale:   true,
@@ -25,6 +27,16 @@ module pages.cabinet {
             $scope.realtyTypes = realtyTypesService.realty_types;
 
             $timeout(() => $('select').material_select());
+
+            this.loadPublications();
+        }
+
+
+
+        private loadPublications() {
+            this.publicationsService.load((response) => {
+                this.$scope.publications = response;
+            });
         }
 
 

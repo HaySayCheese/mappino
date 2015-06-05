@@ -1663,7 +1663,7 @@ body {
  * and Firefox.
  * Correct `block` display not defined for `main` in IE 11.
  */
-article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
+article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, .brief, summary {
   display: block; }
 
 /**
@@ -1993,7 +1993,7 @@ ul {
 .clearfix {
   clear: both; }
 
-.z-depth-1, nav, .card-panel, .card, .toast, .btn, .btn-large, .btn-floating, .dropdown-content, .collapsible, .side-nav, section, .login-panel, .ticket-page section, .ticket-page .message {
+.z-depth-1, nav, .card-panel, .card, .toast, .btn, .btn-large, .btn-floating, .dropdown-content, .collapsible, .side-nav, section, .brief, .login-panel, .ticket-page section, .ticket-page .brief, .ticket-page .message {
   -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
   -moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12); }
@@ -5352,13 +5352,13 @@ small {
     font-weight: 300; }
     .card .card-title.activator {
       cursor: pointer; }
-  .card.small, .card.medium, .card.large, .card.x-large {
+  .card.small, .card.medium, .card.large {
     position: relative; }
-    .card.small .card-image, .card.medium .card-image, .card.large .card-image, .card.x-large .card-image {
+    .card.small .card-image, .card.medium .card-image, .card.large .card-image {
       overflow: hidden; }
-    .card.small .card-content, .card.medium .card-content, .card.large .card-content, .card.x-large .card-content {
+    .card.small .card-content, .card.medium .card-content, .card.large .card-content {
       overflow: hidden; }
-    .card.small .card-action, .card.medium .card-action, .card.large .card-action, .card.x-large .card-action {
+    .card.small .card-action, .card.medium .card-action, .card.large .card-action {
       position: absolute;
       bottom: 0;
       left: 0;
@@ -5375,11 +5375,11 @@ small {
       height: 250px; }
     .card.medium .card-content {
       height: 150px; }
-  .card.large, .card.x-large {
+  .card.large {
     height: 500px; }
-    .card.large .card-image, .card.x-large .card-image {
+    .card.large .card-image {
       height: 330px; }
-    .card.large .card-content, .card.x-large .card-content {
+    .card.large .card-content {
       height: 170px; }
   .card .card-image {
     position: relative; }
@@ -7919,57 +7919,66 @@ button.picker__today:focus, button.picker__clear:focus, button.picker__close:foc
   .picker--time .picker__box {
     margin-bottom: 5em; } }
 
-.card.x-large {
-  height: 600px;
-  overflow: visible; }
-  .card.x-large .card-image {
-    height: 380px; }
-  .card.x-large .card-content {
-    height: 220px; }
-.card.new-publication {
-  color: #757575; }
-  .card.new-publication .btn, .card.new-publication .btn-large {
-    z-index: 0; }
-.card .card-title {
-  text-shadow: 0 0 1px #000000, 0 1px 10px #000000; }
-.card .card-content {
-  position: relative;
-  padding-top: 30px; }
-  .card .card-content .card-label {
-    position: absolute;
-    top: 7px;
-    left: 0;
-    line-height: 30px;
-    padding: 0 10px; }
-    .card .card-content .card-label.green {
-      color: #388E3C; }
-    .card .card-content .card-label.grey {
-      color: #757575; }
-.card .card-action a {
-  color: #03a9f4;
-  margin-right: 20px;
-  -webkit-transition: color .3s ease;
-  -moz-transition: color .3s ease;
-  -o-transition: color .3s ease;
-  -ms-transition: color .3s ease;
-  transition: color .3s ease;
-  text-transform: uppercase; }
-  .card .card-action a:hover {
-    color: #60ccfd; }
-.card .valign-wrapper {
-  height: 100%; }
-  .card .valign-wrapper .valign {
-    width: 100%; }
+.nav-wrapper {
+  padding: 0 20px; }
+  .nav-wrapper .hide-on-med-and-down:not(.right) {
+    margin-left: 200px; }
+  .nav-wrapper a:not(.brand-logo) {
+    text-transform: uppercase; }
 
-section {
+.brief {
+  padding: 0 !important; }
+  .brief.brief-new-publication .brief-content {
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px; }
+  .brief .brief-image {
+    position: relative;
+    overflow: hidden;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px; }
+    .brief .brief-image img {
+      height: 380px; }
+  .brief .brief-title {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    color: #fff;
+    font-size: 2.28rem;
+    text-shadow: 0 0 1px #000000, 0 1px 10px #000000; }
+  .brief .brief-content {
+    position: relative;
+    padding: 45px 20px 20px;
+    border-bottom: 1px solid #eeeeee; }
+  .brief .brief-status {
+    position: absolute;
+    top: 10px;
+    left: 20px; }
+    .brief .brief-status.published {
+      color: #4CAF50; }
+  .brief .brief-footer {
+    padding: 20px; }
+    .brief .brief-footer a {
+      color: #ffab40;
+      -webkit-transition: color .3s ease;
+      -moz-transition: color .3s ease;
+      -o-transition: color .3s ease;
+      -ms-transition: color .3s ease;
+      transition: color .3s ease;
+      text-transform: uppercase; }
+      .brief .brief-footer a:hover {
+        color: #ffd8a6; }
+    .brief .brief-footer a + a {
+      margin-left: 15px; }
+
+section, .brief {
   display: block;
   position: relative;
   padding: 20px 40px 20px 40px;
-  margin: 20px 0 20px;
+  margin: 20px auto;
   background-color: #fff;
   border-radius: 3px; }
   @media screen and (max-width: 700px) {
-    section {
+    section, .brief {
       width: 100% !important;
       height: auto;
       padding: 10px 20px 10px 20px;
@@ -7977,19 +7986,34 @@ section {
       box-shadow: none;
       border-radius: 0;
       border-bottom: 1px solid #e0e0e0; } }
-  section.medium {
+  section.medium, .medium.brief {
     width: 700px;
     height: auto; }
-  section.no-bg {
+  section.no-bg, .no-bg.brief {
     padding: 0;
     background-color: transparent;
     box-shadow: none; }
-  section h5 {
+  section h5, .brief h5 {
     margin-bottom: 30px; }
     @media screen and (max-width: 700px) {
-      section h5 {
+      section h5, .brief h5 {
         margin-top: 15px;
         font-size: 1.3rem; } }
+
+.input-has-error {
+  position: absolute;
+  margin-top: -25px;
+  font-size: 0.8rem;
+  color: #F44336; }
+  .input-has-error.checkbox-error {
+    margin-top: 0 !important; }
+
+.nav-wrapper .navbar-user-block .navbar-user-avatar {
+  width: 35px;
+  height: 35px;
+  margin-right: 10px;
+  border-radius: 50%;
+  border: 1px solid #1976D2; }
 
 .login-panel {
   width: 400px;
@@ -8059,7 +8083,7 @@ section {
       margin-left: 15px; }
 
 @media screen and (max-width: 700px) {
-  .ticket-page section {
+  .ticket-page section, .ticket-page .brief {
     margin-bottom: 20px;
     border-bottom: none; } }
 .ticket-page .btn-floating {
@@ -8097,23 +8121,4 @@ html, body {
   height: 100%; }
 
 body {
-  background-color: #eceff1; }
-
-.nav-wrapper {
-  padding: 0 20px; }
-  .nav-wrapper .hide-on-med-and-down:not(.right) {
-    margin-left: 200px; }
-  .nav-wrapper .navbar-user-avatar {
-    width: 35px;
-    height: 35px;
-    margin-right: 10px;
-    border-radius: 50%; }
-
-.input-has-error {
-  position: absolute;
-  margin-top: -25px;
-  font-size: 0.8rem;
-  color: #F44336; }
-  .input-has-error.checkbox-error {
-    margin-top: 0 !important; }
-
+  background: url('../../images/cabinet/cabinet-bg.jpg') center center no-repeat fixed; }

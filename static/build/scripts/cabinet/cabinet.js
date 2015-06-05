@@ -529,17 +529,38 @@ var pages;
                 this.$state = $state;
                 // ---------------------------------------------------------------------------------------------------------
             }
-            PublicationsService.prototype.create = function (publication, callback) {
+            PublicationsService.prototype.load = function (success_callback, error_callback) {
+                var _this = this;
+                this.$http.get('/ajax/api/cabinet/publications/briefs/all')
+                    .then(function (response) {
+                    if (response.data['code'] === 0) {
+                        console.log(response.data['data']);
+                        _this._publications = response.data['data'];
+                        _.isFunction(success_callback) && success_callback(_this._publications);
+                    }
+                    else {
+                        _.isFunction(error_callback) && error_callback(response.data);
+                    }
+                }, function (response) {
+                    _.isFunction(error_callback) && error_callback(response.data);
+                });
+            };
+            PublicationsService.prototype.create = function (publication, success_callback, error_callback) {
                 var self = this;
                 this.$http.post('/ajax/api/cabinet/publications/', publication)
                     .then(function (response) {
-                    self.$state.go('publication_edit', { id: publication['tid'] + ":" + response.data['data']['id'] });
-                    callback(response);
+                    if (response.data['code'] === 0) {
+                        self.$state.go('publication_edit', { id: publication['tid'] + ":" + response.data['data']['id'] });
+                        _.isFunction(success_callback) && success_callback(response.data);
+                    }
+                    else {
+                        _.isFunction(error_callback) && error_callback(response.data);
+                    }
                 }, function () {
-                    // error
+                    _.isFunction(error_callback) && error_callback(response.data);
                 });
             };
-            PublicationsService.prototype.load = function (publication, success_callback, error_callback) {
+            PublicationsService.prototype.loadPublication = function (publication, success_callback, error_callback) {
                 var _this = this;
                 var self = this;
                 this.$http.get('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/')
@@ -753,7 +774,8 @@ var pages;
                 this.$timeout = $timeout;
                 this.realtyTypesService = realtyTypesService;
                 this.publicationsService = publicationsService;
-                // -
+                // ---------------------------------------------------------------------------------------------------------
+                $scope.publications = [];
                 $scope.new_publication = {
                     tid: 0,
                     for_sale: true,
@@ -761,7 +783,14 @@ var pages;
                 };
                 $scope.realtyTypes = realtyTypesService.realty_types;
                 $timeout(function () { return $('select').material_select(); });
+                this.loadPublications();
             }
+            BriefsController.prototype.loadPublications = function () {
+                var _this = this;
+                this.publicationsService.load(function (response) {
+                    _this.$scope.publications = response;
+                });
+            };
             BriefsController.prototype.createPublication = function () {
                 this.publicationsService.create(this.$scope.new_publication, function () {
                     // - create callback
@@ -805,7 +834,7 @@ var pages;
             PublicationController.prototype.loadPublicationData = function () {
                 var _this = this;
                 this.$rootScope.loaders.base = true;
-                this.publicationsService.load(this._publication, function (response) {
+                this.publicationsService.loadPublication(this._publication, function (response) {
                     _this.$scope.publication = response;
                     _this.$rootScope.loaders.base = false;
                     _this.$timeout(function () { return $('select').material_select(); }, 0);

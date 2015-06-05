@@ -47,7 +47,7 @@ module pages.cabinet {
         private loadPublicationData() {
             this.$rootScope.loaders.base = true;
 
-            this.publicationsService.load(this._publication, (response) => {
+            this.publicationsService.loadPublication(this._publication, (response) => {
                 this.$scope.publication = response;
                 this.$rootScope.loaders.base = false;
 

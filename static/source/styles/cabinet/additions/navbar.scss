@@ -1,0 +1,11 @@
+.nav-wrapper {
+    padding: 0 20px;
+
+    .hide-on-med-and-down:not(.right) {
+        margin-left: 200px;
+    }
+
+    a:not(.brand-logo) {
+        text-transform: uppercase;
+    }
+}

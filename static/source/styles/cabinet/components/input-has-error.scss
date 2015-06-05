@@ -1,0 +1,15 @@
+.input-has-error {
+    position: absolute;
+    margin-top: -25px;
+    font-size: 0.8rem;
+    color: color('red', 'base');
+
+    &.checkbox-error {
+        margin-top: 0 !important;
+    }
+}
+
+
+.ng-invalid {
+    @extend input.invalid;
+}

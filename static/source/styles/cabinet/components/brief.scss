@@ -1,0 +1,68 @@
+.brief {
+    @extend section;
+    padding: 0 !important;
+
+    &.brief-new-publication {
+        .brief-content {
+            border-bottom-left-radius: 3px;
+            border-bottom-right-radius: 3px;
+        }
+    }
+
+
+    .brief-image {
+        position: relative;
+        overflow: hidden;
+
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+
+        img {
+            height: 380px;
+        }
+    }
+
+    .brief-title {
+        position: absolute;
+        left: 20px;
+        bottom: 20px;
+
+        color: #fff;
+        font-size: $h4-fontsize;
+        text-shadow: 0 0 1px #000000, 0 1px 10px #000000;
+    }
+
+    .brief-content {
+        position: relative;
+        padding: 45px 20px 20px;
+        border-bottom: 1px solid color('grey', 'lighten-3');
+    }
+
+    .brief-status {
+        position: absolute;
+        top: 10px;
+        left: 20px;
+
+        &.published {
+            color: color('green', 'base');
+        }
+    }
+
+    .brief-footer {
+        padding: 20px;
+
+        a {
+            color: color("orange", "accent-2");
+            @include transition(color .3s ease);
+            text-transform: uppercase;
+
+            &:hover {
+                color: lighten(color("orange", "accent-2"), 20%);
+            }
+        }
+
+        a + a {
+            margin-left: 15px;
+        }
+    }
+}

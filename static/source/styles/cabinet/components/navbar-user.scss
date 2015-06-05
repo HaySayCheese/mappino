@@ -1,0 +1,12 @@
+.nav-wrapper {
+
+    .navbar-user-block {
+
+        .navbar-user-avatar {
+            @include square(35px);
+            margin-right: 10px;
+            border-radius: 50%;
+            border: 1px solid color('blue', 'darken-2');
+        }
+    }
+}

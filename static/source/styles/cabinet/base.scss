@@ -3,64 +3,34 @@
 // --------------------------------------------------
 @import "../_common/materialize";
 
-// override materialize components
-@import "components/card";
+
+// additions to the "materialize" components
+@import "additions/navbar";
+
+
+// custom components
+@import "components/brief";
 @import "components/section";
+@import "components/input-has-error";
+@import "components/navbar-user";
 
 
+// pages style
 @import "pages/login";
+@import "pages/briefs";
 @import "pages/publication";
 @import "pages/settings";
 @import "pages/support";
 @import "pages/ticket";
 
 
-
+// sets size to 100%
 html,
 body {
     @include square(100%);
 }
 
-
 body {
-    background-color: color("blue-grey", "lighten-5");
-}
-
-
-.wrapper {
-    //padding: 20px;
-
-}
-
-.nav-wrapper {
-    padding: 0 20px;
-
-    .hide-on-med-and-down:not(.right) {
-        margin-left: 200px;
-    }
-
-    .navbar-user-avatar {
-        @include square(35px);
-        margin-right: 10px;
-        border-radius: 50%;
-    }
-}
-
-
-
-
-
-.input-has-error {
-    position: absolute;
-    margin-top: -25px;
-    font-size: 0.8rem;
-    color: color('red', 'base');
-
-    &.checkbox-error {
-        margin-top: 0 !important;
-    }
-}
-
-.ng-invalid {
-    @extend input.invalid;
+    //background-color: color("blue-grey", "lighten-5");
+    background: url('../../images/cabinet/cabinet-bg.jpg') center center no-repeat fixed;
 }
