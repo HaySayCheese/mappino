@@ -5,26 +5,24 @@ module pages.cabinet {
     export class CabinetController {
 
         public static $inject = [
-            '$timeout',
+            '$rootScope',
             'AuthService',
             'SettingsService'
         ];
 
         constructor(
-            private $timeout: angular.ITimeoutService,
+            private $rootScope: any,
             private authService: bModules.Auth.IAuthService,
             private settingsService: bModules.Auth.SettingsService) {
             // -
-            var self = this;
-            //$timeout(() => {
-            //    self.authService.user = { full_name: 'fsafaf' };
-            //    console.log(self.authService.user)
-            //}, 4000);
             $(".button-collapse").sideNav();
+
+            $rootScope.loaders = {
+                base:   false,
+                avatar: false
+            };
 
             authService.getUserByCookie();
         }
-
-
     }
 }

@@ -2520,7 +2520,7 @@ span.badge {
 .circle {
   border-radius: 50%; }
 
-.center-block {
+.center-block, .publication-view-content .publication-form {
   display: block;
   margin-left: auto;
   margin-right: auto; }
@@ -7997,6 +7997,33 @@ section {
   padding: 30px 50px;
   background-color: #fff; }
 
+@media screen and (max-width: 1735px) {
+  .publication-view-content {
+    width: 92% !important;
+    margin-left: 4% !important; } }
+@media screen and (max-width: 1570px) {
+  .publication-view-content {
+    width: 100% !important;
+    margin-left: 0 !important; } }
+@media screen and (max-width: 700px) {
+  .publication-view-content {
+    padding: 0 !important; } }
+@media screen and (min-width: 1445px) {
+  .publication-view-content form {
+    float: left; } }
+.publication-view-content .publication-preview {
+  position: fixed;
+  right: calc(8.3% + 0.75rem); }
+  @media screen and (max-width: 1735px) {
+    .publication-view-content .publication-preview {
+      right: calc(4% + 0.75rem); } }
+  @media screen and (max-width: 1570px) {
+    .publication-view-content .publication-preview {
+      right: calc(0% + 0.75rem); } }
+  @media screen and (max-width: 1445px) {
+    .publication-view-content .publication-preview {
+      display: none; } }
+
 .settings-page .user-block .user-photo {
   width: 180px;
   height: 180px;
@@ -8017,6 +8044,8 @@ section {
   .settings-page .user-block .image-errors .input-has-error {
     position: relative;
     margin-top: 0px; }
+.settings-page .user-block .preloader-wrapper {
+  margin-top: 45px; }
 .settings-page .col .col {
   padding: 0; }
 .settings-page .row .row {
@@ -8063,7 +8092,7 @@ section {
   .ticket-page .message .message-created {
     font-size: 0.8rem; }
 
-html, body, main {
+html, body {
   width: 100%;
   height: 100%; }
 
@@ -8074,10 +8103,17 @@ body {
   padding: 0 20px; }
   .nav-wrapper .hide-on-med-and-down:not(.right) {
     margin-left: 200px; }
+  .nav-wrapper .navbar-user-avatar {
+    width: 35px;
+    height: 35px;
+    margin-right: 10px;
+    border-radius: 50%; }
 
 .input-has-error {
   position: absolute;
   margin-top: -25px;
   font-size: 0.8rem;
   color: #F44336; }
+  .input-has-error.checkbox-error {
+    margin-top: 0 !important; }
 

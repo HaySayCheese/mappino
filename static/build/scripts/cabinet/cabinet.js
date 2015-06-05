@@ -101,6 +101,72 @@ var bModules;
         Types.RealtyTypesService = RealtyTypesService;
     })(Types = bModules.Types || (bModules.Types = {}));
 })(bModules || (bModules = {}));
+/// <reference path='../_references.ts' />
+var bModules;
+(function (bModules) {
+    var Types;
+    (function (Types) {
+        var CurrencyTypesService = (function () {
+            function CurrencyTypesService() {
+                this._currency_types = [{
+                        id: '0',
+                        name: 'USD',
+                        title: 'Дол.'
+                    }, {
+                        id: '1',
+                        name: 'EUR',
+                        title: 'Евро'
+                    }, {
+                        id: '2',
+                        name: 'UAH',
+                        title: 'Грн.'
+                    }];
+            }
+            Object.defineProperty(CurrencyTypesService.prototype, "currency_types", {
+                get: function () {
+                    return this._currency_types;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            return CurrencyTypesService;
+        })();
+        Types.CurrencyTypesService = CurrencyTypesService;
+    })(Types = bModules.Types || (bModules.Types = {}));
+})(bModules || (bModules = {}));
+/// <reference path='../_references.ts' />
+var bModules;
+(function (bModules) {
+    var Types;
+    (function (Types) {
+        var PeriodTypesService = (function () {
+            function PeriodTypesService() {
+                this._period_types = [{
+                        id: '0',
+                        name: 'daily',
+                        title: 'Посуточно'
+                    }, {
+                        id: '1',
+                        name: 'monthly',
+                        title: 'Помесячно'
+                    }, {
+                        id: '2',
+                        name: 'long_term',
+                        title: 'Долгосрочная'
+                    }];
+            }
+            Object.defineProperty(PeriodTypesService.prototype, "period_types", {
+                get: function () {
+                    return this._period_types;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            return PeriodTypesService;
+        })();
+        Types.PeriodTypesService = PeriodTypesService;
+    })(Types = bModules.Types || (bModules.Types = {}));
+})(bModules || (bModules = {}));
 /// <reference path='_references.ts' />
 var bModules;
 (function (bModules) {
@@ -109,10 +175,14 @@ var bModules;
         'use strict';
         var bTypes = angular.module('bModules.Types', []);
         bTypes.service('RealtyTypesService', Types.RealtyTypesService);
+        bTypes.service('CurrencyTypesService', Types.CurrencyTypesService);
+        bTypes.service('PeriodTypesService', Types.PeriodTypesService);
     })(Types = bModules.Types || (bModules.Types = {}));
 })(bModules || (bModules = {}));
 /// <reference path='../../definitions/_references.ts' />
 /// <reference path='services/RealtyTypesService.ts' />
+/// <reference path='services/CurrencyTypesService.ts' />
+/// <reference path='services/PeriodTypesService.ts' />
 /// <reference path='Types.ts' /> 
 /// <reference path='../_references.ts' />
 /// <reference path='../_references.ts' />
@@ -247,14 +317,16 @@ var bModules;
                 this.Upload.upload({
                     url: '/ajax/api/cabinet/account/photo/',
                     file: avatar
-                }).then(function (response) {
+                }).success(function (response) {
                     if (response.code === 0) {
-                        self.update({ avatar: response.data['data']['url'] });
-                        _.isFunction(success_callback) && success_callback(response.data);
+                        self.update({ avatar: response.data['url'] });
+                        _.isFunction(success_callback) && success_callback(response);
                     }
                     else {
                         _.isFunction(error_callback) && error_callback(response);
                     }
+                }).error(function (response) {
+                    _.isFunction(error_callback) && error_callback(response);
                 });
             };
             SettingsService.prototype.update = function (params) {
@@ -467,15 +539,48 @@ var pages;
                     // error
                 });
             };
-            PublicationsService.prototype.loadPublicationData = function (publication, callback) {
+            PublicationsService.prototype.load = function (publication, success_callback, error_callback) {
+                var _this = this;
                 var self = this;
                 this.$http.get('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/')
                     .then(function (response) {
-                    console.log(response);
-                    callback(response);
-                }, function () {
-                    // -
+                    if (response.data['code'] === 0) {
+                        console.log(response.data['data']);
+                        _this._publication = response.data['data'];
+                        _this.createDefaultTerms();
+                        _.isFunction(success_callback) && success_callback(_this._publication);
+                    }
+                    else {
+                        _.isFunction(error_callback) && error_callback(response.data);
+                    }
+                }, function (response) {
+                    _.isFunction(error_callback) && error_callback(response.data);
                 });
+            };
+            PublicationsService.prototype.createDefaultTerms = function () {
+                if (_.isNull(this._publication['sale_terms'])) {
+                    this._publication['sale_terms'] = {};
+                    _.defaults(this._publication['sale_terms'], {
+                        add_terms: null,
+                        currency_sid: '0',
+                        is_contract: false,
+                        price: null,
+                        sale_type_sid: '0',
+                        transaction_sid: '0'
+                    });
+                }
+                if (_.isNull(this._publication['rent_terms'])) {
+                    this._publication['rent_terms'] = {};
+                    _.defaults(this._publication['rent_terms'], {
+                        add_terms: null,
+                        currency_sid: '0',
+                        is_contract: false,
+                        period_sid: '1',
+                        persons_count: null,
+                        price: null,
+                        rent_type_sid: '0'
+                    });
+                }
             };
             PublicationsService.$inject = [
                 '$http',
@@ -615,21 +720,20 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var CabinetController = (function () {
-            function CabinetController($timeout, authService, settingsService) {
-                this.$timeout = $timeout;
+            function CabinetController($rootScope, authService, settingsService) {
+                this.$rootScope = $rootScope;
                 this.authService = authService;
                 this.settingsService = settingsService;
                 // -
-                var self = this;
-                //$timeout(() => {
-                //    self.authService.user = { full_name: 'fsafaf' };
-                //    console.log(self.authService.user)
-                //}, 4000);
                 $(".button-collapse").sideNav();
+                $rootScope.loaders = {
+                    base: false,
+                    avatar: false
+                };
                 authService.getUserByCookie();
             }
             CabinetController.$inject = [
-                '$timeout',
+                '$rootScope',
                 'AuthService',
                 'SettingsService'
             ];
@@ -680,35 +784,41 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var PublicationController = (function () {
-            function PublicationController($scope, $timeout, $state, publicationsService) {
-                // -
+            function PublicationController($scope, $rootScope, $timeout, $state, currencyTypesService, periodTypesService, publicationsService) {
+                // ---------------------------------------------------------------------------------------------------------
                 this.$scope = $scope;
+                this.$rootScope = $rootScope;
                 this.$timeout = $timeout;
                 this.$state = $state;
+                this.currencyTypesService = currencyTypesService;
+                this.periodTypesService = periodTypesService;
                 this.publicationsService = publicationsService;
                 this._publication = {};
                 this._publication['tid'] = $state.params['id'].split(':')[0];
                 this._publication['hid'] = $state.params['id'].split(':')[1];
-                $scope.showPublication = true;
-                $scope.publicationLoaded = true;
+                $scope.currencyTypes = currencyTypesService.currency_types;
+                $scope.periodTypes = periodTypesService.period_types;
                 $scope.publication = {};
                 $scope.publicationTemplateUrl = '/ajax/template/cabinet/publications/unpublished/' + this._publication['tid'] + '/';
                 this.loadPublicationData();
             }
             PublicationController.prototype.loadPublicationData = function () {
                 var _this = this;
-                this.$scope.publicationLoaded = false;
-                this.publicationsService.loadPublicationData(this._publication, function (response) {
-                    _this.$scope.publicationLoaded = true;
-                    _this.$scope.publication = response.data;
+                this.$rootScope.loaders.base = true;
+                this.publicationsService.load(this._publication, function (response) {
+                    _this.$scope.publication = response;
+                    _this.$rootScope.loaders.base = false;
+                    _this.$timeout(function () { return $('select').material_select(); }, 0);
                 });
-                this.$timeout(function () { return $('select').material_select(); }, 3000);
             };
             PublicationController.$inject = [
                 '$scope',
+                '$rootScope',
                 '$timeout',
                 '$state',
-                'PublicationsService'
+                'CurrencyTypesService',
+                'PeriodTypesService',
+                'PublicationsService',
             ];
             return PublicationController;
         })();
@@ -721,16 +831,17 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var SettingsController = (function () {
-            function SettingsController($scope, $timeout, settingsService) {
+            function SettingsController($scope, $rootScope, $timeout, settingsService) {
                 this.$scope = $scope;
+                this.$rootScope = $rootScope;
                 this.$timeout = $timeout;
                 this.settingsService = settingsService;
-                // -
-                $scope.settingsIsLoaded = false;
+                // ---------------------------------------------------------------------------------------------------------
+                $rootScope.loaders.base = true;
                 this.initInputsChange();
                 settingsService.load(function (response) {
                     $scope.user = response;
-                    $scope.settingsIsLoaded = true;
+                    $rootScope.loaders.base = false;
                     $timeout(function () {
                         angular.element(".settings-page input:not([type='file'], [type='checkbox'])").change();
                         $timeout(function () { return $('select').material_select(); });
@@ -745,7 +856,9 @@ var pages;
             SettingsController.prototype.initInputsChange = function () {
                 var self = this;
                 angular.element(".settings-page input[type='file']").bind('change', function (event) {
+                    self.$rootScope.loaders.avatar = true;
                     self.settingsService.uploadAvatar(event.target['files'][0], function (response) {
+                        self.$rootScope.loaders.avatar = false;
                         self.$scope.imageFatal = response.code === 1;
                         self.$scope.imageTooLarge = response.code === 2;
                         self.$scope.ImageTooSmall = response.code === 3;
@@ -782,6 +895,7 @@ var pages;
             };
             SettingsController.$inject = [
                 '$scope',
+                '$rootScope',
                 '$timeout',
                 'SettingsService'
             ];
@@ -796,9 +910,10 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var SupportController = (function () {
-            function SupportController($scope, $state, ticketsService) {
+            function SupportController($scope, $rootScope, $state, ticketsService) {
                 var _this = this;
                 this.$scope = $scope;
+                this.$rootScope = $rootScope;
                 this.$state = $state;
                 this.ticketsService = ticketsService;
                 this._ticket = {
@@ -812,11 +927,11 @@ var pages;
                 // ---------------------------------------------------------------------------------------------------------
                 $scope.ticket = {};
                 $scope.tickets = this._tickets = [];
-                $scope.ticketsIsLoaded = false;
+                $rootScope.loaders.base = true;
                 $scope.ticketFormIsVisible = false;
                 ticketsService.loadTickets(function (response) {
                     _this._tickets = $scope.tickets = response;
-                    $scope.ticketsIsLoaded = true;
+                    $rootScope.loaders.base = false;
                 });
             }
             SupportController.prototype.createTicket = function () {
@@ -839,6 +954,7 @@ var pages;
             };
             SupportController.$inject = [
                 '$scope',
+                '$rootScope',
                 '$state',
                 'TicketsService'
             ];

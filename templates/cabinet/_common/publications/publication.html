@@ -1,44 +1,11 @@
-
-
 <div class="publication-view" ng-controller="PublicationController as pubCtrl">
 
     <div class="row">
-        <div class="publication-view-content col s12 m12 l8 offset-l2">
-            <div ng-show="publicationLoaded">
+        <div class="publication-view-content col s12 m12 l10 offset-l1">
+            <div ng-hide="loaders.base">
                 <div ng-include="publicationTemplateUrl"></div>
             </div>
         </div>
     </div>
 
-
-
-    <div class="row">
-        <div class="col s12 center">
-            <div class="preloader-wrapper big active" ng-show="!publicationLoaded">
-                <div class="spinner-layer spinner-blue">
-                    <div class="circle-clipper left">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="gap-patch">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="circle-clipper right">
-                        <div class="circle"></div>
-                    </div>
-                </div>
-
-                <div class="spinner-layer spinner-red">
-                    <div class="circle-clipper left">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="gap-patch">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="circle-clipper right">
-                        <div class="circle"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>

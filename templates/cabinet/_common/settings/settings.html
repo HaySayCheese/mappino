@@ -1,13 +1,25 @@
 <div class="settings-page" ng-controller="SettingsController as settingsCtrl">
-    <form name="form.user" ng-show="settingsIsLoaded" novalidate>
+    <form name="form.user" ng-hide="loaders.base" novalidate>
         <section class="medium user-block center-block">
             <h5 class="light-blue-text base">Основная информация</h5>
 
             <div class="row">
                 <div class="col s12 m6 center">
                     <div class="user-photo center-block">
-                        <img ng-src="[[ user.account.avatar ]]" alt=""/>
-                        <input id="photo-field" name="avatar" type="file"/>
+                        <img ng-src="[[ user.account.avatar ]]" alt="" ng-hide="loaders.avatar" />
+                        <input id="photo-field" name="avatar" type="file" />
+
+                        <div class="preloader-wrapper big active" ng-show="loaders.avatar">
+                            <div class="spinner-layer spinner-blue-only">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div><div class="gap-patch">
+                                <div class="circle"></div>
+                            </div><div class="circle-clipper right">
+                                <div class="circle"></div>
+                            </div>
+                            </div>
+                        </div>
                     </div>
 
                     <a href="#" ng-click="settingsCtrl.changePhoto($event)">
@@ -222,58 +234,4 @@
             </div>
         </section>
     </form>
-
-
-    <section class="medium center-block center-align" ng-hide="settingsIsLoaded">
-        <div class="preloader-wrapper big active">
-            <div class="spinner-layer spinner-blue">
-                <div class="circle-clipper left">
-                    <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                    <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                    <div class="circle"></div>
-                </div>
-            </div>
-
-            <div class="spinner-layer spinner-red">
-                <div class="circle-clipper left">
-                    <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                    <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                    <div class="circle"></div>
-                </div>
-            </div>
-
-            <div class="spinner-layer spinner-yellow">
-                <div class="circle-clipper left">
-                    <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                    <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                    <div class="circle"></div>
-                </div>
-            </div>
-
-            <div class="spinner-layer spinner-green">
-                <div class="circle-clipper left">
-                    <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                    <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                    <div class="circle"></div>
-                </div>
-            </div>
-        </div>
-    </section>
 </div>
-

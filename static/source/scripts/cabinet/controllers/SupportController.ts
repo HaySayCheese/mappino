@@ -15,26 +15,27 @@ module pages.cabinet {
 
         public static $inject = [
             '$scope',
+            '$rootScope',
             '$state',
             'TicketsService'
         ];
 
         constructor(
             private $scope: any,
+            private $rootScope: any,
             private $state: angular.ui.IStateService,
             private ticketsService: ITicketsService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.ticket   = {};
             $scope.tickets  = this._tickets = [];
 
-            $scope.ticketsIsLoaded      = false;
+            $rootScope.loaders.base     = true;
             $scope.ticketFormIsVisible  = false;
 
 
             ticketsService.loadTickets((response) => {
                 this._tickets = $scope.tickets = response;
-
-                $scope.ticketsIsLoaded = true;
+                $rootScope.loaders.base = false;
             })
         }
 

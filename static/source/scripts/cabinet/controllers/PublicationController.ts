@@ -9,23 +9,31 @@ module pages.cabinet {
 
         public static $inject = [
             '$scope',
+            '$rootScope',
             '$timeout',
             '$state',
-            'PublicationsService'
+            'CurrencyTypesService',
+            'PeriodTypesService',
+            'PublicationsService',
         ];
 
         constructor(
             private $scope: any,
+            private $rootScope: any,
             private $timeout: angular.ITimeoutService,
             private $state: angular.ui.IStateService,
+
+            private currencyTypesService: bModules.Types.CurrencyTypesService,
+            private periodTypesService: bModules.Types.PeriodTypesService,
+
             private publicationsService: PublicationsService) {
-            // -
+            // ---------------------------------------------------------------------------------------------------------
 
             this._publication['tid']    = $state.params['id'].split(':')[0];
             this._publication['hid']    = $state.params['id'].split(':')[1];
 
-            $scope.showPublication = true;
-            $scope.publicationLoaded = true;
+            $scope.currencyTypes    = currencyTypesService.currency_types;
+            $scope.periodTypes      = periodTypesService.period_types;
 
             $scope.publication = {};
 
@@ -37,15 +45,14 @@ module pages.cabinet {
 
 
         private loadPublicationData() {
-            this.$scope.publicationLoaded = false;
+            this.$rootScope.loaders.base = true;
 
-            this.publicationsService.loadPublicationData(this._publication, (response) => {
-                this.$scope.publicationLoaded = true;
-                this.$scope.publication = response.data;
+            this.publicationsService.load(this._publication, (response) => {
+                this.$scope.publication = response;
+                this.$rootScope.loaders.base = false;
+
+                this.$timeout(() => $('select').material_select(), 0);
             });
-
-            this.$timeout(() => $('select').material_select(), 3000);
-
         }
 
     }

@@ -9,6 +9,7 @@
 
 
 @import "pages/login";
+@import "pages/publication";
 @import "pages/settings";
 @import "pages/support";
 @import "pages/ticket";
@@ -16,8 +17,7 @@
 
 
 html,
-body,
-main {
+body {
     @include square(100%);
 }
 
@@ -38,6 +38,12 @@ body {
     .hide-on-med-and-down:not(.right) {
         margin-left: 200px;
     }
+
+    .navbar-user-avatar {
+        @include square(35px);
+        margin-right: 10px;
+        border-radius: 50%;
+    }
 }
 
 
@@ -49,6 +55,10 @@ body {
     margin-top: -25px;
     font-size: 0.8rem;
     color: color('red', 'base');
+
+    &.checkbox-error {
+        margin-top: 0 !important;
+    }
 }
 
 .ng-invalid {

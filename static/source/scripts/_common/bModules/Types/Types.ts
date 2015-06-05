@@ -7,4 +7,6 @@ module bModules.Types {
     var bTypes: angular.IModule = angular.module('bModules.Types', []);
 
     bTypes.service('RealtyTypesService', RealtyTypesService);
+    bTypes.service('CurrencyTypesService', CurrencyTypesService);
+    bTypes.service('PeriodTypesService', PeriodTypesService);
 }

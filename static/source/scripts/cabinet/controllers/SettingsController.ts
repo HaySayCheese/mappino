@@ -6,22 +6,24 @@ module pages.cabinet {
 
         public static $inject = [
             '$scope',
+            '$rootScope',
             '$timeout',
             'SettingsService'
         ];
 
         constructor(
             private $scope: any,
+            private $rootScope: any,
             private $timeout: angular.ITimeoutService,
             private settingsService: bModules.Auth.SettingsService) {
-            // -
-            $scope.settingsIsLoaded = false;
+            // ---------------------------------------------------------------------------------------------------------
+            $rootScope.loaders.base = true;
 
             this.initInputsChange();
 
             settingsService.load((response) => {
                 $scope.user = response;
-                $scope.settingsIsLoaded = true;
+                $rootScope.loaders.base = false;
                 $timeout(() => {
                     angular.element(".settings-page input:not([type='file'], [type='checkbox'])").change();
                     $timeout(() => $('select').material_select());
@@ -44,7 +46,11 @@ module pages.cabinet {
             var self = this;
 
             angular.element(".settings-page input[type='file']").bind('change', (event) => {
+                self.$rootScope.loaders.avatar = true;
+
                 self.settingsService.uploadAvatar(event.target['files'][0], (response) => {
+                    self.$rootScope.loaders.avatar = false;
+
                     self.$scope.imageFatal      = response.code === 1;
                     self.$scope.imageTooLarge   = response.code === 2;
                     self.$scope.ImageTooSmall   = response.code === 3;
