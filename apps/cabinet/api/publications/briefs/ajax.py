@@ -4,11 +4,11 @@ import json
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
-from apps.cabinet.api.dirtags.models import DirTags
 
+from apps.cabinet.api.dirtags.models import DirTags
 from apps.cabinet.api.publications.briefs.utils import briefs_of_tag, briefs_of_section, get_sections_counters
 from collective.decorators.views import login_required_or_forbidden
-
+from collective.http.responses import HttpJsonResponse
 
 
 get_codes = {
@@ -40,17 +40,17 @@ def get(request, tag_id=None, section=None):
 		if tag.user_id != request.user.id:
 			raise PermissionDenied()
 
-		return HttpResponse(
-			json.dumps(briefs_of_tag(tag)), content_type='application/json')
-			# todo: додати код 0 (ok) у відповідь
-
-
+		return HttpJsonResponse({
+            "code": 0,
+            'message': "OK",
+            "data": briefs_of_tag(tag)
+        })
 	else:
-		return HttpResponse(
-			json.dumps(briefs_of_section(section, request.user.id)), content_type='application/json')
-			# todo: додати код 0 (ok) у відповідь
-
-
+		return HttpJsonResponse({
+            "code": 0,
+            'message': "OK",
+            "data": briefs_of_section(section, request.user.id)
+        })
 
 @login_required_or_forbidden
 @require_http_methods('GET')

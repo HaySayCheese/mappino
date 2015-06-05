@@ -156,20 +156,26 @@ class Publication(CabinetView):
         else:
             response = self.unpublished_formatter.format(tid, head)
 
-        reg = re.compile('_sid$')
-        response = self.change(response, reg)
+        response = self.change(response)
 
         return self.GetResponses.ok(response)
 
-    def change(self, some_dict, reg):
-        for key,value in some_dict.iteritems():
+    def change(self, dict_to_validate, reg = "_sid$"):
+        """
+
+        :param dict_to_validate:
+        :param reg:
+        :return:
+        """
+        reg = re.compile(reg)
+        for key,value in dict_to_validate.iteritems():
             if isinstance(value,dict):
-                some_dict[key] = self.change(value,reg)
+                dict_to_validate[key] = self.change(value)
             else:
                 if reg.search(key):
-                    some_dict[key] = str(value)
+                    dict_to_validate[key] = str(value)
 
-        return some_dict
+        return dict_to_validate
 
     def put(self, request, *args):
         try:
