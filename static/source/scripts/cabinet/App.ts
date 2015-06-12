@@ -4,9 +4,10 @@ module pages.cabinet {
     'use strict';
 
     var app: angular.IModule = angular.module('mappino.pages.cabinet', [
+        'ngMaterial',
         'ngCookies',
+        'ngMessages',
         'ui.router',
-        'ui.mask',
         'ngFileUpload',
 
         'bModules.Types',
@@ -21,6 +22,9 @@ module pages.cabinet {
 
     /** Routers configuration create */
     new RoutersConfigs(app);
+
+    /** Material configuration create */
+    new MaterialFrameworkConfigs(app);
 
     /** Application configuration create */
     new ApplicationConfigs(app);

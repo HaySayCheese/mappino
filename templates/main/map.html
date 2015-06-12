@@ -6,9 +6,10 @@
 
     {# перевірка для яндекс.вебмастер #}
     <meta name='yandex-verification' content='546bbc19b208a750'/>
-
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
+
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/angular_material/0.8.3/angular-material.min.css">
 
     {% compress css %}
         <link rel="stylesheet" href="{{ static }}build/styles/map/base.min.css"/>
@@ -22,12 +23,15 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0-rc.1/angular-cookies.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0-rc.1/angular-resource.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.14/angular-ui-router.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.1/angular-animate.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.1/angular-aria.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.js"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 
 
     {% compress js %}
-        <script src="{{ static }}build/libs/materialize.js"></script>
+        <!-- local libraries here -->
     {% endcompress %}
 
     <script>
@@ -41,73 +45,92 @@
     </script>
 </head>
 <body ng-controller="AppController as appCtrl">
-    <div class="wrapper">
+    <md-content>
+        <md-toolbar class="md-whiteframe-z1">
+            <div class="md-toolbar-tools">
+                <md-button class="md-icon-button" aria-label="Settings">
+                    <md-icon md-svg-icon="{{ static }}source/icons/material/content/ic_filter_list_24px.svg"></md-icon>
+                </md-button>
+                <h2>
+                    <span>Toolbar with Icon Buttons</span>
+                </h2>
+                <span flex></span>
+                <md-button class="md-icon-button" aria-label="Favorite">
+                    <md-icon md-svg-icon="img/icons/favorite.svg" style="color: greenyellow;"></md-icon>
+                </md-button>
+                <md-button class="md-icon-button" aria-label="More">
+                    <md-icon md-svg-icon="img/icons/more_vert.svg"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
 
         <div id="map" ng-controller="MapController as mapCtrl"></div>
         <div ui-view></div>
+    </md-content>
 
+    <!--<div class="wrapper">-->
 
         <!-- Fixed search panel panel -->
-        <div class="search-panel" ng-controller="PlaceAutocompleteController">
-            <a class="btn-flat btn-menu valign-wrapper"
-                    ng-click="appCtrl.dropPanelsHandler.open('menu')"
-                    ng-hide="appCtrl.dropPanelsHandler.isOpened('menu')">
-                <i class="mdi-navigation-menu valign"></i>
-            </a>
-            <a class="btn-flat btn-menu valign-wrapper"
-                    ng-click="appCtrl.dropPanelsHandler.close('menu')"
-                    ng-show="appCtrl.dropPanelsHandler.isOpened('menu')">
-                <i class="mdi-navigation-close valign"></i>
-            </a>
-            <input id="place-autocomplete" placeholder="Введите местоположение" type="text">
-            <a class="btn-flat btn-search valign-wrapper">
-                <i class="mdi-action-search valign"></i>
-            </a>
-        </div>
+        <!--<div class="search-panel" ng-controller="PlaceAutocompleteController">-->
+            <!--<a class="btn-flat btn-menu valign-wrapper"-->
+                    <!--ng-click="appCtrl.dropPanelsHandler.open('menu')"-->
+                    <!--ng-hide="appCtrl.dropPanelsHandler.isOpened('menu')">-->
+                <!--<i class="mdi-navigation-menu valign"></i>-->
+            <!--</a>-->
+            <!--<a class="btn-flat btn-menu valign-wrapper"-->
+                    <!--ng-click="appCtrl.dropPanelsHandler.close('menu')"-->
+                    <!--ng-show="appCtrl.dropPanelsHandler.isOpened('menu')">-->
+                <!--<i class="mdi-navigation-close valign"></i>-->
+            <!--</a>-->
+            <!--<input id="place-autocomplete" placeholder="Введите местоположение" type="text">-->
+            <!--<a class="btn-flat btn-search valign-wrapper">-->
+                <!--<i class="mdi-action-search valign"></i>-->
+            <!--</a>-->
+        <!--</div>-->
 
         <!-- Drop menu panel -->
-        <div class="menu-panel closed">
+        <!--<div class="menu-panel closed">-->
 
-        </div>
+        <!--</div>-->
 
 
 
         <!-- Fixed tabs panel panel -->
-        <div class="tabs-panel" ng-controller="TabsNavigationController as tabsCtrl" ng-cloak>
-            <ul class="tabs"
-                ng-class="{ 'nothing-selected': !appCtrl.slidingPanelsHandler.isOpened('filters') && !appCtrl.slidingPanelsHandler.isOpened('favorites') }">
+        <!--<div class="tabs-panel" ng-controller="TabsNavigationController as tabsCtrl" ng-cloak>-->
+            <!--<ul class="tabs"-->
+                <!--ng-class="{ 'nothing-selected': !appCtrl.slidingPanelsHandler.isOpened('filters') && !appCtrl.slidingPanelsHandler.isOpened('favorites') }">-->
 
-                <li class="tab col s3" ng-click="appCtrl.slidingPanelsHandler.open('filters')">
-                    <a href="#" ng-class="{ active: appCtrl.slidingPanelsHandler.isOpened('filters') }">
-                        <i class="mdi-content-filter-list"></i>
-                        Фильтры
-                    </a>
-                </li>
-                <li class="tab col s3" ng-click="appCtrl.slidingPanelsHandler.open('favorites')">
-                    <a href="#" ng-class="{ active: appCtrl.slidingPanelsHandler.isOpened('favorites') }">
-                        <i class="mdi-action-grade"></i>
-                        Избранние
-                    </a>
-                </li>
-            </ul>
+                <!--<li class="tab col s3" ng-click="appCtrl.slidingPanelsHandler.open('filters')">-->
+                    <!--<a href="#" ng-class="{ active: appCtrl.slidingPanelsHandler.isOpened('filters') }">-->
+                        <!--<i class="mdi-content-filter-list"></i>-->
+                        <!--Фильтры-->
+                    <!--</a>-->
+                <!--</li>-->
+                <!--<li class="tab col s3" ng-click="appCtrl.slidingPanelsHandler.open('favorites')">-->
+                    <!--<a href="#" ng-class="{ active: appCtrl.slidingPanelsHandler.isOpened('favorites') }">-->
+                        <!--<i class="mdi-action-grade"></i>-->
+                        <!--Избранние-->
+                    <!--</a>-->
+                <!--</li>-->
+            <!--</ul>-->
 
-            <div class="user-block valign-wrapper" ng-hide="appCtrl.dropPanelsHandler.isOpened('user')"
-                    ng-click="appCtrl.dropPanelsHandler.open('user')">
-                <span class="valign hide-on-small-only">Serhii</span>
-                <img class="valign" src="{{ static }}build/images/main/publication-view/no-user.png" alt=""/>
-            </div>
-            <div class="user-block valign-wrapper" ng-show="appCtrl.dropPanelsHandler.isOpened('user')"
-                    ng-click="appCtrl.dropPanelsHandler.close('user')">
-                <a class="btn-flat">
-                    <span class="hide-on-small-only">CLOSE</span>
-                </a>
-            </div>
-        </div>
+            <!--<div class="user-block valign-wrapper" ng-hide="appCtrl.dropPanelsHandler.isOpened('user')"-->
+                    <!--ng-click="appCtrl.dropPanelsHandler.open('user')">-->
+                <!--<span class="valign hide-on-small-only">Serhii</span>-->
+                <!--<img class="valign" src="{{ static }}build/images/main/publication-view/no-user.png" alt=""/>-->
+            <!--</div>-->
+            <!--<div class="user-block valign-wrapper" ng-show="appCtrl.dropPanelsHandler.isOpened('user')"-->
+                    <!--ng-click="appCtrl.dropPanelsHandler.close('user')">-->
+                <!--<a class="btn-flat">-->
+                    <!--<span class="hide-on-small-only">CLOSE</span>-->
+                <!--</a>-->
+            <!--</div>-->
+        <!--</div>-->
 
         <!-- Drop user panel -->
-        <div class="user-panel closed">
+        <!--<div class="user-panel closed">-->
 
-        </div>
+        <!--</div>-->
 
 
 
@@ -116,187 +139,186 @@
 
 
         <!-- Sliding panels -->
-        <div class="publication-panel closed">
-            <div class="publication-panel-header">
-                <img src="{{ static }}build/images/home/home-bg-1.jpg" alt=""/>
-                <div class="over-photo-control" ng-click="appCtrl.slidingPanelsHandler.close('publication')">
-                    <i class="mdi-navigation-close"></i>
-                </div>
-                <div class="over-photo-block">
-                    <div class="title">Lorem ipsum dolor sit amet.</div>
-                    <div class="address">Lorem ipsum dolor sit amet, consectetur adipisicing.</div>
-                </div>
-            </div>
-            <div class="publication-panel-body">
-                <div class="row">
-                    <div class="col s6">
-                        <table>
-                            <tr>
-                                <td>Тип рынка:</td>
-                                <td>Lorem ipsum.</td>
-                            </tr>
-                            <tr>
-                                <td>Тип здания:</td>
-                                <td>Lorem ipsum.</td>
-                            </tr>
-                            <tr>
-                                <td>Год постройки:</td>
-                                <td>1992</td>
-                            </tr>
-                            <tr>
-                                <td>Возраст бизнеса:</td>
-                                <td>Lorem.</td>
-                            </tr>
-                            <tr>
-                                <td>Тип квартиры:</td>
-                                <td>Lorem ipsum.</td>
-                            </tr>
-                            <tr>
-                                <td>Планировка:</td>
-                                <td>Lorem.</td>
-                            </tr>
-                            <tr>
-                                <td>Общая площадь:</td>
-                                <td>100 m</td>
-                            </tr>
-                            <tr>
-                                <td>Площадь:</td>
-                                <td>100 m</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="col s6">
-                        <table>
-                            <tr>
-                                <td>Тип рынка:</td>
-                                <td>Lorem ipsum.</td>
-                            </tr>
-                            <tr>
-                                <td>Тип здания:</td>
-                                <td>Lorem ipsum.</td>
-                            </tr>
-                            <tr>
-                                <td>Год постройки:</td>
-                                <td>1992</td>
-                            </tr>
-                            <tr>
-                                <td>Возраст бизнеса:</td>
-                                <td>Lorem.</td>
-                            </tr>
-                            <tr>
-                                <td>Тип квартиры:</td>
-                                <td>Lorem ipsum.</td>
-                            </tr>
-                            <tr>
-                                <td>Планировка:</td>
-                                <td>Lorem.</td>
-                            </tr>
-                            <tr>
-                                <td>Общая площадь:</td>
-                                <td>100 m</td>
-                            </tr>
-                            <tr>
-                                <td>Площадь:</td>
-                                <td>100 m</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col s12">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid aperiam architecto, atque blanditiis deleniti eos eveniet excepturi nulla perspiciatis tempore!
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col s12">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid aperiam architecto, atque blanditiis deleniti eos eveniet excepturi nulla perspiciatis tempore!
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!--<div class="publication-panel closed">-->
+            <!--<div class="publication-panel-header">-->
+                <!--<img src="{{ static }}build/images/home/home-bg-1.jpg" alt=""/>-->
+                <!--<div class="over-photo-control" ng-click="appCtrl.slidingPanelsHandler.close('publication')">-->
+                    <!--<i class="mdi-navigation-close"></i>-->
+                <!--</div>-->
+                <!--<div class="over-photo-block">-->
+                    <!--<div class="title">Lorem ipsum dolor sit amet.</div>-->
+                    <!--<div class="address">Lorem ipsum dolor sit amet, consectetur adipisicing.</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="publication-panel-body">-->
+                <!--<div class="row">-->
+                    <!--<div class="col s6">-->
+                        <!--<table>-->
+                            <!--<tr>-->
+                                <!--<td>Тип рынка:</td>-->
+                                <!--<td>Lorem ipsum.</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>Тип здания:</td>-->
+                                <!--<td>Lorem ipsum.</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>Год постройки:</td>-->
+                                <!--<td>1992</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>Возраст бизнеса:</td>-->
+                                <!--<td>Lorem.</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>Тип квартиры:</td>-->
+                                <!--<td>Lorem ipsum.</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>Планировка:</td>-->
+                                <!--<td>Lorem.</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>Общая площадь:</td>-->
+                                <!--<td>100 m</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>Площадь:</td>-->
+                                <!--<td>100 m</td>-->
+                            <!--</tr>-->
+                        <!--</table>-->
+                    <!--</div>-->
+                    <!--<div class="col s6">-->
+                        <!--<table>-->
+                            <!--<tr>-->
+                                <!--<td>Тип рынка:</td>-->
+                                <!--<td>Lorem ipsum.</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>Тип здания:</td>-->
+                                <!--<td>Lorem ipsum.</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>Год постройки:</td>-->
+                                <!--<td>1992</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>Возраст бизнеса:</td>-->
+                                <!--<td>Lorem.</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>Тип квартиры:</td>-->
+                                <!--<td>Lorem ipsum.</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>Планировка:</td>-->
+                                <!--<td>Lorem.</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>Общая площадь:</td>-->
+                                <!--<td>100 m</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td>Площадь:</td>-->
+                                <!--<td>100 m</td>-->
+                            <!--</tr>-->
+                        <!--</table>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="row">-->
+                    <!--<div class="col s12">-->
+                        <!--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid aperiam architecto, atque blanditiis deleniti eos eveniet excepturi nulla perspiciatis tempore!-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="row">-->
+                    <!--<div class="col s12">-->
+                        <!--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid aperiam architecto, atque blanditiis deleniti eos eveniet excepturi nulla perspiciatis tempore!-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
 
 
 
 
 
-        <div class="filters-panel closed" ng-controller="FiltersPanelController as fpCtrl">
-            <div class="filters-panel-header">
-                <div class="btn-flat header-btn right" ng-click="appCtrl.slidingPanelsHandler.close('filters')">
-                    <i class="mdi-navigation-close"></i>
-                </div>
-            </div>
-            <ul class="collapsible" data-collapsible="accordion">
-                <li>
-                    <div class="collapsible-header red-header active">
-                        <i class="mdi-maps-place"></i>Квартиры
-                    </div>
-                    <div class="collapsible-body">
-                        <div class="row">
-                            <div class="input-field col s12">
-                                <select ng-model="filters.red.t_sid" ng-options="realtyType.id as realtyType.title for realtyType in realtyTypes">
-                                    <option value="" selected>Виберите тип</option>
-                                    <!--<option value="1">Option 1</option>-->
-                                    <!--<option value="2">Option 2</option>-->
-                                    <!--<option value="3">Option 3</option>-->
-                                </select>
-                                <!--<label>Materialize Select</label>-->
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="collapsible-header blue-header">
-                        <i class="mdi-maps-place"></i>Виберите тип
-                    </div>
-                    <div class="collapsible-body"><p>Lorem ipsum dolor sit amet.</p></div>
-                </li>
-                <li>
-                    <div class="collapsible-header green-header">
-                        <i class="mdi-maps-place"></i>Виберите тип
-                    </div>
-                    <div class="collapsible-body"><p>Lorem ipsum dolor sit amet.</p></div>
-                </li>
-            </ul>
-        </div>
+        <!--<div class="filters-panel closed" ng-controller="FiltersPanelController as fpCtrl">-->
+            <!--<div class="filters-panel-header">-->
+                <!--<div class="btn-flat header-btn right" ng-click="appCtrl.slidingPanelsHandler.close('filters')">-->
+                    <!--<i class="mdi-navigation-close"></i>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<ul class="collapsible" data-collapsible="accordion">-->
+                <!--<li>-->
+                    <!--<div class="collapsible-header red-header active">-->
+                        <!--<i class="mdi-maps-place"></i>Квартиры-->
+                    <!--</div>-->
+                    <!--<div class="collapsible-body">-->
+                        <!--<div class="row">-->
+                            <!--<div class="input-field col s12">-->
+                                <!--<select ng-model="filters.red.t_sid" ng-options="realtyType.id as realtyType.title for realtyType in realtyTypes">-->
+                                    <!--<option value="" selected>Виберите тип</option>-->
+                                    <!--&lt;!&ndash;<option value="1">Option 1</option>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<option value="2">Option 2</option>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<option value="3">Option 3</option>&ndash;&gt;-->
+                                <!--</select>-->
+                                <!--&lt;!&ndash;<label>Materialize Select</label>&ndash;&gt;-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</li>-->
+                <!--<li>-->
+                    <!--<div class="collapsible-header blue-header">-->
+                        <!--<i class="mdi-maps-place"></i>Виберите тип-->
+                    <!--</div>-->
+                    <!--<div class="collapsible-body"><p>Lorem ipsum dolor sit amet.</p></div>-->
+                <!--</li>-->
+                <!--<li>-->
+                    <!--<div class="collapsible-header green-header">-->
+                        <!--<i class="mdi-maps-place"></i>Виберите тип-->
+                    <!--</div>-->
+                    <!--<div class="collapsible-body"><p>Lorem ipsum dolor sit amet.</p></div>-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</div>-->
 
-        <div class="favorites-panel closed">
-            <h1>Favorites</h1>
-        </div>
+        <!--<div class="favorites-panel closed">-->
+            <!--<h1>Favorites</h1>-->
+        <!--</div>-->
 
-        <div class="auth-panel closed">
-            <h1>Auth</h1>
-        </div>
+        <!--<div class="auth-panel closed">-->
+            <!--<h1>Auth</h1>-->
+        <!--</div>-->
 
 
 
-        <div class="property-list-panel">
-            <div class="property-list-item -red">
-                <img src="http://lorempixel.com/96/81/" alt=""/>
-            </div>
-            <div class="property-list-item -red">
-                <img src="http://lorempixel.com/96/81/" alt=""/>
-            </div>
-            <div class="property-list-item -blue">
-                <img src="http://lorempixel.com/96/81/" alt=""/>
-            </div>
-            <div class="property-list-item -green">
-                <img src="http://lorempixel.com/96/81/" alt=""/>
-            </div>
-            <div class="property-list-item -red">
-                <img src="http://lorempixel.com/96/81/" alt=""/>
-            </div>
-            <div class="property-list-item -blue">
-                <img src="http://lorempixel.com/96/81/" alt=""/>
-            </div>
-        </div>
-    </div>
+        <!--<div class="property-list-panel">-->
+            <!--<div class="property-list-item -red">-->
+                <!--<img src="http://lorempixel.com/96/81/" alt=""/>-->
+            <!--</div>-->
+            <!--<div class="property-list-item -red">-->
+                <!--<img src="http://lorempixel.com/96/81/" alt=""/>-->
+            <!--</div>-->
+            <!--<div class="property-list-item -blue">-->
+                <!--<img src="http://lorempixel.com/96/81/" alt=""/>-->
+            <!--</div>-->
+            <!--<div class="property-list-item -green">-->
+                <!--<img src="http://lorempixel.com/96/81/" alt=""/>-->
+            <!--</div>-->
+            <!--<div class="property-list-item -red">-->
+                <!--<img src="http://lorempixel.com/96/81/" alt=""/>-->
+            <!--</div>-->
+            <!--<div class="property-list-item -blue">-->
+                <!--<img src="http://lorempixel.com/96/81/" alt=""/>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
 
 
 
     {% compress js %}
         <!-- mappino.main.map -->
-        <script type="text/javascript" src="{{ static }}build/scripts/map.js"></script>
-
+        <script type="text/javascript" src="{{ static }}build/scripts/map/map.js"></script>
     {% endcompress %}
 </body>
 </html>

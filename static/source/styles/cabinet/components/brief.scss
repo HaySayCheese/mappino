@@ -1,6 +1,12 @@
 .brief {
-    @extend section;
     padding: 0 !important;
+
+    @media screen and (max-width: 700px) {
+        .brief-image {
+            border-top-left-radius: 0 !important;
+            border-top-right-radius: 0 !important;
+        }
+    }
 
     &.brief-new-publication {
         .brief-content {
@@ -28,13 +34,14 @@
         bottom: 20px;
 
         color: #fff;
-        font-size: $h4-fontsize;
         text-shadow: 0 0 1px #000000, 0 1px 10px #000000;
+
+        @extend .md-display-1;
     }
 
     .brief-content {
         position: relative;
-        padding: 45px 20px 20px;
+        padding: 45px 20px 45px;
         border-bottom: 1px solid color('grey', 'lighten-3');
     }
 

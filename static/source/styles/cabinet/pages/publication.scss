@@ -41,9 +41,18 @@
     }
 
 
-    .publication-form {
+    .publication-section {
         @media screen and (max-width: 1444px) {
             @extend .center-block;
         }
+    }
+
+
+    .input-field .prefix {
+        width: auto !important;
+        right: 0.1rem;
+        top: 0.8rem;
+
+        font-size: 1rem !important;
     }
 }

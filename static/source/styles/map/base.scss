@@ -1,7 +1,7 @@
 //
 // Materialize include
 // --------------------------------------------------
-@import "../_common/materialize";
+@import "../_common/material/materialize";
 
 
 //
@@ -37,11 +37,20 @@
 // --------------------------------------------------
 
 
-html, body, .wrapper, #map {
+html,
+body,
+md-content,
+#map {
     @include square(100%);
     overflow: hidden;
 }
 
+
+.btn-floating.btn-large {
+    position: fixed;
+    bottom: 30px;
+    right: 200px;
+}
 
 
 .pac-container {

@@ -28,7 +28,6 @@ module pages.cabinet {
 
             private publicationsService: PublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
-
             this._publication['tid']    = $state.params['id'].split(':')[0];
             this._publication['hid']    = $state.params['id'].split(':')[1];
 
@@ -50,10 +49,7 @@ module pages.cabinet {
             this.publicationsService.loadPublication(this._publication, (response) => {
                 this.$scope.publication = response;
                 this.$rootScope.loaders.base = false;
-
-                this.$timeout(() => $('select').material_select(), 0);
             });
         }
-
     }
 }

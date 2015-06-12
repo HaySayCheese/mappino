@@ -5,6 +5,8 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.9.8/angular-material.min.css" />
+
     {% compress css %}
         <link rel="stylesheet" href="{{ static }}build/styles/cabinet/base.min.css"/>
     {% endcompress %}
@@ -15,128 +17,69 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0-rc.1/angular.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0-rc.1/angular-cookies.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.14/angular-ui-router.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.1/angular-animate.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-rc.1/angular-aria.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0-rc.1/angular-messages.min.js"></script>
 
-    <script type="text/javascript" src="{{ static }}build/libs/angular-ui-mask.min.js"></script>
-    <script type="text/javascript" src="{{ static }}build/libs/angular-file-upload.js"></script>
+    <script type="text/javascript" src="{{ static }}build/libraries/angular-file-upload.js"></script>
 
 
 
     {% compress js %}
-        <script src="{{ static }}build/libs/materialize.js"></script>
+
     {% endcompress %}
 </head>
-<body ng-controller="CabinetController as cabinetCtrl">
+<body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()">
 
     {% block navbar %}
-        <div class="navbar-fixed">
-            <nav>
-                <a href="#" data-activates="mobile-menu" class="button-collapse">
-                    <i class="mdi-navigation-menu"></i>
-                </a>
-                <div class="nav-wrapper">
-                    <a href="/" class="brand-logo">mappino</a>
-
-                    <!-- desktop menu -->
-                    <ul class="hide-on-med-and-down">
-                        <li ui-sref-active="active">
-                            <a href ui-sref="publications">Объявления</a>
-                        </li>
-                        <li ui-sref-active="active">
-                            <a href ui-sref="support">Поддержка</a>
-                        </li>
-                    </ul>
-                    <ul class="hide-on-med-and-down navbar-user-block right" ng-show="cabinetCtrl.settingsService.user['account']['full_name']">
-                        <li ui-sref-active="active">
-                            <a href ui-sref="settings" class="valign-wrapper">
-                                <!--<i class="mdi-social-mood left"></i>-->
-                                <img class="navbar-user-avatar valign left" ng-src="[[ cabinetCtrl.settingsService.user['account']['avatar'] ]]">
-                                [[ cabinetCtrl.settingsService.user['account']['full_name'] ]]
-                            </a>
-                        </li>
-                    </ul>
-
-                    <!-- mobile menu -->
-                    <ul class="side-nav" id="mobile-menu">
-                        <li ui-sref-active="active">
-                            <a href ui-sref="publications">Объявления</a>
-                        </li>
-                        <li ui-sref-active="active">
-                            <a href ui-sref="support">Поддержка</a>
-                        </li>
-                        <li ui-sref-active="settings">
-                            <a href ui-sref="settings">
-                                <i class="mdi-social-mood left"></i>Meketiuk Serhii
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
+        <md-toolbar class="md-whiteframe-z1">
+            <nav class="md-toolbar-tools" show-sm hide-gt-sm>
+                <md-button href class="nav-button" aria-label="Открть меню" ng-click="cabinetCtrl.toggleSidenav()">
+                    <md-icon md-svg-icon="{{ static }}source/icons/navigation/ic_menu_24px.svg"></md-icon>
+                </md-button>
             </nav>
-        </div>
+
+            <nav class="md-toolbar-tools" hide-sm>
+                <md-button ui-sref="publications" class="nav-button" aria-label="Объявления">
+                    <!--<md-icon md-svg-icon="{{ static }}source/icons/material/content/ic_filter_list_24px.svg"></md-icon>-->
+                    Объявления
+                </md-button>
+                <md-button ui-sref="support" class="nav-button" aria-label="Поддержка">
+                    Поддержка
+                </md-button>
+
+                <span flex></span>
+
+                <md-button ui-sref="settings" class="nav-button" aria-label="Настройки">
+                    Настройки
+                </md-button>
+            </nav>
+        </md-toolbar>
+
+        <md-progress-linear md-mode="indeterminate" ng-show="loaders.base" ng-cloak></md-progress-linear>
     {% endblock %}
 
+
+    {% block sidenav %}
+        <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav" ng-cloak>
+            <md-toolbar>
+                <h1 class="md-toolbar-tools">mappino</h1>
+            </md-toolbar>
+            <md-content layout-padding>
+                <md-button ng-click="close()" class="md-primary">
+                    Close Sidenav Right
+                </md-button>
+            </md-content>
+        </md-sidenav>
+    {% endblock %}
 
 
     {% block wrapper %}
-        <main>
-            <div ui-view>
-                <!-- view template included here -->
-            </div>
+        <main layout="row" layout-align="center start">
+            <div ui-view flex></div>
         </main>
     {% endblock %}
-
-
-    <section class="medium center-block center-align" ng-show="loaders.base" ng-cloak>
-        <div class="preloader-wrapper big active">
-            <div class="spinner-layer spinner-blue">
-                <div class="circle-clipper left">
-                    <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                    <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                    <div class="circle"></div>
-                </div>
-            </div>
-
-            <div class="spinner-layer spinner-red">
-                <div class="circle-clipper left">
-                    <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                    <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                    <div class="circle"></div>
-                </div>
-            </div>
-
-            <div class="spinner-layer spinner-yellow">
-                <div class="circle-clipper left">
-                    <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                    <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                    <div class="circle"></div>
-                </div>
-            </div>
-
-            <div class="spinner-layer spinner-green">
-                <div class="circle-clipper left">
-                    <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                    <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                    <div class="circle"></div>
-                </div>
-            </div>
-        </div>
-    </section>
 
 
     {% compress js %}

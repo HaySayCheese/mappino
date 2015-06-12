@@ -7,15 +7,20 @@ module pages.cabinet {
         public static $inject = [
             '$rootScope',
             'AuthService',
-            'SettingsService'
+            'SettingsService',
+            '$mdSidenav',
+            '$mdUtil',
+            '$mdMedia'
         ];
 
         constructor(
             private $rootScope: any,
             private authService: bModules.Auth.IAuthService,
-            private settingsService: bModules.Auth.SettingsService) {
-            // -
-            $(".button-collapse").sideNav();
+            private settingsService: bModules.Auth.SettingsService,
+            private $mdSidenav: any,
+            private $mdUtil: any,
+            private $mdMedia: any) {
+            // ---------------------------------------------------------------------------------------------------------
 
             $rootScope.loaders = {
                 base:   false,
@@ -23,6 +28,16 @@ module pages.cabinet {
             };
 
             authService.getUserByCookie();
+        }
+
+
+
+        private toggleSidenav() {
+            if (!this.$mdMedia('sm')) {
+                return;
+            }
+            this.$mdSidenav('left-sidenav')
+                .toggle();
         }
     }
 }

@@ -64,5 +64,10 @@ module pages.cabinet {
                 self.$state.go('ticket_view', { ticket_id: this._ticket.id })
             });
         }
+
+
+        private goToTicket(ticket_id) {
+            this.$state.go('ticket_view', { ticket_id: ticket_id })
+        }
     }
 }

@@ -4,15 +4,10 @@ module pages.map {
     'use strict';
 
     var app: angular.IModule = angular.module('mappino.pages.map', [
-        //'ngRoute',
+        'ngMaterial',
         'ngCookies',
-        //'ngAnimate',
         'ngResource',
-        //
-        //'ui.mask',
         'ui.router',
-        //'lrNotifier',
-        //'ab-base64',
     ]);
 
 
@@ -21,6 +16,9 @@ module pages.map {
 
     /** Routers configuration create */
     new RoutersConfigs(app);
+
+    /** Material configuration create */
+    new MaterialFrameworkConfigs(app);
 
     /** Application configuration create */
     new ApplicationConfigs(app);

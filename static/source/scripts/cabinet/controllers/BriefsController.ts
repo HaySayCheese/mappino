@@ -28,9 +28,6 @@ module pages.cabinet {
             };
             $scope.realtyTypes = realtyTypesService.realty_types;
 
-            $timeout(() => $('select').material_select());
-
-
             this.loadPublications();
         }
 
@@ -42,6 +39,8 @@ module pages.cabinet {
             this.publicationsService.load((response) => {
                 this.$scope.briefs = response;
                 this.$rootScope.loaders.base = false;
+
+                console.log(response)
             });
         }
 
@@ -51,6 +50,5 @@ module pages.cabinet {
         private createPublication() {
             this.publicationsService.create(this.$scope.new_publication);
         }
-
     }
 }

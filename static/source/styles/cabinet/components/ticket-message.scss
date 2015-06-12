@@ -1,0 +1,46 @@
+.ticket-message {
+    min-width: 250px;
+    max-width: 500px;
+    padding: 15px;
+
+    background-color: #fff;
+    border-radius: 3px;
+
+    + & {
+        margin-top: 15px;
+    }
+
+
+    .message-avatar {
+        @include square(60px);
+        border-radius: 50%;
+
+        &.-user {
+            margin-right: 15px;
+        }
+
+        &.-support {
+            margin-left: 15px;
+        }
+    }
+
+    .message-text {
+        text-align: justify;
+        margin-bottom: 10px;
+    }
+
+    .message-created {
+        width: 100%;
+        display: block;
+
+        font-size: 0.8rem;
+
+        &.-user {
+            text-align: right;
+        }
+
+        &.-support {
+            text-align: left;
+        }
+    }
+}

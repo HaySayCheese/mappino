@@ -1,45 +1,53 @@
 section {
     display: block;
     position: relative;
-    padding: 20px 40px 20px 40px;
-    margin: 20px auto;
+    padding: 20px 40px 30px 40px;
+    margin: 10px auto;
 
     background-color: #fff;
     border-radius: 3px;
 
-    @extend .z-depth-1;
+    border-top: 3px solid color('blue', 'base');
 
+    &:first-child {
+        margin-top: 20px;
+    }
 
     @media screen and (max-width: 700px) {
         @include size(100% !important, auto);
-        padding: 10px 20px 10px 20px;
-        margin: 0;
+        padding: 10px 20px 20px 20px;
+        margin: 0 !important;
 
         box-shadow: none;
         border-radius: 0;
+        border-top: 0 !important;
         border-bottom: 1px solid color('grey', 'lighten-2')
     }
 
 
-    &.medium {
+    &.-medium {
         @include size(700px, auto);
     }
 
 
-    &.no-bg {
-        padding: 0;
+    &.-transparent {
+        border-top: 0 !important;
         background-color: transparent;
         box-shadow: none;
     }
 
 
-    h5 {
-        margin-bottom: 30px;
-        //margin-top: 30px;
+    &.-no-padding {
+        padding: 0 !important;
+    }
+
+
+    h3 {
+        margin-top: 15px;
 
         @media screen and (max-width: 700px) {
-            margin-top: 15px;
-            font-size: 1.3rem;
+            margin-top: 10px;
+            font-size: 1.3rem !important;
         }
     }
 

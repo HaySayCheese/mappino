@@ -1,11 +1,21 @@
+// Font import
+@import url('http://fonts.googleapis.com/css?family=RobotoDraft:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en');
+
+
 //
 // Materialize include
 // --------------------------------------------------
-@import "../_common/materialize";
+@import "../_common/material/material";
+
 
 
 // additions to the "materialize" components
-@import "additions/navbar";
+@import "additions/md-toolbar";
+@import "additions/md-progress";
+@import "additions/collection";
+
+
+
 
 
 // custom components
@@ -13,6 +23,7 @@
 @import "components/section";
 @import "components/input-has-error";
 @import "components/navbar-user";
+@import "components/ticket-message";
 
 
 // pages style
@@ -24,13 +35,23 @@
 @import "pages/ticket";
 
 
+
 // sets size to 100%
 html,
-body {
+body{
     @include square(100%);
+    overflow: hidden;
 }
 
+
 body {
-    //background-color: color("blue-grey", "lighten-5");
-    background: url('../../images/cabinet/cabinet-bg.jpg') center center no-repeat fixed;
+    font-family: RobotoDraft;
+}
+
+
+main {
+    height: calc(100% - 56px);
+    overflow: auto;
+    background-color: color('blue-grey', 'lighten-4');
+    //background: url('../../images/cabinet/cabinet-bg.jpg') center center no-repeat fixed;
 }

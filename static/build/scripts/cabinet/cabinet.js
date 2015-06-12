@@ -509,6 +509,27 @@ var pages;
     var cabinet;
     (function (cabinet) {
         'use strict';
+        var MaterialFrameworkConfigs = (function () {
+            function MaterialFrameworkConfigs(app) {
+                this.app = app;
+                app.config(['$mdThemingProvider', '$mdIconProvider', function ($mdThemingProvider, $mdIconProvider) {
+                        var material_icons_path = 'http://127.0.0.1/mappino_static/source/icons/material/';
+                        $mdThemingProvider.theme('default')
+                            .primaryPalette('blue')
+                            .accentPalette('grey');
+                    }]);
+            }
+            return MaterialFrameworkConfigs;
+        })();
+        cabinet.MaterialFrameworkConfigs = MaterialFrameworkConfigs;
+    })(cabinet = pages.cabinet || (pages.cabinet = {}));
+})(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var cabinet;
+    (function (cabinet) {
+        'use strict';
         var ApplicationConfigs = (function () {
             function ApplicationConfigs(app) {
                 this.app = app;
@@ -739,22 +760,34 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var CabinetController = (function () {
-            function CabinetController($rootScope, authService, settingsService) {
+            function CabinetController($rootScope, authService, settingsService, $mdSidenav, $mdUtil, $mdMedia) {
+                // ---------------------------------------------------------------------------------------------------------
                 this.$rootScope = $rootScope;
                 this.authService = authService;
                 this.settingsService = settingsService;
-                // -
-                $(".button-collapse").sideNav();
+                this.$mdSidenav = $mdSidenav;
+                this.$mdUtil = $mdUtil;
+                this.$mdMedia = $mdMedia;
                 $rootScope.loaders = {
                     base: false,
                     avatar: false
                 };
                 authService.getUserByCookie();
             }
+            CabinetController.prototype.toggleSidenav = function () {
+                if (!this.$mdMedia('sm')) {
+                    return;
+                }
+                this.$mdSidenav('left-sidenav')
+                    .toggle();
+            };
             CabinetController.$inject = [
                 '$rootScope',
                 'AuthService',
-                'SettingsService'
+                'SettingsService',
+                '$mdSidenav',
+                '$mdUtil',
+                '$mdMedia'
             ];
             return CabinetController;
         })();
@@ -781,7 +814,6 @@ var pages;
                     for_rent: false
                 };
                 $scope.realtyTypes = realtyTypesService.realty_types;
-                $timeout(function () { return $('select').material_select(); });
                 this.loadPublications();
             }
             BriefsController.prototype.loadPublications = function () {
@@ -790,6 +822,7 @@ var pages;
                 this.publicationsService.load(function (response) {
                     _this.$scope.briefs = response;
                     _this.$rootScope.loaders.base = false;
+                    console.log(response);
                 });
             };
             // using in scope
@@ -815,7 +848,6 @@ var pages;
     (function (cabinet) {
         var PublicationController = (function () {
             function PublicationController($scope, $rootScope, $timeout, $state, currencyTypesService, periodTypesService, publicationsService) {
-                // ---------------------------------------------------------------------------------------------------------
                 this.$scope = $scope;
                 this.$rootScope = $rootScope;
                 this.$timeout = $timeout;
@@ -824,6 +856,7 @@ var pages;
                 this.periodTypesService = periodTypesService;
                 this.publicationsService = publicationsService;
                 this._publication = {};
+                // ---------------------------------------------------------------------------------------------------------
                 this._publication['tid'] = $state.params['id'].split(':')[0];
                 this._publication['hid'] = $state.params['id'].split(':')[1];
                 $scope.currencyTypes = currencyTypesService.currency_types;
@@ -838,7 +871,6 @@ var pages;
                 this.publicationsService.loadPublication(this._publication, function (response) {
                     _this.$scope.publication = response;
                     _this.$rootScope.loaders.base = false;
-                    _this.$timeout(function () { return $('select').material_select(); }, 0);
                 });
             };
             PublicationController.$inject = [
@@ -982,6 +1014,9 @@ var pages;
                     self.$state.go('ticket_view', { ticket_id: _this._ticket.id });
                 });
             };
+            SupportController.prototype.goToTicket = function (ticket_id) {
+                this.$state.go('ticket_view', { ticket_id: ticket_id });
+            };
             SupportController.$inject = [
                 '$scope',
                 '$rootScope',
@@ -999,9 +1034,10 @@ var pages;
     var cabinet;
     (function (cabinet) {
         var TicketController = (function () {
-            function TicketController($scope, $state, ticketsService, settingsService) {
+            function TicketController($scope, $rootScope, $state, ticketsService, settingsService) {
                 var _this = this;
                 this.$scope = $scope;
+                this.$rootScope = $rootScope;
                 this.$state = $state;
                 this.ticketsService = ticketsService;
                 this.settingsService = settingsService;
@@ -1017,6 +1053,7 @@ var pages;
                 $scope.ticket = {};
                 $scope.new_message = {};
                 $scope.ticketIsLoaded = false;
+                $rootScope.loaders.base = true;
                 $scope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
                     ticketsService.loadTicketMessages(toParams.ticket_id, function (response) {
                         _this._ticket.id = toParams.ticket_id;
@@ -1024,6 +1061,7 @@ var pages;
                         _this._ticket.messages = response.messages;
                         $scope.ticket = _this._ticket;
                         $scope.ticketIsLoaded = true;
+                        $rootScope.loaders.base = false;
                     });
                 });
             }
@@ -1044,6 +1082,7 @@ var pages;
             };
             TicketController.$inject = [
                 '$scope',
+                '$rootScope',
                 '$state',
                 'TicketsService',
                 'SettingsService'
@@ -1060,9 +1099,10 @@ var pages;
     (function (cabinet) {
         'use strict';
         var app = angular.module('mappino.pages.cabinet', [
+            'ngMaterial',
             'ngCookies',
+            'ngMessages',
             'ui.router',
-            'ui.mask',
             'ngFileUpload',
             'bModules.Types',
             'bModules.Auth',
@@ -1072,6 +1112,8 @@ var pages;
         new cabinet.ProvidersConfigs(app);
         /** Routers configuration create */
         new cabinet.RoutersConfigs(app);
+        /** Material configuration create */
+        new cabinet.MaterialFrameworkConfigs(app);
         /** Application configuration create */
         new cabinet.ApplicationConfigs(app);
         /** Module services */
@@ -1108,6 +1150,7 @@ var pages;
 // ####################
 /// <reference path='configs/ProvidersConfigs.ts' />
 /// <reference path='configs/RoutersConfigs.ts' />
+/// <reference path='configs/MaterialFrameworkConfigs.ts' />
 /// <reference path='configs/ApplicationConfigs.ts' />
 // ####################
 // Services import

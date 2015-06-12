@@ -2,7 +2,6 @@ var gulp        = require('gulp'),
     del         = require('del'),
     runSequence = require('run-sequence'),
     rename      = require("gulp-rename"),
-    concat      = require('gulp-concat'),
 
     sass        = require('gulp-sass'),
     minifyCSS   = require('gulp-minify-css'),
@@ -20,17 +19,19 @@ var PATHS = {
         PATH:       './static/build/',
         FONTS:      './static/build/fonts/',
         IMAGES:     './static/build/images/',
+        ICONS:      './static/build/icons/',
         STYLES:     './static/build/styles/',
         SCRIPTS:    './static/build/scripts/',
-        LIBRARIES:  './static/build/libs/'
+        LIBRARIES:  './static/build/libraries/'
     },
     SOURCE: {
         PATH:       './static/source/',
         FONTS:      './static/source/fonts/',
         IMAGES:     './static/source/images/',
+        ICONS:      './static/source/icons/',
         STYLES:     './static/source/styles/',
         SCRIPTS:    './static/source/scripts/',
-        LIBRARIES:  './static/source/scripts/libs/'
+        LIBRARIES:  './static/source/libraries/'
     }
 };
 
@@ -58,9 +59,15 @@ gulp.task('Copy:Images', function() {
         .pipe(gulp.dest(PATHS.BUILD.IMAGES));
 });
 
-/** Task Copy:Libs: Copy Libs to build folder **/
-gulp.task('Copy:Libs', function() {
-    gulp.src(PATHS.SOURCE.LIBRARIES + '/**/*.{js,ts,coffee}')
+/** Task Copy:Icons: Copy icons to build folder **/
+gulp.task('Copy:Icons', function() {
+    gulp.src(PATHS.SOURCE.ICONS + '/**/*.{png,jpg,jpeg,gif,svg}')
+        .pipe(gulp.dest(PATHS.BUILD.ICONS));
+});
+
+/** Task Copy:Libraries: Copy Libs to build folder **/
+gulp.task('Copy:Libraries', function() {
+    gulp.src(PATHS.SOURCE.LIBRARIES + '/**/*.{js,ts}')
         .pipe(sourcemaps.init())
         .pipe(uglify())
         .pipe(sourcemaps.write('/maps'))
@@ -68,7 +75,7 @@ gulp.task('Copy:Libs', function() {
 });
 
 /** Task Copy: Run all 'Copy:*' tasks **/
-gulp.task('Copy', ['Copy:Fonts', 'Copy:Images', 'Copy:Libs']);
+gulp.task('Copy', ['Copy:Fonts', 'Copy:Images', 'Copy:Icons', 'Copy:Libraries']);
 
 
 
@@ -94,8 +101,17 @@ gulp.task('Sass:Map', function () {
         .pipe(gulp.dest(PATHS.BUILD.STYLES + '/map/'));
 });
 
+/** Task Sass:Cabinet: Compile 'source/styles/cabinet/base.scss' **/
+gulp.task('Sass:Cabinet', function () {
+    return gulp.src(PATHS.SOURCE.STYLES + '/cabinet/base.scss')
+        .pipe(sass())
+        .pipe(minifyCSS())
+        .pipe(rename(COMPILED_CSS_FILE_NAME))
+        .pipe(gulp.dest(PATHS.BUILD.STYLES + '/cabinet/'));
+});
+
 /** Task Sass: Run all 'Sass:*' tasks **/
-gulp.task('Sass', ['Sass:Landing', 'Sass:Map']);
+gulp.task('Sass', ['Sass:Landing', 'Sass:Map', 'Sass:Cabinet']);
 
 
 
@@ -133,8 +149,23 @@ gulp.task('TypeScript:Map', function() {
         .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/map/'));
 });
 
+/** Task TypeScript:Map - Compile 'source/scripts/map/*' **/
+gulp.task('TypeScript:Cabinet', function() {
+    return gulp.src(PATHS.SOURCE.SCRIPTS + '/cabinet/_references.ts')
+        .pipe(sourcemaps.init())
+        .pipe(ts({
+            noImplicitAny: false,
+            target: 'ES5',
+            sortOutput: true,
+            out: 'cabinet.js'
+        }))
+        .pipe(uglify())
+        .pipe(sourcemaps.write('/'))
+        .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/cabinet/'));
+});
+
 /** Task TypeScript: Run all 'TypeScript:*' tasks **/
-gulp.task('TypeScript', ['TypeScript:Landing', 'TypeScript:Map']);
+gulp.task('TypeScript', ['TypeScript:Landing', 'TypeScript:Map', 'TypeScript:Cabinet']);
 
 
 

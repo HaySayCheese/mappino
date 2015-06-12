@@ -18,3 +18,4 @@ static/escaped_fragments/*
 
 *.pyc
 *.log
+bower_components

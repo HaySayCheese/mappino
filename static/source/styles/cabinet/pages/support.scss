@@ -1,9 +1,7 @@
 .support-page {
-    .collection-item {
-        height: auto !important;
-
+    md-list-item {
         p {
-            font-size: 0.8rem;
+            font-size: 0.8rem !important;
 
             span + span {
                 margin-left: 15px;

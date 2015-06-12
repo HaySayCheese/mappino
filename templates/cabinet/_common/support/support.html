@@ -1,89 +1,81 @@
-<div class="support-page" ng-controller="SupportController as supportCtrl">
-    <section class="medium center-block">
-        <h5 class="light-blue-text base">Поддержка mappino!</h5>
+<div class="support-page" layout="column" layout-align="start center" ng-controller="SupportController as supportCtrl">
+    <section class="-medium md-whiteframe-z2">
+        <h3 class="md-headline light-blue-text">Поддержка mappino!</h3>
 
-        <div class="row">
-            <div class="col s12 center">
-                В этом разделе Вы можете связаться с командой поддержки mappino и задать интересующие Вас вопросы.
-                Вы можете обращаться в службу поддержки если у Вас возникают проблемы с сервисом,
-                Вам нужна консультация касательно наших услуг, или если у Вас просто есть предложения или пожелания.
-            </div>
+        <div class="center-align" layout="row">
+            В этом разделе Вы можете связаться с командой поддержки mappino и задать интересующие Вас вопросы.
+            Вы можете обращаться в службу поддержки если у Вас возникают проблемы с сервисом,
+            Вам нужна консультация касательно наших услуг, или если у Вас просто есть предложения или пожелания.
         </div>
     </section>
 
 
 
-    <section class="medium center-block" ng-hide="loaders.base">
-        <h5 class="light-blue-text base">Диалоги</h5>
+    <section class="-medium md-whiteframe-z2" ng-hide="loaders.base">
+        <h3 class="md-headline light-blue-text">Диалоги</h3>
 
-        <div class="row">
-            <div class="col s12">
-                <div class="row" ng-hide="tickets.length">
-                    <div class="col s12 center">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                        Dicta ducimus esse facere fugit laborum officia veniam. Magnam molestiae officia sed!
-                    </div>
-                </div>
+        <div layout="column">
+            <div class="md-padding center-align" ng-hide="!tickets.length || ticketFormIsVisible">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                Dicta ducimus esse facere fugit laborum officia veniam. Magnam molestiae officia sed!
+            </div>
 
-                <div class="row" ng-hide="tickets.length">
-                    <div class="col s12">
-                        <div class="divider"></div>
-                    </div>
-                </div>
+            <div layout="column" ng-show="ticketFormIsVisible">
+                <form class="md-padding" name="form.ticket" novalidate>
+                    <md-input-container flex>
+                        <label>Тема обращения</label>
+                        <input type="text" name="subject" ng-model="ticket.subject">
+                    </md-input-container>
 
-                <div class="row" ng-hide="ticketFormIsVisible">
-                    <div class="col s12 center">
-                        <a class="waves-effect waves-light btn" ng-click="supportCtrl.createTicket()">Связаться со службой поддержки</a>
-                    </div>
-                </div>
-
-                <div class="row" ng-show="ticketFormIsVisible">
-                    <div class="col s12">
-                        <form name="form.ticket" novalidate>
-                            <div class="input-field">
-                                <label for="ticket_subject">Тема обращения</label>
-                                <input id="ticket_subject" type="text" name="subject" ng-model="ticket.subject" />
-                            </div>
-                            <div class="input-field">
-                                <label for="ticket_message">Описание обращения</label>
-                                <textarea id="ticket_message" class="materialize-textarea validate" rows="3" name="message" ng-model="ticket.message" required></textarea>
-                                <span class="input-has-error" ng-show="form.ticket.message.$error.required">Укажите, пожалуйста, тему обращения.</span>
-                            </div>
-                            <button class="waves-effect waves-light btn right" ng-disabled="!ticket.message" ng-click="supportCtrl.sendMessage()">
-                                <i class="mdi-content-send right"></i>Отправить
-                            </button>
-                            <a class="waves-effect waves-light btn-flat right" ng-click="ticketFormIsVisible = false;">Отмена</a>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col s12">
-                        <div class="divider"></div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col s12">
-                        <h6>Последнии диалоги</h6>
-                        <div class="collection">
-                            <a href ui-sref="ticket_view({ ticket_id: ticket.id })" class="collection-item avatar" ng-repeat="ticket in tickets | orderBy: 'created': true">
-                                <img src="http://lorempixel.com/42/42/nature" alt="" class="circle">
-                                <div class="title grey-text text-darken-3 truncate" ng-show="ticket.subject">
-                                    [[ ticket.subject ]]
-                                </div>
-                                <div class="title grey-text text-darken-1" ng-hide="ticket.subject">
-                                    Новый диалог
-                                </div>
-                                <p class="grey-text">
-                                    <span>Создано: [[ ticket.created | date:'dd.MM.yyyy в HH:mm' ]]</span>
-                                    <span>Посл. сообщ.: [[ ticket.last_message | date:'dd.MM.yyyy в HH:mm' ]]</span>
-                                </p>
-                                <!--<a href="#!" class="secondary-content"><i class="mdi-action-grade"></i></a>-->
-                            </a>
+                    <md-input-container flex>
+                        <label>Описание обращения</label>
+                        <textarea name="message" ng-model="ticket.message" columns="1" md-maxlength="400" required></textarea>
+                        <div ng-messages="form.ticket.message.$error">
+                            <div ng-message="required">Укажите, пожалуйста, тему обращения.</div>
+                            <div ng-message="md-maxlength">Тема обращения слишком длинная.</div>
                         </div>
+                    </md-input-container>
+
+                    <div layout="row" layout-align="end center">
+                        <md-button ng-click="ticketFormIsVisible = false;">
+                            Отмена
+                        </md-button>
+
+                        <md-button class="md-raised md-primary" ng-disabled="!ticket.message" ng-click="supportCtrl.sendMessage()">
+                            Отправить
+                        </md-button>
                     </div>
-                </div>
+                </form>
+            </div>
+
+            <div class="md-padding" layout="row" layout-align="center center" ng-hide="ticketFormIsVisible">
+                <md-button class="md-raised md-primary" ng-click="supportCtrl.createTicket()">
+                    Связаться со службой поддержки
+                </md-button>
+            </div>
+
+            <md-divider></md-divider>
+
+            <div layout="column">
+                <md-list>
+                    <md-subheader class="md-no-sticky">Последнии диалоги</md-subheader>
+
+                    <md-list-item ng-click="supportCtrl.goToTicket(ticket.id)" class="md-2-line" ng-repeat="ticket in tickets | orderBy: 'created': true">
+                        <img ng-src="http://lorempixel.com/40/40/nature" class="md-avatar" alt="[[ ticket.subject ]]" />
+                        <div class="md-list-item-text">
+                            <h3 class="truncate" ng-show="ticket.subject">
+                                [[ ticket.subject ]]
+                            </h3>
+                            <h3 class="grey-text text-darken-1" ng-hide="ticket.subject">
+                                Диалог без темы
+                            </h3>
+                            <p>
+                                <span>Создано: [[ ticket.created | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                                <span>Посл. сообщ.: [[ ticket.last_message | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                            </p>
+                        </div>
+                    </md-list-item>
+                </md-list>
             </div>
         </div>
     </section>

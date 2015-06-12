@@ -14,6 +14,7 @@ module pages.cabinet {
 
         public static $inject = [
             '$scope',
+            '$rootScope',
             '$state',
             'TicketsService',
             'SettingsService'
@@ -23,6 +24,7 @@ module pages.cabinet {
 
         constructor(
             private $scope: any,
+            private $rootScope: any,
             private $state: angular.ui.IStateService,
             private ticketsService: ITicketsService,
             private settingsService: bModules.Auth.SettingsService) {
@@ -31,6 +33,7 @@ module pages.cabinet {
             $scope.new_message  = {};
 
             $scope.ticketIsLoaded = false;
+            $rootScope.loaders.base = true;
 
 
             $scope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
@@ -41,6 +44,7 @@ module pages.cabinet {
 
                     $scope.ticket = this._ticket;
                     $scope.ticketIsLoaded = true;
+                    $rootScope.loaders.base = false;
                 });
             });
         }

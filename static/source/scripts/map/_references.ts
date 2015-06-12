@@ -1,13 +1,7 @@
 // ####################
 // Declarations import
 // ####################
-/// <reference path='../_common/definitions/underscore.d.ts' />
-/// <reference path='../_common/definitions/google.maps.d.ts' />
-/// <reference path='../_common/definitions/jquery.d.ts' />
-/// <reference path='../_common/definitions/angular.d.ts' />
-/// <reference path='../_common/definitions/angular-cookies.d.ts' />
-/// <reference path='../_common/definitions/angular-ui-router.d.ts' />
-/// <reference path='../_common/definitions/custom.d.ts' />
+/// <reference path='../_common/definitions/_references.ts' />
 
 
 
@@ -31,6 +25,7 @@
 // ####################
 /// <reference path='configs/ProvidersConfigs.ts' />
 /// <reference path='configs/RoutersConfigs.ts' />
+/// <reference path='configs/MaterialFrameworkConfigs.ts' />
 /// <reference path='configs/ApplicationConfigs.ts' />
 
 

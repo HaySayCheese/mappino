@@ -31,6 +31,7 @@
 // ####################
 /// <reference path='configs/ProvidersConfigs.ts' />
 /// <reference path='configs/RoutersConfigs.ts' />
+/// <reference path='configs/MaterialFrameworkConfigs.ts' />
 /// <reference path='configs/ApplicationConfigs.ts' />
 
 
