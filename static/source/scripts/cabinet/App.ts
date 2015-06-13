@@ -7,8 +7,9 @@ module pages.cabinet {
         'ngMaterial',
         'ngCookies',
         'ngMessages',
-        'ui.router',
         'ngFileUpload',
+
+        'ui.router',
 
         'bModules.Types',
         'bModules.Auth',
@@ -29,9 +30,6 @@ module pages.cabinet {
     /** Application configuration create */
     new ApplicationConfigs(app);
 
-
-    /** Module services */
-    // -
 
     app.service('PublicationsService', PublicationsService);
     app.service('TicketsService', TicketsService);
