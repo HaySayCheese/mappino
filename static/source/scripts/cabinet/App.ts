@@ -17,6 +17,7 @@ module pages.cabinet {
     ]);
 
 
+
     /** Providers configuration create */
     new ProvidersConfigs(app);
 
