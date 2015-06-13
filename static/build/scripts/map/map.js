@@ -1,2 +1,1209 @@
-var bModules;!function(e){var t;!function(e){var t=function(){function e(e,t,s){void 0===s&&(s=0),this._el=e,this._panel_name=t,this._state=s,this.config={openedClass:"opened",closedClass:"closed",closingClass:"closing"}}return Object.defineProperty(e.prototype,"panel_name",{get:function(){return this._panel_name},enumerable:!0,configurable:!0}),Object.defineProperty(e.prototype,"state",{get:function(){return this._state},set:function(e){this._state!==e&&(this._state=e,0===e?this.hide():this.show())},enumerable:!0,configurable:!0}),e.prototype.show=function(){this._el.dequeue().removeClass(this.config.closedClass).removeClass(this.config.closingClass).addClass(this.config.openedClass)},e.prototype.hide=function(){var e=this;this._el.hasClass(this.config.openedClass)?this._el.removeClass(this.config.openedClass).addClass(this.config.closingClass).delay(500).queue(function(){e._el.removeClass(e.config.closingClass).addClass(e.config.closedClass).dequeue()}):this._el.addClass(this.config.closedClass)},e}();e.Panel=t}(t=e.Panels||(e.Panels={}))}(bModules||(bModules={}));var __extends=this.__extends||function(e,t){function s(){this.constructor=e}for(var i in t)t.hasOwnProperty(i)&&(e[i]=t[i]);s.prototype=t.prototype,e.prototype=new s},bModules;!function(e){var t;!function(e){var t=function(e){function t(t,s,i){void 0===i&&(i=0),e.call(this,t,s,i),this._el=t,this._panel_name=s,this._state=i}return __extends(t,e),t}(e.Panel);e.DropPanel=t}(t=e.Panels||(e.Panels={}))}(bModules||(bModules={}));var bModules;!function(e){var t;!function(e){"use strict";var t=function(){function t(t,s){this.$rootScope=t,this.$state=s,this.panels=[],this.close_state_sid=0,this.open_state_sid=1,this.panels.push(new e.DropPanel(angular.element(".user-panel"),"user")),this.panels.push(new e.DropPanel(angular.element(".menu-panel"),"menu"))}return t.prototype.isOpened=function(e){for(var t=this.panels,s=0,i=t.length;i>s;s++)if(e===t[s].panel_name)return t[s].state!==this.close_state_sid},t.prototype.open=function(e,t){void 0===t&&(t=this.open_state_sid);for(var s=this.panels,i=0,a=s.length;a>i;i++)e===s[i].panel_name&&(s[i].state=t,this.$rootScope.$broadcast("bModules.Panels.DropPanels.PanelOpened",{panel_name:e,state:t,is_opened:t!==this.close_state_sid}))},t.prototype.close=function(e){for(var t=this.panels,s=0,i=t.length;i>s;s++)e===t[s].panel_name&&(t[s].state=this.close_state_sid,this.$rootScope.$broadcast("bModules.Panels.DropPanels.PanelClosed",{panel_name:e,state:this.close_state_sid,is_opened:!1}))},t.$inject=["$rootScope","$state"],t}();e.DropPanelsHandler=t}(t=e.Panels||(e.Panels={}))}(bModules||(bModules={}));var bModules;!function(e){var t;!function(e){var t=function(e){function t(t,s,i){void 0===i&&(i=0),e.call(this,t,s,i),this._el=t,this._panel_name=s,this._state=i}return __extends(t,e),t}(e.Panel);e.SlidingPanel=t}(t=e.Panels||(e.Panels={}))}(bModules||(bModules={}));var bModules;!function(e){var t;!function(e){"use strict";var t=function(){function t(t,s){var i=this;this.$rootScope=t,this.$state=s,this.panels=[],this.close_state_sid=0,this.open_state_sid=1,this.panels.push(new e.SlidingPanel(angular.element(".publication-panel"),"publication")),this.panels.push(new e.SlidingPanel(angular.element(".filters-panel"),"filters")),this.panels.push(new e.SlidingPanel(angular.element(".favorites-panel"),"favorites")),this.panels.push(new e.SlidingPanel(angular.element(".auth-panel"),"auth")),this.$rootScope.$on("$stateChangeSuccess",function(){return i.synchronize()})}return t.prototype.synchronize=function(){parseInt(this.$state.params.filters)!==this.close_state_sid&&parseInt(this.$state.params.favorites)!==this.close_state_sid&&this.$state.go("base",{favorites:this.close_state_sid}),parseInt(this.$state.params.filters)!==this.close_state_sid&&parseInt(this.$state.params.auth)!==this.close_state_sid&&this.$state.go("base",{auth:this.close_state_sid}),parseInt(this.$state.params.favorites)!==this.close_state_sid&&parseInt(this.$state.params.auth)!==this.close_state_sid&&this.$state.go("base",{auth:this.close_state_sid}),this.switchState("publication",parseInt(this.$state.params.publication)),this.switchState("filters",parseInt(this.$state.params.filters)),this.switchState("favorites",parseInt(this.$state.params.favorites)),this.switchState("auth",parseInt(this.$state.params.auth))},t.prototype.switchState=function(e,t){for(var s=this.panels,i=0,a=s.length;a>i;i++)e===s[i].panel_name&&(s[i].state=t,this.$rootScope.$broadcast("bModules.Panels.SlidingPanels.PanelSwitchState",{panel_name:e,state:t,is_opened:t!==this.close_state_sid}))},t.prototype.isOpened=function(e){for(var t=this.panels,s=0,i=t.length;i>s;s++)if(e===t[s].panel_name)return t[s].state!==this.close_state_sid},t.prototype.open=function(e,t){switch(void 0===t&&(t=this.open_state_sid),e){case"publication":this.$state.go("base",{publication:t});break;case"filters":this.$state.go("base",{filters:t,favorites:this.close_state_sid,auth:this.close_state_sid});break;case"favorites":this.$state.go("base",{filters:this.close_state_sid,favorites:t,auth:this.close_state_sid});break;case"auth":this.$state.go("base",{filters:this.close_state_sid,favorites:this.close_state_sid,auth:t})}this.$rootScope.$broadcast("bModules.Panels.SlidingPanels.PanelOpened",{panel_name:e,state:t,is_opened:t!==this.close_state_sid})},t.prototype.close=function(e){switch(e){case"publication":this.$state.go("base",{publication:this.close_state_sid});break;case"filters":this.$state.go("base",{filters:this.close_state_sid});break;case"favorites":this.$state.go("base",{favorites:this.close_state_sid});break;case"auth":this.$state.go("base",{auth:this.close_state_sid})}this.$rootScope.$broadcast("bModules.Panels.SlidingPanels.PanelClosed",{panel_name:e,state:this.close_state_sid,is_opened:!1})},t.$inject=["$rootScope","$state"],t}();e.SlidingPanelsHandler=t}(t=e.Panels||(e.Panels={}))}(bModules||(bModules={}));var bModules;!function(e){var t;!function(e){var t=function(){function e(){this._realty_types=[{id:0,name:"flat",title:"Квартиры",filters:["op_sid","pr_sid","p_min","p_max","cu_sid","p_c_min","p_c_max","n_b","s_m","fml","frg","r_c_min","r_c_max","t_a_min","t_a_max","f_min","f_max","msd","grd","pl_sid","lft","elt","h_w","c_w","gas","h_t_sid"]},{id:1,name:"house",title:"Дома",filters:["op_sid","pr_sid","p_min","p_max","cu_sid","p_c_min","p_c_max","n_b","s_m","fml","frg","r_c_min","r_c_max","f_c_min","f_c_max","elt","h_w","gas","c_w","swg","h_t_sid"]},{id:2,name:"room",title:"Комнаты",filters:["op_sid","pr_sid","p_min","p_max","cu_sid","p_c_min","p_c_max","n_b","s_m","fml","frg","r_c_min","r_c_max","t_a_min","t_a_max","f_min","f_max","msd","grd","lft","elt","h_w","c_w","gas","h_t_sid"]},{id:3,name:"land",title:"Земельные участки",filters:["op_sid","p_min","p_max","cu_sid","a_min","a_max","gas","elt","wtr","swg"]},{id:4,name:"garage",title:"Гаражи",filters:["op_sid","p_min","p_max","cu_sid","t_a_min","t_a_max"]},{id:5,name:"office",title:"Офисы",filters:["op_sid","p_min","p_max","cu_sid","n_b","s_m","t_a_min","t_a_max","c_c_min","c_c_max","sct","ktn","h_w","c_w"]},{id:6,name:"trade",title:"Торговые помещения",filters:["op_sid","p_min","p_max","cu_sid","n_b","s_m","h_a_min","h_a_max","t_a_min","t_a_max","b_t_sid","gas","elt","h_w","c_w","swg"]},{id:7,name:"warehouse",title:"Склады",filters:["op_sid","p_min","p_max","cu_sid","n_b","s_m","h_a_min","h_a_max","gas","elt","h_w","c_w","s_a","f_a"]},{id:8,name:"business",title:"Готовый бизнес",filters:["op_sid","p_min","p_max","cu_sid"]}]}return Object.defineProperty(e.prototype,"realty_types",{get:function(){return this._realty_types},enumerable:!0,configurable:!0}),e}();e.RealtyTypesService=t}(t=e.Types||(e.Types={}))}(bModules||(bModules={}));var bModules;!function(e){var t;!function(e){var t=function(){function e(){this._currency_types=[{id:"0",name:"USD",title:"Дол."},{id:"1",name:"EUR",title:"Евро"},{id:"2",name:"UAH",title:"Грн."}]}return Object.defineProperty(e.prototype,"currency_types",{get:function(){return this._currency_types},enumerable:!0,configurable:!0}),e}();e.CurrencyTypesService=t}(t=e.Types||(e.Types={}))}(bModules||(bModules={}));var bModules;!function(e){var t;!function(e){var t=function(){function e(){this._period_types=[{id:"0",name:"daily",title:"Посуточно"},{id:"1",name:"monthly",title:"Помесячно"},{id:"2",name:"long_term",title:"Долгосрочная"}]}return Object.defineProperty(e.prototype,"period_types",{get:function(){return this._period_types},enumerable:!0,configurable:!0}),e}();e.PeriodTypesService=t}(t=e.Types||(e.Types={}))}(bModules||(bModules={}));var bModules;!function(e){var t;!function(e){"use strict";var t=angular.module("bModules.Types",[]);t.service("RealtyTypesService",e.RealtyTypesService),t.service("CurrencyTypesService",e.CurrencyTypesService),t.service("PeriodTypesService",e.PeriodTypesService)}(t=e.Types||(e.Types={}))}(bModules||(bModules={}));var pages;!function(e){var t;!function(e){"use strict";var t=function(){function e(e){this.app=e,e.config(["$interpolateProvider","$resourceProvider","$locationProvider",function(e,t,s){e.startSymbol("[["),e.endSymbol("]]"),t.defaults.stripTrailingSlashes=!1}])}return e}();e.ProvidersConfigs=t}(t=e.map||(e.map={}))}(pages||(pages={}));var pages;!function(e){var t;!function(e){"use strict";var t=function(){function e(e){this.app=e,e.config(["$stateProvider","$urlRouterProvider","$locationProvider",function(e,t,s){t.otherwise("/0/1/0/0/"),e.state("base",{url:"/:auth/:filters/:favorites/:publication/"}),s.hashPrefix("!")}])}return e}();e.RoutersConfigs=t}(t=e.map||(e.map={}))}(pages||(pages={}));var pages;!function(e){var t;!function(e){"use strict";var t=function(){function e(e){this.app=e,e.config(["$mdThemingProvider","$mdIconProvider",function(e,t){e.theme("default").primaryPalette("blue").accentPalette("orange")}])}return e}();e.MaterialFrameworkConfigs=t}(t=e.map||(e.map={}))}(pages||(pages={}));var pages;!function(e){var t;!function(e){"use strict";var t=function(){function e(e){this.app=e,e.run(["$http","$cookies",function(e,t){return e.defaults.headers.common["X-CSRFToken"]=t.csrftoken}])}return e}();e.ApplicationConfigs=t}(t=e.map||(e.map={}))}(pages||(pages={}));var pages;!function(e){var t;!function(e){"use strict";var t=function(){function e(e,t,s,i){this.$rootScope=e,this.$timeout=t,this.$location=s,this.realtyTypesService=i,this._filters={map:{c:null,l:"48.455935,34.41285",v:null,z:6},panels:{red:{r_t_sid:null},blue:{b_t_sid:null},green:{g_t_sid:null},yellow:{y_t_sid:null}},base:{op_sid:0,cu_sid:0,h_t_sid:0,pr_sid:0,pl_sid:0,b_t_sid:0,p_min:null,p_max:null,r_c_min:null,r_c_max:null,f_c_min:null,f_c_max:null,p_c_min:null,p_c_max:null,t_a_min:null,t_a_max:null,f_min:null,f_max:null,h_a_min:null,h_a_max:null,c_c_min:null,c_c_max:null,h_c_min:null,h_c_max:null,c_h_min:null,c_h_max:null,a_min:null,a_max:null,n_b:!0,s_m:!0,fml:!1,frg:!1,elt:!1,gas:!1,h_w:!1,c_w:!1,swg:!1,lft:!1,sct:!1,ktn:!1,s_a:!1,f_a:!1,pit:!1,wtr:!1,msd:!0,grd:!0}},this._filters_for_load_markers={zoom:null,viewport:null,filters:[]},this.updateFiltersFromUrl()}return e.prototype.update=function(e,t){var s=this;for(var i in t)t.hasOwnProperty(i)&&(this._filters[e][i]=t[i]);this.updateUrlFromFilters(),this.createFormattedObjectForLoadMarkers(),this.$timeout(function(){return s.$rootScope.$broadcast("pages.map.FiltersService.FiltersUpdated",s._filters)})},Object.defineProperty(e.prototype,"filters",{get:function(){return this._filters},enumerable:!0,configurable:!0}),e.prototype.createFiltersForPanel=function(e){var t=this,s=this,i=e.toString().substring(0,1)+"_",a=this._filters.panels[e][i+"t_sid"],r=this.$location.search();if(_.isNull(a)){this._filters.panels[e]={},this._filters.panels[e][i+"t_sid"]=a;for(var n in r)r.hasOwnProperty(n)&&n.match(new RegExp("^"+i,"m"))&&this.$location.search(n,null)}if(!_.isNull(a))for(var o=_.where(s.realtyTypesService.realty_types,{id:a})[0].filters,l=0,p=o.length;p>l;l++){var c=i+o[l];_.isUndefined(this._filters.panels[e][c])&&(this._filters.panels[e][c]=this._filters.base[o[l]])}this.$timeout(function(){return t.$rootScope.$broadcast("pages.map.FiltersService.FiltersUpdated",t._filters)})},e.prototype.updateFiltersFromUrl=function(){var e=this,t=this.$location.search(),s=this._filters.panels;for(var i in t)if(t.hasOwnProperty(i)){if("token"===i.toString())continue;"true"===t[i]&&(t[i]=!0),"false"===t[i]&&(t[i]=!1),-1!==i.toString().indexOf("_sid")&&(t[i]=parseInt(t[i])),/^r_/.test(i.toString())&&(s.red[i]=t[i]),/^b_/.test(i.toString())&&(s.blue[i]=t[i]),/^g_/.test(i.toString())&&(s.green[i]=t[i]),/^y_/.test(i.toString())&&(s.yellow[i]=t[i]),_.include(["c","l","z"],i)&&(this._filters.map[i]=t[i])}_.isUndefined(t.r_t_sid)&&_.isUndefined(t.b_t_sid)&&_.isUndefined(t.g_t_sid)&&_.isUndefined(t.y_t_sid)&&(s.red.r_t_sid=0,this.createFiltersForPanel("red")),_.isUndefined(t.r_t_sid)||this.createFiltersForPanel("red"),_.isUndefined(t.b_t_sid)||this.createFiltersForPanel("blue"),_.isUndefined(t.g_t_sid)||this.createFiltersForPanel("green"),_.isUndefined(t.y_t_sid)||this.createFiltersForPanel("yellow"),this.$timeout(function(){return e.$rootScope.$broadcast("pages.map.FiltersService.UpdatedFromUrl",e._filters)})},e.prototype.updateUrlFromFilters=function(){var e="",t=this._filters.map,s=this._filters.panels,i={};this._filters_for_load_markers={zoom:null,viewport:null,filters:[]};for(var a in t)if(t.hasOwnProperty(a)&&!_.include(["v"],a)){if(!t[a])continue;_.include(["",null],t[a])||(e+=(0!==e.length?"&":"")+a+"="+t[a])}for(var r in s)if(s.hasOwnProperty(r)){i={panel:r};for(var n in s[r])if(s[r].hasOwnProperty(n)){if(-1!==n.indexOf("t_sid")&&_.isNull(s[r][n])){i=null;continue}if(_.include(["",null],s[r][n]))continue;if(i[n.substr(2,n.length)]=s[r][n],s[r][n]===this._filters.base[n.substr(2,n.length)])continue;e+=(0!==e.length?"&":"")+n+"="+s[r][n]}_.isNull(i)||this._filters_for_load_markers.filters.push(i)}console.info("updateUrlFromPanelsFilters method: panels filters updated"),this.$location.search(e),this.$rootScope.$$phase||this.$rootScope.$apply()},e.prototype.createFormattedObjectForLoadMarkers=function(){var e=this;this._filters_for_load_markers.zoom=this._filters.map.z,this.createFormattedViewportForLoadMarkers(),this.$timeout(function(){return e.$rootScope.$broadcast("pages.map.FiltersService.CreatedFormattedFilters",e._filters_for_load_markers)})},e.prototype.createFormattedViewportForLoadMarkers=function(){var e=this._filters.map,t=e.v.getNorthEast().lat().toString(),s=e.v.getNorthEast().lng().toString(),i=e.v.getSouthWest().lat().toString(),a=e.v.getSouthWest().lng().toString(),r=t.replace(t.substring(t.indexOf(".")+3,t.length),""),n=s.replace(s.substring(s.indexOf(".")+3,s.length),""),o=i.replace(i.substring(i.indexOf(".")+3,i.length),""),l=a.replace(a.substring(a.indexOf(".")+3,a.length),"");this._filters_for_load_markers.viewport={ne_lat:r,ne_lng:n,sw_lat:o,sw_lng:l},console.log(this._filters_for_load_markers)},e.$inject=["$rootScope","$timeout","$location","RealtyTypesService"],e}();e.FiltersService=t}(t=e.map||(e.map={}))}(pages||(pages={}));var pages;!function(e){var t;!function(e){"use strict";var t=function(){function e(e,t,s,i){this.$rootScope=e,this.$http=t,this.$timeout=s,this.slidingPanelsHandler=i,this._response_markers={red:{},blue:{},green:{}},this._markers={red:{},blue:{},green:{}};var a=this;e.$on("pages.map.FiltersService.CreatedFormattedFilters",function(e,t){a._filters_for_load_markers=t,a.load()})}return e.prototype.load=function(){var e=this;this.$http.get("/ajax/api/markers/?p="+JSON.stringify(this._filters_for_load_markers)).success(function(t){e.clearResponseMarkersObject(),e._response_markers=t,e.$timeout(function(){return e.$rootScope.$broadcast("pages.map.MarkersService.MarkersIsLoaded")})})},e.prototype.place=function(e){var t=this;for(var s in this._markers)if(this._markers.hasOwnProperty(s))for(var i in this._markers[s])this._markers[s].hasOwnProperty(i)&&(this._response_markers[s][i]||(this._markers[s][i].setMap(null),console.log("deleted: "+this._markers[s][i]),delete this._markers[s][i]),console.log(this._markers));for(var s in this._response_markers)if(this._response_markers.hasOwnProperty(s))for(var i in this._response_markers[s])this._response_markers[s].hasOwnProperty(i)&&(this._markers[s][i]||(this._markers[s][i]=new google.maps.Marker({position:new google.maps.LatLng(i.split(":")[0],i.split(":")[1]),map:e,title:"Hello World!"}),this._markers[s][i].setMap(e),console.log("added: "+this._markers[s][i])),console.log(this._markers));this.$timeout(function(){return t.$rootScope.$broadcast("pages.map.MarkersService.MarkersPlaced")})},e.prototype.clearResponseMarkersObject=function(){this._response_markers={red:{},blue:{},green:{}}},e.$inject=["$rootScope","$http","$timeout"],e}();e.MarkersService=t}(t=e.map||(e.map={}))}(pages||(pages={}));var pages;!function(e){var t;!function(e){"use strict";var t=function(){function e(e,t,s,i){this.$rootScope=e,this.$location=t,this.dropPanelsHandler=s,this.slidingPanelsHandler=i;var a=this;e.$on("$stateChangeStart",function(){_.isNull(t.search())||(a._location_search=t.search())}),e.$on("$stateChangeSuccess",function(){_.isNull(a._location_search)||t.search(a._location_search)})}return e.$inject=["$rootScope","$location","DropPanelsHandler","SlidePanelsHandler"],e}();e.AppController=t}(t=e.map||(e.map={}))}(pages||(pages={}));var pages;!function(e){var t;!function(e){"use strict";var t=function(){function e(e,t){this.$scope=e,this.$timeout=t,t(function(){return $(".tabs").tabs()})}return e.$inject=["$scope","$timeout","SlidePanelsHandler"],e}();e.TabsNavigationController=t}(t=e.map||(e.map={}))}(pages||(pages={}));var pages;!function(e){var t;!function(e){"use strict";var t=function(){function e(e,t,s,i){this.$scope=e,this.$timeout=t,this.filtersService=s,this.realtyTypesService=i,t(function(){return $("select").material_select()}),e.realtyTypes=i.realty_types,this.filters=e.filters=s.filters.panels}return e.$inject=["$scope","$timeout","FiltersService","RealtyTypesService"],e}();e.FiltersPanelController=t}(t=e.map||(e.map={}))}(pages||(pages={}));var pages;!function(e){var t;!function(e){"use strict";var t=function(){function e(e,t,s){var i=this;this.$scope=e,this.filtersService=t,this.markersService=s;var a=this;google.maps.event.addDomListener(window,"load",function(){return i.initMap(i)}),e.$on("pages.map.MarkersService.MarkersIsLoaded",function(){s.place(a._map)}),e.$on("pages.map.PlaceAutocompleteController.PlaceChanged",function(e,t){a.positioningMap(t)})}return e.prototype.initMap=function(e){e._map=new google.maps.Map(document.getElementById("map"),{center:new google.maps.LatLng(this.filtersService.filters.map.l.split(",")[0],this.filtersService.filters.map.l.split(",")[1]),zoom:parseInt(this.filtersService.filters.map.z),mapTypeId:google.maps.MapTypeId.ROADMAP,disableDefaultUI:!0}),google.maps.event.addListener(e._map,"idle",function(){e.filtersService.update("map",{z:e._map.getZoom(),v:e._map.getBounds(),l:e._map.getCenter().toUrlValue()})})},e.prototype.positioningMap=function(e){e.geometry&&(e.geometry.viewport?this._map.fitBounds(e.geometry.viewport):(this._map.panTo(e.geometry.location),this._map.setZoom(17)))},e.$inject=["$scope","FiltersService","MarkersService"],e}();e.MapController=t}(t=e.map||(e.map={}))}(pages||(pages={}));var pages;!function(e){var t;!function(e){"use strict";var t=function(){function e(e,t,s){var i=this;this.$scope=e,this.$rootScope=t,this.filtersService=s;var a=this;this._autocompleteInput=document.getElementById("place-autocomplete"),google.maps.event.addDomListener(window,"load",function(){return i.initAutocomplete(a)}),e.$on("pages.map.FiltersService.UpdatedFromUrl",function(e,t){i._autocompleteInput.value=t.map.c})}return e.prototype.initAutocomplete=function(e){e._autocomplete=new google.maps.places.Autocomplete(this._autocompleteInput,{componentRestrictions:{country:"ua"}}),google.maps.event.addListener(e._autocomplete,"place_changed",function(){e.filtersService.update("map",{c:e._autocomplete.getPlace().formatted_address}),e.$rootScope.$broadcast("pages.map.PlaceAutocompleteController.PlaceChanged",e._autocomplete.getPlace())})},e.$inject=["$scope","$rootScope","FiltersService"],e}();e.PlaceAutocompleteController=t}(t=e.map||(e.map={}))}(pages||(pages={}));var pages;!function(e){var t;!function(e){"use strict";var t=angular.module("mappino.pages.map",["ngMaterial","ngCookies","ngResource","ui.router"]);new e.ProvidersConfigs(t),new e.RoutersConfigs(t),new e.MaterialFrameworkConfigs(t),new e.ApplicationConfigs(t),t.service("DropPanelsHandler",bModules.Panels.DropPanelsHandler),t.service("SlidePanelsHandler",bModules.Panels.SlidingPanelsHandler),t.service("RealtyTypesService",bModules.Types.RealtyTypesService),t.service("FiltersService",e.FiltersService),t.service("MarkersService",e.MarkersService),t.controller("AppController",e.AppController),t.controller("TabsNavigationController",e.TabsNavigationController),t.controller("FiltersPanelController",e.FiltersPanelController),t.controller("MapController",e.MapController),t.controller("PlaceAutocompleteController",e.PlaceAutocompleteController)}(t=e.map||(e.map={}))}(pages||(pages={}));
-//# sourceMappingURL=/map.js.map
+/// <reference path='angular.d.ts' />
+/// <reference path='angular-cookies.d.ts' />
+/// <reference path='angular-ui-router.d.ts' />
+/// <reference path='custom.d.ts' />
+/// <reference path='google.maps.d.ts' />
+/// <reference path='jquery.d.ts' />
+/// <reference path='underscore.d.ts' />
+var bModules;
+(function (bModules) {
+    var Panels;
+    (function (Panels) {
+        var Panel = (function () {
+            function Panel(_el, _panel_name, _state) {
+                if (_state === void 0) { _state = 0; }
+                this._el = _el;
+                this._panel_name = _panel_name;
+                this._state = _state;
+                this.config = {
+                    openedClass: 'opened',
+                    closedClass: 'closed',
+                    closingClass: 'closing'
+                };
+                // -
+            }
+            Object.defineProperty(Panel.prototype, "panel_name", {
+                get: function () {
+                    return this._panel_name;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            Object.defineProperty(Panel.prototype, "state", {
+                get: function () {
+                    return this._state;
+                },
+                set: function (state) {
+                    if (this._state !== state) {
+                        this._state = state;
+                        state === 0 ? this.hide() : this.show();
+                    }
+                },
+                enumerable: true,
+                configurable: true
+            });
+            Panel.prototype.show = function () {
+                this._el
+                    .dequeue()
+                    .removeClass(this.config['closedClass'])
+                    .removeClass(this.config['closingClass'])
+                    .addClass(this.config['openedClass']);
+            };
+            Panel.prototype.hide = function () {
+                var self = this;
+                // Якщо панель має клас 'this.config['openedClass']' (відкрита)
+                // то закриваємо її
+                // ця провірка потрібна що б не смикати панель спочатку у відкритий стан а потім закривати
+                if (this._el.hasClass(this.config['openedClass'])) {
+                    this._el
+                        .removeClass(this.config['openedClass'])
+                        .addClass(this.config['closingClass'])
+                        .delay(500)
+                        .queue(function () {
+                        self._el
+                            .removeClass(self.config['closingClass'])
+                            .addClass(self.config['closedClass'])
+                            .dequeue();
+                    });
+                }
+                else {
+                    this._el.addClass(this.config['closedClass']);
+                }
+            };
+            return Panel;
+        })();
+        Panels.Panel = Panel;
+    })(Panels = bModules.Panels || (bModules.Panels = {}));
+})(bModules || (bModules = {}));
+/// <reference path='_references.ts' />
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var bModules;
+(function (bModules) {
+    var Panels;
+    (function (Panels) {
+        var DropPanel = (function (_super) {
+            __extends(DropPanel, _super);
+            function DropPanel(_el, _panel_name, _state) {
+                if (_state === void 0) { _state = 0; }
+                _super.call(this, _el, _panel_name, _state);
+                this._el = _el;
+                this._panel_name = _panel_name;
+                this._state = _state;
+            }
+            return DropPanel;
+        })(Panels.Panel);
+        Panels.DropPanel = DropPanel;
+    })(Panels = bModules.Panels || (bModules.Panels = {}));
+})(bModules || (bModules = {}));
+/// <reference path='_references.ts' />
+/// <reference path='_references.ts' />
+var bModules;
+(function (bModules) {
+    var Panels;
+    (function (Panels) {
+        'use strict';
+        var DropPanelsHandler = (function () {
+            function DropPanelsHandler($rootScope, $state) {
+                this.$rootScope = $rootScope;
+                this.$state = $state;
+                this.panels = [];
+                this.close_state_sid = 0;
+                this.open_state_sid = 1;
+                this.panels.push(new Panels.DropPanel(angular.element('.user-panel'), 'user'));
+                this.panels.push(new Panels.DropPanel(angular.element('.menu-panel'), 'menu'));
+            }
+            DropPanelsHandler.prototype.isOpened = function (panel_name) {
+                var panels = this.panels;
+                for (var i = 0, len = panels.length; i < len; i++) {
+                    if (panel_name === panels[i].panel_name)
+                        return panels[i].state !== this.close_state_sid;
+                }
+            };
+            DropPanelsHandler.prototype.open = function (panel_name, state) {
+                if (state === void 0) { state = this.open_state_sid; }
+                var panels = this.panels;
+                for (var i = 0, len = panels.length; i < len; i++) {
+                    if (panel_name === panels[i].panel_name) {
+                        panels[i].state = state;
+                        this.$rootScope.$broadcast('bModules.Panels.DropPanels.PanelOpened', {
+                            panel_name: panel_name,
+                            state: state,
+                            is_opened: state !== this.close_state_sid
+                        });
+                    }
+                }
+            };
+            DropPanelsHandler.prototype.close = function (panel_name) {
+                var panels = this.panels;
+                for (var i = 0, len = panels.length; i < len; i++) {
+                    if (panel_name === panels[i].panel_name) {
+                        panels[i].state = this.close_state_sid;
+                        this.$rootScope.$broadcast('bModules.Panels.DropPanels.PanelClosed', {
+                            panel_name: panel_name,
+                            state: this.close_state_sid,
+                            is_opened: false
+                        });
+                    }
+                }
+            };
+            DropPanelsHandler.$inject = [
+                '$rootScope',
+                '$state'
+            ];
+            return DropPanelsHandler;
+        })();
+        Panels.DropPanelsHandler = DropPanelsHandler;
+    })(Panels = bModules.Panels || (bModules.Panels = {}));
+})(bModules || (bModules = {}));
+/// <reference path='DropPanel.ts' />
+/// <reference path='IDropPanelsHandler.ts' />
+/// <reference path='DropPanelsHandler.ts' /> 
+/// <reference path='_references.ts' />
+var bModules;
+(function (bModules) {
+    var Panels;
+    (function (Panels) {
+        var SlidingPanel = (function (_super) {
+            __extends(SlidingPanel, _super);
+            function SlidingPanel(_el, _panel_name, _state) {
+                if (_state === void 0) { _state = 0; }
+                _super.call(this, _el, _panel_name, _state);
+                this._el = _el;
+                this._panel_name = _panel_name;
+                this._state = _state;
+            }
+            return SlidingPanel;
+        })(Panels.Panel);
+        Panels.SlidingPanel = SlidingPanel;
+    })(Panels = bModules.Panels || (bModules.Panels = {}));
+})(bModules || (bModules = {}));
+/// <reference path='_references.ts' />
+/// <reference path='_references.ts' />
+var bModules;
+(function (bModules) {
+    var Panels;
+    (function (Panels) {
+        'use strict';
+        var SlidingPanelsHandler = (function () {
+            function SlidingPanelsHandler($rootScope, $state) {
+                var _this = this;
+                this.$rootScope = $rootScope;
+                this.$state = $state;
+                this.panels = [];
+                this.close_state_sid = 0;
+                this.open_state_sid = 1;
+                this.panels.push(new Panels.SlidingPanel(angular.element('.publication-panel'), 'publication'));
+                this.panels.push(new Panels.SlidingPanel(angular.element('.filters-panel'), 'filters'));
+                this.panels.push(new Panels.SlidingPanel(angular.element('.favorites-panel'), 'favorites'));
+                this.panels.push(new Panels.SlidingPanel(angular.element('.auth-panel'), 'auth'));
+                this.$rootScope.$on('$stateChangeSuccess', function () { return _this.synchronize(); });
+            }
+            SlidingPanelsHandler.prototype.synchronize = function () {
+                // Приоритет панелей якщо в урлі для декількох панелей задано значення відкритої
+                // -
+                if (parseInt(this.$state.params['filters']) !== this.close_state_sid &&
+                    parseInt(this.$state.params['favorites']) !== this.close_state_sid) {
+                    // -
+                    this.$state.go('base', { favorites: this.close_state_sid });
+                }
+                if (parseInt(this.$state.params['filters']) !== this.close_state_sid &&
+                    parseInt(this.$state.params['auth']) !== this.close_state_sid) {
+                    // -
+                    this.$state.go('base', { auth: this.close_state_sid });
+                }
+                if (parseInt(this.$state.params['favorites']) !== this.close_state_sid &&
+                    parseInt(this.$state.params['auth']) !== this.close_state_sid) {
+                    // -
+                    this.$state.go('base', { auth: this.close_state_sid });
+                }
+                this.switchState('publication', parseInt(this.$state.params['publication']));
+                this.switchState('filters', parseInt(this.$state.params['filters']));
+                this.switchState('favorites', parseInt(this.$state.params['favorites']));
+                this.switchState('auth', parseInt(this.$state.params['auth']));
+            };
+            SlidingPanelsHandler.prototype.switchState = function (panel_name, state) {
+                var panels = this.panels;
+                for (var i = 0, len = panels.length; i < len; i++) {
+                    if (panel_name === panels[i].panel_name) {
+                        panels[i].state = state;
+                        this.$rootScope.$broadcast('bModules.Panels.SlidingPanels.PanelSwitchState', {
+                            panel_name: panel_name,
+                            state: state,
+                            is_opened: state !== this.close_state_sid
+                        });
+                    }
+                }
+            };
+            SlidingPanelsHandler.prototype.isOpened = function (panel_name) {
+                var panels = this.panels;
+                for (var i = 0, len = panels.length; i < len; i++) {
+                    if (panel_name === panels[i].panel_name)
+                        return panels[i].state !== this.close_state_sid;
+                }
+            };
+            SlidingPanelsHandler.prototype.open = function (panel_name, state) {
+                if (state === void 0) { state = this.open_state_sid; }
+                switch (panel_name) {
+                    case 'publication':
+                        this.$state.go('base', { publication: state });
+                        break;
+                    case 'filters':
+                        this.$state.go('base', { filters: state, favorites: this.close_state_sid, auth: this.close_state_sid });
+                        break;
+                    case 'favorites':
+                        this.$state.go('base', { filters: this.close_state_sid, favorites: state, auth: this.close_state_sid });
+                        break;
+                    case 'auth':
+                        this.$state.go('base', { filters: this.close_state_sid, favorites: this.close_state_sid, auth: state });
+                        break;
+                }
+                this.$rootScope.$broadcast('bModules.Panels.SlidingPanels.PanelOpened', {
+                    panel_name: panel_name,
+                    state: state,
+                    is_opened: state !== this.close_state_sid
+                });
+            };
+            SlidingPanelsHandler.prototype.close = function (panel_name) {
+                switch (panel_name) {
+                    case 'publication':
+                        this.$state.go('base', { publication: this.close_state_sid });
+                        break;
+                    case 'filters':
+                        this.$state.go('base', { filters: this.close_state_sid });
+                        break;
+                    case 'favorites':
+                        this.$state.go('base', { favorites: this.close_state_sid });
+                        break;
+                    case 'auth':
+                        this.$state.go('base', { auth: this.close_state_sid });
+                        break;
+                }
+                this.$rootScope.$broadcast('bModules.Panels.SlidingPanels.PanelClosed', {
+                    panel_name: panel_name,
+                    state: this.close_state_sid,
+                    is_opened: false
+                });
+            };
+            SlidingPanelsHandler.$inject = [
+                '$rootScope',
+                '$state'
+            ];
+            return SlidingPanelsHandler;
+        })();
+        Panels.SlidingPanelsHandler = SlidingPanelsHandler;
+    })(Panels = bModules.Panels || (bModules.Panels = {}));
+})(bModules || (bModules = {}));
+/// <reference path='SlidingPanel.ts' />
+/// <reference path='ISlidingPanelsHandler.ts' />
+/// <reference path='SlidingPanelsHandler.ts' /> 
+/// <reference path='../../definitions/angular.d.ts' />
+/// <reference path='Panel/Panel.ts' />
+/// <reference path='DropPanels/_references.ts' />
+/// <reference path='SlidingPanels/_references.ts' /> 
+/// <reference path='../_references.ts' />
+var bModules;
+(function (bModules) {
+    var Types;
+    (function (Types) {
+        var RealtyTypesService = (function () {
+            function RealtyTypesService() {
+                this._realty_types = [
+                    {
+                        id: 0,
+                        name: "flat",
+                        title: "Квартиры",
+                        filters: [
+                            "op_sid", "pr_sid", "p_min", "p_max", "cu_sid", "p_c_min", "p_c_max", "n_b",
+                            "s_m", "fml", "frg", "r_c_min", "r_c_max", "t_a_min", "t_a_max", "f_min", "f_max",
+                            "msd", "grd", "pl_sid", "lft", "elt", "h_w", "c_w", "gas", "h_t_sid"
+                        ]
+                    }, {
+                        id: 1,
+                        name: "house",
+                        title: "Дома",
+                        filters: [
+                            "op_sid", "pr_sid", "p_min", "p_max", "cu_sid", "p_c_min", "p_c_max", "n_b",
+                            "s_m", "fml", "frg", "r_c_min", "r_c_max", "f_c_min", "f_c_max", "elt", "h_w",
+                            "gas", "c_w", "swg", "h_t_sid"
+                        ]
+                    }, {
+                        id: 2,
+                        name: "room",
+                        title: "Комнаты",
+                        filters: [
+                            "op_sid", "pr_sid", "p_min", "p_max", "cu_sid", "p_c_min", "p_c_max", "n_b",
+                            "s_m", "fml", "frg", "r_c_min", "r_c_max", "t_a_min", "t_a_max", "f_min", "f_max",
+                            "msd", "grd", "lft", "elt", "h_w", "c_w", "gas", "h_t_sid"
+                        ]
+                    }, {
+                        id: 3,
+                        name: "land",
+                        title: "Земельные участки",
+                        filters: [
+                            "op_sid", "p_min", "p_max", "cu_sid", "a_min", "a_max", "gas", "elt", "wtr", "swg"
+                        ]
+                    }, {
+                        id: 4,
+                        name: "garage",
+                        title: "Гаражи",
+                        filters: [
+                            "op_sid", "p_min", "p_max", "cu_sid", "t_a_min", "t_a_max"
+                        ]
+                    }, {
+                        id: 5,
+                        name: "office",
+                        title: "Офисы",
+                        filters: [
+                            "op_sid", "p_min", "p_max", "cu_sid", "n_b", "s_m", "t_a_min", "t_a_max",
+                            "c_c_min", "c_c_max", "sct", "ktn", "h_w", "c_w"
+                        ]
+                    }, {
+                        id: 6,
+                        name: "trade",
+                        title: "Торговые помещения",
+                        filters: [
+                            "op_sid", "p_min", "p_max", "cu_sid", "n_b", "s_m", "h_a_min", "h_a_max",
+                            "t_a_min", "t_a_max", "b_t_sid", "gas", "elt", "h_w", "c_w", "swg"
+                        ]
+                    }, {
+                        id: 7,
+                        name: "warehouse",
+                        title: "Склады",
+                        filters: [
+                            "op_sid", "p_min", "p_max", "cu_sid", "n_b", "s_m", "h_a_min", "h_a_max",
+                            "gas", "elt", "h_w", "c_w", "s_a", "f_a"
+                        ]
+                    }, {
+                        id: 8,
+                        name: "business",
+                        title: "Готовый бизнес",
+                        filters: [
+                            "op_sid", "p_min", "p_max", "cu_sid"
+                        ]
+                    }];
+            }
+            Object.defineProperty(RealtyTypesService.prototype, "realty_types", {
+                get: function () {
+                    return this._realty_types;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            return RealtyTypesService;
+        })();
+        Types.RealtyTypesService = RealtyTypesService;
+    })(Types = bModules.Types || (bModules.Types = {}));
+})(bModules || (bModules = {}));
+/// <reference path='../_references.ts' />
+var bModules;
+(function (bModules) {
+    var Types;
+    (function (Types) {
+        var CurrencyTypesService = (function () {
+            function CurrencyTypesService() {
+                this._currency_types = [{
+                        id: '0',
+                        name: 'USD',
+                        title: 'Дол.'
+                    }, {
+                        id: '1',
+                        name: 'EUR',
+                        title: 'Евро'
+                    }, {
+                        id: '2',
+                        name: 'UAH',
+                        title: 'Грн.'
+                    }];
+            }
+            Object.defineProperty(CurrencyTypesService.prototype, "currency_types", {
+                get: function () {
+                    return this._currency_types;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            return CurrencyTypesService;
+        })();
+        Types.CurrencyTypesService = CurrencyTypesService;
+    })(Types = bModules.Types || (bModules.Types = {}));
+})(bModules || (bModules = {}));
+/// <reference path='../_references.ts' />
+var bModules;
+(function (bModules) {
+    var Types;
+    (function (Types) {
+        var PeriodTypesService = (function () {
+            function PeriodTypesService() {
+                this._period_types = [{
+                        id: '0',
+                        name: 'daily',
+                        title: 'Посуточно'
+                    }, {
+                        id: '1',
+                        name: 'monthly',
+                        title: 'Помесячно'
+                    }, {
+                        id: '2',
+                        name: 'long_term',
+                        title: 'Долгосрочная'
+                    }];
+            }
+            Object.defineProperty(PeriodTypesService.prototype, "period_types", {
+                get: function () {
+                    return this._period_types;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            return PeriodTypesService;
+        })();
+        Types.PeriodTypesService = PeriodTypesService;
+    })(Types = bModules.Types || (bModules.Types = {}));
+})(bModules || (bModules = {}));
+/// <reference path='_references.ts' />
+var bModules;
+(function (bModules) {
+    var Types;
+    (function (Types) {
+        'use strict';
+        var bTypes = angular.module('bModules.Types', []);
+        bTypes.service('RealtyTypesService', Types.RealtyTypesService);
+        bTypes.service('CurrencyTypesService', Types.CurrencyTypesService);
+        bTypes.service('PeriodTypesService', Types.PeriodTypesService);
+    })(Types = bModules.Types || (bModules.Types = {}));
+})(bModules || (bModules = {}));
+/// <reference path='../../definitions/_references.ts' />
+/// <reference path='services/RealtyTypesService.ts' />
+/// <reference path='services/CurrencyTypesService.ts' />
+/// <reference path='services/PeriodTypesService.ts' />
+/// <reference path='Types.ts' /> 
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var map;
+    (function (map) {
+        'use strict';
+        var ProvidersConfigs = (function () {
+            function ProvidersConfigs(app) {
+                this.app = app;
+                app.config(['$interpolateProvider', '$resourceProvider', '$locationProvider',
+                    function ($interpolateProvider, $resourceProvider, $locationProvider) {
+                        $interpolateProvider.startSymbol('[[');
+                        $interpolateProvider.endSymbol(']]');
+                        $resourceProvider.defaults.stripTrailingSlashes = false;
+                    }
+                ]);
+            }
+            return ProvidersConfigs;
+        })();
+        map.ProvidersConfigs = ProvidersConfigs;
+    })(map = pages.map || (pages.map = {}));
+})(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var map;
+    (function (map) {
+        'use strict';
+        var RoutersConfigs = (function () {
+            function RoutersConfigs(app) {
+                this.app = app;
+                app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($stateProvider, $urlRouterProvider, $locationProvider) {
+                        //
+                        // For any unmatched url, redirect to /state1
+                        $urlRouterProvider.otherwise("/0/1/0/0/");
+                        //
+                        // Now set up the states
+                        $stateProvider
+                            .state('base', {
+                            url: "/:auth/:filters/:favorites/:publication/"
+                        });
+                        $locationProvider.hashPrefix('!');
+                    }]);
+            }
+            return RoutersConfigs;
+        })();
+        map.RoutersConfigs = RoutersConfigs;
+    })(map = pages.map || (pages.map = {}));
+})(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var map;
+    (function (map) {
+        'use strict';
+        var MaterialFrameworkConfigs = (function () {
+            function MaterialFrameworkConfigs(app) {
+                this.app = app;
+                app.config(['$mdThemingProvider', '$mdIconProvider', function ($mdThemingProvider, $mdIconProvider) {
+                        var material_icons_path = 'http://127.0.0.1/mappino_static/source/icons/material/';
+                        $mdThemingProvider.theme('default')
+                            .primaryPalette('blue')
+                            .accentPalette('orange');
+                    }]);
+            }
+            return MaterialFrameworkConfigs;
+        })();
+        map.MaterialFrameworkConfigs = MaterialFrameworkConfigs;
+    })(map = pages.map || (pages.map = {}));
+})(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var map;
+    (function (map) {
+        'use strict';
+        var ApplicationConfigs = (function () {
+            function ApplicationConfigs(app) {
+                this.app = app;
+                app.run(['$http', '$cookies', function ($http, $cookies) {
+                        return $http.defaults.headers.common['X-CSRFToken'] = $cookies.csrftoken;
+                    }
+                ]);
+            }
+            return ApplicationConfigs;
+        })();
+        map.ApplicationConfigs = ApplicationConfigs;
+    })(map = pages.map || (pages.map = {}));
+})(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var map;
+    (function (map) {
+        'use strict';
+        var FiltersService = (function () {
+            function FiltersService($rootScope, $timeout, $location, realtyTypesService) {
+                this.$rootScope = $rootScope;
+                this.$timeout = $timeout;
+                this.$location = $location;
+                this.realtyTypesService = realtyTypesService;
+                this._filters = {
+                    map: {
+                        c: null,
+                        l: "48.455935,34.41285",
+                        v: null,
+                        z: 6 // zoom
+                    },
+                    panels: {
+                        red: {
+                            r_t_sid: null
+                        },
+                        blue: {
+                            b_t_sid: null
+                        },
+                        green: {
+                            g_t_sid: null
+                        },
+                        yellow: {
+                            y_t_sid: null
+                        }
+                    },
+                    base: {
+                        // Загальні
+                        op_sid: 0,
+                        // Дропдауни
+                        cu_sid: 0,
+                        h_t_sid: 0,
+                        pr_sid: 0,
+                        pl_sid: 0,
+                        b_t_sid: 0,
+                        // Поля вводу
+                        p_min: null,
+                        p_max: null,
+                        r_c_min: null,
+                        r_c_max: null,
+                        f_c_min: null,
+                        f_c_max: null,
+                        p_c_min: null,
+                        p_c_max: null,
+                        t_a_min: null,
+                        t_a_max: null,
+                        f_min: null,
+                        f_max: null,
+                        h_a_min: null,
+                        h_a_max: null,
+                        c_c_min: null,
+                        c_c_max: null,
+                        h_c_min: null,
+                        h_c_max: null,
+                        c_h_min: null,
+                        c_h_max: null,
+                        a_min: null,
+                        a_max: null,
+                        // Чекбокси
+                        n_b: true,
+                        s_m: true,
+                        fml: false,
+                        frg: false,
+                        elt: false,
+                        gas: false,
+                        h_w: false,
+                        c_w: false,
+                        swg: false,
+                        lft: false,
+                        sct: false,
+                        ktn: false,
+                        s_a: false,
+                        f_a: false,
+                        pit: false,
+                        wtr: false,
+                        msd: true,
+                        grd: true // ground
+                    }
+                };
+                this._filters_for_load_markers = {
+                    zoom: null,
+                    viewport: null,
+                    filters: []
+                };
+                // -
+                this.updateFiltersFromUrl();
+            }
+            FiltersService.prototype.update = function (filter_object_name, filters_object) {
+                var _this = this;
+                for (var filter in filters_object) {
+                    if (filters_object.hasOwnProperty(filter)) {
+                        this._filters[filter_object_name][filter] = filters_object[filter];
+                    }
+                }
+                this.updateUrlFromFilters();
+                this.createFormattedObjectForLoadMarkers();
+                this.$timeout(function () { return _this.$rootScope.$broadcast('pages.map.FiltersService.FiltersUpdated', _this._filters); });
+            };
+            Object.defineProperty(FiltersService.prototype, "filters", {
+                get: function () {
+                    return this._filters;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            FiltersService.prototype.createFiltersForPanel = function (panel_color) {
+                var _this = this;
+                var self = this, panel_prefix = panel_color.toString().substring(0, 1) + "_", type_sid = this._filters['panels'][panel_color][panel_prefix + 't_sid'], location_search = this.$location.search();
+                if (_.isNull(type_sid)) {
+                    // Очищаємо обєкт з фільтрами
+                    this._filters['panels'][panel_color] = {};
+                    // Створюємо параметр з типом оголошення в обєкті з фільтрами
+                    this._filters['panels'][panel_color][panel_prefix + "t_sid"] = type_sid;
+                    // Видаляємо фільтри з урла
+                    for (var s_key in location_search) {
+                        if (location_search.hasOwnProperty(s_key)) {
+                            if (s_key.match(new RegExp('^' + panel_prefix, 'm'))) {
+                                this.$location.search(s_key, null);
+                            }
+                        }
+                    }
+                }
+                // Створюємо набір фільтрів для панелі за набором
+                if (!_.isNull(type_sid)) {
+                    var realty_type_filters = _.where(self.realtyTypesService.realty_types, { 'id': type_sid })[0]['filters'];
+                    for (var i = 0, len = realty_type_filters.length; i < len; i++) {
+                        var filter_name = panel_prefix + realty_type_filters[i];
+                        if (_.isUndefined(this._filters['panels'][panel_color][filter_name])) {
+                            this._filters['panels'][panel_color][filter_name] = this._filters['base'][realty_type_filters[i]];
+                        }
+                    }
+                }
+                this.$timeout(function () { return _this.$rootScope.$broadcast('pages.map.FiltersService.FiltersUpdated', _this._filters); });
+            };
+            FiltersService.prototype.updateFiltersFromUrl = function () {
+                var _this = this;
+                var location_search = this.$location.search(), filters_panels = this._filters['panels'];
+                for (var key in location_search) {
+                    if (location_search.hasOwnProperty(key)) {
+                        if (key.toString() === "token") {
+                            continue;
+                        }
+                        if (location_search[key] === 'true') {
+                            location_search[key] = true;
+                        }
+                        if (location_search[key] === 'false') {
+                            location_search[key] = false;
+                        }
+                        if (key.toString().indexOf("_sid") !== -1) {
+                            location_search[key] = parseInt(location_search[key]);
+                        }
+                        if (/^r_/.test(key.toString())) {
+                            filters_panels['red'][key] = location_search[key];
+                        }
+                        if (/^b_/.test(key.toString())) {
+                            filters_panels['blue'][key] = location_search[key];
+                        }
+                        if (/^g_/.test(key.toString())) {
+                            filters_panels['green'][key] = location_search[key];
+                        }
+                        if (/^y_/.test(key.toString())) {
+                            filters_panels['yellow'][key] = location_search[key];
+                        }
+                        if (_.include(['c', 'l', 'z'], key)) {
+                            this._filters['map'][key] = location_search[key];
+                        }
+                    }
+                }
+                if (_.isUndefined(location_search['r_t_sid']) && _.isUndefined(location_search['b_t_sid']) &&
+                    _.isUndefined(location_search['g_t_sid']) && _.isUndefined(location_search['y_t_sid'])) {
+                    // -
+                    filters_panels['red']['r_t_sid'] = 0;
+                    this.createFiltersForPanel("red");
+                }
+                if (!_.isUndefined(location_search['r_t_sid'])) {
+                    this.createFiltersForPanel("red");
+                }
+                if (!_.isUndefined(location_search['b_t_sid'])) {
+                    this.createFiltersForPanel("blue");
+                }
+                if (!_.isUndefined(location_search['g_t_sid'])) {
+                    this.createFiltersForPanel("green");
+                }
+                if (!_.isUndefined(location_search['y_t_sid'])) {
+                    this.createFiltersForPanel("yellow");
+                }
+                this.$timeout(function () { return _this.$rootScope.$broadcast('pages.map.FiltersService.UpdatedFromUrl', _this._filters); });
+            };
+            FiltersService.prototype.updateUrlFromFilters = function () {
+                var location_search = '', map_filters = this._filters['map'], panels_filters = this._filters['panels'], _formattedPanelFilters = {};
+                // reset to empty object
+                this._filters_for_load_markers = {
+                    zoom: null,
+                    viewport: null,
+                    filters: []
+                };
+                // create location search from map filters
+                for (var map_filter in map_filters) {
+                    if (map_filters.hasOwnProperty(map_filter) && !_.include(['v'], map_filter)) {
+                        if (!map_filters[map_filter]) {
+                            continue;
+                        }
+                        if (!_.include(['', null], map_filters[map_filter])) {
+                            location_search += (location_search.length !== 0 ? '&' : '') + map_filter + '=' + map_filters[map_filter];
+                        }
+                    }
+                }
+                // create location search from panels filters
+                for (var panel in panels_filters) {
+                    if (panels_filters.hasOwnProperty(panel)) {
+                        _formattedPanelFilters = {
+                            panel: panel
+                        };
+                        for (var panel_filter in panels_filters[panel]) {
+                            if (panels_filters[panel].hasOwnProperty(panel_filter)) {
+                                if (panel_filter.indexOf("t_sid") !== -1 && _.isNull(panels_filters[panel][panel_filter])) {
+                                    _formattedPanelFilters = null;
+                                    continue;
+                                }
+                                if (_.include(['', null], panels_filters[panel][panel_filter])) {
+                                    continue;
+                                }
+                                _formattedPanelFilters[panel_filter.substr(2, panel_filter.length)] = panels_filters[panel][panel_filter];
+                                if (panels_filters[panel][panel_filter] === this._filters['base'][panel_filter.substr(2, panel_filter.length)]) {
+                                    continue;
+                                }
+                                // i love js
+                                //if (_.include(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], filters_panels[panel][filter])) {
+                                //    filters_panels[panel][filter] = parseInt(filters_panels[panel][filter]);
+                                //}
+                                location_search += (location_search.length !== 0 ? '&' : '') + panel_filter + '=' + panels_filters[panel][panel_filter];
+                            }
+                        }
+                        if (!_.isNull(_formattedPanelFilters))
+                            this._filters_for_load_markers['filters'].push(_formattedPanelFilters);
+                    }
+                }
+                console.info('updateUrlFromPanelsFilters method: panels filters updated');
+                this.$location.search(location_search);
+                if (!this.$rootScope.$$phase)
+                    this.$rootScope.$apply();
+            };
+            FiltersService.prototype.createFormattedObjectForLoadMarkers = function () {
+                var _this = this;
+                this._filters_for_load_markers['zoom'] = this._filters['map']['z'];
+                this.createFormattedViewportForLoadMarkers();
+                this.$timeout(function () { return _this.$rootScope.$broadcast('pages.map.FiltersService.CreatedFormattedFilters', _this._filters_for_load_markers); });
+            };
+            FiltersService.prototype.createFormattedViewportForLoadMarkers = function () {
+                var filters_map = this._filters['map'];
+                var sneLat = filters_map['v'].getNorthEast().lat().toString(), sneLng = filters_map['v'].getNorthEast().lng().toString(), sswLat = filters_map['v'].getSouthWest().lat().toString(), sswLng = filters_map['v'].getSouthWest().lng().toString();
+                var neLat = sneLat.replace(sneLat.substring(sneLat.indexOf(".") + 3, sneLat.length), ""), neLng = sneLng.replace(sneLng.substring(sneLng.indexOf(".") + 3, sneLng.length), ""), swLat = sswLat.replace(sswLat.substring(sswLat.indexOf(".") + 3, sswLat.length), ""), swLng = sswLng.replace(sswLng.substring(sswLng.indexOf(".") + 3, sswLng.length), "");
+                this._filters_for_load_markers['viewport'] = {
+                    'ne_lat': neLat,
+                    'ne_lng': neLng,
+                    'sw_lat': swLat,
+                    'sw_lng': swLng
+                };
+                console.log(this._filters_for_load_markers);
+            };
+            FiltersService.$inject = [
+                '$rootScope',
+                '$timeout',
+                '$location',
+                'RealtyTypesService'
+            ];
+            return FiltersService;
+        })();
+        map.FiltersService = FiltersService;
+    })(map = pages.map || (pages.map = {}));
+})(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var map;
+    (function (map_1) {
+        'use strict';
+        var MarkersService = (function () {
+            function MarkersService($rootScope, $http, $timeout, slidingPanelsHandler) {
+                this.$rootScope = $rootScope;
+                this.$http = $http;
+                this.$timeout = $timeout;
+                this.slidingPanelsHandler = slidingPanelsHandler;
+                this._response_markers = {
+                    red: {},
+                    blue: {},
+                    green: {}
+                };
+                this._markers = {
+                    red: {},
+                    blue: {},
+                    green: {}
+                };
+                // -
+                var self = this;
+                $rootScope.$on('pages.map.FiltersService.CreatedFormattedFilters', function (event, formatted_filters) {
+                    self._filters_for_load_markers = formatted_filters;
+                    self.load();
+                });
+            }
+            MarkersService.prototype.load = function () {
+                var self = this;
+                this.$http.get('/ajax/api/markers/?p=' + JSON.stringify(this._filters_for_load_markers)).success(function (response) {
+                    self.clearResponseMarkersObject();
+                    self._response_markers = response;
+                    self.$timeout(function () { return self.$rootScope.$broadcast('pages.map.MarkersService.MarkersIsLoaded'); });
+                });
+            };
+            MarkersService.prototype.place = function (map) {
+                var _this = this;
+                // видаляємо маркери з карти яких нема в відповіді з сервера
+                for (var panel in this._markers) {
+                    if (this._markers.hasOwnProperty(panel)) {
+                        for (var marker in this._markers[panel]) {
+                            if (this._markers[panel].hasOwnProperty(marker)) {
+                                if (!this._response_markers[panel][marker]) {
+                                    this._markers[panel][marker].setMap(null);
+                                    console.log('deleted: ' + this._markers[panel][marker]);
+                                    delete this._markers[panel][marker];
+                                }
+                                console.log(this._markers);
+                            }
+                        }
+                    }
+                }
+                // додаємо новві маркери на карту
+                for (var panel in this._response_markers) {
+                    if (this._response_markers.hasOwnProperty(panel)) {
+                        for (var marker in this._response_markers[panel]) {
+                            if (this._response_markers[panel].hasOwnProperty(marker)) {
+                                if (!this._markers[panel][marker]) {
+                                    this._markers[panel][marker] = new google.maps.Marker({
+                                        position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
+                                        map: map,
+                                        title: 'Hello World!'
+                                    });
+                                    this._markers[panel][marker].setMap(map);
+                                    console.log('added: ' + this._markers[panel][marker]);
+                                }
+                                console.log(this._markers);
+                            }
+                        }
+                    }
+                }
+                this.$timeout(function () { return _this.$rootScope.$broadcast('pages.map.MarkersService.MarkersPlaced'); });
+            };
+            MarkersService.prototype.clearResponseMarkersObject = function () {
+                this._response_markers = {
+                    red: {},
+                    blue: {},
+                    green: {}
+                };
+            };
+            MarkersService.$inject = [
+                '$rootScope',
+                '$http',
+                '$timeout'
+            ];
+            return MarkersService;
+        })();
+        map_1.MarkersService = MarkersService;
+    })(map = pages.map || (pages.map = {}));
+})(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var map;
+    (function (map) {
+        'use strict';
+        var AppController = (function () {
+            function AppController($rootScope, $location, dropPanelsHandler, slidingPanelsHandler) {
+                this.$rootScope = $rootScope;
+                this.$location = $location;
+                this.dropPanelsHandler = dropPanelsHandler;
+                this.slidingPanelsHandler = slidingPanelsHandler;
+                // -
+                var self = this;
+                /**
+                 * Відновлюємо фільтри в урлі після зміни панелі
+                 **/
+                $rootScope.$on('$stateChangeStart', function () {
+                    if (!_.isNull($location.search()))
+                        self._location_search = $location.search();
+                });
+                $rootScope.$on('$stateChangeSuccess', function () {
+                    if (!_.isNull(self._location_search))
+                        $location.search(self._location_search);
+                });
+            }
+            AppController.$inject = [
+                '$rootScope',
+                '$location',
+                'DropPanelsHandler',
+                'SlidePanelsHandler'
+            ];
+            return AppController;
+        })();
+        map.AppController = AppController;
+    })(map = pages.map || (pages.map = {}));
+})(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var map;
+    (function (map) {
+        'use strict';
+        var TabsNavigationController = (function () {
+            function TabsNavigationController($scope, $timeout) {
+                // -
+                this.$scope = $scope;
+                this.$timeout = $timeout;
+                // Materialize: init .tabs()
+                $timeout(function () { return $('.tabs').tabs(); });
+            }
+            TabsNavigationController.$inject = [
+                '$scope',
+                '$timeout',
+                'SlidePanelsHandler'
+            ];
+            return TabsNavigationController;
+        })();
+        map.TabsNavigationController = TabsNavigationController;
+    })(map = pages.map || (pages.map = {}));
+})(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var map;
+    (function (map) {
+        'use strict';
+        var FiltersPanelController = (function () {
+            function FiltersPanelController($scope, $timeout, filtersService, realtyTypesService) {
+                this.$scope = $scope;
+                this.$timeout = $timeout;
+                this.filtersService = filtersService;
+                this.realtyTypesService = realtyTypesService;
+                // -
+                $timeout(function () { return $('select').material_select(); });
+                $scope.realtyTypes = realtyTypesService.realty_types;
+                this.filters = $scope.filters = filtersService.filters['panels'];
+            }
+            FiltersPanelController.$inject = [
+                '$scope',
+                '$timeout',
+                'FiltersService',
+                'RealtyTypesService'
+            ];
+            return FiltersPanelController;
+        })();
+        map.FiltersPanelController = FiltersPanelController;
+    })(map = pages.map || (pages.map = {}));
+})(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var map;
+    (function (map) {
+        'use strict';
+        var MapController = (function () {
+            function MapController($scope, filtersService, markersService) {
+                var _this = this;
+                this.$scope = $scope;
+                this.filtersService = filtersService;
+                this.markersService = markersService;
+                // -
+                var self = this;
+                google.maps.event.addDomListener(window, "load", function () { return _this.initMap(_this); });
+                $scope.$on('pages.map.MarkersService.MarkersIsLoaded', function () {
+                    markersService.place(self._map);
+                });
+                $scope.$on('pages.map.PlaceAutocompleteController.PlaceChanged', function (event, place) {
+                    self.positioningMap(place);
+                });
+            }
+            MapController.prototype.initMap = function (self) {
+                self._map = new google.maps.Map(document.getElementById("map"), {
+                    center: new google.maps.LatLng(this.filtersService.filters['map']['l'].split(',')[0], this.filtersService.filters['map']['l'].split(',')[1]),
+                    zoom: parseInt(this.filtersService.filters['map']['z']),
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    disableDefaultUI: true
+                });
+                google.maps.event.addListener(self._map, 'idle', function () {
+                    self.filtersService.update('map', {
+                        z: self._map.getZoom(),
+                        v: self._map.getBounds(),
+                        l: self._map.getCenter().toUrlValue()
+                    });
+                });
+            };
+            MapController.prototype.positioningMap = function (place) {
+                if (!place.geometry)
+                    return;
+                if (place.geometry.viewport) {
+                    this._map.fitBounds(place.geometry.viewport);
+                }
+                else {
+                    this._map.panTo(place.geometry.location);
+                    this._map.setZoom(17);
+                }
+            };
+            MapController.$inject = [
+                '$scope',
+                'FiltersService',
+                'MarkersService'
+            ];
+            return MapController;
+        })();
+        map.MapController = MapController;
+    })(map = pages.map || (pages.map = {}));
+})(pages || (pages = {}));
+/// <reference path='../_references.ts' />
+var pages;
+(function (pages) {
+    var map;
+    (function (map) {
+        'use strict';
+        var PlaceAutocompleteController = (function () {
+            function PlaceAutocompleteController($scope, $rootScope, filtersService) {
+                var _this = this;
+                this.$scope = $scope;
+                this.$rootScope = $rootScope;
+                this.filtersService = filtersService;
+                // -
+                var self = this;
+                this._autocompleteInput = document.getElementById("place-autocomplete");
+                /** Listen events */
+                google.maps.event.addDomListener(window, "load", function () { return _this.initAutocomplete(self); });
+                $scope.$on('pages.map.FiltersService.UpdatedFromUrl', function (event, filters) {
+                    _this._autocompleteInput.value = filters['map']['c'];
+                });
+            }
+            PlaceAutocompleteController.prototype.initAutocomplete = function (self) {
+                self._autocomplete = new google.maps.places.Autocomplete(this._autocompleteInput, {
+                    componentRestrictions: {
+                        country: "ua"
+                    }
+                });
+                google.maps.event.addListener(self._autocomplete, 'place_changed', function () {
+                    self.filtersService.update('map', {
+                        c: self._autocomplete.getPlace().formatted_address
+                    });
+                    self.$rootScope.$broadcast('pages.map.PlaceAutocompleteController.PlaceChanged', self._autocomplete.getPlace());
+                    //
+                    //if (!self.$scope.$$phase)
+                    //    self.$scope.$apply();
+                });
+            };
+            PlaceAutocompleteController.$inject = [
+                '$scope',
+                '$rootScope',
+                'FiltersService'
+            ];
+            return PlaceAutocompleteController;
+        })();
+        map.PlaceAutocompleteController = PlaceAutocompleteController;
+    })(map = pages.map || (pages.map = {}));
+})(pages || (pages = {}));
+/// <reference path='_references.ts' />
+var pages;
+(function (pages) {
+    var map;
+    (function (map) {
+        'use strict';
+        var app = angular.module('mappino.pages.map', [
+            'ngMaterial',
+            'ngCookies',
+            'ngResource',
+            'ui.router',
+        ]);
+        /** Providers configuration create */
+        new map.ProvidersConfigs(app);
+        /** Routers configuration create */
+        new map.RoutersConfigs(app);
+        /** Material configuration create */
+        new map.MaterialFrameworkConfigs(app);
+        /** Application configuration create */
+        new map.ApplicationConfigs(app);
+        /** Module services */
+        app.service('DropPanelsHandler', bModules.Panels.DropPanelsHandler);
+        app.service('SlidePanelsHandler', bModules.Panels.SlidingPanelsHandler);
+        app.service('RealtyTypesService', bModules.Types.RealtyTypesService);
+        app.service('FiltersService', map.FiltersService);
+        app.service('MarkersService', map.MarkersService);
+        /** Module controllers */
+        app.controller('AppController', map.AppController);
+        app.controller('TabsNavigationController', map.TabsNavigationController);
+        app.controller('FiltersPanelController', map.FiltersPanelController);
+        app.controller('MapController', map.MapController);
+        app.controller('PlaceAutocompleteController', map.PlaceAutocompleteController);
+    })(map = pages.map || (pages.map = {}));
+})(pages || (pages = {}));
+// ####################
+// Declarations import
+// ####################
+/// <reference path='../_common/definitions/_references.ts' />
+// ####################
+// Interfaces import
+// ####################
+/// <reference path='interfaces/IFiltersService.ts' />
+// ####################
+// _modules import
+// ####################
+/// <reference path='../_common/bModules/Panels/_references.ts' />
+/// <reference path='../_common/bModules/Types/_references.ts' />
+// ####################
+// Configs import
+// ####################
+/// <reference path='configs/ProvidersConfigs.ts' />
+/// <reference path='configs/RoutersConfigs.ts' />
+/// <reference path='configs/MaterialFrameworkConfigs.ts' />
+/// <reference path='configs/ApplicationConfigs.ts' />
+// ####################
+// Services import
+// ####################
+/// <reference path='services/FiltersService.ts' />
+/// <reference path='services/MarkersService.ts' />
+// ####################
+// Controllers import
+// ####################
+/// <reference path='controllers/AppController.ts' />
+/// <reference path='controllers/TabsNavigationController.ts' />
+/// <reference path='controllers/FiltersPanelController.ts' />
+/// <reference path='controllers/MapController.ts' />
+/// <reference path='controllers/PlaceAutocompleteController.ts' />
+// ####################
+// App init
+// ####################
+/// <reference path='App.ts' />
+//# sourceMappingURL=map.js.map
