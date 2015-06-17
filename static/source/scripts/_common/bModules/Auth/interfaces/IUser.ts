@@ -16,6 +16,7 @@ module bModules.Auth {
             skype:              string
             work_email:         string
         }
+
         preferences: {
             allow_call_requests:            boolean
             allow_messaging:                boolean

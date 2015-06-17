@@ -27,7 +27,7 @@ module pages.cabinet {
                 avatar: false
             };
 
-            authService.getUserByCookie();
+            authService.tryLogin();
         }
 
 

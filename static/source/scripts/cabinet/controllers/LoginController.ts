@@ -28,12 +28,13 @@ module pages.cabinet {
                 return;
             }
 
-            this.authService.login(this.$scope.user, (response) => {
-                if (response.data.code !== 0) {
-                    self.$scope.user.invalid = true;
-                } else {
-                    window.location.pathname = '/cabinet/';
-                }
+            this.authService.login(this.$scope.user.username, this.$scope.user.password, (response) => {
+                window.location.pathname = '/cabinet/';
+                //if (response.data.code !== 0) {
+                //    self.$scope.user.invalid = true;
+                //} else {
+                //    window.location.pathname = '/cabinet/';
+                //}
             });
         }
     }

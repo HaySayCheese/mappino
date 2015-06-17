@@ -1,7 +1,3 @@
-// Font import
-@import url('http://fonts.googleapis.com/css?family=RobotoDraft:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en');
-
-
 //
 // Materialize include
 // --------------------------------------------------
@@ -12,16 +8,12 @@
 // additions to the "materialize" components
 @import "additions/md-toolbar";
 @import "additions/md-progress";
-@import "additions/collection";
-
-
 
 
 
 // custom components
 @import "components/brief";
 @import "components/section";
-@import "components/input-has-error";
 @import "components/navbar-user";
 @import "components/ticket-message";
 
@@ -41,11 +33,6 @@ html,
 body{
     @include square(100%);
     overflow: hidden;
-}
-
-
-body {
-    font-family: RobotoDraft;
 }
 
 

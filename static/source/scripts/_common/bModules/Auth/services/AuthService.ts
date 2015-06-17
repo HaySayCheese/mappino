@@ -4,6 +4,7 @@
 module bModules.Auth {
 
     export class AuthService implements IAuthService {
+        private _user: IUser = null;
 
         public static $inject = [
             '$http',
@@ -19,40 +20,42 @@ module bModules.Auth {
 
 
 
-        public login(user: IUser, success_callback?, error_callback?) {
+        public login(username: string, password: string, success?: Function, error?: Function) {
             var self = this;
 
-            this.$http.post('/ajax/api/accounts/login/', user)
-                .then((response) => {
-                    if (response.data['code'] === 0) {
-                        self.settingsService.update(response.data['user']);
-                        _.isFunction(success_callback) && success_callback(response.data)
-                    } else {
-                        self.settingsService.clearDataByUser();
-                        _.isFunction(error_callback) && error_callback(response.data)
-                    }
-                }, (response) => {
+            this.$http.post('/ajax/api/accounts/login/', {
+                "username": username,
+                "password": password
+            }).then((response) => {
+                if (response.data['code'] === 0) {
+                    self.settingsService.update(response.data['user']);
+                    success(response.data)
+                } else {
                     self.settingsService.clearDataByUser();
-                    _.isFunction(error_callback) && error_callback(response.data)
-                });
+                    error(response.data)
+                }
+            }, (response) => {
+                self.settingsService.clearDataByUser();
+                success(response.data)
+            });
         }
 
 
 
-        public getUserByCookie(success_callback?, error_callback?) {
+        public tryLogin(success?: Function, error?: Function) {
             var self = this;
 
             this.$http.get('/ajax/api/accounts/on-login-info/')
                 .then((response) => {
                     if (response.data['code'] === 0) {
                         self.settingsService.update(response.data['user']);
-                        _.isFunction(success_callback) && success_callback(response.data)
+                        success(response.data)
                     } else {
                         self.settingsService.clearDataByUser();
-                        _.isFunction(error_callback) && error_callback(response.data)
+                        error(response.data)
                     }
                 }, (response) => {
-                    _.isFunction(error_callback) && error_callback(response.data)
+                    error(response.data)
                 })
         }
 

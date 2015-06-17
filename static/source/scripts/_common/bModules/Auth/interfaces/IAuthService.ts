@@ -3,8 +3,8 @@
 
 module bModules.Auth {
     export interface IAuthService {
-        login(user: IUser, success_callback?, error_callback?): void
+        login(username: string, password: string, success?: Function, error?: Function): void
 
-        getUserByCookie(success_callback?, error_callback?): void
+        tryLogin(success?: Function, error?: Function): void
     }
 }
