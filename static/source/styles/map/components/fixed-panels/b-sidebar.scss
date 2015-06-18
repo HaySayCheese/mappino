@@ -1,0 +1,27 @@
+b-sidebar {
+    @extend %_fixed-panel;
+
+    @include size(60px, auto);
+    top: 15px;
+    left: 15px;
+
+    background-color: #363636;
+
+
+    .b-sidebar-button {
+        width: 60px;
+        min-width: 60px;
+        height: 60px;
+        margin: 0;
+        border-radius: 0 !important;
+
+        &:not(:last-child) {
+            border-bottom: 1px solid color('grey', 'darken-3');
+        }
+    }
+
+
+    md-icon {
+        color: color('grey', 'lighten-2') !important;
+    }
+}

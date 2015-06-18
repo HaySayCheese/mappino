@@ -46,25 +46,27 @@
     </script>
 </head>
 <body ng-controller="AppController as appCtrl">
-    <md-content layout="row">
+    <md-content>
         <b-sidebar layout="column">
             <md-button class="b-sidebar-button" aria-label="Открыть меню">
                 <md-icon md-svg-icon="{{ static }}build/icons/action/ic_search_24px.svg"></md-icon>
             </md-button>
-            <md-button class="b-sidebar-button" aria-label="Открыть меню">
-                <md-icon md-svg-icon="{{ static }}build/icons/action/ic_visibility_24px.svg"></md-icon>
-            </md-button>
             <md-button class="b-sidebar-button" aria-label="Фільтри" ng-click="appCtrl.slidingPanelsHandler.open('filters')">
-                <md-icon md-svg-icon="{{ static }}build/icons/action/ic_list_24px.svg"></md-icon>
+                <md-icon md-svg-icon="{{ static }}build/icons/content/ic_filter_list_24px.svg"></md-icon>
             </md-button>
             <md-button class="b-sidebar-button" aria-label="Улюблені" ng-click="appCtrl.slidingPanelsHandler.open('favorites')">
-                <md-icon md-svg-icon="{{ static }}build/icons/action/ic_favorite_border_24px.svg"></md-icon>
+                <md-icon md-svg-icon="{{ static }}build/icons/toggle/ic_star_border_24px.svg"></md-icon>
             </md-button>
-            <span flex></span>
             <md-button class="b-sidebar-button" aria-label="Открыть меню">
                 <md-icon md-svg-icon="{{ static }}build/icons/action/ic_perm_identity_24px.svg"></md-icon>
             </md-button>
         </b-sidebar>
+
+        <div class="search-panel md-whiteframe-z1">
+            <md-content>
+
+            </md-content>
+        </div>
 
         <div id="map" ng-controller="MapController as mapCtrl"></div>
         <div ui-view></div>
@@ -244,59 +246,66 @@
 
 
 
-        <div class="filters-panel -closed" layout="column" b-sidebar-panel>
-            <section class="md-whiteframe-z1" layout="row" layout-align="start center">
-                <md-icon class="red-text text-lighten-2" flex="15" md-svg-icon="{{ static }}build/icons/maps/ic_place_24px.svg"></md-icon>
-                <b flex="65" offset="5">Квартиры 0 - 50 000 $</b>
-                <md-button flex="15" class="md-icon-button md-primary" aria-label="Додати панель фільтрів">
-                    <md-icon md-svg-icon="{{ static }}build/icons/content/ic_add_circle_outline_24px.svg"></md-icon>
-                </md-button>
-            </section>
+    <div class="filters-panel -closed" layout="column" b-sidebar-panel>
+        <section class="md-whiteframe-z1" layout="row" layout-align="start center">
+            <md-icon class="red-text text-lighten-2" flex="15" md-svg-icon="{{ static }}build/icons/maps/ic_place_24px.svg"></md-icon>
+            <b flex="65" offset="5">Квартиры 0 - 50 000 $</b>
+            <md-button flex="15" class="md-icon-button md-primary" aria-label="Додати панель фільтрів" ng-click="appCtrl.slidingPanelsHandler.close('filters')">
+                <md-icon md-svg-icon="{{ static }}build/icons/action/ic_highlight_off_24px.svg"></md-icon>
+            </md-button>
+        </section>
 
-            <section class="md-whiteframe-z1">
-                тут тип обєкта
-            </section>
+        <section class="md-whiteframe-z1">
+            тут тип обєкта
+        </section>
 
-            <section class="md-whiteframe-z1">
-                тут основні фільтри
-            </section>
+        <section class="md-whiteframe-z1">
+            тут основні фільтри
+        </section>
 
-            <section class="md-whiteframe-z1">
-                тут розширені філтри
-            </section>
+        <section class="md-whiteframe-z1">
+            тут розширені філтри
+        </section>
+    </div>
+
+    <div class="favorites-panel -closed">
+        <h1>Favorites</h1>
+    </div>
+
+    <div class="auth-panel -closed">
+        <h1>Auth</h1>
+    </div>
+
+
+
+    <div class="property-list-panel md-whiteframe-z1" layout="column" layout-align="start start">
+        <div class="property-list-header md-whiteframe-z1" layout="row" layout-align="start center">
+            <span flex></span>
+            <md-button class="md-icon-button md-primary">
+                <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_right_24px.svg"></md-icon>
+            </md-button>
         </div>
-
-        <div class="favorites-panel -closed">
-            <h1>Favorites</h1>
+        <div class="property-list-body" layout="column">
+            <div class="property-list-item -red">
+                <img src="http://lorempixel.com/200/120/sports" alt=""/>
+            </div>
+            <div class="property-list-item -red">
+                <img src="http://lorempixel.com/200/120/city" alt=""/>
+            </div>
+            <div class="property-list-item -blue">
+                <img src="http://lorempixel.com/200/120/nature" alt=""/>
+            </div>
+            <div class="property-list-item -green">
+                <img src="http://lorempixel.com/200/120/cats" alt=""/>
+            </div>
+            <div class="property-list-item -red">
+                <img src="http://lorempixel.com/200/120/transport" alt=""/>
+            </div>
+            <div class="property-list-item -blue">
+                <img src="http://lorempixel.com/215/120/" alt=""/>
+            </div>
         </div>
-
-        <div class="auth-panel -closed">
-            <h1>Auth</h1>
-        </div>
-
-
-
-        <!--<div class="property-list-panel">-->
-            <!--<div class="property-list-item -red">-->
-                <!--<img src="http://lorempixel.com/96/81/" alt=""/>-->
-            <!--</div>-->
-            <!--<div class="property-list-item -red">-->
-                <!--<img src="http://lorempixel.com/96/81/" alt=""/>-->
-            <!--</div>-->
-            <!--<div class="property-list-item -blue">-->
-                <!--<img src="http://lorempixel.com/96/81/" alt=""/>-->
-            <!--</div>-->
-            <!--<div class="property-list-item -green">-->
-                <!--<img src="http://lorempixel.com/96/81/" alt=""/>-->
-            <!--</div>-->
-            <!--<div class="property-list-item -red">-->
-                <!--<img src="http://lorempixel.com/96/81/" alt=""/>-->
-            <!--</div>-->
-            <!--<div class="property-list-item -blue">-->
-                <!--<img src="http://lorempixel.com/96/81/" alt=""/>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
+    </div>
 
 
 

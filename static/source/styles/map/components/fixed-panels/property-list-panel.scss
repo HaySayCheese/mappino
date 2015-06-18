@@ -1,44 +1,55 @@
 .property-list-panel {
+    @extend %_fixed-panel;
+
     @include size(auto, auto);
-    position: fixed;
-    top: 58px;
-    right: 10px;
-    bottom: 15px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    background: #fff;//rgba(0, 0, 0, .1);
 
 
+    > .property-list-header {
+        @include size(100%, 50px);
+        max-height: 50px;
+        padding: 5px 0 5px 5px;
+        background: #fff;
+    }
 
-    > .property-list-item {
-        @include size(auto, 88px);
-        padding: 4px 4px 0 4px;
-        margin-bottom: 7px;
+
+    .property-list-item {
+        @include size(220px, 120px);
+        min-height: 120px;
+
+        padding-right: 1px;
+        margin-bottom: 3px;
 
         cursor: pointer;
 
-        border-bottom: 4px solid;
+        //border-right: 4px solid;
         background: #fff;
 
-        @extend .z-depth-1;
         @include transition(width .2s ease);
 
 
         &:first-child {
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
 
         &.-red {
-            border-bottom-color: #fb6262;
+            border-right-color: #fb6262;
         }
         &.-blue {
-            border-bottom-color: #4996cc;
+            border-right-color: #4996cc;
         }
         &.-green {
-            border-bottom-color: #71c187;
+            border-right-color: #71c187;
         }
 
 
         > img {
-            @include size(100px, 80px);
+            @include size(220px, 120px);
         }
     }
 }

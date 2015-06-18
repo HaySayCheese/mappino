@@ -7,13 +7,12 @@
 //
 // Components include
 // --------------------------------------------------
-@import "components/b-sidebar/b-sidebar";
 
 
 // fixed panels
 @import "components/fixed-panels/_fixed-panel";
+@import "components/fixed-panels/b-sidebar";
 @import "components/fixed-panels/search-panel";
-@import "components/fixed-panels/tabs-panel";
 @import "components/fixed-panels/property-list-panel";
 
 
