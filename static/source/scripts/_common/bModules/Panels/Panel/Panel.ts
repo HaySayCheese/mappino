@@ -3,9 +3,9 @@ module bModules.Panels {
 
     export class Panel {
         config: Object = {
-            openedClass:    'opened',
-            closedClass:    'closed',
-            closingClass:   'closing'
+            openedClass:    '-opened',
+            closedClass:    '-closed',
+            closingClass:   '-closing'
         };
 
         constructor(public _el: JQuery, public _panel_name: string, public _state: number = 0) {

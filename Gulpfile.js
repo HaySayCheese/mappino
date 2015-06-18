@@ -1,6 +1,5 @@
 var gulp        = require('gulp'),
     del         = require('del'),
-    watch       = require('gulp-watch'),
     runSequence = require('run-sequence'),
     rename      = require("gulp-rename"),
 
@@ -173,11 +172,16 @@ gulp.task('TypeScript', ['TypeScript:Landing', 'TypeScript:Map', 'TypeScript:Cab
 
 
 gulp.task('watch', function () {
+    gulp.watch(PATHS.SOURCE.STYLES + '/_common/**/*.scss',   ['Sass']);
+    gulp.watch(PATHS.SOURCE.STYLES + '/map/**/*.scss',       ['Sass:Map']);
+    gulp.watch(PATHS.SOURCE.STYLES + '/landing/**/*.scss',   ['Sass:Landing']);
+    gulp.watch(PATHS.SOURCE.STYLES + '/cabinet/**/*.scss',   ['Sass:Cabinet']);
+
+
+    gulp.watch(PATHS.SOURCE.SCRIPTS + '/_common/**/*.ts',   ['TypeScript']);
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/map/**/*.ts',       ['TypeScript:Map']);
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/landing/**/*.ts',   ['TypeScript:Landing']);
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/cabinet/**/*.ts',   ['TypeScript:Cabinet']);
-
-    gulp.watch(PATHS.SOURCE.SCRIPTS + '/_common/**/*.ts',   ['TypeScript']);
 });
 
 

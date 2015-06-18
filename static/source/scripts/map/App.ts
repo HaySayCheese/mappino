@@ -8,7 +8,11 @@ module pages.map {
         'ngCookies',
         'ngResource',
         'ui.router',
+
+        //'bModules.bSidebarPanel'
     ]);
+
+
 
 
     /** Providers configuration create */

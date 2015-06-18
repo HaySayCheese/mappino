@@ -8,9 +8,9 @@ module pages.map {
 
         constructor(private app: angular.IModule) {
             app.config(['$mdThemingProvider', '$mdIconProvider', function($mdThemingProvider, $mdIconProvider) {
-                var material_icons_path = 'http://127.0.0.1/mappino_static/source/icons/material/';
+                $mdThemingProvider.setDefaultTheme('blue');
 
-                $mdThemingProvider.theme('default')
+                $mdThemingProvider.theme('blue')
                     .primaryPalette('blue')
                     .accentPalette('orange');
             }]);

@@ -7,6 +7,9 @@
 //
 // Components include
 // --------------------------------------------------
+@import "components/b-sidebar/b-sidebar";
+
+
 // fixed panels
 @import "components/fixed-panels/_fixed-panel";
 @import "components/fixed-panels/search-panel";
@@ -18,17 +21,18 @@
 // sliding panels
 @import "components/sliding-panels/left/_left-sliding-panel";
 @import "components/sliding-panels/left/publication-panel";
+@import "components/sliding-panels/left/filters-panel";
+@import "components/sliding-panels/left/favorites-panel";
 
 @import "components/sliding-panels/right/_right-sliding-panel";
-@import "components/sliding-panels/right/filters-panel";
-@import "components/sliding-panels/right/favorites-panel";
-@import "components/sliding-panels/right/auth-panel";
+@import "components/sliding-panels/left/auth-panel";
 
 
 
 // drop panels
 @import "components/drop-panels/menu-panel";
 @import "components/drop-panels/user-panel";
+
 
 
 

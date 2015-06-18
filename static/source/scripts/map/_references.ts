@@ -6,17 +6,17 @@
 
 
 // ####################
+// _modules import
+// ####################
+/// <reference path='../_common/bModules/_references.ts' />
+
+
+
+// ####################
 // Interfaces import
 // ####################
 /// <reference path='interfaces/IFiltersService.ts' />
 
-
-
-// ####################
-// _modules import
-// ####################
-/// <reference path='../_common/bModules/Panels/_references.ts' />
-/// <reference path='../_common/bModules/Types/_references.ts' />
 
 
 
