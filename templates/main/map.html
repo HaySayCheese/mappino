@@ -51,13 +51,10 @@
 
         <div class="b-navbar md-whiteframe-z1" layout="row" ng-controller="BNavbarController as bnavCtrl">
             <div class="b-navbar-wrapper">
-                <md-tabs md-dynamic-height>
-                    <md-tab id="filters_red">
+                <md-tabs md-selected="panelsIndex.leftPanelIndex" md-dynamic-height>
+                    <md-tab id="filters_red" md-on-select="panelsIndex.leftPanelIndex = 0">
                         <md-tab-label>
                             <md-icon md-svg-icon="{{ static }}build/icons/content/ic_filter_list_24px.svg"></md-icon>
-                            <!--<md-tooltip>-->
-                                <!--Зелені фільтри-->
-                            <!--</md-tooltip>-->
                         </md-tab-label>
                         <md-tab-body>
                             <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
@@ -68,9 +65,9 @@
                             <tab-body-collapsible>
                                 <section layout="column">
                                     <div layout="row">
-                                        <md-select placeholder="Тип обєкта" ng-model="">
-                                            <md-option ng-repeat="" value="0">пвіпвп</md-option>
-                                        </md-select>
+                                        <!--<md-select placeholder="Тип обєкта">-->
+                                            <!--<md-option value="0">пвіпвп</md-option>-->
+                                        <!--</md-select>-->
                                     </div>
                                     <div layout="row">
                                         <md-input-container flex>
@@ -81,9 +78,9 @@
                                             <label>Ціна до</label>
                                             <input type="text">
                                         </md-input-container>
-                                        <md-select placeholder="Валюта" ng-model="">
-                                            <md-option ng-repeat="" value="0">пвіпвп</md-option>
-                                        </md-select>
+                                        <!--<md-select placeholder="Валюта">-->
+                                            <!--<md-option value="0">пвіпвп</md-option>-->
+                                        <!--</md-select>-->
                                     </div>
                                     <div layout="row">
                                         <md-input-container flex>
@@ -114,7 +111,7 @@
                         </md-tab-body>
                     </md-tab>
 
-                    <md-tab id="filters_blue">
+                    <md-tab id="filters_blue" md-on-select="panelsIndex.leftPanelIndex = 1">
                         <md-tab-label>
                             <md-icon md-svg-icon="{{ static }}build/icons/content/ic_filter_list_24px.svg"></md-icon>
                             <!--<md-tooltip>-->
@@ -133,7 +130,7 @@
                         </md-tab-body>
                     </md-tab>
 
-                    <md-tab id="favorites">
+                    <md-tab id="favorites" md-on-select="panelsIndex.leftPanelIndex = 2">
                         <md-tab-label>
                             <md-icon md-svg-icon="{{ static }}build/icons/toggle/ic_star_border_24px.svg"></md-icon>
                             <!--<md-tooltip>-->
@@ -150,12 +147,9 @@
                         </md-tab-body>
                     </md-tab>
 
-                    <md-tab id="account">
+                    <md-tab id="account" md-on-select="panelsIndex.leftPanelIndex = 3">
                         <md-tab-label>
                             <md-icon md-svg-icon="{{ static }}build/icons/action/ic_perm_identity_24px.svg"></md-icon>
-                            <!--<md-tooltip>-->
-                                <!--Акаунт-->
-                            <!--</md-tooltip>-->
                         </md-tab-label>
                         <md-tab-body>
                             <section class="md-padding">
@@ -179,7 +173,7 @@
 
 
 
-    <!--<div class="filters-panel" layout="column" ng-show="appCtrl.$state.includes('left_panels', { left_panel_name: 'filters_red' });">-->
+    <!--<div class="filters-panel" layout="column" ng-show="appCtrl.$state.includes('left_panels', { left_panel_index: 'filters_red' });">-->
         <!--<div class="left-panel-container">-->
             <!--<section class="md-whiteframe-z1" layout="row" layout-align="start center">-->
                 <!--<md-icon class="red-text text-lighten-2" flex="15" md-svg-icon="{{ static }}build/icons/maps/ic_place_24px.svg"></md-icon>-->
@@ -203,7 +197,7 @@
         <!--</div>-->
     <!--</div>-->
 
-    <!--<div class="favorites-panel" ng-show="appCtrl.$state.includes('left_panels', { left_panel_name: 'favorites' });">-->
+    <!--<div class="favorites-panel" ng-show="appCtrl.$state.includes('left_panels', { left_panel_index: 'favorites' });">-->
         <!--<h1>Favorites</h1>-->
     <!--</div>-->
 
@@ -215,25 +209,6 @@
 
     <div class="property-list-panel md-whiteframe-z1" layout="column" layout-align="start start">
         <header layout="row" layout-align="start center">
-            <md-menu md-offset="0 -7">
-                <md-button aria-label="Меню оголошення" class="md-icon-button" ng-click="$mdOpenMenu()">
-                    <md-icon md-menu-origin md-svg-icon="{{ static }}build/icons/navigation/ic_more_vert_24px.svg"></md-icon>
-                </md-button>
-                <md-menu-content width="3">
-                    <md-menu-item>
-                        <md-button>
-                            <md-icon md-menu-align-target md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_right_24px.svg"></md-icon>
-                            Подать обьявление
-                        </md-button>
-                    </md-menu-item>
-                    <md-menu-item>
-                        <md-button>
-                            <md-icon md-menu-align-target md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_right_24px.svg"></md-icon>
-                            Сортировать по цене
-                        </md-button>
-                    </md-menu-item>
-                </md-menu-content>
-            </md-menu>
             <span flex></span>
             <md-button class="md-icon-button md-primary">
                 <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_right_24px.svg"></md-icon>

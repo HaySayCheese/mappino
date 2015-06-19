@@ -11,7 +11,7 @@ module pages.map {
                 $mdThemingProvider.setDefaultTheme('default');
 
                 $mdThemingProvider.theme('default')
-                    .primaryPalette('grey');
+                    .primaryPalette('blue');
             }]);
         }
     }

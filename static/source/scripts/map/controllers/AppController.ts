@@ -22,17 +22,8 @@ module pages.map {
             // -
             var self = this;
 
-            /**
-             * Відновлюємо фільтри в урлі після зміни панелі
-             **/
-            $rootScope.$on('$stateChangeStart', function() {
-                if (!_.isNull($location.search()))
-                    self._location_search = $location.search();
-            });
-            $rootScope.$on('$stateChangeSuccess', function() {
-                if (!_.isNull(self._location_search))
-                    $location.search(self._location_search);
-            });
+
+
         }
     }
 }

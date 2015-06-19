@@ -16,5 +16,10 @@ module pages.map {
             private $timeout) {
             // -
         }
+
+
+        private test() {
+            console.log('dsdsd')
+        }
     }
 }

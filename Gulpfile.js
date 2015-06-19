@@ -130,7 +130,7 @@ gulp.task('TypeScript:Landing', function() {
             out: 'landing.js'
         }))
         .pipe(uglify())
-        .pipe(sourcemaps.write('/'))
+        .pipe(sourcemaps.write())
         .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/landing/'));
 });
 
@@ -145,7 +145,7 @@ gulp.task('TypeScript:Map', function() {
             out: 'map.js'
         }))
         .pipe(uglify())
-        .pipe(sourcemaps.write('/'))
+        .pipe(sourcemaps.write())
         .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/map/'));
 });
 
@@ -160,7 +160,7 @@ gulp.task('TypeScript:Cabinet', function() {
             out: 'cabinet.js'
         }))
         .pipe(uglify())
-        .pipe(sourcemaps.write('/'))
+        .pipe(sourcemaps.write())
         .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/cabinet/'));
 });
 

@@ -2,9 +2,9 @@
     @extend %_fixed-panel;
 
     @include size(auto, auto);
-    top: 15px;
-    right: 15px;
-    bottom: 15px;
+    top: 0;
+    right: 0;
+    bottom: 0;
 
     background: #fff;
 

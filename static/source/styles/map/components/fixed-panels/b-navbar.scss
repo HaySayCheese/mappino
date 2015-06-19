@@ -2,8 +2,8 @@
     @extend %_fixed-panel;
 
     @include size(350px, auto);
-    top: 15px;
-    left: 15px;
+    top: 0;
+    left: 0;
 
 
     .b-navbar-wrapper {
@@ -37,16 +37,6 @@
         background-color: #363636;
         box-shadow: 0 3px 1px -2px rgba(0,0,0,.14),0 2px 2px 0 rgba(0,0,0,.098),0 1px 5px 0 rgba(0,0,0,.084);
     }
-
-
-    md-pagination-wrapper {
-    }
-
-
-    md-tab-content {
-
-    }
-
 
 
 

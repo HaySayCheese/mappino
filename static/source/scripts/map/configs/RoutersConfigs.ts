@@ -8,17 +8,12 @@ module pages.map {
 
         constructor(private app: angular.IModule) {
             app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
-                //
-                // For any unmatched url, redirect to /state1
-                $urlRouterProvider.otherwise("/filters/none/");
-                //
-                // Now set up the states
+
+                $urlRouterProvider.otherwise("/0/0/");
+
                 $stateProvider
-                    .state('left_panels', {
-                        url: "/:left_panel_name/:right_panel_name/"
-                    })
-                    .state('right_panels', {
-                        url: "/:left_panel_name/:right_panel_name/"
+                    .state('base', {
+                        url: "/:left_panel_index/:right_panel_index/"
                     });
 
                 $locationProvider.hashPrefix('!');
