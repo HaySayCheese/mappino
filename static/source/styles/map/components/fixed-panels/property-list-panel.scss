@@ -2,40 +2,30 @@
     @extend %_fixed-panel;
 
     @include size(auto, auto);
-    top: 0;
-    right: 0;
-    bottom: 0;
+    top: 15px;
+    right: 15px;
+    bottom: 15px;
 
-    background: #fff;//rgba(0, 0, 0, .1);
+    background: #fff;
 
 
-    > .property-list-header {
-        @include size(100%, 50px);
-        max-height: 50px;
-        padding: 5px 0 5px 5px;
-        background: #fff;
+    header {
+        @include size(100%, 48px);
+        min-height: 48px;
+        max-height: 48px;
+        margin-bottom: 2px;
+        background: #363636;
     }
 
 
-    .property-list-item {
+    section {
         @include size(220px, 120px);
         min-height: 120px;
+        max-height: 120px;
 
-        padding-right: 1px;
-        margin-bottom: 3px;
+        padding: 2px 3px;
 
         cursor: pointer;
-
-        //border-right: 4px solid;
-        background: #fff;
-
-        @include transition(width .2s ease);
-
-
-        &:first-child {
-            margin-top: 5px;
-        }
-
 
         &.-red {
             border-right-color: #fb6262;
@@ -49,7 +39,7 @@
 
 
         > img {
-            @include size(220px, 120px);
+            @include square(100%);
         }
     }
 }

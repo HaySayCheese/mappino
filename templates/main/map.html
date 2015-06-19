@@ -49,28 +49,77 @@
     <main>
         <div id="map" ng-controller="MapController as mapCtrl"></div>
 
-        <b-navbar class="md-whiteframe-z1" layout="row">
-            <b-navbar-wrapper>
+        <div class="b-navbar md-whiteframe-z1" layout="row" ng-controller="BNavbarController as bnavCtrl">
+            <div class="b-navbar-wrapper">
                 <md-tabs md-dynamic-height>
                     <md-tab id="filters_red">
                         <md-tab-label>
                             <md-icon md-svg-icon="{{ static }}build/icons/content/ic_filter_list_24px.svg"></md-icon>
+                            <!--<md-tooltip>-->
+                                <!--Зелені фільтри-->
+                            <!--</md-tooltip>-->
                         </md-tab-label>
                         <md-tab-body>
-                            <section class="md-padding">
-                                тут трошки фільтрів
-                            </section>
-                            <section class="-clickable md-padding" layout="row">
-                                <span>Розширений фільтер</span>
+                            <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
+                                <span class="md-body-1">Квартири 0 - 50 000 $</span>
                                 <span flex></span>
-                                <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_down_24px.svg"></md-icon>
-                            </section>
+                                <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_up_24px.svg"></md-icon>
+                            </header>
+                            <tab-body-collapsible>
+                                <section layout="column">
+                                    <div layout="row">
+                                        <md-select placeholder="Тип обєкта" ng-model="">
+                                            <md-option ng-repeat="" value="0">пвіпвп</md-option>
+                                        </md-select>
+                                    </div>
+                                    <div layout="row">
+                                        <md-input-container flex>
+                                            <label>Ціна від</label>
+                                            <input type="text">
+                                        </md-input-container>
+                                        <md-input-container flex>
+                                            <label>Ціна до</label>
+                                            <input type="text">
+                                        </md-input-container>
+                                        <md-select placeholder="Валюта" ng-model="">
+                                            <md-option ng-repeat="" value="0">пвіпвп</md-option>
+                                        </md-select>
+                                    </div>
+                                    <div layout="row">
+                                        <md-input-container flex>
+                                            <label>Площа від</label>
+                                            <input type="text">
+                                        </md-input-container>
+                                        <md-input-container flex>
+                                            <label>Площа до</label>
+                                            <input type="text">
+                                        </md-input-container>
+                                        <md-input-container flex>
+                                            <label>Кімнат</label>
+                                            <input type="text">
+                                        </md-input-container>
+                                    </div>
+                                </section>
+                                <header class="-tab-body-section-closed" layout="row" layout-align="start center" layout-padding toggle-tab-body-section>
+                                    <span class="md-body-1">Розширений фільтер</span>
+                                    <span flex></span>
+                                    <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_up_24px.svg"></md-icon>
+                                </header>
+                                <tab-body-section-collapsible class="-closed">
+                                    <section layout-padding>
+                                        тут трошки фільтрів
+                                    </section>
+                                </tab-body-section-collapsible>
+                            </tab-body-collapsible>
                         </md-tab-body>
                     </md-tab>
 
                     <md-tab id="filters_blue">
                         <md-tab-label>
                             <md-icon md-svg-icon="{{ static }}build/icons/content/ic_filter_list_24px.svg"></md-icon>
+                            <!--<md-tooltip>-->
+                                <!--Сині фільтри-->
+                            <!--</md-tooltip>-->
                         </md-tab-label>
                         <md-tab-body>
                             <section class="md-padding">
@@ -87,6 +136,9 @@
                     <md-tab id="favorites">
                         <md-tab-label>
                             <md-icon md-svg-icon="{{ static }}build/icons/toggle/ic_star_border_24px.svg"></md-icon>
+                            <!--<md-tooltip>-->
+                                <!--Обрані оголошення-->
+                            <!--</md-tooltip>-->
                         </md-tab-label>
                         <md-tab-body>
                             <section class="md-padding">
@@ -101,7 +153,9 @@
                     <md-tab id="account">
                         <md-tab-label>
                             <md-icon md-svg-icon="{{ static }}build/icons/action/ic_perm_identity_24px.svg"></md-icon>
-                            <!--Item One-->
+                            <!--<md-tooltip>-->
+                                <!--Акаунт-->
+                            <!--</md-tooltip>-->
                         </md-tab-label>
                         <md-tab-body>
                             <section class="md-padding">
@@ -113,8 +167,8 @@
                         </md-tab-body>
                     </md-tab>
                 </md-tabs>
-            </b-navbar-wrapper>
-        </b-navbar>
+            </div>
+        </div>
 
         <!--<div class="search-panel md-whiteframe-z1">-->
             <!--fff-->
@@ -125,67 +179,81 @@
 
 
 
-    <div class="filters-panel" layout="column" ng-show="appCtrl.$state.includes('left_panels', { left_panel_name: 'filters_red' });">
-        <div class="left-panel-container">
-            <section class="md-whiteframe-z1" layout="row" layout-align="start center">
-                <md-icon class="red-text text-lighten-2" flex="15" md-svg-icon="{{ static }}build/icons/maps/ic_place_24px.svg"></md-icon>
-                <b flex="65" offset="5">Квартиры 0 - 50 000 $</b>
-                <md-button flex="15" class="md-icon-button md-primary" aria-label="Додати панель фільтрів" ng-click="appCtrl.slidingPanelsHandler.close('filters')">
-                    <md-icon md-svg-icon="{{ static }}build/icons/action/ic_highlight_off_24px.svg"></md-icon>
-                </md-button>
-            </section>
+    <!--<div class="filters-panel" layout="column" ng-show="appCtrl.$state.includes('left_panels', { left_panel_name: 'filters_red' });">-->
+        <!--<div class="left-panel-container">-->
+            <!--<section class="md-whiteframe-z1" layout="row" layout-align="start center">-->
+                <!--<md-icon class="red-text text-lighten-2" flex="15" md-svg-icon="{{ static }}build/icons/maps/ic_place_24px.svg"></md-icon>-->
+                <!--<b flex="65" offset="5">Квартиры 0 - 50 000 $</b>-->
+                <!--<md-button flex="15" class="md-icon-button md-primary" aria-label="Додати панель фільтрів" ng-click="appCtrl.slidingPanelsHandler.close('filters')">-->
+                    <!--<md-icon md-svg-icon="{{ static }}build/icons/action/ic_highlight_off_24px.svg"></md-icon>-->
+                <!--</md-button>-->
+            <!--</section>-->
 
-            <section class="md-whiteframe-z1">
-                тут тип обєкта
-            </section>
+            <!--<section class="md-whiteframe-z1">-->
+                <!--тут тип обєкта-->
+            <!--</section>-->
 
-            <section class="md-whiteframe-z1">
-                тут основні фільтри
-            </section>
+            <!--<section class="md-whiteframe-z1">-->
+                <!--тут основні фільтри-->
+            <!--</section>-->
 
-            <section class="md-whiteframe-z1">
-                тут розширені філтри
-            </section>
-        </div>
-    </div>
+            <!--<section class="md-whiteframe-z1">-->
+                <!--тут розширені філтри-->
+            <!--</section>-->
+        <!--</div>-->
+    <!--</div>-->
 
-    <div class="favorites-panel" ng-show="appCtrl.$state.includes('left_panels', { left_panel_name: 'favorites' });">
-        <h1>Favorites</h1>
-    </div>
+    <!--<div class="favorites-panel" ng-show="appCtrl.$state.includes('left_panels', { left_panel_name: 'favorites' });">-->
+        <!--<h1>Favorites</h1>-->
+    <!--</div>-->
 
-    <div class="auth-panel -closed">
-        <h1>Auth</h1>
-    </div>
+    <!--<div class="auth-panel -closed">-->
+        <!--<h1>Auth</h1>-->
+    <!--</div>-->
 
 
 
     <div class="property-list-panel md-whiteframe-z1" layout="column" layout-align="start start">
-        <div class="property-list-header md-whiteframe-z1" layout="row" layout-align="start center">
+        <header layout="row" layout-align="start center">
+            <md-menu md-offset="0 -7">
+                <md-button aria-label="Меню оголошення" class="md-icon-button" ng-click="$mdOpenMenu()">
+                    <md-icon md-menu-origin md-svg-icon="{{ static }}build/icons/navigation/ic_more_vert_24px.svg"></md-icon>
+                </md-button>
+                <md-menu-content width="3">
+                    <md-menu-item>
+                        <md-button>
+                            <md-icon md-menu-align-target md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_right_24px.svg"></md-icon>
+                            Подать обьявление
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                        <md-button>
+                            <md-icon md-menu-align-target md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_right_24px.svg"></md-icon>
+                            Сортировать по цене
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
             <span flex></span>
             <md-button class="md-icon-button md-primary">
                 <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_right_24px.svg"></md-icon>
             </md-button>
-        </div>
-        <div class="property-list-body" layout="column">
-            <div class="property-list-item -red">
-                <img src="http://lorempixel.com/200/120/sports" alt=""/>
-            </div>
-            <div class="property-list-item -red">
-                <img src="http://lorempixel.com/200/120/city" alt=""/>
-            </div>
-            <div class="property-list-item -blue">
-                <img src="http://lorempixel.com/200/120/nature" alt=""/>
-            </div>
-            <div class="property-list-item -green">
-                <img src="http://lorempixel.com/200/120/cats" alt=""/>
-            </div>
-            <div class="property-list-item -red">
-                <img src="http://lorempixel.com/200/120/transport" alt=""/>
-            </div>
-            <div class="property-list-item -blue">
-                <img src="http://lorempixel.com/215/120/" alt=""/>
-            </div>
-        </div>
+        </header>
+        <section class="-green">
+            <img src="http://lorempixel.com/200/120/sports" alt=""/>
+        </section>
+        <section class="-blue">
+            <img src="http://lorempixel.com/200/120/sports" alt=""/>
+        </section>
+        <section class="-green">
+            <img src="http://lorempixel.com/200/120/sports" alt=""/>
+        </section>
+        <section class="-blue">
+            <img src="http://lorempixel.com/200/120/sports" alt=""/>
+        </section>
+        <section class="-blue">
+            <img src="http://lorempixel.com/200/120/sports" alt=""/>
+        </section>
     </div>
 
 

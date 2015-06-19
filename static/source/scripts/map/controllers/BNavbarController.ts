@@ -4,21 +4,17 @@
 module pages.map {
     'use strict';
 
-    export class TabsNavigationController {
+    export class BNavbarController {
 
         public static $inject = [
             '$scope',
-            '$timeout',
-            'SlidePanelsHandler'
+            '$timeout'
         ];
 
         constructor(
             private $scope,
             private $timeout) {
             // -
-
-            // Materialize: init .tabs()
-            $timeout(() => $('.tabs').tabs())
         }
     }
 }

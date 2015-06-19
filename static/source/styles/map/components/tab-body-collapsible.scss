@@ -1,0 +1,41 @@
+tab-body-collapsible,
+tab-body-section-collapsible {
+    display: block;
+    max-height: 800px;
+    @include transition(max-height .3s  ease);
+
+    &.-closed {
+        max-height: 0;
+    }
+}
+
+tab-body-collapsible {
+    section {
+        border-bottom: 1px solid color('grey', 'lighten-3');
+    }
+}
+
+
+tab-body-section-collapsible {
+    &.-closed {
+        max-height: 0 !important;
+    }
+
+}
+
+
+[toggle-tab-body],
+[toggle-tab-body-section] {
+    cursor: pointer;
+
+    md-icon {
+        @include transition(all .3s ease);
+    }
+
+    &.-tab-body-closed,
+    &.-tab-body-section-closed {
+        > md-icon {
+            @include rotate(180deg);
+        }
+    }
+}

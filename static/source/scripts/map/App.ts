@@ -43,9 +43,15 @@ module pages.map {
     app.service('MarkersService', MarkersService);
 
 
+
+    /** Directives */
+    app.directive('tabBodyCollapsible', tabBodyCollapsible);
+    app.directive('tabBodySectionCollapsible', tabBodySectionCollapsible);
+
+
     /** Controllers */
     app.controller('AppController', AppController);
-    app.controller('TabsNavigationController', TabsNavigationController);
+    app.controller('BNavbarController', BNavbarController);
     app.controller('FiltersPanelController', FiltersPanelController);
     app.controller('MapController', MapController);
     app.controller('PlaceAutocompleteController', PlaceAutocompleteController);
