@@ -36,15 +36,16 @@ module pages.map {
              **/
             var _onceUpdateTabsFromUrl = _.once(this.onceUpdateTabsFromUrl);
             $rootScope.$on('$stateChangeStart', () => {
-                console.log($location.search())
-                if (!_.isNull($location.search()))
+                if (!_.isNull($location.search())) {
                     this._location_search = $location.search();
+                }
             });
             $rootScope.$on('$stateChangeSuccess', () => {
                 _onceUpdateTabsFromUrl(this);
 
-                if (!_.isNull(this._location_search))
+                if (!_.isNull(this._location_search)) {
                     $location.search(this._location_search);
+                }
             });
         }
 

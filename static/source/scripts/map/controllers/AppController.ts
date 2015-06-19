@@ -5,8 +5,6 @@ module pages.map {
     'use strict';
 
     export class AppController {
-        private _location_search: any;
-
         public static $inject = [
             '$state',
             '$rootScope',

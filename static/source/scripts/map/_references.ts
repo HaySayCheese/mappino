@@ -59,7 +59,6 @@
 // Controllers import
 // ####################
 /// <reference path='controllers/AppController.ts' />
-/// <reference path='controllers/BNavbarController.ts' />
 /// <reference path='controllers/FiltersPanelController.ts' />
 /// <reference path='controllers/MapController.ts' />
 /// <reference path='controllers/PlaceAutocompleteController.ts' />

@@ -49,7 +49,7 @@
     <main>
         <div id="map" ng-controller="MapController as mapCtrl"></div>
 
-        <div class="b-navbar md-whiteframe-z1" layout="row" ng-controller="BNavbarController as bnavCtrl">
+        <div class="b-navbar md-whiteframe-z1" layout="row" ng-cloak>
             <div class="b-navbar-wrapper">
                 <md-tabs md-selected="panelsIndex.leftPanelIndex" md-dynamic-height>
                     <md-tab id="filters_red" md-on-select="panelsIndex.leftPanelIndex = 0">
@@ -170,40 +170,6 @@
 
         <div ui-view></div>
     </main>
-
-
-
-    <!--<div class="filters-panel" layout="column" ng-show="appCtrl.$state.includes('left_panels', { left_panel_index: 'filters_red' });">-->
-        <!--<div class="left-panel-container">-->
-            <!--<section class="md-whiteframe-z1" layout="row" layout-align="start center">-->
-                <!--<md-icon class="red-text text-lighten-2" flex="15" md-svg-icon="{{ static }}build/icons/maps/ic_place_24px.svg"></md-icon>-->
-                <!--<b flex="65" offset="5">Квартиры 0 - 50 000 $</b>-->
-                <!--<md-button flex="15" class="md-icon-button md-primary" aria-label="Додати панель фільтрів" ng-click="appCtrl.slidingPanelsHandler.close('filters')">-->
-                    <!--<md-icon md-svg-icon="{{ static }}build/icons/action/ic_highlight_off_24px.svg"></md-icon>-->
-                <!--</md-button>-->
-            <!--</section>-->
-
-            <!--<section class="md-whiteframe-z1">-->
-                <!--тут тип обєкта-->
-            <!--</section>-->
-
-            <!--<section class="md-whiteframe-z1">-->
-                <!--тут основні фільтри-->
-            <!--</section>-->
-
-            <!--<section class="md-whiteframe-z1">-->
-                <!--тут розширені філтри-->
-            <!--</section>-->
-        <!--</div>-->
-    <!--</div>-->
-
-    <!--<div class="favorites-panel" ng-show="appCtrl.$state.includes('left_panels', { left_panel_index: 'favorites' });">-->
-        <!--<h1>Favorites</h1>-->
-    <!--</div>-->
-
-    <!--<div class="auth-panel -closed">-->
-        <!--<h1>Auth</h1>-->
-    <!--</div>-->
 
 
 

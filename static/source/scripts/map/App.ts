@@ -8,23 +8,15 @@ module pages.map {
         'ngCookies',
         'ngResource',
         'ui.router',
-
-        //'bModules.bSidebarPanel'
     ]);
 
 
 
 
-    /** Providers configuration create */
+    /** Configs */
     new ProvidersConfigs(app);
-
-    /** Routers configuration create */
     new RoutersConfigs(app);
-
-    /** Material configuration create */
     new MaterialFrameworkConfigs(app);
-
-    /** Application configuration create */
     new ApplicationConfigs(app);
 
 
@@ -51,7 +43,6 @@ module pages.map {
 
     /** Controllers */
     app.controller('AppController', AppController);
-    app.controller('BNavbarController', BNavbarController);
     app.controller('FiltersPanelController', FiltersPanelController);
     app.controller('MapController', MapController);
     app.controller('PlaceAutocompleteController', PlaceAutocompleteController);
