@@ -1,14 +1,13 @@
-%_left-sliding-panel {
+%_left-panel {
     @include size(400px, auto);
 
     position: absolute;
-    top: 0;
-    left: 70px;
+    top: 75px;
+    left: 15px;
     bottom: 0;
 
     z-index: 10;
 
-    background: rgba(0, 0, 0, .1);
 
     &.-opened {
         @include animation(bounceInLeft 0.6s both);
@@ -21,13 +20,20 @@
     }
 
 
+    > .left-panel-container {
+        position: relative;
+
+        background: rgba(0, 0, 0, .1);
+    }
+
+
     section {
         padding: 10px 20px;
         background: #fff;
 
-        &:not(:last-child) {
-            margin-bottom: 10px;
-        }
+        //&:not(:last-child) {
+        //    margin-bottom: 10px;
+        //}
     }
 }
 

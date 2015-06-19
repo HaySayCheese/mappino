@@ -8,11 +8,10 @@ module pages.map {
 
         constructor(private app: angular.IModule) {
             app.config(['$mdThemingProvider', '$mdIconProvider', function($mdThemingProvider, $mdIconProvider) {
-                $mdThemingProvider.setDefaultTheme('blue');
+                $mdThemingProvider.setDefaultTheme('default');
 
-                $mdThemingProvider.theme('blue')
-                    .primaryPalette('blue')
-                    .accentPalette('orange');
+                $mdThemingProvider.theme('default')
+                    .primaryPalette('grey');
             }]);
         }
     }

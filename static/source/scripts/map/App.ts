@@ -28,18 +28,22 @@ module pages.map {
     new ApplicationConfigs(app);
 
 
-    /** Module services */
-    app.service('DropPanelsHandler', bModules.Panels.DropPanelsHandler);
-    app.service('SlidePanelsHandler', bModules.Panels.SlidingPanelsHandler);
+    /** Handlers */
+    app.service('PanelsHandler', PanelsHandler);
 
+
+    /** bModule services */
+    //app.service('DropPanelsHandler', bModules.Panels.DropPanelsHandler);
+    //app.service('SlidePanelsHandler', bModules.Panels.SlidingPanelsHandler);
     app.service('RealtyTypesService', bModules.Types.RealtyTypesService);
 
 
+    /** Services */
     app.service('FiltersService', FiltersService);
     app.service('MarkersService', MarkersService);
 
 
-    /** Module controllers */
+    /** Controllers */
     app.controller('AppController', AppController);
     app.controller('TabsNavigationController', TabsNavigationController);
     app.controller('FiltersPanelController', FiltersPanelController);

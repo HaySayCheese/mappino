@@ -10,12 +10,15 @@ module pages.map {
             app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
                 //
                 // For any unmatched url, redirect to /state1
-                $urlRouterProvider.otherwise("/0/1/0/0/");
+                $urlRouterProvider.otherwise("/filters/none/");
                 //
                 // Now set up the states
                 $stateProvider
-                    .state('base', {
-                        url: "/:auth/:filters/:favorites/:publication/"
+                    .state('left_panels', {
+                        url: "/:left_panel_name/:right_panel_name/"
+                    })
+                    .state('right_panels', {
+                        url: "/:left_panel_name/:right_panel_name/"
                     });
 
                 $locationProvider.hashPrefix('!');

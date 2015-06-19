@@ -8,17 +8,17 @@ module pages.map {
         private _location_search: any;
 
         public static $inject = [
+            '$state',
             '$rootScope',
             '$location',
-            'DropPanelsHandler',
-            'SlidePanelsHandler'
+            'PanelsHandler'
         ];
 
         constructor(
+            private $state: angular.ui.IStateService,
             private $rootScope,
             private $location,
-            private dropPanelsHandler: bModules.Panels.IDropPanelsHandler,
-            private slidingPanelsHandler: bModules.Panels.ISlidingPanelsHandler) {
+            private panelsHandler: PanelsHandler) {
             // -
             var self = this;
 

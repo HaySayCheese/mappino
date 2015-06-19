@@ -31,6 +31,14 @@
 
 
 // ####################
+// Handlers import
+// ####################
+/// <reference path='handlers/PanelsHandler.ts' />
+
+
+
+
+// ####################
 // Services import
 // ####################
 /// <reference path='services/FiltersService.ts' />

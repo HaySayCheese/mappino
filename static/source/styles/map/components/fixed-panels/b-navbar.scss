@@ -1,0 +1,79 @@
+b-navbar {
+    @extend %_fixed-panel;
+
+    @include size(350px, auto);
+    top: 15px;
+    left: 15px;
+
+
+    b-navbar-wrapper {
+        width: 100%;
+        position: relative;
+        display: block;
+        //background: #fff;
+    }
+
+
+    section {
+        background: #fff;
+
+        &:not(:last-child) {
+            border-bottom: 1px solid color('grey', 'lighten-3')
+        }
+
+        &.-clickable {
+            cursor: pointer;
+        }
+    }
+
+
+
+    md-tabs {
+        border-radius: 0 !important;
+    }
+    md-tabs-canvas {
+        height: 60px !important;
+        background-color: #363636;
+        box-shadow: 0 3px 1px -2px rgba(0,0,0,.14),0 2px 2px 0 rgba(0,0,0,.098),0 1px 5px 0 rgba(0,0,0,.084);
+    }
+    md-pagination-wrapper {
+        height: 60px !important;
+    }
+    md-tab-body {
+    }
+    md-tab-item {
+        padding: 18px 20px !important;
+        color: color('grey', 'darken-1') !important;
+
+        &:nth-child(1) {
+            md-icon {
+                color: #71c187 !important;
+                opacity: 0.6;
+            }
+            &.md-active md-icon {
+                opacity: 1;
+            }
+        }
+
+        &:nth-child(2) {
+            md-icon {
+                color: #4996cc !important;
+                opacity: 0.6;
+            }
+            &.md-active md-icon {
+                opacity: 1;
+            }
+        }
+
+        &:nth-child(3),
+        &:nth-child(4) {
+            &.md-active md-icon {
+                color: #fff !important;
+            }
+        }
+
+        md-icon {
+            color: color('grey', 'darken-1') !important;
+        }
+    }
+}

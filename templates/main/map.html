@@ -46,229 +46,110 @@
     </script>
 </head>
 <body ng-controller="AppController as appCtrl">
-    <md-content>
-        <b-sidebar layout="column">
-            <md-button class="b-sidebar-button" aria-label="Открыть меню">
-                <md-icon md-svg-icon="{{ static }}build/icons/action/ic_search_24px.svg"></md-icon>
-            </md-button>
-            <md-button class="b-sidebar-button" aria-label="Фільтри" ng-click="appCtrl.slidingPanelsHandler.open('filters')">
-                <md-icon md-svg-icon="{{ static }}build/icons/content/ic_filter_list_24px.svg"></md-icon>
-            </md-button>
-            <md-button class="b-sidebar-button" aria-label="Улюблені" ng-click="appCtrl.slidingPanelsHandler.open('favorites')">
-                <md-icon md-svg-icon="{{ static }}build/icons/toggle/ic_star_border_24px.svg"></md-icon>
-            </md-button>
-            <md-button class="b-sidebar-button" aria-label="Открыть меню">
-                <md-icon md-svg-icon="{{ static }}build/icons/action/ic_perm_identity_24px.svg"></md-icon>
-            </md-button>
-        </b-sidebar>
-
-        <div class="search-panel md-whiteframe-z1">
-            <md-content>
-
-            </md-content>
-        </div>
-
+    <main>
         <div id="map" ng-controller="MapController as mapCtrl"></div>
+
+        <b-navbar class="md-whiteframe-z1" layout="row">
+            <b-navbar-wrapper>
+                <md-tabs md-dynamic-height>
+                    <md-tab id="filters_red">
+                        <md-tab-label>
+                            <md-icon md-svg-icon="{{ static }}build/icons/content/ic_filter_list_24px.svg"></md-icon>
+                        </md-tab-label>
+                        <md-tab-body>
+                            <section class="md-padding">
+                                тут трошки фільтрів
+                            </section>
+                            <section class="-clickable md-padding" layout="row">
+                                <span>Розширений фільтер</span>
+                                <span flex></span>
+                                <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_down_24px.svg"></md-icon>
+                            </section>
+                        </md-tab-body>
+                    </md-tab>
+
+                    <md-tab id="filters_blue">
+                        <md-tab-label>
+                            <md-icon md-svg-icon="{{ static }}build/icons/content/ic_filter_list_24px.svg"></md-icon>
+                        </md-tab-label>
+                        <md-tab-body>
+                            <section class="md-padding">
+                                і тут трошки фільтрів
+                            </section>
+                            <section class="-clickable md-padding" layout="row">
+                                <span>Розширений фільтер</span>
+                                <span flex></span>
+                                <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_down_24px.svg"></md-icon>
+                            </section>
+                        </md-tab-body>
+                    </md-tab>
+
+                    <md-tab id="favorites">
+                        <md-tab-label>
+                            <md-icon md-svg-icon="{{ static }}build/icons/toggle/ic_star_border_24px.svg"></md-icon>
+                        </md-tab-label>
+                        <md-tab-body>
+                            <section class="md-padding">
+                                тут вибране оголошення
+                            </section>
+                            <section class="md-padding">
+                                і тут вибране оголошення
+                            </section>
+                        </md-tab-body>
+                    </md-tab>
+
+                    <md-tab id="account">
+                        <md-tab-label>
+                            <md-icon md-svg-icon="{{ static }}build/icons/action/ic_perm_identity_24px.svg"></md-icon>
+                            <!--Item One-->
+                        </md-tab-label>
+                        <md-tab-body>
+                            <section class="md-padding">
+                                тут вхід
+                            </section>
+                            <section class="md-padding">
+                                тута реєстрація
+                            </section>
+                        </md-tab-body>
+                    </md-tab>
+                </md-tabs>
+            </b-navbar-wrapper>
+        </b-navbar>
+
+        <!--<div class="search-panel md-whiteframe-z1">-->
+            <!--fff-->
+        <!--</div>-->
+
         <div ui-view></div>
-    </md-content>
-
-    <!--<div class="wrapper">-->
-
-        <!-- Fixed search panel panel -->
-        <!--<div class="search-panel" ng-controller="PlaceAutocompleteController">-->
-            <!--<a class="btn-flat btn-menu valign-wrapper"-->
-                    <!--ng-click="appCtrl.dropPanelsHandler.open('menu')"-->
-                    <!--ng-hide="appCtrl.dropPanelsHandler.isOpened('menu')">-->
-                <!--<i class="mdi-navigation-menu valign"></i>-->
-            <!--</a>-->
-            <!--<a class="btn-flat btn-menu valign-wrapper"-->
-                    <!--ng-click="appCtrl.dropPanelsHandler.close('menu')"-->
-                    <!--ng-show="appCtrl.dropPanelsHandler.isOpened('menu')">-->
-                <!--<i class="mdi-navigation-close valign"></i>-->
-            <!--</a>-->
-            <!--<input id="place-autocomplete" placeholder="Введите местоположение" type="text">-->
-            <!--<a class="btn-flat btn-search valign-wrapper">-->
-                <!--<i class="mdi-action-search valign"></i>-->
-            <!--</a>-->
-        <!--</div>-->
-
-        <!-- Drop menu panel -->
-        <!--<div class="menu-panel closed">-->
-
-        <!--</div>-->
+    </main>
 
 
 
-        <!-- Fixed tabs panel panel -->
-        <!--<div class="tabs-panel" ng-controller="TabsNavigationController as tabsCtrl" ng-cloak>-->
-            <!--<ul class="tabs"-->
-                <!--ng-class="{ 'nothing-selected': !appCtrl.slidingPanelsHandler.isOpened('filters') && !appCtrl.slidingPanelsHandler.isOpened('favorites') }">-->
+    <div class="filters-panel" layout="column" ng-show="appCtrl.$state.includes('left_panels', { left_panel_name: 'filters_red' });">
+        <div class="left-panel-container">
+            <section class="md-whiteframe-z1" layout="row" layout-align="start center">
+                <md-icon class="red-text text-lighten-2" flex="15" md-svg-icon="{{ static }}build/icons/maps/ic_place_24px.svg"></md-icon>
+                <b flex="65" offset="5">Квартиры 0 - 50 000 $</b>
+                <md-button flex="15" class="md-icon-button md-primary" aria-label="Додати панель фільтрів" ng-click="appCtrl.slidingPanelsHandler.close('filters')">
+                    <md-icon md-svg-icon="{{ static }}build/icons/action/ic_highlight_off_24px.svg"></md-icon>
+                </md-button>
+            </section>
 
-                <!--<li class="tab col s3" ng-click="appCtrl.slidingPanelsHandler.open('filters')">-->
-                    <!--<a href="#" ng-class="{ active: appCtrl.slidingPanelsHandler.isOpened('filters') }">-->
-                        <!--<i class="mdi-content-filter-list"></i>-->
-                        <!--Фильтры-->
-                    <!--</a>-->
-                <!--</li>-->
-                <!--<li class="tab col s3" ng-click="appCtrl.slidingPanelsHandler.open('favorites')">-->
-                    <!--<a href="#" ng-class="{ active: appCtrl.slidingPanelsHandler.isOpened('favorites') }">-->
-                        <!--<i class="mdi-action-grade"></i>-->
-                        <!--Избранние-->
-                    <!--</a>-->
-                <!--</li>-->
-            <!--</ul>-->
+            <section class="md-whiteframe-z1">
+                тут тип обєкта
+            </section>
 
-            <!--<div class="user-block valign-wrapper" ng-hide="appCtrl.dropPanelsHandler.isOpened('user')"-->
-                    <!--ng-click="appCtrl.dropPanelsHandler.open('user')">-->
-                <!--<span class="valign hide-on-small-only">Serhii</span>-->
-                <!--<img class="valign" src="{{ static }}build/images/main/publication-view/no-user.png" alt=""/>-->
-            <!--</div>-->
-            <!--<div class="user-block valign-wrapper" ng-show="appCtrl.dropPanelsHandler.isOpened('user')"-->
-                    <!--ng-click="appCtrl.dropPanelsHandler.close('user')">-->
-                <!--<a class="btn-flat">-->
-                    <!--<span class="hide-on-small-only">CLOSE</span>-->
-                <!--</a>-->
-            <!--</div>-->
-        <!--</div>-->
+            <section class="md-whiteframe-z1">
+                тут основні фільтри
+            </section>
 
-        <!-- Drop user panel -->
-        <!--<div class="user-panel closed">-->
-
-        <!--</div>-->
-
-
-
-
-
-
-
-        <!-- Sliding panels -->
-        <!--<div class="publication-panel closed">-->
-            <!--<div class="publication-panel-header">-->
-                <!--<img src="{{ static }}build/images/home/home-bg-1.jpg" alt=""/>-->
-                <!--<div class="over-photo-control" ng-click="appCtrl.slidingPanelsHandler.close('publication')">-->
-                    <!--<i class="mdi-navigation-close"></i>-->
-                <!--</div>-->
-                <!--<div class="over-photo-block">-->
-                    <!--<div class="title">Lorem ipsum dolor sit amet.</div>-->
-                    <!--<div class="address">Lorem ipsum dolor sit amet, consectetur adipisicing.</div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="publication-panel-body">-->
-                <!--<div class="row">-->
-                    <!--<div class="col s6">-->
-                        <!--<table>-->
-                            <!--<tr>-->
-                                <!--<td>Тип рынка:</td>-->
-                                <!--<td>Lorem ipsum.</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td>Тип здания:</td>-->
-                                <!--<td>Lorem ipsum.</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td>Год постройки:</td>-->
-                                <!--<td>1992</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td>Возраст бизнеса:</td>-->
-                                <!--<td>Lorem.</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td>Тип квартиры:</td>-->
-                                <!--<td>Lorem ipsum.</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td>Планировка:</td>-->
-                                <!--<td>Lorem.</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td>Общая площадь:</td>-->
-                                <!--<td>100 m</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td>Площадь:</td>-->
-                                <!--<td>100 m</td>-->
-                            <!--</tr>-->
-                        <!--</table>-->
-                    <!--</div>-->
-                    <!--<div class="col s6">-->
-                        <!--<table>-->
-                            <!--<tr>-->
-                                <!--<td>Тип рынка:</td>-->
-                                <!--<td>Lorem ipsum.</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td>Тип здания:</td>-->
-                                <!--<td>Lorem ipsum.</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td>Год постройки:</td>-->
-                                <!--<td>1992</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td>Возраст бизнеса:</td>-->
-                                <!--<td>Lorem.</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td>Тип квартиры:</td>-->
-                                <!--<td>Lorem ipsum.</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td>Планировка:</td>-->
-                                <!--<td>Lorem.</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td>Общая площадь:</td>-->
-                                <!--<td>100 m</td>-->
-                            <!--</tr>-->
-                            <!--<tr>-->
-                                <!--<td>Площадь:</td>-->
-                                <!--<td>100 m</td>-->
-                            <!--</tr>-->
-                        <!--</table>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<div class="row">-->
-                    <!--<div class="col s12">-->
-                        <!--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid aperiam architecto, atque blanditiis deleniti eos eveniet excepturi nulla perspiciatis tempore!-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<div class="row">-->
-                    <!--<div class="col s12">-->
-                        <!--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid aperiam architecto, atque blanditiis deleniti eos eveniet excepturi nulla perspiciatis tempore!-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-
-
-
-
-
-    <div class="filters-panel -closed" layout="column" b-sidebar-panel>
-        <section class="md-whiteframe-z1" layout="row" layout-align="start center">
-            <md-icon class="red-text text-lighten-2" flex="15" md-svg-icon="{{ static }}build/icons/maps/ic_place_24px.svg"></md-icon>
-            <b flex="65" offset="5">Квартиры 0 - 50 000 $</b>
-            <md-button flex="15" class="md-icon-button md-primary" aria-label="Додати панель фільтрів" ng-click="appCtrl.slidingPanelsHandler.close('filters')">
-                <md-icon md-svg-icon="{{ static }}build/icons/action/ic_highlight_off_24px.svg"></md-icon>
-            </md-button>
-        </section>
-
-        <section class="md-whiteframe-z1">
-            тут тип обєкта
-        </section>
-
-        <section class="md-whiteframe-z1">
-            тут основні фільтри
-        </section>
-
-        <section class="md-whiteframe-z1">
-            тут розширені філтри
-        </section>
+            <section class="md-whiteframe-z1">
+                тут розширені філтри
+            </section>
+        </div>
     </div>
 
-    <div class="favorites-panel -closed">
+    <div class="favorites-panel" ng-show="appCtrl.$state.includes('left_panels', { left_panel_name: 'favorites' });">
         <h1>Favorites</h1>
     </div>
 

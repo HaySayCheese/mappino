@@ -11,20 +11,20 @@
 
 // fixed panels
 @import "components/fixed-panels/_fixed-panel";
-@import "components/fixed-panels/b-sidebar";
+@import "components/fixed-panels/b-navbar";
 @import "components/fixed-panels/search-panel";
 @import "components/fixed-panels/property-list-panel";
 
 
 
 // sliding panels
-@import "components/sliding-panels/left/_left-sliding-panel";
-@import "components/sliding-panels/left/publication-panel";
-@import "components/sliding-panels/left/filters-panel";
-@import "components/sliding-panels/left/favorites-panel";
+@import "components/left-panels/_left-panel";
+@import "components/left-panels/filters-panel";
+@import "components/left-panels/favorites-panel";
+@import "components/left-panels/auth-panel";
 
 @import "components/sliding-panels/right/_right-sliding-panel";
-@import "components/sliding-panels/left/auth-panel";
+@import "components/sliding-panels/right/publication-panel";
 
 
 
@@ -42,7 +42,7 @@
 
 html,
 body,
-md-content,
+main,
 #map {
     @include square(100%);
     overflow: hidden;
