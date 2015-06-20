@@ -1,13 +1,14 @@
 import { RealtyTypesService } from "../_common/bModules/Types/services/realty-types.service.js";
 
 import { AppController } from "./controllers/app.controller.js";
-import { FiltersPanelController } from "./controllers/filters-panel.controller.js";
 import { MapController } from "./controllers/map.controller.js";
+import { FiltersPanelController } from "./controllers/filters-panel.controller.js";
 import { PlaceAutocompleteController } from "./controllers/place-autocomplete.controller.js";
+
+import { PanelsHandler } from "./handlers/panels.hendler.js";
 
 import { FiltersService } from "./services/filters.service.js";
 import { MarkersService } from "./services/markers.service.js";
-import { PanelsHandler } from "./handlers/panels.hendler.js";
 import { tabBodyCollapsible, tabBodySectionCollapsible } from "./directives/tabs-panel.directive.js";
 
 
