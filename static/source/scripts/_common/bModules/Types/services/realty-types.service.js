@@ -1,9 +1,8 @@
-/// <reference path='../_references.ts' />
+export class RealtyTypesService {
+    constructor() {
+        "use strict";
 
-
-module bModules.Types {
-    export class RealtyTypesService {
-        private _realty_types = [
+        this._realty_types = [
             {
                 id:     0,
                 name:   "flat",
@@ -77,12 +76,9 @@ module bModules.Types {
                     "op_sid", "p_min", "p_max", "cu_sid"
                 ]
             }];
+    }
 
-
-        constructor() {}
-
-        get realty_types() {
-            return this._realty_types;
-        }
+    get realty_types() {
+        return this._realty_types;
     }
 }

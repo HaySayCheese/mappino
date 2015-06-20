@@ -2,11 +2,15 @@ var gulp        = require('gulp'),
     del         = require('del'),
     runSequence = require('run-sequence'),
     rename      = require("gulp-rename"),
+    source      = require('vinyl-source-stream'),
 
     sass        = require('gulp-sass'),
     minifyCSS   = require('gulp-minify-css'),
 
-    ts          = require('gulp-typescript'),
+    babel       = require("gulp-babel"),
+    babelify    = require('babelify'),
+    browserify  = require('browserify'),
+    concat      = require("gulp-concat"),
 
     uglify      = require('gulp-uglify'),
     sourcemaps  = require('gulp-sourcemaps');
@@ -119,53 +123,47 @@ gulp.task('Sass', ['Sass:Landing', 'Sass:Map', 'Sass:Cabinet']);
 
 
 
-/** Task TypeScript:Landing - Compile 'source/scripts/landing/*' **/
-gulp.task('TypeScript:Landing', function() {
+/** Task ES6:Landing - Compile 'source/scripts/landing/*' **/
+gulp.task('ES6:Landing', function() {
     return gulp.src(PATHS.SOURCE.SCRIPTS + '/landing/_references.ts')
         .pipe(sourcemaps.init())
-        .pipe(ts({
-            noImplicitAny: false,
-            target: 'ES5',
-            sortOutput: true,
-            out: 'landing.js'
-        }))
+        .pipe(concat("landing.js"))
+        .pipe(babel())
         .pipe(uglify())
-        .pipe(sourcemaps.write())
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/landing/'));
 });
 
-/** Task TypeScript:Map - Compile 'source/scripts/map/*' **/
-gulp.task('TypeScript:Map', function() {
-    return gulp.src(PATHS.SOURCE.SCRIPTS + '/map/_references.ts')
-        .pipe(sourcemaps.init())
-        .pipe(ts({
-            noImplicitAny: false,
-            target: 'ES5',
-            sortOutput: true,
-            out: 'map.js'
-        }))
-        .pipe(uglify())
-        .pipe(sourcemaps.write())
+/** Task ES6:Map - Compile 'source/scripts/map/*' **/
+gulp.task('ES6:Map', function() {
+    return browserify({ entries: PATHS.SOURCE.SCRIPTS + '/map/app.js', debug: true })
+        .transform(babelify)
+        .bundle()
+        .pipe(source('map.js'))
         .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/map/'));
+
+    //return gulp.src(PATHS.SOURCE.SCRIPTS + '/map/app.js')
+    //    .pipe(sourcemaps.init())
+    //    .pipe(concat("map.js"))
+    //    .pipe(babel())
+    //    .pipe(uglify())
+    //    .pipe(sourcemaps.write('.'))
+    //    .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/map/'));
 });
 
-/** Task TypeScript:Map - Compile 'source/scripts/map/*' **/
-gulp.task('TypeScript:Cabinet', function() {
+/** Task ES6:Cabinet - Compile 'source/scripts/map/*' **/
+gulp.task('ES6:Cabinet', function() {
     return gulp.src(PATHS.SOURCE.SCRIPTS + '/cabinet/_references.ts')
         .pipe(sourcemaps.init())
-        .pipe(ts({
-            noImplicitAny: false,
-            target: 'ES5',
-            sortOutput: true,
-            out: 'cabinet.js'
-        }))
+        .pipe(concat("cabinet.js"))
+        .pipe(babel())
         .pipe(uglify())
-        .pipe(sourcemaps.write())
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/cabinet/'));
 });
 
-/** Task TypeScript: Run all 'TypeScript:*' tasks **/
-gulp.task('TypeScript', ['TypeScript:Landing', 'TypeScript:Map', 'TypeScript:Cabinet']);
+/** Task ES6: Run all 'ES6:*' tasks **/
+gulp.task('ES6', [/*'ES6:Landing',*/ 'ES6:Map'/*, 'ES6:Cabinet'*/]);
 
 
 
@@ -178,10 +176,10 @@ gulp.task('watch', function () {
     gulp.watch(PATHS.SOURCE.STYLES + '/cabinet/**/*.scss',   ['Sass:Cabinet']);
 
 
-    gulp.watch(PATHS.SOURCE.SCRIPTS + '/_common/**/*.ts',   ['TypeScript']);
-    gulp.watch(PATHS.SOURCE.SCRIPTS + '/map/**/*.ts',       ['TypeScript:Map']);
-    gulp.watch(PATHS.SOURCE.SCRIPTS + '/landing/**/*.ts',   ['TypeScript:Landing']);
-    gulp.watch(PATHS.SOURCE.SCRIPTS + '/cabinet/**/*.ts',   ['TypeScript:Cabinet']);
+    gulp.watch(PATHS.SOURCE.SCRIPTS + '/_common/**/*.js',   ['ES6']);
+    gulp.watch(PATHS.SOURCE.SCRIPTS + '/map/**/*.js',       ['ES6:Map']);
+    gulp.watch(PATHS.SOURCE.SCRIPTS + '/landing/**/*.js',   ['ES6:Landing']);
+    gulp.watch(PATHS.SOURCE.SCRIPTS + '/cabinet/**/*.js',   ['ES6:Cabinet']);
 });
 
 
@@ -190,5 +188,5 @@ gulp.task('watch', function () {
 
 /** default task (use 'gulp' to build project) **/
 gulp.task('default', function(callback) {
-    runSequence('Clean', ['Copy', 'Sass', 'TypeScript'], callback);
+    runSequence('Clean', ['Copy', 'Sass', 'ES6'], callback);
 });
