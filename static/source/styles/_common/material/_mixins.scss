@@ -20,10 +20,3 @@
     #{$property}: -webkit-calc(#{$expression});
     #{$property}: calc(#{$expression});
 }
-
-@mixin user-select($args) {
-    -webkit-user-select: $args;
-    -moz-user-select: $args;
-    -ms-user-select: $args;
-    user-select: $args;
-}

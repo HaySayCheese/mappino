@@ -10,7 +10,7 @@ module pages.map {
             app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
 
                 $urlRouterProvider.otherwise("/0/0/");
-
+                
                 $stateProvider
                     .state('base', {
                         url: "/:left_panel_index/:right_panel_index/"

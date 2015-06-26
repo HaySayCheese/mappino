@@ -20,6 +20,8 @@
 
     section {
         @include size(220px, 120px);
+        position: relative;
+
         min-height: 120px;
         max-height: 120px;
 
@@ -27,19 +29,32 @@
 
         cursor: pointer;
 
-        &.-red {
-            border-right-color: #fb6262;
-        }
-        &.-blue {
-            border-right-color: #4996cc;
-        }
-        &.-green {
-            border-right-color: #71c187;
-        }
-
 
         > img {
             @include square(100%);
+        }
+
+
+        .property-list-item-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        md-icon.-white-star {
+            color: #fff !important;
+        }
+
+        .property-list-item-description {
+            position: absolute;
+            bottom: 0;
+
+            padding: 10px 20px;
+
+            color: #fff;
+            font-size: 13px;
         }
     }
 }

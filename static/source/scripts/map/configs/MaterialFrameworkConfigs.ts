@@ -8,9 +8,9 @@ module pages.map {
 
         constructor(private app: angular.IModule) {
             app.config(['$mdThemingProvider', '$mdIconProvider', function($mdThemingProvider, $mdIconProvider) {
-                $mdThemingProvider.setDefaultTheme('default');
+                $mdThemingProvider.setDefaultTheme('blue');
 
-                $mdThemingProvider.theme('default')
+                $mdThemingProvider.theme('blue')
                     .primaryPalette('blue');
             }]);
         }

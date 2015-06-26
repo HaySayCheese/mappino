@@ -9,8 +9,9 @@ module pages.map {
         'ngResource',
         'ui.router',
 
-        //'bModules.bSidebarPanel'
+        'bModules.Types'
     ]);
+
 
 
 
@@ -28,30 +29,22 @@ module pages.map {
     new ApplicationConfigs(app);
 
 
-    /** Handlers */
-    app.service('PanelsHandler', PanelsHandler);
-
-
-    /** bModule services */
-    //app.service('DropPanelsHandler', bModules.Panels.DropPanelsHandler);
-    //app.service('SlidePanelsHandler', bModules.Panels.SlidingPanelsHandler);
-    app.service('RealtyTypesService', bModules.Types.RealtyTypesService);
-
-
     /** Services */
     app.service('FiltersService', FiltersService);
     app.service('MarkersService', MarkersService);
 
 
+    /** Handlers */
+    app.service('PanelsHandler', PanelsHandler);
+
 
     /** Directives */
-    app.directive('tabBodyCollapsible', tabBodyCollapsible);
-    app.directive('tabBodySectionCollapsible', tabBodySectionCollapsible);
+    app.directive('tabBodyCollapsible', TabBodyCollapsibleDirective);
+    app.directive('tabBodySectionCollapsible', TabBodySectionCollapsibleDirective);
 
 
     /** Controllers */
     app.controller('AppController', AppController);
-    app.controller('BNavbarController', BNavbarController);
     app.controller('FiltersPanelController', FiltersPanelController);
     app.controller('MapController', MapController);
     app.controller('PlaceAutocompleteController', PlaceAutocompleteController);

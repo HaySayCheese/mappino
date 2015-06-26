@@ -18,16 +18,22 @@ module pages.map {
             private $rootScope: any,
             private $location: angular.ILocationService) {
             // ---------------------------------------------------------------------------------------------------------
-            $rootScope.panelsIndex = {
+
+        }
+
+
+
+        public initialize() {
+            this.$rootScope.panelsIndex = {
                 leftPanelIndex:     0,
                 rightPanelIndex:    0
             };
 
-            $rootScope.$watch('panelsIndex.leftPanelIndex', (newValue, oldValue) => {
-                $state.go('base', { left_panel_index: newValue });
+            this.$rootScope.$watch('panelsIndex.leftPanelIndex', (newValue, oldValue) => {
+                this.$state.go('base', { left_panel_index: newValue });
             }, true);
-            $rootScope.$watch('panelsIndex.rightPanelIndex', (newValue, oldValue) => {
-                $state.go('base', { right_panel_index: newValue });
+            this.$rootScope.$watch('panelsIndex.rightPanelIndex', (newValue, oldValue) => {
+                this.$state.go('base', { right_panel_index: newValue });
             }, true);
 
 
@@ -35,16 +41,15 @@ module pages.map {
              * Відновлюємо фільтри в урлі після зміни панелі
              **/
             var _onceUpdateTabsFromUrl = _.once(this.onceUpdateTabsFromUrl);
-            $rootScope.$on('$stateChangeStart', () => {
-                console.log($location.search())
-                if (!_.isNull($location.search()))
-                    this._location_search = $location.search();
+            this.$rootScope.$on('$stateChangeStart', () => {
+                if (!_.isNull(this.$location.search()))
+                    this._location_search = this.$location.search();
             });
-            $rootScope.$on('$stateChangeSuccess', () => {
+            this.$rootScope.$on('$stateChangeSuccess', () => {
                 _onceUpdateTabsFromUrl(this);
 
                 if (!_.isNull(this._location_search))
-                    $location.search(this._location_search);
+                    this.$location.search(this._location_search);
             });
         }
 

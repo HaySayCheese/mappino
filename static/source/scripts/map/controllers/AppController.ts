@@ -5,25 +5,21 @@ module pages.map {
     'use strict';
 
     export class AppController {
-        private _location_search: any;
+        private realtyTypes = [];
 
         public static $inject = [
-            '$state',
-            '$rootScope',
-            '$location',
-            'PanelsHandler'
+            '$scope',
+            'PanelsHandler',
+            'RealtyTypesService'
         ];
 
-        constructor(
-            private $state: angular.ui.IStateService,
-            private $rootScope,
-            private $location,
-            private panelsHandler: PanelsHandler) {
-            // -
-            var self = this;
+        constructor(private $scope,
+                    private panelsHandler,
+                    private realtyTypesService) {
+            // ---------------------------------------------------------------------------------------------------------
+            this.realtyTypes = realtyTypesService.realtyTypes;
 
-
-
+            panelsHandler.initialize();
         }
     }
 }

@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/angular_material/0.10.0/angular-material.min.css">
 
     {% compress css %}
-        <link rel="stylesheet" href="{{ static }}build/styles/map/base.min.css"/>
+    <link rel="stylesheet" href="{{ static }}build/styles/map/base.min.css"/>
     {% endcompress %}
 
     <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places"></script>
@@ -32,12 +32,12 @@
 
 
     {% compress js %}
-        <!-- local libraries here -->
+    <!-- local libraries here -->
     {% endcompress %}
 
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
                 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
@@ -49,7 +49,7 @@
     <main>
         <div id="map" ng-controller="MapController as mapCtrl"></div>
 
-        <div class="b-navbar md-whiteframe-z1" layout="row" ng-controller="BNavbarController as bnavCtrl">
+        <div class="b-navbar md-whiteframe-z1" layout="row" ng-cloak>
             <div class="b-navbar-wrapper">
                 <md-tabs md-selected="panelsIndex.leftPanelIndex" md-dynamic-height>
                     <md-tab id="filters_red" md-on-select="panelsIndex.leftPanelIndex = 0">
@@ -65,21 +65,25 @@
                             <tab-body-collapsible>
                                 <section layout="column">
                                     <div layout="row">
-                                        <!--<md-select placeholder="Тип обєкта">-->
-                                            <!--<md-option value="0">пвіпвп</md-option>-->
-                                        <!--</md-select>-->
+                                        <md-select placeholder="Тип обєкта" ng-model="filters.red.t_sid" flex="65">
+                                            <md-option ng-repeat="realtyType in appCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
+                                        </md-select>
+                                        <md-select placeholder="Операция" ng-model="filters.red.op_sid" flex="35">
+                                            <md-option value="0">Продажа</md-option>
+                                            <md-option value="1">Оренда</md-option>
+                                        </md-select>
                                     </div>
                                     <div layout="row">
                                         <md-input-container flex>
                                             <label>Ціна від</label>
-                                            <input type="text">
+                                            <input type="text" ng-model="filters.red.pr" only-number>
                                         </md-input-container>
                                         <md-input-container flex>
                                             <label>Ціна до</label>
                                             <input type="text">
                                         </md-input-container>
                                         <!--<md-select placeholder="Валюта">-->
-                                            <!--<md-option value="0">пвіпвп</md-option>-->
+                                        <!--<md-option value="0">пвіпвп</md-option>-->
                                         <!--</md-select>-->
                                     </div>
                                     <div layout="row">
@@ -115,7 +119,7 @@
                         <md-tab-label>
                             <md-icon md-svg-icon="{{ static }}build/icons/content/ic_filter_list_24px.svg"></md-icon>
                             <!--<md-tooltip>-->
-                                <!--Сині фільтри-->
+                            <!--Сині фільтри-->
                             <!--</md-tooltip>-->
                         </md-tab-label>
                         <md-tab-body>
@@ -134,7 +138,7 @@
                         <md-tab-label>
                             <md-icon md-svg-icon="{{ static }}build/icons/toggle/ic_star_border_24px.svg"></md-icon>
                             <!--<md-tooltip>-->
-                                <!--Обрані оголошення-->
+                            <!--Обрані оголошення-->
                             <!--</md-tooltip>-->
                         </md-tab-label>
                         <md-tab-body>
@@ -165,45 +169,11 @@
         </div>
 
         <!--<div class="search-panel md-whiteframe-z1">-->
-            <!--fff-->
+        <!--fff-->
         <!--</div>-->
 
         <div ui-view></div>
     </main>
-
-
-
-    <!--<div class="filters-panel" layout="column" ng-show="appCtrl.$state.includes('left_panels', { left_panel_index: 'filters_red' });">-->
-        <!--<div class="left-panel-container">-->
-            <!--<section class="md-whiteframe-z1" layout="row" layout-align="start center">-->
-                <!--<md-icon class="red-text text-lighten-2" flex="15" md-svg-icon="{{ static }}build/icons/maps/ic_place_24px.svg"></md-icon>-->
-                <!--<b flex="65" offset="5">Квартиры 0 - 50 000 $</b>-->
-                <!--<md-button flex="15" class="md-icon-button md-primary" aria-label="Додати панель фільтрів" ng-click="appCtrl.slidingPanelsHandler.close('filters')">-->
-                    <!--<md-icon md-svg-icon="{{ static }}build/icons/action/ic_highlight_off_24px.svg"></md-icon>-->
-                <!--</md-button>-->
-            <!--</section>-->
-
-            <!--<section class="md-whiteframe-z1">-->
-                <!--тут тип обєкта-->
-            <!--</section>-->
-
-            <!--<section class="md-whiteframe-z1">-->
-                <!--тут основні фільтри-->
-            <!--</section>-->
-
-            <!--<section class="md-whiteframe-z1">-->
-                <!--тут розширені філтри-->
-            <!--</section>-->
-        <!--</div>-->
-    <!--</div>-->
-
-    <!--<div class="favorites-panel" ng-show="appCtrl.$state.includes('left_panels', { left_panel_index: 'favorites' });">-->
-        <!--<h1>Favorites</h1>-->
-    <!--</div>-->
-
-    <!--<div class="auth-panel -closed">-->
-        <!--<h1>Auth</h1>-->
-    <!--</div>-->
 
 
 
@@ -215,19 +185,32 @@
             </md-button>
         </header>
         <section class="-green">
-            <img src="http://lorempixel.com/200/120/sports" alt=""/>
+            <img src="http://lorempixel.com/200/120/sports" alt="" />
+            <div class="property-list-item-overlay">
+                <md-button class="md-icon-button">
+                    <md-icon class="-white-star" md-svg-icon="{{ static }}build/icons/toggle/ic_star_border_24px.svg"></md-icon>
+                </md-button>
+                <div class="property-list-item-description" layout="column">
+                    <div class="property-list-item-title">
+                        Lorem ipsum dolor sit.
+                    </div>
+                    <div class="property-list-item-price">
+                        <b>50 000 грн.</b>
+                    </div>
+                </div>
+            </div>
         </section>
         <section class="-blue">
-            <img src="http://lorempixel.com/200/120/sports" alt=""/>
+            <img src="http://lorempixel.com/200/120/sports" alt="" />
         </section>
         <section class="-green">
-            <img src="http://lorempixel.com/200/120/sports" alt=""/>
+            <img src="http://lorempixel.com/200/120/sports" alt="" />
         </section>
         <section class="-blue">
-            <img src="http://lorempixel.com/200/120/sports" alt=""/>
+            <img src="http://lorempixel.com/200/120/sports" alt="" />
         </section>
         <section class="-blue">
-            <img src="http://lorempixel.com/200/120/sports" alt=""/>
+            <img src="http://lorempixel.com/200/120/sports" alt="" />
         </section>
     </div>
 

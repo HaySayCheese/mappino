@@ -10,19 +10,13 @@ module pages.map {
         public static $inject = [
             '$scope',
             '$timeout',
-            'FiltersService',
-            'RealtyTypesService'
+            'FiltersService'
         ];
 
         constructor(private $scope,
                     private $timeout,
-                    private filtersService: FiltersService,
-                    private realtyTypesService: bModules.Types.RealtyTypesService) {
-            // -
-            $timeout(() => $('select').material_select());
-
-
-            $scope.realtyTypes = realtyTypesService.realty_types;
+                    private filtersService: FiltersService) {
+            // ---------------------------------------------------------------------------------------------------------
 
             this.filters = $scope.filters = filtersService.filters['panels'];
         }

@@ -153,7 +153,7 @@ module pages.map {
 
             // Створюємо набір фільтрів для панелі за набором
             if (!_.isNull(type_sid)) {
-                var realty_type_filters = _.where(self.realtyTypesService.realty_types, { 'id': type_sid })[0]['filters'];
+                var realty_type_filters = _.where(self.realtyTypesService.realtyTypes, { 'id': type_sid })[0]['filters'];
 
                 for (var i = 0, len = realty_type_filters.length; i < len; i++) {
                     var filter_name = panel_prefix + realty_type_filters[i];

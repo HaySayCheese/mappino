@@ -81,7 +81,7 @@ module bModules.Types {
 
         constructor() {}
 
-        get realty_types() {
+        get realtyTypes() {
             return this._realty_types;
         }
     }
