@@ -1,10 +1,122 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+<div class="b-navbar md-whiteframe-z1" layout="row">
+    <div class="b-navbar-wrapper">
+        <md-tabs md-selected="panelsIndex.leftPanelIndex" md-dynamic-height>
+            <md-tab id="filters-tab-red" md-on-select="panelsIndex.leftPanelIndex = 0">
+                <md-tab-label>
+                    <md-icon md-svg-icon="{{ static }}build/icons/content/ic_filter_list_24px.svg"></md-icon>
+                </md-tab-label>
+                <md-tab-body>
+                    <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
+                        <span class="md-body-1">Квартири 0 - 50 000 $</span>
+                        <span flex></span>
+                        <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_up_24px.svg"></md-icon>
+                    </header>
+                    <tab-body-collapsible>
+                        <section class="-border-top" layout="column" layout-padding>
+                            <div layout="row">
+                                <md-select placeholder="Тип обєкта" ng-model="filters.red.r_t_sid" flex="65">
+                                    <md-option ng-repeat="realtyType in appCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
+                                </md-select>
+                                <md-select placeholder="Операция" ng-model="filters.red.op_sid" flex="35">
+                                    <md-option value="0">Продажа</md-option>
+                                    <md-option value="1">Оренда</md-option>
+                                </md-select>
+                            </div>
+                        </section>
+                        <div ng-if="filters.red.r_t_sid != null" ng-include="'/ajax/template/main/filters/red/' + [[ filters.red.r_t_sid ]] + '/'"></div>
+                    </tab-body-collapsible>
+                </md-tab-body>
+            </md-tab>
 
-</body>
-</html>
+            <md-tab id="filters-tab-blue" md-on-select="panelsIndex.leftPanelIndex = 1">
+                <md-tab-label>
+                    <md-icon md-svg-icon="{{ static }}build/icons/content/ic_filter_list_24px.svg"></md-icon>
+                </md-tab-label>
+                <md-tab-body>
+                    <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
+                        <span class="md-body-1">Дома 0 - 90 000 $</span>
+                        <span flex></span>
+                        <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_up_24px.svg"></md-icon>
+                    </header>
+                    <tab-body-collapsible>
+                        <section class="-border-top" layout="column" layout-padding>
+                            <div layout="row">
+                                <md-select placeholder="Тип обєкта" ng-model="filters.blue.b_t_sid" flex="65">
+                                    <md-option ng-repeat="realtyType in appCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
+                                </md-select>
+                                <md-select placeholder="Операция" ng-model="filters.blue.b_op_sid" flex="35">
+                                    <md-option value="0">Продажа</md-option>
+                                    <md-option value="1">Оренда</md-option>
+                                </md-select>
+                            </div>
+                        </section>
+                        <div ng-if="filters.blue.b_t_sid != null" ng-include="'/ajax/template/main/filters/blue/' + [[ filters.blue.b_t_sid ]] + '/'"></div>
+                    </tab-body-collapsible>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab id="favorites" class="favorites-tab" md-on-select="panelsIndex.leftPanelIndex = 2">
+                <md-tab-label>
+                    <md-icon md-svg-icon="{{ static }}build/icons/toggle/ic_star_border_24px.svg"></md-icon>
+                </md-tab-label>
+                <md-tab-body>
+                    <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
+                        <span class="md-body-1">Обрані оголошення - 5</span>
+                        <span flex></span>
+                        <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_up_24px.svg"></md-icon>
+                    </header>
+                    <tab-body-collapsible class="favorites-tab">
+                        <section class="-border-top" layout-padding>
+                            <div class="favorite-item">
+                                <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
+                                <div class="favorite-item-overlay">
+                                    <md-button class="md-icon-button">
+                                        <md-icon class="favorite-remove-btn" md-svg-icon="{{ static }}build/icons/action/ic_delete_24px.svg"></md-icon>
+                                    </md-button>
+                                    <div class="favorite-item-description" layout="column">
+                                        <div class="favorite-item-title">
+                                            Lorem ipsum dolor sit.
+                                        </div>
+                                        <div class="favorite-item-price">
+                                            <b>50 000 грн.</b>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="favorite-item">
+                                <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
+                                <div class="favorite-item-overlay">
+                                    <md-button class="md-icon-button">
+                                        <md-icon class="favorite-remove-btn" md-svg-icon="{{ static }}build/icons/action/ic_delete_24px.svg"></md-icon>
+                                    </md-button>
+                                    <div class="favorite-item-description" layout="column">
+                                        <div class="favorite-item-title">
+                                            Lorem ipsum dolor sit.
+                                        </div>
+                                        <div class="favorite-item-price">
+                                            <b>50 000 грн.</b>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </tab-body-collapsible>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab id="account" md-on-select="panelsIndex.leftPanelIndex = 3">
+                <md-tab-label>
+                    <md-icon md-svg-icon="{{ static }}build/icons/action/ic_perm_identity_24px.svg"></md-icon>
+                </md-tab-label>
+                <md-tab-body>
+                    <section class="md-padding">
+                        тут вхід
+                    </section>
+                    <section class="md-padding">
+                        тута реєстрація
+                    </section>
+                </md-tab-body>
+            </md-tab>
+        </md-tabs>
+    </div>
+</div>
