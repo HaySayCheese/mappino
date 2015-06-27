@@ -1,8 +1,0 @@
-@import "drop-panel";
-
-.user-panel {
-    @extend ._drop-panel;
-
-    @include size(400px, 200px);
-    right: 10px;
-}

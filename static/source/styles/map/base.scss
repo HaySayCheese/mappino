@@ -17,24 +17,20 @@
 
 
 
-// sliding panels
-@import "components/left-panels/_left-panel";
-@import "components/left-panels/filters-panel";
-@import "components/left-panels/favorites-panel";
-@import "components/left-panels/auth-panel";
+// tabs
+@import "components/tabs/filters-tab";
+@import "components/tabs/favorites-tab";
+@import "components/tabs/auth-tab";
+
+@import "components/tabs/tab-body-collapsible";
+
+
+
 
 @import "components/sliding-panels/right/_right-sliding-panel";
 @import "components/sliding-panels/right/publication-panel";
 
 
-
-// drop panels
-@import "components/drop-panels/menu-panel";
-@import "components/drop-panels/user-panel";
-
-
-
-@import "components/tab-body-collapsible";
 
 
 

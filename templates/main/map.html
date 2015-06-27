@@ -52,7 +52,7 @@
         <div class="b-navbar md-whiteframe-z1" layout="row" ng-cloak>
             <div class="b-navbar-wrapper">
                 <md-tabs md-selected="panelsIndex.leftPanelIndex" md-dynamic-height>
-                    <md-tab id="filters_red" md-on-select="panelsIndex.leftPanelIndex = 0">
+                    <md-tab id="filters-tab-red" md-on-select="panelsIndex.leftPanelIndex = 0">
                         <md-tab-label>
                             <md-icon md-svg-icon="{{ static }}build/icons/content/ic_filter_list_24px.svg"></md-icon>
                         </md-tab-label>
@@ -63,9 +63,9 @@
                                 <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_up_24px.svg"></md-icon>
                             </header>
                             <tab-body-collapsible>
-                                <section layout="column">
+                                <section class="-border-top" layout="column" layout-padding>
                                     <div layout="row">
-                                        <md-select placeholder="Тип обєкта" ng-model="filters.red.t_sid" flex="65">
+                                        <md-select placeholder="Тип обєкта" ng-model="filters.red.r_t_sid" flex="65">
                                             <md-option ng-repeat="realtyType in appCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
                                         </md-select>
                                         <md-select placeholder="Операция" ng-model="filters.red.op_sid" flex="35">
@@ -73,81 +73,85 @@
                                             <md-option value="1">Оренда</md-option>
                                         </md-select>
                                     </div>
-                                    <div layout="row">
-                                        <md-input-container flex>
-                                            <label>Ціна від</label>
-                                            <input type="text" ng-model="filters.red.pr" only-number>
-                                        </md-input-container>
-                                        <md-input-container flex>
-                                            <label>Ціна до</label>
-                                            <input type="text">
-                                        </md-input-container>
-                                        <!--<md-select placeholder="Валюта">-->
-                                        <!--<md-option value="0">пвіпвп</md-option>-->
-                                        <!--</md-select>-->
-                                    </div>
-                                    <div layout="row">
-                                        <md-input-container flex>
-                                            <label>Площа від</label>
-                                            <input type="text">
-                                        </md-input-container>
-                                        <md-input-container flex>
-                                            <label>Площа до</label>
-                                            <input type="text">
-                                        </md-input-container>
-                                        <md-input-container flex>
-                                            <label>Кімнат</label>
-                                            <input type="text">
-                                        </md-input-container>
-                                    </div>
                                 </section>
-                                <header class="-tab-body-section-closed" layout="row" layout-align="start center" layout-padding toggle-tab-body-section>
-                                    <span class="md-body-1">Розширений фільтер</span>
-                                    <span flex></span>
-                                    <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_up_24px.svg"></md-icon>
-                                </header>
-                                <tab-body-section-collapsible class="-closed">
-                                    <section layout-padding>
-                                        тут трошки фільтрів
-                                    </section>
-                                </tab-body-section-collapsible>
+                                <div ng-if="filters.red.r_t_sid != null" ng-include="'/ajax/template/main/filters/red/' + [[ filters.red.r_t_sid ]] + '/'"></div>
                             </tab-body-collapsible>
                         </md-tab-body>
                     </md-tab>
 
-                    <md-tab id="filters_blue" md-on-select="panelsIndex.leftPanelIndex = 1">
+                    <md-tab id="filters-tab-blue" md-on-select="panelsIndex.leftPanelIndex = 1">
                         <md-tab-label>
                             <md-icon md-svg-icon="{{ static }}build/icons/content/ic_filter_list_24px.svg"></md-icon>
-                            <!--<md-tooltip>-->
-                            <!--Сині фільтри-->
-                            <!--</md-tooltip>-->
                         </md-tab-label>
                         <md-tab-body>
-                            <section class="md-padding">
-                                і тут трошки фільтрів
-                            </section>
-                            <section class="-clickable md-padding" layout="row">
-                                <span>Розширений фільтер</span>
+                            <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
+                                <span class="md-body-1">Дома 0 - 90 000 $</span>
                                 <span flex></span>
-                                <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_down_24px.svg"></md-icon>
-                            </section>
+                                <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_up_24px.svg"></md-icon>
+                            </header>
+                            <tab-body-collapsible>
+                                <section class="-border-top" layout="column" layout-padding>
+                                    <div layout="row">
+                                        <md-select placeholder="Тип обєкта" ng-model="filters.blue.b_t_sid" flex="65">
+                                            <md-option ng-repeat="realtyType in appCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
+                                        </md-select>
+                                        <md-select placeholder="Операция" ng-model="filters.blue.b_op_sid" flex="35">
+                                            <md-option value="0">Продажа</md-option>
+                                            <md-option value="1">Оренда</md-option>
+                                        </md-select>
+                                    </div>
+                                </section>
+                                <div ng-if="filters.blue.b_t_sid != null" ng-include="'/ajax/template/main/filters/blue/' + [[ filters.blue.b_t_sid ]] + '/'"></div>
+                            </tab-body-collapsible>
                         </md-tab-body>
                     </md-tab>
 
-                    <md-tab id="favorites" md-on-select="panelsIndex.leftPanelIndex = 2">
+                    <md-tab id="favorites" class="favorites-tab" md-on-select="panelsIndex.leftPanelIndex = 2">
                         <md-tab-label>
                             <md-icon md-svg-icon="{{ static }}build/icons/toggle/ic_star_border_24px.svg"></md-icon>
-                            <!--<md-tooltip>-->
-                            <!--Обрані оголошення-->
-                            <!--</md-tooltip>-->
                         </md-tab-label>
                         <md-tab-body>
-                            <section class="md-padding">
-                                тут вибране оголошення
-                            </section>
-                            <section class="md-padding">
-                                і тут вибране оголошення
-                            </section>
+                            <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
+                                <span class="md-body-1">Обрані оголошення - 5</span>
+                                <span flex></span>
+                                <md-icon md-svg-icon="{{ static }}build/icons/hardware/ic_keyboard_arrow_up_24px.svg"></md-icon>
+                            </header>
+                            <tab-body-collapsible class="favorites-tab">
+                                <section class="-border-top" layout-padding>
+                                    <div class="favorite-item">
+                                        <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
+                                        <div class="favorite-item-overlay">
+                                            <md-button class="md-icon-button">
+                                                <md-icon class="favorite-remove-btn" md-svg-icon="{{ static }}build/icons/action/ic_delete_24px.svg"></md-icon>
+                                            </md-button>
+                                            <div class="favorite-item-description" layout="column">
+                                                <div class="favorite-item-title">
+                                                    Lorem ipsum dolor sit.
+                                                </div>
+                                                <div class="favorite-item-price">
+                                                    <b>50 000 грн.</b>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="favorite-item">
+                                        <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
+                                        <div class="favorite-item-overlay">
+                                            <md-button class="md-icon-button">
+                                                <md-icon class="favorite-remove-btn" md-svg-icon="{{ static }}build/icons/action/ic_delete_24px.svg"></md-icon>
+                                            </md-button>
+                                            <div class="favorite-item-description" layout="column">
+                                                <div class="favorite-item-title">
+                                                    Lorem ipsum dolor sit.
+                                                </div>
+                                                <div class="favorite-item-price">
+                                                    <b>50 000 грн.</b>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </tab-body-collapsible>
                         </md-tab-body>
                     </md-tab>
 
@@ -185,7 +189,7 @@
             </md-button>
         </header>
         <section class="-green">
-            <img src="http://lorempixel.com/200/120/sports" alt="" />
+            <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
             <div class="property-list-item-overlay">
                 <md-button class="md-icon-button">
                     <md-icon class="-white-star" md-svg-icon="{{ static }}build/icons/toggle/ic_star_border_24px.svg"></md-icon>
@@ -201,16 +205,68 @@
             </div>
         </section>
         <section class="-blue">
-            <img src="http://lorempixel.com/200/120/sports" alt="" />
+            <img src="http://hmsdemo.dhru.com/images/gallery/room/delux/SetHeight800-Deluxe-Room-Bedroom.jpg" alt="" />
+            <div class="property-list-item-overlay">
+                <md-button class="md-icon-button">
+                    <md-icon class="-white-star" md-svg-icon="{{ static }}build/icons/toggle/ic_star_border_24px.svg"></md-icon>
+                </md-button>
+                <div class="property-list-item-description" layout="column">
+                    <div class="property-list-item-title">
+                        Lorem ipsum dolor sit.
+                    </div>
+                    <div class="property-list-item-price">
+                        <b>50 000 грн.</b>
+                    </div>
+                </div>
+            </div>
         </section>
         <section class="-green">
-            <img src="http://lorempixel.com/200/120/sports" alt="" />
+            <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
+            <div class="property-list-item-overlay">
+                <md-button class="md-icon-button">
+                    <md-icon class="-white-star" md-svg-icon="{{ static }}build/icons/toggle/ic_star_border_24px.svg"></md-icon>
+                </md-button>
+                <div class="property-list-item-description" layout="column">
+                    <div class="property-list-item-title">
+                        Lorem ipsum dolor sit.
+                    </div>
+                    <div class="property-list-item-price">
+                        <b>50 000 грн.</b>
+                    </div>
+                </div>
+            </div>
         </section>
         <section class="-blue">
-            <img src="http://lorempixel.com/200/120/sports" alt="" />
+            <img src="http://hmsdemo.dhru.com/images/gallery/room/delux/SetHeight800-Deluxe-Room-Bedroom.jpg" alt="" />
+            <div class="property-list-item-overlay">
+                <md-button class="md-icon-button">
+                    <md-icon class="-white-star" md-svg-icon="{{ static }}build/icons/toggle/ic_star_border_24px.svg"></md-icon>
+                </md-button>
+                <div class="property-list-item-description" layout="column">
+                    <div class="property-list-item-title">
+                        Lorem ipsum dolor sit.
+                    </div>
+                    <div class="property-list-item-price">
+                        <b>50 000 грн.</b>
+                    </div>
+                </div>
+            </div>
         </section>
         <section class="-blue">
-            <img src="http://lorempixel.com/200/120/sports" alt="" />
+            <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
+            <div class="property-list-item-overlay">
+                <md-button class="md-icon-button">
+                    <md-icon class="-white-star" md-svg-icon="{{ static }}build/icons/toggle/ic_star_border_24px.svg"></md-icon>
+                </md-button>
+                <div class="property-list-item-description" layout="column">
+                    <div class="property-list-item-title">
+                        Lorem ipsum dolor sit.
+                    </div>
+                    <div class="property-list-item-price">
+                        <b>50 000 грн.</b>
+                    </div>
+                </div>
+            </div>
         </section>
     </div>
 

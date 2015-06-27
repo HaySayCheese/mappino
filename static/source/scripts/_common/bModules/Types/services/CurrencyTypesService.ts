@@ -20,7 +20,7 @@ module bModules.Types {
 
         constructor() {}
 
-        get currency_types() {
+        get currencyTypes() {
             return this._currency_types;
         }
     }

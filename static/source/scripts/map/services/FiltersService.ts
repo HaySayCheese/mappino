@@ -4,7 +4,7 @@
 module pages.map {
     'use strict';
 
-    export class FiltersService implements IFiltersService {
+    export class FiltersService {
         private _filters: Object = {
             map: {
                 c: null,    // city

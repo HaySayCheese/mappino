@@ -12,13 +12,6 @@
 
 
 
-// ####################
-// Interfaces import
-// ####################
-/// <reference path='interfaces/IFiltersService.ts' />
-
-
-
 
 // ####################
 // Configs import
