@@ -31,9 +31,12 @@ urlpatterns = patterns('apps.main.templates',
     #
     #
     # # publications search engine templates
-    # url(r'^ajax/template/main/filters/(\w+)/(\d+)/$', 'publications_search.filters_form_template'),
     # url(r'^ajax/template/main/detailed-dialog/$', 'publications_search.detailed_dlg_template'),
     # url(r'^ajax/template/main/search/$', 'publications_search.search_template'),
     # url(r'^ajax/template/main/first-enter/$', 'publications_search.first_enter_template'),
 
+)
+
+urlpatterns += patterns('apps.main.templates_ajax',
+    url(r'^ajax/template/map/filters/(\w+)/(\d+)/$', 'publications_search.filters_form_template'),
 )
