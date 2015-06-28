@@ -7,12 +7,13 @@ module pages.map {
         'ngMaterial',
         'ngCookies',
         'ngResource',
+
+        'ngTinyScrollbar',
+
         'ui.router',
 
         'bModules.Types'
     ]);
-
-
 
 
 
@@ -35,7 +36,7 @@ module pages.map {
 
 
     /** Handlers */
-    app.service('PanelsHandler', PanelsHandler);
+    app.service('TabsHandler', TabsHandler);
 
 
     /** Directives */
@@ -45,6 +46,7 @@ module pages.map {
 
     /** Controllers */
     app.controller('AppController', AppController);
+    app.controller('NavbarController', NavbarController);
     app.controller('FiltersPanelController', FiltersPanelController);
     app.controller('MapController', MapController);
     app.controller('PlaceAutocompleteController', PlaceAutocompleteController);

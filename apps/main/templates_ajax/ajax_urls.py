@@ -10,8 +10,8 @@ urlpatterns = patterns('apps.main.templates',
     url(r'^ajax/template/map/navbar/tabs/search/$', 'navbar_search'),
 
 
-    url(r'^ajax/template/amp/publication/view/$', 'publication_view'),
-    url(r'^ajax/template/amp/publication/list/$', 'publication_view_list'),
+    url(r'^ajax/template/map/publication/view/$', 'publication_view'),
+    url(r'^ajax/template/map/publication/list/$', 'publication_view_list'),
 
 
     # # homepage

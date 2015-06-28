@@ -5,25 +5,12 @@ module pages.map {
     'use strict';
 
     export class AppController {
-        private realtyTypes     = [];
-        private currencyTypes   = [];
-
         public static $inject = [
-            '$scope',
-            'PanelsHandler',
-            'RealtyTypesService',
-            'CurrencyTypesService'
+            '$scope'
         ];
 
-        constructor(private $scope,
-                    private panelsHandler: PanelsHandler,
-                    private realtyTypesService: bModules.Types.RealtyTypesService,
-                    private currencyTypesService: bModules.Types.CurrencyTypesService) {
+        constructor(private $scope) {
             // ---------------------------------------------------------------------------------------------------------
-            this.realtyTypes    = realtyTypesService.realtyTypes;
-            this.currencyTypes  = currencyTypesService.currencyTypes;
-
-            panelsHandler.initialize();
         }
     }
 }

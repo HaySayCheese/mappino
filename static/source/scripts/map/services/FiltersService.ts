@@ -7,10 +7,10 @@ module pages.map {
     export class FiltersService {
         private _filters: Object = {
             map: {
-                c: null,    // city
+                c: null,                    // city
                 l: "48.455935,34.41285",    // lat_lng
-                v: null,    // viewport
-                z: 6     // zoom
+                v: null,                    // viewport
+                z: 6                        // zoom
             },
             panels: {
                 red: {

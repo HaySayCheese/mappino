@@ -26,7 +26,7 @@ module pages.cabinet {
                 for_sale:   true,
                 for_rent:   false
             };
-            $scope.realtyTypes = realtyTypesService.realty_types;
+            $scope.realtyTypes = realtyTypesService.realtyTypes;
 
             this.loadPublications();
         }

@@ -1,19 +1,27 @@
-.property-list-panel {
+.publications-list-panel {
     @extend %_fixed-panel;
 
-    @include size(auto, auto);
+    @include size(220px, auto);
     top: 0;
     right: 0;
     bottom: 0;
 
-    background: #fff;
+
+    .property-list-body {
+        @include size(100%, calc(100% - 48px));
+        position: relative;
+        display: block;
+
+        .scroll-viewport {
+            @include square(100%);
+        }
+    }
 
 
     header {
         @include size(100%, 48px);
         min-height: 48px;
         max-height: 48px;
-        margin-bottom: 2px;
         background: #363636;
     }
 
@@ -25,9 +33,17 @@
         min-height: 120px;
         max-height: 120px;
 
-        padding: 1px 3px;
+        padding: 1px 5px 1px 3px;
 
         cursor: pointer;
+        background: #fff;
+
+        &:first-child {
+            padding-top: 2px;
+        }
+        &:last-child {
+            padding-bottom: 2px;
+        }
 
 
         > img {
@@ -41,10 +57,6 @@
             left: 0;
             right: 0;
             bottom: 0;
-        }
-
-        md-icon.-white-star {
-            color: #fff !important;
         }
 
         .property-list-item-description {

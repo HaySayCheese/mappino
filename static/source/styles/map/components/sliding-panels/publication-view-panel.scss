@@ -1,0 +1,44 @@
+.publication-view-panel {
+    @extend %_right-sliding-panel;
+
+    width: 600px;
+
+    background: #fff;
+
+
+    header {
+        position: relative;
+
+        img {
+            @include size(100%, 400px);
+        }
+    }
+
+    section {
+        width: 100%;
+        display: block;
+    }
+
+    .property-view-img-overlay {
+        @include square(100%);
+        position: absolute;
+        top: 0;
+    }
+
+
+    .publication-view-overlay-description {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        color: #fff;
+
+
+        md-button {
+            position: absolute !important;
+            right: 0;
+            @include translate(0, -50%);
+        }
+    }
+}

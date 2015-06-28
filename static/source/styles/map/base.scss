@@ -7,13 +7,15 @@
 //
 // Components include
 // --------------------------------------------------
+@import "../_common/components/ng-tiny-scrollbar";
+
 
 
 // fixed panels
 @import "components/fixed-panels/_fixed-panel";
 @import "components/fixed-panels/b-navbar";
 @import "components/fixed-panels/search-panel";
-@import "components/fixed-panels/property-list-panel";
+@import "components/fixed-panels/publications-list-panel";
 
 
 
@@ -27,8 +29,8 @@
 
 
 
-@import "components/sliding-panels/right/_right-sliding-panel";
-@import "components/sliding-panels/right/publication-panel";
+@import "components/sliding-panels/_right-sliding-panel";
+@import "components/sliding-panels/publication-view-panel";
 
 
 

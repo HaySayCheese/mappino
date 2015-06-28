@@ -31,7 +31,7 @@ module pages.cabinet {
             this._publication['tid']    = $state.params['id'].split(':')[0];
             this._publication['hid']    = $state.params['id'].split(':')[1];
 
-            $scope.currencyTypes    = currencyTypesService.currency_types;
+            $scope.currencyTypes    = currencyTypesService.currencyTypes;
             $scope.periodTypes      = periodTypesService.period_types;
 
             $scope.publication = {};

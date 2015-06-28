@@ -9,11 +9,11 @@ module pages.map {
         constructor(private app: angular.IModule) {
             app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
 
-                $urlRouterProvider.otherwise("/0/0/");
+                $urlRouterProvider.otherwise("/0/0/0/0/0/1/44:33");
                 
                 $stateProvider
                     .state('base', {
-                        url: "/:left_panel_index/:right_panel_index/"
+                        url: "/:filters_red/:filters_blue/:favorites/:account/:search/:publications_list/:publication_id"
                     });
 
                 $locationProvider.hashPrefix('!');
