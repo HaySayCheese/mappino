@@ -80,10 +80,25 @@ module pages.map {
                         if (this._response_markers[panel].hasOwnProperty(marker)) {
 
                             if (!this._markers[panel][marker]) {
-                                this._markers[panel][marker] = new google.maps.Marker({
+                                var markerLabelOffsetX = 35;
+
+                                if (this._response_markers[panel][marker].d1.length >= 9 && this._response_markers[panel][marker].d1.length <= 11)
+                                    markerLabelOffsetX = 38;
+                                if (this._response_markers[panel][marker].d1.length >= 12 && this._response_markers[panel][marker].d1.length <= 14)
+                                    markerLabelOffsetX = 42;
+
+                                console.log(this._response_markers[panel][marker].d1.length)
+                                console.log(markerLabelOffsetX)
+
+
+                                this._markers[panel][marker] = new MarkerWithLabel({
                                     position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
                                     map: map,
-                                    title: 'Hello World!'
+                                    labelContent:
+                                        "<div class='custom-marker md-whiteframe-z2'>" + this._response_markers[panel][marker].d1 + "</div>" +
+                                        "<div class='custom-marker-arrow-down'></div>",
+                                    labelClass: "custom-marker-container",
+                                    labelAnchor: new google.maps.Point(markerLabelOffsetX, 32)
                                 });
                                 this._markers[panel][marker].setMap(map);
                                 console.log('added: ' + this._markers[panel][marker])

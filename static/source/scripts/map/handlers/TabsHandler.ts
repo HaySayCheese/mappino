@@ -3,8 +3,6 @@
 
 module pages.map {
     export class TabsHandler {
-        private location_search = null;
-
         private tabsState = {
             filters_red:        0,
             filters_blue:       0,
@@ -33,7 +31,6 @@ module pages.map {
         public initialize() {
             this.$rootScope.activeTabIndex = null;
 
-            this.stateWatcher();
             this.setPanelsStateFromUrl();
         }
 
@@ -85,22 +82,6 @@ module pages.map {
                     });
                     break;
             }
-        }
-
-
-
-        private stateWatcher() {
-            this.$rootScope.$on('$stateChangeStart', () => {
-                if (_.keys(this.$location.search()).length)
-                    this.location_search = this.$location.search();
-            });
-
-            this.$rootScope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
-                //this.setPanelsStateFromUrl();
-
-                if (_.keys(this.location_search).length)
-                    this.$location.search(this.location_search);
-            });
         }
 
 

@@ -1,5 +1,5 @@
 module pages.map {
-    export function TabBodyCollapsibleDirective($compile, $location): angular.IDirective {
+    export function TabBodyCollapsibleDirective($compile): angular.IDirective {
         return {
             restrict: 'E',
 
@@ -7,7 +7,7 @@ module pages.map {
                 var toggleTabBodyBtn = angular.element(element).parent().find('[toggle-tab-body]');
                 var headerControllers = angular.element(
                     "<span flex></span>" +
-                    "<md-icon md-svg-icon=\"http://" + $location.host() + "/mappino_static/build/icons/navigation/ic_expand_less_24px.svg\"></md-icon>"
+                    "<md-icon class=\"md-dark\">keyboard_arrow_up</md-icon>"
                 );
                 $compile(headerControllers)(scope);
 
@@ -20,11 +20,11 @@ module pages.map {
             }
         };
     }
-    TabBodyCollapsibleDirective.$inject = ['$compile', '$location'];
+    TabBodyCollapsibleDirective.$inject = ['$compile'];
 
 
 
-    export function TabBodySectionCollapsibleDirective($compile, $location): angular.IDirective {
+    export function TabBodySectionCollapsibleDirective($compile): angular.IDirective {
         return {
             restrict: 'E',
 
@@ -32,7 +32,7 @@ module pages.map {
                 var toggleTabBodySectionBtn = angular.element(element).parent().find('[toggle-tab-body-section]');
                 var headerControllers = angular.element(
                     "<span flex></span>" +
-                    "<md-icon md-svg-icon=\"http://" + $location.host() + "/mappino_static/build/icons/navigation/ic_expand_less_24px.svg\"></md-icon>"
+                    "<md-icon class=\"md-dark\">keyboard_arrow_up</md-icon>"
                 );
                 $compile(headerControllers)(scope);
 
@@ -45,5 +45,5 @@ module pages.map {
             }
         };
     }
-    TabBodySectionCollapsibleDirective.$inject = ['$compile', '$location'];
+    TabBodySectionCollapsibleDirective.$inject = ['$compile'];
 }

@@ -6,11 +6,14 @@
     right: 0;
     bottom: 0;
 
+    background: #fff;
+
 
     .property-list-body {
         @include size(100%, calc(100% - 48px));
         position: relative;
         display: block;
+
 
         .scroll-viewport {
             @include square(100%);

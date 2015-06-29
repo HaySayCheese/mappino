@@ -59,12 +59,6 @@ gulp.task('Copy:Images', function() {
         .pipe(gulp.dest(PATHS.BUILD.IMAGES));
 });
 
-/** Task Copy:Icons: Copy icons to build folder **/
-gulp.task('Copy:Icons', function() {
-    gulp.src(PATHS.SOURCE.ICONS + '/**/*.{png,jpg,jpeg,gif,svg}')
-        .pipe(gulp.dest(PATHS.BUILD.ICONS));
-});
-
 /** Task Copy:Libraries: Copy Libs to build folder **/
 gulp.task('Copy:Libraries', function() {
     gulp.src(PATHS.SOURCE.LIBRARIES + '/**/*.{js,ts}')
@@ -75,7 +69,7 @@ gulp.task('Copy:Libraries', function() {
 });
 
 /** Task Copy: Run all 'Copy:*' tasks **/
-gulp.task('Copy', ['Copy:Fonts', 'Copy:Images', 'Copy:Icons', 'Copy:Libraries']);
+gulp.task('Copy', ['Copy:Fonts', 'Copy:Images', 'Copy:Libraries']);
 
 
 

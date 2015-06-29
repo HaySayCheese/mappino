@@ -1,0 +1,34 @@
+.custom-marker-container {
+    position: relative;
+    padding:  0 0 7px 0;
+
+    .custom-marker {
+        position: relative;
+        padding: 5px 10px;
+
+        color: #fff;
+        background: color('blue', 'base');
+
+        opacity: 1;
+        overflow: visible;
+
+        border-top: 2px solid color('blue', 'darken-2');
+
+        border-bottom-left-radius: 3px;
+        border-bottom-right-radius: 3px;
+
+        font-weight: bold;
+    }
+
+    .custom-marker-arrow-down {
+        position: absolute;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 7px 5px 0 5px;
+        border-color: color('blue', 'base') transparent transparent transparent;
+
+        @include translate(-50%, 0)
+    }
+}

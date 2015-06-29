@@ -5,7 +5,7 @@
 
             <md-tab id="filters-tab-red" md-on-select="navCtrl.tabsHandler.open('filters_red');">
                 <md-tab-label>
-                    <md-icon md-svg-icon="{{ static }}build/icons/content/ic_filter_list_24px.svg"></md-icon>
+                    <md-icon>filter_list</md-icon>
                 </md-tab-label>
                 <md-tab-body>
                     <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
@@ -32,7 +32,7 @@
 
             <md-tab id="filters-tab-blue" md-on-select="navCtrl.tabsHandler.open('filters_blue');">
                 <md-tab-label>
-                    <md-icon md-svg-icon="{{ static }}build/icons/content/ic_filter_list_24px.svg"></md-icon>
+                    <md-icon>filter_list</md-icon>
                 </md-tab-label>
                 <md-tab-body>
                     <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
@@ -59,7 +59,7 @@
 
             <md-tab id="favorites-tab" class="favorites-tab" md-on-select="navCtrl.tabsHandler.open('favorites');">
                 <md-tab-label>
-                    <md-icon md-svg-icon="{{ static }}build/icons/toggle/ic_star_border_24px.svg"></md-icon>
+                    <md-icon>star_border</md-icon>
                 </md-tab-label>
                 <md-tab-body>
                     <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
@@ -71,7 +71,7 @@
                                 <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
                                 <div class="favorite-item-overlay">
                                     <md-button class="md-icon-button">
-                                        <md-icon class="favorite-remove-btn" md-svg-icon="{{ static }}build/icons/action/ic_delete_24px.svg"></md-icon>
+                                        <md-icon class="favorite-remove-btn">delete</md-icon>
                                     </md-button>
                                     <div class="favorite-item-description" layout="column">
                                         <div class="favorite-item-title">
@@ -87,7 +87,7 @@
                                 <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
                                 <div class="favorite-item-overlay">
                                     <md-button class="md-icon-button">
-                                        <md-icon class="favorite-remove-btn" md-svg-icon="{{ static }}build/icons/action/ic_delete_24px.svg"></md-icon>
+                                        <md-icon class="favorite-remove-btn">delete</md-icon>
                                     </md-button>
                                     <div class="favorite-item-description" layout="column">
                                         <div class="favorite-item-title">
@@ -108,14 +108,30 @@
 
             <md-tab id="account-tab" md-on-select="navCtrl.tabsHandler.open('account');">
                 <md-tab-label>
-                    <md-icon md-svg-icon="{{ static }}build/icons/action/ic_perm_identity_24px.svg"></md-icon>
+                    <md-icon>perm_identity</md-icon>
                 </md-tab-label>
                 <md-tab-body>
                     <section class="md-padding">
-                        тут вхід
-                    </section>
-                    <section class="md-padding">
-                        тута реєстрація
+                        <form name="loginForm">
+                            <div layout="column">
+                                <md-input-container>
+                                    <label>Телефон или эл. почта</label>
+                                    <input type="text" ng-model="user.login" >
+                                </md-input-container>
+                                <md-input-container>
+                                    <label>Пароль</label>
+                                    <input type="text" ng-model="user.password">
+                                </md-input-container>
+                                <md-button class="md-raised md-primary">
+                                    Войти
+                                </md-button>
+                            </div>
+                        </form>
+                        <div layout="row">
+                            <md-button class="md-primary">Регистрация</md-button>
+                            <span flex></span>
+                            <md-button class="md-primary">Напомнить пароль</md-button>
+                        </div>
                     </section>
                 </md-tab-body>
             </md-tab>
@@ -124,14 +140,14 @@
 
             <md-tab id="search-tab" md-on-select="navCtrl.tabsHandler.open('search');">
                 <md-tab-label>
-                    <md-icon md-svg-icon="{{ static }}build/icons/action/ic_search_24px.svg"></md-icon>
+                    <md-icon>search</md-icon>
                 </md-tab-label>
                 <md-tab-body>
                     <section class="md-padding">
-                        тут вхід
-                    </section>
-                    <section class="md-padding">
-                        тута реєстрація
+                        <md-input-container>
+                            <label>Местоположение</label>
+                            <input type="text" ng-model="filters.map.c">
+                        </md-input-container>
                     </section>
                 </md-tab-body>
             </md-tab>
