@@ -3,8 +3,17 @@
         <img src="http://hmsdemo.dhru.com/images/gallery/room/delux/SetHeight800-Deluxe-Room-Bedroom.jpg" alt=""/>
         <div class="property-view-img-overlay">
             <md-button class="md-icon-button">
-                <md-icon class="white-text" md-svg-icon="{{ static }}build/icons/navigation/ic_close_24px.svg"></md-icon>
+                <md-icon class="md-light md-36">close</md-icon>
             </md-button>
+
+
+            <md-button class="md-icon-button slide-prev">
+                <md-icon class="md-light md-48">chevron_left</md-icon>
+            </md-button>
+            <md-button class="md-icon-button slide-next">
+                <md-icon class="md-light md-48">chevron_right</md-icon>
+            </md-button>
+
 
             <div class="publication-view-overlay-description md-padding">
                 <div class="md-headline">
@@ -13,9 +22,21 @@
                 <div class="md-subhead">
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                 </div>
-                <md-button class="md-fab md-primary" aria-label="Use Android">
-                    <md-icon md-svg-icon="{{ static }}build/icons/navigation/ic_close_24px.svg"></md-icon>
-                </md-button>
+                <md-fab-speed-dial class="md-fling publication-menu" md-direction="up">
+                    <md-fab-trigger>
+                        <md-button aria-label="publication menu" class="md-fab md-primary">
+                            <md-icon>menu</md-icon>
+                        </md-button>
+                    </md-fab-trigger>
+                    <md-fab-actions>
+                        <md-button aria-label="twitter" class="md-fab md-raised md-mini">
+                            <md-icon class="blue-text">share</md-icon>
+                        </md-button>
+                        <md-button aria-label="Google hangout" class="md-fab md-raised md-mini">
+                            <md-icon class="red-text">report</md-icon>
+                        </md-button>
+                    </md-fab-actions>
+                </md-fab-speed-dial>
             </div>
         </div>
     </header>

@@ -1,7 +1,7 @@
 %_right-sliding-panel {
     @include size(auto, auto);
 
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 220px;
     bottom: 0;

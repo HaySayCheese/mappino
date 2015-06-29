@@ -35,10 +35,30 @@
         color: #fff;
 
 
-        md-button {
+        .publication-menu {
             position: absolute !important;
             right: 0;
-            @include translate(0, -50%);
+            bottom: -30px;
         }
+    }
+
+
+    .slide-prev,
+    .slide-next {
+        position: absolute;
+        top: 50%;
+        @include translate(0, -50%);
+
+        md-icon {
+            @include square(48px);
+        }
+    }
+
+    .slide-prev {
+        left: 0;
+    }
+    
+    .slide-next {
+        right: 0;
     }
 }
