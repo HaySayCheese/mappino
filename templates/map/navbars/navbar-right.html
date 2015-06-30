@@ -1,6 +1,6 @@
 <div class="b-navbar-right md-whiteframe-z3" layout="column"
-     ng-class="{ '-opened': navCtrl.tabsHandler.isOpened('navbar_right') || !navCtrl.publicationHandler.isOpened(),
-        '-closed': !navCtrl.tabsHandler.isOpened('navbar_right') && navCtrl.publicationHandler.isOpened() }"
+     ng-class="{ '-opened': navCtrl.navbarsHandler.isOpened('navbar_right') || !navCtrl.publicationHandler.isOpened(),
+                 '-closed': !navCtrl.navbarsHandler.isOpened('navbar_right') && navCtrl.publicationHandler.isOpened() }"
      ng-controller="NavbarRightController as navCtrl">
     <div class="b-navbar-right-wrapper" ng-if="activeNavbarRightTabIndex !== null">
 

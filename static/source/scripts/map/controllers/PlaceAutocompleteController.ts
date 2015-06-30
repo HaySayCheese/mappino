@@ -18,7 +18,7 @@ module pages.map {
         constructor(private $scope,
                     private $rootScope: angular.IRootScopeService,
                     private filtersService: FiltersService) {
-            // -
+            // ---------------------------------------------------------------------------------------------------------
             var self = this;
             this._autocompleteInput = document.getElementById("place-autocomplete");
 

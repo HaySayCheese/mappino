@@ -95,12 +95,12 @@ module pages.map {
             'RealtyTypesService'
         ];
 
-        constructor(
-            private $rootScope: angular.IRootScopeService,
-            private $timeout: angular.ITimeoutService,
-            private $location: angular.ILocationService,
-            private realtyTypesService: bModules.Types.RealtyTypesService) {
-            // -
+        constructor(private $rootScope: angular.IRootScopeService,
+                    private $timeout: angular.ITimeoutService,
+                    private $location: angular.ILocationService,
+                    private realtyTypesService: bModules.Types.RealtyTypesService) {
+            // ---------------------------------------------------------------------------------------------------------
+
             this.updateFiltersFromUrl();
         }
 

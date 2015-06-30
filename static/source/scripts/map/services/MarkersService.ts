@@ -24,12 +24,10 @@ module pages.map {
             '$timeout'
         ];
 
-        constructor(
-            private $rootScope: angular.IRootScopeService,
-            private $http: angular.IHttpService,
-            private $timeout: angular.ITimeoutService,
-            private slidingPanelsHandler: bModules.Panels.ISlidingPanelsHandler) {
-            // -
+        constructor(private $rootScope: angular.IRootScopeService,
+                    private $http: angular.IHttpService,
+                    private $timeout: angular.ITimeoutService) {
+            // ---------------------------------------------------------------------------------------------------------
             var self = this;
 
             $rootScope.$on('pages.map.FiltersService.CreatedFormattedFilters', function(event, formatted_filters) {

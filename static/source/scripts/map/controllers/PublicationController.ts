@@ -7,15 +7,17 @@ module pages.map {
     export class PublicationController {
         public static $inject = [
             '$scope',
-            'TabsHandler',
+            'NavbarsHandler',
             'PublicationHandler'
         ];
 
-        constructor(
-            private $scope,
-            private tabsHandler: TabsHandler,
-            private publicationHandler: PublicationHandler) {
+        constructor(private $scope,
+                    private navbarsHandler: NavbarsHandler,
+                    private publicationHandler: PublicationHandler) {
             // ---------------------------------------------------------------------------------------------------------
+
+            this.navbarsHandler     = navbarsHandler;
+            this.publicationHandler = publicationHandler;
         }
     }
 }

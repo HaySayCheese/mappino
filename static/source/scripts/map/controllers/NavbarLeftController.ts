@@ -20,10 +20,11 @@ module pages.map {
                     private realtyTypesService: bModules.Types.RealtyTypesService,
                     private currencyTypesService: bModules.Types.CurrencyTypesService) {
             // ---------------------------------------------------------------------------------------------------------
+
             this.realtyTypes    = realtyTypesService.realtyTypes;
             this.currencyTypes  = currencyTypesService.currencyTypes;
 
-            tabsHandler.initializeNavbarLeft();
+            tabsHandler.initializeNavbarLeftTabs();
         }
     }
 }

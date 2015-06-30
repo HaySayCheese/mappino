@@ -10,9 +10,8 @@ module pages.map {
             'PublicationHandler'
         ];
 
-        constructor(
-            private $scope,
-            private publicationHandler: PublicationHandler) {
+        constructor(private $scope,
+                    private publicationHandler: PublicationHandler) {
             // ---------------------------------------------------------------------------------------------------------
         }
 

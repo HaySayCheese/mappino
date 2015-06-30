@@ -16,7 +16,7 @@ module pages.map {
         constructor(private $scope,
                     private filtersService: FiltersService,
                     private markersService: MarkersService) {
-            // -
+            // ---------------------------------------------------------------------------------------------------------
             var self = this;
             google.maps.event.addDomListener(window, "load", () => this.initMap(this));
 

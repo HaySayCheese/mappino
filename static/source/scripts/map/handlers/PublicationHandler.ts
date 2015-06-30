@@ -3,7 +3,7 @@
 
 module pages.map {
     export class PublicationHandler {
-        private publication_panel_element: angular.IAugmentedJQuery;
+        private publication_panel_element: JQuery;
 
         public static $inject = [
             '$state',
@@ -12,11 +12,10 @@ module pages.map {
             '$location'
         ];
 
-        constructor(
-            private $state: angular.ui.IStateService,
-            private $stateParams: angular.ui.IStateParamsService,
-            private $rootScope: any,
-            private $location: angular.ILocationService) {
+        constructor(private $state: angular.ui.IStateService,
+                    private $stateParams: angular.ui.IStateParamsService,
+                    private $rootScope: angular.IRootScopeService,
+                    private $location: angular.ILocationService) {
             // ---------------------------------------------------------------------------------------------------------
 
         }
@@ -27,18 +26,18 @@ module pages.map {
             this.publication_panel_element = angular.element('.publication-view');
 
             if (without_publication_list) {
-                //this.publication_panel_element.removeClass('-opened').addClass('-without-panel-list');
                 this.$state.go('base', { navbar_right: 0, publication_id: publication_id });
             } else {
-                //this.publication_panel_element.removeClass('-without-panel-list').addClass('-opened');
                 this.$state.go('base', { navbar_right: 1, publication_id: publication_id });
             }
         }
 
 
+
         public close() {
             this.$state.go('base', { publication_id: 0 });
         }
+
 
 
         public isOpened() {

@@ -36,6 +36,7 @@ module pages.map {
 
 
     /** Handlers */
+    app.service('NavbarsHandler', NavbarsHandler);
     app.service('TabsHandler', TabsHandler);
     app.service('PublicationHandler', PublicationHandler);
 

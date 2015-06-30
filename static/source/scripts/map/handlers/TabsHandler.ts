@@ -3,9 +3,6 @@
 
 module pages.map {
     export class TabsHandler {
-        private navbars = {
-            navbar_right:       1,
-        };
         private navbarLeftTabsState = {
             filters_red:        0,
             filters_blue:       0,
@@ -25,28 +22,29 @@ module pages.map {
             '$location'
         ];
 
-        constructor(
-            private $state: angular.ui.IStateService,
-            private $stateParams: angular.ui.IStateParamsService,
-            private $rootScope: any,
-            private $location: angular.ILocationService) {
+        constructor(private $state: angular.ui.IStateService,
+                    private $stateParams: angular.ui.IStateParamsService,
+                    private $rootScope: any,
+                    private $location: angular.ILocationService) {
             // ---------------------------------------------------------------------------------------------------------
         }
 
 
 
-        public initializeNavbarLeft() {
-            this.$rootScope.activeNavbarLeftTabIndex    = null;
+        public initializeNavbarLeftTabs() {
+            this.$rootScope.activeNavbarLeftTabIndex = null;
 
             this.setNavbarLeftTabsStateFromUrl();
         }
 
 
-        public initializeNavbarRight() {
-            this.$rootScope.activeNavbarRightTabIndex   = null;
+
+        public initializeNavbarRightTabs() {
+            this.$rootScope.activeNavbarRightTabIndex = null;
 
             this.setNavbarRightTabsStateFromUrl();
         }
+
 
 
         public open(tab) {
@@ -83,6 +81,7 @@ module pages.map {
                         account:        1
                     });
                     break;
+
                 case 'publication_list':
                     this.$state.go('base', {
                         publication_list:   1,

@@ -8,16 +8,21 @@ module pages.map {
 
         public static $inject = [
             '$scope',
+            'NavbarsHandler',
             'TabsHandler',
             'PublicationHandler'
         ];
 
-        constructor(
-            private $scope,
-            private tabsHandler: TabsHandler,
-            private publicationHandler: PublicationHandler) {
+        constructor(private $scope,
+                    private navbarsHandler: NavbarsHandler,
+                    private tabsHandler: TabsHandler,
+                    private publicationHandler: PublicationHandler) {
             // ---------------------------------------------------------------------------------------------------------
-            tabsHandler.initializeNavbarRight();
+
+            this.navbarsHandler     = navbarsHandler;
+            this.publicationHandler = publicationHandler;
+
+            tabsHandler.initializeNavbarRightTabs();
         }
     }
 }
