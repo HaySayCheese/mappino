@@ -1,0 +1,21 @@
+.publication-list {
+    @include square(100%);
+    min-height: 100%;
+    position: relative;
+    display: block;
+    margin: 0;
+    padding: 0;
+
+    
+    .publication-list-item {
+        @extend %_base-list-item;
+
+        .publication-list-item-overlay {
+            @extend %_base-list-item-overlay;
+        }
+
+        .publication-list-item-description {
+            @extend %_base-list-item-description;
+        }
+    }
+}

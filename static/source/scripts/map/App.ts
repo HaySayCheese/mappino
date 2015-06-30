@@ -37,6 +37,7 @@ module pages.map {
 
     /** Handlers */
     app.service('TabsHandler', TabsHandler);
+    app.service('PublicationHandler', PublicationHandler);
 
 
     /** Directives */
@@ -46,7 +47,10 @@ module pages.map {
 
     /** Controllers */
     app.controller('AppController', AppController);
-    app.controller('NavbarController', NavbarController);
+    app.controller('NavbarLeftController', NavbarLeftController);
+    app.controller('NavbarRightController', NavbarRightController);
+    app.controller('PublicationController', PublicationController);
+    app.controller('FavoritesController', FavoritesController);
     app.controller('FiltersPanelController', FiltersPanelController);
     app.controller('MapController', MapController);
     app.controller('PlaceAutocompleteController', PlaceAutocompleteController);

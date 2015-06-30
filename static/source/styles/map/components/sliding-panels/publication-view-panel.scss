@@ -1,4 +1,4 @@
-.publication-view-panel {
+.publication-view {
     @extend %_right-sliding-panel;
 
     width: 600px;
@@ -6,6 +6,18 @@
     overflow: auto;
 
     background: #fff;
+    @include transition(right .5s ease);
+
+
+    &.-opened {
+        right: 0;
+    }
+    &.-closed {
+        right: -1000px;
+    }
+    &.-with-navbar-right {
+        right: 220px;
+    }
 
 
     .publication-view-body {

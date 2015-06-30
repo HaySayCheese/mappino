@@ -1,0 +1,192 @@
+<div class="b-navbar-right md-whiteframe-z3" layout="column"
+     ng-class="{ '-opened': navCtrl.tabsHandler.isOpened('navbar_right') || !navCtrl.publicationHandler.isOpened(),
+        '-closed': !navCtrl.tabsHandler.isOpened('navbar_right') && navCtrl.publicationHandler.isOpened() }"
+     ng-controller="NavbarRightController as navCtrl">
+    <div class="b-navbar-right-wrapper" ng-if="activeNavbarRightTabIndex !== null">
+
+        <md-tabs md-selected="activeNavbarRightTabIndex">
+
+            <md-tab id="publication-list-tab" md-on-select="navCtrl.tabsHandler.open('publication_list');">
+                <md-tab-label>
+                    <md-icon>list</md-icon>
+                </md-tab-label>
+                <md-tab-body>
+                    <section>
+                        <ul class="publication-list" layout="column" layout-align="start start" scrollbar>
+                            <li class="publication-list-item">
+                                <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
+                                <div class="publication-list-item-overlay">
+                                    <md-button class="md-icon-button">
+                                        <md-icon class="md-light">star_border</md-icon>
+                                        <md-tooltip md-direction="right" md-delay="0">
+                                            Добавить в избранные
+                                        </md-tooltip>
+                                    </md-button>
+                                    <div class="publication-list-item-description" layout="column">
+                                        <div>Lorem ipsum dolor sit.</div>
+                                        <div><b>50 000 грн.</b></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="publication-list-item">
+                                <img src="http://hmsdemo.dhru.com/images/gallery/room/delux/SetHeight800-Deluxe-Room-Bedroom.jpg" alt="" />
+                                <div class="publication-list-item-overlay">
+                                    <md-button class="md-icon-button">
+                                        <md-icon class="md-light">star_border</md-icon>
+                                        <md-tooltip md-direction="right" md-delay="0">
+                                            Добавить в избранные
+                                        </md-tooltip>
+                                    </md-button>
+                                    <div class="publication-list-item-description" layout="column">
+                                        <div>Lorem ipsum dolor sit.</div>
+                                        <div><b>50 000 грн.</b></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="publication-list-item">
+                                <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
+                                <div class="publication-list-item-overlay">
+                                    <md-button class="md-icon-button">
+                                        <md-icon class="md-light">star_border</md-icon>
+                                    </md-button>
+                                    <div class="publication-list-item-description" layout="column">
+                                        <div>Lorem ipsum dolor sit.</div>
+                                        <div><b>50 000 грн.</b></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="publication-list-item">
+                                <img src="http://hmsdemo.dhru.com/images/gallery/room/delux/SetHeight800-Deluxe-Room-Bedroom.jpg" alt="" />
+                                <div class="publication-list-item-overlay">
+                                    <md-button class="md-icon-button">
+                                        <md-icon class="md-light">star_border</md-icon>
+                                    </md-button>
+                                    <div class="publication-list-item-description" layout="column">
+                                        <div>Lorem ipsum dolor sit.</div>
+                                        <div><b>50 000 грн.</b></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="publication-list-item">
+                                <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
+                                <div class="publication-list-item-overlay">
+                                    <md-button class="md-icon-button">
+                                        <md-icon class="md-light">star_border</md-icon>
+                                    </md-button>
+                                    <div class="publication-list-item-description" layout="column">
+                                        <div>Lorem ipsum dolor sit.</div>
+                                        <div><b>50 000 грн.</b></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="publication-list-item">
+                                <img src="http://hmsdemo.dhru.com/images/gallery/room/delux/SetHeight800-Deluxe-Room-Bedroom.jpg" alt="" />
+                                <div class="publication-list-item-overlay">
+                                    <md-button class="md-icon-button">
+                                        <md-icon class="md-light">star_border</md-icon>
+                                    </md-button>
+                                    <div class="publication-list-item-description" layout="column">
+                                        <div>Lorem ipsum dolor sit.</div>
+                                        <div><b>50 000 грн.</b></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="publication-list-item">
+                                <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
+                                <div class="publication-list-item-overlay">
+                                    <md-button class="md-icon-button">
+                                        <md-icon class="md-light">star_border</md-icon>
+                                    </md-button>
+                                    <div class="publication-list-item-description" layout="column">
+                                        <div>Lorem ipsum dolor sit.</div>
+                                        <div><b>50 000 грн.</b></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="publication-list-item">
+                                <img src="http://hmsdemo.dhru.com/images/gallery/room/delux/SetHeight800-Deluxe-Room-Bedroom.jpg" alt="" />
+                                <div class="publication-list-item-overlay">
+                                    <md-button class="md-icon-button">
+                                        <md-icon class="md-light">star_border</md-icon>
+                                    </md-button>
+                                    <div class="publication-list-item-description" layout="column">
+                                        <div>Lorem ipsum dolor sit.</div>
+                                        <div><b>50 000 грн.</b></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="publication-list-item">
+                                <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
+                                <div class="publication-list-item-overlay">
+                                    <md-button class="md-icon-button">
+                                        <md-icon class="md-light">star_border</md-icon>
+                                    </md-button>
+                                    <div class="publication-list-item-description" layout="column">
+                                        <div>Lorem ipsum dolor sit.</div>
+                                        <div><b>50 000 грн.</b></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="publication-list-item">
+                                <img src="http://hmsdemo.dhru.com/images/gallery/room/delux/SetHeight800-Deluxe-Room-Bedroom.jpg" alt="" />
+                                <div class="publication-list-item-overlay">
+                                    <md-button class="md-icon-button">
+                                        <md-icon class="md-light">star_border</md-icon>
+                                    </md-button>
+                                    <div class="publication-list-item-description" layout="column">
+                                        <div>Lorem ipsum dolor sit.</div>
+                                        <div><b>50 000 грн.</b></div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </section>
+                </md-tab-body>
+            </md-tab>
+
+
+
+            <md-tab id="favorites-tab" md-on-select="navCtrl.tabsHandler.open('favorite_list');">
+                <md-tab-label>
+                    <md-icon>stars</md-icon>
+                </md-tab-label>
+                <md-tab-body>
+                    <section ng-controller="FavoritesController as favCtrl">
+                        <ul class="favorite-list" layout="column" layout-align="start start" scrollbar>
+                            <li class="favorite-list-item" ng-click="favCtrl.openPublication('11:22')">
+                                <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
+                                <div class="favorite-list-item-overlay">
+                                    <md-button class="md-icon-button">
+                                        <md-icon class="md-light">delete</md-icon>
+                                        <md-tooltip md-direction="right" md-delay="0">
+                                            Удалить из избранных
+                                        </md-tooltip>
+                                    </md-button>
+                                    <div class="favorite-list-item-description" layout="column">
+                                        <div>Lorem ipsum dolor sit.</div>
+                                        <div><b>50 000 грн.</b></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="favorite-list-item" ng-click="favCtrl.openPublication('33:44', true)">
+                                <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
+                                <div class="favorite-list-item-overlay">
+                                    <md-button class="md-icon-button">
+                                        <md-icon class="md-light">delete</md-icon>
+                                        <md-tooltip md-direction="right" md-delay="0">
+                                            Удалить из избранных
+                                        </md-tooltip>
+                                    </md-button>
+                                    <div class="favorite-list-item-description" layout="column">
+                                        <div>Lorem ipsum dolor sit.</div>
+                                        <div><b>50 000 грн.</b></div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </section>
+                </md-tab-body>
+            </md-tab>
+        </md-tabs>
+    </div>
+</div>

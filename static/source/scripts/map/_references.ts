@@ -33,6 +33,7 @@
 // Handlers import
 // ####################
 /// <reference path='handlers/TabsHandler.ts' />
+/// <reference path='handlers/PublicationHandler.ts' />
 
 
 
@@ -49,7 +50,10 @@
 // Controllers import
 // ####################
 /// <reference path='controllers/AppController.ts' />
-/// <reference path='controllers/NavbarController.ts' />
+/// <reference path='controllers/NavbarLeftController.ts' />
+/// <reference path='controllers/NavbarRightController.ts' />
+/// <reference path='controllers/PublicationController.ts' />
+/// <reference path='controllers/FavoritesController.ts' />
 /// <reference path='controllers/FiltersPanelController.ts' />
 /// <reference path='controllers/MapController.ts' />
 /// <reference path='controllers/PlaceAutocompleteController.ts' />

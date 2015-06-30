@@ -3,13 +3,20 @@
 
 module pages.map {
     export class TabsHandler {
-        private tabsState = {
+        private navbars = {
+            navbar_right:       1,
+        };
+        private navbarLeftTabsState = {
             filters_red:        0,
             filters_blue:       0,
-            favorites:          0,
-            account:            0,
-            search:             0
+            search:             0,
+            account:            0
         };
+        private navbarRightTabsState = {
+            publication_list:   1,
+            favorite_list:      0
+        };
+
 
         public static $inject = [
             '$state',
@@ -28,10 +35,17 @@ module pages.map {
 
 
 
-        public initialize() {
-            this.$rootScope.activeTabIndex = null;
+        public initializeNavbarLeft() {
+            this.$rootScope.activeNavbarLeftTabIndex    = null;
 
-            this.setPanelsStateFromUrl();
+            this.setNavbarLeftTabsStateFromUrl();
+        }
+
+
+        public initializeNavbarRight() {
+            this.$rootScope.activeNavbarRightTabIndex   = null;
+
+            this.setNavbarRightTabsStateFromUrl();
         }
 
 
@@ -41,44 +55,44 @@ module pages.map {
                     this.$state.go('base', {
                         filters_red:    1,
                         filters_blue:   0,
-                        favorites:      0,
-                        account:        0,
-                        search:         0
+                        search:         0,
+                        account:        0
                     });
                     break;
                 case 'filters_blue':
                     this.$state.go('base', {
                         filters_red:    0,
                         filters_blue:   1,
-                        favorites:      0,
+                        search:         0,
                         account:        0
-                    });
-                    break;
-                case 'favorites':
-                    this.$state.go('base', {
-                        filters_red:    0,
-                        filters_blue:   0,
-                        favorites:      1,
-                        account:        0,
-                        search:         0
-                    });
-                    break;
-                case 'account':
-                    this.$state.go('base', {
-                        filters_red:    0,
-                        filters_blue:   0,
-                        favorites:      0,
-                        account:        1,
-                        search:         0
                     });
                     break;
                 case 'search':
                     this.$state.go('base', {
                         filters_red:    0,
                         filters_blue:   0,
-                        favorites:      0,
-                        account:        0,
-                        search:         1
+                        search:         1,
+                        account:        0
+                    });
+                    break;
+                case 'account':
+                    this.$state.go('base', {
+                        filters_red:    0,
+                        filters_blue:   0,
+                        search:         0,
+                        account:        1
+                    });
+                    break;
+                case 'publication_list':
+                    this.$state.go('base', {
+                        publication_list:   1,
+                        favorite_list:      0
+                    });
+                    break;
+                case 'favorite_list':
+                    this.$state.go('base', {
+                        publication_list:   0,
+                        favorite_list:      1
                     });
                     break;
             }
@@ -86,30 +100,56 @@ module pages.map {
 
 
 
+        public isOpened(tab_name) {
+            return this.$stateParams[tab_name] != 0;
+        }
 
-        private setPanelsStateFromUrl() {
-            this.tabsState.filters_red  = this.$stateParams['filters_red']  || 0;
-            this.tabsState.filters_blue = this.$stateParams['filters_blue'] || 0;
-            this.tabsState.favorites    = this.$stateParams['favorites']    || 0;
-            this.tabsState.account      = this.$stateParams['account']      || 0;
-            this.tabsState.search       = this.$stateParams['search']       || 0;
 
-            for (var key in this.tabsState) {
-                if (this.tabsState[key] == '1') {
+
+        private setNavbarLeftTabsStateFromUrl() {
+            this.navbarLeftTabsState.filters_red  = this.$stateParams['filters_red']  || 0;
+            this.navbarLeftTabsState.filters_blue = this.$stateParams['filters_blue'] || 0;
+            this.navbarLeftTabsState.search       = this.$stateParams['search']       || 0;
+            this.navbarLeftTabsState.account      = this.$stateParams['account']      || 0;
+
+            for (var key in this.navbarLeftTabsState) {
+                if (this.navbarLeftTabsState[key] == '1') {
                     this.open(key);
 
                     // ternary start
-                    this.$rootScope.activeTabIndex =
+                    this.$rootScope.activeNavbarLeftTabIndex =
                         key == 'filters_red' ? 0 :
                             key == 'filters_blue' ? 1 :
-                                key == 'favorites' ? 2 :
-                                    key == 'account' ? 3 : 4;
+                                key == 'search' ? 2 : 3;
                     // ternary end
 
                     break;
                 } else {
                     this.open('filters_red');
-                    this.$rootScope.activeTabIndex = 0;
+                    this.$rootScope.activeNavbarLeftTabIndex = 0;
+                }
+            }
+        }
+
+
+
+        private setNavbarRightTabsStateFromUrl() {
+            this.navbarRightTabsState.publication_list  = this.$stateParams['publication_list']     || 0;
+            this.navbarRightTabsState.favorite_list     = this.$stateParams['favorite_list']        || 0;
+
+            for (var key in this.navbarRightTabsState) {
+                if (this.navbarRightTabsState[key] == '1') {
+                    this.open(key);
+
+                    // ternary start
+                    this.$rootScope.activeNavbarRightTabIndex =
+                        key == 'publication_list' ? 0 : 1;
+                    // ternary end
+
+                    break;
+                } else {
+                    this.open('publication_list');
+                    this.$rootScope.activeNavbarRightTabIndex = 0;
                 }
             }
         }

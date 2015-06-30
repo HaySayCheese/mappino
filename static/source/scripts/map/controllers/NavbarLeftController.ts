@@ -4,7 +4,7 @@
 module pages.map {
     'use strict';
 
-    export class NavbarController {
+    export class NavbarLeftController {
         private realtyTypes     = [];
         private currencyTypes   = [];
 
@@ -23,7 +23,7 @@ module pages.map {
             this.realtyTypes    = realtyTypesService.realtyTypes;
             this.currencyTypes  = currencyTypesService.currencyTypes;
 
-            tabsHandler.initialize();
+            tabsHandler.initializeNavbarLeft();
         }
     }
 }

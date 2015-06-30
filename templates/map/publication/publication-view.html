@@ -1,15 +1,25 @@
-<div class="publication-view-panel md-whiteframe-z1" layout="column">
+<div class="publication-view md-whiteframe-z1" layout="column"
+     ng-class="{ '-opened': pubCtrl.publicationHandler.isOpened(),
+        '-closed': !pubCtrl.publicationHandler.isOpened(),
+        '-with-navbar-right': pubCtrl.tabsHandler.isOpened('navbar_right') }"
+     ng-controller="PublicationController as pubCtrl">
     <div class="publication-view-body" scrollbar>
         <header>
             <img src="http://hmsdemo.dhru.com/images/gallery/room/delux/SetHeight800-Deluxe-Room-Bedroom.jpg" alt=""/>
             <div class="property-view-img-overlay">
                 <div layout="row">
-                    <md-button class="md-icon-button">
+                    <md-button class="md-icon-button" ng-click="pubCtrl.publicationHandler.close()">
                         <md-icon class="md-light md-36">close</md-icon>
+                        <md-tooltip md-direction="right" md-delay="0">
+                            Закрыть объявления
+                        </md-tooltip>
                     </md-button>
                     <span flex></span>
                     <md-button class="md-icon-button">
                         <md-icon class="md-light md-36">fullscreen</md-icon>
+                        <md-tooltip md-direction="left" md-delay="0">
+                            Посмотреть все фотографии
+                        </md-tooltip>
                     </md-button>
                 </div>
 
@@ -26,10 +36,13 @@
                 <div class="publication-view-overlay-description" layout="row" layout-align="start center" layout-padding>
                     <md-button class="md-icon-button">
                         <md-icon class="md-light md-48">star_border</md-icon>
+                        <md-tooltip md-direction="top" md-delay="0">
+                            Добавить в избранные
+                        </md-tooltip>
                     </md-button>
                     <div layout="column" layout-padding>
                         <div class="md-headline">
-                            Lorem ipsum dolor sit amet.
+                            [[ pubCtrl.publicationHandler.isOpened() ]]
                         </div>
                         <div class="md-subhead">
                             Lorem ipsum dolor sit amet, consectetur adipisicing elit.

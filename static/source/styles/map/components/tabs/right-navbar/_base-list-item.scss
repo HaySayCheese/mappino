@@ -1,0 +1,42 @@
+%_base-list-item {
+    @include size(220px, 120px);
+    position: relative;
+
+    min-height: 120px;
+    max-height: 120px;
+
+    padding: 1px 5px 1px 3px;
+
+    cursor: pointer;
+    background: #fff;
+
+    &:first-child {
+        padding-top: 2px;
+    }
+    &:last-child {
+        padding-bottom: 2px;
+    }
+
+
+    > img {
+        @include square(100%);
+    }
+}
+
+%_base-list-item-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+%_base-list-item-description {
+    position: absolute;
+    bottom: 0;
+
+    padding: 10px 20px;
+
+    color: #fff;
+    font-size: 13px;
+}

@@ -1,0 +1,56 @@
+.b-navbar-right {
+    @extend %_fixed-panel;
+
+    @include size(220px, auto);
+    top: 0;
+    bottom: 0;
+
+    @include transition(right .5s ease);
+
+
+    &.-opened {
+        right: 0;
+    }
+
+    &.-closed {
+        right: -230px;
+    }
+
+
+    .b-navbar-right-wrapper {
+        @include square(100%);
+        position: relative;
+        display: block;
+
+        background: #fff;
+    }
+
+    md-tabs {
+        height: 100%;
+
+        [md-template] {
+            height: 100%;
+        }
+
+        section {
+            height: 100%;
+        }
+    }
+
+    .scroll-viewport {
+        @include square(100%);
+    }
+
+
+    md-tab-item {
+        color: color('grey', 'darken-1') !important;
+
+        &.md-active md-icon {
+            color: #fff !important;
+        }
+
+        md-icon {
+            color: color('grey', 'darken-1') !important;
+        }
+    }
+}

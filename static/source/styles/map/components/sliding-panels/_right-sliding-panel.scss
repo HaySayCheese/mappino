@@ -3,35 +3,9 @@
 
     position: fixed;
     top: 0;
-    right: 220px;
     bottom: 0;
 
-    z-index: 200;
+    z-index: 80;
 
     background: #fff;
-
-    &.opened {
-        @include animation(bounceInRight 1s both);
-    }
-    &.closing {
-        @include animation(bounceOutRight 1s both);
-    }
-    &.closed {
-        @include translate3d(3000px, 0, 0);
-    }
-}
-
-
-
-@keyframes bounceInRight {
-    0%, 60%, 75%, 90%, 100% { @include transition-timing-function(cubic-bezier(0.215, 0.610, 0.355, 1.000)); }
-    0% {    @include translate3d(3000px, 0, 0); }
-    60% {   @include translate3d(-25px, 0, 0); }
-    75% {   @include translate3d(10px, 0, 0); }
-    90% {   @include translate3d(-5px, 0, 0); }
-    100% {  @include translate3d(0, 0, 0); }
-}
-@keyframes bounceOutRight {
-    20% {   @include translate3d(-20px, 0, 0); }
-    100% {  @include translate3d(2000px, 0, 0); }
 }

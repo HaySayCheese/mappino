@@ -1,6 +1,6 @@
-<div class="b-navbar md-whiteframe-z1" layout="row" ng-controller="NavbarController as navCtrl">
-    <div class="b-navbar-wrapper" ng-if="activeTabIndex !== null">
-        <md-tabs md-selected="activeTabIndex" md-dynamic-height>
+<div class="b-navbar-left md-whiteframe-z1" layout="row" ng-controller="NavbarLeftController as navCtrl">
+    <div class="b-navbar-left-wrapper" ng-if="activeNavbarLeftTabIndex !== null">
+        <md-tabs md-selected="activeNavbarLeftTabIndex" md-dynamic-height>
 
 
             <md-tab id="filters-tab-red" md-on-select="navCtrl.tabsHandler.open('filters_red');">
@@ -57,53 +57,19 @@
 
 
 
-            <md-tab id="favorites-tab" class="favorites-tab" md-on-select="navCtrl.tabsHandler.open('favorites');">
+            <md-tab id="search-tab" md-on-select="navCtrl.tabsHandler.open('search');">
                 <md-tab-label>
-                    <md-icon>star_border</md-icon>
+                    <md-icon>search</md-icon>
                 </md-tab-label>
                 <md-tab-body>
-                    <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
-                        <span class="md-body-1">Обрані оголошення - 5</span>
-                    </header>
-                    <tab-body-collapsible class="favorites-tab">
-                        <section class="-border-top" layout-padding>
-                            <div class="favorite-item">
-                                <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
-                                <div class="favorite-item-overlay">
-                                    <md-button class="md-icon-button">
-                                        <md-icon class="favorite-remove-btn">delete</md-icon>
-                                    </md-button>
-                                    <div class="favorite-item-description" layout="column">
-                                        <div class="favorite-item-title">
-                                            Lorem ipsum dolor sit.
-                                        </div>
-                                        <div class="favorite-item-price">
-                                            <b>50 000 грн.</b>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="favorite-item">
-                                <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
-                                <div class="favorite-item-overlay">
-                                    <md-button class="md-icon-button">
-                                        <md-icon class="favorite-remove-btn">delete</md-icon>
-                                    </md-button>
-                                    <div class="favorite-item-description" layout="column">
-                                        <div class="favorite-item-title">
-                                            Lorem ipsum dolor sit.
-                                        </div>
-                                        <div class="favorite-item-price">
-                                            <b>50 000 грн.</b>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </tab-body-collapsible>
+                    <section class="md-padding">
+                        <md-input-container>
+                            <label>Местоположение</label>
+                            <input type="text" ng-model="filters.map.c">
+                        </md-input-container>
+                    </section>
                 </md-tab-body>
             </md-tab>
-
 
 
             <md-tab id="account-tab" md-on-select="navCtrl.tabsHandler.open('account');">
@@ -132,22 +98,6 @@
                             <span flex></span>
                             <md-button class="md-primary">Напомнить пароль</md-button>
                         </div>
-                    </section>
-                </md-tab-body>
-            </md-tab>
-
-
-
-            <md-tab id="search-tab" md-on-select="navCtrl.tabsHandler.open('search');">
-                <md-tab-label>
-                    <md-icon>search</md-icon>
-                </md-tab-label>
-                <md-tab-body>
-                    <section class="md-padding">
-                        <md-input-container>
-                            <label>Местоположение</label>
-                            <input type="text" ng-model="filters.map.c">
-                        </md-input-container>
                     </section>
                 </md-tab-body>
             </md-tab>

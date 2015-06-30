@@ -1,0 +1,21 @@
+.favorite-list {
+    @include square(100%);
+    min-height: 100%;
+    position: relative;
+    display: block;
+    margin: 0;
+    padding: 0;
+
+
+    .favorite-list-item {
+        @extend %_base-list-item;
+
+        .favorite-list-item-overlay {
+            @extend %_base-list-item-overlay;
+        }
+
+        .favorite-list-item-description {
+            @extend %_base-list-item-description;
+        }
+    }
+}

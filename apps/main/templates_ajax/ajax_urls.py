@@ -2,16 +2,11 @@
 from django.conf.urls import patterns, url
 
 urlpatterns = patterns('apps.main.templates',
-    url(r'^ajax/template/map/navbar/$', 'navbar'),
-    url(r'^ajax/template/map/navbar/tabs/account/$', 'navbar_account'),
-    url(r'^ajax/template/map/navbar/tabs/favorites/$', 'navbar_favorites'),
-    url(r'^ajax/template/map/navbar/tabs/filters-red/$', 'navbar_filters_red'),
-    url(r'^ajax/template/map/navbar/tabs/filters-blue/$', 'navbar_filters_blue'),
-    url(r'^ajax/template/map/navbar/tabs/search/$', 'navbar_search'),
+    url(r'^ajax/template/map/navbar-left/$', 'navbar_left'),
+    url(r'^ajax/template/map/navbar-right/$', 'navbar_right'),
 
 
     url(r'^ajax/template/map/publication/view/$', 'publication_view'),
-    url(r'^ajax/template/map/publication/list/$', 'publication_view_list'),
 
 
     # # homepage

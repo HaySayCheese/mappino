@@ -4,6 +4,7 @@
 @import "../_common/material/material";
 
 
+
 //
 // Components include
 // --------------------------------------------------
@@ -12,19 +13,25 @@
 
 
 
-// fixed panels
+// navbars
 @import "components/fixed-panels/_fixed-panel";
-@import "components/fixed-panels/b-navbar";
-@import "components/fixed-panels/search-panel";
-@import "components/fixed-panels/publications-list-panel";
+@import "components/fixed-panels/b-navbar-left";
+@import "components/fixed-panels/b-navbar-right";
 
 
 
-// tabs
-@import "components/tabs/filters-tab";
-@import "components/tabs/favorites-tab";
-@import "components/tabs/auth-tab";
 
+// left navbar tabs
+@import "components/tabs/left-navbar/filters-tab";
+@import "components/tabs/left-navbar/auth-tab";
+
+
+// right navbar tabs
+@import "components/tabs/right-navbar/_base-list-item";
+@import "components/tabs/right-navbar/publication-list";
+@import "components/tabs/right-navbar/favorite-list";
+
+// tab components
 @import "components/tabs/tab-body-collapsible";
 
 
@@ -35,48 +42,13 @@
 
 
 
-
-
 //
 // our styles
 // --------------------------------------------------
-
-
 html,
 body,
 main,
 #map {
     @include square(100%);
     overflow: hidden;
-}
-
-
-.btn-floating.btn-large {
-    position: fixed;
-    bottom: 30px;
-    right: 200px;
-}
-
-
-.pac-container {
-    border-top: none;
-    border-radius: 0 !important;
-    box-shadow: 0 4px 5px rgba(0,0,0,0.2);
-
-    > .pac-item {
-        line-height: 48px;
-
-        > .pac-icon {
-            margin: 14px;
-        }
-
-        > .pac-item-query {
-            margin-left: 12px;
-            padding-right: 5px;
-        }
-    }
-
-    &:after {
-        border-radius: 0 !important;
-    }
 }

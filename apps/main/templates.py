@@ -5,38 +5,14 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 
 @ensure_csrf_cookie
-def navbar(request):
-	t = templates.get_template('map/navbar/navbar.html')
+def navbar_left(request):
+	t = templates.get_template('map/navbars/navbar-left.html')
 	return HttpResponse(content=t.render())
 
 
 @ensure_csrf_cookie
-def navbar_account(request):
-	t = templates.get_template('map/navbar/tabs/account.html')
-	return HttpResponse(content=t.render())
-
-
-@ensure_csrf_cookie
-def navbar_favorites(request):
-	t = templates.get_template('map/navbar/tabs/favorites.html')
-	return HttpResponse(content=t.render())
-
-
-@ensure_csrf_cookie
-def navbar_filters_red(request):
-	t = templates.get_template('map/navbar/tabs/filters-red.html')
-	return HttpResponse(content=t.render())
-
-
-@ensure_csrf_cookie
-def navbar_filters_blue(request):
-	t = templates.get_template('map/navbar/tabs/filters-blue.html')
-	return HttpResponse(content=t.render())
-
-
-@ensure_csrf_cookie
-def navbar_search(request):
-	t = templates.get_template('map/navbar/tabs/search.html')
+def navbar_right(request):
+	t = templates.get_template('map/navbars/navbar-right.html')
 	return HttpResponse(content=t.render())
 
 
