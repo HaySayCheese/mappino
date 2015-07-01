@@ -18,24 +18,18 @@ module pages.map {
                 },
                 blue: {
                     b_t_sid: null
-                },
-                green: {
-                    g_t_sid: null
-                },
-                yellow: {
-                    y_t_sid: null
                 }
             },
             base: {
                 // Загальні
-                op_sid:     0,  // operation_sid
+                op_sid:     '0',  // operation_sid
 
                 // Дропдауни
-                cu_sid:     0,  // currency_sid
-                h_t_sid:    0,  // heating_type_sid
-                pr_sid:     0,  // period_sid
-                pl_sid:     0,  // planing_sid
-                b_t_sid:    0,  // building_type_sid
+                cu_sid:     '0',  // currency_sid
+                h_t_sid:    '0',  // heating_type_sid
+                pr_sid:     '0',  // period_sid
+                pl_sid:     '0',  // planing_sid
+                b_t_sid:    '0',  // building_type_sid
 
                 // Поля вводу
                 p_min:      null,   // price_min
@@ -190,7 +184,7 @@ module pages.map {
                         location_search[key] = false;
                     }
                     if (key.toString().indexOf("_sid") !== -1) {
-                        location_search[key] = parseInt(location_search[key]);
+                        location_search[key] = location_search[key];
                     }
                     if (/^r_/.test(key.toString())) {
                         filters_panels['red'][key] = location_search[key];
@@ -198,20 +192,13 @@ module pages.map {
                     if (/^b_/.test(key.toString())) {
                         filters_panels['blue'][key] = location_search[key];
                     }
-                    if (/^g_/.test(key.toString())) {
-                        filters_panels['green'][key] = location_search[key];
-                    }
-                    if (/^y_/.test(key.toString())) {
-                        filters_panels['yellow'][key] = location_search[key];
-                    }
                     if (_.include(['c', 'l', 'z'], key)) {
                         this._filters['map'][key] = location_search[key];
                     }
                 }
             }
 
-            if (_.isUndefined(location_search['r_t_sid']) && _.isUndefined(location_search['b_t_sid']) &&
-                _.isUndefined(location_search['g_t_sid']) && _.isUndefined(location_search['y_t_sid'])) {
+            if (_.isUndefined(location_search['r_t_sid']) && _.isUndefined(location_search['b_t_sid'])) {
                 // -
                 filters_panels['red']['r_t_sid'] = 0;
                 this.createFiltersForPanel("red");
@@ -221,12 +208,6 @@ module pages.map {
             }
             if (!_.isUndefined(location_search['b_t_sid'])) {
                 this.createFiltersForPanel("blue");
-            }
-            if (!_.isUndefined(location_search['g_t_sid'])) {
-                this.createFiltersForPanel("green");
-            }
-            if (!_.isUndefined(location_search['y_t_sid'])) {
-                this.createFiltersForPanel("yellow");
             }
 
             this.$timeout(() => this.$rootScope.$broadcast('pages.map.FiltersService.UpdatedFromUrl', this._filters));

@@ -29,7 +29,7 @@ module pages.map {
             var counter = 0;
             this.$scope.$watchCollection('filters.red', (newValue, oldValue) => {
                 counter++;
-                if (counter > 3) {
+                if (counter > 0) {
                     this.filtersService.update('panels', newValue, filters_color)
                 }
             })

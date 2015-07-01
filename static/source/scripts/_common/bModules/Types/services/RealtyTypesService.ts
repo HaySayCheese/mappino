@@ -5,7 +5,7 @@ module bModules.Types {
     export class RealtyTypesService {
         private _realty_types = [
             {
-                id:     0,
+                id:     '0',
                 name:   "flat",
                 title:  "Квартиры",
                 filters: [
@@ -14,7 +14,7 @@ module bModules.Types {
                     "msd", "grd", "pl_sid", "lft", "elt", "h_w", "c_w", "gas", "h_t_sid"
                 ]
             }, {
-                id:     1,
+                id:     '1',
                 name:   "house",
                 title:  "Дома",
                 filters: [
@@ -23,7 +23,7 @@ module bModules.Types {
                     "gas", "c_w", "swg", "h_t_sid"
                 ]
             }, {
-                id:     2,
+                id:     '2',
                 name:   "room",
                 title:  "Комнаты",
                 filters: [
@@ -32,21 +32,21 @@ module bModules.Types {
                     "msd", "grd", "lft", "elt", "h_w", "c_w", "gas", "h_t_sid"
                 ]
             }, {
-                id:     3,
+                id:     '3',
                 name:   "land",
                 title:  "Земельные участки",
                 filters: [
                     "op_sid", "p_min", "p_max", "cu_sid", "a_min", "a_max", "gas", "elt", "wtr", "swg"
                 ]
             }, {
-                id:     4,
+                id:     '4',
                 name:   "garage",
                 title:  "Гаражи",
                 filters: [
                     "op_sid", "p_min", "p_max", "cu_sid", "t_a_min", "t_a_max"
                 ]
             }, {
-                id:     5,
+                id:     '5',
                 name:   "office",
                 title:  "Офисы",
                 filters: [
@@ -54,7 +54,7 @@ module bModules.Types {
                     "c_c_min", "c_c_max", "sct", "ktn", "h_w", "c_w"
                 ]
             }, {
-                id:     6,
+                id:     '6',
                 name:   "trade",
                 title:  "Торговые помещения",
                 filters: [
@@ -62,7 +62,7 @@ module bModules.Types {
                     "t_a_min", "t_a_max", "b_t_sid", "gas", "elt", "h_w", "c_w", "swg"
                 ]
             }, {
-                id:     7,
+                id:     '7',
                 name:   "warehouse",
                 title:  "Склады",
                 filters: [
@@ -70,7 +70,7 @@ module bModules.Types {
                     "gas", "elt", "h_w", "c_w", "s_a", "f_a"
                 ]
             }, {
-                id:     8,
+                id:     '8',
                 name:   "business",
                 title:  "Готовый бизнес",
                 filters: [

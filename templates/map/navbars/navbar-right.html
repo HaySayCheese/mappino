@@ -2,9 +2,9 @@
      ng-class="{ '-opened': navCtrl.navbarsHandler.isOpened('navbar_right') || !navCtrl.publicationHandler.isOpened(),
                  '-closed': !navCtrl.navbarsHandler.isOpened('navbar_right') && navCtrl.publicationHandler.isOpened() }"
      ng-controller="NavbarRightController as navCtrl">
-    <div class="b-navbar-right-wrapper" ng-if="navbarLeftActiveTabIndex !== null">
+    <div class="b-navbar-right-wrapper" ng-if="navbarRightActiveTabIndex !== null">
 
-        <md-tabs md-selected="navbarLeftActiveTabIndex">
+        <md-tabs md-selected="navbarRightActiveTabIndex">
 
             <md-tab id="publication-list-tab" md-on-select="navCtrl.tabsHandler.open('publication_list');">
                 <md-tab-label>
