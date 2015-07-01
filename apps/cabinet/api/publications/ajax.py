@@ -2,7 +2,7 @@
 import copy
 import json
 
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.http.response import HttpResponse, HttpResponseBadRequest
 
 from collective.http.responses import HttpJsonResponseBadRequest, HttpJsonResponse
@@ -311,7 +311,8 @@ class Publication(CabinetView):
             try:
                 head.publish()
                 return cls.PutResponses.ok()
-            except ValidationError:
+            # ValidationError
+            except  Exception as e :
                 return cls.PutResponses.invalid_publication()
 
 

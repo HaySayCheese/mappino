@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
+
 from core.users.models import Users
 
 
@@ -23,7 +24,7 @@ class PublicationsToCheck(models.Model):
             record = cls.objects.filter(
                 publication_type_id = publication_type_id,
                 publication_hash_id = publication_hash_id
-                    ).only('publication_ids')[:1][0]
+                    ).only('publication_type_id','publication_hash_id')[:1][0]
 
             record.is_suspicious = is_suspicious
             record.save()

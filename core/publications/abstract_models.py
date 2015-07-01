@@ -496,6 +496,7 @@ class BodyModel(AbstractModel):
         self.check_extended_fields()
 
         return self.check_fields_on_adequacy()
+        # return self.check_fields_on_adequacy()
 
 
 
