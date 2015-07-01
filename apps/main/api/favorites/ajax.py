@@ -50,15 +50,15 @@ class FavoritesListView(FavoritesBaseView, View):
             return cls.CommonResponses.empty_customer_hash_id_cookie()
 
         try:
-            favorite = Favorites.objects\
-                           .filter(customer__hash_id=customer_hash_id)\
-                           .only('publications_ids')[:1][0]
+            favorites = Favorites.objects.all()
+            print favorites.count()
+            favorite = Favorites.objects.filter(customer__hash_id=customer_hash_id)[:1][0]
         except IndexError:
             return cls.CommonResponses.invalid_customers_hash_id()
 
 
-        publications_info = cls.get_information_about_publication(favorite)
-        return cls.Get.ok(favorite)
+        publications_info = cls.get_information_about_publications(favorite)
+        return cls.Get.ok(publications_info)
 
 
     @classmethod
@@ -80,43 +80,54 @@ class FavoritesListView(FavoritesBaseView, View):
         except ValueError:
             return cls.CommonResponses.absent_publications_id()
 
-        try:
-            favorite = Favorites.objects.get_or_create(customer_id=customer_id)[0]
-        except IndexError:
-            return cls.CommonResponses.invalid_customers_hash_id()
 
+        favorite = Favorites.objects.get_or_create(customer_id=customer_id)[0]
         favorite.add(customer_id, tid, hash_id)
         return cls.Post.ok()
 
-    @classmethod
-    def get_information_about_publication(cls,favorite):
-        try:
-            publications_ids = json.loads(favorite.publications_ids)
-            list_with_publications_ids = [publication_ids.split(":",2) for publication_ids in publications_ids]
-            list_with_publications_ids = [[int(publication_ids[0]),publication_ids[1]] for publication_ids in list_with_publications_ids]
-            list_with_publication_info = []
-            for publication_ids in list_with_publications_ids:
-                publication_model = HEAD_MODELS[publication_ids[0]]
-                publication = publication_model.objects.get(hash_id = publication_ids[1])
-                photo = publication.photos()
-                list_with_publication_info.append(publication.body.title)
 
-        except Exception as e:
-            pass
-        return list_with_publication_info
+    #todo  optimize request/ GEt all publication of one type
+    @classmethod
+    def get_information_about_publications(cls,favorite):
+        publications_ids = json.loads(favorite.publications_ids)
+        list_with_publications_ids = [publication_ids.split(":",2) for publication_ids in publications_ids]
+        list_with_publications_ids = [[int(publication_ids[0]),publication_ids[1]] for publication_ids in list_with_publications_ids]
+        list_with_publications_info = []
+        for publication_ids in list_with_publications_ids:
+            publication_model = HEAD_MODELS[publication_ids[0]]
+            try:
+                publication = publication_model.objects.filter(hash_id = publication_ids[1]).only('body__title')[:1][0]
+            except IndexError:
+                return cls.Get.publication_does_not_exist(json.dumps(publications_ids))
+
+            photos = publication.photos().only('big_thumb_url')
+            big_thumb_urls = [photo.big_thumb_url for photo in photos]
+            list_with_publications_info.append(
+                {
+                    'ids':"{tid}:{hid}".format(publication_ids[0],publication_ids[1]),
+                    'photos':big_thumb_urls,
+                    'title':publication.photos
+                })
+
+        return list_with_publications_info
 
 
     class Get(object):
+
         @staticmethod
-        def ok(favorite):
+        def publication_does_not_exist(publications_ids):
+            return HttpJsonResponse({
+                'code':1,
+                'message': "Publication with {0} does not exist".format(publications_ids)
+            })
+
+        @staticmethod
+        def ok(pubclications_info):
             return HttpJsonResponse({
                 'code': 0,
                 'message': 'OK',
-                'data': {
-                    'publications_ids': favorite.publication_ids,
-                }
+                'data': [pubclication_info for pubclication_info in pubclications_info]
             })
-
 
     class Post(object):
         @staticmethod
