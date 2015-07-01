@@ -9,13 +9,11 @@ module pages.map {
 
         private _response_markers: Object = {
             red:    {},
-            blue:   {},
-            green:  {}
+            blue:   {}
         };
         private _markers: Object = {
             red:    {},
-            blue:   {},
-            green:  {}
+            blue:   {}
         };
 
         public static $inject = [
@@ -53,12 +51,14 @@ module pages.map {
 
 
         public place(map) {
+            console.log(this._markers)
+            console.log(this._response_markers)
             // видаляємо маркери з карти яких нема в відповіді з сервера
             for (var panel in this._markers) {
                 if (this._markers.hasOwnProperty(panel)) {
                     for (var marker in this._markers[panel]) {
                         if (this._markers[panel].hasOwnProperty(marker)) {
-                            if (!this._response_markers[panel][marker]) {
+                            if (!_.isUndefined(this._response_markers[panel]) && _.isUndefined(this._response_markers[panel][marker])) {
                                 this._markers[panel][marker].setMap(null);
                                 console.log('deleted: ' + this._markers[panel][marker]);
 
@@ -121,8 +121,7 @@ module pages.map {
         private clearResponseMarkersObject() {
             this._response_markers = {
                 red:    {},
-                blue:   {},
-                green:  {}
+                blue:   {}
             };
         }
     }
