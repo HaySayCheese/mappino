@@ -20,7 +20,7 @@ module bModules.Types {
 
         constructor() {}
 
-        get period_types() {
+        get periodTypes() {
             return this._period_types;
         }
     }

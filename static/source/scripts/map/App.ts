@@ -8,12 +8,13 @@ module pages.map {
         'ngCookies',
         'ngResource',
 
-        'ngTinyScrollbar',
+        'perfect_scrollbar',
 
         'ui.router',
 
         'bModules.Types'
     ]);
+
 
 
 

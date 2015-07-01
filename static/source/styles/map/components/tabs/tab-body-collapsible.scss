@@ -17,6 +17,7 @@ tab-body-collapsible {
 tab-body-section-collapsible {
     &.-closed {
         max-height: 0 !important;
+        overflow: hidden;
     }
 
 }

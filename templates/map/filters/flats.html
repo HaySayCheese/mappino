@@ -26,6 +26,11 @@
             <input type="text">
         </md-input-container>
     </div>
+    <div layout="row">
+        <md-select placeholder="Период" ng-model="filters.red.r_pr_sid" flex="100">
+            <md-option ng-repeat="periodType in navCtrl.periodTypes" value="[[ periodType.id ]]">[[ periodType.title ]]</md-option>
+        </md-select>
+    </div>
 </section>
 <header class="-tab-body-section-closed" layout="row" layout-align="start center" layout-padding toggle-tab-body-section>
     <span class="md-body-1">Розширений фільтер</span>
