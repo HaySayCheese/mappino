@@ -26,6 +26,9 @@
 // ####################
 // Directives import
 // ####################
+/// <reference path='directives/NavbarLeftDirective.ts' />
+/// <reference path='directives/NavbarRightDirective.ts' />
+/// <reference path='directives/PublcationViewDirective.ts' />
 /// <reference path='directives/TabsPanelDirective.ts' />
 
 

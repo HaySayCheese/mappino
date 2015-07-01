@@ -55,14 +55,14 @@
     <main>
         <div id="map" ng-controller="MapController as mapCtrl"></div>
 
-        <ng-include src="'/ajax/template/map/navbar-left/'"></ng-include>
-        <ng-include src="'/ajax/template/map/navbar-right/'"></ng-include>
+        <navbar-left></navbar-left>
+        <navbar-right></navbar-right>
 
 
         <div ui-view></div>
 
 
-        <ng-include src="'/ajax/template/map/publication/view/'"></ng-include>
+        <publication-view></publication-view>
     </main>
 
 

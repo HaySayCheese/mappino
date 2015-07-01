@@ -43,6 +43,9 @@ module pages.map {
 
 
     /** Directives */
+    app.directive('navbarLeft', NavbarLeftDirective);
+    app.directive('navbarRight', NavbarRightDirective);
+    app.directive('publicationView', PublcationViewDirective);
     app.directive('tabBodyCollapsible', TabBodyCollapsibleDirective);
     app.directive('tabBodySectionCollapsible', TabBodySectionCollapsibleDirective);
 
