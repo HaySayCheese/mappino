@@ -1,6 +1,7 @@
 #coding=utf-8
-from apps.cabinet.api.publications.ajax import Publications, Publication
 from django.conf.urls import patterns, url
+
+from apps.cabinet.api.publications.ajax import Publications, Publication
 
 
 urlpatterns = patterns('apps.cabinet.api',
@@ -9,8 +10,12 @@ urlpatterns = patterns('apps.cabinet.api',
 
 	# single
 	url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/((permanent/)?)$', Publication.as_view()), # note: optional parameter "permanent"
-    url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/publish/$', Publication.PublishUnpublish.as_view(), {'operation': 'publish'}),
-    url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/unpublish/$', Publication.PublishUnpublish.as_view(), {'operation': 'unpublish'}),
+
+
+
+    # url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/publish/$', Publication.PublishUnpublish.as_view(), {"operation": 'publish'}),
+    url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/publish/$', Publication.Publish.as_view()),
+    url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/unpublish/$', Publication.Unpublish.as_view()),
 
         # photos
         url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/photos/$', Publication.UploadPhoto.as_view()),
