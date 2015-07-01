@@ -78,14 +78,19 @@ module pages.map {
                         if (this._response_markers[panel].hasOwnProperty(marker)) {
 
                             if (!this._markers[panel][marker]) {
-                                var markerLabelOffsetX = 35;
+                                var markerLabelOffsetX = 35,
+                                    markerDescriptionLength;
 
-                                if (this._response_markers[panel][marker].d1.length >= 9 && this._response_markers[panel][marker].d1.length <= 11)
+                                if (!_.isUndefined(this._response_markers[panel][marker].d1)) {
+                                    markerDescriptionLength = this._response_markers[panel][marker].d1.length;
+                                }
+
+                                if (markerDescriptionLength >= 9 && markerDescriptionLength <= 11)
                                     markerLabelOffsetX = 38;
-                                if (this._response_markers[panel][marker].d1.length >= 12 && this._response_markers[panel][marker].d1.length <= 14)
+                                if (markerDescriptionLength >= 12 && markerDescriptionLength <= 14)
                                     markerLabelOffsetX = 42;
 
-                                console.log(this._response_markers[panel][marker].d1.length)
+                                console.log(markerDescriptionLength)
                                 console.log(markerLabelOffsetX)
 
 

@@ -4,7 +4,7 @@
 module pages.map {
     'use strict';
 
-    export class FiltersPanelController {
+    export class FiltersController {
         private filters: any;
 
         public static $inject = [
@@ -19,6 +19,20 @@ module pages.map {
             // ---------------------------------------------------------------------------------------------------------
 
             this.filters = $scope.filters = filtersService.filters['panels'];
+
+            this.initFiltersWatcher('red');
+        }
+
+
+
+        private initFiltersWatcher(filters_color) {
+            var counter = 0;
+            this.$scope.$watchCollection('filters.red', (newValue, oldValue) => {
+                counter++;
+                if (counter > 3) {
+                    this.filtersService.update('panels', newValue, filters_color)
+                }
+            })
         }
     }
 }

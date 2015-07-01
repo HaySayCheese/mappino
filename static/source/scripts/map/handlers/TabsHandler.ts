@@ -3,15 +3,16 @@
 
 module pages.map {
     export class TabsHandler {
-        private navbarLeftTabsState = {
+        private navbarLeftTabsIndex = {
             filters_red:        0,
-            filters_blue:       0,
-            search:             0,
-            account:            0
+            filters_blue:       1,
+            search:             2,
+            account:            3
         };
-        private navbarRightTabsState = {
-            publication_list:   1,
-            favorite_list:      0
+
+        private navbarRightTabsIndex = {
+            publication_list:   0,
+            favorite_list:      1
         };
 
 
@@ -32,125 +33,39 @@ module pages.map {
 
 
         public initializeNavbarLeftTabs() {
-            this.$rootScope.activeNavbarLeftTabIndex = null;
-
-            this.setNavbarLeftTabsStateFromUrl();
+            this.$rootScope.navbarLeftActiveTabIndex        = this.$stateParams['navbar_left_tab_index'];
+            this.$rootScope.navbarLeftActiveTabIndexPart    = null;
         }
 
 
 
         public initializeNavbarRightTabs() {
-            this.$rootScope.activeNavbarRightTabIndex = null;
-
-            this.setNavbarRightTabsStateFromUrl();
+            this.$rootScope.navbarRightActiveTabIndex        = this.$stateParams['navbar_right_tab_index'];
+            this.$rootScope.navbarRightActiveTabIndexPart    = null;
         }
 
 
 
-        public open(tab) {
-            switch (tab) {
-                case 'filters_red':
-                    this.$state.go('base', {
-                        filters_red:    1,
-                        filters_blue:   0,
-                        search:         0,
-                        account:        0
-                    });
-                    break;
-                case 'filters_blue':
-                    this.$state.go('base', {
-                        filters_red:    0,
-                        filters_blue:   1,
-                        search:         0,
-                        account:        0
-                    });
-                    break;
-                case 'search':
-                    this.$state.go('base', {
-                        filters_red:    0,
-                        filters_blue:   0,
-                        search:         1,
-                        account:        0
-                    });
-                    break;
-                case 'account':
-                    this.$state.go('base', {
-                        filters_red:    0,
-                        filters_blue:   0,
-                        search:         0,
-                        account:        1
-                    });
-                    break;
+        public open(tab, tab_state_index?: Number) {
+            if (!_.isUndefined(this.navbarLeftTabsIndex[tab])) {
 
-                case 'publication_list':
-                    this.$state.go('base', {
-                        publication_list:   1,
-                        favorite_list:      0
-                    });
-                    break;
-                case 'favorite_list':
-                    this.$state.go('base', {
-                        publication_list:   0,
-                        favorite_list:      1
-                    });
-                    break;
+                this.$state.go('base', {
+                    'navbar_left_tab_index': this.navbarLeftTabsIndex[tab]
+                });
+            }
+
+            if (!_.isUndefined(this.navbarRightTabsIndex[tab])) {
+
+                this.$state.go('base', {
+                    'navbar_right_tab_index': this.navbarRightTabsIndex[tab]
+                });
             }
         }
 
 
 
-        public isOpened(tab_name) {
-            return this.$stateParams[tab_name] != 0;
-        }
-
-
-
-        private setNavbarLeftTabsStateFromUrl() {
-            this.navbarLeftTabsState.filters_red  = this.$stateParams['filters_red']  || 0;
-            this.navbarLeftTabsState.filters_blue = this.$stateParams['filters_blue'] || 0;
-            this.navbarLeftTabsState.search       = this.$stateParams['search']       || 0;
-            this.navbarLeftTabsState.account      = this.$stateParams['account']      || 0;
-
-            for (var key in this.navbarLeftTabsState) {
-                if (this.navbarLeftTabsState[key] == '1') {
-                    this.open(key);
-
-                    // ternary start
-                    this.$rootScope.activeNavbarLeftTabIndex =
-                        key == 'filters_red' ? 0 :
-                            key == 'filters_blue' ? 1 :
-                                key == 'search' ? 2 : 3;
-                    // ternary end
-
-                    break;
-                } else {
-                    this.open('filters_red');
-                    this.$rootScope.activeNavbarLeftTabIndex = 0;
-                }
-            }
-        }
-
-
-
-        private setNavbarRightTabsStateFromUrl() {
-            this.navbarRightTabsState.publication_list  = this.$stateParams['publication_list']     || 0;
-            this.navbarRightTabsState.favorite_list     = this.$stateParams['favorite_list']        || 0;
-
-            for (var key in this.navbarRightTabsState) {
-                if (this.navbarRightTabsState[key] == '1') {
-                    this.open(key);
-
-                    // ternary start
-                    this.$rootScope.activeNavbarRightTabIndex =
-                        key == 'publication_list' ? 0 : 1;
-                    // ternary end
-
-                    break;
-                } else {
-                    this.open('publication_list');
-                    this.$rootScope.activeNavbarRightTabIndex = 0;
-                }
-            }
+        public isOpened(param_name) {
+            return this.$stateParams[param_name] != 0;
         }
     }
 }

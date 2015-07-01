@@ -55,7 +55,7 @@
 /// <reference path='controllers/NavbarRightController.ts' />
 /// <reference path='controllers/PublicationController.ts' />
 /// <reference path='controllers/FavoritesController.ts' />
-/// <reference path='controllers/FiltersPanelController.ts' />
+/// <reference path='controllers/FiltersController.ts' />
 /// <reference path='controllers/MapController.ts' />
 /// <reference path='controllers/PlaceAutocompleteController.ts' />
 

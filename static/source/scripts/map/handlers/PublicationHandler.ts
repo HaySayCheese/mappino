@@ -22,20 +22,20 @@ module pages.map {
 
 
 
-        public open(publication_id, without_publication_list?: Boolean) {
+        public open(publication_id, with_publication_list?: Boolean) {
             this.publication_panel_element = angular.element('.publication-view');
 
-            if (without_publication_list) {
-                this.$state.go('base', { navbar_right: 0, publication_id: publication_id });
-            } else {
+            if (with_publication_list) {
                 this.$state.go('base', { navbar_right: 1, publication_id: publication_id });
+            } else {
+                this.$state.go('base', { navbar_right: 0, publication_id: publication_id });
             }
         }
 
 
 
         public close() {
-            this.$state.go('base', { publication_id: 0 });
+            this.$state.go('base', { publication_id: 0, navbar_right: 1 });
         }
 
 

@@ -106,10 +106,14 @@ module pages.map {
 
 
 
-        public update(filter_object_name: string, filters_object: Object) {
+        public update(filter_object_name: string, filters_object: Object, panel_name?: string) {
             for (var filter in filters_object) {
                 if (filters_object.hasOwnProperty(filter)) {
-                    this._filters[filter_object_name][filter] = filters_object[filter];
+                    if (panel_name) {
+                        this._filters[filter_object_name][panel_name][filter] = filters_object[filter];
+                    } else {
+                        this._filters[filter_object_name][filter] = filters_object[filter];
+                    }
                 }
             }
 

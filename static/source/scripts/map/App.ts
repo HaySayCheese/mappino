@@ -52,7 +52,7 @@ module pages.map {
     app.controller('NavbarRightController', NavbarRightController);
     app.controller('PublicationController', PublicationController);
     app.controller('FavoritesController', FavoritesController);
-    app.controller('FiltersPanelController', FiltersPanelController);
+    app.controller('FiltersController', FiltersController);
     app.controller('MapController', MapController);
     app.controller('PlaceAutocompleteController', PlaceAutocompleteController);
 }

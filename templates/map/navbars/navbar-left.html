@@ -1,6 +1,6 @@
 <div class="b-navbar-left md-whiteframe-z1" layout="row" ng-controller="NavbarLeftController as navCtrl">
-    <div class="b-navbar-left-wrapper" ng-if="activeNavbarLeftTabIndex !== null">
-        <md-tabs md-selected="activeNavbarLeftTabIndex" md-dynamic-height>
+    <div class="b-navbar-left-wrapper" ng-if="navbarLeftActiveTabIndex !== null">
+        <md-tabs md-selected="navbarLeftActiveTabIndex" md-dynamic-height>
 
 
             <md-tab id="filters-tab-red" md-on-select="navCtrl.tabsHandler.open('filters_red');">
@@ -8,23 +8,36 @@
                     <md-icon>filter_list</md-icon>
                 </md-tab-label>
                 <md-tab-body>
-                    <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
-                        <span class="md-body-1">Квартири 0 - 50 000 $</span>
-                    </header>
-                    <tab-body-collapsible>
-                        <section class="-border-top" layout="column" layout-padding>
-                            <div layout="row">
-                                <md-select placeholder="Тип обєкта" ng-model="filters.red.r_t_sid" flex="65">
-                                    <md-option ng-repeat="realtyType in navCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
-                                </md-select>
-                                <md-select placeholder="Операция" ng-model="filters.red.op_sid" flex="35">
-                                    <md-option value="0">Продажа</md-option>
-                                    <md-option value="1">Оренда</md-option>
-                                </md-select>
-                            </div>
-                        </section>
-                        <div ng-if="filters.red.r_t_sid != null" ng-include="'/ajax/template/map/filters/red/' + [[ filters.red.r_t_sid ]] + '/'"></div>
-                    </tab-body-collapsible>
+                    <div ng-controller="FiltersController as filCtrl">
+                        <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
+                            <span class="md-body-1">
+                                [[ navCtrl.realtyTypes[filters.red.r_t_sid].title ]]&nbsp;
+                            </span>
+                            <span class="md-body-1" ng-show="filters.red.r_p_min && filters.red.r_p_max">
+                                ([[ filters.red.r_p_min ]] - [[ filters.red.r_p_max ]] [[ navCtrl.currencyTypes[filters.red.r_cu_sid].title ]])
+                            </span>
+                            <span class="md-body-1" ng-show="filters.red.r_p_min && !filters.red.r_p_max">
+                                (от [[ filters.red.r_p_min ]] [[ navCtrl.currencyTypes[filters.red.r_cu_sid].title ]])
+                            </span>
+                            <span class="md-body-1" ng-show="!filters.red.r_p_min && filters.red.r_p_max">
+                                (до [[ filters.red.r_p_max ]] [[ navCtrl.currencyTypes[filters.red.r_cu_sid].title ]])
+                            </span>
+                        </header>
+                        <tab-body-collapsible>
+                            <section class="-border-top" layout="column" layout-padding>
+                                <div layout="row">
+                                    <md-select placeholder="Тип обєкта" ng-model="filters.red.r_t_sid" flex="65">
+                                        <md-option ng-repeat="realtyType in navCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
+                                    </md-select>
+                                    <md-select placeholder="Операция" ng-model="filters.red.r_op_sid" flex="35">
+                                        <md-option value="0">Продажа</md-option>
+                                        <md-option value="1">Оренда</md-option>
+                                    </md-select>
+                                </div>
+                            </section>
+                            <div ng-if="filters.red.r_t_sid != null" ng-include="'/ajax/template/map/filters/red/' + [[ filters.red.r_t_sid ]] + '/'"></div>
+                        </tab-body-collapsible>
+                    </div>
                 </md-tab-body>
             </md-tab>
 

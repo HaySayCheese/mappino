@@ -13,7 +13,6 @@ module pages.map {
         }
 
 
-
         public isOpened(navbar_name) {
             return this.$stateParams[navbar_name] != 0;
         }

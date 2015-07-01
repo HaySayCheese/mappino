@@ -2,24 +2,24 @@
     <div layout="row">
         <md-input-container flex>
             <label>Ціна від</label>
-            <input type="text" ng-model="filters.red.pr" only-number>
+            <input type="text" ng-model="filters.red.r_p_min" only-number>
         </md-input-container>
         <md-input-container flex>
             <label>Ціна до</label>
-            <input type="text">
+            <input type="text" ng-model="filters.red.r_p_max">
         </md-input-container>
-        <md-select placeholder="Валюта" ng-model="filters.red.cu_sid">
-            <md-option ng-repeat="currencyType in appCtrl.currencyTypes" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
+        <md-select placeholder="Валюта" ng-model="filters.red.r_cu_sid">
+            <md-option ng-repeat="currencyType in navCtrl.currencyTypes" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
         </md-select>
     </div>
     <div layout="row">
         <md-input-container flex>
             <label>Площа від</label>
-            <input type="text">
+            <input type="text" ng-model="filters.red.r_t_a_min">
         </md-input-container>
         <md-input-container flex>
             <label>Площа до</label>
-            <input type="text">
+            <input type="text" ng-model="filters.red.r_t_a_max">
         </md-input-container>
         <md-input-container flex>
             <label>Кімнат</label>
