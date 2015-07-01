@@ -1,4 +1,5 @@
 #coding=utf-8
+
 import uuid
 import datetime
 # from django.contrib.postgres.fields.array import ArrayField
@@ -493,7 +494,10 @@ class BodyModel(AbstractModel):
             raise EmptyTitle('Title is empty')
         if (self.description is None) or (not self.description):
             raise EmptyDescription('Description is empty')
+
         self.check_extended_fields()
+
+        self.check_fields_on_abusive_words()
 
         return self.check_fields_on_adequacy()
         # return self.check_fields_on_adequacy()
@@ -501,7 +505,11 @@ class BodyModel(AbstractModel):
 
 
 
-
+    def check_fields_on_abusive_words(self):
+        fields_name = self._meta.get_all_field_names()
+        for name in fields_name:
+            print name
+        return
     def check_fields_on_adequacy(self):
         """
             Abstract

@@ -266,7 +266,7 @@ class Publication(CabinetView):
 
 
 
-
+#todo fix try except block
     class Publish(CabinetView):
         class PutResponses(object):
             @staticmethod
