@@ -2,6 +2,9 @@
 
 import uuid
 import datetime
+
+from djantimat.helpers import RegexpProc
+
 # from django.contrib.postgres.fields.array import ArrayField
 
 from django.db.utils import DatabaseError
@@ -18,7 +21,7 @@ from core.currencies.constants import CURRENCIES as currencies_constants
 from core.publications import models_signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
-    EmptyRentPrice
+    EmptyRentPrice, BadWords
 
 from publications_to_check.models import PublicationsToCheck
 
@@ -497,7 +500,8 @@ class BodyModel(AbstractModel):
 
         self.check_extended_fields()
 
-        self.check_fields_on_abusive_words()
+        if not self.check_fields_on_abusive_words():
+            raise BadWords('abusive_words')
 
         return self.check_fields_on_adequacy()
         # return self.check_fields_on_adequacy()
@@ -506,10 +510,13 @@ class BodyModel(AbstractModel):
 
 
     def check_fields_on_abusive_words(self):
-        fields_name = self._meta.get_all_field_names()
-        for name in fields_name:
-            print name
-        return
+        checking_phrase = ''
+        for attr, value in self.__dict__.iteritems():
+            if isinstance(value, unicode):
+                checking_phrase=checking_phrase+value
+        return RegexpProc.test(checking_phrase)
+
+
     def check_fields_on_adequacy(self):
         """
             Abstract

@@ -14,7 +14,6 @@ class EmptyRentPrice(ValidationError): pass
 class EmptyTitle(ValidationError): pass
 class EmptyDescription(ValidationError): pass
 
-
 #-- validation
 class EmptyFloor(ValidationError): pass
 class EmptyTotalArea(ValidationError): pass
@@ -35,6 +34,7 @@ class IncorrectBedRoomsCount(ValidationError): pass
 class IncorrectLivingArea(ValidationError): pass
 class IncorrectKitchenArea(ValidationError): pass
 
+class BadWords(ValidationError): pass
 
 class PhotosHandlerExceptions(object):
     class ImageIsTooLarge(Exception): pass
