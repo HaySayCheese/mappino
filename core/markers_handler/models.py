@@ -1,9 +1,9 @@
 # coding=utf-8
 import math
+
 from django.db import models, connections
 from django.db.models import Q
 from djorm_pgarray.fields import BigIntegerArrayField
-
 from collective.exceptions import InvalidArgument
 from core.currencies.constants import CURRENCIES
 from core.currencies.currencies_manager import convert as convert_price
@@ -12,7 +12,6 @@ from core.publications.constants import \
     OBJECTS_TYPES, MARKET_TYPES, FLOOR_TYPES, HEATING_TYPES, LIVING_RENT_PERIODS, HEAD_MODELS
 from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
-
 
 
 class AbstractBaseIndex(models.Model):
@@ -136,16 +135,14 @@ class AbstractBaseIndex(models.Model):
         if filters is None:
             return CURRENCIES.uah()
 
-        return filters.get('cu_sid', CURRENCIES.uah())
+        return int(filters.get('cu_sid', CURRENCIES.uah()))
 
 
     # -- filters methods
 
-    @staticmethod  # range
-    def apply_price_filter(filters, markers):
-        currency = int(filters.get('cu_sid'))
-        if (currency is None) or (currency not in CURRENCIES.values()):
-            raise InvalidArgument('filters does not contains or contains invalid currency_sid.')
+    @classmethod  # range
+    def apply_price_filter(cls, filters, markers):
+        currency = cls.currency_from_filters(filters)
 
         price_min = filters.get('p_min')
         if price_min:
@@ -2735,9 +2732,11 @@ class SegmentsIndex(models.Model):
             index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
         elif 'for_rent' in filters:
             index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
+        else:
+            raise RuntimeError('Request must containt filters or for rnet, or for sale.')
 
         if index is None:
-            raise InvalidArgument('No index for such tid.')
+            raise RuntimeError('No index for such tid.')
 
 
         # Custom SQL is needed here to call PostgreSQL's stored procedure "unnest(...)"
