@@ -21,10 +21,7 @@ def login_required_or_forbidden(func):
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated():
             return HttpResponseForbidden()
-        try:
-            return func(request, *args, **kwargs)
-        except Exception as e:
-            pass
+        return func(request, *args, **kwargs)
     return wrapper
 
 
