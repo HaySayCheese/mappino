@@ -147,6 +147,11 @@ class FlatsBodies(BodyModel):
 
     #-- validation
     def check_extended_fields(self):
+        '''
+        Check information in fields. If data is impossible
+            function will raise Validation error
+
+        '''
         if self.floor_type_sid == FLOOR_TYPES.floor() and self.floor is None:
             raise EmptyFloor('Floor is None.')
         if self.floors_count is not None and self.floors_count<self.floor:
@@ -169,10 +174,14 @@ class FlatsBodies(BodyModel):
 
     def check_fields_on_adequacy(self):
         """
-            I will check some parameters of publication on adequacy
+            Check some parameters of publication on adequacy.
             If check failed, i will return False.
-        :return: True or False
+
+        :return:
+            True - If there are no strange information
+            False - If information is not impossible, but is very strange
         """
+
         #Operator have to check publication with higher priority if:
 
         #There are less than 10 square meter per room,
