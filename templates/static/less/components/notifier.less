@@ -1,0 +1,39 @@
+
+.notification-collection {
+    position: absolute;
+    top: 0px;
+    right: 50%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    z-index: 9999 !important;
+
+    .translate(50%, 0);
+
+    .notification-item {
+        min-width: 250px;
+        padding: 6px 20px;
+
+        cursor: pointer;
+        color: @gray-darker;
+
+        background: lighten(@nice-yellow, 12%);
+        border: 0 1px 1px 1px 1px 1px solid lighten(@nice-yellow, 7%);
+        .border-bottom-radius(@border-radius-base);
+
+
+        &.ng-enter {
+            -webkit-animation: 0.5s fadeInDown;
+            -moz-animation: 0.5s fadeInDown;
+            -o-animation: 0.5s fadeInDown;
+            animation: 0.5s fadeInDown;
+        }
+
+        &.ng-leave {
+            -webkit-animation: 0.5s fadeOutUp;
+            -moz-animation: 0.5s fadeOutUp;
+            -o-animation: 0.5s fadeOutUp;
+            animation: 0.5s fadeOutUp;
+        }
+    }
+}

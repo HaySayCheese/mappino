@@ -5,6 +5,7 @@
 mappino/dev_settings.py
 mappino/passwords.py
 mappino/keys/*
+mappino/keys
 
 node_modules
 

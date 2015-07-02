@@ -1,0 +1,126 @@
+@font-face {
+    font-family: 'mappino';
+    src: url('../../fonts/mappino.eot?66131332');
+    src: url('../../fonts/mappino.eot?66131332#iefix') format('embedded-opentype'),
+    url('../../fonts/mappino.woff?66131332') format('woff'),
+    url('../../fonts/mappino.ttf?66131332') format('truetype'),
+    url('../../fonts/mappino.svg?66131332#mappino') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'mappino';
+    src: url('../font/mappino.svg?66131332#mappino') format('svg');
+  }
+}
+*/
+
+[class^="icon-"]:before, [class*=" icon-"]:before {
+    font-family: "mappino";
+    font-style: normal;
+    font-weight: normal;
+    speak: none;
+
+    display: inline-block;
+    text-decoration: inherit;
+    width: 1em;
+    margin-right: .2em;
+    text-align: center;
+    /* opacity: .8; */
+
+    /* For safety - reset parent styles, that can break glyph codes*/
+    font-variant: normal;
+    text-transform: none;
+
+    /* fix buttons height, for twitter bootstrap */
+    line-height: 1em;
+
+    /* Animation center compensation - margins should be symmetric */
+    /* remove if not needed */
+    margin-left: .2em;
+
+    /* you can be more comfortable with increased icons size */
+    /* font-size: 120%; */
+
+    /* Uncomment for 3D effect */
+    /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+.icon-circle-checked:before { content: '\e800'; } /* '' */
+.icon-circle-unchecked:before { content: '\e801'; } /* '' */
+
+.icon-lightbulb {
+
+    &:before {
+        content: '\e802';
+    }
+
+    &.margin-left {
+        &:before {
+            margin-left: -50px;
+        }
+    }
+    &.margin-top-right {
+        &:before {
+            margin-top: 20px;
+            margin-left: 0px;
+        }
+    }
+    &.margin-top-left {
+        &:before {
+            margin-top: 80px;
+            margin-left: -50px;
+        }
+    }
+
+
+    &.light-gray {
+        color: @gray-lighter;
+    }
+    &.yellow {
+        color: @nice-yellow;
+    }
+    &.orange {
+        color: @nice-orange;
+    }
+    &.blue {
+        color: @nice-blue;
+    }
+    &.green {
+        color: @nice-green;
+    }
+
+
+
+    &.left-10:before {
+        .rotate(-10deg);
+    }
+    &.left-20:before {
+        .rotate(-20deg);
+    }
+    &.right-10:before {
+        .rotate(10deg);
+    }
+
+
+
+    &.x3:before {
+        font-size: 300%;
+    }
+    &.x4:before {
+        font-size: 450%;
+    }
+    &.x5:before {
+        font-size: 550%;
+    }
+    &.x8:before {
+        font-size: 850%;
+    }
+    &.x12:before {
+        font-size: 1250%;
+    }
+}

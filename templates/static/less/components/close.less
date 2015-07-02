@@ -1,0 +1,29 @@
+//
+// Close icons
+// --------------------------------------------------
+
+
+.close {
+  float: right;
+  line-height: 1;
+  .opacity(.7);
+  .transition(~"all 0.1s ease");
+
+  &:hover,
+  &:focus {
+    text-decoration: none;
+    cursor: pointer;
+    .opacity(0.9);
+  }
+
+  // Additional properties for button version
+  // iOS requires the button element instead of an anchor tag.
+  // If you want the anchor version, it requires `href="#"`.
+  button& {
+    padding: 0;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    -webkit-appearance: none;
+  }
+}
