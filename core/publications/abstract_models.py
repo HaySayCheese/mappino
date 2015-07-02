@@ -5,6 +5,7 @@ import datetime
 
 from djantimat.helpers import RegexpProc
 
+
 # from django.contrib.postgres.fields.array import ArrayField
 
 from django.db.utils import DatabaseError
@@ -21,7 +22,7 @@ from core.currencies.constants import CURRENCIES as currencies_constants
 from core.publications import models_signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
-    EmptyRentPrice, BadWords
+    EmptyRentPrice, AbusiveWords
 
 from publications_to_check.models import PublicationsToCheck
 
@@ -498,22 +499,28 @@ class BodyModel(AbstractModel):
         if (self.description is None) or (not self.description):
             raise EmptyDescription('Description is empty')
 
+        #Raise ValidationError if parameters of publication is wrong
         self.check_extended_fields()
 
+        #Raise ValidationError if there are abusive words in string fields
         if not self.check_fields_on_abusive_words():
-            raise BadWords('abusive_words')
+            raise AbusiveWords('abusive_words')
 
         return self.check_fields_on_adequacy()
-        # return self.check_fields_on_adequacy()
-
-
 
 
     def check_fields_on_abusive_words(self):
+        '''
+
+        :return:
+            True - there are abusive words in text fields
+            False - obviously
+        '''
         checking_phrase = ''
         for attr, value in self.__dict__.iteritems():
             if isinstance(value, unicode):
                 checking_phrase=checking_phrase+value
+
         return RegexpProc.test(checking_phrase)
 
 
