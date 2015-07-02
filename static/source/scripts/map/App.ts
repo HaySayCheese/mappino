@@ -4,14 +4,19 @@ module pages.map {
     'use strict';
 
     var app: angular.IModule = angular.module('mappino.pages.map', [
+        'ngAnimate',
         'ngMaterial',
         'ngCookies',
         'ngResource',
+        'ngMessages',
+
+        'ngFileUpload',
 
         'perfect_scrollbar',
 
         'ui.router',
 
+        'bModules.Auth',
         'bModules.Types'
     ]);
 
@@ -57,6 +62,7 @@ module pages.map {
     app.controller('PublicationController', PublicationController);
     app.controller('FavoritesController', FavoritesController);
     app.controller('FiltersController', FiltersController);
+    app.controller('AccountController', AccountController);
     app.controller('MapController', MapController);
     app.controller('PlaceAutocompleteController', PlaceAutocompleteController);
 }

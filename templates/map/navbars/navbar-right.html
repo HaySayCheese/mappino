@@ -155,7 +155,7 @@
                     <section ng-controller="FavoritesController as favCtrl">
                         <perfect-scrollbar class="scroller">
                             <ul class="favorite-list" layout="column" layout-align="start start">
-                                <li class="favorite-list-item" ng-click="favCtrl.openPublication('11:22')">
+                                <li class="favorite-list-item" ng-click="favCtrl.publicationHandler.open('11:22')">
                                     <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
                                     <div class="favorite-list-item-overlay">
                                         <md-button class="md-icon-button">
@@ -170,7 +170,7 @@
                                         </div>
                                     </div>
                                 </li>
-                                <li class="favorite-list-item" ng-click="favCtrl.openPublication('33:44', true)">
+                                <li class="favorite-list-item" ng-click="favCtrl.publicationHandler.open('33:44', true)">
                                     <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
                                     <div class="favorite-list-item-overlay">
                                         <md-button class="md-icon-button">

@@ -13,12 +13,7 @@ module pages.map {
         constructor(private $scope,
                     private publicationHandler: PublicationHandler) {
             // ---------------------------------------------------------------------------------------------------------
-        }
-
-
-
-        public openPublication(publication_id, without_publication_list?: Boolean) {
-            this.publicationHandler.open(publication_id, without_publication_list);
+            this.publicationHandler = publicationHandler;
         }
     }
 }

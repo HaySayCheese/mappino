@@ -1,6 +1,8 @@
-publication-view {
+.publication-view {
     @extend %_right-sliding-panel;
     @extend .md-whiteframe-z3;
+
+    //right: -1000px;
 
     width: 600px;
     overflow: auto;
@@ -36,7 +38,7 @@ publication-view {
         height: 400px;
         position: relative;
 
-        img {
+        img, video {
             @include size(100%, 400px);
         }
 

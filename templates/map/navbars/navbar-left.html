@@ -92,26 +92,104 @@
                     <md-icon>perm_identity</md-icon>
                 </md-tab-label>
                 <md-tab-body>
-                    <section class="md-padding">
-                        <form name="loginForm">
-                            <div layout="column">
-                                <md-input-container>
-                                    <label>Телефон или эл. почта</label>
-                                    <input type="text" ng-model="user.login" >
-                                </md-input-container>
-                                <md-input-container>
-                                    <label>Пароль</label>
-                                    <input type="text" ng-model="user.password">
-                                </md-input-container>
-                                <md-button class="md-raised md-primary">
-                                    Войти
-                                </md-button>
+                    <section class="md-padding" ng-controller="AccountController as accCtrl">
+                        <div ng-switch="accountState" ng-animate-children>
+                            <div ng-switch-when="login">
+                                <form name="loginForm" layout="column" novalidate>
+                                    <md-input-container>
+                                        <label>Телефон или эл. почта</label>
+                                        <input type="text" name="userLogin" ng-model="login.user.login" required>
+                                        <div ng-messages="loginForm.userLogin.$error"
+                                             ng-show="loginForm.$submitted || loginForm.userLogin.$touched">
+                                            <div ng-message="required">Обязательное поле</div>
+                                            <div ng-message="invalid">Неверная пара логин - пароль</div>
+                                        </div>
+                                    </md-input-container>
+                                    <md-input-container>
+                                        <label>Пароль</label>
+                                        <input type="text" name="userPassword" ng-model="login.user.password" required>
+                                        <div ng-messages="loginForm.userPassword.$error"
+                                             ng-show="loginForm.$submitted || loginForm.userPassword.$touched">
+                                            <div ng-message="required">Обязательное поле</div>
+                                        </div>
+                                    </md-input-container>
+                                    <md-button class="md-raised md-primary" ng-click="accCtrl.login();">
+                                        Войти
+                                    </md-button>
+                                </form>
+                                <div layout="row">
+                                    <md-button class="md-primary" ng-click="accCtrl.changeState('registration');">Регистрация</md-button>
+                                    <span flex></span>
+                                    <md-button class="md-primary">Напомнить пароль</md-button>
+                                </div>
                             </div>
-                        </form>
-                        <div layout="row">
-                            <md-button class="md-primary">Регистрация</md-button>
-                            <span flex></span>
-                            <md-button class="md-primary">Напомнить пароль</md-button>
+                            <!-- registration part -->
+                            <div ng-switch-when="registration">
+                                <form name="registrationForm" layout="column" novalidate>
+                                    <div layout="row">
+                                        <md-input-container>
+                                            <label>Имя</label>
+                                            <input type="text" name="userName" ng-model="registration.user.name" required>
+                                            <div ng-messages="registrationForm.userName.$error"
+                                                 ng-show="registrationForm.$submitted || registrationForm.userName.$touched">
+                                                <div ng-message="required">Обязательное поле</div>
+                                            </div>
+                                        </md-input-container>
+                                        <md-input-container>
+                                            <label>Фамилия</label>
+                                            <input type="text" name="userSurname" ng-model="registration.user.surname" required>
+                                            <div ng-messages="registrationForm.userSurname.$error"
+                                                 ng-show="registrationForm.$submitted || registrationForm.userSurname.$touched">
+                                                <div ng-message="required">Обязательное поле</div>
+                                            </div>
+                                        </md-input-container>
+                                    </div>
+                                    <div layout="row">
+                                        <md-input-container flex="100">
+                                            <label>Эл. почта</label>
+                                            <input type="email" name="userEmail" ng-model="registration.user.email" required>
+                                            <div ng-messages="registrationForm.userEmail.$error"
+                                                 ng-show="registrationForm.$submitted || registrationForm.userEmail.$touched">
+                                                <div ng-message="required">Обязательное поле</div>
+                                            </div>
+                                        </md-input-container>
+                                    </div>
+                                    <div layout="column">
+                                        <md-input-container>
+                                            <label>Моб. телефон</label>
+                                            <input type="tel" name="userPhone" ng-model="registration.user.phone" required>
+                                            <div ng-messages="registrationForm.userPhone.$error"
+                                                 ng-show="registrationForm.$submitted || registrationForm.userPhone.$touched">
+                                                <div ng-message="required">Обязательное поле</div>
+                                            </div>
+                                        </md-input-container>
+                                        <md-input-container>
+                                            <label>Пароль</label>
+                                            <input type="text" name="userPassword" ng-model="registration.user.password" required>
+                                            <div ng-messages="registrationForm.userPassword.$error"
+                                                 ng-show="registrationForm.$submitted || registrationForm.userPassword.$touched">
+                                                <div ng-message="required">Обязательное поле</div>
+                                            </div>
+                                        </md-input-container>
+                                        <md-input-container>
+                                            <label>Пароль еще разочек</label>
+                                            <input type="text" name="userPasswordRepeat" ng-model="registration.user.passwordRepeat" required>
+                                            <div ng-messages="registrationForm.userPasswordRepeat.$error"
+                                                 ng-show="registrationForm.$submitted || registrationForm.userPasswordRepeat.$touched">
+                                                <div ng-message="required">Обязательное поле</div>
+                                            </div>
+                                        </md-input-container>
+                                        <md-button class="md-raised md-primary" ng-click="accCtrl.registration();">
+                                            Регистрация
+                                        </md-button>
+                                    </div>
+                                    <div layout="row">
+                                        <md-button class="md-primary" ng-click="accCtrl.changeState('login');">Войти</md-button>
+                                        <span flex></span>
+                                        <md-button class="md-primary">Напомнить пароль</md-button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </section>
                 </md-tab-body>

@@ -59,6 +59,7 @@
 /// <reference path='controllers/PublicationController.ts' />
 /// <reference path='controllers/FavoritesController.ts' />
 /// <reference path='controllers/FiltersController.ts' />
+/// <reference path='controllers/AccountController.ts' />
 /// <reference path='controllers/MapController.ts' />
 /// <reference path='controllers/PlaceAutocompleteController.ts' />
 

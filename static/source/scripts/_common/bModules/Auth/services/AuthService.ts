@@ -49,13 +49,13 @@ module bModules.Auth {
                 .then((response) => {
                     if (response.data['code'] === 0) {
                         self.settingsService.update(response.data['user']);
-                        success(response.data)
+                        _.isFunction(success) && success(response.data)
                     } else {
                         self.settingsService.clearDataByUser();
-                        error(response.data)
+                        _.isFunction(error) && error(response.data)
                     }
                 }, (response) => {
-                    error(response.data)
+                    _.isFunction(error) && error(response.data)
                 })
         }
 
