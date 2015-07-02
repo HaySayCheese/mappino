@@ -1,0 +1,47 @@
+.support-message-list {
+    padding: 0;
+    list-style: none;
+
+    li {
+        padding: 7px 7px 7px 20px;
+        border-bottom: 1px dashed @gray-lighter;
+
+        div {
+            padding-top: 2px;
+        }
+    }
+}
+
+.support-message-form {
+    padding: 40px 80px 10px;
+    margin-bottom: 30px;
+    border-bottom: 1px dashed @gray-lighter;
+}
+
+.support-message-block {
+    padding: 20px 80px;
+
+    &.user {
+        > .user-photo {
+            margin-right: 20px;
+        }
+    }
+    &.admin {
+        > .user-photo {
+            margin-left: 20px;
+        }
+    }
+
+    > .user-photo img {
+        .square(100px);
+        background: @gray-lighter;
+        border-radius: 50%;
+        border: 1px solid @gray-lighter;
+    }
+    > .message-body {
+        .message {
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+    }
+}

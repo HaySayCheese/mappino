@@ -1,0 +1,266 @@
+//
+// Load core variables and mixins
+// --------------------------------------------------
+@import "../../components/variables";
+@import "../../components/mixins.less";
+
+
+.sidebar {
+    position: absolute;
+
+    top: 30px;
+    right: 30px;
+    bottom: 30px;
+
+    width: 370px;
+
+    background: #ffffff;
+    .box-shadow(~"0 0 15px rgba(0, 0, 0, 0.4)");
+
+    .sidebar-header-links,
+    .sidebar-body,
+    .sidebar-footer {
+        display: block;
+        padding: 10px;
+    }
+}
+
+.sidebar-header {
+    display: block;
+
+    .sidebar-header-links {
+        padding: 5px 10px !important;
+
+        background: #f2f1ef;
+        border-bottom: 1px solid #e5e1d9;
+
+        font-size: @font-size-h6;
+        text-align: right;
+    }
+
+    .sidebar-header-city-search {
+        display: block;
+        height: 80px;
+
+        padding: 20px 10px;
+
+        background: white;
+        text-align: center;
+
+        .sidebar-city-input {
+            border: none;
+            border-bottom: 1px dashed #ccc;
+            border-radius: 0;
+            .box-shadow(none);
+        }
+    }
+}
+
+.sidebar-body {
+    position: relative;
+    display: block;
+
+    padding: 0 !important;
+
+    height: ~"calc(100% - 165px)";
+
+    .red-markers-panel-icon,
+    .blue-markers-panel-icon,
+    .green-markers-panel-icon,
+    .yellow-markers-panel-icon {
+        position: relative;
+
+        background-size: 31px 34px;
+        background-position: right bottom;
+        background-repeat: no-repeat;
+
+        cursor: pointer;
+
+
+        &:after {
+            position: absolute;
+
+            right: 0;
+            bottom: -8px;
+            width: 0;
+
+            height: 0;
+            border-top-width: 8px;
+            border-top-style: solid;
+            border-right: 8px solid transparent;
+
+            content: " ";
+        }
+    }
+
+    .red-markers-panel-icon {
+        background-image: url("../../img/main/sidebar/red-panel-marker.png");
+
+        &:after {
+            border-top-color: darken(@panel-danger-heading-bg, 30%);
+        }
+    }
+    .blue-markers-panel-icon {
+        background-image: url("../../img/main/sidebar/blue-panel-marker.png");
+
+        &:after {
+            border-top-color: darken(@panel-primary-heading-bg, 25%);
+        }
+    }
+    .green-markers-panel-icon {
+        background-image: url("../../img/main/sidebar/green-panel-marker.png");
+
+        &:after {
+            border-top-color: darken(@panel-success-heading-bg, 25%);
+        }
+    }
+    .yellow-markers-panel-icon {
+        background-image: url("../../img/main/sidebar/yellow-panel-marker.png");
+
+        &:after {
+            border-top-color: darken(@panel-warning-heading-bg, 25%);
+        }
+    }
+
+    .panel {
+        margin-right: -8px;
+
+        .panel-body {
+            padding-top: 0px;
+            padding-bottom: 0px;
+            position: relative;
+            overflow-y: hidden;
+            padding-right: 23px;
+
+            @media (min-height: 500px) and (max-height: 550px) {
+                max-height: 150px;
+            }
+            @media (min-height: 550px) and (max-height: 600px) {
+                max-height: 200px;
+            }
+            @media (min-height: 600px) and (max-height: 650px) {
+                max-height: 250px;
+            }
+            @media (min-height: 650px) and (max-height: 700px) {
+                max-height: 300px;
+            }
+            @media (min-height: 700px) and (max-height: 750px) {
+                max-height: 350px;
+            }
+            @media (min-height: 750px) and (max-height: 800px) {
+                max-height: 400px;
+            }
+            @media (min-height: 800px) and (max-height: 850px) {
+                max-height: 450;
+            }
+            @media (min-height: 850px) and (max-height: 900px) {
+                max-height: 500px;
+            }
+            @media (min-height: 900px) and (max-height: 950px) {
+                max-height: 550px;
+            }
+            @media (min-height: 950px) and (max-height: 1000px) {
+                max-height: 600px;
+            }
+            @media (min-height: 1000px) and (max-height: 1050px) {
+                max-height: 650px;
+            }
+
+            .ps-scrollbar-y-rail {
+                right: 10px;
+            }
+
+            > div > .form-horizontal {
+                padding-top: 20px;
+            }
+        }
+    }
+
+    .section-header {
+        padding-bottom: 5px;
+        border-bottom: 1px solid @gray-lighter;
+    }
+
+    .form-group {
+        margin-left: -5px;
+        margin-right: -5px;
+    }
+
+    .without-margin-bottom {
+        margin-bottom: 0;
+    }
+
+    .sidebar-loader {
+        .size(100%, 64px);
+        display: block;
+
+        background: url("../../img/main/sidebar/ajax-loader.gif") center center no-repeat;
+    }
+
+    [class*='col-sm-'] {
+        padding-right: 5px;
+        padding-left: 5px;
+    }
+
+    .dropdown-toggle.selectpicker {
+        border: 1px solid #cccccc !important;
+    }
+}
+
+.sidebar-footer {
+    border-top: 1px solid #e5e1d9;
+    background: #f2f1ef;
+
+    text-align: center;
+    line-height: 36px;
+    .clearfix();
+
+    .sidebar-footer-text {
+        color: lighten(@gray, 10%);
+        float: left;
+    }
+
+    .sidebar-footer-social-links {
+        float: right;
+        .clearfix();
+
+        > a {
+            .square(35px);
+            float: left;
+        }
+
+        > a:nth-child(1) {
+            background-image: url("../../img/main/sidebar/v.png");
+        }
+        > a:nth-child(2) {
+            background-image: url("../../img/main/sidebar/f.png");
+        }
+        > a:nth-child(3) {
+            background-image: url("../../img/main/sidebar/t.png");
+        }
+        > a:nth-child(4) {
+            background-image: url("../../img/main/sidebar/g.png");
+        }
+    }
+}
+
+.realtor-sidebar {
+    .sidebar-body {
+        height: ~"calc(100% - 105px)";
+    }
+
+    .realtor {
+        > img.photo {
+            .square(120px);
+            margin-top: 20px;
+            border-radius: 50%;
+            border: 1px solid @gray-lighter;
+            .center-block();
+        }
+
+        > .name {
+            margin-top: 10px;
+            font-size: @font-size-h3;
+        }
+    }
+}
