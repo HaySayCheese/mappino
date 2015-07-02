@@ -20,23 +20,48 @@ module bModules.Auth {
 
 
 
-        public login(username: string, password: string, success?: Function, error?: Function) {
+        public login(user: IUserToLogin, success?: Function, error?: Function) {
             var self = this;
 
             this.$http.post('/ajax/api/accounts/login/', {
-                "username": username,
-                "password": password
+                "username": user.login,
+                "password": user.password
             }).then((response) => {
                 if (response.data['code'] === 0) {
                     self.settingsService.update(response.data['user']);
-                    success(response.data)
+                    _.isFunction(success) && success(response.data)
                 } else {
                     self.settingsService.clearDataByUser();
-                    error(response.data)
+                    _.isFunction(error) && error(response.data)
                 }
             }, (response) => {
                 self.settingsService.clearDataByUser();
-                success(response.data)
+                _.isFunction(error) && error(response.data)
+            });
+        }
+
+
+
+        public registration(user: IUserToRegistration, success?: Function, error?: Function) {
+            var self = this;
+
+            this.$http.post('/ajax/api/accounts/registration/', {
+                "name":             user.firstName,
+                "surname":          user.lastName,
+                "email":            user.email,
+                "phone-number":     user.phoneNumber,
+                "password":         user.password,
+                "password-repeat":  user.passwordRepeat
+            }).then((response) => {
+                if (response.data['code'] === 0) {
+                    _.isFunction(success) && success(response.data)
+                } else {
+                    self.settingsService.clearDataByUser();
+                    _.isFunction(error) && error(response.data)
+                }
+            }, (response) => {
+                self.settingsService.clearDataByUser();
+                _.isFunction(error) && error(response.data)
             });
         }
 
@@ -52,6 +77,36 @@ module bModules.Auth {
                         _.isFunction(success) && success(response.data)
                     } else {
                         self.settingsService.clearDataByUser();
+                        _.isFunction(error) && error(response.data)
+                    }
+                }, (response) => {
+                    _.isFunction(error) && error(response.data)
+                })
+        }
+
+
+
+        public validateEmail(email: string, success?: Function, error?: Function) {
+            this.$http.post('/ajax/api/accounts/validate-email/', { email: email })
+                .then((response) => {
+                    if (response.data['code'] === 0) {
+                        _.isFunction(success) && success(response.data)
+                    } else {
+                        _.isFunction(error) && error(response.data)
+                    }
+                }, (response) => {
+                    _.isFunction(error) && error(response.data)
+                })
+        }
+
+
+
+        public validatePhoneNumber(phoneNumber: string, success?: Function, error?: Function) {
+            this.$http.post('/ajax/api/accounts/validate-phone-number/', { number: phoneNumber })
+                .then((response) => {
+                    if (response.data['code'] === 0) {
+                        _.isFunction(success) && success(response.data)
+                    } else {
                         _.isFunction(error) && error(response.data)
                     }
                 }, (response) => {

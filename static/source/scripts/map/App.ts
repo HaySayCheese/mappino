@@ -55,14 +55,27 @@ module pages.map {
     app.directive('tabBodySectionCollapsible', TabBodySectionCollapsibleDirective);
 
 
+
+
     /** Controllers */
     app.controller('AppController', AppController);
+
+    // left navbar controllers
     app.controller('NavbarLeftController', NavbarLeftController);
+    app.controller('FiltersTabController', FiltersTabController);
+    // account tab controllers
+    app.controller('AccountTabController', AccountTabController);
+    app.controller('LoginController', LoginController);
+    app.controller('RegistrationController', RegistrationController);
+
+    // right navbar controllers
     app.controller('NavbarRightController', NavbarRightController);
+    app.controller('FavoritesTabController', FavoritesTabController);
+
+    // publication controllers
     app.controller('PublicationController', PublicationController);
-    app.controller('FavoritesController', FavoritesController);
-    app.controller('FiltersController', FiltersController);
-    app.controller('AccountController', AccountController);
+
+
     app.controller('MapController', MapController);
     app.controller('PlaceAutocompleteController', PlaceAutocompleteController);
 }

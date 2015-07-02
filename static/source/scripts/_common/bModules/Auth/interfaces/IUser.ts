@@ -2,6 +2,20 @@
 
 
 module bModules.Auth {
+    export interface IUserToLogin {
+        login:      string
+        password:   string
+    }
+
+    export interface IUserToRegistration {
+        firstName:      string
+        lastName:       string
+        email:          string
+        phoneNumber:    string
+        password:       string
+        passwordRepeat: string
+    }
+
     export interface IUser {
         account: {
             name:               string
