@@ -34,7 +34,7 @@ class IncorrectBedRoomsCount(ValidationError): pass
 class IncorrectLivingArea(ValidationError): pass
 class IncorrectKitchenArea(ValidationError): pass
 
-class BadWords(ValidationError): pass
+class AbusiveWords(ValidationError): pass
 
 class PhotosHandlerExceptions(object):
     class ImageIsTooLarge(Exception): pass
