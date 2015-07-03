@@ -7,16 +7,29 @@ module pages.map {
     export class FiltersTabController {
         private filters: any;
 
+        private periodTypes     = [];
+        private realtyTypes     = [];
+        private currencyTypes   = [];
+
         public static $inject = [
             '$scope',
             '$timeout',
-            'FiltersService'
+            'FiltersService',
+            'PeriodTypesService',
+            'RealtyTypesService',
+            'CurrencyTypesService'
         ];
 
         constructor(private $scope,
                     private $timeout,
-                    private filtersService: FiltersService) {
+                    private filtersService: FiltersService,
+                    private periodTypesService: bModules.Types.PeriodTypesService,
+                    private realtyTypesService: bModules.Types.RealtyTypesService,
+                    private currencyTypesService: bModules.Types.CurrencyTypesService) {
             // ---------------------------------------------------------------------------------------------------------
+            this.periodTypes    = periodTypesService.periodTypes;
+            this.realtyTypes    = realtyTypesService.realtyTypes;
+            this.currencyTypes  = currencyTypesService.currencyTypes;
 
             this.filters = $scope.filters = filtersService.filters['panels'];
 

@@ -11,7 +11,7 @@
                 </md-tab-label>
                 <md-tab-body>
                     <section>
-                        <perfect-scrollbar class="scroller">
+                        <div scrollbar>
                             <ul class="publication-list" layout="column" layout-align="start start">
                                 <li class="publication-list-item">
                                     <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
@@ -140,7 +140,7 @@
                                     </div>
                                 </li>
                             </ul>
-                        </perfect-scrollbar>
+                        </div>
                     </section>
                 </md-tab-body>
             </md-tab>
@@ -153,7 +153,7 @@
                 </md-tab-label>
                 <md-tab-body>
                     <section ng-controller="FavoritesTabController as favCtrl">
-                        <perfect-scrollbar class="scroller">
+                        <div scrollbar>
                             <ul class="favorite-list" layout="column" layout-align="start start">
                                 <li class="favorite-list-item" ng-click="favCtrl.publicationHandler.open('11:22')">
                                     <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
@@ -186,7 +186,7 @@
                                     </div>
                                 </li>
                             </ul>
-                        </perfect-scrollbar>
+                        </div>
                     </section>
                 </md-tab-body>
             </md-tab>

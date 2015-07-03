@@ -12,9 +12,9 @@ module pages.map {
 
         'ngFileUpload',
 
-        'perfect_scrollbar',
-
         'ui.router',
+
+        //'ngTinyScrollbar',
 
         'bModules.Auth',
         'bModules.Types'
