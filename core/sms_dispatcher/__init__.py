@@ -1,5 +1,7 @@
-from core.sms_dispatcher.classes import RegistrationCheckCodesSender, NotificationsSender
+#coding=utf-8
+
+from core.sms_dispatcher.classes import LoginCodesSender, NotificationsSender
 
 
-check_codes_sms_sender = RegistrationCheckCodesSender()
+login_codes_sms_sender = LoginCodesSender()
 notifications_sms_sender = NotificationsSender()

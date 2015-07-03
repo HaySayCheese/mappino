@@ -47,7 +47,7 @@ class BaseSMSSender(object):
 		return 'OK' in response
 
 
-class RegistrationCheckCodesSender(BaseSMSSender):
+class LoginCodesSender(BaseSMSSender):
 	"""
 	Клас призначений для розсилки кодів перевірки мобільних телефонів під час реєстрації.
 	"""
@@ -75,13 +75,6 @@ class RegistrationCheckCodesSender(BaseSMSSender):
 			pipe.set(key, 1)
 			pipe.expireat(key, self.__zero_timestamp())
 			pipe.execute()
-
-
-	def resend(self, number, code, request):
-		self.throttle(request)
-		return self.process_transaction(
-			# WARN: message can't be encoded in unicode, because of urlencode can process only ASCII
-			number, 'Ваш проверочный код mappino: {0}'.format(code))
 
 
 	def send(self, number, code, request):

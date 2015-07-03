@@ -6,7 +6,7 @@ import string
 from collective.exceptions import EmptyArgument
 from collective.http.cookies import set_signed_cookie
 from core import redis_connections
-from core.sms_dispatcher import check_codes_sms_sender
+from core.sms_dispatcher import login_codes_sms_sender
 
 
 class MobilePhoneChecker(object):
@@ -138,9 +138,9 @@ class MobilePhoneChecker(object):
 		"""
 		def send():
 			if resend:
-				check_codes_sms_sender.resend(mobile_phone, code, resend)
+				login_codes_sms_sender.resend(mobile_phone, code, resend)
 			else:
-				check_codes_sms_sender.send(mobile_phone, code, request)
+				login_codes_sms_sender.send(mobile_phone, code, request)
 
 
 		sms_sent = cls._redis.hget(record_id, 'sms_sent')

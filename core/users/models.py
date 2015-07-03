@@ -2,45 +2,66 @@
 import random
 import string
 import uuid
+import datetime
+import phonenumbers
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
+from django.db.utils import IntegrityError
+from django.db import models, transaction
 from django.utils.timezone import now
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.db import models, transaction
 
 import exceptions
+
 from core.users.classes import Avatar
 from core.users import constants
 
 
-
 class UsersManager(BaseUserManager):
-    def create_user(self, email, phone, password=None):
-        assert email, 'User must have an email.'
-        assert phone, 'User must have phone number.'
-
+    def create_user(self, mobile_phone_number):
         with transaction.atomic():
-            user = self.create(
-                email=self.normalize_email(email),
-                mobile_phone=phone,
-            )
-            user.set_password(password)
-            user.save()
+            try:
+                user = self.create(
+                    mobile_phone = self.parse_phone_number(mobile_phone_number),
+                    is_active = True
+                )
+            except IntegrityError:
+                raise ValueError('User with such mobile phone is already present.')
 
             Preferences.objects.create(user=user)
             return user
 
 
-    def create_superuser(self, email, phone, password=None):
+    def create_superuser(self, email, phone):
         assert email, 'User must have an email.'
         assert phone, 'User must have phone number.'
 
         with transaction.atomic():
-            user = self.create_user(email, phone, password)
+            user = self.create_user(phone)
+
+            user.email = email
             user.is_admin = True
             user.is_active = True
             user.save()
+
             return user
+
+
+    @staticmethod
+    def parse_phone_number(phone_number):
+        """
+        :rtype: basestring
+        :returns: parsed string with the phone number in E164 format.
+        """
+
+        try:
+            return phonenumbers.format_number(
+                phonenumbers.parse(phone_number),
+                phonenumbers.PhoneNumberFormat.E164
+            )
+        except phonenumbers.NumberParseException:
+            raise ValueError('parameter "phone_number" can not be parsed.')
 
 
 class Users(AbstractBaseUser):
@@ -54,14 +75,15 @@ class Users(AbstractBaseUser):
     is_moderator = models.BooleanField(default=False)
     is_manager = models.BooleanField(default=False)
 
+    # One time token is used to perform authentication by the sms.
+    one_time_token = models.TextField(null=True, unique=True)
+    one_time_token_updated = models.DateTimeField(null=True)
 
-    # required
-    first_name = models.TextField()
-    last_name = models.TextField()
-    email = models.EmailField(unique=True)
+    first_name = models.TextField(null=True)
+    last_name = models.TextField(null=True)
+
+    email = models.EmailField(null=True, unique=True)
     mobile_phone = models.TextField(unique=True)
-
-    # other contacts
     add_mobile_phone = models.TextField(null=True, unique=True)
     work_email = models.EmailField(null=True)  # work email can be common per company, therefore it can't be unique
     skype = models.TextField(null=True)  # skype can be common per company, therefore it can't be unique
@@ -73,7 +95,7 @@ class Users(AbstractBaseUser):
 
 
     USERNAME_FIELD = 'mobile_phone'
-    REQUIRED_FIELDS = ['name', 'surname', 'email']
+    REQUIRED_FIELDS = ['email']
 
     objects = UsersManager()
 
@@ -94,12 +116,30 @@ class Users(AbstractBaseUser):
 
 
     @classmethod
-    def validate_alias(cls, alias, exclude_user=None):
-        if not cls.alias_free(alias, exclude_user=exclude_user):
-            raise exceptions.AliasAlreadyTaken('')
+    def by_one_of_the_mobile_phones(cls, phone_number):
+        """
+        :returns:
+            user who's mobile phone or additional mobile phone is exact to "phone_number".
+            If no such users will be found - returns None.
+        :raises:
+            ValueError - if "phone_number" can't be parsed.
+        """
+        parsed_phone_number = cls.objects.parse_phone_number(phone_number)
 
-        if len(alias) <= 3:
-            raise exceptions.TooShortAlias('')
+        try:
+            return cls.objects\
+                .filter(Q(mobile_phone=parsed_phone_number) | Q(add_mobile_phone=parsed_phone_number))[0]
+        except IndexError:
+            return None
+
+
+    # @classmethod
+    # def validate_alias(cls, alias, exclude_user=None):
+    #     if not cls.alias_free(alias, exclude_user=exclude_user):
+    #         raise exceptions.AliasAlreadyTaken('')
+    #
+    #     if len(alias) <= 3:
+    #         raise exceptions.TooShortAlias('')
 
 
     @classmethod
@@ -127,6 +167,55 @@ class Users(AbstractBaseUser):
 
     def contact_email(self):
         return self.work_email if self.work_email else self.email
+
+
+    def update_one_time_token(self):
+        """
+        Updates users one time token with the random generated value.
+        The generated token will be unique between all the users.
+        Also, updates time of one time token generation.
+        """
+
+        def generate_token():
+            return ''.join([random.choice(string.digits) for _ in xrange(6)])
+
+
+        # check if no user with such token
+        token = generate_token()
+        while self.objects.filter(one_time_token=token).only('id')[:1]:
+            token = generate_token()
+
+
+        self.one_time_token = token
+        self.one_time_token_updated = now()
+        self.save()
+
+
+    def check_one_time_token(self, token):
+        """
+        Checks users one time token with the "token".
+        If tokens are exact - one time token of the user wil lbe deleted, and methods returns True.
+        Otherwise - returns False.
+        """
+
+        if not self.one_time_token or not self.one_time_token_updated:
+            return False
+
+        # check if token is not expired
+        if self.one_time_token_updated < (now() - datetime.timedelta(hours=2)):
+            self.one_time_token = None
+            self.one_time_token_updated = None
+            self.save()
+            return False
+
+        if self.one_time_token == token:
+            self.one_time_token = None
+            self.one_time_token_updated = None
+            self.save()
+            return True
+
+        else:
+            return False
 
 
     @property
@@ -196,44 +285,3 @@ class Preferences(models.Model):
 
     def email_may_be_shown(self):
         return not self.hide_email
-
-
-
-class AccessRestoreTokens(models.Model):
-    class Meta:
-        db_table = "users_access_restore_tokens"
-
-
-    user = models.ForeignKey(Users)
-    token = models.TextField(unique=True)
-    created = models.DateTimeField(default=now)
-
-
-    @classmethod
-    def new(cls, user_id):
-        def generate():
-            return ''.join(random.choice(string.digits + string.ascii_letters) for x in range(256))
-
-
-        check_user_query = cls.objects.filter(user=user_id)[:1]
-        if check_user_query:
-            # user already requested password reset
-            # regenerating the token
-            record = check_user_query[0]
-
-            new_token = generate()
-            while new_token == record.token:
-                new_token = generate()
-
-            record.token = new_token
-            record.save()
-            return record
-
-
-        else:
-            # user does not exist
-            token = generate()
-            while cls.objects.filter(token=token).count() > 0:
-                token = generate()
-
-            return cls.objects.create(user=user_id, token=token)
