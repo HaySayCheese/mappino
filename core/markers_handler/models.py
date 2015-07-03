@@ -1,7 +1,9 @@
 # coding=utf-8
 import math
+
 from django.db import models, connections
 from django.db.models import Q
+from django.contrib.postgres.fields import ArrayField
 from djorm_pgarray.fields import BigIntegerArrayField
 
 from collective.exceptions import InvalidArgument
@@ -12,7 +14,6 @@ from core.publications.constants import \
     OBJECTS_TYPES, MARKET_TYPES, FLOOR_TYPES, HEATING_TYPES, LIVING_RENT_PERIODS, HEAD_MODELS
 from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
-
 
 
 class AbstractBaseIndex(models.Model):
@@ -477,6 +478,13 @@ class AbstractBaseIndex(models.Model):
 
 
 
+class AbstractRentIndex(AbstractBaseIndex):
+
+    entrance_dates = ArrayField(models.DateTimeField)
+    departure_dates = ArrayField(models.DateTimeField)
+    rent_dates = ArrayField(models.DateTimeField)
+
+
 class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
@@ -609,7 +617,7 @@ class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
 
 
 
-class FlatsRentIndex(AbstractBaseIndex):
+class FlatsRentIndex(AbstractRentIndex):
     period_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
@@ -873,7 +881,7 @@ class HousesSaleIndex(AbstractBaseIndex):
 
 
 
-class HousesRentIndex(AbstractBaseIndex):
+class HousesRentIndex(AbstractRentIndex):
     period_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
@@ -1134,7 +1142,7 @@ class RoomsSaleIndex(AbstractBaseIndex):
 
 
 
-class RoomsRentIndex(AbstractBaseIndex):
+class RoomsRentIndex(AbstractRentIndex):
     period_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
