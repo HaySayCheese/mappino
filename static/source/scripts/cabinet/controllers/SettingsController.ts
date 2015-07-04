@@ -8,26 +8,22 @@ module pages.cabinet {
             '$scope',
             '$rootScope',
             '$timeout',
-            'SettingsService'
+            'AuthService'
         ];
 
         constructor(
             private $scope: any,
             private $rootScope: any,
             private $timeout: angular.ITimeoutService,
-            private settingsService: bModules.Auth.SettingsService) {
+            private authService: bModules.Auth.AuthService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.loaders.base = true;
 
             this.initInputsChange();
 
-            settingsService.load((response) => {
+            authService.loadProfile((response) => {
                 $scope.user = response;
                 $rootScope.loaders.base = false;
-                $timeout(() => {
-                    angular.element(".settings-page input:not([type='file'], [type='checkbox'])").change();
-                    $timeout(() => $('select').material_select());
-                });
             });
         }
 
@@ -43,31 +39,27 @@ module pages.cabinet {
 
 
         private initInputsChange() {
-            var self = this;
-
             angular.element(".settings-page input[type='file']").bind('change', (event) => {
-                self.$rootScope.loaders.avatar = true;
+                this.$rootScope.loaders.avatar = true;
 
-                self.settingsService.uploadAvatar(event.target['files'][0], (response) => {
-                    self.$rootScope.loaders.avatar = false;
+                this.authService.uploadAvatar(event.target['files'][0], (response) => {
+                    this.$rootScope.loaders.avatar = false;
 
-                    self.$scope.imageFatal      = response.code === 1;
-                    self.$scope.imageTooLarge   = response.code === 2;
-                    self.$scope.ImageTooSmall   = response.code === 3;
-                    self.$scope.ImageUndefined  = response.code === 4;
+                    this.$scope.imageFatal      = response.code === 1;
+                    this.$scope.imageTooLarge   = response.code === 2;
+                    this.$scope.ImageTooSmall   = response.code === 3;
+                    this.$scope.ImageUndefined  = response.code === 4;
                 });
             });
 
-            angular.element(
-                ".settings-page input[type='text'], " +
-                ".settings-page input[type='tel'], " +
-                ".settings-page input[type='email']")
-                .bind("focusout", (e) => {
-                // -
+            angular.element(".settings-page input[type='text'], " +
+                            ".settings-page input[type='tel'], " +
+                            ".settings-page input[type='email']").bind("focusout", (e) => {
+                // -----------------------------------------------------------------------------------------------------
                 var name  = e.currentTarget['name'],
                     value = e.currentTarget['value'].replace(/\s+/g, " ");
 
-                if (!self.$scope.form.user[name].$dirty) {
+                if (!this.$scope.userProfileForm[name].$dirty) {
                     return;
                 }
 
@@ -75,27 +67,23 @@ module pages.cabinet {
                     return;
                 }
 
-                self.settingsService.check({ f: name, v: value }, (newValue) => {
+                this.authService.checkProfileField({ f: name, v: value }, (newValue) => {
                     e.currentTarget['value'] = newValue;
                 }, (response) => {
-                    self.$scope.form.user[name].$setValidity("incorrect",   response.code !== 10);
-                    self.$scope.form.user[name].$setValidity("duplicated",  response.code !== 11);
+                    this.$scope.userProfileForm[name].$setValidity("incorrect",   response.code !== 10);
+                    this.$scope.userProfileForm[name].$setValidity("inUsed",      response.code !== 11);
                 });
 
             });
 
-            angular.element(".settings-page input[type='checkbox']").bind("change", (e) => {
-                var name  = e.currentTarget['name'],
-                    value = e.currentTarget['checked'];
-
-                self.settingsService.check({ f: name, v: value });
-            });
-
-            angular.element(".settings-page select").bind('change', (e) => {
-                var name  = e.currentTarget['name'],
-                    value = e.currentTarget['value'];
-
-                self.settingsService.check({ f: name, v: value });
+            this.$scope.$watchCollection('user.preferences', (newValue, oldValue) => {
+                if (!_.isUndefined(newValue) && !_.isUndefined(oldValue)) {
+                    for (var key in newValue) {
+                        if (newValue[key] != oldValue[key]) {
+                            this.authService.checkProfileField({ f: key, v: newValue[key] });
+                        }
+                    }
+                }
             });
         }
     }

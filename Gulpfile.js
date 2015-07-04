@@ -154,7 +154,7 @@ gulp.task('TypeScript:Cabinet', function() {
             out: 'cabinet.js'
         }))
         .pipe(uglify())
-        .pipe(sourcemaps.write('/'))
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/cabinet/'));
 });
 

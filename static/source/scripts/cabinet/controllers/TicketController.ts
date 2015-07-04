@@ -16,8 +16,7 @@ module pages.cabinet {
             '$scope',
             '$rootScope',
             '$state',
-            'TicketsService',
-            'SettingsService'
+            'TicketsService'
         ];
 
 
@@ -26,8 +25,7 @@ module pages.cabinet {
             private $scope: any,
             private $rootScope: any,
             private $state: angular.ui.IStateService,
-            private ticketsService: ITicketsService,
-            private settingsService: bModules.Auth.SettingsService) {
+            private ticketsService: ITicketsService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.ticket       = {};
             $scope.new_message  = {};

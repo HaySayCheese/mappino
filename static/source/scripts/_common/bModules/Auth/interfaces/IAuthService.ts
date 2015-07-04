@@ -3,15 +3,16 @@
 
 module bModules.Auth {
     export interface IAuthService {
-        login(user: IUserToLogin, success?: Function, error?: Function): void
+        user: IUser
+
+        login(phoneNumber: string, success?: Function, error?: Function): void
 
         tryLogin(success?: Function, error?: Function): void
 
-        registration(user: IUserToRegistration, success?: Function, error?: Function): void
+        loadProfile(success?: Function, error?: Function): void
 
-        validateEmail(email: string, success?: Function, error?: Function): void
+        checkProfileField(field: Object, success?: Function, error?: Function): void
 
-        validatePhoneNumber(phoneNumber: string, success?: Function, error?: Function): void
-
+        uploadAvatar(avatar: File, success?: Function, error?: Function): void
     }
 }

@@ -2,26 +2,12 @@
 
 
 module bModules.Auth {
-    export interface IUserToLogin {
-        login:      string
-        password:   string
-    }
-
-    export interface IUserToRegistration {
-        firstName:      string
-        lastName:       string
-        email:          string
-        phoneNumber:    string
-        password:       string
-        passwordRepeat: string
-    }
-
     export interface IUser {
         account: {
-            name:               string
-            surname:            string
+            first_name:         string
+            last_name:          string
             full_name:          string
-            avatar:             string
+            avatar_url:         string
             add_landline_phone: string
             add_mobile_phone:   string
             email:              string

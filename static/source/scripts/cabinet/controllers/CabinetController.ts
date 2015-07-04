@@ -7,7 +7,6 @@ module pages.cabinet {
         public static $inject = [
             '$rootScope',
             'AuthService',
-            'SettingsService',
             '$mdSidenav',
             '$mdUtil',
             '$mdMedia'
@@ -16,7 +15,6 @@ module pages.cabinet {
         constructor(
             private $rootScope: any,
             private authService: bModules.Auth.IAuthService,
-            private settingsService: bModules.Auth.SettingsService,
             private $mdSidenav: any,
             private $mdUtil: any,
             private $mdMedia: any) {

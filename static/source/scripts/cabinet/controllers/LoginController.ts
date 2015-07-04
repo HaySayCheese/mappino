@@ -9,33 +9,21 @@ module pages.cabinet {
             'AuthService'
         ];
 
-        constructor(
-            private $scope: any,
-            private authService: bModules.Auth.IAuthService) {
-            // -
+        constructor(private $scope: any, private authService: bModules.Auth.IAuthService) {
             $scope.user = {
-                username: '',
-                password: '',
-                invalid: false
+                phoneNumber: '',
             };
         }
 
 
         private login() {
-            var self = this;
-
-            if (!this.$scope.user.username || !this.$scope.user.password) {
-                return;
+            if (this.$scope.loginForm.$valid) {
+                this.authService.login(this.$scope.user.phoneNumber, () => {
+                    window.location.pathname = '/cabinet/';
+                }, () => {
+                    this.$scope.loginForm.phoneNumber.$setValidity('invalid', false);
+                });
             }
-
-            this.authService.login(this.$scope.user.username, this.$scope.user.password, (response) => {
-                window.location.pathname = '/cabinet/';
-                //if (response.data.code !== 0) {
-                //    self.$scope.user.invalid = true;
-                //} else {
-                //    window.location.pathname = '/cabinet/';
-                //}
-            });
         }
     }
 }
