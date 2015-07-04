@@ -1,9 +1,9 @@
-<div class="settings-page" ng-controller="SettingsController as settingsCtrl" layout="column" layout-align="start center">
-    <form name="userProfileForm" ng-hide="loaders.base" novalidate>
+<div class="settings-page" ng-controller="SettingsController as settingsCtrl">
+    <form name="userProfileForm" ng-hide="loaders.base" layout="column" layout-align="start center" novalidate>
         <section class="-medium user-block md-whiteframe-z2">
             <h3 class="md-headline light-blue-text">Основная информация</h3>
 
-            <div layout="row">
+            <div layout-gt-sm="row" layout-sm="column">
                 <div layout="column" layout-align="center center" flex="40">
                     <div class="user-photo">
                         <img ng-src="[[ user.account.avatar ]]" alt="" ng-hide="loaders.avatar" />
@@ -23,7 +23,7 @@
                 </div>
 
 
-                <div layout="column" layout-align="start right" flex="50" offset="10">
+                <div layout="column" layout-align="start right" flex-sm="100" flex-gt-sm="50" offset-gt-sm="10">
                     <md-input-container flex>
                         <label>Имя</label>
                         <input type="text" name="first_name" ng-model="user.account.first_name" required>
@@ -69,7 +69,7 @@
             <h3 class="md-headline light-blue-text">Контакты</h3>
 
             <div layout="row">
-                <div layout="column" flex="40">
+                <div layout="column" flex-gt-sm="40" hide-sm>
                     <!--<i class="mdi-communication-contacts large"></i>-->
                     <blockquote>
                         Надання додаткових контактів дасть більше можливості будь-кому звязатися з вами
@@ -77,7 +77,7 @@
                 </div>
 
 
-                <div layout="column" flex="50" offset="10">
+                <div layout="column" flex-sm="100" flex-gt-sm="50" offset-gt-sm="10">
                     <md-input-container flex>
                         <label>Рабочая эл. почта</label>
                         <input type="text" name="work_email" ng-model="user.account.work_email">
@@ -121,8 +121,8 @@
                                  aria-label="Разрешать запрос обратного звонка">
                         Разрешать запрос обратного звонка
                     </md-checkbox>
-                    <div layout="row" layout-align="start center" ng-show="user.preferences.allow_call_requests">
-                        <span flex="45" offset="10">Присылать уведомления на</span>
+                    <div layout-sm="column" layout-gt-sm="row" layout-align="start center" ng-show="user.preferences.allow_call_requests">
+                        <span fxel-sm="100" flex-gt-sm="45" offset-gt-sm="10">Присылать уведомления на</span>
                         <md-select placeholder="Присылать уведомления на" name="send_call_request_notifications_to_sid" ng-model="user.preferences.send_call_request_notifications_to_sid">
                             <md-option value="0">телефон посредством sms</md-option>
                             <md-option value="1">почту</md-option>
@@ -138,8 +138,8 @@
                                  aria-label="Разрешать оставлять сообщения через форму обратной связи">
                         Разрешать оставлять сообщения через форму обратной связи
                     </md-checkbox>
-                    <div layout="row" layout-align="start center" ng-show="user.preferences.allow_messaging">
-                        <span flex="45" offset="10">Присылать уведомления на</span>
+                    <div  layout-sm="column" layout-gt-sm="row" layout-align="start center" ng-show="user.preferences.allow_messaging">
+                        <span fxel-sm="100" flex-gt-sm="45" offset-gt-sm="10">Присылать уведомления на</span>
                         <md-select placeholder="Присылать уведомления на" name="send_call_request_notifications_to_sid" ng-model="user.preferences.send_message_notifications_to_sid">
                             <md-option value="1">почту</md-option>
                             <md-option value="2">телефон и почту</md-option>
