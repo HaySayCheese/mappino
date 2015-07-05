@@ -2,6 +2,7 @@
 import copy
 import json
 
+from django.conf import settings
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.contrib.auth import authenticate, login
 from django.views.generic import View
@@ -63,9 +64,10 @@ class LoginManager(object):
                 user = Users.objects.create_user(phone_number)
 
 
-            # updating one time token
             user.update_one_time_token()
-            login_codes_sms_sender.send(phone_number, user.one_time_token, request)
+
+            if not settings.DEBUG:
+                login_codes_sms_sender.send(phone_number, user.one_time_token, request)
 
             return self.PostResponses.ok()
 

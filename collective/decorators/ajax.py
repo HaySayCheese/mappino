@@ -32,19 +32,19 @@ def ajax_only(f):
 
 
 def json_response(f):
-    def wrapper(request, *args, **kwargs):
-        return HttpJsonResponse(f(request, *args, **kwargs))
+    def wrapper(*args, **kwargs):
+        return HttpJsonResponse(f(*args, **kwargs))
     return wrapper
 
 
 def json_response_bad_request(f):
-    def wrapper(request, *args, **kwargs):
-        return HttpJsonResponseBadRequest(f(request, *args, **kwargs))
+    def wrapper(*args, **kwargs):
+        return HttpJsonResponseBadRequest(f(*args, **kwargs))
     return wrapper
 
 
 def json_response_not_found(f):
-    def wrapper(request, *args, **kwargs):
-        return HttpJsonResponseNotFound(f(request, *args, **kwargs))
+    def wrapper(*args, **kwargs):
+        return HttpJsonResponseNotFound(f(*args, **kwargs))
     return wrapper
 

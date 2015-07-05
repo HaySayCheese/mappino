@@ -56,6 +56,9 @@ class UsersManager(BaseUserManager):
         """
 
         try:
+            if phone_number[:4] != '+380':
+                raise ValueError('Only Ukrainian phone numbers are supported.')
+
             return phonenumbers.format_number(
                 phonenumbers.parse(phone_number),
                 phonenumbers.PhoneNumberFormat.E164
@@ -182,7 +185,7 @@ class Users(AbstractBaseUser):
 
         # check if no user with such token
         token = generate_token()
-        while self.objects.filter(one_time_token=token).only('id')[:1]:
+        while self._default_manager.filter(one_time_token=token).only('id')[:1]:
             token = generate_token()
 
 
