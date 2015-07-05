@@ -4,47 +4,30 @@
 {% block navbar %}
 {% endblock %}
 
+{% block sidenav %}
+{% endblock %}
+
 
 
 {% block wrapper %}
-    <div class="wrapper valign-wrapper">
-        <div ng-controller="LoginController as loginCtrl" class="center-block valign">
-
-            <div class="login-panel">
-                <form name="loginForm" novalidate>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <input id="username" type="text" name="username"
-                                   ng-model="user.username"
-                                   ng-class="{ invalid: loginForm.username.$dirty && !user.username, valid: user.username }"
-                                   required>
-                            <label for="username">Логин</label>
-                        </div>
+<div layout="row" layout-align="center center">
+    <div ng-controller="LoginController as loginCtrl" class="login-panel md-padding md-whiteframe-z1">
+        <form name="loginForm" ng-submit="loginCtrl.login()"  novalidate>
+            <div layout="column">
+                <md-input-container flex>
+                    <label>Телефон или Эл. почта</label>
+                    <input type="text" name="phoneNumber" ng-model="user.phoneNumber" autofocus required>
+                    <div ng-messages="loginForm.phoneNumber.$error"
+                         ng-show="loginForm.$submitted || loginForm.phoneNumber.$touched">
+                        <div ng-message="required">Обязательное поле</div>
+                        <div ng-message="invalid">Неверная пара логин - пароль</div>  `
                     </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <input id="password" type="password" name="password"
-                                   ng-model="user.password"
-                                   ng-class="{ invalid: loginForm.password.$dirty && !user.password, valid: user.password }"
-                                   required>
-                            <label for="password">Пароль</label>
-                        </div>
-                    </div>
-                    <div class="row" ng-show="user.invalid">
-                        <div class="col s12 center-align">
-                            <span class="red-text">Попытка входа не удалась</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col s12 right">
-                            <button class="waves-effect waves-light btn right"
-                               ng-disabled="!user.username || !user.password"
-                               ng-class="{ 'blue lighten-1': user.username && user.password }"
-                               ng-click="loginCtrl.login()">Войти</button>
-                        </div>
-                    </div>
-                </form>
+                </md-input-container>
+                <md-button class="md-raised md-primary">
+                    Войти
+                </md-button>
             </div>
-        </div>
+        </form>
     </div>
+</div>
 {% endblock %}

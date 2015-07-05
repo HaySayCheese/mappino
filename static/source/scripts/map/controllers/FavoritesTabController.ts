@@ -4,18 +4,16 @@
 module pages.map {
     'use strict';
 
-    export class NavbarLeftController {
-
+    export class FavoritesTabController {
         public static $inject = [
             '$scope',
-            'TabsHandler'
+            'PublicationHandler'
         ];
 
         constructor(private $scope,
-                    private tabsHandler: TabsHandler) {
+                    private publicationHandler: PublicationHandler) {
             // ---------------------------------------------------------------------------------------------------------
-
-            tabsHandler.initializeNavbarLeftTabs();
+            this.publicationHandler = publicationHandler;
         }
     }
 }

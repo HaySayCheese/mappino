@@ -8,27 +8,27 @@
                     <md-icon>filter_list</md-icon>
                 </md-tab-label>
                 <md-tab-body>
-                    <div ng-controller="FiltersController as filCtrl">
+                    <div class="account-tab" ng-controller="FiltersTabController as filCtrl">
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
                             <span class="md-body-1">
-                                [[ navCtrl.realtyTypes[filters.red.r_t_sid].title ]]&nbsp;
+                                [[ filCtrl.realtyTypes[filters.red.r_t_sid].title ]]&nbsp;
                             </span>
                             <span class="md-body-1" ng-show="filters.red.r_p_min && filters.red.r_p_max">
-                                ([[ filters.red.r_p_min ]] - [[ filters.red.r_p_max ]] [[ navCtrl.currencyTypes[filters.red.r_cu_sid].title ]])
+                                ([[ filters.red.r_p_min ]] - [[ filters.red.r_p_max ]] [[ filCtrl.currencyTypes[filters.red.r_cu_sid].title ]])
                             </span>
                             <span class="md-body-1" ng-show="filters.red.r_p_min && !filters.red.r_p_max">
-                                (от [[ filters.red.r_p_min ]] [[ navCtrl.currencyTypes[filters.red.r_cu_sid].title ]])
+                                (от [[ filters.red.r_p_min ]] [[ filCtrl.currencyTypes[filters.red.r_cu_sid].title ]])
                             </span>
                             <span class="md-body-1" ng-show="!filters.red.r_p_min && filters.red.r_p_max">
-                                (до [[ filters.red.r_p_max ]] [[ navCtrl.currencyTypes[filters.red.r_cu_sid].title ]])
+                                (до [[ filters.red.r_p_max ]] [[ filCtrl.currencyTypes[filters.red.r_cu_sid].title ]])
                             </span>
                         </header>
                         <tab-body-collapsible>
-                            <perfect-scrollbar class="scroller">
+                            <div scrollbar>
                                 <section class="-border-top" layout="column" layout-padding>
                                     <div layout="row">
                                         <md-select placeholder="Тип обєкта" ng-model="filters.red.r_t_sid" flex="67">
-                                            <md-option ng-repeat="realtyType in navCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
+                                            <md-option ng-repeat="realtyType in filCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
                                         </md-select>
                                         <md-select placeholder="Операция" ng-model="filters.red.r_op_sid" flex="33">
                                             <md-option value="0">Продажа</md-option>
@@ -37,7 +37,7 @@
                                     </div>
                                 </section>
                                 <div ng-if="filters.red.r_t_sid != null" ng-include="'/ajax/template/map/filters/red/' + [[ filters.red.r_t_sid ]] + '/'"></div>
-                            </perfect-scrollbar>
+                            </div>
                         </tab-body-collapsible>
                     </div>
                 </md-tab-body>
@@ -50,23 +50,25 @@
                     <md-icon>filter_list</md-icon>
                 </md-tab-label>
                 <md-tab-body>
-                    <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
-                        <span class="md-body-1">Дома 0 - 90 000 $</span>
-                    </header>
-                    <tab-body-collapsible>
-                        <section class="-border-top" layout="column" layout-padding>
-                            <div layout="row">
-                                <md-select placeholder="Тип обєкта" ng-model="filters.blue.b_t_sid" flex="65">
-                                    <md-option ng-repeat="realtyType in navCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
-                                </md-select>
-                                <md-select placeholder="Операция" ng-model="filters.blue.b_op_sid" flex="35">
-                                    <md-option value="0">Продажа</md-option>
-                                    <md-option value="1">Оренда</md-option>
-                                </md-select>
-                            </div>
-                        </section>
-                        <div ng-if="filters.blue.b_t_sid != null" ng-include="'/ajax/template/main/filters/blue/' + [[ filters.blue.b_t_sid ]] + '/'"></div>
-                    </tab-body-collapsible>
+                    <div class="filters-tab">
+                        <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
+                            <span class="md-body-1">Дома 0 - 90 000 $</span>
+                        </header>
+                        <tab-body-collapsible>
+                            <section class="-border-top" layout="column" layout-padding>
+                                <div layout="row">
+                                    <md-select placeholder="Тип обєкта" ng-model="filters.blue.b_t_sid" flex="65">
+                                        <md-option ng-repeat="realtyType in navCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
+                                    </md-select>
+                                    <md-select placeholder="Операция" ng-model="filters.blue.b_op_sid" flex="35">
+                                        <md-option value="0">Продажа</md-option>
+                                        <md-option value="1">Оренда</md-option>
+                                    </md-select>
+                                </div>
+                            </section>
+                            <div ng-if="filters.blue.b_t_sid != null" ng-include="'/ajax/template/main/filters/blue/' + [[ filters.blue.b_t_sid ]] + '/'"></div>
+                        </tab-body-collapsible>
+                    </div>
                 </md-tab-body>
             </md-tab>
 
@@ -77,7 +79,7 @@
                     <md-icon>search</md-icon>
                 </md-tab-label>
                 <md-tab-body>
-                    <section class="md-padding">
+                    <section class="search-tab md-padding">
                         <md-input-container>
                             <label>Местоположение</label>
                             <input type="text" ng-model="filters.map.c">
@@ -92,10 +94,11 @@
                     <md-icon>perm_identity</md-icon>
                 </md-tab-label>
                 <md-tab-body>
-                    <section class="md-padding" ng-controller="AccountController as accCtrl">
+                    <section class="account-tab md-padding" ng-controller="AccountTabController as accCtrl">
                         <div ng-switch="accountState" ng-animate-children>
-                            <div ng-switch-when="login">
-                                <form name="loginForm" layout="column" novalidate>
+
+                            <div ng-switch-when="login" ng-controller="LoginController as loginCtrl">
+                                <form name="loginForm" layout="column" ng-submit="loginCtrl.login()" novalidate>
                                     <md-input-container>
                                         <label>Телефон или эл. почта</label>
                                         <input type="text" name="userLogin" ng-model="login.user.login" required>
@@ -107,13 +110,13 @@
                                     </md-input-container>
                                     <md-input-container>
                                         <label>Пароль</label>
-                                        <input type="text" name="userPassword" ng-model="login.user.password" required>
+                                        <input type="password" name="userPassword" ng-model="login.user.password" required>
                                         <div ng-messages="loginForm.userPassword.$error"
                                              ng-show="loginForm.$submitted || loginForm.userPassword.$touched">
                                             <div ng-message="required">Обязательное поле</div>
                                         </div>
                                     </md-input-container>
-                                    <md-button class="md-raised md-primary" ng-click="accCtrl.login();">
+                                    <md-button class="md-raised md-primary">
                                         Войти
                                     </md-button>
                                 </form>
@@ -124,12 +127,12 @@
                                 </div>
                             </div>
                             <!-- registration part -->
-                            <div ng-switch-when="registration">
-                                <form name="registrationForm" layout="column" novalidate>
+                            <div ng-switch-when="registration" ng-controller="RegistrationController as regCtrl">
+                                <form name="registrationForm" layout="column" ng-submit="regCtrl.registration()" novalidate>
                                     <div layout="row">
                                         <md-input-container>
                                             <label>Имя</label>
-                                            <input type="text" name="userName" ng-model="registration.user.name" required>
+                                            <input type="text" name="userName" ng-model="registration.user.firstName" required>
                                             <div ng-messages="registrationForm.userName.$error"
                                                  ng-show="registrationForm.$submitted || registrationForm.userName.$touched">
                                                 <div ng-message="required">Обязательное поле</div>
@@ -137,7 +140,7 @@
                                         </md-input-container>
                                         <md-input-container>
                                             <label>Фамилия</label>
-                                            <input type="text" name="userSurname" ng-model="registration.user.surname" required>
+                                            <input type="text" name="userSurname" ng-model="registration.user.lastName" required>
                                             <div ng-messages="registrationForm.userSurname.$error"
                                                  ng-show="registrationForm.$submitted || registrationForm.userSurname.$touched">
                                                 <div ng-message="required">Обязательное поле</div>
@@ -147,20 +150,25 @@
                                     <div layout="row">
                                         <md-input-container flex="100">
                                             <label>Эл. почта</label>
-                                            <input type="email" name="userEmail" ng-model="registration.user.email" required>
+                                            <input type="text" name="userEmail" ng-model="registration.user.email" required>
                                             <div ng-messages="registrationForm.userEmail.$error"
                                                  ng-show="registrationForm.$submitted || registrationForm.userEmail.$touched">
                                                 <div ng-message="required">Обязательное поле</div>
+                                                <div ng-message="emailIncorrect">Некоректная эл. почта</div>
+                                                <div ng-message="emailIsUsed">Указанная эл. почта уже используется</div>
                                             </div>
                                         </md-input-container>
                                     </div>
                                     <div layout="column">
                                         <md-input-container>
                                             <label>Моб. телефон</label>
-                                            <input type="tel" name="userPhone" ng-model="registration.user.phone" required>
+                                            <input type="tel" name="userPhone" ng-model="registration.user.phoneNumber" required>
                                             <div ng-messages="registrationForm.userPhone.$error"
                                                  ng-show="registrationForm.$submitted || registrationForm.userPhone.$touched">
                                                 <div ng-message="required">Обязательное поле</div>
+                                                <div ng-message="phoneCodeIncorrect">Некоректный код</div>
+                                                <div ng-message="phoneNumberIncorrect">Некоректный номер</div>
+                                                <div ng-message="phoneNumberIsUsed">Указанный номер уже используется</div>
                                             </div>
                                         </md-input-container>
                                         <md-input-container>
@@ -177,6 +185,7 @@
                                             <div ng-messages="registrationForm.userPasswordRepeat.$error"
                                                  ng-show="registrationForm.$submitted || registrationForm.userPasswordRepeat.$touched">
                                                 <div ng-message="required">Обязательное поле</div>
+                                                <div ng-message="passwordsNotMatch">Пароли не совпадают</div>
                                             </div>
                                         </md-input-container>
                                         <md-button class="md-raised md-primary" ng-click="accCtrl.registration();">
@@ -189,6 +198,18 @@
                                         <md-button class="md-primary">Напомнить пароль</md-button>
                                     </div>
                                 </form>
+                            </div>
+
+                            <div ng-switch-when="accountInformation">
+                                <div class="account-info-state" layout="column">
+                                    <div layout="row"layout-align="start start">
+                                        <img class="user-avatar" src="http://lorempixel.com/100/100" alt=""/>
+
+                                        <div layout="column" layout-align="start start" layout-padding>
+                                            <div class="md-title">Сергій Мекетюк</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>

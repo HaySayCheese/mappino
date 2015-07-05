@@ -32,7 +32,7 @@ module pages.cabinet {
             this._publication['hid']    = $state.params['id'].split(':')[1];
 
             $scope.currencyTypes    = currencyTypesService.currencyTypes;
-            $scope.periodTypes      = periodTypesService.period_types;
+            $scope.periodTypes      = periodTypesService.periodTypes;
 
             $scope.publication = {};
 

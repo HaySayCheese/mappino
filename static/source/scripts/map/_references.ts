@@ -50,16 +50,25 @@
 
 
 
+
+
 // ####################
 // Controllers import
 // ####################
 /// <reference path='controllers/AppController.ts' />
+
 /// <reference path='controllers/NavbarLeftController.ts' />
+/// <reference path='controllers/FiltersTabController.ts' />
+
+/// <reference path='controllers/AccountTabController.ts' />
+/// <reference path='controllers/LoginController.ts' />
+/// <reference path='controllers/RegistrationController.ts' />
+
 /// <reference path='controllers/NavbarRightController.ts' />
+/// <reference path='controllers/FavoritesTabController.ts' />
+
 /// <reference path='controllers/PublicationController.ts' />
-/// <reference path='controllers/FavoritesController.ts' />
-/// <reference path='controllers/FiltersController.ts' />
-/// <reference path='controllers/AccountController.ts' />
+
 /// <reference path='controllers/MapController.ts' />
 /// <reference path='controllers/PlaceAutocompleteController.ts' />
 

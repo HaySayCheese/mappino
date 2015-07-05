@@ -1,4 +1,5 @@
 .settings-page {
+
     .user-block {
 
         .user-photo {
@@ -12,7 +13,6 @@
             @media #{$small-and-down} {
                 margin-top: 0;
             }
-
 
             img {
                 @include square(180px);
@@ -31,19 +31,6 @@
                 margin-top: 0px;
             }
         }
-
-        .preloader-wrapper {
-            margin-top: 45px;
-        }
-    }
-
-
-    .col .col {
-        padding: 0;
-    }
-
-    .row .row {
-        margin-bottom: 0;
     }
 }
 

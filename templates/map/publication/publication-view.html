@@ -3,134 +3,132 @@
         '-closed': !pubCtrl.publicationHandler.isOpened(),
         '-with-navbar-right': pubCtrl.navbarsHandler.isOpened('navbar_right') }">
 
-    <div class="publication-view-container">
-        <perfect-scrollbar class="scroller">
-            <header>
-                <img src="http://hmsdemo.dhru.com/images/gallery/room/delux/SetHeight800-Deluxe-Room-Bedroom.jpg" alt=""/>
-                <div class="publication-view-image-overlay">
+    <div class="publication-view-container" scrollbar>
+        <header>
+            <img src="http://hmsdemo.dhru.com/images/gallery/room/delux/SetHeight800-Deluxe-Room-Bedroom.jpg" alt=""/>
+            <div class="publication-view-image-overlay">
+                <div layout="row">
+                    <md-button class="md-icon-button">
+                        <md-icon class="md-light md-36">fullscreen</md-icon>
+                        <md-tooltip md-direction="right" md-delay="0">
+                            Посмотреть все фотографии
+                        </md-tooltip>
+                    </md-button>
+                    <span flex></span>
+                    <md-button class="md-icon-button" ng-click="pubCtrl.publicationHandler.close()">
+                        <md-icon class="md-light md-36">close</md-icon>
+                        <md-tooltip md-direction="left" md-delay="0">
+                            Закрыть объявления
+                        </md-tooltip>
+                    </md-button>
+                </div>
+
+
+
+                <md-button class="md-icon-button slide-prev">
+                    <md-icon class="md-light md-48">chevron_left</md-icon>
+                </md-button>
+                <md-button class="md-icon-button slide-next">
+                    <md-icon class="md-light md-48">chevron_right</md-icon>
+                </md-button>
+
+
+                <div class="publication-view-overlay-description" layout="row" layout-align="start center" layout-padding>
+                    <md-button class="md-icon-button">
+                        <md-icon class="md-light md-48">star_border</md-icon>
+                        <md-tooltip md-direction="top" md-delay="0">
+                            Добавить в избранные
+                        </md-tooltip>
+                    </md-button>
+                    <div layout="column" layout-padding>
+                        <div class="md-headline">
+                            [[ pubCtrl.publicationHandler.isOpened() ]]
+                        </div>
+                        <div class="md-subhead">
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                        </div>
+                    </div>
+                    <md-fab-speed-dial class="md-fling publication-menu" md-direction="up">
+                        <md-fab-trigger>
+                            <md-button aria-label="publication menu" class="md-fab md-primary">
+                                <md-icon>more_vert</md-icon>
+                            </md-button>
+                        </md-fab-trigger>
+                        <md-fab-actions>
+                            <md-button aria-label="twitter" class="md-fab md-raised md-mini">
+                                <md-icon class="blue-text">share</md-icon>
+                            </md-button>
+                            <md-button aria-label="Google hangout" class="md-fab md-raised md-mini">
+                                <md-icon class="red-text">report</md-icon>
+                            </md-button>
+                        </md-fab-actions>
+                    </md-fab-speed-dial>
+                </div>
+            </div>
+        </header>
+
+        <section class="md-padding">
+            <div class="md-subhead blue-text">Краткая информация</div>
+            <md-divider></md-divider>
+            <p layout-padding>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias at aut deleniti dignissimos expedita explicabo iste perferendis porro, praesentium quasi qui quibusdam ratione reprehenderit saepe tenetur totam voluptatem? Esse, qui!
+            </p>
+            <div class="md-subhead blue-text">Інфа</div>
+            <md-divider></md-divider>
+            <div layout="row" layout-padding>
+                <div flex="50">
                     <div layout="row">
-                        <md-button class="md-icon-button">
-                            <md-icon class="md-light md-36">fullscreen</md-icon>
-                            <md-tooltip md-direction="right" md-delay="0">
-                                Посмотреть все фотографии
-                            </md-tooltip>
-                        </md-button>
-                        <span flex></span>
-                        <md-button class="md-icon-button" ng-click="pubCtrl.publicationHandler.close()">
-                            <md-icon class="md-light md-36">close</md-icon>
-                            <md-tooltip md-direction="left" md-delay="0">
-                                Закрыть объявления
-                            </md-tooltip>
-                        </md-button>
-                    </div>
-
-
-
-                    <md-button class="md-icon-button slide-prev">
-                        <md-icon class="md-light md-48">chevron_left</md-icon>
-                    </md-button>
-                    <md-button class="md-icon-button slide-next">
-                        <md-icon class="md-light md-48">chevron_right</md-icon>
-                    </md-button>
-
-
-                    <div class="publication-view-overlay-description" layout="row" layout-align="start center" layout-padding>
-                        <md-button class="md-icon-button">
-                            <md-icon class="md-light md-48">star_border</md-icon>
-                            <md-tooltip md-direction="top" md-delay="0">
-                                Добавить в избранные
-                            </md-tooltip>
-                        </md-button>
-                        <div layout="column" layout-padding>
-                            <div class="md-headline">
-                                [[ pubCtrl.publicationHandler.isOpened() ]]
-                            </div>
-                            <div class="md-subhead">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            </div>
+                        <div class="text-right" flex="50">
+                            <div>Тип квартири:</div>
                         </div>
-                        <md-fab-speed-dial class="md-fling publication-menu" md-direction="up">
-                            <md-fab-trigger>
-                                <md-button aria-label="publication menu" class="md-fab md-primary">
-                                    <md-icon>more_vert</md-icon>
-                                </md-button>
-                            </md-fab-trigger>
-                            <md-fab-actions>
-                                <md-button aria-label="twitter" class="md-fab md-raised md-mini">
-                                    <md-icon class="blue-text">share</md-icon>
-                                </md-button>
-                                <md-button aria-label="Google hangout" class="md-fab md-raised md-mini">
-                                    <md-icon class="red-text">report</md-icon>
-                                </md-button>
-                            </md-fab-actions>
-                        </md-fab-speed-dial>
+                        <div flex="50">
+                            <div>новостройка</div>
+                        </div>
+                    </div>
+                    <div layout="row">
+                        <div class="text-right" flex="50">
+                            <div>Тип рынка:</div>
+                        </div>
+                        <div flex="50">
+                            <div>вторичный</div>
+                        </div>
+                    </div>
+                    <div layout="row">
+                        <div class="text-right" flex="50">
+                            <div>Тип здания:</div>
+                        </div>
+                        <div flex="50">
+                            <div>кирпич</div>
+                        </div>
+                    </div>
+                    <div layout="row">
+                        <div class="text-right" flex="50">
+                            <div>Планировка:</div>
+                        </div>
+                        <div flex="50">
+                            <div>раздельная</div>
+                        </div>
+                    </div>
+                    <div layout="row">
+                        <div class="text-right" flex="50">
+                            <div>Общая площадь:</div>
+                        </div>
+                        <div flex="50">
+                            <div>100 м²</div>
+                        </div>
                     </div>
                 </div>
-            </header>
-
-            <section class="md-padding">
-                <div class="md-subhead blue-text">Краткая информация</div>
-                <md-divider></md-divider>
-                <p layout-padding>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias at aut deleniti dignissimos expedita explicabo iste perferendis porro, praesentium quasi qui quibusdam ratione reprehenderit saepe tenetur totam voluptatem? Esse, qui!
-                </p>
-                <div class="md-subhead blue-text">Інфа</div>
-                <md-divider></md-divider>
-                <div layout="row" layout-padding>
-                    <div flex="50">
-                        <div layout="row">
-                            <div class="text-right" flex="50">
-                                <div>Тип квартири:</div>
-                            </div>
-                            <div flex="50">
-                                <div>новостройка</div>
-                            </div>
-                        </div>
-                        <div layout="row">
-                            <div class="text-right" flex="50">
-                                <div>Тип рынка:</div>
-                            </div>
-                            <div flex="50">
-                                <div>вторичный</div>
-                            </div>
-                        </div>
-                        <div layout="row">
-                            <div class="text-right" flex="50">
-                                <div>Тип здания:</div>
-                            </div>
-                            <div flex="50">
-                                <div>кирпич</div>
-                            </div>
-                        </div>
-                        <div layout="row">
-                            <div class="text-right" flex="50">
-                                <div>Планировка:</div>
-                            </div>
-                            <div flex="50">
-                                <div>раздельная</div>
-                            </div>
-                        </div>
-                        <div layout="row">
-                            <div class="text-right" flex="50">
-                                <div>Общая площадь:</div>
-                            </div>
-                            <div flex="50">
-                                <div>100 м²</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div flex="50">
-                        <div>Тип квартири: новостройка</div>
-                        <div>Тип квартири: новостройка</div>
-                        <div>Тип квартири: новостройка</div>
-                    </div>
+                <div flex="50">
+                    <div>Тип квартири: новостройка</div>
+                    <div>Тип квартири: новостройка</div>
+                    <div>Тип квартири: новостройка</div>
                 </div>
-                <div class="md-subhead blue-text">Контакти</div>
-                <md-divider></md-divider>
-                <p layout-padding>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias at aut deleniti dignissimos expedita explicabo iste perferendis porro, praesentium quasi qui quibusdam ratione reprehenderit saepe tenetur totam voluptatem? Esse, qui!
-                </p>
-            </section>
-        </perfect-scrollbar>
+            </div>
+            <div class="md-subhead blue-text">Контакти</div>
+            <md-divider></md-divider>
+            <p layout-padding>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias at aut deleniti dignissimos expedita explicabo iste perferendis porro, praesentium quasi qui quibusdam ratione reprehenderit saepe tenetur totam voluptatem? Esse, qui!
+            </p>
+        </section>
     </div>
 </div>

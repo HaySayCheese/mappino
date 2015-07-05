@@ -4,10 +4,10 @@
 module bModules.Auth {
     export interface IUser {
         account: {
-            name:               string
-            surname:            string
+            first_name:         string
+            last_name:          string
             full_name:          string
-            avatar:             string
+            avatar_url:         string
             add_landline_phone: string
             add_mobile_phone:   string
             email:              string

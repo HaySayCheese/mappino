@@ -27,7 +27,8 @@
 
 // left navbar tabs
 @import "components/tabs/left-navbar/filters-tab";
-@import "components/tabs/left-navbar/auth-tab";
+@import "components/tabs/left-navbar/search-tab";
+@import "components/tabs/left-navbar/account-tab";
 
 
 // right navbar tabs
@@ -40,7 +41,7 @@
 
 
 
-
+// publication panel
 @import "components/sliding-panels/_right-sliding-panel";
 @import "components/sliding-panels/publication-view";
 
