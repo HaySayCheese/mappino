@@ -61,8 +61,6 @@
 /// <reference path='controllers/FiltersTabController.ts' />
 
 /// <reference path='controllers/AccountTabController.ts' />
-/// <reference path='controllers/LoginController.ts' />
-/// <reference path='controllers/RegistrationController.ts' />
 
 /// <reference path='controllers/NavbarRightController.ts' />
 /// <reference path='controllers/FavoritesTabController.ts' />

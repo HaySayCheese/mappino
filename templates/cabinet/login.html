@@ -13,7 +13,7 @@
 <div layout="row" layout-align="center center">
     <div ng-controller="LoginController as loginCtrl" class="login-panel md-padding md-whiteframe-z1">
         <form name="loginForm" layout="column" ng-submit="loginCtrl.login()" novalidate>
-            <div ng-switch="loginState">
+            <div ng-switch="authState">
                 <div ng-switch-when="enterPhone">
                     <div layout="column">
                         <div layout="row">
