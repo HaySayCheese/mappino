@@ -1,5 +1,6 @@
 # coding=utf-8
 import math
+from datetime import timedelta as td
 
 from django.db import models, connections
 from django.db.models import Q
@@ -483,6 +484,23 @@ class AbstractRentIndex(AbstractBaseIndex):
     entrance_dates = ArrayField(models.DateTimeField)
     departure_dates = ArrayField(models.DateTimeField)
     rent_dates = ArrayField(models.DateTimeField)
+
+    class Metta:
+        abstract = True
+
+    @classmethod
+    def add_date_rent(cls, date_from, date_to):
+        cls.entrance_dates.append(date_from)
+        cls.departure_dates.append(date_to)
+
+        if (date_to-date_from)>1:
+            delta = date_to - date_from
+            rent_dates = []
+            for i in range(1,delta.days):
+                rent_dates.append(date_from+ td(delta.days))
+
+            cls.rent_dates.extend(rent_dates)
+        cls.save()
 
 
 class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
@@ -1140,8 +1158,7 @@ class RoomsSaleIndex(AbstractBaseIndex):
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
         }
 
-
-
+     
 class RoomsRentIndex(AbstractRentIndex):
     period_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
