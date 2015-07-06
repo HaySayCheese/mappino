@@ -56,6 +56,9 @@ class UsersManager(BaseUserManager):
         :returns: parsed string with the phone number in E164 format.
         """
 
+        if len(phone_number) < 13:
+            raise ValueError('Phone number is to short.')
+
         try:
             if phone_number[:4] != '+380':
                 raise ValueError('Only Ukrainian phone numbers are supported.')
