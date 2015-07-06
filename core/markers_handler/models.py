@@ -481,27 +481,12 @@ class AbstractBaseIndex(models.Model):
 
 class AbstractRentIndex(AbstractBaseIndex):
 
-    entrance_dates = ArrayField(models.DateTimeField)
-    departure_dates = ArrayField(models.DateTimeField)
-    rent_dates = ArrayField(models.DateTimeField)
+    entrance_dates = ArrayField(models.DateTimeField())
+    departure_dates = ArrayField(models.DateTimeField())
+    rent_dates = ArrayField(models.DateTimeField())
 
-    class Metta:
+    class Meta:
         abstract = True
-
-    @classmethod
-    def add_date_rent(cls, date_from, date_to):
-        cls.entrance_dates.append(date_from)
-        cls.departure_dates.append(date_to)
-
-        if (date_to-date_from)>1:
-            delta = date_to - date_from
-            rent_dates = []
-            for i in range(1,delta.days):
-                rent_dates.append(date_from+ td(delta.days))
-
-            cls.rent_dates.extend(rent_dates)
-        cls.save()
-
 
 class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -661,6 +646,25 @@ class FlatsRentIndex(AbstractRentIndex):
 
     class Meta:
         db_table = 'index_flats_rent'
+
+
+
+
+    @classmethod
+    def add_dates_rent(cls, date_from, date_to):
+        cls.entrance_dates.append(date_from)
+        cls.departure_dates.append(date_to)
+
+        if (date_to-date_from)>1:
+            delta = date_to - date_from
+
+            rent_dates = []
+            for i in range(1,delta.days):
+                rent_dates.append(date_from+ td(delta.days))
+
+            cls.rent_dates.extend(rent_dates)
+
+
 
 
     @classmethod
@@ -1985,7 +1989,6 @@ class BusinessesSaleIndex(AbstractBusinessesIndex):
             'sale_terms__price', # note: sale terms here
             'sale_terms__currency_sid', # note: sale terms here
         )
-
 
 
 class BusinessesRentIndex(AbstractBusinessesIndex):
