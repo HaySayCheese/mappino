@@ -34,13 +34,14 @@ module bModules.Auth {
 
         public static $inject = [
             '$http',
+            '$cookies',
             'Upload'
         ];
 
 
-        constructor(
-            private $http: angular.IHttpService,
-            private Upload: any) {
+        constructor(private $http: angular.IHttpService,
+                    private $cookies: angular.cookies.ICookiesService,
+                    private Upload: any) {
             // ---------------------------------------------------------------------------------------------------------
         }
 
@@ -69,6 +70,7 @@ module bModules.Auth {
             }).then((response) => {
                 if (response.data['code'] === 0) {
                     this.updateProfileField(response.data['data']);
+                    this.$cookies.remove('mcheck');
                     _.isFunction(success) && success(response.data)
                 } else {
                     this.clearUserFromStorage();
