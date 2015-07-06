@@ -5,7 +5,7 @@ import string
 import uuid
 
 
-def generate_sha256_unique_id(value, salt=None):
+def generate_sha256_unique_id(value=None, salt=None):
     """
     :type value str
     :param value: value that should be uses as a base for hashing.
@@ -17,6 +17,9 @@ def generate_sha256_unique_id(value, salt=None):
     :returns:
          str that contains sha256 hash from value salted with uuid4
     """
+    if not value:
+        value = ''.join([random.choice(string.ascii_letters + string.digits) for x in range(32)])
+
     if not salt:
         salt = ''.join([random.choice(string.ascii_letters + string.digits) for x in range(32)])
 

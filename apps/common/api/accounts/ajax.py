@@ -32,7 +32,7 @@ class LoginManager(object):
                 # This cookie is needed fot the front-end.
                 # By it's presence front-end login will display or hide
                 # state of the login form with the token input
-                response.set_signed_cookie('mcheck', [random.choice(string.ascii_letters) for _ in range(7)], max_age=60*5)
+                response.set_signed_cookie('mcheck', ''.join([random.choice(string.ascii_letters) for _ in range(7)]), max_age=60*5)
                 return response
 
 

@@ -1,7 +1,6 @@
 # coding=utf-8
 import random
 import string
-import uuid
 import datetime
 from collective.utils import generate_sha256_unique_id
 import phonenumbers
@@ -13,7 +12,6 @@ from django.db import models, transaction
 from django.utils.timezone import now
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
-import exceptions
 
 from core.users.classes import Avatar
 from core.users import constants
