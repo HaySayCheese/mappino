@@ -17,10 +17,9 @@ class SMSAuthenticationBackend(object):
         return user if user.check_one_time_token(one_time_token) else None
 
 
-    @staticmethod
-    def get_user(user_id):
+    def get_user(self, user_id):
         try:
-            return Users.objects.get(id=user_id)
+            return Users.objects.get(pk=user_id)
         except Users.DoesNotExist:
             return None
 

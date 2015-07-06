@@ -84,9 +84,8 @@ class LoginManager(object):
     class SecondStep(AnonymousOnlyView):
         class PostResponses(object):
             @staticmethod
-            @json_response
             def ok(user):
-                return {
+                response = HttpJsonResponse({
                     'code': 0,
                     'message': 'OK',
                     'data': {
@@ -94,7 +93,10 @@ class LoginManager(object):
                         'last_name': user.last_name,
                         'avatar_url': user.avatar.url(),
                     }
-                }
+                })
+
+                response.delete_cookie('mcheck')
+                return response
 
             @staticmethod
             @json_response_bad_request
@@ -146,7 +148,7 @@ class LoginManager(object):
 
 
             # to authenticate user without password we need a little trick
-            authenticated_user.backend = 'django.contrib.auth.backends.ModelBackend'
+            authenticated_user.backend = 'core.users.authentication_backends.SMSAuthenticationBackend'
             login(request, authenticated_user)
 
             return self.PostResponses.ok(authenticated_user)
