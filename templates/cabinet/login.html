@@ -12,20 +12,47 @@
 {% block wrapper %}
 <div layout="row" layout-align="center center">
     <div ng-controller="LoginController as loginCtrl" class="login-panel md-padding md-whiteframe-z1">
-        <form name="loginForm" ng-submit="loginCtrl.login()"  novalidate>
-            <div layout="column">
-                <md-input-container flex>
-                    <label>Телефон или Эл. почта</label>
-                    <input type="text" name="phoneNumber" ng-model="user.phoneNumber" autofocus required>
-                    <div ng-messages="loginForm.phoneNumber.$error"
-                         ng-show="loginForm.$submitted || loginForm.phoneNumber.$touched">
-                        <div ng-message="required">Обязательное поле</div>
-                        <div ng-message="invalid">Неверная пара логин - пароль</div>  `
+        <form name="loginForm" layout="column" ng-submit="loginCtrl.login()" novalidate>
+            <div ng-switch="loginState">
+                <div ng-switch-when="enterPhone">
+                    <div layout="column">
+                        <div layout="row">
+                            <md-input-container flex="20">
+                                <label>Код</label>
+                                <input type="text" name="phoneCode" ng-model="user.phoneCode" disabled>
+                            </md-input-container>
+                            <md-input-container flex="80">
+                                <label>Номер телефона</label>
+                                <input type="text" name="phoneNumber" ng-model="user.phoneNumber" autofocus only-number required>
+                                <div ng-messages="loginForm.phoneNumber.$error"
+                                     ng-show="loginForm.$submitted || loginForm.phoneNumber.$touched">
+                                    <div ng-message="required">Обязательное поле</div>
+                                    <div ng-message="invalid">Номер телефона указан неверно</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <md-button class="md-raised md-primary">
+                            Войти
+                        </md-button>
                     </div>
-                </md-input-container>
-                <md-button class="md-raised md-primary">
-                    Войти
-                </md-button>
+                </div>
+
+                <div ng-switch-when="enterSMSCode">
+                    <div layout="column">
+                        <md-input-container flex="100">
+                            <label>Код подтверждения</label>
+                            <input type="text" name="smsCode" ng-model="user.smsCode" autofocus only-number required>
+                            <div ng-messages="loginForm.smsCode.$error"
+                                 ng-show="loginForm.smsCode.$touched">
+                                <div ng-message="required">Обязательное поле</div>
+                                <div ng-message="invalid">Неверный код подтверждения</div>
+                            </div>
+                        </md-input-container>
+                        <md-button class="md-raised md-primary">
+                            Войти
+                        </md-button>
+                    </div>
+                </div>
             </div>
         </form>
     </div>

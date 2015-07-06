@@ -5,7 +5,9 @@ module bModules.Auth {
     export interface IAuthService {
         user: IUser
 
-        login(phoneNumber: string, success?: Function, error?: Function): void
+        checkPhoneNumber(phoneNumber: string, success?: Function, error?: Function): void
+
+        checkSMSCode(phoneNumber: string, smsCode: string, success?: Function, error?: Function): void
 
         tryLogin(success?: Function, error?: Function): void
 

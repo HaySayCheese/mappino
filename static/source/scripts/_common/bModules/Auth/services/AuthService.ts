@@ -46,9 +46,26 @@ module bModules.Auth {
 
 
 
-        public login(phoneNumber: string, success?: Function, error?: Function) {
+        public checkPhoneNumber(phoneNumber: string, success?: Function, error?: Function) {
             this.$http.post('/ajax/api/accounts/login/', {
                 "phone_number": phoneNumber
+            }).then((response) => {
+                if (response.data['code'] === 0) {
+                    _.isFunction(success) && success(response.data)
+                } else {
+                    _.isFunction(error) && error(response.data)
+                }
+            }, (response) => {
+                _.isFunction(error) && error(response.data)
+            });
+        }
+
+
+
+        public checkSMSCode(phoneNumber: string, smsCode: string, success?: Function, error?: Function) {
+            this.$http.post('/ajax/api/accounts/login/check-code/', {
+                "phone_number": phoneNumber,
+                "token":        smsCode
             }).then((response) => {
                 if (response.data['code'] === 0) {
                     this.updateProfileField(response.data['data']);

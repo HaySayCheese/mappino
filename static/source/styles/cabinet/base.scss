@@ -33,12 +33,13 @@ html,
 body{
     @include square(100%);
     overflow: hidden;
+    background-color: color('blue-grey', 'lighten-4');
 }
 
 
 main {
     height: calc(100% - 56px);
     overflow: auto;
-    background-color: color('blue-grey', 'lighten-4');
+    //background-color: color('blue-grey', 'lighten-4');
     //background: url('../../images/cabinet/cabinet-bg.jpg') center center no-repeat fixed;
 }
