@@ -1,6 +1,9 @@
 #coding=utf-8
 import copy
 import json
+import random
+import string
+from collective.http.responses import HttpJsonResponse
 
 from django.conf import settings
 from django.http import HttpResponseBadRequest, HttpResponse
@@ -20,12 +23,18 @@ class LoginManager(object):
     class FirstStep(AnonymousOnlyView):
         class PostResponses(object):
             @staticmethod
-            @json_response
             def ok():
-                return {
+                response = HttpJsonResponse({
                     'code': 0,
                     'message': 'OK',
-                }
+                })
+
+                # This cookie is needed fot the front-end.
+                # By it's presence front-end login will display or hide
+                # state of the login form with the token input
+                response.set_signed_cookie('mcheck', [random.choice(string.ascii_letters) for _ in range(7)], max_age=60*5)
+                return response
+
 
             @staticmethod
             @json_response_bad_request
