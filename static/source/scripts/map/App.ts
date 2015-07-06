@@ -65,8 +65,6 @@ module pages.map {
     app.controller('FiltersTabController', FiltersTabController);
     // account tab controllers
     app.controller('AccountTabController', AccountTabController);
-    app.controller('LoginController', LoginController);
-    app.controller('RegistrationController', RegistrationController);
 
     // right navbar controllers
     app.controller('NavbarRightController', NavbarRightController);

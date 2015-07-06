@@ -16,7 +16,7 @@ module pages.cabinet {
                     private $cookies: angular.cookies.ICookiesService,
                     private authService: bModules.Auth.IAuthService) {
             // ---------------------------------------------------------------------------------------------------------
-            $scope.loginState = $cookies.get('mcheck') ? 'enterSMSCode' : 'enterPhone';
+            $scope.authState = $cookies.get('mcheck') ? 'enterSMSCode' : 'enterPhone';
 
             $scope.user = {
                 phoneCode:      '+380',
@@ -30,13 +30,13 @@ module pages.cabinet {
 
 
         private login() {
-            if (this.$scope.loginState === 'enterPhone') {
+            if (this.$scope.authState === 'enterPhone') {
                 if (this.$scope.loginForm.phoneNumber.$valid) {
                     this.fullNumber = this.$scope.user.phoneCode + this.$scope.user.phoneNumber;
                     localStorage['fullNumber'] = this.fullNumber;
 
                     this.authService.checkPhoneNumber(this.fullNumber, () => {
-                        this.$scope.loginState = 'enterSMSCode';
+                        this.$scope.authState = 'enterSMSCode';
                     }, () => {
                         this.$scope.loginForm.phoneNumber.$setValidity('invalid', false);
                     });
@@ -59,7 +59,7 @@ module pages.cabinet {
         private initWatchers() {
             this.$scope.$watchCollection('user', () => {
                 if (this.$scope.loginForm.$invalid) {
-                    if (this.$scope.loginState === 'enterPhone') {
+                    if (this.$scope.authState === 'enterPhone') {
                         this.$scope.loginForm.phoneNumber.$setValidity('invalid', true);
                     } else {
                         this.$scope.loginForm.smsCode.$setValidity('invalid', true);

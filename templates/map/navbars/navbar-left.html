@@ -95,123 +95,61 @@
                 </md-tab-label>
                 <md-tab-body>
                     <section class="account-tab md-padding" ng-controller="AccountTabController as accCtrl">
-                        <div ng-switch="accountState" ng-animate-children>
-
-                            <div ng-switch-when="login" ng-controller="LoginController as loginCtrl">
-                                <form name="loginForm" layout="column" ng-submit="loginCtrl.login()" novalidate>
-                                    <md-input-container>
-                                        <label>Телефон или эл. почта</label>
-                                        <input type="text" name="userLogin" ng-model="login.user.login" required>
-                                        <div ng-messages="loginForm.userLogin.$error"
-                                             ng-show="loginForm.$submitted || loginForm.userLogin.$touched">
-                                            <div ng-message="required">Обязательное поле</div>
-                                            <div ng-message="invalid">Неверная пара логин - пароль</div>
-                                        </div>
-                                    </md-input-container>
-                                    <md-input-container>
-                                        <label>Пароль</label>
-                                        <input type="password" name="userPassword" ng-model="login.user.password" required>
-                                        <div ng-messages="loginForm.userPassword.$error"
-                                             ng-show="loginForm.$submitted || loginForm.userPassword.$touched">
-                                            <div ng-message="required">Обязательное поле</div>
-                                        </div>
-                                    </md-input-container>
-                                    <md-button class="md-raised md-primary">
-                                        Войти
-                                    </md-button>
-                                </form>
-                                <div layout="row">
-                                    <md-button class="md-primary" ng-click="accCtrl.changeState('registration');">Регистрация</md-button>
-                                    <span flex></span>
-                                    <md-button class="md-primary">Напомнить пароль</md-button>
-                                </div>
-                            </div>
-                            <!-- registration part -->
-                            <div ng-switch-when="registration" ng-controller="RegistrationController as regCtrl">
-                                <form name="registrationForm" layout="column" ng-submit="regCtrl.registration()" novalidate>
-                                    <div layout="row">
-                                        <md-input-container>
-                                            <label>Имя</label>
-                                            <input type="text" name="userName" ng-model="registration.user.firstName" required>
-                                            <div ng-messages="registrationForm.userName.$error"
-                                                 ng-show="registrationForm.$submitted || registrationForm.userName.$touched">
-                                                <div ng-message="required">Обязательное поле</div>
-                                            </div>
-                                        </md-input-container>
-                                        <md-input-container>
-                                            <label>Фамилия</label>
-                                            <input type="text" name="userSurname" ng-model="registration.user.lastName" required>
-                                            <div ng-messages="registrationForm.userSurname.$error"
-                                                 ng-show="registrationForm.$submitted || registrationForm.userSurname.$touched">
-                                                <div ng-message="required">Обязательное поле</div>
-                                            </div>
-                                        </md-input-container>
-                                    </div>
-                                    <div layout="row">
-                                        <md-input-container flex="100">
-                                            <label>Эл. почта</label>
-                                            <input type="text" name="userEmail" ng-model="registration.user.email" required>
-                                            <div ng-messages="registrationForm.userEmail.$error"
-                                                 ng-show="registrationForm.$submitted || registrationForm.userEmail.$touched">
-                                                <div ng-message="required">Обязательное поле</div>
-                                                <div ng-message="emailIncorrect">Некоректная эл. почта</div>
-                                                <div ng-message="emailIsUsed">Указанная эл. почта уже используется</div>
-                                            </div>
-                                        </md-input-container>
-                                    </div>
+                        <form name="loginForm" layout="column" ng-submit="accCtrl.login()" novalidate>
+                            <div ng-switch="authState">
+                                <div ng-switch-when="enterPhone">
                                     <div layout="column">
-                                        <md-input-container>
-                                            <label>Моб. телефон</label>
-                                            <input type="tel" name="userPhone" ng-model="registration.user.phoneNumber" required>
-                                            <div ng-messages="registrationForm.userPhone.$error"
-                                                 ng-show="registrationForm.$submitted || registrationForm.userPhone.$touched">
-                                                <div ng-message="required">Обязательное поле</div>
-                                                <div ng-message="phoneCodeIncorrect">Некоректный код</div>
-                                                <div ng-message="phoneNumberIncorrect">Некоректный номер</div>
-                                                <div ng-message="phoneNumberIsUsed">Указанный номер уже используется</div>
-                                            </div>
-                                        </md-input-container>
-                                        <md-input-container>
-                                            <label>Пароль</label>
-                                            <input type="text" name="userPassword" ng-model="registration.user.password" required>
-                                            <div ng-messages="registrationForm.userPassword.$error"
-                                                 ng-show="registrationForm.$submitted || registrationForm.userPassword.$touched">
-                                                <div ng-message="required">Обязательное поле</div>
-                                            </div>
-                                        </md-input-container>
-                                        <md-input-container>
-                                            <label>Пароль еще разочек</label>
-                                            <input type="text" name="userPasswordRepeat" ng-model="registration.user.passwordRepeat" required>
-                                            <div ng-messages="registrationForm.userPasswordRepeat.$error"
-                                                 ng-show="registrationForm.$submitted || registrationForm.userPasswordRepeat.$touched">
-                                                <div ng-message="required">Обязательное поле</div>
-                                                <div ng-message="passwordsNotMatch">Пароли не совпадают</div>
-                                            </div>
-                                        </md-input-container>
-                                        <md-button class="md-raised md-primary" ng-click="accCtrl.registration();">
-                                            Регистрация
+                                        <div layout="row">
+                                            <md-input-container flex="20">
+                                                <label>Код</label>
+                                                <input type="text" name="phoneCode" ng-model="user.phoneCode" disabled>
+                                            </md-input-container>
+                                            <md-input-container flex="80">
+                                                <label>Номер телефона</label>
+                                                <input type="text" name="phoneNumber" ng-model="user.phoneNumber" autofocus only-number required>
+                                                <div ng-messages="loginForm.phoneNumber.$error"
+                                                     ng-show="loginForm.$submitted || loginForm.phoneNumber.$touched">
+                                                    <div ng-message="required">Обязательное поле</div>
+                                                    <div ng-message="invalid">Номер телефона указан неверно</div>
+                                                </div>
+                                            </md-input-container>
+                                        </div>
+                                        <md-button class="md-raised md-primary">
+                                            Войти
                                         </md-button>
                                     </div>
-                                    <div layout="row">
-                                        <md-button class="md-primary" ng-click="accCtrl.changeState('login');">Войти</md-button>
-                                        <span flex></span>
-                                        <md-button class="md-primary">Напомнить пароль</md-button>
+                                </div>
+
+                                <div ng-switch-when="enterSMSCode">
+                                    <div layout="column">
+                                        <md-input-container flex="100">
+                                            <label>Код подтверждения</label>
+                                            <input type="text" name="smsCode" ng-model="user.smsCode" autofocus only-number required>
+                                            <div ng-messages="loginForm.smsCode.$error"
+                                                 ng-show="loginForm.smsCode.$touched">
+                                                <div ng-message="required">Обязательное поле</div>
+                                                <div ng-message="invalid">Неверный код подтверждения</div>
+                                            </div>
+                                        </md-input-container>
+                                        <md-button class="md-raised md-primary">
+                                            Войти
+                                        </md-button>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
 
-                            <div ng-switch-when="accountInformation">
-                                <div class="account-info-state" layout="column">
-                                    <div layout="row"layout-align="start start">
-                                        <img class="user-avatar" src="http://lorempixel.com/100/100" alt=""/>
+                                <div ng-switch-when="accountInformation">
+                                    <div class="account-info-state" layout="column">
+                                        <div layout="row"layout-align="start start">
+                                            <img class="user-avatar" src="http://lorempixel.com/100/100" alt=""/>
 
-                                        <div layout="column" layout-align="start start" layout-padding>
-                                            <div class="md-title">Сергій Мекетюк</div>
+                                            <div layout="column" layout-align="start start" layout-padding>
+                                                <div class="md-title">Сергій Мекетюк</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </section>
                 </md-tab-body>
             </md-tab>

@@ -1,5 +1,5 @@
 <div class="publication-view md-whiteframe-z1" layout="column"
-     ng-class="{ '-opened': pubCtrl.publicationHandler.isOpened(),
+     ng-class="{ '-opened': pubCtrl.publicationHandler.isOpened() && !pubCtrl.navbarsHandler.isOpened('navbar_right'),
         '-closed': !pubCtrl.publicationHandler.isOpened(),
         '-with-navbar-right': pubCtrl.navbarsHandler.isOpened('navbar_right') }">
 
