@@ -1,6 +1,11 @@
 .idea/*
-.venv/*
-.venv2/*
+venv/*
+venv
+venv2/*
+venv2
+venv-pypy/*
+venv-pypy
+
 
 mappino/dev_settings.py
 mappino/passwords.py

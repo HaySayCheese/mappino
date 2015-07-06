@@ -1,12 +1,12 @@
 # coding=utf-8
 import os
-#from psycopg2cffi import compat
+from psycopg2cffi import compat
 from mappino import passwords
 
 
 
 # cffi hook (needed by pypy)
-#compat.register()
+compat.register()
 
 
 DEBUG = True
@@ -36,16 +36,16 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': 5555,
     },
-    'markers_index': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '(dev)mappino-index-db', # todo: change to mappino-indexes
-        'USER': '(dev)mappino', # todo: change to mappino
-        'PASSWORD': '123123',
-        'HOST': '127.0.0.1',
-        'PORT': 5555,
-    }
+    # 'markers_index': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': '(dev)mappino-index-db', # todo: change to mappino-indexes
+    #     'USER': '(dev)mappino', # todo: change to mappino
+    #     'PASSWORD': '123123',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': 5555,
+    # }
 }
-DATABASE_ROUTERS = ['core.database_router.Router', ]
+# DATABASE_ROUTERS = ['core.database_router.Router', ]
 
 
 REDIS_DATABASES = {
@@ -215,6 +215,8 @@ WSGI_APPLICATION = 'mappino.wsgi.application'
 
 
 AUTH_USER_MODEL = 'users.Users'
+AUTHENTICATION_BACKENDS = ('core.users.authentication_backends.SMSAuthenticationBackend', )
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 

@@ -112,7 +112,7 @@ class AbstractHeadModel(models.Model):
     # Передача id у відкритому вигляді небезпечна тим, що:
     #   * полегшує повний перебір записів з таблиці по інкременту, а значить — полегшує ddos.
     #   * відкриває внутрішню структуру таблиць в БД і наяні зв’язки.
-    hash_id = models.TextField(unique=True, default=lambda: uuid.uuid4().hex)
+    hash_id = models.TextField(unique=True, default=generate_sha256_unique_id)
     owner = models.ForeignKey(Users)
 
 
