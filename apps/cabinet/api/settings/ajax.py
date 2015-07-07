@@ -47,7 +47,7 @@ class AccountView(CabinetView):
                         'email': user.email,
                         'work_email': user.work_email or '',
                         'skype': user.skype or '',
-                        'avatar': user.avatar.url() or '',
+                        'avatar_url': user.avatar.url() or '',
 
                         'mobile_phone': mobile_phone_number,
                         'add_mobile_phone': add_mobile_phone_number,
