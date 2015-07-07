@@ -150,8 +150,8 @@ class AccountView(CabinetView):
     def __init__(self):
         super(AccountView, self).__init__()
         self.update_methods = {
-            'name': self.__update_first_name,
-            'surname': self.__update_last_name,
+            'first_name': self.__update_first_name,
+            'last_name': self.__update_last_name,
             'email': self.__update_email,
             'work_email': self.__update_work_email,
             'mobile_phone': self.__update_mobile_phone_number,
