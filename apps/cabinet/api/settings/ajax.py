@@ -246,15 +246,13 @@ class AccountView(CabinetView):
         if not phone:
             return self.PostResponses.value_required()
 
-        try:
-            phone = phonenumbers.parse(phone)
-            if not phonenumbers.is_valid_number(phone):
-                raise ValidationError('Invalid number.')
 
-        except (phonenumbers.NumberParseException, ValidationError):
+        try:
+            phone = Users.objects.parse_phone_number(phone)
+        except ValueError:
             return self.PostResponses.invalid_value()
 
-        phone = phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.E164)
+
         if user.mobile_phone == phone:
             # already the same
             return self.PostResponses.ok()
@@ -281,15 +279,11 @@ class AccountView(CabinetView):
 
 
         try:
-            phone = phonenumbers.parse(phone)
-            if not phonenumbers.is_valid_number(phone):
-                raise ValidationError('Invalid number.')
-
-        except (phonenumbers.NumberParseException, ValidationError):
+            phone =Users.objects.parse_phone_number(phone)
+        except ValueError:
             return self.PostResponses.invalid_value()
 
 
-        phone = phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.E164)
         if user.add_mobile_phone == phone:
             # already the same
             return self.PostResponses.ok()
