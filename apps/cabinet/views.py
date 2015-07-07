@@ -1,7 +1,8 @@
 # coding=utf-8
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.http.response import HttpResponseForbidden
 from django.views.decorators.csrf import ensure_csrf_cookie
+
 from core.utils.jinja2_integration import templates
 
 
@@ -22,13 +23,4 @@ def cabinet(request):
         template = templates.get_template('cabinet/users/users.html')
 
 
-    return HttpResponse(content=template.render())
-
-
-@ensure_csrf_cookie
-def login(request):
-    if request.user.is_authenticated():
-        return HttpResponseRedirect('/cabinet/')
-
-    template = templates.get_template('cabinet/login.html')
     return HttpResponse(content=template.render())
