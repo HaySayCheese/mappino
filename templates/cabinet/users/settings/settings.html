@@ -5,12 +5,13 @@
 
             <div layout-sm="column" layout-gt-sm="row">
                 <div layout="column" layout-align="center center" flex="40">
-                    <div class="user-photo">
-                        <img ng-src="[[ user.account.avatar ]]" alt="" ng-hide="loaders.avatar" />
-                        <input id="photo-field" name="avatar" type="file" />
+                    <div class="user-photo" layout="column" layout-align="center center">
+                        <img ng-src="[[ user.account.avatar_url ]]" alt="" ng-hide="loaders.avatar" />
 
                         <md-progress-circular md-mode="indeterminate" ng-show="loaders.avatar"></md-progress-circular>
                     </div>
+                    <input id="photo-field" name="avatar" type="file" />
+
 
                     <md-button class="md-primary md-hue-1" ng-click="settingsCtrl.changePhoto($event)">Сменить фото</md-button>
 
@@ -26,7 +27,7 @@
                 <div layout="column" layout-align="start right" flex="50" flex-sm="100" offset-gt-sm="10">
                     <md-input-container flex>
                         <label>Имя</label>
-                        <input type="text" name="first_name" ng-model="user.account.first_name" required>
+                        <input type="text" name="first_name" ng-model="user.account.first_name">
                         <div ng-messages="userProfileForm.first_name.$error">
                             <div ng-message="required">Обязательное поле</div>
                         </div>
@@ -34,7 +35,7 @@
 
                     <md-input-container flex>
                         <label>Фамилия</label>
-                        <input type="text" name="last_name" ng-model="user.account.last_name" required>
+                        <input type="text" name="last_name" ng-model="user.account.last_name">
                         <div ng-messages="userProfileForm.last_name.$error">
                             <div ng-message="required">Обязательное поле</div>
                         </div>
@@ -45,8 +46,8 @@
                         <input type="text" name="email" ng-model="user.account.email" required>
                         <div ng-messages="userProfileForm.email.$error">
                             <div ng-message="required">Обязательное поле</div>
-                            <div ng-message="incorrect">Некоректная эл. почта</div>
-                            <div ng-message="inUsed">Указанная эл. почта уже используется</div>
+                            <div ng-message="invalid">Некоректная эл. почта</div>
+                            <div ng-message="duplicated">Указанная эл. почта уже используется</div>
                         </div>
                     </md-input-container>
 
@@ -55,8 +56,8 @@
                         <input type="tel" name="mobile_number" ng-model="user.account.mobile_phone" required>
                         <div ng-messages="userProfileForm.mobile_number.$error">
                             <div ng-message="required">Обязательное поле</div>
-                            <div ng-message="incorrect">Некоректный номер</div>
-                            <div ng-message="inUsed">Указанный номер уже используется</div>
+                            <div ng-message="invalid">Некоректный номер</div>
+                            <div ng-message="duplicated">Указанный номер уже используется</div>
                         </div>
                     </md-input-container>
                 </div>
@@ -82,19 +83,27 @@
                         <label>Рабочая эл. почта</label>
                         <input type="text" name="work_email" ng-model="user.account.work_email">
                         <div ng-messages="userProfileForm.work_email.$error">
-                            <div ng-message="incorrect">Некоректная эл. почта</div>
-                            <div ng-message="inUsed">Указанная эл. почта уже используется</div>
+                            <div ng-message="invalid">Некоректная эл. почта</div>
+                            <div ng-message="duplicated">Указанная эл. почта уже используется</div>
                         </div>
                     </md-input-container>
 
                     <md-input-container flex>
                         <label>Доп. моб. телефон</label>
-                        <input type="text" name="add_mobile_phone" ng-model="user.account.add_mobile_phone">
+                        <input type="text" name="add_mobile_phone" ng-model="user.account.add_mobile_phone" only-number>
+                        <div ng-messages="userProfileForm.add_mobile_phone.$error">
+                            <div ng-message="invalid">Некоректный номер</div>
+                            <div ng-message="duplicated">Указанный номер уже используется</div>
+                        </div>
                     </md-input-container>
 
                     <md-input-container flex>
                         <label>Раб. телефон</label>
                         <input type="text" name="landline_phone" ng-model="user.account.landline_phone" only-number>
+                        <div ng-messages="userProfileForm.landline_phone.$error">
+                            <div ng-message="invalid">Некоректный номер</div>
+                            <div ng-message="duplicated">Указанный номер уже используется</div>
+                        </div>
                     </md-input-container>
 
                     <md-input-container flex>

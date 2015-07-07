@@ -1,12 +1,11 @@
 <div class="ticket-page" layout="column" layout-align="start center" ng-controller="TicketController as ticketCtrl">
     <section class="-medium md-whiteframe-z2" ng-show="ticketIsLoaded">
 
-        <form name="form.ticket" novalidate>
+        <form name="ticketForm" ng-submit="ticketCtrl.sendMessage()" novalidate>
             <div layout="row">
                 <h3 class="md-headline light-blue-text" ng-show="ticket.subject">
                     Тема: [[ ticket.subject ]]
                 </h3>
-
                 <md-input-container flex ng-hide="ticket.subject">
                     <label>Тема обращения</label>
                     <input type="text" name="subject" ng-model="new_message.subject">
@@ -17,14 +16,14 @@
                 <md-input-container flex>
                     <label>Текст сообщение</label>
                     <textarea name="message" columns="1" md-maxlength="400" ng-model="new_message.message" required></textarea>
-                    <div ng-messages="form.ticket.message.$error">
-                        <div ng-message="required">Укажите, пожалуйста, тему обращения.</div>
-                        <div ng-message="md-maxlength">Тема обращения слишком длинная.</div>
+                    <div ng-messages="ticketForm.message.$error" ng-show="ticketForm.$submitted || ticketForm.message.$touched">
+                        <div ng-message="required">Укажите, пожалуйста, текст обращения.</div>
+                        <div ng-message="md-maxlength">Текст обращения слишком длинный.</div>
                     </div>
                 </md-input-container>
 
-                <md-button class="md-fab md-primary" aria-label="Отправить сообщение" ng-disabled="!new_message.message" ng-click="ticketCtrl.sendMessage()">
-                    <md-icon md-svg-icon="{{ static }}source/icons/content/ic_send_24px.svg"></md-icon>
+                <md-button class="md-fab md-primary" aria-label="Отправить сообщение">
+                    <md-icon>send</md-icon>
                 </md-button>
             </div>
         </form>
