@@ -41,19 +41,13 @@ module pages.cabinet {
 
 
         private createTicket() {
-            var self = this;
-
-            this.$rootScope.loaders.base = true;
-
             this.ticketsService.createTicket((response) => {
-                this.$rootScope.loaders.base = false;
+                this._ticket.id = this.$scope.ticket.id = response.id;
 
-                this._ticket.id = self.$scope.ticket.id = response.id;
+                this.$scope.ticketFormIsVisible = true;
 
-                self.$scope.ticketFormIsVisible = true;
-
-                if (!self.$scope.$$phase) {
-                    self.$scope.$apply()
+                if (!this.$scope.$$phase) {
+                    this.$scope.$apply()
                 }
             });
         }
@@ -61,15 +55,9 @@ module pages.cabinet {
 
 
         private sendMessage() {
-            var self = this;
-
             if (this.$scope.ticketForm.$valid) {
-                this.$rootScope.loaders.base = true;
-
                 this.ticketsService.sendMessage(this._ticket.id, this.$scope.ticket, (response) => {
-                    this.$rootScope.loaders.base = false;
-
-                    self.$state.go('ticket_view', { ticket_id: this._ticket.id })
+                    this.$state.go('ticket_view', { ticket_id: this._ticket.id })
                 });
             }
         }

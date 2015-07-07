@@ -68,7 +68,10 @@ module pages.cabinet {
                         self.$scope.new_message.subject = '';
                     }
 
-                    self.$scope.new_message.message = '';
+                    self.$scope.new_message.message = null;
+
+                    this.$scope.ticketForm.$setPristine();
+                    this.$scope.ticketForm.$setUntouched();
                 });
             }
         }
