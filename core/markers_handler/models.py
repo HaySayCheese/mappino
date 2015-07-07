@@ -648,12 +648,16 @@ class FlatsRentIndex(AbstractRentIndex):
         db_table = 'index_flats_rent'
 
 
-
-
     @classmethod
-    def add_dates_rent(cls, date_from, date_to):
-        cls.entrance_dates.append(date_from)
-        cls.departure_dates.append(date_to)
+    def add_dates_rent(cls, hash_id, date_from, date_to):
+        try:
+            record = FlatsRentIndex.objects.filter(hash_id = hash_id)[:1][0]
+        except:
+            #todo fix it.
+            pass
+
+        record.entrance_dates.append(date_from)
+        record.departure_dates.append(date_to)
 
         if (date_to-date_from)>1:
             delta = date_to - date_from
@@ -662,7 +666,7 @@ class FlatsRentIndex(AbstractRentIndex):
             for i in range(1,delta.days):
                 rent_dates.append(date_from+ td(delta.days))
 
-            cls.rent_dates.extend(rent_dates)
+            record.rent_dates.extend(rent_dates)
 
 
 
