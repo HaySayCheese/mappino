@@ -10,7 +10,7 @@ from django.http import HttpResponseBadRequest, HttpResponse
 from django.contrib.auth import authenticate, login
 from django.views.generic import View
 
-from apps.classes import AnonymousOnlyView
+from apps.classes import AnonymousOnlyView, AuthenticatedOnlyView
 from collective.decorators.ajax import json_response, json_response_bad_request
 from collective.methods.request_data_getters import angular_post_parameters
 from core.ban.classes import BanHandler
@@ -88,11 +88,7 @@ class LoginManager(object):
                 response = HttpJsonResponse({
                     'code': 0,
                     'message': 'OK',
-                    'data': {
-                        'first_name': user.first_name,
-                        'last_name': user.last_name,
-                        'avatar_url': user.avatar.url(),
-                    }
+                    'data': LoginManager.on_login_info(user)
                 })
 
                 response.delete_cookie('mcheck')
@@ -152,6 +148,34 @@ class LoginManager(object):
             login(request, authenticated_user)
 
             return self.PostResponses.ok(authenticated_user)
+
+
+    class OnLoginInfo(AuthenticatedOnlyView):
+        class GetResponses(object):
+            @staticmethod
+            @json_response
+            def ok(user):
+                return {
+                    'code': 0,
+                    'message': 'OK',
+                    'data': LoginManager.on_login_info(user)
+                }
+
+
+        def get(self, reguest):
+            return self.GetResponses.ok(reguest.user)
+
+
+
+    @staticmethod
+    def on_login_info(user):
+        return {
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'avatar_url': user.avatar.url(),
+        }
+
+
 
 
 class Contacts(View):

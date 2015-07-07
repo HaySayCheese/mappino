@@ -11,7 +11,7 @@ from core.utils.jinja2_integration import templates
 # @condition(last_modified_func=static_template_last_modified)
 def briefs(request):
     return HttpResponse(
-        templates.get_template('cabinet/_common/publications/briefs.html').render()
+        templates.get_template('cabinet/users/publications/briefs.html').render()
     )
 
 
@@ -19,7 +19,7 @@ def briefs(request):
 # @condition(last_modified_func=static_template_last_modified)
 def publication(request):
     return HttpResponse(
-        templates.get_template('cabinet/_common/publications/publication.html').render()
+        templates.get_template('cabinet/users/publications/publication.html').render()
     )
 
 
@@ -32,51 +32,51 @@ def unpublished_form(request, tid):
     # living realty
     if tid == OBJECTS_TYPES.house():
         return HttpResponse(
-            templates.get_template('cabinet/_common/publications/unpublished/house.html').render()
+            templates.get_template('cabinet/users/publications/unpublished/house.html').render()
         )
 
     elif tid == OBJECTS_TYPES.flat():
         return HttpResponse(
-            templates.get_template('cabinet/_common/publications/unpublished/flat.html').render()
+            templates.get_template('cabinet/users/publications/unpublished/flat.html').render()
         )
 
     elif tid == OBJECTS_TYPES.room():
         return HttpResponse(
-            templates.get_template('cabinet/_common/publications/unpublished/room.html').render()
+            templates.get_template('cabinet/users/publications/unpublished/room.html').render()
         )
 
 
     # commercial realty
     elif tid == OBJECTS_TYPES.trade():
         return HttpResponse(
-            templates.get_template('cabinet/_common/publications/unpublished/trade.html').render()
+            templates.get_template('cabinet/users/publications/unpublished/trade.html').render()
         )
 
     elif tid == OBJECTS_TYPES.office():
         return HttpResponse(
-            templates.get_template('cabinet/_common/publications/unpublished/office.html').render()
+            templates.get_template('cabinet/users/publications/unpublished/office.html').render()
         )
 
     elif tid == OBJECTS_TYPES.warehouse():
         return HttpResponse(
-            templates.get_template('cabinet/_common/publications/unpublished/warehouse.html').render()
+            templates.get_template('cabinet/users/publications/unpublished/warehouse.html').render()
         )
 
     elif tid == OBJECTS_TYPES.business():
         return HttpResponse(
-            templates.get_template('cabinet/_common/publications/unpublished/business.html').render()
+            templates.get_template('cabinet/users/publications/unpublished/business.html').render()
         )
 
 
     # other realty
     elif tid == OBJECTS_TYPES.garage():
         return HttpResponse(
-            templates.get_template('cabinet/_common/publications/unpublished/garage.html').render()
+            templates.get_template('cabinet/users/publications/unpublished/garage.html').render()
         )
 
     elif tid == OBJECTS_TYPES.land():
         return HttpResponse(
-            templates.get_template('cabinet/_common/publications/unpublished/land.html').render()
+            templates.get_template('cabinet/users/publications/unpublished/land.html').render()
         )
 
 
@@ -87,7 +87,7 @@ def unpublished_form(request, tid):
 # @condition(last_modified_func=static_template_last_modified)
 def unpublished_map(request):
     return HttpResponse(
-        templates.get_template('cabinet/publications/_common/unpublished/parts/map.html')
+        templates.get_template('cabinet/users/publications/unpublished/parts/map.html')
     )
 
 
@@ -95,7 +95,7 @@ def unpublished_map(request):
 # @condition(last_modified_func=static_template_last_modified)
 def unpublished_photos(request):
     return HttpResponse(
-        templates.get_template('cabinet/publications/_common/unpublished/parts/photos.html')
+        templates.get_template('cabinet/users/publications/unpublished/parts/photos.html')
     )
 
 
@@ -103,13 +103,5 @@ def unpublished_photos(request):
 # @condition(last_modified_func=static_template_last_modified)
 def published_form(request):
     return HttpResponse(
-        templates.get_template('cabinet/publications/_common/published/published.html')
+        templates.get_template('cabinet/users/publications/published/published.html')
     )
-
-
-
-# @ensure_csrf_cookie
-# @condition(last_modified_func=static_template_last_modified)
-# def no_pubs_hint(request):
-# 	t = templates.get_template('cabinet/publications/hints/no_publications.html')
-# 	return HttpResponse(t.render())

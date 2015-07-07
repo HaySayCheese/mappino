@@ -9,7 +9,7 @@ from core.utils.jinja2_integration import templates
 @ensure_csrf_cookie
 # @condition(last_modified_func=static_template_last_modified)
 def settings(request):
-	t = templates.get_template('cabinet/_common/settings/settings.html')
+	t = templates.get_template('cabinet/users/settings/settings.html')
 	return HttpResponse(t.render())
 
 
