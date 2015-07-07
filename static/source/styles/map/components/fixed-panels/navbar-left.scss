@@ -1,4 +1,4 @@
-.b-navbar-left {
+navbar-left {
     @extend %_fixed-panel;
 
     @include size(365px, auto);
@@ -6,7 +6,7 @@
     left: 0;
 
 
-    .b-navbar-left-wrapper {
+    .navbar-left-container {
         width: 100%;
         position: relative;
         display: block;
