@@ -10,13 +10,10 @@ from core.users.exceptions import AvatarExceptions
 
 
 class Avatar(GoogleCSPhotoUploader):
-    avatar_suffix = '_processed'
     avatar_size = 180
-
-    original_image_suffix = '_original'
     min_original_image_size = avatar_size
 
-    bucket_path = GoogleCSPhotoUploader.bucket + '/users/photos/'
+    bucket_path = 'users/photos/'
 
 
     def __init__(self, user):
@@ -24,6 +21,8 @@ class Avatar(GoogleCSPhotoUploader):
 
 
     def update(self, image):
+        self.remove()
+
         url =  self.process_and_upload_to_gcs(image)
         self.user.avatar_url = url
         self.user.save()
@@ -32,6 +31,21 @@ class Avatar(GoogleCSPhotoUploader):
 
     def url(self):
         return self.user.avatar_url
+
+
+    def remove(self):
+        url = self.user.avatar_url
+        if not url:
+            return
+
+        filename = url.split('/')[-1]
+        path = self.bucket_path + filename
+
+        if url:
+            try:
+                self.remove_photo_from_google_cloud_storage(path)
+            except:
+                pass
 
 
     @classmethod
@@ -69,8 +83,8 @@ class Avatar(GoogleCSPhotoUploader):
 
         # original photo saving
         original_photo_extension = os.path.splitext(img.name)[1].lower()
-        original_photo_name = uid + cls.original_image_suffix + original_photo_extension
-        original_image_path = os.path.join(temporary_dir, original_photo_name)
+        original_photo_filename = uid + original_photo_extension
+        original_image_path = os.path.join(temporary_dir, original_photo_filename)
 
         with open(original_image_path, 'wb+') as original_img:
             for chunk in img.chunks():
@@ -97,8 +111,9 @@ class Avatar(GoogleCSPhotoUploader):
 
 
         # the image is scaled/cropped vertically or horizontally depending on the ratio
-        image_ratio = avatar_width / float(avatar_height)
+        image_ratio = image.size[0] / float(image.size[1])
         ratio = 1
+
         if ratio > image_ratio:
             image = image.resize(
                 (image.size, cls.avatar_size * image.size[1] / image.size[0]), Image.ANTIALIAS)
@@ -114,22 +129,57 @@ class Avatar(GoogleCSPhotoUploader):
             image = image.resize((cls.avatar_size, cls.avatar_size), Image.ANTIALIAS)
 
 
-        photo_name = '{uid}{photo_suffix}.jpg'.format(uid=uid, photo_suffix=cls.avatar_suffix)
-        photo_path = os.path.join(temporary_dir, photo_name)
+
+
+
+    #     if ratio > img_ratio:
+    #     img = img.resize((size[0], int(round(size[0] * img.size[1] / img.size[0]))),
+    #         Image.ANTIALIAS)
+    #     # Crop in the top, middle or bottom
+    #     if crop_type == 'top':
+    #         box = (0, 0, img.size[0], size[1])
+    #     elif crop_type == 'middle':
+    #         box = (0, int(round((img.size[1] - size[1]) / 2)), img.size[0],
+    #             int(round((img.size[1] + size[1]) / 2)))
+    #     elif crop_type == 'bottom':
+    #         box = (0, img.size[1] - size[1], img.size[0], img.size[1])
+    #     else :
+    #         raise ValueError('ERROR: invalid value for crop_type')
+    #     img = img.crop(box)
+    # elif ratio < img_ratio:
+    #     img = img.resize((int(round(size[1] * img.size[0] / img.size[1])), size[1]),
+    #         Image.ANTIALIAS)
+    #     # Crop in the top, middle or bottom
+    #     if crop_type == 'top':
+    #         box = (0, 0, size[0], img.size[1])
+    #     elif crop_type == 'middle':
+    #         box = (int(round((img.size[0] - size[0]) / 2)), 0,
+    #             int(round((img.size[0] + size[0]) / 2)), img.size[1])
+    #     elif crop_type == 'bottom':
+    #         box = (img.size[0] - size[0], 0, img.size[0], img.size[1])
+    #     else :
+    #         raise ValueError('ERROR: invalid value for crop_type')
+    #     img = img.crop(box)
+    # else :
+    #     img = img.resize((size[0], size[1]),
+    #         Image.ANTIALIAS)
+
+
+
+
 
         try:
-            image.save(photo_path, 'JPEG', quality=100)
+            image.save(original_image_path, 'JPEG', quality=100)
         except Exception as e:
             os.remove(original_image_path)
-            os.remove(photo_path)
+            os.remove(original_image_path)
             raise e
 
 
-        avatar_bucket_path = cls.upload_photo_to_google_cloud_storage(photo_path, cls.bucket_path + photo_name)
+        avatar_bucket_path = cls.upload_photo_to_google_cloud_storage(original_image_path, cls.bucket_path + original_photo_filename)
 
         # seems to be ok,
         # lets remove temporary images after uploading to the google cloud storage
         os.remove(original_image_path)
-        os.remove(photo_path)
 
         return avatar_bucket_path

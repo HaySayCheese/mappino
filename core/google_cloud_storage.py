@@ -54,13 +54,11 @@ class GoogleCSPhotoUploader(object):
         :type bucket_file_path str, unicode
         :param bucket_file_path:
         """
-        try:
-            root_index = bucket_file_path.index(cls.bucket)
-        except ValueError:
-            raise ValueError('It seems that storage does not contains such bucket or filepath.')
 
         storage = init_google_cloud_storage()
-        storage.objects().delete(
-            bucket_name=cls.bucket,
-            object=bucket_file_path[root_index:]
-        )
+        storage.objects()\
+            .delete(
+                bucket=cls.bucket,
+                object=bucket_file_path
+            )\
+            .execute()
