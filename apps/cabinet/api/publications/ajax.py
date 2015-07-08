@@ -1,14 +1,15 @@
 # coding=utf-8
+import re
 import copy
 import json
-import re
 
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.http.response import HttpResponse, HttpResponseBadRequest
 
-from collective.http.responses import HttpJsonResponseBadRequest, HttpJsonResponse
-from collective.methods.request_data_getters import angular_parameters
 from apps.classes import CabinetView
+from collective.decorators.ajax import json_response, json_response_bad_request
+from collective.http.responses import HttpJsonResponse
+from collective.methods.request_data_getters import angular_parameters
 from core.publications import classes
 from core.publications.exceptions import PhotosHandlerExceptions
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS
@@ -27,21 +28,24 @@ from core.publications.update_methods.lands import update_land
 class Publications(CabinetView):
     class PostResponses(object):
         @staticmethod
+        @json_response
         def ok(publication_hash_id):
-            return HttpJsonResponse({
+            return {
                 'code': 0,
                 'message': 'OK',
                 'data': {
                     'id': publication_hash_id,
                 }
-            })
+            }
+
 
         @staticmethod
+        @json_response_bad_request
         def invalid_parameters():
-            return HttpJsonResponseBadRequest({
+            return {
                 'code': 1,
                 'message': 'Request does not contains valid parameters or one of them is incorrect.',
-            })
+            }
 
 
     @classmethod
@@ -66,68 +70,77 @@ class Publications(CabinetView):
 class Publication(CabinetView):
     class GetResponses(object):
         @staticmethod
+        @json_response
         def ok(publication_data):
-            return HttpJsonResponse({
+            return {
                 'code': 0,
                 'message': 'OK',
                 'data': publication_data,
-            })
+            }
 
 
         @staticmethod
+        @json_response_bad_request
         def invalid_parameters():
-            return HttpResponseBadRequest({
+            return {
                 'code': 1,
                 'message': 'Request does not contains valid parameters or one of them is incorrect.'
-            })
+            }
 
 
     class PutResponses(object):
         @staticmethod
-        def ok(new_value):
+        @json_response
+        def ok(new_value=None):
             if new_value:
-                return HttpJsonResponse({
+                return {
                     'code': 0,
                     'message': 'OK',
                     'data': {
                         'value': new_value,
                     }
-                })
+                }
 
             else:
-                return HttpJsonResponse({
+                return {
                     'code': 0,
                     'message': 'OK',
-                })
+                }
+
 
         @staticmethod
+        @json_response_bad_request
         def invalid_parameters():
-            return HttpResponseBadRequest({
+            return {
                 'code': 1,
                 'message': 'Request does not contains valid parameters or one of them is incorrect.'
-            })
+            }
 
 
     class DeleteResponses(object):
         @staticmethod
+        @json_response
         def ok():
-            return HttpJsonResponse({
+            return {
                 'code': 0,
                 'message': 'OK',
-            })
+            }
+
 
         @staticmethod
+        @json_response_bad_request
         def invalid_parameters():
-            return HttpResponseBadRequest({
+            return {
                 'code': 1,
                 'message': 'Request does not contains valid parameters or one of them is incorrect.'
-            })
+            }
 
 
     def __init__(self):
         super(Publication, self).__init__()
         self.published_formatter = classes.CabinetPublishedDataSource()
         self.unpublished_formatter = classes.UnpublishedFormatter()
+
 
     def get(self, request, *args):
         try:
@@ -156,26 +169,26 @@ class Publication(CabinetView):
         else:
             response = self.unpublished_formatter.format(tid, head)
 
-        response = self.change(response)
+        # response = self.change(response)
 
         return self.GetResponses.ok(response)
 
-    def change(self, dict_to_validate, reg = "_sid$"):
-        """
-
-        :param dict_to_validate:
-        :param reg:
-        :return:
-        """
-        reg = re.compile(reg)
-        for key,value in dict_to_validate.iteritems():
-            if isinstance(value,dict):
-                dict_to_validate[key] = self.change(value)
-            else:
-                if reg.search(key):
-                    dict_to_validate[key] = str(value)
-
-        return dict_to_validate
+    # def change(self, dict_to_validate, reg = "_sid$"):
+    #     """
+    #
+    #     :param dict_to_validate:
+    #     :param reg:
+    #     :return:
+    #     """
+    #     reg = re.compile(reg)
+    #     for key,value in dict_to_validate.iteritems():
+    #         if isinstance(value,dict):
+    #             dict_to_validate[key] = self.change(value)
+    #         else:
+    #             if reg.search(key):
+    #                 dict_to_validate[key] = str(value)
+    #
+    #     return dict_to_validate
 
     def put(self, request, *args):
         try:
@@ -339,8 +352,9 @@ class Publication(CabinetView):
     class UploadPhoto(CabinetView):
         class PostResponses(object):
             @staticmethod
+            @json_response
             def ok(photo):
-                return HttpJsonResponse({
+                return {
                     'code': 0,
                     'message': 'OK',
                     'data': {
@@ -348,55 +362,61 @@ class Publication(CabinetView):
                         'is_title': photo.check_is_title(),
                         'thumbnail': photo.big_thumb_url,
                     }
-                })
+                }
 
 
             @staticmethod
+            @json_response_bad_request
             def invalid_tid():
-                return HttpJsonResponseBadRequest({
+                return {
                     'code': 1,
                     'message': 'request does not contains param "tid", or it is invalid.'
-                })
+                }
 
 
             @staticmethod
+            @json_response_bad_request
             def invalid_hash_id():
-                return HttpJsonResponseBadRequest({
+                return {
                     'code': 2,
                     'message': 'request does not contains param "hash_id" or it is invalid.'
-                })
+                }
 
 
             @staticmethod
+            @json_response_bad_request
             def image_is_absent():
-                return HttpJsonResponseBadRequest({
+                return {
                     'code': 3,
                     'message': 'request does not contains image file "file". '
-                })
+                }
 
 
             @staticmethod
+            @json_response_bad_request
             def image_is_too_large():
-                return HttpJsonResponseBadRequest({
+                return {
                     'code': 4,
                     'message': 'request contains image that is greater than max. allowable.'
-                })
+                }
 
 
             @staticmethod
+            @json_response_bad_request
             def image_is_too_small():
-                return HttpJsonResponseBadRequest({
+                return {
                     'code': 5,
                     'message': 'request contains image that is smaller than min. allowable.'
-                })
+                }
 
 
             @staticmethod
+            @json_response_bad_request
             def unsupported_image_type():
-                return HttpJsonResponseBadRequest({
+                return {
                     'code': 6,
                     'message': 'request contains image of unsupported type.'
-                })
+                }
 
             # ...
             # other response handlers goes here
@@ -404,11 +424,12 @@ class Publication(CabinetView):
 
 
             @staticmethod
+            @json_response_bad_request
             def unknown_error():
-                return HttpJsonResponseBadRequest({
+                return {
                     'code': 100,
                     'message': 'unknown error occurred.'
-                })
+                }
 
 
         @classmethod
@@ -437,11 +458,13 @@ class Publication(CabinetView):
             except IndexError:
                 return cls.PostResponses.invalid_hash_id()
 
+
             # check owner
             if publication.owner.id != request.user.id:
                 # no http response is needed here.
                 # django will generate special error response automatically.
                 raise PermissionDenied()
+
 
             # process image
             try:
