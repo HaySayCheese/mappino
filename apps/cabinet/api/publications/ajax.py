@@ -49,7 +49,7 @@ class Publications(CabinetView):
         try:
             params = angular_parameters(request, ['tid', 'for_sale', 'for_rent'])
 
-            tid = params['tid']
+            tid = int(params['tid'])
             is_sale = params['for_sale']
             is_rent = params['for_rent']
 
