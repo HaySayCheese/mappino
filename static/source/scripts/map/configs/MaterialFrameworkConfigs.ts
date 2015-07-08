@@ -7,7 +7,7 @@ module pages.map {
     export class MaterialFrameworkConfigs {
 
         constructor(private app: angular.IModule) {
-            app.config(['$mdThemingProvider', '$mdIconProvider', function($mdThemingProvider, $mdIconProvider) {
+            app.config(['$mdThemingProvider', function($mdThemingProvider) {
                 $mdThemingProvider.setDefaultTheme('blue');
 
                 $mdThemingProvider.theme('blue')

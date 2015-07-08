@@ -7,12 +7,11 @@ module pages.cabinet {
     export class MaterialFrameworkConfigs {
 
         constructor(private app: angular.IModule) {
-            app.config(['$mdThemingProvider', '$mdIconProvider', function($mdThemingProvider, $mdIconProvider) {
-                var material_icons_path = 'http://127.0.0.1/mappino_static/source/icons/material/';
+            app.config(['$mdThemingProvider', function($mdThemingProvider) {
+                $mdThemingProvider.setDefaultTheme('blue');
 
-                $mdThemingProvider.theme('default')
-                    .primaryPalette('blue')
-                    .accentPalette('grey');
+                $mdThemingProvider.theme('blue')
+                    .primaryPalette('blue');
             }]);
         }
     }
