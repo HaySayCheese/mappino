@@ -117,15 +117,15 @@ INSTALLED_APPS = (
     # 'south',
     # 'compressor',
 
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
 
-
-
-    'core',
-    'core.billing',
+    # 'core',
     'core.users',
+    'core.billing',
+
 
 
     'core.ban',
@@ -169,8 +169,10 @@ MANDRILL_API_KEY = passwords.MANDRILL_API_KEY
 LIQPAY_PUBLIC_KEY = passwords.LIQPAY_PUBLIC_KEY
 LIQPAY_PRIVATE_KEY = passwords.LIQPAY_PRIVATE_KEY
 
+AUTH_USER_MODEL = 'users.Users'
+AUTHENTICATION_BACKENDS = ('core.users.authentication_backends.SMSAuthenticationBackend', )
 
-SESSION_COOKIE_AGE = 60*60*24*14 # 14 days
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 365 * 2
 SESSION_COOKIE_HTTPONLY = False # session cookie is used by the frontend js
 
 
@@ -214,32 +216,4 @@ ROOT_URLCONF = 'mappino.urls'
 WSGI_APPLICATION = 'mappino.wsgi.application'
 
 
-AUTH_USER_MODEL = 'users.Users'
-AUTHENTICATION_BACKENDS = ('core.users.authentication_backends.SMSAuthenticationBackend', )
-
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
