@@ -42,12 +42,12 @@ class AccountView(CabinetView):
                 'message': 'OK',
                 'data': {
                     'account': {
-                        'name': user.first_name,
-                        'surname': user.last_name,
+                        'first_name': user.first_name,
+                        'last_name': user.last_name,
                         'email': user.email,
                         'work_email': user.work_email or '',
                         'skype': user.skype or '',
-                        'avatar': user.avatar.url() or '',
+                        'avatar_url': user.avatar.url() or '',
 
                         'mobile_phone': mobile_phone_number,
                         'add_mobile_phone': add_mobile_phone_number,
@@ -100,42 +100,10 @@ class AccountView(CabinetView):
 
 
         @staticmethod
-        def invalid_email():
+        def duplicated_value():
             return HttpJsonResponse({
-                'code': 10,
-                'message': 'Email is invalid.'
-            })
-
-
-        @staticmethod
-        def duplicated_email():
-            return HttpJsonResponse({
-                'code': 11,
-                'message': 'Email is duplicated.'
-            })
-
-
-        @staticmethod
-        def duplicated_email():
-            return HttpJsonResponse({
-                'code': 11,
-                'message': 'Email is duplicated.'
-            })
-
-
-        @staticmethod
-        def invalid_phone():
-            return HttpJsonResponse({
-                'code': 20,
-                'message': 'Invalid phone.'
-            })
-
-
-        @staticmethod
-        def duplicated_phone():
-            return HttpJsonResponse({
-                'code': 21,
-                'message': 'Duplicated phone.'
+                'code': 2,
+                'message': 'Value is invalid.'
             })
 
 
@@ -150,8 +118,8 @@ class AccountView(CabinetView):
     def __init__(self):
         super(AccountView, self).__init__()
         self.update_methods = {
-            'name': self.__update_first_name,
-            'surname': self.__update_last_name,
+            'first_name': self.__update_first_name,
+            'last_name': self.__update_last_name,
             'email': self.__update_email,
             'work_email': self.__update_work_email,
             'mobile_phone': self.__update_mobile_phone_number,
@@ -232,12 +200,12 @@ class AccountView(CabinetView):
         try:
             validate_email(email)
         except ValidationError:
-            return self.PostResponses.invalid_email()
+            return self.PostResponses.invalid_value()
 
 
         # check for duplicates
         if not Users.email_is_free(email):
-            return self.PostResponses.duplicated_email()
+            return self.PostResponses.duplicated_value()
 
 
         # todo: add email normalization here
@@ -262,11 +230,11 @@ class AccountView(CabinetView):
         try:
             validate_email(email)
         except ValidationError:
-            return self.PostResponses.invalid_email()
+            return self.PostResponses.invalid_value()
 
         # check for duplicates
         if not Users.email_is_free(email):
-            return self.PostResponses.duplicated_email()
+            return self.PostResponses.duplicated_value()
 
         # todo: add email normalization here
         user.work_email = email
@@ -278,22 +246,20 @@ class AccountView(CabinetView):
         if not phone:
             return self.PostResponses.value_required()
 
+
         try:
-            phone = phonenumbers.parse(phone)
-            if not phonenumbers.is_valid_number(phone):
-                raise ValidationError('Invalid number.')
+            phone = Users.objects.parse_phone_number(phone)
+        except ValueError:
+            return self.PostResponses.invalid_value()
 
-        except (phonenumbers.NumberParseException, ValidationError):
-            return self.PostResponses.invalid_phone()
 
-        phone = phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.E164)
         if user.mobile_phone == phone:
             # already the same
             return self.PostResponses.ok()
 
         # check for duplicates
         if not user.mobile_phone_number_is_free(phone):
-            return self.PostResponses.duplicated_phone()
+            return self.PostResponses.duplicated_value()
 
         if not user.mobile_phone == phone:
             user.mobile_phone = phone
@@ -313,22 +279,18 @@ class AccountView(CabinetView):
 
 
         try:
-            phone = phonenumbers.parse(phone)
-            if not phonenumbers.is_valid_number(phone):
-                raise ValidationError('Invalid number.')
-
-        except (phonenumbers.NumberParseException, ValidationError):
-            return self.PostResponses.invalid_phone()
+            phone =Users.objects.parse_phone_number(phone)
+        except ValueError:
+            return self.PostResponses.invalid_value()
 
 
-        phone = phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.E164)
         if user.add_mobile_phone == phone:
             # already the same
             return self.PostResponses.ok()
 
         # check for duplicates
         if user.mobile_phone == phone or not user.mobile_phone_number_is_free(phone):
-            return self.PostResponses.duplicated_phone()
+            return self.PostResponses.duplicated_value()
 
         if not user.add_landline_phone == phone:
             user.add_mobile_phone = phone
@@ -348,7 +310,7 @@ class AccountView(CabinetView):
 
         # check for duplicates
         if user.add_landline_phone or not user.mobile_phone_number_is_free(phone):
-            return self.PostResponses.duplicated_phone()
+            return self.PostResponses.duplicated_value()
 
         if not user.landline_phone == phone:
             user.landline_phone = phone
@@ -368,7 +330,7 @@ class AccountView(CabinetView):
 
         # check for duplicates
         if user.landline_phone == phone or not user.mobile_phone_number_is_free(phone):
-            return self.PostResponses.duplicated_phone()
+            return self.PostResponses.duplicated_value()
 
         if not user.add_landline_phone == phone:
             user.add_landline_phone = phone

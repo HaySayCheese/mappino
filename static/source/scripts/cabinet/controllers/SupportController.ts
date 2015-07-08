@@ -20,11 +20,10 @@ module pages.cabinet {
             'TicketsService'
         ];
 
-        constructor(
-            private $scope: any,
-            private $rootScope: any,
-            private $state: angular.ui.IStateService,
-            private ticketsService: ITicketsService) {
+        constructor(private $scope: any,
+                    private $rootScope: any,
+                    private $state: angular.ui.IStateService,
+                    private ticketsService: ITicketsService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.ticket   = {};
             $scope.tickets  = this._tickets = [];
@@ -42,15 +41,13 @@ module pages.cabinet {
 
 
         private createTicket() {
-            var self = this;
-
             this.ticketsService.createTicket((response) => {
-                this._ticket.id = self.$scope.ticket.id = response.id;
+                this._ticket.id = this.$scope.ticket.id = response.id;
 
-                self.$scope.ticketFormIsVisible = true;
+                this.$scope.ticketFormIsVisible = true;
 
-                if (!self.$scope.$$phase) {
-                    self.$scope.$apply()
+                if (!this.$scope.$$phase) {
+                    this.$scope.$apply()
                 }
             });
         }
@@ -58,11 +55,11 @@ module pages.cabinet {
 
 
         private sendMessage() {
-            var self = this;
-
-            this.ticketsService.sendMessage(this._ticket.id, this.$scope.ticket, (response) => {
-                self.$state.go('ticket_view', { ticket_id: this._ticket.id })
-            });
+            if (this.$scope.ticketForm.$valid) {
+                this.ticketsService.sendMessage(this._ticket.id, this.$scope.ticket, (response) => {
+                    this.$state.go('ticket_view', { ticket_id: this._ticket.id })
+                });
+            }
         }
 
 

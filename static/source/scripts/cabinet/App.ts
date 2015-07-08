@@ -36,7 +36,6 @@ module pages.cabinet {
 
 
     /** Module controllers */
-    app.controller('LoginController', LoginController);
     app.controller('CabinetController', CabinetController);
     app.controller('BriefsController', BriefsController);
     app.controller('PublicationController', PublicationController);

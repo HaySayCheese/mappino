@@ -1,15 +1,14 @@
-<div class="b-navbar-left md-whiteframe-z1" layout="row">
-    <div class="b-navbar-left-wrapper" ng-if="navbarLeftActiveTabIndex !== null">
-        <md-tabs md-selected="navbarLeftActiveTabIndex" md-dynamic-height>
+<div class="navbar-left-container" ng-if="navbarLeftActiveTabIndex !== null">
+    <md-tabs md-selected="navbarLeftActiveTabIndex" md-dynamic-height>
 
 
-            <md-tab id="filters-tab-red" md-on-select="navCtrl.tabsHandler.open('filters_red');">
-                <md-tab-label>
-                    <md-icon>filter_list</md-icon>
-                </md-tab-label>
-                <md-tab-body>
-                    <div class="account-tab" ng-controller="FiltersTabController as filCtrl">
-                        <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
+        <md-tab id="filters-tab-red" md-on-select="navCtrl.tabsHandler.open('filters_red');">
+            <md-tab-label>
+                <md-icon>filter_list</md-icon>
+            </md-tab-label>
+            <md-tab-body>
+                <div class="account-tab" ng-controller="FiltersTabController as filCtrl">
+                    <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
                             <span class="md-body-1">
                                 [[ filCtrl.realtyTypes[filters.red.r_t_sid].title ]]&nbsp;
                             </span>
@@ -22,137 +21,136 @@
                             <span class="md-body-1" ng-show="!filters.red.r_p_min && filters.red.r_p_max">
                                 (до [[ filters.red.r_p_max ]] [[ filCtrl.currencyTypes[filters.red.r_cu_sid].title ]])
                             </span>
-                        </header>
-                        <tab-body-collapsible>
-                            <div scrollbar>
-                                <section class="-border-top" layout="column" layout-padding>
-                                    <div layout="row">
-                                        <md-select placeholder="Тип обєкта" ng-model="filters.red.r_t_sid" flex="67">
-                                            <md-option ng-repeat="realtyType in filCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
-                                        </md-select>
-                                        <md-select placeholder="Операция" ng-model="filters.red.r_op_sid" flex="33">
-                                            <md-option value="0">Продажа</md-option>
-                                            <md-option value="1">Оренда</md-option>
-                                        </md-select>
-                                    </div>
-                                </section>
-                                <div ng-if="filters.red.r_t_sid != null" ng-include="'/ajax/template/map/filters/red/' + [[ filters.red.r_t_sid ]] + '/'"></div>
-                            </div>
-                        </tab-body-collapsible>
-                    </div>
-                </md-tab-body>
-            </md-tab>
-
-
-
-            <md-tab id="filters-tab-blue" md-on-select="navCtrl.tabsHandler.open('filters_blue');">
-                <md-tab-label>
-                    <md-icon>filter_list</md-icon>
-                </md-tab-label>
-                <md-tab-body>
-                    <div class="filters-tab">
-                        <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
-                            <span class="md-body-1">Дома 0 - 90 000 $</span>
-                        </header>
-                        <tab-body-collapsible>
+                    </header>
+                    <tab-body-collapsible>
+                        <div scrollbar>
                             <section class="-border-top" layout="column" layout-padding>
                                 <div layout="row">
-                                    <md-select placeholder="Тип обєкта" ng-model="filters.blue.b_t_sid" flex="65">
-                                        <md-option ng-repeat="realtyType in navCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
+                                    <md-select placeholder="Тип обєкта" ng-model="filters.red.r_t_sid" flex="67">
+                                        <md-option ng-repeat="realtyType in filCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
                                     </md-select>
-                                    <md-select placeholder="Операция" ng-model="filters.blue.b_op_sid" flex="35">
+                                    <md-select placeholder="Операция" ng-model="filters.red.r_op_sid" flex="33">
                                         <md-option value="0">Продажа</md-option>
                                         <md-option value="1">Оренда</md-option>
                                     </md-select>
                                 </div>
                             </section>
-                            <div ng-if="filters.blue.b_t_sid != null" ng-include="'/ajax/template/main/filters/blue/' + [[ filters.blue.b_t_sid ]] + '/'"></div>
-                        </tab-body-collapsible>
-                    </div>
-                </md-tab-body>
-            </md-tab>
+                            <div ng-if="filters.red.r_t_sid != null" ng-include="'/ajax/template/map/filters/red/' + [[ filters.red.r_t_sid ]] + '/'"></div>
+                        </div>
+                    </tab-body-collapsible>
+                </div>
+            </md-tab-body>
+        </md-tab>
 
 
 
-            <md-tab id="search-tab" md-on-select="navCtrl.tabsHandler.open('search');">
-                <md-tab-label>
-                    <md-icon>search</md-icon>
-                </md-tab-label>
-                <md-tab-body>
-                    <section class="search-tab md-padding">
-                        <md-input-container>
-                            <label>Местоположение</label>
-                            <input type="text" ng-model="filters.map.c">
-                        </md-input-container>
-                    </section>
-                </md-tab-body>
-            </md-tab>
+        <md-tab id="filters-tab-blue" md-on-select="navCtrl.tabsHandler.open('filters_blue');">
+            <md-tab-label>
+                <md-icon>filter_list</md-icon>
+            </md-tab-label>
+            <md-tab-body>
+                <div class="filters-tab">
+                    <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
+                        <span class="md-body-1">Дома 0 - 90 000 $</span>
+                    </header>
+                    <tab-body-collapsible>
+                        <section class="-border-top" layout="column" layout-padding>
+                            <div layout="row">
+                                <md-select placeholder="Тип обєкта" ng-model="filters.blue.b_t_sid" flex="65">
+                                    <md-option ng-repeat="realtyType in navCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
+                                </md-select>
+                                <md-select placeholder="Операция" ng-model="filters.blue.b_op_sid" flex="35">
+                                    <md-option value="0">Продажа</md-option>
+                                    <md-option value="1">Оренда</md-option>
+                                </md-select>
+                            </div>
+                        </section>
+                        <div ng-if="filters.blue.b_t_sid != null" ng-include="'/ajax/template/main/filters/blue/' + [[ filters.blue.b_t_sid ]] + '/'"></div>
+                    </tab-body-collapsible>
+                </div>
+            </md-tab-body>
+        </md-tab>
 
 
-            <md-tab id="account-tab" md-on-select="navCtrl.tabsHandler.open('account');">
-                <md-tab-label>
-                    <md-icon>perm_identity</md-icon>
-                </md-tab-label>
-                <md-tab-body>
-                    <section class="account-tab md-padding" ng-controller="AccountTabController as accCtrl">
-                        <form name="loginForm" layout="column" ng-submit="accCtrl.login()" novalidate>
-                            <div ng-switch="authState">
-                                <div ng-switch-when="enterPhone">
-                                    <div layout="column">
-                                        <div layout="row">
-                                            <md-input-container flex="20">
-                                                <label>Код</label>
-                                                <input type="text" name="phoneCode" ng-model="user.phoneCode" disabled>
-                                            </md-input-container>
-                                            <md-input-container flex="80">
-                                                <label>Номер телефона</label>
-                                                <input type="text" name="phoneNumber" ng-model="user.phoneNumber" autofocus only-number required>
-                                                <div ng-messages="loginForm.phoneNumber.$error"
-                                                     ng-show="loginForm.$submitted || loginForm.phoneNumber.$touched">
-                                                    <div ng-message="required">Обязательное поле</div>
-                                                    <div ng-message="invalid">Номер телефона указан неверно</div>
-                                                </div>
-                                            </md-input-container>
-                                        </div>
-                                        <md-button class="md-raised md-primary">
-                                            Войти
-                                        </md-button>
-                                    </div>
-                                </div>
 
-                                <div ng-switch-when="enterSMSCode">
-                                    <div layout="column">
-                                        <md-input-container flex="100">
-                                            <label>Код подтверждения</label>
-                                            <input type="text" name="smsCode" ng-model="user.smsCode" autofocus only-number required>
-                                            <div ng-messages="loginForm.smsCode.$error"
-                                                 ng-show="loginForm.smsCode.$touched">
+        <md-tab id="search-tab" md-on-select="navCtrl.tabsHandler.open('search');">
+            <md-tab-label>
+                <md-icon>search</md-icon>
+            </md-tab-label>
+            <md-tab-body>
+                <section class="search-tab md-padding">
+                    <md-input-container>
+                        <label>Местоположение</label>
+                        <input type="text" ng-model="filters.map.c">
+                    </md-input-container>
+                </section>
+            </md-tab-body>
+        </md-tab>
+
+
+        <md-tab id="account-tab" md-on-select="navCtrl.tabsHandler.open('account');">
+            <md-tab-label>
+                <md-icon>perm_identity</md-icon>
+            </md-tab-label>
+            <md-tab-body>
+                <section class="account-tab md-padding" ng-controller="AccountTabController as accCtrl">
+                    <form name="loginForm" layout="column" ng-submit="accCtrl.login()" novalidate>
+                        <div ng-switch="authState">
+                            <div ng-switch-when="enterPhone">
+                                <div layout="column">
+                                    <div layout="row">
+                                        <md-input-container flex="20">
+                                            <label>Код</label>
+                                            <input type="text" name="phoneCode" ng-model="user.phoneCode" disabled>
+                                        </md-input-container>
+                                        <md-input-container flex="80">
+                                            <label>Номер телефона</label>
+                                            <input type="text" name="phoneNumber" ng-model="user.phoneNumber" autofocus only-number required>
+                                            <div ng-messages="loginForm.phoneNumber.$error"
+                                                 ng-show="loginForm.$submitted || loginForm.phoneNumber.$touched">
                                                 <div ng-message="required">Обязательное поле</div>
-                                                <div ng-message="invalid">Неверный код подтверждения</div>
+                                                <div ng-message="invalid">Номер телефона указан неверно</div>
                                             </div>
                                         </md-input-container>
-                                        <md-button class="md-raised md-primary">
-                                            Войти
-                                        </md-button>
                                     </div>
+                                    <md-button class="md-raised md-primary">
+                                        Войти
+                                    </md-button>
                                 </div>
+                            </div>
 
-                                <div ng-switch-when="accountInformation">
-                                    <div class="account-info-state" layout="column">
-                                        <div layout="row"layout-align="start start">
-                                            <img class="user-avatar" src="http://lorempixel.com/100/100" alt=""/>
+                            <div ng-switch-when="enterSMSCode">
+                                <div layout="column">
+                                    <md-input-container flex="100">
+                                        <label>Код подтверждения</label>
+                                        <input type="text" name="smsCode" ng-model="user.smsCode" autofocus only-number required>
+                                        <div ng-messages="loginForm.smsCode.$error"
+                                             ng-show="loginForm.smsCode.$touched">
+                                            <div ng-message="required">Обязательное поле</div>
+                                            <div ng-message="invalid">Неверный код подтверждения</div>
+                                        </div>
+                                    </md-input-container>
+                                    <md-button class="md-raised md-primary">
+                                        Войти
+                                    </md-button>
+                                </div>
+                            </div>
 
-                                            <div layout="column" layout-align="start start" layout-padding>
-                                                <div class="md-title">Сергій Мекетюк</div>
-                                            </div>
+                            <div ng-switch-when="accountInformation">
+                                <div class="account-info-state" layout="column">
+                                    <div layout="row"layout-align="start start">
+                                        <img class="user-avatar" src="http://lorempixel.com/100/100" alt=""/>
+
+                                        <div layout="column" layout-align="start start" layout-padding>
+                                            <div class="md-title">Сергій Мекетюк</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </form>
-                    </section>
-                </md-tab-body>
-            </md-tab>
-        </md-tabs>
-    </div>
+                        </div>
+                    </form>
+                </section>
+            </md-tab-body>
+        </md-tab>
+    </md-tabs>
 </div>

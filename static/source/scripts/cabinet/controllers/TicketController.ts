@@ -21,11 +21,10 @@ module pages.cabinet {
 
 
 
-        constructor(
-            private $scope: any,
-            private $rootScope: any,
-            private $state: angular.ui.IStateService,
-            private ticketsService: ITicketsService) {
+        constructor(private $scope: any,
+                    private $rootScope: any,
+                    private $state: angular.ui.IStateService,
+                    private ticketsService: ITicketsService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.ticket       = {};
             $scope.new_message  = {};
@@ -52,20 +51,29 @@ module pages.cabinet {
         private sendMessage() {
             var self = this;
 
-            this.ticketsService.sendMessage(this._ticket.id, self.$scope.new_message, (response) => {
-                self.$scope.ticket.messages.unshift({
-                    created:    new Date().getTime(),
-                    text:       self.$scope.new_message.message,
-                    type_sid:   0
+            if (this.$scope.ticketForm.$valid) {
+                this.$rootScope.loaders.base = true;
+
+                this.ticketsService.sendMessage(this._ticket.id, self.$scope.new_message, (response) => {
+                    this.$rootScope.loaders.base = false;
+
+                    self.$scope.ticket.messages.unshift({
+                        created:    new Date().getTime(),
+                        text:       self.$scope.new_message.message,
+                        type_sid:   0
+                    });
+
+                    if (self.$scope.new_message.subject) {
+                        self.$scope.ticket.subject = self.$scope.new_message.subject;
+                        self.$scope.new_message.subject = '';
+                    }
+
+                    self.$scope.new_message.message = null;
+
+                    this.$scope.ticketForm.$setPristine();
+                    this.$scope.ticketForm.$setUntouched();
                 });
-
-                if (self.$scope.new_message.subject) {
-                    self.$scope.ticket.subject = self.$scope.new_message.subject;
-                    self.$scope.new_message.subject = '';
-                }
-
-                self.$scope.new_message.message = '';
-            });
+            }
         }
     }
 }

@@ -35,7 +35,6 @@
 // ####################
 // Handlers import
 // ####################
-/// <reference path='handlers/NavbarsHandler.ts' />
 /// <reference path='handlers/TabsHandler.ts' />
 /// <reference path='handlers/PublicationHandler.ts' />
 

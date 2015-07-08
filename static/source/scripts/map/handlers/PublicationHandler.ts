@@ -16,21 +16,20 @@ module pages.map {
                     private $rootScope: angular.IRootScopeService,
                     private $location: angular.ILocationService) {
             // ---------------------------------------------------------------------------------------------------------
-
         }
 
 
 
         public open(publication_id, with_publication_list?: Boolean) {
-            this.$rootScope.$broadcast('PublicationHandler.Open');
+            this.$rootScope.$broadcast('Handlers.Publication.Open');
 
 
             if (with_publication_list) {
-                this.$rootScope.$broadcast('PublicationHandler.OpenWithNavbarRight');
+                this.$rootScope.$broadcast('Handlers.NavbarRight.Open');
 
                 this.$state.go('base', { navbar_right: 1, publication_id: publication_id });
             } else {
-                this.$rootScope.$broadcast('PublicationHandler.Open');
+                this.$rootScope.$broadcast('Handlers.NavbarRight.Close');
 
                 this.$state.go('base', { navbar_right: 0, publication_id: publication_id });
             }
@@ -40,7 +39,7 @@ module pages.map {
 
 
         public close() {
-            this.$rootScope.$broadcast('PublicationHandler.Close');
+            this.$rootScope.$broadcast('Handlers.Publication.Close');
 
             this.$state.go('base', { publication_id: 0, navbar_right: 1 });
         }

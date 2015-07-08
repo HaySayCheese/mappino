@@ -1,4 +1,4 @@
-.b-navbar-right {
+navbar-right {
     @extend %_fixed-panel;
 
     @include size(220px, auto);
@@ -17,7 +17,7 @@
     }
 
 
-    .b-navbar-right-wrapper {
+    .navbar-right-container {
         @include square(100%);
         position: relative;
         display: block;

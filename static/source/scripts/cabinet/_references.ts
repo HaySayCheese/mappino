@@ -50,7 +50,6 @@
 // ####################
 // Controllers import
 // ####################
-/// <reference path='controllers/LoginController.ts' />
 /// <reference path='controllers/CabinetController.ts' />
 /// <reference path='controllers/BriefsController.ts' />
 /// <reference path='controllers/PublicationController.ts' />

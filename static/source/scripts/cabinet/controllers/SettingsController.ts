@@ -69,9 +69,12 @@ module pages.cabinet {
 
                 this.authService.checkProfileField({ f: name, v: value }, (newValue) => {
                     e.currentTarget['value'] = newValue;
+
+                    this.$scope.userProfileForm[name].$setValidity("invalid",    true);
+                    this.$scope.userProfileForm[name].$setValidity("duplicated", true);
                 }, (response) => {
-                    this.$scope.userProfileForm[name].$setValidity("incorrect",   response.code !== 10);
-                    this.$scope.userProfileForm[name].$setValidity("inUsed",      response.code !== 11);
+                    this.$scope.userProfileForm[name].$setValidity("invalid",       response.code !== 2);
+                    this.$scope.userProfileForm[name].$setValidity("duplicated",    response.code !== 3);
                 });
 
             });
