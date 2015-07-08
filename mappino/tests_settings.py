@@ -6,7 +6,7 @@ from dev_settings import *
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '(test)mappino-db',
+        'NAME': 'test_(test)mappino-db',
         'USER': 'postgres',
         'PASSWORD': '1234',
         'HOST': '127.0.0.1',
@@ -14,7 +14,3 @@ DATABASES = {
     },
 }
 DATABASE_ROUTERS = []
-
-INSTALLED_APPS += (
-    'apps.common.api.accounts',
-)

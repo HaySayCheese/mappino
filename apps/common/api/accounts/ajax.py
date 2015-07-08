@@ -147,6 +147,16 @@ class LoginManager(object):
             authenticated_user.backend = 'core.users.authentication_backends.SMSAuthenticationBackend'
             login(request, authenticated_user)
 
+
+            # Every SMS transaction is paid,
+            # so wee need to send SMS as less as possible.
+            #
+            # To do sow wee will prolong users's session up to 2 years,
+            # to have possibility to not to send another login sms to him as long as possible.
+            request.session.set_expiry(60*60*24*365*2)
+            request.session.save()
+
+
             return self.PostResponses.ok(authenticated_user)
 
 

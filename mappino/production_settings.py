@@ -171,9 +171,11 @@ SMS_GATE_LOGIN = passwords.SMS_GATE_LOGIN
 SMS_GATE_PASSWORD = passwords.SMS_GATE_PASSWORD
 MANDRILL_API_KEY = passwords.MANDRILL_API_KEY
 
-
-SESSION_COOKIE_AGE = 60*60*24*14 # 14 days
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 365 * 2
 SESSION_COOKIE_HTTPONLY = False
+
+AUTH_USER_MODEL = 'users.Users'
+AUTHENTICATION_BACKENDS = ('core.users.authentication_backends.SMSAuthenticationBackend', )
 
 
 
@@ -216,7 +218,8 @@ ROOT_URLCONF = 'mappino.urls'
 WSGI_APPLICATION = 'mappino.wsgi.application'
 
 
-AUTH_USER_MODEL = 'users.Users'
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
