@@ -130,7 +130,6 @@ CELERY_RESULT_BACKEND = BROKER_URL
 
 
 INSTALLED_APPS = (
-    'south',
     'compressor',
 
     'django.contrib.auth',
@@ -142,15 +141,12 @@ INSTALLED_APPS = (
     'core.ban',
     'core.customers',
     'core.favorites',
-    'core.billing',
     'core.publications',
     'core.claims',
     'core.markers_handler',
-    'core.search',
     'core.support',
     'core.escaped_fragments_manager',
 
-    'apps.cabinet.api.dirtags',
     'apps.main.api.correspondence',
 )
 

@@ -8,6 +8,8 @@ venv-pypy
 
 
 mappino/dev_settings.py
+mappino/tests_settings.py
+
 mappino/passwords.py
 mappino/keys/*
 mappino/keys
