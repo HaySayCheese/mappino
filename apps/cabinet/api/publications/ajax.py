@@ -8,7 +8,6 @@ from django.http.response import HttpResponse, HttpResponseBadRequest
 
 from apps.classes import CabinetView
 from collective.decorators.ajax import json_response, json_response_bad_request
-from collective.http.responses import HttpJsonResponse
 from collective.methods.request_data_getters import angular_parameters
 from core.publications import classes
 from core.publications.exceptions import PhotosHandlerExceptions
@@ -300,18 +299,21 @@ class Publication(CabinetView):
     class PublishUnpublish(CabinetView):
         class PutResponses(object):
             @staticmethod
+            @json_response
             def ok():
-                return HttpJsonResponse({
+                return {
                     'code': 0,
                     'message': 'OK'
-                })
+                }
+
 
             @staticmethod
+            @json_response
             def invalid_publication():
-                return HttpJsonResponse({
+                return {
                     'code': 1,
                     'message': 'publication does not pass validation.'
-                })
+                }
 
 
         @classmethod
@@ -549,21 +551,42 @@ class Publication(CabinetView):
             return HttpResponse(json.dumps(response), content_type='application/json')
 
 
-    class PhotoTitle(CabinetView):
-        post_codes = {
-            'OK': {
-                'code': 0,
-            },
-            'invalid_tid': {
-                'code': 1,
-            },
-            'invalid_hid': {
-                'code': 2,
-            },
-            'invalid_pid': {
-                'code': 3,
-            },
-        }
+    class TitlePhoto(CabinetView):
+        class PostResponses(object):
+            @staticmethod
+            @json_response
+            def ok():
+                return {
+                    'code': 0,
+                    'message': 'OK',
+                }
+
+
+            @staticmethod
+            @json_response_bad_request
+            def invalid_tid():
+                return {
+                    'code': 1,
+                    'message': 'Object type id is invalid.'
+                }
+
+
+            @staticmethod
+            @json_response_bad_request
+            def invalid_hid():
+                return {
+                    'code': 2,
+                    'message': 'Object hash id is invalid.'
+                }
+
+
+            @staticmethod
+            @json_response_bad_request
+            def invalid_pid():
+                return {
+                    'code': 3,
+                    'message': 'Photo id is invalid.'
+                }
 
 
         def post(self, request, *args):
@@ -582,15 +605,14 @@ class Publication(CabinetView):
 
 
             if tid not in OBJECTS_TYPES.values():
-                return HttpResponseBadRequest(
-                    json.dumps(self.post_codes['invalid_tid']), content_type='application/json')
+                return self.PostResponses.invalid_tid()
+
 
             model = HEAD_MODELS[tid]
             try:
                 publication = model.objects.filter(hash_id=hash_id).only('id', 'owner')[:1][0]
             except IndexError:
-                return HttpResponseBadRequest(
-                    json.dumps(self.post_codes['invalid_hid']), content_type='application/json')
+                return self.PostResponses.invalid_hid()
 
 
             # check owner
@@ -603,12 +625,13 @@ class Publication(CabinetView):
             try:
                 photo = photos_model.objects.get(hash_id=photo_hash_id)
             except ObjectDoesNotExist:
-                return HttpResponseBadRequest(
-                    json.dumps(self.post_codes['invalid_pid']), content_type='application/json')
+                return self.PostResponses.invalid_pid()
+
 
             photo.mark_as_title()
 
             # seems to be ok
+            raise NotImplemented('This code should be updated')
             response = copy.deepcopy(self.post_codes['OK'])
             response['brief_url'] = publication.title_small_thumbnail_url()
-            return HttpResponse(json.dumps(response), content_type='application/json')
+            return self.PostResponses.ok()

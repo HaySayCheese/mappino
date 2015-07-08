@@ -15,7 +15,7 @@ urlpatterns = patterns('apps.cabinet.api',
         # photos
         url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/photos/$', Publication.UploadPhoto.as_view()),
         url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/(\w+)/$', Publication.Photos.as_view()),
-        url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/(\w+)/title/$', Publication.PhotoTitle.as_view()),
+        url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/(\w+)/title/$', Publication.TitlePhoto.as_view()),
 
 
     # url(r'^ajax/api/cabinet/publications/counters/$', 'publications.briefs.ajax.counters'),
