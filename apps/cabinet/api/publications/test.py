@@ -61,7 +61,7 @@ class TestFlatsRentIndex(object):
         try:
             date_from = datetime.today()
             date_to = date_from + timedelta(days=1)
-            self.publication.add_dates_rent(date_from,date_to)
+            self.publication.add_dates_rent(self.publication.hash_id, date_from, date_to)
         except Exception as e:
             pass
 

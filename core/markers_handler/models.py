@@ -651,8 +651,8 @@ class FlatsRentIndex(AbstractRentIndex):
     @classmethod
     def add_dates_rent(cls, hash_id, date_from, date_to):
         try:
-            record = FlatsRentIndex.objects.filter(hash_id = hash_id)[:1][0]
-        except:
+            record = FlatsRentIndex.objects.get_or_create(hash_id = hash_id)
+        except Exception as e:
             #todo fix it.
             pass
 
