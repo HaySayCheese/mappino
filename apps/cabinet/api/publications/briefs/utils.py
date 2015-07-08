@@ -1,22 +1,5 @@
 #coding=utf-8
-from itertools import ifilter
-
-from django.db import connection
-
-from apps.cabinet.api.dirtags.models import DirTags
 from core.publications.constants import OBJECTS_TYPES, OBJECT_STATES, HEAD_MODELS
-
-
-
-def briefs_of_tag(tag):
-    ids = tag.publications_hids()
-
-    pubs = []
-    for tid in ids.keys():
-        query = HEAD_MODELS[tid].objects.filter(id__in = ids[tid]).only('id').order_by('created')
-        pubs.extend(__dump_publications_list(tid, tag.user.id, query))
-    return pubs
-
 
 
 def briefs_of_section(section, user_id):
@@ -60,134 +43,6 @@ def briefs_of_publications(ids, user_id):
     return pubs
 
 
-
-def get_sections_counters(user_id):
-    """
-    Поверне список розділів і тегів коритсувача з id = user_id.
-    Кожен запис супроводжуватиметься кількістю оголошень в кожному конкретному розділі чи тезі.
-
-    SQL-запит використовується тому, що на orm логіка вибірки була б вкрай важкою, а к-сть запитів значно зросла б.
-    """
-
-    # tags
-    tags = DirTags.by_user_id(user_id=user_id).only('pubs')
-    counters = {
-        tag.id: tag.publications_count() for tag in tags
-    }
-
-    # sections
-    query = """
-    SELECT SUM(published) AS count FROM (
-        SELECT count(*) AS published FROM o_business_heads
-            WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS published FROM o_flats_heads
-            WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS published FROM o_garages_heads
-            WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS published FROM o_houses_heads
-            WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS published FROM o_lands_heads
-            WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS published FROM o_offices_heads
-            WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS published FROM o_rooms_heads
-            WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS published FROM o_trades_heads
-            WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS published FROM o_warehouses_heads
-            WHERE "state_sid" = '{published_sid}' AND "owner_id" = '{owner_id}'
-    ) AS published
-
-    UNION ALL SELECT SUM(unpublished) FROM(
-        SELECT count(*) AS unpublished FROM o_business_heads
-            WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS unpublished FROM o_flats_heads
-            WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS unpublished FROM o_garages_heads
-            WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS unpublished FROM o_houses_heads
-            WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS unpublished FROM o_lands_heads
-            WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS unpublished FROM o_offices_heads
-            WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS unpublished FROM o_rooms_heads
-            WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS unpublished FROM o_trades_heads
-            WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS unpublished FROM o_warehouses_heads
-            WHERE "state_sid" = '{unpublished_sid}' AND "owner_id" = '{owner_id}'
-    ) AS unpublished
-
-    UNION ALL SELECT SUM(deleted) FROM(
-        SELECT count(*) AS deleted FROM o_business_heads
-            WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS deleted FROM o_flats_heads
-            WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS deleted FROM o_garages_heads
-            WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS deleted FROM o_houses_heads
-            WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS deleted FROM o_lands_heads
-            WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS deleted FROM o_offices_heads
-            WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS deleted FROM o_rooms_heads
-            WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS deleted FROM o_trades_heads
-            WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
-
-        UNION ALL SELECT count(*) AS deleted FROM o_warehouses_heads
-            WHERE "deleted" is not NULL AND "owner_id" = '{owner_id}'
-    ) AS deleted;
-    """.format(
-        owner_id = user_id,
-        published_sid = OBJECT_STATES.published(),
-        unpublished_sid = OBJECT_STATES.unpublished(),
-    )
-
-    cursor = connection.cursor()
-    cursor.execute(query)
-    count = cursor.fetchall()
-
-    published = int(count[0][0])
-    unpublished = int(count[1][0])
-    all = published + unpublished
-
-    deleted = int(count[2][0])
-
-    counters.update({
-        'all': all,
-        'published': published,
-        'unpublished': unpublished,
-        'trash': deleted
-    })
-    return counters
-
-
 def __dump_publications_list(tid, user_id, queryset):
     """
     Повератає список брифів оголошень, вибраних у queryset.
@@ -200,9 +55,6 @@ def __dump_publications_list(tid, user_id, queryset):
     publications_list = queryset.values_list('id', 'hash_id', 'state_sid', 'created', 'body__title', 'for_rent', 'for_sale')
     if not publications_list:
         return []
-
-    pub_ids = [publication[0] for publication in publications_list] # publication[0] = publication.hash_id
-    tags = DirTags.contains_publications(tid, pub_ids).filter(user_id = user_id).only('id', 'pubs')
 
     model = HEAD_MODELS[tid]
 
@@ -217,7 +69,6 @@ def __dump_publications_list(tid, user_id, queryset):
             'title': publication[4], # body.title
             'for_rent': publication[5], # for_rent
             'for_sale': publication[6], # for_sale
-            'tags': [tag.id for tag in ifilter(lambda t: t.contains(tid, publication[0]), tags)], # real_id here
 
             # ...
             # other fields here

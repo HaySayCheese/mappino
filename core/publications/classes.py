@@ -1,7 +1,6 @@
 # coding=utf-8
 from django.core import serializers
 
-from apps.cabinet.api.dirtags.models import DirTags
 from collective.exceptions import RuntimeException
 from core.publications.constants import OBJECTS_TYPES
 
@@ -72,13 +71,8 @@ class CabinetPublishedDataSource(object):
         :return: dictionary with common data for all types of publication,
                  such as photos and tags.
         """
-        tags = DirTags.contains_publications(tid, [publication_head.id])
-
         return {
             'state_sid': publication_head.state_sid,
-            'tags': {
-                tag.id: True for tag in tags
-            },
             'photos': {}
         }
 
@@ -823,25 +817,11 @@ class UnpublishedFormatter(object):
         else:
             rent_terms = None
 
-
-        # Перелік тегів, якими позначене оголошення.
-        tags = {
-            tag.id: True for tag in DirTags.contains_publications(tid, [record.id])
-        }
-
-        # photos = [
-        #     {
-        #         'is_title': photo.is_title,
-        #         'thumbnail_url': photo.big_thumb_url,
-        #     } for photo in pu
-        # ]
-
         data = {
             'head': head,
             'body': body,
             'sale_terms': sale_terms,
             'rent_terms': rent_terms,
-            'tags': tags,
             'photos': []
         }
         return cls.format_output_data(data)

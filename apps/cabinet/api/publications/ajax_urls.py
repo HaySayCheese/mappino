@@ -18,7 +18,7 @@ urlpatterns = patterns('apps.cabinet.api',
         url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/(\w+)/title/$', Publication.PhotoTitle.as_view()),
 
 
-    url(r'^ajax/api/cabinet/publications/counters/$', 'publications.briefs.ajax.counters'),
+    # url(r'^ajax/api/cabinet/publications/counters/$', 'publications.briefs.ajax.counters'),
 
     # briefs
     url(r'^ajax/api/cabinet/publications/briefs/all/$',
@@ -29,6 +29,6 @@ urlpatterns = patterns('apps.cabinet.api',
         'publications.briefs.ajax.get', {'section': 'unpublished'}),
     url(r'^ajax/api/cabinet/publications/briefs/trash/$',
         'publications.briefs.ajax.get', {'section': 'trash'}),
-    url(r'^ajax/api/cabinet/publications/briefs/(\d+)/$',
-        'publications.briefs.ajax.get', {'section': 'tag'}),
+    # url(r'^ajax/api/cabinet/publications/briefs/(\d+)/$',
+    #     'publications.briefs.ajax.get', {'section': 'tag'}),
 )
