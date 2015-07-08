@@ -1,7 +1,7 @@
 /// <reference path='../_references.ts' />
 
 
-module pages.map {
+module mappino.map {
     'use strict';
 
     export class PublicationController {

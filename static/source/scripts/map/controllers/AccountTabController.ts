@@ -1,7 +1,7 @@
 /// <reference path='../_references.ts' />
 
 
-module pages.map {
+module mappino.map {
     export class AccountTabController {
         private fullNumber:    string = localStorage['fullNumber'] || '';
         private smsCode:       string;

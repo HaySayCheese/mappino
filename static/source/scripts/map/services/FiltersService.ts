@@ -1,7 +1,7 @@
 /// <reference path='../_references.ts' />
 
 
-module pages.map {
+module mappino.map {
     'use strict';
 
     export class FiltersService {
@@ -114,7 +114,7 @@ module pages.map {
             this.updateUrlFromFilters();
             this.createFormattedObjectForLoadMarkers();
 
-            this.$timeout(() => this.$rootScope.$broadcast('pages.map.FiltersService.FiltersUpdated', this._filters));
+            this.$timeout(() => this.$rootScope.$broadcast('mappino.map.FiltersService.FiltersUpdated', this._filters));
         }
 
 
@@ -162,7 +162,7 @@ module pages.map {
                 }
             }
 
-            this.$timeout(() => this.$rootScope.$broadcast('pages.map.FiltersService.FiltersUpdated', this._filters));
+            this.$timeout(() => this.$rootScope.$broadcast('mappino.map.FiltersService.FiltersUpdated', this._filters));
         }
 
 
@@ -210,7 +210,7 @@ module pages.map {
                 this.createFiltersForPanel("blue");
             }
 
-            this.$timeout(() => this.$rootScope.$broadcast('pages.map.FiltersService.UpdatedFromUrl', this._filters));
+            this.$timeout(() => this.$rootScope.$broadcast('mappino.map.FiltersService.UpdatedFromUrl', this._filters));
         }
 
 
@@ -300,7 +300,7 @@ module pages.map {
             this._filters_for_load_markers['zoom'] = this._filters['map']['z'];
             this.createFormattedViewportForLoadMarkers();
 
-            this.$timeout(() => this.$rootScope.$broadcast('pages.map.FiltersService.CreatedFormattedFilters', this._filters_for_load_markers));
+            this.$timeout(() => this.$rootScope.$broadcast('mappino.map.FiltersService.CreatedFormattedFilters', this._filters_for_load_markers));
         }
 
 

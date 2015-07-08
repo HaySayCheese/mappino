@@ -1,4 +1,4 @@
-module pages.map {
+module mappino.map {
     export function NavbarLeftDirective(): angular.IDirective {
         return {
             restrict: 'E',

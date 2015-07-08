@@ -115,7 +115,7 @@ gulp.task('Sass', ['Sass:Landing', 'Sass:Map', 'Sass:Cabinet']);
 
 /** Task TypeScript:Landing - Compile 'source/scripts/landing/*' **/
 gulp.task('TypeScript:Landing', function() {
-    return gulp.src(PATHS.SOURCE.SCRIPTS + '/landing/_references.ts')
+    return gulp.src(PATHS.SOURCE.SCRIPTS + '/landing/_all.ts')
         .pipe(sourcemaps.init())
         .pipe(ts({
             noImplicitAny: false,
@@ -130,7 +130,7 @@ gulp.task('TypeScript:Landing', function() {
 
 /** Task TypeScript:Map - Compile 'source/scripts/map/*' **/
 gulp.task('TypeScript:Map', function() {
-    return gulp.src(PATHS.SOURCE.SCRIPTS + '/map/_references.ts')
+    return gulp.src(PATHS.SOURCE.SCRIPTS + '/map/_all.ts')
         .pipe(sourcemaps.init())
         .pipe(ts({
             noImplicitAny: false,
@@ -145,7 +145,7 @@ gulp.task('TypeScript:Map', function() {
 
 /** Task TypeScript:Map - Compile 'source/scripts/map/*' **/
 gulp.task('TypeScript:Cabinet', function() {
-    return gulp.src(PATHS.SOURCE.SCRIPTS + '/cabinet/_references.ts')
+    return gulp.src(PATHS.SOURCE.SCRIPTS + '/cabinet/_all.ts')
         .pipe(sourcemaps.init())
         .pipe(ts({
             noImplicitAny: false,
