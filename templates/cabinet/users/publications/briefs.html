@@ -7,7 +7,7 @@
 
             <div layout="row" layout-align="center center">
                 <md-select placeholder="Realty type" ng-model="new_publication.tid">
-                    <md-option ng-repeat="type in realtyTypes" value="[[ type.id ]]">[[ type.title ]]</md-option>
+                    <md-option ng-repeat="type in CONSTANTS.REALTY_TYPES" value="[[ type.id ]]">[[ type.title ]]</md-option>
                 </md-select>
             </div>
 
@@ -36,8 +36,9 @@
             <span class="brief-title">Brief Title</span>
         </div>
         <div class="brief-content">
-            <div class="brief-status published">
-                <i class="mdi-action-done left"></i>Опубликовано
+            <div class="brief-status published" layout="row" layout-align="start center">
+                <md-icon>done</md-icon>
+                <span>Опубликовано</span>
             </div>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus ad aliquid aspernatur expedita quidem quis sed! Atque dolore nisi vitae.
         </div>

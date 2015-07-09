@@ -20,8 +20,8 @@
         position: relative;
         overflow: hidden;
 
-        border-top-left-radius: 3px;
-        border-top-right-radius: 3px;
+        //border-top-left-radius: 3px;
+        //border-top-right-radius: 3px;
 
         img {
             height: 380px;
@@ -51,7 +51,7 @@
         left: 20px;
 
         &.published {
-            color: color('green', 'base');
+            color: color('green', 'base') !important;
         }
     }
 

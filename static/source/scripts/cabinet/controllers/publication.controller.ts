@@ -37,6 +37,12 @@ module mappino.cabinet {
 
 
 
+        private uploadPhoto($file, $event, $flow) {
+            console.log($file)
+        }
+
+
+
         private loadPublicationData() {
             this.$rootScope.loaders.base = true;
 

@@ -1,44 +1,24 @@
-.publication-view-content {
+.publication-view-container {
+    //position: fixed;
+    margin-left: 8%;
+
     @media screen and (max-width: 1735px) {
-        width: 92% !important;
         margin-left: 4% !important;
     }
 
     @media screen and (max-width: 1570px) {
+        margin-left: 2% !important;
+    }
+
+    @media screen and (max-width: 1460px) {
         width: 100% !important;
-        margin-left: 0 !important;
+        margin: 0 auto !important;
     }
 
     @media screen and (max-width: 700px) {
         padding: 0 !important;
     }
 
-
-
-    form {
-        @media screen and (min-width: 1445px) {
-            float: left;
-        }
-    }
-
-
-
-    .publication-preview {
-        position: fixed;
-        right: calc(8.3% + 0.75rem);
-
-        @media screen and (max-width: 1735px) {
-            right: calc(4% + 0.75rem);
-        }
-
-        @media screen and (max-width: 1570px) {
-            right: calc(0% + 0.75rem);
-        }
-
-        @media screen and (max-width: 1445px) {
-            display: none;
-        }
-    }
 
 
     .publication-section {
@@ -51,13 +31,22 @@
             //margin: 30px 0 10px;
         }
     }
+}
 
 
-    .input-field .prefix {
-        width: auto !important;
-        right: 0.1rem;
-        top: 0.8rem;
+.publication-preview-container {
+    position: fixed;
+    right: 8%;
 
-        font-size: 1rem !important;
+    @media screen and (max-width: 1735px) {
+        right: 4%;
+    }
+
+    @media screen and (max-width: 1570px) {
+        right: 2%;
+    }
+
+    @media screen and (max-width: 1460px) {
+        display: none;
     }
 }

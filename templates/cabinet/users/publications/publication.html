@@ -1,9 +1,16 @@
-<div class="publication-view" ng-controller="PublicationController as pubCtrl">
+<div class="publication-container" ng-controller="PublicationController as pubCtrl" layout="row">
 
-    <div class="publication-view-content">
+    <div class="publication-view-container">
         <div ng-hide="loaders.base">
             <div ng-include="publicationTemplateUrl"></div>
         </div>
     </div>
 
+
+    <div class="publication-preview-container">
+        <section class="-medium">
+            publication preview here <br/>
+            coming soon
+        </section>
+    </div>
 </div>

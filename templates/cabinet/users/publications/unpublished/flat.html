@@ -1,676 +1,359 @@
-<div class="publication-page">
-    <form name="publicationForm" novalidate>
-        <section class="-medium -no-padding publication-section">
-            <md-tabs md-selected="0" md-dynamic-height>
+<form name="publicationForm" novalidate>
+    <section class="-medium -no-padding">
+        <md-tabs md-selected="0" md-dynamic-height>
 
-                <md-tab id="main-tab">
-                    <md-tab-label>
-                        Основное
-                    </md-tab-label>
-                    <md-tab-body>
-                        <md-content class="md-padding" layout="column">
-                            <div class="md-subhead blue-text">Header</div>
-                            <md-divider></md-divider>
-                            <div class="md-padding">
-                                <div layout="row">
-                                    <md-checkbox class="md-primary" name="for_sale" ng-model="publication.head.for_sale" ng-required="!publication.head.for_rent">
-                                        О продаже
-                                    </md-checkbox>
-                                    <md-checkbox class="md-primary" name="for_rent" ng-model="publication.head.for_rent" ng-required="!publication.head.for_sale">
-                                        Об аранде
-                                    </md-checkbox>
-                                </div>
-                                <div layout="column">
-                                    <md-input-container flex="100">
-                                        <label>Заголовок обьявления</label>
-                                        <input name="title" ng-model="publication.body.title" required>
-                                        <div ng-messages="publicationForm.title.$error"
-                                             ng-show="publicationForm.$submitted || publicationForm.title.$touched">
-                                            <div ng-message="required">Обязательное поле</div>
-                                        </div>
-                                    </md-input-container>
-                                    <md-input-container flex="100">
-                                        <label>Рекламный текст</label>
-                                        <textarea columns="1" name="description" ng-model="publication.body.description" required></textarea>
-                                        <div ng-messages="publicationForm.description.$error"
-                                             ng-show="publicationForm.$submitted || publicationForm.description.$touched">
-                                            <div ng-message="required">Обязательное поле</div>
-                                        </div>
-                                    </md-input-container>
-                                </div>
+            <md-tab id="main-tab">
+                <md-tab-label>
+                    Объявление
+                </md-tab-label>
+                <md-tab-body>
+                    <md-content class="md-padding" layout="column">
+                        <div class="md-subhead blue-text">Объявление</div>
+                        <div class="md-padding">
+                            <div layout="row">
+                                <md-checkbox class="md-primary" name="for_sale" ng-model="publication.head.for_sale" ng-required="!publication.head.for_rent">
+                                    О продаже
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="for_rent" ng-model="publication.head.for_rent" ng-required="!publication.head.for_sale">
+                                    Об аранде
+                                </md-checkbox>
                             </div>
+                        </div>
 
 
-                            <div class="md-subhead blue-text">Условия продажы</div>
-                            <md-divider></md-divider>
-                            <div class="md-padding">
-                                <div layout="row" layout-align="start center">
-                                    <md-input-container flex="33">
-                                        <label>Цена</label>
-                                        <input name="sale_price" ng-model="publication.sale_terms.price"
-                                               ng-required="publication.head.for_sale" only-number>
-                                        <div ng-messages="publicationForm.sale_price.$error"
-                                             ng-show="publicationForm.$submitted || publicationForm.sale_price.$touched">
-                                            <div ng-message="required">Обязательное поле</div>
-                                            <div ng-message="invalid">Цена указана неверно</div>
-                                        </div>
-                                    </md-input-container>
-                                    <md-select placeholder="Валюта" ng-model="publication.sale_terms.currency_sid" flex="33">
-                                        <md-option ng-repeat="currencyType in CONSTANTS.CURRENCY_TYPES" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
-                                    </md-select>
-                                    <md-checkbox class="md-primary" name="sale_is_contract" ng-model="publication.sale_terms.is_contract">
-                                        Договорная
-                                    </md-checkbox>
-                                </div>
-                            </div>
-
-
-
-                            <div class="md-subhead blue-text">Условия аренды</div>
-                            <md-divider></md-divider>
-                            <div class="md-padding">
-                                <div layout="row">
-                                    <md-select placeholder="Срок" ng-model="publication.rent_terms.currency_sid" flex="33">
-                                        <md-option ng-repeat="periodType in CONSTANTS.PERIOD_TYPES" value="[[ periodType.id ]]">[[ periodType.title ]]</md-option>
-                                    </md-select>
-                                    <md-input-container flex="33">
-                                        <label>Количество мест</label>
-                                        <input name="rent_persons_count" ng-model="publication.rent_terms.rent_persons_count" only-number>
-                                        <div ng-messages="publicationForm.rent_price.$error"
-                                             ng-show="publicationForm.$submitted || publicationForm.rent_persons_count.$touched">
-                                            <div ng-message="required">Обязательное поле</div>
-                                            <div ng-message="invalid">Количество мест указано неверно</div>
-                                        </div>
-                                    </md-input-container>
-                                </div>
-                                <div layout="row" layout-align="start center">
-                                    [[ pubCtrl.realtyTypess[0].name ]]
-                                    <md-input-container flex="33">
-                                        <label>Цена</label>
-                                        <input name="rent_price" ng-model="publication.rent_terms.price"
-                                               ng-required="publication.head.for_rent" only-number>
-                                        <div ng-messages="publicationForm.rent_price.$error"
-                                             ng-show="publicationForm.$submitted || publicationForm.rent_price.$touched">
-                                            <div ng-message="invalid">Цена указана неверно</div>
-                                        </div>
-                                    </md-input-container>
-                                    <md-select placeholder="Валюта" ng-model="publication.rent_terms.currency_sid" flex="33">
-                                        <md-option ng-repeat="currencyType in CONSTANTS.CURRENCY_TYPES" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
-                                    </md-select>
-                                    <md-checkbox class="md-primary" name="rent_is_contract" ng-model="publication.rent_terms.is_contract">
-                                        Договорная
-                                    </md-checkbox>
-                                </div>
-                                <div layout="row" layout-sm="column">
-                                    <div layout="column">
-                                        <md-checkbox class="md-primary" name="rent_family" ng-model="publication.rent_terms.family">
-                                            Подходит для семей с детьми
-                                        </md-checkbox>
-                                        <md-checkbox class="md-primary" name="rent_family" ng-model="publication.rent_terms.foreigners">
-                                            Размещение иностранцев
-                                        </md-checkbox>
+                        <div class="md-subhead blue-text" ng-show="publication.head.for_sale">
+                            Условия продажы
+                        </div>
+                        <div class="md-padding" ng-show="publication.head.for_sale">
+                            <div layout="row" layout-align="start center">
+                                <md-input-container flex="33">
+                                    <label>Цена</label>
+                                    <input name="sale_price" ng-model="publication.sale_terms.price"
+                                           ng-required="publication.head.for_sale" only-number>
+                                    <div ng-messages="publicationForm.sale_price.$error"
+                                         ng-show="publicationForm.$submitted || publicationForm.sale_price.$touched">
+                                        <div ng-message="required">Обязательное поле</div>
+                                        <div ng-message="invalid">Цена указана неверно</div>
                                     </div>
-                                    <div layout="column">
-                                        <md-checkbox class="md-primary" name="rent_smoking" ng-model="publication.rent_terms.smoking">
-                                            Можно курить
-                                        </md-checkbox>
-                                        <md-checkbox class="md-primary" name="rent_pets" ng-model="publication.rent_terms.pets">
-                                            Питомцы разрешены
-                                        </md-checkbox>
-                                    </div>
-                                </div>
+                                </md-input-container>
+                                <md-select placeholder="Валюта" ng-model="publication.sale_terms.currency_sid" flex="33">
+                                    <md-option ng-repeat="currencyType in CONSTANTS.CURRENCY_TYPES" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
+                                </md-select>
+                                <md-checkbox class="md-primary" name="sale_is_contract" ng-model="publication.sale_terms.is_contract">
+                                    Договорная
+                                </md-checkbox>
                             </div>
-                        </md-content>
-                    </md-tab-body>
-                </md-tab>
-
-                <md-tab id="additional-tab">
-                    <md-tab-label>
-                        Дополнительно
-                    </md-tab-label>
-                    <md-tab-body>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores dolor dolore excepturi iste minima mollitia natus praesentium tempore velit voluptatibus!
-                    </md-tab-body>
-                </md-tab>
-
-                <md-tab id="placement-tab">
-                    <md-tab-label>
-                        Местоположение
-                    </md-tab-label>
-                    <md-tab-body>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores dolor dolore excepturi iste minima mollitia natus praesentium tempore velit voluptatibus!
-                    </md-tab-body>
-                </md-tab>
-
-                <md-tab id="media-tab">
-                    <md-tab-label>
-                        Фото и видео
-                    </md-tab-label>
-                    <md-tab-body>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores dolor dolore excepturi iste minima mollitia natus praesentium tempore velit voluptatibus!
-                    </md-tab-body>
-                </md-tab>
-            </md-tabs>
-        </section>
-
-
-        <div id="publication-state-more-info">
-            <section class="-medium publication-section">
-                <h5 class="light-blue-text">Подробнее</h5>
-
-                <div class="row">
-                    <div class="col s6">
-                        <div class="input-field">
-                            <select name="market_type_sid" ng-model="publication.body.market_type_sid">
-                                <option value="0">Новостройка</option>
-                                <option value="1">Вторичный рынок</option>
-                            </select>
-                            <label>Тип рынка</label>
                         </div>
-                    </div>
 
-                    <div class="col s6">
-                        <div class="input-field">
-                            <select name="building_type_sid" ng-model="publication.body.building_type_sid">
-                                <option value="1">Панель</option>
-                                <option value="2">Кирпич</option>
-                                <option value="3">Хрущевка</option>
-                                <option value="4">Монолит</option>
-                                <option value="5">Дореволюционний</option>
-                                <option value="6">Малосемейка</option>
-                                <option value="7">Индивидуальный проект</option>
-                                <option value="0">Другой</option>
-                                <option value="8">Неизвестно</option>
-                            </select>
-                            <label>Тип дома</label>
+
+
+                        <div class="md-subhead blue-text" ng-show="publication.head.for_rent">
+                            Условия аренды
                         </div>
-                    </div>
-                </div>
-
-
-                <div class="row" ng-show="publication.body.building_type_sid == 0">
-                    <div class="col s12">
-                        <div class="input-field">
-                            <label for="publication-custom-building-type">Укажите другой тип дома</label>
-                            <input id="publication-custom-building-type" type="text" class="validate" name="custom_building_type" ng-model="publication.body.custom_building_type">
+                        <div class="md-padding" ng-show="publication.head.for_rent">
+                            <div layout="row">
+                                <md-select placeholder="Срок" ng-model="publication.rent_terms.currency_sid" flex="33">
+                                    <md-option ng-repeat="periodType in CONSTANTS.PERIOD_TYPES" value="[[ periodType.id ]]">[[ periodType.title ]]</md-option>
+                                </md-select>
+                                <md-input-container flex="33">
+                                    <label>Количество мест</label>
+                                    <input name="rent_persons_count" ng-model="publication.rent_terms.rent_persons_count" only-number>
+                                    <div ng-messages="publicationForm.rent_price.$error"
+                                         ng-show="publicationForm.$submitted || publicationForm.rent_persons_count.$touched">
+                                        <div ng-message="required">Обязательное поле</div>
+                                        <div ng-message="invalid">Количество мест указано неверно</div>
+                                    </div>
+                                </md-input-container>
+                            </div>
+                            <div layout="row" layout-align="start center">
+                                [[ pubCtrl.realtyTypess[0].name ]]
+                                <md-input-container flex="33">
+                                    <label>Цена</label>
+                                    <input name="rent_price" ng-model="publication.rent_terms.price"
+                                           ng-required="publication.head.for_rent" only-number>
+                                    <div ng-messages="publicationForm.rent_price.$error"
+                                         ng-show="publicationForm.$submitted || publicationForm.rent_price.$touched">
+                                        <div ng-message="invalid">Цена указана неверно</div>
+                                    </div>
+                                </md-input-container>
+                                <md-select placeholder="Валюта" ng-model="publication.rent_terms.currency_sid" flex="33">
+                                    <md-option ng-repeat="currencyType in CONSTANTS.CURRENCY_TYPES" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
+                                </md-select>
+                                <md-checkbox class="md-primary" name="rent_is_contract" ng-model="publication.rent_terms.is_contract">
+                                    Договорная
+                                </md-checkbox>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
 
-                <div class="row">
-                    <div class="col s6">
-                        <div class="input-field">
-                            <select name="flat_type_sid" ng-model="publication.body.flat_type_sid">
-                                <option value="1">Малосемейка</option>
-                                <option value="2">Отдельная</option>
-                                <option value="3">Коммунальная</option>
-                                <option value="4">Двухуровневая</option>
-                                <option value="5">Студия</option>
-                                <option value="0">Другой</option>
-                            </select>
-                            <label>Тип квартиры</label>
+                        <div class="md-subhead blue-text">
+                            Описание обьекта
                         </div>
-                    </div>
-
-                    <div class="col s6">
-                        <div class="input-field">
-                            <select name="rooms_planning_sid" ng-model="publication.body.rooms_planning_sid">
-                                <option value="0">Смежная</option>
-                                <option value="1">Раздельная</option>
-                                <option value="2">Раздельно-смежная</option>
-                                <option value="3">Свободная планировка</option>
-                            </select>
-                            <label>Планировка комнат</label>
+                        <div class="md-padding" layout="column">
+                            <md-input-container flex="100">
+                                <label>Заголовок обьявления</label>
+                                <input name="title" ng-model="publication.body.title" required>
+                                <div ng-messages="publicationForm.title.$error"
+                                     ng-show="publicationForm.$submitted || publicationForm.title.$touched">
+                                    <div ng-message="required">Обязательное поле</div>
+                                </div>
+                            </md-input-container>
+                            <md-input-container flex="100">
+                                <label>Рекламный текст</label>
+                                <textarea columns="1" name="description" ng-model="publication.body.description" required></textarea>
+                                <div ng-messages="publicationForm.description.$error"
+                                     ng-show="publicationForm.$submitted || publicationForm.description.$touched">
+                                    <div ng-message="required">Обязательное поле</div>
+                                </div>
+                            </md-input-container>
+                            <div layout="row">
+                                <md-select placeholder="Тип рынка" ng-model="publication.body.market_type_sid" flex="33">
+                                    <md-option ng-repeat="marketType in CONSTANTS.MARKET_TYPES" value="[[ marketType.id ]]">[[ marketType.title ]]</md-option>
+                                </md-select>
+                                <md-select placeholder="Тип квартиры" ng-model="publication.body.flat_type_sid" flex="33">
+                                    <md-option ng-repeat="flatType in CONSTANTS.FLAT_TYPES" value="[[ flatType.id ]]">[[ flatType.title ]]</md-option>
+                                </md-select>
+                                <md-select placeholder="Общее состояние" ng-model="publication.body.condition_sid" flex="33">
+                                    <md-option ng-repeat="conditionType in CONSTANTS.CONDITION_TYPES" value="[[ conditionType.id ]]">[[ conditionType.title ]]</md-option>
+                                </md-select>
+                            </div>
+                            <div layout="row">
+                                <md-input-container flex="33">
+                                    <label>Общая площадь</label>
+                                    <input name="total_area" ng-model="publication.body.total_area" only-number required>
+                                    <div ng-messages="publicationForm.total_area.$error"
+                                         ng-show="publicationForm.$submitted || publicationForm.total_area.$touched">
+                                        <div ng-message="required">Обязательное поле</div>
+                                        <div ng-message="invalid">Общая площадь указана неверно</div>
+                                    </div>
+                                </md-input-container>
+                                <md-input-container flex="33">
+                                    <label>Жилая площадь</label>
+                                    <input name="living_area" ng-model="publication.body.living_area" only-number required>
+                                    <div ng-messages="publicationForm.living_area.$error"
+                                         ng-show="publicationForm.$submitted || publicationForm.living_area.$touched">
+                                        <div ng-message="required">Обязательное поле</div>
+                                        <div ng-message="invalid">Жилая площадь указана неверно</div>
+                                    </div>
+                                </md-input-container>
+                                <md-input-container flex="33">
+                                    <label>Площадь кухни</label>
+                                    <input name="kitchen_area" ng-model="publication.body.kitchen_area" only-number required>
+                                    <div ng-messages="publicationForm.kitchen_area.$error"
+                                         ng-show="publicationForm.$submitted || publicationForm.kitchen_area.$touched">
+                                        <div ng-message="required">Обязательное поле</div>
+                                        <div ng-message="invalid">Площадь кухни указана неверно</div>
+                                    </div>
+                                </md-input-container>
+                            </div>
+                            <div layout="row">
+                                <md-input-container flex="33">
+                                    <label>Количество этажей</label>
+                                    <input name="floors_count" ng-model="publication.body.floors_count" only-number required>
+                                    <div ng-messages="publicationForm.floors_count.$error"
+                                         ng-show="publicationForm.$submitted || publicationForm.floors_count.$touched">
+                                        <div ng-message="required">Обязательное поле</div>
+                                        <div ng-message="invalid">Количество этажей указана неверно</div>
+                                    </div>
+                                </md-input-container>
+                                <md-input-container flex="33">
+                                    <label>Этаж</label>
+                                    <input name="floor" ng-model="publication.body.floor" only-number required>
+                                    <div ng-messages="publicationForm.floor.$error"
+                                         ng-show="publicationForm.$submitted || publicationForm.floor.$touched">
+                                        <div ng-message="required">Обязательное поле</div>
+                                        <div ng-message="invalid">Этаж указан неверно</div>
+                                    </div>
+                                </md-input-container>
+                                <md-select placeholder="Тип этажа" ng-model="publication.body.floor_type_sid" flex="33">
+                                    <md-option ng-repeat="floorType in CONSTANTS.FLOOR_TYPES" value="[[ floorType.id ]]">[[ floorType.title ]]</md-option>
+                                </md-select>
+                            </div>
+                            <div layout="row">
+                                <md-input-container flex="33">
+                                    <label>Количество комнат</label>
+                                    <input name="rooms_count" ng-model="publication.body.rooms_count" only-number required>
+                                    <div ng-messages="publicationForm.rooms_count.$error"
+                                         ng-show="publicationForm.$submitted || publicationForm.rooms_count.$touched">
+                                        <div ng-message="required">Обязательное поле</div>
+                                        <div ng-message="invalid">Количество комнат указано неверно</div>
+                                    </div>
+                                </md-input-container>
+                                <md-select placeholder="Планировка комнат" ng-model="publication.body.rooms_planning_sid" flex="33">
+                                    <md-option ng-repeat="roomPlanningType in CONSTANTS.ROOM_PLANNING_TYPES" value="[[ roomPlanningType.id ]]">[[ roomPlanningType.title ]]</md-option>
+                                </md-select>
+                                <md-select placeholder="Отопление" ng-model="publication.body.heating_type_sid" flex="33">
+                                    <md-option ng-repeat="heatingType in CONSTANTS.HEATING_TYPES" value="[[ heatingType.id ]]">[[ heatingType.title ]]</md-option>
+                                </md-select>
+                            </div>
+                            <div layout="row" ng-show="publication.body.heating_type_sid == '1'">
+                                <md-select placeholder="Индивидуальное отопление" ng-model="publication.body.ind_heating_type_sid" flex="33" label="fasfaf">
+                                    <md-option ng-repeat="individualHeatingType in CONSTANTS.INDIVIDUAL_HEATING_TYPES" value="[[ individualHeatingType.id ]]">[[ individualHeatingType.title ]]</md-option>
+                                </md-select>
+                                <md-input-container flex="66" ng-show="publication.body.ind_heating_type_sid == '0'">
+                                    <label>Тип индивидуального отопления</label>
+                                    <input name="custom_ind_heating_type" ng-model="publication.body.custom_ind_heating_type" ng-required="publication.body.ind_heating_type_sid == '0'">
+                                    <div ng-messages="publicationForm.custom_ind_heating_type.$error"
+                                         ng-show="publicationForm.$submitted || publicationForm.custom_ind_heating_type.$touched">
+                                        <div ng-message="required">Обязательное поле</div>
+                                    </div>
+                                </md-input-container>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </md-content>
+                </md-tab-body>
+            </md-tab>
 
-
-                <div class="row" ng-show="publication.body.flat_type_sid == 5">
-                    <div class="col s12">
-                        <div class="input-field">
-                            <label for="publication-custom-flat-type">Укажите другой тип квартиры</label>
-                            <input id="publication-custom-flat-type" type="text" class="validate" name="custom_flat_type" ng-model="publication.body.custom_flat_type">
+            <md-tab id="additional-tab">
+                <md-tab-label>
+                    Дополнительно
+                </md-tab-label>
+                <md-tab-body>
+                    <md-content class="md-padding" layout="column">
+                        <div class="md-subhead blue-text">Удобства</div>
+                        <div class="md-padding" layout-sm="column" layout-gt-sm="row">
+                            <div layout="column" flex="50">
+                                <md-checkbox class="md-primary" name="electricity" ng-model="publication.body.electricity">
+                                    Электричество
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="gas" ng-model="publication.body.gas">
+                                    Газ
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="lift" ng-model="publication.body.lift">
+                                    Лифт
+                                </md-checkbox>
+                            </div>
+                            <div layout="column" flex="50">
+                                <md-checkbox class="md-primary" name="hot_water" ng-model="publication.body.hot_water">
+                                    Горячая вода
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="cold_water" ng-model="publication.body.cold_water">
+                                    Холодная вода
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="security_alarm" ng-model="publication.body.security_alarm">
+                                    Охранная сигнализация
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="fire_alarm" ng-model="publication.body.fire_alarm">
+                                    Пожарная сигнализация
+                                </md-checkbox>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-
-                <div class="row">
-                    <div class="col s6">
-                        <div class="input-field">
-                            <label for="publication-build-year">Год постройки</label>
-                            <input id="publication-build-year" type="text" class="validate" name="build_year" ng-model="publication.body.build_year" only-number>
-                            <i class="prefix">г.</i>
-
-                            <span class="input-has-error" ng-show="form.publication.build_year.$error.incorrect">Год постройки указан неверно</span>
+                        <div class="md-subhead blue-text">Удобства, предоставляемые с орендой</div>
+                        <div class="md-padding" layout-sm="column" layout-gt-sm="row">
+                            <div layout="column" flex="50">
+                                <md-checkbox class="md-primary" name="furniture" ng-model="publication.body.furniture">
+                                    Мебель
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="refrigerator" ng-model="publication.body.refrigerator">
+                                    Холодильник
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="tv" ng-model="publication.body.tv">
+                                    Телевизор
+                                </md-checkbox>
+                            </div>
+                            <div layout="column" flex="50">
+                                <md-checkbox class="md-primary" name="washing_machine" ng-model="publication.body.washing_machine">
+                                    Стиральная машина
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="conditioner" ng-model="publication.body.conditioner">
+                                    Кондиционер
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="home_theater" ng-model="publication.body.home_theater">
+                                    Дом. кинотеатр
+                                </md-checkbox>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="col s6">
-                        <div class="input-field">
-                            <select name="condition_sid" ng-model="publication.body.condition_sid">
-                                <option value="0">Косметический ремонт</option>
-                                <option value="2">Евроремонт</option>
-                                <option value="3">Дизайнерский ремонт</option>
-                                <option value="4">Требуется косметический ремонт</option>
-                                <option value="5">Неоконченный ремонт</option>
-                                <option value="6">Под чистовую отделку</option>
-                                <option value="1">Жилое</option>
-                            </select>
-                            <label>Общее состояние</label>
+                        <div class="md-subhead blue-text">Коммуникации</div>
+                        <div class="md-padding" layout-sm="column" layout-gt-sm="row">
+                            <div layout="column" flex="30">
+                                <md-checkbox class="md-primary" name="phone" ng-model="publication.body.phone">
+                                    Телефон
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="internet" ng-model="publication.body.internet">
+                                    Интернет
+                                </md-checkbox>
+                            </div>
+                            <div layout="column" flex="70">
+                                <md-checkbox class="md-primary" name="mobile_coverage" ng-model="publication.body.mobile_coverage">
+                                    Покрытие моб. операторов
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="cable_tv" ng-model="publication.body.cable_tv">
+                                    Кабельное / спутниковое телевидение
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="conditioner" ng-model="publication.body.conditioner">
+                                    Кондиционер
+                                </md-checkbox>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-
-                <div class="row">
-                    <div class="col s4">
-                        <div class="input-field">
-                            <select name="floor_type_sid" ng-model="publication.body.floor_type_sid">
-                                <option value="0">Этаж</option>
-                                <option value="1">Мансарда</option>
-                                <option value="2">Цоколь</option>
-                            </select>
-                            <label>Этаж</label>
+                        <div class="md-subhead blue-text">Дополнительные постройки</div>
+                        <div class="md-padding" layout-sm="column" layout-gt-sm="row">
+                            <div layout="column" flex="50">
+                                <md-checkbox class="md-primary" name="garage" ng-model="publication.body.garage">
+                                    Гараж / паркместо
+                                </md-checkbox>
+                            </div>
+                            <div layout="column" flex="50">
+                                <md-checkbox class="md-primary" name="playground" ng-model="publication.body.playground">
+                                    Детская площадка
+                                </md-checkbox>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="col s4">
-                        <div class="input-field">
-                            <label for="publication-floor">Этаж</label>
-                            <input id="publication-floor" class="validate" type="text" name="floor" ng-model="publication.body.floor"
-                                   ng-disabled="publication.body.floor_type_sid == 1 || publication.body.floor_type_sid == 2"
-                                   ng-required="publication.body.floor_type_sid == 0" only-number />
-
-                            <span class="input-has-error" ng-show="form.publication.floor.$error.required">Укажите, пожалуйста, этаж</span>
-                            <span class="input-has-error" ng-show="form.publication.floor.$error.incorrect">Этаж указан неверно</span>
+                        <div class="md-subhead blue-text">Рядом находиться</div>
+                        <div class="md-padding" layout-sm="column" layout-gt-sm="row">
+                            <div layout="column" flex="50">
+                                <md-checkbox class="md-primary" name="kindergarten" ng-model="publication.body.kindergarten">
+                                    Детсад
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="school" ng-model="publication.body.school">
+                                    Школа
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="market" ng-model="publication.body.market">
+                                    Рынок / супераркет
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="park" ng-model="publication.body.park">
+                                    Парк / сквер
+                                </md-checkbox>
+                            </div>
+                            <div layout="column" flex="50">
+                                <md-checkbox class="md-primary" name="transport_stop" ng-model="publication.body.transport_stop">
+                                    Остановка общ. транспорта
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="entertainment" ng-model="publication.body.entertainment">
+                                    Развлекательные заведения
+                                </md-checkbox>
+                                <md-checkbox class="md-primary" name="sport_center" ng-model="publication.body.sport_center">
+                                    Спортивно-оздоровительный центр
+                                </md-checkbox>
+                            </div>
                         </div>
-                    </div>
+                    </md-content>
+                </md-tab-body>
+            </md-tab>
 
-                    <div class="col s4">
-                        <div class="input-field">
-                            <label for="publication-floors-count">Этажность</label>
-                            <input id="publication-floors-count" type="text" class="validate" name="floors_count" ng-model="publication.body.floors_count" only-number>
+            <md-tab id="placement-tab">
+                <md-tab-label>
+                    Местоположение
+                </md-tab-label>
+                <md-tab-body>
+                    <div ng-include="'/ajax/template/cabinet/publications/unpublished/map/'"></div>
+                </md-tab-body>
+            </md-tab>
 
-                            <span class="input-has-error" ng-show="form.publication.floors_count.$error.incorrect">Этажность указана неверно</span>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col s6">
-                        <div class="input-field">
-                            <label for="publication-total-area">Общая площадь</label>
-                            <input id="publication-total-area" type="text" class="validate" name="total_area" ng-model="publication.body.total_area" only-number required>
-                            <i class="prefix">м<sup>2</sup></i>
-
-                            <span class="input-has-error" ng-show="form.publication.total_area.$error.required">Укажите, пожалуйста, общую площадь</span>
-                            <span class="input-has-error" ng-show="form.publication.total_area.$error.incorrect">Общая площадь указана неверно</span>
-                        </div>
-                    </div>
-
-                    <div class="col s6">
-                        <div class="input-field">
-                            <label for="publication-living-area">Жилая площадь</label>
-                            <input id="publication-living-area" type="text" class="validate" name="living_area" ng-model="publication.body.living_area" only-number required>
-                            <i class="prefix">м<sup>2</sup></i>
-
-                            <span class="input-has-error" ng-show="form.publication.living_area.$error.required">Укажите, пожалуйста, жилую площадь</span>
-                            <span class="input-has-error" ng-show="form.publication.living_area.$error.incorrect">Жилая площадь указана неверно</span>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col s6">
-                        <div class="input-field">
-                            <label for="publication-kitchen-area">Площадь кухни</label>
-                            <input id="publication-kitchen-area" type="text" class="form-control" name="kitchen_area" ng-model="publication.body.kitchen_area" only-number>
-                            <i class="prefix">м<sup>2</sup></i>
-
-                            <span class="input-has-error" ng-show="form.publication.kitchen_area.$error.incorrect">Площадь кухни указана неверно</span>
-                        </div>
-                    </div>
-
-                    <div class="col s6">
-                        <div class="input-field">
-                            <label for="publication-ceiling-height">Высота потолков</label>
-                            <input id="publication-ceiling-height" type="text" class="form-control" name="validate" ng-model="publication.body.ceiling_height" only-number>
-                            <i class="prefix">м</i>
-
-                            <span class="input-has-error" ng-show="form.publication.ceiling_height.$error.incorrect">Высота потолков указана неверно</span>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col s6">
-                        <div class="input-field">
-                            <select name="heating_type_sid" ng-model="publication.body.heating_type_sid">
-                                <option value="1">Индивидуальное</option>
-                                <option value="2">Центральное</option>
-                                <option value="3">Не известно</option>
-                                <option value="0">Другой</option>
-                                <option value="4">Отсутсвует</option>
-                            </select>
-                            <label>Отопление</label>
-                        </div>
-                    </div>
-
-                    <div class="col s6" ng-show="publication.body.heating_type_sid == 0">
-                        <div class="input-field">
-                            <label for="publication-custom-heating-type">Укажите, пожалуйста, отопления</label>
-                            <input id="publication-custom-heating-type" type="text" class="validate" name="custom_heating_type" ng-model="publication.body.custom_heating_type">
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="row" >
-                    <div class="col s6">
-                        <div class="input-field">
-                            <select name="ind_heating_type_sid" ng-model="publication.body.ind_heating_type_sid">
-                                <option value="1">Электричество</option>
-                                <option value="2">Газ</option>
-                                <option value="3">Дрова</option>
-                                <option value="0">Другой</option>
-                            </select>
-                            <label >Тип отопления</label>
-                        </div>
-                    </div>
-
-                    <div class="col s6" ng-show="publication.body.ind_heating_type_sid == 0">
-                        <div class="input-field">
-                            <label for="publication-custom-ind-heating-type">Укажите, пожалуйста, тип отопления</label>
-                            <input id="publication-custom-ind-heating-type" type="text" class="validate" name="custom_ind_heating_type" ng-model="publication.body.custom_ind_heating_type">
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-
-
-            <section class="-medium publication-section">
-                <h5 class="light-blue-text">Комнаты</h5>
-
-                <div class="row">
-                    <div class="col s6">
-                        <div class="input-field">
-                            <label for="publication-rooms-count">Кол-во комнат</label>
-                            <input id="publication-rooms-count" type="text" class="validate" name="rooms_count" ng-model="publication.body.rooms_count" only-number required>
-
-                            <span class="input-has-error" ng-show="form.publication.rooms_count.$error.required">Укажите, пожалуйста, количество комнат</span>
-                            <span class="input-has-error" ng-show="form.publication.rooms_count.$error.incorrect">Количество комнат указано неверно</span>
-                        </div>
-                    </div>
-
-                    <div class="col s6">
-                        <div class="input-field">
-                            <label for="publication-bedrooms-count">Кол-во спален</label>
-                            <input id="publication-bedrooms-count" type="text" class="validate" name="bedrooms_count" ng-model="publication.body.bedrooms_count" only-number>
-
-                            <span class="input-has-error" ng-show="form.publication.bedrooms_count.$error.incorrect">Количество спален указано неверно</span>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col s6">
-                        <div class="input-field">
-                            <label for="publication-vcs-count">Кол-во сан. узлов</label>
-                            <input id="publication-vcs-count" type="text" class="validate" name="vcs_count" ng-model="publication.body.vcs_count" only-number>
-
-                            <span class="input-has-error" ng-show="form.publication.vcs_count.$error.incorrect">Количество сан. узлов указано неверно</span>
-                        </div>
-                    </div>
-
-                    <div class="col s6">
-                        <div class="input-field">
-                            <label for="publication-balconies-count">Кол-во балконов</label>
-                            <input id="publication-balconies-count" type="text" class="validate" name="balconies_count" ng-model="publication.body.balconies_count" only-number>
-
-                            <span class="input-has-error" ng-show="form.publication.balconies_count.$error.incorrect">Количество балконов указано неверно</span>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col s6">
-                        <div class="input-field">
-                            <label for="publication-loggias-count">Кол-во лоджий</label>
-                            <input id="publication-loggias-count" type="text" class="validate" name="loggias_count" ng-model="publication.body.loggias_count" only-number>
-
-                            <span class="input-has-error" ng-show="form.publication.loggias_count.$error.incorrect">Количество лоджий указано неверно</span>
-                        </div>
-                    </div>
-
-                    <div class="col s6">
-                        <div class="input-field">
-
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-
-
-            <section class="medium publication-section">
-                <h5 class="light-blue-text">Удобства</h5>
-
-                <div class="row">
-                    <div class="col s6">
-                        <p>
-                            <input id="publication-electricity" type="checkbox" name="electricity" ng-model="publication.body.electricity">
-                            <label for="publication-electricity">Электричество</label>
-                        </p>
-                        <p>
-                            <input id="publication-gas" type="checkbox" name="gas" ng-model="publication.body.gas">
-                            <label for="publication-gas">Газ</label>
-                        </p>
-                        <p>
-                            <input id="publication-lift" type="checkbox" name="lift" ng-model="publication.body.lift">
-                            <label for="publication-lift">Лифт</label>
-                        </p>
-                    </div>
-
-                    <div class="col s6">
-                        <p>
-                            <input id="publication-hot-water" type="checkbox" name="hot_water" ng-model="publication.body.hot_water">
-                            <label for="publication-hot-water">Горячая вода</label>
-                        </p>
-                        <p>
-                            <input id="publication-cold-water" type="checkbox" name="cold_water" ng-model="publication.body.cold_water">
-                            <label for="publication-cold-water">Холодная вода</label>
-                        </p>
-                        <p>
-                            <input id="publication-security-alarm" type="checkbox" name="security_alarm" ng-model="publication.body.security_alarm">
-                            <label for="publication-security-alarm">Охранная сигнализация</label>
-                        </p>
-                        <p>
-                            <input id="publication-fire-alarm" type="checkbox" name="fire_alarm" ng-model="publication.body.fire_alarm">
-                            <label for="publication-fire-alarm">Пожарная сигнализация</label>
-                        </p>
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <h6 class="light-blue-text">Удобства, предоставляемые с орендой</h6>
-                    <div class="divider"></div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col s6">
-                        <p>
-                            <input id="publication-furniture" type="checkbox" name="furniture" ng-model="publication.body.furniture">
-                            <label for="publication-furniture">Мебель</label>
-                        </p>
-                        <p>
-                            <input id="publication-refrigerator" type="checkbox" name="refrigerator" ng-model="publication.body.refrigerator">
-                            <label for="publication-refrigerator">Холодильник</label>
-                        </p>
-                        <p>
-                            <input id="publication-tv" type="checkbox" name="tv" ng-model="publication.body.tv">
-                            <label for="publication-tv">Телевизор</label>
-                        </p>
-                    </div>
-
-                    <div class="col s6">
-                        <p>
-                            <input id="publication-washing-machine" type="checkbox" name="washing_machine" ng-model="publication.body.washing_machine">
-                            <label for="publication-washing-machine">Стиральная машина</label>
-                        </p>
-                        <p>
-                            <input id="publication-conditioner" type="checkbox" name="conditioner" ng-model="publication.body.conditioner">
-                            <label for="publication-conditioner">Кондиционер</label>
-                        </p>
-                        <p>
-                            <input id="publication-home-theater" type="checkbox" name="home_theater" ng-model="publication.body.home_theater">
-                            <label for="publication-home-theater">Дом. кинотеатр</label>
-                        </p>
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col s12">
-                        <div class="input-field">
-                            <label for="publication-add-facilities">Другие удобства, уточнения</label>
-                            <input id="publication-add-facilities" type="text" class="validate" name="add_facilities" ng-model="publication.body.add_facilities">
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-
-
-            <section class="medium publication-section">
-                <h5 class="light-blue-text">Коммуникации</h5>
-
-                <div class="row">
-                    <div class="col s4">
-                        <p>
-                            <input id="publication-phone" type="checkbox" name="phone" ng-model="publication.body.phone">
-                            <label for="publication-phone">Телефон</label>
-                        </p>
-                        <p>
-                            <input id="publication-internet" type="checkbox" name="internet" ng-model="publication.body.internet">
-                            <label for="publication-internet">Интернет</label>
-                        </p>
-                    </div>
-
-                    <div class="col s8">
-                        <p>
-                            <input id="publication-mobile-coverage" type="checkbox" name="mobile_coverage" ng-model="publication.body.mobile_coverage">
-                            <label for="publication-mobile-coverage">Покрытие моб. операторов</label>
-                        </p>
-                        <p>
-                            <input id="publication-cable-tv" type="checkbox" name="cable_tv" ng-model="publication.body.cable_tv">
-                            <label for="publication-cable-tv">Кабельное / спутниковое телевидение</label>
-                        </p>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </form>
-
-
-
-    <section class="medium publication-preview right">
-        publication preview here <br/>
-        coming soon
+            <md-tab id="media-tab">
+                <md-tab-label>
+                    Фото и видео
+                </md-tab-label>
+                <md-tab-body>
+                    <div ng-include="'/ajax/template/cabinet/publications/unpublished/photos/'"></div>
+                </md-tab-body>
+            </md-tab>
+        </md-tabs>
     </section>
-</div>
-
-        <!--<div class="row">-->
-            <!--<h3 id="pub-outb-section">Дополнительные постройки</h3>-->
-            <!--<div class="col-sm-6 col-lg-4 form-group">-->
-                <!--<div class="checkbox">-->
-                    <!--<input id="garage" type="checkbox" name="garage" ng-model="publication.body.garage">-->
-                    <!--<label for="garage">Гараж / паркместо</label>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="col-sm-6 col-lg-4 form-group">-->
-                <!--<div class="checkbox">-->
-                    <!--<input id="playground" type="checkbox" name="playground" ng-model="publication.body.playground">-->
-                    <!--<label for="playground">Детская площадка</label>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="col-sm-12">-->
-                <!--<div class="form-group">-->
-                    <!--<label>Другие постройки, уточнения:</label>-->
-                    <!--<input type="text" class="form-control" name="add_buildings" ng-model="publication.body.add_buildings">-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-
-
-        <!--<div class="row">-->
-            <!--<h3 id="pub-near-sections">Рядом находиться</h3>-->
-            <!--<div class="col-lg-6 form-group">-->
-                <!--<div class="checkbox">-->
-                    <!--<input id="kindergarten" type="checkbox" name="kindergarten" ng-model="publication.body.kindergarten">-->
-                    <!--<label for="kindergarten">Детсад</label>-->
-                <!--</div>-->
-                <!--<div class="checkbox">-->
-                    <!--<input id="school" type="checkbox" name="school" ng-model="publication.body.school">-->
-                    <!--<label for="school">Школа</label>-->
-                <!--</div>-->
-                <!--<div class="checkbox">-->
-                    <!--<input id="market" type="checkbox" name="market" ng-model="publication.body.market">-->
-                    <!--<label for="market">Рынок / супераркет</label>-->
-                <!--</div>-->
-                <!--<div class="checkbox">-->
-                    <!--<input id="park" type="checkbox" name="park" ng-model="publication.body.park">-->
-                    <!--<label for="park">Парк / сквер</label>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="col-lg-6 form-group">-->
-                <!--<div class="checkbox">-->
-                    <!--<input id="transport_stop" type="checkbox" name="transport_stop" ng-model="publication.body.transport_stop">-->
-                    <!--<label for="transport_stop">Остановка общ. транспорта</label>-->
-                <!--</div>-->
-                <!--<div class="checkbox">-->
-                    <!--<input id="entertainment" type="checkbox" name="entertainment" ng-model="publication.body.entertainment">-->
-                    <!--<label for="entertainment">Развлекательные заведения</label>-->
-                <!--</div>-->
-                <!--<div class="checkbox">-->
-                    <!--<input id="sport_center" type="checkbox" name="sport_center" ng-model="publication.body.sport_center">-->
-                    <!--<label for="sport_center">Спортивно-оздоровительный центр</label>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="col-sm-12">-->
-                <!--<div class="form-group">-->
-                    <!--<label>Другие достопримечательности, уточнения:</label>-->
-                    <!--<input type="text" class="form-control" name="add_showplaces" ng-model="publication.body.add_showplaces">-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-
-
-        <!--<div class="row">-->
-            <!--<h3 id="pub-place-section">Местоположение</h3>-->
-            <!--<div class="col-sm-12">-->
-                <!--<ng-include src="'/ajax/template/cabinet/publications/unpublished/map/'"></ng-include>-->
-            <!--</div>-->
-        <!--</div>-->
-
-
-        <!--<div class="row">-->
-            <!--<h3 id="pub-photo-section">Изображения</h3>-->
-            <!--<div class="col-lg-12">-->
-                <!--<ng-include src="'/ajax/template/cabinet/publications/unpublished/photos/'"></ng-include>-->
-            <!--</div>-->
-        <!--</div>-->
-
+</form>
 
         <!--<div class="row" ng-show="tags.length">-->
             <!--<h3 id="pub-tags-section">Ярлыки</h3>-->

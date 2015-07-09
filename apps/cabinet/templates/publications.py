@@ -87,7 +87,7 @@ def unpublished_form(request, tid):
 # @condition(last_modified_func=static_template_last_modified)
 def unpublished_map(request):
     return HttpResponse(
-        templates.get_template('cabinet/users/publications/unpublished/parts/map.html')
+        templates.get_template('cabinet/users/publications/unpublished/parts/map.html').render()
     )
 
 
@@ -95,7 +95,7 @@ def unpublished_map(request):
 # @condition(last_modified_func=static_template_last_modified)
 def unpublished_photos(request):
     return HttpResponse(
-        templates.get_template('cabinet/users/publications/unpublished/parts/photos.html')
+        templates.get_template('cabinet/users/publications/unpublished/parts/photos.html').render()
     )
 
 
