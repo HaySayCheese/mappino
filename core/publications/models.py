@@ -3305,6 +3305,7 @@ HEAD_MODELS = {
     OBJECTS_TYPES.garage():     GaragesHeads,
     OBJECTS_TYPES.land():       LandsHeads,
 }
+
 PHOTOS_MODELS = {
     OBJECTS_TYPES.flat():       FlatsPhotos,
     OBJECTS_TYPES.house():      HousesPhotos,

@@ -2,8 +2,11 @@
 
 import uuid
 import datetime
+from datetime import  timedelta as td
 
+from django.contrib.postgres.fields import ArrayField
 from djantimat.helpers import RegexpProc
+
 
 
 # from django.contrib.postgres.fields.array import ArrayField
@@ -24,7 +27,11 @@ from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, L
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
     EmptyRentPrice, AbusiveWords
 
+from core.signals import PublicationsSignals
+
 from publications_to_check.models import PublicationsToCheck
+
+
 
 
 class AbstractModel(models.Model):
@@ -489,6 +496,19 @@ class BodyModel(AbstractModel):
     title = models.TextField(null=True, max_length=max_title_length)
     description = models.TextField(null=True)
 
+
+    def get_head_queryset(self):
+        """
+            Uses backward relationship to get head object
+            We use this, because head has foreign key on body,
+                but body does not have foreign key on head.
+        :return: QuerySet with 1 head object.
+            QuerySet - because this approach allows us, to get only certain fields
+            from object on next step
+        """
+        return self.head_set()[:1].only()
+
+
     def check_required_fields(self):
         """
         Check if required fields is not None. If None - generate Exception
@@ -508,7 +528,6 @@ class BodyModel(AbstractModel):
 
         return self.check_fields_on_adequacy()
 
-
     def check_fields_on_abusive_words(self):
         '''
 
@@ -523,7 +542,6 @@ class BodyModel(AbstractModel):
 
         return RegexpProc.test(checking_phrase)
 
-
     def check_fields_on_adequacy(self):
         """
             Abstract
@@ -537,6 +555,7 @@ class BodyModel(AbstractModel):
         Призначений для валідації моделей, унаслідуваних від поточної.
         """
         return
+
 
 
 class SaleTermsModel(AbstractModel):
@@ -586,6 +605,46 @@ class LivingRentTermsModel(AbstractModel):
     washing_machine = models.BooleanField(default=False)
     conditioner = models.BooleanField(default=False)
     home_theater = models.BooleanField(default=False)
+
+
+    entrance_dates = ArrayField(models.DateTimeField())
+    departure_dates = ArrayField(models.DateTimeField())
+    rent_dates = ArrayField(models.DateTimeField())
+
+
+    #SecondStep
+    @classmethod
+    def add_dates_rent(cls, hash_id, date_from, date_to):
+
+
+        try:
+            record = cls.objects.get_or_create(hash_id = hash_id)
+        except Exception as e:
+            #todo fix it.
+            pass
+
+        record.entrance_dates.append(date_from)
+        record.departure_dates.append(date_to)
+
+        if (date_to-date_from)>1:
+            delta = date_to - date_from
+
+            rent_dates = []
+            for i in range(1,delta.days):
+                rent_dates.append(date_from+ td(delta.days))
+
+
+            # todo: add atomic here
+            with transaction.atomic():
+                record.rent_dates.extend(rent_dates)
+
+                PublicationsSignals.daily_rent_added.send(
+                    None,
+                    hash_id = hash_id,
+                    date_from = date_from,
+                    date_to = date_to
+                )
+
 
     #-- validation
     def check_required_fields(self):

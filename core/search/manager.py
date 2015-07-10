@@ -1,8 +1,7 @@
 #coding=utf-8
 import Queue
+
 import MySQLdb
-
-
 from django.conf import settings
 
 from apps.cabinet.api.dirtags import DirTags
@@ -13,9 +12,7 @@ from core.search.tasks import \
     update_house_index, update_flat_index, update_room_index, \
     update_trade_index, update_office_index, update_warehouse_index, update_business_index, \
     update_garage_index, update_land_index
-
 from mappino.celery_integration import app
-
 
 
 class SearchManager(object):
@@ -37,6 +34,13 @@ class SearchManager(object):
         models_signals.created.connect(self.update_record_index)
         models_signals.record_updated.connect(self.update_record_index)
         models_signals.deleted_permanent.connect(self.remove_record_from_index)
+
+
+        # models_signals.daily_rent_updated.connect(self.)
+
+
+
+
 
 
     def update_record_index(self, **kwargs):

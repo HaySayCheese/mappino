@@ -488,6 +488,30 @@ class AbstractRentIndex(AbstractBaseIndex):
     class Meta:
         abstract = True
 
+    #FourthStep
+    def add_dates_rent(cls, hash_id, date_from, date_to):
+
+        try:
+            record = cls.objects.get_or_create(hash_id = hash_id)
+        except Exception as e:
+            #todo fix it.
+            pass
+
+        record.entrance_dates.append(date_from)
+        record.departure_dates.append(date_to)
+
+        if (date_to-date_from)>1:
+            delta = date_to - date_from
+
+            rent_dates = []
+            for i in range(1,delta.days):
+                rent_dates.append(date_from+ td(delta.days))
+
+            record.rent_dates.extend(rent_dates)
+
+
+
+
 class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
@@ -646,28 +670,6 @@ class FlatsRentIndex(AbstractRentIndex):
 
     class Meta:
         db_table = 'index_flats_rent'
-
-
-    @classmethod
-    def add_dates_rent(cls, hash_id, date_from, date_to):
-        try:
-            record = FlatsRentIndex.objects.get_or_create(hash_id = hash_id)
-        except Exception as e:
-            #todo fix it.
-            pass
-
-        record.entrance_dates.append(date_from)
-        record.departure_dates.append(date_to)
-
-        if (date_to-date_from)>1:
-            delta = date_to - date_from
-
-            rent_dates = []
-            for i in range(1,delta.days):
-                rent_dates.append(date_from+ td(delta.days))
-
-            record.rent_dates.extend(rent_dates)
-
 
 
 
@@ -2548,6 +2550,28 @@ class SegmentsIndex(models.Model):
 
         index.remove(hid, using=cls.index_db_name)
         # todo: transaction end
+
+
+    #ThrirdStep
+    @classmethod
+    def add_daily_rent_terms(cls, tid, hash_id, date_from, date_to):
+        """
+         Get certain
+        """
+
+        model = cls.living_rent_indexes.get(tid)
+        model.add_dates_rent(hash_id, date_from, date_to)
+
+
+    @classmethod
+    def delete_daily_rent_terms(cls, tid, hash_id, date_from, date_to):
+        """
+         Get certain
+        """
+
+        model = cls.living_rent_indexes.get(tid)
+        model.add_dates_rent(hash_id, date_from, date_to)
+
 
 
     @classmethod
