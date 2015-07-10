@@ -445,7 +445,6 @@ class FlatsBodies(BodyModel):
         return u''
 
 
-
 class FlatsHeads(AbstractHeadModel):
     class Meta:
         db_table = 'o_flats_heads'
@@ -469,13 +468,11 @@ class HousesPhotos(PhotosModel):
     tid = OBJECTS_TYPES.house()
 
 
-
 class HousesSaleTerms(SaleTermsModel):
     class Meta:
         db_table = 'o_houses_sale_terms'
 
     sale_type_sid = models.SmallIntegerField(default=HOUSE_SALE_TYPES.all_house())
-
 
 
 class HousesRentTerms(LivingRentTermsModel):
@@ -491,7 +488,6 @@ class HousesRentTerms(LivingRentTermsModel):
         if self.rent_type_sid == HOUSE_RENT_TYPES.part():
             return u'Часть дома, ' + terms
         return terms
-
 
 
 class HousesBodies(BodyModel):
@@ -783,7 +779,6 @@ class HousesBodies(BodyModel):
         if showplaces:
             return showplaces[2:]
         return u''
-
 
 
 class HousesHeads(AbstractHeadModel):
