@@ -16,12 +16,26 @@ class Favorites(models.Model):
 
 
     @classmethod
+    def by_user(cls, user_id):
+        """
+        :returns:
+            Record with all the favorites of the user.
+            If specified user does not have favorites - returns None.
+        """
+
+        try:
+            return cls.objects.filter(uiser_id=user_id).only('publications_ids')[:1][0]
+        except IndexError:
+            return None
+
+
+    @classmethod
     def add(cls, user_id, tid, hash_id):
         assert tid in OBJECTS_TYPES.values()
         assert hash_id
 
         try:
-            record = Favorites.objects.filter(user_id=user_id).only('publications_ids')[:1][0]
+            record = cls.by_user(user_id)
         except IndexError:
             record = Favorites.objects.create(user_id=user_id)
 
@@ -46,7 +60,7 @@ class Favorites(models.Model):
         assert hash_id
 
         try:
-            record = Favorites.objects.filter(user_id=user_id).only('publications_ids')[:1][0]
+            record = cls.by_user(user_id)
         except IndexError:
             return False
 
@@ -75,7 +89,7 @@ class Favorites(models.Model):
         assert hash_id
 
         try:
-            record = Favorites.objects.filter(users_id=users_id).only('publications_ids')[:1][0]
+            record = cls.by_user(users_id)
         except IndexError:
             record = Favorites.objects.create(users_id=users_id)
 
