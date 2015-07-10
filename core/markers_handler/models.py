@@ -9,10 +9,19 @@ from djorm_pgarray.fields import BigIntegerArrayField
 
 from collective.exceptions import InvalidArgument
 from core.currencies.constants import CURRENCIES
-from core.currencies.currencies_manager import convert as convert_price
+
+
+try:
+    from core.currencies.currencies_manager import convert as convert_price
+except Exception as e:
+    pass
+
 from core.markers_handler.classes import Grid
-from core.publications.constants import \
-    OBJECTS_TYPES, MARKET_TYPES, FLOOR_TYPES, HEATING_TYPES, LIVING_RENT_PERIODS, HEAD_MODELS
+try:
+    from core.publications.constants import \
+        OBJECTS_TYPES, MARKET_TYPES, FLOOR_TYPES, HEATING_TYPES, LIVING_RENT_PERIODS, HEAD_MODELS
+except Exception as e:
+    pass
 from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
 

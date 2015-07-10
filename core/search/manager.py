@@ -5,7 +5,7 @@ import MySQLdb
 from django.conf import settings
 
 from apps.cabinet.api.dirtags import DirTags
-from core import redis_connections
+from core.redis_database_connections import redis_connections
 from core.publications import models_signals
 from core.publications.constants import OBJECTS_TYPES
 from core.search.tasks import \

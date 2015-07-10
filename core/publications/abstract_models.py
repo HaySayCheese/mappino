@@ -9,6 +9,7 @@ from djantimat.helpers import RegexpProc
 
 
 
+
 # from django.contrib.postgres.fields.array import ArrayField
 
 from django.db.utils import DatabaseError
@@ -27,8 +28,7 @@ from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, L
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
     EmptyRentPrice, AbusiveWords
 
-from core.signals import PublicationsSignals
-
+from  core.initialize_signals.initialize_signals import  PublicationsSignals
 from publications_to_check.models import PublicationsToCheck
 
 

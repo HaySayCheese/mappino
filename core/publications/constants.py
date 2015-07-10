@@ -373,7 +373,7 @@ RED_LINE_VALUES = RedLineValues()
 
 
 from core.publications.models import FlatsHeads, HousesHeads, RoomsHeads, \
-    TradesHeads, OfficesHeads, WarehousesHeads, BusinessesHeads, GaragesHeads, LandsHeads
+        TradesHeads, OfficesHeads, WarehousesHeads, BusinessesHeads, GaragesHeads, LandsHeads
 
 HEAD_MODELS = {
     OBJECTS_TYPES.flat(): FlatsHeads,
@@ -408,11 +408,11 @@ PHOTOS_MODELS = {
     OBJECTS_TYPES.land(): LandsPhotos,
 }
 
-from core.markers_handler.models import FlatsRentIndex,HousesRentIndex,RoomsRentIndex
-
-DB_INDEX_RENT_TYPES = {
-    OBJECTS_DB_INDEX_RENT_TYPES.flat(): FlatsRentIndex,
-    OBJECTS_DB_INDEX_RENT_TYPES.house(): HousesRentIndex,
-    OBJECTS_DB_INDEX_RENT_TYPES.room(): RoomsRentIndex
-
-}
+# from core.markers_handler.models import FlatsRentIndex,HousesRentIndex,RoomsRentIndex
+#
+# DB_INDEX_RENT_TYPES = {
+#     OBJECTS_DB_INDEX_RENT_TYPES.flat(): FlatsRentIndex,
+#     OBJECTS_DB_INDEX_RENT_TYPES.house(): HousesRentIndex,
+#     OBJECTS_DB_INDEX_RENT_TYPES.room(): RoomsRentIndex
+#
+# }
