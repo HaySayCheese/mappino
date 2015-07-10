@@ -1,9 +1,9 @@
 /// <reference path='_references.ts' />
 
-module pages.map {
+module mappino.map {
     'use strict';
 
-    var app: angular.IModule = angular.module('mappino.pages.map', [
+    var app: angular.IModule = angular.module('mappino.map', [
         'ngAnimate',
         'ngMaterial',
         'ngCookies',

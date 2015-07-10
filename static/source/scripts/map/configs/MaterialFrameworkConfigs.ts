@@ -1,13 +1,13 @@
 /// <reference path='../_references.ts' />
 
 
-module pages.map {
+module mappino.map {
     'use strict';
 
     export class MaterialFrameworkConfigs {
 
         constructor(private app: angular.IModule) {
-            app.config(['$mdThemingProvider', '$mdIconProvider', function($mdThemingProvider, $mdIconProvider) {
+            app.config(['$mdThemingProvider', function($mdThemingProvider) {
                 $mdThemingProvider.setDefaultTheme('blue');
 
                 $mdThemingProvider.theme('blue')

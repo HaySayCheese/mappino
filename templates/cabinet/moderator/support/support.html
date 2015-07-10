@@ -1,0 +1,83 @@
+<div class="support-page" layout="column" layout-align="start center" ng-controller="SupportController as supportCtrl">
+    <section class="-medium md-whiteframe-z2">
+        <h3 class="md-headline light-blue-text">Поддержка mappino!</h3>
+
+        <div class="center-align" layout="row">
+            В этом разделе Вы можете связаться с командой поддержки mappino и задать интересующие Вас вопросы.
+            Вы можете обращаться в службу поддержки если у Вас возникают проблемы с сервисом,
+            Вам нужна консультация касательно наших услуг, или если у Вас просто есть предложения или пожелания.
+        </div>
+    </section>
+
+
+
+    <section class="-medium md-whiteframe-z2" ng-hide="loaders.base">
+        <h3 class="md-headline light-blue-text">Диалоги</h3>
+
+        <div layout="column">
+            <div class="md-padding center-align" ng-hide="!tickets.length || ticketFormIsVisible">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                Dicta ducimus esse facere fugit laborum officia veniam. Magnam molestiae officia sed!
+            </div>
+
+            <div layout="column" ng-show="ticketFormIsVisible">
+                <form class="md-padding" name="ticketForm" ng-submit="supportCtrl.sendMessage()" novalidate>
+                    <md-input-container flex>
+                        <label>Тема обращения</label>
+                        <input type="text" name="subject" ng-model="ticket.subject">
+                    </md-input-container>
+
+                    <md-input-container flex>
+                        <label>Описание обращения</label>
+                        <textarea name="message" ng-model="ticket.message" columns="1" md-maxlength="400" required></textarea>
+                        <div ng-messages="ticketForm.message.$error" ng-show="ticketForm.$submitted || ticketForm.message.$touched">
+                            <div ng-message="required">Укажите, пожалуйста, тему обращения.</div>
+                            <div ng-message="md-maxlength">Тема обращения слишком длинная.</div>
+                        </div>
+                    </md-input-container>
+
+                    <div layout="row" layout-align="end center">
+                        <md-button ng-click="ticketFormIsVisible = false;">
+                            Отмена
+                        </md-button>
+
+                        <md-button class="md-raised md-primary">
+                            Отправить
+                        </md-button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="md-padding" layout="row" layout-align="center center" ng-hide="ticketFormIsVisible">
+                <md-button class="md-raised md-primary" ng-click="supportCtrl.createTicket()">
+                    Связаться со службой поддержки
+                </md-button>
+            </div>
+
+            <md-divider ng-show="tickets.length"></md-divider>
+
+            <div layout="column" ng-show="tickets.length">
+                <md-list>
+                    <md-subheader class="md-no-sticky">Последнии диалоги</md-subheader>
+
+                    <md-list-item ng-click="supportCtrl.goToTicket(ticket.id)" class="md-2-line" ng-repeat="ticket in tickets | orderBy: 'created': true">
+                        <img ng-src="http://lorempixel.com/40/40/nature" class="md-avatar" alt="[[ ticket.subject ]]" />
+                        <div class="md-list-item-text">
+                            <h3 class="truncate" ng-show="ticket.subject">
+                                [[ ticket.subject ]]
+                            </h3>
+                            <h3 class="grey-text text-darken-1" ng-hide="ticket.subject">
+                                Диалог без темы
+                            </h3>
+                            <p>
+                                <span>Создано: [[ ticket.created | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                                <span>Посл. сообщ.: [[ ticket.last_message | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                            </p>
+                        </div>
+                    </md-list-item>
+                </md-list>
+            </div>
+        </div>
+    </section>
+</div>
+

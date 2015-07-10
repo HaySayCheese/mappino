@@ -1,7 +1,7 @@
 /// <reference path='../_references.ts' />
 
 
-module pages.map {
+module mappino.map {
     'use strict';
 
     export class MapController {
@@ -20,11 +20,11 @@ module pages.map {
             var self = this;
             google.maps.event.addDomListener(window, "load", () => this.initMap(this));
 
-            $scope.$on('pages.map.MarkersService.MarkersIsLoaded', function() {
+            $scope.$on('mappino.map.MarkersService.MarkersIsLoaded', function() {
                 markersService.place(self._map)
             });
 
-            $scope.$on('pages.map.PlaceAutocompleteController.PlaceChanged', function(event, place) {
+            $scope.$on('mappino.map.PlaceAutocompleteController.PlaceChanged', function(event, place) {
                 self.positioningMap(place);
             })
         }

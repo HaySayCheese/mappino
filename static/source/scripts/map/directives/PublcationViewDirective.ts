@@ -1,4 +1,4 @@
-module pages.map {
+module mappino.map {
     export function PublcationViewDirective($rootScope, $stateParams): angular.IDirective {
 
         return {

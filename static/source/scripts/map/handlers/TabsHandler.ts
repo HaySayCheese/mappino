@@ -1,7 +1,7 @@
 /// <reference path='../_references.ts' />
 
 
-module pages.map {
+module mappino.map {
     export class TabsHandler {
         private navbarLeftTabsIndex = {
             filters_red:        0,

@@ -1,7 +1,7 @@
 /// <reference path='../_references.ts' />
 
 
-module pages.map {
+module mappino.map {
     'use strict';
 
     export class MarkersService {
@@ -28,7 +28,7 @@ module pages.map {
             // ---------------------------------------------------------------------------------------------------------
             var self = this;
 
-            $rootScope.$on('pages.map.FiltersService.CreatedFormattedFilters', function(event, formatted_filters) {
+            $rootScope.$on('mappino.map.FiltersService.CreatedFormattedFilters', function(event, formatted_filters) {
                 self._filters_for_load_markers = formatted_filters;
 
                 self.load();
@@ -44,7 +44,7 @@ module pages.map {
                 self.clearResponseMarkersObject();
 
                 self._response_markers = response;
-                self.$timeout(() => self.$rootScope.$broadcast('pages.map.MarkersService.MarkersIsLoaded'));
+                self.$timeout(() => self.$rootScope.$broadcast('mappino.map.MarkersService.MarkersIsLoaded'));
             });
         }
 
@@ -113,7 +113,7 @@ module pages.map {
                 }
             }
 
-            this.$timeout(() => this.$rootScope.$broadcast('pages.map.MarkersService.MarkersPlaced'));
+            this.$timeout(() => this.$rootScope.$broadcast('mappino.map.MarkersService.MarkersPlaced'));
         }
 
 
