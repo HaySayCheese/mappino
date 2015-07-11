@@ -3,61 +3,71 @@ import json
 
 from django.db import models
 
-from core.favorites.exceptions import InvalidCustomer
-from core.customers.models import Customers
+from core.publications.constants import OBJECTS_TYPES
+from core.users.models import Users
 
 
 class Favorites(models.Model):
-
-    customer = models.ForeignKey(Customers)
+    user = models.ForeignKey(Users)
     publications_ids = models.TextField(default="[]")  # note: Json type
 
+    class Meta:
+        db_table = 'users_favorites'
+
+
     @classmethod
-    def add(cls, customer_id, tid, hash_id):
+    def by_user(cls, user_id):
         """
-        Adds publication to customer's favorites (Based on type id and hash_id)
-        :param customer_id (int):
-        :param tid (int): type of publications, for example : 0 for flat, 1 for house
-        :param hash_id (string): publication's hash_id.
+        :returns:
+            Record with all the favorites of the user.
+            If specified user does not have favorites - returns None.
         """
+
         try:
-            record = Favorites.objects.filter(customer_id=customer_id).only('publications_ids')[:1][0]
+            return cls.objects.filter(uiser_id=user_id).only('publications_ids')[:1][0]
         except IndexError:
-            record = Favorites.objects.create(customer=customer_id)
+            return None
+
+
+    @classmethod
+    def add(cls, user_id, tid, hash_id):
+        assert tid in OBJECTS_TYPES.values()
+        assert hash_id
+
+        try:
+            record = cls.by_user(user_id)
+        except IndexError:
+            record = Favorites.objects.create(user_id=user_id)
 
         publications_ids = json.loads(record.publications_ids)
-        publications_ids.append("{tid}:{hash_id}".format(tid=tid, hash_id=hash_id))
+        publications_ids.append(cls.__publication_digest(tid, hash_id))
         publications_ids = set(publications_ids)
+
         record.publications_ids = json.dumps(list(publications_ids))
         record.save()
 
+
     @classmethod
-    def remove(cls, customer_id, tid, hash_id):
+    def remove(cls, user_id, tid, hash_id):
         """
         Removes publication from customer's favorites.
-
-        :type customer_id int, unicode
-        :param customer_id: real id of the customer.
-
-        :type tid int
-        :param tid: type of the publication.
-
-        :type hash_id unicode, str
-        :param hash_id: publication's hash_id
 
         :returns
             True - if publication with exact id was deleted from the favorites publication of the customer.
             False - if no such publication is exist in customer's favorites.
         """
+        assert tid in OBJECTS_TYPES.values()
+        assert hash_id
+
         try:
-            record = Favorites.objects.filter(customer_id=customer_id).only('publications_ids')[:1][0]
+            record = cls.by_user(user_id)
         except IndexError:
-            raise InvalidCustomer('No customer with such id.')
+            return False
 
 
         publications_ids = json.loads(record.publications_ids)
         try:
-            publications_ids.remove("{tid}:{hash_id}".format(tid=tid, hash_id=hash_id))
+            publications_ids.remove(cls.__publication_digest(tid, hash_id))
         except ValueError:
             return False
 
@@ -68,18 +78,33 @@ class Favorites(models.Model):
 
 
     @classmethod
-    def exist(cls, customer_id, tid, hash_id):
+    def exist(cls, users_id, tid, hash_id):
         """
-        Check if publication exist in customer's favorites.
-        :param customer_id (int):
-        :param tid (int): type of publications, for example : 0 for flat, 1 for house
-        :param hash_id (string): publication hash_id.
-        :return: True or False
+        :returns:
+            True if publication with exact tid and hash_id exists in the user's favorites,
+            otherwise - returns False.
         """
-        try:
-            record = Favorites.objects.filter(customer_id=customer_id).only('publications_ids')[:1][0]
-        except IndexError:
-            record = Favorites.objects.create(customer=customer_id)
 
-        check_value = "{tid}:{hash_id}".format(tid=tid, hash_id=hash_id)
+        assert tid in OBJECTS_TYPES.values()
+        assert hash_id
+
+        try:
+            record = cls.by_user(users_id)
+        except IndexError:
+            record = Favorites.objects.create(users_id=users_id)
+
+        check_value = cls.__publication_digest(tid, hash_id)
         return check_value in json.loads(record.publications_ids)
+
+
+    @staticmethod
+    def __publication_digest(tid, hash_id):
+        """
+        :returns:
+            digest of the publication based on tid and hash_id.
+
+            This method is needed to unify digests generation process
+            and to guarantee, that all the methods in this model uses single
+            digest format.
+        """
+        return "{tid}:{hash_id}".format(tid=tid, hash_id=hash_id)
