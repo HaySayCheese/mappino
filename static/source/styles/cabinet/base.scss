@@ -30,10 +30,12 @@
 
 // sets size to 100%
 html,
-body{
+body {
     @include square(100%);
     overflow: hidden;
-    background-color: color('blue-grey', 'lighten-4');
+    //background-color: color('blue-grey', 'lighten-4');
+    background: url('../../images/cabinet/cabinet-bg.jpg') center center no-repeat fixed;
+    //background-size: cover;
 }
 
 

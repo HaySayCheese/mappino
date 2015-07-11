@@ -20,52 +20,68 @@ module mappino.cabinet {
 
 
 
-        public load(success_callback?, error_callback?) {
+        public loadBriefs(success?, error?) {
             this.$http.get('/ajax/api/cabinet/publications/briefs/all/')
                 .then((response) => {
                     if (response.data['code'] === 0) {
                         this._publications = response.data['data'];
-                        _.isFunction(success_callback) && success_callback(this._publications)
+                        _.isFunction(success) && success(this._publications)
                     } else {
-                        _.isFunction(error_callback) && error_callback(response.data)
+                        _.isFunction(error) && error(response.data)
                     }
                 }, (response) => {
-                    _.isFunction(error_callback) && error_callback(response.data)
+                    _.isFunction(error) && error(response.data)
                 });
         }
 
 
 
-        public create(publication: Object, success_callback?, error_callback?) {
+        public create(publication: Object, success?, error?) {
             this.$http.post('/ajax/api/cabinet/publications/', publication)
                 .then((response) => {
                     if (response.data['code'] === 0) {
                         this.$state.go('publication_edit', { id: publication['tid'] + ":" + response.data['data']['id'] });
-                        _.isFunction(success_callback) && success_callback(response.data)
+                        _.isFunction(success) && success(response.data)
                     } else {
-                        _.isFunction(error_callback) && error_callback(response.data)
+                        _.isFunction(error) && error(response.data)
                     }
                 }, (response) => {
-                    _.isFunction(error_callback) && error_callback(response.data)
+                    _.isFunction(error) && error(response.data)
                 });
         }
 
 
 
-        public loadPublication(publication: Object, success_callback?, error_callback?) {
+        public loadPublication(publication: Object, success?, error?) {
             this.$http.get('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/')
                 .then((response) => {
                     if (response.data['code'] === 0) {
                         console.log(response.data['data']);
                         this._publication = response.data['data'];
                         this.createDefaultTerms();
-                        _.isFunction(success_callback) && success_callback(this._publication)
+                        _.isFunction(success) && success(this._publication)
                     } else {
-                        _.isFunction(error_callback) && error_callback(response.data)
+                        _.isFunction(error) && error(response.data)
                     }
                 }, (response) => {
-                    _.isFunction(error_callback) && error_callback(response.data)
+                    _.isFunction(error) && error(response.data)
                 })
+        }
+
+
+
+        public checkField(publication: Object, field, success?, error?) {
+            var fieldName   = field.f,
+                fieldValue  = field.v;
+
+            this.$http.put('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/', field)
+                .then((response) => {
+                    if (response.data['code'] === 0) {
+                        _.isFunction(success) && success(response.data['data'].value ? response.data['data'].value : fieldValue);
+                    }
+                }, (response) => {
+                    _.isFunction(error) && error(response.data);
+                });
         }
 
 
