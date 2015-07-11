@@ -52,7 +52,6 @@ module mappino.cabinet {
                 var name  = e.currentTarget['name'],
                     value = e.currentTarget['value'].replace(/\s+/g, " ");
 
-                console.log(name)
                 if (!this.$scope.publicationForm[name].$dirty) {
                     return;
                 }
