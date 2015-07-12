@@ -2,10 +2,9 @@
 from django.conf.urls import patterns, url
 from apps.main.api.correspondence.ajax import SendMessageFromClient, SendCallRequestFromClient
 from apps.main.api.customers.ajax import CustomersView
-from apps.main.api.favorites.ajax import FavoritesListView, FavoritesView
+from apps.main.api.favorites.ajax import FavoritesListView
 from apps.main.api.publications_and_markers.ajax import Markers, DetailedView, Claims
 from apps.main.api.realtors_contacts.ajax import RealtorsContacts
-# from apps.main.api.viewed_publications.ajax import ViewedPublicationsView
 
 
 urlpatterns = patterns('apps.main.api',
@@ -22,7 +21,7 @@ urlpatterns = patterns('apps.main.api',
 
     # favorites
     url(r'^ajax/api/favorites/$', FavoritesListView.as_view()),
-    url(r'^ajax/api/favorites/(\d+):(\w+)/$', FavoritesView.as_view()),
+    url(r'^ajax/api/favorites/(\d+):(\w+)/$', FavoritesListView.as_view()),
 
     # #viewed
     # url(r'^ajax/api/viewed/$', ViewedPublicationsView.as_view()),
