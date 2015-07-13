@@ -1,8 +1,8 @@
 <form name="publicationForm" ng-controller="UnpublishedPublicationController as u_pubCtrl" novalidate>
     <section class="-medium -no-padding md-whiteframe-z2">
-        <md-tabs md-selected="0" md-dynamic-height md-border-bottom>
+        <md-tabs md-selected="activeTabStateIndex" md-dynamic-height md-border-bottom>
 
-            <md-tab id="main-tab">
+            <md-tab id="main-tab" md-on-select="u_pubCtrl.changeState(0)">
                 <md-tab-label>
                     Объявление
                 </md-tab-label>
@@ -62,8 +62,8 @@
                                 </md-select>
                                 <md-input-container flex="33">
                                     <label>Количество мест</label>
-                                    <input name="rent_persons_count" ng-model="publication.rent_terms.rent_persons_count" only-number>
-                                    <div ng-messages="publicationForm.rent_price.$error"
+                                    <input name="rent_persons_count" ng-model="publication.rent_terms.persons_count" only-number required>
+                                    <div ng-messages="publicationForm.rent_persons_count.$error"
                                          ng-show="publicationForm.$submitted || publicationForm.rent_persons_count.$touched">
                                         <div ng-message="required">Обязательное поле</div>
                                         <div ng-message="invalid">Количество мест указано неверно</div>
@@ -74,9 +74,10 @@
                                 <md-input-container flex="33">
                                     <label>Цена</label>
                                     <input name="rent_price" ng-model="publication.rent_terms.price"
-                                           ng-required="publication.head.for_rent" only-number>
+                                           ng-required="publication.head.for_rent" only-number required>
                                     <div ng-messages="publicationForm.rent_price.$error"
                                          ng-show="publicationForm.$submitted || publicationForm.rent_price.$touched">
+                                        <div ng-message="required">Обязательное поле</div>
                                         <div ng-message="invalid">Цена указана неверно</div>
                                     </div>
                                 </md-input-container>
@@ -96,7 +97,7 @@
                             Описание обьекта
                         </div>
                         <div class="md-padding" layout="column">
-                            <md-input-container flex="100">
+                            <md-input-container>
                                 <label>Заголовок обьявления</label>
                                 <input name="title" ng-model="publication.body.title" required>
                                 <div ng-messages="publicationForm.title.$error"
@@ -104,7 +105,7 @@
                                     <div ng-message="required">Обязательное поле</div>
                                 </div>
                             </md-input-container>
-                            <md-input-container flex="100">
+                            <md-input-container>
                                 <label>Рекламный текст</label>
                                 <textarea columns="1" name="description" ng-model="publication.body.description" required></textarea>
                                 <div ng-messages="publicationForm.description.$error"
@@ -217,7 +218,7 @@
                 </md-tab-body>
             </md-tab>
 
-            <md-tab id="additional-tab">
+            <md-tab id="additional-tab" md-on-select="u_pubCtrl.changeState(1)">
                 <md-tab-label>
                     Дополнительно
                 </md-tab-label>
@@ -259,7 +260,7 @@
                                     </md-checkbox>
                                 </div>
                             </div>
-                            <md-input-container flex="100">
+                            <md-input-container>
                                 <label>Другие удобства, уточнения</label>
                                 <input name="add_facilities" ng-model="publication.body.add_facilities">
                             </md-input-container>
@@ -298,7 +299,7 @@
                                     </md-checkbox>
                                 </div>
                             </div>
-                            <md-input-container flex="100">
+                            <md-input-container>
                                 <label>Другие удобства, уточнения предоставляемые с орендой</label>
                                 <input name="add_facilities" ng-model="publication.body.add_facilities">
                             </md-input-container>
@@ -345,7 +346,7 @@
                                     </md-checkbox>
                                 </div>
                             </div>
-                            <md-input-container flex="100">
+                            <md-input-container>
                                 <label>Другие постройки, уточнения</label>
                                 <input name="add_buildings" ng-model="publication.body.add_buildings">
                             </md-input-container>
@@ -388,7 +389,7 @@
                                     </md-checkbox>
                                 </div>
                             </div>
-                            <md-input-container flex="100">
+                            <md-input-container>
                                 <label>Другие достопримечательности, уточнения</label>
                                 <input name="add_showplaces" ng-model="publication.body.add_showplaces">
                             </md-input-container>
@@ -397,7 +398,7 @@
                 </md-tab-body>
             </md-tab>
 
-            <md-tab id="placement-tab">
+            <md-tab id="placement-tab" md-on-select="u_pubCtrl.changeState(2)">
                 <md-tab-label>
                     Местоположение
                 </md-tab-label>
@@ -406,7 +407,7 @@
                 </md-tab-body>
             </md-tab>
 
-            <md-tab id="media-tab">
+            <md-tab id="media-tab" md-on-select="u_pubCtrl.changeState(3)">
                 <md-tab-label>
                     Фото и видео
                 </md-tab-label>
@@ -415,5 +416,23 @@
                 </md-tab-body>
             </md-tab>
         </md-tabs>
+
+        <div class="md-padding" layout="row">
+            <span flex="15" ng-show="activeTabStateIndex == 0"></span>
+            <md-button class="md-primary md-hue-1" ng-show="activeTabStateIndex != 0"
+                       ng-click="u_pubCtrl.changeState('prev')">
+                Вернутся
+            </md-button>
+            <span flex></span>
+            <md-button class="md-raised md-primary"
+                       ng-click="u_pubCtrl.publish()">
+                Опубликовать
+            </md-button>
+            <span flex></span>
+            <md-button class="md-primary md-hue-1" ng-hide="activeTabStateIndex == 3"
+                       ng-click="u_pubCtrl.changeState('next')">
+                Продолжить
+            </md-button>
+        </div>
     </section>
 </form>

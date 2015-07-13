@@ -52,6 +52,22 @@ module mappino.cabinet {
 
 
 
+        public publish(publication: Object, success?, error?) {
+            this.$http.put('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/publish/', null)
+                .then((response) => {
+                    if (response.data['code'] === 0) {
+                        this.$state.go('publications');
+                        _.isFunction(success) && success(response.data)
+                    } else {
+                        _.isFunction(error) && error(response.data)
+                    }
+                }, (response) => {
+                    _.isFunction(error) && error(response.data)
+                });
+        }
+
+
+
         public loadPublication(publication: Object, success?, error?) {
             this.$http.get('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/')
                 .then((response) => {
@@ -77,7 +93,7 @@ module mappino.cabinet {
             this.$http.put('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/', field)
                 .then((response) => {
                     if (response.data['code'] === 0) {
-                        _.isFunction(success) && success(response.data['data'].value ? response.data['data'].value : fieldValue);
+                        _.isFunction(success) && success(response.data['data'] && response.data['data'].value ? response.data['data'].value : fieldValue);
                     }
                 }, (response) => {
                     _.isFunction(error) && error(response.data);

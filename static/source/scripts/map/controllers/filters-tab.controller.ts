@@ -1,4 +1,4 @@
-/// <reference path='../_references.ts' />
+/// <reference path='../_all.ts' />
 
 
 module mappino.map {
@@ -15,22 +15,12 @@ module mappino.map {
             '$scope',
             '$timeout',
             'FiltersService',
-            'PeriodTypesService',
-            'RealtyTypesService',
-            'CurrencyTypesService'
         ];
 
         constructor(private $scope,
                     private $timeout,
-                    private filtersService: FiltersService,
-                    private periodTypesService: bModules.Types.PeriodTypesService,
-                    private realtyTypesService: bModules.Types.RealtyTypesService,
-                    private currencyTypesService: bModules.Types.CurrencyTypesService) {
+                    private filtersService: FiltersService) {
             // ---------------------------------------------------------------------------------------------------------
-            this.periodTypes    = periodTypesService.periodTypes;
-            this.realtyTypes    = realtyTypesService.realtyTypes;
-            this.currencyTypes  = currencyTypesService.currencyTypes;
-
             this.filters = $scope.filters = filtersService.filters['panels'];
 
             this.initFiltersWatcher('red');

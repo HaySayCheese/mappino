@@ -1,7 +1,14 @@
-<div class="form-group">
-    <label><span class="required-star">*</span>Укажите местоположение:</label>
-    <input id="publication-map-input" type="text" class="form-control" name="address" ng-model="publication.head.address" required/>
-    <span class="input-has-error" ng-show="form.publication.address.$error.required && showValidationMessages">Укажите, пожалуйста, местоположение.</span>
-    <span class="input-has-error" ng-show="form.publication.address.$error.incorrect">Местоположение указано неверно.</span>
+<div class="md-padding" layout="column">
+    <md-input-container>
+        <!--<label>Местоположение</label>-->
+        <input id="publication-map-input" name="address" ng-model="publication.head.address" required>
+        <div ng-messages="publicationForm.address.$error"
+             ng-show="publicationForm.$submitted || publicationForm.address.$touched">
+            <div ng-message="required">Обязательное поле</div>
+            <div ng-message="invalid">Местоположение указано неверно</div>
+        </div>
+    </md-input-container>
+
+    <div id="publication-map"></div>
 </div>
-<div id="publication-map" class="form-group" ng-init="initMap()"></div>
+
