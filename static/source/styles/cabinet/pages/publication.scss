@@ -31,6 +31,10 @@
             //margin: 30px 0 10px;
         }
     }
+
+    #publication-map {
+        @include size(100%, 400px)
+    }
 }
 
 

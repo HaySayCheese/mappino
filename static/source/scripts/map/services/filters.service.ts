@@ -1,4 +1,4 @@
-/// <reference path='../_references.ts' />
+/// <reference path='../_all.ts' />
 
 
 module mappino.map {
@@ -86,13 +86,13 @@ module mappino.map {
             '$rootScope',
             '$timeout',
             '$location',
-            'RealtyTypesService'
+            'CONSTANTS'
         ];
 
         constructor(private $rootScope: angular.IRootScopeService,
                     private $timeout: angular.ITimeoutService,
                     private $location: angular.ILocationService,
-                    private realtyTypesService: bModules.Types.RealtyTypesService) {
+                    private CONSTANTS: any) {
             // ---------------------------------------------------------------------------------------------------------
 
             this.updateFiltersFromUrl();
@@ -151,7 +151,7 @@ module mappino.map {
 
             // Створюємо набір фільтрів для панелі за набором
             if (!_.isNull(type_sid)) {
-                var realty_type_filters = _.where(self.realtyTypesService.realtyTypes, { 'id': type_sid })[0]['filters'];
+                var realty_type_filters = _.where(self.CONSTANTS.REALTY_TYPES, { 'id': type_sid })[0]['filters'];
 
                 for (var i = 0, len = realty_type_filters.length; i < len; i++) {
                     var filter_name = panel_prefix + realty_type_filters[i];

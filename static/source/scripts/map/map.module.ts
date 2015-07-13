@@ -1,4 +1,4 @@
-/// <reference path='_references.ts' />
+/// <reference path='_all.ts' />
 
 module mappino.map {
     'use strict';
@@ -14,10 +14,9 @@ module mappino.map {
 
         'ui.router',
 
-        //'ngTinyScrollbar',
+        'mappino.core'
 
-        'bModules.Auth',
-        'bModules.Types'
+        //'ngTinyScrollbar',
     ]);
 
 

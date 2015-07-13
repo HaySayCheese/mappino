@@ -1,4 +1,4 @@
-/// <reference path='../_references.ts' />
+/// <reference path='../_all.ts' />
 
 
 module mappino.map {

@@ -1,4 +1,4 @@
-/// <reference path='../_references.ts' />
+/// <reference path='../_all.ts' />
 
 
 module mappino.map {
@@ -14,7 +14,7 @@ module mappino.map {
 
         constructor(private $scope: any,
                     private $cookies: angular.cookies.ICookiesService,
-                    private authService: bModules.Auth.IAuthService) {
+                    private authService: mappino.core.auth.IAuthService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.authState = $cookies.get('mcheck') ? 'enterSMSCode' : 'enterPhone';
 
