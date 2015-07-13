@@ -3,3 +3,5 @@
 from redis_database_connections import intialize_redis_connections
 intialize_redis_connections()
 
+from core.initialize_signals.initialize_signals import initialize_all_signals
+initialize_all_signals()
