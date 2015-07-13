@@ -1,7 +1,6 @@
 #coding=utf-8
 from django.conf.urls import patterns, url
 from apps.main.api.correspondence.ajax import SendMessageFromClient, SendCallRequestFromClient
-from apps.main.api.customers.ajax import CustomersView
 from apps.main.api.favorites.ajax import FavoritesListView
 from apps.main.api.publications_and_markers.ajax import Markers, DetailedView, Claims
 from apps.main.api.realtors_contacts.ajax import RealtorsContacts
@@ -26,10 +25,6 @@ urlpatterns = patterns('apps.main.api',
     # #viewed
     # url(r'^ajax/api/viewed/$', ViewedPublicationsView.as_view()),
     # url(r'^ajax/api/viewed/(\d+):(\w+)/$', ViewedPublicationsView.as_view()),
-
-
-    # customers
-    url(r'^ajax/api/customers/authorise/$', CustomersView.as_view()),
 
     # claims
     url(r'^ajax/api/publications/(\d+):(\w+)/claims/$', Claims.List.as_view()),
