@@ -10,16 +10,16 @@
                 <div class="account-tab" ng-controller="FiltersTabController as filCtrl">
                     <header layout="row" layout-align="start center" layout-padding toggle-tab-body>
                             <span class="md-body-1">
-                                [[ filCtrl.realtyTypes[filters.red.r_t_sid].title ]]&nbsp;
+                                [[ CONSTANTS.REALTY_TYPES[filters.red.r_t_sid].title ]]&nbsp;
                             </span>
                             <span class="md-body-1" ng-show="filters.red.r_p_min && filters.red.r_p_max">
-                                ([[ filters.red.r_p_min ]] - [[ filters.red.r_p_max ]] [[ filCtrl.currencyTypes[filters.red.r_cu_sid].title ]])
+                                ([[ filters.red.r_p_min ]] - [[ filters.red.r_p_max ]] [[ CONSTANTS.CURRENCY_TYPES[filters.red.r_cu_sid].title ]])
                             </span>
                             <span class="md-body-1" ng-show="filters.red.r_p_min && !filters.red.r_p_max">
-                                (от [[ filters.red.r_p_min ]] [[ filCtrl.currencyTypes[filters.red.r_cu_sid].title ]])
+                                (от [[ filters.red.r_p_min ]] [[ CONSTANTS.CURRENCY_TYPES[filters.red.r_cu_sid].title ]])
                             </span>
                             <span class="md-body-1" ng-show="!filters.red.r_p_min && filters.red.r_p_max">
-                                (до [[ filters.red.r_p_max ]] [[ filCtrl.currencyTypes[filters.red.r_cu_sid].title ]])
+                                (до [[ filters.red.r_p_max ]] [[ CONSTANTS.CURRENCY_TYPES[filters.red.r_cu_sid].title ]])
                             </span>
                     </header>
                     <tab-body-collapsible>
@@ -27,7 +27,7 @@
                             <section class="-border-top" layout="column" layout-padding>
                                 <div layout="row">
                                     <md-select placeholder="Тип обєкта" ng-model="filters.red.r_t_sid" flex="67">
-                                        <md-option ng-repeat="realtyType in filCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
+                                        <md-option ng-repeat="realtyType in CONSTANTS.REALTY_TYPES" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
                                     </md-select>
                                     <md-select placeholder="Операция" ng-model="filters.red.r_op_sid" flex="33">
                                         <md-option value="0">Продажа</md-option>

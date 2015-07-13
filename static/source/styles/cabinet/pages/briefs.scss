@@ -1,0 +1,20 @@
+.briefs-page {
+    .brief-status {
+        &.-published {
+            span,
+            md-icon {
+                color: color('green', 'base') !important;
+            }
+        }
+    }
+
+    md-card-content {
+        position: relative;
+    }
+
+    .publication-create-button {
+        position: absolute;
+        right: 30px;
+        bottom: 10px;
+    }
+}

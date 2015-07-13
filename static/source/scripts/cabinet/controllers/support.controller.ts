@@ -28,13 +28,13 @@ module mappino.cabinet {
             $scope.ticket   = {};
             $scope.tickets  = this._tickets = [];
 
-            $rootScope.loaders.base     = true;
+            $rootScope.loaders.tickets     = true;
             $scope.ticketFormIsVisible  = false;
 
 
             ticketsService.loadTickets((response) => {
                 this._tickets = $scope.tickets = response;
-                $rootScope.loaders.base = false;
+                $rootScope.loaders.tickets = false;
             })
         }
 

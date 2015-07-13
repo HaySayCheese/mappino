@@ -11,11 +11,10 @@ module mappino.cabinet {
             'AuthService'
         ];
 
-        constructor(
-            private $scope: any,
-            private $rootScope: any,
-            private $timeout: angular.ITimeoutService,
-            private authService: mappino.core.auth.IAuthService) {
+        constructor(private $scope: any,
+                    private $rootScope: any,
+                    private $timeout: angular.ITimeoutService,
+                    private authService: mappino.core.auth.IAuthService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.loaders.base = true;
 
@@ -30,7 +29,7 @@ module mappino.cabinet {
 
 
         // used in scope, don't remove
-        private changePhoto(event) {
+        private changeAvatar(event) {
             event.preventDefault();
 
             angular.element('#photo-field').click();

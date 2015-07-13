@@ -1,205 +1,226 @@
 <div class="settings-page" ng-controller="SettingsController as settingsCtrl">
-    <form name="userProfileForm" ng-hide="loaders.base" layout="column" layout-align="start center" novalidate>
-        <section class="-medium user-block md-whiteframe-z2">
-            <h3 class="md-headline light-blue-text">Основная информация</h3>
+    <form class="md-padding" name="userProfileForm" ng-hide="loaders.base"
+          layout-wrap layout="column" layout-gt-lg="row" layout-align-md="start center" layout-align-lg="start center" novalidate>
 
-            <div layout-sm="column" layout-gt-sm="row">
-                <div layout="column" layout-align="center center" flex="40">
-                    <div class="user-photo" layout="column" layout-align="center center">
-                        <img ng-src="[[ user.account.avatar_url ]]" alt="" ng-hide="loaders.avatar" />
+        <md-card flex="32">
+            <md-card-content>
+                <h3 class="md-headline light-blue-text">Основная информация</h3>
 
-                        <md-progress-circular md-mode="indeterminate" ng-show="loaders.avatar"></md-progress-circular>
+                <div layout-sm="column" layout-gt-sm="row">
+                    <div class="user-block" layout="column" layout-align="center center" flex="45">
+                        <div class="user-photo" layout="column" layout-align="center center">
+                            <img ng-src="[[ user.account.avatar_url ]]" alt="" ng-hide="loaders.avatar" />
+
+                            <md-progress-circular md-mode="indeterminate" ng-show="loaders.avatar"></md-progress-circular>
+                        </div>
+                        <input id="photo-field" name="avatar" type="file" />
+
+                        <div layout="row">
+                            <md-button class="md-warn md-hue-1 md-icon-button" ng-click="settingsCtrl.removeAvatar($event)">
+                                <md-icon>remove_circle_outline</md-icon>
+                                <md-tooltip md-direction="top" md-delay="0">
+                                    Удалить фото
+                                </md-tooltip>
+                            </md-button>
+                            <md-button class="md-primary md-hue-1" ng-click="settingsCtrl.changeAvatar($event)">
+                                Сменить фото
+                            </md-button>
+                        </div>
+
+                        <!-- todo: need fixed-->
+                        <div class="image-errors">
+                            <span class="input-has-error text-center" ng-show="imageTooLarge">Слишком большое изображение <br/> (ограничение в 5 мб.)</span>
+                            <span class="input-has-error text-center" ng-show="imageTooSmall">Слишком малое изображение <br/>(<200px по одной из сторон)</span>
+                            <span class="input-has-error text-center" ng-show="imageUndefined">Неподдерживаемый тип</span>
+                        </div>
                     </div>
-                    <input id="photo-field" name="avatar" type="file" />
 
 
-                    <md-button class="md-primary md-hue-1" ng-click="settingsCtrl.changePhoto($event)">Сменить фото</md-button>
+                    <div layout="column" layout-align="start right" flex="50" flex-sm="100" offset-gt-sm="5">
+                        <md-input-container flex>
+                            <label>Имя</label>
+                            <input type="text" name="first_name" ng-model="user.account.first_name">
+                            <div ng-messages="userProfileForm.first_name.$error">
+                                <div ng-message="required">Обязательное поле</div>
+                            </div>
+                        </md-input-container>
 
-                    <!-- todo: need fixed-->
-                    <div class="image-errors">
-                        <span class="input-has-error text-center" ng-show="imageTooLarge">Слишком большое изображение <br/> (ограничение в 5 мб.)</span>
-                        <span class="input-has-error text-center" ng-show="imageTooSmall">Слишком малое изображение <br/>(<200px по одной из сторон)</span>
-                        <span class="input-has-error text-center" ng-show="imageUndefined">Неподдерживаемый тип</span>
+                        <md-input-container flex>
+                            <label>Фамилия</label>
+                            <input type="text" name="last_name" ng-model="user.account.last_name">
+                            <div ng-messages="userProfileForm.last_name.$error">
+                                <div ng-message="required">Обязательное поле</div>
+                            </div>
+                        </md-input-container>
+
+                        <md-input-container flex>
+                            <label>Эл. почта</label>
+                            <input type="text" name="email" ng-model="user.account.email" required>
+                            <div ng-messages="userProfileForm.email.$error">
+                                <div ng-message="required">Обязательное поле</div>
+                                <div ng-message="invalid">Некоректная эл. почта</div>
+                                <div ng-message="duplicated">Указанная эл. почта уже используется</div>
+                            </div>
+                        </md-input-container>
+
+                        <md-input-container>
+                            <label>Моб. телефон</label>
+                            <input type="tel" name="mobile_number" ng-model="user.account.mobile_phone" required>
+                            <div ng-messages="userProfileForm.mobile_number.$error">
+                                <div ng-message="required">Обязательное поле</div>
+                                <div ng-message="invalid">Некоректный номер</div>
+                                <div ng-message="duplicated">Указанный номер уже используется</div>
+                            </div>
+                        </md-input-container>
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
+
+
+
+        <md-card flex="32">
+            <md-card-content>
+                <h3 class="md-headline light-blue-text">Контакты</h3>
+
+                <div layout="row">
+                    <div layout="column" flex-gt-sm="45" hide-sm>
+                        <!--<i class="mdi-communication-contacts large"></i>-->
+                        <blockquote>
+                            Надання додаткових контактів дасть більше можливості будь-кому звязатися з вами
+                        </blockquote>
+                    </div>
+
+
+                    <div layout="column" flex="50" flex-sm="100" offset-gt-sm="5">
+                        <md-input-container flex>
+                            <label>Рабочая эл. почта</label>
+                            <input type="text" name="work_email" ng-model="user.account.work_email">
+                            <div ng-messages="userProfileForm.work_email.$error">
+                                <div ng-message="invalid">Некоректная эл. почта</div>
+                                <div ng-message="duplicated">Указанная эл. почта уже используется</div>
+                            </div>
+                        </md-input-container>
+
+                        <md-input-container flex>
+                            <label>Доп. моб. телефон</label>
+                            <input type="text" name="add_mobile_phone" ng-model="user.account.add_mobile_phone" only-number>
+                            <div ng-messages="userProfileForm.add_mobile_phone.$error">
+                                <div ng-message="invalid">Некоректный номер</div>
+                                <div ng-message="duplicated">Указанный номер уже используется</div>
+                            </div>
+                        </md-input-container>
+
+                        <md-input-container flex>
+                            <label>Раб. телефон</label>
+                            <input type="text" name="landline_phone" ng-model="user.account.landline_phone" only-number>
+                            <div ng-messages="userProfileForm.landline_phone.$error">
+                                <div ng-message="invalid">Некоректный номер</div>
+                                <div ng-message="duplicated">Указанный номер уже используется</div>
+                            </div>
+                        </md-input-container>
+
+                        <md-input-container flex>
+                            <label>Доп. раб. телефон</label>
+                            <input type="text" name="add_landline_phone" ng-model="user.account.add_landline_phone" only-number>
+                        </md-input-container>
+
+                        <md-input-container flex>
+                            <label>Skype</label>
+                            <input type="text" name="skype" ng-model="user.account.skype">
+                        </md-input-container>
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
+
+
+
+        <md-card flex="32">
+            <md-card-content>
+                <h3 class="md-headline light-blue-text">Настройки</h3>
+
+                <div layout="row">
+                    <div layout="column" flex>
+                        <md-checkbox class="md-primary" name="allow_call_requests" ng-model="user.preferences.allow_call_requests">
+                            Разрешать запрос обратного звонка
+                        </md-checkbox>
+                        <div layout="row" layout-sm="column" layout-align="start center" ng-show="user.preferences.allow_call_requests">
+                            <span flex="45" fxel="100" offset-gt-sm="10">Присылать уведомления на</span>
+                            <md-select placeholder="Присылать уведомления на" name="send_call_request_notifications_to_sid" ng-model="user.preferences.send_call_request_notifications_to_sid">
+                                <md-option value="0">телефон посредством sms</md-option>
+                                <md-option value="1">почту</md-option>
+                                <md-option value="2">телефон и почту</md-option>
+                            </md-select>
+                        </div>
                     </div>
                 </div>
 
-
-                <div layout="column" layout-align="start right" flex="50" flex-sm="100" offset-gt-sm="10">
-                    <md-input-container flex>
-                        <label>Имя</label>
-                        <input type="text" name="first_name" ng-model="user.account.first_name">
-                        <div ng-messages="userProfileForm.first_name.$error">
-                            <div ng-message="required">Обязательное поле</div>
+                <div layout="row">
+                    <div layout="column" flex>
+                        <md-checkbox class="md-primary" name="allow_messaging" ng-model="user.preferences.allow_messaging">
+                            Разрешать оставлять сообщения через форму обратной связи
+                        </md-checkbox>
+                        <div layout="row" layout-sm="column" layout-align="start center" ng-show="user.preferences.allow_messaging">
+                            <span flex="45" fxel-sm="100" offset-gt-sm="10">Присылать уведомления на</span>
+                            <md-select placeholder="Присылать уведомления на" name="send_call_request_notifications_to_sid" ng-model="user.preferences.send_message_notifications_to_sid">
+                                <md-option value="1">почту</md-option>
+                                <md-option value="2">телефон и почту</md-option>
+                            </md-select>
                         </div>
-                    </md-input-container>
-
-                    <md-input-container flex>
-                        <label>Фамилия</label>
-                        <input type="text" name="last_name" ng-model="user.account.last_name">
-                        <div ng-messages="userProfileForm.last_name.$error">
-                            <div ng-message="required">Обязательное поле</div>
-                        </div>
-                    </md-input-container>
-
-                    <md-input-container flex>
-                        <label>Эл. почта</label>
-                        <input type="text" name="email" ng-model="user.account.email" required>
-                        <div ng-messages="userProfileForm.email.$error">
-                            <div ng-message="required">Обязательное поле</div>
-                            <div ng-message="invalid">Некоректная эл. почта</div>
-                            <div ng-message="duplicated">Указанная эл. почта уже используется</div>
-                        </div>
-                    </md-input-container>
-
-                    <md-input-container>
-                        <label>Моб. телефон</label>
-                        <input type="tel" name="mobile_number" ng-model="user.account.mobile_phone" required>
-                        <div ng-messages="userProfileForm.mobile_number.$error">
-                            <div ng-message="required">Обязательное поле</div>
-                            <div ng-message="invalid">Некоректный номер</div>
-                            <div ng-message="duplicated">Указанный номер уже используется</div>
-                        </div>
-                    </md-input-container>
+                    </div>
                 </div>
-            </div>
-        </section>
 
+                <md-divider></md-divider>
 
+                <div layout="row">
+                    <md-checkbox class="md-primary" name="hide_email" ng-model="user.preferences.hide_email">
+                        Скрывать почту
+                    </md-checkbox>
+                </div>
 
-        <section class="-medium md-whiteframe-z2">
-            <h3 class="md-headline light-blue-text">Контакты</h3>
-
-            <div layout="row">
-                <div layout="column" flex-gt-sm="40" hide-sm>
-                    <!--<i class="mdi-communication-contacts large"></i>-->
-                    <blockquote>
-                        Надання додаткових контактів дасть більше можливості будь-кому звязатися з вами
+                <div layout="row">
+                    <blockquote offset="10">
+                        При запросе Ваших контактов адрес Вашей эл. почты будет скрыт,
+                        но клиенты смогут оставить Вам сообщение через форму обратной связи на нашем сайте,
+                        если она включена. Обратите внимание, ответив на сообщение клиента со своей почты Вы тем самым раскроете свой эл. адрес.
                     </blockquote>
                 </div>
 
-
-                <div layout="column" flex="50" flex-sm="100" offset-gt-sm="10">
-                    <md-input-container flex>
-                        <label>Рабочая эл. почта</label>
-                        <input type="text" name="work_email" ng-model="user.account.work_email">
-                        <div ng-messages="userProfileForm.work_email.$error">
-                            <div ng-message="invalid">Некоректная эл. почта</div>
-                            <div ng-message="duplicated">Указанная эл. почта уже используется</div>
-                        </div>
-                    </md-input-container>
-
-                    <md-input-container flex>
-                        <label>Доп. моб. телефон</label>
-                        <input type="text" name="add_mobile_phone" ng-model="user.account.add_mobile_phone" only-number>
-                        <div ng-messages="userProfileForm.add_mobile_phone.$error">
-                            <div ng-message="invalid">Некоректный номер</div>
-                            <div ng-message="duplicated">Указанный номер уже используется</div>
-                        </div>
-                    </md-input-container>
-
-                    <md-input-container flex>
-                        <label>Раб. телефон</label>
-                        <input type="text" name="landline_phone" ng-model="user.account.landline_phone" only-number>
-                        <div ng-messages="userProfileForm.landline_phone.$error">
-                            <div ng-message="invalid">Некоректный номер</div>
-                            <div ng-message="duplicated">Указанный номер уже используется</div>
-                        </div>
-                    </md-input-container>
-
-                    <md-input-container flex>
-                        <label>Доп. раб. телефон</label>
-                        <input type="text" name="add_landline_phone" ng-model="user.account.add_landline_phone" only-number>
-                    </md-input-container>
-
-                    <md-input-container flex>
-                        <label>Skype</label>
-                        <input type="text" name="skype" ng-model="user.account.skype">
-                    </md-input-container>
-                </div>
-            </div>
-        </section>
-
-
-
-        <section class="-medium md-whiteframe-z2">
-            <h3 class="md-headline light-blue-text">Настройки</h3>
-
-            <div layout="row">
-                <div layout="column" flex>
-                    <md-checkbox class="md-primary" name="allow_call_requests" ng-model="user.preferences.allow_call_requests">
-                        Разрешать запрос обратного звонка
+                <div layout="row">
+                    <md-checkbox class="md-primary" name="hide_mobile_phone_number" ng-model="user.preferences.hide_mobile_phone_number">
+                        Скрывать основной мобильный телефон
                     </md-checkbox>
-                    <div layout="row" layout-sm="column" layout-align="start center" ng-show="user.preferences.allow_call_requests">
-                        <span flex="45" fxel="100" offset-gt-sm="10">Присылать уведомления на</span>
-                        <md-select placeholder="Присылать уведомления на" name="send_call_request_notifications_to_sid" ng-model="user.preferences.send_call_request_notifications_to_sid">
-                            <md-option value="0">телефон посредством sms</md-option>
-                            <md-option value="1">почту</md-option>
-                            <md-option value="2">телефон и почту</md-option>
-                        </md-select>
-                    </div>
                 </div>
-            </div>
 
-            <div layout="row">
-                <div layout="column" flex>
-                    <md-checkbox class="md-primary" name="allow_messaging" ng-model="user.preferences.allow_messaging">
-                        Разрешать оставлять сообщения через форму обратной связи
+                <div layout="row">
+                    <md-checkbox class="md-primary" name="hide_add_mobile_phone_number" ng-model="user.preferences.hide_add_mobile_phone_number">
+                        Скрывать дополнительный мобильный телефон
                     </md-checkbox>
-                    <div layout="row" layout-sm="column" layout-align="start center" ng-show="user.preferences.allow_messaging">
-                        <span flex="45" fxel-sm="100" offset-gt-sm="10">Присылать уведомления на</span>
-                        <md-select placeholder="Присылать уведомления на" name="send_call_request_notifications_to_sid" ng-model="user.preferences.send_message_notifications_to_sid">
-                            <md-option value="1">почту</md-option>
-                            <md-option value="2">телефон и почту</md-option>
-                        </md-select>
-                    </div>
                 </div>
-            </div>
 
-            <md-divider></md-divider>
+                <div layout="row">
+                    <md-checkbox class="md-primary" name="hide_landline_phone_number" ng-model="user.preferences.hide_landline_phone_number">
+                        Скрывать рабочий телефон
+                    </md-checkbox>
+                </div>
 
-            <div layout="row">
-                <md-checkbox class="md-primary" name="hide_email" ng-model="user.preferences.hide_email">
-                    Скрывать почту
-                </md-checkbox>
-            </div>
+                <div layout="row">
+                    <md-checkbox class="md-primary" name="hide_add_landline_phone_number" ng-model="user.preferences.hide_add_landline_phone_number">
+                        Скрывать дополнительный рабочий телефон
+                    </md-checkbox>
+                </div>
 
-            <div layout="row">
-                <blockquote offset="10">
-                    При запросе Ваших контактов адрес Вашей эл. почты будет скрыт,
-                    но клиенты смогут оставить Вам сообщение через форму обратной связи на нашем сайте,
-                    если она включена. Обратите внимание, ответив на сообщение клиента со своей почты Вы тем самым раскроете свой эл. адрес.
-                </blockquote>
-            </div>
+                <div layout="row">
+                    <md-checkbox class="md-primary" name="hide_skype" ng-model="user.preferences.hide_skype">
+                        Скрывать skype
+                    </md-checkbox>
+                </div>
+            </md-card-content>
+        </md-card>
 
-            <div layout="row">
-                <md-checkbox class="md-primary" name="hide_mobile_phone_number" ng-model="user.preferences.hide_mobile_phone_number">
-                    Скрывать основной мобильный телефон
-                </md-checkbox>
-            </div>
 
-            <div layout="row">
-                <md-checkbox class="md-primary" name="hide_add_mobile_phone_number" ng-model="user.preferences.hide_add_mobile_phone_number">
-                    Скрывать дополнительный мобильный телефон
-                </md-checkbox>
-            </div>
 
-            <div layout="row">
-                <md-checkbox class="md-primary" name="hide_landline_phone_number" ng-model="user.preferences.hide_landline_phone_number">
-                    Скрывать рабочий телефон
-                </md-checkbox>
-            </div>
-
-            <div layout="row">
-                <md-checkbox class="md-primary" name="hide_add_landline_phone_number" ng-model="user.preferences.hide_add_landline_phone_number">
-                    Скрывать дополнительный рабочий телефон
-                </md-checkbox>
-            </div>
-
-            <div layout="row">
-                <md-checkbox class="md-primary" name="hide_skype" ng-model="user.preferences.hide_skype">
-                    Скрывать skype
-                </md-checkbox>
-            </div>
-        </section>
+        <md-card class="-fake" flex="32"></md-card>
     </form>
 </div>
