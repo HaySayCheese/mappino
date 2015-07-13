@@ -189,9 +189,11 @@ class Publication(CabinetView):
     #
     #     return dict_to_validate
 
-    def put(self, request, *args):
+
+    @classmethod
+    def put(cls, request, *args):
         try:
-            tid, hash_id = args[:]
+            tid, hash_id = args[:2]
             tid = int(tid)
             model = HEAD_MODELS[tid]
 
@@ -200,13 +202,13 @@ class Publication(CabinetView):
             value = parameters['v'] # may be ''
 
         except (IndexError, ValueError, KeyError):
-            return self.PutResponses.invalid_parameters()
+            return cls.PutResponses.invalid_parameters()
 
 
         try:
             head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
         except IndexError:
-             return self.PutResponses.invalid_parameters()
+             return cls.PutResponses.invalid_parameters()
 
 
         # check owner
@@ -217,7 +219,6 @@ class Publication(CabinetView):
         returned_value = None
 
         # todo: move this into models as a method
-        # Жилая недвижимость
         if tid == OBJECTS_TYPES.flat():
             returned_value = update_flat(head, field, value, tid)
 
@@ -227,7 +228,7 @@ class Publication(CabinetView):
         elif tid == OBJECTS_TYPES.room():
             returned_value = update_room(head, field, value, tid)
 
-        # Коммерческая недвижимость
+
         elif tid == OBJECTS_TYPES.land():
             returned_value = update_land(head, field, value, tid)
 
@@ -260,7 +261,7 @@ class Publication(CabinetView):
             for_rent=head.for_rent,
         )
 
-        return self.PutResponses.ok(returned_value)
+        return cls.PutResponses.ok(returned_value)
 
 
     def delete(self, request, *args):
