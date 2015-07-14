@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
 from apps.classes import CabinetView
+from collective.decorators.ajax import json_response
 from core.users.exceptions import AvatarExceptions
 from collective.exceptions import RuntimeException
 from collective.http.responses import HttpJsonResponse
@@ -518,26 +519,43 @@ class AvatarUpdate(CabinetView):
             })
 
 
-    def post(self, request):
+    class DeleteCodes(object):
+        @staticmethod
+        @json_response
+        def ok():
+            return {
+                'code': 0,
+                'message': 'OK',
+            }
+
+
+    @classmethod
+    def post(cls, request):
         # check if request is not empty
         image = request.FILES.get('file')
         if image is None:
-            return self.PostResponses.invalid_parameters()
+            return cls.PostResponses.invalid_parameters()
 
         try:
             request.user.avatar.update(image)
 
         except AvatarExceptions.ImageIsTooLarge:
-            return self.PostResponses.too_large()
+            return cls.PostResponses.too_large()
 
         except AvatarExceptions.ImageIsTooSmall:
-            return self.PostResponses.too_small()
+            return cls.PostResponses.too_small()
 
         except AvatarExceptions.UnsupportedImageType:
-            return self.PostResponses.unsupported_type()
+            return cls.PostResponses.unsupported_type()
 
         except RuntimeException:
-            return self.PostResponses.invalid_parameters()
+            return cls.PostResponses.invalid_parameters()
 
         # seems to be ok
-        return self.PostResponses.ok(request.user.avatar.url())
+        return cls.PostResponses.ok(request.user.avatar.url())
+
+
+    @classmethod
+    def delete(cls, request):
+        request.user.avatar.remove()
+        return cls.DeleteCodes.ok()
