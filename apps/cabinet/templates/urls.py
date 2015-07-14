@@ -2,29 +2,31 @@
 from django.conf.urls import patterns, url
 
 
-urlpatterns = patterns('apps.cabinet',
+urlpatterns = patterns('apps.cabinet.templates.templates',
     # briefs
-    url(r'^ajax/template/cabinet/publications/briefs/$', 'templates.publications.briefs'),
-    url(r'^ajax/template/cabinet/publications/publication/$', 'templates.publications.publication'),
+    url(r'^ajax/template/cabinet/publications/briefs/$', 'publications_briefs'),
+
+    # publication
+    url(r'^ajax/template/cabinet/publications/publication/$', 'publications_publication'),
 
 
     # unpublished publications forms
-    url(r'^ajax/template/cabinet/publications/unpublished/(\d+)/$', 'templates.publications.unpublished_form'),
-    url(r'^ajax/template/cabinet/publications/unpublished/map/$', 'templates.publications.unpublished_map'),
-    url(r'^ajax/template/cabinet/publications/unpublished/photos/$', 'templates.publications.unpublished_photos'),
+    url(r'^ajax/template/cabinet/publications/unpublished/(\d+)/$', 'publications_unpublished_form'),
+    url(r'^ajax/template/cabinet/publications/unpublished/map/$', 'publications_unpublished_map'),
+    url(r'^ajax/template/cabinet/publications/unpublished/photos/$', 'publications_unpublished_photos'),
+
+
+    # published publications forms
+    # url(r'^ajax/template/cabinet/publications/published/$', ''), # todo: fix me
 
 
     # settings
-    url(r'^ajax/template/cabinet/settings/$', 'templates.settings.settings'),
+    url(r'^ajax/template/cabinet/settings/$', 'settings'),
 
 
     # support
-    url(r'^ajax/template/cabinet/support/$', 'templates.support.support'),
-    url(r'^ajax/template/cabinet/support/ticket/$', 'templates.support.ticket'),
-
-
-	# published publications forms
-    url(r'^ajax/template/cabinet/publications/published/$', 'templates.publications.published_form'),
+    url(r'^ajax/template/cabinet/support/$', 'support'),
+    url(r'^ajax/template/cabinet/support/ticket/$', 'support_ticket'),
 
 
     # # hints
