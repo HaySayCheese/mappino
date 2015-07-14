@@ -470,7 +470,6 @@ class AccountView(CabinetView):
         return self.PostResponses.ok()
 
 
-
 class AvatarUpdate(CabinetView):
     class PostResponses(object):
         @staticmethod
