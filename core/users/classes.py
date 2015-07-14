@@ -38,17 +38,18 @@ class Avatar(GoogleCSPhotoUploader):
         if not url:
             return
 
-        filename = url.split('/')[-1]
-        path = self.bucket_path + filename
 
+        # clear url anyway
         self.user.avatar_url = ''
         self.user.save()
 
-        if url:
-            try:
-                self.remove_photo_from_google_cloud_storage(path)
-            except:
-                pass
+        filename = url.split('/')[-1]
+        path = self.bucket_path + filename
+
+        try:
+            self.remove_photo_from_google_cloud_storage(path)
+        except:
+            pass
 
 
     @classmethod
