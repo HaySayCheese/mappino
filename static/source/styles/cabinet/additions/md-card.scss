@@ -1,0 +1,31 @@
+md-card {
+    @include size(600px, auto);
+    min-width: 430px;
+    margin: 20px;
+
+
+    @media screen and (max-width: 775px) {
+        @include size(100% !important, auto);
+        min-width: 100% !important;
+        margin: 7px 0 !important;
+    }
+
+
+    &.-fake {
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+
+
+    &.-no-padding {
+        md-card-content {
+            padding: 0 !important;
+        }
+    }
+
+
+
+    .md-headline {
+        margin-top: 5px !important;
+    }
+}

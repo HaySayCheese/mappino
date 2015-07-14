@@ -151,7 +151,9 @@ module mappino.map {
 
             // Створюємо набір фільтрів для панелі за набором
             if (!_.isNull(type_sid)) {
-                var realty_type_filters = _.where(self.CONSTANTS.REALTY_TYPES, { 'id': type_sid })[0]['filters'];
+
+                console.log(_.where(self.CONSTANTS.REALTY_TYPES, { 'id': type_sid }))
+                var realty_type_filters = self.CONSTANTS.REALTY_TYPES[type_sid].filters;
 
                 for (var i = 0, len = realty_type_filters.length; i < len; i++) {
                     var filter_name = panel_prefix + realty_type_filters[i];

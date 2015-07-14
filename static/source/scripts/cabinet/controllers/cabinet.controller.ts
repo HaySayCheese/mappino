@@ -22,7 +22,10 @@ module mappino.cabinet {
 
             $rootScope.loaders = {
                 base:   false,
-                avatar: false
+
+                avatar: false,
+
+                tickets: false
             };
 
             authService.tryLogin();

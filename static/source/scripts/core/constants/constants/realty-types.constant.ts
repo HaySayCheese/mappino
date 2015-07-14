@@ -5,7 +5,7 @@ module mappino.core.constants {
         static get Default(): any {
             return [
                 {
-                    id:     '0',
+                    id:     0,
                     name:   "flat",
                     title:  "Квартиры",
                     filters: [

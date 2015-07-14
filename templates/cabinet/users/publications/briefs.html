@@ -1,51 +1,60 @@
-<div class="briefs-page" layout="column" layout-align="start center" ng-controller="BriefsController as briefsCtrl">
-    <section class="brief -medium brief-new-publication md-whiteframe-z2 center-align">
-        <div class="brief-content">
-            <div layout="row" layout-align="center center">
-                <h4 class="grey-text text-darken-2">Добавить новое объявление</h4>
-            </div>
+<div class="briefs-page md-padding" ng-controller="BriefsController as briefsCtrl"
+     layout-wrap layout="column" layout-gt-lg="row" layout-align-md="start center" layout-align-lg="start center">
 
-            <div layout="row" layout-align="center center">
+    <md-card class="-fake" flex="32" ng-hide="briefs.length"></md-card>
+
+    <md-card flex="32">
+        <md-card-content layout="column">
+            <div layout="column" layout-align="center center">
+                <img src="{{ static }}build/images/cabinet/brief-new-publication.gif" alt=""/>
+                <h3 class="grey-text text-darken-2">Добавить новое объявление</h3>
+
                 <md-select placeholder="Realty type" ng-model="new_publication.tid">
                     <md-option ng-repeat="type in CONSTANTS.REALTY_TYPES" value="[[ type.id ]]">[[ type.title ]]</md-option>
                 </md-select>
-            </div>
 
-            <div layout="row" layout-align="center center">
-                <md-checkbox class="md-primary" ng-model="new_publication.for_sale" aria-label="Продажа">
-                    Продажа
-                </md-checkbox>
-                <md-checkbox class="md-primary" ng-model="new_publication.for_rent" aria-label="Аренда">
-                    Аренда
-                </md-checkbox>
-            </div>
+                <div layout="row">
+                    <md-checkbox class="md-primary" ng-model="new_publication.for_sale" aria-label="Продажа">
+                        Продажа
+                    </md-checkbox>
+                    <md-checkbox class="md-primary" ng-model="new_publication.for_rent" aria-label="Аренда">
+                        Аренда
+                    </md-checkbox>
+                </div>
 
-            <div layout="row" layout-align="center center">
-                <md-button class="md-raised md-primary" ng-click="briefsCtrl.createPublication()">
-                    Создать объявление
+                <md-button class="md-fab md-primary publication-create-button" ng-click="briefsCtrl.createPublication()">
+                    <md-icon>create</md-icon>
                 </md-button>
             </div>
-        </div>
-    </section>
+        </md-card-content>
+    </md-card>
+
+    <md-card class="-fake" flex="32" ng-hide="briefs.length"></md-card>
 
 
-
-    <section class="brief -medium md-whiteframe-z2" ng-repeat="brief in briefs">
-        <div class="brief-image">
-            <img src="http://lorempixel.com/700/380/city" class="responsive-img">
-            <span class="brief-title">Brief Title</span>
-        </div>
-        <div class="brief-content">
-            <div class="brief-status published" layout="row" layout-align="start center">
+    <md-card ng-repeat="brief in briefs" flex="32">
+        <img ng-src="http://lorempixel.com/700/380/city" class="md-card-image" alt="Washed Out">
+        <md-card-content>
+            <div class="brief-status -published" layout="row" layout-align="start center">
                 <md-icon>done</md-icon>
                 <span>Опубликовано</span>
+                <span flex></span>
             </div>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus ad aliquid aspernatur expedita quidem quis sed! Atque dolore nisi vitae.
+            <h2 class="md-title">Paracosm</h2>
+
+            <p>
+                The titles of Washed Out's breakthrough song and the first single from Paracosm share the
+                two most important words in Ernest Greene's musical language: feel it. It's a simple request, as well...
+            </p>
+        </md-card-content>
+        <div class="md-actions" layout="row" layout-align="end center">
+            <md-button class="md-primary md-hue-1" ui-sref="publication_edit({ id: brief.tid + ':' + brief.id })">
+                Редактировать
+            </md-button>
+            <md-button class="md-primary md-hue-1" ui-sref="publication_view({ id: brief.tid + ':' + brief.id })">
+                Посмотреть
+            </md-button>
         </div>
-        <div class="brief-footer right-align">
-            <a href ui-sref="publication_edit({ id: brief.tid + ':' + brief.id })">Редактировать</a>
-            <a href ui-sref="publication_view({ id: brief.tid + ':' + brief.id })" >Просмотреть</a>
-        </div>
-    </section>
+    </md-card>
 </div>
 

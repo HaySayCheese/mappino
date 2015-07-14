@@ -1,50 +1,53 @@
 <div class="ticket-page" layout="column" layout-align="start center" ng-controller="TicketController as ticketCtrl">
-    <section class="-medium md-whiteframe-z2" ng-show="ticketIsLoaded">
-
-        <form name="ticketForm" ng-submit="ticketCtrl.sendMessage()" novalidate>
-            <div layout="row">
-                <h3 class="md-headline light-blue-text" ng-show="ticket.subject">
-                    Тема: [[ ticket.subject ]]
-                </h3>
-                <md-input-container flex ng-hide="ticket.subject">
-                    <label>Тема обращения</label>
-                    <input type="text" name="subject" ng-model="new_message.subject">
-                </md-input-container>
-            </div>
-
-            <div layout="row">
-                <md-input-container flex>
-                    <label>Текст сообщение</label>
-                    <textarea name="message" columns="1" md-maxlength="400" ng-model="new_message.message" required></textarea>
-                    <div ng-messages="ticketForm.message.$error" ng-show="ticketForm.$submitted || ticketForm.message.$touched">
-                        <div ng-message="required">Укажите, пожалуйста, текст обращения.</div>
-                        <div ng-message="md-maxlength">Текст обращения слишком длинный.</div>
-                    </div>
-                </md-input-container>
-
-                <md-button class="md-fab md-primary" aria-label="Отправить сообщение">
-                    <md-icon>send</md-icon>
-                </md-button>
-            </div>
-        </form>
-    </section>
-
-
-
-    <section class="-medium -transparent -no-padding" ng-show="ticketIsLoaded">
-        <div layout="row" layout-align="[[ message.type_sid == '0' ? 'start' : 'end' ]] start" layout-margin ng-repeat="message in ticket.messages">
-            <div class="ticket-message md-whiteframe-z2" layout="row" layout-align="start start">
-                <img class="message-avatar -user" ng-src="[[ ticketCtrl.settingsService.user.account.avatar ]]" alt="" ng-show="message.type_sid == '0'"/>
-
-                <div layout="column" layout-align="space-between start" flex>
-                    <div class="message-text">[[ message.text ]]</div>
-                    <div class="message-created grey-text" ng-class="{ '-user': message.type_sid == '0', '-support': message.type_sid != '0' }">
-                        [[ message.created | date:'dd.MM.yyyy в HH:mm' ]]
-                    </div>
+    <md-card ng-show="ticketIsLoaded">
+        <md-card-content>
+            <form name="ticketForm" ng-submit="ticketCtrl.sendMessage()" novalidate>
+                <div layout="row">
+                    <h3 class="md-headline light-blue-text" ng-show="ticket.subject">
+                        Тема: [[ ticket.subject ]]
+                    </h3>
+                    <md-input-container flex ng-hide="ticket.subject">
+                        <label>Тема обращения</label>
+                        <input type="text" name="subject" ng-model="new_message.subject">
+                    </md-input-container>
                 </div>
 
-                <img class="message-avatar -support" ng-src="[[ ticketCtrl.settingsService.user.account.avatar ]]" alt="" ng-show="message.type_sid != '0'"/>
+                <div layout="row">
+                    <md-input-container flex>
+                        <label>Текст сообщение</label>
+                        <textarea name="message" columns="1" md-maxlength="400" ng-model="new_message.message" required></textarea>
+                        <div ng-messages="ticketForm.message.$error" ng-show="ticketForm.$submitted || ticketForm.message.$touched">
+                            <div ng-message="required">Укажите, пожалуйста, текст обращения.</div>
+                            <div ng-message="md-maxlength">Текст обращения слишком длинный.</div>
+                        </div>
+                    </md-input-container>
+
+                    <md-button class="md-fab md-primary" aria-label="Отправить сообщение">
+                        <md-icon>send</md-icon>
+                    </md-button>
+                </div>
+            </form>
+        </md-card-content>
+    </md-card>
+
+
+
+    <md-card class="-fake -no-padding" ng-show="ticketIsLoaded">
+        <md-card-content>
+            <div layout="row" layout-align="[[ message.type_sid == '0' ? 'start' : 'end' ]] start" layout-margin ng-repeat="message in ticket.messages">
+                <div class="ticket-message md-whiteframe-z2" layout="row" layout-align="start start">
+                    <img class="message-avatar -user" ng-src="[[ ticketCtrl.settingsService.user.account.avatar ]]" alt="" ng-show="message.type_sid == '0'"/>
+
+                    <div layout="column" layout-align="space-between start" flex>
+                        <div class="message-text">[[ message.text ]]</div>
+                        <div class="message-created grey-text" ng-class="{ '-user': message.type_sid == '0', '-support': message.type_sid != '0' }">
+                            [[ message.created | date:'dd.MM.yyyy в HH:mm' ]]
+                        </div>
+                    </div>
+
+                    <img class="message-avatar -support" ng-src="[[ ticketCtrl.settingsService.user.account.avatar ]]" alt="" ng-show="message.type_sid != '0'"/>
+                </div>
             </div>
-        </div>
-    </section>
+        </md-card-content>
+    </md-card>
 </div>

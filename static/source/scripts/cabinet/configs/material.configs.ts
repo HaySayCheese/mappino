@@ -8,9 +8,7 @@ module mappino.cabinet {
 
         constructor(private app: angular.IModule) {
             app.config(['$mdThemingProvider', function($mdThemingProvider) {
-                $mdThemingProvider.setDefaultTheme('blue');
-
-                $mdThemingProvider.theme('blue')
+                $mdThemingProvider.theme('default')
                     .primaryPalette('blue');
             }]);
         }
