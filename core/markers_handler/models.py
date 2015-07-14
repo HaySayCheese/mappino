@@ -481,9 +481,9 @@ class AbstractBaseIndex(models.Model):
 
 class AbstractRentIndex(AbstractBaseIndex):
 #todo comment
-    entrance_dates = ArrayField(models.DateTimeField())
-    departure_dates = ArrayField(models.DateTimeField())
-    rent_dates = ArrayField(models.DateTimeField())
+    entrance_dates = ArrayField(models.DateField())
+    departure_dates = ArrayField(models.DateField())
+    rent_dates = ArrayField(models.DateField())
 
     class Meta:
         abstract = True
@@ -2446,10 +2446,7 @@ class SegmentsIndex(models.Model):
 
 
         # todo: add transaction here (find a way to combine custom sql and django orm to perform a transaction)
-        try:
-            index.add(record, using=cls.index_db_name)
-        except Exception as e:
-            pass
+        index.add(record, using=cls.index_db_name)
         cursor = cls.cursor()
         cursor.execute('BEGIN;')
         for zoom, x, y in cls.grid.segments_digests(lat, lng):

@@ -11,6 +11,7 @@ from djantimat.helpers import RegexpProc
 
 
 
+
 # from django.contrib.postgres.fields.array import ArrayField
 
 from django.db.utils import DatabaseError
@@ -617,14 +618,14 @@ class LivingRentTermsModel(AbstractModel):
 
         record = self
 
-        #checked dates range on unique
-        # all_dates = []
-        # all_dates.extend(record.entrance_dates+record.departure_dates+record.rent_dates)
-        # if len(set(all_dates+[date_from,date_to]))<len(all_dates+[date_from,date_to]):
-        #     raise ValueError('date alredy exist')
-        #
-        # record.entrance_dates.append(date_from)
-        # record.departure_dates.append(date_to)
+        # checked dates range on unique
+        all_dates = []
+        all_dates.extend(record.entrance_dates+record.departure_dates+record.rent_dates)
+        if len(set(all_dates+[date_from,date_to]))<len(all_dates+[date_from,date_to]):
+            raise ValueError('date alredy exist')
+
+        record.entrance_dates.append(date_from)
+        record.departure_dates.append(date_to)
 
         rent_dates = []
         delta = date_to-date_from
@@ -634,7 +635,7 @@ class LivingRentTermsModel(AbstractModel):
                         rent_dates.append(date_from+ td(days=i))
 
         with transaction.atomic():
-            # record.rent_dates.extend(rent_dates)
+            record.rent_dates.extend(rent_dates)
             record.save()
             PublicationsSignals.daily_rent_updated.send(
                 None,

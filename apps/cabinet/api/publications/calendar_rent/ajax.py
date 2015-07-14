@@ -13,8 +13,6 @@ class CalendarControlView(View):
     @classmethod
     def post(cls, request, *args):
         try:
-            # params = angular_parameters(request, ['id'])
-            # tid, hash_id = params['id'].split(':')
             tid, hash_id = args[0], args[1]
             tid = int(tid)
         except Exception as e:
@@ -41,16 +39,14 @@ class CalendarControlView(View):
         #Publication - my way, to named head.
         publication = model.objects.get(hash_id = hash_id)
 
+        #todo Fix this thing
         # if publication.owner.id != request.user.id:
         #     raise PermissionDenied()
 
         try:
             publication.rent_terms.add_dates_rent(tid, hash_id, date_from, date_to )
         except (ValueError, ):
-            pass
-        except Exception as e:
-            pass
-
+            return cls.Post.invalid_date()
 
         return cls.Post.ok()
 
