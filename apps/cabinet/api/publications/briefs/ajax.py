@@ -19,9 +19,7 @@ class BriefsView(CabinetView):
     @classmethod
     def get(cls, request, section):
         briefs = cls.briefs_of_section(section, request.user.id)
-
         return cls.GetResponses.ok(briefs)
-
 
 
     @classmethod
