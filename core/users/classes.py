@@ -44,6 +44,8 @@ class Avatar(GoogleCSPhotoUploader):
         if url:
             try:
                 self.remove_photo_from_google_cloud_storage(path)
+                self.user.avatar_url = ''
+                self.user.save()
             except:
                 pass
 
