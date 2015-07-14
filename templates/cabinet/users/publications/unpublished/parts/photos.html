@@ -1,11 +1,16 @@
 <div layout="column">
 
-    <md-button ngf-select ng-model="files" ngf-multiple="true" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
-        File
-    </md-button>
 
-    <div ngf-drop ngf-select ng-model="files" class="drop-box"
-         ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
-         accept="image/*">Drop pdfs or images here or click to upload
+
+    <div ngf-drop ngf-select ng-model="files" class="drop-box" ngf-drag-over-class="dragover" ngf-multiple="true"
+         ngf-allow-dir="true" accept="image/*">
+
+        <div layout="column" layout-align="center center">
+            <p>Перенесите сюда фото или видео файл</p>
+
+            <md-button ngf-select ng-model="files" ngf-multiple="true" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
+                Вибрать файл
+            </md-button>
+        </div>
     </div>
 </div>

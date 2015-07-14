@@ -3,4 +3,10 @@
     #publication-map {
         @include size(100%, 400px);
     }
+
+    .drop-box {
+        height: 200px;
+        border: 3px dashed color('blue', 'lighten-3');
+        border-radius: 5px;
+    }
 }
