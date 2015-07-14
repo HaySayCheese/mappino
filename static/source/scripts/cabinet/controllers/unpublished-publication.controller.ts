@@ -9,7 +9,10 @@ module mappino.cabinet {
         private placeAutocompleteField: any;
         private placeAutocomplete: google.maps.places.Autocomplete;
 
-        private _publication: Object = {};
+        private publicationIds: IPublicationIds = {
+            tid: null,
+            hid: null
+        };
 
         public static $inject = [
             '$scope',
@@ -25,8 +28,8 @@ module mappino.cabinet {
                     private $timeout: angular.ITimeoutService,
                     private publicationsService: PublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
-            this._publication['tid']    = $state.params['id'].split(':')[0];
-            this._publication['hid']    = $state.params['id'].split(':')[1];
+            this.publicationIds.tid    = $state.params['id'].split(':')[0];
+            this.publicationIds.hid    = $state.params['id'].split(':')[1];
 
             $scope.activeTabStateIndex = 0;
 
@@ -44,21 +47,14 @@ module mappino.cabinet {
                     inputElement    = angular.element("textarea.ng-invalid, input.ng-invalid")[0];
 
                 if (checkboxElement) {
-                    this.$scope.activeTabStateIndex = 1;
                     checkboxElement.parentNode.scrollIntoView(true);
                 } else {
-                    if (inputElement.id == "publication-map-input")
-                        this.$scope.activeTabStateIndex = 2;
-                    else
-                        this.$scope.activeTabStateIndex = 0;
-
+                    inputElement.parentNode.scrollIntoView(true);
                     inputElement.focus();
                 }
-
-                return;
             } else {
-                this.publicationsService.publish(this._publication, () => {
-
+                this.publicationsService.publish(this.publicationIds, () => {
+                    // success
                 });
             }
         }
@@ -66,7 +62,7 @@ module mappino.cabinet {
 
 
         public uploadPublicationPhotos($files) {
-            this.publicationsService.uploadPublicationPhotos(this._publication, $files, (response) => {
+            this.publicationsService.uploadPublicationPhotos(this.publicationIds, $files, (response) => {
                 console.log(response)
             })
         }
@@ -77,7 +73,7 @@ module mappino.cabinet {
         private loadPublicationData() {
             this.$rootScope.loaders.base = true;
 
-            this.publicationsService.loadPublication(this._publication, (response) => {
+            this.publicationsService.loadPublication(this.publicationIds, (response) => {
                 this.$scope.publication = response;
                 this.$rootScope.loaders.base = false;
 
@@ -95,7 +91,7 @@ module mappino.cabinet {
                 var mapOptions = {
                     center: center,
                     zoom: this.$scope.publication.head.lat ? 17 : 8,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    mapTypeId: google.maps.MapTypeId['ROADMAP'],
                     mapTypeControl: false,
                     streetViewControl: false,
                     scrollwheel: true,
@@ -146,7 +142,7 @@ module mappino.cabinet {
                     this.$timeout(() => {
                         var latLng = new google.maps.LatLng(this.$scope.publication.head.lat || 50.448159, this.$scope.publication.head.lng || 30.524654);
                         this.map.setCenter(latLng);
-                        this.publicationsService.checkField(this._publication, { f: "lat_lng", v: latLng.lat() + ";" + latLng.lng() });
+                        this.publicationsService.checkField(this.publicationIds, { fieldName: "lat_lng", fieldValue: latLng.lat() + ";" + latLng.lng() });
                     }, 1000);
                 });
             }, 1000)
@@ -163,8 +159,8 @@ module mappino.cabinet {
 
                 angular.element(input).trigger("input");
 
-                this.publicationsService.checkField(this._publication, { f: "address", v: input.value }, null);
-                this.publicationsService.checkField(this._publication, { f: "lat_lng", v: latLng.lat() + ";" + latLng.lng() }, null);
+                this.publicationsService.checkField(this.publicationIds, { fieldName: "address", fieldValue: input.value }, null);
+                this.publicationsService.checkField(this.publicationIds, { fieldName: "lat_lng", fieldValue: latLng.lat() + ";" + latLng.lng() }, null);
             });
         }
 
@@ -179,7 +175,7 @@ module mappino.cabinet {
                     return;
                 }
 
-                this.publicationsService.checkField(this._publication, { f: name, v: value }, (newValue) => {
+                this.publicationsService.checkField(this.publicationIds, { fieldName: name, fieldValue: value }, (newValue) => {
                     if (newValue && !angular.element(e.currentTarget).is(":focus")) {
                         e.currentTarget['value'] = newValue;
                     }
@@ -194,7 +190,7 @@ module mappino.cabinet {
                 var name  = e.currentTarget['name'],
                     value = e.currentTarget['checked'];
 
-                this.publicationsService.checkField(this._publication, { f: name, v: value });
+                this.publicationsService.checkField(this.publicationIds, { f: name, v: value });
             });
         }
 
@@ -206,27 +202,27 @@ module mappino.cabinet {
 
             if (elementName.indexOf('rent_') !== -1) {
                 elementValue = this.$scope.publication.rent_terms[elementName.replace('rent_', '')];
-                this.publicationsService.checkField(this._publication, { f: elementName, v: elementValue });
+                this.publicationsService.checkField(this.publicationIds, { fieldName: elementName, fieldValue: elementValue });
 
             } else if (elementName.indexOf('sale_') !== -1) {
                 elementValue = this.$scope.publication.sale_terms[elementName.replace('sale_', '')];
-                this.publicationsService.checkField(this._publication, { f: elementName, v: elementValue });
+                this.publicationsService.checkField(this.publicationIds, { fieldName: elementName, fieldValue: elementValue });
 
             } else if (!_.isUndefined(this.$scope.publication.head[elementName])) {
                 elementValue = this.$scope.publication.head[elementName];
-                this.publicationsService.checkField(this._publication, { f: elementName, v: elementValue });
+                this.publicationsService.checkField(this.publicationIds, { fieldName: elementName, fieldValue: elementValue });
 
             } else if (!_.isUndefined(this.$scope.publication.body[elementName])) {
                 elementValue = this.$scope.publication.body[elementName];
-                this.publicationsService.checkField(this._publication, { f: elementName, v: elementValue });
+                this.publicationsService.checkField(this.publicationIds, { fieldName: elementName, fieldValue: elementValue });
 
             } else if (!_.isUndefined(this.$scope.publication.rent_terms[elementName])) {
                 elementValue = this.$scope.publication.rent_terms[elementName];
-                this.publicationsService.checkField(this._publication, { f: elementName, v: elementValue });
+                this.publicationsService.checkField(this.publicationIds, { fieldName: elementName, fieldValue: elementValue });
 
             } else if (!_.isUndefined(this.$scope.publication.sale_terms[elementName])) {
                 elementValue = this.$scope.publication.sale_terms[elementName];
-                this.publicationsService.checkField(this._publication, { f: elementName, v: elementValue });
+                this.publicationsService.checkField(this.publicationIds, { fieldName: elementName, fieldValue: elementValue });
             }
         }
 

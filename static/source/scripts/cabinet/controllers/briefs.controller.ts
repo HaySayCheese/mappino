@@ -11,11 +11,10 @@ module mappino.cabinet {
             'PublicationsService'
         ];
 
-        constructor(
-            private $scope: any,
-            private $rootScope: any,
-            private $timeout: angular.ITimeoutService,
-            private publicationsService: PublicationsService) {
+        constructor(private $scope: any,
+                    private $rootScope: any,
+                    private $timeout: angular.ITimeoutService,
+                    private publicationsService: PublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.briefs = [];
 

@@ -3,9 +3,8 @@
 
 module mappino.cabinet {
     export class PublicationsService {
-        private _publication: Object;
-
-        private _publications: Object;
+        private briefs: Array<Object>;
+        private publication: Object;
 
         public static $inject = [
             '$http',
@@ -14,10 +13,9 @@ module mappino.cabinet {
         ];
 
 
-        constructor(
-            private $http: angular.IHttpService,
-            private $state: angular.ui.IStateService,
-            private Upload: any) {
+        constructor(private $http: angular.IHttpService,
+                    private $state: angular.ui.IStateService,
+                    private Upload: any) {
             // ---------------------------------------------------------------------------------------------------------
         }
 
@@ -27,8 +25,8 @@ module mappino.cabinet {
             this.$http.get('/ajax/api/cabinet/publications/briefs/all/')
                 .then((response) => {
                     if (response.data['code'] === 0) {
-                        this._publications = response.data['data'];
-                        _.isFunction(success) && success(this._publications)
+                        this.briefs = response.data['data'];
+                        _.isFunction(success) && success(this.briefs)
                     } else {
                         _.isFunction(error) && error(response.data)
                     }
@@ -39,11 +37,11 @@ module mappino.cabinet {
 
 
 
-        public create(publication: Object, success?, error?) {
+        public create(publication: IPublicationNew, success?, error?) {
             this.$http.post('/ajax/api/cabinet/publications/', publication)
                 .then((response) => {
                     if (response.data['code'] === 0) {
-                        this.$state.go('publication_edit', { id: publication['tid'] + ":" + response.data['data']['id'] });
+                        this.$state.go('publication_edit', { id: publication.tid + ":" + response.data['data']['id'] });
                         _.isFunction(success) && success(response.data)
                     } else {
                         _.isFunction(error) && error(response.data)
@@ -55,8 +53,8 @@ module mappino.cabinet {
 
 
 
-        public publish(publication: Object, success?, error?) {
-            this.$http.put('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/publish/', null)
+        public publish(publicationIds: IPublicationIds, success?, error?) {
+            this.$http.put('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/publish/', null)
                 .then((response) => {
                     if (response.data['code'] === 0) {
                         this.$state.go('publications');
@@ -71,13 +69,13 @@ module mappino.cabinet {
 
 
 
-        public loadPublication(publication: Object, success?, error?) {
-            this.$http.get('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/')
+        public loadPublication(publicationIds: IPublicationIds, success?, error?) {
+            this.$http.get('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/')
                 .then((response) => {
                     if (response.data['code'] === 0) {
-                        this._publication = response.data['data'];
+                        this.publication = response.data['data'];
                         this.createDefaultTerms();
-                        _.isFunction(success) && success(this._publication)
+                        _.isFunction(success) && success(this.publication)
                     } else {
                         _.isFunction(error) && error(response.data)
                     }
@@ -88,14 +86,11 @@ module mappino.cabinet {
 
 
 
-        public checkField(publication: Object, field, success?, error?) {
-            var fieldName   = field.f,
-                fieldValue  = field.v;
-
-            this.$http.put('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/', field)
+        public checkField(publicationIds: IPublicationIds, field: IPublicationCheckField, success?, error?) {
+            this.$http.put('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/', field)
                 .then((response) => {
                     if (response.data['code'] === 0) {
-                        _.isFunction(success) && success(response.data['data'] && response.data['data'].value ? response.data['data'].value : fieldValue);
+                        _.isFunction(success) && success(response.data['data'] && response.data['data'].value ? response.data['data'].value : field.fieldValue);
                     }
                 }, (response) => {
                     _.isFunction(error) && error(response.data);
@@ -104,23 +99,23 @@ module mappino.cabinet {
 
 
 
-        public uploadPublicationPhotos(publication: Object, photos: Array, success?, error?) {
+        public uploadPublicationPhotos(publicationIds: IPublicationIds, photos: Array<File>, success?, error?) {
             if (photos && photos.length) {
                 for (var i = 0; i < photos.length; i++) {
                     var file = photos[i];
 
                     this.Upload.upload({
-                        url: '/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/photos/',
+                        url: '/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/photos/',
                         file: file
                     }).then((response) => {
                         if (response.data['code'] === 0) {
-                            if (this._publication['photos']) {
-                                this._publication['photos'].push(response.data['data']);
+                            if (this.publication['photos']) {
+                                this.publication['photos'].push(response.data['data']);
                             } else {
-                                this._publication['photos'] = [];
-                                this._publication['photos'].push(response.data['data']);
+                                this.publication['photos'] = [];
+                                this.publication['photos'].push(response.data['data']);
                             }
-                            _.isFunction(success) && success(this._publication)
+                            _.isFunction(success) && success(this.publication)
                         } else {
                             _.isFunction(error) && error(response.data)
                         }
@@ -132,10 +127,10 @@ module mappino.cabinet {
 
 
         private createDefaultTerms() {
-            if (_.isNull(this._publication['sale_terms'])) {
-                this._publication['sale_terms'] = {};
+            if (_.isNull(this.publication['sale_terms'])) {
+                this.publication['sale_terms'] = {};
 
-                _.defaults(this._publication['sale_terms'], {
+                _.defaults(this.publication['sale_terms'], {
                     add_terms:          null,
                     currency_sid:       '0',
                     is_contract:        false,
@@ -145,10 +140,10 @@ module mappino.cabinet {
                 });
             }
 
-            if (_.isNull(this._publication['rent_terms'])) {
-                this._publication['rent_terms'] = {};
+            if (_.isNull(this.publication['rent_terms'])) {
+                this.publication['rent_terms'] = {};
 
-                _.defaults(this._publication['rent_terms'], {
+                _.defaults(this.publication['rent_terms'], {
                     add_terms:      null,
                     currency_sid:   '0',
                     is_contract:    false,
