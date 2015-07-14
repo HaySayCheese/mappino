@@ -73,30 +73,6 @@ class ObjectTypes(AbstractConstant):
 OBJECTS_TYPES = ObjectTypes()
 
 
-
-
-class ObjectDBIndexRentTypes(AbstractConstant):
-    def __init__(self):
-        super(ObjectDBIndexRentTypes, self).__init__()
-        self.set_ids({
-                'flat': 0,
-                'house': 1,
-                'room': 2,
-            })
-
-    def flat(self):
-        return self.ids['flat']
-
-
-    def house(self):
-        return self.ids['house']
-
-
-    def room(self):
-        return self.ids['room']
-OBJECTS_DB_INDEX_RENT_TYPES = ObjectDBIndexRentTypes()
-
-
 class ObjectStates(AbstractConstant):
     def __init__(self):
         super(ObjectStates, self).__init__()
@@ -407,12 +383,3 @@ PHOTOS_MODELS = {
     OBJECTS_TYPES.garage(): GaragesPhotos,
     OBJECTS_TYPES.land(): LandsPhotos,
 }
-
-# from core.markers_handler.models import FlatsRentIndex,HousesRentIndex,RoomsRentIndex
-#
-# DB_INDEX_RENT_TYPES = {
-#     OBJECTS_DB_INDEX_RENT_TYPES.flat(): FlatsRentIndex,
-#     OBJECTS_DB_INDEX_RENT_TYPES.house(): HousesRentIndex,
-#     OBJECTS_DB_INDEX_RENT_TYPES.room(): RoomsRentIndex
-#
-# }

@@ -1,10 +1,9 @@
 from datetime import datetime
 
-from django.core.exceptions import PermissionDenied, RentTypeError
+from django.core.exceptions import RentTypeError
 from django.views.generic import View
 
 from collective.http.responses import HttpJsonResponse
-from collective.methods.request_data_getters import angular_parameters
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 
 
@@ -14,10 +13,11 @@ class CalendarControlView(View):
     @classmethod
     def post(cls, request, *args):
         try:
-            params = angular_parameters(request, ['id'])
-            tid, hash_id = params['id'].split(':')
+            # params = angular_parameters(request, ['id'])
+            # tid, hash_id = params['id'].split(':')
+            tid, hash_id = args[0], args[1]
             tid = int(tid)
-        except ValueError:
+        except Exception as e:
             return cls.Post.absent_publications_id()
 
         if not tid in OBJECTS_TYPES.daily_rent:
@@ -25,23 +25,31 @@ class CalendarControlView(View):
             raise RentTypeError('This type of objects doest supply daily rent')
 
         try:
-            date_from = request.GET.get('date_from')
-            date_to = request.GET.get('date_to')
+            date_from = request.POST.get('date_from')
+            date_to = request.POST.get('date_to')
         except:
              return cls.Post.invalid_date()
 
-        date_from = datetime.strptime(date_from, '%Y-%m-%d')
-        date_to = datetime.strptime(date_to, '%Y-%m-%d')
+
+
+        date_from = datetime.strptime(date_from, '%Y-%m-%d').date()
+        date_to = datetime.strptime(date_to, '%Y-%m-%d').date()
+
         model = HEAD_MODELS[tid]
 
 
         #Publication - my way, to named head.
-        publication = model.by_id(tid, hash_id)
+        publication = model.objects.get(hash_id = hash_id)
 
-        if publication.owner.id != request.user.id:
-            raise PermissionDenied()
+        # if publication.owner.id != request.user.id:
+        #     raise PermissionDenied()
 
-        publication.rent_terms.add_dates_rent(hash_id, date_from, date_to )
+        try:
+            publication.rent_terms.add_dates_rent(tid, hash_id, date_from, date_to )
+        except (ValueError, ):
+            pass
+        except Exception as e:
+            pass
 
 
         return cls.Post.ok()

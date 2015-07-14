@@ -1,7 +1,9 @@
 from django.dispatch import Signal
+
+#todo move all signals here
+
 class PublicationsSignals(object):
-    daily_rent_added = Signal(providing_args=['tid','hash_id','date_from','date_to'])
-    daily_rent_deleted = Signal(providing_args=['tid','hash_id','date_from','date_to'])
+    daily_rent_updated = Signal(providing_args=['tid','hid'])
 
 
 

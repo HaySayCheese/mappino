@@ -5,7 +5,7 @@ import string
 
 from collective.exceptions import EmptyArgument
 from collective.http.cookies import set_signed_cookie
-from core import redis_connections
+from core.redis_database_connections import redis_connections
 from core.sms_dispatcher import check_codes_sms_sender
 
 

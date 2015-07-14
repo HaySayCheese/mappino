@@ -16,7 +16,7 @@ urlpatterns = patterns('apps.cabinet.api',
     # url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/publish/$', Publication.PublishUnpublish.as_view(), {"operation": 'publish'}),
     url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/publish/$', Publication.Publish.as_view()),
     url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/unpublish/$', Publication.Unpublish.as_view()),
-    url(r'^ajax/api/cabinet/(\d+): (\w+)/calendar/$', CalendarControlView.as_view()),
+    url(r'^ajax/api/cabinet/(\d+):(\w+)/calendar/$', CalendarControlView.as_view()),
 
         # photos
         url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/photos/$', Publication.UploadPhoto.as_view()),

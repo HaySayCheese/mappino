@@ -10,6 +10,7 @@ from djantimat.helpers import RegexpProc
 
 
 
+
 # from django.contrib.postgres.fields.array import ArrayField
 
 from django.db.utils import DatabaseError
@@ -28,10 +29,9 @@ from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, L
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
     EmptyRentPrice, AbusiveWords
 
-from  core.initialize_signals.initialize_signals import  PublicationsSignals
 from publications_to_check.models import PublicationsToCheck
 
-
+from core.signals import PublicationsSignals
 
 
 class AbstractModel(models.Model):
@@ -607,43 +607,40 @@ class LivingRentTermsModel(AbstractModel):
     home_theater = models.BooleanField(default=False)
 
 
-    entrance_dates = ArrayField(models.DateTimeField())
-    departure_dates = ArrayField(models.DateTimeField())
-    rent_dates = ArrayField(models.DateTimeField())
+    entrance_dates = ArrayField(models.DateField(), null=True)
+    departure_dates = ArrayField(models.DateField(), null=True)
+    rent_dates = ArrayField(models.DateField(), null=True)
 
 
     #SecondStep
-    @classmethod
-    def add_dates_rent(cls, hash_id, date_from, date_to):
+    def add_dates_rent(self, tid, hash_id, date_from, date_to):
 
+        record = self
 
-        try:
-            record = cls.objects.get_or_create(hash_id = hash_id)
-        except Exception as e:
-            #todo fix it.
-            pass
+        #checked dates range on unique
+        # all_dates = []
+        # all_dates.extend(record.entrance_dates+record.departure_dates+record.rent_dates)
+        # if len(set(all_dates+[date_from,date_to]))<len(all_dates+[date_from,date_to]):
+        #     raise ValueError('date alredy exist')
+        #
+        # record.entrance_dates.append(date_from)
+        # record.departure_dates.append(date_to)
 
-        record.entrance_dates.append(date_from)
-        record.departure_dates.append(date_to)
+        rent_dates = []
+        delta = date_to-date_from
+        if delta.days>1:
 
-        if (date_to-date_from)>1:
-            delta = date_to - date_from
-
-            rent_dates = []
             for i in range(1,delta.days):
-                rent_dates.append(date_from+ td(delta.days))
+                        rent_dates.append(date_from+ td(days=i))
 
-
-            # todo: add atomic here
-            with transaction.atomic():
-                record.rent_dates.extend(rent_dates)
-
-                PublicationsSignals.daily_rent_added.send(
-                    None,
-                    hash_id = hash_id,
-                    date_from = date_from,
-                    date_to = date_to
-                )
+        with transaction.atomic():
+            # record.rent_dates.extend(rent_dates)
+            record.save()
+            PublicationsSignals.daily_rent_updated.send(
+                None,
+                tid = tid,
+                hid = record.id,
+            )
 
 
     #-- validation

@@ -6,6 +6,7 @@ created = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'
 
 before_publish = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])
 published = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])
+
 record_updated = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])
 
 before_unpublish = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])

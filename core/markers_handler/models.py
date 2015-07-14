@@ -1,7 +1,7 @@
 # coding=utf-8
 import math
-from datetime import timedelta as td
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, connections
 from django.db.models import Q
 from django.contrib.postgres.fields import ArrayField
@@ -9,19 +9,10 @@ from djorm_pgarray.fields import BigIntegerArrayField
 
 from collective.exceptions import InvalidArgument
 from core.currencies.constants import CURRENCIES
-
-
-try:
-    from core.currencies.currencies_manager import convert as convert_price
-except Exception as e:
-    pass
-
+from core.currencies.currencies_manager import convert as convert_price
 from core.markers_handler.classes import Grid
-try:
-    from core.publications.constants import \
+from core.publications.constants import \
         OBJECTS_TYPES, MARKET_TYPES, FLOOR_TYPES, HEATING_TYPES, LIVING_RENT_PERIODS, HEAD_MODELS
-except Exception as e:
-    pass
 from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
 
@@ -56,7 +47,7 @@ class AbstractBaseIndex(models.Model):
     #
     # Така ситуація достатньо вірогідна через те, що довелось змішати чистий sql з django-orm,
     # через що порушився механізм транзакцій (зараз транзакцій як таких немає).
-    publication_id = models.PositiveIntegerField()
+    publication_id = models.PositiveIntegerField(db_index=True)
     hash_id = models.TextField()
 
     # lat, lng дублюються в індексі щоб уникнути зайвого join-а з таблицею даних по оголошеннях.
@@ -489,36 +480,13 @@ class AbstractBaseIndex(models.Model):
 
 
 class AbstractRentIndex(AbstractBaseIndex):
-
+#todo comment
     entrance_dates = ArrayField(models.DateTimeField())
     departure_dates = ArrayField(models.DateTimeField())
     rent_dates = ArrayField(models.DateTimeField())
 
     class Meta:
         abstract = True
-
-    #FourthStep
-    def add_dates_rent(cls, hash_id, date_from, date_to):
-
-        try:
-            record = cls.objects.get_or_create(hash_id = hash_id)
-        except Exception as e:
-            #todo fix it.
-            pass
-
-        record.entrance_dates.append(date_from)
-        record.departure_dates.append(date_to)
-
-        if (date_to-date_from)>1:
-            delta = date_to - date_from
-
-            rent_dates = []
-            for i in range(1,delta.days):
-                rent_dates.append(date_from+ td(delta.days))
-
-            record.rent_dates.extend(rent_dates)
-
-
 
 
 class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
@@ -705,6 +673,11 @@ class FlatsRentIndex(AbstractRentIndex):
             cold_water=record.body.cold_water,
             gas=record.body.gas,
             electricity=record.body.electricity,
+
+            entrance_dates = record.rent_terms.entrance_dates,
+            rent_dates = record.rent_terms.rent_dates,
+            departure_dates = record.rent_terms.departure_dates,
+
         )
 
 
@@ -741,7 +714,12 @@ class FlatsRentIndex(AbstractRentIndex):
             'rent_terms__period_sid',
             'rent_terms__persons_count',
             'rent_terms__family',
-            'rent_terms__foreigners'
+            'rent_terms__foreigners',
+
+            'rent_terms__entrance_dates',
+            'rent_terms__rent_dates',
+            'rent_terms__departure_dates',
+
         )
 
 
@@ -2468,8 +2446,10 @@ class SegmentsIndex(models.Model):
 
 
         # todo: add transaction here (find a way to combine custom sql and django orm to perform a transaction)
-        index.add(record, using=cls.index_db_name)
-
+        try:
+            index.add(record, using=cls.index_db_name)
+        except Exception as e:
+            pass
         cursor = cls.cursor()
         cursor.execute('BEGIN;')
         for zoom, x, y in cls.grid.segments_digests(lat, lng):
@@ -2563,14 +2543,25 @@ class SegmentsIndex(models.Model):
 
     #ThrirdStep
     @classmethod
-    def add_daily_rent_terms(cls, tid, hash_id, date_from, date_to):
+    def add_daily_rent_terms(cls,  **kwargs):
         """
          Get certain
         """
+        tid = kwargs['tid']
+        publication_id = kwargs['publication_id']
+        date_from = kwargs['date_from']
+        date_to = kwargs['date_to']
 
         model = cls.living_rent_indexes.get(tid)
-        model.add_dates_rent(hash_id, date_from, date_to)
+        try:
+            model = model.objects.get(publication_id = publication_id)
+        except ObjectDoesNotExist:
+            return
 
+        try:
+            model.add_dates_rent(publication_id, date_from, date_to)
+        except Exception as e:
+            pass
 
     @classmethod
     def delete_daily_rent_terms(cls, tid, hash_id, date_from, date_to):
