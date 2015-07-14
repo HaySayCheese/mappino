@@ -65,8 +65,10 @@ module mappino.cabinet {
 
 
 
-        private uploadPhoto($file, $event, $flow) {
-            console.log($file)
+        public uploadPublicationPhotos($files) {
+            this.publicationsService.uploadPublicationPhotos(this._publication, $files, (response) => {
+                console.log(response)
+            })
         }
 
 

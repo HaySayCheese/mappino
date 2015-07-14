@@ -1,2 +1,1158 @@
-!function(){function e(e,t){window.XMLHttpRequest.prototype[e]=t(window.XMLHttpRequest.prototype[e])}function t(e,t,n,i,o,s,l){function f(){return"input"===t[0].tagName.toLowerCase()&&t.attr("type")&&"file"===t.attr("type").toLowerCase()}function u(t){if(!h){h=!0;try{for(var l=t.__files_||t.target&&t.target.files,f=[],u=[],d=0;d<l.length;d++){var c=l.item(d);a(e,o,n,c,t)?f.push(c):u.push(c)}r(o,s,e,i,n,n.ngfChange||n.ngfSelect,f,u,t),0==f.length&&(t.target.value=f)}finally{h=!1}}}function d(i){n.ngfMultiple&&i.attr("multiple",o(n.ngfMultiple)(e)),o(n.ngfMultiple)(e)||i.attr("multiple",void 0),n.accept&&i.attr("accept",n.accept),n.ngfCapture&&i.attr("capture",o(n.ngfCapture)(e));for(var r=0;r<t[0].attributes.length;r++){var a=t[0].attributes[r];(f()&&"type"!==a.name||"type"!==a.name&&"class"!==a.name&&"id"!==a.name&&"style"!==a.name)&&i.attr(a.name,a.value)}}function c(n){if(!t.attr("disabled")){var i=angular.element('<input type="file">');return d(i),f()?(t.replaceWith(i),t=i,i.attr("__ngf_gen__",!0),l(t)(e)):(i.css("visibility","hidden").css("position","absolute").css("width","1").css("height","1").css("z-index","-100000").attr("tabindex","-1"),t.__ngf_ref_elem__&&t.__ngf_ref_elem__.remove(),t.__ngf_ref_elem__=i,document.body.appendChild(i[0])),i}}function p(t){r(o,s,e,i,n,n.ngfChange||n.ngfSelect,[],[],t,!0)}function g(e){function n(e){null!=e&&i[0].click(),f()&&t.bind("click touchend",g)}null!=e&&(e.preventDefault(),e.stopPropagation());var i=c(e);return i&&(i.bind("change",u),e&&p(e),navigator.userAgent.toLowerCase().match(/android/)?setTimeout(function(){n(e)},0):n(e)),!1}if(!t.attr("__ngf_gen__")){var h=!1;window.FileAPI&&window.FileAPI.ngfFixIE?window.FileAPI.ngfFixIE(t,c,d,u,p):(g(),f()||t.bind("click touchend",g))}}function n(e,t,n,o,s,l,f){function u(e,t,n){var i=!0,r=n.dataTransfer.items;if(null!=r)for(var o=0;o<r.length&&i;o++)i=i&&("file"==r[o].kind||""==r[o].kind)&&a(e,s,t,r[o],n);var l=s(t.ngfDragOverClass)(e,{$event:n});return l&&(l.delay&&(_=l.delay),l.accept&&(l=i?l.accept:l.reject)),l||t.ngfDragOverClass||"dragover"}function d(t,i,r,o){function u(i){a(e,s,n,i,t)?c.push(i):p.push(i)}function d(e,t,n){if(null!=t)if(t.isDirectory){var i=(n||"")+t.name;u({name:t.name,type:"directory",path:i});var r=t.createReader(),a=[];h++;var o=function(){r.readEntries(function(i){try{if(i.length)a=a.concat(Array.prototype.slice.call(i||[],0)),o();else{for(var r=0;r<a.length;r++)d(e,a[r],(n?n:"")+t.name+"/");h--}}catch(s){h--,console.error(s)}},function(){h--})};o()}else h++,t.file(function(e){try{h--,e.path=(n?n:"")+e.name,u(e)}catch(t){h--,console.error(t)}},function(){h--})}var c=[],p=[],g=t.dataTransfer.items,h=0;if(g&&g.length>0&&"file"!=f.protocol())for(var _=0;_<g.length;_++){if(g[_].webkitGetAsEntry&&g[_].webkitGetAsEntry()&&g[_].webkitGetAsEntry().isDirectory){var v=g[_].webkitGetAsEntry();if(v.isDirectory&&!r)continue;null!=v&&d(c,v)}else{var m=g[_].getAsFile();null!=m&&u(m)}if(!o&&c.length>0)break}else{var w=t.dataTransfer.files;if(null!=w)for(var _=0;_<w.length&&(u(w.item(_)),o||!(c.length>0));_++);}var y=0;!function A(e){l(function(){if(h)10*y++<2e4&&A(10);else{if(!o&&c.length>1){for(_=0;"directory"==c[_].type;)_++;c=[c[_]]}i(c,p)}},e||0)}()}var c=i();if(n.dropAvailable&&l(function(){e[n.dropAvailable]?e[n.dropAvailable].value=c:e[n.dropAvailable]=c}),!c)return void(1==s(n.ngfHideOnDropNotAvailable)(e)&&t.css("display","none"));{var p,g=null,h=s(n.ngfStopPropagation),_=1;s(n.ngfAccept)}t[0].addEventListener("dragover",function(i){if(!t.attr("disabled")){if(i.preventDefault(),h(e)&&i.stopPropagation(),navigator.userAgent.indexOf("Chrome")>-1){var r=i.dataTransfer.effectAllowed;i.dataTransfer.dropEffect="move"===r||"linkMove"===r?"move":"copy"}l.cancel(g),e.actualDragOverClass||(p=u(e,n,i)),t.addClass(p)}},!1),t[0].addEventListener("dragenter",function(n){t.attr("disabled")||(n.preventDefault(),h(e)&&n.stopPropagation())},!1),t[0].addEventListener("dragleave",function(){t.attr("disabled")||(g=l(function(){t.removeClass(p),p=null},_||1))},!1),t[0].addEventListener("drop",function(i){t.attr("disabled")||(i.preventDefault(),h(e)&&i.stopPropagation(),t.removeClass(p),p=null,d(i,function(t,a){r(s,l,e,o,n,n.ngfChange||n.ngfDrop,t,a,i)},0!=s(n.ngfAllowDir)(e),n.multiple||s(n.ngfMultiple)(e)))},!1)}function i(){var e=document.createElement("div");return"draggable"in e&&"ondrop"in e}function r(e,t,n,i,r,a,o,s,l,f){function u(){i&&(e(r.ngModel).assign(n,o),t(function(){i&&i.$setViewValue(null!=o&&0==o.length?null:o)})),r.ngModelRejected&&e(r.ngModelRejected).assign(n,s),a&&e(a)(n,{$files:o,$rejectedFiles:s,$event:l})}f?u():t(function(){u()})}function a(e,t,n,i,r){var a=t(n.ngfAccept)(e,{$file:i,$event:r}),s=t(n.ngfMaxSize)(e,{$file:i,$event:r})||9007199254740991,l=t(n.ngfMinSize)(e,{$file:i,$event:r})||-1;if(null!=a&&angular.isString(a)){var f=new RegExp(o(a),"gi");a=null!=i.type&&f.test(i.type.toLowerCase())||null!=i.name&&f.test(i.name.toLowerCase())}return(null==a||a)&&(null==i.size||i.size<s&&i.size>l)}function o(e){if(e.length>2&&"/"===e[0]&&"/"===e[e.length-1])return e.substring(1,e.length-1);var t=e.split(","),n="";if(t.length>1)for(var i=0;i<t.length;i++)n+="("+o(t[i])+")",i<t.length-1&&(n+="|");else 0==e.indexOf(".")&&(e="*"+e),n="^"+e.replace(new RegExp("[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\-]","g"),"\\$&")+"$",n=n.replace(/\\\*/g,".*").replace(/\\\?/g,".");return n}var s;window.XMLHttpRequest&&!window.XMLHttpRequest.__isFileAPIShim&&e("setRequestHeader",function(e){return function(t,n){if("__setXHR_"===t){var i=n(this);i instanceof Function&&i(this)}else e.apply(this,arguments)}});var l=angular.module("ngFileUpload",[]);l.version="4.2.4",l.service("Upload",["$http","$q","$timeout",function(e,t,n){function i(i){i.method=i.method||"POST",i.headers=i.headers||{},i.transformRequest=i.transformRequest||function(t,n){return window.ArrayBuffer&&t instanceof window.ArrayBuffer?t:e.defaults.transformRequest[0](t,n)};var r=t.defer(),a=r.promise;return i.headers.__setXHR_=function(){return function(e){e&&(i.__XHR=e,i.xhrFn&&i.xhrFn(e),e.upload.addEventListener("progress",function(e){e.config=i,r.notify?r.notify(e):a.progress_fn&&n(function(){a.progress_fn(e)})},!1),e.upload.addEventListener("load",function(e){e.lengthComputable&&(e.config=i,r.notify?r.notify(e):a.progress_fn&&n(function(){a.progress_fn(e)}))},!1))}},e(i).then(function(e){r.resolve(e)},function(e){r.reject(e)},function(e){r.notify(e)}),a.success=function(e){return a.then(function(t){e(t.data,t.status,t.headers,i)}),a},a.error=function(e){return a.then(null,function(t){e(t.data,t.status,t.headers,i)}),a},a.progress=function(e){return a.progress_fn=e,a.then(null,null,function(t){e(t)}),a},a.abort=function(){return i.__XHR&&n(function(){i.__XHR.abort()}),a},a.xhr=function(e){return i.xhrFn=function(t){return function(){t&&t.apply(a,arguments),e.apply(a,arguments)}}(i.xhrFn),a},a}this.upload=function(e){return e.headers=e.headers||{},e.headers["Content-Type"]=void 0,e.transformRequest=e.transformRequest?angular.isArray(e.transformRequest)?e.transformRequest:[e.transformRequest]:[],e.transformRequest.push(function(t){var n=new FormData,i={};for(s in e.fields)e.fields.hasOwnProperty(s)&&(i[s]=e.fields[s]);if(t&&(i.data=t),e.formDataAppender)for(s in i)i.hasOwnProperty(s)&&e.formDataAppender(n,s,i[s]);else for(s in i)if(i.hasOwnProperty(s)){var r=i[s];void 0!==r&&(angular.isDate(r)&&(r=r.toISOString()),angular.isString(r)?n.append(s,r):e.sendObjectsAsJsonBlob&&angular.isObject(r)?n.append(s,new Blob([r],{type:"application/json"})):n.append(s,JSON.stringify(r)))}if(null!=e.file){var a=e.fileFormDataName||"file";if(angular.isArray(e.file))for(var o=angular.isString(a),l=0;l<e.file.length;l++)n.append(o?a:a[l],e.file[l],e.fileName&&e.fileName[l]||e.file[l].name);else n.append(a,e.file,e.fileName||e.file.name)}return n}),i(e)},this.http=function(e){return i(e)}}]),l.directive("ngfSelect",["$parse","$timeout","$compile",function(e,n,i){return{restrict:"AEC",require:"?ngModel",link:function(r,a,o,s){t(r,a,o,s,e,n,i)}}}]),l.directive("ngfDrop",["$parse","$timeout","$location",function(e,t,i){return{restrict:"AEC",require:"?ngModel",link:function(r,a,o,s){n(r,a,o,s,e,t,i)}}}]),l.directive("ngfNoFileDrop",function(){return function(e,t){i()&&t.css("display","none")}}),l.directive("ngfDropAvailable",["$parse","$timeout",function(e,t){return function(n,r,a){if(i()){var o=e(a.ngfDropAvailable);t(function(){o(n),o.assign&&o.assign(n,!0)})}}}]),l.directive("ngfSrc",["$parse","$timeout",function(e,t){return{restrict:"AE",link:function(n,i,r,o){window.FileReader&&n.$watch(r.ngfSrc,function(o){o&&a(n,e,r,o,null)&&(!window.FileAPI||-1===navigator.userAgent.indexOf("MSIE 8")||o.size<2e4)&&(!window.FileAPI||-1===navigator.userAgent.indexOf("MSIE 9")||o.size<4e6)?t(function(){var e=window.URL||window.webkitURL;if(e&&e.createObjectURL)i.attr("src",e.createObjectURL(o));else{var n=new FileReader;n.readAsDataURL(o),n.onload=function(e){t(function(){i.attr("src",e.target.result)})}}}):i.attr("src",r.ngfDefaultSrc||"")})}}}])}(),function(){function e(e,t){window.XMLHttpRequest.prototype[e]=t(window.XMLHttpRequest.prototype[e])}function t(e,t,n){try{Object.defineProperty(e,t,{get:n})}catch(i){}}function n(e){return"input"===e[0].tagName.toLowerCase()&&e.attr("type")&&"file"===e.attr("type").toLowerCase()}var i=function(){try{var e=new ActiveXObject("ShockwaveFlash.ShockwaveFlash");if(e)return!0}catch(t){if(void 0!=navigator.mimeTypes["application/x-shockwave-flash"])return!0}return!1};if(window.XMLHttpRequest&&!window.FormData||window.FileAPI&&FileAPI.forceLoad){var r=function(e){if(!e.__listeners){e.upload||(e.upload={}),e.__listeners=[];var t=e.upload.addEventListener;e.upload.addEventListener=function(n,i,r){e.__listeners[n]=i,t&&t.apply(this,arguments)}}};e("open",function(e){return function(t,n,i){r(this),this.__url=n;try{e.apply(this,[t,n,i])}catch(a){a.message.indexOf("Access is denied")>-1&&(this.__origError=a,e.apply(this,[t,"_fix_for_ie_crossdomain__",i]))}}}),e("getResponseHeader",function(e){return function(t){return this.__fileApiXHR&&this.__fileApiXHR.getResponseHeader?this.__fileApiXHR.getResponseHeader(t):null==e?null:e.apply(this,[t])}}),e("getAllResponseHeaders",function(e){return function(){return this.__fileApiXHR&&this.__fileApiXHR.getAllResponseHeaders?this.__fileApiXHR.getAllResponseHeaders():null==e?null:e.apply(this)}}),e("abort",function(e){return function(){return this.__fileApiXHR&&this.__fileApiXHR.abort?this.__fileApiXHR.abort():null==e?null:e.apply(this)}}),e("setRequestHeader",function(e){return function(t,n){if("__setXHR_"===t){r(this);var i=n(this);i instanceof Function&&i(this)}else this.__requestHeaders=this.__requestHeaders||{},this.__requestHeaders[t]=n,e.apply(this,arguments)}}),e("send",function(e){return function(){var n=this;if(arguments[0]&&arguments[0].__isFileAPIShim){var r=arguments[0],a={url:n.__url,jsonp:!1,cache:!0,complete:function(e,i){n.__completed=!0,!e&&n.__listeners.load&&n.__listeners.load({type:"load",loaded:n.__loaded,total:n.__total,target:n,lengthComputable:!0}),!e&&n.__listeners.loadend&&n.__listeners.loadend({type:"loadend",loaded:n.__loaded,total:n.__total,target:n,lengthComputable:!0}),"abort"===e&&n.__listeners.abort&&n.__listeners.abort({type:"abort",loaded:n.__loaded,total:n.__total,target:n,lengthComputable:!0}),void 0!==i.status&&t(n,"status",function(){return 0==i.status&&e&&"abort"!==e?500:i.status}),void 0!==i.statusText&&t(n,"statusText",function(){return i.statusText}),t(n,"readyState",function(){return 4}),void 0!==i.response&&t(n,"response",function(){return i.response});var r=i.responseText||(e&&0==i.status&&"abort"!==e?e:void 0);t(n,"responseText",function(){return r}),t(n,"response",function(){return r}),e&&t(n,"err",function(){return e}),n.__fileApiXHR=i,n.onreadystatechange&&n.onreadystatechange(),n.onload&&n.onload()},progress:function(e){if(e.target=n,n.__listeners.progress&&n.__listeners.progress(e),n.__total=e.total,n.__loaded=e.loaded,e.total===e.loaded){var t=this;setTimeout(function(){n.__completed||(n.getAllResponseHeaders=function(){},t.complete(null,{status:204,statusText:"No Content"}))},FileAPI.noContentTimeout||1e4)}},headers:n.__requestHeaders};a.data={},a.files={};for(var o=0;o<r.data.length;o++){var s=r.data[o];null!=s.val&&null!=s.val.name&&null!=s.val.size&&null!=s.val.type?a.files[s.key]=s.val:a.data[s.key]=s.val}setTimeout(function(){if(!i())throw'Adode Flash Player need to be installed. To check ahead use "FileAPI.hasFlash"';n.__fileApiXHR=FileAPI.upload(a)},1)}else{if(this.__origError)throw this.__origError;e.apply(n,arguments)}}}),window.XMLHttpRequest.__isFileAPIShim=!0,window.FormData=FormData=function(){return{append:function(e,t,n){t.__isFileAPIBlobShim&&(t=t.data[0]),this.data.push({key:e,val:t,name:n})},data:[],__isFileAPIShim:!0}},window.Blob=Blob=function(e){return{data:e,__isFileAPIBlobShim:!0}},function(){if(window.FileAPI||(window.FileAPI={}),FileAPI.forceLoad&&(FileAPI.html5=!1),!FileAPI.upload){var e,t,n,r,a,o=document.createElement("script"),s=document.getElementsByTagName("script");if(window.FileAPI.jsUrl)e=window.FileAPI.jsUrl;else if(window.FileAPI.jsPath)t=window.FileAPI.jsPath;else for(n=0;n<s.length;n++)if(a=s[n].src,r=a.search(/\/ng\-file\-upload[\-a-zA-z0-9\.]*\.js/),r>-1){t=a.substring(0,r+1);break}null==FileAPI.staticPath&&(FileAPI.staticPath=t),o.setAttribute("src",e||t+"FileAPI.min.js"),document.getElementsByTagName("head")[0].appendChild(o),FileAPI.hasFlash=i()}}(),FileAPI.ngfFixIE=function(e,t,r,a,o){if(!i())throw'Adode Flash Player need to be installed. To check ahead use "FileAPI.hasFlash"';var s=function(i){function o(e){var t,n;if(t=n=0,e.offsetParent)do t+=e.offsetLeft,n+=e.offsetTop;while(e=e.offsetParent);return{left:t,top:n}}if(e.attr("disabled"))e.__ngf_elem__.removeClass("js-fileapi-wrapper");else{var f=e.__ngf_elem__;f?r(e.__ngf_elem__):(f=e.__ngf_elem__=t(),f.addClass("js-fileapi-wrapper"),!n(e),setTimeout(function(){f.bind("mouseenter",s)},10),f.bind("change",function(e){l.apply(this,[e]),a.apply(this,[e])})),n(e)||f.css("position","absolute").css("top",o(e[0]).top+"px").css("left",o(e[0]).left+"px").css("width",e[0].offsetWidth+"px").css("height",e[0].offsetHeight+"px").css("filter","alpha(opacity=0)").css("display",e.css("display")).css("overflow","hidden").css("z-index","900000").css("visibility","visible")}};e.bind("mouseenter",s);var l=function(e){for(var t=FileAPI.getFiles(e),n=0;n<t.length;n++)void 0===t[n].size&&(t[n].size=0),void 0===t[n].name&&(t[n].name="file"),void 0===t[n].type&&(t[n].type="undefined");e.target||(e.target={}),e.target.files=t,e.target.files!=t&&(e.__files_=t),(e.__files_||e.target.files).item=function(t){return(e.__files_||e.target.files)[t]||null}}},FileAPI.disableFileInput=function(e,t){t?e.removeClass("js-fileapi-wrapper"):e.addClass("js-fileapi-wrapper")}}window.FileReader||(window.FileReader=function(){var e=this,t=!1;this.listeners={},this.addEventListener=function(t,n){e.listeners[t]=e.listeners[t]||[],e.listeners[t].push(n)},this.removeEventListener=function(t,n){e.listeners[t]&&e.listeners[t].splice(e.listeners[t].indexOf(n),1)},this.dispatchEvent=function(t){var n=e.listeners[t.type];if(n)for(var i=0;i<n.length;i++)n[i].call(e,t)},this.onabort=this.onerror=this.onload=this.onloadstart=this.onloadend=this.onprogress=null;var n=function(t,n){var i={type:t,target:e,loaded:n.loaded,total:n.total,error:n.error};return null!=n.result&&(i.target.result=n.result),i},i=function(i){if(t||(t=!0,e.onloadstart&&e.onloadstart(n("loadstart",i))),"load"===i.type){e.onloadend&&e.onloadend(n("loadend",i));var r=n("load",i);e.onload&&e.onload(r),e.dispatchEvent(r)}else if("progress"===i.type){var r=n("progress",i);e.onprogress&&e.onprogress(r),e.dispatchEvent(r)}else{var r=n("error",i);e.onerror&&e.onerror(r),e.dispatchEvent(r)}};this.readAsArrayBuffer=function(e){FileAPI.readAsBinaryString(e,i)},this.readAsBinaryString=function(e){FileAPI.readAsBinaryString(e,i)},this.readAsDataURL=function(e){FileAPI.readAsDataURL(e,i)},this.readAsText=function(e){FileAPI.readAsText(e,i)}})}();
-//# sourceMappingURL=/maps/angular-file-upload.js.map
+/**!
+ * AngularJS file upload/drop directive and service with progress and abort
+ * FileAPI Flash shim for old browsers not supporting FormData
+ * @author  Danial  <danial.farid@gmail.com>
+ * @version 5.0.9
+ */
+
+(function () {
+    /** @namespace FileAPI.noContentTimeout */
+
+    function patchXHR(fnName, newFn) {
+        window.XMLHttpRequest.prototype[fnName] = newFn(window.XMLHttpRequest.prototype[fnName]);
+    }
+
+    function redefineProp(xhr, prop, fn) {
+        try {
+            Object.defineProperty(xhr, prop, {get: fn});
+        } catch (e) {/*ignore*/
+        }
+    }
+
+    if (!window.FileAPI) {
+        window.FileAPI = {};
+    }
+
+    FileAPI.shouldLoad = (window.XMLHttpRequest && !window.FormData) || FileAPI.forceLoad;
+    if (FileAPI.shouldLoad) {
+        var initializeUploadListener = function (xhr) {
+            if (!xhr.__listeners) {
+                if (!xhr.upload) xhr.upload = {};
+                xhr.__listeners = [];
+                var origAddEventListener = xhr.upload.addEventListener;
+                xhr.upload.addEventListener = function (t, fn) {
+                    xhr.__listeners[t] = fn;
+                    if (origAddEventListener) origAddEventListener.apply(this, arguments);
+                };
+            }
+        };
+
+        patchXHR('open', function (orig) {
+            return function (m, url, b) {
+                initializeUploadListener(this);
+                this.__url = url;
+                try {
+                    orig.apply(this, [m, url, b]);
+                } catch (e) {
+                    if (e.message.indexOf('Access is denied') > -1) {
+                        this.__origError = e;
+                        orig.apply(this, [m, '_fix_for_ie_crossdomain__', b]);
+                    }
+                }
+            };
+        });
+
+        patchXHR('getResponseHeader', function (orig) {
+            return function (h) {
+                return this.__fileApiXHR && this.__fileApiXHR.getResponseHeader ? this.__fileApiXHR.getResponseHeader(h) : (orig == null ? null : orig.apply(this, [h]));
+            };
+        });
+
+        patchXHR('getAllResponseHeaders', function (orig) {
+            return function () {
+                return this.__fileApiXHR && this.__fileApiXHR.getAllResponseHeaders ? this.__fileApiXHR.getAllResponseHeaders() : (orig == null ? null : orig.apply(this));
+            };
+        });
+
+        patchXHR('abort', function (orig) {
+            return function () {
+                return this.__fileApiXHR && this.__fileApiXHR.abort ? this.__fileApiXHR.abort() : (orig == null ? null : orig.apply(this));
+            };
+        });
+
+        patchXHR('setRequestHeader', function (orig) {
+            return function (header, value) {
+                if (header === '__setXHR_') {
+                    initializeUploadListener(this);
+                    var val = value(this);
+                    // fix for angular < 1.2.0
+                    if (val instanceof Function) {
+                        val(this);
+                    }
+                } else {
+                    this.__requestHeaders = this.__requestHeaders || {};
+                    this.__requestHeaders[header] = value;
+                    orig.apply(this, arguments);
+                }
+            };
+        });
+
+        patchXHR('send', function (orig) {
+            return function () {
+                var xhr = this;
+                if (arguments[0] && arguments[0].__isFileAPIShim) {
+                    var formData = arguments[0];
+                    var config = {
+                        url: xhr.__url,
+                        jsonp: false, //removes the callback form param
+                        cache: true, //removes the ?fileapiXXX in the url
+                        complete: function (err, fileApiXHR) {
+                            xhr.__completed = true;
+                            if (!err && xhr.__listeners.load)
+                                xhr.__listeners.load({
+                                    type: 'load',
+                                    loaded: xhr.__loaded,
+                                    total: xhr.__total,
+                                    target: xhr,
+                                    lengthComputable: true
+                                });
+                            if (!err && xhr.__listeners.loadend)
+                                xhr.__listeners.loadend({
+                                    type: 'loadend',
+                                    loaded: xhr.__loaded,
+                                    total: xhr.__total,
+                                    target: xhr,
+                                    lengthComputable: true
+                                });
+                            if (err === 'abort' && xhr.__listeners.abort)
+                                xhr.__listeners.abort({
+                                    type: 'abort',
+                                    loaded: xhr.__loaded,
+                                    total: xhr.__total,
+                                    target: xhr,
+                                    lengthComputable: true
+                                });
+                            if (fileApiXHR.status !== undefined) redefineProp(xhr, 'status', function () {
+                                return (fileApiXHR.status === 0 && err && err !== 'abort') ? 500 : fileApiXHR.status;
+                            });
+                            if (fileApiXHR.statusText !== undefined) redefineProp(xhr, 'statusText', function () {
+                                return fileApiXHR.statusText;
+                            });
+                            redefineProp(xhr, 'readyState', function () {
+                                return 4;
+                            });
+                            if (fileApiXHR.response !== undefined) redefineProp(xhr, 'response', function () {
+                                return fileApiXHR.response;
+                            });
+                            var resp = fileApiXHR.responseText || (err && fileApiXHR.status === 0 && err !== 'abort' ? err : undefined);
+                            redefineProp(xhr, 'responseText', function () {
+                                return resp;
+                            });
+                            redefineProp(xhr, 'response', function () {
+                                return resp;
+                            });
+                            if (err) redefineProp(xhr, 'err', function () {
+                                return err;
+                            });
+                            xhr.__fileApiXHR = fileApiXHR;
+                            if (xhr.onreadystatechange) xhr.onreadystatechange();
+                            if (xhr.onload) xhr.onload();
+                        },
+                        progress: function (e) {
+                            e.target = xhr;
+                            if (xhr.__listeners.progress) xhr.__listeners.progress(e);
+                            xhr.__total = e.total;
+                            xhr.__loaded = e.loaded;
+                            if (e.total === e.loaded) {
+                                // fix flash issue that doesn't call complete if there is no response text from the server
+                                var _this = this;
+                                setTimeout(function () {
+                                    if (!xhr.__completed) {
+                                        xhr.getAllResponseHeaders = function () {
+                                        };
+                                        _this.complete(null, {status: 204, statusText: 'No Content'});
+                                    }
+                                }, FileAPI.noContentTimeout || 10000);
+                            }
+                        },
+                        headers: xhr.__requestHeaders
+                    };
+                    config.data = {};
+                    config.files = {};
+                    for (var i = 0; i < formData.data.length; i++) {
+                        var item = formData.data[i];
+                        if (item.val != null && item.val.name != null && item.val.size != null && item.val.type != null) {
+                            config.files[item.key] = item.val;
+                        } else {
+                            config.data[item.key] = item.val;
+                        }
+                    }
+
+                    setTimeout(function () {
+                        if (!FileAPI.hasFlash) {
+                            throw 'Adode Flash Player need to be installed. To check ahead use "FileAPI.hasFlash"';
+                        }
+                        xhr.__fileApiXHR = FileAPI.upload(config);
+                    }, 1);
+                } else {
+                    if (this.__origError) {
+                        throw this.__origError;
+                    }
+                    orig.apply(xhr, arguments);
+                }
+            };
+        });
+        window.XMLHttpRequest.__isFileAPIShim = true;
+        window.FormData = FormData = function () {
+            return {
+                append: function (key, val, name) {
+                    if (val.__isFileAPIBlobShim) {
+                        val = val.data[0];
+                    }
+                    this.data.push({
+                        key: key,
+                        val: val,
+                        name: name
+                    });
+                },
+                data: [],
+                __isFileAPIShim: true
+            };
+        };
+
+        window.Blob = Blob = function (b) {
+            return {
+                data: b,
+                __isFileAPIBlobShim: true
+            };
+        };
+    }
+
+})();
+
+(function () {
+    /** @namespace FileAPI.forceLoad */
+    /** @namespace window.FileAPI.jsUrl */
+    /** @namespace window.FileAPI.jsPath */
+
+    function isInputTypeFile(elem) {
+        return elem[0].tagName.toLowerCase() === 'input' && elem.attr('type') && elem.attr('type').toLowerCase() === 'file';
+    }
+
+    function hasFlash() {
+        try {
+            var fo = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+            if (fo) return true;
+        } catch (e) {
+            if (navigator.mimeTypes['application/x-shockwave-flash'] !== undefined) return true;
+        }
+        return false;
+    }
+
+    function getOffset(obj) {
+        var left = 0, top = 0;
+
+        if (window.jQuery) {
+            return jQuery(obj).offset();
+        }
+
+        if (obj.offsetParent) {
+            do {
+                left += (obj.offsetLeft - obj.scrollLeft);
+                top += (obj.offsetTop - obj.scrollTop);
+                obj = obj.offsetParent;
+            } while (obj);
+        }
+        return {
+            left: left,
+            top: top
+        };
+    }
+
+    if (FileAPI.shouldLoad) {
+
+        //load FileAPI
+        if (FileAPI.forceLoad) {
+            FileAPI.html5 = false;
+        }
+
+        if (!FileAPI.upload) {
+            var jsUrl, basePath, script = document.createElement('script'), allScripts = document.getElementsByTagName('script'), i, index, src;
+            if (window.FileAPI.jsUrl) {
+                jsUrl = window.FileAPI.jsUrl;
+            } else if (window.FileAPI.jsPath) {
+                basePath = window.FileAPI.jsPath;
+            } else {
+                for (i = 0; i < allScripts.length; i++) {
+                    src = allScripts[i].src;
+                    index = src.search(/\/ng\-file\-upload[\-a-zA-z0-9\.]*\.js/);
+                    if (index > -1) {
+                        basePath = src.substring(0, index + 1);
+                        break;
+                    }
+                }
+            }
+
+            if (FileAPI.staticPath == null) FileAPI.staticPath = basePath;
+            script.setAttribute('src', jsUrl || basePath + 'FileAPI.min.js');
+            document.getElementsByTagName('head')[0].appendChild(script);
+
+            FileAPI.hasFlash = hasFlash();
+        }
+
+        FileAPI.ngfFixIE = function (elem, createFileElemFn, bindAttr, changeFn) {
+            if (!hasFlash()) {
+                throw 'Adode Flash Player need to be installed. To check ahead use "FileAPI.hasFlash"';
+            }
+            var makeFlashInput = function () {
+                if (elem.attr('disabled')) {
+                    elem.$$ngfRefElem.removeClass('js-fileapi-wrapper');
+                } else {
+                    var fileElem = elem.$$ngfRefElem;
+                    if (!fileElem) {
+                        fileElem = elem.$$ngfRefElem = createFileElemFn();
+                        fileElem.addClass('js-fileapi-wrapper');
+                        if (!isInputTypeFile(elem)) {
+//						if (fileElem.parent().css('position') === '' || fileElem.parent().css('position') === 'static') {
+//							fileElem.parent().css('position', 'relative');
+//						}
+//						elem.parent()[0].insertBefore(fileElem[0], elem[0]);
+//						elem.css('overflow', 'hidden');
+                        }
+                        setTimeout(function () {
+                            fileElem.bind('mouseenter', makeFlashInput);
+                        }, 10);
+                        fileElem.bind('change', function (evt) {
+                            fileApiChangeFn.apply(this, [evt]);
+                            changeFn.apply(this, [evt]);
+//						alert('change' +  evt);
+                        });
+                    } else {
+                        bindAttr(elem.$$ngfRefElem);
+                    }
+                    if (!isInputTypeFile(elem)) {
+                        fileElem.css('position', 'absolute')
+                            .css('top', getOffset(elem[0]).top + 'px').css('left', getOffset(elem[0]).left + 'px')
+                            .css('width', elem[0].offsetWidth + 'px').css('height', elem[0].offsetHeight + 'px')
+                            .css('filter', 'alpha(opacity=0)').css('display', elem.css('display'))
+                            .css('overflow', 'hidden').css('z-index', '900000')
+                            .css('visibility', 'visible');
+                    }
+                }
+            };
+
+            elem.bind('mouseenter', makeFlashInput);
+
+            var fileApiChangeFn = function (evt) {
+                var files = FileAPI.getFiles(evt);
+                //just a double check for #233
+                for (var i = 0; i < files.length; i++) {
+                    if (files[i].size === undefined) files[i].size = 0;
+                    if (files[i].name === undefined) files[i].name = 'file';
+                    if (files[i].type === undefined) files[i].type = 'undefined';
+                }
+                if (!evt.target) {
+                    evt.target = {};
+                }
+                evt.target.files = files;
+                // if evt.target.files is not writable use helper field
+                if (evt.target.files !== files) {
+                    evt.__files_ = files;
+                }
+                (evt.__files_ || evt.target.files).item = function (i) {
+                    return (evt.__files_ || evt.target.files)[i] || null;
+                };
+            };
+        };
+
+        FileAPI.disableFileInput = function (elem, disable) {
+            if (disable) {
+                elem.removeClass('js-fileapi-wrapper');
+            } else {
+                elem.addClass('js-fileapi-wrapper');
+            }
+        };
+    }
+})();
+
+if (!window.FileReader) {
+    window.FileReader = function () {
+        var _this = this, loadStarted = false;
+        this.listeners = {};
+        this.addEventListener = function (type, fn) {
+            _this.listeners[type] = _this.listeners[type] || [];
+            _this.listeners[type].push(fn);
+        };
+        this.removeEventListener = function (type, fn) {
+            if (_this.listeners[type]) _this.listeners[type].splice(_this.listeners[type].indexOf(fn), 1);
+        };
+        this.dispatchEvent = function (evt) {
+            var list = _this.listeners[evt.type];
+            if (list) {
+                for (var i = 0; i < list.length; i++) {
+                    list[i].call(_this, evt);
+                }
+            }
+        };
+        this.onabort = this.onerror = this.onload = this.onloadstart = this.onloadend = this.onprogress = null;
+
+        var constructEvent = function (type, evt) {
+            var e = {type: type, target: _this, loaded: evt.loaded, total: evt.total, error: evt.error};
+            if (evt.result != null) e.target.result = evt.result;
+            return e;
+        };
+        var listener = function (evt) {
+            if (!loadStarted) {
+                loadStarted = true;
+                if (_this.onloadstart) _this.onloadstart(constructEvent('loadstart', evt));
+            }
+            var e;
+            if (evt.type === 'load') {
+                if (_this.onloadend) _this.onloadend(constructEvent('loadend', evt));
+                e = constructEvent('load', evt);
+                if (_this.onload) _this.onload(e);
+                _this.dispatchEvent(e);
+            } else if (evt.type === 'progress') {
+                e = constructEvent('progress', evt);
+                if (_this.onprogress) _this.onprogress(e);
+                _this.dispatchEvent(e);
+            } else {
+                e = constructEvent('error', evt);
+                if (_this.onerror) _this.onerror(e);
+                _this.dispatchEvent(e);
+            }
+        };
+        this.readAsArrayBuffer = function (file) {
+            FileAPI.readAsBinaryString(file, listener);
+        };
+        this.readAsBinaryString = function (file) {
+            FileAPI.readAsBinaryString(file, listener);
+        };
+        this.readAsDataURL = function (file) {
+            FileAPI.readAsDataURL(file, listener);
+        };
+        this.readAsText = function (file) {
+            FileAPI.readAsText(file, listener);
+        };
+    };
+}
+
+/**!
+ * AngularJS file upload/drop directive and service with progress and abort
+ * @author  Danial  <danial.farid@gmail.com>
+ * @version 5.0.9
+ */
+
+if (window.XMLHttpRequest && !(window.FileAPI && FileAPI.shouldLoad)) {
+    window.XMLHttpRequest.prototype.setRequestHeader = (function (orig) {
+        return function (header, value) {
+            if (header === '__setXHR_') {
+                var val = value(this);
+                // fix for angular < 1.2.0
+                if (val instanceof Function) {
+                    val(this);
+                }
+            } else {
+                orig.apply(this, arguments);
+            }
+        };
+    })(window.XMLHttpRequest.prototype.setRequestHeader);
+}
+
+var ngFileUpload = angular.module('ngFileUpload', []);
+
+ngFileUpload.version = '5.0.9';
+ngFileUpload.service('Upload', ['$http', '$q', '$timeout', function ($http, $q, $timeout) {
+    function sendHttp(config) {
+        config.method = config.method || 'POST';
+        config.headers = config.headers || {};
+
+        var deferred = $q.defer();
+        var promise = deferred.promise;
+
+        config.headers.__setXHR_ = function () {
+            return function (xhr) {
+                if (!xhr) return;
+                config.__XHR = xhr;
+                if (config.xhrFn) config.xhrFn(xhr);
+                xhr.upload.addEventListener('progress', function (e) {
+                    e.config = config;
+                    if (deferred.notify) {
+                        deferred.notify(e);
+                    } else if (promise.progressFunc) {
+                        $timeout(function () {
+                            promise.progressFunc(e);
+                        });
+                    }
+                }, false);
+                //fix for firefox not firing upload progress end, also IE8-9
+                xhr.upload.addEventListener('load', function (e) {
+                    if (e.lengthComputable) {
+                        e.config = config;
+                        if (deferred.notify) {
+                            deferred.notify(e);
+                        } else if (promise.progressFunc) {
+                            $timeout(function () {
+                                promise.progressFunc(e);
+                            });
+                        }
+                    }
+                }, false);
+            };
+        };
+
+        $http(config).then(function (r) {
+            deferred.resolve(r);
+        }, function (e) {
+            deferred.reject(e);
+        }, function (n) {
+            deferred.notify(n);
+        });
+
+        promise.success = function (fn) {
+            promise.then(function (response) {
+                fn(response.data, response.status, response.headers, config);
+            });
+            return promise;
+        };
+
+        promise.error = function (fn) {
+            promise.then(null, function (response) {
+                fn(response.data, response.status, response.headers, config);
+            });
+            return promise;
+        };
+
+        promise.progress = function (fn) {
+            promise.progressFunc = fn;
+            promise.then(null, null, function (update) {
+                fn(update);
+            });
+            return promise;
+        };
+        promise.abort = function () {
+            if (config.__XHR) {
+                $timeout(function () {
+                    config.__XHR.abort();
+                });
+            }
+            return promise;
+        };
+        promise.xhr = function (fn) {
+            config.xhrFn = (function (origXhrFn) {
+                return function () {
+                    if (origXhrFn) origXhrFn.apply(promise, arguments);
+                    fn.apply(promise, arguments);
+                };
+            })(config.xhrFn);
+            return promise;
+        };
+
+        return promise;
+    }
+
+    this.upload = function (config) {
+        function addFieldToFormData(formData, val, key) {
+            if (val !== undefined) {
+                if (angular.isDate(val)) {
+                    val = val.toISOString();
+                }
+                if (angular.isString(val)) {
+                    formData.append(key, val);
+                } else if (config.sendFieldsAs === 'form') {
+                    if (angular.isObject(val)) {
+                        for (var k in val) {
+                            if (val.hasOwnProperty(k)) {
+                                addFieldToFormData(formData, val[k], key + '[' + k + ']');
+                            }
+                        }
+                    } else {
+                        formData.append(key, val);
+                    }
+                } else {
+                    val = angular.isString(val) ? val : JSON.stringify(val);
+                    if (config.sendFieldsAs === 'json-blob') {
+                        formData.append(key, new Blob([val], {type: 'application/json'}));
+                    } else {
+                        formData.append(key, val);
+                    }
+                }
+            }
+        }
+
+        config.headers = config.headers || {};
+        config.headers['Content-Type'] = undefined;
+        config.transformRequest = config.transformRequest ?
+            (angular.isArray(config.transformRequest) ?
+                config.transformRequest : [config.transformRequest]) : [];
+        config.transformRequest.push(function (data) {
+            var formData = new FormData();
+            var allFields = {};
+            var key;
+            for (key in config.fields) {
+                if (config.fields.hasOwnProperty(key)) {
+                    allFields[key] = config.fields[key];
+                }
+            }
+            if (data) allFields.data = data;
+            for (key in allFields) {
+                if (allFields.hasOwnProperty(key)) {
+                    var val = allFields[key];
+                    if (config.formDataAppender) {
+                        config.formDataAppender(formData, key, val);
+                    } else {
+                        addFieldToFormData(formData, val, key);
+                    }
+                }
+            }
+
+            if (config.file != null) {
+                var fileFormName = config.fileFormDataName || 'file';
+
+                if (angular.isArray(config.file)) {
+                    var isFileFormNameString = angular.isString(fileFormName);
+                    for (var i = 0; i < config.file.length; i++) {
+                        formData.append(isFileFormNameString ? fileFormName : fileFormName[i], config.file[i],
+                            (config.fileName && config.fileName[i]) || config.file[i].name);
+                    }
+                } else {
+                    formData.append(fileFormName, config.file, config.fileName || config.file.name);
+                }
+            }
+            return formData;
+        });
+
+        return sendHttp(config);
+    };
+
+    this.http = function (config) {
+        config.transformRequest = config.transformRequest || function (data) {
+                if ((window.ArrayBuffer && data instanceof window.ArrayBuffer) || data instanceof Blob) {
+                    return data;
+                }
+                return $http.defaults.transformRequest[0](arguments);
+            };
+        return sendHttp(config);
+    };
+}
+
+]);
+
+(function () {
+    ngFileUpload.directive('ngfSelect', ['$parse', '$timeout', '$compile',
+        function ($parse, $timeout, $compile) {
+            return {
+                restrict: 'AEC',
+                require: '?ngModel',
+                link: function (scope, elem, attr, ngModel) {
+                    linkFileSelect(scope, elem, attr, ngModel, $parse, $timeout, $compile);
+                }
+            };
+        }]);
+
+    function linkFileSelect(scope, elem, attr, ngModel, $parse, $timeout, $compile) {
+        /** @namespace attr.ngfSelect */
+        /** @namespace attr.ngfChange */
+        /** @namespace attr.ngModel */
+        /** @namespace attr.ngModelRejected */
+        /** @namespace attr.ngfMultiple */
+        /** @namespace attr.ngfCapture */
+        /** @namespace attr.ngfAccept */
+        /** @namespace attr.ngfMaxSize */
+        /** @namespace attr.ngfMinSize */
+        /** @namespace attr.ngfResetOnClick */
+        /** @namespace attr.ngfResetModelOnClick */
+        /** @namespace attr.ngfKeep */
+        /** @namespace attr.ngfKeepDistinct */
+
+        if (elem.attr('__ngf_gen__')) {
+            return;
+        }
+
+        scope.$on('$destroy', function () {
+            if (elem.$$ngfRefElem) elem.$$ngfRefElem.remove();
+        });
+
+        var disabled = false;
+        if (attr.ngfSelect.search(/\W+$files\W+/) === -1) {
+            scope.$watch(attr.ngfSelect, function (val) {
+                disabled = val === false;
+            });
+        }
+        function isInputTypeFile() {
+            return elem[0].tagName.toLowerCase() === 'input' && attr.type && attr.type.toLowerCase() === 'file';
+        }
+
+        var isUpdating = false;
+
+        function changeFn(evt) {
+            if (!isUpdating) {
+                isUpdating = true;
+                try {
+                    var fileList = evt.__files_ || (evt.target && evt.target.files);
+                    var files = [], rejFiles = [];
+
+                    for (var i = 0; i < fileList.length; i++) {
+                        var file = fileList.item(i);
+                        if (validate(scope, $parse, attr, file, evt)) {
+                            files.push(file);
+                        } else {
+                            rejFiles.push(file);
+                        }
+                    }
+                    updateModel($parse, $timeout, scope, ngModel, attr, attr.ngfChange || attr.ngfSelect, files, rejFiles, evt);
+                    if (files.length === 0) evt.target.value = files;
+//                if (evt.target && evt.target.getAttribute('__ngf_gen__')) {
+//                    angular.element(evt.target).remove();
+//                }
+                } finally {
+                    isUpdating = false;
+                }
+            }
+        }
+
+        function bindAttrToFileInput(fileElem) {
+            if (attr.ngfMultiple) fileElem.attr('multiple', $parse(attr.ngfMultiple)(scope));
+            if (attr.ngfCapture) fileElem.attr('capture', $parse(attr.ngfCapture)(scope));
+            if (attr.accept) fileElem.attr('accept', attr.accept);
+            for (var i = 0; i < elem[0].attributes.length; i++) {
+                var attribute = elem[0].attributes[i];
+                if ((isInputTypeFile() && attribute.name !== 'type') ||
+                    (attribute.name !== 'type' && attribute.name !== 'class' &&
+                    attribute.name !== 'id' && attribute.name !== 'style')) {
+                    fileElem.attr(attribute.name, attribute.value);
+                }
+            }
+        }
+
+        function createFileInput(evt, resetOnClick) {
+            if (!resetOnClick && (evt || isInputTypeFile())) return elem.$$ngfRefElem || elem;
+
+            var fileElem = angular.element('<input type="file">');
+            bindAttrToFileInput(fileElem);
+
+            if (isInputTypeFile()) {
+                elem.replaceWith(fileElem);
+                elem = fileElem;
+                fileElem.attr('__ngf_gen__', true);
+                $compile(elem)(scope);
+            } else {
+                fileElem.css('visibility', 'hidden').css('position', 'absolute').css('overflow', 'hidden')
+                    .css('width', '0px').css('height', '0px').css('z-index', '-100000').css('border', 'none')
+                    .css('margin', '0px').css('padding', '0px').attr('tabindex', '-1');
+                if (elem.$$ngfRefElem) {
+                    elem.$$ngfRefElem.remove();
+                }
+                elem.$$ngfRefElem = fileElem;
+                document.body.appendChild(fileElem[0]);
+            }
+
+            return fileElem;
+        }
+
+        function resetModel(evt) {
+            updateModel($parse, $timeout, scope, ngModel, attr, attr.ngfChange || attr.ngfSelect, [], [], evt, true);
+        }
+
+        function clickHandler(evt) {
+            if (elem.attr('disabled') || disabled) return false;
+            if (evt != null) {
+                evt.preventDefault();
+                evt.stopPropagation();
+            }
+            var resetOnClick = $parse(attr.ngfResetOnClick)(scope) !== false;
+            var fileElem = createFileInput(evt, resetOnClick);
+
+            function clickAndAssign(evt) {
+                if (evt) {
+                    fileElem[0].click();
+                }
+                if (isInputTypeFile() || !evt) {
+                    elem.bind('click touchend', clickHandler);
+                }
+            }
+
+            if (fileElem) {
+                if (!evt || resetOnClick) fileElem.bind('change', changeFn);
+                if (evt && resetOnClick && $parse(attr.ngfResetModelOnClick)(scope) !== false) resetModel(evt);
+
+                // fix for android native browser < 4.4
+                if (shouldClickLater(navigator.userAgent)) {
+                    setTimeout(function () {
+                        clickAndAssign(evt);
+                    }, 0);
+                } else {
+                    clickAndAssign(evt);
+                }
+            }
+            return false;
+        }
+
+        if (window.FileAPI && window.FileAPI.ngfFixIE) {
+            window.FileAPI.ngfFixIE(elem, createFileInput, bindAttrToFileInput, changeFn);
+        } else {
+            clickHandler();
+            //if (!isInputTypeFile()) {
+            //  elem.bind('click touchend', clickHandler);
+            //}
+        }
+    }
+
+    function shouldClickLater(ua) {
+        // android below 4.4
+        var m = ua.match(/Android[^\d]*(\d+)\.(\d+)/);
+        if (m && m.length > 2) {
+            return parseInt(m[1]) < 4 || (parseInt(m[1]) === 4 && parseInt(m[2]) < 4);
+        }
+
+        // safari on windows
+        return /.*Windows.*Safari.*/.test(ua);
+    }
+
+    ngFileUpload.validate = function (scope, $parse, attr, file, evt) {
+        function globStringToRegex(str) {
+            if (str.length > 2 && str[0] === '/' && str[str.length - 1] === '/') {
+                return str.substring(1, str.length - 1);
+            }
+            var split = str.split(','), result = '';
+            if (split.length > 1) {
+                for (var i = 0; i < split.length; i++) {
+                    result += '(' + globStringToRegex(split[i]) + ')';
+                    if (i < split.length - 1) {
+                        result += '|';
+                    }
+                }
+            } else {
+                if (str.indexOf('.') === 0) {
+                    str = '*' + str;
+                }
+                result = '^' + str.replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + '-]', 'g'), '\\$&') + '$';
+                result = result.replace(/\\\*/g, '.*').replace(/\\\?/g, '.');
+            }
+            return result;
+        }
+
+        var accept = $parse(attr.ngfAccept)(scope, {$file: file, $event: evt});
+        var fileSizeMax = $parse(attr.ngfMaxSize)(scope, {$file: file, $event: evt}) || 9007199254740991;
+        var fileSizeMin = $parse(attr.ngfMinSize)(scope, {$file: file, $event: evt}) || -1;
+        if (accept != null && angular.isString(accept)) {
+            var regexp = new RegExp(globStringToRegex(accept), 'gi');
+            accept = (file.type != null && regexp.test(file.type.toLowerCase())) ||
+                (file.name != null && regexp.test(file.name.toLowerCase()));
+        }
+        return (accept == null || accept) && (file.size == null || (file.size < fileSizeMax && file.size > fileSizeMin));
+    };
+
+    ngFileUpload.updateModel = function ($parse, $timeout, scope, ngModel, attr, fileChange,
+                                         files, rejFiles, evt, noDelay) {
+        function update() {
+            if ($parse(attr.ngfKeep)(scope) === true) {
+                var prevFiles = (ngModel.$modelValue || []).slice(0);
+                if (!files || !files.length) {
+                    files = prevFiles;
+                } else if ($parse(attr.ngfKeepDistinct)(scope) === true) {
+                    var len = prevFiles.length;
+                    for (var i = 0; i < files.length; i++) {
+                        for (var j = 0; j < len; j++) {
+                            if (files[i].name === prevFiles[j].name) break;
+                        }
+                        if (j === len) {
+                            prevFiles.push(files[i]);
+                        }
+                    }
+                    files = prevFiles;
+                } else {
+                    files = prevFiles.concat(files);
+                }
+            }
+            if (ngModel) {
+                $parse(attr.ngModel).assign(scope, files);
+                $timeout(function () {
+                    if (ngModel) {
+                        ngModel.$setViewValue(files != null && files.length === 0 ? null : files);
+                    }
+                });
+            }
+            if (attr.ngModelRejected) {
+                $parse(attr.ngModelRejected).assign(scope, rejFiles);
+            }
+            if (fileChange) {
+                $parse(fileChange)(scope, {
+                    $files: files,
+                    $rejectedFiles: rejFiles,
+                    $event: evt
+                });
+            }
+        }
+
+        if (noDelay) {
+            update();
+        } else {
+            $timeout(function () {
+                update();
+            });
+        }
+    };
+
+    var validate = ngFileUpload.validate;
+    var updateModel = ngFileUpload.updateModel;
+
+})();
+
+(function () {
+    var validate = ngFileUpload.validate;
+    var updateModel = ngFileUpload.updateModel;
+
+    ngFileUpload.directive('ngfDrop', ['$parse', '$timeout', '$location', function ($parse, $timeout, $location) {
+        return {
+            restrict: 'AEC',
+            require: '?ngModel',
+            link: function (scope, elem, attr, ngModel) {
+                linkDrop(scope, elem, attr, ngModel, $parse, $timeout, $location);
+            }
+        };
+    }]);
+
+    ngFileUpload.directive('ngfNoFileDrop', function () {
+        return function (scope, elem) {
+            if (dropAvailable()) elem.css('display', 'none');
+        };
+    });
+
+    ngFileUpload.directive('ngfDropAvailable', ['$parse', '$timeout', function ($parse, $timeout) {
+        return function (scope, elem, attr) {
+            if (dropAvailable()) {
+                var fn = $parse(attr.ngfDropAvailable);
+                $timeout(function () {
+                    fn(scope);
+                    if (fn.assign) {
+                        fn.assign(scope, true);
+                    }
+                });
+            }
+        };
+    }]);
+
+    function linkDrop(scope, elem, attr, ngModel, $parse, $timeout, $location) {
+        var available = dropAvailable();
+        if (attr.dropAvailable) {
+            $timeout(function () {
+                if (scope[attr.dropAvailable]) {
+                    scope[attr.dropAvailable].value = available;
+                } else {
+                    scope[attr.dropAvailable] = available;
+                }
+            });
+        }
+        if (!available) {
+            if ($parse(attr.ngfHideOnDropNotAvailable)(scope) === true) {
+                elem.css('display', 'none');
+            }
+            return;
+        }
+
+        var disabled = false;
+        if (attr.ngfDrop.search(/\W+$files\W+/) === -1) {
+            scope.$watch(attr.ngfDrop, function(val) {
+                disabled = val === false;
+            });
+        }
+
+        var leaveTimeout = null;
+        var stopPropagation = $parse(attr.ngfStopPropagation);
+        var dragOverDelay = 1;
+        var actualDragOverClass;
+
+        elem[0].addEventListener('dragover', function (evt) {
+            if (elem.attr('disabled') || disabled) return;
+            evt.preventDefault();
+            if (stopPropagation(scope)) evt.stopPropagation();
+            // handling dragover events from the Chrome download bar
+            if (navigator.userAgent.indexOf('Chrome') > -1) {
+                var b = evt.dataTransfer.effectAllowed;
+                evt.dataTransfer.dropEffect = ('move' === b || 'linkMove' === b) ? 'move' : 'copy';
+            }
+            $timeout.cancel(leaveTimeout);
+            if (!scope.actualDragOverClass) {
+                actualDragOverClass = calculateDragOverClass(scope, attr, evt);
+            }
+            elem.addClass(actualDragOverClass);
+        }, false);
+        elem[0].addEventListener('dragenter', function (evt) {
+            if (elem.attr('disabled') || disabled) return;
+            evt.preventDefault();
+            if (stopPropagation(scope)) evt.stopPropagation();
+        }, false);
+        elem[0].addEventListener('dragleave', function () {
+            if (elem.attr('disabled') || disabled) return;
+            leaveTimeout = $timeout(function () {
+                elem.removeClass(actualDragOverClass);
+                actualDragOverClass = null;
+            }, dragOverDelay || 1);
+        }, false);
+        elem[0].addEventListener('drop', function (evt) {
+            if (elem.attr('disabled') || disabled) return;
+            evt.preventDefault();
+            if (stopPropagation(scope)) evt.stopPropagation();
+            elem.removeClass(actualDragOverClass);
+            actualDragOverClass = null;
+            extractFiles(evt, function (files, rejFiles) {
+                updateModel($parse, $timeout, scope, ngModel, attr,
+                    attr.ngfChange || attr.ngfDrop, files, rejFiles, evt);
+            }, $parse(attr.ngfAllowDir)(scope) !== false, attr.multiple || $parse(attr.ngfMultiple)(scope));
+        }, false);
+
+        function calculateDragOverClass(scope, attr, evt) {
+            var accepted = true;
+            var items = evt.dataTransfer.items;
+            if (items != null) {
+                for (var i = 0; i < items.length && accepted; i++) {
+                    accepted = accepted &&
+                        (items[i].kind === 'file' || items[i].kind === '') &&
+                        validate(scope, $parse, attr, items[i], evt);
+                }
+            }
+            var clazz = $parse(attr.ngfDragOverClass)(scope, {$event: evt});
+            if (clazz) {
+                if (clazz.delay) dragOverDelay = clazz.delay;
+                if (clazz.accept) clazz = accepted ? clazz.accept : clazz.reject;
+            }
+            return clazz || attr.ngfDragOverClass || 'dragover';
+        }
+
+        function extractFiles(evt, callback, allowDir, multiple) {
+            var files = [], rejFiles = [], items = evt.dataTransfer.items, processing = 0;
+
+            function addFile(file) {
+                if (validate(scope, $parse, attr, file, evt)) {
+                    files.push(file);
+                } else {
+                    rejFiles.push(file);
+                }
+            }
+
+            function traverseFileTree(files, entry, path) {
+                if (entry != null) {
+                    if (entry.isDirectory) {
+                        var filePath = (path || '') + entry.name;
+                        addFile({name: entry.name, type: 'directory', path: filePath});
+                        var dirReader = entry.createReader();
+                        var entries = [];
+                        processing++;
+                        var readEntries = function () {
+                            dirReader.readEntries(function (results) {
+                                try {
+                                    if (!results.length) {
+                                        for (var i = 0; i < entries.length; i++) {
+                                            traverseFileTree(files, entries[i], (path ? path : '') + entry.name + '/');
+                                        }
+                                        processing--;
+                                    } else {
+                                        entries = entries.concat(Array.prototype.slice.call(results || [], 0));
+                                        readEntries();
+                                    }
+                                } catch (e) {
+                                    processing--;
+                                    console.error(e);
+                                }
+                            }, function () {
+                                processing--;
+                            });
+                        };
+                        readEntries();
+                    } else {
+                        processing++;
+                        entry.file(function (file) {
+                            try {
+                                processing--;
+                                file.path = (path ? path : '') + file.name;
+                                addFile(file);
+                            } catch (e) {
+                                processing--;
+                                console.error(e);
+                            }
+                        }, function () {
+                            processing--;
+                        });
+                    }
+                }
+            }
+
+            if (items && items.length > 0 && $location.protocol() !== 'file') {
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].webkitGetAsEntry && items[i].webkitGetAsEntry() && items[i].webkitGetAsEntry().isDirectory) {
+                        var entry = items[i].webkitGetAsEntry();
+                        if (entry.isDirectory && !allowDir) {
+                            continue;
+                        }
+                        if (entry != null) {
+                            traverseFileTree(files, entry);
+                        }
+                    } else {
+                        var f = items[i].getAsFile();
+                        if (f != null) addFile(f);
+                    }
+                    if (!multiple && files.length > 0) break;
+                }
+            } else {
+                var fileList = evt.dataTransfer.files;
+                if (fileList != null) {
+                    for (var j = 0; j < fileList.length; j++) {
+                        addFile(fileList.item(j));
+                        if (!multiple && files.length > 0) {
+                            break;
+                        }
+                    }
+                }
+            }
+            var delays = 0;
+            (function waitForProcess(delay) {
+                $timeout(function () {
+                    if (!processing) {
+                        if (!multiple && files.length > 1) {
+                            i = 0;
+                            while (files[i].type === 'directory') i++;
+                            files = [files[i]];
+                        }
+                        callback(files, rejFiles);
+                    } else {
+                        if (delays++ * 10 < 20 * 1000) {
+                            waitForProcess(10);
+                        }
+                    }
+                }, delay || 0);
+            })();
+        }
+    }
+
+    ngFileUpload.directive('ngfSrc', ['$parse', '$timeout', function ($parse, $timeout) {
+        return {
+            restrict: 'AE',
+            link: function (scope, elem, attr) {
+                if (window.FileReader) {
+                    scope.$watch(attr.ngfSrc, function (file) {
+                        if (file &&
+                            validate(scope, $parse, attr, file, null) &&
+                            (!window.FileAPI || navigator.userAgent.indexOf('MSIE 8') === -1 || file.size < 20000) &&
+                            (!window.FileAPI || navigator.userAgent.indexOf('MSIE 9') === -1 || file.size < 4000000)) {
+                            $timeout(function () {
+                                //prefer URL.createObjectURL for handling refrences to files of all sizes
+                                //since it doesn´t build a large string in memory
+                                var URL = window.URL || window.webkitURL;
+                                if (URL && URL.createObjectURL) {
+                                    elem.attr('src', URL.createObjectURL(file));
+                                } else {
+                                    var fileReader = new FileReader();
+                                    fileReader.readAsDataURL(file);
+                                    fileReader.onload = function (e) {
+                                        $timeout(function () {
+                                            elem.attr('src', e.target.result);
+                                        });
+                                    };
+                                }
+                            });
+                        } else {
+                            elem.attr('src', attr.ngfDefaultSrc || '');
+                        }
+                    });
+                }
+            }
+        };
+    }]);
+
+    function dropAvailable() {
+        var div = document.createElement('div');
+        return ('draggable' in div) && ('ondrop' in div);
+    }
+
+})();

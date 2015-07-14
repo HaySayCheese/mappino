@@ -4,17 +4,20 @@
 module mappino.cabinet {
     export class PublicationsService {
         private _publication: Object;
+
         private _publications: Object;
 
         public static $inject = [
             '$http',
-            '$state'
+            '$state',
+            'Upload'
         ];
 
 
         constructor(
             private $http: angular.IHttpService,
-            private $state: angular.ui.IStateService) {
+            private $state: angular.ui.IStateService,
+            private Upload: any) {
             // ---------------------------------------------------------------------------------------------------------
         }
 
@@ -72,7 +75,6 @@ module mappino.cabinet {
             this.$http.get('/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/')
                 .then((response) => {
                     if (response.data['code'] === 0) {
-                        console.log(response.data['data']);
                         this._publication = response.data['data'];
                         this.createDefaultTerms();
                         _.isFunction(success) && success(this._publication)
@@ -98,6 +100,33 @@ module mappino.cabinet {
                 }, (response) => {
                     _.isFunction(error) && error(response.data);
                 });
+        }
+
+
+
+        public uploadPublicationPhotos(publication: Object, photos: Array, success?, error?) {
+            if (photos && photos.length) {
+                for (var i = 0; i < photos.length; i++) {
+                    var file = photos[i];
+
+                    this.Upload.upload({
+                        url: '/ajax/api/cabinet/publications/' + publication['tid'] + ':' + publication['hid'] + '/photos/',
+                        file: file
+                    }).then((response) => {
+                        if (response.data['code'] === 0) {
+                            if (this._publication['photos']) {
+                                this._publication['photos'].push(response.data['data']);
+                            } else {
+                                this._publication['photos'] = [];
+                                this._publication['photos'].push(response.data['data']);
+                            }
+                            _.isFunction(success) && success(this._publication)
+                        } else {
+                            _.isFunction(error) && error(response.data)
+                        }
+                    });
+                }
+            }
         }
 
 

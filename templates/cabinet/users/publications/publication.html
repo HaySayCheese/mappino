@@ -1,16 +1,18 @@
-<div class="publication-container" ng-controller="PublicationController as pubCtrl" layout="row">
+<div class="publication-page" ng-controller="PublicationController as pubCtrl"
+     layout-wrap layout-gt-lg="row" layout-lg="column">
 
-    <div class="publication-view-container">
-        <div ng-hide="loaders.base">
-            <div ng-include="publicationTemplateUrl"></div>
-        </div>
+    <div class="md-padding" flex="49">
+        <div ng-hide="loaders.base" ng-include="publicationTemplateUrl"></div>
     </div>
 
 
-    <div class="publication-preview-container">
-        <section class="-medium">
-            publication preview here <br/>
-            coming soon
-        </section>
+    <div class="md-padding" flex="49" hide-gt-sm show-gt-lg>
+        <div layout-wrap layout="column" layout-gt-lg="row" layout-align-md="start center" layout-align-lg="start center">
+            <md-card flex>
+                <md-card-content>
+                    safagasg
+                </md-card-content>
+            </md-card>
+        </div>
     </div>
 </div>

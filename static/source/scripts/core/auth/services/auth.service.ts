@@ -160,7 +160,7 @@ module mappino.core.auth {
             this.$http.delete('/ajax/api/cabinet/account/photo/')
                 .then((response) => {
                     this.updateProfileField({ avatar_url: null });
-                    _.isFunction(success) && success(response);
+                    _.isFunction(success) && success(this.user);
                 }, (response) => {
                     _.isFunction(error) && error(response)
                 })

@@ -11,8 +11,6 @@ module mappino.cabinet {
 
         'ui.router',
 
-        'flow',
-
         'mappino.core',
     ]);
 

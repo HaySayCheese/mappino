@@ -7,16 +7,17 @@
                 <h3 class="md-headline light-blue-text">Основная информация</h3>
 
                 <div layout-sm="column" layout-gt-sm="row">
-                    <div class="user-block" layout="column" layout-align="center center" flex="45">
+                    <div class="user-block" layout="column" layout-align="center center" flex-gt-sm="45">
                         <div class="user-photo" layout="column" layout-align="center center">
-                            <img ng-src="[[ user.account.avatar_url ]]" alt="" ng-hide="loaders.avatar" />
+                            <img ng-src="[[ user.account.avatar_url ]]" alt="" ng-hide="loaders.avatar || !user.account.avatar_url" />
+                            <img src="{{ static }}build/images/cabinet/user.png" alt="" ng-hide="loaders.avatar || user.account.avatar_url" />
 
                             <md-progress-circular md-mode="indeterminate" ng-show="loaders.avatar"></md-progress-circular>
                         </div>
                         <input id="photo-field" name="avatar" type="file" />
 
                         <div layout="row">
-                            <md-button class="md-warn md-hue-1 md-icon-button" ng-disabled="loaders.avatar" ng-click="settingsCtrl.removeAvatar()">
+                            <md-button class="md-warn md-hue-1 md-icon-button" ng-show="user.account.avatar_url" ng-disabled="loaders.avatar" ng-click="settingsCtrl.removeAvatar()">
                                 <md-icon>remove_circle_outline</md-icon>
                                 <md-tooltip md-direction="top" md-delay="0">
                                     Удалить фото
@@ -36,7 +37,7 @@
                     </div>
 
 
-                    <div layout="column" layout-align="start right" flex="50" flex-sm="100" offset-gt-sm="5">
+                    <div layout="column" layout-align="start right" flex-gt-sm="50" offset-gt-sm="5">
                         <md-input-container flex>
                             <label>Имя</label>
                             <input type="text" name="first_name" ng-model="user.account.first_name">

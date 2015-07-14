@@ -1,15 +1,11 @@
-<div flow-init flow-file-added="pubCtrl.uploadPhoto($file, $event, $flow)">
+<div layout="column">
 
-    <input type="file" flow-btn/>
-    Input OR Other element as upload button
-    <span class="btn" flow-btn>Upload File</span>
+    <md-button ngf-select ng-model="files" ngf-multiple="true" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
+        File
+    </md-button>
 
-    <ul>
-        <li ng-repeat="file in $flow.files">
-            <div>[[ $index+1 ]]</div>
-            <div>[[ file.name ]]</div>
-            <div>[[ file.msg ]]</div>
-            <div><img flow-img="file" /></div>
-        </li>
-    </ul>
+    <div ngf-drop ngf-select ng-model="files" class="drop-box"
+         ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
+         accept="image/*">Drop pdfs or images here or click to upload
+    </div>
 </div>

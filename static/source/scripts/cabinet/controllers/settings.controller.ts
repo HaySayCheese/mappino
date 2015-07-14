@@ -39,8 +39,11 @@ module mappino.cabinet {
         public removeAvatar() {
             this.$rootScope.loaders.avatar = true;
 
-            this.authService.removeAvatar(() => {
+            this.authService.removeAvatar((response) => {
+                //this.$scope.user.account.avatar_url = null;
                 this.$rootScope.loaders.avatar = false;
+
+                console.log(this.$scope.user)
             });
         }
 
