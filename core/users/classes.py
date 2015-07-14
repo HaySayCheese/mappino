@@ -41,11 +41,12 @@ class Avatar(GoogleCSPhotoUploader):
         filename = url.split('/')[-1]
         path = self.bucket_path + filename
 
+        self.user.avatar_url = ''
+        self.user.save()
+
         if url:
             try:
                 self.remove_photo_from_google_cloud_storage(path)
-                self.user.avatar_url = ''
-                self.user.save()
             except:
                 pass
 
