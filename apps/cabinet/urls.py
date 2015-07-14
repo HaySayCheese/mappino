@@ -10,8 +10,8 @@ urlpatterns = patterns('apps.cabinet',
     url(r'', include('apps.cabinet.templates.urls')),
 
     # API
-    url(r'', include('apps.cabinet.api.publications.ajax_urls')),
-    url(r'', include('apps.cabinet.api.stats.ajax_urls')),
-    url(r'', include('apps.cabinet.api.support.ajax_urls')),
-    url(r'', include('apps.cabinet.api.settings.ajax_urls')),
+    url(r'', include('apps.cabinet.api.publications.urls')),
+    url(r'', include('apps.cabinet.api.stats.urls')),
+    url(r'', include('apps.cabinet.api.support.urls')),
+    url(r'', include('apps.cabinet.api.settings.urls')),
 )

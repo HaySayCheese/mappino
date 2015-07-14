@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.http import HttpResponse
-from django.http.response import HttpResponseForbidden
+from django.shortcuts import redirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from core.utils.jinja2_integration import templates
@@ -9,8 +9,9 @@ from core.utils.jinja2_integration import templates
 @ensure_csrf_cookie
 def cabinet(request):
     user = request.user
+
     if not user.is_authenticated():
-        return HttpResponseForbidden()
+        return redirect('/map/#!/3/1/1/0/') # login page :)
 
 
     if user.is_moderator:
