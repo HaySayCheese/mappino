@@ -529,29 +529,30 @@ class AvatarUpdate(CabinetView):
             }
 
 
-    def post(self, request):
+    @classmethod
+    def post(cls, request):
         # check if request is not empty
         image = request.FILES.get('file')
         if image is None:
-            return self.PostResponses.invalid_parameters()
+            return cls.PostResponses.invalid_parameters()
 
         try:
             request.user.avatar.update(image)
 
         except AvatarExceptions.ImageIsTooLarge:
-            return self.PostResponses.too_large()
+            return cls.PostResponses.too_large()
 
         except AvatarExceptions.ImageIsTooSmall:
-            return self.PostResponses.too_small()
+            return cls.PostResponses.too_small()
 
         except AvatarExceptions.UnsupportedImageType:
-            return self.PostResponses.unsupported_type()
+            return cls.PostResponses.unsupported_type()
 
         except RuntimeException:
-            return self.PostResponses.invalid_parameters()
+            return cls.PostResponses.invalid_parameters()
 
         # seems to be ok
-        return self.PostResponses.ok(request.user.avatar.url())
+        return cls.PostResponses.ok(request.user.avatar.url())
 
 
     @classmethod
