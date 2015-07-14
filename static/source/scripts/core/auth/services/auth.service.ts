@@ -156,6 +156,17 @@ module mappino.core.auth {
 
 
 
+        public removeAvatar(success?, error?) {
+            this.$http.delete('/ajax/api/cabinet/account/photo/')
+                .then((response) => {
+                    _.isFunction(success) && success(response);
+                }, (response) => {
+                    _.isFunction(error) && error(response)
+                })
+        }
+
+
+
         private updateProfileField(params: Object) {
             for (var key in params) {
                 if (this._user.account[key] !== undefined) {

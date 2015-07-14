@@ -10,8 +10,15 @@ md-card {
         margin: 7px 0 !important;
     }
 
+    @media screen and (min-width: 1700px) {
+        &.-fake:not([ng-hide]) {
+            display: none !important;
+        }
+    }
 
-    &.-fake {
+
+    &.-fake,
+    &.-transparent {
         background-color: transparent !important;
         box-shadow: none !important;
     }
@@ -22,7 +29,6 @@ md-card {
             padding: 0 !important;
         }
     }
-
 
 
     .md-headline {

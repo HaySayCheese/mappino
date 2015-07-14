@@ -28,11 +28,20 @@ module mappino.cabinet {
 
 
 
-        // used in scope, don't remove
-        private changeAvatar(event) {
+        public changeAvatar(event) {
             event.preventDefault();
 
             angular.element('#photo-field').click();
+        }
+
+
+
+        public removeAvatar() {
+            this.$rootScope.loaders.avatar = true;
+
+            this.authService.removeAvatar(() => {
+                this.$rootScope.loaders.avatar = false;
+            });
         }
 
 

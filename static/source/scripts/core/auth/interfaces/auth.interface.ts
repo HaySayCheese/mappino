@@ -13,5 +13,7 @@ module mappino.core.auth {
         checkProfileField(field: Object, success?: Function, error?: Function): void
 
         uploadAvatar(avatar: File, success?: Function, error?: Function): void
+
+        removeAvatar(success?: Function, error?: Function): void
     }
 }

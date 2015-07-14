@@ -15,10 +15,9 @@
                 <div layout="row">
                     <md-input-container flex>
                         <label>Текст сообщение</label>
-                        <textarea name="message" columns="1" md-maxlength="400" ng-model="new_message.message" required></textarea>
+                        <textarea name="message" columns="1" ng-model="new_message.message" required></textarea>
                         <div ng-messages="ticketForm.message.$error" ng-show="ticketForm.$submitted || ticketForm.message.$touched">
                             <div ng-message="required">Укажите, пожалуйста, текст обращения.</div>
-                            <div ng-message="md-maxlength">Текст обращения слишком длинный.</div>
                         </div>
                     </md-input-container>
 
@@ -32,7 +31,7 @@
 
 
 
-    <md-card class="-fake -no-padding" ng-show="ticketIsLoaded">
+    <md-card class="-transparent -no-padding" ng-show="ticketIsLoaded">
         <md-card-content>
             <div layout="row" layout-align="[[ message.type_sid == '0' ? 'start' : 'end' ]] start" layout-margin ng-repeat="message in ticket.messages">
                 <div class="ticket-message md-whiteframe-z2" layout="row" layout-align="start start">
