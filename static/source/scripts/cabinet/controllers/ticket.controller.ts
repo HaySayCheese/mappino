@@ -48,7 +48,7 @@ module mappino.cabinet {
 
 
 
-        private sendMessage() {
+        public sendMessage() {
             var self = this;
 
             if (this.$scope.ticketForm.$valid) {

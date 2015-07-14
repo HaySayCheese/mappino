@@ -13,7 +13,7 @@ module mappino.core.auth {
                 landline_phone:     null,
                 mobile_phone:       null,
                 skype:              null,
-                work_email:         null,
+                work_email:         null
             },
             preferences: {
                 allow_call_requests:            true,

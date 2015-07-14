@@ -4,7 +4,7 @@
 module mappino.cabinet {
     export class PublicationsService {
         private briefs: Array<Object>;
-        private publication: Object;
+        private publication: IPublication;
 
         public static $inject = [
             '$http',
@@ -109,11 +109,11 @@ module mappino.cabinet {
                         file: file
                     }).then((response) => {
                         if (response.data['code'] === 0) {
-                            if (this.publication['photos']) {
-                                this.publication['photos'].push(response.data['data']);
+                            if (this.publication.photos) {
+                                this.publication.photos.push(response.data['data']);
                             } else {
-                                this.publication['photos'] = [];
-                                this.publication['photos'].push(response.data['data']);
+                                this.publication.photos = [];
+                                this.publication.photos.push(response.data['data']);
                             }
                             _.isFunction(success) && success(this.publication)
                         } else {

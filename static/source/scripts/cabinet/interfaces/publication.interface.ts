@@ -2,6 +2,14 @@
 
 
 module mappino.cabinet {
+    export interface IPublication {
+        head: Object
+        body: Object
+        rent_terms: Object
+        sale_terms: Object
+        photos: Array<string>
+    }
+
     export interface IPublicationNew {
         tid:        number
         for_sale:   boolean

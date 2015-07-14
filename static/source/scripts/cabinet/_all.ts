@@ -20,6 +20,7 @@
 /// <reference path='interfaces/ticket.interface.ts' />
 /// <reference path='interfaces/tickets.service.interface.ts' />
 /// <reference path='interfaces/publication.interface.ts' />
+/// <reference path='interfaces/brief.interface.ts' />
 
 
 

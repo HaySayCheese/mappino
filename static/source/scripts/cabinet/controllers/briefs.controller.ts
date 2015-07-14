@@ -3,26 +3,25 @@
 
 module mappino.cabinet {
     export class BriefsController {
+        private briefs: Array<IBrief> = [];
+        private newPublication: IPublicationNew = {
+            tid:        0,
+            for_sale:   true,
+            for_rent:   false
+        };
 
         public static $inject = [
             '$scope',
             '$rootScope',
-            '$timeout',
             'PublicationsService'
         ];
 
         constructor(private $scope: any,
                     private $rootScope: any,
-                    private $timeout: angular.ITimeoutService,
                     private publicationsService: PublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
-            $scope.briefs = [];
-
-            $scope.new_publication = {
-                tid:        0,
-                for_sale:   true,
-                for_rent:   false
-            };
+            $scope.briefs = this.briefs;
+            $scope.newPublication = this.newPublication;
 
             this.loadPublications();
         }
@@ -35,8 +34,6 @@ module mappino.cabinet {
             this.publicationsService.loadBriefs((response) => {
                 this.$scope.briefs = response;
                 this.$rootScope.loaders.base = false;
-
-                console.log(response)
             });
         }
 
