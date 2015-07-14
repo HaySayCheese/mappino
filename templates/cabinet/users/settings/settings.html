@@ -16,13 +16,13 @@
                         <input id="photo-field" name="avatar" type="file" />
 
                         <div layout="row">
-                            <md-button class="md-warn md-hue-1 md-icon-button" ng-click="settingsCtrl.removeAvatar()">
+                            <md-button class="md-warn md-hue-1 md-icon-button" ng-disabled="loaders.avatar" ng-click="settingsCtrl.removeAvatar()">
                                 <md-icon>remove_circle_outline</md-icon>
                                 <md-tooltip md-direction="top" md-delay="0">
                                     Удалить фото
                                 </md-tooltip>
                             </md-button>
-                            <md-button class="md-primary md-hue-1" ng-click="settingsCtrl.changeAvatar($event)">
+                            <md-button class="md-primary md-hue-1" ng-disabled="loaders.avatar" ng-click="settingsCtrl.changeAvatar($event)">
                                 Сменить фото
                             </md-button>
                         </div>
