@@ -1,7 +1,7 @@
 #coding=utf-8
 from django.conf.urls import patterns, url
 
-from apps.cabinet.api.publications.ajax import Publications, Publication, BriefsView
+from apps.cabinet.api.publications.ajax import Publications, Publication, Briefs
 
 
 urlpatterns = patterns('',
@@ -20,8 +20,8 @@ urlpatterns = patterns('',
 
 
     # briefs
-    url(r'^ajax/api/cabinet/publications/briefs/all/$', BriefsView.as_view(), {'section': 'all'}),
-    url(r'^ajax/api/cabinet/publications/briefs/published/$', BriefsView.as_view(), {'section': 'published'}),
-    url(r'^ajax/api/cabinet/publications/briefs/unpublished/$', BriefsView.as_view(), {'section': 'unpublished'}),
-    url(r'^ajax/api/cabinet/publications/briefs/trash/$', BriefsView.as_view(), {'section': 'trash'}),
+    url(r'^ajax/api/cabinet/publications/briefs/all/$', Briefs.as_view(), {'section': 'all'}),
+    url(r'^ajax/api/cabinet/publications/briefs/published/$', Briefs.as_view(), {'section': 'published'}),
+    url(r'^ajax/api/cabinet/publications/briefs/unpublished/$', Briefs.as_view(), {'section': 'unpublished'}),
+    url(r'^ajax/api/cabinet/publications/briefs/trash/$', Briefs.as_view(), {'section': 'trash'}),
 )
