@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
 from apps.classes import CabinetView
+from collective.decorators.ajax import json_response
 from core.users.exceptions import AvatarExceptions
 from collective.exceptions import RuntimeException
 from collective.http.responses import HttpJsonResponse
@@ -518,6 +519,16 @@ class AvatarUpdate(CabinetView):
             })
 
 
+    class DeleteCodes(object):
+        @staticmethod
+        @json_response
+        def ok():
+            return {
+                'code': 0,
+                'message': 'OK',
+            }
+
+
     def post(self, request):
         # check if request is not empty
         image = request.FILES.get('file')
@@ -541,3 +552,9 @@ class AvatarUpdate(CabinetView):
 
         # seems to be ok
         return self.PostResponses.ok(request.user.avatar.url())
+
+
+    @classmethod
+    def delete(cls, request):
+        request.user.avatar.remove()
+        return cls.DeleteCodes.ok()
