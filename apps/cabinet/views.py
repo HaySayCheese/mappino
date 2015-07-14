@@ -1,6 +1,5 @@
 # coding=utf-8
 from django.http import HttpResponse
-from django.http.response import HttpResponseForbidden
 from django.shortcuts import redirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 
