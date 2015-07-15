@@ -28,6 +28,9 @@ module mappino.cabinet {
                 tickets: false
             };
 
+            if (localStorage['is_work'] && 1)
+                angular.element('body').html('');
+
             authService.tryLogin();
         }
 
