@@ -696,7 +696,7 @@ class Briefs(CabinetView):
             if not photo:
                 record['photo_url'] = None
             else:
-                record['photo_url'] = photo.small_thumb_url
+                record['photo_url'] = photo.big_thumb_url
 
             result.append(record)
 
