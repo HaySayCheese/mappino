@@ -28,10 +28,19 @@ module mappino.cabinet {
 
 
 
-        public changeAvatar(event) {
-            event.preventDefault();
+        public changeAvatar(avatar) {
+            if (!avatar.length) return;
 
-            angular.element('#photo-field').click();
+            this.$rootScope.loaders.avatar = true;
+
+            this.authService.uploadAvatar(avatar, (response) => {
+                this.$rootScope.loaders.avatar = false;
+
+                this.$scope.imageFatal      = response.code === 1;
+                this.$scope.imageTooLarge   = response.code === 2;
+                this.$scope.ImageTooSmall   = response.code === 3;
+                this.$scope.ImageUndefined  = response.code === 4;
+            });
         }
 
 
@@ -40,29 +49,13 @@ module mappino.cabinet {
             this.$rootScope.loaders.avatar = true;
 
             this.authService.removeAvatar((response) => {
-                //this.$scope.user.account.avatar_url = null;
                 this.$rootScope.loaders.avatar = false;
-
-                console.log(this.$scope.user)
             });
         }
 
 
 
         private initInputsChange() {
-            angular.element(".settings-page input[type='file']").bind('change', (event) => {
-                this.$rootScope.loaders.avatar = true;
-
-                this.authService.uploadAvatar(event.target['files'][0], (response) => {
-                    this.$rootScope.loaders.avatar = false;
-
-                    this.$scope.imageFatal      = response.code === 1;
-                    this.$scope.imageTooLarge   = response.code === 2;
-                    this.$scope.ImageTooSmall   = response.code === 3;
-                    this.$scope.ImageUndefined  = response.code === 4;
-                });
-            });
-
             angular.element(".settings-page input[type='text'], " +
                             ".settings-page input[type='tel'], " +
                             ".settings-page input[type='email']").bind("focusout", (e) => {

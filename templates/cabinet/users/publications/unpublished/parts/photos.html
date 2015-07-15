@@ -2,7 +2,7 @@
 
 
 
-    <div ngf-drop ngf-select ng-model="files" class="drop-box" ngf-drag-over-class="dragover" ngf-multiple="true"
+    <div ngf-drop ng-model="files" class="drop-box" ngf-drag-over-class="dragover" ngf-multiple="true"
          ngf-allow-dir="true" accept="image/*">
 
         <div layout="column" layout-align="center center">
@@ -11,6 +11,17 @@
             <md-button ngf-select ng-model="files" ngf-multiple="true" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
                 Вибрать файл
             </md-button>
+        </div>
+    </div>
+
+
+    <div class="publication-photos-list">
+        <div layout="column">
+            <div layout="row" layout-sm="column" layout-wrap>
+                <div class="publication-photo" flex-gt-sm="50" ng-repeat="photo in publication.photos">
+                    <img ng-src="[[ photo.thumbnail_url ]]" alt=""/>
+                </div>
+            </div>
         </div>
     </div>
 </div>

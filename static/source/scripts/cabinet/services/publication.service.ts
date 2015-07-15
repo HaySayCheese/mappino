@@ -109,12 +109,10 @@ module mappino.cabinet {
                         file: file
                     }).then((response) => {
                         if (response.data['code'] === 0) {
-                            if (this.publication.photos) {
-                                this.publication.photos.push(response.data['data']);
-                            } else {
+                            if (!this.publication.photos) {
                                 this.publication.photos = [];
-                                this.publication.photos.push(response.data['data']);
                             }
+                            this.publication.photos.push(response.data['data']);
                             _.isFunction(success) && success(this.publication)
                         } else {
                             _.isFunction(error) && error(response.data)

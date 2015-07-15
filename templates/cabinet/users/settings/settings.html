@@ -14,7 +14,7 @@
 
                             <md-progress-circular md-mode="indeterminate" ng-show="loaders.avatar"></md-progress-circular>
                         </div>
-                        <input id="photo-field" name="avatar" type="file" />
+                        <!--<input id="photo-field" name="avatar" type="file" />-->
 
                         <div layout="row">
                             <md-button class="md-warn md-hue-1 md-icon-button" ng-show="user.account.avatar_url" ng-disabled="loaders.avatar" ng-click="settingsCtrl.removeAvatar()">
@@ -23,7 +23,7 @@
                                     Удалить фото
                                 </md-tooltip>
                             </md-button>
-                            <md-button class="md-primary md-hue-1" ng-disabled="loaders.avatar" ng-click="settingsCtrl.changeAvatar($event)">
+                            <md-button class="md-primary md-hue-1" ng-disabled="loaders.avatar" ngf-select ngf-change="settingsCtrl.changeAvatar($files)">
                                 Сменить фото
                             </md-button>
                         </div>
