@@ -168,26 +168,7 @@ class Publication(CabinetView):
         else:
             response = self.unpublished_formatter.format(tid, head)
 
-        # response = self.change(response)
-
         return self.GetResponses.ok(response)
-
-    # def change(self, dict_to_validate, reg = "_sid$"):
-    #     """
-    #
-    #     :param dict_to_validate:
-    #     :param reg:
-    #     :return:
-    #     """
-    #     reg = re.compile(reg)
-    #     for key,value in dict_to_validate.iteritems():
-    #         if isinstance(value,dict):
-    #             dict_to_validate[key] = self.change(value)
-    #         else:
-    #             if reg.search(key):
-    #                 dict_to_validate[key] = str(value)
-    #
-    #     return dict_to_validate
 
 
     @classmethod
@@ -197,9 +178,9 @@ class Publication(CabinetView):
             tid = int(tid)
             model = HEAD_MODELS[tid]
 
-            parameters = angular_parameters(request, ['f'])
-            field = parameters['f']
-            value = parameters['v'] # may be ''
+            parameters = angular_parameters(request, ['fieldName'])
+            field = parameters['fieldName']
+            value = parameters['fieldValue'] # may be ''
 
         except (IndexError, ValueError, KeyError):
             return cls.PutResponses.invalid_parameters()
@@ -363,7 +344,7 @@ class Publication(CabinetView):
                     'data': {
                         'hash_id': photo.hash_id,
                         'is_title': photo.check_is_title(),
-                        'thumbnail': photo.big_thumb_url,
+                        'thumbnail_url': photo.big_thumb_url,
                     }
                 }
 

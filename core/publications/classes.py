@@ -822,7 +822,11 @@ class UnpublishedFormatter(object):
             'body': body,
             'sale_terms': sale_terms,
             'rent_terms': rent_terms,
-            'photos': []
+            'photos': [{
+                'thumbnail_url': photo.big_thumb_url,
+                'photo_url': photo.photo_url,
+                'is_title': photo.is_title,
+            } for photo in record.photos()]
         }
         return cls.format_output_data(data)
 
