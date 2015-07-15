@@ -1,17 +1,17 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.cabinet {
+module Mappino.Cabinet {
     export class SupportController {
-        private _ticket: ITicket = {
-            id:             null,
+        private ticket: ITicket = {
+            ticket_id:             null,
             created:        null,
             last_message:   null,
             state_sid:      null,
             subject:        null,
             messages:       null
         };
-        private _tickets: ITicket[];
+        private tickets: ITicket[];
 
         public static $inject = [
             '$scope',
@@ -25,24 +25,24 @@ module mappino.cabinet {
                     private $state: angular.ui.IStateService,
                     private ticketsService: ITicketsService) {
             // ---------------------------------------------------------------------------------------------------------
-            $scope.ticket   = {};
-            $scope.tickets  = this._tickets = [];
+            $scope.ticket   = this.ticket;
+            $scope.tickets  = this.tickets = [];
 
             $rootScope.loaders.tickets     = true;
             $scope.ticketFormIsVisible  = false;
 
 
-            ticketsService.loadTickets((response) => {
-                this._tickets = $scope.tickets = response;
+            ticketsService.loadTickets(response => {
+                $scope.tickets = response;
                 $rootScope.loaders.tickets = false;
-            })
+            });
         }
 
 
 
-        private createTicket() {
-            this.ticketsService.createTicket((response) => {
-                this._ticket.id = this.$scope.ticket.id = response.id;
+        public createTicket() {
+            this.ticketsService.createTicket(ticketId => {
+                this.$scope.ticket.ticket_id = ticketId;
 
                 this.$scope.ticketFormIsVisible = true;
 
@@ -54,17 +54,17 @@ module mappino.cabinet {
 
 
 
-        private sendMessage() {
+        public sendMessage() {
             if (this.$scope.ticketForm.$valid) {
-                this.ticketsService.sendMessage(this._ticket.id, this.$scope.ticket, (response) => {
-                    this.$state.go('ticket_view', { ticket_id: this._ticket.id })
+                this.ticketsService.sendMessage(this.ticket.ticket_id, this.$scope.ticket, response => {
+                    this.$state.go('ticket_view', { ticket_id: this.ticket.ticket_id })
                 });
             }
         }
 
 
-        private goToTicket(ticket_id) {
-            this.$state.go('ticket_view', { ticket_id: ticket_id })
+        public goToTicket(ticketId) {
+            this.$state.go('ticket_view', { ticket_id: ticketId })
         }
     }
 }

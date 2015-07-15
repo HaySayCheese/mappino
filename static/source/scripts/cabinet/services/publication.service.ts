@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.cabinet {
+module Mappino.Cabinet {
     export class PublicationsService {
         private briefs: Object[];
         private publication: IPublication;
@@ -23,14 +23,14 @@ module mappino.cabinet {
 
         public loadBriefs(success?, error?) {
             this.$http.get('/ajax/api/cabinet/publications/briefs/all/')
-                .then((response) => {
+                .then(response => {
                     if (response.data['code'] === 0) {
                         this.briefs = response.data['data'];
                         _.isFunction(success) && success(this.briefs)
                     } else {
                         _.isFunction(error) && error(response.data)
                     }
-                }, (response) => {
+                }, response => {
                     _.isFunction(error) && error(response.data)
                 });
         }
@@ -39,14 +39,14 @@ module mappino.cabinet {
 
         public create(publication: IPublicationNew, success?, error?) {
             this.$http.post('/ajax/api/cabinet/publications/', publication)
-                .then((response) => {
+                .then(response => {
                     if (response.data['code'] === 0) {
                         this.$state.go('publication_edit', { id: publication.tid + ":" + response.data['data']['id'] });
                         _.isFunction(success) && success(response.data)
                     } else {
                         _.isFunction(error) && error(response.data)
                     }
-                }, (response) => {
+                }, response => {
                     _.isFunction(error) && error(response.data)
                 });
         }
@@ -55,14 +55,14 @@ module mappino.cabinet {
 
         public publish(publicationIds: IPublicationIds, success?, error?) {
             this.$http.put('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/publish/', null)
-                .then((response) => {
+                .then(response => {
                     if (response.data['code'] === 0) {
                         this.$state.go('publications');
                         _.isFunction(success) && success(response.data)
                     } else {
                         _.isFunction(error) && error(response.data)
                     }
-                }, (response) => {
+                }, response => {
                     _.isFunction(error) && error(response.data)
                 });
         }
@@ -71,7 +71,7 @@ module mappino.cabinet {
 
         public loadPublication(publicationIds: IPublicationIds, success?, error?) {
             this.$http.get('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/')
-                .then((response) => {
+                .then(response => {
                     if (response.data['code'] === 0) {
                         this.publication = response.data['data'];
                         this.createDefaultTerms();
@@ -79,7 +79,7 @@ module mappino.cabinet {
                     } else {
                         _.isFunction(error) && error(response.data)
                     }
-                }, (response) => {
+                }, response => {
                     _.isFunction(error) && error(response.data)
                 })
         }
@@ -88,11 +88,11 @@ module mappino.cabinet {
 
         public checkField(publicationIds: IPublicationIds, field: IPublicationCheckField, success?, error?) {
             this.$http.put('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/', field)
-                .then((response) => {
+                .then(response => {
                     if (response.data['code'] === 0) {
                         _.isFunction(success) && success(response.data['data'] && response.data['data'].value ? response.data['data'].value : field.fieldValue);
                     }
-                }, (response) => {
+                }, response => {
                     _.isFunction(error) && error(response.data);
                 });
         }
@@ -107,7 +107,7 @@ module mappino.cabinet {
                     this.Upload.upload({
                         url: '/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/photos/',
                         file: file
-                    }).then((response) => {
+                    }).then(response => {
                         if (response.data['code'] === 0) {
                             if (!this.publication.photos) {
                                 this.publication.photos = [];
@@ -125,7 +125,7 @@ module mappino.cabinet {
 
         public removePublicationPhoto(publicationIds: IPublicationIds, photoId: any, success?, error?) {
             this.$http.delete('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/photos/' + photoId + '/')
-                .then((response) => {
+                .then(response => {
                     if (response.data['code'] === 0) {
                         _.each(this.publication.photos, (photo, index, list) => {
                             if (photo.hash_id === photoId) {
@@ -137,7 +137,7 @@ module mappino.cabinet {
                     } else {
                         _.isFunction(error) && error(response.data)
                     }
-                }, (response) => {
+                }, response => {
                     _.isFunction(error) && error(response.data)
                 })
         }

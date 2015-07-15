@@ -1,17 +1,29 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.cabinet {
+module Mappino.Cabinet {
     export interface ITicket {
-        id:             number
-        created:        Date
-        last_message:   Date
-        state_sid:      number
-        subject:        string
-        messages: [{
-            created:    Date
-            text:       string
-            type_sid:   number
-        }]
+        ticket_id:      number
+        created?:       string
+        last_message?:  string
+        state_sid?:     number
+        messages?:      ITicketMessage[]
+        subject?:       string
+        user_avatar?:   string
+    }
+
+
+    export interface ITicketMessage {
+        subject?:   string
+        created?:   string
+        text:       string
+        type_sid?:  number
+    }
+
+
+    export interface ITicketMessages {
+        messages:       ITicketMessage[]
+        subject?:       string
+        user_avatar?:   string
     }
 }

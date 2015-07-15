@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.cabinet {
+module Mappino.Cabinet {
     export class PublicationController {
         private _publication: Object = {};
 
@@ -13,8 +13,8 @@ module mappino.cabinet {
         constructor(private $scope: any,
                     private $state: angular.ui.IStateService) {
             // ---------------------------------------------------------------------------------------------------------
-            this._publication['tid']    = $state.params['id'].split(':')[0];
-            this._publication['hid']    = $state.params['id'].split(':')[1];
+            this._publication['tid'] = $state.params['id'].split(':')[0];
+            this._publication['hid'] = $state.params['id'].split(':')[1];
 
             $scope.publicationTemplateUrl = '/ajax/template/cabinet/publications/unpublished/' + this._publication['tid'] + '/';
         }

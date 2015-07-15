@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.cabinet {
+module Mappino.Cabinet {
     export class SettingsController {
 
         public static $inject = [
@@ -20,7 +20,7 @@ module mappino.cabinet {
 
             this.initInputsChange();
 
-            authService.loadProfile((response) => {
+            authService.loadProfile(response => {
                 $scope.user = response;
                 $rootScope.loaders.base = false;
             });
@@ -33,7 +33,7 @@ module mappino.cabinet {
 
             this.$rootScope.loaders.avatar = true;
 
-            this.authService.uploadAvatar(avatar, (response) => {
+            this.authService.uploadAvatar(avatar, response => {
                 this.$rootScope.loaders.avatar = false;
 
                 this.$scope.imageFatal      = response.code === 1;
@@ -48,7 +48,7 @@ module mappino.cabinet {
         public removeAvatar() {
             this.$rootScope.loaders.avatar = true;
 
-            this.authService.removeAvatar((response) => {
+            this.authService.removeAvatar(response => {
                 this.$rootScope.loaders.avatar = false;
             });
         }
@@ -71,12 +71,12 @@ module mappino.cabinet {
                     return;
                 }
 
-                this.authService.checkProfileField({ f: name, v: value }, (newValue) => {
-                    e.currentTarget['value'] = newValue;
+                this.authService.checkProfileField({ f: name, v: value }, response => {
+                    e.currentTarget['value'] = response;
 
                     this.$scope.userProfileForm[name].$setValidity("invalid",    true);
                     this.$scope.userProfileForm[name].$setValidity("duplicated", true);
-                }, (response) => {
+                }, response => {
                     this.$scope.userProfileForm[name].$setValidity("invalid",       response.code !== 2);
                     this.$scope.userProfileForm[name].$setValidity("duplicated",    response.code !== 3);
                 });
