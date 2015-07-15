@@ -825,7 +825,8 @@ class UnpublishedFormatter(object):
             'photos': [{
                 'thumbnail_url': photo.big_thumb_url,
                 'photo_url': photo.photo_url,
-                'is_title': photo.is_title,
+                'is_title': photo.check_is_title(),
+                'hash_id': photo.hash_id,
             } for photo in record.photos()]
         }
         return cls.format_output_data(data)
