@@ -3,7 +3,7 @@
 
 module mappino.cabinet {
     export class PublicationsService {
-        private briefs: Array<Object>;
+        private briefs: Object[];
         private publication: IPublication;
 
         public static $inject = [
@@ -120,6 +120,26 @@ module mappino.cabinet {
                     });
                 }
             }
+        }
+
+
+        public removePublicationPhoto(publicationIds: IPublicationIds, photoId: any, success?, error?) {
+            this.$http.delete('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/photos/' + photoId + '/')
+                .then((response) => {
+                    if (response.data['code'] === 0) {
+                        _.each(this.publication.photos, (photo, index, list) => {
+                            if (photo.hash_id === photoId) {
+                                this.publication.photos.splice(index, 1);
+                            }
+                        });
+
+                        _.isFunction(success) && success(this.publication)
+                    } else {
+                        _.isFunction(error) && error(response.data)
+                    }
+                }, (response) => {
+                    _.isFunction(error) && error(response.data)
+                })
         }
 
 

@@ -9,6 +9,10 @@ module mappino.cabinet {
         private placeAutocompleteField: any;
         private placeAutocomplete: google.maps.places.Autocomplete;
 
+        private publication: IPublication;
+
+        private tempPublicationPhotos: Array<Object> = [];
+
         private publicationIds: IPublicationIds = {
             tid: null,
             hid: null
@@ -33,7 +37,9 @@ module mappino.cabinet {
 
             $scope.activeTabStateIndex = 0;
 
-            $scope.publication = {};
+            $scope.publication = this.publication;
+
+            $scope.tempPublicationPhotos = this.tempPublicationPhotos;
 
 
             this.loadPublicationData();
@@ -62,9 +68,22 @@ module mappino.cabinet {
 
 
         public uploadPublicationPhotos($files) {
+            if (!$files.length) return;
+
+            this.$scope.tempPublicationPhotos.push({});
+
+            this.scrollToBottom();
+
             this.publicationsService.uploadPublicationPhotos(this.publicationIds, $files, (response) => {
-                console.log(response)
-            })
+                this.$scope.tempPublicationPhotos.shift();
+                this.scrollToBottom();
+            });
+        }
+
+
+
+        public removePublicationPhoto(photoId) {
+            this.publicationsService.removePublicationPhoto(this.publicationIds, photoId)
         }
 
 
@@ -237,16 +256,10 @@ module mappino.cabinet {
 
 
 
-        private changeState(state: string) {
-            if (state == 'next') this.$scope.activeTabStateIndex++;
-
-            else if (state == 'prev') this.$scope.activeTabStateIndex--;
-
-            else this.$scope.activeTabStateIndex = state;
-
-            angular.element('main').animate({
-                scrollTop: 0
-            }, 'fast');
+        private scrollToBottom() {
+            angular.element("main").animate({
+                scrollTop: angular.element("main [ui-view]").height()
+            }, "slow");
         }
     }
 }
