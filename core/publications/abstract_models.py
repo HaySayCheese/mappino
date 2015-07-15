@@ -774,7 +774,7 @@ class PhotosModel(AbstractModel):
         """
         original_image_url, \
         photo_url, \
-        big_thumb_url = cls.photosЛ_handler.process_and_upload_to_gcs(cls.tid, img)
+        big_thumb_url = cls.photos_handler.process_and_upload_to_gcs(cls.tid, img)
 
 
         # If user will send several photos at a time - there are no guarantee about photos order.
