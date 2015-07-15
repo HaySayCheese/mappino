@@ -849,9 +849,9 @@ class PhotosModel(AbstractModel):
         Removes all the photos and thumbs from google cloud storage
         """
         self.photos_handler.remove_photo_from_google_cloud_storage(self.original_image_url.split('.com/mappino/')[1])
-        self.photos_handler.remove_photo_from_google_cloud_storage(self.photo_url('.com/mappino/')[1])
-        self.photos_handler.remove_photo_from_google_cloud_storage(self.big_thumb_url('.com/mappino/')[1])
-        self.photos_handler.remove_photo_from_google_cloud_storage(self.small_thumb_url('.com/mappino/')[1])
+        self.photos_handler.remove_photo_from_google_cloud_storage(self.photo_url.split('.com/mappino/')[1])
+        self.photos_handler.remove_photo_from_google_cloud_storage(self.big_thumb_url.split('.com/mappino/')[1])
+        self.photos_handler.remove_photo_from_google_cloud_storage(self.small_thumb_url.split('.com/mappino/')[1])
 
     def check_is_title(self):
         """
