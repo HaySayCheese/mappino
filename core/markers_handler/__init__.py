@@ -39,9 +39,14 @@ def remove_publication_marker(sender, **kwargs):
 
 @receiver(PublicationsSignals.daily_rent_updated)
 def update_calendar_rent(sender, **kwargs):
-    #todo comments
+    """
+    :param sender: objects that executed signal
+    :param kwargs: [tid]- type id, [hid]- publication id
+    :return:
+    This method updates whole rent_terms_index object, when publication calendar rent terms are updated
+    Remove  index object and add it again with new values
+    """
     kwargs['for_rent'] = True
     remove_publication_marker(sender, **kwargs)
     add_publication_marker(sender, **kwargs)
-
 

@@ -2,18 +2,12 @@
 
 import uuid
 import datetime
+import copy
 from datetime import  timedelta as td
 
-from django.contrib.postgres.fields import ArrayField
 from djantimat.helpers import RegexpProc
 
-
-
-
-
-
-# from django.contrib.postgres.fields.array import ArrayField
-
+from django.contrib.postgres.fields import ArrayField
 from django.db.utils import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.db import models, transaction
@@ -29,9 +23,7 @@ from core.publications import models_signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
     EmptyRentPrice, AbusiveWords
-
 from publications_to_check.models import PublicationsToCheck
-
 from core.signals import PublicationsSignals
 
 
@@ -613,35 +605,83 @@ class LivingRentTermsModel(AbstractModel):
     rent_dates = ArrayField(models.DateField(), null=True)
 
 
-    #SecondStep
-    def add_dates_rent(self, tid, hash_id, date_from, date_to):
+    def get_rent_dates(self):
+        record = self
+        calendar_rent_dates = {}
+        calendar_rent_dates['rent_dates'] = [datetime.date.strftime(i,'%Y-%m-%d') for i in record.rent_dates]
+        calendar_rent_dates['entrance_dates'] = [datetime.date.strftime(i,'%Y-%m-%d') for i in record.entrance_dates]
+        calendar_rent_dates['departure_dates'] = [datetime.date.strftime(i,'%Y-%m-%d') for i in record.departure_dates]
+        return calendar_rent_dates
 
+
+    def add_dates_rent(self, tid, date_from, date_to):
+        """
+
+        :param tid:
+        :param date_from: date, when client enter real estate for rent
+        :param date_to: date, when client left real estate for rent
+        Check input date. If date already exist in base - raise error
+        If date is valid -> add to database and generate signal, to save date at index base
+        """
+
+        # Obvious - we have to do it!
+        # Just smile :)
         record = self
 
-        # checked dates range on unique
-        all_dates = []
-        all_dates.extend(record.entrance_dates+record.departure_dates+record.rent_dates)
-        if len(set(all_dates+[date_from,date_to]))<len(all_dates+[date_from,date_to]):
-            raise ValueError('date alredy exist')
-
-        record.entrance_dates.append(date_from)
-        record.departure_dates.append(date_to)
+        # check for uniqueness
+        if (date_to in record.rent_dates) or  (date_to in record.departure_dates):
+            raise ValueError('departure date is unavailable')
+        if (date_from in record.rent_dates) or (date_from in record.entrance_dates):
+            raise ValueError('entrance date is unavailable')
 
         rent_dates = []
+
         delta = date_to-date_from
         if delta.days>1:
-
             for i in range(1,delta.days):
                         rent_dates.append(date_from+ td(days=i))
 
         with transaction.atomic():
-            record.rent_dates.extend(rent_dates)
+                record.entrance_dates.append(date_from)
+                record.departure_dates.append(date_to)
+                record.rent_dates.extend(rent_dates)
+                record.save()
+                PublicationsSignals.daily_rent_updated.send(
+                    None,
+                    tid = tid,
+                    hid = record.id,
+                )
+
+
+    def remove_rent_dates(self, tid, date_from, date_to):
+        """
+
+        :param tid:
+        :param date_from: date, when client enter real estate for rent
+        :param date_to: date, when client left real estate for rent
+
+        Remove calendar rent dates from  database and generate signal,
+        to synchronize date with index base
+        """
+        record = self
+
+        rent_dates = copy.copy(record.rent_dates)
+
+        delta = date_to - date_from
+        for i in range(1,delta.days):
+            rent_dates.remove(date_from + td(days=i))
+
+        with transaction.atomic():
+
+            record.entrance_dates.remove(date_from)
+            record.departure_dates.remove(date_to)
+            record.rent_dates = copy.copy(rent_dates)
             record.save()
             PublicationsSignals.daily_rent_updated.send(
-                None,
-                tid = tid,
-                hid = record.id,
-            )
+                    None,
+                    tid = tid,
+                    hid = record.id,
+                )
 
 
     #-- validation
