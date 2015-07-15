@@ -1,7 +1,7 @@
 #coding=utf-8
 import uuid
 import datetime
-# from django.contrib.postgres.fields.array import ArrayField
+import redis_lock
 
 from django.db.utils import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
@@ -10,6 +10,7 @@ from django.utils.timezone import now
 
 from collective.utils import generate_sha256_unique_id
 from collective.exceptions import InvalidArgument, RuntimeException
+from core import redis_connections
 from core.users.models import Users
 from core.publications.handlers import PublicationsPhotosHandler
 from core.currencies import currencies_manager as currencies
@@ -738,10 +739,8 @@ class CommercialRentTermsModel(AbstractModel):
 
 
 class PhotosModel(AbstractModel):
-    # todo: inherit this model from the special model to prevent manual tid handling
-    tid = None # note: override to real tid
-
     # class variables
+    tid = None # note: override to real tid # todo: inherit this model from the special model to prevent manual tid handling
     photos_handler = PublicationsPhotosHandler
 
     # fields
@@ -750,17 +749,19 @@ class PhotosModel(AbstractModel):
     original_image_url = models.TextField()
     photo_url = models.TextField()
     big_thumb_url = models.TextField()
-    small_thumb_url = models.TextField()
     is_title = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
+
 
     class Meta:
         abstract = True
         unique_together = (('hid', 'is_title'), )
 
+
     @classmethod
     def by_publication(cls, publication_id):
         return cls.objects.filter(hid=publication_id).order_by('-created', '-is_title')
+
 
     @classmethod
     def add(cls, img, publication_head):
@@ -774,19 +775,48 @@ class PhotosModel(AbstractModel):
         """
         original_image_url, \
         photo_url, \
-        big_thumb_url, \
-        small_thumb_url = cls.photos_handler.process_and_upload_to_gcs(cls.tid, img)
+        big_thumb_url = cls.photosЛ_handler.process_and_upload_to_gcs(cls.tid, img)
+
+
+        # If user will send several photos at a time - there are no guarantee about photos order.
+        # Oly one photo should be marked as a title, so some kind of transaction is needed here.
+        # Django transactions does not allow to lock tables for selecting, so django-transactions are not
+        # helpful here, and redis lock is used instead.
+        redis_connection = redis_connections['steady']
+        lock_unique_identifier = "{0}:{1}".format(cls.tid, publication_head.id)
+
+        lock = redis_lock.Lock(redis_connection, lock_unique_identifier)
+        photo_is_title = False
+
+        # Only first thread will lock the token and mark it's photo as title,
+        # all other threads will mark their photos as non-title, because failed lock attempts.
+        if lock.acquire(blocking=False) and \
+                        cls.objects.filter(publication=publication_head, is_title=True).count() == 0:
+            photo_is_title = True
 
         try:
-            return cls.objects.create(
+            record = cls.objects.create(
                 publication = publication_head,
                 original_image_url = original_image_url,
                 photo_url = photo_url,
                 big_thumb_url = big_thumb_url,
-                small_thumb_url = small_thumb_url,
+                is_title = photo_is_title,
             )
 
-        except DatabaseError:
+            try:
+                lock.release()
+            except redis_lock.NotAcquired:
+                pass
+
+            return record
+
+        except DatabaseError as e:
+            # release lock even in case of error.
+            try:
+                lock.release()
+            except redis_lock.NotAcquired:
+                pass
+
             # Images are already uploaded to the cloud storage,
             # so we need to remove them now.
             #
@@ -794,16 +824,16 @@ class PhotosModel(AbstractModel):
             # because all the filenames are unique (based on uuid4)
             # and exists only now in this context.
 
-            cls.photos_handler.remove_photo_from_google_cloud_storage(original_image_url)
-            cls.photos_handler.remove_photo_from_google_cloud_storage(photo_url)
-            cls.photos_handler.remove_photo_from_google_cloud_storage(big_thumb_url)
-            cls.photos_handler.remove_photo_from_google_cloud_storage(small_thumb_url)
+            cls.photos_handler.remove_photo_from_google_cloud_storage(original_image_url.split('.com/mappino/')[1])
+            cls.photos_handler.remove_photo_from_google_cloud_storage(photo_url.split('.com/mappino/')[1])
+            cls.photos_handler.remove_photo_from_google_cloud_storage(big_thumb_url.split('.com/mappino/')[1])
 
             # ...
             # other images deletion should go here
             # ...
 
-            raise cls.UnknownError('Database error.')
+            raise cls.UnknownError('Database error: {}'.format(e.message))
+
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         # This method is overridden to automatically save hash_id for the photo.
@@ -849,7 +879,11 @@ class PhotosModel(AbstractModel):
         # check if system is not broken
         photos_of_its_publication = self.publication.photos()
         if photos_of_its_publication.filter(is_title=True).count() > 1:
-            raise RuntimeError('There are two or more photos of one publications are marked as title')
+            photos_of_its_publication.filter(is_title=True).update(is_title=False)
+
+            photo = photos_of_its_publication[:1][0]
+            photo.is_title = True
+            photo.save()
 
         # check if current photo is marked as title
         if self.is_title:

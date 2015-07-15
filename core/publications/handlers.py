@@ -27,8 +27,6 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
     big_thumbnail_suffix = '_big_thumb'
     big_thumbnail_size = (280, 350)
 
-    small_thumbnail_suffix = '_small_thumb'
-    small_thumbnail_size = (50, 50)
 
     @classmethod
     def process_and_upload_to_gcs(cls, tid, img):
@@ -161,64 +159,25 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
             os.remove(photo_path)
             raise e
 
-        # small thumbnail generation
-        image = Image.open(original_image_path) # previous thumb may be smaller than this one
-        image_width, image_height = image.size # image size may change at this pos by thumb() method
-        small_thumb_width, small_thumb_height  = cls.small_thumbnail_size
-
-        if image_width > small_thumb_width or image_height > small_thumb_height:
-            image.thumbnail(cls.small_thumbnail_size, Image.ANTIALIAS)
-
-        else:
-            # Всеодно виконати операцію над зображенням, інакше PIL не збереже файл.
-            # Розміри зображення при цьому слід залишити без змін, щоб уникнути небажаного розширення.
-            image.thumbnail(image.size, Image.ANTIALIAS)
-
-        small_thumb_name = '{uid}{small_thumb_suffix}.jpg'.format(uid=uid, small_thumb_suffix=cls.small_thumbnail_suffix)
-        small_thumb_path = os.path.join(temporary_dir, small_thumb_name)
-
-        # The image is scaled/cropped vertically or horizontally depending on the ratio
-        # This is needed to guarantee that thumb will be cropped exactly by it's size
-        image_width, image_height = image.size
-        image_ratio = image_width / float(image_height)
-        ratio = small_thumb_width / float(small_thumb_height)
-        if ratio > image_ratio:
-            image = image.resize((small_thumb_width, small_thumb_width * image_height / image_width), Image.ANTIALIAS)
-            box = (0, (image_height - small_thumb_height) / 2, image_width, (image_height + small_thumb_height) / 2)
-            image = image.crop(box)
-
-        elif ratio < image_ratio:
-            image = image.resize((small_thumb_height * image_width / image_height, small_thumb_height), Image.ANTIALIAS)
-            box = ((image_width - small_thumb_width) / 2, 0, (image_width + small_thumb_width) / 2, image_height)
-            image = image.crop(box)
-
-        else:
-            image = image.resize(cls.small_thumbnail_size, Image.ANTIALIAS)
-
-        try:
-            image.save(small_thumb_path, 'JPEG', quality=100)
-        except Exception as e:
-            os.remove(original_image_path)
-            os.remove(photo_path)
-            os.remove(big_thumb_path)
-            raise e
 
 
-        raise Exception('"upload_photo_to_google_cloud_storage" signature was changed')
+        bucket_path = os.path.join(cls.bucket_root_path, str(tid))
 
-        original_image_bucket_path = cls.upload_photo_to_google_cloud_storage(tid, original_image_path, )
-        photo_bucket_path = cls.upload_photo_to_google_cloud_storage(tid, photo_path, )
-        big_thumb_bucket_path = cls.upload_photo_to_google_cloud_storage(tid, big_thumb_path, )
-        small_thumb_bucket_path = cls.upload_photo_to_google_cloud_storage(tid, small_thumb_path, )
+        original_image_bucket_path = cls.upload_photo_to_google_cloud_storage(
+            original_image_path, os.path.join(bucket_path, original_photo_name))
+
+        photo_bucket_path = cls.upload_photo_to_google_cloud_storage(
+            photo_path, os.path.join(bucket_path, photo_name))
+
+        big_thumb_bucket_path = cls.upload_photo_to_google_cloud_storage(
+            big_thumb_path, os.path.join(bucket_path, big_thumb_name))
 
         # seems to be ok,
         # lets remove temporary images after uploading to the google cloud storage
         os.remove(original_image_path)
         os.remove(photo_path)
         os.remove(big_thumb_path)
-        os.remove(small_thumb_path)
 
         return original_image_bucket_path, \
                photo_bucket_path, \
-               big_thumb_bucket_path, \
-               small_thumb_bucket_path
+               big_thumb_bucket_path
