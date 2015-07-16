@@ -49,6 +49,14 @@
 
 
 // ####################
+// Directives import
+// ####################
+/// <reference path='directives/publication-controls.directive.ts' />
+
+
+
+
+// ####################
 // Controllers import
 // ####################
 /// <reference path='controllers/cabinet.controller.ts' />

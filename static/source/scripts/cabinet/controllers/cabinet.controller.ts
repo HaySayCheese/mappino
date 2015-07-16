@@ -12,12 +12,11 @@ module Mappino.Cabinet {
             '$mdMedia'
         ];
 
-        constructor(
-            private $rootScope: any,
-            private authService: mappino.core.auth.IAuthService,
-            private $mdSidenav: any,
-            private $mdUtil: any,
-            private $mdMedia: any) {
+        constructor(private $rootScope: any,
+                    private authService: mappino.core.auth.IAuthService,
+                    private $mdSidenav: any,
+                    private $mdUtil: any,
+                    private $mdMedia: any) {
             // ---------------------------------------------------------------------------------------------------------
 
             $rootScope.loaders = {
@@ -27,11 +26,6 @@ module Mappino.Cabinet {
             };
 
             authService.tryLogin();
-
-            window.onresize = (event) => {
-                console.log($('md-card').offset().left);
-
-            };
         }
 
 
