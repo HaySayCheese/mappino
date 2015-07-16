@@ -33,6 +33,9 @@ module Mappino.Cabinet {
     app.service('TicketsService', TicketsService);
 
 
+    app.directive('publicationControls', publicationControls);
+
+
     /** Module controllers */
     app.controller('CabinetController', CabinetController);
     app.controller('BriefsController', BriefsController);
