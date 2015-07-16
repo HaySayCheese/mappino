@@ -469,20 +469,26 @@ class Publication(CabinetView):
 
 
     class Photos(CabinetView):
-        delete_codes = {
-            'OK': {
-                'code': 0,
-            },
-            'invalid_tid': {
-                'code': 1,
-            },
-            'invalid_hid': {
-                'code': 2,
-            },
-            'invalid_pid': {
-                'code': 3,
-            },
-        }
+        class DeleteResponses(object):
+            @staticmethod
+            @json_response
+            def ok(new_title_photo_hash):
+                return {
+                    'code': 0,
+                    'message': 'OK',
+                    'data': {
+                        'hash_id': new_title_photo_hash,
+                    }
+                }
+
+
+            @staticmethod
+            @json_response_bad_request
+            def invalid_params():
+                return {
+                    'code': 1,
+                    'message': 'request contains invalid parameters (tid, hid, or pid)',
+                }
 
 
         def delete(self, request, *args):
@@ -493,44 +499,31 @@ class Publication(CabinetView):
                 photo_hash_id = args[1]
 
             except (IndexError, ValueError):
-                return HttpResponseBadRequest('Invalid parameters.')
+                return self.DeleteResponses.invalid_params()
 
 
             if tid not in OBJECTS_TYPES.values():
-                return HttpResponseBadRequest(
-                    json.dumps(self.delete_codes['invalid_tid']), content_type='application/json')
+                return self.DeleteResponses.invalid_params()
 
             model = HEAD_MODELS[tid]
             try:
                 publication = model.objects.filter(hash_id=hash_id).only('id', 'owner')[:1][0]
             except IndexError:
-                return HttpResponseBadRequest(
-                    json.dumps(self.delete_codes['invalid_hid']), content_type='application/json')
-
+                return self.DeleteResponses.invalid_params()
 
             # check owner
             if publication.owner.id != request.user.id:
                 raise PermissionDenied()
-
 
             # process photo deletion
             try:
                 photo = publication.photos_model.objects.get(hash_id=photo_hash_id)
                 new_title_photo = photo.remove()
             except ObjectDoesNotExist:
-                return HttpResponseBadRequest(
-                    json.dumps(self.delete_codes['invalid_pid']), content_type='application/json')
+                return self.DeleteResponses.invalid_params()
 
             # seems to be OK
-            response = copy.deepcopy(self.delete_codes['OK'])
-            if new_title_photo is None:
-                response['photo_hash_id'] = None
-                response['brief_url'] = None
-            else:
-                response['photo_hash_id'] = new_title_photo.hash_id
-                response['brief_url'] = new_title_photo.url() + new_title_photo.big_thumbnail_name()
-
-            return HttpResponse(json.dumps(response), content_type='application/json')
+            return self.DeleteResponses.ok(new_title_photo.hash_id if new_title_photo else None)
 
 
     class TitlePhoto(CabinetView):
