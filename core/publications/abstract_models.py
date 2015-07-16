@@ -887,18 +887,17 @@ class PhotosModel(AbstractModel):
         # check if system is not broken
         photos_of_its_publication = self.publication.photos()
         if photos_of_its_publication.filter(is_title=True).count() > 1:
-            photos_of_its_publication.filter(is_title=True).update(is_title=False)
+            first_created_photo = photos_of_its_publication[:1][0]
+            first_created_photo.mark_as_title()
 
-            photo = photos_of_its_publication[:1][0]
-            photo.is_title = True
-            photo.save()
+            # current photo (self) may not be the first photo of the publication.
+            return self.check_is_title()
 
         # check if current photo is marked as title
         if self.is_title:
             return True
 
-        # check if current photo was created first
-        return self.created <= photos_of_its_publication[0].created
+        return False
 
 
     def mark_as_title(self):
