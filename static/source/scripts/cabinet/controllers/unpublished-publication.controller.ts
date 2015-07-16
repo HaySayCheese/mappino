@@ -96,10 +96,10 @@ module Mappino.Cabinet {
 
 
         public setTitlePhoto(photoId) {
-            this.$rootScope.loaders.publicationPhoto = true;
+            this.$scope.publicationPhotoLoader[photoId] = true;
 
             this.publicationsService.setTitlePhoto(this.publicationIds, photoId, () => {
-                this.$rootScope.loaders.publicationPhoto = false;
+                this.$scope.publicationPhotoLoader[photoId] = false;
             });
         }
 
