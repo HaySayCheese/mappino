@@ -1,13 +1,13 @@
-<div class="drop-container" ngf-drop ng-model="files" ngf-drag-over-class="dragover" ngf-multiple="true"
-     ngf-allow-dir="true" accept="image/*" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
+<div class="drop-container" ngf-drop ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
+     accept="image/*" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
 
     <div class="md-padding">
         <div class="drop-box" layout="column" layout-align="center center">
 
             <p>Перенесите сюда фото или видео файл</p>
 
-            <md-button class="md-primary" ngf-select ng-model="files" ngf-multiple="true" accept="image/*" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
-                Вибрать файл
+            <md-button class="md-primary" ngf-select ngf-multiple="true" accept="image/*" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
+                Выбрать файл
             </md-button>
         </div>
     </div>
@@ -16,10 +16,10 @@
 
     <div class="publication-photos-list">
         <div layout="column">
-            <div layout="row" layout-wrap layout-padding>
-                <div flex-gt-sm="50" ng-repeat="photo in publication.photos">
+            <div layout-sm="column" layout-gt-sm="row" layout-wrap layout-padding>
+                <div flex-gt-sm="50" ng-repeat="photo in publication.photos" >
                     <div class="publication-photo" layout="column" layout-align="center center" ng-class="{ '-main': photo.is_title }">
-                        <img ng-src="[[ photo.thumbnail_url ]]" alt=""/>
+                        <img ng-src="[[ photo.thumbnail_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png" />
 
                         <md-progress-circular md-mode="indeterminate" ng-show="publicationPhotoLoader[photo.hash_id]"></md-progress-circular>
 

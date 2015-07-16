@@ -30,7 +30,7 @@ module Mappino.Cabinet {
                     private $rootScope: any,
                     private $state: angular.ui.IStateService,
                     private $timeout: angular.ITimeoutService,
-                    private publicationsService: PublicationsService) {
+                    private publicationsService: IPublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
             this.publicationIds.tid    = $state.params['id'].split(':')[0];
             this.publicationIds.hid    = $state.params['id'].split(':')[1];
@@ -69,18 +69,19 @@ module Mappino.Cabinet {
 
 
         public uploadPublicationPhotos($files) {
-            if (!$files.length) return;
+            if ($files && $files.length) {
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
 
-            for(var i = 0; i < $files.length; i++) {
-                this.$scope.tempPublicationPhotos.push({});
+                    this.$scope.tempPublicationPhotos.push({});
+                    this.scrollToBottom();
+
+                    this.publicationsService.uploadPhoto(this.publicationIds, file, response => {
+                        this.$scope.tempPublicationPhotos.shift();
+                        this.scrollToBottom();
+                    });
+                }
             }
-
-            this.scrollToBottom();
-
-            this.publicationsService.uploadPublicationPhotos(this.publicationIds, $files, response => {
-                this.$scope.tempPublicationPhotos.shift();
-                this.scrollToBottom();
-            });
         }
 
 
@@ -88,7 +89,7 @@ module Mappino.Cabinet {
         public removePublicationPhoto(photoId) {
             this.$scope.publicationPhotoLoader[photoId] = true;
 
-            this.publicationsService.removePublicationPhoto(this.publicationIds, photoId, () => {
+            this.publicationsService.removePhoto(this.publicationIds, photoId, () => {
                 this.$scope.publicationPhotoLoader[photoId] = false;
             });
         }
@@ -109,7 +110,7 @@ module Mappino.Cabinet {
         private loadPublicationData() {
             this.$rootScope.loaders.base = true;
 
-            this.publicationsService.loadPublication(this.publicationIds, response => {
+            this.publicationsService.load(this.publicationIds, response => {
                 this.$scope.publication = response;
                 this.$rootScope.loaders.base = false;
 
@@ -226,9 +227,12 @@ module Mappino.Cabinet {
                 var name  = e.currentTarget['name'],
                     value = e.currentTarget['checked'];
 
-                this.publicationsService.checkField(this.publicationIds, { f: name, v: value });
+                this.publicationsService.checkField(this.publicationIds, {
+                    fieldName: name, fieldValue: value
+                });
             });
         }
+
 
 
         private checkField(elementName) {

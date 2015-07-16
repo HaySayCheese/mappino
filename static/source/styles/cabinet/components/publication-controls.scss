@@ -3,5 +3,9 @@
     background: #fff;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
-    border-top: 1px solid color('blue', 'base');
+
+    &.-fixed {
+        border-radius: 0;
+        border-top: 1px solid color('blue', 'base');
+    }
 }

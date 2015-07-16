@@ -1,5 +1,5 @@
-<form name="publicationForm" ng-controller="UnpublishedPublicationController as u_pubCtrl"
-      layout-wrap layout-gt-lg="row" layout-md="column" layout-lg="column" layout-align-md="start center" layout-align-lg="start center" novalidate>
+<form name="publicationForm" ng-controller="UnpublishedPublicationController as u_pubCtrl" layout-wrap layout-gt-lg="row"
+      layout-md="column" layout-lg="column" layout-gt-lg="row" layout-align-md="start center" layout-align-lg="start center" layout-align-gt-lg="end center" novalidate>
 
     <md-card>
         <md-card-content>
@@ -395,10 +395,22 @@
 
 
     <div class="md-whiteframe-z2" layout="row" publication-controls>
-        <md-button class="md-primary md-hue-1">
+        <md-button class="md-warn md-hue-3" hide-sm ng-click="pubCtrl.removePublication($event)">
             Удалить
         </md-button>
+        <md-button class="md-icon-button md-warn md-hue-3" hide-gt-sm show-sm ng-click="pubCtrl.removePublication($event)">
+            <md-icon>delete</md-icon>
+        </md-button>
+
+        <md-button class="md-primary md-hue-1" hide-sm>
+            Заполнить позже
+        </md-button>
+        <md-button class="md-icon-button md-primary" hide-gt-sm show-sm >
+            <md-icon>access_time</md-icon>
+        </md-button>
+
         <span flex></span>
+
         <md-button class="md-raised md-primary" ng-click="u_pubCtrl.publish()">
             Опубликовать
         </md-button>
