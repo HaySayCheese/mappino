@@ -846,7 +846,11 @@ class PhotosModel(AbstractModel):
 
     def remove(self):
         """
-        Removes all the photos and thumbs from google cloud storage and database.
+        Removes original photo, processed photo and thumb from google cloud storage.
+        Deletes the record of this photo from the database.
+
+        :returns:
+            record with next title photo.
         """
         try:
             # In some cases photos are already removed from the GCS and one more delete request will generate 404 error.
@@ -858,6 +862,13 @@ class PhotosModel(AbstractModel):
             # todo: add message about inappropriate deletion to the log.
         except:
             pass
+
+        if self.is_title:
+            photos = self.publication.photos()
+            if photos:
+                next_title_photo = photos[0]
+                next_title_photo.mark_as_title()
+                return next_title_photo
 
         super(PhotosModel, self).delete()
 

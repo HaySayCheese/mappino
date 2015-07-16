@@ -20,7 +20,7 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
     bucket_root_path = 'models/photos/'
 
     original_image_suffix = '_original'
-    min_original_image_size = (300, 300)
+    min_original_image_size = (600, 500)
 
     photo_suffix = '_processed'
     photo_size = (1000, 900)
