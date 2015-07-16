@@ -534,7 +534,7 @@ class Publication(CabinetView):
 
 
     class TitlePhoto(CabinetView):
-        class PostResponses(object):
+        class PutResponses(object):
             @staticmethod
             @json_response
             def ok():
@@ -571,7 +571,7 @@ class Publication(CabinetView):
                 }
 
 
-        def post(self, request, *args):
+        def put(self, request, *args):
             """
             Помічає фото з hash_id=photo_hash_id як основне.
             Для даного фото буде згенеровано title_thumb і воно використовуватиметься як початкове у видачі.
@@ -587,14 +587,14 @@ class Publication(CabinetView):
 
 
             if tid not in OBJECTS_TYPES.values():
-                return self.PostResponses.invalid_tid()
+                return self.PutResponses.invalid_tid()
 
 
             model = HEAD_MODELS[tid]
             try:
                 publication = model.objects.filter(hash_id=hash_id).only('id', 'owner')[:1][0]
             except IndexError:
-                return self.PostResponses.invalid_hid()
+                return self.PutResponses.invalid_hid()
 
 
             # check owner
@@ -607,7 +607,7 @@ class Publication(CabinetView):
             try:
                 photo = photos_model.objects.get(hash_id=photo_hash_id)
             except ObjectDoesNotExist:
-                return self.PostResponses.invalid_pid()
+                return self.PutResponses.invalid_pid()
 
 
             photo.mark_as_title()
