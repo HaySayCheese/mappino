@@ -27,6 +27,11 @@ module Mappino.Cabinet {
             };
 
             authService.tryLogin();
+
+            window.onresize = (event) => {
+                console.log($('md-card').offset().left);
+
+            };
         }
 
 
