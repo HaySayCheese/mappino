@@ -528,7 +528,7 @@ class Publication(CabinetView):
                 response['brief_url'] = None
             else:
                 response['photo_hash_id'] = new_title_photo.hash_id
-                response['brief_url'] = new_title_photo.url() + new_title_photo.small_thumbnail_name()
+                response['brief_url'] = new_title_photo.url() + new_title_photo.big_thumbnail_name()
 
             return HttpResponse(json.dumps(response), content_type='application/json')
 
