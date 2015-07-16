@@ -846,11 +846,21 @@ class PhotosModel(AbstractModel):
 
     def remove(self):
         """
-        Removes all the photos and thumbs from google cloud storage
+        Removes all the photos and thumbs from google cloud storage and database.
         """
-        self.photos_handler.remove_photo_from_google_cloud_storage(self.original_image_url.split('.com/mappino/')[1])
-        self.photos_handler.remove_photo_from_google_cloud_storage(self.photo_url.split('.com/mappino/')[1])
-        self.photos_handler.remove_photo_from_google_cloud_storage(self.big_thumb_url.split('.com/mappino/')[1])
+        try:
+            # In some cases photos are already removed from the GCS and one more delete request will generate 404 error.
+            # In this case photo record should be removed from the database too, and 404 error should be ignored.
+            self.photos_handler.remove_photo_from_google_cloud_storage(self.original_image_url.split('.com/mappino/')[1])
+            self.photos_handler.remove_photo_from_google_cloud_storage(self.photo_url.split('.com/mappino/')[1])
+            self.photos_handler.remove_photo_from_google_cloud_storage(self.big_thumb_url.split('.com/mappino/')[1])
+
+            # todo: add message about inappropriate deletion to the log.
+        except:
+            pass
+
+        super(PhotosModel, self).delete()
+
 
     def check_is_title(self):
         """
