@@ -4,18 +4,22 @@
         @include size(100%, 400px);
     }
 
-    .drop-box {
-        height: 200px;
-        color: color('blue-grey', 'lighten-2');
-        border: 3px dashed color('blue-grey', 'lighten-4');
-        border-radius: 10px;
+    .drop-container {
+        .drop-box {
+            height: 200px;
+            color: color('blue-grey', 'lighten-2');
+            border: 3px dashed color('blue-grey', 'lighten-4');
+            border-radius: 10px;
 
-        @include animation(border-color .5s ease);
+            @include animation(border-color .5s ease);
 
+        }
 
         &:hover,
         &.dragover {
-            border-color: color('blue-grey', 'lighten-3');
+            .drop-box {
+                border-color: color('blue-grey', 'lighten-3');
+            }
         }
     }
 
@@ -53,6 +57,10 @@
             position: absolute;
             top: 5px;
             right: 5px;
+
+            &.ng-hide {
+                display: none !important;
+            }
         }
     }
 }
