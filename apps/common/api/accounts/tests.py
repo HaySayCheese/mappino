@@ -59,15 +59,14 @@ class UserLoginTest(JsonApiTestCase):
     @override_settings(SMS_DEBUG=True)
     def test_normal_attempt(self):
         r, d = self.post_json(self.first_step_url, {'phone_number': '+380930767377'})
-        self.assertEqual(r.status_code, 200)
-
-
         user = Users.objects.all()[0] # refresh user
 
         r, d = self.post_json(self.second_step_url, {
                 'phone_number': '+380930767377',
                 'token': user.one_time_token,
         })
+        self.assertEqual(r.status_code, 200)
+
 
         user = Users.objects.all()[0] # refresh user
         self.assertTrue(user.is_authenticated())
