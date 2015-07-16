@@ -128,8 +128,12 @@ module Mappino.Cabinet {
                 .then(response => {
                     if (response.data['code'] === 0) {
                         _.each(this.publication.photos, (photo, index, list) => {
-                            if (photo && photo.hash_id === photoId) {
+                            if (photo && photo.hash_id == photoId) {
                                 this.publication.photos.splice(index, 1);
+                            }
+
+                            if (photo && photo.hash_id == response.data['data'].hash_id) {
+                                this.publication.photos[index].is_title = true;
                             }
                         });
 

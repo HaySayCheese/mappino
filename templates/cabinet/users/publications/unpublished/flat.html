@@ -66,7 +66,8 @@
                     </md-select>
                     <md-input-container flex="33" flex-sm="66">
                         <label>Количество мест</label>
-                        <input name="rent_persons_count" ng-model="publication.rent_terms.persons_count" only-number required>
+                        <input name="rent_persons_count" ng-model="publication.rent_terms.persons_count"
+                               ng-required="publication.head.for_rent" only-number required>
                         <div ng-messages="publicationForm.rent_persons_count.$error"
                              ng-show="publicationForm.$submitted || publicationForm.rent_persons_count.$touched">
                             <div ng-message="required">Обязательное поле</div>
@@ -374,54 +375,6 @@
 
     <md-card>
         <md-card-content>
-            <div class="md-subhead blue-text">Рядом находиться</div>
-            <div class="md-padding" layout="column">
-                <div layout-sm="column" layout-gt-sm="row">
-                    <div layout="column" flex="50">
-                        <md-checkbox class="md-primary" name="kindergarten" ng-change="u_pubCtrl.checkField('kindergarten')"
-                                     ng-model="publication.body.kindergarten">
-                            Детсад
-                        </md-checkbox>
-                        <md-checkbox class="md-primary" name="school" ng-change="u_pubCtrl.checkField('school')"
-                                     ng-model="publication.body.school">
-                            Школа
-                        </md-checkbox>
-                        <md-checkbox class="md-primary" name="market" ng-change="u_pubCtrl.checkField('market')"
-                                     ng-model="publication.body.market">
-                            Рынок / супераркет
-                        </md-checkbox>
-                        <md-checkbox class="md-primary" name="park" ng-change="u_pubCtrl.checkField('park')"
-                                     ng-model="publication.body.park">
-                            Парк / сквер
-                        </md-checkbox>
-                    </div>
-                    <div layout="column" flex="50">
-                        <md-checkbox class="md-primary" name="transport_stop" ng-change="u_pubCtrl.checkField('transport_stop')"
-                                     ng-model="publication.body.transport_stop">
-                            Остановка общ. транспорта
-                        </md-checkbox>
-                        <md-checkbox class="md-primary" name="entertainment" ng-change="u_pubCtrl.checkField('entertainment')"
-                                     ng-model="publication.body.entertainment">
-                            Развлекательные заведения
-                        </md-checkbox>
-                        <md-checkbox class="md-primary" name="sport_center" ng-change="u_pubCtrl.checkField('sport_center')"
-                                     ng-model="publication.body.sport_center">
-                            Спортивно-оздоровительный центр
-                        </md-checkbox>
-                    </div>
-                </div>
-                <md-input-container>
-                    <label>Другие достопримечательности, уточнения</label>
-                    <input name="add_showplaces" ng-model="publication.body.add_showplaces">
-                </md-input-container>
-            </div>
-        </md-card-content>
-    </md-card>
-
-
-
-    <md-card>
-        <md-card-content>
             <div class="md-subhead blue-text">Местоположение</div>
             <div class="md-padding">
                 <div ng-include="'/ajax/template/cabinet/publications/unpublished/map/'"></div>
@@ -441,11 +394,12 @@
 
 
 
-    <div class="md-whiteframe-z2" publication-controls>
-        <md-button class="md-raised md-warn md-hue-2">
+    <div class="md-whiteframe-z2" layout="row" publication-controls>
+        <md-button class="md-primary md-hue-1">
             Удалить
         </md-button>
-        <md-button class="md-raised md-primary">
+        <span flex></span>
+        <md-button class="md-raised md-primary" ng-click="u_pubCtrl.publish()">
             Опубликовать
         </md-button>
     </div>

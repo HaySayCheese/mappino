@@ -49,25 +49,21 @@ module Mappino.Cabinet {
 
 
         public publish() {
-            this.publicationsService.publish(this.publicationIds, () => {
-                // success
-            });
+            if (this.$scope.publicationForm.$invalid) {
+                var checkboxElement = angular.element("input[type='checkbox'].ng-invalid")[0],
+                    inputElement    = angular.element("textarea.ng-invalid, input.ng-invalid")[0];
 
-            //if (this.$scope.publicationForm.$invalid) {
-            //    var checkboxElement = angular.element("input[type='checkbox'].ng-invalid")[0],
-            //        inputElement    = angular.element("textarea.ng-invalid, input.ng-invalid")[0];
-            //
-            //    if (checkboxElement) {
-            //        checkboxElement.parentNode.scrollIntoView(true);
-            //    } else {
-            //        inputElement.parentNode.scrollIntoView(true);
-            //        inputElement.focus();
-            //    }
-            //} else {
-            //    this.publicationsService.publish(this.publicationIds, () => {
-            //        // success
-            //    });
-            //}
+                if (checkboxElement) {
+                    checkboxElement.parentNode.scrollIntoView(true);
+                } else {
+                    inputElement.parentNode.scrollIntoView(true);
+                    inputElement.focus();
+                }
+            } else {
+                this.publicationsService.publish(this.publicationIds, () => {
+                    // success
+                });
+            }
         }
 
 
