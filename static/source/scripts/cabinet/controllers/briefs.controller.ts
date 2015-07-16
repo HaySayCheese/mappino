@@ -41,7 +41,7 @@ module Mappino.Cabinet {
 
         // using in scope
         private createPublication() {
-            this.publicationsService.create(this.$scope.new_publication);
+            this.publicationsService.create(this.$scope.newPublication);
         }
     }
 }

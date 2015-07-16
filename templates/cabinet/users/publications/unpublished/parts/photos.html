@@ -15,7 +15,7 @@
     <div layout="column">
         <div layout="row" layout-wrap layout-padding>
             <div flex-gt-sm="50" ng-repeat="photo in publication.photos">
-                <div class="publication-photo" layout="column">
+                <div class="publication-photo" layout="column" ng-class="{ '-main': photo.is_title }">
                     <img ng-src="[[ photo.thumbnail_url ]]" alt=""/>
 
                     <md-fab-speed-dial class="md-fling" md-direction="left">
@@ -28,7 +28,7 @@
                             <md-button aria-label="twitter" class="md-fab md-raised md-mini md-warn" ng-click="u_pubCtrl.removePublicationPhoto(photo.hash_id)">
                                 <md-icon>delete</md-icon>
                             </md-button>
-                            <md-button aria-label="facebook" class="md-fab md-raised md-mini md-primary">
+                            <md-button aria-label="facebook" class="md-fab md-raised md-mini md-primary" ng-click="u_pubCtrl.setTitlePhoto(photo.hash_id)">
                                 <md-icon>check</md-icon>
                             </md-button>
                         </md-fab-actions>

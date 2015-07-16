@@ -7,7 +7,7 @@ module Mappino.Cabinet {
         body: Object
         rent_terms: Object
         sale_terms: Object
-        photos: IPublicationPhoto[]
+        photos: Array<IPublicationPhoto>
     }
 
     export interface IPublicationPhoto {

@@ -33,6 +33,10 @@
             &.-temp {
                 height: 150px;
             }
+
+            &.-main {
+                border-color: color('green', 'base');
+            }
         }
 
         img {

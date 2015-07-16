@@ -88,6 +88,12 @@ module Mappino.Cabinet {
 
 
 
+        public setTitlePhoto(photoId) {
+            this.publicationsService.setTitlePhoto(this.publicationIds, photoId)
+        }
+
+
+
 
         private loadPublicationData() {
             this.$rootScope.loaders.base = true;

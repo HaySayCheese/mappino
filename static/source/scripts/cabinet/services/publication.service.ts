@@ -144,6 +144,29 @@ module Mappino.Cabinet {
 
 
 
+        public setTitlePhoto(publicationIds: IPublicationIds, photoId: any, success?, error?) {
+            this.$http.put('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/photos/' + photoId + '/title/', null)
+                .then(response => {
+                    if (response.data['code'] === 0) {
+                        _.each(this.publication.photos, (photo, index, list) => {
+                            photo.is_title = false;
+
+                            if (photo.hash_id === photoId) {
+                                this.publication.photos[index].is_title = true;
+                            }
+                        });
+
+                        _.isFunction(success) && success(this.publication)
+                    } else {
+                        _.isFunction(error) && error(response.data)
+                    }
+                }, response => {
+                    _.isFunction(error) && error(response.data)
+                })
+        }
+
+
+
         private createDefaultTerms() {
             if (_.isNull(this.publication['sale_terms'])) {
                 this.publication['sale_terms'] = {};
