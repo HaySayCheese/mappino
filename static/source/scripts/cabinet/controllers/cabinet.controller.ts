@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.cabinet {
+module Mappino.Cabinet {
     export class CabinetController {
 
         public static $inject = [
@@ -22,14 +22,9 @@ module mappino.cabinet {
 
             $rootScope.loaders = {
                 base:   false,
-
                 avatar: false,
-
                 tickets: false
             };
-
-            if (localStorage['is_work'] && 1)
-                angular.element('body').html('');
 
             authService.tryLogin();
         }

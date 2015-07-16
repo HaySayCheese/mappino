@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.cabinet {
+module Mappino.Cabinet {
     export interface IBrief {
         created:    string
         for_rent:   boolean

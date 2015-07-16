@@ -1,6 +1,6 @@
 /// <reference path='_all.ts' />
 
-module mappino.cabinet {
+module Mappino.Cabinet {
     'use strict';
 
     var app: angular.IModule = angular.module('mappino.cabinet', [

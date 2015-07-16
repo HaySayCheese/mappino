@@ -1,79 +1,79 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.cabinet {
+module Mappino.Cabinet {
     export class TicketsService implements ITicketsService {
-        private _tickets: ITicket[];
+        private _ticket:    ITicket;
+        private _tickets:   ITicket[];
 
         public static $inject = [
-            '$http',
-            '$location'
+            '$http'
         ];
 
-        constructor(private $http: angular.IHttpService,
-                    private $location: angular.ILocationService) {
-            // ---------------------------------------------------------------------------------------------------------
+        constructor(private $http: angular.IHttpService) {
+            //
         }
 
 
 
-        public createTicket(success?, error?) {
+        public createTicket(successCallback, errorCallback) {
             this.$http.post('/ajax/api/cabinet/support/tickets/', null)
-                .then((response) => {
+                .then(response => {
                     if (response.data['code'] === 0) {
-                        _.isFunction(success) && success(response.data['data'])
+                        _.isFunction(successCallback) && successCallback(response.data['data'].id)
                     } else {
-                        _.isFunction(error) && error(response.data)
+                        _.isFunction(errorCallback) && errorCallback(response.data)
                     }
-                }, (response) => {
-                    _.isFunction(error) && error(response.data)
+                }, response => {
+                    _.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
 
 
 
-        public loadTickets(success?, error?) {
+        public loadTickets(successCallback, errorCallback) {
             this.$http.get('/ajax/api/cabinet/support/tickets/')
-                .then((response) => {
+                .then(response => {
                     if (response.data['code'] === 0) {
                         this._tickets = response.data['data'];
-                        _.isFunction(success) && success(this._tickets)
+                        _.isFunction(successCallback) && successCallback(this._tickets)
                     } else {
-                        _.isFunction(error) && error(response.data)
+                        _.isFunction(errorCallback) && errorCallback(response.data)
                     }
-                }, (response) => {
-                    _.isFunction(error) && error(response.data)
-                })
+                }, response => {
+                    _.isFunction(errorCallback) && errorCallback(response.data)
+                });
         }
 
 
 
-        public loadTicketMessages(ticketId: number, success?, error?) {
+        public loadTicketMessages(ticketId, successCallback, errorCallback) {
             this.$http.get('/ajax/api/cabinet/support/tickets/' + ticketId + '/messages/')
-                .then((response) => {
+                .then(response => {
                     if (response.data['code'] === 0) {
-                        _.isFunction(success) && success(response.data['data'])
+                        this._ticket = response.data['data'];
+                        _.isFunction(successCallback) && successCallback(this._ticket)
                     } else {
-                        _.isFunction(error) && error(response.data)
+                        _.isFunction(errorCallback) && errorCallback(response.data)
                     }
-                }, (response) => {
-                    _.isFunction(error) && error(response.data)
-                })
+                }, response => {
+                    _.isFunction(errorCallback) && errorCallback(response.data)
+                });
         }
 
 
 
-        public sendMessage(ticketId: number, message: Object, success?, error?) {
-            this.$http.post('/ajax/api/cabinet/support/tickets/' + ticketId + '/messages/', message)
-                .then((response) => {
+        public sendMessage(ticketId, ticketMessage, successCallback, errorCallback) {
+            this.$http.post('/ajax/api/cabinet/support/tickets/' + ticketId + '/messages/', ticketMessage)
+                .then(response => {
                     if (response.data['code'] === 0) {
-                        _.isFunction(success) && success(response.data)
+                        _.isFunction(successCallback) && successCallback(response.data['data'])
                     } else {
-                        _.isFunction(error) && error(response.data)
+                        _.isFunction(errorCallback) && errorCallback(response.data)
                     }
-                }, (response) => {
-                    _.isFunction(error) && error(response.data)
-                })
+                }, response => {
+                    _.isFunction(errorCallback) && errorCallback(response.data)
+                });
         }
 
 
@@ -81,7 +81,6 @@ module mappino.cabinet {
         public get tickets() {
             return this._tickets;
         }
-
     }
 }
 

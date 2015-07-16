@@ -1,21 +1,13 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.cabinet {
+module Mappino.Cabinet {
     export class TicketController {
-        private _ticket: ITicket = {
-            id:             null,
-            created:        null,
-            last_message:   null,
-            state_sid:      null,
-            subject:        null,
-            messages:       null
-        };
+        private ticket: ITicket;
 
         public static $inject = [
             '$scope',
             '$rootScope',
-            '$state',
             'TicketsService'
         ];
 
@@ -23,10 +15,16 @@ module mappino.cabinet {
 
         constructor(private $scope: any,
                     private $rootScope: any,
-                    private $state: angular.ui.IStateService,
                     private ticketsService: ITicketsService) {
             // ---------------------------------------------------------------------------------------------------------
-            $scope.ticket       = {};
+            $scope.ticket = this.ticket = {
+                ticket_id:      null,
+                created:        null,
+                last_message:   null,
+                state_sid:      null,
+                subject:        null,
+                messages:       null
+            };
             $scope.new_message  = {};
 
             $scope.ticketIsLoaded = false;
@@ -34,41 +32,40 @@ module mappino.cabinet {
 
 
             $scope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
-                ticketsService.loadTicketMessages(toParams.ticket_id, (response) => {
-                    this._ticket.id        = toParams.ticket_id;
-                    this._ticket.subject   = response.subject;
-                    this._ticket.messages  = response.messages;
+                ticketsService.loadTicketMessages(toParams.ticket_id, response => {
+                    $scope.ticket.ticket_id = toParams.ticket_id;
+                    $scope.ticket.subject   = response.subject;
+                    $scope.ticket.messages  = response.messages;
 
-                    $scope.ticket = this._ticket;
+                    $scope.ticket = this.ticket;
                     $scope.ticketIsLoaded = true;
                     $rootScope.loaders.base = false;
                 });
+
             });
         }
 
 
 
         public sendMessage() {
-            var self = this;
-
             if (this.$scope.ticketForm.$valid) {
                 this.$rootScope.loaders.base = true;
 
-                this.ticketsService.sendMessage(this._ticket.id, self.$scope.new_message, (response) => {
+                this.ticketsService.sendMessage(this.ticket.ticket_id, this.$scope.new_message, response => {
                     this.$rootScope.loaders.base = false;
 
-                    self.$scope.ticket.messages.unshift({
-                        created:    new Date().getTime(),
-                        text:       self.$scope.new_message.message,
+                    this.ticket.messages.unshift({
+                        created:    new Date().getTime().toString(),
+                        text:       this.$scope.new_message.message,
                         type_sid:   0
                     });
 
-                    if (self.$scope.new_message.subject) {
-                        self.$scope.ticket.subject = self.$scope.new_message.subject;
-                        self.$scope.new_message.subject = '';
+                    if (this.$scope.new_message.subject) {
+                        this.$scope.ticket.subject = this.$scope.new_message.subject;
+                        this.$scope.new_message.subject = '';
                     }
 
-                    self.$scope.new_message.message = null;
+                    this.$scope.new_message.message = null;
 
                     this.$scope.ticketForm.$setPristine();
                     this.$scope.ticketForm.$setUntouched();

@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.cabinet {
+module Mappino.Cabinet {
     export class UnpublishedPublicationController {
         private map: google.maps.Map;
         private marker: google.maps.Marker;
@@ -74,7 +74,7 @@ module mappino.cabinet {
 
             this.scrollToBottom();
 
-            this.publicationsService.uploadPublicationPhotos(this.publicationIds, $files, (response) => {
+            this.publicationsService.uploadPublicationPhotos(this.publicationIds, $files, response => {
                 this.$scope.tempPublicationPhotos.shift();
                 this.scrollToBottom();
             });
@@ -92,7 +92,7 @@ module mappino.cabinet {
         private loadPublicationData() {
             this.$rootScope.loaders.base = true;
 
-            this.publicationsService.loadPublication(this.publicationIds, (response) => {
+            this.publicationsService.loadPublication(this.publicationIds, response => {
                 this.$scope.publication = response;
                 this.$rootScope.loaders.base = false;
 
@@ -194,13 +194,13 @@ module mappino.cabinet {
                     return;
                 }
 
-                this.publicationsService.checkField(this.publicationIds, { fieldName: name, fieldValue: value }, (newValue) => {
-                    if (newValue && !angular.element(e.currentTarget).is(":focus")) {
-                        e.currentTarget['value'] = newValue;
+                this.publicationsService.checkField(this.publicationIds, { fieldName: name, fieldValue: value }, response => {
+                    if (response && !angular.element(e.currentTarget).is(":focus")) {
+                        e.currentTarget['value'] = response;
                     }
 
                     this.$scope.publicationForm[name].$setValidity("invalid", true);
-                }, (response) => {
+                }, response => {
                     this.$scope.publicationForm[name].$setValidity("invalid", response.code === 0);
                 });
             });

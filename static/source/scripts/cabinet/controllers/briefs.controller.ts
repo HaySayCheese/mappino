@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.cabinet {
+module Mappino.Cabinet {
     export class BriefsController {
         private briefs: Array<IBrief> = [];
         private newPublication: IPublicationNew = {
@@ -31,7 +31,7 @@ module mappino.cabinet {
         private loadPublications() {
             this.$rootScope.loaders.base = true;
 
-            this.publicationsService.loadBriefs((response) => {
+            this.publicationsService.loadBriefs(response => {
                 this.$scope.briefs = response;
                 this.$rootScope.loaders.base = false;
             });

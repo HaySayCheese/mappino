@@ -1,17 +1,100 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.cabinet {
+module Mappino.Cabinet {
     export interface ITicketsService {
 
-        createTicket(success?: Function, error?: Function): void
+        /**
+         * Create empty ticket
+         */
+        createTicket(successCallback?: ITicketCreateSuccessCallback, errorCallback?: ITicketsBaseErrorCallback): void
 
-        loadTickets(success?: Function, error?: Function): void
 
-        loadTicketMessages(ticketId: number, success?: Function, error?: Function): void
+        /**
+         * Load all user tickets
+         */
+        loadTickets(successCallback?: ITicketsLoadSuccessCallback, errorCallback?: ITicketsBaseErrorCallback): void
 
-        sendMessage(ticketId: number, message: Object, success?: Function, error?: Function): void
 
+        /**
+         * Load messages for ticket by ticket_id
+         */
+        loadTicketMessages(ticketId: number, successCallback?: ITicketLoadMessagesSuccessCallback, errorCallback?: ITicketsBaseErrorCallback): void
+
+
+        /**
+         * Send message into ticket by ticket_id
+         */
+        sendMessage(ticketId: number, ticketMessage: ITicketMessage, successCallback?: ITicketSendMessageSuccessCallback, errorCallback?: ITicketsBaseErrorCallback): void
+
+
+        /**
+         * Return all tickets
+         */
         tickets: ITicket[]
+    }
+
+
+
+
+
+    /**
+     * Success create ticket callback
+     * @callback Mappino.Cabinet.TicketsService~ITicketCreateSuccessCallback
+     * @param {number} ticketId
+     * @returns {void}
+     */
+    export interface ITicketCreateSuccessCallback {
+        (ticketId: number): void
+    }
+
+
+
+    /**
+     * Success load tickets callback
+     * @callback Mappino.Cabinet.TicketsService~ITicketsLoadSuccessCallback
+     * @param {number} ticketId
+     * @returns {void}
+     */
+    export interface ITicketsLoadSuccessCallback {
+        (tickets: ITicket[]): void
+    }
+
+
+
+    /**
+     * Success load ticket messages callback
+     * @callback Mappino.Cabinet.TicketsService~ITicketLoadMessagesSuccessCallback
+     * @param {number} ticketId
+     * @returns {void}
+     */
+    export interface ITicketLoadMessagesSuccessCallback {
+        (ticketMessages: ITicketMessages): void
+    }
+
+
+
+    /**
+     * Success send message into ticket callback
+     * @callback Mappino.Cabinet.TicketsService~ITicketSendMessageSuccessCallback
+     * @param {number} ticketId
+     * @returns {void}
+     */
+    export interface ITicketSendMessageSuccessCallback {
+        (ticketMessages: ITicketMessages): void
+    }
+
+
+
+
+    /**
+     * Error base callback
+     * @callback Mappino.Cabinet.TicketsService~ITicketsBaseErrorCallback
+     * @param {number} code     Server error code
+     * @param {string} message  Server error message
+     * @returns {void}
+     */
+    export interface ITicketsBaseErrorCallback {
+        (code: number, message: string): void
     }
 }
