@@ -1,10 +1,10 @@
 <div class="md-padding">
     <div class="drop-box" ngf-drop ng-model="files" ngf-drag-over-class="dragover" ngf-multiple="true"
-         ngf-allow-dir="true" accept="image/*" layout="column" layout-align="center center">
+         ngf-allow-dir="true" accept="image/*" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)" layout="column" layout-align="center center">
 
         <p>Перенесите сюда фото или видео файл</p>
 
-        <md-button class="md-primary" ngf-select ng-model="files" ngf-multiple="true" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
+        <md-button class="md-primary" ngf-select ng-model="files" ngf-multiple="true" accept="image/*" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
             Вибрать файл
         </md-button>
     </div>
@@ -15,8 +15,10 @@
     <div layout="column">
         <div layout="row" layout-wrap layout-padding>
             <div flex-gt-sm="50" ng-repeat="photo in publication.photos">
-                <div class="publication-photo" layout="column" ng-class="{ '-main': photo.is_title }">
+                <div class="publication-photo" layout="column" layout-align="center center" ng-class="{ '-main': photo.is_title }">
                     <img ng-src="[[ photo.thumbnail_url ]]" alt=""/>
+
+                    <md-progress-circular md-mode="indeterminate" ng-show="publicationPhotoLoader[photo.hash_id]"></md-progress-circular>
 
                     <md-fab-speed-dial class="md-fling" md-direction="left">
                         <md-fab-trigger>
@@ -37,7 +39,7 @@
             </div>
 
             <div flex-gt-sm="50" ng-repeat="tempPhoto in tempPublicationPhotos">
-                <div class="publication-photo -temp" layout="column" layout-align="center center">
+                <div class="publication-photo" layout="column" layout-align="center center">
                     <md-progress-circular md-mode="indeterminate"></md-progress-circular>
                 </div>
             </div>

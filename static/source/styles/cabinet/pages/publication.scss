@@ -24,18 +24,23 @@
         position: relative;
 
         .publication-photo {
-            max-height: 150px;
+            min-height: 150px;
             position: relative;
             overflow: hidden;
             border: 2px solid color('blue-grey', 'lighten-4');
             border-radius: 3px;
 
-            &.-temp {
-                height: 150px;
-            }
-
             &.-main {
                 border-color: color('green', 'base');
+            }
+
+            &:not(.-temp) {
+                md-progress-circular {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    @include transform(translate(-50%, -50%) scale(1) !important)
+                }
             }
         }
 

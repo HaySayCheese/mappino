@@ -41,6 +41,7 @@ module Mappino.Cabinet {
 
             $scope.tempPublicationPhotos = this.tempPublicationPhotos;
 
+            $scope.publicationPhotoLoader = {};
 
             this.loadPublicationData();
         }
@@ -70,7 +71,9 @@ module Mappino.Cabinet {
         public uploadPublicationPhotos($files) {
             if (!$files.length) return;
 
-            this.$scope.tempPublicationPhotos.push({});
+            for(var i = 0; i < $files.length; i++) {
+                this.$scope.tempPublicationPhotos.push({});
+            }
 
             this.scrollToBottom();
 
@@ -83,13 +86,21 @@ module Mappino.Cabinet {
 
 
         public removePublicationPhoto(photoId) {
-            this.publicationsService.removePublicationPhoto(this.publicationIds, photoId)
+            this.$scope.publicationPhotoLoader[photoId] = true;
+
+            this.publicationsService.removePublicationPhoto(this.publicationIds, photoId, () => {
+                this.$scope.publicationPhotoLoader[photoId] = false;
+            });
         }
 
 
 
         public setTitlePhoto(photoId) {
-            this.publicationsService.setTitlePhoto(this.publicationIds, photoId)
+            this.$rootScope.loaders.publicationPhoto = true;
+
+            this.publicationsService.setTitlePhoto(this.publicationIds, photoId, () => {
+                this.$rootScope.loaders.publicationPhoto = false;
+            });
         }
 
 
