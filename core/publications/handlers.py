@@ -26,7 +26,7 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
     photo_size = (1000, 900)
 
     thumbnail_suffix = '_big_thumb'
-    thumbnail_size = (280, 350)
+    thumbnail_size = (350, 250)
 
 
     @classmethod
@@ -151,16 +151,16 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
 
         if ratio > image_ratio:
             size = thumb_width, thumb_height
-
+            box = (0, (image.size[1] - size[1]) / 2, image.size[0], (image.size[1] + size[1]) / 2)
             image = image.resize((size[0], size[0] * image.size[1] / image.size[0]), Image.ANTIALIAS)
-            box = ((image.size[0] - size[0]) / 2, 0, (image.size[0] + size[0]) / 2, image.size[1])
+
             image = image.crop(box)
 
         elif ratio < image_ratio:
             size = thumb_width, thumb_height
 
             image = image.resize((size[1] * image.size[0] / image.size[1], size[1]), Image.ANTIALIAS)
-            box = (0, (image.size[1] - size[1]) / 2, image.size[0], (image.size[1] + size[1]) / 2)
+            box = ((image.size[0] - size[0]) / 2, 0, (image.size[0] + size[0]) / 2, image.size[1])
             image = image.crop(box)
 
         else:
