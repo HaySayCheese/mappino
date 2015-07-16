@@ -613,10 +613,7 @@ class Publication(CabinetView):
             photo.mark_as_title()
 
             # seems to be ok
-            raise NotImplemented('This code should be updated')
-            response = copy.deepcopy(self.post_codes['OK'])
-            response['brief_url'] = publication.title_small_thumbnail_url()
-            return self.PostResponses.ok()
+            return self.PutResponses.ok()
 
 
 class Briefs(CabinetView):

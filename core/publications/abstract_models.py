@@ -907,3 +907,4 @@ class PhotosModel(AbstractModel):
         """
         self.publication.photos().update(is_title=False)
         self.is_title = True
+        self.save()
