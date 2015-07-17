@@ -242,7 +242,7 @@ class Publication(CabinetView):
 
     def delete(self, request, *args):
         try:
-            tid, hash_id = args[:]
+            tid, hash_id = args[:2]
             tid = int(tid)
             # hash_id doesnt need to be converted to int
 
@@ -262,15 +262,15 @@ class Publication(CabinetView):
             raise PermissionDenied()
 
 
-        if not 'permanent' in request.path:
+        if not head.is_deleted():
             # note: no real deletion here.
             # all publications that was deleted are situated in trash
             head.mark_as_deleted()
         else:
             head.delete_permanent()
 
-        return self.DeleteResponses.ok()
 
+        return self.DeleteResponses.ok()
 
 
     class PublishUnpublish(CabinetView):
