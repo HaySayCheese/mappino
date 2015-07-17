@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.core.exceptions import RentTypeError
+from django.core.exceptions import RentTypeError, PermissionDenied
 from django.views.generic import View
 
 from collective.http.responses import HttpJsonResponse
@@ -9,7 +9,6 @@ from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 
 class CalendarControlView(View):
 
-    #FirstStep
     @classmethod
     def post(cls, request, *args):
         try:
@@ -19,7 +18,7 @@ class CalendarControlView(View):
             return cls.Post.absent_publications_id()
 
         if not tid in OBJECTS_TYPES.daily_rent:
-            # error
+
             raise RentTypeError('This type of objects doest supply daily rent')
 
         try:
@@ -37,9 +36,8 @@ class CalendarControlView(View):
         #Publication - my way, to named head.
         publication = model.objects.get(hash_id = hash_id)
 
-        #todo Fix this thing
-        # if publication.owner.id != request.user.id:
-        #     raise PermissionDenied()
+        if publication.owner.id != request.user.id:
+            raise PermissionDenied()
 
         try:
             publication.rent_terms.add_dates_rent(tid, date_from, date_to )
@@ -100,9 +98,8 @@ class CalendarControlView(View):
         #Publication - my way, to named head.
         publication = model.objects.get(hash_id = hash_id)
 
-        #todo Fix this thing
-        # if publication.owner.id != request.user.id:
-        #     raise PermissionDenied()
+        if publication.owner.id != request.user.id:
+            raise PermissionDenied()
 
         try:
             publication.rent_terms.remove_rent_dates(tid, date_from, date_to)
