@@ -42,7 +42,7 @@ def publications_unpublished_form(request, tid):
 @login_required_or_forbidden
 @render_jinja2_template
 def publications_unpublished_footer(request):
-    return 'cabinet/users/publications/unpublished/parts/footer.html'
+    return 'cabinet/users/publications/unpublished/parts/unpublished_footer.html'
 
 
 @ensure_csrf_cookie
