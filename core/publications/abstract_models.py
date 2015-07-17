@@ -384,19 +384,12 @@ class AbstractHeadModel(models.Model):
         """
         Removes record permanent without possibility to restore it.
         If deletion was performed without errors - signal "deleted_permanently" will be emitted.
-
-        :return: None
         """
-        if self.deleted is None:
-            raise SuspiciousOperation('Attempt to delete publication that was not moved to trash.')
-
-        owner = self.owner
-
-        # todo: enable me back whe billing will be completed
-        # is_paid = self.is_paid
+        assert self.deleted, 'Attempt to delete publication that was not moved to trash.'
 
         # @deleted_permanently needs id of the publication as a parameter,
         # but the id will be None after deleting.
+        #
         # So, for the correct work of all handlers related to this signal,
         # it is emitted before the physical record removing.
         models_signals.deleted_permanent.send(
@@ -407,14 +400,8 @@ class AbstractHeadModel(models.Model):
             for_sale = self.for_sale,
             for_rent = self.for_rent,
         )
+
         super(AbstractHeadModel, self).delete()
-
-
-        # todo: enable me back whe billing will be completed
-        # # Поновити к-сть безкоштовних оголошень,
-        # # якщо оголошення, яке видалили, було безкоштовним.
-        # if not is_paid:
-        #     owner.publications().ensure_free_publications()
 
 
     def check_required_fields(self):
