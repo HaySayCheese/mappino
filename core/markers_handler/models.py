@@ -1,15 +1,17 @@
 # coding=utf-8
 import math
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, connections
 from django.db.models import Q
+from django.contrib.postgres.fields import ArrayField
 from djorm_pgarray.fields import BigIntegerArrayField
 from collective.exceptions import InvalidArgument
 from core.currencies.constants import CURRENCIES
 from core.currencies.currencies_manager import convert as convert_price
 from core.markers_handler.classes import Grid
 from core.publications.constants import \
-    OBJECTS_TYPES, MARKET_TYPES, FLOOR_TYPES, HEATING_TYPES, LIVING_RENT_PERIODS, HEAD_MODELS
+        OBJECTS_TYPES, MARKET_TYPES, FLOOR_TYPES, HEATING_TYPES, LIVING_RENT_PERIODS, HEAD_MODELS
 from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
 
@@ -44,7 +46,7 @@ class AbstractBaseIndex(models.Model):
     #
     # Така ситуація достатньо вірогідна через те, що довелось змішати чистий sql з django-orm,
     # через що порушився механізм транзакцій (зараз транзакцій як таких немає).
-    publication_id = models.PositiveIntegerField()
+    publication_id = models.PositiveIntegerField(db_index=True)
     hash_id = models.TextField()
 
     # lat, lng дублюються в індексі щоб уникнути зайвого join-а з таблицею даних по оголошеннях.
@@ -474,6 +476,16 @@ class AbstractBaseIndex(models.Model):
 
 
 
+class AbstractRentIndex(AbstractBaseIndex):
+#todo comment
+    entrance_dates = ArrayField(models.DateField())
+    departure_dates = ArrayField(models.DateField())
+    rent_dates = ArrayField(models.DateField())
+
+    class Meta:
+        abstract = True
+
+
 class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
@@ -606,7 +618,7 @@ class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
 
 
 
-class FlatsRentIndex(AbstractBaseIndex):
+class FlatsRentIndex(AbstractRentIndex):
     period_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
@@ -634,6 +646,7 @@ class FlatsRentIndex(AbstractBaseIndex):
         db_table = 'index_flats_rent'
 
 
+
     @classmethod
     def add(cls, record, using=None):
         cls.objects.using(using).create(
@@ -657,6 +670,11 @@ class FlatsRentIndex(AbstractBaseIndex):
             cold_water=record.body.cold_water,
             gas=record.body.gas,
             electricity=record.body.electricity,
+
+            entrance_dates = record.rent_terms.entrance_dates,
+            rent_dates = record.rent_terms.rent_dates,
+            departure_dates = record.rent_terms.departure_dates,
+
         )
 
 
@@ -693,7 +711,12 @@ class FlatsRentIndex(AbstractBaseIndex):
             'rent_terms__period_sid',
             'rent_terms__persons_count',
             'rent_terms__family',
-            'rent_terms__foreigners'
+            'rent_terms__foreigners',
+
+            'rent_terms__entrance_dates',
+            'rent_terms__rent_dates',
+            'rent_terms__departure_dates',
+
         )
 
 
@@ -870,7 +893,7 @@ class HousesSaleIndex(AbstractBaseIndex):
 
 
 
-class HousesRentIndex(AbstractBaseIndex):
+class HousesRentIndex(AbstractRentIndex):
     period_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
@@ -1129,9 +1152,8 @@ class RoomsSaleIndex(AbstractBaseIndex):
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
         }
 
-
-
-class RoomsRentIndex(AbstractBaseIndex):
+     
+class RoomsRentIndex(AbstractRentIndex):
     period_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
@@ -1959,7 +1981,6 @@ class BusinessesSaleIndex(AbstractBusinessesIndex):
         )
 
 
-
 class BusinessesRentIndex(AbstractBusinessesIndex):
     class Meta:
         db_table = 'index_businesses_rent'
@@ -1995,119 +2016,6 @@ class BusinessesRentIndex(AbstractBusinessesIndex):
             'rent_terms__price', # note: rent terms here
             'rent_terms__currency_sid', # note: rent terms here
         )
-
-
-
-# class CateringsSaleIndex(AbstractBaseIndex):
-#     price = models.FloatField(db_index=True)
-#     currency_sid = models.PositiveSmallIntegerField()
-#     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
-#     halls_area = models.FloatField(db_index=True)
-#     total_area = models.FloatField(db_index=True)
-#     building_type_sid = models.PositiveSmallIntegerField(db_index=True)
-#     hot_water = models.BooleanField(db_index=True)
-#     cold_water = models.BooleanField(db_index=True)
-#     gas = models.BooleanField(db_index=True)
-#     electricity = models.BooleanField(db_index=True)
-#     sewerage = models.BooleanField(db_index=True)
-#
-#
-#     class Meta:
-#         db_table = 'index_caterings_sale'
-#
-#
-#     @classmethod
-#     def add(cls, record, using=None):
-#         cls.objects.using(using).create(
-#             publication_id=record.id,
-#             hash_id=record.hash_id,
-#             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
-#             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
-#
-#             market_type_sid=record.body.market_type_sid,
-#             halls_area=record.body.halls_area,
-#             total_area=record.body.total_area,
-#             building_type_sid=record.body.building_type_sid,
-#             hot_water=record.body.hot_water,
-#             cold_water=record.body.cold_water,
-#             gas=record.body.gas,
-#             electricity=record.body.electricity,
-#             sewerage=record.body.sewerage,
-#
-#             price=record.sale_terms.price,
-#             currency_sid=record.sale_terms.currency_sid,
-#         )
-#
-#
-#     @classmethod
-#     def min_queryset(cls):
-#         return cls.objects.all().only(
-#             'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')  # todo: fixme
-#
-#
-#     @classmethod
-#     def min_add_queryset(cls):
-#         model = HEAD_MODELS[OBJECTS_TYPES.catering()]
-#         return model.objects.all().only(
-#             'degree_lat',
-#             'degree_lng',
-#             'segment_lat',
-#             'segment_lng',
-#             'pos_lat',
-#             'pos_lng',
-#
-#             'id',
-#             'hash_id',
-#
-#             'body__market_type_sid',
-#             'body__halls_area',
-#             'body__total_area',
-#             'body__building_type_sid',
-#             'body__hot_water',
-#             'body__cold_water',
-#             'body__electricity',
-#             'body__gas',
-#             'body__fire_alarm',
-#             'body__security_alarm',
-#
-#             'sale_terms__price',
-#             'sale_terms__currency_sid'
-#         )
-#
-#
-#     @classmethod
-#     def apply_filters(cls, filters, markers):
-#         markers = cls.apply_market_type_filter(filters, markers)
-#         markers = cls.apply_price_filter(filters, markers)
-#         markers = cls.apply_halls_area_filter(filters, markers)
-#         markers = cls.apply_total_area_filter(filters, markers)
-#         markers = cls.apply_trade_building_type_filter(filters, markers)
-#         markers = cls.apply_electricity_filter(filters, markers)
-#         markers = cls.apply_gas_filter(filters, markers)
-#         markers = cls.apply_hot_water_filter(filters, markers)
-#         markers = cls.apply_cold_water_filter(filters, markers)
-#         markers = cls.apply_sewerage_filter(filters, markers)
-#         return markers
-#
-#
-#     @classmethod
-#     def brief(cls, marker, filters=None):
-#         currency = cls.currency_from_filters(filters)
-#         price = cls.convert_and_format_price(marker.price, marker.currency_sid, currency)
-#         total_area = '{0}'.format(marker.total_area).rstrip('0').rstrip('.')
-#
-#         return {
-#             'id': marker.hash_id,
-#             'd0': u'{0} м²'.format(total_area),
-#             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
-#         }
-#
-#
-#
-# class CateringsRentIndex(CateringsSaleIndex):
-#     class Meta:
-#         db_table = 'index_caterings_rent'
-
 
 
 class AbstractGaragesIndex(AbstractBaseIndex):
@@ -2536,7 +2444,6 @@ class SegmentsIndex(models.Model):
 
         # todo: add transaction here (find a way to combine custom sql and django orm to perform a transaction)
         index.add(record, using=cls.index_db_name)
-
         cursor = cls.cursor()
         cursor.execute('BEGIN;')
         for zoom, x, y in cls.grid.segments_digests(lat, lng):
@@ -2626,6 +2533,39 @@ class SegmentsIndex(models.Model):
 
         index.remove(hid, using=cls.index_db_name)
         # todo: transaction end
+
+
+    #ThrirdStep
+    @classmethod
+    def add_daily_rent_terms(cls,  **kwargs):
+        """
+         Get certain
+        """
+        tid = kwargs['tid']
+        publication_id = kwargs['publication_id']
+        date_from = kwargs['date_from']
+        date_to = kwargs['date_to']
+
+        model = cls.living_rent_indexes.get(tid)
+        try:
+            model = model.objects.get(publication_id = publication_id)
+        except ObjectDoesNotExist:
+            return
+
+        try:
+            model.add_dates_rent(publication_id, date_from, date_to)
+        except Exception as e:
+            pass
+
+    @classmethod
+    def delete_daily_rent_terms(cls, tid, hash_id, date_from, date_to):
+        """
+         Get certain
+        """
+
+        model = cls.living_rent_indexes.get(tid)
+        model.add_dates_rent(hash_id, date_from, date_to)
+
 
 
     @classmethod

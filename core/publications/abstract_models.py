@@ -1,7 +1,13 @@
 #coding=utf-8
+import uuid
 import datetime
 import redis_lock
+import copy
+from datetime import  timedelta as td
 
+from djantimat.helpers import RegexpProc
+
+from django.contrib.postgres.fields import ArrayField
 from django.db.utils import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.db import models, transaction
@@ -9,7 +15,6 @@ from django.utils.timezone import now
 
 from collective.utils import generate_sha256_unique_id
 from collective.exceptions import InvalidArgument, RuntimeException
-from core import redis_connections
 from core.users.models import Users
 from core.publications.handlers import PublicationsPhotosHandler
 from core.currencies import currencies_manager as currencies
@@ -17,7 +22,9 @@ from core.currencies.constants import CURRENCIES as currencies_constants
 from core.publications import models_signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
-    EmptyRentPrice
+    EmptyRentPrice, AbusiveWords
+from publications_to_check.models import PublicationsToCheck
+from core.signals import PublicationsSignals
 
 
 class AbstractModel(models.Model):
@@ -272,10 +279,14 @@ class AbstractHeadModel(models.Model):
         if self.deleted is not None:
             raise SuspiciousOperation('Attempt to publish deleted publication.')
 
-        self.check_required_fields()
-        self.body.check_required_fields()
+        is_suspicious = self.check_required_fields()
 
-        # if self.owner.account.
+
+        PublicationsToCheck.add(
+            publication_type_id = self.tid,
+            publication_hash_id = self.hash_id,
+            is_suspicious = is_suspicious
+        )
 
         # sender=None для того, щоб django-orm не витягував автоматично дані з БД,
         # які, швидше за все, не знадобляться в подальшій обробці.
@@ -304,6 +315,7 @@ class AbstractHeadModel(models.Model):
             for_sale = self.for_sale,
             for_rent = self.for_rent,
         )
+
 
 
     def unpublish(self):
@@ -441,7 +453,7 @@ class AbstractHeadModel(models.Model):
             self.rent_terms.check_required_fields()
 
         #-- body
-        self.body.check_required_fields()
+        return self.body.check_required_fields()
 
     def photos(self):
         return self.photos_model.objects.filter(publication = self.id).order_by('-is_title', '-created')
@@ -477,17 +489,58 @@ class BodyModel(AbstractModel):
     title = models.TextField(null=True, max_length=max_title_length)
     description = models.TextField(null=True)
 
+
+    def get_head_queryset(self):
+        """
+            Uses backward relationship to get head object
+            We use this, because head has foreign key on body,
+                but body does not have foreign key on head.
+        :return: QuerySet with 1 head object.
+            QuerySet - because this approach allows us, to get only certain fields
+            from object on next step
+        """
+        return self.head_set()[:1].only()
+
+
     def check_required_fields(self):
         """
-        Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
-        Не перевіряє інформацію в полях на коректність, оскільки передбачається,
-        що некоректні дані не можуть потрапити в БД через обробники зміни даних.
+        Check if required fields is not None. If None - generate Exception
+        Check some fields on adequacy. If adequacy - return True in other way - False
         """
         if (self.title is None) or (not self.title):
             raise EmptyTitle('Title is empty')
         if (self.description is None) or (not self.description):
             raise EmptyDescription('Description is empty')
+
+        #Raise ValidationError if parameters of publication is wrong
         self.check_extended_fields()
+
+        #Raise ValidationError if there are abusive words in string fields
+        if not self.check_fields_on_abusive_words():
+            raise AbusiveWords('abusive_words')
+
+        return self.check_fields_on_adequacy()
+
+    def check_fields_on_abusive_words(self):
+        '''
+
+        :return:
+            True - there are abusive words in text fields
+            False - obviously
+        '''
+        checking_phrase = ''
+        for attr, value in self.__dict__.iteritems():
+            if isinstance(value, unicode):
+                checking_phrase=checking_phrase+value
+
+        return RegexpProc.test(checking_phrase)
+
+    def check_fields_on_adequacy(self):
+        """
+            Abstract
+            Each child will override this method
+        """
+        return
 
     def check_extended_fields(self):
         """
@@ -495,6 +548,7 @@ class BodyModel(AbstractModel):
         Призначений для валідації моделей, унаслідуваних від поточної.
         """
         return
+
 
 
 class SaleTermsModel(AbstractModel):
@@ -544,6 +598,91 @@ class LivingRentTermsModel(AbstractModel):
     washing_machine = models.BooleanField(default=False)
     conditioner = models.BooleanField(default=False)
     home_theater = models.BooleanField(default=False)
+
+
+    entrance_dates = ArrayField(models.DateField(), null=True)
+    departure_dates = ArrayField(models.DateField(), null=True)
+    rent_dates = ArrayField(models.DateField(), null=True)
+
+
+    def get_rent_dates(self):
+        record = self
+        calendar_rent_dates = {}
+        calendar_rent_dates['rent_dates'] = [datetime.date.strftime(i,'%Y-%m-%d') for i in record.rent_dates]
+        calendar_rent_dates['entrance_dates'] = [datetime.date.strftime(i,'%Y-%m-%d') for i in record.entrance_dates]
+        calendar_rent_dates['departure_dates'] = [datetime.date.strftime(i,'%Y-%m-%d') for i in record.departure_dates]
+        return calendar_rent_dates
+
+
+    def add_dates_rent(self, tid, date_from, date_to):
+        """
+
+        :param tid:
+        :param date_from: date, when client enter real estate for rent
+        :param date_to: date, when client left real estate for rent
+        Check input date. If date already exist in base - raise error
+        If date is valid -> add to database and generate signal, to save date at index base
+        """
+
+        # Obvious - we have to do it!
+        # Just smile :)
+        record = self
+
+        # check for uniqueness
+        if (date_to in record.rent_dates) or  (date_to in record.departure_dates):
+            raise ValueError('departure date is unavailable')
+        if (date_from in record.rent_dates) or (date_from in record.entrance_dates):
+            raise ValueError('entrance date is unavailable')
+
+        rent_dates = []
+
+        delta = date_to-date_from
+        if delta.days>1:
+            for i in range(1,delta.days):
+                        rent_dates.append(date_from+ td(days=i))
+
+        with transaction.atomic():
+                record.entrance_dates.append(date_from)
+                record.departure_dates.append(date_to)
+                record.rent_dates.extend(rent_dates)
+                record.save()
+                PublicationsSignals.daily_rent_updated.send(
+                    None,
+                    tid = tid,
+                    hid = record.id,
+                )
+
+
+    def remove_rent_dates(self, tid, date_from, date_to):
+        """
+
+        :param tid:
+        :param date_from: date, when client enter real estate for rent
+        :param date_to: date, when client left real estate for rent
+
+        Remove calendar rent dates from  database and generate signal,
+        to synchronize date with index base
+        """
+        record = self
+
+        rent_dates = copy.copy(record.rent_dates)
+
+        delta = date_to - date_from
+        for i in range(1,delta.days):
+            rent_dates.remove(date_from + td(days=i))
+
+        with transaction.atomic():
+
+            record.entrance_dates.remove(date_from)
+            record.departure_dates.remove(date_to)
+            record.rent_dates = copy.copy(rent_dates)
+            record.save()
+            PublicationsSignals.daily_rent_updated.send(
+                    None,
+                    tid = tid,
+                    hid = record.id,
+                )
+
 
     #-- validation
     def check_required_fields(self):

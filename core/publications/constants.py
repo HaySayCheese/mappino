@@ -28,7 +28,11 @@ class ObjectTypes(AbstractConstant):
             self.ids['warehouse'],
             self.ids['business'],
         ]
-
+        self.daily_rent=[
+            self.ids['flat'],
+            self.ids['house'],
+            self.ids['room'],
+        ]
 
     # жилая недвижимость
     def flat(self):
@@ -67,7 +71,6 @@ class ObjectTypes(AbstractConstant):
     def business(self):
         return self.ids['business']
 OBJECTS_TYPES = ObjectTypes()
-
 
 
 class ObjectStates(AbstractConstant):
@@ -346,7 +349,7 @@ RED_LINE_VALUES = RedLineValues()
 
 
 from core.publications.models import FlatsHeads, HousesHeads, RoomsHeads, \
-    TradesHeads, OfficesHeads, WarehousesHeads, BusinessesHeads, GaragesHeads, LandsHeads
+        TradesHeads, OfficesHeads, WarehousesHeads, BusinessesHeads, GaragesHeads, LandsHeads
 
 HEAD_MODELS = {
     OBJECTS_TYPES.flat(): FlatsHeads,

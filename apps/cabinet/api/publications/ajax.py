@@ -3,7 +3,7 @@ import re
 import copy
 import json
 
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.http.response import HttpResponse, HttpResponseBadRequest
 
 from apps.classes import CabinetView
@@ -278,7 +278,8 @@ class Publication(CabinetView):
 
 
 
-    class PublishUnpublish(CabinetView):
+#todo fix try except block
+    class Publish(CabinetView):
         class PutResponses(object):
             @staticmethod
             @json_response
@@ -299,7 +300,7 @@ class Publication(CabinetView):
 
 
         @classmethod
-        def put(cls, request, operation, *args):
+        def put(cls, request, *args):
             try:
                 tid, hash_id = args[:]
                 tid = int(tid)
@@ -321,16 +322,57 @@ class Publication(CabinetView):
                 raise PermissionDenied()
 
 
-            if operation == 'unpublish':
-                head.unpublish()
+
+            try:
+                head.publish()
+                return cls.PutResponses.ok()
+            # ValidationError
+            except  Exception as e :
+                return cls.PutResponses.invalid_publication()
+
+
+    class Unpublish(CabinetView):
+        class PutResponses(object):
+            @staticmethod
+            def ok():
+                return HttpJsonResponse({
+                    'code': 0,
+                    'message': 'OK'
+                })
+
+            @staticmethod
+            def invalid_publication():
+                return HttpJsonResponse({
+                    'code': 1,
+                    'message': 'publication does not pass validation.'
+                })
+
+
+        @classmethod
+        def put(cls, request, *args):
+            try:
+                tid, hash_id = args[:]
+                tid = int(tid)
+                # hash_id doesnt need to be converted to int
+
+                model = HEAD_MODELS[tid]
+            except (IndexError, ValueError):
+                return HttpResponseBadRequest('Invalid parameters.')
+
+
+            try:
+                head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
+            except IndexError:
                 return cls.PutResponses.ok()
 
-            elif operation == 'publish':
-                try:
-                    head.publish()
-                    return cls.PutResponses.ok()
-                except ValidationError:
-                    return cls.PutResponses.invalid_publication()
+
+            # check owner
+            if head.owner.id != request.user.id:
+                raise PermissionDenied()
+
+
+            head.unpublish()
+            return cls.PutResponses.ok()
 
 
     class UploadPhoto(CabinetView):
