@@ -1,0 +1,106 @@
+<md-card>
+    <md-card-content>
+        <div class="md-subhead blue-text">Местоположение</div>
+        <div class="md-padding">
+            <div layout="column">
+                <md-input-container>
+                    <!--<label>Местоположение</label>-->
+                    <input id="publication-map-input" name="address" ng-model="publication.head.address" required>
+                    <div ng-messages="publicationForm.address.$error"
+                         ng-show="publicationForm.$submitted || publicationForm.address.$touched">
+                        <div ng-message="required">Обязательное поле</div>
+                        <div ng-message="invalid">Местоположение указано неверно</div>
+                    </div>
+                </md-input-container>
+
+                <div id="publication-map"></div>
+            </div>
+        </div>
+    </md-card-content>
+</md-card>
+
+
+
+<md-card>
+    <md-card-content>
+        <div class="md-subhead blue-text">Фото и видео</div>
+        <div class="drop-container" ngf-drop ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
+             accept="image/*" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
+
+            <div class="md-padding">
+                <div class="drop-box" layout="column" layout-align="center center">
+
+                    <p>Перенесите сюда фото или видео файл</p>
+
+                    <md-button class="md-primary" ngf-select ngf-multiple="true" accept="image/*" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
+                        Выбрать файл
+                    </md-button>
+                </div>
+            </div>
+
+
+
+            <div class="publication-photos-list">
+                <div layout="column">
+                    <div layout-sm="column" layout-gt-sm="row" layout-wrap layout-padding>
+                        <div flex-gt-sm="50" ng-repeat="photo in publication.photos" >
+                            <div class="publication-photo" layout="column" layout-align="center center" ng-class="{ '-main': photo.is_title }">
+                                <img ng-src="[[ photo.thumbnail_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png" />
+
+                                <md-progress-circular md-mode="indeterminate" ng-show="publicationPhotoLoader[photo.hash_id]"></md-progress-circular>
+
+                                <md-fab-speed-dial class="md-fling" md-direction="left" ng-hide="publicationPhotoLoader[photo.hash_id]">
+                                    <md-fab-trigger>
+                                        <md-button aria-label="menu" class="md-fab md-mini grey lighten-2">
+                                            <md-icon class="grey-text">menu</md-icon>
+                                        </md-button>
+                                    </md-fab-trigger>
+                                    <md-fab-actions>
+                                        <md-button aria-label="twitter" class="md-fab md-raised md-mini md-warn"
+                                                   ng-click="u_pubCtrl.removePublicationPhoto(photo.hash_id)">
+                                            <md-icon>delete</md-icon>
+                                        </md-button>
+                                        <md-button aria-label="facebook" class="md-fab md-raised md-mini md-primary" ng-hide="photo.is_title"
+                                                   ng-click="u_pubCtrl.setTitlePhoto(photo.hash_id)">
+                                            <md-icon>check</md-icon>
+                                        </md-button>
+                                    </md-fab-actions>
+                                </md-fab-speed-dial>
+                            </div>
+                        </div>
+
+                        <div flex-gt-sm="50" ng-repeat="tempPhoto in tempPublicationPhotos">
+                            <div class="publication-photo" layout="column" layout-align="center center">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </md-card-content>
+</md-card>
+
+
+
+<div class="md-whiteframe-z2" layout="row" publication-controls>
+    <md-button class="md-warn md-hue-3" hide-sm ng-click="pubCtrl.removePublication($event)">
+        Удалить
+    </md-button>
+    <md-button class="md-icon-button md-warn md-hue-3" hide-gt-sm show-sm ng-click="pubCtrl.removePublication($event)">
+        <md-icon>delete</md-icon>
+    </md-button>
+
+    <md-button class="md-primary md-hue-1" hide-sm ng-click="u_pubCtrl.doneEditingLater($event)">
+        Заполнить позже
+    </md-button>
+    <md-button class="md-icon-button md-primary" hide-gt-sm show-sm >
+        <md-icon>access_time</md-icon>
+    </md-button>
+
+    <span flex></span>
+
+    <md-button class="md-raised md-primary" ng-click="u_pubCtrl.publish()">
+        Опубликовать
+    </md-button>
+</div>

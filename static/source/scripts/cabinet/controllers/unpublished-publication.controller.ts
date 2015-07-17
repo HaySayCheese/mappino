@@ -23,6 +23,7 @@ module Mappino.Cabinet {
             '$rootScope',
             '$state',
             '$timeout',
+            '$mdDialog',
             'PublicationsService',
         ];
 
@@ -30,6 +31,7 @@ module Mappino.Cabinet {
                     private $rootScope: any,
                     private $state: angular.ui.IStateService,
                     private $timeout: angular.ITimeoutService,
+                    private $mdDialog: any,
                     private publicationsService: IPublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
             this.publicationIds.tid    = $state.params['id'].split(':')[0];
@@ -64,6 +66,22 @@ module Mappino.Cabinet {
                     // success
                 });
             }
+        }
+
+
+
+        public doneEditingLater($event) {
+            var alert = this.$mdDialog
+                .alert()
+                .parent(angular.element(document.body))
+                .clickOutsideToClose(true)
+                .title('Ваше объявление будет сохранено')
+                .content('Вы сможете продолжить работать с ним в любое время.')
+                //.ariaLabel('Alert Dialog Demo')
+                .ok('Хорошо')
+                .targetEvent($event);
+
+            this.$mdDialog.show(alert);
         }
 
 

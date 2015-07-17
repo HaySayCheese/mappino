@@ -35,7 +35,7 @@
                     <md-input-container flex="33">
                         <label>Цена</label>
                         <input name="sale_price" ng-model="publication.sale_terms.price"
-                               ng-required="publication.head.for_sale" only-number>
+                               ng-required="publication.head.for_sale" only-number-with-dots>
                         <div ng-messages="publicationForm.sale_price.$error"
                              ng-show="publicationForm.$submitted || publicationForm.sale_price.$touched">
                             <div ng-message="required">Обязательное поле</div>
@@ -66,14 +66,14 @@
                 <div layout="row">
                     <md-select placeholder="Срок" md-on-close="u_pubCtrl.checkField('rent_period_sid')"
                                ng-model="publication.rent_terms.period_sid" flex="33">
-                        <md-option ng-repeat="periodType in CONSTANTS.PERIOD_TYPES" value="[[ periodType.id ]]">[[ periodType.title ]]</md-option>
+                        <md-option ng-repeat="periodType in CONSTANTS.PERIOD_TYPES" ng-if="$index > 0" value="[[ periodType.id ]]">[[ periodType.title ]]</md-option>
                     </md-select>
                 </div>
                 <div layout="row" layout-align="start center">
                     <md-input-container flex="33">
                         <label>Цена</label>
                         <input name="rent_price" ng-model="publication.rent_terms.price"
-                               ng-required="publication.head.for_rent" only-number required>
+                               ng-required="publication.head.for_rent" only-number-with-dots required>
                         <div ng-messages="publicationForm.rent_price.$error"
                              ng-show="publicationForm.$submitted || publicationForm.rent_price.$touched">
                             <div ng-message="required">Обязательное поле</div>
@@ -124,7 +124,7 @@
                     </md-select>
                     <md-input-container flex="33">
                         <label>Площадь</label>
-                        <input name="area" ng-model="publication.body.area" only-number required>
+                        <input name="area" ng-model="publication.body.area" only-number-with-dots required>
                         <div ng-messages="publicationForm.area.$error"
                              ng-show="publicationForm.$submitted || publicationForm.area.$touched">
                             <div ng-message="required">Обязательное поле</div>
@@ -205,46 +205,5 @@
 
 
 
-    <md-card>
-        <md-card-content>
-            <div class="md-subhead blue-text">Местоположение</div>
-            <div class="md-padding">
-                <div ng-include="'/ajax/template/cabinet/publications/unpublished/map/'"></div>
-            </div>
-        </md-card-content>
-    </md-card>
-
-
-
-    <md-card>
-        <md-card-content>
-            <div class="md-subhead blue-text">Фото и видео</div>
-
-            <div ng-include="'/ajax/template/cabinet/publications/unpublished/photos/'"></div>
-        </md-card-content>
-    </md-card>
-
-
-
-    <div class="md-whiteframe-z2" layout="row" publication-controls>
-        <md-button class="md-warn md-hue-3" hide-sm ng-click="pubCtrl.removePublication($event)">
-            Удалить
-        </md-button>
-        <md-button class="md-icon-button md-warn md-hue-3" hide-gt-sm show-sm ng-click="pubCtrl.removePublication($event)">
-            <md-icon>delete</md-icon>
-        </md-button>
-
-        <md-button class="md-primary md-hue-1" hide-sm>
-            Заполнить позже
-        </md-button>
-        <md-button class="md-icon-button md-primary" hide-gt-sm show-sm >
-            <md-icon>access_time</md-icon>
-        </md-button>
-
-        <span flex></span>
-
-        <md-button class="md-raised md-primary" ng-click="u_pubCtrl.publish()">
-            Опубликовать
-        </md-button>
-    </div>
+    <div ng-include="'/ajax/templates/cabinet/publications/unpublished/footer/'"></div>
 </form>

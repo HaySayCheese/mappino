@@ -38,7 +38,7 @@ module Mappino.Cabinet {
 
 
         public remove(publicationIds: IPublicationIds, successCallback?, errorCallback?) {
-            this.$http.delete('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/delete-permanent/')
+            this.$http.delete('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/')
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this.$state.go('publications');
