@@ -176,17 +176,22 @@
                             <div ng-message="invalid">Количество комнат указано неверно</div>
                         </div>
                     </md-input-container>
-                    <md-select placeholder="Планировка комнат" md-on-close="u_pubCtrl.checkField('rooms_planning_sid')"
-                               ng-model="publication.body.rooms_planning_sid" flex="33">
-                        <md-option ng-repeat="roomPlanningType in CONSTANTS.ROOM_PLANNING_TYPES" value="[[ roomPlanningType.id ]]">[[ roomPlanningType.title ]]</md-option>
-                    </md-select>
+                    <md-input-container flex="33">
+                        <label>Количество этажей</label>
+                        <input name="floors_count" ng-model="publication.body.floors_count" only-number required>
+                        <div ng-messages="publicationForm.floors_count.$error"
+                             ng-show="publicationForm.$submitted || publicationForm.floors_count.$touched">
+                            <div ng-message="required">Обязательное поле</div>
+                            <div ng-message="invalid">Количество этажей указана неверно</div>
+                        </div>
+                    </md-input-container>
                     <md-select placeholder="Отопление" md-on-close="u_pubCtrl.checkField('heating_type_sid')"
                                ng-model="publication.body.heating_type_sid" flex="33">
                         <md-option ng-repeat="heatingType in CONSTANTS.HEATING_TYPES" value="[[ heatingType.id ]]">[[ heatingType.title ]]</md-option>
                     </md-select>
                 </div>
                 <div layout="row" ng-show="publication.body.heating_type_sid == '0'">
-                    <md-input-container>
+                    <md-input-container flex>
                         <label>Тип отопления</label>
                         <input name="custom_heating_type" ng-model="publication.body.custom_heating_type" ng-required="publication.body.heating_type_sid == '0'">
                         <div ng-messages="publicationForm.custom_heating_type.$error"
