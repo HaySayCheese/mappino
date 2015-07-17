@@ -35,7 +35,7 @@
                     <md-input-container flex="33">
                         <label>Цена</label>
                         <input name="sale_price" ng-model="publication.sale_terms.price"
-                               ng-required="publication.head.for_sale" only-number>
+                               ng-required="publication.head.for_sale" only-number-with-dots>
                         <div ng-messages="publicationForm.sale_price.$error"
                              ng-show="publicationForm.$submitted || publicationForm.sale_price.$touched">
                             <div ng-message="required">Обязательное поле</div>
@@ -83,7 +83,7 @@
                     <md-input-container flex="33">
                         <label>Цена</label>
                         <input name="rent_price" ng-model="publication.rent_terms.price"
-                               ng-required="publication.head.for_rent" only-number required>
+                               ng-required="publication.head.for_rent" only-number-with-dots required>
                         <div ng-messages="publicationForm.rent_price.$error"
                              ng-show="publicationForm.$submitted || publicationForm.rent_price.$touched">
                             <div ng-message="required">Обязательное поле</div>
@@ -138,7 +138,7 @@
                     </md-select>
                     <md-input-container flex="33">
                         <label>Площадь</label>
-                        <input name="area" ng-model="publication.body.area" only-number required>
+                        <input name="area" ng-model="publication.body.area" only-number-with-dots required>
                         <div ng-messages="publicationForm.area.$error"
                              ng-show="publicationForm.$submitted || publicationForm.area.$touched">
                             <div ng-message="required">Обязательное поле</div>
