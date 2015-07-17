@@ -655,7 +655,8 @@ class Briefs(CabinetView):
             щоб на вищих рівнях можна було накласти додакові умови на вибірку.
             По суті, дана функція лише дампить результати цієї вибірки в список в певному форматі.
         """
-        publications_list = queryset.values_list('id', 'hash_id', 'state_sid', 'created', 'body__title', 'for_rent', 'for_sale')
+        publications_list = queryset.values_list(
+            'id', 'hash_id', 'state_sid', 'created', 'body__title', 'body__description', 'for_rent', 'for_sale')
         if not publications_list:
             return []
 
@@ -665,13 +666,14 @@ class Briefs(CabinetView):
         result = []
         for publication in publications_list:
             record = {
-                'tid': tid,
-                'id': publication[1], # hash_id
-                'state_sid': publication[2], # state_sid
-                'created': publication[3].strftime('%Y-%m-%dT%H:%M:%SZ'),
-                'title': publication[4], # body.title
-                'for_rent': publication[5], # for_rent
-                'for_sale': publication[6], # for_sale
+                'tid':          tid,
+                'id':           publication[1], # hash_id
+                'state_sid':    publication[2], # state_sid
+                'created':      publication[3].strftime('%Y-%m-%dT%H:%M:%SZ'),
+                'title':        publication[4], # body.title
+                'description':  publication[5], # body.description
+                'for_rent':     publication[6], # for_rent
+                'for_sale':     publication[7], # for_sale
 
                 # ...
                 # other fields here
