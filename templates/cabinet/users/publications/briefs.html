@@ -1,7 +1,6 @@
 <div class="briefs-page md-padding" ng-controller="BriefsController as briefsCtrl"
      layout-wrap layout="column" layout-gt-lg="row" layout-align-md="start center" layout-align-lg="start center">
 
-    <md-card class="-fake" flex="32" ng-hide="briefs.length"></md-card>
 
     <md-card flex="32">
         <md-card-content layout="column">
@@ -29,6 +28,7 @@
         </md-card-content>
     </md-card>
 
+    <md-card class="-fake" flex="32" ng-hide="briefs.length"></md-card>
     <md-card class="-fake" flex="32" ng-hide="briefs.length"></md-card>
 
 
@@ -58,7 +58,7 @@
     </md-card>
 
 
-    <md-card class="-fake" flex="32" ng-hide="briefs.length % 2 != briefs.length / 2"></md-card>
+    <md-card class="-fake" flex="32" ng-show="briefs.length"></md-card>
 
 </div>
 
