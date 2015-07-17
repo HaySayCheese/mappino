@@ -1,5 +1,6 @@
 # coding=utf-8
 import math
+from django.conf import settings
 
 from django.db import models, connections
 from django.db.models import Q
@@ -2458,7 +2459,7 @@ class LandsRentIndex(LandsSaleIndex):
 
 # -- index handler
 class SegmentsIndex(models.Model):
-    index_db_name = 'markers_index'
+    index_db_name = settings.INDEXES_DATABASE_NAME
     min_zoom = 1
     max_zoom = 15
 
