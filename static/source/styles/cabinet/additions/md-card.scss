@@ -4,6 +4,11 @@ md-card {
     margin: 20px;
 
 
+    &.-brief {
+        width: 550px;
+    }
+
+
     @media screen and (max-width: 775px) {
         @include size(100% !important, auto);
         min-width: 100% !important;

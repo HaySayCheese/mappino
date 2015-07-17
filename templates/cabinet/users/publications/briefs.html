@@ -1,8 +1,8 @@
 <div class="briefs-page md-padding" ng-controller="BriefsController as briefsCtrl"
-     layout-wrap layout="column" layout-gt-lg="row" layout-align-md="start center" layout-align-lg="start center">
+     layout-sm="column" layout-md="column" layout-lg="row" layout-gt-lg="row"
+     layout-align-sm="start center" layout-align-md="start center" layout-align-lg="center start" layout-align-gt-lg="center start" layout-wrap>
 
-
-    <md-card flex="32">
+    <md-card class="-brief">
         <md-card-content layout="column">
             <div layout="column" layout-align="center center">
                 <img src="{{ static }}build/images/cabinet/brief-new-publication.gif" alt=""/>
@@ -28,27 +28,35 @@
         </md-card-content>
     </md-card>
 
-    <md-card class="-fake" flex="32" ng-hide="briefs.length"></md-card>
-    <md-card class="-fake" flex="32" ng-hide="briefs.length"></md-card>
 
-
-    <md-card ng-repeat="brief in briefs" flex="32">
-        <img class="md-card-image" ng-src="[[ brief.photo_url ]]" on-error-src="{{ static }}build/images/common/image-404.png" alt="">
+    <md-card class="-brief" ng-repeat="brief in briefs">
+        <img class="md-card-image" ng-src="[[ brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png" />
         <md-card-content>
-            <div class="brief-status -published" layout="row" layout-align="start center" ng-show="brief.state_sid == 0">
-                <md-icon>done</md-icon>
-                <span>Опубликовано</span>
+            <div layout="row">
+                <div class="brief-status -published" layout="row" layout-align="start center" ng-show="brief.state_sid == 0">
+                    <md-icon>done</md-icon>
+                    <span>Опубликовано</span>
+                    <span flex></span>
+                </div>
+                <div class="brief-status -unpublished" layout="row" layout-align="start center" ng-show="brief.state_sid == 1">
+                    <span>Не опубликовано</span>
+                    <span flex></span>
+                </div>
                 <span flex></span>
+                <span class="blue-grey-text">[[ CONSTANTS.REALTY_TYPES[brief.tid].singularTitle ]]</span>
             </div>
-            <div class="brief-status -unpublished" layout="row" layout-align="start center" ng-show="brief.state_sid == 1">
-                <span>Не опубликовано</span>
-                <span flex></span>
-            </div>
-            <h2 class="md-title">[[ brief.title ]]</h2>
 
-            <p>[[ brief.description ]]</p>
+            <h2 class="md-title" ng-show="brief.title">[[ brief.title ]]</h2>
+            <h2 class="md-title grey-text text-lighten-1" ng-hide="brief.title">Заголовок не указан</h2>
+
+            <p ng-show="brief.description">[[ brief.description ]]</p>
+            <p class="grey-text text-lighten-1" ng-hide="brief.description">Описание не указано</p>
         </md-card-content>
         <div class="md-actions" layout="row" layout-align="end center">
+            <md-button class="md-warn md-hue-3" ng-click="briefsCtrl.removePublication($event, brief.tid, brief.id)">
+                Удалить
+            </md-button>
+            <span flex></span>
             <md-button class="md-primary md-hue-1" ui-sref="publication_edit({ id: brief.tid + ':' + brief.id })">
                 Редактировать
             </md-button>
@@ -57,8 +65,5 @@
             </md-button>
         </div>
     </md-card>
-
-
-    <md-card class="-fake" flex="32" ng-show="briefs.length"></md-card>
 </div>
 
