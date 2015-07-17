@@ -12,8 +12,7 @@ urlpatterns = patterns('apps.cabinet.templates.templates',
 
     # unpublished publications forms
     url(r'^ajax/template/cabinet/publications/unpublished/(\d+)/$', 'publications_unpublished_form'),
-    url(r'^ajax/template/cabinet/publications/unpublished/map/$', 'publications_unpublished_map'),
-    url(r'^ajax/template/cabinet/publications/unpublished/photos/$', 'publications_unpublished_photos'),
+    url(r'^ajax/template/cabinet/publications/unpublished/footer/$', 'publications_unpublished_footer'),
 
 
     # published publications forms
