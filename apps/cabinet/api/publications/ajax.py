@@ -1,10 +1,6 @@
 # coding=utf-8
-import re
-import copy
-import json
-
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
-from django.http.response import HttpResponse, HttpResponseBadRequest
+from django.http.response import HttpResponseBadRequest
 
 from apps.classes import CabinetView
 from collective.decorators.ajax import json_response, json_response_bad_request
@@ -63,6 +59,7 @@ class Publications(CabinetView):
 
         record = model.new(request.user, is_sale, is_rent)
         return cls.PostResponses.ok(record.hash_id)
+
 
 
 class Publication(CabinetView):
@@ -298,9 +295,9 @@ class Publication(CabinetView):
 
 
         @classmethod
-        def put(cls, request, *args, **kwargs):
+        def put(cls, request, operation, *args):
             try:
-                tid, hash_id = args[:2]
+                tid, hash_id = args[:]
                 tid = int(tid)
                 # hash_id doesnt need to be converted to int
 
@@ -319,7 +316,7 @@ class Publication(CabinetView):
             if head.owner.id != request.user.id:
                 raise PermissionDenied()
 
-            operation = kwargs['operation']
+
             if operation == 'unpublish':
                 head.unpublish()
                 return cls.PutResponses.ok()
