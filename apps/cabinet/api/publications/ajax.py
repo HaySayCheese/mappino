@@ -1,13 +1,11 @@
 # coding=utf-8
-import re
-import copy
-import json
 
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.http.response import HttpResponse, HttpResponseBadRequest
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
+from django.http.response import HttpResponseBadRequest
 
 from apps.classes import CabinetView
 from collective.decorators.ajax import json_response, json_response_bad_request
+from collective.http.responses import HttpJsonResponse
 from collective.methods.request_data_getters import angular_parameters
 from core.publications import classes
 from core.publications.exceptions import PhotosHandlerExceptions
@@ -326,8 +324,8 @@ class Publication(CabinetView):
             try:
                 head.publish()
                 return cls.PutResponses.ok()
-            # ValidationError
-            except  Exception as e :
+            #
+            except (ValidationError,):
                 return cls.PutResponses.invalid_publication()
 
 
