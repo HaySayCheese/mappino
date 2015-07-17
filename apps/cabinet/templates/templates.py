@@ -41,15 +41,8 @@ def publications_unpublished_form(request, tid):
 @ensure_csrf_cookie
 @login_required_or_forbidden
 @render_jinja2_template
-def publications_unpublished_map(request):
-    return 'cabinet/users/publications/unpublished/parts/map.html'
-
-
-@ensure_csrf_cookie
-@login_required_or_forbidden
-@render_jinja2_template
-def publications_unpublished_photos(request):
-    return 'cabinet/users/publications/unpublished/parts/photos.html'
+def publications_unpublished_footer(request):
+    return 'cabinet/users/publications/unpublished/parts/footer.html'
 
 
 @ensure_csrf_cookie
