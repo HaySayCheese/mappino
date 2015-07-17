@@ -1,8 +1,14 @@
 [publication-controls] {
+    position: fixed;
+    bottom: -300px;
+    z-index: 9999;
+
     margin: 0 !important;
     background: #fff;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
+
+    @include transition(bottom 1s ease);
 
     &.-fixed {
         border-radius: 0;

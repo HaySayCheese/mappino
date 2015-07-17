@@ -33,19 +33,20 @@
 
 
     <md-card ng-repeat="brief in briefs" flex="32">
-        <img ng-src="http://lorempixel.com/700/380/city" class="md-card-image" alt="Washed Out">
+        <img class="md-card-image" ng-src="[[ brief.photo_url ]]" on-error-src="{{ static }}build/images/common/image-404.png" alt="">
         <md-card-content>
-            <div class="brief-status -published" layout="row" layout-align="start center">
+            <div class="brief-status -published" layout="row" layout-align="start center" ng-show="brief.state_sid == 0">
                 <md-icon>done</md-icon>
                 <span>Опубликовано</span>
                 <span flex></span>
             </div>
-            <h2 class="md-title">Paracosm</h2>
+            <div class="brief-status -unpublished" layout="row" layout-align="start center" ng-show="brief.state_sid == 1">
+                <span>Не опубликовано</span>
+                <span flex></span>
+            </div>
+            <h2 class="md-title">[[ brief.title ]]</h2>
 
-            <p>
-                The titles of Washed Out's breakthrough song and the first single from Paracosm share the
-                two most important words in Ernest Greene's musical language: feel it. It's a simple request, as well...
-            </p>
+            <p>[[ brief.description ]]</p>
         </md-card-content>
         <div class="md-actions" layout="row" layout-align="end center">
             <md-button class="md-primary md-hue-1" ui-sref="publication_edit({ id: brief.tid + ':' + brief.id })">

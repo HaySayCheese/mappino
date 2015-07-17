@@ -81,7 +81,12 @@ module Mappino.Cabinet {
                 .ok('Хорошо')
                 .targetEvent($event);
 
-            this.$mdDialog.show(alert);
+            this.$mdDialog.show(alert)
+                .then(() => {
+                    console.log('ggdg')
+                }, () => {
+                    //
+                });
         }
 
 

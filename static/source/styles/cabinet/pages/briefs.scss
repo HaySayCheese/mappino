@@ -6,6 +6,13 @@
                 color: color('green', 'base') !important;
             }
         }
+
+        &.-unpublished {
+            span,
+            md-icon {
+                color: color('orange', 'base') !important;
+            }
+        }
     }
 
     md-card-content {
