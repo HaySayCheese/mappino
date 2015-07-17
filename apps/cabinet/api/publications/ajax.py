@@ -65,7 +65,6 @@ class Publications(CabinetView):
         return cls.PostResponses.ok(record.hash_id)
 
 
-
 class Publication(CabinetView):
     class GetResponses(object):
         @staticmethod
@@ -299,9 +298,9 @@ class Publication(CabinetView):
 
 
         @classmethod
-        def put(cls, request, operation, *args):
+        def put(cls, request, *args, **kwargs):
             try:
-                tid, hash_id = args[:]
+                tid, hash_id = args[:2]
                 tid = int(tid)
                 # hash_id doesnt need to be converted to int
 
@@ -320,7 +319,7 @@ class Publication(CabinetView):
             if head.owner.id != request.user.id:
                 raise PermissionDenied()
 
-
+            operation = kwargs['operation']
             if operation == 'unpublish':
                 head.unpublish()
                 return cls.PutResponses.ok()
