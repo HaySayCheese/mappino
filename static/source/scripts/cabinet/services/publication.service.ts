@@ -3,7 +3,7 @@
 
 module Mappino.Cabinet {
     export class PublicationsService implements IPublicationsService {
-        private briefs: Array<IBrief>;
+        private briefs: IBrief[];
         private publication: IPublication;
 
         public static $inject = [
@@ -171,7 +171,7 @@ module Mappino.Cabinet {
             this.$http.get('/ajax/api/cabinet/publications/briefs/all/')
                 .then(response => {
                     if (response.data['code'] === 0) {
-                        this.briefs.push(response.data['data']);
+                        this.briefs = response.data['data'];
                         _.isFunction(successCallback) && successCallback(this.briefs)
                     } else {
                         _.isFunction(errorCallback) && errorCallback(response.data)
