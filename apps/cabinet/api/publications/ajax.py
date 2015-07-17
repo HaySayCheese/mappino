@@ -580,7 +580,7 @@ class Publication(CabinetView):
                 photo_hash_id = args[1]
 
             except (IndexError, ValueError):
-                return cls.PostResponses.invalid_parameters()
+                return self.PutResponses.invalid_parameters()
 
 
             if tid not in OBJECTS_TYPES.values():
