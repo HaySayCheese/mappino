@@ -1,12 +1,10 @@
 #coding=utf-8
-import uuid
 import datetime
-import redis_lock
 import copy
 from datetime import  timedelta as td
 
+import redis_lock
 from djantimat.helpers import RegexpProc
-
 from django.contrib.postgres.fields import ArrayField
 from django.db.utils import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
@@ -665,7 +663,12 @@ class LivingRentTermsModel(AbstractModel):
         """
         record = self
 
-        rent_dates = copy.copy(record.rent_dates)
+        if (date_to in record.rent_dates) or  (date_to in record.departure_dates):
+            raise ValueError('departure date is unavailable')
+        if (date_from in record.rent_dates) or (date_from in record.entrance_dates):
+            raise ValueError('entrance date is unavailable')
+
+        rent_dates = record.rent_dates
 
         delta = date_to - date_from
         for i in range(1,delta.days):
