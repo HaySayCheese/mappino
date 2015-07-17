@@ -3,7 +3,7 @@ import urllib
 import datetime
 
 from collective.exceptions import InvalidArgument, ResourceThrottled
-from core import redis_connections
+from core.redis_database_connections import redis_connections
 from core.constants import GLOBAL_REDIS_PREFIXES
 from mappino import settings
 
