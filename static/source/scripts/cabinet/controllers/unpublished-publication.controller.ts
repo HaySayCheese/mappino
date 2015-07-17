@@ -83,7 +83,7 @@ module Mappino.Cabinet {
 
             this.$mdDialog.show(alert)
                 .then(() => {
-                    console.log('ggdg')
+                    //this.$state
                 }, () => {
                     //
                 });
