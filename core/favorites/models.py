@@ -7,6 +7,8 @@ from core.publications.constants import OBJECTS_TYPES
 from core.users.models import Users
 
 
+from core.publications.publications_to_check.models import PublicationsToCheck
+
 class Favorites(models.Model):
     user = models.ForeignKey(Users)
     publications_ids = models.TextField(default="[]")  # note: Json type

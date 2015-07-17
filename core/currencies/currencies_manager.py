@@ -2,13 +2,13 @@
 import json
 import urllib2
 import xml.etree.ElementTree as ET
-
 from datetime import timedelta
-from core import redis_connections
+
 from django.utils.timezone import now
 
 from collective.exceptions import RuntimeException
 from core.currencies.constants import CURRENCIES
+from core.redis_database_connections import redis_connections
 
 
 redis = redis_connections['cache']

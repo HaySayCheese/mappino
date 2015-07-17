@@ -18,9 +18,10 @@ ADMINS = (
     ('Dima Chizhevsky', 'dima@mappino.com'),
 )
 MANAGERS = (
-    ('Dima Chizhevsky', 'support@mappino.com'),
+    ('Dima Chizhevsky', 'support@mappino.com', 'bloodlustwolf43@gmail.com'),
 )
-SUPPORT_EMAIL =  MANAGERS[0][1]
+SUPPORT_EMAIL =  MANAGERS[0][2]
+MANAGER_EMAIL = SUPPORT_EMAIL
 BILLING_MANAGER_EMAIL = MANAGERS[0][1]
 MODERATORS = MANAGERS[0][1]
 
@@ -132,6 +133,7 @@ INSTALLED_APPS = (
     'core.claims',
     'core.markers_handler',
     'core.support',
+    'core.publications.publications_to_check',
     'core.escaped_fragments_manager',
 
     # todo: shift this apps into core
