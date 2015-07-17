@@ -1,6 +1,6 @@
 #coding=utf-8
 from collective.exceptions import InvalidArgument
-from core import redis_connections
+from core.redis_database_connections import redis_connections
 
 
 class AbstractCacheManager(object):
