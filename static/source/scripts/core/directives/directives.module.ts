@@ -5,4 +5,5 @@ module mappino.core.directives {
     var core: angular.IModule = angular.module('mappino.core.directives', []);
 
     core.directive('onlyNumber', onlyNumber);
+    core.directive('onErrorSrc', onErrorSrc);
 }

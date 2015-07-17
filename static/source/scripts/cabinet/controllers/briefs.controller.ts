@@ -18,7 +18,7 @@ module Mappino.Cabinet {
 
         constructor(private $scope: any,
                     private $rootScope: any,
-                    private publicationsService: PublicationsService) {
+                    private publicationsService: IPublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.briefs = this.briefs;
             $scope.newPublication = this.newPublication;

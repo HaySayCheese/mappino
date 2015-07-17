@@ -1,9 +1,13 @@
-<form name="publicationForm" ng-controller="UnpublishedPublicationController as u_pubCtrl"
-      layout-wrap layout-gt-lg="row" layout-md="column" layout-lg="column" layout-align-md="start center" layout-align-lg="start center" novalidate>
+<form name="publicationForm" ng-controller="UnpublishedPublicationController as u_pubCtrl" layout-wrap layout-gt-lg="row"
+      layout-md="column" layout-lg="column" layout-gt-lg="row" layout-align-md="start center" layout-align-lg="start center" layout-align-gt-lg="end center" novalidate>
 
     <md-card>
         <md-card-content>
-            <div class="md-subhead blue-text">Объявление</div>
+            <div layout="row">
+                <div class="md-subhead blue-text">Объявление</div>
+                <span flex></span>
+                <span class="blue-grey-text">[[ CONSTANTS.REALTY_TYPES[pubCtrl.publicationIds.tid].title ]]</span>
+            </div>
             <div class="md-padding">
                 <div layout="row">
                     <md-checkbox class="md-primary" name="for_sale" ng-change="u_pubCtrl.checkField('for_sale')"
@@ -66,7 +70,8 @@
                     </md-select>
                     <md-input-container flex="33" flex-sm="66">
                         <label>Количество мест</label>
-                        <input name="rent_persons_count" ng-model="publication.rent_terms.persons_count" only-number required>
+                        <input name="rent_persons_count" ng-model="publication.rent_terms.persons_count"
+                               ng-required="publication.head.for_rent" only-number required>
                         <div ng-messages="publicationForm.rent_persons_count.$error"
                              ng-show="publicationForm.$submitted || publicationForm.rent_persons_count.$touched">
                             <div ng-message="required">Обязательное поле</div>
@@ -207,6 +212,16 @@
                                ng-model="publication.body.heating_type_sid" flex="33">
                         <md-option ng-repeat="heatingType in CONSTANTS.HEATING_TYPES" value="[[ heatingType.id ]]">[[ heatingType.title ]]</md-option>
                     </md-select>
+                </div>
+                <div layout="row" ng-show="publication.body.heating_type_sid == '0'">
+                    <md-input-container flex>
+                        <label>Тип отопления</label>
+                        <input name="custom_heating_type" ng-model="publication.body.custom_heating_type" ng-required="publication.body.heating_type_sid == '0'">
+                        <div ng-messages="publicationForm.custom_heating_type.$error"
+                             ng-show="publicationForm.$submitted || publicationForm.custom_heating_type.$touched">
+                            <div ng-message="required">Обязательное поле</div>
+                        </div>
+                    </md-input-container>
                 </div>
                 <div layout="row" ng-show="publication.body.heating_type_sid == '1'">
                     <md-select placeholder="Индивидуальное отопление" md-on-close="u_pubCtrl.checkField('ind_heating_type_sid')"
@@ -374,54 +389,6 @@
 
     <md-card>
         <md-card-content>
-            <div class="md-subhead blue-text">Рядом находиться</div>
-            <div class="md-padding" layout="column">
-                <div layout-sm="column" layout-gt-sm="row">
-                    <div layout="column" flex="50">
-                        <md-checkbox class="md-primary" name="kindergarten" ng-change="u_pubCtrl.checkField('kindergarten')"
-                                     ng-model="publication.body.kindergarten">
-                            Детсад
-                        </md-checkbox>
-                        <md-checkbox class="md-primary" name="school" ng-change="u_pubCtrl.checkField('school')"
-                                     ng-model="publication.body.school">
-                            Школа
-                        </md-checkbox>
-                        <md-checkbox class="md-primary" name="market" ng-change="u_pubCtrl.checkField('market')"
-                                     ng-model="publication.body.market">
-                            Рынок / супераркет
-                        </md-checkbox>
-                        <md-checkbox class="md-primary" name="park" ng-change="u_pubCtrl.checkField('park')"
-                                     ng-model="publication.body.park">
-                            Парк / сквер
-                        </md-checkbox>
-                    </div>
-                    <div layout="column" flex="50">
-                        <md-checkbox class="md-primary" name="transport_stop" ng-change="u_pubCtrl.checkField('transport_stop')"
-                                     ng-model="publication.body.transport_stop">
-                            Остановка общ. транспорта
-                        </md-checkbox>
-                        <md-checkbox class="md-primary" name="entertainment" ng-change="u_pubCtrl.checkField('entertainment')"
-                                     ng-model="publication.body.entertainment">
-                            Развлекательные заведения
-                        </md-checkbox>
-                        <md-checkbox class="md-primary" name="sport_center" ng-change="u_pubCtrl.checkField('sport_center')"
-                                     ng-model="publication.body.sport_center">
-                            Спортивно-оздоровительный центр
-                        </md-checkbox>
-                    </div>
-                </div>
-                <md-input-container>
-                    <label>Другие достопримечательности, уточнения</label>
-                    <input name="add_showplaces" ng-model="publication.body.add_showplaces">
-                </md-input-container>
-            </div>
-        </md-card-content>
-    </md-card>
-
-
-
-    <md-card>
-        <md-card-content>
             <div class="md-subhead blue-text">Местоположение</div>
             <div class="md-padding">
                 <div ng-include="'/ajax/template/cabinet/publications/unpublished/map/'"></div>
@@ -441,11 +408,24 @@
 
 
 
-    <div class="md-whiteframe-z2" publication-controls>
-        <md-button class="md-raised md-warn md-hue-2">
+    <div class="md-whiteframe-z2" layout="row" publication-controls>
+        <md-button class="md-warn md-hue-3" hide-sm ng-click="pubCtrl.removePublication($event)">
             Удалить
         </md-button>
-        <md-button class="md-raised md-primary">
+        <md-button class="md-icon-button md-warn md-hue-3" hide-gt-sm show-sm ng-click="pubCtrl.removePublication($event)">
+            <md-icon>delete</md-icon>
+        </md-button>
+
+        <md-button class="md-primary md-hue-1" hide-sm>
+            Заполнить позже
+        </md-button>
+        <md-button class="md-icon-button md-primary" hide-gt-sm show-sm >
+            <md-icon>access_time</md-icon>
+        </md-button>
+
+        <span flex></span>
+
+        <md-button class="md-raised md-primary" ng-click="u_pubCtrl.publish()">
             Опубликовать
         </md-button>
     </div>

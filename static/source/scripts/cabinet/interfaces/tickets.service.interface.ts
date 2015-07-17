@@ -95,6 +95,6 @@ module Mappino.Cabinet {
      * @returns {void}
      */
     export interface ITicketsBaseErrorCallback {
-        (code: number, message: string): void
+        (response: { code: number; message: string }): void
     }
 }

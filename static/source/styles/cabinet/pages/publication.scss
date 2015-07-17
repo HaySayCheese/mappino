@@ -1,4 +1,7 @@
 .publication-page {
+    form {
+        position: relative;
+    }
 
     #publication-map {
         @include size(100%, 400px);
