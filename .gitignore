@@ -1,12 +1,18 @@
 .idea/*
-.venv/*
-.venv2/*
+venv/*
+venv
+venv2/*
+venv2
+venv-pypy/*
+venv-pypy
+
 
 mappino/dev_settings.py
 mappino/tests_settings.py
 
 mappino/passwords.py
 mappino/keys/*
+mappino/keys
 
 node_modules
 
@@ -16,8 +22,8 @@ static/CACHE/*
 static/escaped_fragments
 static/escaped_fragments/*
 
-
+.gitignore
 
 *.pyc
 *.log
-*.ipynb
+bower_components
