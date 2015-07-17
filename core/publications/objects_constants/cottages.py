@@ -1,5 +1,0 @@
-from core.publications.objects_constants.houses import HOUSE_SALE_TYPES, HOUSE_RENT_TYPES
-
-
-COTTAGE_SALE_TYPES = HOUSE_SALE_TYPES
-COTTAGE_RENT_TYPES = HOUSE_RENT_TYPES
