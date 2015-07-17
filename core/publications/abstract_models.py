@@ -850,7 +850,7 @@ class PhotosModel(AbstractModel):
         Deletes the record of this photo from the database.
 
         :returns:
-            record with next title photo.
+            record with next title photo if exists, or None.
         """
         try:
             # In some cases photos are already removed from the GCS and one more delete request will generate 404 error.
