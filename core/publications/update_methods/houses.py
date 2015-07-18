@@ -1,15 +1,16 @@
 #coding=utf-8
 from decimal import InvalidOperation
 
+from collective.methods.formatters import format_text
+from collective.methods.formatters import format_title
 from django.db.utils import IntegrityError
 from django.db import DatabaseError
-
-from core.publications.update_methods.utils.formaters import format_text, format_title
 from core.currencies.constants import CURRENCIES
 from core.publications.constants import SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, MARKET_TYPES, \
 	OBJECT_CONDITIONS, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES
 from core.publications.models import HousesSaleTerms, HousesRentTerms, HousesBodies
 from core.publications.objects_constants.houses import HOUSE_SALE_TYPES, HOUSE_RENT_TYPES
+
 
 
 

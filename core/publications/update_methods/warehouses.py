@@ -1,9 +1,10 @@
 #coding=utf-8
 from decimal import InvalidOperation
+from collective.methods.formatters import format_text
+from collective.methods.formatters import format_title
 
 from django.db import DatabaseError, IntegrityError
 
-from core.publications.update_methods.utils.formaters import format_text, format_title
 from core.currencies.constants import CURRENCIES
 from core.publications.constants import RED_LINE_VALUES, SALE_TRANSACTION_TYPES, INDIVIDUAL_HEATING_TYPES, HEATING_TYPES, MARKET_TYPES, COMMERCIAL_RENT_PERIODS
 from core.publications.models import WarehousesBodies, WarehousesRentTerms, WarehousesSaleTerms
