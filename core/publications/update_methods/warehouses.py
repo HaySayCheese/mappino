@@ -338,7 +338,7 @@ def update_warehouse(h, field, value, tid):
                 b.save(force_update=True)
                 return
             else:
-                value = format_text(value)
+                value = format_title(value)
                 b.custom_heating_type = value
                 b.save(force_update=True)
                 return
@@ -364,7 +364,7 @@ def update_warehouse(h, field, value, tid):
                 b.save(force_update=True)
                 return
             else:
-                value = format_text(value)
+                value = format_title(value)
                 b.custom_ind_heating_type = value
                 b.save(force_update=True)
                 return value

@@ -528,14 +528,14 @@ def update_house(h, field, value, tid):
 
 
         # text
-        elif field == 'custom_heating_type_sid':
+        elif field == 'custom_heating_type':
             b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
             if not value:
                 b.custom_heating_type = u''
                 b.save(force_update=True)
                 return
             else:
-                value = format_text(value)
+                value = format_title(value)
                 b.custom_heating_type = value
                 b.save(force_update=True)
                 return value
@@ -554,14 +554,14 @@ def update_house(h, field, value, tid):
 
 
         # text
-        elif field == 'custom_ind_heating_type_sid':
+        elif field == 'custom_ind_heating_type':
             b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
             if not value:
                 b.custom_ind_heating_type = u''
                 b.save(force_update=True)
                 return
             else:
-                value = format_text(value)
+                value = format_title(value)
                 b.custom_ind_heating_type = value
                 b.save(force_update=True)
                 return value
