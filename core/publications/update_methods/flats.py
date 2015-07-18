@@ -3,11 +3,12 @@ from decimal import InvalidOperation
 
 from django.db import DatabaseError, IntegrityError
 
-from core.publications.update_methods.utils.formaters import format_text, format_title
+from collective.methods.formatters import format_text, format_title
 from core.currencies.constants import CURRENCIES
-from core.publications.constants import MARKET_TYPES, FLOOR_TYPES, OBJECT_CONDITIONS, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, LIVING_RENT_PERIODS, SALE_TRANSACTION_TYPES
+from core.publications.constants import \
+	MARKET_TYPES, FLOOR_TYPES, OBJECT_CONDITIONS, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, LIVING_RENT_PERIODS
 from core.publications.models import FlatsBodies, FlatsRentTerms, FlatsSaleTerms
-from core.publications.objects_constants.flats import FLAT_BUILDING_TYPES, FLAT_ROOMS_PLANNINGS, FLAT_TYPES
+from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
 
 
 
@@ -66,18 +67,6 @@ def update_flat(h, field, value, tid):
 
 
 		# sid
-		elif field == 'sale_transaction_sid':
-			value = int(value)
-			if value not in SALE_TRANSACTION_TYPES.values():
-				raise ValueError()
-
-			st = FlatsSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
-			st.transaction_sid = value
-			st.save(force_update=True)
-			return
-
-
-		# sid
 		elif field == 'sale_currency_sid':
 			value = int(value)
 			if value not in CURRENCIES.values():
@@ -98,20 +87,6 @@ def update_flat(h, field, value, tid):
 				return
 			else:
 				raise ValueError()
-
-
-		# text
-		elif field == 'sale_add_terms':
-			st = FlatsSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
-			if not value:
-				st.add_terms = u''
-				st.save(force_update=True)
-				return
-			else:
-				value = format_text(value)
-				st.add_terms = value
-				st.save(force_update=True)
-				return value
 
 
 		# bool
@@ -202,64 +177,6 @@ def update_flat(h, field, value, tid):
 				raise ValueError()
 
 
-		# boolean
-		elif field == 'rent_family':
-			if (value is True) or (value is False):
-				rt = FlatsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-				rt.family = value
-				rt.save(force_update=True)
-				return
-			else:
-				raise ValueError()
-
-
-		# boolean
-		elif field == 'rent_smoking':
-			if (value is True) or (value is False):
-				rt = FlatsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-				rt.smoking = value
-				rt.save(force_update=True)
-				return
-			else:
-				raise ValueError()
-
-
-		# boolean
-		elif field == 'rent_foreigners':
-			if (value is True) or (value is False):
-				rt = FlatsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-				rt.foreigners = value
-				rt.save(force_update=True)
-				return
-			else:
-				raise ValueError()
-
-
-		# boolean
-		elif field == 'rent_pets':
-			if (value is True) or (value is False):
-				rt = FlatsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-				rt.pets = value
-				rt.save(force_update=True)
-				return
-			else:
-				raise ValueError()
-
-
-		# text
-		elif field == 'rent_add_terms':
-			rt = FlatsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-			if not value:
-				rt.add_terms = u''
-				rt.save(force_update=True)
-				return
-			else:
-				value = format_text(value)
-				rt.add_terms = value
-				rt.save(force_update=True)
-				return value
-
-
 		# text
 		elif field == 'title':
 			b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
@@ -296,62 +213,6 @@ def update_flat(h, field, value, tid):
 
 			b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
 			b.market_type_sid = value
-			b.save(force_update=True)
-			return
-
-
-		# sid
-		elif field == 'building_type_sid':
-			value = int(value)
-			if value not in FLAT_BUILDING_TYPES.values():
-				raise ValueError()
-
-			b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-			b.building_type_sid = value
-			b.save(force_update=True)
-			return
-
-
-		# text
-		elif field == 'custom_building_type':
-			b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-			if not value:
-				b.custom_building_type = u''
-				b.save(force_update=True)
-				return
-			else:
-				value = format_text(value)
-				b.custom_building_type = value
-				b.save(force_update=True)
-				return value
-
-
-		# blank or int
-		elif field == 'build_year':
-			if not value:
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.build_year = None
-				b.save(force_update=True)
-				return
-			else:
-				value = int(value)
-				if value <= 0:
-					raise ValueError()
-
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.build_year = value
-				b.save(force_update=True)
-				return
-
-
-		# sid
-		elif field == 'flat_type_sid':
-			value = int(value)
-			if value not in FLAT_TYPES.values():
-				raise ValueError()
-
-			b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-			b.flat_type_sid = value
 			b.save(force_update=True)
 			return
 
@@ -531,102 +392,6 @@ def update_flat(h, field, value, tid):
 				b.rooms_count = value
 				b.save(force_update=True)
 				return
-
-
-		# blank or int
-		elif field == 'bedrooms_count':
-			if not value:
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.bedrooms_count = None
-				b.save(force_update=True)
-				return
-			else:
-				value = int(value)
-				if value < 0:
-					raise ValueError()
-
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.bedrooms_count = value
-				b.save(force_update=True)
-				return
-
-
-		# blank or int
-		elif field == 'vcs_count':
-			if not value:
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.vcs_count = None
-				b.save(force_update=True)
-				return
-			else:
-				value = int(value)
-				if value < 0:
-					raise ValueError()
-
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.vcs_count = value
-				b.save(force_update=True)
-				return
-
-
-		# blank or int
-		elif field == 'balconies_count':
-			if not value:
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.balconies_count = None
-				b.save(force_update=True)
-				return
-			else:
-				value = int(value)
-				if value < 0:
-					raise ValueError()
-
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.balconies_count = value
-				b.save(force_update=True)
-				return
-
-
-		# blank or int
-		elif field == 'loggias_count':
-			if not value:
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.loggias_count = None
-				b.save(force_update=True)
-				return
-			else:
-				value = int(value)
-				if value < 0:
-					raise ValueError()
-
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.loggias_count = value
-				b.save(force_update=True)
-				return
-
-
-		# blank or float
-		elif field == 'ceiling_height':
-			if not value:
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.ceiling_height = None
-				b.save(force_update=True)
-				return
-			else:
-				value = round(float(value.replace(',', '.')), 2)
-				if value <= 0:
-					raise ValueError()
-
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.ceiling_height = value
-				b.save(force_update=True)
-
-				if int(value) == value:
-					# Відсікти дробову частину, якщо після коми нулі
-					return int(value)
-				else:
-					# скоротити / розширити до 2х цифр після коми
-					return "%.2f" % value
 
 
 		# sid
@@ -913,130 +678,6 @@ def update_flat(h, field, value, tid):
 			else:
 				value = format_text(value)
 				b.add_buildings = value
-				b.save(force_update=True)
-				return value
-
-
-		# boolean
-		elif field == 'kindergarten':
-			if (value is True) or (value is False):
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.kindergarten = value
-				b.save(force_update=True)
-				return
-			else:
-				raise ValueError()
-
-
-		# boolean
-		elif field == 'school':
-			if (value is True) or (value is False):
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.school = value
-				b.save(force_update=True)
-				return
-			else:
-				raise ValueError()
-
-
-		# boolean
-		elif field == 'market':
-			if (value is True) or (value is False):
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.market = value
-				b.save(force_update=True)
-				return
-			else:
-				raise ValueError()
-
-
-		# boolean
-		elif field == 'transport_stop':
-			if (value is True) or (value is False):
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.transport_stop = value
-				b.save(force_update=True)
-				return
-			else:
-				raise ValueError()
-
-
-		# boolean
-		elif field == 'entertainment':
-			if (value is True) or (value is False):
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.entertainment = value
-				b.save(force_update=True)
-				return
-			else:
-				raise ValueError()
-
-
-		# boolean
-		elif field == 'sport_center':
-			if (value is True) or (value is False):
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.sport_center = value
-				b.save(force_update=True)
-				return
-			else:
-				raise ValueError()
-
-
-		# boolean
-		elif field == 'park':
-			if (value is True) or (value is False):
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.park = value
-				b.save(force_update=True)
-				return
-			else:
-				raise ValueError()
-
-
-		# boolean
-		elif field == 'water':
-			if (value is True) or (value is False):
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.water = value
-				b.save(force_update=True)
-				return
-			else:
-				raise ValueError()
-
-
-		# boolean
-		elif field == 'wood':
-			if (value is True) or (value is False):
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.wood = value
-				b.save(force_update=True)
-				return
-			else:
-				raise ValueError()
-
-
-		# boolean
-		elif field == 'sea':
-			if (value is True) or (value is False):
-				b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-				b.sea = value
-				b.save(force_update=True)
-				return
-			else:
-				raise ValueError('')
-
-
-		# text
-		elif field == 'add_showplaces':
-			b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-			if not value:
-				b.add_showplaces = u''
-				b.save(force_update=True)
-				return
-			else:
-				value = format_text(value)
-				b.add_showplaces = value
 				b.save(force_update=True)
 				return value
 

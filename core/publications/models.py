@@ -142,12 +142,6 @@ class FlatsBodies(BodyModel):
         if self.title is None:
             return u''
 
-        # if without_trailing_dot:
-        # 	if self.title[-1] == u'.':
-        # 		return self.title[:-1]
-        # else:
-        # 	if self.title[-1] != u'.':
-        # 		return self.title + u'.'
         return self.title
 
 
@@ -177,9 +171,6 @@ class FlatsBodies(BodyModel):
 
     def print_rooms_planning(self):
         return self.substitutions['rooms_planning'][self.rooms_planning_sid]
-
-
-
 
 
     def print_floor(self):
@@ -218,39 +209,6 @@ class FlatsBodies(BodyModel):
         if self.rooms_planning_sid == FLAT_ROOMS_PLANNINGS.free() or not self.rooms_count:
             return u''
         return unicode(self.rooms_count)
-
-
-    def print_bedrooms_count(self):
-        if not self.bedrooms_count:
-            return u''
-        return unicode(self.bedrooms_count)
-
-
-    def print_vcs_count(self):
-        if not self.vcs_count:
-            return u''
-        return unicode(self.vcs_count)
-
-
-    def print_balconies_count(self):
-        if not self.balconies_count:
-            return u''
-        return unicode(self.balconies_count)
-
-
-    def print_loggias_count(self):
-        if not self.loggias_count:
-            return u''
-        return unicode(self.loggias_count)
-
-
-    def print_ceiling_height(self):
-        if self.ceiling_height is None:
-            return u''
-
-        if self.ceiling_height == int(self.ceiling_height):
-            return unicode(int(self.ceiling_height)) + u' м'
-        return unicode(self.ceiling_height) + u' м'
 
 
     def print_facilities(self):
@@ -330,31 +288,6 @@ class FlatsBodies(BodyModel):
 
         if buildings:
             return buildings[2:]
-        return u''
-
-
-    def print_showplaces(self):
-        showplaces = u''
-        if self.kindergarten:
-            showplaces += u', детский сад'
-        if self.school:
-            showplaces += u', школа'
-        if self.market:
-            showplaces += u', рынок'
-        if self.transport_stop:
-            showplaces += u', остановка общ. транспорта'
-        if self.park:
-            showplaces += u', парк'
-        if self.sport_center:
-            showplaces += u', спортивно-оздоровительный центр'
-        if self.entertainment:
-            showplaces += u', развлекательные заведения'
-
-        if self.add_showplaces:
-            showplaces += '. ' + self.add_showplaces
-
-        if showplaces:
-            return showplaces[2:]
         return u''
 
 
