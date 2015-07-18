@@ -4,6 +4,7 @@
 module Mappino.Cabinet {
     export class BriefsController {
         private briefs: Array<IBrief> = [];
+
         private newPublication: IPublicationNew = {
             tid:        0,
             for_sale:   true,
@@ -13,17 +14,41 @@ module Mappino.Cabinet {
         public static $inject = [
             '$scope',
             '$rootScope',
+            '$mdDialog',
             'PublicationsService'
         ];
 
         constructor(private $scope: any,
                     private $rootScope: any,
+                    private $mdDialog: any,
                     private publicationsService: IPublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.briefs = this.briefs;
             $scope.newPublication = this.newPublication;
 
             this.loadPublications();
+        }
+
+
+        public removeBrief($event, briefTid, briefId) {
+            // Appending dialog to document.body to cover sidenav in docs app
+            var confirm = this.$mdDialog
+                .confirm()
+                .parent(angular.element(document.body))
+                .title('Вы на самом деле хотите удалить это объявление?')
+                .content('Все данные по этому объявлению будут удалены навсегда.')
+                //.ariaLabel('Lucky day')
+                .ok('Удалить')
+                .cancel('Отменить удаление')
+                .targetEvent($event);
+
+
+            this.$mdDialog.show(confirm)
+                .then(() => {
+                    //this.publicationsService.remove({ tid: briefTid, hid: briefId })
+                }, () => {
+                    //
+                });
         }
 
 

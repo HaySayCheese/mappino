@@ -83,9 +83,7 @@ module Mappino.Cabinet {
 
             this.$mdDialog.show(alert)
                 .then(() => {
-                    //this.$state
-                }, () => {
-                    //
+                    this.$state.go('publications');
                 });
         }
 
