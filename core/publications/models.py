@@ -358,7 +358,6 @@ class HousesBodies(BodyModel):
 
 
     market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
-
     condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
     total_area = models.FloatField(null=True)
     living_area = models.FloatField(null=True)
@@ -370,9 +369,6 @@ class HousesBodies(BodyModel):
 
     floors_count = models.SmallIntegerField(null=True)
     rooms_count = models.PositiveSmallIntegerField(null=True)
-    bedrooms_count = models.PositiveSmallIntegerField(null=True)
-    vcs_count = models.SmallIntegerField(null=True)
-
 
     # Опалення
     heating_type_sid = models.SmallIntegerField(default=HEATING_TYPES.individual())
@@ -409,16 +405,6 @@ class HousesBodies(BodyModel):
     pool = models.BooleanField(default=False)
     cellar = models.BooleanField(default=False) # погреб
     add_buildings = models.TextField(null=True)
-
-    # Поряд знаходиться
-    kindergarten = models.BooleanField(default=False)
-    school = models.BooleanField(default=False)
-    market = models.BooleanField(default=False)
-    transport_stop = models.BooleanField(default=False)
-    entertainment = models.BooleanField(default=False) # розважальні установи
-    sport_center = models.BooleanField(default=False)
-    park = models.BooleanField(default=False)
-    add_showplaces = models.TextField(null=True)
 
 
     # validation
@@ -494,17 +480,6 @@ class HousesBodies(BodyModel):
             return u''
         return unicode(self.rooms_count)
 
-
-    def print_bedrooms_count(self):
-        if not self.bedrooms_count:
-            return u''
-        return unicode(self.bedrooms_count)
-
-
-    def print_vcs_count(self):
-        if not self.vcs_count:
-            return u''
-        return unicode(self.vcs_count)
 
 
     def print_facilities(self):
@@ -599,31 +574,6 @@ class HousesBodies(BodyModel):
 
         if buildings:
             return buildings[2:]
-        return u''
-
-
-    def print_showplaces(self):
-        showplaces = u''
-        if self.kindergarten:
-            showplaces += u', детский сад'
-        if self.school:
-            showplaces += u', школа'
-        if self.market:
-            showplaces += u', рынок'
-        if self.transport_stop:
-            showplaces += u', остановка общ. транспорта'
-        if self.park:
-            showplaces += u', парк'
-        if self.sport_center:
-            showplaces += u', спортивно-оздоровительный центр'
-        if self.entertainment:
-            showplaces += u', развлекательные заведения'
-
-        if self.add_showplaces:
-            showplaces += '. ' + self.add_showplaces
-
-        if showplaces:
-            return showplaces[2:]
         return u''
 
 
