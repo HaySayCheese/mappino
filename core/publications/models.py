@@ -81,31 +81,22 @@ class FlatsBodies(BodyModel):
 
 
     market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
-
-    building_type_sid = models.SmallIntegerField(default=FLAT_BUILDING_TYPES.brick())
-    custom_building_type = models.TextField(null=True)
-    build_year = models.PositiveSmallIntegerField(null=True)
     flat_type_sid = models.SmallIntegerField(default=FLAT_TYPES.separate()) # тип квартири
     custom_flat_type = models.TextField(null=True)
-    rooms_planning_sid = models.SmallIntegerField(default=FLAT_ROOMS_PLANNINGS.separate()) # планування кімнат
     condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
-
-    floor = models.SmallIntegerField(null=True) # номер поверху
-    floor_type_sid = models.SmallIntegerField(default=FLOOR_TYPES.floor()) # тип поверху: мансарда, цоколь, звичайний поверх і т.д
-    floors_count = models.SmallIntegerField(null=True)
-    ceiling_height = models.FloatField(null=True) # висота стелі
 
     total_area = models.FloatField(null=True)
     living_area = models.FloatField(null=True)
     kitchen_area = models.FloatField(null=True)
 
+    floors_count = models.SmallIntegerField(null=True)
+    floor = models.SmallIntegerField(null=True) # номер поверху
+    floor_type_sid = models.SmallIntegerField(default=FLOOR_TYPES.floor()) # тип поверху: мансарда, цоколь, звичайний поверх і т.д
+
     rooms_count = models.PositiveSmallIntegerField(null=True)
-    bedrooms_count = models.PositiveSmallIntegerField(null=True)
-    vcs_count = models.SmallIntegerField(null=True)
-    balconies_count = models.SmallIntegerField(null=True)
-    loggias_count = models.SmallIntegerField(null=True)
+    rooms_planning_sid = models.SmallIntegerField(default=FLAT_ROOMS_PLANNINGS.separate()) # планування кімнат
 
-
+    ceiling_height = models.FloatField(null=True) # висота стелі
     # Опалення
     heating_type_sid = models.SmallIntegerField(default=HEATING_TYPES.central())
     custom_heating_type = models.TextField(null=True) # якщо нічого не вказано в heating_type_sid
@@ -134,16 +125,6 @@ class FlatsBodies(BodyModel):
     garage = models.BooleanField(default=False) # гараж / паркомісце
     playground = models.BooleanField(default=False)
     add_buildings = models.TextField(null=True)
-
-    # Поряд знаходиться
-    kindergarten = models.BooleanField(default=False)
-    school = models.BooleanField(default=False)
-    market = models.BooleanField(default=False)
-    transport_stop = models.BooleanField(default=False)
-    entertainment = models.BooleanField(default=False) # розважальні установи
-    sport_center = models.BooleanField(default=False)
-    park = models.BooleanField(default=False)
-    add_showplaces = models.TextField(null=True)
 
     #-- validation
     def check_extended_fields(self):
@@ -181,22 +162,6 @@ class FlatsBodies(BodyModel):
         return self.substitutions['market_type'][self.market_type_sid]
 
 
-    def print_building_type(self):
-        building_type = self.substitutions['building_type'].get(self.building_type_sid)
-        if building_type:
-            return building_type
-
-        if self.building_type_sid == FLAT_BUILDING_TYPES.custom() and self.custom_building_type:
-            return self.custom_building_type
-        return u''
-
-
-    def print_build_year(self):
-        if not self.build_year:
-            return u''
-        return unicode(self.build_year) + u' г.'
-
-
     def print_flat_type(self):
         flat_type = self.substitutions['flat_type'].get(self.flat_type_sid)
         if flat_type:
@@ -207,12 +172,15 @@ class FlatsBodies(BodyModel):
         return u''
 
 
+    def print_condition(self):
+        return self.substitutions['condition'][self.condition_sid]
+
+
     def print_rooms_planning(self):
         return self.substitutions['rooms_planning'][self.rooms_planning_sid]
 
 
-    def print_condition(self):
-        return self.substitutions['condition'][self.condition_sid]
+
 
 
     def print_floor(self):
@@ -389,7 +357,6 @@ class FlatsBodies(BodyModel):
         if showplaces:
             return showplaces[2:]
         return u''
-
 
 
 class FlatsHeads(AbstractHeadModel):
