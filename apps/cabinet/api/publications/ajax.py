@@ -15,7 +15,6 @@ from core.publications.update_methods.offices import update_office
 from core.publications.update_methods.rooms import update_room
 from core.publications.update_methods.trades import update_trade
 from core.publications.update_methods.warehouses import update_warehouse
-from core.publications.update_methods.business import update_business
 from core.publications.update_methods.garages import update_garage
 from core.publications.update_methods.lands import update_land
 
@@ -219,9 +218,6 @@ class Publication(CabinetView):
 
         elif tid == OBJECTS_TYPES.warehouse():
             returned_value = update_warehouse(head, field, value, tid)
-
-        elif tid == OBJECTS_TYPES.business():
-            returned_value = update_business(head, field, value, tid)
 
 
         # Відправити сигнал про зміну моделі.
