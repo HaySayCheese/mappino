@@ -625,15 +625,12 @@ class LivingRentTermsModel(AbstractModel):
 
 
 
-class CommercialRentTermsModel(AdevsbstractModel):
+class CommercialRentTermsModel(AbstractModel):
     class Meta:
         abstract = True
 
-    #-- constraints
-    max_price_symbols_count = 18
-
     #-- fields
-    price = models.DecimalField(null=True, max_digits=max_price_symbols_count, decimal_places=2)
+    price = models.DecimalField(null=True, max_digits=18, decimal_places=2)
     currency_sid = models.SmallIntegerField(default=currencies_constants.dol())
     is_contract = models.BooleanField(default=False)
     period_sid = models.SmallIntegerField(default=COMMERCIAL_RENT_PERIODS.monthly())
