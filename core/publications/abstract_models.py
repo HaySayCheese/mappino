@@ -457,11 +457,8 @@ class BodyModel(AbstractModel):
     class Meta:
         abstract = True
 
-    #-- constraints
-    max_title_length = 80 # todo: визначити довжину
-
     #-- fields
-    title = models.TextField(null=True, max_length=max_title_length)
+    title = models.TextField(null=True)
     description = models.TextField(null=True)
 
     def check_required_fields(self):
@@ -493,7 +490,6 @@ class SaleTermsModel(AbstractModel):
     currency_sid = models.SmallIntegerField(default=currencies_constants.dol())
     is_contract = models.BooleanField(default=False)
     transaction_sid = models.SmallIntegerField(default=SALE_TRANSACTION_TYPES.for_all())
-    add_terms = models.TextField(default='')
 
     #-- validation
     def check_required_fields(self):
@@ -506,7 +502,6 @@ class SaleTermsModel(AbstractModel):
             raise EmptySalePrice('Sale price is None.')
 
 
-
 class LivingRentTermsModel(AbstractModel):
     class Meta:
         abstract = True
@@ -516,14 +511,7 @@ class LivingRentTermsModel(AbstractModel):
     currency_sid = models.SmallIntegerField(default=currencies_constants.dol())
     is_contract = models.BooleanField(default=False)
     period_sid = models.SmallIntegerField(default=LIVING_RENT_PERIODS.monthly())
-    # days_reserved = ArrayField(models.DateField)
     persons_count = models.SmallIntegerField(null=True)
-
-    family = models.BooleanField(default=False)
-    foreigners = models.BooleanField(default=False)
-    smoking = models.BooleanField(default=False)
-    pets = models.BooleanField(default=False)
-    add_terms = models.TextField(default='')
 
     furniture = models.BooleanField(default=False)
     refrigerator = models.BooleanField(default=False)
@@ -637,7 +625,7 @@ class LivingRentTermsModel(AbstractModel):
 
 
 
-class CommercialRentTermsModel(AbstractModel):
+class CommercialRentTermsModel(AdevsbstractModel):
     class Meta:
         abstract = True
 

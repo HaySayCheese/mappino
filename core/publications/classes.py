@@ -84,8 +84,6 @@ class CabinetPublishedDataSource(object):
             'description': p.body.print_description(),
 
             'market_type': p.body.print_market_type(),
-            'building_type': p.body.print_building_type(),
-            'build_year': p.body.print_build_year(),
             'flat_type': p.body.print_flat_type(),
             'rooms_planning': p.body.print_rooms_planning() ,
             'condition': p.body.print_condition(),
