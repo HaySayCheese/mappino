@@ -472,7 +472,7 @@ def update_land(h, field, value, tid):
         else:
             raise ValueError('invalid @field')
 
-    except (DatabaseError, IntegrityError, InvalidOperation, ValueError), e:
-        raise ValueError('Object type: flat. Message: {0} field: {1}. Value = {2}'.format(
-            unicode(e), unicode(field), unicode(value))
-        )
+    except (DatabaseError, IntegrityError, InvalidOperation, ValueError) as e:
+        raise ValueError(u'Field update error. Prefix: {0}. Value = {1}; Message: {2};'.format(
+            unicode(field), unicode(value), e.message
+        ))

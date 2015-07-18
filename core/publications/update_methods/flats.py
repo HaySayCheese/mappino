@@ -710,6 +710,6 @@ def update_flat(h, field, value, tid):
             raise ValueError()
 
     except (DatabaseError, IntegrityError, InvalidOperation, ValueError) as e:
-        raise ValueError(u'Object type: houses. Prefix: {0}. Value = {1}; Message: {2}'.format(
+        raise ValueError(u'Field update error. Prefix: {0}. Value = {1}; Message: {2};'.format(
             unicode(field), unicode(value), e.message
         ))

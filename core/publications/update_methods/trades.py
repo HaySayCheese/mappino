@@ -869,7 +869,7 @@ def update_trade(h, field, value, tid):
         else:
             raise ValueError('invalid @field')
 
-    except (DatabaseError, IntegrityError, InvalidOperation, ValueError):
-        raise ValueError('Object type: apartments. Prefix: {field}. Value = {value}'.format(
-            field = unicode(field), value = unicode(value)
+    except (DatabaseError, IntegrityError, InvalidOperation, ValueError) as e:
+        raise ValueError(u'Field update error. Prefix: {0}. Value = {1}; Message: {2};'.format(
+            unicode(field), unicode(value), e.message
         ))
