@@ -65,18 +65,6 @@ def update_room(h, field, value, tid):
 
 
         # sid
-        elif field == 'sale_transaction_sid':
-            value = int(value)
-            if value not in SALE_TRANSACTION_TYPES.values():
-                raise ValueError()
-
-            st = RoomsSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
-            st.transaction_sid = value
-            st.save(force_update=True)
-            return
-
-
-        # sid
         elif field == 'sale_currency_sid':
             value = int(value)
             if value not in CURRENCIES.values():
@@ -201,62 +189,6 @@ def update_room(h, field, value, tid):
                 raise ValueError()
 
 
-        # boolean
-        elif field == 'rent_family':
-            if (value is True) or (value is False):
-                rt = RoomsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-                rt.family = value
-                rt.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'rent_smoking':
-            if (value is True) or (value is False):
-                rt = RoomsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-                rt.smoking = value
-                rt.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'rent_foreigners':
-            if (value is True) or (value is False):
-                rt = RoomsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-                rt.foreigners = value
-                rt.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'rent_pets':
-            if (value is True) or (value is False):
-                rt = RoomsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-                rt.pets = value
-                rt.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # text
-        elif field == 'rent_add_terms':
-            rt = RoomsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-            if not value:
-                rt.add_terms = u''
-                rt.save(force_update=True)
-                return
-            else:
-                value = format_text(value)
-                rt.add_terms = value
-                rt.save(force_update=True)
-                return value
 
 
         # text
@@ -295,62 +227,6 @@ def update_room(h, field, value, tid):
 
             b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
             b.market_type_sid = value
-            b.save(force_update=True)
-            return
-
-
-        # sid
-        elif field == 'building_type_sid':
-            value = int(value)
-            if value not in FLAT_BUILDING_TYPES.values():
-                raise ValueError()
-
-            b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-            b.building_type_sid = value
-            b.save(force_update=True)
-            return
-
-
-        # text
-        elif field == 'custom_building_type':
-            b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-            if not value:
-                b.custom_building_type = u''
-                b.save(force_update=True)
-                return
-            else:
-                value = format_text(value)
-                b.custom_building_type = value
-                b.save(force_update=True)
-                return value
-
-
-        # blank or int
-        elif field == 'build_year':
-            if not value:
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.build_year = None
-                b.save(force_update=True)
-                return
-            else:
-                value = int(value)
-                if value <= 0:
-                    raise ValueError()
-
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.build_year = value
-                b.save(force_update=True)
-                return
-
-
-        # sid
-        elif field == 'rooms_planing_sid':
-            value = int(value)
-            if value not in FLAT_ROOMS_PLANNINGS.values():
-                raise ValueError()
-
-            b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-            b.rooms_planing_sid = value
             b.save(force_update=True)
             return
 
@@ -420,10 +296,10 @@ def update_room(h, field, value, tid):
 
 
         # blank or float
-        elif field == 'total_area':
+        elif field == 'area':
             if not value:
                 b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.total_area = None
+                b.area = None
                 b.save(force_update=True)
                 return
             else:
@@ -432,7 +308,7 @@ def update_room(h, field, value, tid):
                     raise ValueError()
 
                 b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.total_area = value
+                b.area = value
                 b.save(force_update=True)
 
                 if int(value) == value:
@@ -441,133 +317,6 @@ def update_room(h, field, value, tid):
                 else:
                     # Скоротити / розширити до 2х цифр після коми
                     return "%.2f" % value
-
-
-        # blank or float
-        elif field == 'living_area':
-            if not value:
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.living_area = None
-                b.save(force_update=True)
-                return
-            else:
-                value = round(float(value.replace(',', '.')), 2)
-                if value <= 0:
-                    raise ValueError()
-
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.living_area = value
-                b.save(force_update=True)
-
-                if int(value) == value:
-                    # Відсікти дробову частину, якщо після коми нулі
-                    return "%.0f" % value
-                else:
-                    # скоротити / розширити до 2х цифр після коми
-                    return "%.2f" % value
-
-
-        # blank or float
-        elif field == 'kitchen_area':
-            if not value:
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.kitchen_area = None
-                b.save(force_update=True)
-                return
-            else:
-                value = round(float(value.replace(',', '.')), 2)
-                if value <= 0:
-                    raise ValueError()
-
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.kitchen_area = value
-                b.save(force_update=True)
-
-                if int(value) == value:
-                    # Відсікти дробову частину, якщо після коми нулі
-                    return "%.0f" % value
-                else:
-                    # Скоротити / розширити до 2х цифр після коми
-                    return "%.2f" % value
-
-
-        # blank or int
-        elif field == 'rooms_count':
-            if not value:
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.rooms_count = None
-                b.save(force_update=True)
-                return
-            else:
-                value = int(value)
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.rooms_count = value
-                b.save(force_update=True)
-                return
-
-
-        # todo: РОЗІБРАТИСЬ ІЗ ЦИМ ПОЛЕМ
-        ## sid
-        #elif field == 'vc_loc':
-        #	value = int(value)
-        #	if value not in ROOMS_WC_LOCATIONS.values():
-        #		raise ValueError('Invalid vc location sid.')
-        #
-        #	b = RoomsBodies.by_id(body_id, only='vc_loc_sid')
-        #	b.vc_loc_sid = value
-        #	b.save(force_update=True)
-
-
-        # sid
-        elif field == 'heating_type_sid':
-            value = int(value)
-            if value not in HEATING_TYPES.values():
-                raise ValueError()
-
-            b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-            b.heating_type_sid = value
-            b.save(force_update=True)
-            return
-
-
-        # text
-        elif field == 'custom_heating_type':
-            b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-            if not value:
-                b.custom_heating_type = u''
-                b.save(force_update=True)
-                return
-            else:
-                value = format_title(value)
-                b.custom_heating_type = value
-                b.save(force_update=True)
-                return
-
-
-        # sid
-        elif field == 'ind_heating_type_sid':
-            value = int(value)
-            if value not in INDIVIDUAL_HEATING_TYPES.values():
-                raise ValueError()
-
-            b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-            b.ind_heating_type_sid = value
-            b.save(force_update=True)
-            return
-
-
-        # text
-        elif field == 'custom_ind_heating_type':
-            b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-            if not value:
-                b.custom_ind_heating_type = u''
-                b.save(force_update=True)
-                return
-            else:
-                value = format_title(value)
-                b.custom_ind_heating_type = value
-                b.save(force_update=True)
-                return
 
 
         # boolean
@@ -746,155 +495,6 @@ def update_room(h, field, value, tid):
                 return
             else:
                 raise ValueError()
-
-
-        # boolean
-        elif field == 'playground':
-            if (value is True) or (value is False):
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.playground = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # text
-        elif field == 'add_buildings':
-            b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-            if not value:
-                b.add_buildings= None
-                b.save(force_update=True)
-                return
-            else:
-                value = format_text(value)
-                b.add_buildings = value
-                b.save(force_update=True)
-                return value
-
-
-        # boolean
-        elif field == 'kindergarten':
-            if (value is True) or (value is False):
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.kindergarten = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'school':
-            if (value is True) or (value is False):
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.school = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'market':
-            if (value is True) or (value is False):
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.market = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'transport_stop':
-            if (value is True) or (value is False):
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.transport_stop = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'entertainment':
-            if (value is True) or (value is False):
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.entertainment = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'sport_center':
-            if (value is True) or (value is False):
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.sport_center = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'park':
-            if (value is True) or (value is False):
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.park = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'water':
-            if (value is True) or (value is False):
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.water = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'wood':
-            if (value is True) or (value is False):
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.wood = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'sea':
-            if (value is True) or (value is False):
-                b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.sea = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError('')
-
-
-        # text
-        elif field == 'add_showplaces':
-            b = RoomsBodies.objects.filter(id=h.body_id).only('id')[0]
-            if not value:
-                b.add_showplaces= None
-                b.save(force_update=True)
-                return
-            else:
-                value = format_text(value)
-                b.add_showplaces = value
-                b.save(force_update=True)
-                return
 
 
         # text

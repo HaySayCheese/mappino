@@ -177,7 +177,7 @@ class CabinetPublishedDataSource(object):
             'floor': p.body.print_floor(),
             'floors_count': p.body.print_floors_count(),
 
-            'total_area': p.body.print_total_area() or u'неизвестно',
+            'total_area': p.body.print_area() or u'неизвестно',
             'living_area': p.body.print_living_area() or u'неизвестно',
             'kitchen_area': p.body.print_kitchen_area(),
 
@@ -554,7 +554,7 @@ class PublishedDataSource(object):
             'floor': p.body.print_floor(),
             'floors_count': p.body.print_floors_count(),
 
-            'total_area': p.body.print_total_area() or u'неизвестно',
+            'total_area': p.body.print_area() or u'неизвестно',
             'living_area': p.body.print_living_area() or u'неизвестно',
             'kitchen_area': p.body.print_kitchen_area(),
 

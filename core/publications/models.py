@@ -670,10 +670,6 @@ class RoomsBodies(BodyModel):
 
     market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
 
-    building_type_sid = models.SmallIntegerField(default=ROOMS_BUILDINGS_TYPES.brick())
-    custom_building_type = models.TextField(null=True)
-    build_year = models.PositiveSmallIntegerField(null=True)
-
     floor = models.SmallIntegerField(null=True) # номер поверху
     floor_type_sid = models.SmallIntegerField(default=FLOOR_TYPES.floor()) # тип поверху: мансарда, цоколь, звичайний поверх і т.д
     floors_count = models.SmallIntegerField(null=True)
@@ -681,18 +677,7 @@ class RoomsBodies(BodyModel):
     condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
 
     rooms_count = models.PositiveSmallIntegerField(null=True)
-    total_area = models.FloatField(null=True)
-    living_area = models.FloatField(null=True)
-    kitchen_area = models.FloatField(null=True)
-
-    wc_loc_sid = models.SmallIntegerField(default=ROOMS_WC_LOCATION.inside())
-
-    # Опалення
-    heating_type_sid = models.SmallIntegerField(default=HEATING_TYPES.central())
-    custom_heating_type = models.TextField(null=True) # якщо нічого не вказано в heating_type_sid
-    # якщо вибрано ідивідуальний тип опалення в heating_type_sid
-    ind_heating_type_sid = models.SmallIntegerField(default=INDIVIDUAL_HEATING_TYPES.gas())
-    custom_ind_heating_type = models.TextField(null=True) # якщо нічого не вказано в ind_heating_type_sid
+    area = models.FloatField(null=True)
 
     # Інші зручності
     electricity = models.BooleanField(default=False)
@@ -708,32 +693,14 @@ class RoomsBodies(BodyModel):
     mobile_coverage = models.BooleanField(default=False) # покриття моб. операторами
     cable_tv = models.BooleanField(default=False) # кабельне / супутникове тб
 
-    # Дод. будівлі
-    playground = models.BooleanField(default=False)
-    add_buildings = models.TextField(null=True)
-
-    # Поряд знаходиться
-    kindergarten = models.BooleanField(default=False)
-    school = models.BooleanField(default=False)
-    market = models.BooleanField(default=False)
-    transport_stop = models.BooleanField(default=False)
-    entertainment = models.BooleanField(default=False) # розважальні установи
-    sport_center = models.BooleanField(default=False)
-    park = models.BooleanField(default=False)
-    add_showplaces = models.TextField(null=True)
 
     # validation
     def check_extended_fields(self):
         if self.floor_type_sid == FLOOR_TYPES.floor() and self.floor is None:
             raise EmptyFloor('Floor is None.')
-        if self.rooms_count is None:
-            raise EmptyRoomsCount('Rooms count is None.')
-        if self.total_area is None:
+
+        if self.area is None:
             raise EmptyTotalArea('Total area is None.')
-        if self.living_area is None:
-            raise EmptyLivingArea('Living area is None.')
-        # if self.persons_count is None:
-        #     raise EmptyPersonsCount('Persons count is None.')
 
 
     # output
@@ -753,22 +720,6 @@ class RoomsBodies(BodyModel):
         return self.substitutions['market_type'][self.market_type_sid]
 
 
-    def print_building_type(self):
-        building_type = self.substitutions['building_type'].get(self.building_type_sid)
-        if building_type is not None:
-            return building_type
-
-        if self.building_type_sid == ROOMS_BUILDINGS_TYPES.custom() and self.custom_building_type:
-            return self.custom_building_type
-        return u''
-
-
-    def print_build_year(self):
-        if not self.build_year:
-            return u''
-        return unicode(self.build_year) + u' г.'
-
-
     def print_floor(self):
         floor_type = self.substitutions['floor_types'].get(self.floor_type_sid, u'')
         if floor_type:
@@ -782,36 +733,14 @@ class RoomsBodies(BodyModel):
         return unicode(self.floors_count)
 
 
-    def print_rooms_planning(self):
-        return self.substitutions['rooms_planning'][self.rooms_planning_sid]
-
-
     def print_condition(self):
         return self.substitutions['condition'][self.condition_sid]
 
 
-    def print_rooms_count(self):
-        if self.rooms_count is None:
-            return u''
-        return unicode(self.rooms_count)
-
-
-    def print_total_area(self):
+    def print_area(self):
         if self.total_area is None:
             return u''
         return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
-
-
-    def print_living_area(self):
-        if self.living_area is None:
-            return u''
-        return "{:.2f}".format(self.living_area).rstrip('0').rstrip('.') + u' м²'
-
-
-    def print_kitchen_area(self):
-        if self.kitchen_area is None:
-            return u''
-        return "{:.2f}".format(self.kitchen_area).rstrip('0').rstrip('.') + u' м²'
 
 
     def print_facilities(self):
@@ -876,44 +805,6 @@ class RoomsBodies(BodyModel):
 
         if communications:
             return communications[2:]  + u'.'
-        return u''
-
-
-    def print_provided_add_buildings(self):
-        buildings = u''
-        if self.playground:
-            buildings += u', детская площадка'
-
-        if self.add_buildings:
-            buildings += u'. ' + self.add_buildings
-
-        if buildings:
-            return buildings[2:]
-        return u''
-
-
-    def print_showplaces(self):
-        showplaces = u''
-        if self.kindergarten:
-            showplaces += u', детский сад'
-        if self.school:
-            showplaces += u', школа'
-        if self.market:
-            showplaces += u', рынок'
-        if self.transport_stop:
-            showplaces += u', остановка общ. транспорта'
-        if self.park:
-            showplaces += u', парк'
-        if self.sport_center:
-            showplaces += u', спортивно-оздоровительный центр'
-        if self.entertainment:
-            showplaces += u', развлекательные заведения'
-
-        if self.add_showplaces:
-            showplaces += '. ' + self.add_showplaces
-
-        if showplaces:
-            return showplaces[2:]
         return u''
 
 
