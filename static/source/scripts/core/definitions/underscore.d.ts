@@ -2273,7 +2273,7 @@ interface Underscore<T> {
 
     /**
      * Wrapped type `object`.
-     * @see _.isFunction
+     * @see angular.isFunction
      **/
     isFunction(): boolean;
 
@@ -3129,7 +3129,7 @@ interface _Chain<T> {
 
     /**
      * Wrapped type `object`.
-     * @see _.isFunction
+     * @see angular.isFunction
      **/
     isFunction(): _Chain<T>;
 

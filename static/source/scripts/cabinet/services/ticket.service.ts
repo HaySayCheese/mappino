@@ -20,12 +20,12 @@ module Mappino.Cabinet {
             this.$http.post('/ajax/api/cabinet/support/tickets/', null)
                 .then(response => {
                     if (response.data['code'] === 0) {
-                        _.isFunction(successCallback) && successCallback(response.data['data'].id)
+                        angular.isFunction(successCallback) && successCallback(response.data['data'].id)
                     } else {
-                        _.isFunction(errorCallback) && errorCallback(response.data)
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    _.isFunction(errorCallback) && errorCallback(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
 
@@ -36,12 +36,12 @@ module Mappino.Cabinet {
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this._tickets = response.data['data'];
-                        _.isFunction(successCallback) && successCallback(this._tickets)
+                        angular.isFunction(successCallback) && successCallback(this._tickets)
                     } else {
-                        _.isFunction(errorCallback) && errorCallback(response.data)
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    _.isFunction(errorCallback) && errorCallback(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
 
@@ -52,12 +52,12 @@ module Mappino.Cabinet {
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this._ticket = response.data['data'];
-                        _.isFunction(successCallback) && successCallback(this._ticket)
+                        angular.isFunction(successCallback) && successCallback(this._ticket)
                     } else {
-                        _.isFunction(errorCallback) && errorCallback(response.data)
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    _.isFunction(errorCallback) && errorCallback(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
 
@@ -67,12 +67,12 @@ module Mappino.Cabinet {
             this.$http.post('/ajax/api/cabinet/support/tickets/' + ticketId + '/messages/', ticketMessage)
                 .then(response => {
                     if (response.data['code'] === 0) {
-                        _.isFunction(successCallback) && successCallback(response.data['data'])
+                        angular.isFunction(successCallback) && successCallback(response.data['data'])
                     } else {
-                        _.isFunction(errorCallback) && errorCallback(response.data)
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    _.isFunction(errorCallback) && errorCallback(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
 

@@ -26,12 +26,12 @@ module Mappino.Cabinet {
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this.$state.go('publication_edit', { id: publication.tid + ":" + response.data['data']['id'] });
-                        _.isFunction(successCallback) && successCallback(response.data)
+                        angular.isFunction(successCallback) && successCallback(response.data)
                     } else {
-                        _.isFunction(errorCallback) && errorCallback(response.data)
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    _.isFunction(errorCallback) && errorCallback(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
 
@@ -42,12 +42,12 @@ module Mappino.Cabinet {
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this.$state.go('publications');
-                        _.isFunction(successCallback) && successCallback(response.data)
+                        angular.isFunction(successCallback) && successCallback(response.data)
                     } else {
-                        _.isFunction(errorCallback) && errorCallback(response.data)
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    _.isFunction(errorCallback) && errorCallback(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
 
@@ -58,12 +58,12 @@ module Mappino.Cabinet {
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this.$state.go('publications');
-                        _.isFunction(successCallback) && successCallback(response.data)
+                        angular.isFunction(successCallback) && successCallback(response.data)
                     } else {
-                        _.isFunction(errorCallback) && errorCallback(response.data)
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    _.isFunction(errorCallback) && errorCallback(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
 
@@ -75,12 +75,12 @@ module Mappino.Cabinet {
                     if (response.data['code'] === 0) {
                         this.publication = response.data['data'];
                         this.createDefaultTerms();
-                        _.isFunction(successCallback) && successCallback(this.publication)
+                        angular.isFunction(successCallback) && successCallback(this.publication)
                     } else {
-                        _.isFunction(errorCallback) && errorCallback(response.data)
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    _.isFunction(errorCallback) && errorCallback(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 })
         }
 
@@ -96,9 +96,9 @@ module Mappino.Cabinet {
                         this.publication.photos = [];
                     }
                     this.publication.photos.push(response.data['data']);
-                    _.isFunction(successCallback) && successCallback(this.publication)
+                    angular.isFunction(successCallback) && successCallback(this.publication)
                 } else {
-                    _.isFunction(errorCallback) && errorCallback(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 }
             });
         }
@@ -109,7 +109,7 @@ module Mappino.Cabinet {
             this.$http.delete('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/photos/' + photoId + '/')
                 .then(response => {
                     if (response.data['code'] === 0) {
-                        _.each(this.publication.photos, (photo, index, list) => {
+                        angular.forEach(this.publication.photos, (photo, index) => {
                             if (photo && photo.hash_id == photoId) {
                                 this.publication.photos.splice(index, 1);
                             }
@@ -119,12 +119,12 @@ module Mappino.Cabinet {
                             }
                         });
 
-                        _.isFunction(successCallback) && successCallback(this.publication)
+                        angular.isFunction(successCallback) && successCallback(this.publication)
                     } else {
-                        _.isFunction(errorCallback) && errorCallback(response.data)
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    _.isFunction(errorCallback) && errorCallback(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 })
         }
 
@@ -134,20 +134,17 @@ module Mappino.Cabinet {
             this.$http.put('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/photos/' + photoId + '/title/', null)
                 .then(response => {
                     if (response.data['code'] === 0) {
-                        _.each(this.publication.photos, (photo, index, list) => {
-                            photo.is_title = false;
-
-                            if (photo.hash_id === photoId) {
-                                this.publication.photos[index].is_title = true;
-                            }
+                        angular.forEach(this.publication.photos, (photo, index) => {
+                            photo.hash_id === photoId ? this.publication.photos[index].is_title = true :
+                                this.publication.photos[index].is_title = false;
                         });
 
-                        _.isFunction(successCallback) && successCallback(this.publication)
+                        angular.isFunction(successCallback) && successCallback(this.publication)
                     } else {
-                        _.isFunction(errorCallback) && errorCallback(response.data)
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    _.isFunction(errorCallback) && errorCallback(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 })
         }
 
@@ -157,11 +154,11 @@ module Mappino.Cabinet {
             this.$http.put('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/', field)
                 .then(response => {
                     if (response.data['code'] === 0) {
-                        _.isFunction(successCallback) &&
+                        angular.isFunction(successCallback) &&
                         successCallback(response.data['data'] && response.data['data'].value ? response.data['data'].value : field.fieldValue);
                     }
                 }, response => {
-                    _.isFunction(errorCallback) && errorCallback(response.data);
+                    angular.isFunction(errorCallback) && errorCallback(response.data);
                 });
         }
 
@@ -172,12 +169,12 @@ module Mappino.Cabinet {
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this.briefs = response.data['data'];
-                        _.isFunction(successCallback) && successCallback(this.briefs)
+                        angular.isFunction(successCallback) && successCallback(this.briefs)
                     } else {
-                        _.isFunction(errorCallback) && errorCallback(response.data)
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    _.isFunction(errorCallback) && errorCallback(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
 

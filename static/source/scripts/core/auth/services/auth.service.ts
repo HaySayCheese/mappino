@@ -1,4 +1,4 @@
-module mappino.core.auth {
+module Mappino.Core.Auth {
 
     export class AuthService implements IAuthService {
         private _user: IUser = {
@@ -47,14 +47,14 @@ module mappino.core.auth {
         public checkPhoneNumber(phoneNumber: string, success?: Function, error?: Function) {
             this.$http.post('/ajax/api/accounts/login/', {
                 "phone_number": phoneNumber
-            }).then((response) => {
+            }).then(response => {
                 if (response.data['code'] === 0) {
-                    _.isFunction(success) && success(response.data)
+                    angular.isFunction(success) && success(response.data)
                 } else {
-                    _.isFunction(error) && error(response.data)
+                    angular.isFunction(error) && error(response.data)
                 }
-            }, (response) => {
-                _.isFunction(error) && error(response.data)
+            }, response => {
+                angular.isFunction(error) && error(response.data)
             });
         }
 
@@ -64,18 +64,18 @@ module mappino.core.auth {
             this.$http.post('/ajax/api/accounts/login/check-code/', {
                 "phone_number": phoneNumber,
                 "token":        smsCode
-            }).then((response) => {
+            }).then(response => {
                 if (response.data['code'] === 0) {
                     this.updateProfileField(response.data['data']);
                     this.$cookies.remove('mcheck');
-                    _.isFunction(success) && success(response.data)
+                    angular.isFunction(success) && success(response.data)
                 } else {
                     this.clearUserFromStorage();
-                    _.isFunction(error) && error(response.data)
+                    angular.isFunction(error) && error(response.data)
                 }
-            }, (response) => {
+            }, response => {
                 this.clearUserFromStorage();
-                _.isFunction(error) && error(response.data)
+                angular.isFunction(error) && error(response.data)
             });
         }
 
@@ -84,16 +84,16 @@ module mappino.core.auth {
 
         public tryLogin(success?: Function, error?: Function) {
             this.$http.get('/ajax/api/accounts/on-login-info/')
-                .then((response) => {
+                .then(response => {
                     if (response.data['code'] === 0) {
                         this.updateProfileField(response.data['data']);
-                        _.isFunction(success) && success(response.data)
+                        angular.isFunction(success) && success(response.data)
                     } else {
                         this.clearUserFromStorage();
-                        _.isFunction(error) && error(response.data)
+                        angular.isFunction(error) && error(response.data)
                     }
-                }, (response) => {
-                    _.isFunction(error) && error(response.data)
+                }, response => {
+                    angular.isFunction(error) && error(response.data)
                 })
         }
 
@@ -101,17 +101,17 @@ module mappino.core.auth {
 
         public loadProfile(success?, error?) {
             this.$http.get('/ajax/api/cabinet/account/')
-                .then((response) => {
+                .then(response => {
                     if (response.data['code'] === 0) {
                         this.updateProfileField(response.data['data']['account']);
                         this.updateProfileField(response.data['data']['preferences']);
 
-                        _.isFunction(success) && success(this._user);
+                        angular.isFunction(success) && success(this._user);
                     } else {
-                        _.isFunction(error) && error(response.data);
+                        angular.isFunction(error) && error(response.data);
                     }
-                }, (response) => {
-                    _.isFunction(error) && error(response.data);
+                }, response => {
+                    angular.isFunction(error) && error(response.data);
                 });
         }
 
@@ -119,7 +119,7 @@ module mappino.core.auth {
 
         public checkProfileField(field: Object, success?, error?) {
             this.$http.post('/ajax/api/cabinet/account/', field)
-                .then((response) => {
+                .then(response => {
                     if (response.data['code'] === 0) {
                         field['v'] = response.data['value'] ? response.data['value'] : field['v'];
 
@@ -127,12 +127,12 @@ module mappino.core.auth {
                         _field[field['f']] = field['v'];
 
                         this.updateProfileField(_field);
-                        _.isFunction(success) && success(field['v']);
+                        angular.isFunction(success) && success(field['v']);
                     } else {
-                        _.isFunction(error) && error(response.data);
+                        angular.isFunction(error) && error(response.data);
                     }
-                }, (response) => {
-                    _.isFunction(error) && error(response.data);
+                }, response => {
+                    angular.isFunction(error) && error(response.data);
                 })
         }
 
@@ -142,15 +142,15 @@ module mappino.core.auth {
             this.Upload.upload({
                 url: '/ajax/api/cabinet/account/photo/',
                 file: avatar
-            }).success((response) => {
+            }).success(response => {
                 if (response.code === 0) {
                     this.updateProfileField({ avatar_url: response.data['url'] });
-                    _.isFunction(success) && success(response);
+                    angular.isFunction(success) && success(response);
                 } else {
-                    _.isFunction(error) && error(response)
+                    angular.isFunction(error) && error(response)
                 }
-            }).error((response) => {
-                _.isFunction(error) && error(response)
+            }).error(response => {
+                angular.isFunction(error) && error(response)
             })
         }
 
@@ -158,11 +158,11 @@ module mappino.core.auth {
 
         public removeAvatar(success?, error?) {
             this.$http.delete('/ajax/api/cabinet/account/photo/')
-                .then((response) => {
+                .then(response => {
                     this.updateProfileField({ avatar_url: null });
-                    _.isFunction(success) && success(this.user);
-                }, (response) => {
-                    _.isFunction(error) && error(response)
+                    angular.isFunction(success) && success(this.user);
+                }, response => {
+                    angular.isFunction(error) && error(response)
                 })
         }
 

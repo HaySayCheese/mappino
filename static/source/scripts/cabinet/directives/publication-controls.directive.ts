@@ -24,7 +24,7 @@ module Mappino.Cabinet {
                     $element.css({
                         'width':    $mdFirstCard.width() + 'px',
                         'bottom':   0,
-                        'left':     $mdFirstCard.offset().left,
+                        'left':     $mdFirstCard.offset().left
                     });
 
 
@@ -65,7 +65,7 @@ module Mappino.Cabinet {
 
                         scrollBottom >= elementStartFixedPosition ? $element.addClass('-fixed') : $element.removeClass('-fixed');
                     });
-                }, 2000);
+                }, 1000);
             }
         };
     }

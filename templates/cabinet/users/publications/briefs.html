@@ -1,6 +1,6 @@
-<div class="briefs-page md-padding" ng-controller="BriefsController as briefsCtrl"
-     layout-sm="column" layout-md="column" layout-lg="row" layout-gt-lg="row"
-     layout-align-sm="start center" layout-align-md="start center" layout-align-lg="center start" layout-align-gt-lg="center start" layout-wrap>
+<div class="briefs-page" ng-controller="BriefsController as briefsCtrl" layout-wrap layout-padding layout-sm="column"
+     layout-md="column" layout-lg="row" layout-gt-lg="row" layout-align-sm="start center" layout-align-md="start center"
+     layout-align-lg="center start" layout-align-gt-lg="center start" >
 
     <md-card class="-brief">
         <md-card-content layout="column">
@@ -21,9 +21,11 @@
                     </md-checkbox>
                 </div>
 
-                <md-button class="md-fab md-primary publication-create-button" ng-click="briefsCtrl.createPublication()">
-                    <md-icon>create</md-icon>
-                </md-button>
+                <div class="md-padding">
+                    <md-button class="md-raised md-primary" ng-click="briefsCtrl.createPublication()">
+                        Создать объявление
+                    </md-button>
+                </div>
             </div>
         </md-card-content>
     </md-card>
@@ -53,7 +55,7 @@
             <p class="grey-text text-lighten-1" ng-hide="brief.description">Описание не указано</p>
         </md-card-content>
         <div class="md-actions" layout="row" layout-align="end center">
-            <md-button class="md-warn md-hue-3" ng-click="briefsCtrl.removePublication($event, brief.tid, brief.id)">
+            <md-button class="md-warn md-hue-3" ng-click="briefsCtrl.removeBrief($event, brief.tid, brief.id)">
                 Удалить
             </md-button>
             <span flex></span>

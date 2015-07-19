@@ -25,14 +25,14 @@
     <md-card-content>
         <div class="md-subhead blue-text">Фото и видео</div>
         <div class="drop-container" ngf-drop ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
-             accept="image/*" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
+             accept="image/*" ngf-change="pubCtrl.uploadPublicationPhotos($files)">
 
             <div class="md-padding">
                 <div class="drop-box" layout="column" layout-align="center center">
 
                     <p>Перенесите сюда фото или видео файл</p>
 
-                    <md-button class="md-primary" ngf-select ngf-multiple="true" accept="image/*" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
+                    <md-button class="md-primary" ngf-select ngf-multiple="true" accept="image/*" ngf-change="pubCtrl.uploadPublicationPhotos($files)">
                         Выбрать файл
                     </md-button>
                 </div>
@@ -57,11 +57,11 @@
                                     </md-fab-trigger>
                                     <md-fab-actions>
                                         <md-button aria-label="twitter" class="md-fab md-raised md-mini md-warn"
-                                                   ng-click="u_pubCtrl.removePublicationPhoto(photo.hash_id)">
+                                                   ng-click="pubCtrl.removePublicationPhoto(photo.hash_id)">
                                             <md-icon>delete</md-icon>
                                         </md-button>
                                         <md-button aria-label="facebook" class="md-fab md-raised md-mini md-primary" ng-hide="photo.is_title"
-                                                   ng-click="u_pubCtrl.setTitlePhoto(photo.hash_id)">
+                                                   ng-click="pubCtrl.setTitlePhoto(photo.hash_id)">
                                             <md-icon>check</md-icon>
                                         </md-button>
                                     </md-fab-actions>
@@ -91,16 +91,13 @@
         <md-icon>delete</md-icon>
     </md-button>
 
-    <md-button class="md-primary md-hue-1" hide-sm ng-click="u_pubCtrl.doneEditingLater($event)">
+    <md-button class="md-primary md-hue-1" ng-click="pubCtrl.doneEditingLater($event)">
         Заполнить позже
-    </md-button>
-    <md-button class="md-icon-button md-primary" hide-gt-sm show-sm ng-click="u_pubCtrl.doneEditingLater($event)">
-        <md-icon>access_time</md-icon>
     </md-button>
 
     <span flex></span>
 
-    <md-button class="md-raised md-primary" ng-click="u_pubCtrl.publish()">
+    <md-button class="md-raised md-primary" ng-click="pubCtrl.publish()">
         Опубликовать
     </md-button>
 </div>

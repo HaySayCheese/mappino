@@ -1,5 +1,5 @@
-<form name="publicationForm" ng-controller="UnpublishedPublicationController as u_pubCtrl" layout-wrap layout-gt-lg="row"
-      layout-md="column" layout-lg="column" layout-gt-lg="row" layout-align-md="start center" layout-align-lg="start center" layout-align-gt-lg="end center" novalidate>
+<form name="forms.publicationForm" layout-wrap layout="column" layout-align-md="start center"
+      layout-align-lg="start center" layout-align-gt-lg="start end" novalidate>
 
     <md-card>
         <md-card-content>
@@ -10,11 +10,11 @@
             </div>
             <div class="md-padding">
                 <div layout="row">
-                    <md-checkbox class="md-primary" name="for_sale" ng-change="u_pubCtrl.checkField('for_sale')"
+                    <md-checkbox class="md-primary" name="for_sale" ng-change="pubCtrl.checkField('for_sale')"
                                  ng-model="publication.head.for_sale">
                         О продаже
                     </md-checkbox>
-                    <md-checkbox class="md-primary" name="for_rent" ng-change="u_pubCtrl.checkField('for_rent')"
+                    <md-checkbox class="md-primary" name="for_rent" ng-change="pubCtrl.checkField('for_rent')"
                                  ng-model="publication.head.for_rent">
                         Об аранде
                     </md-checkbox>
@@ -36,17 +36,17 @@
                         <label>Цена</label>
                         <input name="sale_price" ng-model="publication.sale_terms.price"
                                ng-required="publication.head.for_sale" only-number-with-dots>
-                        <div ng-messages="publicationForm.sale_price.$error"
-                             ng-show="publicationForm.$submitted || publicationForm.sale_price.$touched">
+                        <div ng-messages="forms.publicationForm.sale_price.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.sale_price.$touched">
                             <div ng-message="required">Обязательное поле</div>
                             <div ng-message="invalid">Цена указана неверно</div>
                         </div>
                     </md-input-container>
-                    <md-select placeholder="Валюта" md-on-close="u_pubCtrl.checkField('sale_currency_sid')"
+                    <md-select placeholder="Валюта" md-on-close="pubCtrl.checkField('sale_currency_sid')"
                                ng-model="publication.sale_terms.currency_sid" flex="33">
                         <md-option ng-repeat="currencyType in CONSTANTS.CURRENCY_TYPES" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
                     </md-select>
-                    <md-checkbox class="md-primary" name="sale_is_contract" ng-change="u_pubCtrl.checkField('sale_is_contract')"
+                    <md-checkbox class="md-primary" name="sale_is_contract" ng-change="pubCtrl.checkField('sale_is_contract')"
                                  ng-model="publication.sale_terms.is_contract">
                         Договорная
                     </md-checkbox>
@@ -64,7 +64,7 @@
             </div>
             <div class="md-padding" ng-show="publication.head.for_rent">
                 <div layout="row">
-                    <md-select placeholder="Срок" md-on-close="u_pubCtrl.checkField('rent_period_sid')"
+                    <md-select placeholder="Срок" md-on-close="pubCtrl.checkField('rent_period_sid')"
                                ng-model="publication.rent_terms.period_sid" flex="33">
                         <md-option ng-repeat="periodType in CONSTANTS.PERIOD_TYPES" value="[[ periodType.id ]]">[[ periodType.title ]]</md-option>
                     </md-select>
@@ -72,8 +72,8 @@
                         <label>Количество мест</label>
                         <input name="rent_persons_count" ng-model="publication.rent_terms.persons_count"
                                ng-required="publication.head.for_rent" only-number required>
-                        <div ng-messages="publicationForm.rent_persons_count.$error"
-                             ng-show="publicationForm.$submitted || publicationForm.rent_persons_count.$touched">
+                        <div ng-messages="forms.publicationForm.rent_persons_count.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.rent_persons_count.$touched">
                             <div ng-message="required">Обязательное поле</div>
                             <div ng-message="invalid">Количество мест указано неверно</div>
                         </div>
@@ -84,17 +84,17 @@
                         <label>Цена</label>
                         <input name="rent_price" ng-model="publication.rent_terms.price"
                                ng-required="publication.head.for_rent" only-number-with-dots required>
-                        <div ng-messages="publicationForm.rent_price.$error"
-                             ng-show="publicationForm.$submitted || publicationForm.rent_price.$touched">
+                        <div ng-messages="forms.publicationForm.rent_price.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.rent_price.$touched">
                             <div ng-message="required">Обязательное поле</div>
                             <div ng-message="invalid">Цена указана неверно</div>
                         </div>
                     </md-input-container>
-                    <md-select placeholder="Валюта" md-on-close="u_pubCtrl.checkField('rent_currency_sid')"
+                    <md-select placeholder="Валюта" md-on-close="pubCtrl.checkField('rent_currency_sid')"
                                ng-model="publication.rent_terms.currency_sid" flex="33">
                         <md-option ng-repeat="currencyType in CONSTANTS.CURRENCY_TYPES" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
                     </md-select>
-                    <md-checkbox class="md-primary" name="rent_is_contract" ng-change="u_pubCtrl.checkField('rent_is_contract')"
+                    <md-checkbox class="md-primary" name="rent_is_contract" ng-change="pubCtrl.checkField('rent_is_contract')"
                                  ng-model="publication.rent_terms.is_contract">
                         Договорная
                     </md-checkbox>
@@ -114,25 +114,25 @@
                 <md-input-container>
                     <label>Заголовок обьявления</label>
                     <input name="title" ng-model="publication.body.title" required>
-                    <div ng-messages="publicationForm.title.$error"
-                         ng-show="publicationForm.$submitted || publicationForm.title.$touched">
+                    <div ng-messages="forms.publicationForm.title.$error"
+                         ng-show="forms.publicationForm.$submitted || forms.publicationForm.title.$touched">
                         <div ng-message="required">Обязательное поле</div>
                     </div>
                 </md-input-container>
                 <md-input-container>
                     <label>Рекламный текст</label>
                     <textarea columns="1" name="description" ng-model="publication.body.description" required></textarea>
-                    <div ng-messages="publicationForm.description.$error"
-                         ng-show="publicationForm.$submitted || publicationForm.description.$touched">
+                    <div ng-messages="forms.publicationForm.description.$error"
+                         ng-show="forms.publicationForm.$submitted || forms.publicationForm.description.$touched">
                         <div ng-message="required">Обязательное поле</div>
                     </div>
                 </md-input-container>
                 <div layout="row">
-                    <md-select placeholder="Тип рынка" md-on-close="u_pubCtrl.checkField('market_type_sid')"
+                    <md-select placeholder="Тип рынка" md-on-close="pubCtrl.checkField('market_type_sid')"
                                ng-model="publication.body.market_type_sid" flex="33">
                         <md-option ng-repeat="marketType in CONSTANTS.MARKET_TYPES" value="[[ marketType.id ]]">[[ marketType.title ]]</md-option>
                     </md-select>
-                    <md-select placeholder="Общее состояние" md-on-close="u_pubCtrl.checkField('condition_sid')"
+                    <md-select placeholder="Общее состояние" md-on-close="pubCtrl.checkField('condition_sid')"
                                ng-model="publication.body.condition_sid" flex="33">
                         <md-option ng-repeat="conditionType in CONSTANTS.CONDITION_TYPES" value="[[ conditionType.id ]]">[[ conditionType.title ]]</md-option>
                     </md-select>
@@ -141,8 +141,8 @@
                     <md-input-container flex="33">
                         <label>Общая площадь</label>
                         <input name="total_area" ng-model="publication.body.total_area" only-number-with-dots required>
-                        <div ng-messages="publicationForm.total_area.$error"
-                             ng-show="publicationForm.$submitted || publicationForm.total_area.$touched">
+                        <div ng-messages="forms.publicationForm.total_area.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.total_area.$touched">
                             <div ng-message="required">Обязательное поле</div>
                             <div ng-message="invalid">Общая площадь указана неверно</div>
                         </div>
@@ -150,8 +150,8 @@
                     <md-input-container flex="33">
                         <label>Жилая площадь</label>
                         <input name="living_area" ng-model="publication.body.living_area" only-number-with-dots required>
-                        <div ng-messages="publicationForm.living_area.$error"
-                             ng-show="publicationForm.$submitted || publicationForm.living_area.$touched">
+                        <div ng-messages="forms.publicationForm.living_area.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.living_area.$touched">
                             <div ng-message="required">Обязательное поле</div>
                             <div ng-message="invalid">Жилая площадь указана неверно</div>
                         </div>
@@ -159,8 +159,8 @@
                     <md-input-container flex="33">
                         <label>Площадь кухни</label>
                         <input name="kitchen_area" ng-model="publication.body.kitchen_area" only-number-with-dots required>
-                        <div ng-messages="publicationForm.kitchen_area.$error"
-                             ng-show="publicationForm.$submitted || publicationForm.kitchen_area.$touched">
+                        <div ng-messages="forms.publicationForm.kitchen_area.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.kitchen_area.$touched">
                             <div ng-message="required">Обязательное поле</div>
                             <div ng-message="invalid">Площадь кухни указана неверно</div>
                         </div>
@@ -170,8 +170,8 @@
                     <md-input-container flex="33">
                         <label>Количество комнат</label>
                         <input name="rooms_count" ng-model="publication.body.rooms_count" only-number required>
-                        <div ng-messages="publicationForm.rooms_count.$error"
-                             ng-show="publicationForm.$submitted || publicationForm.rooms_count.$touched">
+                        <div ng-messages="forms.publicationForm.rooms_count.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.rooms_count.$touched">
                             <div ng-message="required">Обязательное поле</div>
                             <div ng-message="invalid">Количество комнат указано неверно</div>
                         </div>
@@ -179,37 +179,46 @@
                     <md-input-container flex="33">
                         <label>Количество этажей</label>
                         <input name="floors_count" ng-model="publication.body.floors_count" only-number required>
-                        <div ng-messages="publicationForm.floors_count.$error"
-                             ng-show="publicationForm.$submitted || publicationForm.floors_count.$touched">
+                        <div ng-messages="forms.publicationForm.floors_count.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.floors_count.$touched">
                             <div ng-message="required">Обязательное поле</div>
                             <div ng-message="invalid">Количество этажей указана неверно</div>
                         </div>
                     </md-input-container>
-                    <md-select placeholder="Отопление" md-on-close="u_pubCtrl.checkField('heating_type_sid')"
+                </div>
+                <div layout="row">
+                    <md-checkbox class="md-primary" name="mansard" ng-change="pubCtrl.checkField('mansard')" ng-model="publication.body.mansard">
+                        Есть мансарда
+                    </md-checkbox>
+                    <md-checkbox class="md-primary" name="ground" ng-change="pubCtrl.checkField('ground')" ng-model="publication.body.ground">
+                        Есть цокольный этаж
+                    </md-checkbox>
+                    <md-checkbox class="md-primary" name="lower_floor" ng-change="pubCtrl.checkField('lower_floor')" ng-model="publication.body.lower_floor">
+                        Есть подвал
+                    </md-checkbox>
+                </div>
+                <div layout="row">
+                    <md-select placeholder="Отопление" md-on-close="pubCtrl.checkField('heating_type_sid')"
                                ng-model="publication.body.heating_type_sid" flex="33">
                         <md-option ng-repeat="heatingType in CONSTANTS.HEATING_TYPES" value="[[ heatingType.id ]]">[[ heatingType.title ]]</md-option>
                     </md-select>
-                </div>
-                <div layout="row" ng-show="publication.body.heating_type_sid == '0'">
-                    <md-input-container flex>
+                    <md-input-container flex="33" ng-show="publication.body.heating_type_sid == 0">
                         <label>Тип отопления</label>
                         <input name="custom_heating_type" ng-model="publication.body.custom_heating_type" ng-required="publication.body.heating_type_sid == '0'">
-                        <div ng-messages="publicationForm.custom_heating_type.$error"
-                             ng-show="publicationForm.$submitted || publicationForm.custom_heating_type.$touched">
+                        <div ng-messages="forms.publicationForm.custom_heating_type.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.custom_heating_type.$touched">
                             <div ng-message="required">Обязательное поле</div>
                         </div>
                     </md-input-container>
-                </div>
-                <div layout="row" ng-show="publication.body.heating_type_sid == '1'">
-                    <md-select placeholder="Индивидуальное отопление" md-on-close="u_pubCtrl.checkField('ind_heating_type_sid')"
-                               ng-model="publication.body.ind_heating_type_sid" flex="33" label="fasfaf">
+                    <md-select placeholder="Индивидуальное отопление" md-on-close="pubCtrl.checkField('ind_heating_type_sid')"
+                               ng-model="publication.body.ind_heating_type_sid" flex="33" ng-show="publication.body.heating_type_sid == 1">
                         <md-option ng-repeat="individualHeatingType in CONSTANTS.INDIVIDUAL_HEATING_TYPES" value="[[ individualHeatingType.id ]]">[[ individualHeatingType.title ]]</md-option>
                     </md-select>
-                    <md-input-container flex="66" ng-show="publication.body.ind_heating_type_sid == '0'">
+                    <md-input-container flex="33" ng-show="publication.body.ind_heating_type_sid == 0 && publication.body.heating_type_sid == 1">
                         <label>Тип индивидуального отопления</label>
                         <input name="custom_ind_heating_type" ng-model="publication.body.custom_ind_heating_type" ng-required="publication.body.ind_heating_type_sid == '0'">
-                        <div ng-messages="publicationForm.custom_ind_heating_type.$error"
-                             ng-show="publicationForm.$submitted || publicationForm.custom_ind_heating_type.$touched">
+                        <div ng-messages="forms.publicationForm.custom_ind_heating_type.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.custom_ind_heating_type.$touched">
                             <div ng-message="required">Обязательное поле</div>
                         </div>
                     </md-input-container>
@@ -226,33 +235,33 @@
             <div class="md-padding" layout="column">
                 <div layout-sm="column" layout-gt-sm="row">
                     <div layout="column" flex="50">
-                        <md-checkbox class="md-primary" name="electricity" ng-change="u_pubCtrl.checkField('electricity')"
+                        <md-checkbox class="md-primary" name="electricity" ng-change="pubCtrl.checkField('electricity')"
                                      ng-model="publication.body.electricity">
                             Электричество
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="gas" ng-change="u_pubCtrl.checkField('gas')"
+                        <md-checkbox class="md-primary" name="gas" ng-change="pubCtrl.checkField('gas')"
                                      ng-model="publication.body.gas">
                             Газ
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="sewerage" ng-change="u_pubCtrl.checkField('sewerage')"
+                        <md-checkbox class="md-primary" name="sewerage" ng-change="pubCtrl.checkField('sewerage')"
                                      ng-model="publication.body.sewerage">
                             Канализация
                         </md-checkbox>
                     </div>
                     <div layout="column" flex="50">
-                        <md-checkbox class="md-primary" name="hot_water" ng-change="u_pubCtrl.checkField('hot_water')"
+                        <md-checkbox class="md-primary" name="hot_water" ng-change="pubCtrl.checkField('hot_water')"
                                      ng-model="publication.body.hot_water">
                             Горячая вода
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="cold_water" ng-change="u_pubCtrl.checkField('cold_water')"
+                        <md-checkbox class="md-primary" name="cold_water" ng-change="pubCtrl.checkField('cold_water')"
                                      ng-model="publication.body.cold_water">
                             Холодная вода
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="security_alarm" ng-change="u_pubCtrl.checkField('security_alarm')"
+                        <md-checkbox class="md-primary" name="security_alarm" ng-change="pubCtrl.checkField('security_alarm')"
                                      ng-model="publication.body.security_alarm">
                             Охранная сигнализация
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="fire_alarm" ng-change="u_pubCtrl.checkField('fire_alarm')"
+                        <md-checkbox class="md-primary" name="fire_alarm" ng-change="pubCtrl.checkField('fire_alarm')"
                                      ng-model="publication.body.fire_alarm">
                             Пожарная сигнализация
                         </md-checkbox>
@@ -264,42 +273,38 @@
                 </md-input-container>
             </div>
 
-            <div class="md-subhead blue-text">Удобства, предоставляемые с орендой</div>
+            <div class="md-body-2">Удобства, предоставляемые с орендой</div>
             <div class="md-padding" layout="column">
                 <div layout-sm="column" layout-gt-sm="row">
                     <div layout="column" flex="50">
-                        <md-checkbox class="md-primary" name="furniture" ng-change="u_pubCtrl.checkField('furniture')"
-                                     ng-model="publication.body.furniture">
+                        <md-checkbox class="md-primary" name="furniture" ng-change="pubCtrl.checkField('furniture')"
+                                     ng-model="publication.rent_terms.furniture">
                             Мебель
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="refrigerator" ng-change="u_pubCtrl.checkField('refrigerator')"
-                                     ng-model="publication.body.refrigerator">
+                        <md-checkbox class="md-primary" name="refrigerator" ng-change="pubCtrl.checkField('refrigerator')"
+                                     ng-model="publication.rent_terms.refrigerator">
                             Холодильник
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="tv" ng-change="u_pubCtrl.checkField('tv')"
-                                     ng-model="publication.body.tv">
+                        <md-checkbox class="md-primary" name="tv" ng-change="pubCtrl.checkField('tv')"
+                                     ng-model="publication.rent_terms.tv">
                             Телевизор
                         </md-checkbox>
                     </div>
                     <div layout="column" flex="50">
-                        <md-checkbox class="md-primary" name="washing_machine" ng-change="u_pubCtrl.checkField('washing_machine')"
-                                     ng-model="publication.body.washing_machine">
+                        <md-checkbox class="md-primary" name="washing_machine" ng-change="pubCtrl.checkField('washing_machine')"
+                                     ng-model="publication.rent_terms.washing_machine">
                             Стиральная машина
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="conditioner" ng-change="u_pubCtrl.checkField('conditioner')"
-                                     ng-model="publication.body.conditioner">
+                        <md-checkbox class="md-primary" name="conditioner" ng-change="pubCtrl.checkField('conditioner')"
+                                     ng-model="publication.rent_terms.conditioner">
                             Кондиционер
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="home_theater" ng-change="u_pubCtrl.checkField('home_theater')"
-                                     ng-model="publication.body.home_theater">
+                        <md-checkbox class="md-primary" name="home_theater" ng-change="pubCtrl.checkField('home_theater')"
+                                     ng-model="publication.rent_terms.home_theater">
                             Дом. кинотеатр
                         </md-checkbox>
                     </div>
                 </div>
-                <md-input-container>
-                    <label>Другие удобства, уточнения предоставляемые с орендой</label>
-                    <input name="add_facilities" ng-model="publication.body.add_facilities">
-                </md-input-container>
             </div>
         </md-card-content>
     </md-card>
@@ -311,21 +316,21 @@
             <div class="md-subhead blue-text">Коммуникации</div>
             <div class="md-padding" layout-sm="column" layout-gt-sm="row">
                 <div layout="column" flex="50">
-                    <md-checkbox class="md-primary" name="phone" ng-change="u_pubCtrl.checkField('phone')"
+                    <md-checkbox class="md-primary" name="phone" ng-change="pubCtrl.checkField('phone')"
                                  ng-model="publication.body.phone">
                         Телефон
                     </md-checkbox>
-                    <md-checkbox class="md-primary" name="internet" ng-change="u_pubCtrl.checkField('internet')"
+                    <md-checkbox class="md-primary" name="internet" ng-change="pubCtrl.checkField('internet')"
                                  ng-model="publication.body.internet">
                         Интернет
                     </md-checkbox>
                 </div>
                 <div layout="column" flex="50">
-                    <md-checkbox class="md-primary" name="mobile_coverage" ng-change="u_pubCtrl.checkField('mobile_coverage')"
+                    <md-checkbox class="md-primary" name="mobile_coverage" ng-change="pubCtrl.checkField('mobile_coverage')"
                                  ng-model="publication.body.mobile_coverage">
                         Покрытие моб. операторов
                     </md-checkbox>
-                    <md-checkbox class="md-primary" name="cable_tv" ng-change="u_pubCtrl.checkField('cable_tv')"
+                    <md-checkbox class="md-primary" name="cable_tv" ng-change="pubCtrl.checkField('cable_tv')"
                                  ng-model="publication.body.cable_tv">
                         Кабельное / спутниковое ТВ
                     </md-checkbox>
@@ -342,41 +347,41 @@
             <div class="md-padding" layout="column">
                 <div layout-sm="column" layout-gt-sm="row">
                     <div layout="column" flex="50">
-                        <md-checkbox class="md-primary" name="garage" ng-change="u_pubCtrl.checkField('garage')"
+                        <md-checkbox class="md-primary" name="garage" ng-change="pubCtrl.checkField('garage')"
                                      ng-model="publication.body.garage">
                             Гараж / паркместо
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="fence" ng-change="u_pubCtrl.checkField('fence')"
+                        <md-checkbox class="md-primary" name="fence" ng-change="pubCtrl.checkField('fence')"
                                      ng-model="publication.body.fence">
                             Ограждение участка
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="terrace" ng-change="u_pubCtrl.checkField('terrace')"
+                        <md-checkbox class="md-primary" name="terrace" ng-change="pubCtrl.checkField('terrace')"
                                      ng-model="publication.body.terrace">
                             Терраса
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="well" ng-change="u_pubCtrl.checkField('well')"
+                        <md-checkbox class="md-primary" name="well" ng-change="pubCtrl.checkField('well')"
                                      ng-model="publication.body.well">
                             Колодец
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="kaleyard" ng-change="u_pubCtrl.checkField('kaleyard')"
+                        <md-checkbox class="md-primary" name="kaleyard" ng-change="pubCtrl.checkField('kaleyard')"
                                      ng-model="publication.body.kaleyard">
                             Огород
                         </md-checkbox>
                     </div>
                     <div layout="column" flex="50">
-                        <md-checkbox class="md-primary" name="pool" ng-change="u_pubCtrl.checkField('pool')"
+                        <md-checkbox class="md-primary" name="pool" ng-change="pubCtrl.checkField('pool')"
                                      ng-model="publication.body.pool">
                             Бассейн
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="alcove" ng-change="u_pubCtrl.checkField('alcove')"
+                        <md-checkbox class="md-primary" name="alcove" ng-change="pubCtrl.checkField('alcove')"
                                      ng-model="publication.body.alcove">
                             Беседка
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="garden" ng-change="u_pubCtrl.checkField('garden')"
+                        <md-checkbox class="md-primary" name="garden" ng-change="pubCtrl.checkField('garden')"
                                      ng-model="publication.body.garden">
                             Сад
                         </md-checkbox>
-                        <md-checkbox class="md-primary" name="cellar" ng-change="u_pubCtrl.checkField('cellar')"
+                        <md-checkbox class="md-primary" name="cellar" ng-change="pubCtrl.checkField('cellar')"
                                      ng-model="publication.body.cellar">
                             Погреб
                         </md-checkbox>

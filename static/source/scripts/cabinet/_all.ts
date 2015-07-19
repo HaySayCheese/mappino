@@ -63,7 +63,6 @@
 /// <reference path='controllers/cabinet.controller.ts' />
 /// <reference path='controllers/briefs.controller.ts' />
 /// <reference path='controllers/publication.controller.ts' />
-/// <reference path='controllers/unpublished-publication.controller.ts' />
 /// <reference path='controllers/settings.controller.ts' />
 /// <reference path='controllers/support.controller.ts' />
 /// <reference path='controllers/ticket.controller.ts' />

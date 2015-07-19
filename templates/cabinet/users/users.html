@@ -41,53 +41,50 @@
 </head>
 <body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()">
 
-    {% block navbar %}
-        <md-toolbar class="md-whiteframe-z1">
-            <nav class="md-toolbar-tools" show-sm hide-gt-sm>
-                <md-button href class="nav-button" aria-label="Открыть меню" ng-click="cabinetCtrl.toggleSidenav()">
-                    <md-icon>menu</md-icon>
-                </md-button>
-            </nav>
+    <md-toolbar class="md-whiteframe-z1">
+        <nav class="md-toolbar-tools" show-sm hide-gt-sm layout="row" layout-align="start center">
+            <md-button href class="nav-button" aria-label="Открыть меню" ng-click="cabinetCtrl.toggleSidenav()">
+                <md-icon>menu</md-icon>
+            </md-button>
+            <h1 class="md-toolbar-tools align-center">mappino</h1>
+        </nav>
 
-            <nav class="md-toolbar-tools" hide-sm>
-                <md-button ui-sref="publications" class="nav-button" aria-label="Объявления">
-                    Объявления
-                </md-button>
-                <md-button ui-sref="support" class="nav-button" aria-label="Поддержка">
-                    Поддержка
-                </md-button>
+        <nav class="md-toolbar-tools" hide-sm>
+            <md-button ui-sref="publications" class="nav-button">
+                Объявления
+            </md-button>
+            <md-button ui-sref="support" class="nav-button">
+                Поддержка
+            </md-button>
 
-                <span flex></span>
+            <span flex></span>
 
-                <md-button ui-sref="settings" class="nav-button" aria-label="Настройки">
-                    Настройки
-                </md-button>
-            </nav>
+            <md-button ui-sref="settings" class="nav-button">
+                Настройки
+            </md-button>
+        </nav>
+    </md-toolbar>
+
+    <md-progress-linear md-mode="indeterminate" ng-show="loaders.navbar" ng-cloak></md-progress-linear>
+
+
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav" ng-cloak>
+        <md-toolbar>
+            <h1 class="md-toolbar-tools">mappino</h1>
         </md-toolbar>
-
-        <md-progress-linear md-mode="indeterminate" ng-show="loaders.base" ng-cloak></md-progress-linear>
-    {% endblock %}
-
-
-    {% block sidenav %}
-        <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav" ng-cloak>
-            <md-toolbar>
-                <h1 class="md-toolbar-tools">mappino</h1>
-            </md-toolbar>
-            <md-content layout-padding>
-                <md-button ng-click="close()" class="md-primary">
-                    Close Sidenav Right
-                </md-button>
-            </md-content>
-        </md-sidenav>
-    {% endblock %}
+        <md-content layout-padding>
+            <md-button ng-click="close()" class="md-primary">
+                Close Sidenav Right
+            </md-button>
+        </md-content>
+    </md-sidenav>
 
 
-    {% block wrapper %}
-        <main layout="row" layout-align="center start">
-            <div ui-view flex></div>
-        </main>
-    {% endblock %}
+    <main layout="row" layout-align="center start">
+        <md-content flex ui-view></md-content>
+    </main>
+
+    <div class="overlay-loader -animation" ng-show="loaders.overlay"></div>
 
 
     {% compress js %}

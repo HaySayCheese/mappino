@@ -2,13 +2,13 @@
      layout-wrap layout-gt-lg="row" layout-lg="column" ng-clock>
 
     <!-- Load publication -->
-    <div class="md-padding" flex="49">
-        <div ng-hide="loaders.base" ng-include="publicationTemplateUrl"></div>
+    <div layout-padding flex="49">
+        <div ng-include="publicationTemplateUrl" include-replace></div>
     </div>
 
 
     <!-- Publication preview -->
-    <div class="md-padding" flex="49" hide-sm hide-md hide-lg>
+    <div class="publication-preview" layout-padding flex="45" hide-sm hide-md hide-lg>
         <div layout-wrap layout="column" layout-gt-lg="row" layout-align-md="start center" layout-align-lg="start center">
             <md-card flex>
                 <md-card-content>

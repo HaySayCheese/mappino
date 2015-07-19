@@ -1,6 +1,6 @@
 
 
-module mappino.core.constants {
+module Mappino.Core.Constants {
     export class FloorTypesConstant {
         static get Default(): any {
             return [{

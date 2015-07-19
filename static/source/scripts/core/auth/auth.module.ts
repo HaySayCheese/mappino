@@ -1,10 +1,10 @@
 /// <reference path='_all.ts' />
 
 
-module mappino.core.auth {
+module Mappino.Core.Auth {
     'use strict';
 
-    var auth: angular.IModule = angular.module('mappino.core.auth', [
+    var auth: angular.IModule = angular.module('Mappino.Core.Auth', [
         'ngCookies'
     ]);
 

@@ -1,5 +1,5 @@
-<form name="publicationForm" ng-controller="UnpublishedPublicationController as u_pubCtrl" layout-wrap layout-gt-lg="row"
-      layout-md="column" layout-lg="column" layout-gt-lg="row" layout-align-md="start center" layout-align-lg="start center" layout-align-gt-lg="end center" novalidate>
+<form name="forms.publicationForm" layout-wrap layout="column" layout-align-md="start center"
+      layout-align-lg="start center" layout-align-gt-lg="start end" novalidate>
 
     <md-card>
         <md-card-content>
@@ -36,8 +36,8 @@
                         <label>Цена</label>
                         <input name="sale_price" ng-model="publication.sale_terms.price"
                                ng-required="publication.head.for_sale" only-number-with-dots>
-                        <div ng-messages="publicationForm.sale_price.$error"
-                             ng-show="publicationForm.$submitted || publicationForm.sale_price.$touched">
+                        <div ng-messages="forms.publicationForm.sale_price.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.sale_price.$touched">
                             <div ng-message="required">Обязательное поле</div>
                             <div ng-message="invalid">Цена указана неверно</div>
                         </div>
@@ -74,8 +74,8 @@
                         <label>Цена</label>
                         <input name="rent_price" ng-model="publication.rent_terms.price"
                                ng-required="publication.head.for_rent" only-number-with-dots required>
-                        <div ng-messages="publicationForm.rent_price.$error"
-                             ng-show="publicationForm.$submitted || publicationForm.rent_price.$touched">
+                        <div ng-messages="forms.publicationForm.rent_price.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.rent_price.$touched">
                             <div ng-message="required">Обязательное поле</div>
                             <div ng-message="invalid">Цена указана неверно</div>
                         </div>
@@ -104,16 +104,16 @@
                 <md-input-container>
                     <label>Заголовок обьявления</label>
                     <input name="title" ng-model="publication.body.title" required>
-                    <div ng-messages="publicationForm.title.$error"
-                         ng-show="publicationForm.$submitted || publicationForm.title.$touched">
+                    <div ng-messages="forms.publicationForm.title.$error"
+                         ng-show="forms.publicationForm.$submitted || forms.publicationForm.title.$touched">
                         <div ng-message="required">Обязательное поле</div>
                     </div>
                 </md-input-container>
                 <md-input-container>
                     <label>Рекламный текст</label>
                     <textarea columns="1" name="description" ng-model="publication.body.description" required></textarea>
-                    <div ng-messages="publicationForm.description.$error"
-                         ng-show="publicationForm.$submitted || publicationForm.description.$touched">
+                    <div ng-messages="forms.publicationForm.description.$error"
+                         ng-show="forms.publicationForm.$submitted || forms.publicationForm.description.$touched">
                         <div ng-message="required">Обязательное поле</div>
                     </div>
                 </md-input-container>
@@ -125,8 +125,8 @@
                     <md-input-container flex="33">
                         <label>Площадь</label>
                         <input name="area" ng-model="publication.body.area" only-number-with-dots required>
-                        <div ng-messages="publicationForm.area.$error"
-                             ng-show="publicationForm.$submitted || publicationForm.area.$touched">
+                        <div ng-messages="forms.publicationForm.area.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.area.$touched">
                             <div ng-message="required">Обязательное поле</div>
                             <div ng-message="invalid">Площадь указана неверно</div>
                         </div>
@@ -134,8 +134,8 @@
                     <md-input-container flex="33">
                         <label>Высота потолков</label>
                         <input name="area" ng-model="publication.body.ceiling_height" only-number required>
-                        <div ng-messages="publicationForm.ceiling_height.$error"
-                             ng-show="publicationForm.$submitted || publicationForm.ceiling_height.$touched">
+                        <div ng-messages="forms.publicationForm.ceiling_height.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.ceiling_height.$touched">
                             <div ng-message="required">Обязательное поле</div>
                             <div ng-message="invalid">Высота потолков указана неверно</div>
                         </div>

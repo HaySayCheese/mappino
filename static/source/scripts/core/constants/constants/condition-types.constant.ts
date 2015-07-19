@@ -1,6 +1,6 @@
 
 // todo: перекласти назви на англ мову
-module mappino.core.constants {
+module Mappino.Core.Constants {
     export class ConditionTypesConstant {
         static get Default(): any {
             return [{

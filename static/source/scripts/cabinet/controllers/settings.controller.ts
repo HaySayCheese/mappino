@@ -14,15 +14,15 @@ module Mappino.Cabinet {
         constructor(private $scope: any,
                     private $rootScope: any,
                     private $timeout: angular.ITimeoutService,
-                    private authService: mappino.core.auth.IAuthService) {
+                    private authService: Mappino.Core.Auth.IAuthService) {
             // ---------------------------------------------------------------------------------------------------------
-            $rootScope.loaders.base = true;
+            $rootScope.loaders.overlay = true;
 
             this.initInputsChange();
 
             authService.loadProfile(response => {
                 $scope.user = response;
-                $rootScope.loaders.base = false;
+                $rootScope.loaders.overlay = false;
             });
         }
 

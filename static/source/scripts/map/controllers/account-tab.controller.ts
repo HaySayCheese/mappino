@@ -14,7 +14,7 @@ module mappino.map {
 
         constructor(private $scope: any,
                     private $cookies: angular.cookies.ICookiesService,
-                    private authService: mappino.core.auth.IAuthService) {
+                    private authService: Mappino.Core.Auth.IAuthService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.authState = $cookies.get('mcheck') ? 'enterSMSCode' : 'enterPhone';
 

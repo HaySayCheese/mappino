@@ -11,7 +11,7 @@ module Mappino.Cabinet {
 
         'ui.router',
 
-        'mappino.core',
+        'Mappino.Core',
     ]);
 
 
@@ -40,7 +40,6 @@ module Mappino.Cabinet {
     app.controller('CabinetController', CabinetController);
     app.controller('BriefsController', BriefsController);
     app.controller('PublicationController', PublicationController);
-    app.controller('UnpublishedPublicationController', UnpublishedPublicationController);
     app.controller('SettingsController', SettingsController);
     app.controller('SupportController', SupportController);
     app.controller('TicketController', TicketController);

@@ -1,4 +1,4 @@
-module mappino.core.auth {
+module Mappino.Core.Auth {
     export interface IAuthService {
         user: IUser
 

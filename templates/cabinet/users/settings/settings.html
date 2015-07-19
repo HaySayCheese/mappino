@@ -1,6 +1,6 @@
 <div class="settings-page" ng-controller="SettingsController as settingsCtrl">
-    <form class="md-padding" name="userProfileForm" ng-hide="loaders.base"
-          layout-wrap layout="column" layout-gt-lg="row" layout-align-md="start center" layout-align-lg="start center" novalidate>
+    <form name="userProfileForm" ng-hide="loaders.base" layout-wrap layout-padding layout-sm="column" layout-md="column"
+          layout-lg="column" layout-gt-lg="row" layout-align-md="start center" layout-align-lg="start center" novalidate>
 
         <md-card flex="32">
             <md-card-content>
@@ -14,7 +14,6 @@
 
                             <md-progress-circular md-mode="indeterminate" ng-show="loaders.avatar"></md-progress-circular>
                         </div>
-                        <!--<input id="photo-field" name="avatar" type="file" />-->
 
                         <div layout="row">
                             <md-button class="md-warn md-hue-1 md-icon-button" ng-show="user.account.avatar_url" ng-disabled="loaders.avatar" ng-click="settingsCtrl.removeAvatar()">
@@ -40,7 +39,7 @@
                     <div layout="column" layout-align="start right" flex-gt-sm="50" offset-gt-sm="5">
                         <md-input-container flex>
                             <label>Имя</label>
-                            <input type="text" name="first_name" ng-model="user.account.first_name">
+                            <input type="text" name="first_name" ng-model="user.account.first_name" required>
                             <div ng-messages="userProfileForm.first_name.$error">
                                 <div ng-message="required">Обязательное поле</div>
                             </div>
@@ -48,7 +47,7 @@
 
                         <md-input-container flex>
                             <label>Фамилия</label>
-                            <input type="text" name="last_name" ng-model="user.account.last_name">
+                            <input type="text" name="last_name" ng-model="user.account.last_name" required>
                             <div ng-messages="userProfileForm.last_name.$error">
                                 <div ng-message="required">Обязательное поле</div>
                             </div>

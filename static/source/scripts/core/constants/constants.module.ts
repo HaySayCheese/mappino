@@ -1,8 +1,8 @@
 /// <reference path='_all.ts' />
 
 
-module mappino.core.constants {
-    var constants: angular.IModule = angular.module('mappino.core.constants', []);
+module Mappino.Core.Constants {
+    var constants: angular.IModule = angular.module('Mappino.Core.Constants', []);
 
     constants.constant('CONSTANTS', {
         'BUILDING_TYPES':           BuildingTypesConstant.Default,

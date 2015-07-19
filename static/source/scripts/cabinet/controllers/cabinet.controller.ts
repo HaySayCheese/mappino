@@ -13,14 +13,15 @@ module Mappino.Cabinet {
         ];
 
         constructor(private $rootScope: any,
-                    private authService: mappino.core.auth.IAuthService,
+                    private authService: Mappino.Core.Auth.IAuthService,
                     private $mdSidenav: any,
                     private $mdUtil: any,
                     private $mdMedia: any) {
             // ---------------------------------------------------------------------------------------------------------
 
             $rootScope.loaders = {
-                base:               false,
+                overlay:            false,
+                navbar:             false,
                 avatar:             false,
                 tickets:            false
             };

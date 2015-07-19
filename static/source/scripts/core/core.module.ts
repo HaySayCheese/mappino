@@ -1,11 +1,11 @@
 /// <reference path='_all.ts' />
 
 
-module mappino.core {
-    var core: angular.IModule = angular.module('mappino.core', [
-        'mappino.core.constants',
-        'mappino.core.directives',
+module Mappino.Core {
+    var core: angular.IModule = angular.module('Mappino.Core', [
+        'Mappino.Core.Constants',
+        'Mappino.Core.Directives',
 
-        'mappino.core.auth'
+        'Mappino.Core.Auth'
     ]);
 }

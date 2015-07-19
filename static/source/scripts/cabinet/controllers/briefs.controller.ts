@@ -26,7 +26,7 @@ module Mappino.Cabinet {
             $scope.briefs = this.briefs;
             $scope.newPublication = this.newPublication;
 
-            this.loadPublications();
+            this.loadBriefs();
         }
 
 
@@ -35,30 +35,34 @@ module Mappino.Cabinet {
             var confirm = this.$mdDialog
                 .confirm()
                 .parent(angular.element(document.body))
-                .title('Вы на самом деле хотите удалить это объявление?')
-                .content('Все данные по этому объявлению будут удалены навсегда.')
+                .title('Р’С‹ РЅР° СЃР°РјРѕРј РґРµР»Рµ С…РѕС‚РёС‚Рµ СѓРґР°Р»РёС‚СЊ СЌС‚Рѕ РѕР±СЉСЏРІР»РµРЅРёРµ?')
+                .content('Р’СЃРµ РґР°РЅРЅС‹Рµ РїРѕ СЌС‚РѕРјСѓ РѕР±СЉСЏРІР»РµРЅРёСЋ Р±СѓРґСѓС‚ СѓРґР°Р»РµРЅС‹ РЅР°РІСЃРµРіРґР°.')
                 //.ariaLabel('Lucky day')
-                .ok('Удалить')
-                .cancel('Отменить удаление')
+                .ok('РЈРґР°Р»РёС‚СЊ')
+                .cancel('РћС‚РјРµРЅРёС‚СЊ СѓРґР°Р»РµРЅРёРµ')
                 .targetEvent($event);
 
 
             this.$mdDialog.show(confirm)
                 .then(() => {
-                    //this.publicationsService.remove({ tid: briefTid, hid: briefId })
-                }, () => {
-                    //
+                    this.publicationsService.remove({ tid: briefTid, hid: briefId }, () => {
+                        angular.forEach(this.$scope.briefs, (brief, index) => {
+                            if (brief.id == briefId) {
+                                this.$scope.briefs.splice(index, 1)
+                            }
+                        })
+                    })
                 });
         }
 
 
 
-        private loadPublications() {
-            this.$rootScope.loaders.base = true;
+        public loadBriefs() {
+            this.$rootScope.loaders.navbar = true;
 
             this.publicationsService.loadBriefs(response => {
                 this.$scope.briefs = response;
-                this.$rootScope.loaders.base = false;
+                this.$rootScope.loaders.navbar = false;
             });
         }
 
