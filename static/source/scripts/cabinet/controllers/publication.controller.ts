@@ -76,13 +76,17 @@ module Mappino.Cabinet {
 
 
             this.$mdDialog.show(confirm).then(() => {
-                this.publicationsService.remove(this.publicationIds)
+                this.$rootScope.loaders.overlay = true;
+                this.publicationsService.remove(this.publicationIds, response => {
+                    this.$rootScope.loaders.overlay = false;
+                    this.$state.go('publications');
+                });
             });
         }
 
 
 
-        public publish($event) {
+        public publishPublication($event) {
             if (this.$scope.forms.publicationForm.$invalid) {
                 var checkboxElement = angular.element("input[type='checkbox'].ng-invalid")[0],
                     inputElement    = angular.element("textarea.ng-invalid, input.ng-invalid")[0];

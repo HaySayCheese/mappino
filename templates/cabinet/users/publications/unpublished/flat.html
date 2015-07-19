@@ -287,8 +287,8 @@
                 </md-input-container>
             </div>
 
-            <div class="md-body-2">Удобства, предоставляемые с орендой</div>
-            <div class="md-padding" layout="column">
+            <div class="md-body-2" ng-show="publication.body.head.for_rent">Удобства, предоставляемые с орендой</div>
+            <div class="md-padding" layout="column" ng-show="publication.body.head.for_rent">
                 <div layout-sm="column" layout-gt-sm="row">
                     <div layout="column" flex="50">
                         <md-checkbox class="md-primary" name="furniture" ng-change="pubCtrl.checkField('furniture')"
