@@ -111,7 +111,7 @@ module Mappino.Cabinet {
 
 
 
-        public doneEditingLater($event) {
+        public doneEditingLaterPublication($event) {
             var alert = this.$mdDialog.alert()
                 .parent(angular.element(document.body))
                 .clickOutsideToClose(false)

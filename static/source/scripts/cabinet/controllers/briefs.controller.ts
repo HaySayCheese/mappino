@@ -15,12 +15,16 @@ module Mappino.Cabinet {
             '$scope',
             '$rootScope',
             '$mdDialog',
+            '$state',
+            'TXT',
             'PublicationsService'
         ];
 
         constructor(private $scope: any,
                     private $rootScope: any,
                     private $mdDialog: any,
+                    private $state: angular.ui.IStateService,
+                    private TXT: any,
                     private publicationsService: IPublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.briefs = this.briefs;
@@ -31,28 +35,27 @@ module Mappino.Cabinet {
 
 
         public removeBrief($event, briefTid, briefId) {
-            // Appending dialog to document.body to cover sidenav in docs app
-            var confirm = this.$mdDialog
-                .confirm()
+            var confirm = this.$mdDialog.confirm()
                 .parent(angular.element(document.body))
-                .title('Р’С‹ РЅР° СЃР°РјРѕРј РґРµР»Рµ С…РѕС‚РёС‚Рµ СѓРґР°Р»РёС‚СЊ СЌС‚Рѕ РѕР±СЉСЏРІР»РµРЅРёРµ?')
-                .content('Р’СЃРµ РґР°РЅРЅС‹Рµ РїРѕ СЌС‚РѕРјСѓ РѕР±СЉСЏРІР»РµРЅРёСЋ Р±СѓРґСѓС‚ СѓРґР°Р»РµРЅС‹ РЅР°РІСЃРµРіРґР°.')
-                //.ariaLabel('Lucky day')
-                .ok('РЈРґР°Р»РёС‚СЊ')
-                .cancel('РћС‚РјРµРЅРёС‚СЊ СѓРґР°Р»РµРЅРёРµ')
+                .title(this.TXT.DIALOGS.REMOVE_PUBLICATION.TITLE)
+                .content(this.TXT.DIALOGS.REMOVE_PUBLICATION.BODY)
+                .ariaLabel(this.TXT.DIALOGS.REMOVE_PUBLICATION.ARIA_LABEL)
+                .ok(this.TXT.DIALOGS.REMOVE_PUBLICATION.OK_BTN)
+                .cancel(this.TXT.DIALOGS.REMOVE_PUBLICATION.CANCEL_BTN)
                 .targetEvent($event);
 
 
-            this.$mdDialog.show(confirm)
-                .then(() => {
-                    this.publicationsService.remove({ tid: briefTid, hid: briefId }, () => {
-                        angular.forEach(this.$scope.briefs, (brief, index) => {
-                            if (brief.id == briefId) {
-                                this.$scope.briefs.splice(index, 1)
-                            }
-                        })
-                    })
-                });
+            this.$mdDialog.show(confirm).then(() => {
+                this.$rootScope.loaders.overlay = true;
+                this.publicationsService.remove({ tid: briefTid, hid: briefId }, () => {
+                    angular.forEach(this.$scope.briefs, (brief, index) => {
+                        if (brief.id == briefId) {
+                            this.$scope.briefs.splice(index, 1)
+                        }
+                    });
+                    this.$rootScope.loaders.overlay = false;
+                })
+            });
         }
 
 
@@ -68,9 +71,15 @@ module Mappino.Cabinet {
 
 
 
-        // using in scope
-        private createPublication() {
-            this.publicationsService.create(this.$scope.newPublication);
+        public createPublication() {
+            var newPublication = this.$scope.newPublication;
+
+            this.$rootScope.loaders.overlay = true;
+
+            this.publicationsService.create(newPublication, response => {
+                this.$rootScope.loaders.overlay = false;
+                this.$state.go('publication_edit', { id: newPublication.tid + ":" + response.data.id });
+            });
         }
     }
 }
