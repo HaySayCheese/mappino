@@ -65,11 +65,14 @@ module Mappino.Cabinet {
     /**
      * Success create publication callback
      * @callback Mappino.Cabinet.PublicationService~IPublicationCreateSuccessCallback
-     * @param {number} publicationId
+     * @param {object} response         Response object
+     * @param {number} response.code    Server error code
+     * @param {string} response.message Server error message
+     * @param {string} response.data    Response data
      * @returns {void}
      */
     export interface IPublicationCreateSuccessCallback {
-        (publicationId: number): void
+        (response: { code: number; message: string; data: { id: string } }): void
     }
 
 

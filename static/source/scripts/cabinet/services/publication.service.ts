@@ -25,7 +25,6 @@ module Mappino.Cabinet {
             this.$http.post('/ajax/api/cabinet/publications/', publication)
                 .then(response => {
                     if (response.data['code'] === 0) {
-                        this.$state.go('publication_edit', { id: publication.tid + ":" + response.data['data']['id'] });
                         angular.isFunction(successCallback) && successCallback(response.data)
                     } else {
                         angular.isFunction(errorCallback) && errorCallback(response.data)
