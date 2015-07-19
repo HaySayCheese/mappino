@@ -1,14 +1,17 @@
 
 
-module Mappino.Core.Constants {
-    export class RealtyTypesConstant {
+module Mappino.Core.Values {
+    export class RealtyTypesValues {
         static get Default(): any {
             return [
                 {
                     id:             0,
                     name:           "flat",
-                    title:          "Квартиры",
-                    singularTitle:  "Квартира",
+                    titles: {
+                        singular:   "Квартира",
+                        plural:     "Квартиры",
+                        nominative: "Квартиры"
+                    },
                     filters: [
                         "op_sid", "pr_sid", "p_min", "p_max", "cu_sid", "p_c_min", "p_c_max", "n_b",
                         "s_m", "fml", "frg", "r_c_min", "r_c_max", "t_a_min", "t_a_max", "f_min", "f_max",
@@ -17,8 +20,11 @@ module Mappino.Core.Constants {
                 }, {
                     id:             1,
                     name:           "house",
-                    title:          "Дома",
-                    singularTitle:  "Дом",
+                    titles: {
+                        singular:   "Дом",
+                        plural:     "Дома",
+                        nominative: "Дома"
+                    },
                     filters: [
                         "op_sid", "pr_sid", "p_min", "p_max", "cu_sid", "p_c_min", "p_c_max", "n_b",
                         "s_m", "fml", "frg", "r_c_min", "r_c_max", "f_c_min", "f_c_max", "elt", "h_w",
@@ -27,8 +33,11 @@ module Mappino.Core.Constants {
                 }, {
                     id:             2,
                     name:           "room",
-                    title:          "Комнаты",
-                    singularTitle:  "Комната",
+                    titles: {
+                        singular:   "Комната",
+                        plural:     "Комнаты",
+                        nominative: "Комнаты"
+                    },
                     filters: [
                         "op_sid", "pr_sid", "p_min", "p_max", "cu_sid", "p_c_min", "p_c_max", "n_b",
                         "s_m", "fml", "frg", "r_c_min", "r_c_max", "t_a_min", "t_a_max", "f_min", "f_max",
@@ -37,24 +46,33 @@ module Mappino.Core.Constants {
                 }, {
                     id:             3,
                     name:           "land",
-                    title:          "Земельные участки",
-                    singularTitle:  "Земельный участок",
+                    titles: {
+                        singular:   "Земельный участок",
+                        plural:     "Земельные участки",
+                        nominative: "Земельного участка"
+                    },
                     filters: [
                         "op_sid", "p_min", "p_max", "cu_sid", "a_min", "a_max", "gas", "elt", "wtr", "swg"
                     ]
                 }, {
                     id:             4,
                     name:           "garage",
-                    title:          "Гаражи",
-                    singularTitle:  "Гараж",
+                    titles: {
+                        singular:   "Гараж",
+                        plural:     "Гаражи",
+                        nominative: "Гаража"
+                    },
                     filters: [
                         "op_sid", "p_min", "p_max", "cu_sid", "t_a_min", "t_a_max"
                     ]
                 }, {
                     id:             5,
                     name:           "office",
-                    title:          "Офисы",
-                    singularTitle:  "Офис",
+                    titles: {
+                        singular:   "Офис",
+                        plural:     "Офисы",
+                        nominative: "Офиса"
+                    },
                     filters: [
                         "op_sid", "p_min", "p_max", "cu_sid", "n_b", "s_m", "t_a_min", "t_a_max",
                         "c_c_min", "c_c_max", "sct", "ktn", "h_w", "c_w"
@@ -62,8 +80,11 @@ module Mappino.Core.Constants {
                 }, {
                     id:             6,
                     name:           "trade",
-                    title:          "Торговые помещения",
-                    singularTitle:  "Торговое помещение",
+                    titles: {
+                        singular:   "Торговое помещение",
+                        plural:     "Торговые помещения",
+                        nominative: "Торгового помещения"
+                    },
                     filters: [
                         "op_sid", "p_min", "p_max", "cu_sid", "n_b", "s_m", "h_a_min", "h_a_max",
                         "t_a_min", "t_a_max", "b_t_sid", "gas", "elt", "h_w", "c_w", "swg"
@@ -71,8 +92,11 @@ module Mappino.Core.Constants {
                 }, {
                     id:             7,
                     name:           "warehouse",
-                    title:          "Склады",
-                    singularTitle:  "Склад",
+                    titles: {
+                        singular:   "Склад",
+                        plural:     "Склады",
+                        nominative: "Склада"
+                    },
                     filters: [
                         "op_sid", "p_min", "p_max", "cu_sid", "n_b", "s_m", "h_a_min", "h_a_max",
                         "gas", "elt", "h_w", "c_w", "s_a", "f_a"

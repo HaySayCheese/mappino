@@ -32,7 +32,7 @@ module Mappino.Cabinet {
             $scope.ticketFormIsVisible  = false;
 
 
-            ticketsService.loadTickets(response => {
+            ticketsService.load(response => {
                 $scope.tickets = response;
                 $rootScope.loaders.tickets = false;
             });
@@ -41,7 +41,7 @@ module Mappino.Cabinet {
 
 
         public createTicket() {
-            this.ticketsService.createTicket(ticketId => {
+            this.ticketsService.create(ticketId => {
                 this.$scope.ticket.ticket_id = ticketId;
 
                 this.$scope.ticketFormIsVisible = true;
@@ -56,7 +56,9 @@ module Mappino.Cabinet {
 
         public sendMessage() {
             if (this.$scope.ticketForm.$valid) {
+                this.$rootScope.loaders.overlay = true;
                 this.ticketsService.sendMessage(this.ticket.ticket_id, this.$scope.ticket, response => {
+                    this.$rootScope.loaders.overlay = false;
                     this.$state.go('ticket_view', { ticket_id: this.ticket.ticket_id })
                 });
             }

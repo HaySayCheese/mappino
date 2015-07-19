@@ -24,7 +24,7 @@
             </div>
 
             <div layout="column" ng-hide="loaders.tickets">
-                <div class="md-padding center-align" ng-hide="!tickets.length || ticketFormIsVisible">
+                <div class="md-padding center-align" ng-hide="ticketFormIsVisible">
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                     Dicta ducimus esse facere fugit laborum officia veniam. Magnam molestiae officia sed!
                 </div>
@@ -38,10 +38,9 @@
 
                         <md-input-container flex>
                             <label>Описание обращения</label>
-                            <textarea name="message" ng-model="ticket.message" columns="1" md-maxlength="400" required></textarea>
+                            <textarea name="message" ng-model="ticket.message" columns="1" required></textarea>
                             <div ng-messages="ticketForm.message.$error" ng-show="ticketForm.$submitted || ticketForm.message.$touched">
                                 <div ng-message="required">Укажите, пожалуйста, тему обращения.</div>
-                                <div ng-message="md-maxlength">Тема обращения слишком длинная.</div>
                             </div>
                         </md-input-container>
 

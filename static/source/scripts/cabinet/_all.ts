@@ -43,8 +43,8 @@
 // ####################
 // Services import
 // ####################
-/// <reference path='services/publication.service.ts' />
-/// <reference path='services/ticket.service.ts' />
+/// <reference path='services/publications.service.ts' />
+/// <reference path='services/tickets.service.ts' />
 
 
 

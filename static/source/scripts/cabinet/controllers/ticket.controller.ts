@@ -28,7 +28,7 @@ module Mappino.Cabinet {
             $scope.new_message  = {};
 
             $scope.ticketIsLoaded = false;
-            $rootScope.loaders.base = true;
+            $rootScope.loaders.overlay = true;
 
 
             $scope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
@@ -39,7 +39,7 @@ module Mappino.Cabinet {
 
                     $scope.ticket = this.ticket;
                     $scope.ticketIsLoaded = true;
-                    $rootScope.loaders.base = false;
+                    $rootScope.loaders.overlay = false;
                 });
 
             });
@@ -49,10 +49,10 @@ module Mappino.Cabinet {
 
         public sendMessage() {
             if (this.$scope.ticketForm.$valid) {
-                this.$rootScope.loaders.base = true;
+                this.$rootScope.loaders.overlay = true;
 
                 this.ticketsService.sendMessage(this.ticket.ticket_id, this.$scope.new_message, response => {
-                    this.$rootScope.loaders.base = false;
+                    this.$rootScope.loaders.overlay = false;
 
                     this.ticket.messages.unshift({
                         created:    new Date().getTime().toString(),

@@ -1,7 +1,7 @@
 
 
-module Mappino.Core.Constants {
-    export class MarketTypesConstant {
+module Mappino.Core.Values {
+    export class MarketTypesValues {
         static get Default(): any {
             return [{
                 id:     '0',

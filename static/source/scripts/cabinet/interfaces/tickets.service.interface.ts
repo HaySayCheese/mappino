@@ -7,13 +7,13 @@ module Mappino.Cabinet {
         /**
          * Create empty ticket
          */
-        createTicket(successCallback?: ITicketCreateSuccessCallback, errorCallback?: ITicketsBaseErrorCallback): void
+        create(successCallback?: ITicketCreateSuccessCallback, errorCallback?: ITicketsBaseErrorCallback): void
 
 
         /**
          * Load all user tickets
          */
-        loadTickets(successCallback?: ITicketsLoadSuccessCallback, errorCallback?: ITicketsBaseErrorCallback): void
+        load(successCallback?: ITicketsLoadSuccessCallback, errorCallback?: ITicketsBaseErrorCallback): void
 
 
         /**

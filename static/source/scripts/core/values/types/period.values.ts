@@ -1,7 +1,7 @@
 
 
-module Mappino.Core.Constants {
-    export class PeriodTypesConstant {
+module Mappino.Core.Values {
+    export class PeriodTypesValues {
         static get Default(): any {
             return [{
                 id:     '0',

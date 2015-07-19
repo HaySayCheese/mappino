@@ -1,7 +1,7 @@
 
 
-module Mappino.Core.Constants {
-    export class HeatingTypesConstant {
+module Mappino.Core.Values {
+    export class HeatingTypesValues {
         static get Default(): any {
             return [{
                 id:     '0',

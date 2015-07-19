@@ -84,7 +84,9 @@
         <md-content flex ui-view></md-content>
     </main>
 
-    <div class="overlay-loader -animation" ng-show="loaders.overlay"></div>
+    <div class="overlay-loader -animation" layout="column" layout-align="center center" ng-show="loaders.overlay">
+        <md-progress-circular class="md-accent" md-mode="indeterminate" md-diameter="100"></md-progress-circular>
+    </div>
 
 
     {% compress js %}

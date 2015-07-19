@@ -6,17 +6,26 @@ module Mappino.Cabinet {
         private _ticket:    ITicket;
         private _tickets:   ITicket[];
 
+        private toastOptions = {
+            position:   'top right',
+            delay:      5000
+        };
+
         public static $inject = [
-            '$http'
+            '$http',
+            '$mdToast',
+            'TXT'
         ];
 
-        constructor(private $http: angular.IHttpService) {
-            //
+        constructor(private $http: angular.IHttpService,
+                    private $mdToast: any,
+                    private TXT: any) {
+            //----------------------------------------------------------------------------------------------------------
         }
 
 
 
-        public createTicket(successCallback, errorCallback) {
+        public create(successCallback, errorCallback) {
             this.$http.post('/ajax/api/cabinet/support/tickets/', null)
                 .then(response => {
                     if (response.data['code'] === 0) {
@@ -25,13 +34,18 @@ module Mappino.Cabinet {
                         angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.TICKETS.CREATE.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
                 });
         }
 
 
 
-        public loadTickets(successCallback, errorCallback) {
+        public load(successCallback, errorCallback) {
             this.$http.get('/ajax/api/cabinet/support/tickets/')
                 .then(response => {
                     if (response.data['code'] === 0) {
@@ -41,7 +55,12 @@ module Mappino.Cabinet {
                         angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.TICKETS.LOAD.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
                 });
         }
 
@@ -57,7 +76,12 @@ module Mappino.Cabinet {
                         angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.TICKETS.LOAD_TICKET_MESSAGES.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
                 });
         }
 
@@ -72,7 +96,12 @@ module Mappino.Cabinet {
                         angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.TICKETS.SEND_TICKET_MESSAGE.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
                 });
         }
 

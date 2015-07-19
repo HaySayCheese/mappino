@@ -6,16 +6,25 @@ module Mappino.Cabinet {
         private briefs: IBrief[];
         private publication: IPublication;
 
+        private toastOptions = {
+            position:   'top right',
+            delay:      5000
+        };
+
         public static $inject = [
             '$http',
             '$state',
-            'Upload'
+            '$mdToast',
+            'Upload',
+            'TXT'
         ];
 
 
         constructor(private $http: angular.IHttpService,
                     private $state: angular.ui.IStateService,
-                    private Upload: any) {
+                    private $mdToast: any,
+                    private Upload: any,
+                    private TXT: any) {
             // ---------------------------------------------------------------------------------------------------------
         }
 
@@ -30,7 +39,12 @@ module Mappino.Cabinet {
                         angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.CREATE.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
                 });
         }
 
@@ -46,7 +60,12 @@ module Mappino.Cabinet {
                         angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.REMOVE.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
                 });
         }
 
@@ -62,7 +81,12 @@ module Mappino.Cabinet {
                         angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.PUBLISH.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
                 });
         }
 
@@ -79,8 +103,13 @@ module Mappino.Cabinet {
                         angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
-                })
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.LOAD.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
+                });
         }
 
 
@@ -99,6 +128,13 @@ module Mappino.Cabinet {
                 } else {
                     angular.isFunction(errorCallback) && errorCallback(response.data)
                 }
+            }, response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.PUBLICATION.UPLOAD_PHOTO.TITLE)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
             });
         }
 
@@ -123,7 +159,12 @@ module Mappino.Cabinet {
                         angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.REMOVE_PHOTO.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
                 })
         }
 
@@ -143,7 +184,12 @@ module Mappino.Cabinet {
                         angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.SET_TITLE_PHOTO.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
                 })
         }
 
@@ -157,7 +203,11 @@ module Mappino.Cabinet {
                         successCallback(response.data['data'] && response.data['data'].value ? response.data['data'].value : field.fieldValue);
                     }
                 }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data);
+                    this.$mdToast.show(this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.PUBLICATION.CHECK_FIELD.TITLE)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                    );
                 });
         }
 
@@ -173,7 +223,12 @@ module Mappino.Cabinet {
                         angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.LOAD_BRIEFS.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
                 });
         }
 

@@ -9,7 +9,8 @@ module Mappino.Cabinet {
         constructor(private app: angular.IModule) {
             app.config(['$mdThemingProvider', function($mdThemingProvider) {
                 $mdThemingProvider.theme('default')
-                    .primaryPalette('blue');
+                    .primaryPalette('blue')
+                    .accentPalette('deep-orange');
             }]);
         }
     }

@@ -1,7 +1,7 @@
 
 // todo: перекласти назви на англ мову
-module Mappino.Core.Constants {
-    export class RoomPlanningTypesConstant {
+module Mappino.Core.Values {
+    export class RoomPlanningTypesValues {
         static get Default(): any {
             return [{
                 id:     '0',
