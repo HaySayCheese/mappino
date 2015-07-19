@@ -94,9 +94,9 @@ class CabinetPublishedDataSource(object):
             'floor': p.body.print_floor(),
             'floors_count': p.body.print_floors_count(),
 
-            'rooms_count': p.body.print_rooms_count() or u'неизвестно',
+            'rooms_count': p.body.print_rooms_count(),
             'rooms_planning': p.body.print_rooms_planning() ,
-            'facilities': p.body.print_facilities() or u'неизвестно',
+            'facilities': p.body.print_facilities(),
 
             'communications': p.body.print_communications(),
             'buildings': p.body.print_provided_add_buildings(),
@@ -124,25 +124,21 @@ class CabinetPublishedDataSource(object):
             'market_type': p.body.print_market_type(),
             'condition': p.body.print_condition(),
 
-            'total_area': p.body.print_total_area() or u'неизвестно',
-            'living_area': p.body.print_living_area() or u'неизвестно',
+            'total_area': p.body.print_total_area(),
+            'living_area': p.body.print_living_area(),
             'kitchen_area': p.body.print_kitchen_area(),
 
-            'floors_count': p.body.print_floors_count() or u'неизвестно',
-            'rooms_count': p.body.print_rooms_count() or u'неизвестно',
-            'bedrooms_count': p.body.print_bedrooms_count(),
-            'vcs_count': p.body.print_vcs_count(),
+            'floors_count': p.body.print_floors_count(),
+            'rooms_count': p.body.print_rooms_count(),
 
             'facilities': p.body.print_facilities(),
             'communications': p.body.print_communications(),
             'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
         }
 
         if p.for_sale:
             description.update({
                 'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms()
             })
         if p.for_rent:
             description.update({
