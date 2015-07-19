@@ -83,7 +83,7 @@ module Mappino.Cabinet {
 
             });
 
-            this.$scope.$watchCollection('user.preferences', (newValue, oldValue) => {
+            this.$scope.$watchCollection('account.preferences', (newValue, oldValue) => {
                 if (!_.isUndefined(newValue) && !_.isUndefined(oldValue)) {
                     for (var key in newValue) {
                         if (newValue[key] != oldValue[key]) {
