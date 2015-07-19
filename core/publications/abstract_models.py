@@ -88,12 +88,6 @@ class AbstractModel(models.Model):
         return u'{dol} ({uah}, {eur})'.format(dol=dol, uah=uah, eur=eur)
 
 
-    def print_add_terms(self):
-        if self.add_terms is None:
-            return u''
-        return self.add_terms
-
-
 
 class AbstractHeadModel(models.Model):
     class Meta:
@@ -542,18 +536,6 @@ class LivingRentTermsModel(AbstractModel):
 
         if self.persons_count:
             terms += u', количество мест — ' + unicode(self.persons_count)
-
-        if self.family:
-            terms += u', подходит для семей с детьми'
-        if self.pets:
-            terms += u', питомцы разрешены'
-        if self.foreigners:
-            terms += u', размещение иностранцев'
-        if self.smoking:
-            terms += u', можно курить'
-
-        if self.add_terms:
-            terms += u'. ' + self.add_terms
 
         if terms:
             return terms[2:]

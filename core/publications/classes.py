@@ -85,33 +85,26 @@ class CabinetPublishedDataSource(object):
 
             'market_type': p.body.print_market_type(),
             'flat_type': p.body.print_flat_type(),
-            'rooms_planning': p.body.print_rooms_planning() ,
             'condition': p.body.print_condition(),
+
+            'total_area': p.body.print_total_area(),
+            'living_area': p.body.print_living_area(),
+            'kitchen_area': p.body.print_kitchen_area(),
 
             'floor': p.body.print_floor(),
             'floors_count': p.body.print_floors_count(),
 
-            'total_area': p.body.print_total_area() or u'неизвестно',
-            'living_area': p.body.print_living_area() or u'неизвестно',
-            'kitchen_area': p.body.print_kitchen_area(),
-
             'rooms_count': p.body.print_rooms_count() or u'неизвестно',
-            'bedrooms_count': p.body.print_bedrooms_count(),
-            'vcs_count': p.body.print_vcs_count(),
-            'balconies_count': p.body.print_balconies_count(),
-            'loggias_count': p.body.print_loggias_count(),
-            'ceiling_height': p.body.print_ceiling_height(),
-
+            'rooms_planning': p.body.print_rooms_planning() ,
             'facilities': p.body.print_facilities() or u'неизвестно',
+
             'communications': p.body.print_communications(),
             'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
         }
 
         if p.for_sale:
             description.update({
                 'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms()
             })
         if p.for_rent:
             description.update({
@@ -191,7 +184,6 @@ class CabinetPublishedDataSource(object):
         if p.for_sale:
             description.update({
                 'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms()
             })
         if p.for_rent:
             description.update({
@@ -232,7 +224,6 @@ class CabinetPublishedDataSource(object):
         if p.for_sale:
             description.update({
                 'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms(),
             })
         if p.for_rent:
             description.update({
@@ -366,7 +357,6 @@ class CabinetPublishedDataSource(object):
         if p.for_sale:
             description.update({
                 'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms(),
             })
         if p.for_rent:
             description.update({
