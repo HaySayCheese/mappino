@@ -3,7 +3,7 @@
 module Mappino.Cabinet {
     'use strict';
 
-    var app: angular.IModule = angular.module('mappino.cabinet', [
+    var app: angular.IModule = angular.module('Mappino.Cabinet', [
         'ngMaterial',
         'ngCookies',
         'ngMessages',

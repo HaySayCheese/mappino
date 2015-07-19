@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.map {
+module Mappino.Map {
     'use strict';
 
     export class FiltersService {
@@ -86,13 +86,13 @@ module mappino.map {
             '$rootScope',
             '$timeout',
             '$location',
-            'CONSTANTS'
+            'TYPES'
         ];
 
         constructor(private $rootScope: angular.IRootScopeService,
                     private $timeout: angular.ITimeoutService,
                     private $location: angular.ILocationService,
-                    private CONSTANTS: any) {
+                    private TYPES: any) {
             // ---------------------------------------------------------------------------------------------------------
 
             this.updateFiltersFromUrl();
@@ -114,7 +114,7 @@ module mappino.map {
             this.updateUrlFromFilters();
             this.createFormattedObjectForLoadMarkers();
 
-            this.$timeout(() => this.$rootScope.$broadcast('mappino.map.FiltersService.FiltersUpdated', this._filters));
+            this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.FiltersService.FiltersUpdated', this._filters));
         }
 
 
@@ -152,8 +152,8 @@ module mappino.map {
             // Створюємо набір фільтрів для панелі за набором
             if (!_.isNull(type_sid)) {
 
-                console.log(_.where(self.CONSTANTS.REALTY_TYPES, { 'id': type_sid }))
-                var realty_type_filters = self.CONSTANTS.REALTY_TYPES[type_sid].filters;
+                console.log(_.where(self.TYPES.REALTY, { 'id': type_sid }))
+                var realty_type_filters = self.TYPES.REALTY[type_sid].filters;
 
                 for (var i = 0, len = realty_type_filters.length; i < len; i++) {
                     var filter_name = panel_prefix + realty_type_filters[i];
@@ -164,7 +164,7 @@ module mappino.map {
                 }
             }
 
-            this.$timeout(() => this.$rootScope.$broadcast('mappino.map.FiltersService.FiltersUpdated', this._filters));
+            this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.FiltersService.FiltersUpdated', this._filters));
         }
 
 
@@ -212,7 +212,7 @@ module mappino.map {
                 this.createFiltersForPanel("blue");
             }
 
-            this.$timeout(() => this.$rootScope.$broadcast('mappino.map.FiltersService.UpdatedFromUrl', this._filters));
+            this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.FiltersService.UpdatedFromUrl', this._filters));
         }
 
 
@@ -302,7 +302,7 @@ module mappino.map {
             this._filters_for_load_markers['zoom'] = this._filters['map']['z'];
             this.createFormattedViewportForLoadMarkers();
 
-            this.$timeout(() => this.$rootScope.$broadcast('mappino.map.FiltersService.CreatedFormattedFilters', this._filters_for_load_markers));
+            this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.FiltersService.CreatedFormattedFilters', this._filters_for_load_markers));
         }
 
 

@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.map {
+module Mappino.Map {
     'use strict';
 
     export class ProvidersConfigs {

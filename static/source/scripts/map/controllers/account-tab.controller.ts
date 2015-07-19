@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.map {
+module Mappino.Map {
     export class AccountTabController {
         private fullNumber:    string = localStorage['fullNumber'] || '';
         private smsCode:       string;
@@ -16,9 +16,8 @@ module mappino.map {
                     private $cookies: angular.cookies.ICookiesService,
                     private authService: Mappino.Core.Auth.IAuthService) {
             // ---------------------------------------------------------------------------------------------------------
-            $scope.authState = $cookies.get('mcheck') ? 'enterSMSCode' : 'enterPhone';
-
-            $scope.user = {
+            $scope.user = authService.user;
+            $scope.account = {
                 phoneCode:      '+380',
                 phoneNumber:    '',
                 smsCode:        ''
@@ -27,6 +26,7 @@ module mappino.map {
             authService.tryLogin();
 
             this.initWatchers();
+            this.initAuthState();
         }
 
 
@@ -34,7 +34,7 @@ module mappino.map {
         private login() {
             if (this.$scope.authState === 'enterPhone') {
                 if (this.$scope.loginForm.phoneNumber.$valid) {
-                    this.fullNumber = this.$scope.user.phoneCode + this.$scope.user.phoneNumber;
+                    this.fullNumber = this.$scope.account.phoneCode + this.$scope.account.phoneNumber;
                     localStorage['fullNumber'] = this.fullNumber;
 
                     this.authService.checkPhoneNumber(this.fullNumber, () => {
@@ -45,7 +45,7 @@ module mappino.map {
                 }
             } else {
                 if (this.$scope.loginForm.smsCode.$valid) {
-                    this.smsCode = this.$scope.user.smsCode;
+                    this.smsCode = this.$scope.account.smsCode;
 
                     this.authService.checkSMSCode(this.fullNumber, this.smsCode, () => {
                         window.location.pathname = '/cabinet/';
@@ -68,6 +68,13 @@ module mappino.map {
                     }
                 }
             });
+        }
+
+
+
+        private initAuthState() {
+            this.$scope.authState = this.$cookies.get('mcheck') ? 'enterSMSCode' :
+                this.$cookies.get('sessionid') ? 'accountInformation' : 'enterPhone';
         }
     }
 }

@@ -1,40 +1,16 @@
-tab-body-collapsible,
-tab-body-section-collapsible {
+tab-section-collapsible {
     display: block;
     max-height: 800px;
     @include transition(max-height .3s  ease);
-
-    &.-closed {
-        max-height: 0;
-    }
-}
-
-tab-body-collapsible {
-    //
 }
 
 
-tab-body-section-collapsible {
-    &.-closed {
-        max-height: 0 !important;
-        overflow: hidden;
-    }
-
-}
-
-
-[toggle-tab-body],
-[toggle-tab-body-section] {
+[toggle-tab-section] {
     cursor: pointer;
+    border-bottom: 1px solid color('grey', 'lighten-3');
+    @include transition(border .3s ease);
 
     md-icon {
         @include transition(all .3s ease);
-    }
-
-    &.-tab-body-closed,
-    &.-tab-body-section-closed {
-        > md-icon {
-            @include rotate(180deg);
-        }
     }
 }

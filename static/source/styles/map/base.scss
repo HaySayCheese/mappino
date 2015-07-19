@@ -3,15 +3,15 @@
 // --------------------------------------------------
 @import "../_common/material/material";
 
-//
-// Additions include
-// --------------------------------------------------
-@import "../_common/additions/additions";
+
+// additions
+@import "../_common/additions/md-select";
+@import "additions/md-tabs";
 
 
 
 //
-// Components include
+// custom components
 // --------------------------------------------------
 @import "../_common/components/components";
 
@@ -26,6 +26,7 @@
 
 
 // left navbar tabs
+@import "components/tabs/left-navbar/left-navbar-tab";
 @import "components/tabs/left-navbar/filters-tab";
 @import "components/tabs/left-navbar/search-tab";
 @import "components/tabs/left-navbar/account-tab";

@@ -1,8 +1,10 @@
 .account-tab {
+    @extend %_left-navbar-tab;
+    
     .account-info-state {
-        .user-avatar {
+        img {
+            @include square(100px);
             border-radius: 50%;
-            border: 1px solid color('grey', 'lighten-2')
         }
     }
 }

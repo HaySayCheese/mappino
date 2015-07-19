@@ -1,4 +1,4 @@
-module mappino.map {
+module Mappino.Map {
     export function NavbarLeftDirective(): angular.IDirective {
         return {
             restrict: 'E',
@@ -9,7 +9,7 @@ module mappino.map {
             link: function(scope, element, attrs, modelCtrl) {
                 var $element = angular.element(element);
 
-                $element.addClass('md-whiteframe-z3');
+                //$element.addClass('md-whiteframe-z3');
             }
         };
     }

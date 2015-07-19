@@ -3,8 +3,8 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
         "use strict";
 
         BAuthService.tryLogin(function(user) {
-            $scope.user = {
-                name: user.fullName
+            $scope.account = {
+                name: account.fullName
             };
         });
 
@@ -88,7 +88,7 @@ app.controller('HomeController', ['$scope', '$timeout', '$http', '$cookies', 'ba
          **/
         $scope.logout = function(e) {
             BAuthService.logout(function() {
-                $scope.user = {
+                $scope.account = {
                     name: ''
                 };
             });

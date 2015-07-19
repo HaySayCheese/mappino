@@ -1,13 +1,12 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.map {
+module Mappino.Map {
     export class TabsHandler {
         private navbarLeftTabsIndex = {
-            filters_red:        0,
-            filters_blue:       1,
-            search:             2,
-            account:            3
+            filters:    0,
+            search:     1,
+            account:    2
         };
 
         private navbarRightTabsIndex = {

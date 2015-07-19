@@ -40,17 +40,4 @@ navbar-right {
     .scroller {
         @include square(100%);
     }
-
-
-    md-tab-item {
-        color: color('grey', 'darken-1') !important;
-
-        &.md-active md-icon {
-            color: #fff !important;
-        }
-
-        md-icon {
-            color: color('grey', 'darken-1') !important;
-        }
-    }
 }

@@ -4,13 +4,12 @@
 
         <md-card flex="32">
             <md-card-content>
-                <h3 class="md-headline light-blue-text">Основная информация</h3>
+                <h3 class="md-headline blue-text text-lighten-1">Основная информация</h3>
 
                 <div layout-sm="column" layout-gt-sm="row">
                     <div class="user-block" layout="column" layout-align="center center" flex-gt-sm="45">
                         <div class="user-photo" layout="column" layout-align="center center">
-                            <img ng-src="[[ user.account.avatar_url ]]" alt="" ng-hide="loaders.avatar || !user.account.avatar_url" />
-                            <img src="{{ static }}build/images/cabinet/user.png" alt="" ng-hide="loaders.avatar || user.account.avatar_url" />
+                            <img ng-src="[[ user.account.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/user.png" ng-hide="loaders.avatar" />
 
                             <md-progress-circular md-mode="indeterminate" ng-show="loaders.avatar"></md-progress-circular>
                         </div>
@@ -81,7 +80,7 @@
 
         <md-card flex="32">
             <md-card-content>
-                <h3 class="md-headline light-blue-text">Контакты</h3>
+                <h3 class="md-headline blue-text text-lighten-1">Контакты</h3>
 
                 <div layout="row">
                     <div layout="column" flex-gt-sm="45" hide-sm>
@@ -138,7 +137,7 @@
 
         <md-card flex="32">
             <md-card-content>
-                <h3 class="md-headline light-blue-text">Настройки</h3>
+                <h3 class="md-headline blue-text text-lighten-1">Настройки</h3>
 
                 <div layout="row">
                     <div layout="column" flex>

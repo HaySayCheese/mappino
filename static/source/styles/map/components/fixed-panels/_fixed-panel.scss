@@ -1,29 +1,4 @@
 %_fixed-panel {
     position: fixed;
     z-index: 90;
-
-
-    section {
-        position: relative;
-        background: #fff;
-
-        &.-border-top {
-            border-top: 1px solid color('grey', 'lighten-3');
-        }
-        &.-border-bottom {
-            border-bottom: 1px solid color('grey', 'lighten-3');
-        }
-    }
-
-
-    md-tabs {
-        border-radius: 0 !important;
-    }
-
-    md-tabs-canvas {
-        background-color: #363636;
-    }
-
-
-
 }

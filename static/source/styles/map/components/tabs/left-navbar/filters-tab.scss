@@ -1,3 +1,26 @@
 .filters-tab {
+    @extend %_left-navbar-tab;
 
+    section {
+        md-icon:first-child {
+            margin-right: 3px;
+        }
+
+        &.-filters-red {
+            header {
+                md-icon:first-child {
+                    color: color('red', 'lighten-2')
+                }
+            }
+        }
+
+
+        &.-filters-blue {
+            header {
+                md-icon:first-child {
+                    color: color('blue', 'lighten-2');
+                }
+            }
+        }
+    }
 }

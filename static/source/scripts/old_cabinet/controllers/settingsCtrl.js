@@ -16,7 +16,7 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
 
 
     Settings.load(function(data) {
-        $scope.user = data;
+        $scope.account = data;
         $rootScope.loadings.settings = false;
     });
 
@@ -35,11 +35,11 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
      * Логіка загрузки зображень
      */
     $scope.onFileSelect = function(files) {
-        $scope.user.account.avatar_url = "";
+        $scope.account.account.avatar_url = "";
         $scope.uploadingAvatar = true;
 
         Settings.uploadUserPhoto(files[0], function(data) {
-            $scope.user = data;
+            $scope.account = data;
             $scope.uploadingAvatar = false;
 
             data.code !== 0 ? $scope.avatarErrorCode = data.code : $scope.avatarErrorCode = 0;
@@ -56,7 +56,7 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
             var name  = e.currentTarget.name,
                 value = e.currentTarget.value.replace(/\s+/g, " ");
 
-            if (!$scope.form.user[name].$dirty)
+            if (!$scope.form.account[name].$dirty)
                 return;
 
             if (name == "mobile_phone" && (value == "+38 (0__) __ - __ - ___" || value[22] == "_"))
@@ -66,8 +66,8 @@ app.controller('SettingsCtrl', function($scope, $rootScope, $timeout, Settings) 
                 if (newValue)
                     e.currentTarget.value = newValue;
 
-                $scope.form.user[name].$setValidity("incorrect", code !== 10);
-                $scope.form.user[name].$setValidity("duplicated", code !== 11);
+                $scope.form.account[name].$setValidity("incorrect", code !== 10);
+                $scope.form.account[name].$setValidity("duplicated", code !== 11);
             });
 
         });

@@ -17,40 +17,4 @@ navbar-left {
         color: color('grey', 'darken-2');
         background: color('grey', 'lighten-5');
     }
-
-    md-tab-item {
-        color: color('grey', 'darken-1') !important;
-
-        &:nth-child(1) {
-            md-icon {
-                color: #fb6262 !important;
-                opacity: 0.6;
-            }
-            &.md-active md-icon {
-                opacity: 1;
-            }
-        }
-
-        &:nth-child(2) {
-            md-icon {
-                color: #4996cc !important;
-                opacity: 0.6;
-            }
-            &.md-active md-icon {
-                opacity: 1;
-            }
-        }
-
-        &:nth-child(3),
-        &:nth-child(4),
-        &:nth-child(5) {
-            &.md-active md-icon {
-                color: #fff !important;
-            }
-        }
-
-        md-icon {
-            color: color('grey', 'darken-1') !important;
-        }
-    }
 }

@@ -1,45 +1,44 @@
-<section class="-border-bottom" layout="column" layout-padding>
-    <div layout="row">
-        <md-input-container flex="33">
-            <label>Ціна від</label>
-            <input type="text" ng-model="filters.red.r_p_min" only-number>
-        </md-input-container>
-        <md-input-container flex="33">
-            <label>Ціна до</label>
-            <input type="text" ng-model="filters.red.r_p_max">
-        </md-input-container>
-        <md-select placeholder="Валюта" ng-model="filters.red.r_cu_sid" flex="33">
-            <md-option ng-repeat="currencyType in filCtrl.currencyTypes" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
-        </md-select>
-    </div>
-    <div layout="row">
-        <md-input-container flex="33">
-            <label>Площа від</label>
-            <input type="text" ng-model="filters.red.r_t_a_min">
-        </md-input-container>
-        <md-input-container flex="33">
-            <label>Площа до</label>
-            <input type="text" ng-model="filters.red.r_t_a_max">
-        </md-input-container>
-        <md-input-container flex="33">
-            <label>Кімнат</label>
-            <input type="text">
-        </md-input-container>
-    </div>
-    <div layout="row">
-        <md-select placeholder="Период" ng-model="filters.red.r_pr_sid" flex="100">
-            <md-option ng-repeat="periodType in filCtrl.periodTypes" value="[[ periodType.id ]]">[[ periodType.title ]]</md-option>
-        </md-select>
-    </div>
-</section>
-<header class="-tab-body-section-closed" layout="row" layout-align="start center" layout-padding toggle-tab-body-section>
-    <span class="md-body-1">Розширений фільтер</span>
-</header>
-<tab-body-section-collapsible class="-closed">
-    <section layout-padding>
-        тут трошки фільтрів
-    </section>
-</tab-body-section-collapsible>
+<div layout="row">
+    <md-input-container flex="33">
+        <label>Ціна від</label>
+        <input type="text" ng-model="filters.red.r_p_min" only-number>
+    </md-input-container>
+    <md-input-container flex="33">
+        <label>Ціна до</label>
+        <input type="text" ng-model="filters.red.r_p_max">
+    </md-input-container>
+    <md-select placeholder="Валюта" ng-model="filters.red.r_cu_sid" flex="33">
+        <md-option ng-repeat="currencyType in filCtrl.currencyTypes" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
+    </md-select>
+</div>
+<div layout="row">
+    <md-input-container flex="33">
+        <label>Площа від</label>
+        <input type="text" ng-model="filters.red.r_t_a_min">
+    </md-input-container>
+    <md-input-container flex="33">
+        <label>Площа до</label>
+        <input type="text" ng-model="filters.red.r_t_a_max">
+    </md-input-container>
+    <md-input-container flex="33">
+        <label>Кімнат</label>
+        <input type="text">
+    </md-input-container>
+</div>
+<div layout="row">
+    <md-select placeholder="Период" ng-model="filters.red.r_pr_sid" flex="100">
+        <md-option ng-repeat="periodType in filCtrl.periodTypes" value="[[ periodType.id ]]">[[ periodType.title ]]</md-option>
+    </md-select>
+</div>
+
+<!--<header class="-tab-body-section-closed" layout="row" layout-align="start center" layout-padding toggle-tab-body-section>-->
+    <!--<span class="md-body-1">Розширений фільтер</span>-->
+<!--</header>-->
+<!--<tab-body-section-collapsible class="-closed">-->
+    <!--<section layout-padding>-->
+        <!--тут трошки фільтрів-->
+    <!--</section>-->
+<!--</tab-body-section-collapsible>-->
 
 
 

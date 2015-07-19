@@ -21,7 +21,7 @@ module Mappino.Cabinet {
             this.initInputsChange();
 
             authService.loadProfile(response => {
-                $scope.user = response;
+                $scope.account = response;
                 $rootScope.loaders.overlay = false;
             });
         }

@@ -13,9 +13,9 @@ app.factory('Settings', function($rootScope, $window, $cookies, Queries) {
         */
         load: function(callback) {
             Queries.Settings.load(function(data) {
-                user = data;
+                account = data;
 
-                _.isFunction(callback) && callback(user);
+                _.isFunction(callback) && callback(account);
             })
         },
 
@@ -45,13 +45,13 @@ app.factory('Settings', function($rootScope, $window, $cookies, Queries) {
             Queries.Settings.uploadUserPhoto(photo, function(data) {
                 if (data.data.code === 100) {
                     channel.info("Во время загрузки возникла ошибка. Повторите попытку с другим изображением");
-                    _.isFunction(callback) && callback(user);
+                    _.isFunction(callback) && callback(account);
                     return;
                 }
 
-                user.account.avatar_url = data.data.url + "?" + new Date().getTime();
+                account.account.avatar_url = data.data.url + "?" + new Date().getTime();
 
-                _.isFunction(callback) && callback(user);
+                _.isFunction(callback) && callback(account);
             });
         },
 

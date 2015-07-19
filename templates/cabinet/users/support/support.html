@@ -3,7 +3,7 @@
 
     <md-card flex="32">
         <md-card-content>
-            <h3 class="md-headline light-blue-text">Поддержка mappino!</h3>
+            <h3 class="md-headline blue-text text-lighten-1">Поддержка mappino!</h3>
 
             <div class="center-align" layout="row">
                 В этом разделе Вы можете связаться с командой поддержки mappino и задать интересующие Вас вопросы.
@@ -17,7 +17,7 @@
 
     <md-card flex="32">
         <md-card-content>
-            <h3 class="md-headline light-blue-text">Диалоги</h3>
+            <h3 class="md-headline blue-text text-lighten-1">Диалоги</h3>
 
             <div layout="row" layout-align="center center" ng-show="loaders.tickets">
                 <md-progress-circular md-mode="indeterminate" ng-show="loaders.tickets"></md-progress-circular>
@@ -66,7 +66,7 @@
 
                 <div layout="column" ng-show="tickets.length">
                     <md-list>
-                        <md-subheader class="md-no-sticky">Последнии диалоги</md-subheader>
+                        <div class="md-body-2">Последнии диалоги</div>
 
                         <md-list-item ng-click="supportCtrl.goToTicket(ticket.id)" class="md-2-line" ng-repeat="ticket in tickets | orderBy: 'created': true">
                             <img ng-src="http://lorempixel.com/40/40/nature" class="md-avatar" alt="[[ ticket.subject ]]" />

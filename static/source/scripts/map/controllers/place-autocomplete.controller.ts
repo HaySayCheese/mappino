@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module mappino.map {
+module Mappino.Map {
     'use strict';
 
     export class PlaceAutocompleteController {
@@ -26,7 +26,7 @@ module mappino.map {
             /** Listen events */
             google.maps.event.addDomListener(window, "load", () => this.initAutocomplete(self));
 
-            $scope.$on('mappino.map.FiltersService.UpdatedFromUrl', (event, filters) => {
+            $scope.$on('Mappino.Map.FiltersService.UpdatedFromUrl', (event, filters) => {
                 this._autocompleteInput.value = filters['map']['c'];
             });
         }
@@ -45,7 +45,7 @@ module mappino.map {
                     c: self._autocomplete.getPlace().formatted_address
                 });
 
-                self.$rootScope.$broadcast('mappino.map.PlaceAutocompleteController.PlaceChanged', self._autocomplete.getPlace());
+                self.$rootScope.$broadcast('Mappino.Map.PlaceAutocompleteController.PlaceChanged', self._autocomplete.getPlace());
                 //
                 //if (!self.$scope.$$phase)
                 //    self.$scope.$apply();
