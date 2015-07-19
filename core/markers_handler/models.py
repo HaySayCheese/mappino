@@ -495,7 +495,6 @@ class AbstractBaseIndex(models.Model):
         return markers
 
 
-
 class FlatsSaleIndex(AbstractBaseIndex):
     # constants
     tid = OBJECTS_TYPES.flat()
@@ -599,7 +598,6 @@ class FlatsSaleIndex(AbstractBaseIndex):
         cls.apply_lift_filter(filters, markers)
         cls.apply_heating_type_filter(filters, markers)
         return markers
-
 
 
 class FlatsRentIndex(AbstractBaseIndex):
@@ -712,6 +710,10 @@ class FlatsRentIndex(AbstractBaseIndex):
 
 
 class HousesSaleIndex(AbstractBaseIndex):
+    # constants
+    tid = OBJECTS_TYPES.house()
+    
+    # fields
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
@@ -722,11 +724,7 @@ class HousesSaleIndex(AbstractBaseIndex):
     cold_water = models.BooleanField(db_index=True)
     gas = models.BooleanField(db_index=True)
     electricity = models.BooleanField(db_index=True)
-    sewerage = models.BooleanField(db_index=True)
     heating_type_sid = models.PositiveSmallIntegerField(db_index=True)
-
-
-    tid = OBJECTS_TYPES.house()
 
 
     class Meta:
@@ -757,24 +755,17 @@ class HousesSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def brief_queryset(cls):
-        return cls.objects.all().only(
-            'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')
-
-
-    @classmethod
     def min_add_queryset(cls):
         model = HEAD_MODELS[OBJECTS_TYPES.house()]
         return model.objects.all().only(
+            'id',
+            'hash_id',
             'degree_lat',
             'degree_lng',
             'segment_lat',
             'segment_lng',
             'pos_lat',
             'pos_lng',
-
-            'id',
-            'hash_id',
 
             'body__market_type_sid',
             'body__total_area',
@@ -784,7 +775,6 @@ class HousesSaleIndex(AbstractBaseIndex):
             'body__cold_water',
             'body__electricity',
             'body__gas',
-            'body__sewerage',
             'body__heating_type_sid',
 
             'sale_terms__price',
@@ -793,49 +783,20 @@ class HousesSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_remove_queryset(cls):
-        model = HEAD_MODELS[cls.tid]
-        return model.objects.all().only(
-            'id',
-
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
-        )
-
-
-    @classmethod
     def apply_filters(cls, filters, markers):
-        markers = cls.apply_price_filter(filters, markers)
-        markers = cls.apply_market_type_filter(filters, markers)
-        markers = cls.apply_total_area_filter(filters, markers)
-        markers = cls.apply_rooms_count_filter(filters, markers)
-        markers = cls.apply_floors_count_filter(filters, markers)
-        markers = cls.apply_electricity_filter(filters, markers)
-        markers = cls.apply_gas_filter(filters, markers)
-        markers = cls.apply_hot_water_filter(filters, markers)
-        markers = cls.apply_cold_water_filter(filters, markers)
-        markers = cls.apply_sewerage_filter(filters, markers)
-        markers = cls.apply_heating_type_filter(filters, markers)
+        cls.apply_price_filter(filters, markers)
+
+        cls.apply_market_type_filter(filters, markers)
+        cls.apply_total_area_filter(filters, markers)
+        cls.apply_rooms_count_filter(filters, markers)
+        cls.apply_floors_count_filter(filters, markers)
+        cls.apply_electricity_filter(filters, markers)
+        cls.apply_gas_filter(filters, markers)
+        cls.apply_hot_water_filter(filters, markers)
+        cls.apply_cold_water_filter(filters, markers)
+        cls.apply_sewerage_filter(filters, markers)
+        cls.apply_heating_type_filter(filters, markers)
         return markers
-
-
-    @classmethod
-    def brief(cls, marker, filters=None):
-        currency = cls.currency_from_filters(filters)
-        price = cls.convert_and_format_price(marker.price, marker.currency_sid, currency)
-        total_area = '{0}'.format(marker.total_area).rstrip('0').rstrip('.')
-
-        return {
-            'tid': cls.tid,
-            'id': marker.hash_id,
-            'd0': u'{0} м²'.format(total_area),
-            'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
-        }
-
 
 
 class HousesRentIndex(AbstractBaseIndex):
@@ -964,7 +925,6 @@ class HousesRentIndex(AbstractBaseIndex):
             'd0': u'Мест {0}'.format(marker.persons_count),
             'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
         }
-
 
 
 class RoomsSaleIndex(AbstractBaseIndex):

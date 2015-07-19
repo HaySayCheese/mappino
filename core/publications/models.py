@@ -359,6 +359,7 @@ class HousesBodies(BodyModel):
 
     market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
     condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
+
     total_area = models.FloatField(null=True)
     living_area = models.FloatField(null=True)
     kitchen_area = models.FloatField(null=True)
@@ -479,7 +480,6 @@ class HousesBodies(BodyModel):
         if not self.rooms_count:
             return u''
         return unicode(self.rooms_count)
-
 
 
     def print_facilities(self):
