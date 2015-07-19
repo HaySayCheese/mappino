@@ -41,7 +41,7 @@ class AbstractBaseIndex(models.Model):
     # publication_id умисно не помічено за первинний ключ.
     # Для індекса не критично якщо час-від-часу в ньому виникатимуть дублі записів.
     # Більш критичним є неможливість користувача опублікувати оголошення через потенційно можливий конфлікт
-    # із уже існуючим записом в ндексі.
+    # із уже існуючим записом в індексі.
     #
     # Така ситуація достатньо вірогідна через те, що довелось змішати чистий sql з django-orm,
     # через що порушився механізм транзакцій (зараз транзакцій як таких немає).
@@ -72,12 +72,24 @@ class AbstractBaseIndex(models.Model):
 
 
     @classmethod
-    def min_queryset(cls):  # virtual
+    def brief_queryset(cls):  # virtual
         """
         :returns:
             minimum queryset needed for marker brief performing.
         """
-        return cls.objects.none()
+        return cls.objects.all().only('publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid')
+
+
+    @classmethod
+    def brief(cls, marker, filters=None):
+        currency = cls.currency_from_filters(filters)
+        price = cls.convert_and_format_price(marker.price, marker.currency_sid, currency)
+
+        return {
+            'tid': cls.tid,
+            'id': marker.hash_id,
+            'price': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
+        }
 
 
     @classmethod
@@ -98,7 +110,16 @@ class AbstractBaseIndex(models.Model):
 
     @classmethod
     def min_remove_queryset(cls):
-        raise Exception('Abstract method was called.')
+        model = HEAD_MODELS[cls.tid]
+        return model.objects.all().only(
+            'id',
+            'degree_lat',
+            'degree_lng',
+            'segment_lat',
+            'segment_lng',
+            'pos_lat',
+            'pos_lng',
+        )
 
 
     @staticmethod
@@ -475,10 +496,14 @@ class AbstractBaseIndex(models.Model):
 
 
 
-class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
-    market_type_sid = models.PositiveSmallIntegerField(db_index=True)
+class FlatsSaleIndex(AbstractBaseIndex):
+    # constants
+    tid = OBJECTS_TYPES.flat()
+
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
+
+    market_type_sid = models.PositiveSmallIntegerField(db_index=True)
     rooms_count = models.PositiveSmallIntegerField(db_index=True)
     rooms_planning_sid = models.PositiveSmallIntegerField(db_index=True)
     total_area = models.FloatField(db_index=True)
@@ -490,10 +515,6 @@ class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
     gas = models.BooleanField(db_index=True)
     electricity = models.BooleanField(db_index=True)
     heating_type_sid = models.PositiveSmallIntegerField(db_index=True)
-
-
-    # constants
-    tid = OBJECTS_TYPES.flat()
 
 
     class Meta:
@@ -508,9 +529,10 @@ class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
-            market_type_sid=record.body.market_type_sid,
             price=record.sale_terms.price,
             currency_sid=record.sale_terms.currency_sid,
+
+            market_type_sid=record.body.market_type_sid,
             rooms_count=record.body.rooms_count,
             rooms_planning_sid=record.body.rooms_planning_sid,
             total_area=record.body.total_area,
@@ -526,9 +548,8 @@ class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
 
 
     @classmethod
-    def min_queryset(cls):
-        return cls.objects.all().only(
-            'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'rooms_count')  # todo: fixme
+    def brief_queryset(cls):
+        return cls.objects.all().only('publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid')
 
 
     @classmethod
@@ -544,6 +565,9 @@ class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
             'pos_lat',
             'pos_lng',
 
+            'sale_terms__price',
+            'sale_terms__currency_sid',
+
             'body__market_type_sid',
             'body__rooms_count',
             'body__rooms_planning_sid',
@@ -556,54 +580,25 @@ class FlatsSaleIndex(AbstractBaseIndex): # todo: rename me, i am not an abstract
             'body__gas',
             'body__electricity',
             'body__heating_type_sid',
-
-            'sale_terms__price',
-            'sale_terms__currency_sid'
-        )
-
-
-    @classmethod
-    def min_remove_queryset(cls):
-        model = HEAD_MODELS[cls.tid]
-        return model.objects.all().only(
-            'id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
         )
 
 
     @classmethod
     def apply_filters(cls, filters, markers):
-        markers = cls.apply_price_filter(filters, markers)
-        markers = cls.apply_market_type_filter(filters, markers)
-        markers = cls.apply_rooms_count_filter(filters, markers)
-        markers = cls.apply_rooms_planning_filter(filters, markers)
-        markers = cls.apply_total_area_filter(filters, markers)
-        markers = cls.apply_floor_filter(filters, markers)
-        markers = cls.apply_electricity_filter(filters, markers)
-        markers = cls.apply_gas_filter(filters, markers)
-        markers = cls.apply_hot_water_filter(filters, markers)
-        markers = cls.apply_cold_water_filter(filters, markers)
-        markers = cls.apply_lift_filter(filters, markers)
-        markers = cls.apply_heating_type_filter(filters, markers)
+        cls.apply_price_filter(filters, markers)
+
+        cls.apply_market_type_filter(filters, markers)
+        cls.apply_rooms_count_filter(filters, markers)
+        cls.apply_rooms_planning_filter(filters, markers)
+        cls.apply_total_area_filter(filters, markers)
+        cls.apply_floor_filter(filters, markers)
+        cls.apply_electricity_filter(filters, markers)
+        cls.apply_gas_filter(filters, markers)
+        cls.apply_hot_water_filter(filters, markers)
+        cls.apply_cold_water_filter(filters, markers)
+        cls.apply_lift_filter(filters, markers)
+        cls.apply_heating_type_filter(filters, markers)
         return markers
-
-
-    @classmethod
-    def brief(cls, marker, filters=None):
-        currency = cls.currency_from_filters(filters)
-        price = cls.convert_and_format_price(marker.price, marker.currency_sid, currency)
-
-        return {
-            'tid': cls.tid,
-            'id': marker.hash_id,
-            'd0': u'Комнат: {0}'.format(marker.rooms_count) if marker.rooms_count else 'Комнат: не указано',
-            'd1': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
-        }
 
 
 
@@ -662,7 +657,7 @@ class FlatsRentIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_queryset(cls):
+    def brief_queryset(cls):
         return cls.objects.all().only(
             'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'persons_count')  # todo: fixme
 
@@ -790,7 +785,7 @@ class HousesSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_queryset(cls):
+    def brief_queryset(cls):
         return cls.objects.all().only(
             'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')
 
@@ -921,7 +916,7 @@ class HousesRentIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_queryset(cls):
+    def brief_queryset(cls):
         return cls.objects.all().only(
             'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'persons_count')
 
@@ -1050,7 +1045,7 @@ class RoomsSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_queryset(cls):
+    def brief_queryset(cls):
         return cls.objects.all().only(
             'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')
 
@@ -1184,7 +1179,7 @@ class RoomsRentIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_queryset(cls):
+    def brief_queryset(cls):
         return cls.objects.all().only(
             'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'persons_count')
 
@@ -1307,7 +1302,7 @@ class AbstractTradesIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_queryset(cls):
+    def brief_queryset(cls):
         return cls.objects.all().only(
             'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')
 
@@ -1507,7 +1502,7 @@ class AbstractOfficesIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_queryset(cls):
+    def brief_queryset(cls):
         return cls.objects.all().only(
             'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'total_area')
 
@@ -1697,7 +1692,7 @@ class AbstractWarehousesIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_queryset(cls):
+    def brief_queryset(cls):
         return cls.objects.all().only(
             'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'halls_area')  # todo: fixme
 
@@ -1884,7 +1879,7 @@ class AbstractBusinessesIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_queryset(cls):
+    def brief_queryset(cls):
         return cls.objects.all().only(
             'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid')
 
@@ -2144,7 +2139,7 @@ class AbstractGaragesIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_queryset(cls):
+    def brief_queryset(cls):
         return cls.objects.all().only(
             'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'area')  # todo: fixme
 
@@ -2313,7 +2308,7 @@ class AbstractLandsIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_queryset(cls):
+    def brief_queryset(cls):
         return cls.objects.all().only(
             'publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid', 'area')  # todo: fixme
 
@@ -2777,7 +2772,7 @@ class SegmentsIndex(models.Model):
         in_index_publications_ids = set(in_index_publications_ids) - set(excluded_ids_list)
 
 
-        markers = index.min_queryset().filter(publication_id__in=in_index_publications_ids)
+        markers = index.brief_queryset().filter(publication_id__in=in_index_publications_ids)
         filtered_markers = index.apply_filters(filters, markers)
 
 
