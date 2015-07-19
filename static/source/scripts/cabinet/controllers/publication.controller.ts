@@ -24,6 +24,7 @@ module Mappino.Cabinet {
             '$state',
             '$timeout',
             '$mdDialog',
+            'TXT',
             'PublicationsService',
         ];
 
@@ -32,19 +33,16 @@ module Mappino.Cabinet {
                     private $state: angular.ui.IStateService,
                     private $timeout: angular.ITimeoutService,
                     private $mdDialog: any,
+                    private TXT: any,
                     private publicationsService: IPublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
             this.publicationIds.tid = $state.params['id'].split(':')[0];
             this.publicationIds.hid = $state.params['id'].split(':')[1];
 
             $scope.publicationTemplateUrl = '/ajax/template/cabinet/publications/unpublished/' + this.publicationIds.tid + '/';
-
             $scope.publication = this.publication;
-
             $scope.tempPublicationPhotos = this.tempPublicationPhotos;
-
             $scope.publicationPhotoLoader = {};
-
             $scope.forms = {};
 
             this.loadPublicationData();
@@ -67,25 +65,28 @@ module Mappino.Cabinet {
 
 
         public removePublication($event) {
-            var confirm = this.$mdDialog
-                .confirm()
+            var confirm = this.$mdDialog.confirm()
                 .parent(angular.element(document.body))
-                .title('Вы на самом деле хотите удалить это объявление?')
-                .content('Все данные по этому объявлению будут удалены навсегда.')
-                .ariaLabel('Диалог удаления')
-                .ok('Удалить')
-                .cancel('Отменить удаление')
+                .title(this.TXT.DIALOGS.REMOVE_PUBLICATION.TITLE)
+                .content(this.TXT.DIALOGS.REMOVE_PUBLICATION.BODY)
+                .ariaLabel(this.TXT.DIALOGS.REMOVE_PUBLICATION.ARIA_LABEL)
+                .ok(this.TXT.DIALOGS.REMOVE_PUBLICATION.OK_BTN)
+                .cancel(this.TXT.DIALOGS.REMOVE_PUBLICATION.CANCEL_BTN)
                 .targetEvent($event);
 
 
             this.$mdDialog.show(confirm).then(() => {
-                this.publicationsService.remove(this.publicationIds)
+                this.$rootScope.loaders.overlay = true;
+                this.publicationsService.remove(this.publicationIds, response => {
+                    this.$rootScope.loaders.overlay = false;
+                    this.$state.go('publications');
+                });
             });
         }
 
 
 
-        public publish($event) {
+        public publishPublication($event) {
             if (this.$scope.forms.publicationForm.$invalid) {
                 var checkboxElement = angular.element("input[type='checkbox'].ng-invalid")[0],
                     inputElement    = angular.element("textarea.ng-invalid, input.ng-invalid")[0];
@@ -96,20 +97,14 @@ module Mappino.Cabinet {
                     inputElement.parentNode.scrollIntoView(true);
                     inputElement.focus();
                 }
-            } else {var alert = this.$mdDialog
-                .alert()
-                .parent(angular.element(document.body))
-                .clickOutsideToClose(true)
-                .title('Ваше объявление отправлено на модерацию')
-                .content('После модериции оно будет опубликовано и вас уведомлят об єтом')
-                .ariaLabel('Диалог публикации')
-                .ok('Ок')
-                .targetEvent($event);
+            } else {
+                this.$rootScope.loaders.overlay = true;
 
-                this.$mdDialog.show(alert).then(() => {
-                    this.publicationsService.publish(this.publicationIds, () => {
-                        this.$state.go('publications');
-                    });
+                this.publicationsService.publish(this.publicationIds, response => {
+                    this.$rootScope.loaders.overlay = false;
+                    this.$state.go('publications');
+                }, response => {
+                    this.$rootScope.loaders.overlay = false;
                 });
             }
         }
@@ -117,14 +112,13 @@ module Mappino.Cabinet {
 
 
         public doneEditingLater($event) {
-            var alert = this.$mdDialog
-                .alert()
+            var alert = this.$mdDialog.alert()
                 .parent(angular.element(document.body))
-                .clickOutsideToClose(true)
-                .title('Р’Р°С€Рµ РѕР±СЉСЏРІР»РµРЅРёРµ Р±СѓРґРµС‚ СЃРѕС…СЂР°РЅРµРЅРѕ')
-                .content('Р’С‹ СЃРјРѕР¶РµС‚Рµ РїСЂРѕРґРѕР»Р¶РёС‚СЊ СЂР°Р±РѕС‚Р°С‚СЊ СЃ РЅРёРј РІ Р»СЋР±РѕРµ РІСЂРµРјСЏ.')
-                .ariaLabel('Уведомление о возможности заполнить объявление позже')
-                .ok('РҐРѕСЂРѕС€Рѕ')
+                .clickOutsideToClose(false)
+                .title(this.TXT.DIALOGS.DONE_EDITING_LATER_PUBLICATION.TITLE)
+                .content(this.TXT.DIALOGS.DONE_EDITING_LATER_PUBLICATION.BODY)
+                .ariaLabel(this.TXT.DIALOGS.DONE_EDITING_LATER_PUBLICATION.ARIA_LABEL)
+                .ok(this.TXT.DIALOGS.DONE_EDITING_LATER_PUBLICATION.OK_BTN)
                 .targetEvent($event);
 
             this.$mdDialog.show(alert).then(() => {

@@ -65,8 +65,8 @@
 
                         <md-input-container>
                             <label>Моб. телефон</label>
-                            <input type="tel" name="mobile_number" ng-model="user.account.mobile_phone" required>
-                            <div ng-messages="userProfileForm.mobile_number.$error">
+                            <input type="tel" name="mobile_phone" ng-model="user.account.mobile_phone" only-number required>
+                            <div ng-messages="userProfileForm.mobile_phone.$error">
                                 <div ng-message="required">Обязательное поле</div>
                                 <div ng-message="invalid">Некоректный номер</div>
                                 <div ng-message="duplicated">Указанный номер уже используется</div>
