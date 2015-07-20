@@ -1141,7 +1141,6 @@ class SegmentsIndex(models.Model):
         OBJECTS_TYPES.trade(): TradesRentIndex,
         OBJECTS_TYPES.office(): OfficesRentIndex,
         OBJECTS_TYPES.warehouse(): WarehousesRentIndex,
-        OBJECTS_TYPES.business(): BusinessesRentIndex,
         OBJECTS_TYPES.garage(): GaragesRentIndex,
         OBJECTS_TYPES.land(): LandsRentIndex,
     }

@@ -340,7 +340,7 @@ RED_LINE_VALUES = RedLineValues()
 
 
 from core.publications.models import FlatsHeads, HousesHeads, RoomsHeads, \
-    TradesHeads, OfficesHeads, WarehousesHeads, BusinessesHeads, GaragesHeads, LandsHeads
+    TradesHeads, OfficesHeads, WarehousesHeads, GaragesHeads, LandsHeads
 
 HEAD_MODELS = {
     OBJECTS_TYPES.flat(): FlatsHeads,
@@ -350,7 +350,6 @@ HEAD_MODELS = {
     OBJECTS_TYPES.trade(): TradesHeads,
     OBJECTS_TYPES.office(): OfficesHeads,
     OBJECTS_TYPES.warehouse(): WarehousesHeads,
-    OBJECTS_TYPES.business(): BusinessesHeads,
 
     OBJECTS_TYPES.garage(): GaragesHeads,
     OBJECTS_TYPES.land(): LandsHeads,
@@ -359,7 +358,7 @@ HEAD_MODELS = {
 
 
 from core.publications.models import FlatsPhotos, HousesPhotos, RoomsPhotos, \
-    TradesPhotos, OfficesPhotos, WarehousesPhotos, BusinessesPhotos, GaragesPhotos, LandsPhotos
+    TradesPhotos, OfficesPhotos, WarehousesPhotos, GaragesPhotos, LandsPhotos
 
 PHOTOS_MODELS = {
     OBJECTS_TYPES.flat(): FlatsPhotos,
@@ -369,7 +368,6 @@ PHOTOS_MODELS = {
     OBJECTS_TYPES.trade(): TradesPhotos,
     OBJECTS_TYPES.office(): OfficesPhotos,
     OBJECTS_TYPES.warehouse(): WarehousesPhotos,
-    OBJECTS_TYPES.business(): BusinessesPhotos,
 
     OBJECTS_TYPES.garage(): GaragesPhotos,
     OBJECTS_TYPES.land(): LandsPhotos,
