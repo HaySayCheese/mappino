@@ -25,6 +25,8 @@ module Mappino.Cabinet {
                     private $state: angular.ui.IStateService,
                     private ticketsService: ITicketsService) {
             // ---------------------------------------------------------------------------------------------------------
+            $rootScope.pageTitle = 'Поддержка mappino';
+
             $scope.ticket   = this.ticket;
             $scope.tickets  = this.tickets = [];
 

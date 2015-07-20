@@ -17,6 +17,8 @@ module Mappino.Cabinet {
                     private $rootScope: any,
                     private ticketsService: ITicketsService) {
             // ---------------------------------------------------------------------------------------------------------
+            $rootScope.pageTitle = 'Обращение в службу поддержки mappino';
+
             $scope.ticket = this.ticket = {
                 ticket_id:      null,
                 created:        null,

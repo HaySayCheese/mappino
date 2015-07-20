@@ -16,6 +16,8 @@ module Mappino.Cabinet {
                     private $timeout: angular.ITimeoutService,
                     private authService: Mappino.Core.Auth.IAuthService) {
             // ---------------------------------------------------------------------------------------------------------
+            $rootScope.pageTitle = 'Редактирование профиля';
+
             $rootScope.loaders.overlay = true;
 
             this.initInputsChange();

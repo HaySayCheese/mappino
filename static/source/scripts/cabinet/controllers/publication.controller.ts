@@ -36,6 +36,8 @@ module Mappino.Cabinet {
                     private TXT: any,
                     private publicationsService: IPublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
+            $rootScope.pageTitle = 'Редактирование объявления';
+
             this.publicationIds.tid = $state.params['id'].split(':')[0];
             this.publicationIds.hid = $state.params['id'].split(':')[1];
 
