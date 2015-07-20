@@ -61,11 +61,11 @@ module Mappino.Cabinet {
                 this.$rootScope.loaders.overlay = true;
                 this.publicationsService.remove({ tid: brief.tid, hid: brief.id }, () => {
                     angular.forEach(this.$scope.briefs, (_brief, index) => {
+                        this.$rootScope.loaders.overlay = false;
                         if (_brief.id == brief.id) {
-                            this.$scope.briefs.splice(index, 1)
+                            this.$scope.briefs.splice(index, 1);
                         }
                     });
-                    this.$rootScope.loaders.overlay = false;
                 }, response => {
                     this.$rootScope.loaders.overlay = false;
                 });
