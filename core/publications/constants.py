@@ -220,8 +220,8 @@ class CommercialRentPeriods(AbstractConstant):
     def __init__(self):
         super(CommercialRentPeriods, self).__init__()
         self.set_ids({
-        'monthly': 0,
-        'long_period': 1
+            'monthly': 1,
+            'long_period': 2
         })
 
 
