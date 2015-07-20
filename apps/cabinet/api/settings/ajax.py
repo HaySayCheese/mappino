@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
 from apps.classes import CabinetView
-from collective.decorators.ajax import json_response
+from collective.decorators.ajax import json_response, json_response_bad_request
 from core.users.exceptions import AvatarExceptions
 from collective.exceptions import RuntimeException
 from collective.http.responses import HttpJsonResponse
@@ -77,43 +77,48 @@ class AccountView(CabinetView):
 
     class PostResponses(object):
         @staticmethod
+        @json_response
         def ok():
-            return HttpJsonResponse({
+            return {
                 'code': 0,
                 'message': 'OK',
-            })
+            }
 
 
         @staticmethod
+        @json_response_bad_request
         def value_required():
-            return HttpJsonResponse({
+            return {
                 'code': 1,
                 'message': 'Value is required.'
-            })
+            }
 
 
         @staticmethod
+        @json_response_bad_request
         def invalid_value():
-            return HttpJsonResponse({
+            return {
                 'code': 2,
                 'message': 'Value is invalid.'
-            })
+            }
 
 
         @staticmethod
+        @json_response_bad_request
         def duplicated_value():
-            return HttpJsonResponse({
-                'code': 2,
-                'message': 'Value is invalid.'
-            })
+            return {
+                'code': 3,
+                'message': 'Value is duplicated.'
+            }
 
 
         @staticmethod
+        @json_response_bad_request
         def invalid_parameters():
-            return HttpJsonResponse({
+            return {
                 'code': 100,
                 'message': 'Request does not contains parameters or one of them is invalid.'
-            })
+            }
 
 
     def __init__(self):
@@ -160,7 +165,7 @@ class AccountView(CabinetView):
 
 
         try:
-            update_method = self.update_methods.get(field)
+            update_method = self.update_methods[field]
             return update_method(request.user, value)
 
         except KeyError:
@@ -247,6 +252,10 @@ class AccountView(CabinetView):
         if not phone:
             return self.PostResponses.value_required()
 
+        # todo: enable two factor check here
+        if user.mobile_phone:
+            raise RuntimeError(
+                'Phone number can not be edited at this moment. See trello card: https://trello.com/c/fUgUruyB/85-sms')
 
         try:
             phone = Users.objects.parse_phone_number(phone)
@@ -277,6 +286,12 @@ class AccountView(CabinetView):
                 user.save()
 
             return self.PostResponses.ok()
+
+
+        # todo: enable two factor check here
+        if user.add_mobile_phone:
+            raise RuntimeError(
+                'Phone number can not be edited at this moment. See trello card: https://trello.com/c/fUgUruyB/85-sms')
 
 
         try:
