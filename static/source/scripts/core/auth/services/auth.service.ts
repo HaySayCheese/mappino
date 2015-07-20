@@ -46,81 +46,81 @@ module Mappino.Core.Auth {
 
 
 
-        public checkPhoneNumber(phoneNumber: string, success?: Function, error?: Function) {
-            this.$http.post('/ajax/api/accounts/login/', {
+        public checkPhoneNumber(phoneNumber: string, successCallback?: Function, errorCallback?: Function) {
+            this.$http.post(`/ajax/api/accounts/login/`, {
                 "phone_number": phoneNumber
             }).then(response => {
                 if (response.data['code'] === 0) {
-                    angular.isFunction(success) && success(response.data)
+                    angular.isFunction(successCallback) && successCallback(response.data)
                 } else {
-                    angular.isFunction(error) && error(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 }
             }, response => {
-                angular.isFunction(error) && error(response.data)
+                angular.isFunction(errorCallback) && errorCallback(response.data)
             });
         }
 
 
 
-        public checkSMSCode(phoneNumber: string, smsCode: string, success?: Function, error?: Function) {
-            this.$http.post('/ajax/api/accounts/login/check-code/', {
-                "phone_number": phoneNumber,
-                "token":        smsCode
+        public checkSMSCode(phoneNumber, smsCode, successCallback?, errorCallback?) {
+            this.$http.post(`/ajax/api/accounts/login/check-code/`, {
+                'phone_number': phoneNumber,
+                'token':        smsCode
             }).then(response => {
                 if (response.data['code'] === 0) {
                     this.updateProfileField(response.data['data']);
                     this.$cookies.remove('mcheck');
-                    angular.isFunction(success) && success(response.data)
+                    angular.isFunction(successCallback) && successCallback(response.data)
                 } else {
                     this.clearUserFromStorage();
-                    angular.isFunction(error) && error(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 }
             }, response => {
                 this.clearUserFromStorage();
-                angular.isFunction(error) && error(response.data)
+                angular.isFunction(errorCallback) && errorCallback(response.data)
             });
         }
 
 
 
 
-        public tryLogin(success?: Function, error?: Function) {
-            this.$http.get('/ajax/api/accounts/on-login-info/')
+        public tryLogin(successCallback?, errorCallback?) {
+            this.$http.get(`/ajax/api/accounts/on-login-info/`)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this.updateProfileField(response.data['data']);
-                        angular.isFunction(success) && success(response.data)
+                        angular.isFunction(successCallback) && successCallback(response.data)
                     } else {
                         this.clearUserFromStorage();
-                        angular.isFunction(error) && error(response.data)
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    angular.isFunction(error) && error(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 })
         }
 
 
 
-        public loadProfile(success?, error?) {
-            this.$http.get('/ajax/api/cabinet/account/')
+        public loadProfile(successCallback?, errorCallback?) {
+            this.$http.get(`/ajax/api/cabinet/account/`)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this.updateProfileField(response.data['data']['account']);
                         this.updateProfileField(response.data['data']['preferences']);
 
-                        angular.isFunction(success) && success(this._user);
+                        angular.isFunction(successCallback) && successCallback(this._user);
                     } else {
-                        angular.isFunction(error) && error(response.data);
+                        angular.isFunction(errorCallback) && errorCallback(response.data);
                     }
                 }, response => {
-                    angular.isFunction(error) && error(response.data);
+                    angular.isFunction(errorCallback) && errorCallback(response.data);
                 });
         }
 
 
 
-        public checkProfileField(field: Object, success?, error?) {
-            this.$http.post('/ajax/api/cabinet/account/', field)
+        public checkProfileField(field, successCallback?, errorCallback?) {
+            this.$http.post(`/ajax/api/cabinet/account/`, field)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         field['v'] = response.data['value'] ? response.data['value'] : field['v'];
@@ -129,43 +129,43 @@ module Mappino.Core.Auth {
                         _field[field['f']] = field['v'];
 
                         this.updateProfileField(_field);
-                        angular.isFunction(success) && success(field['v']);
+                        angular.isFunction(successCallback) && successCallback(field['v']);
                     } else {
-                        angular.isFunction(error) && error(response.data);
+                        angular.isFunction(errorCallback) && errorCallback(response.data);
                     }
                 }, response => {
-                    angular.isFunction(error) && error(response.data);
+                    angular.isFunction(errorCallback) && errorCallback(response.data);
                 })
         }
 
 
 
-        public uploadAvatar(avatar: File, success?, error?) {
+        public uploadAvatar(avatar, successCallback?, errorCallback?) {
             this.Upload.upload({
-                url: '/ajax/api/cabinet/account/photo/',
+                url: `/ajax/api/cabinet/account/photo/`,
                 file: avatar
-            }).success(response => {
-                if (response.code === 0) {
+            }).then(response => {
+                if (response.data['code'] === 0) {
                     this.updateProfileField({ avatar_url: response.data['url'] });
-                    angular.isFunction(success) && success(response);
+                    angular.isFunction(successCallback) && successCallback(response);
                 } else {
-                    angular.isFunction(error) && error(response)
+                    angular.isFunction(errorCallback) && errorCallback(response)
                 }
-            }).error(response => {
-                angular.isFunction(error) && error(response)
+            }, response => {
+                angular.isFunction(errorCallback) && errorCallback(response)
             })
         }
 
 
 
-        public removeAvatar(success?, error?) {
-            this.$http.delete('/ajax/api/cabinet/account/photo/')
+        public removeAvatar(successCallback?, errorCallback?) {
+            this.$http.delete(`/ajax/api/cabinet/account/photo/`)
                 .then(response => {
                     this.updateProfileField({ avatar_url: null });
-                    angular.isFunction(success) && success(this.user);
+                    angular.isFunction(successCallback) && successCallback(this._user);
                 }, response => {
-                    angular.isFunction(error) && error(response)
-                })
+                    angular.isFunction(errorCallback) && errorCallback(response)
+                });
         }
 
 

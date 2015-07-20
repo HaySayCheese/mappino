@@ -57,6 +57,7 @@ module Mappino.Cabinet {
 
 
 
+
         private initInputsChange() {
             angular.element(".settings-page input[type='text'], " +
                             ".settings-page input[type='tel'], " +
@@ -67,7 +68,7 @@ module Mappino.Cabinet {
 
                 if (!this.$scope.userProfileForm[name].$dirty) return;
 
-                this.authService.checkProfileField({ f: name, v: value }, response => {
+                this.authService.checkProfileField({ fieldName: name, fieldValue: value }, response => {
                     e.currentTarget['value'] = response;
 
                     this.$scope.userProfileForm[name].$setValidity("invalid",    true);
