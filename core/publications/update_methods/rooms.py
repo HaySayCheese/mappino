@@ -87,20 +87,6 @@ def update_room(h, field, value, tid):
                 raise ValueError()
 
 
-        # text
-        elif field == 'sale_add_terms':
-            st = RoomsSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
-            if not value:
-                st.add_terms = u''
-                st.save(force_update=True)
-                return
-            else:
-                value = format_text(value)
-                st.add_terms = value
-                st.save(force_update=True)
-                return value
-
-
         # bool
         elif field == 'for_rent':
             if (value is True) or (value is False):
@@ -187,8 +173,6 @@ def update_room(h, field, value, tid):
                 return
             else:
                 raise ValueError()
-
-
 
 
         # text

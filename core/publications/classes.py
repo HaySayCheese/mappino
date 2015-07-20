@@ -156,25 +156,14 @@ class CabinetPublishedDataSource(object):
             'description': p.body.print_description(),
 
             'market_type': p.body.print_market_type(),
-            'building_type': p.body.print_building_type(),
-
-
-            'build_year': p.body.print_build_year(),
-            'rooms_planning': p.body.print_rooms_planning(),
             'condition': p.body.print_condition(),
+            'area': p.body.print_area(),
 
             'floor': p.body.print_floor(),
             'floors_count': p.body.print_floors_count(),
 
-            'total_area': p.body.print_area() or u'неизвестно',
-            'living_area': p.body.print_living_area() or u'неизвестно',
-            'kitchen_area': p.body.print_kitchen_area(),
-
-            'rooms_count': p.body.print_rooms_count() or u'неизвестно',
             'facilities': p.body.print_facilities(),
             'communications': p.body.print_communications(),
-            'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
         }
 
         if p.for_sale:

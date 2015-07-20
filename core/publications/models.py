@@ -669,15 +669,13 @@ class RoomsBodies(BodyModel):
 
 
     market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
+    condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
+    area = models.FloatField(null=True)
 
     floor = models.SmallIntegerField(null=True) # номер поверху
     floor_type_sid = models.SmallIntegerField(default=FLOOR_TYPES.floor()) # тип поверху: мансарда, цоколь, звичайний поверх і т.д
     floors_count = models.SmallIntegerField(null=True)
-    rooms_planning_sid = models.SmallIntegerField(default=ROOMS_ROOMS_PLANNING_TYPES.separate()) # планування кімнат
-    condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
 
-    rooms_count = models.PositiveSmallIntegerField(null=True)
-    area = models.FloatField(null=True)
 
     # Інші зручності
     electricity = models.BooleanField(default=False)
@@ -738,40 +736,13 @@ class RoomsBodies(BodyModel):
 
 
     def print_area(self):
-        if self.total_area is None:
+        if self.area is None:
             return u''
-        return "{:.2f}".format(self.total_area).rstrip('0').rstrip('.') + u' м²'
+        return "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м²'
 
 
     def print_facilities(self):
         facilities = u''
-
-        # Опалення (пункт "невідомо" не виводиться)
-        if self.heating_type_sid == HEATING_TYPES.none():
-            facilities += u'отопление отсутствует'
-        elif self.heating_type_sid == HEATING_TYPES.central():
-            facilities += u'центральное отопление'
-        elif self.heating_type_sid == HEATING_TYPES.individual():
-            facilities += u'индивидуальное отопление'
-            if self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.electricity():
-                facilities += u' (электричество)'
-            elif self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.gas():
-                facilities += u' (газ)'
-            elif self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.firewood():
-                facilities += u' (дрова)'
-            elif self.ind_heating_type_sid == INDIVIDUAL_HEATING_TYPES.other():
-                if self.custom_ind_heating_type is not None:
-                    facilities += u' ('+self.custom_ind_heating_type + u')'
-        elif self.heating_type_sid == HEATING_TYPES.other():
-            facilities += u'отопление: ' + self.custom_heating_type
-
-        # Розташування сан. вузла
-        if self.wc_loc_sid == ROOMS_WC_LOCATION.inside():
-            facilities += u', сан. узел в комнате'
-        elif self.wc_loc_sid == ROOMS_WC_LOCATION.on_the_floor():
-            facilities += u', сан. узел на этаже'
-        elif self.wc_loc_sid == ROOMS_WC_LOCATION.none():
-            facilities += u', сан. узел отсутсвует'
 
         if self.electricity:
             facilities += u', электричество'
