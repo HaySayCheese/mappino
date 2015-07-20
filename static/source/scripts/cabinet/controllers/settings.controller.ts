@@ -65,13 +65,7 @@ module Mappino.Cabinet {
                 var name  = e.currentTarget['name'],
                     value = e.currentTarget['value'].replace(/\s+/g, " ");
 
-                if (!this.$scope.userProfileForm[name].$dirty) {
-                    return;
-                }
-
-                if (name === "mobile_phone" && (value === "+38 (0__) __ - __ - ___" || value[22] === "_")) {
-                    return;
-                }
+                if (!this.$scope.userProfileForm[name].$dirty) return;
 
                 this.authService.checkProfileField({ f: name, v: value }, response => {
                     e.currentTarget['value'] = response;

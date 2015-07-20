@@ -62,15 +62,22 @@
                             </div>
                         </md-input-container>
 
-                        <md-input-container>
-                            <label>Моб. телефон</label>
-                            <input type="tel" name="mobile_phone" ng-model="account.account.mobile_phone" only-number required>
-                            <div ng-messages="userProfileForm.mobile_phone.$error">
-                                <div ng-message="required">Обязательное поле</div>
-                                <div ng-message="invalid">Некоректный номер</div>
-                                <div ng-message="duplicated">Указанный номер уже используется</div>
-                            </div>
-                        </md-input-container>
+                        <div layout="row">
+                            <md-input-container flex="20">
+                                <label>Код</label>
+                                <input type="text" name="mobile_code" ng-model="account.account.mobile_code" disabled>
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Моб. телефон</label>
+                                <input type="tel" name="mobile_phone" ng-model="account.account.mobile_phone" minlength="9" maxlength="9" required>
+                                <div ng-messages="userProfileForm.mobile_phone.$error">
+                                    <div ng-message="required">Обязательное поле</div>
+                                    <div ng-message="minlength">Некоректный номер</div>
+                                    <div ng-message="invalid">Некоректный номер</div>
+                                    <div ng-message="duplicated">Указанный номер уже используется</div>
+                                </div>
+                            </md-input-container>
+                        </div>
                     </div>
                 </div>
             </md-card-content>
@@ -101,14 +108,22 @@
                             </div>
                         </md-input-container>
 
-                        <md-input-container flex>
-                            <label>Доп. моб. телефон</label>
-                            <input type="text" name="add_mobile_phone" ng-model="account.account.add_mobile_phone" only-number>
-                            <div ng-messages="userProfileForm.add_mobile_phone.$error">
-                                <div ng-message="invalid">Некоректный номер</div>
-                                <div ng-message="duplicated">Указанный номер уже используется</div>
-                            </div>
-                        </md-input-container>
+                        <div layout="row">
+                            <md-input-container flex="20">
+                                <label>Код</label>
+                                <input type="text" name="add_mobile_code" ng-model="account.account.add_mobile_code" disabled>
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Доп. моб. телефон</label>
+                                <input type="tel" name="add_mobile_phone" ng-model="account.account.add_mobile_phone" minlength="9" maxlength="9">
+                                <div ng-messages="userProfileForm.add_mobile_phone.$error">
+                                    <div ng-message="required">Обязательное поле</div>
+                                    <div ng-message="minlength">Некоректный номер</div>
+                                    <div ng-message="invalid">Некоректный номер</div>
+                                    <div ng-message="duplicated">Указанный номер уже используется</div>
+                                </div>
+                            </md-input-container>
+                        </div>
 
                         <md-input-container flex>
                             <label>Раб. телефон</label>
