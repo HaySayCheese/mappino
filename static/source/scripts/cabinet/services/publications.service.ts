@@ -97,7 +97,6 @@ module Mappino.Cabinet {
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this.publication = response.data['data'];
-                        this.createDefaultTerms();
                         angular.isFunction(successCallback) && successCallback(this.publication)
                     } else {
                         angular.isFunction(errorCallback) && errorCallback(response.data)
@@ -231,38 +230,6 @@ module Mappino.Cabinet {
                     );
                 });
         }
-
-
-
-        private createDefaultTerms() {
-            if (_.isNull(this.publication['sale_terms'])) {
-                this.publication['sale_terms'] = {};
-
-                _.defaults(this.publication['sale_terms'], {
-                    add_terms:          null,
-                    currency_sid:       '0',
-                    is_contract:        false,
-                    price:              null,
-                    sale_type_sid:      '0',
-                    transaction_sid:    '0'
-                });
-            }
-
-            if (_.isNull(this.publication['rent_terms'])) {
-                this.publication['rent_terms'] = {};
-
-                _.defaults(this.publication['rent_terms'], {
-                    add_terms:      null,
-                    currency_sid:   '0',
-                    is_contract:    false,
-                    period_sid:     '1',
-                    persons_count:  null,
-                    price:          null,
-                    rent_type_sid:  '0'
-                });
-            }
-        }
-
     }
 }
 
