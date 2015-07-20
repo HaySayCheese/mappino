@@ -817,12 +817,16 @@ class PhotosModel(AbstractModel):
             pass
 
         try:
+            # In some cases photos are already removed from the GCS and one more delete request will generate 404 error.
+            # In this case photo record should be removed from the database too, and 404 error should be ignored.
             self.photos_handler.remove_photo_from_google_cloud_storage(self.photo_url.split('.com/mappino/')[1])
             # todo: add message about inappropriate deletion to the log.
         except:
             pass
 
         try:
+            # In some cases photos are already removed from the GCS and one more delete request will generate 404 error.
+            # In this case photo record should be removed from the database too, and 404 error should be ignored.
             self.photos_handler.remove_photo_from_google_cloud_storage(self.big_thumb_url.split('.com/mappino/')[1])
             # todo: add message about inappropriate deletion to the log.
         except:
