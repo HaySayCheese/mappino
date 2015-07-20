@@ -945,7 +945,7 @@ class GaragesSaleIndex(AbstractGaragesIndex):
             'sale_terms__price',
             'sale_terms__currency_sid',
 
-            'body__market_type_sid'
+            'body__market_type_sid',
             'body__area',
             'body__ceiling_height',
             'body__pit',
