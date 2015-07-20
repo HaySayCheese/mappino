@@ -60,8 +60,8 @@ module Mappino.Cabinet {
             this.$mdDialog.show(confirm).then(() => {
                 this.$rootScope.loaders.overlay = true;
                 this.publicationsService.remove({ tid: brief.tid, hid: brief.id }, () => {
-                    angular.forEach(this.$scope.briefs, (brief, index) => {
-                        if (brief.id == brief.id) {
+                    angular.forEach(this.$scope.briefs, (_brief, index) => {
+                        if (_brief.id == brief.id) {
                             this.$scope.briefs.splice(index, 1)
                         }
                     });

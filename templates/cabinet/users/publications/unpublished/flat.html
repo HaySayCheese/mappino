@@ -161,9 +161,9 @@
                                ng-model="publication.body.market_type_sid" flex="33">
                         <md-option ng-repeat="marketType in TYPES.MARKET" value="[[ marketType.id ]]">[[ marketType.title ]]</md-option>
                     </md-select>
-                    <md-select placeholder="Тип квартиры" md-on-close="pubCtrl.checkField('flat_type_sid')"
-                               ng-model="publication.body.flat_type_sid" flex="33">
-                        <md-option ng-repeat="flatType in TYPES.FLAT" value="[[ flatType.id ]]">[[ flatType.title ]]</md-option>
+                    <md-select placeholder="Тип дома" md-on-close="pubCtrl.checkField('building_type_sid')"
+                               ng-model="publication.body.building_type_sid" flex="33">
+                        <md-option ng-repeat="buildingType in TYPES.BUILDING" value="[[ buildingType.id ]]">[[ buildingType.title ]]</md-option>
                     </md-select>
                     <md-select placeholder="Общее состояние" md-on-close="pubCtrl.checkField('condition_sid')"
                                ng-model="publication.body.condition_sid" flex="33">
