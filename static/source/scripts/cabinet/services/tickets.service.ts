@@ -40,6 +40,7 @@ module Mappino.Cabinet {
                             .position(this.toastOptions.position)
                             .hideDelay(this.toastOptions.delay)
                     );
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
 
@@ -61,6 +62,7 @@ module Mappino.Cabinet {
                             .position(this.toastOptions.position)
                             .hideDelay(this.toastOptions.delay)
                     );
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
 
@@ -82,6 +84,7 @@ module Mappino.Cabinet {
                             .position(this.toastOptions.position)
                             .hideDelay(this.toastOptions.delay)
                     );
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
 
@@ -102,6 +105,7 @@ module Mappino.Cabinet {
                             .position(this.toastOptions.position)
                             .hideDelay(this.toastOptions.delay)
                     );
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
 

@@ -66,7 +66,9 @@ module Mappino.Cabinet {
                         }
                     });
                     this.$rootScope.loaders.overlay = false;
-                })
+                }, response => {
+                    this.$rootScope.loaders.overlay = false;
+                });
             });
         }
 
@@ -102,6 +104,8 @@ module Mappino.Cabinet {
             this.publicationsService.create(newPublication, response => {
                 this.$rootScope.loaders.overlay = false;
                 this.$state.go('publication_edit', { id: newPublication.tid + ":" + response.data.id });
+            }, response => {
+                this.$rootScope.loaders.overlay = false;
             });
         }
     }
