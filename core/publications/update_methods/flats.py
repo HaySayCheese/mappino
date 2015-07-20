@@ -8,8 +8,7 @@ from core.currencies.constants import CURRENCIES
 from core.publications.constants import \
     MARKET_TYPES, FLOOR_TYPES, OBJECT_CONDITIONS, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, LIVING_RENT_PERIODS
 from core.publications.models import FlatsBodies, FlatsRentTerms, FlatsSaleTerms
-from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
-
+from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS, FLAT_BUILDING_TYPES
 
 
 # Оновлює інформацію про квартиру.
@@ -217,18 +216,16 @@ def update_flat(h, field, value, tid):
             return
 
 
-        # text
-        elif field == 'custom_flat_type':
+        # sid
+        elif field == 'building_type_sid':
+            value = int(value)
+            if value not in FLAT_BUILDING_TYPES.values():
+                raise ValueError()
+
             b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-            if not value:
-                b.custom_flat_type = u''
-                b.save(force_update=True)
-                return
-            else:
-                value = format_text(value)
-                b.custom_flat_type = value
-                b.save(force_update=True)
-                return value
+            b.building_type_sid = value
+            b.save(force_update=True)
+            return
 
 
         # sid
