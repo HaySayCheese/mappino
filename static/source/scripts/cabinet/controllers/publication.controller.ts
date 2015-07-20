@@ -59,6 +59,8 @@ module Mappino.Cabinet {
                 
                 this.initMap();
                 this.initInputsChange();
+            }, response => {
+                this.$rootScope.loaders.overlay = false;
             });
         }
 
@@ -80,6 +82,8 @@ module Mappino.Cabinet {
                 this.publicationsService.remove(this.publicationIds, response => {
                     this.$rootScope.loaders.overlay = false;
                     this.$state.go('publications');
+                }, response => {
+                    this.$rootScope.loaders.overlay = false;
                 });
             });
         }
