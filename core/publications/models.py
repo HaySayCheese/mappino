@@ -16,7 +16,7 @@ class FlatsPhotos(PhotosModel):
         db_table = 'img_flats_photos'
 
     # fields
-    publication = models.ForeignKey('FlatsHeads')
+    publication = models.ForeignKey('FlatsHeads', db_index=True)
 
     # class variables
     tid = OBJECTS_TYPES.flat()
