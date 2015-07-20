@@ -698,6 +698,7 @@ class PhotosModel(AbstractModel):
 
     # fields
     publication = None # note: override to FK(PublicationHeadModel)
+
     hash_id = models.TextField(db_index=True)
     original_image_url = models.TextField()
     photo_url = models.TextField()
@@ -739,6 +740,7 @@ class PhotosModel(AbstractModel):
         lock_unique_identifier = "{0}:{1}".format(cls.tid, publication_head.id)
 
         lock = redis_lock.Lock(redis_connection, lock_unique_identifier)
+
         photo_is_title = False
 
         # Only first thread will lock the token and mark it's photo as title,
@@ -785,7 +787,7 @@ class PhotosModel(AbstractModel):
             # other images deletion should go here
             # ...
 
-            raise cls.UnknownError('Database error: {}'.format(e.message))
+            raise e
 
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
@@ -810,21 +812,32 @@ class PhotosModel(AbstractModel):
             # In some cases photos are already removed from the GCS and one more delete request will generate 404 error.
             # In this case photo record should be removed from the database too, and 404 error should be ignored.
             self.photos_handler.remove_photo_from_google_cloud_storage(self.original_image_url.split('.com/mappino/')[1])
-            self.photos_handler.remove_photo_from_google_cloud_storage(self.photo_url.split('.com/mappino/')[1])
-            self.photos_handler.remove_photo_from_google_cloud_storage(self.big_thumb_url.split('.com/mappino/')[1])
+            # todo: add message about inappropriate deletion to the log.
+        except:
+            pass
 
+        try:
+            self.photos_handler.remove_photo_from_google_cloud_storage(self.photo_url.split('.com/mappino/')[1])
+            # todo: add message about inappropriate deletion to the log.
+        except:
+            pass
+
+        try:
+            self.photos_handler.remove_photo_from_google_cloud_storage(self.big_thumb_url.split('.com/mappino/')[1])
             # todo: add message about inappropriate deletion to the log.
         except:
             pass
 
         if self.is_title:
-            photos = self.publication.photos()
+            photos = self.publication.photos().exclude(id__in=[self.id])
             if photos:
                 next_title_photo = photos[0]
                 next_title_photo.mark_as_title()
+                super(PhotosModel, self).delete()
                 return next_title_photo
 
-        super(PhotosModel, self).delete()
+        else:
+            super(PhotosModel, self).delete()
 
 
     def check_is_title(self):

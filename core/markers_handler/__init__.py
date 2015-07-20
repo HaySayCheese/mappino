@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding=utf-8
 from django.dispatch import receiver
 
 from core.markers_handler.models import SegmentsIndex

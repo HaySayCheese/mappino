@@ -1453,6 +1453,15 @@ class SegmentsIndex(models.Model):
 
     @staticmethod
     def record_lat_lng(record):
+        assert record.degree_lat is not None
+        assert record.segment_lat is not None
+        assert record.pos_lat is not None
+        
+        assert record.degree_lng is not None
+        assert record.segment_lng is not None
+        assert record.pos_lng is not None
+
+
         return float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)), \
                float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng))
 
