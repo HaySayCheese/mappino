@@ -269,20 +269,22 @@ class AbstractHeadModel(models.Model):
         self.check_required_fields()
         self.body.check_required_fields()
 
-        # if self.owner.account.
 
-        # sender=None для того, щоб django-orm не витягував автоматично дані з БД,
-        # які, швидше за все, не знадобляться в подальшій обробці.
-        models_signals.before_publish.send(
-            sender = None,
-            tid = self.tid,
-            hid = self.id,
-            hash_id = self.hash_id,
-            for_sale = self.for_sale,
-            for_rent = self.for_rent
-        )
-
+        # All the signals emitters are wrapped into the atomic transaction.
+        #
+        # This is needed to guarantee that impact of all signals handlers
+        # will be rolled back if some database error will occur in progress.
         with transaction.atomic():
+
+            models_signals.before_publish.send(
+                sender = None,
+                tid = self.tid,
+                hid = self.id,
+                hash_id = self.hash_id,
+                for_sale = self.for_sale,
+                for_rent = self.for_rent
+            )
+
             self.state_sid = OBJECT_STATES.published()
             if update_pub_date:
                 self.published = now()
@@ -290,14 +292,14 @@ class AbstractHeadModel(models.Model):
             self.save()
 
 
-        models_signals.published.send(
-            sender = None,
-            tid = self.tid,
-            hid = self.id,
-            hash_id = self.hash_id,
-            for_sale = self.for_sale,
-            for_rent = self.for_rent,
-        )
+            models_signals.published.send(
+                sender = None,
+                tid = self.tid,
+                hid = self.id,
+                hash_id = self.hash_id,
+                for_sale = self.for_sale,
+                for_rent = self.for_rent,
+            )
 
 
     def unpublish(self):
