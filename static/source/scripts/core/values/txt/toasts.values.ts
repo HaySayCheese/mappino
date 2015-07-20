@@ -1,5 +1,5 @@
 
-// todo: перекласти назви на англ мову
+// todo: Р”РѕРґР°С‚Рё РїРµСЂРµРєР»Р°РґРё
 module Mappino.Core.Values {
     export class ToastsValues {
         static get Default(): any {
