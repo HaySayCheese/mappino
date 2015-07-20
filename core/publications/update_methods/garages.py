@@ -65,18 +65,6 @@ def update_garage(h, field, value, tid):
 
 
         # sid
-        elif field == 'sale_transaction_sid':
-            value = int(value)
-            if value not in SALE_TRANSACTION_TYPES.values():
-                raise ValueError()
-
-            st = GaragesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
-            st.transaction_sid = value
-            st.save(force_update=True)
-            return
-
-
-        # sid
         elif field == 'sale_currency_sid':
             value = int(value)
             if value not in CURRENCIES.values():
@@ -97,20 +85,6 @@ def update_garage(h, field, value, tid):
                 return
             else:
                 raise ValueError()
-
-
-        # text
-        elif field == 'sale_add_terms':
-            st = GaragesSaleTerms.objects.filter(id=h.sale_terms_id).only('id')[0]
-            if not value:
-                st.add_terms = u''
-                st.save(force_update=True)
-                return
-            else:
-                value = format_text(value)
-                st.add_terms = value
-                st.save(force_update=True)
-                return value
 
 
         # bool
@@ -180,20 +154,6 @@ def update_garage(h, field, value, tid):
                 return
             else:
                 raise ValueError()
-
-
-        # text
-        elif field == 'rent_add_terms':
-            rt = GaragesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-            if not value:
-                rt.add_terms = u''
-                rt.save(force_update=True)
-                return
-            else:
-                value = format_text(value)
-                rt.add_terms = value
-                rt.save(force_update=True)
-                return value
 
 
         # text
@@ -293,18 +253,6 @@ def update_garage(h, field, value, tid):
                 return
             else:
                 raise ValueError('Invalid pit value.')
-
-
-        # sid
-        elif field == 'driveways_sid':
-            value = int(value)
-            if value not in GARAGE_DRIVE_WAYS.values():
-                raise ValueError('Invalid driveways sid')
-
-            b = GaragesBodies.objects.filter(id=h.body_id).only('id')[0]
-            b.driveways_sid = value
-            b.save(force_update=True)
-            return
 
 
         # boolean

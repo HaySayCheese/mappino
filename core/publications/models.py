@@ -2216,7 +2216,6 @@ class GaragesBodies(BodyModel):
     area = models.FloatField(null=True)
     ceiling_height = models.FloatField(null=True) # висота стелі
     pit = models.BooleanField(default=False) # яма
-    driveways_sid = models.SmallIntegerField(default=GARAGE_DRIVE_WAYS.asphalt())
 
     # Інші зручності
     electricity = models.BooleanField(default=False)
@@ -2268,15 +2267,6 @@ class GaragesBodies(BodyModel):
         if self.ceiling_height == int(self.ceiling_height):
             return unicode(int(self.ceiling_height)) + u' м'
         return unicode(self.ceiling_height) + u' м'
-
-
-    def print_driveways(self):
-        driveways = u''
-        if self.driveways_sid == GARAGE_DRIVE_WAYS.asphalt():
-            driveways = u'асфальт' + u'.'
-        elif self.driveways_sid == GARAGE_DRIVE_WAYS.ground():
-            driveways = u'грунт'+ u'.'
-        return driveways
 
 
     def print_facilities(self):

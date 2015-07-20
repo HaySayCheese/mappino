@@ -332,10 +332,9 @@ class CabinetPublishedDataSource(object):
             'title': p.body.print_title(),
             'description': p.body.print_description(),
             'market_type': p.body.print_market_type(),
-            'area': p.body.print_area() or u'неизвестно',
-            'ceiling_height': p.body.print_ceiling_height() or u'неизвестно',
+            'area': p.body.print_area(),
+            'ceiling_height': p.body.print_ceiling_height(),
             'pit': u'есть' if p.body.pit else u'',
-            'driveways': p.body.print_driveways(),
             'facilities': p.body.print_facilities(),
         }
 
