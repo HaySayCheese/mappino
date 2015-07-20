@@ -41,5 +41,30 @@ module Mappino.Core.Values {
                 title:  'Неизвестно'
             }];
         }
+
+
+        static get Trade(): any {
+            return [{
+                id:     '0',
+                name:   'not_defined',
+                title:  'В жилом здании'
+            }, {
+                id:     '1',
+                name:   'not_defined',
+                title:  'В торгово-развлекательном центре'
+            }, {
+                id:     '2',
+                name:   'not_defined',
+                title:  'В бизнес-центре'
+            }, {
+                id:     '3',
+                name:   'not_defined',
+                title:  'В административном здании'
+            }, {
+                id:     '4',
+                name:   'not_defined',
+                title:  'В отдельном здании'
+            }];
+        }
     }
 }

@@ -133,9 +133,9 @@
                     </md-input-container>
                     <md-input-container flex="33">
                         <label>Площадь участка</label>
-                        <input name="area" ng-model="publication.body.area" only-number-with-dots required>
-                        <div ng-messages="forms.publicationForm.area.$error"
-                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.area.$touched">
+                        <input name="plot_area" ng-model="publication.body.plot_area" only-number-with-dots required>
+                        <div ng-messages="forms.publicationForm.plot_area.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.plot_area.$touched">
                             <div ng-message="required">Обязательное поле</div>
                             <div ng-message="invalid">Площадь участка указана неверно</div>
                         </div>

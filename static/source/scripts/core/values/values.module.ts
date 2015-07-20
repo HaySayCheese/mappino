@@ -11,6 +11,7 @@ module Mappino.Core.Values {
 
     constants.value('TYPES', {
         'BUILDING':           BuildingTypesValues.Default,
+        'TRADE_BUILDING':     BuildingTypesValues.Trade,
         'CONDITION':          ConditionTypesValues.Default,
         'CURRENCY':           CurrencyTypesValues.Default,
         'FLAT':               FlatTypesValues.Default,

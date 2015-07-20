@@ -7,7 +7,7 @@ module Mappino.Cabinet {
         created?:       string
         last_message?:  string
         state_sid?:     number
-        messages?:      ITicketMessage[]
+        messages?:      Array<ITicketMessage>
         subject?:       string
         user_avatar?:   string
     }

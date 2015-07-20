@@ -66,7 +66,7 @@
 
                 <div layout="column" ng-show="tickets.length">
                     <md-list>
-                        <div class="md-body-2">Последнии диалоги</div>
+                        <div class="md-body-2">Последние диалоги</div>
 
                         <md-list-item ng-click="supportCtrl.goToTicket(ticket.id)" class="md-2-line" ng-repeat="ticket in tickets | orderBy: 'created': true">
                             <img ng-src="http://lorempixel.com/40/40/nature" class="md-avatar" alt="[[ ticket.subject ]]" />
