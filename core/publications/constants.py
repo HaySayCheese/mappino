@@ -18,7 +18,6 @@ class ObjectTypes(AbstractConstant):
             'office': 5,
             'trade': 6,
             'warehouse': 7,
-            'business': 8,
         })
         self.commercial_estate = [
             self.ids['land'],
@@ -26,7 +25,6 @@ class ObjectTypes(AbstractConstant):
             self.ids['office'],
             self.ids['trade'],
             self.ids['warehouse'],
-            self.ids['business'],
         ]
 
 
@@ -62,10 +60,6 @@ class ObjectTypes(AbstractConstant):
 
     def warehouse(self):
         return self.ids['warehouse']
-
-
-    def business(self):
-        return self.ids['business']
 OBJECTS_TYPES = ObjectTypes()
 
 

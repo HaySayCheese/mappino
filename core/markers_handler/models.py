@@ -11,7 +11,7 @@ from core.markers_handler.classes import Grid
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 from core.markers_handler.abstract_models import \
     AbstractBaseIndex, AbstractTradesIndex, AbstractOfficesIndex, AbstractWarehousesIndex, \
-    AbstractBusinessesIndex, AbstractGaragesIndex, AbstractLandsIndex
+    AbstractGaragesIndex, AbstractLandsIndex
 
 
 class FlatsSaleIndex(AbstractBaseIndex):
@@ -1134,7 +1134,6 @@ class SegmentsIndex(models.Model):
         OBJECTS_TYPES.trade(): TradesSaleIndex,
         OBJECTS_TYPES.office(): OfficesSaleIndex,
         OBJECTS_TYPES.warehouse(): WarehousesSaleIndex,
-        OBJECTS_TYPES.business(): BusinessesSaleIndex,
         OBJECTS_TYPES.garage(): GaragesSaleIndex,
         OBJECTS_TYPES.land(): LandsSaleIndex,
     }
