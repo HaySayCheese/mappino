@@ -79,9 +79,9 @@ class FlatsBodies(BodyModel):
     }
 
 
-    market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
-    flat_type_sid = models.SmallIntegerField(default=FLAT_TYPES.separate()) # тип квартири
-    custom_flat_type = models.TextField(null=True)
+    market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # тип ринку
+    building_type_sid = models.SmallIntegerField(default=FLAT_BUILDING_TYPES.panel()) # тип будинку
+    custom_building_type = models.TextField(null=True)
     condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.living()) # загальний стан
 
     total_area = models.FloatField(null=True)
@@ -861,7 +861,7 @@ class TradesBodies(BodyModel):
     total_area = models.FloatField(null=True)
     closed_area = models.BooleanField(default=False)
 
-    vcs_count = models.PositiveSmallIntegerField(null=True)
+    wcs_count = models.PositiveSmallIntegerField(null=True)
     ceiling_height = models.FloatField(null=True) # висота стелі
 
 
@@ -998,10 +998,10 @@ class TradesBodies(BodyModel):
         return total_area
 
 
-    def print_vcs_count(self):
-        if self.vcs_count is None:
+    def print_wcs_count(self):
+        if self.wcs_count is None:
             return u''
-        return unicode(self.vcs_count)
+        return unicode(self.wcs_count)
 
 
     def print_ceiling_height(self):
@@ -1225,7 +1225,7 @@ class OfficesBodies(BodyModel):
     total_area = models.FloatField(null=True)
     closed_area = models.BooleanField(default=False)
 
-    vcs_count = models.PositiveSmallIntegerField(null=True)
+    wcs_count = models.PositiveSmallIntegerField(null=True)
     ceiling_height = models.FloatField(null=True) # висота стелі
 
 
@@ -1340,10 +1340,10 @@ class OfficesBodies(BodyModel):
         return total_area
 
 
-    def print_vcs_count(self):
-        if not self.vcs_count:
+    def print_wcs_count(self):
+        if not self.wcs_count:
             return u''
-        return unicode(self.vcs_count)
+        return unicode(self.wcs_count)
 
 
     def print_ceiling_height(self):
@@ -1550,7 +1550,7 @@ class WarehousesBodies(BodyModel):
     storeroom = models.BooleanField(default=False) # підсобка
     offices = models.BooleanField(default=False)
     cathead = models.BooleanField(default=False) # кран-балка
-    vc = models.BooleanField(default=False) # уборна
+    wc = models.BooleanField(default=False) # уборна
     add_buildings = models.TextField(null=True) # дод. відомості про зручності
 
     # підїздні шляхи
@@ -1701,7 +1701,7 @@ class WarehousesBodies(BodyModel):
             buildings += u', офисные помещения'
         if self.storeroom:
             buildings += u', подсобка / кладовая'
-        if self.vc:
+        if self.wc:
             buildings += u', уборная'
 
         if self.add_buildings:
