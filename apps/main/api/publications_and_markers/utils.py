@@ -129,37 +129,6 @@ def parse_warehouses_filters(params):
     return params
 
 
-def parse_businesses_filters(params):
-    """
-    Формує об’єкт фільтрів із параметрів, переданих в запиті.
-    WARNING:
-        Виконує тільки базові перевірки відповідності типів,
-        але не перевіряє передані фільтри з точки зору коректності структур даних
-        чи взаємопов’язаності. Дані перевірки відводиться функції фільтрування,
-        яка в даному випадку виступає інформаційним експертом.
-    """
-    filters = {}
-    if int(params['op_sid']) == OperationSID.sale:
-        filters['for_sale'] = True
-    if int(params['op_sid']) == OperationSID.rent:
-        filters['for_rent'] = True
-
-
-    if 'price_from' in params:
-        filters['price_from'] = int(params['price_from'])
-    if 'price_to' in params:
-        filters['price_to'] = int(params['price_to'])
-    if 'currency_sid' in params:
-        filters['currency_sid'] = int(params['currency_sid'])
-
-
-    if 'new_buildings' in params:
-        filters['new_buildings'] = True
-    if 'secondary_market' in params:
-        filters['secondary_market'] = True
-    return filters
-
-
 def parse_garages_filters(params):
     """
     Формує об’єкт фільтрів із параметрів, переданих в запиті.

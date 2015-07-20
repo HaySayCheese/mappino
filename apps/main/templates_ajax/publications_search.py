@@ -16,7 +16,6 @@ __FILTERS_TEMPLATES_PATHS = {
 	OBJECTS_TYPES.trade():      'map/filters/trades.html',
 	OBJECTS_TYPES.office():     'map/filters/offices.html',
 	OBJECTS_TYPES.warehouse():  'map/filters/warehouses.html',
-	OBJECTS_TYPES.business():   'map/filters/businesses.html',
 	OBJECTS_TYPES.garage():     'map/filters/garages.html',
 	OBJECTS_TYPES.land():       'map/filters/lands.html',
 }

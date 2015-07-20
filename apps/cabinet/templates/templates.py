@@ -31,7 +31,6 @@ def publications_unpublished_form(request, tid):
         OBJECTS_TYPES.trade():      'cabinet/users/publications/unpublished/trade.html',
         OBJECTS_TYPES.office():     'cabinet/users/publications/unpublished/office.html',
         OBJECTS_TYPES.warehouse():  'cabinet/users/publications/unpublished/warehouse.html',
-        OBJECTS_TYPES.business():   'cabinet/users/publications/unpublished/business.html',
         OBJECTS_TYPES.garage():     'cabinet/users/publications/unpublished/garage.html',
         OBJECTS_TYPES.land():       'cabinet/users/publications/unpublished/land.html',
     }

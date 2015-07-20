@@ -12,7 +12,6 @@ from core.markers_handler import SegmentsIndex
 from core.markers_handler.exceptions import TooBigTransaction
 from core.publications import classes
 from core.publications.constants import HEAD_MODELS
-from django.views.generic import View
 
 
 class Markers(PublicationsViewMixin, CustomerView):

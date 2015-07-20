@@ -22,7 +22,6 @@ class CabinetPublishedDataSource(object):
             OBJECTS_TYPES.trade():      self.compose_trade_description,
             OBJECTS_TYPES.office():     self.compose_office_description,
             OBJECTS_TYPES.warehouse():  self.compose_warehouse_description,
-            OBJECTS_TYPES.business():   self.compose_business_description,
 
             # other
             OBJECTS_TYPES.garage():     self.compose_garage_description,
@@ -287,46 +286,6 @@ class CabinetPublishedDataSource(object):
 
 
     @staticmethod
-    def compose_business_description(p):
-        description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
-            'monthly_cost': p.body.print_monthly_cost(),
-            'annual_receipts': p.body.print_annual_receipts(),
-            'age': p.body.print_age(),
-            'workers_count': p.body.print_workers_count(),
-            'share': p.body.print_share(),
-            'building_type': p.body.print_building_type(),
-            'build_year': p.body.print_build_year(),
-            'condition': p.body.print_condition() or u'неизвестно',
-            'floor': p.body.print_floor(),
-            'floors_count': p.body.print_floors_count(),
-
-            'total_area': p.body.print_total_area() or u'неизвестно',
-            'plot_area': p.body.print_plot_area(),
-            'halls_area': p.body.print_halls_area(),
-
-            'facilities': p.body.print_facilities(),
-            'communications': p.body.print_communications(),
-            'buildings': p.body.print_add_buildings(),
-            'showplaces': p.body.print_showplaces()
-        }
-
-        if p.for_sale:
-            description.update({
-                'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms(),
-            })
-        if p.for_rent:
-            description.update({
-                'rent_price': p.rent_terms.print_price(),
-                'rent_terms': p.rent_terms.print_terms(),
-            })
-        return description
-
-
-    @staticmethod
     def compose_garage_description(p):
         description = {
             'title': p.body.print_title(),
@@ -388,7 +347,6 @@ class PublishedDataSource(object):
             OBJECTS_TYPES.trade():      self.compose_trade_description,
             OBJECTS_TYPES.office():     self.compose_office_description,
             OBJECTS_TYPES.warehouse():  self.compose_warehouse_description,
-            OBJECTS_TYPES.business():   self.compose_business_description,
 
             # other
             OBJECTS_TYPES.garage():     self.compose_garage_description,
@@ -645,46 +603,6 @@ class PublishedDataSource(object):
             'facilities': p.body.print_facilities(),
             'communications': p.body.print_communications(),
             'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
-        }
-
-        if p.for_sale:
-            description.update({
-                'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms(),
-            })
-        if p.for_rent:
-            description.update({
-                'rent_price': p.rent_terms.print_price(),
-                'rent_terms': p.rent_terms.print_terms(),
-            })
-        return description
-
-
-    @staticmethod
-    def compose_business_description(p):
-        description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
-            'monthly_cost': p.body.print_monthly_cost(),
-            'annual_receipts': p.body.print_annual_receipts(),
-            'age': p.body.print_age(),
-            'workers_count': p.body.print_workers_count(),
-            'share': p.body.print_share(),
-            'building_type': p.body.print_building_type(),
-            'build_year': p.body.print_build_year(),
-            'condition': p.body.print_condition() or u'неизвестно',
-            'floor': p.body.print_floor(),
-            'floors_count': p.body.print_floors_count(),
-
-            'total_area': p.body.print_total_area() or u'неизвестно',
-            'plot_area': p.body.print_plot_area(),
-            'halls_area': p.body.print_halls_area(),
-
-            'facilities': p.body.print_facilities(),
-            'communications': p.body.print_communications(),
-            'buildings': p.body.print_add_buildings(),
             'showplaces': p.body.print_showplaces()
         }
 

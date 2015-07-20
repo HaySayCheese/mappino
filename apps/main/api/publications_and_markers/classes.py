@@ -20,7 +20,6 @@ class PublicationsViewMixin(object):
         OBJECTS_TYPES.office(): parse_offices_filters,
         OBJECTS_TYPES.trade(): parse_trades_filters,
         OBJECTS_TYPES.warehouse(): parse_warehouses_filters,
-        OBJECTS_TYPES.business(): parse_businesses_filters,
     }
 
 
