@@ -252,11 +252,6 @@ class AccountView(CabinetView):
         if not phone:
             return self.PostResponses.value_required()
 
-        # todo: enable two factor check here
-        if user.mobile_phone:
-            raise RuntimeError(
-                'Phone number can not be edited at this moment. See trello card: https://trello.com/c/fUgUruyB/85-sms')
-
         try:
             phone = Users.objects.parse_phone_number(phone)
         except ValueError:
@@ -286,13 +281,6 @@ class AccountView(CabinetView):
                 user.save()
 
             return self.PostResponses.ok()
-
-
-        # todo: enable two factor check here
-        if user.add_mobile_phone:
-            raise RuntimeError(
-                'Phone number can not be edited at this moment. See trello card: https://trello.com/c/fUgUruyB/85-sms')
-
 
         try:
             phone =Users.objects.parse_phone_number(phone)
