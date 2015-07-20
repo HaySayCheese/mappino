@@ -871,7 +871,7 @@ class WarehousesSaleIndex(AbstractWarehousesIndex):
         )
 
 
-class WarehousesRentIndex(WarehousesSaleIndex):
+class WarehousesRentIndex(AbstractWarehousesIndex):
     class Meta:
         db_table = 'index_warehouses_rent'
 
@@ -1062,7 +1062,7 @@ class LandsSaleIndex(AbstractLandsIndex):
         )
 
 
-class LandsRentIndex(LandsSaleIndex):
+class LandsRentIndex(AbstractLandsIndex):
     class Meta:
         db_table = 'index_lands_rent'
 
