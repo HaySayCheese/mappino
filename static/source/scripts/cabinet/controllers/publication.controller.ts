@@ -143,6 +143,8 @@ module Mappino.Cabinet {
                     this.publicationsService.uploadPhoto(this.publicationIds, file, response => {
                         this.$scope.tempPublicationPhotos.shift();
                         this.scrollToBottom();
+                    }, response => {
+                        this.$scope.tempPublicationPhotos.shift();
                     });
                 }
             }
