@@ -18,7 +18,6 @@ module Mappino.Cabinet {
                     private $mdUtil: any,
                     private $mdMedia: any) {
             // ---------------------------------------------------------------------------------------------------------
-
             $rootScope.loaders = {
                 overlay:            false,
                 navbar:             false,

@@ -26,7 +26,7 @@ module Mappino.Cabinet {
 
 
         public create(successCallback, errorCallback) {
-            this.$http.post('/ajax/api/cabinet/support/tickets/', null)
+            this.$http.post(`/ajax/api/cabinet/support/tickets/`, null)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         angular.isFunction(successCallback) && successCallback(response.data['data'].id)
@@ -47,7 +47,7 @@ module Mappino.Cabinet {
 
 
         public load(successCallback, errorCallback) {
-            this.$http.get('/ajax/api/cabinet/support/tickets/')
+            this.$http.get(`/ajax/api/cabinet/support/tickets/`)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this._tickets = response.data['data'];
@@ -69,7 +69,7 @@ module Mappino.Cabinet {
 
 
         public loadTicketMessages(ticketId, successCallback, errorCallback) {
-            this.$http.get('/ajax/api/cabinet/support/tickets/' + ticketId + '/messages/')
+            this.$http.get(`/ajax/api/cabinet/support/tickets/${ticketId}/messages/`)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this._ticket = response.data['data'];
@@ -91,7 +91,7 @@ module Mappino.Cabinet {
 
 
         public sendMessage(ticketId, ticketMessage, successCallback, errorCallback) {
-            this.$http.post('/ajax/api/cabinet/support/tickets/' + ticketId + '/messages/', ticketMessage)
+            this.$http.post(`/ajax/api/cabinet/support/tickets/${ticketId}/messages/`, ticketMessage)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         angular.isFunction(successCallback) && successCallback(response.data['data'])

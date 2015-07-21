@@ -28,6 +28,7 @@ module Mappino.Cabinet {
                     private publicationsService: IPublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Все объявления';
+
             $scope.briefs = this.briefs;
             $scope.newPublication = this.newPublication;
 
