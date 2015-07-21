@@ -76,6 +76,30 @@ module Mappino.Cabinet {
 
 
 
+        public recoveryBrief($event, brief) {
+            var confirm = this.$mdDialog.confirm()
+                .parent(angular.element(document.body))
+                .title(this.TXT.DIALOGS.RECOVERY_PUBLICATION.TITLE)
+                .content(this.TXT.DIALOGS.RECOVERY_PUBLICATION.BODY)
+                .ariaLabel(this.TXT.DIALOGS.RECOVERY_PUBLICATION.ARIA_LABEL)
+                .ok(this.TXT.DIALOGS.RECOVERY_PUBLICATION.OK_BTN)
+                .cancel(this.TXT.DIALOGS.RECOVERY_PUBLICATION.CANCEL_BTN)
+                .targetEvent($event);
+
+
+            this.$mdDialog.show(confirm).then(() => {
+                this.$rootScope.loaders.overlay = true;
+                this.publicationsService.unpublish({ tid: brief.tid, hid: brief.id }, () => {
+                    this.$rootScope.loaders.overlay = false;
+                    this.$state.go('publication_edit', { id: brief.tid + ':' + brief.id });
+                }, response => {
+                    this.$rootScope.loaders.overlay = false;
+                });
+            });
+        }
+
+
+
         public editPublication($event, brief) {
             var confirm = this.$mdDialog.confirm()
                 .parent(angular.element(document.body))

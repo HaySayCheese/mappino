@@ -13,6 +13,13 @@
                 color: color('orange', 'base') !important;
             }
         }
+
+        &.-removed {
+            span,
+            md-icon {
+                color: color('grey', 'lighten-1') !important;
+            }
+        }
     }
 
     md-card-content {

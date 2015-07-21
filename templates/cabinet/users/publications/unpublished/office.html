@@ -174,17 +174,6 @@
                             <div ng-message="invalid">Количество кабинетов указано неверно</div>
                         </div>
                     </md-input-container>
-                </div>
-                <div layout="row">
-                    <md-input-container flex="33">
-                        <label>Количество сан. узлов</label>
-                        <input name="wcs_count" ng-model="publication.body.wcs_count" only-number required>
-                        <div ng-messages="forms.publicationForm.wcs_count.$error"
-                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.wcs_count.$touched">
-                            <div ng-message="required">Обязательное поле</div>
-                            <div ng-message="invalid">Количество сан. узлов указано неверно</div>
-                        </div>
-                    </md-input-container>
                     <md-input-container flex="33">
                         <label>Высота потолков</label>
                         <input name="ceiling_height" ng-model="publication.body.ceiling_height" only-number required>

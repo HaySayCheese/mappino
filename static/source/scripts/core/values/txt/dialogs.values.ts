@@ -12,6 +12,14 @@ module Mappino.Core.Values {
                     CANCEL_BTN: 'REMOVE_PUBLICATION_CANCEL_BTN'
                 },
 
+                'RECOVERY_PUBLICATION': {
+                    TITLE:      'RECOVERY_PUBLICATION_TITLE',
+                    BODY:       'RECOVERY_PUBLICATION_BODY',
+                    ARIA_LABEL: 'RECOVERY_PUBLICATION_BODY',
+                    OK_BTN:     'RECOVERY_PUBLICATION_OK_BTN',
+                    CANCEL_BTN: 'RECOVERY_PUBLICATION_CANCEL_BTN'
+                },
+
                 'DONE_EDITING_LATER_PUBLICATION': {
                     TITLE:      'DONE_EDITING_LATER_PUBLICATION_TITLE',
                     BODY:       'DONE_EDITING_LATER_PUBLICATION_BODY',
