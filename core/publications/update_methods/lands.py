@@ -160,7 +160,7 @@ def update_land(h, field, value, tid):
 
 
         # sid
-        elif field == 'rent_currency':
+        elif field == 'rent_currency_sid':
             value = int(value)
             if value not in CURRENCIES.values():
                 raise ValueError()
