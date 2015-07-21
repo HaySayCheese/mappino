@@ -3,20 +3,27 @@
 
 module Mappino.Cabinet {
     export class SettingsController {
+        private account: Mappino.Core.Auth.IUser;
 
         public static $inject = [
             '$scope',
             '$rootScope',
             '$timeout',
-            'AuthService'
+            '$mdDialog',
+            'AuthService',
+            'TXT'
         ];
 
         constructor(private $scope: any,
                     private $rootScope: any,
                     private $timeout: angular.ITimeoutService,
-                    private authService: Mappino.Core.Auth.IAuthService) {
+                    private $mdDialog: any,
+                    private authService: Mappino.Core.Auth.IAuthService,
+                    private TXT: any) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Редактирование профиля';
+
+            $scope.account = this.account;
 
             $rootScope.loaders.overlay = true;
 
@@ -57,7 +64,6 @@ module Mappino.Cabinet {
 
 
 
-
         private initInputsChange() {
             angular.element(".settings-page input[type='text'], " +
                             ".settings-page input[type='tel'], " +
@@ -81,6 +87,8 @@ module Mappino.Cabinet {
             });
 
             this.$scope.$watchCollection('account.preferences', (newValue, oldValue) => {
+                this.checkIfAllMeansOfCommunicationDisabled();
+
                 if (!angular.isUndefined(newValue) && !angular.isUndefined(oldValue)) {
                     for (var key in newValue) {
                         if (newValue[key] != oldValue[key]) {
@@ -89,6 +97,27 @@ module Mappino.Cabinet {
                     }
                 }
             });
+        }
+
+
+
+        private checkIfAllMeansOfCommunicationDisabled() {
+            if (!this.$scope.account) return;
+
+            if (this.$scope.account.preferences.hide_email && this.$scope.account.preferences.hide_mobile_phone_number &&
+                this.$scope.account.preferences.hide_add_mobile_phone_number && this.$scope.account.preferences.hide_landline_phone_number &&
+                this.$scope.account.preferences.hide_add_landline_phone_number && this.$scope.account.preferences.hide_skype) {
+                // ------------------------------------------------------------------------------------------------------
+                var alert = this.$mdDialog.confirm()
+                    .parent(angular.element(document.body))
+                    .title(this.TXT.DIALOGS.ALL_MEANS_OF_COMMUNICATION_DISABLED.TITLE)
+                    .content(this.TXT.DIALOGS.ALL_MEANS_OF_COMMUNICATION_DISABLED.BODY)
+                    .ariaLabel(this.TXT.DIALOGS.ALL_MEANS_OF_COMMUNICATION_DISABLED.ARIA_LABEL)
+                    .ok(this.TXT.DIALOGS.ALL_MEANS_OF_COMMUNICATION_DISABLED.OK_BTN);
+                    //.targetEvent($event);
+
+                this.$mdDialog.show(alert);
+            }
         }
     }
 }

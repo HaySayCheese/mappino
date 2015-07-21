@@ -33,6 +33,13 @@ module Mappino.Core.Values {
                     ARIA_LABEL: 'EDIT_PUBLICATION_LABEL',
                     OK_BTN:     'EDIT_PUBLICATION_OK_BTN',
                     CANCEL_BTN: 'EDIT_PUBLICATION_CANCEL_BTN'
+                },
+
+                'ALL_MEANS_OF_COMMUNICATION_DISABLED': {
+                    TITLE:      'ALL_MEANS_OF_COMMUNICATION_DISABLED_TITLE',
+                    BODY:       'ALL_MEANS_OF_COMMUNICATION_DISABLED_BODY',
+                    ARIA_LABEL: 'ALL_MEANS_OF_COMMUNICATION_DISABLED_LABEL',
+                    OK_BTN:     'ALL_MEANS_OF_COMMUNICATION_DISABLED_OK_BTN'
                 }
             };
         }
