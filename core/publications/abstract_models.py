@@ -425,8 +425,10 @@ class AbstractHeadModel(models.Model):
         #-- body
         self.body.check_required_fields()
 
+
     def photos(self):
-        return self.photos_model.objects.filter(publication = self.id).order_by('-is_title', '-created')
+        return self.photos_model.objects.filter(publication = self.id).order_by('-is_title', 'created')
+
 
     def title_photo(self):
         photos = self.photos()
@@ -434,6 +436,7 @@ class AbstractHeadModel(models.Model):
             return None
 
         return photos[0]
+
 
     def is_published(self):
         return self.state_sid == OBJECT_STATES.published()
@@ -849,8 +852,7 @@ class PhotosModel(AbstractModel):
                 super(PhotosModel, self).delete()
                 return next_title_photo
 
-        else:
-            super(PhotosModel, self).delete()
+        super(PhotosModel, self).delete()
 
 
     def check_is_title(self):
