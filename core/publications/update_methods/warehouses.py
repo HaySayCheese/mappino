@@ -249,10 +249,10 @@ def update_warehouse(h, field, value, tid):
 
 
         # blank or float
-        elif field == 'area':
+        elif field == 'halls_area':
             if not value:
                 b = WarehousesBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.area = None
+                b.halls_area = None
                 b.save(force_update=True)
                 return
             else:
@@ -261,7 +261,7 @@ def update_warehouse(h, field, value, tid):
                     raise ValueError()
 
                 b = WarehousesBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.area = value
+                b.halls_area = value
                 b.save(force_update=True)
 
                 if int(value) == value:

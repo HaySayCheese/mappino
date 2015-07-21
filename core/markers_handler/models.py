@@ -1176,6 +1176,12 @@ class SegmentsIndex(models.Model):
 
 
         record = index.min_add_queryset().filter(id=hid)[:1][0]
+
+        # Check if publication was published.
+        # If not - there is no such publication should be in index.
+        if not record.is_published():
+            return
+
         lat, lng = cls.record_lat_lng(record)
         lat, lng = cls.grid.normalize_lat_lng(lat, lng)
 
@@ -1237,6 +1243,12 @@ class SegmentsIndex(models.Model):
 
 
         record = index.min_remove_queryset().filter(id=hid)[:1][0]
+
+        # Check if publication was published.
+        # If not - there is no such publication should be in index.
+        if not record.is_published():
+            return
+
         lat, lng = cls.record_lat_lng(record)
         lat, lng = cls.grid.normalize_lat_lng(lat, lng)
 

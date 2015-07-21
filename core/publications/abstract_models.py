@@ -88,7 +88,6 @@ class AbstractModel(models.Model):
         return u'{dol} ({uah}, {eur})'.format(dol=dol, uah=uah, eur=eur)
 
 
-
 class AbstractHeadModel(models.Model):
     class Meta:
         abstract = True

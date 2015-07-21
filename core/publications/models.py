@@ -1510,7 +1510,7 @@ class WarehousesBodies(BodyModel):
 
 
     market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
-    area = models.FloatField(null=True)
+    halls_area = models.FloatField(null=True)
     plot_area = models.FloatField(null=True) # площа участку
     open_space = models.BooleanField(default=False) # вільне плаування
     closed_area = models.BooleanField(default=False) # закрита територія
