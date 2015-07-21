@@ -626,7 +626,7 @@ class Briefs(CabinetView):
             query = HEAD_MODELS[tid].by_user_id(user_id).only('id')
 
             if section == 'all':
-                query = query.filter(deleted=None).order_by('state_sid', 'created')
+                query = query.all().order_by('state_sid', 'created')
             elif section == 'published':
                 query = query.filter(state_sid = OBJECT_STATES.published(), deleted=None).order_by('state_sid', 'created')
             elif section == 'unpublished':
