@@ -1,6 +1,6 @@
 Він уже близько)
-https://www.dropbox.com/s/rzmet6xhepmclqz/2222.png?dl=0
 
+![he-he](https://www.dropbox.com/s/rzmet6xhepmclqz/2222.png?dl=0)
 
 # mappino RC1 #
 
