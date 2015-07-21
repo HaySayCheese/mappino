@@ -21,10 +21,10 @@ module Mappino.Cabinet {
                     private $mdMedia: any) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.loaders = {
-                overlay:            false,
-                navbar:             false,
-                avatar:             false,
-                tickets:            false
+                overlay:    false,
+                navbar:     false,
+                avatar:     false,
+                tickets:    false
             };
 
             authService.tryLogin(response => {
