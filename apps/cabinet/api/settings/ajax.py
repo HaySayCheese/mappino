@@ -86,7 +86,7 @@ class AccountView(CabinetView):
 
 
         @staticmethod
-        @json_response_bad_request
+        @json_response
         def value_required():
             return {
                 'code': 1,
@@ -95,7 +95,7 @@ class AccountView(CabinetView):
 
 
         @staticmethod
-        @json_response_bad_request
+        @json_response
         def invalid_value():
             return {
                 'code': 2,
@@ -104,7 +104,7 @@ class AccountView(CabinetView):
 
 
         @staticmethod
-        @json_response_bad_request
+        @json_response
         def duplicated_value():
             return {
                 'code': 3,
@@ -113,7 +113,7 @@ class AccountView(CabinetView):
 
 
         @staticmethod
-        @json_response_bad_request
+        @json_response
         def invalid_parameters():
             return {
                 'code': 100,
