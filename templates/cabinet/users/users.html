@@ -61,7 +61,10 @@
 
             <md-button ui-sref="settings" class="nav-button" ng-show="navbarUserData.account.full_name">
                 <div layout="row" layour-align="center center">
-                    <img class="navbar-user-avatar" ng-src="[[ navbarUserData.account.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/user.png" />
+                    <img class="navbar-user-avatar" ng-src="[[ navbarUserData.account.avatar_url ]]" alt="" ng-show="navbarUserData.account.avatar_url"
+                         on-error-src="{{ static }}build/images/cabinet/user.png" />
+                    <img class="navbar-user-avatar" src="{{ static }}build/images/cabinet/user.png" ng-hide="navbarUserData.account.avatar_url" alt="" />
+
                     <span>[[ navbarUserData.account.full_name ]]</span>
                 </div>
             </md-button>

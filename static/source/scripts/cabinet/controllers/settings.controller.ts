@@ -59,6 +59,7 @@ module Mappino.Cabinet {
 
             this.authService.removeAvatar(response => {
                 this.$rootScope.loaders.avatar = false;
+                console.log(this.$scope.profile)
             });
         }
 
