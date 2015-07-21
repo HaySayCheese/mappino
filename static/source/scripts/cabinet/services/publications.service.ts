@@ -152,7 +152,9 @@ module Mappino.Cabinet {
                             if (photo && photo.hash_id == photoId) {
                                 this.publication.photos.splice(index, 1);
                             }
+                        });
 
+                        angular.forEach(this.publication.photos, (photo, index) => {
                             if (photo && photo.hash_id == response.data['data'].hash_id) {
                                 this.publication.photos[index].is_title = true;
                             }
