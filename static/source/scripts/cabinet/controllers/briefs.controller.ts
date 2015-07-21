@@ -64,8 +64,11 @@ module Mappino.Cabinet {
                 this.publicationsService.remove({ tid: brief.tid, hid: brief.id }, () => {
                     angular.forEach(this.$scope.briefs, (_brief, index) => {
                         this.$rootScope.loaders.overlay = false;
-                        if (_brief.id == brief.id) {
+
+                        if (_brief.id == brief.id && _brief.state_sid == 2) {
                             this.$scope.briefs.splice(index, 1);
+                        } else if (_brief.id == brief.id && _brief.state_sid != 2) {
+                            this.$scope.briefs[index].state_sid = 2;
                         }
                     });
                 }, response => {
