@@ -566,10 +566,10 @@ def update_office(h, field, value, tid):
 
 
         # boolean
-        elif field == 'air_conditioning':
+        elif field == 'conditiononer':
             if (value is True) or (value is False):
                 rt = OfficesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-                rt.air_conditioning = value
+                rt.conditioner = value
                 rt.save(force_update=True)
                 return
             else:
