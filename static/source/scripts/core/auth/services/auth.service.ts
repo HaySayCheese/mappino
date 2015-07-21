@@ -120,16 +120,35 @@ module Mappino.Core.Auth {
 
 
         public checkProfileField(field, successCallback?, errorCallback?) {
-            this.$http.post(`/ajax/api/cabinet/account/`, field)
+            var fullMobileNumber = {
+                fieldName:  field.fieldName,
+                fieldValue: null
+            };
+
+            if (field.fieldName == 'mobile_phone') {
+                fullMobileNumber = {
+                    fieldName:  field.fieldName,
+                    fieldValue: this._user.account.mobile_code + field.fieldValue
+                };
+            }
+
+            if (field.fieldName == 'add_mobile_phone') {
+                fullMobileNumber = {
+                    fieldName:  field.fieldName,
+                    fieldValue: this._user.account.add_mobile_code + field.fieldValue
+                }
+            }
+
+            this.$http.post(`/ajax/api/cabinet/account/`, fullMobileNumber.fieldValue ? fullMobileNumber : field)
                 .then(response => {
                     if (response.data['code'] === 0) {
-                        field['v'] = response.data['value'] ? response.data['value'] : field['v'];
+                        field['fieldValue'] = response.data['value'] ? response.data['value'] : field['fieldValue'];
 
                         var _field = {};
-                        _field[field['f']] = field['v'];
+                        _field[field['fieldName']] = field['fieldValue'];
 
                         this.updateProfileField(_field);
-                        angular.isFunction(successCallback) && successCallback(field['v']);
+                        angular.isFunction(successCallback) && successCallback(field['fieldValue']);
                     } else {
                         angular.isFunction(errorCallback) && errorCallback(response.data);
                     }
