@@ -499,10 +499,10 @@ def update_house(h, field, value, tid):
 
 
         # blank or int
-        elif field == 'vcs_count':
+        elif field == 'wcs_count':
             if not value:
                 b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.vcs_count = None
+                b.wcs_count = None
                 b.save(force_update=True)
                 return
             else:
@@ -511,7 +511,7 @@ def update_house(h, field, value, tid):
                     raise ValueError()
 
                 b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.vcs_count = value
+                b.wcs_count = value
                 b.save(force_update=True)
                 return
 

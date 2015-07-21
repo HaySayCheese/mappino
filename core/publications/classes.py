@@ -196,7 +196,7 @@ class CabinetPublishedDataSource(object):
             'halls_area': p.body.print_halls_area() or u'неизвестно',
             'total_area': p.body.print_total_area() or u'неизвестно',
 
-            'vcs_count': p.body.print_vcs_count(),
+            'wcs_count': p.body.print_wcs_count(),
             'ceiling_height': p.body.print_ceiling_height(),
 
             'facilities': p.body.print_facilities(),
@@ -232,7 +232,7 @@ class CabinetPublishedDataSource(object):
             'floors_count': p.body.print_floors_count(),
             'cabinets_count': p.body.print_cabinets_count() or u'неизвестно',
             'total_area': p.body.print_total_area(),
-            'vcs_count': p.body.print_vcs_count(),
+            'wcs_count': p.body.print_wcs_count(),
             'ceiling_height': p.body.print_ceiling_height(),
 
             'facilities': p.body.print_facilities(),
@@ -406,7 +406,7 @@ class PublishedDataSource(object):
 
             'rooms_count': p.body.print_rooms_count() or u'неизвестно',
             'bedrooms_count': p.body.print_bedrooms_count(),
-            'vcs_count': p.body.print_vcs_count(),
+            'wcs_count': p.body.print_wcs_count(),
             'balconies_count': p.body.print_balconies_count(),
             'loggias_count': p.body.print_loggias_count(),
             'ceiling_height': p.body.print_ceiling_height(),
@@ -447,7 +447,7 @@ class PublishedDataSource(object):
             'floors_count': p.body.print_floors_count() or u'неизвестно',
             'rooms_count': p.body.print_rooms_count() or u'неизвестно',
             'bedrooms_count': p.body.print_bedrooms_count(),
-            'vcs_count': p.body.print_vcs_count(),
+            'wcs_count': p.body.print_wcs_count(),
 
             'facilities': p.body.print_facilities(),
             'communications': p.body.print_communications(),
@@ -529,7 +529,7 @@ class PublishedDataSource(object):
             'halls_area': p.body.print_halls_area() or u'неизвестно',
             'total_area': p.body.print_total_area() or u'неизвестно',
 
-            'vcs_count': p.body.print_vcs_count(),
+            'wcs_count': p.body.print_wcs_count(),
             'ceiling_height': p.body.print_ceiling_height(),
 
             'facilities': p.body.print_facilities(),
@@ -566,7 +566,7 @@ class PublishedDataSource(object):
             'floors_count': p.body.print_floors_count(),
             'cabinets_count': p.body.print_cabinets_count() or u'неизвестно',
             'total_area': p.body.print_total_area(),
-            'vcs_count': p.body.print_vcs_count(),
+            'wcs_count': p.body.print_wcs_count(),
             'ceiling_height': p.body.print_ceiling_height(),
 
             'facilities': p.body.print_facilities(),
