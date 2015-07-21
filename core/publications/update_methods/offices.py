@@ -566,7 +566,7 @@ def update_office(h, field, value, tid):
 
 
         # boolean
-        elif field == 'conditiononer':
+        elif field == 'conditioner':
             if (value is True) or (value is False):
                 rt = OfficesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
                 rt.conditioner = value
