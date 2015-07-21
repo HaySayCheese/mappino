@@ -81,10 +81,10 @@ module Mappino.Cabinet {
             });
 
             this.$scope.$watchCollection('account.preferences', (newValue, oldValue) => {
-                if (!_.isUndefined(newValue) && !_.isUndefined(oldValue)) {
+                if (!angular.isUndefined(newValue) && !angular.isUndefined(oldValue)) {
                     for (var key in newValue) {
                         if (newValue[key] != oldValue[key]) {
-                            this.authService.checkProfileField({ f: key, v: newValue[key] });
+                            this.authService.checkProfileField({ fieldName: key, fieldValue: newValue[key] });
                         }
                     }
                 }

@@ -95,6 +95,28 @@ module Mappino.Cabinet {
 
 
 
+        public unpublish(publicationIds: IPublicationIds, successCallback?, errorCallback?) {
+            this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/unpublish/`, null)
+                .then(response => {
+                    if (response.data['code'] === 0) {
+                        this.$state.go('publications');
+                        angular.isFunction(successCallback) && successCallback(response.data)
+                    } else {
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
+                    }
+                }, response => {
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.UNPUBLISH.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                });
+        }
+
+
+
         public load(publicationIds: IPublicationIds, successCallback?, errorCallback?) {
             this.$http.get(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/`)
                 .then(response => {
@@ -152,7 +174,9 @@ module Mappino.Cabinet {
                             if (photo && photo.hash_id == photoId) {
                                 this.publication.photos.splice(index, 1);
                             }
+                        });
 
+                        angular.forEach(this.publication.photos, (photo, index) => {
                             if (photo && photo.hash_id == response.data['data'].hash_id) {
                                 this.publication.photos[index].is_title = true;
                             }

@@ -6,7 +6,7 @@
             <md-card-content>
                 <h3 class="md-headline blue-text text-lighten-1">Основная информация</h3>
 
-                <div layout-sm="column" layout-gt-sm="row">
+                <div layout-sm="column" layout="row">
                     <div class="user-block" layout="column" layout-align="center center" flex-gt-sm="45">
                         <div class="user-photo" layout="column" layout-align="center center">
                             <img ng-src="[[ account.account.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/user.png" ng-hide="loaders.avatar" />
@@ -26,7 +26,7 @@
                             </md-button>
                         </div>
 
-                        <!-- todo: need fixed-->
+                        <!-- todo: need fixed -->
                         <div class="image-errors">
                             <span class="input-has-error text-center" ng-show="imageTooLarge">Слишком большое изображение <br/> (ограничение в 5 мб.)</span>
                             <span class="input-has-error text-center" ng-show="imageTooSmall">Слишком малое изображение <br/>(<200px по одной из сторон)</span>
@@ -44,7 +44,7 @@
                             </div>
                         </md-input-container>
 
-                        <md-input-container flex>
+                        <md-input-container>
                             <label>Фамилия</label>
                             <input type="text" name="last_name" ng-model="account.account.last_name" required>
                             <div ng-messages="userProfileForm.last_name.$error">
@@ -52,7 +52,7 @@
                             </div>
                         </md-input-container>
 
-                        <md-input-container flex>
+                        <md-input-container>
                             <label>Эл. почта</label>
                             <input type="text" name="email" ng-model="account.account.email" required>
                             <div ng-messages="userProfileForm.email.$error">
@@ -69,7 +69,7 @@
                             </md-input-container>
                             <md-input-container>
                                 <label>Моб. телефон</label>
-                                <input type="tel" name="mobile_phone" ng-model="account.account.mobile_phone" minlength="9" maxlength="9" required>
+                                <input type="tel" name="mobile_phone" ng-model="account.account.mobile_phone" minlength="9" maxlength="9" only-number required>
                                 <div ng-messages="userProfileForm.mobile_phone.$error">
                                     <div ng-message="required">Обязательное поле</div>
                                     <div ng-message="minlength">Некоректный номер</div>
@@ -115,7 +115,7 @@
                             </md-input-container>
                             <md-input-container>
                                 <label>Доп. моб. телефон</label>
-                                <input type="tel" name="add_mobile_phone" ng-model="account.account.add_mobile_phone" minlength="9" maxlength="9">
+                                <input type="tel" name="add_mobile_phone" ng-model="account.account.add_mobile_phone" minlength="9" only-number maxlength="9">
                                 <div ng-messages="userProfileForm.add_mobile_phone.$error">
                                     <div ng-message="required">Обязательное поле</div>
                                     <div ng-message="minlength">Некоректный номер</div>

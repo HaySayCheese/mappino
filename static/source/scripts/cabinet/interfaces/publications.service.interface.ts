@@ -23,6 +23,12 @@ module Mappino.Cabinet {
 
 
         /**
+         * Unpublish publication
+         */
+        unpublish(publicationIds: IPublicationIds, successCallback?: IPublicationBaseCallback, errorCallback?: IPublicationBaseCallback): void
+
+
+        /**
          * Load publication data
          */
         load(publicationIds: IPublicationIds, successCallback?: IPublicationLoadSuccessCallback, errorCallback?: IPublicationBaseCallback): void
