@@ -17,6 +17,10 @@ module Mappino.Core.Values {
                         'TITLE': 'PUBLISH_PUBLICATION_TITLE'
                     },
 
+                    'UNPUBLISH': {
+                        'TITLE': 'PUBLISH_PUBLICATION_TITLE'
+                    },
+
                     'LOAD': {
                         'TITLE': 'LOAD_PUBLICATION_TITLE'
                     },
