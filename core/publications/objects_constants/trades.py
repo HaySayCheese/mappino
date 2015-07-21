@@ -8,9 +8,9 @@ class TradeBuildingTypes(AbstractConstant):
 		self.set_ids({
 			'residential': 0, # житлова будівля
 		    'entertainment': 1,
-		    'business': 3,
-		    'administrative': 4,
-		    'separate': 5,
+		    'business': 2,
+		    'administrative': 3,
+		    'separate': 4,
 		})
 
 	def residential(self):
