@@ -31,7 +31,7 @@
     </md-card>
 
 
-    <md-card class="-brief" ng-repeat="brief in briefs" data-hash="[[ brief.id ]]">
+    <md-card class="-brief" ng-repeat="brief in briefs | orderBy: 'state_sid'" data-hash="[[ brief.id ]]">
         <img class="md-card-image" ng-src="[[ brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png" />
         <md-card-content>
             <div layout="row">
