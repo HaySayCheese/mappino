@@ -64,7 +64,8 @@
                          on-error-src="{{ static }}build/images/cabinet/user.png" />
                     <img class="navbar-user-avatar" src="{{ static }}build/images/cabinet/user.png" ng-hide="userData.account.avatar_url" alt="" />
 
-                    <span>[[ userData.account.full_name ]]</span>
+                    <span ng-show="userData.account.first_name && userData.account.last_name">[[ userData.account.full_name ]]</span>
+                    <span ng-hide="userData.account.first_name && userData.account.last_name">Настройки</span>
                 </div>
             </md-button>
         </nav>
