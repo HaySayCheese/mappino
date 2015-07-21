@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
 from apps.classes import CabinetView
-from collective.decorators.ajax import json_response
+from collective.decorators.ajax import json_response, json_response_bad_request
 from core.users.exceptions import AvatarExceptions
 from collective.exceptions import RuntimeException
 from collective.http.responses import HttpJsonResponse
@@ -77,43 +77,48 @@ class AccountView(CabinetView):
 
     class PostResponses(object):
         @staticmethod
+        @json_response
         def ok():
-            return HttpJsonResponse({
+            return {
                 'code': 0,
                 'message': 'OK',
-            })
+            }
 
 
         @staticmethod
+        @json_response_bad_request
         def value_required():
-            return HttpJsonResponse({
+            return {
                 'code': 1,
                 'message': 'Value is required.'
-            })
+            }
 
 
         @staticmethod
+        @json_response_bad_request
         def invalid_value():
-            return HttpJsonResponse({
+            return {
                 'code': 2,
                 'message': 'Value is invalid.'
-            })
+            }
 
 
         @staticmethod
+        @json_response_bad_request
         def duplicated_value():
-            return HttpJsonResponse({
-                'code': 2,
+            return {
+                'code': 3,
                 'message': 'Value is invalid.'
-            })
+            }
 
 
         @staticmethod
+        @json_response_bad_request
         def invalid_parameters():
-            return HttpJsonResponse({
+            return {
                 'code': 100,
                 'message': 'Request does not contains parameters or one of them is invalid.'
-            })
+            }
 
 
     def __init__(self):
@@ -153,8 +158,8 @@ class AccountView(CabinetView):
     def post(self, request):
         try:
             params = angular_post_parameters(request)
-            field = params['f']
-            value = params.get('v', '') # value can be empty
+            field = params['fieldName']
+            value = params.get('fieldValue', '') # value can be empty
         except (ValueError, KeyError):
             return self.PostResponses.invalid_parameters()
 
