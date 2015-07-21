@@ -17,7 +17,7 @@ from core.currencies.constants import CURRENCIES as currencies_constants
 from core.publications import models_signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
-    EmptyRentPrice
+    EmptyRentPrice, EmptyPersonsCount
 
 
 class AbstractModel(models.Model):
@@ -506,6 +506,8 @@ class LivingRentTermsModel(AbstractModel):
     currency_sid = models.SmallIntegerField(default=currencies_constants.dol())
     is_contract = models.BooleanField(default=False)
     period_sid = models.SmallIntegerField(default=LIVING_RENT_PERIODS.monthly())
+
+    # persons count may be omitted if period_sid is not daily.
     persons_count = models.SmallIntegerField(null=True)
 
     furniture = models.BooleanField(default=False)
@@ -515,6 +517,7 @@ class LivingRentTermsModel(AbstractModel):
     conditioner = models.BooleanField(default=False)
     home_theater = models.BooleanField(default=False)
 
+
     #-- validation
     def check_required_fields(self):
         """
@@ -522,8 +525,13 @@ class LivingRentTermsModel(AbstractModel):
         Не перевіряє інформацію в полях на коректність, оскільки передбачається,
         що некоректні дані не можуть потрапити в БД через обробники зміни даних.
         """
+
         if self.price is None:
-            raise EmptyRentPrice('Rent price is None.')
+            raise EmptyRentPrice('')
+
+        if self.period_sid == LIVING_RENT_PERIODS.daily():
+            if self.persons_count is None:
+                raise EmptyPersonsCount('"period_sid" is daily, but persons count is empty.')
 
 
     def print_terms(self):
