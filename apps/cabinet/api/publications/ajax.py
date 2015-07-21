@@ -626,13 +626,13 @@ class Briefs(CabinetView):
             query = HEAD_MODELS[tid].by_user_id(user_id).only('id')
 
             if section == 'all':
-                query = query.filter(deleted=None).order_by('created')
+                query = query.filter(deleted=None).order_by('state_sid', 'created')
             elif section == 'published':
-                query = query.filter(state_sid = OBJECT_STATES.published(), deleted=None).order_by('created')
+                query = query.filter(state_sid = OBJECT_STATES.published(), deleted=None).order_by('state_sid', 'created')
             elif section == 'unpublished':
-                query = query.filter(state_sid = OBJECT_STATES.unpublished(), deleted=None).order_by('created')
+                query = query.filter(state_sid = OBJECT_STATES.unpublished(), deleted=None).order_by('state_sid', 'created')
             elif section == 'trash':
-                query = query.filter(state_sid = OBJECT_STATES.deleted()).order_by('deleted')
+                query = query.filter(state_sid = OBJECT_STATES.deleted()).order_by('state_sid', 'deleted')
             else:
                 raise ValueError('Invalid section title {0}'.format(section))
 
