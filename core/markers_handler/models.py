@@ -71,34 +71,37 @@ class FlatsSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        model = HEAD_MODELS[OBJECTS_TYPES.flat()]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
+    def min_add_queryset(cls, publication_head_id):
+        model = HEAD_MODELS[cls.tid]
 
-            'sale_terms__price',
-            'sale_terms__currency_sid',
+        return model.objects\
+            .filter(id=publication_head_id)\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'body__market_type_sid',
-            'body__rooms_count',
-            'body__rooms_planning_sid',
-            'body__total_area',
-            'body__floor',
-            'body__floor_type_sid',
-            'body__lift',
-            'body__hot_water',
-            'body__cold_water',
-            'body__gas',
-            'body__electricity',
-            'body__heating_type_sid',
-        )
+                'sale_terms__price',
+                'sale_terms__currency_sid',
+
+                'body__market_type_sid',
+                'body__rooms_count',
+                'body__rooms_planning_sid',
+                'body__total_area',
+                'body__floor',
+                'body__floor_type_sid',
+                'body__lift',
+                'body__hot_water',
+                'body__cold_water',
+                'body__gas',
+                'body__electricity',
+                'body__heating_type_sid',
+            )[:1]
 
 
     @classmethod
@@ -122,8 +125,10 @@ class FlatsSaleIndex(AbstractBaseIndex):
 class FlatsRentIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
-    persons_count = models.PositiveSmallIntegerField(db_index=True)
     period_sid = models.PositiveSmallIntegerField(db_index=True)
+    # if "period_sid" is not "daily" - than persons count may be omitted.
+    persons_count = models.PositiveSmallIntegerField(db_index=True, null=True)
+
 
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
     rooms_count = models.PositiveSmallIntegerField(db_index=True)
@@ -176,36 +181,39 @@ class FlatsRentIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        model = HEAD_MODELS[OBJECTS_TYPES.flat()]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
+    def min_add_queryset(cls, publication_head_id):
+        model = HEAD_MODELS[cls.tid]
 
-            'rent_terms__price',
-            'rent_terms__currency_sid',
-            'rent_terms__period_sid',
-            'rent_terms__persons_count',
+        return model.objects\
+            .filter(id=publication_head_id)\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'body__market_type_sid',
-            'body__rooms_count',
-            'body__rooms_planning_sid',
-            'body__total_area',
-            'body__floor',
-            'body__floor_type_sid',
-            'body__lift',
-            'body__hot_water',
-            'body__cold_water',
-            'body__gas',
-            'body__electricity',
-            'body__heating_type_sid',
-        )
+                'rent_terms__price',
+                'rent_terms__currency_sid',
+                'rent_terms__period_sid',
+                'rent_terms__persons_count',
+
+                'body__market_type_sid',
+                'body__rooms_count',
+                'body__rooms_planning_sid',
+                'body__total_area',
+                'body__floor',
+                'body__floor_type_sid',
+                'body__lift',
+                'body__hot_water',
+                'body__cold_water',
+                'body__gas',
+                'body__electricity',
+                'body__heating_type_sid',
+            )[:1]
 
 
     @classmethod
@@ -275,31 +283,34 @@ class HousesSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        model = HEAD_MODELS[OBJECTS_TYPES.house()]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
+    def min_add_queryset(cls, publication_head_id):
+        model = HEAD_MODELS[cls.tid]
 
-            'body__market_type_sid',
-            'body__total_area',
-            'body__rooms_count',
-            'body__floors_count',
-            'body__hot_water',
-            'body__cold_water',
-            'body__electricity',
-            'body__gas',
-            'body__heating_type_sid',
+        return model.objects\
+            .filter(id=publication_head_id)\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'sale_terms__price',
-            'sale_terms__currency_sid'
-        )
+                'body__market_type_sid',
+                'body__total_area',
+                'body__rooms_count',
+                'body__floors_count',
+                'body__hot_water',
+                'body__cold_water',
+                'body__electricity',
+                'body__gas',
+                'body__heating_type_sid',
+
+                'sale_terms__price',
+                'sale_terms__currency_sid'
+            )[:1]
 
 
     @classmethod
@@ -326,7 +337,8 @@ class HousesRentIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     period_sid = models.PositiveSmallIntegerField(db_index=True)
-    persons_count = models.PositiveSmallIntegerField(db_index=True)
+    # if "period_sid" is not "daily" - than persons count may be omitted.
+    persons_count = models.PositiveSmallIntegerField(db_index=True, null=True)
 
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
     total_area = models.FloatField(db_index=True)
@@ -369,33 +381,36 @@ class HousesRentIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        model = HEAD_MODELS[OBJECTS_TYPES.house()]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
+    def min_add_queryset(cls, publication_head_id):
+        model = HEAD_MODELS[cls.tid]
 
-            'body__market_type_sid',
-            'body__total_area',
-            'body__rooms_count',
-            'body__floors_count',
-            'body__hot_water',
-            'body__cold_water',
-            'body__electricity',
-            'body__gas',
-            'body__heating_type_sid',
+        return model.objects\
+            .filter(id=publication_head_id)\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'rent_terms__period_sid',
-            'rent_terms__price',
-            'rent_terms__currency_sid',
-            'rent_terms__persons_count',
-        )
+                'body__market_type_sid',
+                'body__total_area',
+                'body__rooms_count',
+                'body__floors_count',
+                'body__hot_water',
+                'body__cold_water',
+                'body__electricity',
+                'body__gas',
+                'body__heating_type_sid',
+
+                'rent_terms__period_sid',
+                'rent_terms__price',
+                'rent_terms__currency_sid',
+                'rent_terms__persons_count',
+            )[:1]
 
 
     @classmethod
@@ -463,31 +478,34 @@ class RoomsSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
-        model = HEAD_MODELS[OBJECTS_TYPES.room()]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
+    def min_add_queryset(cls, publication_head_id):
+        model = HEAD_MODELS[cls.tid]
 
-            'sale_terms__price',
-            'sale_terms__currency_sid',
+        return model.objects\
+            .filter(id=publication_head_id)\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'body__market_type_sid',
-            'body__area',
-            'body__floor',
-            'body__floor_type_sid',
-            'body__lift',
-            'body__hot_water',
-            'body__cold_water',
-            'body__electricity',
-            'body__gas',
-        )
+                'sale_terms__price',
+                'sale_terms__currency_sid',
+
+                'body__market_type_sid',
+                'body__area',
+                'body__floor',
+                'body__floor_type_sid',
+                'body__lift',
+                'body__hot_water',
+                'body__cold_water',
+                'body__electricity',
+                'body__gas',
+            )[:1]
 
 
     @classmethod
@@ -513,7 +531,8 @@ class RoomsRentIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     period_sid = models.PositiveSmallIntegerField(db_index=True)
-    persons_count = models.PositiveSmallIntegerField(db_index=True)
+    # if "period_sid" is not "daily" - than persons count may be omitted.
+    persons_count = models.PositiveSmallIntegerField(db_index=True, null=True)
 
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
     area = models.FloatField(db_index=True)
@@ -556,32 +575,35 @@ class RoomsRentIndex(AbstractBaseIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
+    def min_add_queryset(cls, publication_head_id):
         model = HEAD_MODELS[OBJECTS_TYPES.room()]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
 
-            'body__area',
-            'body__floor',
-            'body__floor_type_sid',
-            'body__lift',
-            'body__hot_water',
-            'body__cold_water',
-            'body__gas',
-            'body__electricity',
+        return model.objects\
+            .filter(id=publication_head_id)\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'rent_terms__period_sid',
-            'rent_terms__price',
-            'rent_terms__currency_sid',
-            'rent_terms__persons_count',
-        )
+                'body__area',
+                'body__floor',
+                'body__floor_type_sid',
+                'body__lift',
+                'body__hot_water',
+                'body__cold_water',
+                'body__gas',
+                'body__electricity',
+
+                'rent_terms__period_sid',
+                'rent_terms__price',
+                'rent_terms__currency_sid',
+                'rent_terms__persons_count',
+            )[:1]
 
 
     @classmethod
@@ -630,31 +652,34 @@ class TradesSaleIndex(AbstractTradesIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
+    def min_add_queryset(cls, publication_head_id):
         model = HEAD_MODELS[cls.tid]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
 
-            'sale_terms__price',
-            'sale_terms__currency_sid',
+        return model.objects\
+            .filter(id=publication_head_id)\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'body__market_type_sid',
-            'body__halls_area',
-            'body__total_area',
-            'body__building_type_sid',
-            'body__hot_water',
-            'body__cold_water',
-            'body__electricity',
-            'body__gas',
-            'body__sewerage',
-        )
+                'sale_terms__price',
+                'sale_terms__currency_sid',
+
+                'body__market_type_sid',
+                'body__halls_area',
+                'body__total_area',
+                'body__building_type_sid',
+                'body__hot_water',
+                'body__cold_water',
+                'body__electricity',
+                'body__gas',
+                'body__sewerage',
+            )[:1]
 
 
 class TradesRentIndex(AbstractTradesIndex):
@@ -686,31 +711,34 @@ class TradesRentIndex(AbstractTradesIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
+    def min_add_queryset(cls, publication_head_id):
         model = HEAD_MODELS[cls.tid]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
 
-            'rent_terms__price',
-            'rent_terms__currency_sid',
+        return model.objects\
+            .filter(id=publication_head_id)\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'body__market_type_sid',
-            'body__halls_area',
-            'body__total_area',
-            'body__building_type_sid',
-            'body__hot_water',
-            'body__cold_water',
-            'body__electricity',
-            'body__gas',
-            'body__sewerage',
-        )
+                'rent_terms__price',
+                'rent_terms__currency_sid',
+
+                'body__market_type_sid',
+                'body__halls_area',
+                'body__total_area',
+                'body__building_type_sid',
+                'body__hot_water',
+                'body__cold_water',
+                'body__electricity',
+                'body__gas',
+                'body__sewerage',
+            )[:1]
 
 
 class OfficesSaleIndex(AbstractOfficesIndex):
@@ -740,29 +768,32 @@ class OfficesSaleIndex(AbstractOfficesIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
+    def min_add_queryset(cls, publication_head_id):
         model = HEAD_MODELS[cls.tid]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
 
-            'sale_terms__price',
-            'sale_terms__currency_sid',
+        return model.objects\
+            .filter(id=publication_head_id)\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'body__market_type_sid',
-            'body__total_area',
-            'body__cabinets_count',
-            'body__hot_water',
-            'body__cold_water',
-            'body__security',
-            'body__kitchen',
-        )
+                'sale_terms__price',
+                'sale_terms__currency_sid',
+
+                'body__market_type_sid',
+                'body__total_area',
+                'body__cabinets_count',
+                'body__hot_water',
+                'body__cold_water',
+                'body__security',
+                'body__kitchen',
+            )[:1]
 
 
 class OfficesRentIndex(AbstractOfficesIndex):
@@ -792,29 +823,32 @@ class OfficesRentIndex(AbstractOfficesIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
+    def min_add_queryset(cls, publication_head_id):
         model = HEAD_MODELS[cls.tid]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
 
-            'rent_terms__price',
-            'rent_terms__currency_sid',
+        return model.objects.\
+            filter(id=publication_head_id)\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'body__market_type_sid',
-            'body__total_area',
-            'body__cabinets_count',
-            'body__hot_water',
-            'body__cold_water',
-            'body__security',
-            'body__kitchen',
-        )
+                'rent_terms__price',
+                'rent_terms__currency_sid',
+
+                'body__market_type_sid',
+                'body__total_area',
+                'body__cabinets_count',
+                'body__hot_water',
+                'body__cold_water',
+                'body__security',
+                'body__kitchen',
+            )[:1]
 
 
 class WarehousesSaleIndex(AbstractWarehousesIndex):
@@ -845,30 +879,33 @@ class WarehousesSaleIndex(AbstractWarehousesIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
+    def min_add_queryset(cls, publication_head_id):
         model = HEAD_MODELS[cls.tid]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
 
-            'sale_terms__price',
-            'sale_terms__currency_sid',
+        return model.objects\
+            .filter(id=publication_head_id)\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'body__market_type_sid',
-            'body__halls_area',
-            'body__hot_water',
-            'body__cold_water',
-            'body__electricity',
-            'body__gas',
-            'body__fire_alarm',
-            'body__security_alarm',
-        )
+                'sale_terms__price',
+                'sale_terms__currency_sid',
+
+                'body__market_type_sid',
+                'body__halls_area',
+                'body__hot_water',
+                'body__cold_water',
+                'body__electricity',
+                'body__gas',
+                'body__fire_alarm',
+                'body__security_alarm',
+            )[:1]
 
 
 class WarehousesRentIndex(AbstractWarehousesIndex):
@@ -899,30 +936,33 @@ class WarehousesRentIndex(AbstractWarehousesIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
+    def min_add_queryset(cls, publication_head_id):
         model = HEAD_MODELS[cls.tid]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
 
-            'rent_terms__price',
-            'rent_terms__currency_sid',
+        return model.objects\
+            .filter()\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'body__market_type_sid',
-            'body__halls_area',
-            'body__hot_water',
-            'body__cold_water',
-            'body__electricity',
-            'body__gas',
-            'body__fire_alarm',
-            'body__security_alarm',
-        )
+                'rent_terms__price',
+                'rent_terms__currency_sid',
+
+                'body__market_type_sid',
+                'body__halls_area',
+                'body__hot_water',
+                'body__cold_water',
+                'body__electricity',
+                'body__gas',
+                'body__fire_alarm',
+                'body__security_alarm',
+            )[:1]
 
 
 class GaragesSaleIndex(AbstractGaragesIndex):
@@ -930,26 +970,29 @@ class GaragesSaleIndex(AbstractGaragesIndex):
         db_table = 'index_garages_sale'
 
     @classmethod
-    def min_add_queryset(cls):
+    def min_add_queryset(cls, publication_head_id):
         model = HEAD_MODELS[cls.tid]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
 
-            'sale_terms__price',
-            'sale_terms__currency_sid',
+        return model.objects\
+            .filter(id=publication_head_id)\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'body__market_type_sid',
-            'body__area',
-            'body__ceiling_height',
-            'body__pit',
-        )
+                'sale_terms__price',
+                'sale_terms__currency_sid',
+
+                'body__market_type_sid',
+                'body__area',
+                'body__ceiling_height',
+                'body__pit',
+            )[:1]
 
 
     @classmethod
@@ -993,25 +1036,28 @@ class GaragesRentIndex(AbstractGaragesIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
+    def min_add_queryset(cls, publication_head_id):
         model = HEAD_MODELS[cls.tid]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
 
-            'rent_terms__price',
-            'rent_terms__currency_sid',
+        return model.objects\
+            .filter(id=publication_head_id)\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'body__area',
-            'body__ceiling_height',
-            'body__pit',
-        )
+                'rent_terms__price',
+                'rent_terms__currency_sid',
+
+                'body__area',
+                'body__ceiling_height',
+                'body__pit',
+            )[:1]
 
 
 class LandsSaleIndex(AbstractLandsIndex):
@@ -1039,27 +1085,30 @@ class LandsSaleIndex(AbstractLandsIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
+    def min_add_queryset(cls, publication_head_id):
         model = HEAD_MODELS[cls.tid]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
 
-            'sale_terms__price',
-            'sale_terms__currency_sid',
+        return model.objects\
+            .filter(id=publication_head_id)\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'body__area',
-            'body__water',
-            'body__electricity',
-            'body__gas',
-            'body__sewerage',
-        )
+                'sale_terms__price',
+                'sale_terms__currency_sid',
+
+                'body__area',
+                'body__water',
+                'body__electricity',
+                'body__gas',
+                'body__sewerage',
+            )[:1]
 
 
 class LandsRentIndex(AbstractLandsIndex):
@@ -1087,27 +1136,30 @@ class LandsRentIndex(AbstractLandsIndex):
 
 
     @classmethod
-    def min_add_queryset(cls):
+    def min_add_queryset(cls, publication_head_id):
         model = HEAD_MODELS[cls.tid]
-        return model.objects.all().only(
-            'id',
-            'hash_id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
 
-            'rent_terms__price',
-            'rent_terms__currency_sid',
+        return model.objects\
+            .filter(id=publication_head_id)\
+            .only(
+                'id',
+                'hash_id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
 
-            'body__area',
-            'body__water',
-            'body__electricity',
-            'body__gas',
-            'body__sewerage',
-        )
+                'rent_terms__price',
+                'rent_terms__currency_sid',
+
+                'body__area',
+                'body__water',
+                'body__electricity',
+                'body__gas',
+                'body__sewerage',
+            )[:1]
 
 
 # -- index handler
@@ -1160,11 +1212,9 @@ class SegmentsIndex(models.Model):
 
     @classmethod
     def add_record(cls, tid, hid, for_sale, for_rent):
-        if for_sale and for_rent:
-            raise InvalidArgument('Object can be for_sale or for_rent but not both.')
-        else:
-            if not for_sale and not for_rent:
-                raise InvalidArgument('Object can be for_sale or for_rent')
+        if for_sale == for_rent:
+            raise ValueError('Object can be for sale or for rent, but not both.')
+
 
         if for_sale:
             index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
@@ -1172,10 +1222,16 @@ class SegmentsIndex(models.Model):
             index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
 
         if index is None:
-            return InvalidArgument('No index class for such tid.')
+            return ValueError('No index was found for tid={0}'.format(tid))
 
 
-        record = index.min_add_queryset().filter(id=hid)[:1][0]
+        record = index.min_add_queryset(hid)[0]
+
+        # If publication was not published - it should not be in index.
+        if not record.is_published():
+            return
+
+
         lat, lng = cls.record_lat_lng(record)
         lat, lng = cls.grid.normalize_lat_lng(lat, lng)
 
@@ -1220,11 +1276,8 @@ class SegmentsIndex(models.Model):
 
     @classmethod
     def remove_record(cls, tid, hid, for_sale, for_rent):
-        if for_sale and for_rent:
-            raise InvalidArgument('Object can or for_sale or for_rent but not both.')
-        else:
-            if not for_sale and not for_rent:
-                raise InvalidArgument('Object can be for_sale or for_rent')
+        if for_sale == for_rent:
+            raise ValueError('Object can be for sale or for rent, but not both.')
 
 
         if for_sale:
@@ -1236,7 +1289,13 @@ class SegmentsIndex(models.Model):
             raise InvalidArgument('No index such tid.')
 
 
-        record = index.min_remove_queryset().filter(id=hid)[:1][0]
+        record = index.min_remove_queryset(hid)[0]
+
+        # If publication was not published - it should not be in index.
+        if not record.is_published():
+            return
+
+
         lat, lng = cls.record_lat_lng(record)
         lat, lng = cls.grid.normalize_lat_lng(lat, lng)
 
@@ -1286,6 +1345,10 @@ class SegmentsIndex(models.Model):
             index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
         elif 'for_rent' in filters:
             index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
+        else:
+            raise ValueError(
+                'Filters must be or for rent, or for sale, '
+                'but no one value vas found in current filters object.')
 
         if index is None:
             raise InvalidArgument('No index such tid.')

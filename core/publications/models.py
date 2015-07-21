@@ -1155,7 +1155,7 @@ class OfficesRentTerms(CommercialRentTermsModel):
         db_table = 'o_offices_rent_terms'
 
     furniture = models.BooleanField(default=False)
-    air_conditioning = models.BooleanField(default=False)
+    conditioner = models.BooleanField(default=False)
 
     def print_facilities(self):
         facilities = u''
@@ -1225,7 +1225,6 @@ class OfficesBodies(BodyModel):
     total_area = models.FloatField(null=True)
     closed_area = models.BooleanField(default=False)
 
-    wcs_count = models.PositiveSmallIntegerField(null=True)
     ceiling_height = models.FloatField(null=True) # висота стелі
 
 
@@ -1260,15 +1259,6 @@ class OfficesBodies(BodyModel):
     parking = models.BooleanField(default=False) # гараж / паркомісце
     open_air = models.BooleanField(default=False)
     add_buildings = models.TextField(null=True)
-
-    # Поряд знаходиться
-    transport_stop = models.BooleanField(default=False)
-    market = models.BooleanField(default=False)
-    cafe = models.BooleanField(default=False)
-    bank = models.BooleanField(default=False)
-    cash_machine = models.BooleanField(default=False)
-    entertainment = models.BooleanField(default=False) # розважальні установи
-    add_showplaces = models.TextField(null=True)
 
 
     # validation
@@ -1438,29 +1428,6 @@ class OfficesBodies(BodyModel):
         return buildings[2:] if buildings else u''
 
 
-    def print_showplaces(self):
-        showplaces = u''
-        if self.transport_stop:
-            showplaces += u', остановка общ. транспорта'
-        if self.bank:
-            showplaces += u', отделения банка'
-        if self.cash_machine:
-            showplaces += u', банкомат'
-        if self.cafe:
-            showplaces += u', кафе / ресторан'
-        if self.market:
-            showplaces += u', рынок / супермаркет'
-        if self.entertainment:
-            showplaces += u', развлекательные заведения'
-
-        if self.add_showplaces:
-            showplaces += u'. ' + self.add_showplaces
-
-        if showplaces:
-            return showplaces[2:]
-        return u''
-
-
 class OfficesHeads(CommercialHeadModel):
     class Meta:
         db_table = 'o_offices_heads'
@@ -1510,7 +1477,7 @@ class WarehousesBodies(BodyModel):
 
 
     market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
-    area = models.FloatField(null=True)
+    halls_area = models.FloatField(null=True)
     plot_area = models.FloatField(null=True) # площа участку
     open_space = models.BooleanField(default=False) # вільне плаування
     closed_area = models.BooleanField(default=False) # закрита територія

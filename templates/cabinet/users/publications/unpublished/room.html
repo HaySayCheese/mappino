@@ -68,7 +68,7 @@
                                ng-model="publication.rent_terms.period_sid" flex="33">
                         <md-option ng-repeat="periodType in TYPES.PERIOD" value="[[ periodType.id ]]">[[ periodType.title ]]</md-option>
                     </md-select>
-                    <md-input-container flex="33" flex-sm="66">
+                    <md-input-container flex="33" flex-sm="66" ng-show="publication.rent_terms.period_sid == 0">
                         <label>Количество мест</label>
                         <input name="rent_persons_count" ng-model="publication.rent_terms.persons_count"
                                ng-required="publication.head.for_rent" only-number required>
@@ -206,6 +206,43 @@
                         </md-checkbox>
                     </div>
                 </div>
+            </div>
+
+            <div class="md-body-2" ng-show="publication.body.head.for_rent">Удобства, предоставляемые с орендой</div>
+            <div class="md-padding" layout="column" ng-show="publication.body.head.for_rent">
+                <div layout-sm="column" layout-gt-sm="row">
+                    <div layout="column" flex="50">
+                        <md-checkbox class="md-primary" name="furniture" ng-change="u_pubCtrl.checkField('furniture')"
+                                     ng-model="publication.body.furniture">
+                            Мебель
+                        </md-checkbox>
+                        <md-checkbox class="md-primary" name="refrigerator" ng-change="u_pubCtrl.checkField('refrigerator')"
+                                     ng-model="publication.body.refrigerator">
+                            Холодильник
+                        </md-checkbox>
+                        <md-checkbox class="md-primary" name="tv" ng-change="u_pubCtrl.checkField('tv')"
+                                     ng-model="publication.body.tv">
+                            Телевизор
+                        </md-checkbox>
+                    </div>
+                    <div layout="column" flex="50">
+                        <md-checkbox class="md-primary" name="washing_machine" ng-change="u_pubCtrl.checkField('washing_machine')"
+                                     ng-model="publication.body.washing_machine">
+                            Стиральная машина
+                        </md-checkbox>
+                        <md-checkbox class="md-primary" name="conditioner" ng-change="u_pubCtrl.checkField('conditioner')"
+                                     ng-model="publication.body.conditioner">
+                            Кондиционер
+                        </md-checkbox>
+                        <md-checkbox class="md-primary" name="home_theater" ng-change="u_pubCtrl.checkField('home_theater')"
+                                     ng-model="publication.body.home_theater">
+                            Дом. кинотеатр
+                        </md-checkbox>
+                    </div>
+                </div>
+            </div>
+
+            <div class="md-padding">
                 <md-input-container>
                     <label>Другие удобства, уточнения</label>
                     <input name="add_facilities" ng-model="publication.body.add_facilities">

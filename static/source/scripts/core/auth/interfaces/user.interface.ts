@@ -5,11 +5,13 @@ module Mappino.Core.Auth {
             last_name:          string
             full_name:          string
             avatar_url:         string
-            add_landline_phone: string
-            add_mobile_phone:   string
-            email:              string
-            landline_phone:     string
+            mobile_code:        string
             mobile_phone:       string
+            add_mobile_code:    string
+            add_mobile_phone:   string
+            landline_phone:     string
+            add_landline_phone: string
+            email:              string
             skype:              string
             work_email:         string
         }

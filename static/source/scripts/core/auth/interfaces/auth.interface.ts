@@ -2,18 +2,18 @@ module Mappino.Core.Auth {
     export interface IAuthService {
         user: IUser
 
-        checkPhoneNumber(phoneNumber: string, success?: Function, error?: Function): void
+        checkPhoneNumber(phoneNumber: string, successCallback?: Function, errorCallback?: Function): void
 
-        checkSMSCode(phoneNumber: string, smsCode: string, success?: Function, error?: Function): void
+        checkSMSCode(phoneNumber: string, smsCode: string, successCallback?: Function, errorCallback?: Function): void
 
-        tryLogin(success?: Function, error?: Function): void
+        tryLogin(successCallback?: Function, errorCallback?: Function): void
 
-        loadProfile(success?: Function, error?: Function): void
+        loadProfile(successCallback?: Function, errorCallback?: Function): void
 
-        checkProfileField(field: Object, success?: Function, error?: Function): void
+        checkProfileField(field: Object, successCallback?: Function, errorCallback?: Function): void
 
-        uploadAvatar(avatar: File, success?: Function, error?: Function): void
+        uploadAvatar(avatar: File, successCallback?: Function, errorCallback?: Function): void
 
-        removeAvatar(success?: Function, error?: Function): void
+        removeAvatar(successCallback?: Function, errorCallback?: Function): void
     }
 }

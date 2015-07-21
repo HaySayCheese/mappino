@@ -3,27 +3,34 @@
 
 module Mappino.Cabinet {
     export class SettingsController {
+        private profile: Mappino.Core.Auth.IUser;
 
         public static $inject = [
             '$scope',
             '$rootScope',
             '$timeout',
-            'AuthService'
+            '$mdDialog',
+            'AuthService',
+            'TXT'
         ];
 
         constructor(private $scope: any,
                     private $rootScope: any,
                     private $timeout: angular.ITimeoutService,
-                    private authService: Mappino.Core.Auth.IAuthService) {
+                    private $mdDialog: any,
+                    private authService: Mappino.Core.Auth.IAuthService,
+                    private TXT: any) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Редактирование профиля';
+
+            $scope.profile = this.profile;
 
             $rootScope.loaders.overlay = true;
 
             this.initInputsChange();
 
             authService.loadProfile(response => {
-                $scope.account = response;
+                $scope.profile = response;
                 $rootScope.loaders.overlay = false;
             });
         }
@@ -52,6 +59,7 @@ module Mappino.Cabinet {
 
             this.authService.removeAvatar(response => {
                 this.$rootScope.loaders.avatar = false;
+                console.log(this.$scope.profile)
             });
         }
 
@@ -65,15 +73,9 @@ module Mappino.Cabinet {
                 var name  = e.currentTarget['name'],
                     value = e.currentTarget['value'].replace(/\s+/g, " ");
 
-                if (!this.$scope.userProfileForm[name].$dirty) {
-                    return;
-                }
+                if (!this.$scope.userProfileForm[name].$dirty) return;
 
-                if (name === "mobile_phone" && (value === "+38 (0__) __ - __ - ___" || value[22] === "_")) {
-                    return;
-                }
-
-                this.authService.checkProfileField({ f: name, v: value }, response => {
+                this.authService.checkProfileField({ fieldName: name, fieldValue: value }, response => {
                     e.currentTarget['value'] = response;
 
                     this.$scope.userProfileForm[name].$setValidity("invalid",    true);
@@ -85,15 +87,37 @@ module Mappino.Cabinet {
 
             });
 
-            this.$scope.$watchCollection('account.preferences', (newValue, oldValue) => {
-                if (!_.isUndefined(newValue) && !_.isUndefined(oldValue)) {
+            this.$scope.$watchCollection('profile.preferences', (newValue, oldValue) => {
+                this.checkIfAllMeansOfCommunicationDisabled();
+
+                if (!angular.isUndefined(newValue) && !angular.isUndefined(oldValue)) {
                     for (var key in newValue) {
                         if (newValue[key] != oldValue[key]) {
-                            this.authService.checkProfileField({ f: key, v: newValue[key] });
+                            this.authService.checkProfileField({ fieldName: key, fieldValue: newValue[key] });
                         }
                     }
                 }
             });
+        }
+
+
+
+        private checkIfAllMeansOfCommunicationDisabled() {
+            if (!this.$scope.profile) return;
+
+            if (this.$scope.profile.preferences.hide_email && this.$scope.profile.preferences.hide_mobile_phone_number &&
+                this.$scope.profile.preferences.hide_add_mobile_phone_number && this.$scope.profile.preferences.hide_landline_phone_number &&
+                this.$scope.profile.preferences.hide_add_landline_phone_number && this.$scope.profile.preferences.hide_skype) {
+                // ------------------------------------------------------------------------------------------------------
+                var alert = this.$mdDialog.confirm()
+                    .parent(angular.element(document.body))
+                    .title(this.TXT.DIALOGS.ALL_MEANS_OF_COMMUNICATION_DISABLED.TITLE)
+                    .content(this.TXT.DIALOGS.ALL_MEANS_OF_COMMUNICATION_DISABLED.BODY)
+                    .ariaLabel(this.TXT.DIALOGS.ALL_MEANS_OF_COMMUNICATION_DISABLED.ARIA_LABEL)
+                    .ok(this.TXT.DIALOGS.ALL_MEANS_OF_COMMUNICATION_DISABLED.OK_BTN);
+
+                this.$mdDialog.show(alert);
+            }
         }
     }
 }

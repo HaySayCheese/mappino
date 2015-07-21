@@ -31,8 +31,10 @@
     </md-card>
 
 
-    <md-card class="-brief" ng-repeat="brief in briefs" data-hash="[[ brief.id ]]">
+    <md-card class="-brief" ng-repeat="brief in briefs | orderBy: 'state_sid'">
         <img class="md-card-image" ng-src="[[ brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png" />
+        <img class="md-card-image" src="{{ static }}build/images/common/image-404.png" ng-hide="brief.photo_url" alt="" />
+
         <md-card-content>
             <div layout="row">
                 <div class="brief-status -published" layout="row" layout-align="start center" ng-show="brief.state_sid == 0">
@@ -42,6 +44,10 @@
                 </div>
                 <div class="brief-status -unpublished" layout="row" layout-align="start center" ng-show="brief.state_sid == 1">
                     <span>Не опубликовано</span>
+                    <span flex></span>
+                </div>
+                <div class="brief-status -removed" layout="row" layout-align="start center" ng-show="brief.state_sid == 2">
+                    <span>Удалено</span>
                     <span flex></span>
                 </div>
                 <span flex></span>
@@ -56,15 +62,21 @@
         </md-card-content>
         <md-divider></md-divider>
         <div class="md-actions" layout="row" layout-align="end center">
-            <md-button class="md-warn md-hue-3" ng-click="briefsCtrl.removeBrief($event, brief)">
+            <md-button class="md-warn md-hue-3" ng-hide="brief.state_sid == 2" ng-click="briefsCtrl.removeBrief($event, brief)">
                 Удалить
             </md-button>
+            <md-button class="md-warn md-hue-3" ng-show="brief.state_sid == 2" ng-click="briefsCtrl.removeBrief($event, brief)">
+                Удалить навсегда
+            </md-button>
             <span flex></span>
-            <md-button class="md-primary md-hue-1" ng-click="briefsCtrl.editPublication($event, brief)">
+            <md-button class="md-primary md-hue-1" ng-hide="brief.state_sid == 2" ng-click="briefsCtrl.editPublication($event, brief)">
                 Редактировать
             </md-button>
-            <md-button class="md-primary md-hue-1" ui-sref="publication_view({ id: brief.tid + ':' + brief.id })">
+            <md-button class="md-primary md-hue-1" ng-hide="brief.state_sid == 2" ui-sref="publication_view({ id: brief.tid + ':' + brief.id })">
                 Посмотреть
+            </md-button>
+            <md-button class="md-primary md-hue-1" ng-show="brief.state_sid == 2" ng-click="briefsCtrl.recoveryBrief($event, brief)">
+                Восстановить
             </md-button>
         </div>
     </md-card>

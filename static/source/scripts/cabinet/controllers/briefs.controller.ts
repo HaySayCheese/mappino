@@ -64,10 +64,37 @@ module Mappino.Cabinet {
                 this.publicationsService.remove({ tid: brief.tid, hid: brief.id }, () => {
                     angular.forEach(this.$scope.briefs, (_brief, index) => {
                         this.$rootScope.loaders.overlay = false;
-                        if (_brief.id == brief.id) {
+
+                        if (_brief.id == brief.id && _brief.state_sid == 2) {
                             this.$scope.briefs.splice(index, 1);
+                        } else if (_brief.id == brief.id && _brief.state_sid != 2) {
+                            this.$scope.briefs[index].state_sid = 2;
                         }
                     });
+                }, response => {
+                    this.$rootScope.loaders.overlay = false;
+                });
+            });
+        }
+
+
+
+        public recoveryBrief($event, brief) {
+            var confirm = this.$mdDialog.confirm()
+                .parent(angular.element(document.body))
+                .title(this.TXT.DIALOGS.RECOVERY_PUBLICATION.TITLE)
+                .content(this.TXT.DIALOGS.RECOVERY_PUBLICATION.BODY)
+                .ariaLabel(this.TXT.DIALOGS.RECOVERY_PUBLICATION.ARIA_LABEL)
+                .ok(this.TXT.DIALOGS.RECOVERY_PUBLICATION.OK_BTN)
+                .cancel(this.TXT.DIALOGS.RECOVERY_PUBLICATION.CANCEL_BTN)
+                .targetEvent($event);
+
+
+            this.$mdDialog.show(confirm).then(() => {
+                this.$rootScope.loaders.overlay = true;
+                this.publicationsService.unpublish({ tid: brief.tid, hid: brief.id }, () => {
+                    this.$rootScope.loaders.overlay = false;
+                    this.$state.go('publication_edit', { id: brief.tid + ':' + brief.id });
                 }, response => {
                     this.$rootScope.loaders.overlay = false;
                 });
@@ -88,10 +115,18 @@ module Mappino.Cabinet {
 
             if (brief.state_sid == 0) {
                 this.$mdDialog.show(confirm).then(() => {
-                    this.$state.go('publication_edit', { id: brief.tid + ':' + brief.id });
+                    this.$rootScope.loaders.overlay = true;
+                    this.publicationsService.unpublish({ tid: brief.tid, hid: brief.id }, () => {
+                        this.$rootScope.loaders.overlay = false;
+                        this.$state.go('publication_edit', { id: brief.tid + ':' + brief.id });
+                    });
                 });
             } else {
-                this.$state.go('publication_edit', { id: brief.tid + ':' + brief.id });
+                this.$rootScope.loaders.overlay = true;
+                this.publicationsService.unpublish({ tid: brief.tid, hid: brief.id }, () => {
+                    this.$rootScope.loaders.overlay = false;
+                    this.$state.go('publication_edit', { id: brief.tid + ':' + brief.id });
+                });
             }
 
         }

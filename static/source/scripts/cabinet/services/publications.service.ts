@@ -31,7 +31,7 @@ module Mappino.Cabinet {
 
 
         public create(publication: IPublicationNew, successCallback?, errorCallback?) {
-            this.$http.post('/ajax/api/cabinet/publications/', publication)
+            this.$http.post(`/ajax/api/cabinet/publications/`, publication)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         angular.isFunction(successCallback) && successCallback(response.data)
@@ -52,7 +52,7 @@ module Mappino.Cabinet {
 
 
         public remove(publicationIds: IPublicationIds, successCallback?, errorCallback?) {
-            this.$http.delete('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/')
+            this.$http.delete(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/`)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this.$state.go('publications');
@@ -74,7 +74,7 @@ module Mappino.Cabinet {
 
 
         public publish(publicationIds: IPublicationIds, successCallback?, errorCallback?) {
-            this.$http.put('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/publish/', null)
+            this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/publish/`, null)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this.$state.go('publications');
@@ -95,8 +95,30 @@ module Mappino.Cabinet {
 
 
 
+        public unpublish(publicationIds: IPublicationIds, successCallback?, errorCallback?) {
+            this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/unpublish/`, null)
+                .then(response => {
+                    if (response.data['code'] === 0) {
+                        this.$state.go('publications');
+                        angular.isFunction(successCallback) && successCallback(response.data)
+                    } else {
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
+                    }
+                }, response => {
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.UNPUBLISH.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                });
+        }
+
+
+
         public load(publicationIds: IPublicationIds, successCallback?, errorCallback?) {
-            this.$http.get('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/')
+            this.$http.get(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/`)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this.publication = response.data['data'];
@@ -119,7 +141,7 @@ module Mappino.Cabinet {
 
         public uploadPhoto(publicationIds: IPublicationIds, photo: File, successCallback?, errorCallback?) {
             this.Upload.upload({
-                url: '/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/photos/',
+                url: `/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/photos/`,
                 file: photo
             }).then(response => {
                 if (response.data['code'] === 0) {
@@ -145,14 +167,16 @@ module Mappino.Cabinet {
 
 
         public removePhoto(publicationIds: IPublicationIds, photoId, successCallback?, errorCallback?) {
-            this.$http.delete('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/photos/' + photoId + '/')
+            this.$http.delete(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/photos/${photoId}/`)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         angular.forEach(this.publication.photos, (photo, index) => {
                             if (photo && photo.hash_id == photoId) {
                                 this.publication.photos.splice(index, 1);
                             }
+                        });
 
+                        angular.forEach(this.publication.photos, (photo, index) => {
                             if (photo && photo.hash_id == response.data['data'].hash_id) {
                                 this.publication.photos[index].is_title = true;
                             }
@@ -176,7 +200,7 @@ module Mappino.Cabinet {
 
 
         public setTitlePhoto(publicationIds: IPublicationIds, photoId, successCallback?, errorCallback?) {
-            this.$http.put('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/photos/' + photoId + '/title/', null)
+            this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/photos/${photoId}/title/`, null)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         angular.forEach(this.publication.photos, (photo, index) => {
@@ -202,7 +226,7 @@ module Mappino.Cabinet {
 
 
         public checkField(publicationIds: IPublicationIds, field: IPublicationCheckField, successCallback?, errorCallback?) {
-            this.$http.put('/ajax/api/cabinet/publications/' + publicationIds.tid + ':' + publicationIds.hid + '/', field)
+            this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/`, field)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         angular.isFunction(successCallback) &&
@@ -221,7 +245,7 @@ module Mappino.Cabinet {
 
 
         public loadBriefs(successCallback?, errorCallback?) {
-            this.$http.get('/ajax/api/cabinet/publications/briefs/all/')
+            this.$http.get(`/ajax/api/cabinet/publications/briefs/all/`)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this.briefs = response.data['data'];

@@ -7,11 +7,13 @@ module Mappino.Core.Auth {
                 last_name:          null,
                 full_name:          null,
                 avatar_url:         null,
-                add_landline_phone: null,
-                add_mobile_phone:   null,
-                email:              null,
-                landline_phone:     null,
+                mobile_code:        '+380',
                 mobile_phone:       null,
+                add_mobile_code:    '+380',
+                add_mobile_phone:   null,
+                landline_phone:     null,
+                add_landline_phone: null,
+                email:              null,
                 skype:              null,
                 work_email:         null
             },
@@ -44,126 +46,145 @@ module Mappino.Core.Auth {
 
 
 
-        public checkPhoneNumber(phoneNumber: string, success?: Function, error?: Function) {
-            this.$http.post('/ajax/api/accounts/login/', {
+        public checkPhoneNumber(phoneNumber: string, successCallback?: Function, errorCallback?: Function) {
+            this.$http.post(`/ajax/api/accounts/login/`, {
                 "phone_number": phoneNumber
             }).then(response => {
                 if (response.data['code'] === 0) {
-                    angular.isFunction(success) && success(response.data)
+                    angular.isFunction(successCallback) && successCallback(response.data)
                 } else {
-                    angular.isFunction(error) && error(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 }
             }, response => {
-                angular.isFunction(error) && error(response.data)
+                angular.isFunction(errorCallback) && errorCallback(response.data)
             });
         }
 
 
 
-        public checkSMSCode(phoneNumber: string, smsCode: string, success?: Function, error?: Function) {
-            this.$http.post('/ajax/api/accounts/login/check-code/', {
-                "phone_number": phoneNumber,
-                "token":        smsCode
+        public checkSMSCode(phoneNumber, smsCode, successCallback?, errorCallback?) {
+            this.$http.post(`/ajax/api/accounts/login/check-code/`, {
+                'phone_number': phoneNumber,
+                'token':        smsCode
             }).then(response => {
                 if (response.data['code'] === 0) {
                     this.updateProfileField(response.data['data']);
                     this.$cookies.remove('mcheck');
-                    angular.isFunction(success) && success(response.data)
+                    angular.isFunction(successCallback) && successCallback(response.data)
                 } else {
                     this.clearUserFromStorage();
-                    angular.isFunction(error) && error(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 }
             }, response => {
                 this.clearUserFromStorage();
-                angular.isFunction(error) && error(response.data)
+                angular.isFunction(errorCallback) && errorCallback(response.data)
             });
         }
 
 
 
 
-        public tryLogin(success?: Function, error?: Function) {
-            this.$http.get('/ajax/api/accounts/on-login-info/')
+        public tryLogin(successCallback?, errorCallback?) {
+            this.$http.get(`/ajax/api/accounts/on-login-info/`)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this.updateProfileField(response.data['data']);
-                        angular.isFunction(success) && success(response.data)
+                        angular.isFunction(successCallback) && successCallback(response.data)
                     } else {
                         this.clearUserFromStorage();
-                        angular.isFunction(error) && error(response.data)
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    angular.isFunction(error) && error(response.data)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 })
         }
 
 
 
-        public loadProfile(success?, error?) {
-            this.$http.get('/ajax/api/cabinet/account/')
+        public loadProfile(successCallback?, errorCallback?) {
+            this.$http.get(`/ajax/api/cabinet/account/`)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this.updateProfileField(response.data['data']['account']);
                         this.updateProfileField(response.data['data']['preferences']);
 
-                        angular.isFunction(success) && success(this._user);
+                        angular.isFunction(successCallback) && successCallback(this._user);
                     } else {
-                        angular.isFunction(error) && error(response.data);
+                        angular.isFunction(errorCallback) && errorCallback(response.data);
                     }
                 }, response => {
-                    angular.isFunction(error) && error(response.data);
+                    angular.isFunction(errorCallback) && errorCallback(response.data);
                 });
         }
 
 
 
-        public checkProfileField(field: Object, success?, error?) {
-            this.$http.post('/ajax/api/cabinet/account/', field)
+        public checkProfileField(field, successCallback?, errorCallback?) {
+            var fullMobileNumber = {
+                fieldName:  field.fieldName,
+                fieldValue: null
+            };
+
+            if (field.fieldName == 'mobile_phone') {
+                fullMobileNumber = {
+                    fieldName:  field.fieldName,
+                    fieldValue: this._user.account.mobile_code + field.fieldValue
+                };
+            }
+
+            if (field.fieldName == 'add_mobile_phone') {
+                fullMobileNumber = {
+                    fieldName:  field.fieldName,
+                    fieldValue: this._user.account.add_mobile_code + field.fieldValue
+                }
+            }
+
+            this.$http.post(`/ajax/api/cabinet/account/`, fullMobileNumber.fieldValue ? fullMobileNumber : field)
                 .then(response => {
                     if (response.data['code'] === 0) {
-                        field['v'] = response.data['value'] ? response.data['value'] : field['v'];
+                        field['fieldValue'] = response.data['value'] ? response.data['value'] : field['fieldValue'];
 
                         var _field = {};
-                        _field[field['f']] = field['v'];
+                        _field[field['fieldName']] = field['fieldValue'];
 
                         this.updateProfileField(_field);
-                        angular.isFunction(success) && success(field['v']);
+                        angular.isFunction(successCallback) && successCallback(field['fieldValue']);
                     } else {
-                        angular.isFunction(error) && error(response.data);
+                        angular.isFunction(errorCallback) && errorCallback(response.data);
                     }
                 }, response => {
-                    angular.isFunction(error) && error(response.data);
+                    angular.isFunction(errorCallback) && errorCallback(response.data);
                 })
         }
 
 
 
-        public uploadAvatar(avatar: File, success?, error?) {
+        public uploadAvatar(avatar, successCallback?, errorCallback?) {
             this.Upload.upload({
-                url: '/ajax/api/cabinet/account/photo/',
+                url: `/ajax/api/cabinet/account/photo/`,
                 file: avatar
-            }).success(response => {
-                if (response.code === 0) {
-                    this.updateProfileField({ avatar_url: response.data['url'] });
-                    angular.isFunction(success) && success(response);
+            }).then(response => {
+                if (response.data['code'] === 0) {
+                    this.updateProfileField({ avatar_url: response.data.data['url'] });
+                    angular.isFunction(successCallback) && successCallback(response.data);
                 } else {
-                    angular.isFunction(error) && error(response)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 }
-            }).error(response => {
-                angular.isFunction(error) && error(response)
+            }, response => {
+                angular.isFunction(errorCallback) && errorCallback(response.data)
             })
         }
 
 
 
-        public removeAvatar(success?, error?) {
-            this.$http.delete('/ajax/api/cabinet/account/photo/')
+        public removeAvatar(successCallback?, errorCallback?) {
+            this.$http.delete(`/ajax/api/cabinet/account/photo/`)
                 .then(response => {
                     this.updateProfileField({ avatar_url: null });
-                    angular.isFunction(success) && success(this.user);
+                    angular.isFunction(successCallback) && successCallback(this._user);
                 }, response => {
-                    angular.isFunction(error) && error(response)
-                })
+                    angular.isFunction(errorCallback) && errorCallback(response)
+                });
         }
 
 

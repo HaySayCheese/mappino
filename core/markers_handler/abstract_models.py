@@ -88,7 +88,7 @@ class AbstractBaseIndex(models.Model):
 
 
     @classmethod
-    def min_add_queryset(cls):  # virtual
+    def min_add_queryset(cls, publication_head_id):  # virtual
         """
         :return:
             Мінімальний QuerySet моделі, до якої прив’язаний індекс.
@@ -104,17 +104,20 @@ class AbstractBaseIndex(models.Model):
 
 
     @classmethod
-    def min_remove_queryset(cls):
+    def min_remove_queryset(cls, publication_head_id):
         model = HEAD_MODELS[cls.tid]
-        return model.objects.all().only(
-            'id',
-            'degree_lat',
-            'degree_lng',
-            'segment_lat',
-            'segment_lng',
-            'pos_lat',
-            'pos_lng',
-        )
+
+        return model.objects.\
+            filter(id=publication_head_id)\
+            .only(
+                'id',
+                'degree_lat',
+                'degree_lng',
+                'segment_lat',
+                'segment_lng',
+                'pos_lat',
+                'pos_lng',
+            )[:1]
 
 
     @staticmethod

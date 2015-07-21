@@ -86,7 +86,7 @@ class AccountView(CabinetView):
 
 
         @staticmethod
-        @json_response_bad_request
+        @json_response
         def value_required():
             return {
                 'code': 1,
@@ -95,7 +95,7 @@ class AccountView(CabinetView):
 
 
         @staticmethod
-        @json_response_bad_request
+        @json_response
         def invalid_value():
             return {
                 'code': 2,
@@ -104,16 +104,16 @@ class AccountView(CabinetView):
 
 
         @staticmethod
-        @json_response_bad_request
+        @json_response
         def duplicated_value():
             return {
                 'code': 3,
-                'message': 'Value is duplicated.'
+                'message': 'Value is invalid.'
             }
 
 
         @staticmethod
-        @json_response_bad_request
+        @json_response
         def invalid_parameters():
             return {
                 'code': 100,
@@ -158,14 +158,14 @@ class AccountView(CabinetView):
     def post(self, request):
         try:
             params = angular_post_parameters(request)
-            field = params['f']
-            value = params.get('v', '') # value can be empty
+            field = params['fieldName']
+            value = params.get('fieldValue', '') # value can be empty
         except (ValueError, KeyError):
             return self.PostResponses.invalid_parameters()
 
 
         try:
-            update_method = self.update_methods[field]
+            update_method = self.update_methods.get(field)
             return update_method(request.user, value)
 
         except KeyError:
@@ -252,6 +252,7 @@ class AccountView(CabinetView):
         if not phone:
             return self.PostResponses.value_required()
 
+
         try:
             phone = Users.objects.parse_phone_number(phone)
         except ValueError:
@@ -281,6 +282,7 @@ class AccountView(CabinetView):
                 user.save()
 
             return self.PostResponses.ok()
+
 
         try:
             phone =Users.objects.parse_phone_number(phone)
