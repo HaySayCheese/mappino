@@ -301,19 +301,19 @@ module Mappino.Cabinet {
                 elementValue = this.$scope.publication.sale_terms[elementName.replace('sale_', '')];
                 this.publicationsService.checkField(this.publicationIds, { fieldName: elementName, fieldValue: elementValue });
 
-            } else if (!_.isUndefined(this.$scope.publication.head[elementName])) {
+            } else if (!angular.isUndefined(this.$scope.publication.head[elementName])) {
                 elementValue = this.$scope.publication.head[elementName];
                 this.publicationsService.checkField(this.publicationIds, { fieldName: elementName, fieldValue: elementValue });
 
-            } else if (!_.isUndefined(this.$scope.publication.body[elementName])) {
+            } else if (!angular.isUndefined(this.$scope.publication.body[elementName])) {
                 elementValue = this.$scope.publication.body[elementName];
                 this.publicationsService.checkField(this.publicationIds, { fieldName: elementName, fieldValue: elementValue });
 
-            } else if (!_.isUndefined(this.$scope.publication.rent_terms[elementName])) {
+            } else if (!angular.isUndefined(this.$scope.publication.rent_terms[elementName])) {
                 elementValue = this.$scope.publication.rent_terms[elementName];
                 this.publicationsService.checkField(this.publicationIds, { fieldName: elementName, fieldValue: elementValue });
 
-            } else if (!_.isUndefined(this.$scope.publication.sale_terms[elementName])) {
+            } else if (!angular.isUndefined(this.$scope.publication.sale_terms[elementName])) {
                 elementValue = this.$scope.publication.sale_terms[elementName];
                 this.publicationsService.checkField(this.publicationIds, { fieldName: elementName, fieldValue: elementValue });
             }

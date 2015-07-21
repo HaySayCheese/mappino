@@ -84,12 +84,9 @@ module Mappino.Cabinet {
                     this.$scope.userProfileForm[name].$setValidity("invalid",       response.code !== 2);
                     this.$scope.userProfileForm[name].$setValidity("duplicated",    response.code !== 3);
                 });
-
             });
 
             this.$scope.$watchCollection('profile.preferences', (newValue, oldValue) => {
-                this.checkIfAllMeansOfCommunicationDisabled();
-
                 if (!angular.isUndefined(newValue) && !angular.isUndefined(oldValue)) {
                     for (var key in newValue) {
                         if (newValue[key] != oldValue[key]) {
@@ -97,6 +94,8 @@ module Mappino.Cabinet {
                         }
                     }
                 }
+
+                this.checkIfAllMeansOfCommunicationDisabled();
             });
         }
 
