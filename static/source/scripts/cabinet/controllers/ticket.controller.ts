@@ -37,7 +37,7 @@ module Mappino.Cabinet {
                 ticketsService.loadTicketMessages(toParams.ticket_id, response => {
                     $scope.ticket.ticket_id = toParams.ticket_id;
                     $scope.ticket.subject   = response.subject;
-                    $scope.ticket.messages.push(response.messages);
+                    $scope.ticket.messages  = response.messages;
 
                     $scope.ticket = this.ticket;
                     $scope.ticketIsLoaded = true;

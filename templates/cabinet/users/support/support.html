@@ -69,7 +69,10 @@
                         <div class="md-body-2">Последние диалоги</div>
 
                         <md-list-item ng-click="supportCtrl.goToTicket(ticket.id)" class="md-2-line" ng-repeat="ticket in tickets | orderBy: 'created': true">
-                            <img ng-src="http://lorempixel.com/40/40/nature" class="md-avatar" alt="[[ ticket.subject ]]" />
+                            <img class="md-avatar" ng-src="[[ userData.account.avatar_url ]]" alt="" ng-if="userData.account.avatar_url"
+                                 on-error-src="{{ static }}build/images/cabinet/user.png" />
+                            <img class="md-avatar" src="{{ static }}build/images/cabinet/user.png" ng-hide="userData.account.avatar_url" alt="" />
+
                             <div class="md-list-item-text">
                                 <h3 class="truncate" ng-show="ticket.subject">
                                     [[ ticket.subject ]]

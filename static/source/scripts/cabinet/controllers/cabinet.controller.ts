@@ -28,7 +28,7 @@ module Mappino.Cabinet {
             };
 
             authService.tryLogin(response => {
-                $scope.navbarUserData = authService.user;
+                $scope.userData = authService.user;
             });
         }
 
