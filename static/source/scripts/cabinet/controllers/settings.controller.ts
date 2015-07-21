@@ -3,7 +3,7 @@
 
 module Mappino.Cabinet {
     export class SettingsController {
-        private account: Mappino.Core.Auth.IUser;
+        private profile: Mappino.Core.Auth.IUser;
 
         public static $inject = [
             '$scope',
@@ -23,14 +23,14 @@ module Mappino.Cabinet {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Редактирование профиля';
 
-            $scope.account = this.account;
+            $scope.profile = this.profile;
 
             $rootScope.loaders.overlay = true;
 
             this.initInputsChange();
 
             authService.loadProfile(response => {
-                $scope.account = response;
+                $scope.profile = response;
                 $rootScope.loaders.overlay = false;
             });
         }
@@ -86,7 +86,7 @@ module Mappino.Cabinet {
 
             });
 
-            this.$scope.$watchCollection('account.preferences', (newValue, oldValue) => {
+            this.$scope.$watchCollection('profile.preferences', (newValue, oldValue) => {
                 this.checkIfAllMeansOfCommunicationDisabled();
 
                 if (!angular.isUndefined(newValue) && !angular.isUndefined(oldValue)) {
@@ -102,11 +102,11 @@ module Mappino.Cabinet {
 
 
         private checkIfAllMeansOfCommunicationDisabled() {
-            if (!this.$scope.account) return;
+            if (!this.$scope.profile) return;
 
-            if (this.$scope.account.preferences.hide_email && this.$scope.account.preferences.hide_mobile_phone_number &&
-                this.$scope.account.preferences.hide_add_mobile_phone_number && this.$scope.account.preferences.hide_landline_phone_number &&
-                this.$scope.account.preferences.hide_add_landline_phone_number && this.$scope.account.preferences.hide_skype) {
+            if (this.$scope.profile.preferences.hide_email && this.$scope.profile.preferences.hide_mobile_phone_number &&
+                this.$scope.profile.preferences.hide_add_mobile_phone_number && this.$scope.profile.preferences.hide_landline_phone_number &&
+                this.$scope.profile.preferences.hide_add_landline_phone_number && this.$scope.profile.preferences.hide_skype) {
                 // ------------------------------------------------------------------------------------------------------
                 var alert = this.$mdDialog.confirm()
                     .parent(angular.element(document.body))
@@ -114,7 +114,6 @@ module Mappino.Cabinet {
                     .content(this.TXT.DIALOGS.ALL_MEANS_OF_COMMUNICATION_DISABLED.BODY)
                     .ariaLabel(this.TXT.DIALOGS.ALL_MEANS_OF_COMMUNICATION_DISABLED.ARIA_LABEL)
                     .ok(this.TXT.DIALOGS.ALL_MEANS_OF_COMMUNICATION_DISABLED.OK_BTN);
-                    //.targetEvent($event);
 
                 this.$mdDialog.show(alert);
             }

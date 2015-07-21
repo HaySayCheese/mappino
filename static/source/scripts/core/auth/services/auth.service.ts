@@ -165,13 +165,13 @@ module Mappino.Core.Auth {
                 file: avatar
             }).then(response => {
                 if (response.data['code'] === 0) {
-                    this.updateProfileField({ avatar_url: response.data['url'] });
-                    angular.isFunction(successCallback) && successCallback(response);
+                    this.updateProfileField({ avatar_url: response.data.data['url'] });
+                    angular.isFunction(successCallback) && successCallback(response.data);
                 } else {
-                    angular.isFunction(errorCallback) && errorCallback(response)
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
                 }
             }, response => {
-                angular.isFunction(errorCallback) && errorCallback(response)
+                angular.isFunction(errorCallback) && errorCallback(response.data)
             })
         }
 

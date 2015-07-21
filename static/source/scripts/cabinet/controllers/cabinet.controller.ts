@@ -5,6 +5,7 @@ module Mappino.Cabinet {
     export class CabinetController {
 
         public static $inject = [
+            '$scope',
             '$rootScope',
             'AuthService',
             '$mdSidenav',
@@ -12,7 +13,8 @@ module Mappino.Cabinet {
             '$mdMedia'
         ];
 
-        constructor(private $rootScope: any,
+        constructor(private $scope: any,
+                    private $rootScope: any,
                     private authService: Mappino.Core.Auth.IAuthService,
                     private $mdSidenav: any,
                     private $mdUtil: any,
@@ -25,7 +27,9 @@ module Mappino.Cabinet {
                 tickets:            false
             };
 
-            authService.tryLogin();
+            authService.tryLogin(response => {
+                $scope.navbarUserData = authService.user;
+            });
         }
 
 
