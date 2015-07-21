@@ -256,10 +256,6 @@
                         </md-checkbox>
                     </div>
                 </div>
-                <md-input-container>
-                    <label>Другие удобства, уточнения</label>
-                    <input name="add_facilities" ng-model="publication.body.add_facilities">
-                </md-input-container>
             </div>
 
             <div class="md-body-2" ng-show="publication.head.for_rent">Удобства, предоставляемые с орендой</div>
@@ -278,6 +274,13 @@
                         </md-checkbox>
                     </div>
                 </div>
+            </div>
+
+            <div class="md-padding">
+                <md-input-container>
+                    <label>Другие удобства, уточнения</label>
+                    <input name="add_facilities" ng-model="publication.body.add_facilities">
+                </md-input-container>
             </div>
         </md-card-content>
     </md-card>

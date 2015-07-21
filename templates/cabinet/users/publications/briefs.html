@@ -61,7 +61,10 @@
         <md-divider></md-divider>
         <div class="md-actions" layout="row" layout-align="end center">
             <md-button class="md-warn md-hue-3" ng-hide="brief.state_sid == 2" ng-click="briefsCtrl.removeBrief($event, brief)">
-                [[ brief.state_sid == 2 ? 'Удалить навсегда' : 'Удалить' ]]
+                Удалить
+            </md-button>
+            <md-button class="md-warn md-hue-3" ng-show="brief.state_sid == 2" ng-click="briefsCtrl.removeBrief($event, brief)">
+                Удалить навсегда
             </md-button>
             <span flex></span>
             <md-button class="md-primary md-hue-1" ng-hide="brief.state_sid == 2" ng-click="briefsCtrl.editPublication($event, brief)">
