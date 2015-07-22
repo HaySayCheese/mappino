@@ -1,20 +1,18 @@
 # coding=utf-8
 import json
+from django.views.generic import View
 
-from apps.classes import CustomerView
-from apps.main.api.publications_and_markers.classes import PublicationsViewMixin
 from collective.exceptions import InvalidArgument
 from collective.http.responses import HttpJsonResponseBadRequest, HttpJsonResponse, HttpJsonResponseNotFound
 from collective.methods.request_data_getters import angular_post_parameters
 from core.claims.classes import ClaimsManager
-from core.favorites.models import Favorites
 from core.markers_handler import SegmentsIndex
 from core.markers_handler.exceptions import TooBigTransaction
 from core.publications import classes
 from core.publications.constants import HEAD_MODELS
 
 
-class Markers(PublicationsViewMixin, CustomerView):
+class Markers(View):
     get_codes = {
         'invalid_tids': {
             'code': 1,
@@ -221,7 +219,7 @@ class Markers(PublicationsViewMixin, CustomerView):
         return HttpJsonResponse(response)
 
 
-class DetailedView(PublicationsViewMixin, CustomerView):
+class DetailedView(View):
     formatter = classes.PublishedDataSource() # this is a description generator for the publications.
 
     class GetResponses(object):
@@ -284,22 +282,25 @@ class DetailedView(PublicationsViewMixin, CustomerView):
 
         description = self.formatter.format(tid, publication)
 
-        # check if this publication is listed in customers favorites
-        description['added_to_favorites'] = False
+        # todo: return favorites back
 
-        try:
-            customer = self.get_customer_queryset(request)[0]
-            if Favorites.exist(customer.id, tid, hash_id):
-                description['added_to_favorites'] = True
-        except IndexError:
-            pass
+        # # check if this publication is listed in customers favorites
+        # description['added_to_favorites'] = False
+
+
+        # try:
+        #     customer = self.get_customer_queryset(request)[0]
+        #     if Favorites.exist(customer.id, tid, hash_id):
+        #         description['added_to_favorites'] = True
+        # except IndexError:
+        #     pass
 
 
         return self.GetResponses.ok(description)
 
 
 class Claims(object):
-    class List(CustomerView):
+    class List(View):
         class PostResponses(object):
             @staticmethod
             def ok():
