@@ -83,7 +83,7 @@ class CabinetPublishedDataSource(object):
             'description': p.body.print_description(),
 
             'market_type': p.body.print_market_type(),
-            'flat_type': p.body.print_flat_type(),
+            'building_type': p.body.print_building_type(),
             'condition': p.body.print_condition(),
 
             'total_area': p.body.print_total_area(),
