@@ -155,7 +155,7 @@ class FlatsBodies(BodyModel):
         return self.substitutions['market_type'][self.market_type_sid]
 
 
-     def print_building_type(self):
+    def print_building_type(self):
         building_type = self.substitutions['building_type'].get(self.building_type_sid)
         if building_type:
             return building_type
