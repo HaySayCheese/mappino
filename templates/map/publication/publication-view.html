@@ -1,6 +1,6 @@
-<div class="publication-view-container" layout="column" scrollbar>
+<div class="publication-view-container" layout="column" ng-show="publication" scrollbar>
     <header>
-        <img src="http://hmsdemo.dhru.com/images/gallery/room/delux/SetHeight800-Deluxe-Room-Bedroom.jpg" alt=""/>
+        <img ng-src="[[ publication.photos[0] ]]" alt=""/>
         <div class="publication-view-image-overlay">
             <div layout="row">
                 <md-button class="md-icon-button">
@@ -63,4 +63,8 @@
     </header>
 
     <div ng-include="publicationTemplateUrl" include-replace></div>
+</div>
+
+<div layout="row" layout-align="center center" ng-show="!publication" flex>
+    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
 </div>

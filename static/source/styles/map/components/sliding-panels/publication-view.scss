@@ -19,18 +19,6 @@ publication-view {
     }
 
 
-
-    //.publication-view-container {
-    //    //@include square(100%);
-    //    position: relative;
-    //    display: block;
-    //
-    //    .scroller {
-    //        @include square(100%);
-    //    }
-    //}
-
-
     header {
         height: 400px;
         position: relative;
@@ -85,5 +73,9 @@ publication-view {
     section {
         width: 100%;
         display: block;
+
+        p {
+            margin-top: 0;
+        }
     }
 }
