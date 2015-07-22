@@ -3,7 +3,7 @@ from apps.main.api.publications_and_markers.utils import *
 from core.publications.constants import OBJECTS_TYPES
 
 
-class PublicationsViewMixin(object):
+class PublicationsView(object):
     """
     Implements several common methods for publications and markers processing.
     """
