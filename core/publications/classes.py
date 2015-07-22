@@ -389,7 +389,7 @@ class PublishedDataSource(object):
         description = {
             'title': p.body.print_title(),
             'description': p.body.print_description(),
-            # 'address': p.body
+            'address': p.body.print_address(),
 
             'market_type': p.body.print_market_type(),
             'building_type': p.body.print_building_type(),

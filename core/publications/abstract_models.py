@@ -127,7 +127,6 @@ class AbstractHeadModel(models.Model):
 
     pos_lat = models.TextField(null=True)
     pos_lng = models.TextField(null=True)
-    address = models.TextField(null=True)
 
 
     @classmethod
@@ -458,6 +457,7 @@ class BodyModel(AbstractModel):
     #-- fields
     title = models.TextField(null=True)
     description = models.TextField(null=True)
+    address = models.TextField(null=True)
 
 
     def check_required_fields(self):
@@ -487,6 +487,10 @@ class BodyModel(AbstractModel):
 
     def print_description(self):
         return self.description if self.description else u''
+
+
+    def print_address(self):
+        return self.address if self.address else u''
 
 
 class SaleTermsModel(AbstractModel):
