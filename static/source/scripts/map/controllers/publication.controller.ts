@@ -26,6 +26,7 @@ module Mappino.Map {
             this.publicationHandler = publicationHandler;
 
             $scope.publication = null;
+            $scope.publicationTemplateUrl = null;
 
 
             this.loadPublicationData();
@@ -46,7 +47,10 @@ module Mappino.Map {
                 this.publicationIds.tid = this.$state.params['publication_id'].split(':')[0];
                 this.publicationIds.hid = this.$state.params['publication_id'].split(':')[1];
 
+                this.$scope.publicationTemplateUrl = `/ajax/template/map/publication/detailed/${this.publicationIds.tid}/`;
+
                 this.publicationService.load(this.publicationIds, response => {
+                    this.$scope.publication = response.data;
                     console.log(response)
                 })
             }
