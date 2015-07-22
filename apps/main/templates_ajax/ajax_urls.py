@@ -8,6 +8,7 @@ urlpatterns = patterns('apps.main.templates',
 
     url(r'^ajax/template/map/publication/view/$', 'publication_view'),
 
+    url(r'^ajax/template/map/publication/detailed/(\d+)/$', 'publication_detailed'),
 
     # # homepage
     # url(r'^ajax/template/main/home/suggests/$', 'home.suggests_template'),

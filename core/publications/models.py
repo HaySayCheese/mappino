@@ -138,19 +138,6 @@ class FlatsBodies(BodyModel):
 
 
     #-- output
-    def print_title(self):
-        if self.title is None:
-            return u''
-
-        return self.title
-
-
-    def print_description(self):
-        if not self.description:
-            return u''
-        return self.description
-
-
     def print_market_type(self):
         return self.substitutions['market_type'][self.market_type_sid]
 
@@ -421,18 +408,6 @@ class HousesBodies(BodyModel):
 
 
     # output
-    def print_title(self):
-        if not self.title:
-            return u''
-        return self.title
-
-
-    def print_description(self):
-        if not self.description:
-            return u''
-        return self.description
-
-
     def print_market_type(self):
         return self.substitutions['market_type'][self.market_type_sid]
 
@@ -702,18 +677,6 @@ class RoomsBodies(BodyModel):
 
 
     # output
-    def print_title(self):
-        if not self.title:
-            return u''
-        return self.title
-
-
-    def print_description(self):
-        if not self.description:
-            return u''
-        return self.description
-
-
     def print_market_type(self):
         return self.substitutions['market_type'][self.market_type_sid]
 
@@ -920,18 +883,6 @@ class TradesBodies(BodyModel):
 
 
     # output
-    def print_title(self):
-        if self.title is None:
-            return u''
-        return self.title
-
-
-    def print_description(self):
-        if self.description is None:
-            return u''
-        return self.description
-
-
     def print_market_type(self):
         return self.substitutions['market_type'][self.market_type_sid]
 
@@ -1270,18 +1221,6 @@ class OfficesBodies(BodyModel):
 
 
     # output
-    def print_title(self):
-        if not self.title:
-            return u''
-        return self.title
-
-
-    def print_description(self):
-        if not self.description:
-            return u''
-        return self.description
-
-
     def print_market_type(self):
         return self.substitutions['market_type'][self.market_type_sid]
 

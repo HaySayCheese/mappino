@@ -459,6 +459,7 @@ class BodyModel(AbstractModel):
     title = models.TextField(null=True)
     description = models.TextField(null=True)
 
+
     def check_required_fields(self):
         """
         Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
@@ -471,12 +472,21 @@ class BodyModel(AbstractModel):
             raise EmptyDescription('Description is empty')
         self.check_extended_fields()
 
+
     def check_extended_fields(self):
         """
         Abstract.
         Призначений для валідації моделей, унаслідуваних від поточної.
         """
         return
+
+
+    def print_title(self):
+        return self.title if self.title else u''
+
+
+    def print_description(self):
+        return self.description if self.description else u''
 
 
 class SaleTermsModel(AbstractModel):
