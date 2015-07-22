@@ -392,8 +392,6 @@ class PublishedDataSource(object):
 
             'market_type': p.body.print_market_type(),
             'building_type': p.body.print_building_type(),
-            'build_year': p.body.print_build_year(),
-            'flat_type': p.body.print_flat_type(),
             'rooms_planning': p.body.print_rooms_planning() ,
             'condition': p.body.print_condition(),
 
@@ -405,22 +403,15 @@ class PublishedDataSource(object):
             'kitchen_area': p.body.print_kitchen_area(),
 
             'rooms_count': p.body.print_rooms_count() or u'неизвестно',
-            'bedrooms_count': p.body.print_bedrooms_count(),
-            'vcs_count': p.body.print_vcs_count(),
-            'balconies_count': p.body.print_balconies_count(),
-            'loggias_count': p.body.print_loggias_count(),
-            'ceiling_height': p.body.print_ceiling_height(),
 
             'facilities': p.body.print_facilities() or u'неизвестно',
             'communications': p.body.print_communications(),
             'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
         }
 
         if p.for_sale:
             description.update({
                 'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms()
             })
         if p.for_rent:
             description.update({
