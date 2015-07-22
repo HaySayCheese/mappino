@@ -20,14 +20,13 @@
 
 
     <script src="http://yastatic.net/jquery/2.1.4/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0/angular.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0/angular-cookies.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0/angular-resource.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0/angular-animate.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0/angular-aria.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0/angular-messages.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-cookies.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-resource.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-animate.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-aria.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-messages.min.js"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
 
@@ -59,8 +58,15 @@
 
             <span flex></span>
 
-            <md-button ui-sref="settings" class="nav-button">
-                Настройки
+            <md-button ui-sref="settings" class="nav-button" ng-show="userData.account.full_name">
+                <div layout="row" layour-align="center center">
+                    <img class="navbar-user-avatar" ng-src="[[ userData.account.avatar_url ]]" alt="" ng-show="userData.account.avatar_url"
+                         on-error-src="{{ static }}build/images/cabinet/user.png" />
+                    <img class="navbar-user-avatar" src="{{ static }}build/images/cabinet/user.png" ng-hide="userData.account.avatar_url" alt="" />
+
+                    <span ng-show="userData.account.first_name && userData.account.last_name">[[ userData.account.full_name ]]</span>
+                    <span ng-hide="userData.account.first_name && userData.account.last_name">Настройки</span>
+                </div>
             </md-button>
         </nav>
     </md-toolbar>

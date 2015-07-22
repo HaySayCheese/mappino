@@ -6,20 +6,20 @@
         <md-card-content layout="column">
             <div layout="column" layout-align="center center">
                 <img src="{{ static }}build/images/cabinet/brief-new-publication.gif" alt=""/>
-                <h3 class="grey-text text-darken-2">Добавить новое объявление</h3>
+                <h3 class="md-headline grey-text text-darken-2">Добавить новое объявление</h3>
+
+                <div layout="row">
+                    <md-checkbox class="md-primary" ng-model="newPublication.for_sale" aria-label="Продажа">
+                        О продаже
+                    </md-checkbox>
+                    <md-checkbox class="md-primary" ng-model="newPublication.for_rent" aria-label="Аренда">
+                        Об аренде
+                    </md-checkbox>
+                </div>
 
                 <md-select placeholder="Realty type" ng-model="newPublication.tid">
                     <md-option ng-repeat="type in TYPES.REALTY" value="[[ type.id ]]">[[ type.titles.genitive ]]</md-option>
                 </md-select>
-
-                <div layout="row">
-                    <md-checkbox class="md-primary" ng-model="newPublication.for_sale" aria-label="Продажа">
-                        Продажа
-                    </md-checkbox>
-                    <md-checkbox class="md-primary" ng-model="newPublication.for_rent" aria-label="Аренда">
-                        Аренда
-                    </md-checkbox>
-                </div>
             </div>
         </md-card-content>
         <md-divider></md-divider>
@@ -33,6 +33,8 @@
 
     <md-card class="-brief" ng-repeat="brief in briefs | orderBy: 'state_sid'">
         <img class="md-card-image" ng-src="[[ brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png" />
+        <img class="md-card-image" src="{{ static }}build/images/common/image-404.png" ng-hide="brief.photo_url" alt="" />
+
         <md-card-content>
             <div layout="row">
                 <div class="brief-status -published" layout="row" layout-align="start center" ng-show="brief.state_sid == 0">
