@@ -46,13 +46,12 @@ module Mappino.Map {
     app.service('PublicationHandler', PublicationHandler);
 
 
+
     /** Directives */
     app.directive('navbarLeft', NavbarLeftDirective);
     app.directive('navbarRight', NavbarRightDirective);
     app.directive('publicationView', PublcationViewDirective);
     app.directive('tabSectionCollapsible', TabBodyCollapsibleDirective);
-    //app.directive('tabBodySectionCollapsible', TabBodySectionCollapsibleDirective);
-
 
 
     /** Controllers */

@@ -34,6 +34,7 @@ module Mappino.Map {
             $scope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
                 if (toParams['publication_id'] != 0 && fromParams['publication_id'] != toParams['publication_id']) {
                     this.loadPublicationData();
+                    console.log('gsagasgas')
                 }
             });
         }
