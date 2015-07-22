@@ -38,6 +38,7 @@ module Mappino.Map {
     /** Services */
     app.service('FiltersService', FiltersService);
     app.service('MarkersService', MarkersService);
+    app.service('PublicationService', PublicationService);
 
 
     /** Handlers */
@@ -51,7 +52,6 @@ module Mappino.Map {
     app.directive('publicationView', PublcationViewDirective);
     app.directive('tabSectionCollapsible', TabBodyCollapsibleDirective);
     //app.directive('tabBodySectionCollapsible', TabBodySectionCollapsibleDirective);
-
 
 
 
