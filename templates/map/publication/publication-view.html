@@ -37,10 +37,10 @@
                 </md-button>
                 <div layout="column" layout-padding>
                     <div class="md-headline">
-                        Квартира 3 комн.
+                        [[ publication.title ]]
                     </div>
                     <div class="md-subhead">
-                        м. Чернівці, вул. Головна 146а
+                        [[ publication.address ]]
                     </div>
                 </div>
                 <md-fab-speed-dial class="md-fling publication-menu" md-direction="up">
@@ -62,67 +62,5 @@
         </div>
     </header>
 
-    <section class="md-padding">
-        <div class="md-subhead blue-text">Краткая информация</div>
-        <md-divider></md-divider>
-        <p layout-padding>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias at aut deleniti dignissimos expedita explicabo iste perferendis porro, praesentium quasi qui quibusdam ratione reprehenderit saepe tenetur totam voluptatem? Esse, qui!
-        </p>
-        <div class="md-subhead blue-text">Інфа</div>
-        <md-divider></md-divider>
-        <div layout="row" layout-padding>
-            <div flex="50">
-                <div layout="row">
-                    <div class="text-right" flex="50">
-                        <div>Тип квартири:</div>
-                    </div>
-                    <div flex="50">
-                        <div>новостройка</div>
-                    </div>
-                </div>
-                <div layout="row">
-                    <div class="text-right" flex="50">
-                        <div>Тип рынка:</div>
-                    </div>
-                    <div flex="50">
-                        <div>вторичный</div>
-                    </div>
-                </div>
-                <div layout="row">
-                    <div class="text-right" flex="50">
-                        <div>Тип здания:</div>
-                    </div>
-                    <div flex="50">
-                        <div>кирпич</div>
-                    </div>
-                </div>
-                <div layout="row">
-                    <div class="text-right" flex="50">
-                        <div>Планировка:</div>
-                    </div>
-                    <div flex="50">
-                        <div>раздельная</div>
-                    </div>
-                </div>
-                <div layout="row">
-                    <div class="text-right" flex="50">
-                        <div>Общая площадь:</div>
-                    </div>
-                    <div flex="50">
-                        <div>100 м²</div>
-                    </div>
-                </div>
-            </div>
-            <div flex="50">
-                <div>Тип квартири: новостройка</div>
-                <div>Тип квартири: новостройка</div>
-                <div>Тип квартири: новостройка</div>
-            </div>
-        </div>
-        <div class="md-subhead blue-text">Контакти</div>
-        <md-divider></md-divider>
-        <p layout-padding>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias at aut deleniti dignissimos expedita explicabo iste perferendis porro, praesentium quasi qui quibusdam ratione reprehenderit saepe tenetur totam voluptatem? Esse, qui!
-        </p>
-    </section>
+    <div ng-include="publicationTemplateUrl" include-replace></div>
 </div>
