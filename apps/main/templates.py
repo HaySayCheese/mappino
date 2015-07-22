@@ -34,14 +34,14 @@ def publication_view_list(request):
 @render_jinja2_template
 def publication_detailed(request, tid):
     template_paths = {
-        OBJECTS_TYPES.house():      'map/publications/types/house.html',
-        OBJECTS_TYPES.flat():       'map/publications/types/flat.html',
-        OBJECTS_TYPES.room():       'map/publications/types/room.html',
+        OBJECTS_TYPES.house():      'map/publication/types/house.html',
+        OBJECTS_TYPES.flat():       'map/publication/types/flat.html',
+        OBJECTS_TYPES.room():       'map/publication/types/room.html',
 
-        OBJECTS_TYPES.trade():      'map/publications/types/trade.html',
-        OBJECTS_TYPES.office():     'map/publications/types/office.html',
-        OBJECTS_TYPES.warehouse():  'map/publications/types/warehouse.html',
-        OBJECTS_TYPES.garage():     'map/publications/types/garage.html',
-        OBJECTS_TYPES.land():       'map/publications/types/land.html',
+        OBJECTS_TYPES.trade():      'map/publication/types/trade.html',
+        OBJECTS_TYPES.office():     'map/publication/types/office.html',
+        OBJECTS_TYPES.warehouse():  'map/publication/types/warehouse.html',
+        OBJECTS_TYPES.garage():     'map/publication/types/garage.html',
+        OBJECTS_TYPES.land():       'map/publication/types/land.html',
     }
     return template_paths[int(tid)]
