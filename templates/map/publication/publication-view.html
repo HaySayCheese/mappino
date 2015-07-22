@@ -1,6 +1,12 @@
-<div class="publication-view-container" layout="column" ng-show="publication" scrollbar>
+<div class="publication-view-container" layout="column" ng-show="publication">
     <header>
-        <img ng-src="[[ publication.photos[0] ]]" alt=""/>
+        <ul rn-carousel class="publication-preview-carousel">
+            <li ng-repeat="photo in publication.photos">
+                <div class="layer">[[ photo ]]</div>
+            </li>
+        </ul>
+
+        <!--<img ng-src="[[ publication.photos[0] ]]" alt=""/>-->
         <div class="publication-view-image-overlay">
             <div layout="row">
                 <md-button class="md-icon-button">

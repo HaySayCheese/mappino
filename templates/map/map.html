@@ -38,9 +38,9 @@
 
 
     {% compress js %}
-        <script src="{{ static }}build/libraries/ng-tiny-scrollbar.js"></script>
         <script src="{{ static }}build/libraries/markerwithlabel-1.1.9.min.js"></script>
-        <script type="text/javascript" src="{{ static }}build/libraries/angular-file-upload.js"></script>
+        <script src="{{ static }}build/libraries/angular-file-upload.js"></script>
+        <script src="{{ static }}build/libraries/angular-carousel.js"></script>
     {% endcompress %}
 
     <script>
@@ -64,7 +64,7 @@
         <div ui-view></div>
 
 
-        <publication-view></publication-view>
+        <publication-view class="-closed"></publication-view>
     </main>
 
 
