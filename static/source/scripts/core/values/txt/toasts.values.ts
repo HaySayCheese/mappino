@@ -49,7 +49,7 @@ module Mappino.Core.Values {
 
                 'TICKETS': {
                     'CREATE': {
-                        'TITLE': 'Во время воздания тикета возникла ошибка'
+                        'TITLE': 'Во время восстания тикета возникла ошибка'
                     },
 
                     'LOAD': {
