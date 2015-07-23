@@ -20,10 +20,9 @@ class ObjectTypes(AbstractConstant):
         }
 
 
-        self.set_ids(
-            self.living.copy()\
-                .update(self.commercial)
-        )
+        z = self.living.copy()
+        z.update(self.commercial)
+        self.set_ids(z)
 
         self.commercial_ids = [_id for _id in self.commercial.keys()]
 
