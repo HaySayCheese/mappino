@@ -10,7 +10,7 @@ from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 
 
 
-class RealtorsContacts(View):
+class Contacts(View):
     """
     Implements operations for getting contacts of realtors on main pages of the site.
     """
