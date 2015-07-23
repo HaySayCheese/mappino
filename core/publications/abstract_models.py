@@ -168,9 +168,9 @@ class AbstractHeadModel(models.Model):
 
 
     @classmethod
-    def by_hash_id(cls, head_id, select_body=False, select_sale=False, select_rent=False, select_owner=False):
+    def by_hash_id(cls, hash_id, select_body=False, select_sale=False, select_rent=False, select_owner=False):
         try:
-            query = cls.objects.filter(hash_id = head_id).only('id')
+            query = cls.objects.filter(hash_id = hash_id).only('id')
 
             if select_body:
                 query = query.only('id', 'body').select_related('body')
@@ -184,6 +184,11 @@ class AbstractHeadModel(models.Model):
 
         except IndexError:
             raise ObjectDoesNotExist()
+
+
+    @classmethod
+    def queryset_by_hash_id(cls, hash_id):
+        return cls.objects.filter(hash_id = hash_id).only('id')
 
 
     @classmethod
@@ -632,7 +637,6 @@ class LivingRentTermsModel(AbstractModel):
         return u'{dol} ({uah}, {eur})'.format(dol=dol, uah=uah, eur=eur)
 
 
-
 class CommercialRentTermsModel(AbstractModel):
     class Meta:
         abstract = True
@@ -714,7 +718,6 @@ class CommercialRentTermsModel(AbstractModel):
         if terms:
             return terms[2:]
         return u''
-
 
 
 class PhotosModel(AbstractModel):

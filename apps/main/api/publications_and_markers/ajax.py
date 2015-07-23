@@ -335,28 +335,30 @@ class DetailedView(View):
 
 
     def get(self, request, *args):
-        tid, hash_id = int(args[0]), args[1]
-
         try:
+            tid, hash_id = int(args[0]), args[1]
             model = HEAD_MODELS[tid]
-        except KeyError:
+        except (KeyError, ValueError):
             return self.GetResponses.invalid_tid_hid()
 
+
         try:
-            publication = model.objects\
-                .filter(hash_id=hash_id)\
-                .only('for_sale', 'for_rent', 'body', 'sale_terms', 'rent_terms')[:1][0]
+            publication = model.objects.queryset_by_hash_id(hash_id)\
+                .only('for_sale', 'for_rent')\
+                .prefetch_related('body')\
+                .prefetch_realted('sale_terms')\
+                .prefetch_realted('rent_terms')\
+                [:1][0]
         except IndexError:
             return self.GetResponses.no_such_publication()
 
-        # check if publication is published,
-        # otherwise we must not show it
+
         if not publication.is_published():
             return self.GetResponses.publication_is_unpublished()
 
 
 
-        description = self.formatter.format(tid, publication)
+        data = self.formatter.format(tid, publication)
 
         # todo: return favorites back
 
@@ -372,7 +374,7 @@ class DetailedView(View):
         #     pass
 
 
-        return self.GetResponses.ok(description)
+        return self.GetResponses.ok(data)
 
 
 class Claims(object):
