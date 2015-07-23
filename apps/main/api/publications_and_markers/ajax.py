@@ -343,7 +343,7 @@ class DetailedView(View):
 
 
         try:
-            publication = model.objects.queryset_by_hash_id(hash_id)\
+            publication = model.queryset_by_hash_id(hash_id)\
                 .only('for_sale', 'for_rent')\
                 .prefetch_related('body')\
                 .prefetch_realted('sale_terms')\
