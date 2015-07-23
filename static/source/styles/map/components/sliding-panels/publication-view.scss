@@ -1,6 +1,7 @@
 publication-view {
     @extend %_right-sliding-panel;
 
+    right: -1000px;
     width: 600px;
     overflow: auto;
 
@@ -19,23 +20,11 @@ publication-view {
     }
 
 
-
-    //.publication-view-container {
-    //    //@include square(100%);
-    //    position: relative;
-    //    display: block;
-    //
-    //    .scroller {
-    //        @include square(100%);
-    //    }
-    //}
-
-
     header {
         height: 400px;
         position: relative;
 
-        img, video {
+        .publication-preview-carousel {
             @include size(100%, 400px);
         }
 
@@ -85,5 +74,9 @@ publication-view {
     section {
         width: 100%;
         display: block;
+
+        p {
+            margin-top: 0;
+        }
     }
 }

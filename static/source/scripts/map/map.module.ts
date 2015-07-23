@@ -21,7 +21,6 @@ module Mappino.Map {
 
 
 
-
     /** Providers configuration create */
     new ProvidersConfigs(app);
 

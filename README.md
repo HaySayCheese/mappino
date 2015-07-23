@@ -1,6 +1,6 @@
 
 # mappino RC1 #
-![Він уже близько)](https://www.dropbox.com/s/rzmet6xhepmclqz/2222.png?dl=0)
+![Він уже близько)](https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcT21WwvBsR6w0kR44iFGhEL8DjZ4VpIj7-HB9m5wsWjg407HcMWVg)
 
 
 ## Deploy check list ##
