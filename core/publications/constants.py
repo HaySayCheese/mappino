@@ -24,10 +24,7 @@ class ObjectTypes(AbstractConstant):
         z.update(self.commercial)
         self.set_ids(z)
 
-        self.commercial_ids = [_id for _id in self.commercial.keys()]
 
-
-    # жилая недвижимость
     def flat(self):
         return self.ids['flat']
 
@@ -40,7 +37,6 @@ class ObjectTypes(AbstractConstant):
         return self.ids['room']
 
 
-    # ком. недвижимость
     def land(self):
         return self.ids['land']
 
@@ -59,23 +55,20 @@ class ObjectTypes(AbstractConstant):
 
     def warehouse(self):
         return self.ids['warehouse']
-OBJECTS_TYPES = ObjectTypes()
 
+
+    def commercial_estate(self):
+        return [_id for _id in self.commercial.keys()]
+OBJECTS_TYPES = ObjectTypes()
 
 
 class ObjectStates(AbstractConstant):
     def __init__(self):
         super(ObjectStates, self).__init__()
         self.set_ids({
-            'published': 0,
-            'unpublished': 1,
-            'deleted': 2,
-
-            # todo: розібратись із цим  #'in_verification_queue': 100,  #'robot_verification': 101,
-            #'robot_verification_failed': 102,
-            #'moderator_verification': 111,
-            #'moderator_verification_failed': 112,
-            #'in_publication_queue': 200
+            'published':    0,
+            'unpublished':  1,
+            'deleted':      2,
         })
 
 
@@ -89,22 +82,20 @@ class ObjectStates(AbstractConstant):
 
     def deleted(self):
         return self.ids['deleted']
-
 OBJECT_STATES = ObjectStates()
-
 
 
 class ObjectConditions(AbstractConstant):
     def __init__(self):
         super(ObjectConditions, self).__init__()
         self.set_ids({
-            'cosmetic_repair': 0,  # косметичний ремонт
-            'living': 1,
-            'euro_repair': 2,  # євро-ремонт
-            'design_repair': 3,
-            'cosmetic_repair_needed': 4,
-            'unfinished_repair': 5,
-            'for_finishing': 6,  # під чистову обробку
+            'cosmetic_repair':          0,
+            'living':                   1,
+            'euro_repair':              2,
+            'design_repair':            3,
+            'cosmetic_repair_needed':   4,
+            'unfinished_repair':        5,
+            'for_finishing':            6,  # під чистову обробку
         })
 
 
@@ -134,18 +125,16 @@ class ObjectConditions(AbstractConstant):
 
     def for_finishing(self):
         return self.ids['for_finishing']
-
 OBJECT_CONDITIONS = ObjectConditions()
-
 
 
 class FloorTypes(AbstractConstant):
     def __init__(self):
         super(FloorTypes, self).__init__()
         self.set_ids({
-        'floor': 0,
-        'mansard': 1,
-        'ground': 2,  # цоколь
+            'floor':    0,
+            'mansard':  1,
+            'ground':   2,  # цоколь
         })
 
 
@@ -159,17 +148,15 @@ class FloorTypes(AbstractConstant):
 
     def ground(self):
         return self.ids['ground']
-
 FLOOR_TYPES = FloorTypes()
-
 
 
 class TransactionTypes(AbstractConstant):
     def __init__(self):
         super(TransactionTypes, self).__init__()
         self.set_ids({
-        'all_estate': 0,  # за все
-        'square_meter': 1,  # за м2
+            'all_estate':       0,  # за все
+            'square_meter':     1,  # за м2
         })
 
 
@@ -179,18 +166,16 @@ class TransactionTypes(AbstractConstant):
 
     def for_square_meter(self):
         return self.ids['square_meter']
-
 SALE_TRANSACTION_TYPES = TransactionTypes()
-
 
 
 class LivingRentPeriods(AbstractConstant):
     def __init__(self):
         super(LivingRentPeriods, self).__init__()
         self.set_ids({
-        'daily': 0,
-        'monthly': 1,
-        'long_period': 2
+            'daily':        0,
+            'monthly':      1,
+            'long_period':  2
         })
 
 
@@ -204,17 +189,15 @@ class LivingRentPeriods(AbstractConstant):
 
     def long_period(self):
         return self.ids['long_period']
-
 LIVING_RENT_PERIODS = LivingRentPeriods()
-
 
 
 class CommercialRentPeriods(AbstractConstant):
     def __init__(self):
         super(CommercialRentPeriods, self).__init__()
         self.set_ids({
-            'monthly': 1,
-            'long_period': 2
+            'monthly':      1,
+            'long_period':  2
         })
 
 
@@ -224,9 +207,7 @@ class CommercialRentPeriods(AbstractConstant):
 
     def long_period(self):
         return self.ids['long_period']
-
 COMMERCIAL_RENT_PERIODS = CommercialRentPeriods()
-
 
 
 class MarketType(AbstractConstant):
@@ -244,9 +225,7 @@ class MarketType(AbstractConstant):
 
     def secondary_market(self):
         return self.ids['secondary_market']
-
 MARKET_TYPES = MarketType()
-
 
 
 class HeatingTypes(AbstractConstant):
@@ -279,9 +258,7 @@ class HeatingTypes(AbstractConstant):
 
     def none(self):
         return self.ids['none']
-
 HEATING_TYPES = HeatingTypes()
-
 
 
 class IndividualHeatingTypes(AbstractConstant):
@@ -309,9 +286,7 @@ class IndividualHeatingTypes(AbstractConstant):
 
     def firewood(self):
         return self.ids['firewood']
-
 INDIVIDUAL_HEATING_TYPES = IndividualHeatingTypes()
-
 
 
 class RedLineValues(AbstractConstant):
@@ -334,7 +309,6 @@ class RedLineValues(AbstractConstant):
 
     def unknown(self):
         return self.ids['unknown']
-
 RED_LINE_VALUES = RedLineValues()
 
 
