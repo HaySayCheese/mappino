@@ -346,8 +346,8 @@ class DetailedView(View):
             publication = model.queryset_by_hash_id(hash_id)\
                 .only('for_sale', 'for_rent')\
                 .prefetch_related('body')\
-                .prefetch_realted('sale_terms')\
-                .prefetch_realted('rent_terms')\
+                .prefetch_related('sale_terms')\
+                .prefetch_related('rent_terms')\
                 [:1][0]
         except IndexError:
             return self.GetResponses.no_such_publication()
