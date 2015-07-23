@@ -156,17 +156,6 @@
                     </md-input-container>
                 </div>
                 <div layout="row">
-                    <md-checkbox class="md-primary" name="mansard" ng-change="pubCtrl.checkField('mansard')" ng-model="publication.body.mansard">
-                        Есть мансарда
-                    </md-checkbox>
-                    <md-checkbox class="md-primary" name="ground" ng-change="pubCtrl.checkField('ground')" ng-model="publication.body.ground">
-                        Есть цокольный этаж
-                    </md-checkbox>
-                    <md-checkbox class="md-primary" name="lower_floor" ng-change="pubCtrl.checkField('lower_floor')" ng-model="publication.body.lower_floor">
-                        Есть подвал
-                    </md-checkbox>
-                </div>
-                <div layout="row">
                     <md-input-container flex="33">
                         <label>Общая площадь</label>
                         <input name="total_area" ng-model="publication.body.total_area" only-number-with-dots required>

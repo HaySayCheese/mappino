@@ -10,11 +10,12 @@ module Mappino.Map {
         'ngResource',
         'ngMessages',
 
-        'ngFileUpload',
-
         'ui.router',
 
-        'Mappino.Core'
+        'Mappino.Core',
+
+        'ngFileUpload',
+        'angular-carousel'
 
         //'ngTinyScrollbar',
     ]);

@@ -21,11 +21,11 @@ publication-view {
 
 
     header {
-        height: 400px;
+        min-height: 330px;
         position: relative;
 
         .publication-preview-carousel {
-            @include size(100%, 400px);
+            @include size(100%, 330px);
         }
 
         .publication-view-image-overlay {

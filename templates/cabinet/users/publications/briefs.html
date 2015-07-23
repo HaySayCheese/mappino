@@ -72,7 +72,7 @@
             <md-button class="md-primary md-hue-1" ng-hide="brief.state_sid == 2" ng-click="briefsCtrl.editPublication($event, brief)">
                 Редактировать
             </md-button>
-            <md-button class="md-primary md-hue-1" ng-hide="brief.state_sid == 2" ui-sref="publication_view({ id: brief.tid + ':' + brief.id })">
+            <md-button class="md-primary md-hue-1" ng-show="brief.state_sid == 0" ui-sref="publication_view({ id: brief.tid + ':' + brief.id })">
                 Посмотреть
             </md-button>
             <md-button class="md-primary md-hue-1" ng-show="brief.state_sid == 2" ng-click="briefsCtrl.recoveryBrief($event, brief)">

@@ -68,7 +68,7 @@
                                ng-model="publication.rent_terms.period_sid" flex="33">
                         <md-option ng-repeat="periodType in TYPES.PERIOD" value="[[ periodType.id ]]">[[ periodType.title ]]</md-option>
                     </md-select>
-                    <md-input-container flex="33" flex-sm="66">
+                    <md-input-container flex="33" flex-sm="66" ng-hide="publication.rent_terms.period_sid == 1">
                         <label>Количество мест</label>
                         <input name="rent_persons_count" ng-model="publication.rent_terms.persons_count"
                                ng-required="publication.head.for_rent" only-number required>
