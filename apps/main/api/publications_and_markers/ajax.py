@@ -4,6 +4,7 @@ import json
 from django.views.generic import View
 
 from apps.main.api.publications_and_markers.utils import *
+from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.exceptions import InvalidArgument
 from collective.http.responses import HttpJsonResponseBadRequest, HttpJsonResponse, HttpJsonResponseNotFound
 from collective.methods.request_data_getters import angular_post_parameters
@@ -300,46 +301,46 @@ class DetailedView(View):
 
     class GetResponses(object):
         @staticmethod
+        @json_response
         def ok(data):
-            return HttpJsonResponse({
+            return {
                 'code': 0,
                 'message': 'OK',
                 'data': data,
-            })
+            }
 
         @staticmethod
+        @json_response_bad_request
         def invalid_tid_hid():
-            return HttpJsonResponseBadRequest({
+            return {
                 'code': 1,
                 'message': 'Request contains invalid "tid" or "hid" or does not contains them at all.'
-            })
+            }
 
         @staticmethod
+        @json_response_not_found
         def no_such_publication():
-            return HttpJsonResponseNotFound({
-                'code': 1,
+            return {
+                'code': 2,
                 'message': 'There is no publication with exact id.'
-            })
+            }
 
         @staticmethod
+        @json_response
         def publication_is_unpublished():
-            return HttpJsonResponse({
-                'code': 2,
+            return {
+                'code': 3,
                 'message': 'This publication was unpublished.'
-            })
+            }
 
 
-    def __init__(self):
-        super(DetailedView, self).__init__()
-        self.formatter = classes.PublishedDataSource()
-
-
-    def get(self, request, *args):
+    @classmethod
+    def get(cls, request, *args):
         try:
             tid, hash_id = int(args[0]), args[1]
             model = HEAD_MODELS[tid]
         except (KeyError, ValueError):
-            return self.GetResponses.invalid_tid_hid()
+            return cls.GetResponses.invalid_tid_hid()
 
 
         try:
@@ -350,31 +351,17 @@ class DetailedView(View):
                 .prefetch_related('rent_terms')\
                 [:1][0]
         except IndexError:
-            return self.GetResponses.no_such_publication()
+            return cls.GetResponses.no_such_publication()
 
 
         if not publication.is_published():
-            return self.GetResponses.publication_is_unpublished()
+            return cls.GetResponses.publication_is_unpublished()
 
 
-
-        data = self.formatter.format(tid, publication)
+        data = cls.formatter.format(tid, publication)
 
         # todo: return favorites back
-
-        # # check if this publication is listed in customers favorites
-        # description['added_to_favorites'] = False
-
-
-        # try:
-        #     customer = self.get_customer_queryset(request)[0]
-        #     if Favorites.exist(customer.id, tid, hash_id):
-        #         description['added_to_favorites'] = True
-        # except IndexError:
-        #     pass
-
-
-        return self.GetResponses.ok(data)
+        return cls.GetResponses.ok(data)
 
 
 class Claims(object):
