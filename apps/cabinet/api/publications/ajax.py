@@ -5,7 +5,7 @@ from django.http.response import HttpResponseBadRequest
 from apps.classes import CabinetView
 from collective.decorators.ajax import json_response, json_response_bad_request
 from collective.methods.request_data_getters import angular_parameters
-from core.publications import classes
+from core.publications import formatters
 from core.publications.exceptions import PhotosHandlerExceptions
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS, OBJECT_STATES
 from core.publications.models_signals import record_updated
@@ -61,8 +61,8 @@ class Publications(CabinetView):
 
 
 class Publication(CabinetView):
-    published_formatter = classes.PublishedDataSource()
-    unpublished_formatter = classes.UnpublishedFormatter()
+    published_formatter = formatters.PublishedDataSource()
+    unpublished_formatter = formatters.UnpublishedFormatter()
 
 
     class GetResponses(object):

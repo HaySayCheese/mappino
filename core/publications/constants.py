@@ -2,30 +2,30 @@
 from collective.constants import AbstractConstant
 
 
-
 class ObjectTypes(AbstractConstant):
     def __init__(self):
         super(ObjectTypes, self).__init__()
-        self.set_ids({
-            # Жилая недвижимость
-            'flat': 0,
-            'house': 1,
-            'room': 2,
 
-            # Коммерческая недвижимость
-            'land': 3,
-            'garage': 4,
-            'office': 5,
-            'trade': 6,
-            'warehouse': 7,
-        })
-        self.commercial_estate = [
-            self.ids['land'],
-            self.ids['garage'],
-            self.ids['office'],
-            self.ids['trade'],
-            self.ids['warehouse'],
-        ]
+        self.living = {
+            'flat':         0,
+            'house':        1,
+            'room':         2,
+        }
+        self.commercial = {
+            'land':         3,
+            'garage':       4,
+            'office':       5,
+            'trade':        6,
+            'warehouse':    7,
+        }
+
+
+        self.set_ids(
+            self.living.copy()\
+                .update(self.commercial)
+        )
+
+        self.commercial_ids = [_id for _id in self.commercial.keys()]
 
 
     # жилая недвижимость

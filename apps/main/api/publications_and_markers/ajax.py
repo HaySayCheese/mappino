@@ -11,7 +11,7 @@ from collective.methods.request_data_getters import angular_post_parameters
 from core.claims.classes import ClaimsManager
 from core.markers_handler import SegmentsIndex
 from core.markers_handler.exceptions import TooBigTransaction
-from core.publications import classes
+from core.publications import formatters
 from core.publications.constants import HEAD_MODELS, OBJECTS_TYPES
 
 
@@ -297,7 +297,7 @@ class Markers(View):
 
 
 class DetailedView(View):
-    formatter = classes.PublishedDataSource() # this is a description generator for the publications.
+    formatter = formatters.PublishedDataSource() # this is a description generator for the publications.
 
     class GetResponses(object):
         @staticmethod

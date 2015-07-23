@@ -1,6 +1,6 @@
 #coding=utf-8
 from core.currencies.constants import CURRENCIES
-from core.publications.abstract_models import *
+from core.publications.models_abstract import *
 from core.publications.constants import *
 from core.publications.exceptions import *
 from core.publications.objects_constants.flats import *

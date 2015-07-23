@@ -1,320 +1,7 @@
 # coding=utf-8
 from django.core import serializers
 
-from collective.exceptions import RuntimeException
 from core.publications.constants import OBJECTS_TYPES
-
-
-class CabinetPublishedDataSource(object):
-    """
-    This class is used to perform output for published publications in cabinet.
-    This class does not perform json responses, but only returns dicts with necessary data.
-    """
-
-    def __init__(self):
-        self.data_generators = {
-            # living
-            OBJECTS_TYPES.flat():       self.compose_flat_description,
-            OBJECTS_TYPES.house():      self.compose_house_description,
-            OBJECTS_TYPES.room():       self.compose_room_description,
-
-            # commercial
-            OBJECTS_TYPES.trade():      self.compose_trade_description,
-            OBJECTS_TYPES.office():     self.compose_office_description,
-            OBJECTS_TYPES.warehouse():  self.compose_warehouse_description,
-
-            # other
-            OBJECTS_TYPES.garage():     self.compose_garage_description,
-            OBJECTS_TYPES.land():       self.compose_land_description,
-        }
-
-
-    def format(self, tid, publication_head):
-        """
-        :type tid: int
-        :param tid: type id of the publication.
-
-        :type publication_head: AbstractHeadModel
-        :param publication_head: head-record of the publication.
-
-        :rtype: dict
-        :return:
-            dict with two main sections:
-                head - all system information about publication, such as photos and tags.
-                data - formatted text information about publication.
-
-        :raise: RuntimeException - broken list of data generators.
-        """
-        data_generator = self.data_generators.get(tid, None)
-        if data_generator is None:
-            raise RuntimeException('Missed formatter.')
-
-        # noinspection PyCallingNonCallable
-        result = {
-            'head': self.base_generator(publication_head, tid),
-            'data': data_generator(publication_head),
-        }
-
-        # clearing the results from all empty and None entries, that potentially can occurs
-        result['head'].update((k, v) for k, v in result['head'].iteritems() if v is not None)
-        result['data'].update((k, v) for k, v in result['data'].iteritems() if v is not None)
-
-        return result
-
-
-    @staticmethod
-    def base_generator(publication_head, tid):
-        """
-        :param publication_head: head-record of the publication.
-        :param tid: type id of the record.
-        :return: dictionary with common data for all types of publication,
-                 such as photos and tags.
-        """
-        return {
-            'state_sid': publication_head.state_sid,
-            'photos': {}
-        }
-
-
-    @staticmethod
-    def compose_flat_description(p):
-        description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
-            'market_type': p.body.print_market_type(),
-            'building_type': p.body.print_building_type(),
-            'condition': p.body.print_condition(),
-
-            'total_area': p.body.print_total_area(),
-            'living_area': p.body.print_living_area(),
-            'kitchen_area': p.body.print_kitchen_area(),
-
-            'floor': p.body.print_floor(),
-            'floors_count': p.body.print_floors_count(),
-
-            'rooms_count': p.body.print_rooms_count(),
-            'rooms_planning': p.body.print_rooms_planning() ,
-            'facilities': p.body.print_facilities(),
-
-            'communications': p.body.print_communications(),
-            'buildings': p.body.print_provided_add_buildings(),
-        }
-
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-            'rent_facilities': p.rent_terms.print_facilities()
-        })
-        return description
-
-
-    @staticmethod
-    def compose_house_description(p):
-        description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
-            'market_type': p.body.print_market_type(),
-            'condition': p.body.print_condition(),
-
-            'total_area': p.body.print_total_area(),
-            'living_area': p.body.print_living_area(),
-            'kitchen_area': p.body.print_kitchen_area(),
-
-            'floors_count': p.body.print_floors_count(),
-            'rooms_count': p.body.print_rooms_count(),
-
-            'facilities': p.body.print_facilities(),
-            'communications': p.body.print_communications(),
-            'buildings': p.body.print_provided_add_buildings(),
-        }
-
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-            'rent_facilities': p.rent_terms.print_facilities()
-        })
-        return description
-
-
-    @staticmethod
-    def compose_room_description(p):
-        description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
-            'market_type': p.body.print_market_type(),
-            'condition': p.body.print_condition(),
-            'area': p.body.print_area(),
-
-            'floor': p.body.print_floor(),
-            'floors_count': p.body.print_floors_count(),
-
-            'facilities': p.body.print_facilities(),
-            'communications': p.body.print_communications(),
-        }
-
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-            'rent_facilities': p.rent_terms.print_facilities()
-        })
-        return description
-
-
-    @staticmethod
-    def compose_trade_description(p):
-        description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
-            'market_type': p.body.print_market_type(),
-            'building_type': p.body.print_building_type(),
-            'build_year': p.body.print_build_year(),
-            'condition': p.body.print_condition() or u'неизвестно',
-
-            'floor': p.body.print_floor(),
-            'floors_count': p.body.print_floors_count(),
-
-            'halls_count': p.body.print_halls_count() or u'неизвестно',
-            'halls_area': p.body.print_halls_area() or u'неизвестно',
-            'total_area': p.body.print_total_area() or u'неизвестно',
-
-            'vcs_count': p.body.print_vcs_count(),
-            'ceiling_height': p.body.print_ceiling_height(),
-
-            'facilities': p.body.print_facilities(),
-            'communications': p.body.print_communications(),
-            'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
-        }
-
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-        })
-        return description
-
-
-    @staticmethod
-    def compose_office_description(p):
-        description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
-            'market_type': p.body.print_market_type(),
-            'building_type': p.body.print_building_type(),
-            'build_year': p.body.print_build_year(),
-            'condition': p.body.print_condition() or u'неизвестно',
-
-            'floor': p.body.print_floor() or u'неизвестно',
-            'floors_count': p.body.print_floors_count(),
-            'cabinets_count': p.body.print_cabinets_count() or u'неизвестно',
-            'total_area': p.body.print_total_area(),
-            'vcs_count': p.body.print_vcs_count(),
-            'ceiling_height': p.body.print_ceiling_height(),
-
-            'facilities': p.body.print_facilities(),
-            'communications': p.body.print_communications(),
-            'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
-        }
-
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-            'rent_facilities': p.rent_terms.print_facilities()
-        })
-        return description
-
-
-    @staticmethod
-    def compose_warehouse_description(p):
-        description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
-            'market_type': p.body.print_market_type(),
-            'halls_area': p.body.print_halls_area(),
-            'plot_area': p.body.print_plot_area(),
-            'driveways': p.body.print_driveways(),
-
-            'facilities': p.body.print_facilities(),
-            'communications': p.body.print_communications(),
-            'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
-        }
-
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-        })
-        return description
-
-
-    @staticmethod
-    def compose_garage_description(p):
-        description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-            'market_type': p.body.print_market_type(),
-            'area': p.body.print_area(),
-            'ceiling_height': p.body.print_ceiling_height(),
-            'pit': u'есть' if p.body.pit else u'',
-            'facilities': p.body.print_facilities(),
-        }
-
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-        })
-        return description
-
-
-    @staticmethod
-    def compose_land_description(p):
-        description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-            'area': p.body.print_area() or u'неизвестно',
-            'driveways': p.body.print_driveways(),
-            'facilities': p.body.print_facilities(),
-            'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
-        }
-
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-            'sale_terms': p.sale_terms.print_add_terms(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-        })
-        return description
-
 
 
 class PublishedDataSource(object):
@@ -371,37 +58,34 @@ class PublishedDataSource(object):
         description = {
             'title': p.body.print_title(),
             'description': p.body.print_description(),
-            'address': p.body.print_address(),
 
             'market_type': p.body.print_market_type(),
             'building_type': p.body.print_building_type(),
-            'rooms_planning': p.body.print_rooms_planning() ,
             'condition': p.body.print_condition(),
+
+            'total_area': p.body.print_total_area(),
+            'living_area': p.body.print_living_area(),
+            'kitchen_area': p.body.print_kitchen_area(),
 
             'floor': p.body.print_floor(),
             'floors_count': p.body.print_floors_count(),
 
-            'total_area': p.body.print_total_area() or u'неизвестно',
-            'living_area': p.body.print_living_area() or u'неизвестно',
-            'kitchen_area': p.body.print_kitchen_area(),
+            'rooms_count': p.body.print_rooms_count(),
+            'rooms_planning': p.body.print_rooms_planning() ,
+            'facilities': p.body.print_facilities(),
 
-            'rooms_count': p.body.print_rooms_count() or u'неизвестно',
-
-            'facilities': p.body.print_facilities() or u'неизвестно',
             'communications': p.body.print_communications(),
             'buildings': p.body.print_provided_add_buildings(),
         }
 
-        if p.for_sale:
-            description.update({
-                'sale_price': p.sale_terms.print_price(),
-            })
-        if p.for_rent:
-            description.update({
-                'rent_price': p.rent_terms.print_price(),
-                'rent_terms': p.rent_terms.print_terms(),
-                'rent_facilities': p.rent_terms.print_facilities()
-            })
+        description.update({
+            'sale_price': p.sale_terms.print_price(),
+        })
+        description.update({
+            'rent_price': p.rent_terms.print_price(),
+            'rent_terms': p.rent_terms.print_terms(),
+            'rent_facilities': p.rent_terms.print_facilities()
+        })
         return description
 
 
@@ -414,32 +98,26 @@ class PublishedDataSource(object):
             'market_type': p.body.print_market_type(),
             'condition': p.body.print_condition(),
 
-            'total_area': p.body.print_total_area() or u'неизвестно',
-            'living_area': p.body.print_living_area() or u'неизвестно',
+            'total_area': p.body.print_total_area(),
+            'living_area': p.body.print_living_area(),
             'kitchen_area': p.body.print_kitchen_area(),
 
-            'floors_count': p.body.print_floors_count() or u'неизвестно',
-            'rooms_count': p.body.print_rooms_count() or u'неизвестно',
-            'bedrooms_count': p.body.print_bedrooms_count(),
-            'vcs_count': p.body.print_vcs_count(),
+            'floors_count': p.body.print_floors_count(),
+            'rooms_count': p.body.print_rooms_count(),
 
             'facilities': p.body.print_facilities(),
             'communications': p.body.print_communications(),
             'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
         }
 
-        if p.for_sale:
-            description.update({
-                'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms()
-            })
-        if p.for_rent:
-            description.update({
-                'rent_price': p.rent_terms.print_price(),
-                'rent_terms': p.rent_terms.print_terms(),
-                'rent_facilities': p.rent_terms.print_facilities()
-            })
+        description.update({
+            'sale_price': p.sale_terms.print_price(),
+        })
+        description.update({
+            'rent_price': p.rent_terms.print_price(),
+            'rent_terms': p.rent_terms.print_terms(),
+            'rent_facilities': p.rent_terms.print_facilities()
+        })
         return description
 
 
@@ -450,38 +128,24 @@ class PublishedDataSource(object):
             'description': p.body.print_description(),
 
             'market_type': p.body.print_market_type(),
-            'building_type': p.body.print_building_type(),
-
-
-            'build_year': p.body.print_build_year(),
-            'rooms_planning': p.body.print_rooms_planning(),
             'condition': p.body.print_condition(),
+            'area': p.body.print_area(),
 
             'floor': p.body.print_floor(),
             'floors_count': p.body.print_floors_count(),
 
-            'total_area': p.body.print_area() or u'неизвестно',
-            'living_area': p.body.print_living_area() or u'неизвестно',
-            'kitchen_area': p.body.print_kitchen_area(),
-
-            'rooms_count': p.body.print_rooms_count() or u'неизвестно',
             'facilities': p.body.print_facilities(),
             'communications': p.body.print_communications(),
-            'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
         }
 
-        if p.for_sale:
-            description.update({
-                'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms()
-            })
-        if p.for_rent:
-            description.update({
-                'rent_price': p.rent_terms.print_price(),
-                'rent_terms': p.rent_terms.print_terms(),
-                'rent_facilities': p.rent_terms.print_facilities()
-            })
+        description.update({
+            'sale_price': p.sale_terms.print_price(),
+        })
+        description.update({
+            'rent_price': p.rent_terms.print_price(),
+            'rent_terms': p.rent_terms.print_terms(),
+            'rent_facilities': p.rent_terms.print_facilities()
+        })
         return description
 
 
@@ -494,14 +158,14 @@ class PublishedDataSource(object):
             'market_type': p.body.print_market_type(),
             'building_type': p.body.print_building_type(),
             'build_year': p.body.print_build_year(),
-            'condition': p.body.print_condition() or u'неизвестно',
+            'condition': p.body.print_condition(),
 
             'floor': p.body.print_floor(),
             'floors_count': p.body.print_floors_count(),
 
-            'halls_count': p.body.print_halls_count() or u'неизвестно',
-            'halls_area': p.body.print_halls_area() or u'неизвестно',
-            'total_area': p.body.print_total_area() or u'неизвестно',
+            'halls_count': p.body.print_halls_count(),
+            'halls_area': p.body.print_halls_area(),
+            'total_area': p.body.print_total_area(),
 
             'vcs_count': p.body.print_vcs_count(),
             'ceiling_height': p.body.print_ceiling_height(),
@@ -512,16 +176,13 @@ class PublishedDataSource(object):
             'showplaces': p.body.print_showplaces()
         }
 
-        if p.for_sale:
-            description.update({
-                'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms(),
-            })
-        if p.for_rent:
-            description.update({
-                'rent_price': p.rent_terms.print_price(),
-                'rent_terms': p.rent_terms.print_terms(),
-            })
+        description.update({
+            'sale_price': p.sale_terms.print_price(),
+        })
+        description.update({
+            'rent_price': p.rent_terms.print_price(),
+            'rent_terms': p.rent_terms.print_terms(),
+        })
         return description
 
 
@@ -534,11 +195,11 @@ class PublishedDataSource(object):
             'market_type': p.body.print_market_type(),
             'building_type': p.body.print_building_type(),
             'build_year': p.body.print_build_year(),
-            'condition': p.body.print_condition() or u'неизвестно',
+            'condition': p.body.print_condition(),
 
-            'floor': p.body.print_floor() or u'неизвестно',
+            'floor': p.body.print_floor(),
             'floors_count': p.body.print_floors_count(),
-            'cabinets_count': p.body.print_cabinets_count() or u'неизвестно',
+            'cabinets_count': p.body.print_cabinets_count(),
             'total_area': p.body.print_total_area(),
             'vcs_count': p.body.print_vcs_count(),
             'ceiling_height': p.body.print_ceiling_height(),
@@ -549,17 +210,14 @@ class PublishedDataSource(object):
             'showplaces': p.body.print_showplaces()
         }
 
-        if p.for_sale:
-            description.update({
-                'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms(),
-            })
-        if p.for_rent:
-            description.update({
-                'rent_price': p.rent_terms.print_price(),
-                'rent_terms': p.rent_terms.print_terms(),
-                'rent_facilities': p.rent_terms.print_facilities()
-            })
+        description.update({
+            'sale_price': p.sale_terms.print_price(),
+        })
+        description.update({
+            'rent_price': p.rent_terms.print_price(),
+            'rent_terms': p.rent_terms.print_terms(),
+            'rent_facilities': p.rent_terms.print_facilities()
+        })
         return description
 
 
@@ -580,16 +238,13 @@ class PublishedDataSource(object):
             'showplaces': p.body.print_showplaces()
         }
 
-        if p.for_sale:
-            description.update({
-                'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms(),
-            })
-        if p.for_rent:
-            description.update({
-                'rent_price': p.rent_terms.print_price(),
-                'rent_terms': p.rent_terms.print_terms(),
-            })
+        description.update({
+            'sale_price': p.sale_terms.print_price(),
+        })
+        description.update({
+            'rent_price': p.rent_terms.print_price(),
+            'rent_terms': p.rent_terms.print_terms(),
+        })
         return description
 
 
@@ -599,23 +254,19 @@ class PublishedDataSource(object):
             'title': p.body.print_title(),
             'description': p.body.print_description(),
             'market_type': p.body.print_market_type(),
-            'area': p.body.print_area() or u'неизвестно',
-            'ceiling_height': p.body.print_ceiling_height() or u'неизвестно',
+            'area': p.body.print_area(),
+            'ceiling_height': p.body.print_ceiling_height(),
             'pit': u'есть' if p.body.pit else u'',
-            'driveways': p.body.print_driveways(),
             'facilities': p.body.print_facilities(),
         }
 
-        if p.for_sale:
-            description.update({
-                'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms(),
-            })
-        if p.for_rent:
-            description.update({
-                'rent_price': p.rent_terms.print_price(),
-                'rent_terms': p.rent_terms.print_terms(),
-            })
+        description.update({
+            'sale_price': p.sale_terms.print_price(),
+        })
+        description.update({
+            'rent_price': p.rent_terms.print_price(),
+            'rent_terms': p.rent_terms.print_terms(),
+        })
         return description
 
 
@@ -631,18 +282,14 @@ class PublishedDataSource(object):
             'showplaces': p.body.print_showplaces()
         }
 
-        if p.for_sale:
-            description.update({
-                'sale_price': p.sale_terms.print_price(),
-                'sale_terms': p.sale_terms.print_add_terms(),
-            })
-        if p.for_rent:
-            description.update({
-                'rent_price': p.rent_terms.print_price(),
-                'rent_terms': p.rent_terms.print_terms(),
-            })
+        description.update({
+            'sale_price': p.sale_terms.print_price(),
+        })
+        description.update({
+            'rent_price': p.rent_terms.print_price(),
+            'rent_terms': p.rent_terms.print_terms(),
+        })
         return description
-
 
 
 class UnpublishedFormatter(object):
