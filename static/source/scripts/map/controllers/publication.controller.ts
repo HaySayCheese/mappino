@@ -26,6 +26,7 @@ module Mappino.Map {
             this.publicationHandler = publicationHandler;
 
             $scope.publication = null;
+            $scope.publicationPreviewSlideIndex = 0;
             $scope.publicationTemplateUrl = null;
 
 
@@ -38,6 +39,16 @@ module Mappino.Map {
                     console.log('gsagasgas')
                 }
             });
+        }
+
+
+
+        public prevSlide() {
+            this.$scope.publicationPreviewSlideIndex -= 1;
+        }
+
+        public nextSlide() {
+            this.$scope.publicationPreviewSlideIndex += 1;
         }
 
 
