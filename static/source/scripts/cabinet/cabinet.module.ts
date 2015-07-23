@@ -16,6 +16,7 @@ module Mappino.Cabinet {
 
 
 
+
     /** Providers configuration create */
     new ProvidersConfigs(app);
 
