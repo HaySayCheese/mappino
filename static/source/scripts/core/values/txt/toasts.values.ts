@@ -1,67 +1,67 @@
 
-// todo: Додати переклади
+
 module Mappino.Core.Values {
     export class ToastsValues {
         static get Default(): any {
             return {
                 'PUBLICATION': {
                     'CREATE': {
-                        'TITLE': 'CREATE_PUBLICATION_TITLE'
+                        'TITLE': 'Во время создания объявления возникла ошибка'
                     },
 
                     'REMOVE': {
-                        'TITLE': 'REMOVE_PUBLICATION_TITLE'
+                        'TITLE': 'Во время удаления объявления возникла ошибка'
                     },
 
                     'PUBLISH': {
-                        'TITLE': 'PUBLISH_PUBLICATION_TITLE'
+                        'TITLE': 'Во время публикации объяления возникла ошибка'
                     },
 
                     'UNPUBLISH': {
-                        'TITLE': 'PUBLISH_PUBLICATION_TITLE'
+                        'TITLE': 'Во время обработки объяления возникла ошибка'
                     },
 
                     'LOAD': {
-                        'TITLE': 'LOAD_PUBLICATION_TITLE'
+                        'TITLE': 'Во время загрузки объяления возникла ошибка'
                     },
 
                     'UPLOAD_PHOTO': {
-                        'TITLE': 'UPLOAD_PUBLICATION_PHOTO_TITLE'
+                        'TITLE': 'Во время загрузки фото возникла ошибка'
                     },
 
                     'REMOVE_PHOTO': {
-                        'TITLE': 'REMOVE_PUBLICATION_PHOTO_TITLE'
+                        'TITLE': 'Во время удаления фото возникла ошибка'
                     },
 
                     'SET_TITLE_PHOTO': {
-                        'TITLE': 'SET_PUBLICATION_TITLE_PHOTO_TITLE'
+                        'TITLE': 'Во время обработки фото возникла ошибка'
                     },
 
                     'CHECK_FIELD': {
-                        'TITLE': 'CHECK_PUBLICATION_FIELD_TITLE'
+                        'TITLE': 'Во время проверки значения поля возникла ошибка'
                     },
 
                     'LOAD_BRIEFS': {
-                        'TITLE': 'LOAD_PUBLICATIONS_BRIEFS_TITLE'
+                        'TITLE': 'Во время загрузки объявлений возникла ошибка'
                     }
                 },
 
 
                 'TICKETS': {
                     'CREATE': {
-                        'TITLE': 'CREATE_TICKET_TITLE'
+                        'TITLE': 'Во время воздания тикета возникла ошибка'
                     },
 
                     'LOAD': {
-                        'TITLE': 'LOAD_TICKETS_TITLE'
+                        'TITLE': 'Во время загрузки сообщений возникла ошибка'
                     },
 
                     'LOAD_TICKET_MESSAGES': {
-                        'TITLE': 'LOAD_TICKET_MESSAGES_TITLE'
+                        'TITLE': 'Во время загрузки сообщений возникла ошибка'
                     },
 
                     'SEND_TICKET_MESSAGE': {
-                        'TITLE': 'SEND_TICKET_MESSAGE_TITLE'
+                        'TITLE': 'Во время отправки сообщения возникла ошибка'
                     }
                 }
             };
