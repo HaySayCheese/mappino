@@ -1833,7 +1833,6 @@ class LandsBodies(BodyModel):
     destination_sid = models.SmallIntegerField(null=True)
     area = models.FloatField(null=True)
     closed_area = models.BooleanField(default=False)
-    driveways_sid = models.SmallIntegerField(default=LAND_DRIVEWAYS.asphalt())
 
     # Інші зручності
     electricity = models.BooleanField(default=False)

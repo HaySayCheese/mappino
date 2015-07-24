@@ -276,7 +276,6 @@ class PublishedDataSource(object):
             'title': p.body.print_title(),
             'description': p.body.print_description(),
             'area': p.body.print_area() or u'неизвестно',
-            'driveways': p.body.print_driveways(),
             'facilities': p.body.print_facilities(),
             'buildings': p.body.print_provided_add_buildings(),
             'showplaces': p.body.print_showplaces()
