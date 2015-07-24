@@ -316,7 +316,7 @@ class AccountView(CabinetView):
 
         # note: several users may have common landline phone,
         # so wee need to check for duplication only with other landline_phone
-        if user.add_landline_phone:
+        if user.add_landline_phone == phone:
             return self.PostResponses.duplicated_value()
 
         if not user.landline_phone == phone:
