@@ -1112,7 +1112,7 @@ class OfficesRentTerms(CommercialRentTermsModel):
         facilities = u''
         if self.furniture:
             facilities += u', мебель'
-        if self.air_conditioning:
+        if self.conditioner:
             facilities += u', кондиционер'
 
         if facilities:
