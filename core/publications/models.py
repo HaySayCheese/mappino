@@ -599,7 +599,8 @@ class RoomsRentTerms(LivingRentTermsModel):
         """
         if self.price is None:
             raise EmptyRentPrice('Rent price is None.')
-        if self.persons_count is None:
+
+        if self.period_sid == LIVING_RENT_PERIODS.daily() and self.persons_count is None:
             raise EmptyPersonsCount('Persons count is None.')
 
 
