@@ -201,7 +201,6 @@ class PublishedDataSource(object):
             'floors_count': p.body.print_floors_count(),
             'cabinets_count': p.body.print_cabinets_count(),
             'total_area': p.body.print_total_area(),
-            'wcs_count': p.body.print_wcs_count(),
 
             'facilities': p.body.print_facilities(),
             'communications': p.body.print_communications(),
