@@ -69,6 +69,7 @@ class ObjectStates(AbstractConstant):
             'published':    0,
             'unpublished':  1,
             'deleted':      2,
+            'queued':       3,
         })
 
 
@@ -82,6 +83,10 @@ class ObjectStates(AbstractConstant):
 
     def deleted(self):
         return self.ids['deleted']
+
+
+    def queued(self):
+        return self.ids['queued']
 OBJECT_STATES = ObjectStates()
 
 

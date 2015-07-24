@@ -14,7 +14,7 @@ from core.users.models import Users
 from core.publications.handlers import PublicationsPhotosHandler
 from core.currencies import currencies_manager as currencies
 from core.currencies.constants import CURRENCIES as currencies_constants
-from core.publications import models_signals
+from core.publications import signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
     EmptyRentPrice, EmptyPersonsCount, NotEnoughPhotos
@@ -144,7 +144,7 @@ class AbstractHeadModel(models.Model):
 
         # По сигналу про створення запису відбувається оновлення індексу маркерів та
         # запускається індексація запису в sphinx.
-        models_signals.created.send(
+        signals.created.send(
             sender=None, tid=cls.tid, hid=model.id, hash_id=model.hash_id, for_sale=for_sale, for_rent=for_rent)
 
         return model
@@ -265,7 +265,7 @@ class AbstractHeadModel(models.Model):
         self.save(force_update=True)
 
 
-    def publish(self, update_pub_date=True):
+    def publish_or_enqueue(self, pub_date_should_be_updated=True):
         if self.is_deleted():
             raise SuspiciousOperation('Attempt to publish deleted publication.')
 
@@ -286,7 +286,7 @@ class AbstractHeadModel(models.Model):
         # will be rolled back if some database error will occur in progress.
         with transaction.atomic():
 
-            models_signals.before_publish.send(
+            signals.before_publish.send(
                 sender = None,
                 tid = self.tid,
                 hid = self.id,
@@ -295,21 +295,28 @@ class AbstractHeadModel(models.Model):
                 for_rent = self.for_rent
             )
 
-            self.state_sid = OBJECT_STATES.published()
-            if update_pub_date:
-                self.published = now()
-            self.prolong()
-            self.save()
+            if self.owner.minimal_contact_information_is_available():
+                # user has all necessary contact info, publication may be published now
+                self.state_sid = OBJECT_STATES.published()
 
+                if pub_date_should_be_updated:
+                    self.published = now()
 
-            models_signals.published.send(
-                sender = None,
-                tid = self.tid,
-                hid = self.id,
-                hash_id = self.hash_id,
-                for_sale = self.for_sale,
-                for_rent = self.for_rent,
-            )
+                # no need to call save here,
+                # prolong() will call it
+                self.prolong()
+
+                signals.published.send(
+                    None, tid=self.tid, hid=self.id, hash_id=self.hash_id, for_sale=self.for_sale, for_rent=self.for_rent)
+
+            else:
+                # user does not specified necessary contact info,
+                # so the publication should be queued for automatic publication
+                # after user updates he's data.
+                self.state_sid = OBJECT_STATES.queued()
+                self.save()
+
+                signals.queued.send(None, tid=self.tid, hid=self.id, hash_id=self.hash_id)
 
 
     def unpublish(self):
@@ -320,7 +327,7 @@ class AbstractHeadModel(models.Model):
 
         # sender=None для того, щоб django-orm не витягував автоматично дані з БД,
         # які, швидше за все, не знадобляться в подальшій обробці.
-        models_signals.before_unpublish.send(
+        signals.before_unpublish.send(
             sender = None,
             tid = self.tid,
             hid = self.id,
@@ -336,7 +343,7 @@ class AbstractHeadModel(models.Model):
 
         # sender=None для того, щоб django-orm не витягував автоматично дані з БД,
         # які, швидше за все, не знадобляться в подальшій обробці.
-        models_signals.unpublished.send(
+        signals.unpublished.send(
             sender = None,
             tid = self.tid,
             hid = self.id,
@@ -370,7 +377,7 @@ class AbstractHeadModel(models.Model):
         self.deleted = now()
         self.save()
 
-        models_signals.moved_to_trash.send(
+        signals.moved_to_trash.send(
             sender = None,
             tid = self.tid,
             hid = self.id,
@@ -398,7 +405,7 @@ class AbstractHeadModel(models.Model):
         #
         # So, for the correct work of all handlers related to this signal,
         # it is emitted before the physical record removing.
-        models_signals.deleted_permanent.send(
+        signals.deleted_permanent.send(
             sender = None,
             tid = self.tid,
             hid = self.id,

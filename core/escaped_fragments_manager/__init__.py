@@ -9,17 +9,17 @@ from django.conf import settings
 from django.dispatch import receiver
 import os
 
-from core.publications import models_signals
+from core.publications import signals
 from core.escaped_fragments_manager.models import SEIndexerQueue
 
 
-@receiver(models_signals.published)
+@receiver(signals.published)
 def add_publication_to_index_queue(sender, **kwargs):
 	SEIndexerQueue.add(kwargs['tid'], kwargs['hash_id'])
 
 
-@receiver(models_signals.unpublished)
-@receiver(models_signals.deleted_permanent)
+@receiver(signals.unpublished)
+@receiver(signals.deleted_permanent)
 def remove_publication_to_index_queue(sender, **kwargs):
 	tid, hash_id = kwargs['tid'], kwargs['hash_id']
 

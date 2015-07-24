@@ -8,7 +8,7 @@ from collective.methods.request_data_getters import angular_parameters
 from core.publications import formatters
 from core.publications.exceptions import PhotosHandlerExceptions, NotEnoughPhotos
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS, OBJECT_STATES
-from core.publications.models_signals import record_updated
+from core.publications.signals import record_updated
 from core.publications.update_methods.flats import update_flat
 from core.publications.update_methods.houses import update_house
 from core.publications.update_methods.offices import update_office
@@ -273,10 +273,22 @@ class Publication(CabinetView):
         class PutResponses(object):
             @staticmethod
             @json_response
-            def ok():
+            def ok(publication_head):
                 return {
                     'code': 0,
-                    'message': 'OK'
+                    'message': 'OK',
+                    'data': {
+                        'state_sid': publication_head.state_sid,
+                    }
+                }
+
+
+            @staticmethod
+            @json_response
+            def invalid_parameters():
+                return {
+                    'code': 1,
+                    'message': 'Request contains invalid parameters or does not contains it at all.'
                 }
 
 
@@ -284,7 +296,7 @@ class Publication(CabinetView):
             @json_response
             def invalid_publication():
                 return {
-                    'code': 1,
+                    'code': 2,
                     'message': 'Publication does not pass validation.'
                 }
 
@@ -293,7 +305,7 @@ class Publication(CabinetView):
             @json_response
             def not_enough_photos():
                 return {
-                    'code': 2,
+                    'code': 3,
                     'message': 'Publication does not contains enough photos.'
                 }
 
@@ -313,7 +325,7 @@ class Publication(CabinetView):
             try:
                 head = model.queryset_by_hash_id(hash_id).only('id', 'owner')[0]
             except IndexError:
-                return cls.PutResponses.ok()
+                return cls.PutResponses.invalid_publication()
 
 
             # check owner
@@ -328,8 +340,11 @@ class Publication(CabinetView):
 
             elif operation == 'publish':
                 try:
-                    head.publish()
-                    return cls.PutResponses.ok()
+                    head.publish_or_enqueue()
+
+                    # publication may be added to publication queue instead of publishing,
+                    # so the front should know about it.
+                    return cls.PutResponses.ok(head)
 
                 except NotEnoughPhotos:
                     return cls.PutResponses.not_enough_photos()
