@@ -228,19 +228,19 @@ class Users(AbstractBaseUser):
             return False
         return True
 
-
-    def minimal_contact_information_is_available(self):
-        """
-        :returns: True if user specified minimal contact info and allowed it to be shown,
-                otherwise - returns False.
-        """
-        return self.first_name and self.last_name and \
-               (
-                   (self.mobile_phone and self.preferences.mobile_phone_may_be_shown()) or
-                   (self.add_mobile_phone and self.preferences.add_mobile_phone_may_be_shown()) or
-                   (self.landline_phone and self.preferences.landline_phone_may_be_shown()) or
-                   (self.add_landline_phone and self.preferences.add_landline_phone_may_be_shown())
-               )
+    # DEPRECATED
+    # def minimal_contact_information_is_available(self):
+    #     """
+    #     :returns: True if user specified minimal contact info and allowed it to be shown,
+    #             otherwise - returns False.
+    #     """
+    #     return self.first_name and self.last_name and \
+    #            (
+    #                (self.mobile_phone and self.preferences.mobile_phone_may_be_shown()) or
+    #                (self.add_mobile_phone and self.preferences.add_mobile_phone_may_be_shown()) or
+    #                (self.landline_phone and self.preferences.landline_phone_may_be_shown()) or
+    #                (self.add_landline_phone and self.preferences.add_landline_phone_may_be_shown())
+    #            )
 
 
 class Preferences(models.Model):
