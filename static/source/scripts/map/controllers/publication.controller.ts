@@ -62,8 +62,12 @@ module Mappino.Map {
 
                 this.publicationService.load(this.publicationIds, response => {
                     this.$scope.publication = response.data;
-                    console.log(response)
-                })
+
+                    this.publicationService.loadContacts(this.publicationIds, response => {
+                        this.$scope.publication.contacts = {};
+                        this.$scope.publication.contacts = response.data;
+                    });
+                });
             }
         }
     }
