@@ -13,7 +13,9 @@ urlpatterns = patterns('apps.main.api',
 
     # detailed publication view
     url(r'^ajax/api/detailed/publication/(\d+):(\w+)/$', DetailedView.as_view()),
-    url(r'^ajax/api/detailed/publication/(\d+:\w+)/contacts/$', Contacts.as_view()),
+
+    # contacts
+    url(r'^ajax/api/detailed/publication/(\d+):(\w+)/contacts/$', Contacts.as_view()),
 
     # correspondence
     url(r'^ajax/api/notifications/send-message/(\d+:\w+)/$', SendMessageFromClient.as_view()),
