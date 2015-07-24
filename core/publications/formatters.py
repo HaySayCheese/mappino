@@ -292,8 +292,8 @@ class UnpublishedFormatter(object):
     def format(cls, tid, record):
         head = serializers.serialize(
             'python', [record], fields=(
-                'created', 'for_rent', 'for_sale', 'state_sid', 'degree_lat', 'degree_lng',
-                'segment_lat', 'segment_lng', 'pos_lat', 'pos_lng', 'address'
+                'state_sid', 'for_rent', 'for_sale',
+                'degree_lat', 'degree_lng', 'segment_lat', 'segment_lng', 'pos_lat', 'pos_lng', 'address'
             )
         )[0]['fields']
 
