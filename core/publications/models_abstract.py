@@ -17,7 +17,7 @@ from core.currencies.constants import CURRENCIES as currencies_constants
 from core.publications import models_signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
-    EmptyRentPrice, EmptyPersonsCount
+    EmptyRentPrice, EmptyPersonsCount, NotEnoughPhotos
 
 
 class AbstractModel(models.Model):
@@ -266,11 +266,18 @@ class AbstractHeadModel(models.Model):
 
 
     def publish(self, update_pub_date=True):
-        if self.deleted is not None:
+        if self.is_deleted():
             raise SuspiciousOperation('Attempt to publish deleted publication.')
 
+
         self.check_required_fields()
-        self.body.check_required_fields()
+
+        # todo: check photos OR video, not only photos
+        # publication may contain video and no photos,
+        # but it's enough to publish it only with video or only with photos.
+        #
+        # here should be added another check for videos
+        self.check_photos_are_present()
 
 
         # All the signals emitters are wrapped into the atomic transaction.
@@ -430,6 +437,17 @@ class AbstractHeadModel(models.Model):
         self.body.check_required_fields()
 
 
+    def check_photos_are_present(self):
+        """
+        :returns: None
+        :raises: ValidationError if publication contains less photos than required.
+        """
+        min_photos_count = 3
+
+        if self.photos().count() < min_photos_count:
+            raise NotEnoughPhotos('Publication should contains at least {0} photo(s).'.format(min_photos_count))
+
+
     def photos(self):
         return self.photos_model.objects.filter(publication = self.id).order_by('-is_title', 'created')
 
@@ -447,7 +465,7 @@ class AbstractHeadModel(models.Model):
 
 
     def is_deleted(self):
-        return self.state_sid == OBJECT_STATES.deleted()
+        return self.state_sid == OBJECT_STATES.deleted() or self.deleted is not None
 
 
 class CommercialHeadModel(AbstractHeadModel):

@@ -6,7 +6,7 @@ from apps.classes import CabinetView
 from collective.decorators.ajax import json_response, json_response_bad_request
 from collective.methods.request_data_getters import angular_parameters
 from core.publications import formatters
-from core.publications.exceptions import PhotosHandlerExceptions
+from core.publications.exceptions import PhotosHandlerExceptions, NotEnoughPhotos
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS, OBJECT_STATES
 from core.publications.models_signals import record_updated
 from core.publications.update_methods.flats import update_flat
@@ -285,7 +285,16 @@ class Publication(CabinetView):
             def invalid_publication():
                 return {
                     'code': 1,
-                    'message': 'publication does not pass validation.'
+                    'message': 'Publication does not pass validation.'
+                }
+
+
+            @staticmethod
+            @json_response
+            def not_enough_photos():
+                return {
+                    'code': 2,
+                    'message': 'Publication does not contains enough photos.'
                 }
 
 
@@ -302,7 +311,7 @@ class Publication(CabinetView):
 
 
             try:
-                head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
+                head = model.queryset_by_hash_id(hash_id).only('id', 'owner')[0]
             except IndexError:
                 return cls.PutResponses.ok()
 
@@ -321,6 +330,10 @@ class Publication(CabinetView):
                 try:
                     head.publish()
                     return cls.PutResponses.ok()
+
+                except NotEnoughPhotos:
+                    return cls.PutResponses.not_enough_photos()
+
                 except ValidationError:
                     return cls.PutResponses.invalid_publication()
 
