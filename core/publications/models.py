@@ -1488,13 +1488,13 @@ class WarehousesBodies(BodyModel):
 
 
     def print_halls_area(self):
-        if not self.area:
+        if not self.halls_area:
             return u''
 
-        area = "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м²'
+        halls_area = "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м²'
         if self.open_space:
-            area += u' (свободная планировка)'
-        return area
+            halls_area += u' (свободная планировка)'
+        return halls_area
 
 
     def print_plot_area(self):
