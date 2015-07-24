@@ -173,7 +173,6 @@ class PublishedDataSource(object):
             'facilities': p.body.print_facilities(),
             'communications': p.body.print_communications(),
             'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
         }
 
         description.update({
