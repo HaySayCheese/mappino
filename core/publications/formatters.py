@@ -41,6 +41,9 @@ class PublishedDataSource(object):
         """
         data = {
             'photos': [photo.photo_url for photo in publication_head.photos().only('photo_url')]
+            'title': publication_head.body.print_title(),
+            'description': publication_head.body.print_description(),
+            'address': publication_head.body.print_address(),
         }
 
         description_generator = self.data_generators[tid]
@@ -56,9 +59,6 @@ class PublishedDataSource(object):
     @staticmethod
     def compose_flat_description(p):
         description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
             'market_type': p.body.print_market_type(),
             'building_type': p.body.print_building_type(),
             'condition': p.body.print_condition(),
@@ -92,9 +92,6 @@ class PublishedDataSource(object):
     @staticmethod
     def compose_house_description(p):
         description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
             'market_type': p.body.print_market_type(),
             'condition': p.body.print_condition(),
 
@@ -124,9 +121,6 @@ class PublishedDataSource(object):
     @staticmethod
     def compose_room_description(p):
         description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
             'market_type': p.body.print_market_type(),
             'condition': p.body.print_condition(),
             'area': p.body.print_area(),
@@ -152,9 +146,6 @@ class PublishedDataSource(object):
     @staticmethod
     def compose_trade_description(p):
         description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
             'market_type': p.body.print_market_type(),
             'building_type': p.body.print_building_type(),
             'build_year': p.body.print_build_year(),
@@ -188,9 +179,6 @@ class PublishedDataSource(object):
     @staticmethod
     def compose_office_description(p):
         description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
             'market_type': p.body.print_market_type(),
             'building_type': p.body.print_building_type(),
             'build_year': p.body.print_build_year(),
@@ -220,9 +208,6 @@ class PublishedDataSource(object):
     @staticmethod
     def compose_warehouse_description(p):
         description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
-
             'market_type': p.body.print_market_type(),
             'halls_area': p.body.print_halls_area(),
             'plot_area': p.body.print_plot_area(),
@@ -246,8 +231,6 @@ class PublishedDataSource(object):
     @staticmethod
     def compose_garage_description(p):
         description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
             'market_type': p.body.print_market_type(),
             'area': p.body.print_area(),
             'ceiling_height': p.body.print_ceiling_height(),
@@ -268,8 +251,6 @@ class PublishedDataSource(object):
     @staticmethod
     def compose_land_description(p):
         description = {
-            'title': p.body.print_title(),
-            'description': p.body.print_description(),
             'area': p.body.print_area() or u'неизвестно',
             'facilities': p.body.print_facilities(),
             'buildings': p.body.print_provided_add_buildings(),
