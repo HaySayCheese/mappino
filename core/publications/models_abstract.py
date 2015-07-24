@@ -295,28 +295,17 @@ class AbstractHeadModel(models.Model):
                 for_rent = self.for_rent
             )
 
-            if self.owner.minimal_contact_information_is_available():
-                # user has all necessary contact info, publication may be published now
-                self.state_sid = OBJECT_STATES.published()
+            self.state_sid = OBJECT_STATES.published()
 
-                if pub_date_should_be_updated:
-                    self.published = now()
+            if pub_date_should_be_updated:
+                self.published = now()
 
-                # no need to call save here,
-                # prolong() will call it
-                self.prolong()
+            # no need to call save here,
+            # prolong() will call it
+            self.prolong()
 
-                signals.published.send(
-                    None, tid=self.tid, hid=self.id, hash_id=self.hash_id, for_sale=self.for_sale, for_rent=self.for_rent)
-
-            else:
-                # user does not specified necessary contact info,
-                # so the publication should be queued for automatic publication
-                # after user updates he's data.
-                self.state_sid = OBJECT_STATES.queued()
-                self.save()
-
-                signals.queued.send(None, tid=self.tid, hid=self.id, hash_id=self.hash_id)
+            signals.published.send(
+                None, tid=self.tid, hid=self.id, hash_id=self.hash_id, for_sale=self.for_sale, for_rent=self.for_rent)
 
 
     def unpublish(self):
