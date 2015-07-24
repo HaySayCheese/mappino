@@ -139,6 +139,10 @@
                         <md-input-container flex>
                             <label>Доп. раб. телефон</label>
                             <input type="text" name="add_landline_phone" ng-model="profile.account.add_landline_phone" only-number>
+                            <div ng-messages="userProfileForm.add_landline_phone.$error">
+                                <div ng-message="invalid">Некоректный номер</div>
+                                <div ng-message="duplicated">Указанный номер уже используется</div>
+                            </div>
                         </md-input-container>
 
                         <md-input-container flex>
