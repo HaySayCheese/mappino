@@ -1,5 +1,4 @@
 #coding=utf-8
-from core.currencies.constants import CURRENCIES
 from core.publications.models_abstract import *
 from core.publications.constants import *
 from core.publications.exceptions import *
@@ -863,15 +862,6 @@ class TradesBodies(BodyModel):
     open_air = models.BooleanField(default=False)
     add_buildings = models.TextField(null=True)
 
-    # Поряд знаходиться
-    transport_stop = models.BooleanField(default=False)
-    market = models.BooleanField(default=False)
-    cafe = models.BooleanField(default=False)
-    bank = models.BooleanField(default=False)
-    cash_machine = models.BooleanField(default=False)
-    entertainment = models.BooleanField(default=False) # розважальні установи
-    add_showplaces = models.TextField(null=True)
-
 
     # validation
     def check_extended_fields(self):
@@ -1269,12 +1259,6 @@ class OfficesBodies(BodyModel):
         return total_area
 
 
-    def print_wcs_count(self):
-        if not self.wcs_count:
-            return u''
-        return unicode(self.wcs_count)
-
-
     def print_ceiling_height(self):
         if self.ceiling_height is None:
             return u''
@@ -1479,7 +1463,7 @@ class WarehousesBodies(BodyModel):
 
     # validation
     def check_extended_fields(self):
-        if self.area is None:
+        if self.halls_area is None:
             raise EmptyHallsArea('Halls area is None.')
         if self.plot_area is None:
             raise EmptyPlotArea('Halls count is None.')
