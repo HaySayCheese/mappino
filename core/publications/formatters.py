@@ -40,10 +40,13 @@ class PublishedDataSource(object):
         :raise: RuntimeException - broken list of data generators.
         """
         data = {
-            'photos': [photo.photo_url for photo in publication_head.photos().only('photo_url')]
-            'title': publication_head.body.print_title(),
-            'description': publication_head.body.print_description(),
-            'address': publication_head.body.print_address(),
+            'title':        publication_head.body.print_title(),
+            'description':  publication_head.body.print_description(),
+            'address':      publication_head.body.print_address(),
+
+            'photos':       [photo.photo_url for photo in publication_head.photos().only('photo_url')],
+
+            # todo: add video here
         }
 
         description_generator = self.data_generators[tid]
