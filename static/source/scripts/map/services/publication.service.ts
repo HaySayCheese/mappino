@@ -46,6 +46,28 @@ module Mappino.Map {
                     angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
+
+
+
+        public loadContacts(publicationIds: any, successCallback?, errorCallback?) {
+            this.$http.get(`/ajax/api/detailed/publication/${publicationIds.tid}:${publicationIds.hid}/contacts/`)
+                .then(response => {
+                    if (response.data['code'] === 0) {
+                        this.publication = response.data['data'];
+                        angular.isFunction(successCallback) && successCallback(response.data)
+                    } else {
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
+                    }
+                }, response => {
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.LOAD_CONTACTS.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                });
+        }
     }
 }
 
