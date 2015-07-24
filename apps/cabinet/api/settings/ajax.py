@@ -108,7 +108,7 @@ class AccountView(CabinetView):
         def duplicated_value():
             return {
                 'code': 3,
-                'message': 'Value is invalid.'
+                'message': 'Value is duplicated.'
             }
 
 
@@ -314,8 +314,9 @@ class AccountView(CabinetView):
 
             return self.PostResponses.ok()
 
-        # check for duplicates
-        if user.add_landline_phone or not user.mobile_phone_number_is_free(phone):
+        # note: several users may have common landline phone,
+        # so wee need to check for duplication only with other landline_phone
+        if user.add_landline_phone:
             return self.PostResponses.duplicated_value()
 
         if not user.landline_phone == phone:
@@ -334,8 +335,9 @@ class AccountView(CabinetView):
 
             return self.PostResponses.ok()
 
-        # check for duplicates
-        if user.landline_phone == phone or not user.mobile_phone_number_is_free(phone):
+        # note: several users may have common landline phone,
+        # so wee need to check for duplication only with other landline_phone
+        if user.landline_phone == phone:
             return self.PostResponses.duplicated_value()
 
         if not user.add_landline_phone == phone:
