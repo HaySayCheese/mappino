@@ -167,7 +167,7 @@ class PublishedDataSource(object):
             'halls_area': p.body.print_halls_area(),
             'total_area': p.body.print_total_area(),
 
-            'vcs_count': p.body.print_vcs_count(),
+            'wcs_count': p.body.print_wcs_count(),
             'ceiling_height': p.body.print_ceiling_height(),
 
             'facilities': p.body.print_facilities(),
@@ -201,13 +201,11 @@ class PublishedDataSource(object):
             'floors_count': p.body.print_floors_count(),
             'cabinets_count': p.body.print_cabinets_count(),
             'total_area': p.body.print_total_area(),
-            'vcs_count': p.body.print_vcs_count(),
-            'ceiling_height': p.body.print_ceiling_height(),
+            'wcs_count': p.body.print_wcs_count(),
 
             'facilities': p.body.print_facilities(),
             'communications': p.body.print_communications(),
             'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
         }
 
         description.update({
@@ -235,7 +233,6 @@ class PublishedDataSource(object):
             'facilities': p.body.print_facilities(),
             'communications': p.body.print_communications(),
             'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
         }
 
         description.update({
@@ -278,7 +275,6 @@ class PublishedDataSource(object):
             'area': p.body.print_area() or u'неизвестно',
             'facilities': p.body.print_facilities(),
             'buildings': p.body.print_provided_add_buildings(),
-            'showplaces': p.body.print_showplaces()
         }
 
         description.update({
