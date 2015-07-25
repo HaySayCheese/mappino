@@ -1,4 +1,5 @@
 # coding=utf-8
+from django.http.response import Http404
 from collective.decorators.jinja2_shortcuts import render_jinja2_template
 from core.publications.constants import OBJECTS_TYPES
 from core.utils.jinja2_integration import templates
@@ -45,7 +46,10 @@ __MAP_TEMPLATES_PATHS = {
 @ensure_csrf_cookie
 @render_jinja2_template
 def publication_detailed(request, tid):
-    return __MAP_TEMPLATES_PATHS[int(tid)]
+    try:
+        return __MAP_TEMPLATES_PATHS[int(tid)]
+    except KeyError:
+        raise Http404()
 
 
 __FILTERS_TEMPLATES_PATHS = {
@@ -65,15 +69,17 @@ def filters_form_by_tid(request, color, tid):
     try:
         tid = int(tid)
     except ValueError:
-        return HttpResponseBadRequest('@tid is invalid')
+        raise Http404()
 
     if color not in ['red', 'green', 'blue', 'yellow']:
-        return HttpResponseBadRequest('@color is invalid')
+        raise Http404()
+
     color_prefix = color[0]
 
     template_path = __FILTERS_TEMPLATES_PATHS.get(tid)
     if template_path is None:
-        return HttpResponseBadRequest('@tid is invalid')
+        raise Http404()
+
 
     template = templates.get_template(template_path)
     return HttpResponse(template.render({
