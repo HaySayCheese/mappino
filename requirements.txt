@@ -1,44 +1,97 @@
-# Packages that should be installed on ubuntu before requirements install
+####
+#
+# System packages
+#
+####
+
+# Packages that should be installed on ubuntu before requirements will be installed
 # libmysqlclient-dev libpq-dev libsqlite3-dev libjpeg-dev libfreetype6 libfreetype6-dev zlib1g-dev
 
-# python-dev (for python environment) | pypy-dev (for pypy-environment)
+# for python environment
+# python-dev
+
+# for pypy environment
+# pypy-dev
 
 
-# for deployment
+
+
+
+####
+#
+# Python packages
+#
+####
+
+# for python environment
+# psycopg2
+
+# for pypy environment
+# psycopg2cffi
+
+
+
+
+
+####
+#
+# For deployment
+#
+####
+
 # gunicorn
 
-# for python2.7
-#psycopg2
-
-# for pypy
-psycopg2cffi
 
 
-Django
-Jinja2
-MySQL-python
-Pillow==2.5
-celery
-hiredis
-mandrill
-mmh3
-phonenumbers
-pysqlite
-pytz
+
+
+####
+#
+# Common
+#
+####
+
+django==1.8
+jinja2
 redis
-httplib2
-google-api-python-client
-oauth2client
-pyOpenSSL
+hiredis
+pillow
+mandrill                    # email subsystem
+phonenumbers                # phone numbers parser from google
+
+httplib2                    #
+google-api-python-client    # google api
+oauth2client                # client libraries
+pyOpenSSL                   #
+
+python-redis-lock           # for photo uploading synchronization
+django-redis-cache          # sessions on redis
+djorm-pgarray               # custom array field for indexes tables
+                            #(was added to the project before django 1.8)
+
+pytz                        # proper time zones for the python
+django-appconf
+
+
+
+
+
+####
+#
+# Deprecated
+#
+####
+
+MySQL-python
+celery
+mmh3
+pysqlite
 billiard
-python-redis-lock
 kombu
 django_compressor
-django-redis-cache
-djorm-pgarray
 amqp
 anyjson
 six
 mock
 nose
-#rjsmin # js minifier
+#rjsmin                     # js minifier
