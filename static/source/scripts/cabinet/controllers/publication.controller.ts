@@ -78,7 +78,6 @@ module Mappino.Cabinet {
                 .cancel(this.TXT.DIALOGS.REMOVE_PUBLICATION.CANCEL_BTN)
                 .targetEvent($event);
 
-
             this.$mdDialog.show(confirm).then(() => {
                 this.$rootScope.loaders.overlay = true;
                 this.publicationsService.remove(this.publicationIds, response => {
@@ -93,7 +92,6 @@ module Mappino.Cabinet {
 
 
         public publishPublication($event) {
-            console.log(this.$scope.forms.publicationForm)
             if (this.$scope.forms.publicationForm.$invalid) {
                 var checkboxElement = angular.element("input[type='checkbox'].ng-invalid")[0],
                     inputElement    = angular.element("textarea.ng-invalid, input.ng-invalid")[0];
@@ -104,6 +102,8 @@ module Mappino.Cabinet {
                     inputElement.parentNode.scrollIntoView(true);
                     inputElement.focus();
                 }
+            } else if (!this.$scope.publication.photos || !this.$scope.publication.photos.length) {
+                this.scrollToBottom();
             } else {
                 this.$rootScope.loaders.overlay = true;
 
