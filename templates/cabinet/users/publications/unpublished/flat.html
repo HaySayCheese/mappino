@@ -75,7 +75,8 @@
                     </md-input-container>
                     <md-input-container flex="33" flex-sm="66" ng-show="publication.rent_terms.period_sid == 0">
                         <label>Количество мест</label>
-                        <input name="rent_persons_count" ng-model="publication.rent_terms.persons_count" ng-required="publication.head.for_rent" only-number required>
+                        <input name="rent_persons_count" ng-model="publication.rent_terms.persons_count"
+                               ng-required="publication.head.for_rent && publication.rent_terms.period_sid == 0" only-number>
                         <div ng-messages="forms.publicationForm.rent_persons_count.$error"
                              ng-show="forms.publicationForm.$submitted || forms.publicationForm.rent_persons_count.$touched">
                             <div ng-message="required">Обязательное поле</div>
