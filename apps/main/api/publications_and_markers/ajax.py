@@ -1,20 +1,21 @@
 # coding=utf-8
 import json
 
-from apps.classes import CustomerView
-from apps.main.api.publications_and_markers.classes import PublicationsViewMixin
+from django.views.generic import View
+
+from apps.main.api.publications_and_markers.utils import *
+from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.exceptions import InvalidArgument
 from collective.http.responses import HttpJsonResponseBadRequest, HttpJsonResponse, HttpJsonResponseNotFound
 from collective.methods.request_data_getters import angular_post_parameters
 from core.claims.classes import ClaimsManager
-from core.favorites.models import Favorites
 from core.markers_handler import SegmentsIndex
 from core.markers_handler.exceptions import TooBigTransaction
-from core.publications import classes
-from core.publications.constants import HEAD_MODELS
+from core.publications import formatters
+from core.publications.constants import HEAD_MODELS, OBJECTS_TYPES
 
 
-class Markers(PublicationsViewMixin, CustomerView):
+class Markers(View):
     get_codes = {
         'invalid_tids': {
             'code': 1,
@@ -31,6 +32,19 @@ class Markers(PublicationsViewMixin, CustomerView):
         'invalid_request': {
             'code': 5,
         }
+    }
+
+    filters_parsers = {
+        OBJECTS_TYPES.flat(): parse_flats_filters,
+        OBJECTS_TYPES.house(): parse_houses_filters,
+        OBJECTS_TYPES.room(): parse_rooms_filters,
+
+        OBJECTS_TYPES.land(): parse_lands_filters,
+        OBJECTS_TYPES.garage(): parse_garages_filters,
+
+        OBJECTS_TYPES.office(): parse_offices_filters,
+        OBJECTS_TYPES.trade(): parse_trades_filters,
+        OBJECTS_TYPES.warehouse(): parse_warehouses_filters,
     }
 
 
@@ -221,85 +235,137 @@ class Markers(PublicationsViewMixin, CustomerView):
         return HttpJsonResponse(response)
 
 
-class DetailedView(PublicationsViewMixin, CustomerView):
-    formatter = classes.PublishedDataSource() # this is a description generator for the publications.
+    @staticmethod
+    def parse_viewport_coordinates(params):
+        """
+        Parses viewport coordinates from the "params".
+
+        :param params: object with all the request parameters.
+        :type params: dict
+
+        :returns:
+            ne_lat, ne_lng, sw_lat, sw_lng in tuple.
+
+        :raises:
+            ValueError if request contains invalid data.
+        """
+
+        try:
+            viewport = params['viewport']
+            ne_lat = float(viewport['ne_lat'])
+            ne_lng = float(viewport['ne_lng'])
+            sw_lat = float(viewport['sw_lat'])
+            sw_lng = float(viewport['sw_lng'])
+
+        except (IndexError, ValueError):
+            raise ValueError('Invalid viewport coordinates was received.')
+
+        # seems to be ok
+        return ne_lat, ne_lng, sw_lat, sw_lng
+
+
+    @staticmethod
+    def parse_tids_panels_and_filters(params):
+        """
+        :type params: dict
+        :param params: JSON object with request parameters.
+
+        :returns:
+            list of object types ids received from the request.
+
+        :raises:
+            ValueError even if one tid wil not pass validation.
+        """
+
+        parsed_tids_and_filters = []
+        try:
+            for filters in params['filters']:
+                tid = int(filters['t_sid'])
+                if tid not in OBJECTS_TYPES.values():
+                    raise ValueError('Invalid type id received from the client, {}'.format(tid))
+
+                panel = filters['panel']
+                parsed_tids_and_filters.append(
+                    (tid, panel, filters, ) # note: tuple here
+                )
+
+        except (IndexError, ValueError):
+            raise ValueError('Invalid filters parameters was received.')
+
+        # seems to be ok
+        return parsed_tids_and_filters
+
+
+class DetailedView(View):
+    formatter = formatters.PublishedDataSource() # this is a description generator for the publications.
 
     class GetResponses(object):
         @staticmethod
+        @json_response
         def ok(data):
-            return HttpJsonResponse({
+            return {
                 'code': 0,
                 'message': 'OK',
                 'data': data,
-            })
+            }
 
         @staticmethod
+        @json_response_bad_request
         def invalid_tid_hid():
-            return HttpJsonResponseBadRequest({
+            return {
                 'code': 1,
                 'message': 'Request contains invalid "tid" or "hid" or does not contains them at all.'
-            })
+            }
 
         @staticmethod
+        @json_response_not_found
         def no_such_publication():
-            return HttpJsonResponseNotFound({
-                'code': 1,
+            return {
+                'code': 2,
                 'message': 'There is no publication with exact id.'
-            })
+            }
 
         @staticmethod
+        @json_response
         def publication_is_unpublished():
-            return HttpJsonResponse({
-                'code': 2,
+            return {
+                'code': 3,
                 'message': 'This publication was unpublished.'
-            })
+            }
 
 
-    def __init__(self):
-        super(DetailedView, self).__init__()
-        self.formatter = classes.PublishedDataSource()
-
-
-    def get(self, request, *args):
-        tid, hash_id = int(args[0]), args[1]
-
+    @classmethod
+    def get(cls, request, *args):
         try:
+            tid, hash_id = int(args[0]), args[1]
             model = HEAD_MODELS[tid]
-        except KeyError:
-            return self.GetResponses.invalid_tid_hid()
+        except (KeyError, ValueError):
+            return cls.GetResponses.invalid_tid_hid()
+
 
         try:
-            publication = model.objects\
-                .filter(hash_id=hash_id)\
-                .only('for_sale', 'for_rent', 'body', 'sale_terms', 'rent_terms')[:1][0]
+            publication = model.queryset_by_hash_id(hash_id)\
+                .only('for_sale', 'for_rent')\
+                .prefetch_related('body')\
+                .prefetch_related('sale_terms')\
+                .prefetch_related('rent_terms')\
+                [:1][0]
         except IndexError:
-            return self.GetResponses.no_such_publication()
+            return cls.GetResponses.no_such_publication()
 
-        # check if publication is published,
-        # otherwise we must not show it
+
         if not publication.is_published():
-            return self.GetResponses.publication_is_unpublished()
+            return cls.GetResponses.publication_is_unpublished()
 
 
+        data = cls.formatter.format(tid, publication)
 
-        description = self.formatter.format(tid, publication)
-
-        # check if this publication is listed in customers favorites
-        description['added_to_favorites'] = False
-
-        try:
-            customer = self.get_customer_queryset(request)[0]
-            if Favorites.exist(customer.id, tid, hash_id):
-                description['added_to_favorites'] = True
-        except IndexError:
-            pass
-
-
-        return self.GetResponses.ok(description)
+        # todo: return favorites back
+        return cls.GetResponses.ok(data)
 
 
 class Claims(object):
-    class List(CustomerView):
+    class List(View):
         class PostResponses(object):
             @staticmethod
             def ok():

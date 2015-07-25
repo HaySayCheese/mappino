@@ -151,16 +151,14 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
 
         if ratio > image_ratio:
             size = thumb_width, thumb_height
-            box = (0, (image.size[1] - size[1]) / 2, image.size[0], (image.size[1] + size[1]) / 2)
-            image = image.resize((size[0], size[0] * image.size[1] / image.size[0]), Image.ANTIALIAS)
-
+            image = image.resize((size[0], int(round(size[0] * image.size[1] / image.size[0]))), Image.ANTIALIAS)
+            box = (0, int(round((image.size[1] - size[1]) / 2)), image.size[0], int(round((image.size[1] + size[1]) / 2)))
             image = image.crop(box)
 
         elif ratio < image_ratio:
             size = thumb_width, thumb_height
-
-            image = image.resize((size[1] * image.size[0] / image.size[1], size[1]), Image.ANTIALIAS)
-            box = ((image.size[0] - size[0]) / 2, 0, (image.size[0] + size[0]) / 2, image.size[1])
+            image = image.resize(int((round(size[1] * image.size[0] / image.size[1]), size[1])), Image.ANTIALIAS)
+            box = (int(round((image.size[0] - size[0]) / 2)), 0, int(round((image.size[0] + size[0]) / 2)), image.size[1])
             image = image.crop(box)
 
         else:

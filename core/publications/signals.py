@@ -11,5 +11,7 @@ record_updated = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'fo
 before_unpublish = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])
 unpublished = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])
 
+queued = Signal(providing_args=['tid', 'hid', 'hash_id'])
+
 moved_to_trash = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])
 deleted_permanent = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])

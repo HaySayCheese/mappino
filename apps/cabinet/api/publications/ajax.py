@@ -5,10 +5,10 @@ from django.http.response import HttpResponseBadRequest
 from apps.classes import CabinetView
 from collective.decorators.ajax import json_response, json_response_bad_request
 from collective.methods.request_data_getters import angular_parameters
-from core.publications import classes
-from core.publications.exceptions import PhotosHandlerExceptions
+from core.publications import formatters
+from core.publications.exceptions import PhotosHandlerExceptions, NotEnoughPhotos
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS, OBJECT_STATES
-from core.publications.models_signals import record_updated
+from core.publications.signals import record_updated
 from core.publications.update_methods.flats import update_flat
 from core.publications.update_methods.houses import update_house
 from core.publications.update_methods.offices import update_office
@@ -61,6 +61,10 @@ class Publications(CabinetView):
 
 
 class Publication(CabinetView):
+    published_formatter = formatters.PublishedDataSource()
+    unpublished_formatter = formatters.UnpublishedFormatter()
+
+
     class GetResponses(object):
         @staticmethod
         @json_response
@@ -129,26 +133,21 @@ class Publication(CabinetView):
             }
 
 
-    def __init__(self):
-        super(Publication, self).__init__()
-        self.published_formatter = classes.CabinetPublishedDataSource()
-        self.unpublished_formatter = classes.UnpublishedFormatter()
-
-
-    def get(self, request, *args):
+    @classmethod
+    def get(cls, request, *args):
         try:
             tid, hash_id = args[0], args[1]
             tid = int(tid)
             model = HEAD_MODELS[tid]
 
         except (IndexError, ValueError, KeyError):
-            return self.GetResponses.invalid_parameters()
+            return cls.GetResponses.invalid_parameters()
 
 
         try:
             head = model.by_hash_id(hash_id, select_body=True)
         except ObjectDoesNotExist:
-            return self.GetResponses.invalid_parameters()
+            return cls.GetResponses.invalid_parameters()
 
 
         # check owner
@@ -158,11 +157,11 @@ class Publication(CabinetView):
 
         # seems to be ok
         if head.is_published() or head.is_deleted():
-            response = self.published_formatter.format(tid, head)
+            response = cls.published_formatter.format(tid, head)
         else:
-            response = self.unpublished_formatter.format(tid, head)
+            response = cls.unpublished_formatter.format(tid, head)
 
-        return self.GetResponses.ok(response)
+        return cls.GetResponses.ok(response)
 
 
     @classmethod
@@ -236,7 +235,8 @@ class Publication(CabinetView):
         return cls.PutResponses.ok(returned_value)
 
 
-    def delete(self, request, *args):
+    @classmethod
+    def delete(cls, request, *args):
         try:
             tid, hash_id = args[:2]
             tid = int(tid)
@@ -244,13 +244,13 @@ class Publication(CabinetView):
 
             model = HEAD_MODELS[tid]
         except (IndexError, ValueError):
-            return self.DeleteResponses.invalid_parameters()
+            return cls.DeleteResponses.invalid_parameters()
 
 
         try:
             head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
         except IndexError:
-            return self.DeleteResponses.invalid_parameters()
+            return cls.DeleteResponses.invalid_parameters()
 
 
         # check owner
@@ -266,17 +266,29 @@ class Publication(CabinetView):
             head.delete_permanent()
 
 
-        return self.DeleteResponses.ok()
+        return cls.DeleteResponses.ok()
 
 
     class PublishUnpublish(CabinetView):
         class PutResponses(object):
             @staticmethod
             @json_response
-            def ok():
+            def ok(publication_head):
                 return {
                     'code': 0,
-                    'message': 'OK'
+                    'message': 'OK',
+                    'data': {
+                        'state_sid': publication_head.state_sid,
+                    }
+                }
+
+
+            @staticmethod
+            @json_response
+            def invalid_parameters():
+                return {
+                    'code': 1,
+                    'message': 'Request contains invalid parameters or does not contains it at all.'
                 }
 
 
@@ -284,8 +296,17 @@ class Publication(CabinetView):
             @json_response
             def invalid_publication():
                 return {
-                    'code': 1,
-                    'message': 'publication does not pass validation.'
+                    'code': 2,
+                    'message': 'Publication does not pass validation.'
+                }
+
+
+            @staticmethod
+            @json_response
+            def not_enough_photos():
+                return {
+                    'code': 3,
+                    'message': 'Publication does not contains enough photos.'
                 }
 
 
@@ -302,9 +323,9 @@ class Publication(CabinetView):
 
 
             try:
-                head = model.objects.filter(hash_id=hash_id).only('id', 'owner')[0]
+                head = model.queryset_by_hash_id(hash_id).only('id', 'owner')[0]
             except IndexError:
-                return cls.PutResponses.ok()
+                return cls.PutResponses.invalid_publication()
 
 
             # check owner
@@ -319,8 +340,15 @@ class Publication(CabinetView):
 
             elif operation == 'publish':
                 try:
-                    head.publish()
-                    return cls.PutResponses.ok()
+                    head.publish_or_enqueue()
+
+                    # publication may be added to publication queue instead of publishing,
+                    # so the front should know about it.
+                    return cls.PutResponses.ok(head)
+
+                except NotEnoughPhotos:
+                    return cls.PutResponses.not_enough_photos()
+
                 except ValidationError:
                     return cls.PutResponses.invalid_publication()
 
@@ -483,7 +511,8 @@ class Publication(CabinetView):
                 }
 
 
-        def delete(self, request, *args):
+        @classmethod
+        def delete(cls, request, *args):
             try:
                 tid, hash_id = args[0].split(':')
                 tid = int(tid)
@@ -491,17 +520,17 @@ class Publication(CabinetView):
                 photo_hash_id = args[1]
 
             except (IndexError, ValueError):
-                return self.DeleteResponses.invalid_params()
+                return cls.DeleteResponses.invalid_params()
 
 
             if tid not in OBJECTS_TYPES.values():
-                return self.DeleteResponses.invalid_params()
+                return cls.DeleteResponses.invalid_params()
 
             model = HEAD_MODELS[tid]
             try:
                 publication = model.objects.filter(hash_id=hash_id).only('id', 'owner')[:1][0]
             except IndexError:
-                return self.DeleteResponses.invalid_params()
+                return cls.DeleteResponses.invalid_params()
 
             # check owner
             if publication.owner.id != request.user.id:
@@ -512,10 +541,10 @@ class Publication(CabinetView):
                 photo = publication.photos_model.objects.get(hash_id=photo_hash_id)
                 new_title_photo = photo.remove()
             except ObjectDoesNotExist:
-                return self.DeleteResponses.invalid_params()
+                return cls.DeleteResponses.invalid_params()
 
             # seems to be OK
-            return self.DeleteResponses.ok(new_title_photo.hash_id if new_title_photo else None)
+            return cls.DeleteResponses.ok(new_title_photo.hash_id if new_title_photo else None)
 
 
     class TitlePhoto(CabinetView):
@@ -556,7 +585,8 @@ class Publication(CabinetView):
                 }
 
 
-        def put(self, request, *args):
+        @classmethod
+        def put(cls, request, *args):
             """
             Помічає фото з hash_id=photo_hash_id як основне.
             Для даного фото буде згенеровано title_thumb і воно використовуватиметься як початкове у видачі.
@@ -572,14 +602,14 @@ class Publication(CabinetView):
 
 
             if tid not in OBJECTS_TYPES.values():
-                return self.PutResponses.invalid_tid()
+                return cls.PutResponses.invalid_tid()
 
 
             model = HEAD_MODELS[tid]
             try:
                 publication = model.objects.filter(hash_id=hash_id).only('id', 'owner')[:1][0]
             except IndexError:
-                return self.PutResponses.invalid_hid()
+                return cls.PutResponses.invalid_hid()
 
 
             # check owner
@@ -592,13 +622,13 @@ class Publication(CabinetView):
             try:
                 photo = photos_model.objects.get(hash_id=photo_hash_id)
             except ObjectDoesNotExist:
-                return self.PutResponses.invalid_pid()
+                return cls.PutResponses.invalid_pid()
 
 
             photo.mark_as_title()
 
             # seems to be ok
-            return self.PutResponses.ok()
+            return cls.PutResponses.ok()
 
 
 class Briefs(CabinetView):
@@ -615,12 +645,12 @@ class Briefs(CabinetView):
 
     @classmethod
     def get(cls, request, section):
-        briefs = cls.briefs_of_section(section, request.user.id)
+        briefs = cls.__briefs_of_section(section, request.user.id)
         return cls.GetResponses.ok(briefs)
 
 
     @classmethod
-    def briefs_of_section(cls, section, user_id):
+    def __briefs_of_section(cls, section, user_id):
         pubs = []
         for tid in OBJECTS_TYPES.values():
             query = HEAD_MODELS[tid].by_user_id(user_id).only('id')
@@ -636,13 +666,13 @@ class Briefs(CabinetView):
             else:
                 raise ValueError('Invalid section title {0}'.format(section))
 
-            pubs.extend(cls.dump_publications_list(tid, query))
+            pubs.extend(cls.__dump_publications_list(tid, query))
 
         return pubs
 
 
     @classmethod
-    def dump_publications_list(cls, tid, queryset):
+    def __dump_publications_list(cls, tid, queryset):
         """
         Повератає список брифів оголошень, вибраних у queryset.
 

@@ -14,7 +14,7 @@ urlpatterns = patterns('apps',
         url(r'^map/$', 'main.views.map'),
 
         # templates
-        url(r'', include('apps.main.templates_ajax.ajax_urls')),
+        url(r'', include('apps.main.templates.urls')),
 
         # API
         url(r'', include('apps.main.api.ajax_urls')),

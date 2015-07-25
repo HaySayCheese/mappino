@@ -1,0 +1,94 @@
+<section class="md-padding">
+    <div class="md-subhead blue-text">Описание</div>
+    <md-divider></md-divider>
+    <p layout-padding>
+        [[ publication.description ]]
+    </p>
+    <div class="md-subhead blue-text">Характеристики</div>
+    <md-divider></md-divider>
+    <div layout="row" layout-padding>
+        <div flex="45">
+            <div layout="row">
+                <div flex="40">
+                    <div>Тип рынка:</div>
+                </div>
+                <div flex="60">
+                    <div>[[ publication.market_type ]]</div>
+                </div>
+            </div>
+
+        </div>
+        <div flex="55">
+            <div layout="row">
+                <div flex="70">
+                    <div>Площадь участка:</div>
+                </div>
+                <div flex="30">
+                    <div>[[ publication.plot_area ]]</div>
+                </div>
+            </div>
+            <div layout="row">
+                <div flex="70">
+                    <div>Площадь помещений:</div>
+                </div>
+                <div flex="30">
+                    <div>[[ publication.halls_area ]]</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="publication.facilities">
+        <div class="md-subhead blue-text">Удобства</div>
+        <md-divider></md-divider>
+        <p layout-padding>
+            [[ publication.facilities ]]
+        </p>
+    </div>
+
+    <div ng-show="publication.communications">
+        <div class="md-subhead blue-text">Коммуникации</div>
+        <md-divider></md-divider>
+        <p layout-padding>
+            [[ publication.communications ]]
+        </p>
+    </div>
+
+    <div ng-show="publication.buildings">
+        <div class="md-subhead blue-text">Дополнительные постройки</div>
+        <md-divider></md-divider>
+        <p layout-padding>
+            [[ publication.buildings ]]
+        </p>
+    </div>
+
+    <div class="md-subhead blue-text">Контакти</div>
+    <md-divider></md-divider>
+    <div layout="row" layout-padding>
+        <div flex="40" layout="column" layout-align="center center">
+            <img ng-src="[[ publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/user.png" ng-show="publication.contacts.avatar_url" />
+            <img src="{{ static }}build/images/cabinet/user.png" ng-hide="publication.contacts.avatar_url" alt="" />
+        </div>
+        <div flex="60" layout="column">
+            <div class="md-title" layout-padding ng-show="publication.contacts.first_name || publication.contacts.last_name">
+                [[ publication.contacts.first_name + '&nbsp;' ]][[ publication.contacts.last_name ]]
+            </div>
+            <div layout-padding>
+                <div ng-show="publication.contacts.mobile_phone">
+                    <a ng-href="tel:[[ publication.contacts.mobile_phone ]]">[[ publication.contacts.mobile_phone ]]</a>
+                </div>
+                <div ng-show="publication.contacts.add_mobile_phone">
+                    <a ng-href="tel:[[ publication.contacts.add_mobile_phone ]]">[[ publication.contacts.add_mobile_phone ]]</a>
+                </div>
+                <div ng-show="publication.contacts.landline_phone">[[ publication.contacts.landline_phone ]]</div>
+                <div ng-show="publication.contacts.add_landline_phone">[[ publication.contacts.add_landline_phone ]]</div>
+                <div ng-show="publication.contacts.email">
+                    <a ng-href="mailto:[[ publication.contacts.email ]]">[[ publication.contacts.email ]]</a>
+                </div>
+                <div ng-show="publication.contacts.skype">
+                    <a ng-href="skype:[[ publication.contacts.skype ]]?call">[[ publication.contacts.skype ]]</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

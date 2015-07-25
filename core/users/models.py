@@ -138,15 +138,6 @@ class Users(AbstractBaseUser):
             return None
 
 
-    # @classmethod
-    # def validate_alias(cls, alias, exclude_user=None):
-    #     if not cls.alias_free(alias, exclude_user=exclude_user):
-    #         raise exceptions.AliasAlreadyTaken('')
-    #
-    #     if len(alias) <= 3:
-    #         raise exceptions.TooShortAlias('')
-
-
     @classmethod
     def email_is_free(cls, email):
         return (cls.objects.filter(email=email).count() == 0 and
@@ -236,6 +227,20 @@ class Users(AbstractBaseUser):
         if self.is_moderator or self.is_manager:
             return False
         return True
+
+    # DEPRECATED
+    # def minimal_contact_information_is_available(self):
+    #     """
+    #     :returns: True if user specified minimal contact info and allowed it to be shown,
+    #             otherwise - returns False.
+    #     """
+    #     return self.first_name and self.last_name and \
+    #            (
+    #                (self.mobile_phone and self.preferences.mobile_phone_may_be_shown()) or
+    #                (self.add_mobile_phone and self.preferences.add_mobile_phone_may_be_shown()) or
+    #                (self.landline_phone and self.preferences.landline_phone_may_be_shown()) or
+    #                (self.add_landline_phone and self.preferences.add_landline_phone_may_be_shown())
+    #            )
 
 
 class Preferences(models.Model):

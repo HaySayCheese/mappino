@@ -10,15 +10,15 @@ module Mappino.Map {
         'ngResource',
         'ngMessages',
 
-        'ngFileUpload',
-
         'ui.router',
 
-        'Mappino.Core'
+        'Mappino.Core',
+
+        'ngFileUpload',
+        'angular-carousel'
 
         //'ngTinyScrollbar',
     ]);
-
 
 
 
@@ -38,6 +38,7 @@ module Mappino.Map {
     /** Services */
     app.service('FiltersService', FiltersService);
     app.service('MarkersService', MarkersService);
+    app.service('PublicationService', PublicationService);
 
 
     /** Handlers */
@@ -45,14 +46,12 @@ module Mappino.Map {
     app.service('PublicationHandler', PublicationHandler);
 
 
+
     /** Directives */
     app.directive('navbarLeft', NavbarLeftDirective);
     app.directive('navbarRight', NavbarRightDirective);
     app.directive('publicationView', PublcationViewDirective);
     app.directive('tabSectionCollapsible', TabBodyCollapsibleDirective);
-    //app.directive('tabBodySectionCollapsible', TabBodySectionCollapsibleDirective);
-
-
 
 
     /** Controllers */

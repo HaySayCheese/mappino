@@ -1,6 +1,5 @@
 #coding=utf-8
-from core.currencies.constants import CURRENCIES
-from core.publications.abstract_models import *
+from core.publications.models_abstract import *
 from core.publications.constants import *
 from core.publications.exceptions import *
 from core.publications.objects_constants.flats import *
@@ -138,30 +137,17 @@ class FlatsBodies(BodyModel):
 
 
     #-- output
-    def print_title(self):
-        if self.title is None:
-            return u''
-
-        return self.title
-
-
-    def print_description(self):
-        if not self.description:
-            return u''
-        return self.description
-
-
     def print_market_type(self):
         return self.substitutions['market_type'][self.market_type_sid]
 
 
-    def print_flat_type(self):
-        flat_type = self.substitutions['flat_type'].get(self.flat_type_sid)
-        if flat_type:
-            return flat_type
+    def print_building_type(self):
+        building_type = self.substitutions['building_type'].get(self.building_type_sid)
+        if building_type:
+            return building_type
 
-        if self.flat_type_sid == FLAT_TYPES.custom() and self.custom_flat_type:
-            return self.custom_flat_type
+        if self.building_type_sid == FLAT_BUILDING_TYPES.custom() and self.custom_building_type:
+            return self.custom_building_type
         return u''
 
 
@@ -421,18 +407,6 @@ class HousesBodies(BodyModel):
 
 
     # output
-    def print_title(self):
-        if not self.title:
-            return u''
-        return self.title
-
-
-    def print_description(self):
-        if not self.description:
-            return u''
-        return self.description
-
-
     def print_market_type(self):
         return self.substitutions['market_type'][self.market_type_sid]
 
@@ -625,7 +599,8 @@ class RoomsRentTerms(LivingRentTermsModel):
         """
         if self.price is None:
             raise EmptyRentPrice('Rent price is None.')
-        if self.persons_count is None:
+
+        if self.period_sid == LIVING_RENT_PERIODS.daily() and self.persons_count is None:
             raise EmptyPersonsCount('Persons count is None.')
 
 
@@ -702,18 +677,6 @@ class RoomsBodies(BodyModel):
 
 
     # output
-    def print_title(self):
-        if not self.title:
-            return u''
-        return self.title
-
-
-    def print_description(self):
-        if not self.description:
-            return u''
-        return self.description
-
-
     def print_market_type(self):
         return self.substitutions['market_type'][self.market_type_sid]
 
@@ -900,15 +863,6 @@ class TradesBodies(BodyModel):
     open_air = models.BooleanField(default=False)
     add_buildings = models.TextField(null=True)
 
-    # Поряд знаходиться
-    transport_stop = models.BooleanField(default=False)
-    market = models.BooleanField(default=False)
-    cafe = models.BooleanField(default=False)
-    bank = models.BooleanField(default=False)
-    cash_machine = models.BooleanField(default=False)
-    entertainment = models.BooleanField(default=False) # розважальні установи
-    add_showplaces = models.TextField(null=True)
-
 
     # validation
     def check_extended_fields(self):
@@ -920,18 +874,6 @@ class TradesBodies(BodyModel):
 
 
     # output
-    def print_title(self):
-        if self.title is None:
-            return u''
-        return self.title
-
-
-    def print_description(self):
-        if self.description is None:
-            return u''
-        return self.description
-
-
     def print_market_type(self):
         return self.substitutions['market_type'][self.market_type_sid]
 
@@ -1161,7 +1103,7 @@ class OfficesRentTerms(CommercialRentTermsModel):
         facilities = u''
         if self.furniture:
             facilities += u', мебель'
-        if self.air_conditioning:
+        if self.conditioner:
             facilities += u', кондиционер'
 
         if facilities:
@@ -1270,18 +1212,6 @@ class OfficesBodies(BodyModel):
 
 
     # output
-    def print_title(self):
-        if not self.title:
-            return u''
-        return self.title
-
-
-    def print_description(self):
-        if not self.description:
-            return u''
-        return self.description
-
-
     def print_market_type(self):
         return self.substitutions['market_type'][self.market_type_sid]
 
@@ -1328,12 +1258,6 @@ class OfficesBodies(BodyModel):
         if self.closed_area:
             total_area += u' (закрытая терр.)'
         return total_area
-
-
-    def print_wcs_count(self):
-        if not self.wcs_count:
-            return u''
-        return unicode(self.wcs_count)
 
 
     def print_ceiling_height(self):
@@ -1540,7 +1464,7 @@ class WarehousesBodies(BodyModel):
 
     # validation
     def check_extended_fields(self):
-        if self.area is None:
+        if self.halls_area is None:
             raise EmptyHallsArea('Halls area is None.')
         if self.plot_area is None:
             raise EmptyPlotArea('Halls count is None.')
@@ -1564,13 +1488,13 @@ class WarehousesBodies(BodyModel):
 
 
     def print_halls_area(self):
-        if not self.area:
+        if not self.halls_area:
             return u''
 
-        area = "{:.2f}".format(self.area).rstrip('0').rstrip('.') + u' м²'
+        halls_area = "{:.2f}".format(self.halls_area).rstrip('0').rstrip('.') + u' м²'
         if self.open_space:
-            area += u' (свободная планировка)'
-        return area
+            halls_area += u' (свободная планировка)'
+        return halls_area
 
 
     def print_plot_area(self):
@@ -1894,7 +1818,6 @@ class LandsBodies(BodyModel):
     destination_sid = models.SmallIntegerField(null=True)
     area = models.FloatField(null=True)
     closed_area = models.BooleanField(default=False)
-    driveways_sid = models.SmallIntegerField(default=LAND_DRIVEWAYS.asphalt())
 
     # Інші зручності
     electricity = models.BooleanField(default=False)

@@ -713,86 +713,6 @@ def update_office(h, field, value, tid):
                 return
 
 
-        # boolean
-        elif field == 'transport_stop':
-            if (value is True) or (value is False):
-                b = OfficesBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.transport_stop = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'bank':
-            if (value is True) or (value is False):
-                b = OfficesBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.bank = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'market':
-            if (value is True) or (value is False):
-                b = OfficesBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.market = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'cash_machine':
-            if (value is True) or (value is False):
-                b = OfficesBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.cash_machine = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'cafe':
-            if (value is True) or (value is False):
-                b = OfficesBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.cafe = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # boolean
-        elif field == 'entertainment':
-            if (value is True) or (value is False):
-                b = OfficesBodies.objects.filter(id=h.body_id).only('id')[0]
-                b.entertainment = value
-                b.save(force_update=True)
-                return
-            else:
-                raise ValueError()
-
-
-        # text
-        elif field == 'add_showplaces':
-            b = OfficesBodies.objects.filter(id=h.body_id).only('id')[0]
-            if not value:
-                b.add_showplaces= None
-                b.save(force_update=True)
-                return
-            else:
-                # todo: додати форматування
-                b.add_showplaces = value
-                b.save(force_update=True)
-                return
-
-
         # text
         elif field == 'lat_lng':
             h.set_lat_lng(value)
@@ -801,15 +721,17 @@ def update_office(h, field, value, tid):
 
         # text
         elif field == 'address':
+            b = OfficesBodies.objects.filter(id=h.body_id).only('id')[0]
+
             if not value:
-                h.address = u''
-                h.save(force_update=True)
+                b.address = u''
+                b.save(force_update=True)
                 return
             else:
                 # note: адреса не форматується, оскільки не можливо передбачити,
                 # як саме користувач її введе.
-                h.address = value
-                h.save(force_update=True)
+                b.address = value
+                b.save(force_update=True)
                 return
 
 

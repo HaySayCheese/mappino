@@ -6,20 +6,20 @@
         <md-card-content layout="column">
             <div layout="column" layout-align="center center">
                 <img src="{{ static }}build/images/cabinet/brief-new-publication.gif" alt=""/>
-                <h3 class="grey-text text-darken-2">Добавить новое объявление</h3>
+                <h3 class="md-headline grey-text text-darken-2">Добавить новое объявление</h3>
+
+                <div layout="row">
+                    <md-checkbox class="md-primary" ng-model="newPublication.for_sale" aria-label="Продажа">
+                        О продаже
+                    </md-checkbox>
+                    <md-checkbox class="md-primary" ng-model="newPublication.for_rent" aria-label="Аренда">
+                        Об аренде
+                    </md-checkbox>
+                </div>
 
                 <md-select placeholder="Realty type" ng-model="newPublication.tid">
                     <md-option ng-repeat="type in TYPES.REALTY" value="[[ type.id ]]">[[ type.titles.genitive ]]</md-option>
                 </md-select>
-
-                <div layout="row">
-                    <md-checkbox class="md-primary" ng-model="newPublication.for_sale" aria-label="Продажа">
-                        Продажа
-                    </md-checkbox>
-                    <md-checkbox class="md-primary" ng-model="newPublication.for_rent" aria-label="Аренда">
-                        Аренда
-                    </md-checkbox>
-                </div>
             </div>
         </md-card-content>
         <md-divider></md-divider>
@@ -72,7 +72,7 @@
             <md-button class="md-primary md-hue-1" ng-hide="brief.state_sid == 2" ng-click="briefsCtrl.editPublication($event, brief)">
                 Редактировать
             </md-button>
-            <md-button class="md-primary md-hue-1" ng-hide="brief.state_sid == 2" ui-sref="publication_view({ id: brief.tid + ':' + brief.id })">
+            <md-button class="md-primary md-hue-1" ng-show="brief.state_sid == 0" ui-sref="publication_view({ id: brief.tid + ':' + brief.id })">
                 Посмотреть
             </md-button>
             <md-button class="md-primary md-hue-1" ng-show="brief.state_sid == 2" ng-click="briefsCtrl.recoveryBrief($event, brief)">

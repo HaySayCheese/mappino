@@ -850,15 +850,17 @@ def update_trade(h, field, value, tid):
 
         # text
         elif field == 'address':
+            b = TradesBodies.objects.filter(id=h.body_id).only('id')[0]
+
             if not value:
-                h.address = u''
-                h.save(force_update=True)
+                b.address = u''
+                b.save(force_update=True)
                 return
             else:
                 # note: адреса не форматується, оскільки не можливо передбачити,
                 # як саме користувач її введе.
-                h.address = value
-                h.save(force_update=True)
+                b.address = value
+                b.save(force_update=True)
                 return
 
 

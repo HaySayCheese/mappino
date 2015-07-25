@@ -1,16 +1,17 @@
 
-// todo: перекласти назви на англ мову
+
 module Mappino.Core.Values {
     export class DialogsValues {
         static get Default(): any {
             return {
                 'REMOVE_PUBLICATION': {
-                    TITLE:      'REMOVE_PUBLICATION_TITLE',
-                    BODY:       'REMOVE_PUBLICATION_BODY',
-                    ARIA_LABEL: 'REMOVE_PUBLICATION_BODY',
-                    OK_BTN:     'REMOVE_PUBLICATION_OK_BTN',
-                    CANCEL_BTN: 'REMOVE_PUBLICATION_CANCEL_BTN'
+                    TITLE:      'Подтвердите удаление объявления',
+                    BODY:       'Вы уверенны, что хотите удалить объявление?',
+                    ARIA_LABEL: 'Вы уверенны, что хотите удалить объявление?',
+                    OK_BTN:     'Да, удалить',
+                    CANCEL_BTN: 'Отмена'
                 },
+
 
                 'RECOVERY_PUBLICATION': {
                     TITLE:      'RECOVERY_PUBLICATION_TITLE',
@@ -20,26 +21,29 @@ module Mappino.Core.Values {
                     CANCEL_BTN: 'RECOVERY_PUBLICATION_CANCEL_BTN'
                 },
 
+
                 'DONE_EDITING_LATER_PUBLICATION': {
-                    TITLE:      'DONE_EDITING_LATER_PUBLICATION_TITLE',
-                    BODY:       'DONE_EDITING_LATER_PUBLICATION_BODY',
-                    ARIA_LABEL: 'DONE_EDITING_LATER_PUBLICATION_LABEL',
-                    OK_BTN:     'DONE_EDITING_LATER_PUBLICATION_OK_BTN'
+                    TITLE:      'Сохранение объявления',
+                    BODY:       'Объявление успешно сохранено',
+                    ARIA_LABEL: 'Объявление успешно сохранено',
+                    OK_BTN:     'Хорошо'
                 },
+
 
                 'EDIT_PUBLICATION': {
-                    TITLE:      'EDIT_PUBLICATION_TITLE',
-                    BODY:       'EDIT_PUBLICATION_BODY',
-                    ARIA_LABEL: 'EDIT_PUBLICATION_LABEL',
-                    OK_BTN:     'EDIT_PUBLICATION_OK_BTN',
-                    CANCEL_BTN: 'EDIT_PUBLICATION_CANCEL_BTN'
+                    TITLE:      'Редактирование объявления',
+                    BODY:       'Выбранное объявление опубликовано, для продолжения редактирования его следуют снять с публикации. Вы уверенны, что хотите продолжить?',
+                    ARIA_LABEL: 'Выбранное объявление опубликовано, для продолжения редактирования его следуют снять с публикации. Вы уверенны, что хотите продолжить?',
+                    OK_BTN:     'Да, продолжить',
+                    CANCEL_BTN: 'Отмена'
                 },
 
+
                 'ALL_MEANS_OF_COMMUNICATION_DISABLED': {
-                    TITLE:      'ALL_MEANS_OF_COMMUNICATION_DISABLED_TITLE',
-                    BODY:       'ALL_MEANS_OF_COMMUNICATION_DISABLED_BODY',
-                    ARIA_LABEL: 'ALL_MEANS_OF_COMMUNICATION_DISABLED_LABEL',
-                    OK_BTN:     'ALL_MEANS_OF_COMMUNICATION_DISABLED_OK_BTN'
+                    TITLE:      'Вы - человек-невидимка?',
+                    BODY:       'Вы только что отключили все способы связи с Вами. Возможно, стоит пересмотреть настройки.',
+                    ARIA_LABEL: 'Вы только что отключили все способы связи с Вами. Возможно, стоит пересмотреть настройки.',
+                    OK_BTN:     'Да, спасибо'
                 }
             };
         }

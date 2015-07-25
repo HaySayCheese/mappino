@@ -1,0 +1,51 @@
+<section class="md-padding">
+    <div class="md-subhead blue-text">Описание</div>
+    <md-divider></md-divider>
+    <p layout-padding>
+        [[ publication.description ]]
+    </p>
+    <div class="md-subhead blue-text">Характеристики</div>
+    <md-divider></md-divider>
+    <div layout="row" layout-padding>
+        <div flex="80">
+            <div layout="row">
+                <div flex="40">
+                    <div>Общая площадь:</div>
+                </div>
+                <div flex="60">
+                    <div>[[ publication.area ]]</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="publication.facilities">
+        <div class="md-subhead blue-text">Удобства</div>
+        <md-divider></md-divider>
+        <p layout-padding>
+            [[ publication.facilities ]]
+        </p>
+    </div>
+
+    <div ng-show="publication.communications">
+        <div class="md-subhead blue-text">Коммуникации</div>
+        <md-divider></md-divider>
+        <p layout-padding>
+            [[ publication.communications ]]
+        </p>
+    </div>
+
+    <div ng-show="publication.buildings">
+        <div class="md-subhead blue-text">Дополнительные постройки</div>
+        <md-divider></md-divider>
+        <p layout-padding>
+            [[ publication.buildings ]]
+        </p>
+    </div>
+
+    <div class="md-subhead blue-text">Контакти</div>
+    <md-divider></md-divider>
+    <p layout-padding>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias at aut deleniti dignissimos expedita explicabo iste perferendis porro, praesentium quasi qui quibusdam ratione reprehenderit saepe tenetur totam voluptatem? Esse, qui!
+    </p>
+</section>

@@ -93,6 +93,7 @@ module Mappino.Cabinet {
 
 
         public publishPublication($event) {
+            console.log(this.$scope.forms.publicationForm)
             if (this.$scope.forms.publicationForm.$invalid) {
                 var checkboxElement = angular.element("input[type='checkbox'].ng-invalid")[0],
                     inputElement    = angular.element("textarea.ng-invalid, input.ng-invalid")[0];

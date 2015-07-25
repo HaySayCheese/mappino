@@ -14,10 +14,10 @@ from core.users.models import Users
 from core.publications.handlers import PublicationsPhotosHandler
 from core.currencies import currencies_manager as currencies
 from core.currencies.constants import CURRENCIES as currencies_constants
-from core.publications import models_signals
+from core.publications import signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
-    EmptyRentPrice, EmptyPersonsCount
+    EmptyRentPrice, EmptyPersonsCount, NotEnoughPhotos
 
 
 class AbstractModel(models.Model):
@@ -127,7 +127,6 @@ class AbstractHeadModel(models.Model):
 
     pos_lat = models.TextField(null=True)
     pos_lng = models.TextField(null=True)
-    address = models.TextField(null=True)
 
 
     @classmethod
@@ -145,7 +144,7 @@ class AbstractHeadModel(models.Model):
 
         # По сигналу про створення запису відбувається оновлення індексу маркерів та
         # запускається індексація запису в sphinx.
-        models_signals.created.send(
+        signals.created.send(
             sender=None, tid=cls.tid, hid=model.id, hash_id=model.hash_id, for_sale=for_sale, for_rent=for_rent)
 
         return model
@@ -169,9 +168,9 @@ class AbstractHeadModel(models.Model):
 
 
     @classmethod
-    def by_hash_id(cls, head_id, select_body=False, select_sale=False, select_rent=False, select_owner=False):
+    def by_hash_id(cls, hash_id, select_body=False, select_sale=False, select_rent=False, select_owner=False):
         try:
-            query = cls.objects.filter(hash_id = head_id).only('id')
+            query = cls.objects.filter(hash_id = hash_id).only('id')
 
             if select_body:
                 query = query.only('id', 'body').select_related('body')
@@ -185,6 +184,11 @@ class AbstractHeadModel(models.Model):
 
         except IndexError:
             raise ObjectDoesNotExist()
+
+
+    @classmethod
+    def queryset_by_hash_id(cls, hash_id):
+        return cls.objects.filter(hash_id = hash_id).only('id')
 
 
     @classmethod
@@ -261,12 +265,19 @@ class AbstractHeadModel(models.Model):
         self.save(force_update=True)
 
 
-    def publish(self, update_pub_date=True):
-        if self.deleted is not None:
+    def publish_or_enqueue(self, pub_date_should_be_updated=True):
+        if self.is_deleted():
             raise SuspiciousOperation('Attempt to publish deleted publication.')
 
+
         self.check_required_fields()
-        self.body.check_required_fields()
+
+        # todo: check photos OR video, not only photos
+        # publication may contain video and no photos,
+        # but it's enough to publish it only with video or only with photos.
+        #
+        # here should be added another check for videos
+        self.check_photos_are_present()
 
 
         # All the signals emitters are wrapped into the atomic transaction.
@@ -275,7 +286,7 @@ class AbstractHeadModel(models.Model):
         # will be rolled back if some database error will occur in progress.
         with transaction.atomic():
 
-            models_signals.before_publish.send(
+            signals.before_publish.send(
                 sender = None,
                 tid = self.tid,
                 hid = self.id,
@@ -285,20 +296,16 @@ class AbstractHeadModel(models.Model):
             )
 
             self.state_sid = OBJECT_STATES.published()
-            if update_pub_date:
+
+            if pub_date_should_be_updated:
                 self.published = now()
+
+            # no need to call save here,
+            # prolong() will call it
             self.prolong()
-            self.save()
 
-
-            models_signals.published.send(
-                sender = None,
-                tid = self.tid,
-                hid = self.id,
-                hash_id = self.hash_id,
-                for_sale = self.for_sale,
-                for_rent = self.for_rent,
-            )
+            signals.published.send(
+                None, tid=self.tid, hid=self.id, hash_id=self.hash_id, for_sale=self.for_sale, for_rent=self.for_rent)
 
 
     def unpublish(self):
@@ -309,7 +316,7 @@ class AbstractHeadModel(models.Model):
 
         # sender=None для того, щоб django-orm не витягував автоматично дані з БД,
         # які, швидше за все, не знадобляться в подальшій обробці.
-        models_signals.before_unpublish.send(
+        signals.before_unpublish.send(
             sender = None,
             tid = self.tid,
             hid = self.id,
@@ -325,7 +332,7 @@ class AbstractHeadModel(models.Model):
 
         # sender=None для того, щоб django-orm не витягував автоматично дані з БД,
         # які, швидше за все, не знадобляться в подальшій обробці.
-        models_signals.unpublished.send(
+        signals.unpublished.send(
             sender = None,
             tid = self.tid,
             hid = self.id,
@@ -359,7 +366,7 @@ class AbstractHeadModel(models.Model):
         self.deleted = now()
         self.save()
 
-        models_signals.moved_to_trash.send(
+        signals.moved_to_trash.send(
             sender = None,
             tid = self.tid,
             hid = self.id,
@@ -387,7 +394,7 @@ class AbstractHeadModel(models.Model):
         #
         # So, for the correct work of all handlers related to this signal,
         # it is emitted before the physical record removing.
-        models_signals.deleted_permanent.send(
+        signals.deleted_permanent.send(
             sender = None,
             tid = self.tid,
             hid = self.id,
@@ -426,6 +433,17 @@ class AbstractHeadModel(models.Model):
         self.body.check_required_fields()
 
 
+    def check_photos_are_present(self):
+        """
+        :returns: None
+        :raises: ValidationError if publication contains less photos than required.
+        """
+        min_photos_count = 3
+
+        if self.photos().count() < min_photos_count:
+            raise NotEnoughPhotos('Publication should contains at least {0} photo(s).'.format(min_photos_count))
+
+
     def photos(self):
         return self.photos_model.objects.filter(publication = self.id).order_by('-is_title', 'created')
 
@@ -443,7 +461,7 @@ class AbstractHeadModel(models.Model):
 
 
     def is_deleted(self):
-        return self.state_sid == OBJECT_STATES.deleted()
+        return self.state_sid == OBJECT_STATES.deleted() or self.deleted is not None
 
 
 class CommercialHeadModel(AbstractHeadModel):
@@ -458,6 +476,8 @@ class BodyModel(AbstractModel):
     #-- fields
     title = models.TextField(null=True)
     description = models.TextField(null=True)
+    address = models.TextField(null=True)
+
 
     def check_required_fields(self):
         """
@@ -471,12 +491,25 @@ class BodyModel(AbstractModel):
             raise EmptyDescription('Description is empty')
         self.check_extended_fields()
 
+
     def check_extended_fields(self):
         """
         Abstract.
         Призначений для валідації моделей, унаслідуваних від поточної.
         """
         return
+
+
+    def print_title(self):
+        return self.title if self.title else u''
+
+
+    def print_description(self):
+        return self.description if self.description else u''
+
+
+    def print_address(self):
+        return self.address if self.address else u''
 
 
 class SaleTermsModel(AbstractModel):
@@ -618,7 +651,6 @@ class LivingRentTermsModel(AbstractModel):
         return u'{dol} ({uah}, {eur})'.format(dol=dol, uah=uah, eur=eur)
 
 
-
 class CommercialRentTermsModel(AbstractModel):
     class Meta:
         abstract = True
@@ -700,7 +732,6 @@ class CommercialRentTermsModel(AbstractModel):
         if terms:
             return terms[2:]
         return u''
-
 
 
 class PhotosModel(AbstractModel):

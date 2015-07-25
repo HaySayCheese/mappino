@@ -42,10 +42,12 @@
                             <div ng-message="invalid">Цена указана неверно</div>
                         </div>
                     </md-input-container>
-                    <md-select placeholder="Валюта" md-on-close="pubCtrl.checkField('sale_currency_sid')"
-                               ng-model="publication.sale_terms.currency_sid" flex="33">
-                        <md-option ng-repeat="currencyType in TYPES.CURRENCY" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
-                    </md-select>
+                    <md-input-container flex="33">
+                        <label>Валюта</label>
+                        <md-select md-on-close="pubCtrl.checkField('sale_currency_sid')" ng-model="publication.sale_terms.currency_sid">
+                            <md-option ng-repeat="currencyType in TYPES.CURRENCY" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
+                        </md-select>
+                    </md-input-container>
                     <md-checkbox class="md-primary" name="sale_is_contract" ng-change="pubCtrl.checkField('sale_is_contract')"
                                  ng-model="publication.sale_terms.is_contract">
                         Договорная
@@ -74,10 +76,12 @@
                             <div ng-message="invalid">Цена указана неверно</div>
                         </div>
                     </md-input-container>
-                    <md-select placeholder="Валюта" md-on-close="pubCtrl.checkField('rent_currency_sid')"
-                               ng-model="publication.rent_terms.currency_sid" flex="33">
-                        <md-option ng-repeat="currencyType in TYPES.CURRENCY" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
-                    </md-select>
+                    <md-input-container flex="33">
+                        <label>Валюта</label>
+                        <md-select placeholder="" md-on-close="pubCtrl.checkField('rent_currency_sid')" ng-model="publication.rent_terms.currency_sid">
+                            <md-option ng-repeat="currencyType in TYPES.CURRENCY" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
+                        </md-select>
+                    </md-input-container>
                     <md-checkbox class="md-primary" name="rent_is_contract" ng-change="pubCtrl.checkField('rent_is_contract')"
                                  ng-model="publication.rent_terms.is_contract">
                         Договорная

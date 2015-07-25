@@ -5,7 +5,7 @@
             <div layout="column">
                 <md-input-container>
                     <!--<label>Местоположение</label>-->
-                    <input id="publication-map-input" name="address" ng-model="publication.head.address" required>
+                    <input id="publication-map-input" name="address" aria-label="Местоположение" ng-model="publication.body.address" required>
                     <div ng-messages="publicationForm.address.$error"
                          ng-show="publicationForm.$submitted || publicationForm.address.$touched">
                         <div ng-message="required">Обязательное поле</div>

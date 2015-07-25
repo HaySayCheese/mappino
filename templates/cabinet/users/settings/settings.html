@@ -94,7 +94,8 @@
                     <div layout="column" flex-gt-sm="45" hide-sm>
                         <!--<i class="mdi-communication-contacts large"></i>-->
                         <blockquote>
-                            Надання додаткових контактів дасть більше можливості будь-кому звязатися з вами
+                            Дополнительные контактные данные
+                            увеличивают шансы покупателей связаться с Вами.
                         </blockquote>
                     </div>
 
@@ -138,6 +139,10 @@
                         <md-input-container flex>
                             <label>Доп. раб. телефон</label>
                             <input type="text" name="add_landline_phone" ng-model="profile.account.add_landline_phone" only-number>
+                            <div ng-messages="userProfileForm.add_landline_phone.$error">
+                                <div ng-message="invalid">Некоректный номер</div>
+                                <div ng-message="duplicated">Указанный номер уже используется</div>
+                            </div>
                         </md-input-container>
 
                         <md-input-container flex>
@@ -194,8 +199,8 @@
                     </md-checkbox>
                 </div>
 
-                <div layout="row">
-                    <blockquote offset="10">
+                <div layout="row" ng-show="profile.preferences.hide_email">
+                    <blockquote offset="5">
                         При запросе Ваших контактов адрес Вашей эл. почты будет скрыт,
                         но клиенты смогут оставить Вам сообщение через форму обратной связи на нашем сайте,
                         если она включена. Обратите внимание, ответив на сообщение клиента со своей почты Вы тем самым раскроете свой эл. адрес.
