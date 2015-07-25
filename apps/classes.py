@@ -1,9 +1,8 @@
 # coding=utf-8
-from collective.decorators.views import anonymous_required, login_required_or_forbidden
-from core.customers.models import Customers
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 from django.views.generic import View
+
+from collective.decorators.views import anonymous_required, login_required_or_forbidden
 
 
 class AnonymousOnlyView(View):
@@ -14,7 +13,6 @@ class AnonymousOnlyView(View):
     @method_decorator(anonymous_required)
     def dispatch(self, *args, **kwargs):
         return super(AnonymousOnlyView, self).dispatch(*args, **kwargs)
-
 
 
 class AuthenticatedOnlyView(View):
