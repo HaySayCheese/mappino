@@ -15,7 +15,8 @@ from core.publications.handlers import PublicationsPhotosHandler
 from core.currencies import currencies_manager as currencies
 from core.currencies.constants import CURRENCIES as currencies_constants
 from core.publications import signals
-from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS
+from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS, \
+    OBJECTS_TYPES
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
     EmptyRentPrice, EmptyPersonsCount, NotEnoughPhotos
 
@@ -438,7 +439,14 @@ class AbstractHeadModel(models.Model):
         :returns: None
         :raises: ValidationError if publication contains less photos than required.
         """
-        min_photos_count = 3
+
+        # for lands and garages one photo is often enough,
+        # but for other realty types - it's good when at least three photos are present.
+        if self.tid in [OBJECTS_TYPES.land(), OBJECTS_TYPES.garage()]:
+            min_photos_count = 1
+        else:
+            min_photos_count = 3
+
 
         if self.photos().count() < min_photos_count:
             raise NotEnoughPhotos('Publication should contains at least {0} photo(s).'.format(min_photos_count))
