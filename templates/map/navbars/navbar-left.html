@@ -8,7 +8,7 @@
             </md-tab-label>
             <md-tab-body>
                 <div class="filters-tab" ng-controller="FiltersTabController as filCtrl">
-                    <section class="-filters-red">
+                    <section class="-closable -filters-red">
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
                             <md-icon>place</md-icon>
                             <span class="md-body-1" ng-hide="filters.red.r_t_sid">
@@ -44,7 +44,7 @@
                             </div>
                         </tab-section-collapsible>
                     </section>
-                    <section class="-filters-blue -closed">
+                    <section class="-closable -filters-blue -closed">
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
                             <md-icon>place</md-icon>
                             <span class="md-body-1" ng-hide="filters.blue.b_t_sid">
