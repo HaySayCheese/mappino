@@ -143,7 +143,7 @@ INSTALLED_APPS = (
     'core.favorites',
     'core.publications',
     'core.claims',
-    'core.markers_handler',
+    'core.markers_index',
     'core.support',
     'core.escaped_fragments_manager',
 

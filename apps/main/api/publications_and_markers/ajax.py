@@ -9,8 +9,8 @@ from collective.exceptions import InvalidArgument
 from collective.http.responses import HttpJsonResponseBadRequest, HttpJsonResponse, HttpJsonResponseNotFound
 from collective.methods.request_data_getters import angular_post_parameters
 from core.claims.classes import ClaimsManager
-from core.markers_handler import SegmentsIndex
-from core.markers_handler.exceptions import TooBigTransaction
+from core.markers_index import SegmentsIndex
+from core.markers_index.exceptions import TooBigTransaction
 from core.publications import formatters
 from core.publications.constants import HEAD_MODELS, OBJECTS_TYPES
 
