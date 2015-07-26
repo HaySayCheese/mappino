@@ -15,6 +15,9 @@
     @include square(48px);
     font-size: 48px;
 }
+.material-icons.md-dark-shadow {
+    text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 1px color('grey', 'darken-4');
+}
 
 // Rules for using icons as black on a light background.
 .material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }

@@ -27,9 +27,7 @@
 
     <md-card ng-show="publication.head.for_sale">
         <md-card-content>
-            <div class="md-subhead blue-text">
-                Условия продажы
-            </div>
+            <div class="md-subhead blue-text">Условия продажы</div>
             <div class="md-padding" ng-show="publication.head.for_sale">
                 <div layout="row" layout-align="start center">
                     <md-input-container flex="33">
@@ -42,10 +40,9 @@
                             <div ng-message="invalid">Цена указана неверно</div>
                         </div>
                     </md-input-container>
-                    <md-input-container>
+                    <md-input-container flex="33">
                         <label>Валюта</label>
-                        <md-select md-on-close="pubCtrl.checkField('sale_currency_sid')"
-                                   ng-model="publication.sale_terms.currency_sid" flex="33">
+                        <md-select md-on-close="pubCtrl.checkField('sale_currency_sid')" ng-model="publication.sale_terms.currency_sid">
                             <md-option ng-repeat="currencyType in TYPES.CURRENCY" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
                         </md-select>
                     </md-input-container>
@@ -62,15 +59,15 @@
 
     <md-card ng-show="publication.head.for_rent">
         <md-card-content>
-            <div class="md-subhead blue-text">
-                Условия аренды
-            </div>
+            <div class="md-subhead blue-text">Условия аренды</div>
             <div class="md-padding" ng-show="publication.head.for_rent">
                 <div layout="row">
-                    <md-select placeholder="Срок" md-on-close="pubCtrl.checkField('rent_period_sid')"
-                               ng-model="publication.rent_terms.period_sid" flex="33">
-                        <md-option ng-repeat="periodType in TYPES.PERIOD" ng-if="$index > 0" value="[[ periodType.id ]]">[[ periodType.title ]]</md-option>
-                    </md-select>
+                    <md-input-container flex="33">
+                        <label>Срок</label>
+                        <md-select md-on-close="pubCtrl.checkField('rent_period_sid')" ng-model="publication.rent_terms.period_sid">
+                            <md-option ng-repeat="periodType in TYPES.PERIOD" ng-if="$index > 0" value="[[ periodType.id ]]">[[ periodType.title ]]</md-option>
+                        </md-select>
+                    </md-input-container>
                 </div>
                 <div layout="row" layout-align="start center">
                     <md-input-container flex="33">
@@ -102,9 +99,7 @@
 
     <md-card>
         <md-card-content>
-            <div class="md-subhead blue-text">
-                Описание обьекта
-            </div>
+            <div class="md-subhead blue-text">Описание обьекта</div>
             <div class="md-padding" layout="column">
                 <md-input-container>
                     <label>Заголовок обьявления</label>
@@ -243,9 +238,9 @@
                             <div ng-message="required">Обязательное поле</div>
                         </div>
                     </md-input-container>
-                    <md-input-container flex="33">
+                    <md-input-container flex="33" ng-show="publication.body.heating_type_sid == 1">
                         <label>Индивидуальное отопление</label>
-                        <md-select md-on-close="pubCtrl.checkField('ind_heating_type_sid')" ng-model="publication.body.ind_heating_type_sid" ng-show="publication.body.heating_type_sid == 1">
+                        <md-select md-on-close="pubCtrl.checkField('ind_heating_type_sid')" ng-model="publication.body.ind_heating_type_sid">
                             <md-option ng-repeat="individualHeatingType in TYPES.INDIVIDUAL_HEATING" value="[[ individualHeatingType.id ]]">[[ individualHeatingType.title ]]</md-option>
                         </md-select>
                     </md-input-container>

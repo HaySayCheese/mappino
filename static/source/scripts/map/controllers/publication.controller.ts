@@ -12,6 +12,7 @@ module Mappino.Map {
 
         public static $inject = [
             '$scope',
+            '$rootScope',
             '$state',
             'PublicationHandler',
             'PublicationService'
@@ -19,6 +20,7 @@ module Mappino.Map {
 
 
         constructor(private $scope,
+                    private $rootScope,
                     private $state: angular.ui.IStateService,
                     private publicationHandler: PublicationHandler,
                     private publicationService: PublicationService) {
@@ -26,6 +28,7 @@ module Mappino.Map {
             this.publicationHandler = publicationHandler;
 
             $scope.publication = null;
+            $scope.publicationLoadedSuccess = false;
             $scope.publicationPreviewSlideIndex = 0;
             $scope.publicationTemplateUrl = null;
 
@@ -35,8 +38,8 @@ module Mappino.Map {
 
             $scope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
                 if (toParams['publication_id'] != 0 && fromParams['publication_id'] != toParams['publication_id']) {
+                    $scope.publicationPreviewSlideIndex = 0;
                     this.loadPublicationData();
-                    console.log('gsagasgas')
                 }
             });
         }
@@ -60,13 +63,21 @@ module Mappino.Map {
 
                 this.$scope.publicationTemplateUrl = `/ajax/template/map/publication/detailed/${this.publicationIds.tid}/`;
 
+                this.$rootScope.loaders.publication     = true;
+                this.$scope.publicationLoadedSuccess    = false;
+
                 this.publicationService.load(this.publicationIds, response => {
                     this.$scope.publication = response.data;
+                    this.$rootScope.loaders.publication     = false;
+                    this.$scope.publicationLoadedSuccess    = true;
 
                     this.publicationService.loadContacts(this.publicationIds, response => {
                         this.$scope.publication.contacts = {};
                         this.$scope.publication.contacts = response.data;
                     });
+                }, response => {
+                    this.$rootScope.loaders.publication     = false;
+                    this.$scope.publicationLoadedSuccess    = false;
                 });
             }
         }
