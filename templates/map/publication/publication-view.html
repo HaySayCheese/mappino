@@ -11,14 +11,14 @@
         <div class="publication-view-image-overlay">
             <div layout="row">
                 <md-button class="md-icon-button">
-                    <md-icon class="md-light md-36">fullscreen</md-icon>
+                    <md-icon class="material-icons md-light md-36 md-dark-shadow">fullscreen</md-icon>
                     <md-tooltip md-direction="right" md-delay="0">
                         Посмотреть все фотографии
                     </md-tooltip>
                 </md-button>
                 <span flex></span>
                 <md-button class="md-icon-button" ng-click="pubCtrl.publicationHandler.close()">
-                    <md-icon class="md-light md-36">close</md-icon>
+                    <md-icon class="material-icons md-light md-36 md-dark-shadow">close</md-icon>
                     <md-tooltip md-direction="left" md-delay="0">
                         Закрыть объявления
                     </md-tooltip>
@@ -28,17 +28,17 @@
 
             <md-button class="md-icon-button slide-prev" ng-hide="publicationPreviewSlideIndex == 0"
                        ng-click="pubCtrl.prevSlide()">
-                <md-icon class="md-light md-48">chevron_left</md-icon>
+                <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_left</md-icon>
             </md-button>
             <md-button class="md-icon-button slide-next" ng-hide="publicationPreviewSlideIndex == publication.photos.length - 1"
                        ng-click="pubCtrl.nextSlide()">
-                <md-icon class="md-light md-48">chevron_right</md-icon>
+                <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_right</md-icon>
             </md-button>
 
 
             <div class="publication-view-overlay-description" layout="row" layout-align="start center" layout-padding>
                 <md-button class="md-icon-button">
-                    <md-icon class="md-light md-48">star_border</md-icon>
+                    <md-icon class="material-icons md-light md-48 md-dark-shadow">star_border</md-icon>
                     <md-tooltip md-direction="top" md-delay="0">
                         Добавить в избранные
                     </md-tooltip>
@@ -59,10 +59,10 @@
                     </md-fab-trigger>
                     <md-fab-actions>
                         <md-button aria-label="twitter" class="md-fab md-raised md-mini">
-                            <md-icon class="blue-text">share</md-icon>
+                            <md-icon class="material-icons blue-text">share</md-icon>
                         </md-button>
                         <md-button aria-label="Google hangout" class="md-fab md-raised md-mini">
-                            <md-icon class="red-text">report</md-icon>
+                            <md-icon class="material-icons red-text">report</md-icon>
                         </md-button>
                     </md-fab-actions>
                 </md-fab-speed-dial>

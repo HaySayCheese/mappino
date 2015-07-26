@@ -41,6 +41,7 @@ publication-view {
             bottom: 0;
 
             color: #fff;
+            text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 1px color('grey', 'darken-4');
 
 
             .publication-menu {
@@ -56,10 +57,6 @@ publication-view {
             position: absolute;
             top: 50%;
             @include translate(0, -50%);
-
-            md-icon {
-                @include square(48px);
-            }
         }
 
         .slide-prev {

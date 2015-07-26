@@ -7,7 +7,7 @@ module Mappino.Map {
                 var toggleTabSectionBtn = angular.element(element).parent().find('[toggle-tab-section]'),
                     headerControllers = angular.element(
                         "<span flex></span>" +
-                        "<md-icon class=\"md-dark\">keyboard_arrow_up</md-icon>"
+                        "<md-icon>keyboard_arrow_up</md-icon>"
                     ),
                     $mdTabsContentWrapper = angular.element(element).parents().find('md-tabs-content-wrapper');
 
@@ -24,14 +24,14 @@ module Mappino.Map {
 
                     $section.toggleClass('-closed');
 
-                    //// якщо секшн на який ми клікнули останній а перший секшн відкритий то
+                    //// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ
                     //if ($section.is(':last-child') && !angular.element($sections[0]).hasClass('-closed')) {
                     //    $section.toggleClass('-closed-last');
                     //} else {
                     //    $section.toggleClass('-closed');
                     //}
                     //
-                    //// якщо перший секшн відкритий то додати іншому клас з марджином
+                    //// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                     //if (angular.element($sections[0]).hasClass('-closed') && angular.element($sections[1]).hasClass('-closed-last')) {
                     //    angular.element($sections[1]).removeClass('-closed-last').addClass('-closed')
                     //} else if (angular.element($sections[1]).hasClass('-closed-last')) {
