@@ -122,13 +122,8 @@ module Mappino.Cabinet {
                     });
                 });
             } else {
-                this.$rootScope.loaders.overlay = true;
-                this.publicationsService.unpublish({ tid: brief.tid, hid: brief.id }, () => {
-                    this.$rootScope.loaders.overlay = false;
-                    this.$state.go('publication_edit', { id: brief.tid + ':' + brief.id });
-                });
+                this.$state.go('publication_edit', { id: brief.tid + ':' + brief.id });
             }
-
         }
 
 
