@@ -42,6 +42,7 @@ class AbstractBaseIndex(models.Model):
     # через що порушився механізм транзакцій (зараз транзакцій як таких немає).
     publication_id = models.PositiveIntegerField()
     hash_id = models.TextField()
+    photo_thumbnail_url = models.TextField()
 
     # lat, lng дублюються в індексі щоб уникнути зайвого join-а з таблицею даних по оголошеннях.
     # Аналогічним чином дублюються всі дані, які, так чи інакше, формують видачу по фільтрах,
@@ -67,12 +68,13 @@ class AbstractBaseIndex(models.Model):
 
 
     @classmethod
-    def brief_queryset(cls):  # virtual
+    def brief_queryset(cls):
         """
         :returns:
             minimum queryset needed for marker brief performing.
         """
-        return cls.objects.all().only('publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid')
+        return cls.objects.all().only(
+            'publication_id', 'hash_id', 'photo_thumbnail_url', 'lat', 'lng', 'price', 'currency_sid')
 
 
     @classmethod
@@ -84,6 +86,7 @@ class AbstractBaseIndex(models.Model):
             'tid': cls.tid,
             'id': marker.hash_id,
             'price': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
+            'thumbnail_url': marker.photo_thumbnail_url,
         }
 
 
@@ -644,7 +647,6 @@ class AbstractGaragesIndex(AbstractBaseIndex):
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
 
-    market_type_sid = models.PositiveIntegerField(db_index=True)
     area = models.FloatField(db_index=True)
     ceiling_height = models.FloatField(db_index=True)
     pit = models.BooleanField(db_index=True)

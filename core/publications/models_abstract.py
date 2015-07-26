@@ -453,6 +453,12 @@ class AbstractHeadModel(models.Model):
 
 
     def photos(self):
+        """
+        :rtype: QuerySet
+        :returns:
+            queryset with all photos of the publication.
+            If publication has title photo - it will be first.
+        """
         return self.photos_model.objects.filter(publication = self.id).order_by('-is_title', 'created')
 
 
