@@ -7,9 +7,9 @@ from django.db import models, connections
 from djorm_pgarray.fields import BigIntegerArrayField
 
 from collective.exceptions import InvalidArgument
-from core.markers_handler.classes import Grid
+from core.markers_index.classes import Grid
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
-from core.markers_handler.abstract_models import \
+from core.markers_index.abstract_models import \
     AbstractBaseIndex, AbstractTradesIndex, AbstractOfficesIndex, AbstractWarehousesIndex, \
     AbstractGaragesIndex, AbstractLandsIndex
 

@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.dispatch import receiver
 
-from core.markers_handler.models import SegmentsIndex
+from core.markers_index.models import SegmentsIndex
 from core.publications import signals
 
 
