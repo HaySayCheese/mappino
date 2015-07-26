@@ -131,7 +131,7 @@ module Mappino.Map {
                 location_search     = this.$location.search();
 
 
-            if (_.isNull(type_sid)) {
+            if (type_sid == null) {
                 // Очищаємо обєкт з фільтрами
                 this._filters['panels'][panel_color] = {};
 
@@ -150,15 +150,14 @@ module Mappino.Map {
 
 
             // Створюємо набір фільтрів для панелі за набором
-            if (!_.isNull(type_sid)) {
+            if (type_sid != null) {
 
-                console.log(_.where(self.TYPES.REALTY, { 'id': type_sid }))
                 var realty_type_filters = self.TYPES.REALTY[type_sid].filters;
 
                 for (var i = 0, len = realty_type_filters.length; i < len; i++) {
                     var filter_name = panel_prefix + realty_type_filters[i];
 
-                    if (_.isUndefined(this._filters['panels'][panel_color][filter_name])) {
+                    if (angular.isUndefined(this._filters['panels'][panel_color][filter_name])) {
                         this._filters['panels'][panel_color][filter_name] = this._filters['base'][realty_type_filters[i]];
                     }
                 }
@@ -200,15 +199,15 @@ module Mappino.Map {
                 }
             }
 
-            if (_.isUndefined(location_search['r_t_sid']) && _.isUndefined(location_search['b_t_sid'])) {
+            if (angular.isUndefined(location_search['r_t_sid']) && angular.isUndefined(location_search['b_t_sid'])) {
                 // -
                 filters_panels['red']['r_t_sid'] = 0;
                 this.createFiltersForPanel("red");
             }
-            if (!_.isUndefined(location_search['r_t_sid'])) {
+            if (angular.isDefined(location_search['r_t_sid'])) {
                 this.createFiltersForPanel("red");
             }
-            if (!_.isUndefined(location_search['b_t_sid'])) {
+            if (angular.isDefined(location_search['b_t_sid'])) {
                 this.createFiltersForPanel("blue");
             }
 
@@ -254,7 +253,7 @@ module Mappino.Map {
                     for (var panel_filter in panels_filters[panel]) {
                         if (panels_filters[panel].hasOwnProperty(panel_filter)) {
 
-                            if (panel_filter.indexOf("t_sid") !== -1 && _.isNull(panels_filters[panel][panel_filter])) {
+                            if (panel_filter.indexOf("t_sid") !== -1 && panels_filters[panel][panel_filter] == null) {
                                 _formattedPanelFilters = null;
                                 continue;
                             }
@@ -281,7 +280,7 @@ module Mappino.Map {
                         }
                     }
 
-                    if (!_.isNull(_formattedPanelFilters))
+                    if (_formattedPanelFilters != null)
                         this._filters_for_load_markers['filters'].push(_formattedPanelFilters);
 
 
