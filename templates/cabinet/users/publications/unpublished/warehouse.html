@@ -178,9 +178,9 @@
                             <div ng-message="required">Обязательное поле</div>
                         </div>
                     </md-input-container>
-                    <md-input-container flex="33">
+                    <md-input-container flex="33" ng-show="publication.body.heating_type_sid == 1">
                         <label>Индивидуальное отопление</label>
-                        <md-select md-on-close="pubCtrl.checkField('ind_heating_type_sid')" ng-model="publication.body.ind_heating_type_sid" ng-show="publication.body.heating_type_sid == 1">
+                        <md-select md-on-close="pubCtrl.checkField('ind_heating_type_sid')" ng-model="publication.body.ind_heating_type_sid">
                             <md-option ng-repeat="individualHeatingType in TYPES.INDIVIDUAL_HEATING" value="[[ individualHeatingType.id ]]">[[ individualHeatingType.title ]]</md-option>
                         </md-select>
                     </md-input-container>
