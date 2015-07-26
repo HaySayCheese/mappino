@@ -6,11 +6,16 @@ module Mappino.Map {
 
     export class AppController {
         public static $inject = [
-            '$scope'
+            '$scope',
+            '$rootScope'
         ];
 
-        constructor(private $scope) {
+        constructor(private $scope,
+                    private $rootScope) {
             // ---------------------------------------------------------------------------------------------------------
+            $rootScope.loaders = {
+                publication: false
+            };
         }
     }
 }

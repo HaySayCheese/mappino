@@ -20,6 +20,11 @@ publication-view {
     }
 
 
+    .publication-view-container {
+        @include square(100%);
+    }
+
+
     header {
         min-height: 330px;
         position: relative;

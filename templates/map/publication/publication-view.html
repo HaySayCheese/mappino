@@ -1,78 +1,88 @@
-<div class="publication-view-container" layout="column" ng-show="publication">
-    <header>
-        <ul rn-carousel rn-carousel-index="publicationPreviewSlideIndex" class="publication-preview-carousel">
-            <li ng-repeat="photo in publication.photos">
-                <div class="layer">
-                    <img ng-src="[[ photo ]]" alt=""/>
-                </div>
-            </li>
-        </ul>
-
-        <div class="publication-view-image-overlay">
-            <div layout="row">
-                <md-button class="md-icon-button">
-                    <md-icon class="material-icons md-light md-36 md-dark-shadow">fullscreen</md-icon>
-                    <md-tooltip md-direction="right" md-delay="0">
-                        Посмотреть все фотографии
-                    </md-tooltip>
-                </md-button>
-                <span flex></span>
-                <md-button class="md-icon-button" ng-click="pubCtrl.publicationHandler.close()">
-                    <md-icon class="material-icons md-light md-36 md-dark-shadow">close</md-icon>
-                    <md-tooltip md-direction="left" md-delay="0">
-                        Закрыть объявления
-                    </md-tooltip>
-                </md-button>
-            </div>
-
-
-            <md-button class="md-icon-button slide-prev" ng-hide="publicationPreviewSlideIndex == 0"
-                       ng-click="pubCtrl.prevSlide()">
-                <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_left</md-icon>
-            </md-button>
-            <md-button class="md-icon-button slide-next" ng-hide="publicationPreviewSlideIndex == publication.photos.length - 1"
-                       ng-click="pubCtrl.nextSlide()">
-                <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_right</md-icon>
-            </md-button>
-
-
-            <div class="publication-view-overlay-description" layout="row" layout-align="start center" layout-padding>
-                <md-button class="md-icon-button">
-                    <md-icon class="material-icons md-light md-48 md-dark-shadow">star_border</md-icon>
-                    <md-tooltip md-direction="top" md-delay="0">
-                        Добавить в избранные
-                    </md-tooltip>
-                </md-button>
-                <div layout="column" layout-padding>
-                    <div class="md-headline">
-                        [[ publication.title ]]
+<div class="publication-view-container" layout="column">
+    <div layout="column" ng-show="publicationLoadedSuccess && !loaders.publication">
+        <header>
+            <ul rn-carousel rn-carousel-index="publicationPreviewSlideIndex" class="publication-preview-carousel">
+                <li ng-repeat="photo in publication.photos">
+                    <div class="layer">
+                        <img ng-src="[[ photo ]]" alt=""/>
                     </div>
-                    <div class="md-subhead">
-                        [[ publication.address ]]
-                    </div>
-                </div>
-                <md-fab-speed-dial class="md-fling publication-menu" md-direction="up">
-                    <md-fab-trigger>
-                        <md-button aria-label="publication menu" class="md-fab md-primary">
-                            <md-icon>more_vert</md-icon>
-                        </md-button>
-                    </md-fab-trigger>
-                    <md-fab-actions>
-                        <md-button aria-label="twitter" class="md-fab md-raised md-mini">
-                            <md-icon class="material-icons blue-text">share</md-icon>
-                        </md-button>
-                        <md-button aria-label="Google hangout" class="md-fab md-raised md-mini">
-                            <md-icon class="material-icons red-text">report</md-icon>
-                        </md-button>
-                    </md-fab-actions>
-                </md-fab-speed-dial>
-            </div>
-        </div>
-    </header>
+                </li>
+            </ul>
 
-    <div ng-include="publicationTemplateUrl"></div>
+            <div class="publication-view-image-overlay">
+                <div layout="row">
+                    <md-button class="md-icon-button">
+                        <md-icon class="material-icons md-light md-36 md-dark-shadow">fullscreen</md-icon>
+                        <md-tooltip md-direction="right" md-delay="0">
+                            Посмотреть все фотографии
+                        </md-tooltip>
+                    </md-button>
+                    <span flex></span>
+                    <md-button class="md-icon-button" ng-click="pubCtrl.publicationHandler.close()">
+                        <md-icon class="material-icons md-light md-36 md-dark-shadow">close</md-icon>
+                        <md-tooltip md-direction="left" md-delay="0">
+                            Закрыть объявления
+                        </md-tooltip>
+                    </md-button>
+                </div>
+
+
+                <md-button class="md-icon-button slide-prev" ng-hide="publicationPreviewSlideIndex == 0"
+                           ng-click="pubCtrl.prevSlide()">
+                    <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_left</md-icon>
+                </md-button>
+                <md-button class="md-icon-button slide-next" ng-hide="publicationPreviewSlideIndex == publication.photos.length - 1"
+                           ng-click="pubCtrl.nextSlide()">
+                    <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_right</md-icon>
+                </md-button>
+
+
+                <div class="publication-view-overlay-description" layout="row" layout-align="start center" layout-padding>
+                    <md-button class="md-icon-button">
+                        <md-icon class="material-icons md-light md-48 md-dark-shadow">star_border</md-icon>
+                        <md-tooltip md-direction="top" md-delay="0">
+                            Добавить в избранные
+                        </md-tooltip>
+                    </md-button>
+                    <div layout="column" layout-padding>
+                        <div class="md-headline">
+                            [[ publication.title ]]
+                        </div>
+                        <div class="md-subhead">
+                            [[ publication.address ]]
+                        </div>
+                    </div>
+                    <md-fab-speed-dial class="md-fling publication-menu" md-direction="up">
+                        <md-fab-trigger>
+                            <md-button aria-label="publication menu" class="md-fab md-primary">
+                                <md-icon>more_vert</md-icon>
+                            </md-button>
+                        </md-fab-trigger>
+                        <md-fab-actions>
+                            <md-button aria-label="twitter" class="md-fab md-raised md-mini">
+                                <md-icon class="material-icons blue-text">share</md-icon>
+                            </md-button>
+                            <md-button aria-label="Google hangout" class="md-fab md-raised md-mini">
+                                <md-icon class="material-icons red-text">report</md-icon>
+                            </md-button>
+                        </md-fab-actions>
+                    </md-fab-speed-dial>
+                </div>
+            </div>
+        </header>
+
+        <div ng-include="publicationTemplateUrl"></div>
+    </div>
+
+
+    <div layout="column" layout-align="center center" ng-hide="publicationLoadedSuccess || loaders.publication" flex>
+        <md-icon class="material-icons md-48">error_outline</md-icon>
+    </div>
+
+
+    <div layout="column" layout-align="center center" ng-show="loaders.publication" flex>
+        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+    </div>
 </div>
 
-<div layout="row" layout-align="center center" ng-show="!publication" flex>
-    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
-</div>
+
