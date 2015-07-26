@@ -336,7 +336,7 @@ class Publication(CabinetView):
             operation = kwargs['operation']
             if operation == 'unpublish':
                 head.unpublish()
-                return cls.PutResponses.ok()
+                return cls.PutResponses.ok(head)
 
             elif operation == 'publish':
                 try:
