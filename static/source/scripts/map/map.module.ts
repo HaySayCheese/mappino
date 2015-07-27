@@ -48,6 +48,7 @@ module Mappino.Map {
 
 
     /** Directives */
+    app.directive('googlePlaceAutocomplete', GooglePlaceAutocompleteDirective);
     app.directive('navbarLeft', NavbarLeftDirective);
     app.directive('navbarRight', NavbarRightDirective);
     app.directive('publicationView', PublcationViewDirective);

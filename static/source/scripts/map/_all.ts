@@ -26,6 +26,7 @@
 // ####################
 // Directives import
 // ####################
+/// <reference path='directives/google-place-autocomplete.directive.ts' />
 /// <reference path='directives/navbar-left.directive.ts' />
 /// <reference path='directives/navbar-right.directive.ts' />
 /// <reference path='directives/publication-view.directive.ts' />

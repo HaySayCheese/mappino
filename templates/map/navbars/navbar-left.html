@@ -46,6 +46,7 @@
                                         </md-input-container>
                                     </div>
                                     <div ng-if="filters.red.r_t_sid != null" ng-include="'/ajax/template/map/filters/red/' + [[ filters.red.r_t_sid ]] + '/'"></div>
+                                    <md-button class="md-raised md-primary" ng-click="filCtrl.updateFilters('red');">Update</md-button>
                                 </div>
                             </div>
                         </tab-section-collapsible>
@@ -87,6 +88,7 @@
                                     </md-input-container>
                                 </div>
                                 <div ng-if="filters.blue.b_t_sid != null" ng-include="'/ajax/template/main/filters/blue/' + [[ filters.blue.b_t_sid ]] + '/'"></div>
+                                <md-button ng-click="filCtrl.updateFilters('blue');">Update</md-button>
                             </div>
                         </tab-section-collapsible>
                     </section>
@@ -105,7 +107,7 @@
                     <section class="md-padding">
                         <md-input-container>
                             <label>Местоположение</label>
-                            <input type="text" ng-model="filters.map.c">
+                            <input google-place-autocomplete type="text" ng-model="autocomplete">
                         </md-input-container>
                     </section>
                 </div>

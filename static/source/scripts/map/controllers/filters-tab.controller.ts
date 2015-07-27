@@ -18,28 +18,12 @@ module Mappino.Map {
                     private filtersService: FiltersService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.filters = this.filters = filtersService.filters['panels'];
-
-            this.initFiltersWatcher('red');
         }
 
 
 
-        private initFiltersWatcher(filters_color) {
-            var counterRed = 0;
-            this.$scope.$watchCollection('filters.red', (newValue, oldValue) => {
-                counterRed++;
-                if (counterRed > 0) {
-                    this.filtersService.update('panels', newValue, filters_color)
-                }
-            });
-
-            var counterBlue = 0;
-            this.$scope.$watchCollection('filters.blue', (newValue, oldValue) => {
-                counterBlue++;
-                if (counterBlue > 0) {
-                    this.filtersService.update('panels', newValue, filters_color)
-                }
-            });
+        public updateFilters(panel: string) {
+            this.filtersService.update('panels', this.$scope.filters[panel], panel)
         }
     }
 }
