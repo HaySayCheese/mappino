@@ -134,7 +134,7 @@ module Mappino.Map {
 
         private attachClickEventToMarker(marker) {
             google.maps.event.addListener(marker, 'click', () => {
-                console.log(marker)
+                console.log(`Clicked on marker ${marker.params.tid}:${marker.params.id}`);
                 this.publicationHandler.open(`${marker.params.tid}:${marker.params.id}`);
             })
         }
