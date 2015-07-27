@@ -7,10 +7,6 @@ module Mappino.Map {
     export class FiltersTabController {
         private filters: any;
 
-        private periodTypes     = [];
-        private realtyTypes     = [];
-        private currencyTypes   = [];
-
         public static $inject = [
             '$scope',
             '$timeout',
@@ -21,7 +17,7 @@ module Mappino.Map {
                     private $timeout,
                     private filtersService: FiltersService) {
             // ---------------------------------------------------------------------------------------------------------
-            this.filters = $scope.filters = filtersService.filters['panels'];
+            $scope.filters = this.filters = filtersService.filters['panels'];
 
             this.initFiltersWatcher('red');
         }
@@ -29,13 +25,21 @@ module Mappino.Map {
 
 
         private initFiltersWatcher(filters_color) {
-            var counter = 0;
+            var counterRed = 0;
             this.$scope.$watchCollection('filters.red', (newValue, oldValue) => {
-                counter++;
-                if (counter > 0) {
+                counterRed++;
+                if (counterRed > 0) {
                     this.filtersService.update('panels', newValue, filters_color)
                 }
-            })
+            });
+
+            var counterBlue = 0;
+            this.$scope.$watchCollection('filters.blue', (newValue, oldValue) => {
+                counterBlue++;
+                if (counterBlue > 0) {
+                    this.filtersService.update('panels', newValue, filters_color)
+                }
+            });
         }
     }
 }

@@ -31,13 +31,19 @@
                             <div scrollbar>
                                 <div layout="column" layout-padding>
                                     <div layout="row">
-                                        <md-select placeholder="Тип обєкта" ng-model="filters.red.r_t_sid" flex="67">
-                                            <md-option ng-repeat="realtyType in TYPES.REALTY" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
-                                        </md-select>
-                                        <md-select placeholder="Операция" ng-model="filters.red.r_op_sid" flex="33">
-                                            <md-option value="0">Продажа</md-option>
-                                            <md-option value="1">Оренда</md-option>
-                                        </md-select>
+                                        <md-input-container flex="60">
+                                            <label>Тип обєкта</label>
+                                            <md-select ng-model="filters.red.r_t_sid">
+                                                <md-option ng-repeat="realtyType in TYPES.REALTY" value="[[ realtyType.id ]]">[[ realtyType.titles.singular ]]</md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                        <md-input-container flex="40" ng-show="filters.red.r_t_sid">
+                                            <label>Операция</label>
+                                            <md-select ng-model="filters.red.r_op_sid">
+                                                <md-option value="0">Продажа</md-option>
+                                                <md-option value="1">Оренда</md-option>
+                                            </md-select>
+                                        </md-input-container>
                                     </div>
                                     <div ng-if="filters.red.r_t_sid != null" ng-include="'/ajax/template/map/filters/red/' + [[ filters.red.r_t_sid ]] + '/'"></div>
                                 </div>
@@ -66,13 +72,19 @@
                         <tab-section-collapsible>
                             <div layout="column" layout-padding>
                                 <div layout="row">
-                                    <md-select placeholder="Тип обєкта" ng-model="filters.blue.b_t_sid" flex="65">
-                                        <md-option ng-repeat="realtyType in navCtrl.realtyTypes" value="[[ realtyType.id ]]">[[ realtyType.title ]]</md-option>
-                                    </md-select>
-                                    <md-select placeholder="Операция" ng-model="filters.blue.b_op_sid" flex="35">
-                                        <md-option value="0">Продажа</md-option>
-                                        <md-option value="1">Оренда</md-option>
-                                    </md-select>
+                                    <md-input-container flex="60">
+                                        <label>Тип обєкта</label>
+                                        <md-select ng-model="filters.blue.b_t_sid">
+                                            <md-option ng-repeat="realtyType in TYPES.REALTY" value="[[ realtyType.id ]]">[[ realtyType.titles.singular ]]</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                    <md-input-container flex="40" ng-show="filters.blue.b_t_sid">
+                                        <label>Операция</label>
+                                        <md-select ng-model="filters.blue.b_op_sid">
+                                            <md-option value="0">Продажа</md-option>
+                                            <md-option value="1">Оренда</md-option>
+                                        </md-select>
+                                    </md-input-container>
                                 </div>
                                 <div ng-if="filters.blue.b_t_sid != null" ng-include="'/ajax/template/main/filters/blue/' + [[ filters.blue.b_t_sid ]] + '/'"></div>
                             </div>
