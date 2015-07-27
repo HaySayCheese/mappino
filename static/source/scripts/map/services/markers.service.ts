@@ -94,14 +94,15 @@ module Mappino.Map {
                                 this._markers[panel][marker] = new MarkerWithLabel({
                                     position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
                                     map: map,
+                                    icon: '',
                                     params: {
                                         id:     this._response_markers[panel][marker].id,
                                         tid:    this._response_markers[panel][marker].tid,
                                         price:  this._response_markers[panel][marker].price
                                     },
                                     labelContent:
-                                        "<div class='custom-marker md-whiteframe-z2'>" + this._response_markers[panel][marker].price + "</div>" +
-                                        "<div class='custom-marker-arrow-down'></div>",
+                                        `<div class='custom-marker md-whiteframe-z2'>${this._response_markers[panel][marker].price}</div>` +
+                                        `<div class='custom-marker-arrow-down'></div>`,
                                     labelClass: "custom-marker-container",
                                     labelAnchor: new google.maps.Point(markerLabelOffsetX, 32)
                                 });
@@ -133,16 +134,33 @@ module Mappino.Map {
 
 
         private calcMarkerLabelOffsetX(labelTextLength: number) {
-            if (labelTextLength >= 3 && labelTextLength <= 6)
-                return 30;
-            else if (labelTextLength >= 7 && labelTextLength <= 9)
-                return 32;
-            else if (labelTextLength >= 10 && labelTextLength <= 12)
-                return 42;
-            else if (labelTextLength >= 13 && labelTextLength <= 15)
-                return 48;
-            else
-                return 35;
+            var offset = 24;
+
+            switch (labelTextLength) {
+                case 4:
+                    offset = 24;
+                    break;
+                case 5:
+                    offset = 26;
+                    break;
+                case 6:
+                    offset = 28;
+                    break;
+                case 7:
+                    offset = 30;
+                    break;
+                case 8:
+                    offset = 32;
+                    break;
+                case 9:
+                    offset = 34;
+                    break;
+                case 10:
+                    offset = 36;
+                    break;
+            }
+
+            return (labelTextLength / 2) + offset;
         }
 
 
