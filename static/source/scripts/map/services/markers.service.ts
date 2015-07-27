@@ -82,21 +82,12 @@ module Mappino.Map {
                         if (this._response_markers[panel].hasOwnProperty(marker)) {
 
                             if (!this._markers[panel][marker]) {
-                                var markerLabelOffsetX = 35,
-                                    markerDescriptionLength;
+                                var markerLabelOffsetX = 35;
 
                                 if (angular.isDefined(this._response_markers[panel][marker].price)) {
-                                    markerDescriptionLength = this._response_markers[panel][marker].price.length;
+                                    markerLabelOffsetX = this.calcMarkerLabelOffsetX(this._response_markers[panel][marker].price.length);
                                 }
 
-                                if (markerDescriptionLength >= 3 && markerDescriptionLength <= 8)
-                                    markerLabelOffsetX = 32;
-                                if (markerDescriptionLength >= 9 && markerDescriptionLength <= 11)
-                                    markerLabelOffsetX = 38;
-                                if (markerDescriptionLength >= 12 && markerDescriptionLength <= 14)
-                                    markerLabelOffsetX = 42;
-
-                                console.log(markerDescriptionLength);
                                 console.log(markerLabelOffsetX);
 
 
@@ -137,6 +128,21 @@ module Mappino.Map {
                 console.log(`Clicked on marker ${marker.params.tid}:${marker.params.id}`);
                 this.publicationHandler.open(`${marker.params.tid}:${marker.params.id}`);
             })
+        }
+
+
+
+        private calcMarkerLabelOffsetX(labelTextLength: number) {
+            if (labelTextLength >= 3 && labelTextLength <= 6)
+                return 30;
+            else if (labelTextLength >= 7 && labelTextLength <= 9)
+                return 32;
+            else if (labelTextLength >= 10 && labelTextLength <= 12)
+                return 42;
+            else if (labelTextLength >= 13 && labelTextLength <= 15)
+                return 48;
+            else
+                return 35;
         }
 
 
