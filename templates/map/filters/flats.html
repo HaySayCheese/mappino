@@ -1,15 +1,15 @@
 <div layout="row">
     <md-input-container flex="33">
         <label>Ціна від</label>
-        <input type="text" ng-model="filters.red.r_p_min" only-number>
+        <input type="text" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_p_min" only-number>
     </md-input-container>
     <md-input-container flex="33">
         <label>Ціна до</label>
-        <input type="text" ng-model="filters.red.r_p_max">
+        <input type="text" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_p_max">
     </md-input-container>
     <md-input-container flex="33">
         <label>Валюта</label>
-        <md-select ng-model="filters.red.r_cu_sid">
+        <md-select ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_cu_sid">
             <md-option ng-repeat="currencyType in TYPES.CURRENCY" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
         </md-select>
     </md-input-container>
@@ -17,21 +17,21 @@
 <div layout="row">
     <md-input-container flex="33">
         <label>Площа від</label>
-        <input type="text" ng-model="filters.red.r_t_a_min">
+        <input type="text" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_t_a_min">
     </md-input-container>
     <md-input-container flex="33">
         <label>Площа до</label>
-        <input type="text" ng-model="filters.red.r_t_a_max">
+        <input type="text" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_t_a_max">
     </md-input-container>
     <md-input-container flex="33">
         <label>Кімнат</label>
         <input type="text">
     </md-input-container>
 </div>
-<div layout="row">
+<div layout="row" ng-show="filters.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 1">
     <md-input-container>
         <label>Период</label>
-        <md-select ng-model="filters.red.r_pr_sid">
+        <md-select ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_pr_sid">
             <md-option ng-repeat="periodType in TYPES.PERIOD" value="[[ periodType.id ]]">[[ periodType.title ]]</md-option>
         </md-select>
     </md-input-container>
