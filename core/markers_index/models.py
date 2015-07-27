@@ -20,13 +20,14 @@ class FlatsSaleIndex(AbstractBaseIndex):
 
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
-
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
     rooms_count = models.PositiveSmallIntegerField(db_index=True)
     rooms_planning_sid = models.PositiveSmallIntegerField(db_index=True)
     total_area = models.FloatField(db_index=True)
-    floor = models.PositiveSmallIntegerField(db_index=True)
     floor_type_sid = models.PositiveSmallIntegerField(db_index=True)
+
+    # "floor" may be null if selected floor type is not a floor
+    floor = models.PositiveSmallIntegerField(db_index=True, null=True)
     lift = models.BooleanField(db_index=True)
     hot_water = models.BooleanField(db_index=True)
     cold_water = models.BooleanField(db_index=True)
@@ -41,9 +42,15 @@ class FlatsSaleIndex(AbstractBaseIndex):
 
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
@@ -63,11 +70,6 @@ class FlatsSaleIndex(AbstractBaseIndex):
             electricity=record.body.electricity,
             heating_type_sid=record.body.heating_type_sid,
         )
-
-
-    @classmethod
-    def brief_queryset(cls):
-        return cls.objects.all().only('publication_id', 'hash_id', 'lat', 'lng', 'price', 'currency_sid')
 
 
     @classmethod
@@ -123,19 +125,24 @@ class FlatsSaleIndex(AbstractBaseIndex):
 
 
 class FlatsRentIndex(AbstractBaseIndex):
+    # constants
+    tid = OBJECTS_TYPES.flat()
+
+
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     period_sid = models.PositiveSmallIntegerField(db_index=True)
     # if "period_sid" is not "daily" - than persons count may be omitted.
     persons_count = models.PositiveSmallIntegerField(db_index=True, null=True)
 
-
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
     rooms_count = models.PositiveSmallIntegerField(db_index=True)
     rooms_planning_sid = models.PositiveSmallIntegerField(db_index=True)
     total_area = models.FloatField(db_index=True)
-    floor = models.PositiveSmallIntegerField(db_index=True)
     floor_type_sid = models.PositiveSmallIntegerField(db_index=True)
+
+    # "floor" may be null if selected floor type is not a floor
+    floor = models.PositiveSmallIntegerField(db_index=True, null=True)
     lift = models.BooleanField(db_index=True)
     hot_water = models.BooleanField(db_index=True)
     cold_water = models.BooleanField(db_index=True)
@@ -144,19 +151,21 @@ class FlatsRentIndex(AbstractBaseIndex):
     heating_type_sid = models.PositiveSmallIntegerField(db_index=True)
 
 
-    # constants
-    tid = OBJECTS_TYPES.flat()
-
-
     class Meta:
         db_table = 'index_flats_rent'
 
 
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
@@ -261,9 +270,15 @@ class HousesSaleIndex(AbstractBaseIndex):
 
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
@@ -333,6 +348,7 @@ class HousesRentIndex(AbstractBaseIndex):
     # costants
     tid = OBJECTS_TYPES.house()
 
+
     # fields
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
@@ -357,9 +373,15 @@ class HousesRentIndex(AbstractBaseIndex):
 
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
@@ -441,8 +463,10 @@ class RoomsSaleIndex(AbstractBaseIndex):
 
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
     area = models.FloatField(db_index=True)
-    floor = models.PositiveSmallIntegerField(db_index=True)
     floor_type_sid = models.PositiveSmallIntegerField(db_index=True)
+
+    # "floor" may be null if selected floor type is not a floor
+    floor = models.PositiveSmallIntegerField(db_index=True)
     lift = models.BooleanField(db_index=True)
     hot_water = models.BooleanField(db_index=True)
     cold_water = models.BooleanField(db_index=True)
@@ -456,9 +480,15 @@ class RoomsSaleIndex(AbstractBaseIndex):
 
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
@@ -536,8 +566,10 @@ class RoomsRentIndex(AbstractBaseIndex):
 
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
     area = models.FloatField(db_index=True)
-    floor = models.PositiveSmallIntegerField(db_index=True)
     floor_type_sid = models.PositiveSmallIntegerField(db_index=True)
+
+    # "floor" may be null if selected floor type is not a floor
+    floor = models.PositiveSmallIntegerField(db_index=True)
     lift = models.BooleanField(db_index=True)
     hot_water = models.BooleanField(db_index=True)
     cold_water = models.BooleanField(db_index=True)
@@ -551,9 +583,15 @@ class RoomsRentIndex(AbstractBaseIndex):
 
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
@@ -628,11 +666,18 @@ class TradesSaleIndex(AbstractTradesIndex):
     class Meta:
         db_table = 'index_trades_sale'
 
+
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
@@ -689,9 +734,15 @@ class TradesRentIndex(AbstractTradesIndex):
 
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
@@ -748,9 +799,15 @@ class OfficesSaleIndex(AbstractOfficesIndex):
 
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
@@ -803,9 +860,15 @@ class OfficesRentIndex(AbstractOfficesIndex):
 
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
@@ -858,9 +921,15 @@ class WarehousesSaleIndex(AbstractWarehousesIndex):
 
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
@@ -915,9 +984,15 @@ class WarehousesRentIndex(AbstractWarehousesIndex):
 
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
@@ -940,7 +1015,7 @@ class WarehousesRentIndex(AbstractWarehousesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter()\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -997,16 +1072,21 @@ class GaragesSaleIndex(AbstractGaragesIndex):
 
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
             price=record.sale_terms.price,
             currency_sid=record.sale_terms.currency_sid,
 
-            market_type_sid=record.body.market_type_sid,
             area=record.body.area,
             ceiling_height=record.body.ceiling_height,
             pit=record.body.pit,
@@ -1020,9 +1100,15 @@ class GaragesRentIndex(AbstractGaragesIndex):
 
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
@@ -1067,9 +1153,15 @@ class LandsSaleIndex(AbstractLandsIndex):
 
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
@@ -1118,9 +1210,15 @@ class LandsRentIndex(AbstractLandsIndex):
 
     @classmethod
     def add(cls, record, using=None):
+        title_photo = record.title_photo()
+        if not title_photo:
+            raise RuntimeError('Publication must contain at least one photo.')
+
+
         cls.objects.using(using).create(
             publication_id=record.id,
             hash_id=record.hash_id,
+            photo_thumbnail_url=title_photo.big_thumb_url,
             lat=float('{0}.{1}{2}'.format(record.degree_lat, record.segment_lat, record.pos_lat)),
             lng=float('{0}.{1}{2}'.format(record.degree_lng, record.segment_lng, record.pos_lng)),
 
@@ -1226,12 +1324,6 @@ class SegmentsIndex(models.Model):
 
 
         record = index.min_add_queryset(hid)[0]
-
-        # If publication was not published - it should not be in index.
-        if not record.is_published():
-            return
-
-
         lat, lng = cls.record_lat_lng(record)
         lat, lng = cls.grid.normalize_lat_lng(lat, lng)
 
