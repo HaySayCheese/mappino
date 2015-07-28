@@ -1,9 +1,9 @@
 module Mappino.Map {
     export function TabBodyCollapsibleDirective($compile, $timeout): angular.IDirective {
         var CLASSES = {
-            CLOSED: '-closed',
-            SHADOW: 'md-whiteframe-z2',
-            BORDER_TOP: '-border-top',
+            CLOSED:         '-closed',
+            SHADOW:         'md-whiteframe-z2',
+            BORDER_TOP:     '-border-top',
             WITHOUT_BORDER_TOP_RADIUS: '-without-border-top-radius'
         };
 
@@ -20,9 +20,6 @@ module Mappino.Map {
                     $sections = $mdTabsContentWrapper.find('section.-closable');
 
 
-
-
-
                 $compile(headerControllers)(scope);
                 toggleTabSectionBtn.append(headerControllers);
 
@@ -36,7 +33,7 @@ module Mappino.Map {
                     $section.toggleClass(CLASSES.CLOSED);
 
                     toggleSectionsShadow($sections);
-                    toggleTabsContentWrapperShadow($sections, $mdTabsContentWrapper);
+                    //toggleTabsContentWrapperShadow($sections, $mdTabsContentWrapper);
                 });
             }
         };
@@ -53,13 +50,15 @@ module Mappino.Map {
 
             if ($firstSection.hasClass(CLASSES.CLOSED) && $secondSection.hasClass(CLASSES.CLOSED)) {
                 $firstSection.removeClass(CLASSES.SHADOW);
-                $secondSection.removeClass(CLASSES.SHADOW);
 
-                $secondSection.addClass(CLASSES.BORDER_TOP);
-                $secondSection.addClass(CLASSES.WITHOUT_BORDER_TOP_RADIUS);
+                $secondSection
+                    .removeClass(CLASSES.SHADOW)
+                    .addClass(CLASSES.BORDER_TOP)
+                    .addClass(CLASSES.WITHOUT_BORDER_TOP_RADIUS);
             } else {
-                $secondSection.removeClass(CLASSES.BORDER_TOP);
-                $secondSection.removeClass(CLASSES.WITHOUT_BORDER_TOP_RADIUS);
+                $secondSection
+                    .removeClass(CLASSES.BORDER_TOP)
+                    .removeClass(CLASSES.WITHOUT_BORDER_TOP_RADIUS);
             }
         }
 
