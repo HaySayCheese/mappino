@@ -31,7 +31,7 @@ module Mappino.Map {
 
 
 
-        private login() {
+        public login() {
             if (this.$scope.authState === 'enterPhone') {
                 if (this.$scope.loginForm.phoneNumber.$valid) {
                     this.fullNumber = this.$scope.account.phoneCode + this.$scope.account.phoneNumber;
@@ -54,6 +54,14 @@ module Mappino.Map {
                     });
                 }
             }
+        }
+
+
+
+        public logout() {
+            this.authService.logout(response => {
+                this.$scope.authState = 'enterPhone';
+            });
         }
 
 

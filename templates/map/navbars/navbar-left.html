@@ -125,7 +125,7 @@
             </md-tab-label>
             <md-tab-body>
                 <div class="account-tab" ng-controller="AccountTabController as accCtrl">
-                    <section class="md-padding">
+                    <section layout-padding>
                         <div ng-switch="authState">
                             <form name="loginForm" layout="column" ng-submit="accCtrl.login()" novalidate>
                                 <div ng-switch-when="enterPhone">
@@ -172,7 +172,7 @@
 
                             <div ng-switch-when="accountInformation">
                                 <div class="account-info-state" layout="column">
-                                    <div layout="row"layout-align="start start">
+                                    <div layout="row"layout-align="start start"  layout-padding>
                                         <div layout="column" flex="40">
                                             <img ng-src="[[ user.account.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/user.png" ng-show="user.account.avatar_url" />
                                             <img src="{{ static }}build/images/cabinet/user.png" ng-hide="user.account.avatar_url" alt="" />
@@ -183,10 +183,10 @@
                                         </div>
                                     </div>
                                     <div layout="row">
-                                        <md-button class="md-primary" flex>
+                                        <md-button class="md-primary" flex ng-click="accCtrl.logout()">
                                             Выйти
                                         </md-button>
-                                        <md-button class="md-raised md-primary" flex>
+                                        <md-button class="md-raised md-primary" href="/cabinet/" flex>
                                             Профиль
                                         </md-button>
                                     </div>

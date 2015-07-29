@@ -189,6 +189,19 @@ module Mappino.Core.Auth {
 
 
 
+        public logout(successCallback?, errorCallback?) {
+            this.$http.post(`/ajax/api/accounts/logout/`, null)
+                .then(response => {
+                    this.$cookies.remove('sessionid');
+                    this.clearUserFromStorage();
+                    angular.isFunction(successCallback) && successCallback(response.data);
+                }, response => {
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                });
+        }
+
+
+
         private updateProfileField(params: Object) {
             for (var key in params) {
                 if (this._user.account[key] !== undefined) {

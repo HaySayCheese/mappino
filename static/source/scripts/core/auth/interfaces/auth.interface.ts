@@ -15,5 +15,7 @@ module Mappino.Core.Auth {
         uploadAvatar(avatar: File, successCallback?: Function, errorCallback?: Function): void
 
         removeAvatar(successCallback?: Function, errorCallback?: Function): void
+
+        logout(successCallback?: Function, errorCallback?: Function): void
     }
 }
