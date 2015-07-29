@@ -7,7 +7,7 @@ from collective.http.responses import HttpJsonResponse
 
 from django.conf import settings
 from django.http import HttpResponseBadRequest, HttpResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View
 
 from apps.classes import AnonymousOnlyView, AuthenticatedOnlyView
@@ -176,6 +176,22 @@ class LoginManager(object):
             return self.GetResponses.ok(reguest.user)
 
 
+    class Logout(AuthenticatedOnlyView):
+        class PostResponses(object):
+            @staticmethod
+            @json_response
+            def ok():
+                return {
+                    'code': 0,
+                    'message': 'OK',
+                }
+
+
+        @classmethod
+        def post(cls, request):
+            logout(request)
+            return cls.PostResponses.ok()
+
 
     @staticmethod
     def on_login_info(user):
@@ -184,8 +200,6 @@ class LoginManager(object):
             'last_name': user.last_name,
             'avatar_url': user.avatar.url(),
         }
-
-
 
 
 class Contacts(View):
