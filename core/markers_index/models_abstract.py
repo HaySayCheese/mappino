@@ -400,98 +400,84 @@ class AbstractBaseIndex(models.Model):
 
     @staticmethod  # bool
     def apply_electricity_filter(filters, markers):
-        if 'elt' in filters:
+        if filters.get('elt') is True:
             return markers.filter(electricity=True)
         return markers
 
 
     @staticmethod  # bool
     def apply_gas_filter(filters, markers):
-        if 'gas' in filters:
+        if filters.get('gas') is True:
             return markers.filter(gas=True)
         return markers
 
 
     @staticmethod  # bool
     def apply_hot_water_filter(filters, markers):
-        if 'h_w' in filters:
+        if filters.get('h_w') is True:
             return markers.filter(hot_water=True)
         return markers
 
 
     @staticmethod  # bool
     def apply_cold_water_filter(filters, markers):
-        if 'c_w' in filters:
+        if filters.get('c_w') is True:
             return markers.filter(cold_water=True)
         return markers
 
 
     @staticmethod  # bool
     def apply_water_filter(filters, markers):
-        if 'wtr' in filters:
+        if filters.get('wtr') is True:
             return markers.filter(water=True)
         return markers
 
 
     @staticmethod  # bool
     def apply_sewerage_filter(filters, markers):
-        if 'swg' in filters:
+        if filters.get('swg') is True:
             return markers.filter(sewerage=True)
         return markers
 
 
     @staticmethod  # bool
     def apply_lift_filter(filters, markers):
-        if 'lft' in filters:
+        if filters.get('lft') is True:
             return markers.filter(lift=True)
         return markers
 
 
     @staticmethod  # bool
-    def apply_family_filter(filters, markers):
-        if 'fml' in filters:
-            return markers.filter(family=True)
-        return markers
-
-
-    @staticmethod  # bool
-    def apply_foreigners_filter(filters, markers):
-        if 'frg' in filters:
-            return markers.filter(foreigners=True)
-        return markers
-
-
-    @staticmethod  # bool
     def apply_security_filter(filters, markers):
-        if 'sct' in filters:
+        if filters.get('sct') is True:
             return markers.filter(security=True)
         return markers
 
 
     @staticmethod  # bool
     def apply_kitchen_filter(filters, markers):
-        if 'ktn' in filters:
+        if filters.get('ktn') is True:
             return markers.filter(kitchen=True)
         return markers
 
 
     @staticmethod  # bool
     def apply_fire_alarm_filter(filters, markers):
-        if 'f_a' in filters:
+        if filters.get('f_a') is True:
             return markers.filter(fire_alarm=True)
         return markers
 
 
     @staticmethod  # bool
     def apply_security_alarm_filter(filters, markers):
-        if 's_a' in filters:
+        if filters.get('s_a') is True:
             return markers.filter(security_alarm=True)
         return markers
 
 
     @staticmethod  # bool
     def apply_pit_filter(filters, markers):
-        if 'pit' in filters:
+        if filters.get('pit') is True:
             return markers.filter(pit=True)
         return markers
 
@@ -529,17 +515,17 @@ class AbstractTradesIndex(AbstractBaseIndex):
 
     @classmethod
     def apply_filters(cls, filters, markers):
-        cls.apply_price_filter(filters, markers)
+        markers = cls.apply_price_filter(filters, markers)
 
-        cls.apply_market_type_filter(filters, markers)
-        cls.apply_halls_area_filter(filters, markers)
-        cls.apply_total_area_filter(filters, markers)
-        cls.apply_trade_building_type_filter(filters, markers)
-        cls.apply_electricity_filter(filters, markers)
-        cls.apply_gas_filter(filters, markers)
-        cls.apply_hot_water_filter(filters, markers)
-        cls.apply_cold_water_filter(filters, markers)
-        cls.apply_sewerage_filter(filters, markers)
+        markers = cls.apply_market_type_filter(filters, markers)
+        markers = cls.apply_halls_area_filter(filters, markers)
+        markers = cls.apply_total_area_filter(filters, markers)
+        markers = cls.apply_trade_building_type_filter(filters, markers)
+        markers = cls.apply_electricity_filter(filters, markers)
+        markers = cls.apply_gas_filter(filters, markers)
+        markers = cls.apply_hot_water_filter(filters, markers)
+        markers = cls.apply_cold_water_filter(filters, markers)
+        markers = cls.apply_sewerage_filter(filters, markers)
         return markers
 
 
@@ -574,15 +560,15 @@ class AbstractOfficesIndex(AbstractBaseIndex):
 
     @classmethod
     def apply_filters(cls, filters, markers):
-        cls.apply_price_filter(filters, markers)
+        markers = cls.apply_price_filter(filters, markers)
 
-        cls.apply_market_type_filter(filters, markers)
-        cls.apply_total_area_filter(filters, markers)
-        cls.apply_cabinets_count_filter(filters, markers)
-        cls.apply_hot_water_filter(filters, markers)
-        cls.apply_cold_water_filter(filters, markers)
-        cls.apply_kitchen_filter(filters, markers)
-        cls.apply_security_filter(filters, markers)
+        markers = cls.apply_market_type_filter(filters, markers)
+        markers = cls.apply_total_area_filter(filters, markers)
+        markers = cls.apply_cabinets_count_filter(filters, markers)
+        markers = cls.apply_hot_water_filter(filters, markers)
+        markers = cls.apply_cold_water_filter(filters, markers)
+        markers = cls.apply_kitchen_filter(filters, markers)
+        markers = cls.apply_security_filter(filters, markers)
         return markers
 
 
@@ -618,16 +604,16 @@ class AbstractWarehousesIndex(AbstractBaseIndex):
 
     @classmethod
     def apply_filters(cls, filters, markers):
-        cls.apply_price_filter(filters, markers)
+        markers = cls.apply_price_filter(filters, markers)
 
-        cls.apply_market_type_filter(filters, markers)
-        cls.apply_halls_area_filter(filters, markers)
-        cls.apply_hot_water_filter(filters, markers)
-        cls.apply_cold_water_filter(filters, markers)
-        cls.apply_electricity_filter(filters, markers)
-        cls.apply_gas_filter(filters, markers)
-        cls.apply_fire_alarm_filter(filters, markers)
-        cls.apply_security_alarm_filter(filters, markers)
+        markers = cls.apply_market_type_filter(filters, markers)
+        markers = cls.apply_halls_area_filter(filters, markers)
+        markers = cls.apply_hot_water_filter(filters, markers)
+        markers = cls.apply_cold_water_filter(filters, markers)
+        markers = cls.apply_electricity_filter(filters, markers)
+        markers = cls.apply_gas_filter(filters, markers)
+        markers = cls.apply_fire_alarm_filter(filters, markers)
+        markers = cls.apply_security_alarm_filter(filters, markers)
         return markers
 
 
@@ -657,12 +643,12 @@ class AbstractGaragesIndex(AbstractBaseIndex):
 
     @classmethod
     def apply_filters(cls, filters, markers):
-        cls.apply_price_filter(filters, markers)
+        markers = cls.apply_price_filter(filters, markers)
 
-        cls.apply_market_type_filter(filters, markers)
-        cls.apply_area_filter(filters, markers)
-        cls.apply_ceiling_height_filter(filters, markers)
-        cls.apply_pit_filter(filters, markers)
+        markers = cls.apply_market_type_filter(filters, markers)
+        markers = cls.apply_area_filter(filters, markers)
+        markers = cls.apply_ceiling_height_filter(filters, markers)
+        markers = cls.apply_pit_filter(filters, markers)
         return markers
 
 
@@ -693,11 +679,11 @@ class AbstractLandsIndex(AbstractBaseIndex):
 
     @classmethod
     def apply_filters(cls, filters, markers):
-        cls.apply_market_type_filter(filters, markers)
-        cls.apply_price_filter(filters, markers)
-        cls.apply_area_filter(filters, markers)
-        cls.apply_water_filter(filters, markers)
-        cls.apply_electricity_filter(filters, markers)
-        cls.apply_gas_filter(filters, markers)
-        cls.apply_sewerage_filter(filters, markers)
+        markers = cls.apply_market_type_filter(filters, markers)
+        markers = cls.apply_price_filter(filters, markers)
+        markers = cls.apply_area_filter(filters, markers)
+        markers = cls.apply_water_filter(filters, markers)
+        markers = cls.apply_electricity_filter(filters, markers)
+        markers = cls.apply_gas_filter(filters, markers)
+        markers = cls.apply_sewerage_filter(filters, markers)
         return markers
