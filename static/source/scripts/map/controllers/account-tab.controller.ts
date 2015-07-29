@@ -23,7 +23,13 @@ module Mappino.Map {
                 smsCode:        ''
             };
 
-            authService.tryLogin();
+            $scope.authState = 'enterPhone';
+
+            authService.tryLogin(response => {
+                $scope.authState = 'accountInformation';
+            }, response => {
+                $scope.authState = 'enterPhone';
+            });
 
             this.initWatchers();
             this.initAuthState();
@@ -67,7 +73,7 @@ module Mappino.Map {
 
 
         private initWatchers() {
-            this.$scope.$watchCollection('user', () => {
+            this.$scope.$watchCollection('account', () => {
                 if (this.$scope.loginForm.$invalid) {
                     if (this.$scope.authState === 'enterPhone') {
                         this.$scope.loginForm.phoneNumber.$setValidity('invalid', true);
