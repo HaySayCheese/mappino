@@ -68,6 +68,40 @@ module Mappino.Map {
                     angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
+
+
+
+        public sendMessage(message: Object, publicationIds: any, successCallback?, errorCallback?) {
+            this.$http.post(`/ajax/api/notifications/send-message/${publicationIds.tid}:${publicationIds.hid}/`, message)
+                .then(response => {
+                    angular.isFunction(successCallback) && successCallback(response.data)
+                }, response => {
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.SEND_MESSAGE.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                })
+        }
+
+
+
+        public sendCallRequest(callRequest: Object, publicationIds: any, successCallback?, errorCallback?) {
+            this.$http.post(`/ajax/api/notifications/send-call-request/${publicationIds.tid}:${publicationIds.hid}/`, callRequest)
+                .then(response => {
+                    angular.isFunction(successCallback) && successCallback(response.data)
+                }, response => {
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.SEND_CALL_REQUEST.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                })
+        }
     }
 }
 

@@ -100,6 +100,26 @@ module Mappino.Map {
 
 
 
+        public sendMessage() {
+            if (this.$scope.forms.publicationMessage.$valid) {
+                this.publicationService.sendMessage(this.$scope.message, this.publicationIds, response => {
+                    this.toggleMessageForm();
+                });
+            }
+        }
+
+
+
+        public sendCallRequest() {
+            if (this.$scope.forms.publicationCallRequest.$valid) {
+                this.publicationService.sendCallRequest(this.$scope.callRequest, this.publicationIds, response => {
+                    this.toggleCallRequestForm();
+                });
+            }
+        }
+
+
+
         public toggleMessageForm() {
             this.$scope.messageFormIsVisible ?
                 this.$scope.messageFormIsVisible = false :
@@ -140,7 +160,7 @@ module Mappino.Map {
         private scrollToBottom() {
             angular.element("publication-view").animate({
                 scrollTop: angular.element("publication-view .publication-view-container").height()
-            }, "slow");
+            }, 'slow');
         }
     }
 }

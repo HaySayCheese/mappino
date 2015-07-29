@@ -122,7 +122,7 @@
 
     <div class="md-subhead blue-text">Контакти</div>
     <md-divider></md-divider>
-    <div layout="column" layout-padding>
+    <div layout="column" layout-padding ng-show="publication.contacts">
         <div class="publication-contacts" layout="row" layout-padding ng-hide="messageFormIsVisible || callRequestFormIsVisible">
             <div class="avatar" flex="45" layout="column" layout-align="center center">
                 <img ng-src="[[ publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/user.png" ng-show="publication.contacts.avatar_url" />
@@ -165,6 +165,7 @@
                     <input name="email" type="email" ng-model="message.email" required>
                     <div ng-messages="forms.publicationMessage.email.$error" ng-show="forms.publicationMessage.email.$touched">
                         <div ng-message="required">Обязательное поле</div>
+                        <div ng-message="email">Некоректная эл. почта</div>
                     </div>
                 </md-input-container>
             </div>
@@ -181,7 +182,7 @@
                 <md-button class="md-primary" flex ng-click="pubCtrl.toggleMessageForm()">
                     Отмена
                 </md-button>
-                <md-button class="md-raised md-primary" flex>
+                <md-button class="md-raised md-primary" flex ng-click="pubCtrl.sendMessage()">
                     Отправить
                 </md-button>
             </div>
@@ -208,7 +209,7 @@
                 <md-button class="md-primary" flex ng-click="pubCtrl.toggleCallRequestForm()">
                     Отмена
                 </md-button>
-                <md-button class="md-raised md-primary" flex>
+                <md-button class="md-raised md-primary" flex ng-click="pubCtrl.sendCallRequest()">
                     Отправить
                 </md-button>
             </div>

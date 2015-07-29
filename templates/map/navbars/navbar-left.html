@@ -169,7 +169,6 @@
                                 </div>
                             </form>
 
-
                             <div ng-switch-when="accountInformation">
                                 <div class="account-info-state" layout="column">
                                     <div layout="row"layout-align="start start"  layout-padding>
@@ -179,7 +178,8 @@
                                         </div>
 
                                         <div layout="column" layout-align="start start" flex="60" layout-padding>
-                                            <div class="md-title grey-text text-darken-2">Сергій Мекетюк</div>
+                                            <div class="md-title grey-text text-darken-2">[[ user.account.full_name ]]</div>
+                                            <div>[[ user.account.mobile_number ]]</div>
                                         </div>
                                     </div>
                                     <div layout="row">
