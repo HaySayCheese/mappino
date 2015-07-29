@@ -111,6 +111,18 @@ module Mappino.Map {
                 }
             }
 
+            if (panel_name) {
+                var panel_prefix = panel_name.toString().substring(0, 1) + "_",
+                    type_sid = filter_object_name[panel_prefix + "t_sid"];
+
+                console.log(panel_prefix)
+            }
+
+            if (panel_name && type_sid == null) {
+                console.log('ddddddddddddddddddd')
+                this.createFiltersForPanel(panel_name);
+            }
+
             this.updateUrlFromFilters();
             this.createFormattedObjectForLoadMarkers();
 
@@ -136,7 +148,7 @@ module Mappino.Map {
                 this._filters['panels'][panel_color] = {};
 
                 // Створюємо параметр з типом оголошення в обєкті з фільтрами
-                this._filters['panels'][panel_color][panel_prefix + "t_sid"] = type_sid;
+                //this._filters['panels'][panel_color][panel_prefix + "t_sid"] = type_sid;
 
                 // Видаляємо фільтри з урла
                 for (var s_key in location_search) {
@@ -162,6 +174,8 @@ module Mappino.Map {
                     }
                 }
             }
+
+            console.log(this._filters)
 
             this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.FiltersService.FiltersUpdated', this._filters));
         }

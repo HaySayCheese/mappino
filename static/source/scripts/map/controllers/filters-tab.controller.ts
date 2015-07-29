@@ -23,6 +23,12 @@ module Mappino.Map {
 
 
         public updateFilters(panel: string) {
+            if (this.$scope.filters.red.r_t_sid == 'null')
+                this.$scope.filters.red.r_t_sid = null;
+
+            if (this.$scope.filters.blue.b_t_sid == 'null')
+                this.$scope.filters.blue.b_t_sid = null;
+
             this.filtersService.update('panels', this.$scope.filters[panel], panel)
         }
     }

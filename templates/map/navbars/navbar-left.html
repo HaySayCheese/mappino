@@ -34,6 +34,7 @@
                                         <md-input-container flex="60">
                                             <label>Тип обєкта</label>
                                             <md-select ng-model="filters.red.r_t_sid">
+                                                <md-option value="null">Вибрати тип</md-option>
                                                 <md-option ng-repeat="realtyType in TYPES.REALTY" value="[[ realtyType.id ]]">[[ realtyType.titles.singular ]]</md-option>
                                             </md-select>
                                         </md-input-container>
@@ -78,6 +79,7 @@
                                     <md-input-container flex="60">
                                         <label>Тип обєкта</label>
                                         <md-select ng-model="filters.blue.b_t_sid">
+                                            <md-option value="null">Вибрати тип</md-option>
                                             <md-option ng-repeat="realtyType in TYPES.REALTY" value="[[ realtyType.id ]]">[[ realtyType.titles.singular ]]</md-option>
                                         </md-select>
                                     </md-input-container>
@@ -89,7 +91,7 @@
                                         </md-select>
                                     </md-input-container>
                                 </div>
-                                <div ng-if="filters.blue.b_t_sid != null" ng-include="'/ajax/template/map/filters/blue/' + [[ filters.blue.b_t_sid ]] + '/'"></div>
+                                <div ng-if="filters.blue.b_t_sid && filters.blue.b_t_sid != 'null'" ng-include="'/ajax/template/map/filters/blue/' + [[ filters.blue.b_t_sid ]] + '/'"></div>
                                 <md-button class="md-raised md-primary" ng-click="filCtrl.updateFilters('blue');">
                                     Обновить поиск
                                 </md-button>

@@ -9,7 +9,7 @@ module Mappino.Map {
         constructor(private app: angular.IModule) {
             app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
 
-                $urlRouterProvider.otherwise("/0/1/0/44:33/");
+                $urlRouterProvider.otherwise("/0/1/0/0/");
 
                 $stateProvider
                     .state('base', {
