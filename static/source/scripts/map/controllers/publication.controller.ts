@@ -113,6 +113,8 @@ module Mappino.Map {
 
             this.$scope.forms.publicationMessage.$setPristine();
             this.$scope.forms.publicationMessage.$setUntouched();
+
+            this.scrollToBottom();
         }
 
 
@@ -129,6 +131,16 @@ module Mappino.Map {
 
             this.$scope.forms.publicationCallRequest.$setPristine();
             this.$scope.forms.publicationCallRequest.$setUntouched();
+
+            this.scrollToBottom();
+        }
+
+
+
+        private scrollToBottom() {
+            angular.element("publication-view").animate({
+                scrollTop: angular.element("publication-view .publication-view-container").height()
+            }, "slow");
         }
     }
 }

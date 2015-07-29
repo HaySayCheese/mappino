@@ -123,13 +123,13 @@
     <div class="md-subhead blue-text">Контакти</div>
     <md-divider></md-divider>
     <div layout="column" layout-padding>
-        <div class="publication-contacts" layout="row" ng-hide="messageFormIsVisible || callRequestFormIsVisible">
+        <div class="publication-contacts" layout="row" layout-padding ng-hide="messageFormIsVisible || callRequestFormIsVisible">
             <div class="avatar" flex="45" layout="column" layout-align="center center">
                 <img ng-src="[[ publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/user.png" ng-show="publication.contacts.avatar_url" />
                 <img src="{{ static }}build/images/cabinet/user.png" ng-hide="publication.contacts.avatar_url" alt="" />
             </div>
             <div flex="55" layout="column">
-                <div class="md-title" layout-padding ng-show="publication.contacts.first_name || publication.contacts.last_name">
+                <div class="md-title grey-text text-darken-2" layout-padding ng-show="publication.contacts.first_name || publication.contacts.last_name">
                     [[ publication.contacts.first_name + '&nbsp;' ]][[ publication.contacts.last_name ]]
                 </div>
                 <div layout-padding>
@@ -215,7 +215,7 @@
         </form>
 
         <div layout="row" ng-hide="messageFormIsVisible || callRequestFormIsVisible">
-            <md-button class="md-primary" flex ng-click="pubCtrl.toggleCallRequestForm()">
+            <md-button class="md-raised md-primary" flex ng-click="pubCtrl.toggleCallRequestForm()">
                 Заказать обратный звонок
             </md-button>
             <md-button class="md-raised md-primary" flex ng-click="pubCtrl.toggleMessageForm()">
