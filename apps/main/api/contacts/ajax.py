@@ -26,6 +26,11 @@ class Contacts(View):
 
                 # note: work email wil lbe shown if main email address should be hidden
                 'email': user.email if preferences.email_may_be_shown() else user.work_email,
+
+
+                # preferences
+                'allow_call_requests': preferences.allow_call_requests,
+                'allow_messaging': preferences.allow_messaging,
             }
 
             # Not all fields may be present.
