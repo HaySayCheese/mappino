@@ -3,7 +3,7 @@ from django.http.response import Http404
 from collective.decorators.jinja2_shortcuts import render_jinja2_template
 from core.publications.constants import OBJECTS_TYPES
 from core.utils.jinja2_integration import templates
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 
