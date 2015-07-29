@@ -1,6 +1,7 @@
 .custom-marker-container {
     position: relative;
     padding:  0 0 7px 0;
+    opacity: 1 !important;
 
     .custom-marker {
         position: relative;
@@ -9,7 +10,7 @@
         color: #fff;
         background: color('blue', 'base');
 
-        opacity: 1;
+        //opacity: 1;
         overflow: visible;
 
         border-top: 2px solid color('blue', 'darken-2');
@@ -19,9 +20,11 @@
 
         font-weight: 600;
 
-        &:hover {
-            background: red !important;
-        }
+
+    }
+
+    &.-a .custom-marker {
+        background: red !important;
     }
 
     .custom-marker-arrow-down {

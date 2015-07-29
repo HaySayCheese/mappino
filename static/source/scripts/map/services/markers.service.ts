@@ -180,18 +180,30 @@ module Mappino.Map {
 
 
         private highlightMarker(markerId) {
-            console.log(markerId)
             for (var panel in this._markers) {
                 if (this._markers.hasOwnProperty(panel)) {
                     for (var marker in this._markers[panel]) {
                         if (this._markers[panel].hasOwnProperty(marker)) {
-                            if (this._markers[panel][marker].params.id == markerId)
-                                console.log(this._markers[panel][marker])
+                            var marker = this._markers[panel][marker];
+                            var markerMap = marker.getMap();
+
+                            if (marker.params.id == markerId) {
+                                if (marker.labelClass.indexOf('-a') == -1) {
+                                    marker.labelClass += ' -a';
+                                    marker.setMap(null);
+                                    marker.setMap(markerMap);
+                                }
+                            } else {
+                                marker.labelClass = marker.labelClass.split(' ')[0].toString();
+                                marker.setMap(null);
+                                marker.setMap(markerMap)
+                            }
                         }
                     }
                 }
             }
         }
+
 
 
         private clearResponseMarkersObject() {
