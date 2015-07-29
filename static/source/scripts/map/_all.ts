@@ -45,6 +45,7 @@
 // ####################
 // Services import
 // ####################
+/// <reference path='services/briefs.service.ts' />
 /// <reference path='services/filters.service.ts' />
 /// <reference path='services/markers.service.ts' />
 /// <reference path='services/publication.service.ts' />
@@ -60,11 +61,11 @@
 
 /// <reference path='controllers/navbar-left.controller.ts' />
 /// <reference path='controllers/filters-tab.controller.ts' />
-
 /// <reference path='controllers/account-tab.controller.ts' />
 
 /// <reference path='controllers/navbar-right.controller.ts' />
 /// <reference path='controllers/favorites-tab.controller.ts' />
+/// <reference path='controllers/briefs-tab.controller.ts' />
 
 /// <reference path='controllers/publication.controller.ts' />
 

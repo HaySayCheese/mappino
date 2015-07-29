@@ -72,7 +72,11 @@ module Mappino.Map {
 
 
         public sendMessage(message: Object, publicationIds: any, successCallback?, errorCallback?) {
-            this.$http.post(`/ajax/api/notifications/send-message/${publicationIds.tid}:${publicationIds.hid}/`, message)
+            this.$http.post(`/ajax/api/notifications/send-message/${publicationIds.tid}:${publicationIds.hid}/`, {
+                'name':     message['userName'],
+                'email':    message['email'],
+                'message':  message['text']
+            })
                 .then(response => {
                     angular.isFunction(successCallback) && successCallback(response.data)
                 }, response => {
@@ -89,7 +93,10 @@ module Mappino.Map {
 
 
         public sendCallRequest(callRequest: Object, publicationIds: any, successCallback?, errorCallback?) {
-            this.$http.post(`/ajax/api/notifications/send-call-request/${publicationIds.tid}:${publicationIds.hid}/`, callRequest)
+            this.$http.post(`/ajax/api/notifications/send-call-request/${publicationIds.tid}:${publicationIds.hid}/`, {
+                'name': callRequest['userName'],
+                'phone_number': callRequest['phoneNumber']
+            })
                 .then(response => {
                     angular.isFunction(successCallback) && successCallback(response.data)
                 }, response => {

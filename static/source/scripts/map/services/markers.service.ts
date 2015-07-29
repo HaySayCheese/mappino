@@ -20,13 +20,15 @@ module Mappino.Map {
             '$rootScope',
             '$http',
             '$timeout',
-            'PublicationHandler'
+            'PublicationHandler',
+            'BriefsService'
         ];
 
         constructor(private $rootScope: angular.IRootScopeService,
                     private $http: angular.IHttpService,
                     private $timeout: angular.ITimeoutService,
-                    private publicationHandler: PublicationHandler) {
+                    private publicationHandler: PublicationHandler,
+                    private briefsService: BriefsService) {
             // ---------------------------------------------------------------------------------------------------------
             var self = this;
 
@@ -34,6 +36,11 @@ module Mappino.Map {
                 self._filters_for_load_markers = formatted_filters;
 
                 self.load();
+            });
+
+
+            $rootScope.$on('Mappino.Map.BriefsService.BriefMouseOver', (event, markerId) => {
+                this.highlightMarker(markerId);
             });
         }
 
@@ -63,10 +70,12 @@ module Mappino.Map {
                             if ((angular.isDefined(this._response_markers[panel]) && angular.isUndefined(this._response_markers[panel][marker])) ||
                                 this._markers[panel][marker].params.price != this._response_markers[panel][marker].price) {
 
-                                this._markers[panel][marker].setMap(null);
-                                console.log('deleted: ' + this._markers[panel][marker]);
+                                this.briefsService.remove(this._markers[panel][marker].params.id);
 
+                                this._markers[panel][marker].setMap(null);
                                 delete this._markers[panel][marker];
+
+                                console.log('deleted: ' + this._markers[panel][marker]);
                             }
                             console.log(this._markers)
                         }
@@ -82,32 +91,37 @@ module Mappino.Map {
                         if (this._response_markers[panel].hasOwnProperty(marker)) {
 
                             if (!this._markers[panel][marker]) {
-                                var markerLabelOffsetX = 35;
+                                var markerLabelOffsetX = 35,
+                                    _responseMarker = this._response_markers[panel][marker];
 
-                                if (angular.isDefined(this._response_markers[panel][marker].price)) {
-                                    markerLabelOffsetX = this.calcMarkerLabelOffsetX(this._response_markers[panel][marker].price.length);
+                                if (angular.isDefined(_responseMarker.price)) {
+                                    markerLabelOffsetX = this.calcMarkerLabelOffsetX(_responseMarker.price.length);
                                 }
-
-                                console.log(markerLabelOffsetX);
-
 
                                 this._markers[panel][marker] = new MarkerWithLabel({
                                     position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
                                     map: map,
                                     icon: '',
                                     params: {
-                                        id:     this._response_markers[panel][marker].id,
-                                        tid:    this._response_markers[panel][marker].tid,
-                                        price:  this._response_markers[panel][marker].price
+                                        id:     _responseMarker.id,
+                                        tid:    _responseMarker.tid,
+                                        price:  _responseMarker.price
                                     },
                                     labelContent:
-                                        `<div class='custom-marker md-whiteframe-z2'>${this._response_markers[panel][marker].price}</div>` +
+                                        `<div class='custom-marker md-whiteframe-z2'>${_responseMarker.price}</div>` +
                                         `<div class='custom-marker-arrow-down'></div>`,
-                                    labelClass: "custom-marker-container",
+                                    labelClass: `custom-marker-container`,
                                     labelAnchor: new google.maps.Point(markerLabelOffsetX, 32)
                                 });
 
                                 this.attachClickEventToMarker(this._markers[panel][marker]);
+
+                                this.briefsService.add({
+                                    id: _responseMarker.id,
+                                    tid: _responseMarker.tid,
+                                    price: _responseMarker.price,
+                                    thumbnail_url: _responseMarker.thumbnail_url
+                                });
 
                                 this._markers[panel][marker].setMap(map);
                                 console.log('added: ' + this._markers[panel][marker])
@@ -163,6 +177,21 @@ module Mappino.Map {
             return (labelTextLength / 2) + offset;
         }
 
+
+
+        private highlightMarker(markerId) {
+            console.log(markerId)
+            for (var panel in this._markers) {
+                if (this._markers.hasOwnProperty(panel)) {
+                    for (var marker in this._markers[panel]) {
+                        if (this._markers[panel].hasOwnProperty(marker)) {
+                            if (this._markers[panel][marker].params.id == markerId)
+                                console.log(this._markers[panel][marker])
+                        }
+                    }
+                }
+            }
+        }
 
 
         private clearResponseMarkersObject() {

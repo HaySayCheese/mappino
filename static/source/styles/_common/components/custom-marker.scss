@@ -18,6 +18,10 @@
         border-bottom-right-radius: 3px;
 
         font-weight: 600;
+
+        &:hover {
+            background: red !important;
+        }
     }
 
     .custom-marker-arrow-down {
