@@ -81,4 +81,12 @@ publication-view {
             margin-top: 0;
         }
     }
+
+
+    .publication-contacts {
+        .avatar img {
+            @include square(140px);
+            border-radius: 50%;
+        }
+    }
 }

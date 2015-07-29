@@ -27,10 +27,26 @@ module Mappino.Map {
             // ---------------------------------------------------------------------------------------------------------
             this.publicationHandler = publicationHandler;
 
+            $scope.forms = {};
+
             $scope.publication = null;
             $scope.publicationLoadedSuccess = false;
             $scope.publicationPreviewSlideIndex = 0;
             $scope.publicationTemplateUrl = null;
+
+            $scope.message = {
+                userName:   null,
+                email:      null,
+                text:       null
+            };
+
+            $scope.callRequest = {
+                userName:       null,
+                phoneNumber:    null
+            };
+
+            $scope.messageFormIsVisible     = false;
+            $scope.callRequestFormIsVisible = false;
 
 
             this.loadPublicationData();
@@ -42,16 +58,6 @@ module Mappino.Map {
                     this.loadPublicationData();
                 }
             });
-        }
-
-
-
-        public prevSlide() {
-            this.$scope.publicationPreviewSlideIndex -= 1;
-        }
-
-        public nextSlide() {
-            this.$scope.publicationPreviewSlideIndex += 1;
         }
 
 
@@ -80,6 +86,49 @@ module Mappino.Map {
                     this.$scope.publicationLoadedSuccess    = false;
                 });
             }
+        }
+
+
+
+        public prevSlide() {
+            this.$scope.publicationPreviewSlideIndex -= 1;
+        }
+
+        public nextSlide() {
+            this.$scope.publicationPreviewSlideIndex += 1;
+        }
+
+
+
+        public toggleMessageForm() {
+            this.$scope.messageFormIsVisible ?
+                this.$scope.messageFormIsVisible = false :
+                    this.$scope.messageFormIsVisible = true;
+
+            this.$scope.message = {
+                userName:   null,
+                email:      null,
+                text:       null
+            };
+
+            this.$scope.forms.publicationMessage.$setPristine();
+            this.$scope.forms.publicationMessage.$setUntouched();
+        }
+
+
+
+        public toggleCallRequestForm() {
+            this.$scope.callRequestFormIsVisible ?
+                this.$scope.callRequestFormIsVisible = false :
+                    this.$scope.callRequestFormIsVisible = true;
+
+            this.$scope.callRequest = {
+                userName:       null,
+                phoneNumber:    null
+            };
+
+            this.$scope.forms.publicationCallRequest.$setPristine();
+            this.$scope.forms.publicationCallRequest.$setUntouched();
         }
     }
 }
