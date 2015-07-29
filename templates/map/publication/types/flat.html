@@ -216,10 +216,10 @@
         </form>
 
         <div layout="row" ng-hide="messageFormIsVisible || callRequestFormIsVisible">
-            <md-button class="md-raised md-primary" flex ng-click="pubCtrl.toggleCallRequestForm()">
+            <md-button class="md-raised md-primary" flex ng-show="publication.contacts.allow_call_requests" ng-click="pubCtrl.toggleCallRequestForm()">
                 Заказать обратный звонок
             </md-button>
-            <md-button class="md-raised md-primary" flex ng-click="pubCtrl.toggleMessageForm()">
+            <md-button class="md-raised md-primary" flex ng-show="publication.contacts.allow_messaging" ng-click="pubCtrl.toggleMessageForm()">
                 Оставить сообщение
             </md-button>
         </div>

@@ -113,7 +113,7 @@
                     <section class="md-padding">
                         <md-input-container>
                             <label>Местоположение</label>
-                            <input google-place-autocomplete type="text" ng-model="autocomplete">
+                            <input google-place-autocomplete placeholder="-" type="text" ng-model="autocomplete">
                         </md-input-container>
                     </section>
                 </div>
@@ -179,18 +179,14 @@
                                             <img src="{{ static }}build/images/cabinet/user.png" ng-hide="user.account.avatar_url" alt="" />
                                         </div>
 
-                                        <div layout="column" layout-align="start start" flex="60" layout-padding>
+                                        <div layout="column" flex="60" layout-padding>
                                             <div class="md-title grey-text text-darken-2">[[ user.account.full_name ]]</div>
                                             <div>[[ user.account.mobile_number ]]</div>
+
+                                            <md-button class="md-raised md-primary" href="/cabinet/">
+                                                Профиль
+                                            </md-button>
                                         </div>
-                                    </div>
-                                    <div layout="row">
-                                        <md-button class="md-primary" flex ng-click="accCtrl.logout()">
-                                            Выйти
-                                        </md-button>
-                                        <md-button class="md-raised md-primary" href="/cabinet/" flex>
-                                            Профиль
-                                        </md-button>
                                     </div>
                                 </div>
                             </div>
