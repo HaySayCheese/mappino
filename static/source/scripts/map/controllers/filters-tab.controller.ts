@@ -18,6 +18,21 @@ module Mappino.Map {
                     private filtersService: FiltersService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.filters = this.filters = filtersService.filters['panels'];
+
+
+            $scope.$watch('filters.blue.b_t_sid', newValue => {
+                if (this.$scope.filters.blue.b_t_sid == 'null')
+                    this.$scope.filters.blue.b_t_sid = null;
+
+                this.filtersService.update('panels', this.$scope.filters['blue'], 'blue')
+            });
+
+            $scope.$watch('filters.green.g_t_sid', newValue => {
+                if (this.$scope.filters.green.g_t_sid == 'null')
+                    this.$scope.filters.green.g_t_sid = null;
+
+                this.filtersService.update('panels', this.$scope.filters['green'], 'green')
+            });
         }
 
 
