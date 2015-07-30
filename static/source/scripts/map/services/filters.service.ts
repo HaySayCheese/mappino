@@ -260,7 +260,7 @@ module Mappino.Map {
 
             // create location search from panels filters
             for (var panel in panels_filters) {
-                if (panels_filters.hasOwnProperty(panel)) {
+                if (panels_filters.hasOwnProperty(panel) && Object.keys(panels_filters[panel]).length > 0) {
                     _formattedPanelFilters = {
                         panel: panel
                     };
