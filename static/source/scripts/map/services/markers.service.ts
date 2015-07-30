@@ -135,6 +135,7 @@ module Mappino.Map {
                                     id: _responseMarker.id,
                                     tid: _responseMarker.tid,
                                     price: _responseMarker.price,
+                                    title: _responseMarker.title,
                                     thumbnail_url: _responseMarker.thumbnail_url
                                 });
 
