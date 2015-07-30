@@ -35,6 +35,7 @@ module Mappino.Map {
             var self = this;
 
             this.parseVisitedMarkers();
+            this.parseFavoritesMarkers();
 
             $rootScope.$on('Mappino.Map.FiltersService.CreatedFormattedFilters', function(event, formatted_filters) {
                 self._filters_for_load_markers = formatted_filters;
@@ -47,6 +48,10 @@ module Mappino.Map {
             $rootScope.$on('Mappino.Map.PublicationService.PublicationVisited', (event, markerId) => {
                 this.highlightMarker(markerId, 'visited');
                 this.addMarkerToVisited(markerId);
+            });
+            $rootScope.$on('Mappino.Map.PublicationService.PublicationFavorite', (event, markerId) => {
+                //this.highlightMarker(markerId, 'visited');
+                this.addMarkerToFavorites(markerId);
             });
         }
 
@@ -107,7 +112,7 @@ module Mappino.Map {
                                 this._markers[panel][marker] = new MarkerWithLabel({
                                     position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
                                     map: map,
-                                    icon: '',
+                                    icon: '/build/images/markers/empty_marker.png',
                                     params: {
                                         id:     _responseMarker.id,
                                         tid:    _responseMarker.tid,
@@ -117,7 +122,7 @@ module Mappino.Map {
                                         `<div class='custom-marker md-whiteframe-z2'>${_responseMarker.price}</div>` +
                                         `<div class='custom-marker-arrow-down'></div>`,
                                     labelClass: `custom-marker-container -${panel}`,
-                                    labelAnchor: new google.maps.Point(markerLabelOffsetX, 32)
+                                    labelAnchor: new google.maps.Point(markerLabelOffsetX, 37)
                                 });
 
                                 if (this._visitedMarkers.indexOf(_responseMarker.id) != -1) {
@@ -181,6 +186,9 @@ module Mappino.Map {
                     break;
                 case 10:
                     offset = 36;
+                    break;
+                case 11:
+                    offset = 39;
                     break;
             }
 
@@ -260,10 +268,33 @@ module Mappino.Map {
         }
 
 
-
         private parseVisitedMarkers() {
             if (sessionStorage && sessionStorage.getItem('visitedMarkers')) {
                 this._visitedMarkers = sessionStorage.getItem('visitedMarkers');
+            }
+        }
+
+
+
+        private addMarkerToFavorites(markersId: string) {
+            var favorites = [];
+
+            if (sessionStorage) {
+                if (sessionStorage.getItem('favoritesMarkers')) {
+                    favorites.push(sessionStorage.getItem('favoritesMarkers').split());
+                }
+
+                if (favorites.join().indexOf(markersId) == -1) {
+                    favorites.push(markersId);
+                    sessionStorage.setItem('favoritesMarkers', favorites.join());
+                }
+            }
+        }
+
+
+        private parseFavoritesMarkers() {
+            if (sessionStorage && sessionStorage.getItem('favoritesMarkers')) {
+                this._visitedMarkers = sessionStorage.getItem('favoritesMarkers');
             }
         }
 
