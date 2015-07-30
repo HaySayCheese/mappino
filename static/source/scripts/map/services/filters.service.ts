@@ -13,11 +13,11 @@ module Mappino.Map {
                 z: 6                        // zoom
             },
             panels: {
-                red: {
-                    r_t_sid: null
-                },
                 blue: {
                     b_t_sid: null
+                },
+                green: {
+                    g_t_sid: null
                 }
             },
             base: {
@@ -201,11 +201,11 @@ module Mappino.Map {
                     if (key.toString().indexOf("_sid") !== -1) {
                         location_search[key] = location_search[key];
                     }
-                    if (/^r_/.test(key.toString())) {
-                        filters_panels['red'][key] = location_search[key];
-                    }
                     if (/^b_/.test(key.toString())) {
                         filters_panels['blue'][key] = location_search[key];
+                    }
+                    if (/^g_/.test(key.toString())) {
+                        filters_panels['green'][key] = location_search[key];
                     }
                     if (_.include(['c', 'l', 'z'], key)) {
                         this._filters['map'][key] = location_search[key];
@@ -213,13 +213,14 @@ module Mappino.Map {
                 }
             }
 
-            if (angular.isUndefined(location_search['r_t_sid']) && angular.isUndefined(location_search['b_t_sid'])) {
+            if (angular.isUndefined(location_search['g_t_sid']) && angular.isUndefined(location_search['b_t_sid'])) {
                 // -
-                filters_panels['red']['r_t_sid'] = 0;
-                this.createFiltersForPanel("red");
+                filters_panels['blue']['b_t_sid'] = 0;
+                this.createFiltersForPanel("blue");
             }
-            if (angular.isDefined(location_search['r_t_sid'])) {
-                this.createFiltersForPanel("red");
+
+            if (angular.isDefined(location_search['g_t_sid'])) {
+                this.createFiltersForPanel("green");
             }
             if (angular.isDefined(location_search['b_t_sid'])) {
                 this.createFiltersForPanel("blue");

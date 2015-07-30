@@ -36,6 +36,7 @@ module Mappino.Map {
 
 
     /** Services */
+    app.service('BriefsService', BriefsService);
     app.service('FiltersService', FiltersService);
     app.service('MarkersService', MarkersService);
     app.service('PublicationService', PublicationService);
@@ -67,6 +68,7 @@ module Mappino.Map {
     // right navbar controllers
     app.controller('NavbarRightController', NavbarRightController);
     app.controller('FavoritesTabController', FavoritesTabController);
+    app.controller('BriefsTabController', BriefsTabController);
 
     // publication controllers
     app.controller('PublicationController', PublicationController);

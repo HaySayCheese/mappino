@@ -7,11 +7,15 @@
                 <md-icon>list</md-icon>
             </md-tab-label>
             <md-tab-body>
-                <section>
+                <section ng-controller="BriefsTabController as briefsCtrl">
                     <div scrollbar>
                         <ul class="publication-list" layout="column" layout-align="start start">
-                            <li class="publication-list-item">
-                                <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
+                            <li class="publication-list-item" ng-repeat="brief in briefs"
+                                ng-click="briefsCtrl.publicationHandler.open(brief.tid + ':' + brief.id, true)"
+                                ng-mouseenter="briefsCtrl.onBriefMouseOver(brief)"
+                                ng-mouseleave="briefsCtrl.onBriefMouseLeave()">
+
+                                <img ng-src="[[ brief.thumbnail_url ]]" alt="" />
                                 <div class="publication-list-item-overlay">
                                     <md-button class="md-icon-button">
                                         <md-icon class="material-icons md-light">star_border</md-icon>
@@ -20,119 +24,8 @@
                                         </md-tooltip>
                                     </md-button>
                                     <div class="publication-list-item-description" layout="column">
-                                        <div>Квартира 2 комн.</div>
-                                        <div><b>60 000 $</b></div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="publication-list-item">
-                                <img src="http://hmsdemo.dhru.com/images/gallery/room/delux/SetHeight800-Deluxe-Room-Bedroom.jpg" alt="" />
-                                <div class="publication-list-item-overlay">
-                                    <md-button class="md-icon-button">
-                                        <md-icon class="material-icons md-light">star_border</md-icon>
-                                        <md-tooltip md-direction="right" md-delay="0">
-                                            Добавить в избранные
-                                        </md-tooltip>
-                                    </md-button>
-                                    <div class="publication-list-item-description" layout="column">
-                                        <div>Квартира 3 комн.</div>
-                                        <div><b>70 000 $</b></div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="publication-list-item">
-                                <img src="http://www.hostelljubicica.net/images/hostels/05.JPG" alt="" />
-                                <div class="publication-list-item-overlay">
-                                    <md-button class="md-icon-button">
-                                        <md-icon class="material-icons md-light">star_border</md-icon>
-                                    </md-button>
-                                    <div class="publication-list-item-description" layout="column">
-                                        <div>Квартира 3 комн.</div>
-                                        <div><b>65 000 $</b></div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="publication-list-item">
-                                <img src="http://www.hotel-grandmajestic.cz/files/hotel/rooms/hotel-majestic-prague-double-room-03.jpg" alt="" />
-                                <div class="publication-list-item-overlay">
-                                    <md-button class="md-icon-button">
-                                        <md-icon class="material-icons md-light">star_border</md-icon>
-                                    </md-button>
-                                    <div class="publication-list-item-description" layout="column">
-                                        <div>Квартира 3 комн.</div>
-                                        <div><b>88 000 $</b></div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="publication-list-item">
-                                <img src="http://new.theclaymoreproject.com/uploads/entities/339/images/IMG_4436.JPG" alt="" />
-                                <div class="publication-list-item-overlay">
-                                    <md-button class="md-icon-button">
-                                        <md-icon class="material-icons md-light">star_border</md-icon>
-                                    </md-button>
-                                    <div class="publication-list-item-description" layout="column">
-                                        <div>Квартира 2 комн.</div>
-                                        <div><b>76 000 $</b></div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="publication-list-item">
-                                <img src="http://pitstophostel.com/images/room_images/1.jpg" alt="" />
-                                <div class="publication-list-item-overlay">
-                                    <md-button class="md-icon-button">
-                                        <md-icon class="material-icons md-light">star_border</md-icon>
-                                    </md-button>
-                                    <div class="publication-list-item-description" layout="column">
-                                        <div>Квартира 3 комн.</div>
-                                        <div><b>94 000 $</b></div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="publication-list-item">
-                                <img src="http://www.gansevoorthotelgroup.com/content/slides/MEATPACKING-Superior-Room11.jpg" alt="" />
-                                <div class="publication-list-item-overlay">
-                                    <md-button class="md-icon-button">
-                                        <md-icon class="material-icons md-light">star_border</md-icon>
-                                    </md-button>
-                                    <div class="publication-list-item-description" layout="column">
-                                        <div>Квартира 1 комн.</div>
-                                        <div><b>57 000 $</b></div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="publication-list-item">
-                                <img src="http://hmsdemo.dhru.com/images/gallery/room/delux/SetHeight800-Deluxe-Room-Bedroom.jpg" alt="" />
-                                <div class="publication-list-item-overlay">
-                                    <md-button class="md-icon-button">
-                                        <md-icon class="material-icons md-light">star_border</md-icon>
-                                    </md-button>
-                                    <div class="publication-list-item-description" layout="column">
-                                        <div>Квартира 4 комн.</div>
-                                        <div><b>120 000 $</b></div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="publication-list-item">
-                                <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
-                                <div class="publication-list-item-overlay">
-                                    <md-button class="md-icon-button">
-                                        <md-icon class="material-icons md-light">star_border</md-icon>
-                                    </md-button>
-                                    <div class="publication-list-item-description" layout="column">
-                                        <div>Lorem ipsum dolor sit.</div>
-                                        <div><b>95 000 $</b></div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="publication-list-item">
-                                <img src="http://hmsdemo.dhru.com/images/gallery/room/delux/SetHeight800-Deluxe-Room-Bedroom.jpg" alt="" />
-                                <div class="publication-list-item-overlay">
-                                    <md-button class="md-icon-button">
-                                        <md-icon class="material-icons md-light">star_border</md-icon>
-                                    </md-button>
-                                    <div class="publication-list-item-description" layout="column">
-                                        <div>Lorem ipsum dolor sit.</div>
-                                        <div><b>50 000 грн.</b></div>
+                                        <div>[[ brief.title ]]</div>
+                                        <div><b>[[ brief.price ]]</b></div>
                                     </div>
                                 </div>
                             </li>

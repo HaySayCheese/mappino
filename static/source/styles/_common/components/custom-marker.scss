@@ -1,24 +1,66 @@
 .custom-marker-container {
     position: relative;
     padding:  0 0 7px 0;
+    opacity: 1 !important;
 
     .custom-marker {
         position: relative;
         padding: 5px 10px;
 
         color: #fff;
-        background: color('blue', 'base');
 
-        opacity: 1;
         overflow: visible;
-
-        border-top: 2px solid color('blue', 'darken-2');
 
         border-bottom-left-radius: 3px;
         border-bottom-right-radius: 3px;
 
         font-weight: 600;
     }
+
+
+    &.-blue {
+        .custom-marker {
+            background: color('blue', 'base');
+            border-top: 2px solid color('blue', 'darken-2');
+        }
+        .custom-marker-arrow-down {
+            border-color: color('blue', 'base') transparent transparent transparent;
+        }
+    }
+
+    &.-green {
+        .custom-marker {
+            background: color('green', 'base');
+            border-top: 2px solid color('green', 'darken-2');
+        }
+        .custom-marker-arrow-down {
+            border-color: color('green', 'base') transparent transparent transparent;
+        }
+    }
+
+
+
+
+    &.-hover {
+        .custom-marker {
+            border-top-color: color('orange', 'darken-2') !important;
+            background: color('orange', 'base') !important;
+        }
+        .custom-marker-arrow-down {
+            border-color: color('orange', 'base') transparent transparent transparent !important;
+        }
+    }
+
+    &.-visited {
+        .custom-marker {
+            border-top-color: color('grey', 'darken-2');
+            background: color('grey', 'base');
+        }
+        .custom-marker-arrow-down {
+            border-color: color('grey', 'base') transparent transparent transparent;
+        }
+    }
+
 
     .custom-marker-arrow-down {
         position: absolute;

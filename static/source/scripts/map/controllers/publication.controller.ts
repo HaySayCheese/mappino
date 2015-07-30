@@ -81,6 +81,8 @@ module Mappino.Map {
                         this.$scope.publication.contacts = {};
                         this.$scope.publication.contacts = response.data;
                     });
+
+                    this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationVisited', this.publicationIds.hid);
                 }, response => {
                     this.$rootScope.loaders.publication     = false;
                     this.$scope.publicationLoadedSuccess    = false;
