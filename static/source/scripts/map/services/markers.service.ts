@@ -73,20 +73,23 @@ module Mappino.Map {
         public place(map) {
             console.log(this._markers)
             console.log(this._response_markers)
+
             // видаляємо маркери з карти яких нема в відповіді з сервера
             for (var panel in this._markers) {
                 if (this._markers.hasOwnProperty(panel)) {
                     for (var marker in this._markers[panel]) {
                         if (this._markers[panel].hasOwnProperty(marker)) {
-                            if ((angular.isDefined(this._response_markers[panel]) && angular.isUndefined(this._response_markers[panel][marker])) ||
+
+                            if (angular.isUndefined(this._response_markers[panel]) ||
+                                (angular.isDefined(this._response_markers[panel]) && angular.isUndefined(this._response_markers[panel][marker])) ||
                                 this._markers[panel][marker].params.price != this._response_markers[panel][marker].price) {
 
                                 this.briefsService.remove(this._markers[panel][marker].params.id);
 
+                                console.log('deleted: ' + this._markers[panel][marker].params.id);
+
                                 this._markers[panel][marker].setMap(null);
                                 delete this._markers[panel][marker];
-
-                                console.log('deleted: ' + this._markers[panel][marker]);
                             }
                             console.log(this._markers)
                         }
