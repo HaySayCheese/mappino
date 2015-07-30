@@ -12,7 +12,8 @@
                         <ul class="publication-list" layout="column" layout-align="start start">
                             <li class="publication-list-item" ng-repeat="brief in briefs"
                                 ng-click="briefsCtrl.publicationHandler.open(brief.tid + ':' + brief.id, true)"
-                                ng-mouseover="briefsCtrl.onBriefMouseOver(brief)">
+                                ng-mouseenter="briefsCtrl.onBriefMouseOver(brief)"
+                                ng-mouseleave="briefsCtrl.onBriefMouseLeave()">
 
                                 <img ng-src="[[ brief.thumbnail_url ]]" alt="" />
                                 <div class="publication-list-item-overlay">

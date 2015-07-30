@@ -8,53 +8,7 @@
             </md-tab-label>
             <md-tab-body>
                 <div class="filters-tab" ng-controller="FiltersTabController as filCtrl">
-                    <section class="-closable -filters-red">
-                        <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
-                            <md-icon>place</md-icon>
-                            <span class="md-body-1" ng-hide="filters.red.r_t_sid">
-                                Виберите тип
-                            </span>
-                            <span class="md-body-1" ng-show="filters.red.r_t_sid">
-                                [[ TYPES.REALTY[filters.red.r_t_sid].titles.plural ]]&nbsp;
-                            </span>
-                            <span class="md-body-1" ng-show="filters.red.r_p_min && filters.red.r_p_max">
-                                ([[ filters.red.r_p_min ]] - [[ filters.red.r_p_max ]] [[ TYPES.CURRENCY[filters.red.r_cu_sid].title ]])
-                            </span>
-                            <span class="md-body-1" ng-show="filters.red.r_p_min && !filters.red.r_p_max">
-                                (от [[ filters.red.r_p_min ]] [[ TYPES.CURRENCY[filters.red.r_cu_sid].title ]])
-                            </span>
-                            <span class="md-body-1" ng-show="!filters.red.r_p_min && filters.red.r_p_max">
-                                (до [[ filters.red.r_p_max ]] [[ TYPES.CURRENCY[filters.red.r_cu_sid].title ]])
-                            </span>
-                        </header>
-                        <tab-section-collapsible>
-                            <div scrollbar>
-                                <div layout="column" layout-padding>
-                                    <div layout="row">
-                                        <md-input-container flex="60">
-                                            <label>Тип обєкта</label>
-                                            <md-select ng-model="filters.red.r_t_sid">
-                                                <md-option value="null">Вибрати тип</md-option>
-                                                <md-option ng-repeat="realtyType in TYPES.REALTY" value="[[ realtyType.id ]]">[[ realtyType.titles.singular ]]</md-option>
-                                            </md-select>
-                                        </md-input-container>
-                                        <md-input-container flex="40" ng-show="filters.red.r_t_sid">
-                                            <label>Операция</label>
-                                            <md-select ng-model="filters.red.r_op_sid">
-                                                <md-option value="0">Продажа</md-option>
-                                                <md-option value="1">Оренда</md-option>
-                                            </md-select>
-                                        </md-input-container>
-                                    </div>
-                                    <div ng-if="filters.red.r_t_sid != null" ng-include="'/ajax/template/map/filters/red/' + [[ filters.red.r_t_sid ]] + '/'"></div>
-                                    <md-button class="md-raised md-primary" ng-click="filCtrl.updateFilters('red');">
-                                        Обновить поиск
-                                    </md-button>
-                                </div>
-                            </div>
-                        </tab-section-collapsible>
-                    </section>
-                    <section class="-closable -filters-blue -closed">
+                    <section class="-closable -filters-blue">
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
                             <md-icon>place</md-icon>
                             <span class="md-body-1" ng-hide="filters.blue.b_t_sid">
@@ -95,6 +49,52 @@
                                 <md-button class="md-raised md-primary" ng-click="filCtrl.updateFilters('blue');">
                                     Обновить поиск
                                 </md-button>
+                            </div>
+                        </tab-section-collapsible>
+                    </section>
+                    <section class="-closable -filters-green -closed">
+                        <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
+                            <md-icon>place</md-icon>
+                            <span class="md-body-1" ng-hide="filters.green.g_t_sid">
+                                Виберите тип
+                            </span>
+                            <span class="md-body-1" ng-show="filters.green.g_t_sid">
+                                [[ TYPES.REALTY[filters.green.g_t_sid].titles.plural ]]&nbsp;
+                            </span>
+                            <span class="md-body-1" ng-show="filters.green.g_p_min && filters.green.g_p_max">
+                                ([[ filters.green.g_p_min ]] - [[ filters.green.g_p_max ]] [[ TYPES.CURRENCY[filters.green.g_cu_sid].title ]])
+                            </span>
+                            <span class="md-body-1" ng-show="filters.green.g_p_min && !filters.green.g_p_max">
+                                (от [[ filters.green.g_p_min ]] [[ TYPES.CURRENCY[filters.green.g_cu_sid].title ]])
+                            </span>
+                            <span class="md-body-1" ng-show="!filters.green.g_p_min && filters.green.g_p_max">
+                                (до [[ filters.green.g_p_max ]] [[ TYPES.CURRENCY[filters.green.g_cu_sid].title ]])
+                            </span>
+                        </header>
+                        <tab-section-collapsible>
+                            <div scrollbar>
+                                <div layout="column" layout-padding>
+                                    <div layout="row">
+                                        <md-input-container flex="60">
+                                            <label>Тип обєкта</label>
+                                            <md-select ng-model="filters.green.g_t_sid">
+                                                <md-option value="null">Вибрати тип</md-option>
+                                                <md-option ng-repeat="realtyType in TYPES.REALTY" value="[[ realtyType.id ]]">[[ realtyType.titles.singular ]]</md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                        <md-input-container flex="40" ng-show="filters.green.g_t_sid">
+                                            <label>Операция</label>
+                                            <md-select ng-model="filters.green.g_op_sid">
+                                                <md-option value="0">Продажа</md-option>
+                                                <md-option value="1">Оренда</md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                    </div>
+                                    <div ng-if="filters.green.g_t_sid != null" ng-include="'/ajax/template/map/filters/green/' + [[ filters.green.g_t_sid ]] + '/'"></div>
+                                    <md-button class="md-raised md-primary" ng-click="filCtrl.updateFilters('green');">
+                                        Обновить поиск
+                                    </md-button>
+                                </div>
                             </div>
                         </tab-section-collapsible>
                     </section>

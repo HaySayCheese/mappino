@@ -31,5 +31,10 @@ module Mappino.Map {
         public onBriefMouseOver(brief) {
             this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseOver', brief.id);
         }
+
+
+        public onBriefMouseLeave() {
+            this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseLeave');
+        }
     }
 }
