@@ -112,7 +112,7 @@ module Mappino.Map {
                                 this._markers[panel][marker] = new MarkerWithLabel({
                                     position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
                                     map: map,
-                                    icon: '/build/images/markers/empty_marker.png',
+                                    icon: '../mappino_static/build/images/markers/empty_marker.png',
                                     params: {
                                         id:     _responseMarker.id,
                                         tid:    _responseMarker.tid,
