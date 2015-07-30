@@ -56,6 +56,8 @@ module Mappino.Map {
                 if (toParams['publication_id'] != 0 && fromParams['publication_id'] != toParams['publication_id']) {
                     $scope.publicationPreviewSlideIndex = 0;
                     this.loadPublicationData();
+
+                    this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseOver', this.publicationIds.hid);
                 }
             });
         }
@@ -81,13 +83,19 @@ module Mappino.Map {
                         this.$scope.publication.contacts = {};
                         this.$scope.publication.contacts = response.data;
                     });
-
-                    this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationVisited', this.publicationIds.hid);
                 }, response => {
                     this.$rootScope.loaders.publication     = false;
                     this.$scope.publicationLoadedSuccess    = false;
                 });
             }
+        }
+
+
+
+        private closePublication() {
+            this.publicationHandler.close();
+            this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseLeave', this.publicationIds.hid);
+            this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationVisited', this.publicationIds.hid);
         }
 
 
