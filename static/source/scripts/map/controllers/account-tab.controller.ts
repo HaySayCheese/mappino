@@ -41,7 +41,7 @@ module Mappino.Map {
             if (this.$scope.authState === 'enterPhone') {
                 if (this.$scope.loginForm.phoneNumber.$valid) {
                     this.fullNumber = this.$scope.account.phoneCode + this.$scope.account.phoneNumber;
-                    localStorage['fullNumber'] = this.fullNumber;
+                    //localStorage['fullNumber'] = this.fullNumber;
 
                     this.authService.checkPhoneNumber(this.fullNumber, () => {
                         this.$scope.authState = 'enterSMSCode';
