@@ -285,12 +285,6 @@ module Mappino.Map {
                                 continue;
                             }
 
-
-                            // i love js
-                            //if (_.include(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], filters_panels[panel][filter])) {
-                            //    filters_panels[panel][filter] = parseInt(filters_panels[panel][filter]);
-                            //}
-
                             location_search += (location_search.length !== 0 ? '&' : '') + panel_filter + '=' + panels_filters[panel][panel_filter];
                         }
                     }
