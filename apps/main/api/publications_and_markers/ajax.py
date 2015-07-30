@@ -122,7 +122,14 @@ class Markers(View):
                 # Generating of the filters objects.
                 # This object is used to perform filtering based on parameters
                 # that was specified on front-end.
-                filter_conditions = (cls.filters_parsers[tid])(filters)
+
+                try:
+                    filter_conditions = (cls.filters_parsers[tid])(filters)
+                except OperationSIDParseError:
+                    # In some cases operation type of some panels may be omitted by the front-end.
+                    # (for example, if realty type was selected moment ago and no operation type was selected)
+                    # In this case this panel should be ignored, but the rest panels should be processed.
+                    continue
 
 
                 # Generating of the briefs.
