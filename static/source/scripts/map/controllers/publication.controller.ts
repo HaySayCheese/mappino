@@ -53,6 +53,9 @@ module Mappino.Map {
 
 
             $scope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
+                $scope.messageFormIsVisible     = false;
+                $scope.callRequestFormIsVisible = false;
+
                 if (toParams['publication_id'] != 0 && fromParams['publication_id'] != toParams['publication_id']) {
                     $scope.publicationPreviewSlideIndex = 0;
                     this.loadPublicationData();
