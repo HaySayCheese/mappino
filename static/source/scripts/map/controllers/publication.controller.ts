@@ -58,6 +58,7 @@ module Mappino.Map {
                     this.loadPublicationData();
 
                     this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseLeave', this.publicationIds.hid);
+                    this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationVisited', this.publicationIds.hid);
                     this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseOver', this.publicationIds.hid);
                 }
             });
@@ -85,7 +86,7 @@ module Mappino.Map {
                         this.$scope.publication.contacts = response.data;
                     });
 
-
+                    this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseOver', this.publicationIds.hid);
                     this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationVisited', this.publicationIds.hid);
                 }, response => {
                     this.$rootScope.loaders.publication     = false;
