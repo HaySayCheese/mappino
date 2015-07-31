@@ -10,13 +10,13 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 @ensure_csrf_cookie
 @render_jinja2_template
 def map_navbar_left(request):
-    return 'map/navbars/navbar-left.html'
+    return 'map/navbars/navbar-left/navbar-left.html'
 
 
 @ensure_csrf_cookie
 @render_jinja2_template
 def map_navbar_right(request):
-    return 'map/navbars/navbar-right.html'
+    return 'map/navbars/navbar-right/navbar-right.html'
 
 
 @ensure_csrf_cookie
@@ -53,15 +53,15 @@ def publication_detailed(request, tid):
 
 
 __FILTERS_TEMPLATES_PATHS = {
-	OBJECTS_TYPES.house():      'map/filters/houses.html',
-	OBJECTS_TYPES.flat():       'map/filters/flats.html',
-	OBJECTS_TYPES.room():       'map/filters/rooms.html',
+	OBJECTS_TYPES.house():      'map/navbars/navbar-left/filters/houses.html',
+	OBJECTS_TYPES.flat():       'map/navbars/navbar-left/filters/flats.html',
+	OBJECTS_TYPES.room():       'map/navbars/navbar-left/filters/rooms.html',
 
-	OBJECTS_TYPES.trade():      'map/filters/trades.html',
-	OBJECTS_TYPES.office():     'map/filters/offices.html',
-	OBJECTS_TYPES.warehouse():  'map/filters/warehouses.html',
-	OBJECTS_TYPES.garage():     'map/filters/garages.html',
-	OBJECTS_TYPES.land():       'map/filters/lands.html',
+	OBJECTS_TYPES.trade():      'map/navbars/navbar-left/filters/trades.html',
+	OBJECTS_TYPES.office():     'map/navbars/navbar-left/filters/offices.html',
+	OBJECTS_TYPES.warehouse():  'map/navbars/navbar-left/filters/warehouses.html',
+	OBJECTS_TYPES.garage():     'map/navbars/navbar-left/filters/garages.html',
+	OBJECTS_TYPES.land():       'map/navbars/navbar-left/filters/lands.html',
 }
 
 @ensure_csrf_cookie
