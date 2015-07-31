@@ -199,7 +199,7 @@
                 </md-input-container>
                 <md-input-container flex="60">
                     <label>Моб. телефон</label>
-                    <input name="phoneNumber" type="text" ng-model="callRequest.phoneNumber" required>
+                    <input name="phoneNumber" type="text" ng-model="callRequest.phoneNumber" only-number required>
                     <div ng-messages="forms.publicationCallRequest.phoneNumber.$error" ng-show="forms.publicationCallRequest.phoneNumber.$touched">
                         <div ng-message="required">Обязательное поле</div>
                     </div>

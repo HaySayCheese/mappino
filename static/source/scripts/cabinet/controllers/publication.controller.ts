@@ -245,7 +245,9 @@ module Mappino.Cabinet {
         private setAddressFromLatLng(latLng: google.maps.LatLng, input: HTMLInputElement) {
             var geocoder = new google.maps.Geocoder();
 
-            geocoder.geocode({ 'latLng': latLng }, (results, status) => {
+            geocoder.geocode({
+                'latLng': latLng
+            }, (results, status) => {
                 if(status == google.maps.GeocoderStatus.OK)
                     angular.element(input).val(results[0].formatted_address);
 

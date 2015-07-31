@@ -71,9 +71,6 @@ module Mappino.Map {
 
 
         public place(map) {
-            console.log(this._markers)
-            console.log(this._response_markers)
-
             // видаляємо маркери з карти яких нема в відповіді з сервера
             for (var panel in this._markers) {
                 if (this._markers.hasOwnProperty(panel)) {
@@ -91,7 +88,6 @@ module Mappino.Map {
                                 this._markers[panel][marker].setMap(null);
                                 delete this._markers[panel][marker];
                             }
-                            console.log(this._markers)
                         }
                     }
                 }
@@ -115,7 +111,7 @@ module Mappino.Map {
                                 this._markers[panel][marker] = new MarkerWithLabel({
                                     position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
                                     map: map,
-                                    icon: '../mappino_static/build/images/markers/empty_marker.png',
+                                    icon: '/../mappino_static/build/images/markers/empty_marker.png',
                                     params: {
                                         id:     _responseMarker.id,
                                         tid:    _responseMarker.tid,
@@ -145,8 +141,6 @@ module Mappino.Map {
                                 this._markers[panel][marker].setMap(map);
                                 console.log('added: ' + this._markers[panel][marker])
                             }
-
-                            console.log(this._markers)
                         }
                     }
                 }

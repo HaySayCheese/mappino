@@ -114,12 +114,9 @@ module Mappino.Map {
             if (panel_name) {
                 var panel_prefix = panel_name.toString().substring(0, 1) + "_",
                     type_sid = filter_object_name[panel_prefix + "t_sid"];
-
-                console.log(panel_prefix)
             }
 
             if (panel_name && type_sid == null) {
-                console.log('ddddddddddddddddddd')
                 this.createFiltersForPanel(panel_name);
             }
 
@@ -174,8 +171,6 @@ module Mappino.Map {
                     }
                 }
             }
-
-            console.log(this._filters)
 
             this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.FiltersService.FiltersUpdated', this._filters));
         }
@@ -334,8 +329,6 @@ module Mappino.Map {
                 'sw_lat': swLat,
                 'sw_lng': swLng
             };
-
-            console.log(this._filters_for_load_markers)
         }
     }
 }

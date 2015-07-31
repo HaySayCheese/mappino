@@ -71,8 +71,8 @@ module Mappino.Map {
                 this.publicationIds.hid = this.$state.params['publication_id'].split(':')[1];
 
                 this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseLeave', this.publicationIds.hid);
-                this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationVisited', this.publicationIds.hid);
                 this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseOver', this.publicationIds.hid);
+                this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationVisited', this.publicationIds.hid);
 
                 this.$scope.publicationTemplateUrl = `/ajax/template/map/publication/detailed/${this.publicationIds.tid}/`;
 
