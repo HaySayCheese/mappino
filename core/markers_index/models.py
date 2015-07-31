@@ -107,6 +107,19 @@ class FlatsSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
+    def brief_queryset(cls):
+        queryset = super(FlatsSaleIndex, cls).brief_queryset()
+        return queryset.only('rooms_count')
+
+
+    @classmethod
+    def brief(cls, marker, filters=None):
+        brief = super(FlatsSaleIndex, cls).brief(marker, filters)
+        brief['title'] = u'Квартира, {0} к.'.format(marker.rooms_count) # tr
+        return brief
+
+
+    @classmethod
     def apply_filters(cls, filters, markers):
         markers = cls.apply_price_filter(filters, markers)
 
@@ -226,6 +239,19 @@ class FlatsRentIndex(AbstractBaseIndex):
 
 
     @classmethod
+    def brief_queryset(cls):
+        queryset = super(FlatsRentIndex, cls).brief_queryset()
+        return queryset.only('rooms_count')
+
+
+    @classmethod
+    def brief(cls, marker, filters=None):
+        brief = super(FlatsRentIndex, cls).brief(marker, filters)
+        brief['title'] = u'Квартира, {0} к.'.format(marker.rooms_count) # tr
+        return brief
+
+
+    @classmethod
     def apply_filters(cls, filters, markers):
         markers = cls.apply_price_filter(filters, markers)
         markers = cls.apply_living_rent_period_filter(filters, markers)
@@ -329,6 +355,19 @@ class HousesSaleIndex(AbstractBaseIndex):
 
 
     @classmethod
+    def brief_queryset(cls):
+        queryset = super(HousesSaleIndex, cls).brief_queryset()
+        return queryset.only('total_area')
+
+
+    @classmethod
+    def brief(cls, marker, filters=None):
+        brief = super(HousesSaleIndex, cls).brief(marker, filters)
+        brief['title'] = u'Дом, {:.0f} м².'.format(marker.total_area) # tr
+        return brief
+
+
+    @classmethod
     def apply_filters(cls, filters, markers):
         markers = cls.apply_price_filter(filters, markers)
 
@@ -400,6 +439,19 @@ class HousesRentIndex(AbstractBaseIndex):
             electricity=record.body.electricity,
             heating_type_sid=record.body.heating_type_sid,
         )
+
+
+    @classmethod
+    def brief_queryset(cls):
+        queryset = super(HousesRentIndex, cls).brief_queryset()
+        return queryset.only('total_area')
+
+
+    @classmethod
+    def brief(cls, marker, filters=None):
+        brief = super(HousesRentIndex, cls).brief(marker, filters)
+        brief['title'] = u'Дом, {:.0f} м².'.format(marker.total_area) # tr
+        return brief
 
 
     @classmethod
@@ -505,6 +557,19 @@ class RoomsSaleIndex(AbstractBaseIndex):
             electricity=record.body.electricity,
             gas=record.body.gas,
         )
+
+
+    @classmethod
+    def brief_queryset(cls):
+        queryset = super(RoomsSaleIndex, cls).brief_queryset()
+        return queryset.only('area')
+
+
+    @classmethod
+    def brief(cls, marker, filters=None):
+        brief = super(RoomsSaleIndex, cls).brief(marker, filters)
+        brief['title'] = u'Комната, {:.0f} м².'.format(marker.area) # tr
+        return brief
 
 
     @classmethod
@@ -642,6 +707,19 @@ class RoomsRentIndex(AbstractBaseIndex):
                 'rent_terms__currency_sid',
                 'rent_terms__persons_count',
             )[:1]
+
+
+    @classmethod
+    def brief_queryset(cls):
+        queryset = super(RoomsRentIndex, cls).brief_queryset()
+        return queryset.only('area')
+
+
+    @classmethod
+    def brief(cls, marker, filters=None):
+        brief = super(RoomsRentIndex, cls).brief(marker, filters)
+        brief['title'] = u'Комната, {:.0f} м².'.format(marker.area) # tr
+        return brief
 
 
     @classmethod

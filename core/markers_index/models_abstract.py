@@ -74,7 +74,7 @@ class AbstractBaseIndex(models.Model):
             minimum queryset needed for marker brief performing.
         """
         return cls.objects.all().only(
-            'publication_id', 'hash_id', 'photo_thumbnail_url', 'lat', 'lng', 'price', 'currency_sid')
+            'hash_id', 'lat', 'lng', 'photo_thumbnail_url', 'price', 'currency_sid')
 
 
     @classmethod
@@ -85,7 +85,7 @@ class AbstractBaseIndex(models.Model):
         return {
             'tid': cls.tid,
             'id': marker.hash_id,
-            'price': u'{0} {1}'.format(price, cls.currency_to_str(currency)),
+            'price': u'{0}{1}'.format(cls.currency_to_str(currency), price),
             'thumbnail_url': marker.photo_thumbnail_url,
         }
 
@@ -142,11 +142,11 @@ class AbstractBaseIndex(models.Model):
     @staticmethod
     def currency_to_str(currency):
         if currency == CURRENCIES.dol():
-            return u'дол.'
-        elif currency == CURRENCIES.uah():
-            return u'грн.'
+            return u'$'
         elif currency == CURRENCIES.eur():
-            return u'евро'
+            return u'€'
+        elif currency == CURRENCIES.uah():
+            return u'₴'
         else:
             raise InvalidArgument('Invalid currency.')
 
@@ -529,6 +529,19 @@ class AbstractTradesIndex(AbstractBaseIndex):
         return markers
 
 
+    @classmethod
+    def brief_queryset(cls):
+        queryset = super(AbstractTradesIndex, cls).brief_queryset()
+        return queryset.only('total_area')
+
+
+    @classmethod
+    def brief(cls, marker, filters=None):
+        brief = super(AbstractTradesIndex, cls).brief(marker, filters)
+        brief['title'] = u'Торг. помещение, {:.0f} м².'.format(marker.total_area) # tr
+        return brief
+
+
 class AbstractOfficesIndex(AbstractBaseIndex):
     """
     Sale index and rent index of the offices contains the same field and the same logic,
@@ -570,6 +583,19 @@ class AbstractOfficesIndex(AbstractBaseIndex):
         markers = cls.apply_kitchen_filter(filters, markers)
         markers = cls.apply_security_filter(filters, markers)
         return markers
+
+
+    @classmethod
+    def brief_queryset(cls):
+        queryset = super(AbstractOfficesIndex, cls).brief_queryset()
+        return queryset.only('total_area')
+
+
+    @classmethod
+    def brief(cls, marker, filters=None):
+        brief = super(AbstractOfficesIndex, cls).brief(marker, filters)
+        brief['title'] = u'Офис, {:.0f} м².'.format(marker.total_area) # tr
+        return brief
 
 
 class AbstractWarehousesIndex(AbstractBaseIndex):
@@ -617,6 +643,19 @@ class AbstractWarehousesIndex(AbstractBaseIndex):
         return markers
 
 
+    @classmethod
+    def brief_queryset(cls):
+        queryset = super(AbstractWarehousesIndex, cls).brief_queryset()
+        return queryset.only('halls_area')
+
+
+    @classmethod
+    def brief(cls, marker, filters=None):
+        brief = super(AbstractWarehousesIndex, cls).brief(marker, filters)
+        brief['title'] = u'Склад, {:.0f} м².'.format(marker.halls_area) # tr
+        return brief
+
+
 class AbstractGaragesIndex(AbstractBaseIndex):
     """
     Sale index and rent index of the garages contains the same field and the same logic,
@@ -641,6 +680,7 @@ class AbstractGaragesIndex(AbstractBaseIndex):
     class Meta:
         abstract = True
 
+
     @classmethod
     def apply_filters(cls, filters, markers):
         markers = cls.apply_price_filter(filters, markers)
@@ -650,6 +690,19 @@ class AbstractGaragesIndex(AbstractBaseIndex):
         markers = cls.apply_ceiling_height_filter(filters, markers)
         markers = cls.apply_pit_filter(filters, markers)
         return markers
+
+
+    @classmethod
+    def brief_queryset(cls):
+        queryset = super(AbstractGaragesIndex, cls).brief_queryset()
+        return queryset.only('area')
+
+
+    @classmethod
+    def brief(cls, marker, filters=None):
+        brief = super(AbstractGaragesIndex, cls).brief(marker, filters)
+        brief['title'] = u'Гараж, {:.0f} м².'.format(marker.area) # tr
+        return brief
 
 
 class AbstractLandsIndex(AbstractBaseIndex):
@@ -674,8 +727,10 @@ class AbstractLandsIndex(AbstractBaseIndex):
     gas = models.BooleanField(db_index=True)
     sewerage = models.BooleanField(db_index=True)
 
+
     class Meta:
         abstract = True
+
 
     @classmethod
     def apply_filters(cls, filters, markers):
@@ -687,3 +742,16 @@ class AbstractLandsIndex(AbstractBaseIndex):
         markers = cls.apply_gas_filter(filters, markers)
         markers = cls.apply_sewerage_filter(filters, markers)
         return markers
+
+
+    @classmethod
+    def brief_queryset(cls):
+        queryset = super(AbstractLandsIndex, cls).brief_queryset()
+        return queryset.only('area')
+
+
+    @classmethod
+    def brief(cls, marker, filters=None):
+        brief = super(AbstractLandsIndex, cls).brief(marker, filters)
+        brief['title'] = u'Зем. участок, {:.0f} м².'.format(marker.area) # tr
+        return brief
