@@ -25,9 +25,10 @@ module Mappino.Map {
 
 
         public remove(briefId: string) {
+            console.log(briefId);
             for (var key in this._briefs) {
                 if (this._briefs[key].id == briefId)
-                    this._briefs.splice(this._briefs[key], 1);
+                    this._briefs.splice(key, 1);
             }
         }
 
