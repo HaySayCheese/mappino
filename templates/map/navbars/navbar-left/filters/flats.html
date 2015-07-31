@@ -8,11 +8,11 @@
 </div>
 <div layout="row">
     <md-input-container flex="33">
-        <label>Ціна від</label>
+        <label>Цена от</label>
         <input type="text" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_p_min" only-number>
     </md-input-container>
     <md-input-container flex="33">
-        <label>Ціна до</label>
+        <label>Цена до</label>
         <input type="text" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_p_max">
     </md-input-container>
     <md-input-container flex="33">
@@ -24,15 +24,21 @@
 </div>
 <div layout="row">
     <md-input-container flex="33">
-        <label>Площа від</label>
+        <label>Площадь от</label>
         <input type="text" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_t_a_min">
     </md-input-container>
     <md-input-container flex="33">
-        <label>Площа до</label>
+        <label>Площадь до</label>
         <input type="text" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_t_a_max">
     </md-input-container>
-    <md-input-container flex="33">
-        <label>Кімнат</label>
+</div>
+<div layout="row">
+    <md-input-container flex="33" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_c_min">
+        <label>Комнат от</label>
+        <input type="text">
+    </md-input-container>
+    <md-input-container flex="33" ng-model="filters.{{ current_panel }}.{{ current_panel_prefix }}_c_max">
+        <label>Комнат до</label>
         <input type="text">
     </md-input-container>
 </div>
