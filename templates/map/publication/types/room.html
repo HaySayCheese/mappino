@@ -71,9 +71,5 @@
         </p>
     </div>
 
-    <div class="md-subhead blue-text">Контакти</div>
-    <md-divider></md-divider>
-    <p layout-padding>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias at aut deleniti dignissimos expedita explicabo iste perferendis porro, praesentium quasi qui quibusdam ratione reprehenderit saepe tenetur totam voluptatem? Esse, qui!
-    </p>
+    <ng-include ng-if="publication.contacts" src="'/ajax/template/map/publication/contacts/'"></ng-include>
 </section>
