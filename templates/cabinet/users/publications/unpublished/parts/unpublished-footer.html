@@ -25,14 +25,15 @@
     <md-card-content>
         <div class="md-subhead blue-text">Фото и видео</div>
         <div class="drop-container" ngf-drop ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
-             accept="image/*" ngf-change="pubCtrl.uploadPublicationPhotos($files)">
+             ngf-accept="'image/*'" ngf-change="pubCtrl.uploadPublicationPhotos($files)">
 
             <div class="md-padding">
                 <div class="drop-box" layout="column" layout-align="center center">
 
                     <p>Перенесите сюда фото или видео файл</p>
 
-                    <md-button class="md-primary" ngf-select ngf-multiple="true" accept="image/*" ngf-change="pubCtrl.uploadPublicationPhotos($files)">
+                    <md-button class="md-primary" ngf-select ngf-multiple="true" accept="image/*"
+                               ngf-change="pubCtrl.uploadPublicationPhotos($files)">
                         Выбрать файл
                     </md-button>
                 </div>
