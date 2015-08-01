@@ -25,6 +25,7 @@ module Mappino.Cabinet {
             '$timeout',
             '$mdDialog',
             'TXT',
+            'MAP',
             'PublicationsService',
         ];
 
@@ -34,6 +35,7 @@ module Mappino.Cabinet {
                     private $timeout: angular.ITimeoutService,
                     private $mdDialog: any,
                     private TXT: any,
+                    private MAP: any,
                     private publicationsService: IPublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Редактирование объявления';
@@ -203,7 +205,8 @@ module Mappino.Cabinet {
                         mapTypeControl: false,
                         streetViewControl: false,
                         scrollwheel: true,
-                        disableDoubleClickZoom: false
+                        disableDoubleClickZoom: false,
+                        styles: this.MAP.STYLES
                     },
                     autocompleteOptions = {
                         componentRestrictions: {
