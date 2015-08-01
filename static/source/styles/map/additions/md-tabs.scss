@@ -11,8 +11,12 @@ md-tabs {
 
 
         md-tab-item {
-            &.md-active md-icon {
+            &.md-active {
                 color: #fff !important;
+
+                md-icon {
+                    color: #fff !important;
+                }
             }
 
             md-icon {
