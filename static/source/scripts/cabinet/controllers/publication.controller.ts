@@ -47,6 +47,12 @@ module Mappino.Cabinet {
             $scope.publicationPhotoLoader = {};
             $scope.forms = {};
 
+            $scope.publicationPhotosErrors = {
+                minimumPhotos: false,
+                photoTooSmall: false,
+                photoTooLarge: false,
+            };
+
             this.loadPublicationData();
         }
 
@@ -112,6 +118,9 @@ module Mappino.Cabinet {
                     this.$rootScope.loaders.overlay = false;
                     this.$state.go('publications');
                 }, response => {
+                    response.code == 3 && (this.$scope.publicationPhotosErrors.minimumPhotos = true);
+                    response.code == 3 && (this.$scope.publicationPhotosErrors.minimumPhotos = true);
+
                     this.$rootScope.loaders.overlay = false;
                 });
             }
@@ -149,9 +158,16 @@ module Mappino.Cabinet {
                         this.scrollToBottom();
                     }, response => {
                         this.$scope.tempPublicationPhotos.shift();
+
+                        response.code == 4 && (this.$scope.publicationPhotosErrors.photoTooLarge = true);
+                        response.code == 5 && (this.$scope.publicationPhotosErrors.photoTooSmall = true);
                     });
                 }
             }
+
+            this.$scope.publicationPhotosErrors.minimumPhotos = false;
+            this.$scope.publicationPhotosErrors.photoTooSmall = false;
+            this.$scope.publicationPhotosErrors.photoTooLarge = false;
         }
 
 
