@@ -17,6 +17,11 @@ publication-view {
     }
     &.-with-navbar-right {
         right: 220px;
+
+        @media (max-width: 825px) {
+            width: auto;
+            left: 0;
+        }
     }
 
 

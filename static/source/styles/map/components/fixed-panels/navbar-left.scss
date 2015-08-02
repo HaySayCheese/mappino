@@ -4,6 +4,7 @@ navbar-left {
     @include size(365px, auto);
     top: 0;
     left: 0;
+    z-index: 60;
 
 
     .navbar-left-container {
