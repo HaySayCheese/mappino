@@ -101,45 +101,13 @@ module Mappino.Map {
                         if (this._response_markers[panel].hasOwnProperty(marker)) {
 
                             if (!this._markers[panel][marker]) {
-                                var markerLabelOffsetX = 35,
-                                    _responseMarker = this._response_markers[panel][marker];
+                                var responseMarker = this._response_markers[panel][marker];
 
-                                if (angular.isDefined(_responseMarker.price)) {
-                                    markerLabelOffsetX = this.calcMarkerLabelOffsetX(_responseMarker.price.length);
+                                if (responseMarker.price) {
+                                    this.createSimpleMarker(panel, marker, map, responseMarker);
+                                } else {
+                                    this.createPieMarker(panel, marker, map, responseMarker);
                                 }
-
-                                this._markers[panel][marker] = new MarkerWithLabel({
-                                    position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
-                                    map: map,
-                                    icon: '/../mappino_static/build/images/markers/empty_marker.png',
-                                    params: {
-                                        id:     _responseMarker.id,
-                                        tid:    _responseMarker.tid,
-                                        price:  _responseMarker.price
-                                    },
-                                    labelContent:
-                                        `<div class='custom-marker md-whiteframe-z2'>${_responseMarker.price}</div>` +
-                                        `<div class='custom-marker-arrow-down'></div>`,
-                                    labelClass: `custom-marker-container -${panel}`,
-                                    labelAnchor: new google.maps.Point(markerLabelOffsetX, 37)
-                                });
-
-                                if (this._visitedMarkers.indexOf(_responseMarker.id) != -1) {
-                                    this._markers[panel][marker].labelClass += ' -visited'
-                                }
-
-                                this.attachClickEventToMarker(this._markers[panel][marker]);
-
-                                this.briefsService.add({
-                                    id: _responseMarker.id,
-                                    tid: _responseMarker.tid,
-                                    price: _responseMarker.price,
-                                    title: _responseMarker.title,
-                                    thumbnail_url: _responseMarker.thumbnail_url
-                                });
-
-                                this._markers[panel][marker].setMap(map);
-                                console.log('added: ' + this._markers[panel][marker])
                             }
                         }
                     }
@@ -151,7 +119,118 @@ module Mappino.Map {
 
 
 
-        private attachClickEventToMarker(marker) {
+        private createSimpleMarker(panel, marker, map, responseMarker) {
+            var markerLabelOffsetX = 35;
+
+            if (angular.isDefined(responseMarker.price)) {
+                markerLabelOffsetX = this.calcMarkerLabelOffsetX(responseMarker.price.length);
+            }
+
+            this._markers[panel][marker] = new MarkerWithLabel({
+                position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
+                //map: map,
+                icon: '/../mappino_static/build/images/markers/empty_marker.png',
+                params: {
+                    id:     responseMarker.id,
+                    tid:    responseMarker.tid,
+                    price:  responseMarker.price
+                },
+                labelContent:
+                `<div class='custom-marker md-whiteframe-z2'>${responseMarker.price}</div>` +
+                `<div class='custom-marker-arrow-down'></div>`,
+                labelClass: `custom-marker-container -${panel}`,
+                labelAnchor: new google.maps.Point(markerLabelOffsetX, 37)
+            });
+
+            if (this._visitedMarkers.indexOf(responseMarker.id) != -1) {
+                this._markers[panel][marker].labelClass += ' -visited'
+            }
+
+            this._markers[panel][marker].setMap(map);
+            console.log('added: ' + this._markers[panel][marker]);
+
+            this.briefsService.add({
+                id:             responseMarker.id,
+                tid:            responseMarker.tid,
+                price:          responseMarker.price,
+                title:          responseMarker.title,
+                thumbnail_url:  responseMarker.thumbnail_url
+            });
+
+            this.attachClickEventToSimpleMarker(this._markers[panel][marker]);
+        }
+
+
+
+        private createPieMarker(panel, marker, map, responseMarker) {
+            console.log(responseMarker)
+            var pieBlueMarkers  = responseMarker.blue   || 1,
+                pieGreenMarkers = responseMarker.green  || 2,
+
+                pieMarkersCount = responseMarker,
+
+                pieBlueMarkersCountInDeg    = Math.round((360 / 100 * ((pieBlueMarkers / pieMarkersCount) * 100))   || 0),
+                pieGreenMarkersCountInDeg   = Math.round((360 / 100 * ((pieGreenMarkers / pieMarkersCount) * 100))  || 0),
+
+                blueAdditionalClass      = pieBlueMarkersCountInDeg  > 180 ? ' full' : '',
+                greenAdditionalClass     = pieGreenMarkersCountInDeg > 180 ? ' full' : '',
+
+                sizeOfPieChart = pieMarkersCount < 100 ? "small" :
+                    pieMarkersCount >= 100 && pieMarkersCount < 1000 ? "medium" :
+                        pieMarkersCount >= 1000 && pieMarkersCount < 10000 ? "large" : "super-big",
+
+                _uuid = _.uniqueId('pie-marker-');
+
+
+            this._markers[panel][marker] = new MarkerWithLabel({
+                position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
+                icon: '/../mappino_static/build/images/markers/empty_marker.png',
+                params: {
+                    count:             pieMarkersCount,
+                    bluePercentage:    pieBlueMarkers,
+                    greenPercentage:   pieGreenMarkers
+                },
+                labelContent:
+                    "<style>" +
+                        "." + _uuid + ".pie.pie-blue {" +
+                            "transform: rotate(0deg);" +
+                        "}"+
+                        "." + _uuid + ".pie.pie-blue:before {" +
+                            "transform: rotate(" + pieBlueMarkersCountInDeg + "deg);" +
+                        "}"+
+                        "." + _uuid + ".pie.pie-green {" +
+                            "transform: rotate(" + pieBlueMarkersCountInDeg + "deg);" +
+                        "}"+
+                        "." + _uuid + ".pie.pie-green:before {" +
+                            "transform: rotate(" + pieGreenMarkersCountInDeg + "deg);" +
+                        "}"+
+                    "</style>"+
+                    "<div>" +
+                        "<div class='marker-pie-chart-inner'>" + pieMarkersCount + "</div>" +
+                        "<div class='" + _uuid + " pie pie-blue" + blueAdditionalClass + "'></div>" +
+                        "<div class='" + _uuid + " pie pie-green" + greenAdditionalClass + "'></div>" +
+                    "</div>",
+                labelClass: `marker-pie-chart ${sizeOfPieChart} md-whiteframe-z2`,
+                labelAnchor: new google.maps.Point(30, 45),
+            });
+
+            this._markers[panel][marker].setMap(map);
+            console.log('added: ' + this._markers[panel][marker]);
+
+            this.attachClickEventToPieMarker(this._markers[panel][marker], map);
+        }
+
+
+
+        private attachClickEventToPieMarker(marker, map) {
+            google.maps.event.addListener(marker, 'click', () => {
+                map.setZoom(map.getZoom() + 1);
+            });
+        }
+
+
+
+        private attachClickEventToSimpleMarker(marker) {
             google.maps.event.addListener(marker, 'click', () => {
                 console.log(`Clicked on marker ${marker.params.tid}:${marker.params.id}`);
                 this.publicationHandler.open(`${marker.params.tid}:${marker.params.id}`);
