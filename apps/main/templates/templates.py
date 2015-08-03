@@ -86,3 +86,9 @@ def filters_form_by_tid(request, color, tid):
         'current_panel': color,
         'current_panel_prefix': color_prefix,
     }))
+
+
+@ensure_csrf_cookie
+@render_jinja2_template
+def seller_contacts(request):
+    return 'map/publication/parts/contacts.html'
