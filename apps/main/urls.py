@@ -13,5 +13,6 @@ urlpatterns = patterns('apps.main.views',
     # API
     url(r'', include('apps.main.api.publications_and_markers.urls')),
     url(r'', include('apps.main.api.contacts.urls')),
+    url(r'', include('apps.main.api.correspondence.urls')),
     url(r'', include('apps.main.api.favorites.urls')),
 )
