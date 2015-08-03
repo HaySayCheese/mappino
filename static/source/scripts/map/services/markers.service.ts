@@ -164,10 +164,10 @@ module Mappino.Map {
 
         private createPieMarker(panel, marker, map, responseMarker) {
             console.log(responseMarker)
-            var pieBlueMarkers  = responseMarker.blue   || 1,
-                pieGreenMarkers = responseMarker.green  || 2,
+            var pieBlueMarkers  = responseMarker.blue   || 0,
+                pieGreenMarkers = responseMarker.green  || 0,
 
-                pieMarkersCount = responseMarker,
+                pieMarkersCount = pieBlueMarkers + pieGreenMarkers,
 
                 pieBlueMarkersCountInDeg    = Math.round((360 / 100 * ((pieBlueMarkers / pieMarkersCount) * 100))   || 0),
                 pieGreenMarkersCountInDeg   = Math.round((360 / 100 * ((pieGreenMarkers / pieMarkersCount) * 100))  || 0),
