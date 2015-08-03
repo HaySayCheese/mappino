@@ -1675,6 +1675,34 @@ class SegmentsIndex(models.Model):
 
 
     @classmethod
+    def format_favorites(cls, tids_and_publications):
+        briefs = []
+
+        # briefs, processed_ids = dict(), list()
+        for tid, publications in tids_and_publications.iteritems():
+
+            # publications for sale
+            index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
+            if not index:
+                raise RuntimeError('Invalid index tid')
+
+            markers = index.objects.filter(id__in = [p.id for p in publications])
+            briefs.extend([index.brief(marker) for marker in markers])
+
+
+            # publications for rent
+            index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
+            if not index:
+                raise RuntimeError('Invalid index tid')
+
+            markers = index.objects.filter(id__in = [p.id for p in publications])
+            briefs.extend([index.brief(marker) for marker in markers])
+
+
+        return briefs
+
+
+    @classmethod
     def cursor(cls):
         """
         NOTE: this method may be used to implement requests routing
