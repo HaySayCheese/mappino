@@ -1423,7 +1423,11 @@ class SegmentsIndex(models.Model):
             # otherwise the INSERT will be executed.
             cursor.execute(
                 "UPDATE {table}"
-                "   SET ids = array_append(ids, '{id}')"
+                "   SET ids = ( "
+                "       SELECT ARRAY ("
+                "           SELECT DISTINCT unnest(array_append(ids, '{id}'))"
+                "       )"
+                "   ) "
                 "   WHERE tid='{tid}' AND zoom='{zoom}' AND x='{x}' AND y='{y}';"
 
                 "INSERT INTO {table} (tid, zoom, x, y, ids)"
