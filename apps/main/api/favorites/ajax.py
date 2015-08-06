@@ -74,15 +74,15 @@ class FavoritesListView(AuthenticatedOnlyView):
         :returns:
             All the favorites of the authenticated user.
         """
-        tids_and_publications = {}
+        tids_and_publications_ids = {}
 
         for tid, favorites_model in FAVORITES_MODELS.iteritems():
             publications = favorites_model.queryset_by_user(request.user).only('publication_id')
             if publications:
-                tids_and_publications[tid] = publications
+                tids_and_publications_ids[tid] = [p.publication_id for p in publications]
 
 
-        briefs = SegmentsIndex.format_favorites(tids_and_publications)
+        briefs = SegmentsIndex.format_favorites(tids_and_publications_ids)
         return cls.GetResponses.ok(briefs)
 
 
