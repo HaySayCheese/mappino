@@ -17,10 +17,18 @@
 
                                 <img ng-src="[[ brief.thumbnail_url ]]" alt="" />
                                 <div class="publication-list-item-overlay">
-                                    <md-button class="md-icon-button" ng-click="briefsCtrl.toggleFavorite(brief)">
-                                        <md-icon class="material-icons md-light">star_border</md-icon>
+                                    <md-button class="md-icon-button" ng-hide="brief.is_favorite"
+                                               ng-click="briefsCtrl.toggleFavorite(brief, $event)">
+                                        <md-icon class="material-icons md-light md-dark-shadow">star_border</md-icon>
                                         <md-tooltip md-direction="right" md-delay="0">
                                             Добавить в избранные
+                                        </md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button" ng-show="brief.is_favorite"
+                                               ng-click="briefsCtrl.toggleFavorite(brief, $event)">
+                                        <md-icon class="material-icons md-light md-dark-shadow">star</md-icon>
+                                        <md-tooltip md-direction="right" md-delay="0">
+                                            Удалить из избранных
                                         </md-tooltip>
                                     </md-button>
                                     <div class="publication-list-item-description" layout="column">
@@ -45,33 +53,19 @@
                 <section ng-controller="FavoritesTabController as favCtrl">
                     <div scrollbar>
                         <ul class="favorite-list" layout="column" layout-align="start start">
-                            <li class="favorite-list-item" ng-click="favCtrl.publicationHandler.open('11:22')">
-                                <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
+                            <li class="favorite-list-item" ng-repeat="favorite in favorites"
+                                ng-click="favCtrl.publicationHandler.open(favorite.tid + ':' + favorite.id, true)">
+                                <img ng-src="[[ favorite.thumbnail_url ]]" alt="" />
                                 <div class="favorite-list-item-overlay">
-                                    <md-button class="md-icon-button">
-                                        <md-icon class="material-icons md-light">delete</md-icon>
+                                    <md-button class="md-icon-button" ng-click="favCtrl.removeFromFavorites(favorite, $event)">
+                                        <md-icon class="material-icons md-light md-dark-shadow">delete</md-icon>
                                         <md-tooltip md-direction="right" md-delay="0">
                                             Удалить из избранных
                                         </md-tooltip>
                                     </md-button>
                                     <div class="favorite-list-item-description" layout="column">
-                                        <div>Lorem ipsum dolor sit.</div>
-                                        <div><b>50 000 грн.</b></div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="favorite-list-item" ng-click="favCtrl.publicationHandler.open('33:44', true)">
-                                <img src="http://www.hotelambrose.ca/files/rooms_bg.jpg" alt="" />
-                                <div class="favorite-list-item-overlay">
-                                    <md-button class="md-icon-button">
-                                        <md-icon class="material-icons md-light">delete</md-icon>
-                                        <md-tooltip md-direction="right" md-delay="0">
-                                            Удалить из избранных
-                                        </md-tooltip>
-                                    </md-button>
-                                    <div class="favorite-list-item-description" layout="column">
-                                        <div>Lorem ipsum dolor sit.</div>
-                                        <div><b>50 000 грн.</b></div>
+                                        <div>[[ favorite.title ]]</div>
+                                        <div><b>[[ favorite.price ]]</b></div>
                                     </div>
                                 </div>
                             </li>

@@ -150,6 +150,8 @@ module Mappino.Map {
             this.briefsService.add({
                 id:             responseMarker.id,
                 tid:            responseMarker.tid,
+                lat:            marker.split(':')[0],
+                lng:            marker.split(':')[1],
                 price:          responseMarker.price,
                 title:          responseMarker.title,
                 thumbnail_url:  responseMarker.thumbnail_url
