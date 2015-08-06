@@ -92,7 +92,7 @@ module Mappino.Map {
             }
 
 
-            // додаємо новві маркери на карту
+            // додаємо нові маркери на карту
             for (var panel in this._response_markers) {
                 if (this._response_markers.hasOwnProperty(panel)) {
                     for (var marker in this._response_markers[panel]) {
@@ -126,7 +126,6 @@ module Mappino.Map {
 
             this._markers[panel][marker] = new MarkerWithLabel({
                 position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
-                //map: map,
                 icon: '/../mappino_static/build/images/markers/empty_marker.png',
                 params: {
                     id:     responseMarker.id,
@@ -181,7 +180,7 @@ module Mappino.Map {
                 _uuid = _.uniqueId('pie-marker-');
 
 
-            this._markers[panel][marker] = new MarkerWithLabel({
+            this._markers['blue'][marker] = new MarkerWithLabel({
                 position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
                 icon: '/../mappino_static/build/images/markers/empty_marker.png',
                 params: {

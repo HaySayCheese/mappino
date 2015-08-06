@@ -120,7 +120,6 @@ module Mappino.Map {
 
 
         public toggleFavorite($event) {
-            console.log(this.$scope.publication.is_favorite)
             if (this.$scope.publication.is_favorite) {
                 this.favoritesService.remove(this.publicationIds);
             } else {
@@ -134,15 +133,12 @@ module Mappino.Map {
         private checkIfPublicationIsFavorite(favorites?) {
             var _favorites = favorites || this.favoritesService.favorites;
 
-            if (angular.isDefined(this.$scope.publication)) {
+            if (this.$scope.publicationLoadedSuccess) {
                 this.$scope.publication.is_favorite = false;
 
                 for (var key in _favorites) {
                     if (_favorites[key].id == this.publicationIds.hid) {
                         this.$scope.publication.is_favorite = true;
-
-                        if (!this.$scope.$$phase)
-                            this.$scope.$apply();
                     }
                 }
             }
