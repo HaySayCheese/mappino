@@ -22,12 +22,12 @@ module Mappino.Map {
             var self = this;
             google.maps.event.addDomListener(window, "load", () => this.initMap(this));
 
-            $scope.$on('Mappino.Map.MarkersService.MarkersIsLoaded', function() {
-                markersService.place(self._map)
+            $scope.$on('Mappino.Map.MarkersService.MarkersIsLoaded', () => {
+                markersService.place(this._map)
             });
 
-            $scope.$on('Mappino.Map.PlaceAutocompleteController.PlaceChanged', function(event, place) {
-                self.positioningMap(place);
+            $scope.$on('Mappino.Map.PlaceAutocompleteController.PlaceChanged', (event, place) => {
+                this.positioningMap(place);
             })
         }
 

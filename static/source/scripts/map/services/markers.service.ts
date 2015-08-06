@@ -7,14 +7,19 @@ module Mappino.Map {
     export class MarkersService {
         private _filters_for_load_markers: any;
 
-        private _response_markers: Object = {
+        private responseSimpleMarkers = {
             blue:   {},
             green:  {}
         };
-        private _markers: Object = {
+
+        private responsePieMarkers = {};
+
+        private simpleMarkers = {
             blue:   {},
             green:  {}
         };
+
+        private pieMarkers = {};
 
         private _visitedMarkers = [];
 
@@ -37,7 +42,6 @@ module Mappino.Map {
 
             $rootScope.$on('Mappino.Map.FiltersService.CreatedFormattedFilters', (event, formatted_filters) => {
                 this._filters_for_load_markers = formatted_filters;
-
                 this.load();
             });
 
@@ -47,9 +51,7 @@ module Mappino.Map {
                 this.highlightMarker(markerId, 'visited');
                 this.addMarkerToVisited(markerId);
             });
-            $rootScope.$on('Mappino.Map.PublicationService.PublicationFavorite', (event, markerId) => {
-                this.addMarkerToFavorites(markerId);
-            });
+            $rootScope.$on('Mappino.Map.PublicationService.PublicationFavorite', (event, markerId) => this.addMarkerToFavorites(markerId));
         }
 
 
@@ -57,34 +59,67 @@ module Mappino.Map {
         private load() {
             this.$http.get('/ajax/api/markers/?p=' + JSON.stringify(this._filters_for_load_markers))
                 .then(response => {
-                    this.clearResponseMarkersObject();
+                    var responseData = response.data['data'];
 
-                    this._response_markers = response.data;
+                    this.clearResponseMarkers();
+
+                    if (angular.isDefined(responseData)) {
+                        if (angular.isDefined(responseData.blue) || angular.isDefined(responseData.green)) {
+                            this.clearPieMarkers();
+                            this.responseSimpleMarkers = responseData;
+                        } else {
+                            this.clearSimpleMarkers();
+                            this.responsePieMarkers = responseData;
+                        }
+                    }
+
                     this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkersIsLoaded'));
                 }, response => {
-
+                    // error
                 });
         }
 
 
 
-        public place(map) {
+        public place(map: google.maps.Map) {
+            // якщо обєкт з маркерами які прийшли з сервера не пустий
+            if (Object.keys(this.responseSimpleMarkers.blue).length || Object.keys(this.responseSimpleMarkers.green).length) {
+                this.intersectionSimpleMarkers(map);
+
+                this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkersPlaced'));
+                return;
+            }
+
+            if (Object.keys(this.responsePieMarkers).length) {
+                this.intersectionPieMarkers(map);
+
+                this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkersPlaced'));
+            }
+        }
+
+
+
+        private intersectionSimpleMarkers(map: google.maps.Map) {
             // видаляємо маркери з карти яких нема в відповіді з сервера
-            for (var panel in this._markers) {
-                if (this._markers.hasOwnProperty(panel)) {
-                    for (var marker in this._markers[panel]) {
-                        if (this._markers[panel].hasOwnProperty(marker)) {
+            for (var color in this.simpleMarkers) {
+                if (this.simpleMarkers.hasOwnProperty(color)) {
+                    for (var latLng in this.simpleMarkers[color]) {
+                        if (this.simpleMarkers[color].hasOwnProperty(latLng)) {
 
-                            if (angular.isUndefined(this._response_markers[panel]) ||
-                                (angular.isDefined(this._response_markers[panel]) && angular.isUndefined(this._response_markers[panel][marker])) ||
-                                this._markers[panel][marker].params.price != this._response_markers[panel][marker].price) {
+                            // Видаляємо маркер якщо:
+                            //  - в обєкті з маркерами який прийшов з сервера немає обєкта з одним із кольорів маркерів
+                            //  - в обєкті з маркерами який прийшов з сервера немає обєкта з тілом маркера
+                            //  - в обєкті з маркерами який прийшов з сервера ціна маркера відрізняється від ціни існуючого маркера
+                            if (angular.isUndefined(this.responseSimpleMarkers[color])
+                                || (angular.isDefined(this.responseSimpleMarkers[color]) && angular.isUndefined(this.responseSimpleMarkers[color][latLng]))
+                                || this.simpleMarkers[color][latLng].params.price != this.responseSimpleMarkers[color][latLng].price) {
 
-                                this.briefsService.remove(this._markers[panel][marker].params.id);
+                                this.briefsService.remove(this.simpleMarkers[color][latLng].params.id);
 
-                                console.log('deleted: ' + this._markers[panel][marker].params.id);
+                                console.log('deleted: ' + this.simpleMarkers[color][latLng].params.id);
 
-                                this._markers[panel][marker].setMap(null);
-                                delete this._markers[panel][marker];
+                                this.simpleMarkers[color][latLng].setMap(null);
+                                delete this.simpleMarkers[color][latLng];
                             }
                         }
                     }
@@ -93,39 +128,74 @@ module Mappino.Map {
 
 
             // додаємо нові маркери на карту
-            for (var panel in this._response_markers) {
-                if (this._response_markers.hasOwnProperty(panel)) {
-                    for (var marker in this._response_markers[panel]) {
-                        if (this._response_markers[panel].hasOwnProperty(marker)) {
+            for (var color in this.responseSimpleMarkers) {
+                if (this.responseSimpleMarkers.hasOwnProperty(color)) {
+                    for (var latLng in this.responseSimpleMarkers[color]) {
+                        if (this.responseSimpleMarkers[color].hasOwnProperty(latLng)) {
 
-                            if (!this._markers[panel][marker]) {
-                                var responseMarker = this._response_markers[panel][marker];
+                            // Додаємо новий маркер якщо:
+                            //  - в обєкті з маркерами який прийшов з сервера є маркер якого нема у вже існуючих маркерах
+                            if (angular.isUndefined(this.simpleMarkers[color][latLng])) {
+                                var responseMarker = this.responseSimpleMarkers[color][latLng];
 
-                                if (responseMarker.price) {
-                                    this.createSimpleMarker(panel, marker, map, responseMarker);
-                                } else {
-                                    this.createPieMarker(panel, marker, map, responseMarker);
-                                }
+                                this.createSimpleMarker(color, latLng, map, responseMarker);
                             }
                         }
                     }
                 }
             }
-
-            this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkersPlaced'));
         }
 
 
 
-        private createSimpleMarker(panel, marker, map, responseMarker) {
-            var markerLabelOffsetX = 35;
+        private intersectionPieMarkers(map: google.maps.Map) {
+            for (var latLng in this.pieMarkers) {
+                if (this.pieMarkers.hasOwnProperty(latLng)) {
+
+                    // Видаляємо маркер якщо:
+                    //  - в обєкті з маркерами який прийшов з сервера немає обєкта з одним із кольорів маркерів
+                    //  - в обєкті з маркерами який прийшов з сервера немає обєкта з тілом маркера
+                    //  - в обєкті з маркерами який прийшов з сервера ціна маркера відрізняється від ціни існуючого маркера
+                    if (angular.isUndefined(this.responsePieMarkers[latLng])
+                            || this.pieMarkers[latLng].params.blue_markers != this.responsePieMarkers[latLng].blue
+                            || this.pieMarkers[latLng].params.green_markers != this.responsePieMarkers[latLng].green) {
+
+                        console.log('deleted pie marker: ' + latLng);
+
+                        this.pieMarkers[latLng].setMap(null);
+                        delete this.pieMarkers[latLng];
+                    }
+                }
+            }
+
+            // додаємо нові маркери на карту
+            for (var latLng in this.responsePieMarkers) {
+                if (this.responsePieMarkers.hasOwnProperty(latLng)) {
+
+                    // Додаємо новий маркер якщо:
+                    //  - в обєкті з маркерами який прийшов з сервера є маркер якого нема у вже існуючих маркерах
+                    if (angular.isUndefined(this.pieMarkers[latLng])) {
+                        var responseMarker = this.responsePieMarkers[latLng];
+
+                        this.createPieMarker(latLng, map, responseMarker);
+                    }
+                }
+            }
+        }
+
+
+
+        private createSimpleMarker(color, latLng, map: google.maps.Map, responseMarker) {
+            var markerLabelOffsetX = 35,
+                markerLat = latLng.split(':')[0],
+                markerLng = latLng.split(':')[1];
 
             if (angular.isDefined(responseMarker.price)) {
                 markerLabelOffsetX = this.calcMarkerLabelOffsetX(responseMarker.price.length);
             }
 
-            this._markers[panel][marker] = new MarkerWithLabel({
-                position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
+            this.simpleMarkers[color][latLng] = new MarkerWithLabel({
+                position: new google.maps.LatLng(markerLat, markerLng),
                 icon: '/../mappino_static/build/images/markers/empty_marker.png',
                 params: {
                     id:     responseMarker.id,
@@ -135,34 +205,37 @@ module Mappino.Map {
                 labelContent:
                 `<div class='custom-marker md-whiteframe-z2'>${responseMarker.price}</div>` +
                 `<div class='custom-marker-arrow-down'></div>`,
-                labelClass: `custom-marker-container -${panel}`,
+                labelClass: `custom-marker-container -${color}`,
                 labelAnchor: new google.maps.Point(markerLabelOffsetX, 37)
             });
 
             if (this._visitedMarkers.indexOf(responseMarker.id) != -1) {
-                this._markers[panel][marker].labelClass += ' -visited'
+                this.simpleMarkers[color][latLng].labelClass += ' -visited'
             }
 
-            this._markers[panel][marker].setMap(map);
-            console.log('added: ' + this._markers[panel][marker]);
+            this.simpleMarkers[color][latLng].setMap(map);
+            console.log('added: ' + this.simpleMarkers[color][latLng]);
 
             this.briefsService.add({
                 id:             responseMarker.id,
                 tid:            responseMarker.tid,
-                lat:            marker.split(':')[0],
-                lng:            marker.split(':')[1],
+                lat:            markerLat,
+                lng:            markerLat,
                 price:          responseMarker.price,
                 title:          responseMarker.title,
                 thumbnail_url:  responseMarker.thumbnail_url
             });
 
-            this.attachClickEventToSimpleMarker(this._markers[panel][marker]);
+            this.attachClickEventToSimpleMarker(this.simpleMarkers[color][latLng]);
         }
 
 
 
-        private createPieMarker(panel, marker, map, responseMarker) {
-            var pieBlueMarkers  = responseMarker.blue   || 0,
+        private createPieMarker(latLng, map, responseMarker) {
+            var markerLat = latLng.split(':')[0],
+                markerLng = latLng.split(':')[1],
+
+                pieBlueMarkers  = responseMarker.blue   || 0,
                 pieGreenMarkers = responseMarker.green  || 0,
 
                 pieMarkersCount = pieBlueMarkers + pieGreenMarkers,
@@ -180,13 +253,13 @@ module Mappino.Map {
                 _uuid = _.uniqueId('pie-marker-');
 
 
-            this._markers['blue'][marker] = new MarkerWithLabel({
-                position: new google.maps.LatLng(marker.split(':')[0], marker.split(':')[1]),
+            this.pieMarkers[latLng] = new MarkerWithLabel({
+                position: new google.maps.LatLng(markerLat, markerLng),
                 icon: '/../mappino_static/build/images/markers/empty_marker.png',
                 params: {
-                    count:             pieMarkersCount,
-                    bluePercentage:    pieBlueMarkers,
-                    greenPercentage:   pieGreenMarkers
+                    count:              pieMarkersCount,
+                    blue_markers:       pieBlueMarkers,
+                    green_markers:      pieGreenMarkers
                 },
                 labelContent:
                     "<style>" +
@@ -212,10 +285,10 @@ module Mappino.Map {
                 labelAnchor: new google.maps.Point(30, 45),
             });
 
-            this._markers[panel][marker].setMap(map);
-            console.log('added: ' + this._markers[panel][marker]);
+            this.pieMarkers[latLng].setMap(map);
+            console.log('added: ' + this.pieMarkers[latLng]);
 
-            this.attachClickEventToPieMarker(this._markers[panel][marker], map);
+            this.attachClickEventToPieMarker(this.pieMarkers[latLng], map);
         }
 
 
@@ -284,11 +357,11 @@ module Mappino.Map {
                     break;
             }
 
-            for (var panel in this._markers) {
-                if (this._markers.hasOwnProperty(panel)) {
-                    for (var marker in this._markers[panel]) {
-                        if (this._markers[panel].hasOwnProperty(marker)) {
-                            var marker = this._markers[panel][marker];
+            for (var color in this.simpleMarkers) {
+                if (this.simpleMarkers.hasOwnProperty(color)) {
+                    for (var latLng in this.simpleMarkers[color]) {
+                        if (this.simpleMarkers[color].hasOwnProperty(latLng)) {
+                            var marker = this.simpleMarkers[color][latLng];
                             var markerMap = marker.getMap();
 
                             if (marker.params.id == markerId && marker.labelClass.indexOf(ACTION_CLASS) == -1) {
@@ -307,12 +380,12 @@ module Mappino.Map {
         private clearHighlight() {
             var HOVER_CLASS = '-hover';
 
-            for (var panel in this._markers) {
-                if (this._markers.hasOwnProperty(panel)) {
-                    for (var marker in this._markers[panel]) {
-                        if (this._markers[panel].hasOwnProperty(marker)) {
-                            var marker = this._markers[panel][marker];
-                            var markerMap = marker.getMap();
+            for (var color in this.simpleMarkers) {
+                if (this.simpleMarkers.hasOwnProperty(color)) {
+                    for (var latLng in this.simpleMarkers[color]) {
+                        if (this.simpleMarkers[color].hasOwnProperty(latLng)) {
+                            var marker      = this.simpleMarkers[color][latLng],
+                                markerMap   = marker.getMap();
 
                             if (marker.labelClass.indexOf(HOVER_CLASS) != -1) {
                                 marker.labelClass = marker.labelClass.substring(0, marker.labelClass.indexOf(HOVER_CLASS));
@@ -377,11 +450,47 @@ module Mappino.Map {
 
 
 
-        private clearResponseMarkersObject() {
-            this._response_markers = {
+        private clearResponseMarkers() {
+            this.responseSimpleMarkers = {
                 blue:   {},
                 green:  {}
             };
+
+            this.responsePieMarkers = {};
+        }
+
+
+
+        private clearSimpleMarkers() {
+            for (var color in this.simpleMarkers) {
+                if (this.simpleMarkers.hasOwnProperty(color)) {
+                    for (var latLng in this.simpleMarkers[color]) {
+                        if (this.simpleMarkers[color].hasOwnProperty(latLng)) {
+                            this.briefsService.remove(this.simpleMarkers[color][latLng].params.id);
+                            this.simpleMarkers[color][latLng].setMap(null);
+                            delete this.simpleMarkers[color][latLng];
+                        }
+                    }
+                }
+            }
+
+            this.simpleMarkers = {
+                blue:   {},
+                green:  {}
+            }
+        }
+
+
+
+        private clearPieMarkers() {
+            for (var latLng in this.pieMarkers) {
+                if (this.pieMarkers.hasOwnProperty(latLng)) {
+                    this.pieMarkers[latLng].setMap(null);
+                    delete this.pieMarkers[latLng];
+                }
+            }
+
+            this.pieMarkers = {};
         }
     }
 }
