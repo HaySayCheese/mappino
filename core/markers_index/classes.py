@@ -4,8 +4,8 @@ import math
 
 
 class Grid(object):
-    SEGMENTS_PER_VIEWPORT_BY_LAT = 6
-    SEGMENTS_PER_VIEWPORT_BY_LNG = 10
+    SEGMENTS_PER_VIEWPORT_BY_LAT = 12
+    SEGMENTS_PER_VIEWPORT_BY_LNG = 18
 
 
     def __init__(self, min_zoom, max_zoom):

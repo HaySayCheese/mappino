@@ -1,3 +1,4 @@
 # coding=utf-8
 
-class InvalidCustomer(ValueError): pass
+
+class PublicationDoesNotExists(Exception): pass

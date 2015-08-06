@@ -40,7 +40,7 @@ class AbstractBaseIndex(models.Model):
     #
     # Така ситуація достатньо вірогідна через те, що довелось змішати чистий sql з django-orm,
     # через що порушився механізм транзакцій (зараз транзакцій як таких немає).
-    publication_id = models.PositiveIntegerField()
+    publication_id = models.PositiveIntegerField(db_index=True)
     hash_id = models.TextField()
     photo_thumbnail_url = models.TextField()
 

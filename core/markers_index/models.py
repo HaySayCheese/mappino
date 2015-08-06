@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db import models, connections
 
 from djorm_pgarray.fields import BigIntegerArrayField
+import itertools
 
 from collective.exceptions import InvalidArgument
 from core.markers_index.classes import Grid
@@ -1423,7 +1424,11 @@ class SegmentsIndex(models.Model):
             # otherwise the INSERT will be executed.
             cursor.execute(
                 "UPDATE {table}"
-                "   SET ids = array_append(ids, '{id}')"
+                "   SET ids = ( "
+                "       SELECT ARRAY ("
+                "           SELECT DISTINCT unnest(array_append(ids, '{id}'))"
+                "       )"
+                "   ) "
                 "   WHERE tid='{tid}' AND zoom='{zoom}' AND x='{x}' AND y='{y}';"
 
                 "INSERT INTO {table} (tid, zoom, x, y, ids)"
@@ -1544,8 +1549,8 @@ class SegmentsIndex(models.Model):
         query = "SELECT array_agg(publication_id), x, y FROM {index_table}" \
                 "   JOIN {segments_index_table} " \
                 "       ON zoom = '{zoom}' AND " \
-                "          (x >= {ne_segment_x} AND x < {sw_segment_x}) AND " \
-                "          (y <= {ne_segment_y} AND y > {sw_segment_y}) AND " \
+                "          (x >= {ne_segment_x} AND x <= {sw_segment_x}) AND " \
+                "          (y <= {ne_segment_y} AND y >= {sw_segment_y}) AND " \
                 "           tid = {tid} "\
                 "   WHERE publication_id = ANY(ids) {where_condition}" \
                 "   GROUP BY ids, x, y;" \
@@ -1675,6 +1680,34 @@ class SegmentsIndex(models.Model):
 
 
     @classmethod
+    def format_favorites(cls, tids_and_publications):
+        briefs = []
+
+        # briefs, processed_ids = dict(), list()
+        for tid, publications in tids_and_publications.iteritems():
+
+            # publications for sale
+            index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
+            if not index:
+                raise RuntimeError('Invalid index tid')
+
+            markers = index.objects.filter(id__in = [p.id for p in publications])
+            briefs.extend([index.brief(marker) for marker in markers])
+
+
+            # publications for rent
+            index = cls.living_rent_indexes.get(tid, cls.commercial_rent_indexes.get(tid))
+            if not index:
+                raise RuntimeError('Invalid index tid')
+
+            markers = index.objects.filter(id__in = [p.id for p in publications])
+            briefs.extend([index.brief(marker) for marker in markers])
+
+
+        return briefs
+
+
+    @classmethod
     def cursor(cls):
         """
         NOTE: this method may be used to implement requests routing
@@ -1701,15 +1734,17 @@ class SegmentsIndex(models.Model):
 
     @classmethod
     def normalize_viewport_coordinates(cls, ne_lat, ne_lng, sw_lat, sw_lng, zoom):
+        # # Розширимо сегмент, щоб захопити суміжні області
+        # # Розширення обов’язково повинно бути здійснено до нормалізації координат.
+        # ne_lat += 1
+        # ne_lng -= 1
+        #
+        # sw_lat -= 1
+        # sw_lng += 1
+
+
         ne_lat, ne_lng = cls.grid.normalize_lat_lng(ne_lat, ne_lng)
         sw_lat, sw_lng = cls.grid.normalize_lat_lng(sw_lat, sw_lng)
-
-        # # розширимо сегмент, щоб захопити суміжні області
-        ne_lat += 1
-        ne_lng -= 1
-
-        sw_lat -= 1
-        sw_lng += 1
 
 
         # Округляємо передані координати до більшого
@@ -1765,3 +1800,13 @@ class SegmentsIndex(models.Model):
 
         return ne_segment_x, ne_segment_y, \
                sw_segment_x, sw_segment_y
+
+
+    @classmethod
+    def clear(cls):
+        for index in itertools.chain(
+                cls.living_sale_indexes, cls.living_rent_indexes,
+                cls.commercial_sale_indexes, cls.commercial_rent_indexes):
+            index.objects.all().delete()
+
+        cls.objects.all().delete()

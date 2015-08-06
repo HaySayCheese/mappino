@@ -207,7 +207,7 @@ class Markers(View):
         }
 
 
-        response = {}
+        panels = {}
         try:
             # Generating unique set of markers counters for all panels.
             # All the markers ids will be intersected to prevent counters duplication on front-end.
@@ -226,9 +226,9 @@ class Markers(View):
                     filter_conditions, excluded_ids_per_tid[tid])
 
                 if segments:
-                    response[panel] = segments
+                    panels[panel] = segments
                 else:
-                    response[panel] = {}
+                    panels[panel] = {}
 
                 # on the next iteration we need to receive only ids
                 # that was not received on previous iterations
@@ -240,6 +240,20 @@ class Markers(View):
             return HttpJsonResponseBadRequest(cls.get_codes['too_big_query'])
         except InvalidArgument:
             return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
+
+
+        response = {}
+        for panel_color in panels.keys():
+            for coordinates, count in panels[panel_color].iteritems():
+                if coordinates in response:
+                    response[coordinates][panel_color] += count
+
+                else:
+                    response[coordinates] = {
+                        'green': 0,
+                        'blue': 0,
+                        panel_color: count
+                    }
 
 
         # seems to be ok
