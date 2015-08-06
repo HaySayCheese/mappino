@@ -1682,8 +1682,8 @@ class SegmentsIndex(models.Model):
     @classmethod
     def format_favorites(cls, tids_and_publications_ids):
         briefs = []
+        processed_publications_ids = []
 
-        # briefs, processed_ids = dict(), list()
         for tid, pub_ids_of_the_tid in tids_and_publications_ids.iteritems():
 
             # publications for sale
@@ -1691,8 +1691,9 @@ class SegmentsIndex(models.Model):
             if not index:
                 raise RuntimeError('Invalid index tid')
 
-            markers = index.objects.filter(publication_id__in = pub_ids_of_the_tid)
-            briefs.extend([index.brief(marker) for marker in markers])
+            sale_markers = index.objects\
+                .filter(publication_id__in = pub_ids_of_the_tid)\
+                .only('lat', 'lng', 'hash_id', 'id')
 
 
             # publications for rent
@@ -1700,8 +1701,25 @@ class SegmentsIndex(models.Model):
             if not index:
                 raise RuntimeError('Invalid index tid')
 
-            markers = index.objects.filter(publication_id__in = pub_ids_of_the_tid)
-            briefs.extend([index.brief(marker) for marker in markers])
+            rent_markers = index.objects\
+                .filter(publication_id__in = pub_ids_of_the_tid)\
+                .only('lat', 'lng', 'hash_id', 'publication_id')
+
+
+            for marker in itertools.chain(sale_markers, rent_markers):
+                # Publication may be "for sale" and "for rent" at the same time.
+                # Brief for such publication should be generated only once.
+                if  '{0}:{1}'.format(marker.tid, marker.hash_id) not in processed_publications_ids:
+
+                    brief = index.brief(marker)
+                    brief.update({
+                        'lat': marker.lat,
+                        'lng': marker.lng,
+                    })
+                    briefs.append(brief)
+
+                    # prevent briefs duplicating
+                    processed_publications_ids.append('{0}:{1}'.format(marker.tid, marker.hash_id))
 
 
         return briefs
