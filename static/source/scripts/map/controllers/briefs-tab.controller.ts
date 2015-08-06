@@ -9,13 +9,15 @@ module Mappino.Map {
             '$scope',
             '$rootScope',
             'PublicationHandler',
-            'BriefsService'
+            'BriefsService',
+            'FavoritesService'
         ];
 
         constructor(private $scope,
                     private $rootScope: any,
                     private publicationHandler: PublicationHandler,
-                    private briefsService: BriefsService) {
+                    private briefsService: BriefsService,
+                    private favoritesService: FavoritesService) {
             // ---------------------------------------------------------------------------------------------------------
             //this.publicationHandler = PublicationHandler;
 
@@ -24,6 +26,17 @@ module Mappino.Map {
             $scope.$watchCollection('briefs', (newValue) => {
                 console.log(newValue)
             });
+        }
+
+
+
+        public toggleFavorite(brief) {
+            var publicationsIds = {
+                tid: brief.tid,
+                hid: brief.id
+            };
+
+            this.favoritesService.add(publicationsIds)
         }
 
 

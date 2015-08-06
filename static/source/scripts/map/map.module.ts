@@ -37,6 +37,7 @@ module Mappino.Map {
 
     /** Services */
     app.service('BriefsService', BriefsService);
+    app.service('FavoritesService', FavoritesService);
     app.service('FiltersService', FiltersService);
     app.service('MarkersService', MarkersService);
     app.service('PublicationService', PublicationService);

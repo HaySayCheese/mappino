@@ -17,7 +17,7 @@
 
                                 <img ng-src="[[ brief.thumbnail_url ]]" alt="" />
                                 <div class="publication-list-item-overlay">
-                                    <md-button class="md-icon-button">
+                                    <md-button class="md-icon-button" ng-click="briefsCtrl.toggleFavorite(brief)">
                                         <md-icon class="material-icons md-light">star_border</md-icon>
                                         <md-tooltip md-direction="right" md-delay="0">
                                             Добавить в избранные

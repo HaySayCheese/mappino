@@ -46,6 +46,7 @@
 // Services import
 // ####################
 /// <reference path='services/briefs.service.ts' />
+/// <reference path='services/favorites.service.ts' />
 /// <reference path='services/filters.service.ts' />
 /// <reference path='services/markers.service.ts' />
 /// <reference path='services/publication.service.ts' />

@@ -32,15 +32,13 @@ module Mappino.Map {
                     private publicationHandler: PublicationHandler,
                     private briefsService: BriefsService) {
             // ---------------------------------------------------------------------------------------------------------
-            var self = this;
-
             this.parseVisitedMarkers();
             this.parseFavoritesMarkers();
 
-            $rootScope.$on('Mappino.Map.FiltersService.CreatedFormattedFilters', function(event, formatted_filters) {
-                self._filters_for_load_markers = formatted_filters;
+            $rootScope.$on('Mappino.Map.FiltersService.CreatedFormattedFilters', (event, formatted_filters) => {
+                this._filters_for_load_markers = formatted_filters;
 
-                self.load();
+                this.load();
             });
 
             $rootScope.$on('Mappino.Map.BriefsService.BriefMouseOver', (event, markerId) => this.highlightMarker(markerId, 'hover'));
@@ -50,7 +48,6 @@ module Mappino.Map {
                 this.addMarkerToVisited(markerId);
             });
             $rootScope.$on('Mappino.Map.PublicationService.PublicationFavorite', (event, markerId) => {
-                //this.highlightMarker(markerId, 'visited');
                 this.addMarkerToFavorites(markerId);
             });
         }
@@ -58,14 +55,15 @@ module Mappino.Map {
 
 
         private load() {
-            var self = this;
+            this.$http.get('/ajax/api/markers/?p=' + JSON.stringify(this._filters_for_load_markers))
+                .then(response => {
+                    this.clearResponseMarkersObject();
 
-            this.$http.get('/ajax/api/markers/?p=' + JSON.stringify(this._filters_for_load_markers)).success(function(response) {
-                self.clearResponseMarkersObject();
+                    this._response_markers = response.data;
+                    this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkersIsLoaded'));
+                }, response => {
 
-                self._response_markers = response;
-                self.$timeout(() => self.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkersIsLoaded'));
-            });
+                });
         }
 
 
@@ -163,7 +161,6 @@ module Mappino.Map {
 
 
         private createPieMarker(panel, marker, map, responseMarker) {
-            console.log(responseMarker)
             var pieBlueMarkers  = responseMarker.blue   || 0,
                 pieGreenMarkers = responseMarker.green  || 0,
 
@@ -345,6 +342,7 @@ module Mappino.Map {
         }
 
 
+
         private parseVisitedMarkers() {
             if (sessionStorage && sessionStorage.getItem('visitedMarkers')) {
                 this._visitedMarkers = sessionStorage.getItem('visitedMarkers');
@@ -367,6 +365,7 @@ module Mappino.Map {
                 }
             }
         }
+
 
 
         private parseFavoritesMarkers() {
