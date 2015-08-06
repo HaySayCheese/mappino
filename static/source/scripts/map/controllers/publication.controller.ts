@@ -15,7 +15,9 @@ module Mappino.Map {
             '$rootScope',
             '$state',
             'PublicationHandler',
-            'PublicationService'
+            'PublicationService',
+            'FavoritesService',
+            'BriefsService'
         ];
 
 
@@ -23,7 +25,9 @@ module Mappino.Map {
                     private $rootScope,
                     private $state: angular.ui.IStateService,
                     private publicationHandler: PublicationHandler,
-                    private publicationService: PublicationService) {
+                    private publicationService: PublicationService,
+                    private favoritesService: FavoritesService,
+                    private briefsService: BriefsService) {
             // ---------------------------------------------------------------------------------------------------------
             this.publicationHandler = publicationHandler;
 
@@ -61,6 +65,11 @@ module Mappino.Map {
                     this.loadPublicationData();
                 }
             });
+
+
+            $rootScope.$on('Mappino.Map.FavoritesService.FavoritesIsLoaded', (event, favorites) => this.checkIfPublicationIsFavorite(favorites));
+            $rootScope.$on('Mappino.Map.FavoritesService.FavoriteAdded', () => this.checkIfPublicationIsFavorite());
+            $rootScope.$on('Mappino.Map.FavoritesService.FavoriteRemoved', () => this.checkIfPublicationIsFavorite());
         }
 
 
@@ -81,8 +90,10 @@ module Mappino.Map {
 
                 this.publicationService.load(this.publicationIds, response => {
                     this.$scope.publication = response.data;
+                    this.$scope.publication.is_favorite     = false;
                     this.$rootScope.loaders.publication     = false;
                     this.$scope.publicationLoadedSuccess    = true;
+                    this.checkIfPublicationIsFavorite();
 
                     this.publicationService.loadContacts(this.publicationIds, response => {
                         this.$scope.publication.contacts = {};
@@ -100,10 +111,41 @@ module Mappino.Map {
 
 
 
-        private closePublication() {
+        public closePublication() {
             this.publicationHandler.close();
             this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseLeave', this.publicationIds.hid);
             this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationVisited', this.publicationIds.hid);
+        }
+
+
+
+        public toggleFavorite($event) {
+            console.log(this.$scope.publication.is_favorite)
+            if (this.$scope.publication.is_favorite) {
+                this.favoritesService.remove(this.publicationIds);
+            } else {
+                var brief = this.briefsService.briefs.filter(brief => brief.id == this.publicationIds.hid)[0];
+                this.favoritesService.add(this.publicationIds, brief);
+            }
+        }
+
+
+
+        private checkIfPublicationIsFavorite(favorites?) {
+            var _favorites = favorites || this.favoritesService.favorites;
+
+            if (angular.isDefined(this.$scope.publication)) {
+                this.$scope.publication.is_favorite = false;
+
+                for (var key in _favorites) {
+                    if (_favorites[key].id == this.publicationIds.hid) {
+                        this.$scope.publication.is_favorite = true;
+
+                        if (!this.$scope.$$phase)
+                            this.$scope.$apply();
+                    }
+                }
+            }
         }
 
 

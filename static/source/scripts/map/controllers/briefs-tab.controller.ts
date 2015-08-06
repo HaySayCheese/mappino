@@ -19,8 +19,6 @@ module Mappino.Map {
                     private briefsService: BriefsService,
                     private favoritesService: FavoritesService) {
             // ---------------------------------------------------------------------------------------------------------
-            //this.publicationHandler = PublicationHandler;
-
             $scope.briefs = briefsService.briefs;
 
             $scope.$watchCollection('briefs', (newValue) => {
@@ -30,13 +28,24 @@ module Mappino.Map {
 
 
 
-        public toggleFavorite(brief) {
+        public toggleFavorite(brief, $event) {
             var publicationsIds = {
                 tid: brief.tid,
                 hid: brief.id
             };
 
-            this.favoritesService.add(publicationsIds)
+            if (brief.is_favorite) {
+                this.favoritesService.remove(publicationsIds, response => {
+                    this.briefsService.toggleFavorite(brief);
+                });
+            } else {
+                this.favoritesService.add(publicationsIds, brief, response => {
+                    this.briefsService.toggleFavorite(brief);
+                });
+            }
+
+            $event.preventDefault();
+            $event.stopPropagation();
         }
 
 
