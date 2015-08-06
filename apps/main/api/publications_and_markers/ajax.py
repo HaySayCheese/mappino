@@ -242,14 +242,14 @@ class Markers(View):
             return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
 
 
-        response = {}
+        data = {}
         for panel_color in panels.keys():
             for coordinates, count in panels[panel_color].iteritems():
-                if coordinates in response:
-                    response[coordinates][panel_color] += count
+                if coordinates in data:
+                    data[coordinates][panel_color] += count
 
                 else:
-                    response[coordinates] = {
+                    data[coordinates] = {
                         'green': 0,
                         'blue': 0,
                         panel_color: count
@@ -257,6 +257,12 @@ class Markers(View):
 
 
         # seems to be ok
+        response = {
+            'code': 0,
+            'message': 'OK',
+            'data': data
+        }
+
         return HttpJsonResponse(response)
 
 
