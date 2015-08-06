@@ -1709,8 +1709,8 @@ class SegmentsIndex(models.Model):
             for marker in itertools.chain(sale_markers, rent_markers):
                 # Publication may be "for sale" and "for rent" at the same time.
                 # Brief for such publication should be generated only once.
-                if  '{0}:{1}'.format(marker.tid, marker.hash_id) not in processed_publications_ids:
-
+                marker_id = '{0}:{1}'.format(marker.tid, marker.hash_id)
+                if marker_id not in processed_publications_ids:
                     brief = index.brief(marker)
                     brief.update({
                         'lat': marker.lat,
@@ -1719,7 +1719,7 @@ class SegmentsIndex(models.Model):
                     briefs.append(brief)
 
                     # prevent briefs duplicating
-                    processed_publications_ids.append('{0}:{1}'.format(marker.tid, marker.hash_id))
+                    processed_publications_ids.append(marker_id)
 
 
         return briefs
