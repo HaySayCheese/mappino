@@ -77,9 +77,9 @@ class FavoritesListView(AuthenticatedOnlyView):
         tids_and_publications_ids = {}
 
         for tid, favorites_model in FAVORITES_MODELS.iteritems():
-            publications = favorites_model.queryset_by_user(request.user).only('publication_id')
-            if publications:
-                tids_and_publications_ids[tid] = [p.publication_id for p in publications]
+            favorites = favorites_model.queryset_by_user(request.user).only('publication_id')
+            if favorites:
+                tids_and_publications_ids[tid] = [f.publication_id for f in favorites]
 
 
         briefs = SegmentsIndex.format_favorites(tids_and_publications_ids)
