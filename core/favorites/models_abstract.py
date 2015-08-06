@@ -9,6 +9,11 @@ from core.users.models import Users
 class AbstractFavorites(models.Model):
     user = models.ForeignKey(Users)
     # note: field "publication" needs to be overridden as ForeignKey to a specific model.
+    publication_hash_id = models.TextField(unique=True)
+
+
+    class Meta:
+        abstract = True
 
 
     @classmethod
@@ -28,6 +33,7 @@ class AbstractFavorites(models.Model):
                 return cls.objects.create(
                     user_id=user.id,
                     publication_id=publication.id,
+                    publication_hash_id=publication.hash_id,
                 )
 
             except IntegrityError:
