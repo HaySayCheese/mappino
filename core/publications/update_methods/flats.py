@@ -229,13 +229,13 @@ def update_flat(h, field, value, tid):
 
 
         # sid
-        elif field == 'rooms_planing_sid':
+        elif field == 'rooms_planning_sid':
             value = int(value)
             if value not in FLAT_ROOMS_PLANNINGS.values():
                 raise ValueError()
 
             b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
-            b.rooms_planing_sid = value
+            b.rooms_planning_sid = value
             b.save(force_update=True)
             return
 
@@ -263,8 +263,13 @@ def update_flat(h, field, value, tid):
                 value = int(value)
                 b = FlatsBodies.objects.filter(id=h.body_id).only('id')[0]
                 b.floor = value
-                b.save(force_update=True)
-                return
+
+                try:
+                    b.save(force_update=True)
+                    return
+
+                except DatabaseError:
+                    return ''
 
 
         # sid
