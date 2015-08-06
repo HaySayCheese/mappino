@@ -102,7 +102,7 @@ class FavoritesListView(AuthenticatedOnlyView):
         try:
             model = HEAD_MODELS[tid]
             publication = model.objects.filter(hash_id=hash_id).only('id')[:1][0]
-        except KeyError:
+        except (KeyError, IndexError, ):
             return cls.PostResponses.invalid_params()
 
         except IndexError:
