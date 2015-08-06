@@ -16,23 +16,53 @@ from core.publications.constants import HEAD_MODELS, OBJECTS_TYPES
 
 
 class Markers(View):
-    get_codes = {
-        'invalid_tids': {
-            'code': 1,
-        },
-        'invalid_coordinates': {
-            'code': 2,
-        },
-        'invalid_conditions': {
-            'code': 3,
-        },
-        'too_big_query': {
-            'code': 4,
-        },
-        'invalid_request': {
-            'code': 5,
-        }
-    }
+    class GetResponses(object):
+
+        @staticmethod
+        @json_response
+        def ok(data):
+            return {
+                'code': 0,
+                'message': 'OK',
+                'data': data,
+            }
+
+
+        @staticmethod
+        @json_response_bad_request
+        def invalid_publication_id():
+            return {
+                'code': 1,
+                'message': 'Request contains invalid publication id.'
+            }
+
+
+        @staticmethod
+        @json_response_bad_request
+        def invalid_coordinates():
+            return {
+                'code': 2,
+                'message': 'Request contains invalid coordinates.'
+            }
+
+
+        @staticmethod
+        @json_response_bad_request
+        def invalid_conditions():
+            return {
+                'code': 3,
+                'message': 'Request contains invalid filter conditions.'
+            }
+
+
+        @staticmethod
+        @json_response_bad_request
+        def invalid_request():
+            return {
+                'code': 4,
+                'message': 'Request contains invalid data.'
+            }
+
 
     filters_parsers = {
         OBJECTS_TYPES.flat(): parse_flats_filters,
@@ -57,15 +87,11 @@ class Markers(View):
 
         try:
             params = json.loads(request.GET.get('p', ''))
-        except ValueError:
-            # json decoder will throw value error on attempt to decode empty string
-            return HttpJsonResponseBadRequest(cls.get_codes['invalid_request'])
-
-
-        try:
             zoom = int(params['zoom'])
         except ValueError:
-            return HttpJsonResponseBadRequest(cls.get_codes['invalid_request'])
+            # json decoder will throw value error on attempt to decode empty string
+            return cls.GetResponses.invalid_request()
+
 
         if zoom <= 14:
             return cls.__markers_count_per_segment(params)
@@ -86,13 +112,13 @@ class Markers(View):
             sw_lat, \
             sw_lng = cls.parse_viewport_coordinates(params)
         except ValueError:
-            return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
+            return cls.GetResponses.invalid_coordinates()
 
 
         try:
             tids_panels_and_filters = cls.parse_tids_panels_and_filters(params)
         except ValueError:
-            return HttpJsonResponseBadRequest(cls.get_codes['invalid_tids'])
+            return cls.GetResponses.invalid_publication_id()
 
 
         # by default, markers are shown on a 14 zoom level.
@@ -151,13 +177,14 @@ class Markers(View):
 
 
         except TooBigTransaction:
-            return HttpJsonResponseBadRequest(cls.get_codes['too_big_query'])
+            return cls.GetResponses.invalid_request()
+
         except InvalidArgument:
-            return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
+            return cls.GetResponses.invalid_coordinates()
 
 
         # seems to be ok
-        return HttpJsonResponse(response)
+        return cls.GetResponses.ok(response)
 
 
     @classmethod
@@ -174,19 +201,19 @@ class Markers(View):
             sw_lat, \
             sw_lng = cls.parse_viewport_coordinates(params)
         except ValueError:
-            return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
+            return cls.GetResponses.invalid_coordinates()
 
 
         try:
             tids_panels_and_filters = cls.parse_tids_panels_and_filters(params)
         except ValueError:
-            return HttpJsonResponseBadRequest(cls.get_codes['invalid_tids'])
+            return cls.GetResponses.invalid_publication_id()
 
 
         try:
             zoom = int(params['zoom'])
         except (IndexError, ValueError):
-            return HttpJsonResponseBadRequest(cls.get_codes['invalid_request'])
+            return cls.GetResponses.invalid_request()
 
 
         # all markers should be displayed on a same viewport coordinates,
@@ -237,9 +264,10 @@ class Markers(View):
 
 
         except TooBigTransaction:
-            return HttpJsonResponseBadRequest(cls.get_codes['too_big_query'])
+            return cls.GetResponses.invalid_request()
+
         except InvalidArgument:
-            return HttpJsonResponseBadRequest(cls.get_codes['invalid_coordinates'])
+            return cls.GetResponses.invalid_coordinates()
 
 
         data = {}
@@ -257,13 +285,7 @@ class Markers(View):
 
 
         # seems to be ok
-        response = {
-            'code': 0,
-            'message': 'OK',
-            'data': data
-        }
-
-        return HttpJsonResponse(response)
+        return cls.GetResponses.ok(data)
 
 
     @staticmethod
