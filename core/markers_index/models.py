@@ -1680,18 +1680,18 @@ class SegmentsIndex(models.Model):
 
 
     @classmethod
-    def format_favorites(cls, tids_and_publications):
+    def format_favorites(cls, tids_and_publications_ids):
         briefs = []
 
         # briefs, processed_ids = dict(), list()
-        for tid, publications in tids_and_publications.iteritems():
+        for tid, pub_ids_of_the_tid in tids_and_publications_ids.iteritems():
 
             # publications for sale
             index = cls.living_sale_indexes.get(tid, cls.commercial_sale_indexes.get(tid))
             if not index:
                 raise RuntimeError('Invalid index tid')
 
-            markers = index.objects.filter(id__in = [p.id for p in publications])
+            markers = index.objects.filter(publication_id__in = pub_ids_of_the_tid)
             briefs.extend([index.brief(marker) for marker in markers])
 
 
@@ -1700,7 +1700,7 @@ class SegmentsIndex(models.Model):
             if not index:
                 raise RuntimeError('Invalid index tid')
 
-            markers = index.objects.filter(id__in = [p.id for p in publications])
+            markers = index.objects.filter(publication_id__in = pub_ids_of_the_tid)
             briefs.extend([index.brief(marker) for marker in markers])
 
 
