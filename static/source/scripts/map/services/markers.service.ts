@@ -62,7 +62,9 @@ module Mappino.Map {
             });
 
             $rootScope.$on('Mappino.Map.BriefsService.BriefMouseOver', (event, markerId) => this.highlightMarker(markerId, 'hover'));
-            $rootScope.$on('Mappino.Map.BriefsService.BriefMouseLeave', event => this.clearHighlight());
+            $rootScope.$on('Mappino.Map.BriefsService.BriefMouseLeave', event => this.clearHighlight('hover'));
+            $rootScope.$on('Mappino.Map.PublicationService.PublicationActive', (event, markerId) => this.highlightMarker(markerId, 'active'));
+            $rootScope.$on('Mappino.Map.PublicationService.PublicationClosed', event => this.clearHighlight('active'));
             $rootScope.$on('Mappino.Map.PublicationService.PublicationVisited', (event, markerId) => {
                 this.highlightMarker(markerId, 'visited');
                 this.addMarkerToVisited(markerId);
@@ -297,6 +299,12 @@ module Mappino.Map {
                 this.simpleMarkers[color][latLng].labelClass += ' -visited'
             }
 
+            // якщо в урлі є ід цього маркера то додаємо йому клас з підсвіткою
+            if (this.$state.params['publication_id'].split(':')[1] == responseMarker.id) {
+                if (this.simpleMarkers[color][latLng].labelClass.indexOf('-active') == -1)
+                    this.simpleMarkers[color][latLng].labelClass += ' -active'
+            }
+
             this.simpleMarkers[color][latLng].setMap(map);
 
             // додаємо бриф для панелі справа
@@ -406,9 +414,15 @@ module Mappino.Map {
                 labelContent:
                     `<div class='custom-marker md-whiteframe-z2'>${marker.price}</div>` +
                     `<div class='custom-marker-arrow-down'></div>`,
-                labelClass: `custom-marker-container -blue`,
+                labelClass: `custom-marker-container -orange`,
                 labelAnchor: new google.maps.Point(markerLabelOffsetX, 37)
             });
+
+            // якщо в урлі є ід цього маркера то додаємо йому клас з підсвіткою
+            if (this.$state.params['publication_id'].split(':')[1] == marker.id) {
+                if (this.favoritesMarkers[latLng].labelClass.indexOf('-active') == -1)
+                    this.favoritesMarkers[latLng].labelClass += ' -active'
+            }
 
             this.favoritesMarkers[latLng].setMap(map);
 
@@ -472,30 +486,53 @@ module Mappino.Map {
 
 
         private highlightMarker(markerId: string, action: string) {
-            var ACTION_CLASS = null;
+            var ACTION_CLASS    = null,
+                ACTIVE_CLASS    = '-active';
 
             switch (action) {
                 case 'hover':
                     ACTION_CLASS = '-hover';
+                    break;
+                case 'active':
+                    ACTION_CLASS = '-active';
                     break;
                 case 'visited':
                     ACTION_CLASS = '-visited';
                     break;
             }
 
-            for (var color in this.simpleMarkers) {
-                if (this.simpleMarkers.hasOwnProperty(color)) {
-                    for (var latLng in this.simpleMarkers[color]) {
-                        if (this.simpleMarkers[color].hasOwnProperty(latLng)) {
-                            var marker = this.simpleMarkers[color][latLng];
+            var simpleMarkers       = this.simpleMarkers,
+                favoritesMarkers    = this.favoritesMarkers;
+
+            for (var color in simpleMarkers) {
+                if (simpleMarkers.hasOwnProperty(color)) {
+                    for (var latLng in simpleMarkers[color]) {
+                        if (simpleMarkers[color].hasOwnProperty(latLng)) {
+                            var marker = simpleMarkers[color][latLng];
                             var markerMap = marker.getMap();
 
                             if (marker.params.id == markerId && marker.labelClass.indexOf(ACTION_CLASS) == -1) {
-                                marker.labelClass += ` ${ACTION_CLASS}`;
-                                marker.setMap(null);
-                                marker.setMap(markerMap);
-                                return;
+                                if (marker.labelClass.indexOf(ACTIVE_CLASS) == -1) {
+                                    marker.labelClass += ` ${ACTION_CLASS}`;
+                                    marker.setMap(null);
+                                    marker.setMap(markerMap);
+                                }
                             }
+                        }
+                    }
+                }
+            }
+
+            for (var marker in favoritesMarkers) {
+                if (favoritesMarkers.hasOwnProperty(marker)) {
+                    var marker = favoritesMarkers[marker];
+                    var markerMap = marker.getMap();
+
+                    if (marker.params.id == markerId && marker.labelClass.indexOf(ACTION_CLASS) == -1) {
+                        if (marker.labelClass.indexOf(ACTIVE_CLASS) == -1) {
+                            marker.labelClass += ` ${ACTION_CLASS}`;
+                            marker.setMap(null);
+                            marker.setMap(markerMap);
                         }
                     }
                 }
@@ -504,22 +541,48 @@ module Mappino.Map {
 
 
 
-        private clearHighlight() {
-            var HOVER_CLASS = '-hover';
+        private clearHighlight(action) {
+            var ACTION_CLASS = null;
 
-            for (var color in this.simpleMarkers) {
-                if (this.simpleMarkers.hasOwnProperty(color)) {
-                    for (var latLng in this.simpleMarkers[color]) {
-                        if (this.simpleMarkers[color].hasOwnProperty(latLng)) {
-                            var marker      = this.simpleMarkers[color][latLng],
+            switch (action) {
+                case 'hover':
+                    ACTION_CLASS = '-hover';
+                    break;
+                case 'active':
+                    ACTION_CLASS = '-active';
+                    break;
+            }
+
+            var simpleMarkers       = this.simpleMarkers,
+                favoritesMarkers    = this.favoritesMarkers;
+
+            for (var color in simpleMarkers) {
+                if (simpleMarkers.hasOwnProperty(color)) {
+                    for (var latLng in simpleMarkers[color]) {
+                        if (simpleMarkers[color].hasOwnProperty(latLng)) {
+                            var marker      = simpleMarkers[color][latLng],
                                 markerMap   = marker.getMap();
 
-                            if (marker.labelClass.indexOf(HOVER_CLASS) != -1) {
-                                marker.labelClass = marker.labelClass.substring(0, marker.labelClass.indexOf(HOVER_CLASS));
+                            if (marker.labelClass.indexOf(ACTION_CLASS) != -1) {
+                                marker.labelClass = marker.labelClass.substring(0, marker.labelClass.indexOf(ACTION_CLASS));
                                 marker.setMap(null);
                                 marker.setMap(markerMap)
                             }
                         }
+                    }
+                }
+            }
+
+
+            for (var marker in favoritesMarkers) {
+                if (favoritesMarkers.hasOwnProperty(marker)) {
+                    var marker      = favoritesMarkers[marker],
+                        markerMap   = marker.getMap();
+
+                    if (marker.labelClass.indexOf(ACTION_CLASS) != -1) {
+                        marker.labelClass = marker.labelClass.substring(0, marker.labelClass.indexOf(ACTION_CLASS));
+                        marker.setMap(null);
+                        marker.setMap(markerMap)
                     }
                 }
             }

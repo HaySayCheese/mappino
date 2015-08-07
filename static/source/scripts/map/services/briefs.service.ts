@@ -10,45 +10,73 @@ module Mappino.Map {
 
         public static $inject = [
             '$rootScope',
+            '$timeout',
             'FavoritesService'
         ];
 
         constructor(private $rootScope: angular.IRootScopeService,
+                    private $timeout: angular.ITimeoutService,
                     private favoritesService: FavoritesService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.$on('Mappino.Map.FavoritesService.FavoritesIsLoaded', (event, favorites) => {
-                for (var favorite in favorites) {
-                    for (var key in this._briefs) {
-                        if (this._briefs[key].id == favorites[favorite].id)
-                            this._briefs[key].is_favorite = true;
+                $timeout(() => {
+                    var briefs = this._briefs || undefined;
+
+                    for (var favorite in favorites) {
+                        if (favorites.hasOwnProperty(favorite)) {
+                            for (var brief in briefs) {
+                                if (briefs.hasOwnProperty(brief)) {
+                                    if (briefs[brief].id == favorites[favorite].id)
+                                        briefs[brief].is_favorite = true;
+                                }
+                            }
+                        }
                     }
-                }
+                }, 0);
             });
 
             $rootScope.$on('Mappino.Map.MarkersService.MarkersIsLoaded', (event) => {
-                if (favoritesService.favorites) {
-                    var favorites: any = favoritesService.favorites;
+                $timeout(() => {
+                    var favorites   = favoritesService.favorites    || undefined,
+                        briefs      = this._briefs                  || undefined;
+
                     for (var favorite in favorites) {
-                        for (var key in this._briefs) {
-                            if (this._briefs[key].id == favorites[favorite].id)
-                                this._briefs[key].is_favorite = true;
+                        if (favorites.hasOwnProperty(favorite)) {
+                            for (var brief in briefs) {
+                                if (briefs.hasOwnProperty(brief)) {
+                                    if (briefs[brief].id == favorites[favorite].id)
+                                        briefs[brief].is_favorite = true;
+                                }
+                            }
                         }
                     }
-                }
+                }, 0);
             });
 
             $rootScope.$on('Mappino.Map.FavoritesService.FavoriteAdded', (event, briefId) => {
-                for (var key in this._briefs) {
-                    if (this._briefs[key].id == briefId)
-                        this._briefs[key].is_favorite = true;
-                }
+                $timeout(() => {
+                    var briefs = this._briefs || undefined;
+
+                    for (var brief in briefs) {
+                        if (briefs.hasOwnProperty(brief)) {
+                            if (briefs[brief].id == briefId)
+                                briefs[brief].is_favorite = true;
+                        }
+                    }
+                }, 0)
             });
 
             $rootScope.$on('Mappino.Map.FavoritesService.FavoriteRemoved', (event, briefId) => {
-                for (var key in this._briefs) {
-                    if (this._briefs[key].id == briefId)
-                        this._briefs[key].is_favorite = false;
-                }
+                $timeout(() => {
+                    var briefs = this._briefs || undefined;
+
+                    for (var brief in briefs) {
+                        if (briefs.hasOwnProperty(brief)) {
+                            if (briefs[brief].id == briefId)
+                                briefs[brief].is_favorite = false;
+                        }
+                    }
+                }, 0)
             });
         }
 
@@ -61,22 +89,27 @@ module Mappino.Map {
 
 
         public remove(briefId: string) {
-            console.log(briefId);
-            for (var key in this._briefs) {
-                if (this._briefs[key].id == briefId)
-                    this._briefs.splice(key, 1);
+            var briefs = this._briefs || undefined;
+
+            for (var brief in briefs) {
+                if (briefs.hasOwnProperty(brief)) {
+                    if (briefs[brief].id == briefId)
+                        briefs.splice(brief, 1);
+                }
             }
         }
 
 
 
-        public toggleFavorite(brief) {
-            for (var key in this._briefs) {
-                if (this._briefs[key].id == brief.id)
-                    this._briefs[key].is_favorite = !this._briefs[key].is_favorite;
-            }
+        public toggleFavorite(_brief) {
+            var briefs = this._briefs || undefined;
 
-            console.log(this.briefs)
+            for (var brief in briefs) {
+                if (briefs.hasOwnProperty(brief)) {
+                    if (briefs[brief].id == _brief.id)
+                        briefs[brief].is_favorite = !briefs[brief].is_favorite;
+                }
+            }
         }
 
 
