@@ -6,13 +6,15 @@ module Mappino.Map {
 
     export class FavoritesTabController {
         public static $inject = [
+            '$state',
             '$scope',
             '$rootScope',
             'PublicationHandler',
             'FavoritesService'
         ];
 
-        constructor(private $scope,
+        constructor(private $state: angular.ui.IStateService,
+                    private $scope,
                     private $rootScope: any,
                     private publicationHandler: PublicationHandler,
                     private favoritesService: FavoritesService) {
@@ -22,6 +24,10 @@ module Mappino.Map {
             favoritesService.load(response => {
                 $scope.favorites = response.data;
             });
+
+
+            this.toggleInfoBlock();
+            $rootScope.$on('$stateChangeSuccess', () => this.toggleInfoBlock());
         }
 
 
@@ -47,6 +53,16 @@ module Mappino.Map {
 
         public onBriefMouseLeave() {
             this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseLeave');
+        }
+
+
+
+        private toggleInfoBlock() {
+            if (this.$state.params['navbar_right_tab_index'] == 1) {
+                this.$rootScope.loaders.infoBlock = true;
+            } else {
+                this.$rootScope.loaders.infoBlock = false;
+            }
         }
     }
 }

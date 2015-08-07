@@ -99,11 +99,9 @@ module Mappino.Map {
                     this.checkIfPublicationIsFavorite();
 
 
-                    this.$rootScope.loaders.publication_footer = true;
                     this.publicationService.loadContacts(this.publicationIds, response => {
                         this.$scope.publication.contacts = {};
                         this.$scope.publication.contacts = response.data;
-                        this.$rootScope.loaders.publication_footer = false;
                     });
 
                     this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationClosed');
