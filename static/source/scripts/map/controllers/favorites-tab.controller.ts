@@ -37,5 +37,16 @@ module Mappino.Map {
             $event.preventDefault();
             $event.stopPropagation();
         }
+
+
+
+        public onBriefMouseOver(brief) {
+            this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseOver', brief.id);
+        }
+
+
+        public onBriefMouseLeave() {
+            this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseLeave');
+        }
     }
 }

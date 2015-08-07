@@ -75,18 +75,19 @@ module Mappino.Map {
 
 
         private loadPublicationData() {
+            this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationClosed');
+
             if (this.$state.params['publication_id'] != 0) {
                 this.publicationIds.tid = this.$state.params['publication_id'].split(':')[0];
                 this.publicationIds.hid = this.$state.params['publication_id'].split(':')[1];
-
-                this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseLeave', this.publicationIds.hid);
-                this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationVisited', this.publicationIds.hid);
-                this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseOver', this.publicationIds.hid);
 
                 this.$scope.publicationTemplateUrl = `/ajax/template/map/publication/detailed/${this.publicationIds.tid}/`;
 
                 this.$rootScope.loaders.publication     = true;
                 this.$scope.publicationLoadedSuccess    = false;
+
+                this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationVisited', this.publicationIds.hid);
+                this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationActive', this.publicationIds.hid);
 
                 this.publicationService.load(this.publicationIds, response => {
                     this.$scope.publication = response.data;
@@ -100,8 +101,9 @@ module Mappino.Map {
                         this.$scope.publication.contacts = response.data;
                     });
 
+                    this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationClosed');
                     this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationVisited', this.publicationIds.hid);
-                    this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseOver', this.publicationIds.hid);
+                    this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationActive', this.publicationIds.hid);
                 }, response => {
                     this.$rootScope.loaders.publication     = false;
                     this.$scope.publicationLoadedSuccess    = false;
@@ -113,7 +115,7 @@ module Mappino.Map {
 
         public closePublication() {
             this.publicationHandler.close();
-            this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseLeave', this.publicationIds.hid);
+            this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationClosed');
             this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationVisited', this.publicationIds.hid);
         }
 

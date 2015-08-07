@@ -50,7 +50,8 @@
 
 
 
-    &.-hover {
+    &.-hover,
+    &.-active {
         .custom-marker {
             border-top-color: color('pink', 'darken-2') !important;
             background: color('pink', 'base') !important;

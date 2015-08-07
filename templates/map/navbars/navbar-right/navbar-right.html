@@ -54,7 +54,9 @@
                     <div scrollbar>
                         <ul class="favorite-list" layout="column" layout-align="start start">
                             <li class="favorite-list-item" ng-repeat="favorite in favorites"
-                                ng-click="favCtrl.publicationHandler.open(favorite.tid + ':' + favorite.id, true)">
+                                ng-click="favCtrl.publicationHandler.open(favorite.tid + ':' + favorite.id, true)"
+                                ng-mouseenter="favCtrl.onBriefMouseOver(favorite)"
+                                ng-mouseleave="favCtrl.onBriefMouseLeave()">
                                 <img ng-src="[[ favorite.thumbnail_url ]]" alt="" />
                                 <div class="favorite-list-item-overlay">
                                     <md-button class="md-icon-button" ng-click="favCtrl.removeFromFavorites(favorite, $event)">
