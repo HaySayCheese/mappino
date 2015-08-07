@@ -1,10 +1,9 @@
 # coding=utf-8
-from apps.classes import AuthenticatedOnlyView
+from apps.views_base import AuthenticatedOnlyView
 from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.http.responses import *
 from collective.methods.request_data_getters import angular_parameters
 from core.favorites.constants import FAVORITES_MODELS
-from core.favorites.exceptions import PublicationDoesNotExists
 from core.markers_index.models import SegmentsIndex
 from core.publications.models import HEAD_MODELS
 
@@ -115,9 +114,6 @@ class FavoritesListView(AuthenticatedOnlyView):
 
         except KeyError:
             return cls.PostResponses.invalid_params()
-
-        except PublicationDoesNotExists:
-            return cls.PostResponses.no_such_publication()
 
 
         return cls.PostResponses.ok()
