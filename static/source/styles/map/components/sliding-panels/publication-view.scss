@@ -95,4 +95,16 @@ publication-view {
             border-radius: 50%;
         }
     }
+
+    .animated {
+        @include transition(opacity .5s ease);
+
+        &.ng-hide {
+            opacity: 0;
+        }
+
+        &.ng-show {
+            opacity: 1;
+        }
+    }
 }

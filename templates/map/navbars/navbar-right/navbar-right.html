@@ -19,14 +19,14 @@
                                 <div class="publication-list-item-overlay">
                                     <md-button class="md-icon-button" ng-hide="brief.is_favorite"
                                                ng-click="briefsCtrl.toggleFavorite(brief, $event)">
-                                        <md-icon class="material-icons md-light md-dark-shadow">star_border</md-icon>
+                                        <md-icon class="material-icons md-light md-dark-shadow">favorite_border</md-icon>
                                         <md-tooltip md-direction="right" md-delay="0">
                                             Добавить в избранные
                                         </md-tooltip>
                                     </md-button>
                                     <md-button class="md-icon-button" ng-show="brief.is_favorite"
                                                ng-click="briefsCtrl.toggleFavorite(brief, $event)">
-                                        <md-icon class="material-icons md-light md-dark-shadow">star</md-icon>
+                                        <md-icon class="material-icons md-light md-dark-shadow pink-text">favorite</md-icon>
                                         <md-tooltip md-direction="right" md-delay="0">
                                             Удалить из избранных
                                         </md-tooltip>
@@ -60,7 +60,7 @@
                                 <img ng-src="[[ favorite.thumbnail_url ]]" alt="" />
                                 <div class="favorite-list-item-overlay">
                                     <md-button class="md-icon-button" ng-click="favCtrl.removeFromFavorites(favorite, $event)">
-                                        <md-icon class="material-icons md-light md-dark-shadow">delete</md-icon>
+                                        <md-icon class="material-icons md-light md-dark-shadow pink-text">favorite</md-icon>
                                         <md-tooltip md-direction="right" md-delay="0">
                                             Удалить из избранных
                                         </md-tooltip>
