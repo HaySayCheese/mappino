@@ -1,6 +1,6 @@
 # coding=utf-8
-from apps.cabinet.api.settings.ajax import AccountView, AvatarUpdate
 from django.conf.urls import patterns, url
+from apps.cabinet.api.sellers.settings.ajax import AccountView, AvatarUpdate
 
 
 urlpatterns = patterns('',

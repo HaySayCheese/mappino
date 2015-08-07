@@ -1,8 +1,6 @@
 # coding=utf-8
 from django.db import models
-from django.db.utils import IntegrityError
 
-from core.favorites.exceptions import PublicationDoesNotExists
 from core.users.models import Users
 
 
@@ -33,14 +31,8 @@ class AbstractFavorites(models.Model):
             return records[0]
 
         else:
-            try:
-                return cls.objects.create(
-                    user_id=user.id,
-                    publication_id=publication.id,
-                    publication_hash_id=publication.hash_id,
-                )
-
-            except IntegrityError as e:
-                # It is possible that publication with exact publication_id doesnt exits
-                # In this case database will generate en integrity error
-                raise PublicationDoesNotExists('No publication with exact id.')
+            return cls.objects.create(
+                user_id=user.id,
+                publication_id=publication.id,
+                publication_hash_id=publication.hash_id,
+            )

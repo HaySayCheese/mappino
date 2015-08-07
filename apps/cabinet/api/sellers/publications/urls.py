@@ -1,7 +1,7 @@
 #coding=utf-8
 from django.conf.urls import patterns, url
 
-from apps.cabinet.api.publications.ajax import Publications, Publication, Briefs
+from apps.cabinet.api.sellers.publications.ajax import Publications, Publication, Briefs
 
 
 urlpatterns = patterns('',

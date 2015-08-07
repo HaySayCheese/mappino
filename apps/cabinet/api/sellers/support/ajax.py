@@ -1,7 +1,7 @@
 #coding=utf-8
 from django.db.models import Q
 
-from apps.classes import CabinetView
+from apps.views_base import CabinetView
 from collective.http.responses import *
 from collective.exceptions import EmptyArgument
 from collective.methods.request_data_getters import angular_parameters
