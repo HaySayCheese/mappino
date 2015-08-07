@@ -13,6 +13,7 @@ module Mappino.Map {
             'FavoritesService'
         ];
 
+
         constructor(private $state: angular.ui.IStateService,
                     private $scope,
                     private $rootScope: any,
