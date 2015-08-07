@@ -4,7 +4,7 @@ import phonenumbers
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
-from apps.classes import CabinetView
+from apps.views_base import CabinetView
 from collective.decorators.ajax import json_response, json_response_bad_request
 from core.users.exceptions import AvatarExceptions
 from collective.exceptions import RuntimeException

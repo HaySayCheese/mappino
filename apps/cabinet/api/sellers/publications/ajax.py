@@ -2,7 +2,7 @@
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 from django.http.response import HttpResponseBadRequest
 
-from apps.classes import CabinetView
+from apps.views_base import CabinetView
 from collective.decorators.ajax import json_response, json_response_bad_request
 from collective.methods.request_data_getters import angular_parameters
 from core.publications import formatters

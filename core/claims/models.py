@@ -1,4 +1,5 @@
 #coding=utf-8
+from collective.utils import generate_sha256_unique_id
 from core.users.models import Users
 from django.db import models
 
@@ -7,40 +8,56 @@ class PublicationsClaims(models.Model):
     class InvalidClaimTypeId(ValueError): pass
 
 
-    class ClaimTypes(object):
+    class States(object):
+        new = 0
+        processed = 1
+
+
+    class Types(object):
         other = 0
+
         owner_is_and_intermediary = 1 # власник оголошення - посередник
         untruthful_content = 2
         photos_do_not_correspond_to_reality = 3
 
 
-    class ClaimMessages(object):
+    class Messages(object):
         @staticmethod
-        def owner_is_and_intermediary():
+        def owner_is_intermediary():
             # todo: translates must goes here
-            return u"оголошення подано від посередника"
+            return u"владелец объявления - посредник"
 
 
         @staticmethod
         def untruthful_content():
             # todo: translates must goes here
-            return u"оголошення містить неправдивий контент"
+            return u"объявление содержит подозрительный контент"
 
 
         @staticmethod
         def photos_do_not_correspond_to_reality():
             # todo: translates must goes here
-            return u"фото не відповідають дійсності"
+            return u"фото не соответствуют реальности"
 
 
     #
     # fields
     #
-    owner = models.ForeignKey(Users)
+    hash_id = models.TextField(default=generate_sha256_unique_id, unique=True)
+
+    tid = models.PositiveSmallIntegerField()
+    date_reported = models.DateTimeField(auto_now_add=True)
+    state_sid = models.PositiveSmallIntegerField(db_index=True, default=States.new)
+
+    email = models.EmailField()
+    message = models.TextField(null=True)
+
     publication_tid = models.PositiveSmallIntegerField(db_index=True)
-    publication_hid = models.PositiveIntegerField(db_index=True)
-    claim_tid = models.PositiveSmallIntegerField()
-    message = models.TextField(blank=True, null=True)
+    publication_hash_id = models.TextField(db_index=True)
+
+    moderator = models.ForeignKey(Users, null=True, related_name='moderator')
+    moderator_notice = models.TextField(null=True)
+    message_for_owner = models.TextField(null=True)
 
 
     class Meta:
@@ -48,17 +65,17 @@ class PublicationsClaims(models.Model):
 
 
     @classmethod
-    def new(cls, publication_tid, publication_hid, owner_id, claim_tid, custom_message):
-        if claim_tid == cls.ClaimTypes.owner_is_and_intermediary:
-            message = cls.ClaimMessages.owner_is_and_intermediary()
+    def new(cls, publication_tid, publication_hid, claim_tid, email, custom_message=None):
+        if claim_tid == cls.Types.owner_is_and_intermediary:
+            message = cls.Messages.owner_is_intermediary()
 
-        elif claim_tid == cls.ClaimTypes.untruthful_content:
-            message = cls.ClaimMessages.untruthful_content()
+        elif claim_tid == cls.Types.untruthful_content:
+            message = cls.Messages.untruthful_content()
 
-        elif claim_tid == cls.ClaimTypes.photos_do_not_correspond_to_reality:
-            message = cls.ClaimMessages.photos_do_not_correspond_to_reality()
+        elif claim_tid == cls.Types.photos_do_not_correspond_to_reality:
+            message = cls.Messages.photos_do_not_correspond_to_reality()
 
-        elif claim_tid == cls.ClaimTypes.other:
+        elif claim_tid == cls.Types.other:
             message = custom_message
 
         else:
@@ -66,9 +83,10 @@ class PublicationsClaims(models.Model):
 
 
         return cls.objects.create(
+            tid = claim_tid,
+            message = message,
+            email = email,
+
             publication_tid = publication_tid,
-            publication_hid = publication_hid,
-            owner_id = owner_id,
-            claim_tid = claim_tid,
-            message = message
+            publication_hash_id = publication_hid,
         )

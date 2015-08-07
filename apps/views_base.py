@@ -1,4 +1,5 @@
 # coding=utf-8
+from django.http.response import HttpResponseForbidden
 from django.utils.decorators import method_decorator
 from django.views.generic import View
 
@@ -27,3 +28,12 @@ class AuthenticatedOnlyView(View):
 
 class CabinetView(AuthenticatedOnlyView):
     pass
+
+
+class ModeratorsView(AuthenticatedOnlyView):
+    def dispatch(self, *args, **kwargs):
+        request = args[0]
+        if not request.user.is_moderator:
+            return HttpResponseForbidden('User should have moderators permissions.')
+
+        return super(ModeratorsView, self).dispatch(*args, **kwargs)

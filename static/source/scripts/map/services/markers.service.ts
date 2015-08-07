@@ -494,6 +494,7 @@ module Mappino.Map {
                                 marker.labelClass += ` ${ACTION_CLASS}`;
                                 marker.setMap(null);
                                 marker.setMap(markerMap);
+                                return;
                             }
                         }
                     }

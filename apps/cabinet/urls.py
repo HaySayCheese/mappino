@@ -9,9 +9,12 @@ urlpatterns = patterns('apps.cabinet',
     # templates
     url(r'', include('apps.cabinet.templates.urls')),
 
-    # API
-    url(r'', include('apps.cabinet.api.publications.urls')),
-    url(r'', include('apps.cabinet.api.stats.urls')),
-    url(r'', include('apps.cabinet.api.support.urls')),
-    url(r'', include('apps.cabinet.api.settings.urls')),
+    # Sellers API
+    url(r'', include('apps.cabinet.api.sellers.publications.urls')),
+    url(r'', include('apps.cabinet.api.sellers.stats.urls')),
+    url(r'', include('apps.cabinet.api.sellers.support.urls')),
+    url(r'', include('apps.cabinet.api.sellers.settings.urls')),
+
+    # Moderators API
+    url(r'', include('apps.cabinet.api.moderators.claims.publications.urls')),
 )

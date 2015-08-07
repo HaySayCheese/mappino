@@ -10,7 +10,7 @@ from django.http import HttpResponseBadRequest, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View
 
-from apps.classes import AnonymousOnlyView, AuthenticatedOnlyView
+from apps.views_base import AnonymousOnlyView, AuthenticatedOnlyView
 from collective.decorators.ajax import json_response, json_response_bad_request
 from collective.methods.request_data_getters import angular_post_parameters
 from core.ban.classes import BanHandler

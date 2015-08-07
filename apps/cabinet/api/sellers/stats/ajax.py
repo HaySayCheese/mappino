@@ -8,7 +8,7 @@ from django.utils.timezone import now
 from django.http.response import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.cache import cache_control
 
-from apps.classes import CabinetView
+from apps.views_base import CabinetView
 from collective.exceptions import RuntimeException
 from collective.methods.request_data_getters import GET_parameter
 from core.google_api_auth import init_google_analytics
