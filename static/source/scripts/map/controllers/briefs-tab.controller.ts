@@ -40,6 +40,7 @@ module Mappino.Map {
                 });
             } else {
                 this.favoritesService.add(publicationsIds, brief, response => {
+                    console.log(brief)
                     this.briefsService.toggleFavorite(brief);
                 });
             }

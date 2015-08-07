@@ -21,21 +21,29 @@ module Mappino.Map {
 
         private pieMarkers = {};
 
+        private favoritesMarkers = {};
+
+        private favoritesPlaced: boolean = false;
+
         private _visitedMarkers = [];
 
         public static $inject = [
             '$rootScope',
+            '$state',
             '$http',
             '$timeout',
             'PublicationHandler',
-            'BriefsService'
+            'BriefsService',
+            'FavoritesService'
         ];
 
         constructor(private $rootScope: angular.IRootScopeService,
+                    private $state: angular.ui.IStateService,
                     private $http: angular.IHttpService,
                     private $timeout: angular.ITimeoutService,
                     private publicationHandler: PublicationHandler,
-                    private briefsService: BriefsService) {
+                    private briefsService: BriefsService,
+                    private favoritesService: FavoritesService) {
             // ---------------------------------------------------------------------------------------------------------
             this.parseVisitedMarkers();
             this.parseFavoritesMarkers();
@@ -43,6 +51,14 @@ module Mappino.Map {
             $rootScope.$on('Mappino.Map.FiltersService.CreatedFormattedFilters', (event, formatted_filters) => {
                 this._filters_for_load_markers = formatted_filters;
                 this.load();
+            });
+
+            $rootScope.$on('Mappino.Map.FavoritesService.FavoritesIsLoaded', event => {
+                this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkersIsLoaded'));
+            });
+
+            $rootScope.$on('$stateChangeSuccess', () => {
+                this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkersIsLoaded'));
             });
 
             $rootScope.$on('Mappino.Map.BriefsService.BriefMouseOver', (event, markerId) => this.highlightMarker(markerId, 'hover'));
@@ -57,6 +73,11 @@ module Mappino.Map {
 
 
         private load() {
+            if (this.$state.params['navbar_right_tab_index'] == 1) {
+                this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkersIsLoaded'));
+                return;
+            }
+
             this.$http.get('/ajax/api/markers/?p=' + JSON.stringify(this._filters_for_load_markers))
                 .then(response => {
                     var responseData = response.data['data'];
@@ -96,6 +117,19 @@ module Mappino.Map {
 
 
         public place(map: google.maps.Map) {
+            if (this.$state.params['navbar_right_tab_index'] == 1) {
+                this.clearSimpleMarkers();
+                this.clearPieMarkers();
+
+                console.log(this.favoritesPlaced)
+                if (!this.favoritesPlaced)
+                    this.placeFavoriteMarkers(map);
+
+                return;
+            } else {
+                this.clearFavoritesMarkers();
+            }
+
             // якщо обєкт/обєкти з кольором фільтрів з маркерами які прийшли з сервера не пустий
             // то видаляємо лишні і записуємо нові маркери
             if (Object.keys(this.responseSimpleMarkers.blue).length || Object.keys(this.responseSimpleMarkers.green).length) {
@@ -110,6 +144,33 @@ module Mappino.Map {
                 this.intersectionPieMarkers(map);
 
                 this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkersPlaced'));
+            }
+        }
+
+
+
+        private placeFavoriteMarkers(map: google.maps.Map) {
+            var favoritesMarkers = this.favoritesService.favorites,
+                counter = 0;
+
+            console.log(this.favoritesPlaced)
+
+            for (var marker in favoritesMarkers) {
+                if (favoritesMarkers.hasOwnProperty(marker)) {
+                    var favoriteMarker = favoritesMarkers[marker] || undefined,
+                        favoriteMarkerLatLng = `${favoriteMarker.lat}:${favoriteMarker.lng}`;
+
+                    counter += 1;
+                    console.log(counter)
+                    console.log(favoritesMarkers.length)
+
+                    this.createFavoriteMarker(favoriteMarkerLatLng, map, favoriteMarker);
+                }
+            }
+
+            if (counter > 0 && counter == favoritesMarkers.length) {
+                this.favoritesPlaced = true;
+                console.log(this.favoritesMarkers)
             }
         }
 
@@ -243,7 +304,7 @@ module Mappino.Map {
                 id:             responseMarker.id,
                 tid:            responseMarker.tid,
                 lat:            markerLat,
-                lng:            markerLat,
+                lng:            markerLng,
                 price:          responseMarker.price,
                 title:          responseMarker.title,
                 thumbnail_url:  responseMarker.thumbnail_url
@@ -321,6 +382,39 @@ module Mappino.Map {
             console.log('added: ' + this.pieMarkers[latLng]);
 
             this.attachClickEventToPieMarker(this.pieMarkers[latLng], map);
+        }
+
+
+
+        private createFavoriteMarker(latLng, map: google.maps.Map, marker) {
+            var markerLabelOffsetX = 35,
+                markerLat = latLng.split(':')[0],
+                markerLng = latLng.split(':')[1];
+
+            if (angular.isDefined(marker.price)) {
+                markerLabelOffsetX = this.calcMarkerLabelOffsetX(marker.price.length);
+            }
+
+            this.favoritesMarkers[latLng] = new MarkerWithLabel({
+                position: new google.maps.LatLng(markerLat, markerLng),
+                icon: '/../mappino_static/build/images/markers/empty_marker.png',
+                params: {
+                    id:     marker.id,
+                    tid:    marker.tid,
+                    price:  marker.price
+                },
+                labelContent:
+                    `<div class='custom-marker md-whiteframe-z2'>${marker.price}</div>` +
+                    `<div class='custom-marker-arrow-down'></div>`,
+                labelClass: `custom-marker-container -blue`,
+                labelAnchor: new google.maps.Point(markerLabelOffsetX, 37)
+            });
+
+            this.favoritesMarkers[latLng].setMap(map);
+
+            console.log('added: ' + this.favoritesMarkers[latLng]);
+
+            this.attachClickEventToSimpleMarker(this.favoritesMarkers[latLng]);
         }
 
 
@@ -523,6 +617,21 @@ module Mappino.Map {
             }
 
             this.pieMarkers = {};
+        }
+
+
+
+        private clearFavoritesMarkers() {
+            this.favoritesPlaced = false;
+
+            for (var marker in this.favoritesMarkers) {
+                if (this.favoritesMarkers.hasOwnProperty(marker)) {
+                    this.favoritesMarkers[marker].setMap(null);
+                    delete this.favoritesMarkers[marker];
+                }
+            }
+
+            this.favoritesMarkers = {};
         }
     }
 }
