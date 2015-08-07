@@ -37,17 +37,26 @@
             border-color: color('green', 'base') transparent transparent transparent;
         }
     }
+    &.-orange {
+        .custom-marker {
+            background: color('deep-orange', 'base') !important;
+            border-top: 2px solid color('deep-orange', 'darken-2') !important;
+        }
+        .custom-marker-arrow-down {
+            border-color: color('deep-orange', 'base') transparent transparent transparent !important;
+        }
+    }
 
 
 
 
     &.-hover {
         .custom-marker {
-            border-top-color: color('orange', 'darken-2') !important;
-            background: color('orange', 'base') !important;
+            border-top-color: color('pink', 'darken-2') !important;
+            background: color('pink', 'base') !important;
         }
         .custom-marker-arrow-down {
-            border-color: color('orange', 'base') transparent transparent transparent !important;
+            border-color: color('pink', 'base') transparent transparent transparent !important;
         }
     }
 
