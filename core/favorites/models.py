@@ -1,10 +1,12 @@
 # coding=utf-8
 from core.publications.models import *
 from core.favorites.models_abstract import AbstractFavorites
+from core.publications.types_bases import *
 from core.users.models import Users
 
 
-class FlatsFavorites(AbstractFavorites):
+
+class FlatsFavorites(FlatBase, AbstractFavorites):
     publication = models.ForeignKey(FlatsHeads)
 
 
@@ -12,7 +14,8 @@ class FlatsFavorites(AbstractFavorites):
         db_table = 'favorites_flats'
 
 
-class HousesFavorites(AbstractFavorites):
+
+class HousesFavorites(HouseBase, AbstractFavorites):
     publication = models.ForeignKey(HousesHeads)
 
 
@@ -20,7 +23,7 @@ class HousesFavorites(AbstractFavorites):
         db_table = 'favorites_houses'
 
 
-class RoomsFavorites(AbstractFavorites):
+class RoomsFavorites(RoomBase, AbstractFavorites):
     publication = models.ForeignKey(RoomsHeads)
 
 
@@ -28,7 +31,8 @@ class RoomsFavorites(AbstractFavorites):
         db_table = 'favorites_rooms'
 
 
-class LandsFavorites(AbstractFavorites):
+
+class LandsFavorites(LandBase, AbstractFavorites):
     publication = models.ForeignKey(LandsHeads)
 
 
@@ -36,7 +40,8 @@ class LandsFavorites(AbstractFavorites):
         db_table = 'favorites_lands'
 
 
-class GaragesFavorites(AbstractFavorites):
+
+class GaragesFavorites(GarageBase, AbstractFavorites):
     publication = models.ForeignKey(GaragesHeads)
 
 
@@ -44,7 +49,8 @@ class GaragesFavorites(AbstractFavorites):
         db_table = 'favorites_garages'
 
 
-class OfficesFavorites(AbstractFavorites):
+
+class OfficesFavorites(OfficeBase, AbstractFavorites):
     publication = models.ForeignKey(OfficesHeads)
 
 
@@ -52,7 +58,8 @@ class OfficesFavorites(AbstractFavorites):
         db_table = 'favorites_offices'
 
 
-class TradesFavorites(AbstractFavorites):
+
+class TradesFavorites(TradeBase, AbstractFavorites):
     publication = models.ForeignKey(TradesHeads)
 
 
@@ -60,7 +67,8 @@ class TradesFavorites(AbstractFavorites):
         db_table = 'favorites_trades'
 
 
-class WarehousesFavorites(AbstractFavorites):
+
+class WarehousesFavorites(WarehouseBase, AbstractFavorites):
     publication = models.ForeignKey(WarehousesHeads)
 
 

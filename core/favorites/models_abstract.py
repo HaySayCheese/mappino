@@ -9,11 +9,14 @@ from core.users.models import Users
 class AbstractFavorites(models.Model):
     user = models.ForeignKey(Users)
     # note: field "publication" needs to be overridden as ForeignKey to a specific model.
-    publication_hash_id = models.TextField(unique=True)
+    publication_hash_id = models.TextField(db_index=True)
 
 
     class Meta:
         abstract = True
+        unique_together = (
+            'user', 'publication_hash_id'
+        )
 
 
     @classmethod
@@ -23,6 +26,7 @@ class AbstractFavorites(models.Model):
 
     @classmethod
     def add(cls, user, publication):
+        # check if same record wasn't saved earlier.
         records = cls.queryset_by_user(user).filter(publication_id=publication.id)[:1]
         if records:
             # seems that this record already exists
@@ -36,7 +40,7 @@ class AbstractFavorites(models.Model):
                     publication_hash_id=publication.hash_id,
                 )
 
-            except IntegrityError:
+            except IntegrityError as e:
                 # It is possible that publication with exact publication_id doesnt exits
                 # In this case database will generate en integrity error
                 raise PublicationDoesNotExists('No publication with exact id.')
