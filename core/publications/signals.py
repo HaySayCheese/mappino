@@ -15,3 +15,6 @@ queued = Signal(providing_args=['tid', 'hid', 'hash_id'])
 
 moved_to_trash = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])
 deleted_permanent = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])
+
+before_rejection_by_moderator = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])
+rejected_by_moderator = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])

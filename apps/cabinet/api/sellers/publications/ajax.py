@@ -340,7 +340,7 @@ class Publication(CabinetView):
 
             elif operation == 'publish':
                 try:
-                    head.publish_or_enqueue()
+                    head.publish()
 
                     # publication may be added to publication queue instead of publishing,
                     # so the front should know about it.
