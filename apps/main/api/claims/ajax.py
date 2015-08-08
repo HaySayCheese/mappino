@@ -44,10 +44,10 @@ class ClaimsView(View):
         hash_id = args[1]
 
         try:
-            params = angular_parameters(request, ['claim_tid', 'message', 'email'])
+            params = angular_parameters(request, ['reason_tid', 'message', 'email'])
 
-            claim_tid = int(params['claim_tid'])
-            if claim_tid == PublicationsClaims.Types.other:
+            reason_tid = int(params['reason_tid'])
+            if reason_tid == PublicationsClaims.Reasons.other:
                 message = params['message']
             else:
                 message = params.get('message')
@@ -74,7 +74,7 @@ class ClaimsView(View):
 
         try:
             PublicationsClaims.new(
-                publication.tid, publication.hash_id, claim_tid, email, message)
+                publication.tid, publication.hash_id, reason_tid, email, message)
 
         except PublicationsClaims.InvalidClaimTypeId:
             return cls.PostResponses.invalid_params()

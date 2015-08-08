@@ -13,10 +13,10 @@ class PublicationsClaims(models.Model):
         processed = 1
 
 
-    class Types(object):
+    class Reasons(object):
         other = 0
 
-        owner_is_and_intermediary = 1 # власник оголошення - посередник
+        owner_is_an_intermediary = 1 # власник оголошення - посередник
         untruthful_content = 2
         photos_do_not_correspond_to_reality = 3
 
@@ -45,7 +45,7 @@ class PublicationsClaims(models.Model):
     #
     hash_id = models.TextField(default=generate_sha256_unique_id, unique=True)
 
-    tid = models.PositiveSmallIntegerField()
+    reason_tid = models.PositiveSmallIntegerField()
     date_reported = models.DateTimeField(auto_now_add=True)
     state_sid = models.PositiveSmallIntegerField(db_index=True, default=States.new)
 
@@ -65,17 +65,17 @@ class PublicationsClaims(models.Model):
 
 
     @classmethod
-    def new(cls, publication_tid, publication_hid, claim_tid, email, custom_message=None):
-        if claim_tid == cls.Types.owner_is_and_intermediary:
+    def new(cls, publication_tid, publication_hid, reason_tid, email, custom_message=None):
+        if reason_tid == cls.Reasons.owner_is_an_intermediary:
             message = cls.Messages.owner_is_intermediary()
 
-        elif claim_tid == cls.Types.untruthful_content:
+        elif reason_tid == cls.Reasons.untruthful_content:
             message = cls.Messages.untruthful_content()
 
-        elif claim_tid == cls.Types.photos_do_not_correspond_to_reality:
+        elif reason_tid == cls.Reasons.photos_do_not_correspond_to_reality:
             message = cls.Messages.photos_do_not_correspond_to_reality()
 
-        elif claim_tid == cls.Types.other:
+        elif reason_tid == cls.Reasons.other:
             message = custom_message
 
         else:
@@ -83,7 +83,7 @@ class PublicationsClaims(models.Model):
 
 
         return cls.objects.create(
-            tid = claim_tid,
+            reason_tid = reason_tid,
             message = message,
             email = email,
 

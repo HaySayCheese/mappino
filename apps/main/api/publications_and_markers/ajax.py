@@ -412,8 +412,6 @@ class DetailedView(View):
 
 
         data = cls.formatter.format(tid, publication)
-
-        # todo: return favorites back
         return cls.GetResponses.ok(data)
 
 
