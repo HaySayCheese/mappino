@@ -23,8 +23,7 @@ module Mappino.Cabinet.Moderators {
             $rootScope.loaders = {
                 overlay:    false,
                 navbar:     false,
-                avatar:     false,
-                tickets:    false
+                avatar:     false
             };
 
             authService.tryLogin(response => {

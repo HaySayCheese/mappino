@@ -12,6 +12,8 @@ module Mappino.Cabinet.Moderators {
         'ui.router',
 
         'Mappino.Core',
+
+        'angular-carousel'
     ]);
 
 
@@ -30,18 +32,11 @@ module Mappino.Cabinet.Moderators {
     new ApplicationConfigs(app);
 
 
-    app.service('PublicationsService', PublicationsService);
-    app.service('TicketsService', TicketsService);
-
-
-    app.directive('publicationControls', publicationControls);
+    app.service('ModeratingService', ModeratingService);
 
 
     /** Module controllers */
     app.controller('CabinetController', CabinetController);
-    app.controller('BriefsController', BriefsController);
-    app.controller('PublicationController', PublicationController);
     app.controller('SettingsController', SettingsController);
-    app.controller('SupportController', SupportController);
-    app.controller('TicketController', TicketController);
+    app.controller('ModeratingController', ModeratingController);
 }

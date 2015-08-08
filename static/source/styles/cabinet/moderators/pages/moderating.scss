@@ -1,28 +1,59 @@
-.briefs-page {
-    .brief-status {
-        &.-published {
-            span,
-            md-icon {
-                color: color('green', 'base') !important;
+.moderating-page {
+    .publication-view {
+        header {
+            min-height: 330px;
+            position: relative;
+
+            .publication-preview-carousel {
+                @include size(100%, 330px);
+            }
+
+            .publication-view-image-overlay {
+                @include square(100%);
+                position: absolute;
+                top: 0;
+            }
+
+            .publication-view-overlay-description {
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+
+                color: #fff;
+                text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 1px color('grey', 'darken-4');
+            }
+
+            .slide-prev,
+            .slide-next {
+                position: absolute;
+                top: 50%;
+                @include translate(0, -50%);
+            }
+
+            .slide-prev {
+                left: 0;
+            }
+
+            .slide-next {
+                right: 0;
             }
         }
 
-        &.-unpublished {
-            span,
-            md-icon {
-                color: color('orange', 'base') !important;
+        section {
+            width: 100%;
+            display: block;
+
+            p {
+                margin-top: 0;
             }
         }
 
-        &.-removed {
-            span,
-            md-icon {
-                color: color('grey', 'lighten-1') !important;
+        .publication-contacts {
+            .avatar img {
+                @include square(140px);
+                border-radius: 50%;
             }
         }
-    }
-
-    md-card-content {
-        position: relative;
     }
 }

@@ -27,12 +27,15 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-animate.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-aria.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-messages.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-touch.min.js"></script>
+
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1-rc3/angular-material.min.js"></script>
 
     <!-- Local js libs -->
     <script type="text/javascript" src="{{ static }}build/libraries/angular-file-upload.js"></script>
+    <script type="text/javascript" src="{{ static }}build/libraries/angular-carousel.js"></script>
 </head>
 <body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()">
 
@@ -44,11 +47,8 @@
         </nav>
 
         <nav class="md-toolbar-tools" hide-sm>
-            <md-button ui-sref="publications" class="nav-button" aria-label="Модерация">
+            <md-button ui-sref="moderating" class="nav-button" aria-label="Модерация">
                 Модерация
-            </md-button>
-            <md-button ui-sref="support" class="nav-button" aria-label="Жалобы">
-                Жалобы
             </md-button>
 
             <span flex></span>
