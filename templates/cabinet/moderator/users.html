@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="mappino.pages.cabinet">
+<html ng-app="mappino.cabinet.users">
 <head>
     <title>Cabinet</title>
     <link rel="author" href="/humans.txt"/>
@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/angular_material/0.10.0/angular-material.min.css">
 
     {% compress css %}
-        <link rel="stylesheet" href="{{ static }}build/styles/cabinet/base.min.css"/>
+        <link rel="stylesheet" href="{{ static }}build/styles/cabinet/users/base.min.css"/>
     {% endcompress %}
 
     <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places"></script>
@@ -93,7 +93,7 @@
 
 
     {% compress js %}
-        <script type="text/javascript" src="{{ static }}build/scripts/cabinet/cabinet.js"></script>
+        <script type="text/javascript" src="{{ static }}build/scripts/cabinet/users/cabinet.users.js"></script>
     {% endcompress %}
 </body>
 </html>
