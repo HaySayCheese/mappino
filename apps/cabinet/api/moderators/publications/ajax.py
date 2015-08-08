@@ -92,7 +92,7 @@ class PublicationAcceptOrRejectView(ModeratorsView):
             record = PublicationsCheckQueue\
                 .queryset_by_publication(tid, hash_id)\
                 .only('publication_tid', 'publication_hash_id')\
-                [0]
+                [:1][0]
         except IndexError:
             return cls.PostResponses.invalid_parameters()
 
@@ -109,4 +109,51 @@ class PublicationAcceptOrRejectView(ModeratorsView):
             record.reject()
 
 
+        return cls.PostResponses.ok()
+
+
+class PublicationMessageView(ModeratorsView):
+    class PostResponses(object):
+        @staticmethod
+        @json_response
+        def ok():
+            return {
+                'code': 0,
+                'message': 'OK',
+            }
+
+
+        @staticmethod
+        @json_response_bad_request
+        def invalid_parameters():
+            return {
+                'code': 1,
+                'message': 'Requests contains invalid parameters.'
+            }
+
+
+    @classmethod
+    def post(cls, request, *args):
+        try:
+            params = angular_post_parameters(request, ['publication_id', 'message'])
+
+            publication_id, message = params['publication_id'], params['message']
+            tid, hash_id = publication_id.split(':')
+            tid = int(tid)
+
+        except (ValueError, KeyError):
+            return cls.PostResponses.invalid_parameters()
+
+
+        try:
+            record = PublicationsCheckQueue\
+                .queryset_by_publication(tid, hash_id)\
+                .only('id')\
+                [:1][0]
+        except IndexError:
+            return cls.PostResponses.invalid_parameters()
+
+
+        record.message = message
+        record.save()
         return cls.PostResponses.ok()
