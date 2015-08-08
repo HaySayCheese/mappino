@@ -2,7 +2,7 @@
 from django.conf.urls import patterns, url
 
 
-urlpatterns = patterns('apps.cabinet.templates.templates',
+urlpatterns = patterns('apps.cabinet.templates.users',
     # briefs
     url(r'^ajax/template/cabinet/publications/briefs/$', 'publications_briefs'),
 
@@ -26,9 +26,18 @@ urlpatterns = patterns('apps.cabinet.templates.templates',
     # support
     url(r'^ajax/template/cabinet/support/$', 'support'),
     url(r'^ajax/template/cabinet/support/ticket/$', 'support_ticket'),
+)
 
 
-    # # hints
-    # url(r'^ajax/template/cabinet/publications/hints/no-publications/$', 'publications.no_pubs_hint'),
-    # url(r'^ajax/template/cabinet/support/hints/no-tickets/$', 'support.no_tickets_hint'),
+urlpatterns += patterns('apps.cabinet.templates.moderators',
+    # moderating
+    url(r'^ajax/template/cabinet/moderators/publication/$', 'publication'),
+
+
+    # claims
+    url(r'^ajax/template/cabinet/moderators/claims/$', 'claims'),
+
+
+    # settings
+    url(r'^ajax/template/cabinet/moderators/settings/$', 'settings'),
 )
