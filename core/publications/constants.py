@@ -66,10 +66,10 @@ class ObjectStates(AbstractConstant):
     def __init__(self):
         super(ObjectStates, self).__init__()
         self.set_ids({
-            'published':    0,
-            'unpublished':  1,
-            'deleted':      2,
-            'queued':       3,
+            'published':                0,
+            'unpublished':              1,
+            'deleted':                  2,
+            'rejected_by_moderator':    3,
         })
 
 
@@ -85,8 +85,8 @@ class ObjectStates(AbstractConstant):
         return self.ids['deleted']
 
 
-    def queued(self):
-        return self.ids['queued']
+    def rejected_by_moderator(self):
+        return self.ids['rejected_by_moderator']
 OBJECT_STATES = ObjectStates()
 
 

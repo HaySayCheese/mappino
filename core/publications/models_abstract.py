@@ -154,15 +154,15 @@ class AbstractHeadModel(models.Model):
     @classmethod
     def by_id(cls, head_id, select_body=False, select_sale=False, select_rent=False, select_owner=False):
         try:
-            query = cls.objects.filter(id = head_id).only('id')
+            query = cls.objects.filter(id = head_id)
             if select_body:
-                query = query.only('id', 'body').select_related('body')
+                query = query.select_related('body')
             if select_sale:
-                query = query.only('id', 'sale_terms').select_related('sale_terms')
+                query = query.select_related('sale_terms')
             if select_rent:
-                query = query.only('id', 'rent_terms').select_related('rent_terms')
+                query = query.select_related('rent_terms')
             if select_owner:
-                query = query.only('id', 'owner').select_related('owner')
+                query = query.select_related('owner')
             return query[:1][0]
         except IndexError:
             raise ObjectDoesNotExist()
@@ -171,16 +171,16 @@ class AbstractHeadModel(models.Model):
     @classmethod
     def by_hash_id(cls, hash_id, select_body=False, select_sale=False, select_rent=False, select_owner=False):
         try:
-            query = cls.objects.filter(hash_id = hash_id).only('id')
+            query = cls.objects.filter(hash_id = hash_id)
 
             if select_body:
-                query = query.only('id', 'body').select_related('body')
+                query = query.select_related('body')
             if select_sale:
-                query = query.only('id', 'sale_terms').select_related('sale_terms')
+                query = query.select_related('sale_terms')
             if select_rent:
-                query = query.only('id', 'rent_terms').select_related('rent_terms')
+                query = query.select_related('rent_terms')
             if select_owner:
-                query = query.only('id', 'owner').select_related('owner')
+                query = query.select_related('owner')
             return query[:1][0]
 
         except IndexError:
@@ -266,7 +266,7 @@ class AbstractHeadModel(models.Model):
         self.save(force_update=True)
 
 
-    def publish_or_enqueue(self, pub_date_should_be_updated=True):
+    def publish(self, pub_date_should_be_updated=True):
         if self.is_deleted():
             raise SuspiciousOperation('Attempt to publish deleted publication.')
 
@@ -309,6 +309,10 @@ class AbstractHeadModel(models.Model):
                 None, tid=self.tid, hid=self.id, hash_id=self.hash_id, for_sale=self.for_sale, for_rent=self.for_rent)
 
 
+    def is_published(self):
+        return self.state_sid == OBJECT_STATES.published()
+
+
     def unpublish(self):
         # Moves the publication to unpublished publications.
         #
@@ -334,6 +338,32 @@ class AbstractHeadModel(models.Model):
         # sender=None для того, щоб django-orm не витягував автоматично дані з БД,
         # які, швидше за все, не знадобляться в подальшій обробці.
         signals.unpublished.send(
+            sender = None,
+            tid = self.tid,
+            hid = self.id,
+            hash_id = self.hash_id,
+            for_sale = self.for_sale,
+            for_rent = self.for_rent,
+        )
+
+
+    def reject_by_moderator(self):
+        signals.before_rejection_by_moderator.send(
+            sender = None,
+            tid = self.tid,
+            hid = self.id,
+            hash_id = self.hash_id,
+            for_sale = self.for_sale,
+            for_rent = self.for_rent,
+        )
+
+
+        self.unpublish()
+        self.state_sid = OBJECT_STATES.rejected_by_moderator()
+        self.save()
+
+
+        signals.rejected_by_moderator.send(
             sender = None,
             tid = self.tid,
             hid = self.id,
@@ -375,6 +405,10 @@ class AbstractHeadModel(models.Model):
             for_sale = self.for_sale,
             for_rent = self.for_rent,
         )
+
+
+    def is_deleted(self):
+        return self.state_sid == OBJECT_STATES.deleted() or self.deleted is not None
 
 
     def delete(self, using=None):
@@ -468,14 +502,6 @@ class AbstractHeadModel(models.Model):
             return None
 
         return photos[0]
-
-
-    def is_published(self):
-        return self.state_sid == OBJECT_STATES.published()
-
-
-    def is_deleted(self):
-        return self.state_sid == OBJECT_STATES.deleted() or self.deleted is not None
 
 
 class CommercialHeadModel(AbstractHeadModel):
