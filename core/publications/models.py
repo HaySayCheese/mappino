@@ -1558,7 +1558,7 @@ class WarehousesBodies(BodyModel):
 
         if facilities[:2] == u', ':
             facilities = facilities[2:]
-        return(facilities) if facilities else u''
+        return facilities if facilities else u''
 
 
     def print_communications(self):

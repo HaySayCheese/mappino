@@ -10,24 +10,3 @@ class AbstractCacheManager(object):
 
 		self.redis = redis_connections['cache']
 		self.prefix = prefix
-
-
-class CountersCacheManager(AbstractCacheManager):
-	def __init__(self):
-		super(CountersCacheManager, self).__init__('counters_cache')
-
-
-	def __key(self, tid, hash_id):
-		return '{0}:{1}'.format(tid, hash_id)
-
-
-	def etag(self, tid, hash_id):
-		etag = self.redis.hget(self.prefix, self.__key(tid, hash_id))
-		if etag is None:
-			etag = 0
-			self.redis.hset(self.prefix, self.__key(tid, hash_id), etag)
-		return etag
-
-
-	def increment_etag(self, tid, hash_id):
-		self.redis.incr(self.__key(tid, hash_id))
