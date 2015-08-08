@@ -1,0 +1,28 @@
+.briefs-page {
+    .brief-status {
+        &.-published {
+            span,
+            md-icon {
+                color: color('green', 'base') !important;
+            }
+        }
+
+        &.-unpublished {
+            span,
+            md-icon {
+                color: color('orange', 'base') !important;
+            }
+        }
+
+        &.-removed {
+            span,
+            md-icon {
+                color: color('grey', 'lighten-1') !important;
+            }
+        }
+    }
+
+    md-card-content {
+        position: relative;
+    }
+}

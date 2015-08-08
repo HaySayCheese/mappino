@@ -1,0 +1,11 @@
+.support-page {
+    md-list-item {
+        p {
+            font-size: 0.8rem !important;
+
+            span + span {
+                margin-left: 15px;
+            }
+        }
+    }
+}

@@ -94,7 +94,7 @@ gulp.task('Sass:Map', function () {
 });
 
 gulp.task('Sass:Cabinet:Users', function () {
-    return gulp.src(PATHS.SOURCE.STYLES + '/cabinet/users/base.scss')
+    return gulp.src(PATHS.SOURCE.STYLES + '/cabinet/users/users.scss')
         .pipe(sass())
         .pipe(minifyCSS())
         .pipe(rename(COMPILED_CSS_FILE_NAME))
@@ -102,7 +102,7 @@ gulp.task('Sass:Cabinet:Users', function () {
 });
 
 gulp.task('Sass:Cabinet:Moderators', function () {
-    return gulp.src(PATHS.SOURCE.STYLES + '/cabinet/moderators/base.scss')
+    return gulp.src(PATHS.SOURCE.STYLES + '/cabinet/moderators/moderators.scss')
         .pipe(sass())
         .pipe(minifyCSS())
         .pipe(rename(COMPILED_CSS_FILE_NAME))
