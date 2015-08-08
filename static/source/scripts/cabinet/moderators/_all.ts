@@ -72,5 +72,5 @@
 // ####################
 // App init
 // ####################
-/// <reference path='cabinet.users.module.ts' />
+/// <reference path='cabinet.moderators.module.ts' />
 
