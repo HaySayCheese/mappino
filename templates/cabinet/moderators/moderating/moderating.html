@@ -1,5 +1,5 @@
-<div class="moderating-page" ng-controller="ModeratingController as modCtrl">
-    <md-card>
+<div class="moderating-page" layout="column" layout-align="start center" ng-controller="ModeratingController as modCtrl">
+    <md-card ng-hide="loaders.overlay">
         <md-card-content>
             <div class="publication-view" layout="column">
                 <div layout="column">
@@ -40,5 +40,11 @@
                 </div>
             </div>
         </md-card-content>
+        <md-divider></md-divider>
+        <div class="md-actions" layout="row">
+            <md-button class="md-warn md-hue-3">Отклонить</md-button>
+            <span flex></span>
+            <md-button class="md-primary md-hue-1">Хорошо</md-button>
+        </div>
     </md-card>
 </div>

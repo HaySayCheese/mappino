@@ -19,6 +19,8 @@ module Mappino.Cabinet.Moderators {
 
             $rootScope.loaders.overlay  = true;
             moderatingService.load(response => {
+                this.$scope.publicationTemplateUrl = `/ajax/template/map/publication/detailed/${response.data.publication.tid}/`;
+
                 $scope.publication = response.data;
                 $rootScope.loaders.overlay = false;
             });
