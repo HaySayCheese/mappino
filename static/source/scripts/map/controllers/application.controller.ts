@@ -14,7 +14,8 @@ module Mappino.Map {
                     private $rootScope) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.loaders = {
-                publication: false
+                'publication':  false,
+                'infoBlock':    false
             };
         }
     }

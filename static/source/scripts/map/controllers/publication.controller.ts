@@ -13,6 +13,7 @@ module Mappino.Map {
         public static $inject = [
             '$scope',
             '$rootScope',
+            '$timeout',
             '$state',
             'PublicationHandler',
             'PublicationService',
@@ -23,6 +24,7 @@ module Mappino.Map {
 
         constructor(private $scope,
                     private $rootScope,
+                    private $timeout: angular.ITimeoutService,
                     private $state: angular.ui.IStateService,
                     private publicationHandler: PublicationHandler,
                     private publicationService: PublicationService,
@@ -96,6 +98,7 @@ module Mappino.Map {
                     this.$scope.publicationLoadedSuccess    = true;
                     this.checkIfPublicationIsFavorite();
 
+
                     this.publicationService.loadContacts(this.publicationIds, response => {
                         this.$scope.publication.contacts = {};
                         this.$scope.publication.contacts = response.data;
@@ -125,8 +128,13 @@ module Mappino.Map {
             if (this.$scope.publication.is_favorite) {
                 this.favoritesService.remove(this.publicationIds);
             } else {
-                var brief = this.briefsService.briefs.filter(brief => brief.id == this.publicationIds.hid)[0];
-                this.favoritesService.add(this.publicationIds, brief);
+                var briefs = this.briefsService.briefs;
+                for (var brief in briefs) {
+                    if (briefs.hasOwnProperty(brief)) {
+                        if (briefs[brief].id == this.publicationIds.hid)
+                            this.favoritesService.add(this.publicationIds, briefs[brief]);
+                    }
+                }
             }
         }
 
@@ -139,8 +147,11 @@ module Mappino.Map {
                 this.$scope.publication.is_favorite = false;
 
                 for (var key in _favorites) {
-                    if (_favorites[key].id == this.publicationIds.hid) {
-                        this.$scope.publication.is_favorite = true;
+                    if (_favorites.hasOwnProperty(key)) {
+                        console.log(_favorites);
+                        if (_favorites[key].id == this.publicationIds.hid) {
+                            this.$scope.publication.is_favorite = true;
+                        }
                     }
                 }
             }
@@ -162,6 +173,11 @@ module Mappino.Map {
             if (this.$scope.forms.publicationMessage.$valid) {
                 this.publicationService.sendMessage(this.$scope.message, this.publicationIds, response => {
                     this.toggleMessageForm();
+                    this.$scope.messageSendSuccess = true;
+                    this.$timeout(() => {
+                        this.$scope.messageSendSuccess = false;
+                        this.scrollToBottom(500);
+                    }, 2000);
                 });
             }
         }
@@ -172,6 +188,11 @@ module Mappino.Map {
             if (this.$scope.forms.publicationCallRequest.$valid) {
                 this.publicationService.sendCallRequest(this.$scope.callRequest, this.publicationIds, response => {
                     this.toggleCallRequestForm();
+                    this.$scope.callRequestSendSuccess = true;
+                    this.$timeout(() => {
+                        this.$scope.callRequestSendSuccess = false;
+                        this.scrollToBottom(500);
+                    }, 2000);
                 });
             }
         }
@@ -215,10 +236,12 @@ module Mappino.Map {
 
 
 
-        private scrollToBottom() {
-            angular.element("publication-view").animate({
-                scrollTop: angular.element("publication-view .publication-view-container").height()
-            }, 'slow');
+        private scrollToBottom(delay: number = 0) {
+            this.$timeout(() => {
+                angular.element("publication-view").animate({
+                    scrollTop: angular.element("publication-view .publication-view-container").height()
+                }, 'slow');
+            }, delay);
         }
     }
 }

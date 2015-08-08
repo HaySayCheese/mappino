@@ -414,7 +414,7 @@ module Mappino.Map {
                 labelContent:
                     `<div class='custom-marker md-whiteframe-z2'>${marker.price}</div>` +
                     `<div class='custom-marker-arrow-down'></div>`,
-                labelClass: `custom-marker-container -orange`,
+                labelClass: `custom-marker-container -pink`,
                 labelAnchor: new google.maps.Point(markerLabelOffsetX, 37)
             });
 

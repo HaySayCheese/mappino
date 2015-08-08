@@ -1,0 +1,20 @@
+.map-info-block {
+    position: absolute;
+    top: 0;
+    left: 50%;
+
+    color: color('grey', 'darken-1');
+    background: #fff;
+
+    @include translate(-50%, 0);
+    @include transition(top .5s ease);
+
+
+    &.ng-show {
+        top: 0;
+    }
+
+    &.ng-hide {
+        top: -100px;
+    }
+}

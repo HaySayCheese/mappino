@@ -1,7 +1,9 @@
 <div class="md-subhead blue-text">Контакти</div>
 <md-divider></md-divider>
 <div layout="column" layout-padding>
-    <div class="publication-contacts" layout="row" layout-padding ng-hide="messageFormIsVisible || callRequestFormIsVisible">
+    <div class="publication-contacts" layout="row" layout-padding
+         ng-hide="messageFormIsVisible || callRequestFormIsVisible || callRequestSendSuccess || messageSendSuccess">
+
         <div class="avatar" flex="45" layout="column" layout-align="center center">
             <img ng-src="[[ publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/user.png" ng-show="publication.contacts.avatar_url" />
             <img src="{{ static }}build/images/cabinet/user.png" ng-hide="publication.contacts.avatar_url" alt="" />
@@ -29,7 +31,7 @@
         </div>
     </div>
 
-    <form name="forms.publicationMessage" novalidate layout="column" ng-show="messageFormIsVisible">
+    <form class="animated" name="forms.publicationMessage" novalidate layout="column" ng-show="messageFormIsVisible">
         <div layout="row">
             <md-input-container flex="40">
                 <label>Имя</label>
@@ -66,7 +68,7 @@
         </div>
     </form>
 
-    <form name="forms.publicationCallRequest" novalidate layout="column" ng-show="callRequestFormIsVisible">
+    <form class="animated" name="forms.publicationCallRequest" novalidate layout="column" ng-show="callRequestFormIsVisible">
         <div layout="row">
             <md-input-container flex="40">
                 <label>Имя</label>
@@ -93,12 +95,18 @@
         </div>
     </form>
 
-    <div layout="row" ng-hide="messageFormIsVisible || callRequestFormIsVisible">
+    <div layout="row" ng-hide="messageFormIsVisible || callRequestFormIsVisible || callRequestSendSuccess || messageSendSuccess">
         <md-button class="md-raised md-primary" flex ng-show="publication.contacts.allow_call_requests" ng-click="pubCtrl.toggleCallRequestForm()">
             Заказать обратный звонок
         </md-button>
         <md-button class="md-raised md-primary" flex ng-show="publication.contacts.allow_messaging" ng-click="pubCtrl.toggleMessageForm()">
             Оставить сообщение
         </md-button>
+    </div>
+
+
+    <div class="animated" layout="column" layout-align="center center" ng-show="callRequestSendSuccess || messageSendSuccess">
+        <md-icon class="material-icons md-96 green-text">check</md-icon>
+        <div class="md-headline">Отправлено успешно</div>
     </div>
 </div>

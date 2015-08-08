@@ -15,6 +15,22 @@
     @include square(48px);
     font-size: 48px;
 }
+.material-icons.md-60 {
+    @include square(60px);
+    font-size: 60px;
+}
+.material-icons.md-72 {
+    @include square(72px);
+    font-size: 72px;
+}
+.material-icons.md-84 {
+    @include square(84px);
+    font-size: 84px;
+}
+.material-icons.md-96 {
+    @include square(96px);
+    font-size: 96px;
+}
 .material-icons.md-dark-shadow {
     text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 1px color('grey', 'darken-4');
 }
