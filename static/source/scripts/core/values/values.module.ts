@@ -2,14 +2,14 @@
 
 
 module Mappino.Core.Values {
-    var constants: angular.IModule = angular.module('Mappino.Core.Values', []);
+    var values: angular.IModule = angular.module('Mappino.Core.Values', []);
 
-    constants.value('TXT', {
+    values.value('TXT', {
         'DIALOGS':  DialogsValues.Default,
         'TOASTS':   ToastsValues.Default
     });
 
-    constants.value('TYPES', {
+    values.value('TYPES', {
         'BUILDING':           BuildingTypesValues.Default,
         'TRADE_BUILDING':     BuildingTypesValues.Trade,
         'CONDITION':          ConditionTypesValues.Default,
@@ -24,8 +24,13 @@ module Mappino.Core.Values {
         'ROOM_PLANNING':      RoomPlanningTypesValues.Default
     });
 
+    values.value('CLAIM', {
+        'REASONS':  ClaimReasonsValues.Default,
+    });
 
-    constants.run(['$rootScope', 'TXT', 'TYPES', ($rootScope, TXT, TYPES) => {
+
+    values.run(['$rootScope', 'CLAIM', 'TXT', 'TYPES', ($rootScope, CLAIM, TXT, TYPES) => {
+        $rootScope.CLAIM    = CLAIM;
         $rootScope.TXT      = TXT;
         $rootScope.TYPES    = TYPES;
     }]);

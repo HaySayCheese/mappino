@@ -51,8 +51,15 @@ module Mappino.Map {
                 phoneNumber:    null
             };
 
+            $scope.claim = {
+                email:          null,
+                reason_sid:     1,
+                another_reason: null
+            };
+
             $scope.messageFormIsVisible     = false;
             $scope.callRequestFormIsVisible = false;
+            $scope.claimFormIsVisible       = false;
 
 
             this.loadPublicationData();
@@ -199,19 +206,36 @@ module Mappino.Map {
 
 
 
+        public sendClaim() {
+            if (this.$scope.forms.publicationClaim.$valid) {
+                this.publicationService.sendClaim(this.$scope.claim, this.publicationIds, response => {
+                    this.toggleClaimForm();
+                    this.$scope.claimSendSuccess = true;
+                    this.$timeout(() => {
+                        this.$scope.claimSendSuccess = false;
+                        this.scrollToBottom(500);
+                    }, 2000);
+                });
+            }
+        }
+
+
+
         public toggleMessageForm() {
-            this.$scope.messageFormIsVisible ?
-                this.$scope.messageFormIsVisible = false :
-                    this.$scope.messageFormIsVisible = true;
+            if (this.$scope.messageFormIsVisible) {
+                this.$scope.message = {
+                    userName:   null,
+                    email:      null,
+                    text:       null
+                };
 
-            this.$scope.message = {
-                userName:   null,
-                email:      null,
-                text:       null
-            };
+                this.$scope.forms.publicationMessage.$setPristine();
+                this.$scope.forms.publicationMessage.$setUntouched();
 
-            this.$scope.forms.publicationMessage.$setPristine();
-            this.$scope.forms.publicationMessage.$setUntouched();
+                this.$scope.messageFormIsVisible = false;
+            } else {
+                this.$scope.messageFormIsVisible = true;
+            }
 
             this.scrollToBottom();
         }
@@ -219,17 +243,40 @@ module Mappino.Map {
 
 
         public toggleCallRequestForm() {
-            this.$scope.callRequestFormIsVisible ?
-                this.$scope.callRequestFormIsVisible = false :
-                    this.$scope.callRequestFormIsVisible = true;
+            if (this.$scope.callRequestFormIsVisible) {
+                this.$scope.callRequest = {
+                    userName:       null,
+                    phoneNumber:    null
+                };
 
-            this.$scope.callRequest = {
-                userName:       null,
-                phoneNumber:    null
-            };
+                this.$scope.forms.publicationCallRequest.$setPristine();
+                this.$scope.forms.publicationCallRequest.$setUntouched();
 
-            this.$scope.forms.publicationCallRequest.$setPristine();
-            this.$scope.forms.publicationCallRequest.$setUntouched();
+                this.$scope.callRequestFormIsVisible = false;
+            } else {
+                this.$scope.callRequestFormIsVisible = true;
+            }
+
+            this.scrollToBottom();
+        }
+
+
+
+        private toggleClaimForm() {
+            if (this.$scope.claimFormIsVisible) {
+                this.$scope.claim = {
+                    email:          null,
+                    reason_sid:     1,
+                    another_reason: null
+                };
+
+                this.$scope.forms.publicationClaim.$setPristine();
+                this.$scope.forms.publicationClaim.$setUntouched();
+
+                this.$scope.claimFormIsVisible = false;
+            } else {
+                this.$scope.claimFormIsVisible = true;
+            }
 
             this.scrollToBottom();
         }

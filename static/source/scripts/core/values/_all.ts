@@ -1,3 +1,5 @@
+/// <reference path='claim/reasons.values.ts' />
+
 /// <reference path='txt/dialogs.values.ts' />
 /// <reference path='txt/toasts.values.ts' />
 

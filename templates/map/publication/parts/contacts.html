@@ -2,7 +2,7 @@
 <md-divider></md-divider>
 <div layout="column" layout-padding>
     <div class="publication-contacts" layout="row" layout-padding
-         ng-hide="messageFormIsVisible || callRequestFormIsVisible || callRequestSendSuccess || messageSendSuccess">
+         ng-hide="messageFormIsVisible || callRequestFormIsVisible || claimFormIsVisible || callRequestSendSuccess || messageSendSuccess || claimSendSuccess">
 
         <div class="avatar" flex="45" layout="column" layout-align="center center">
             <img ng-src="[[ publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/user.png" ng-show="publication.contacts.avatar_url" />
@@ -31,7 +31,16 @@
         </div>
     </div>
 
-    <form class="animated" name="forms.publicationMessage" novalidate layout="column" ng-show="messageFormIsVisible">
+    <div layout="row" ng-hide="messageFormIsVisible || callRequestFormIsVisible || claimFormIsVisible || callRequestSendSuccess || messageSendSuccess || claimSendSuccess">
+        <md-button class="md-raised md-primary" flex ng-show="publication.contacts.allow_call_requests" ng-click="pubCtrl.toggleCallRequestForm()">
+            Заказать обратный звонок
+        </md-button>
+        <md-button class="md-raised md-primary" flex ng-show="publication.contacts.allow_messaging" ng-click="pubCtrl.toggleMessageForm()">
+            Оставить сообщение
+        </md-button>
+    </div>
+
+    <form novalidate class="animated" name="forms.publicationMessage" layout="column" ng-show="messageFormIsVisible">
         <div layout="row">
             <md-input-container flex="40">
                 <label>Имя</label>
@@ -68,7 +77,7 @@
         </div>
     </form>
 
-    <form class="animated" name="forms.publicationCallRequest" novalidate layout="column" ng-show="callRequestFormIsVisible">
+    <form novalidate class="animated" name="forms.publicationCallRequest" layout="column" ng-show="callRequestFormIsVisible">
         <div layout="row">
             <md-input-container flex="40">
                 <label>Имя</label>
@@ -95,14 +104,39 @@
         </div>
     </form>
 
-    <div layout="row" ng-hide="messageFormIsVisible || callRequestFormIsVisible || callRequestSendSuccess || messageSendSuccess">
-        <md-button class="md-raised md-primary" flex ng-show="publication.contacts.allow_call_requests" ng-click="pubCtrl.toggleCallRequestForm()">
-            Заказать обратный звонок
-        </md-button>
-        <md-button class="md-raised md-primary" flex ng-show="publication.contacts.allow_messaging" ng-click="pubCtrl.toggleMessageForm()">
-            Оставить сообщение
-        </md-button>
-    </div>
+    <form novalidate class="animated" name="forms.publicationClaim" ng-show="claimFormIsVisible">
+        <div layout="column">
+            <md-input-container flex>
+                <label>Эл. почта</label>
+                <input name="email" type="email" ng-model="claim.email" required>
+                <div ng-messages="forms.publicationClaim.email.$error" ng-show="forms.publicationClaim.email.$touched">
+                    <div ng-message="required">Обязательное поле</div>
+                    <div ng-message="email">Некоректная эл. почта</div>
+                </div>
+            </md-input-container>
+            <md-input-container flex>
+                <label>Причина жалобы</label>
+                <md-select ng-model="claim.reason_sid">
+                    <md-option ng-repeat="reason in CLAIM.REASONS" value="[[ reason.id ]]">[[ reason.title ]]</md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container flex ng-show="claim.reason_sid == 0">
+                <label>Введите причину жалобы</label>
+                <input name="another_reason" type="text" ng-model="claim.another_reason" ng-required="claim.reason_sid == 0">
+                <div ng-messages="forms.publicationClaim.another_reason.$error" ng-show="forms.publicationClaim.another_reason.$touched">
+                    <div ng-message="required">Обязательное поле</div>
+                </div>
+            </md-input-container>
+        </div>
+        <div layout="row">
+            <md-button class="md-primary" flex ng-click="pubCtrl.toggleClaimForm()">
+                Отмена
+            </md-button>
+            <md-button class="md-raised md-primary" flex ng-click="pubCtrl.sendClaim()">
+                Отправить
+            </md-button>
+        </div>
+    </form>
 
 
     <div class="animated" layout="column" layout-align="center center" ng-show="callRequestSendSuccess || messageSendSuccess">
