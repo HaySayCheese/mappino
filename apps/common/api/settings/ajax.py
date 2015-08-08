@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
 from apps.views_base import CabinetView
-from collective.decorators.ajax import json_response, json_response_bad_request
+from collective.decorators.ajax import json_response
 from core.users.exceptions import AvatarExceptions
 from collective.exceptions import RuntimeException
 from collective.http.responses import HttpJsonResponse
@@ -38,41 +38,62 @@ class AccountView(CabinetView):
             landline_phone_number = user.landline_phone if user.landline_phone else ''
             add_landline_phone_number = user.add_landline_phone if user.add_landline_phone else ''
 
-            return HttpJsonResponse({
-                'code': 0,
-                'message': 'OK',
-                'data': {
-                    'account': {
-                        'first_name': user.first_name,
-                        'last_name': user.last_name,
-                        'email': user.email,
-                        'work_email': user.work_email or '',
-                        'skype': user.skype or '',
-                        'avatar_url': user.avatar.url() or '',
+            if user.is_moderator:
+                return HttpJsonResponse({
+                    'code': 0,
+                    'message': 'OK',
+                    'data': {
+                        'account': {
+                            'first_name': user.first_name,
+                            'last_name': user.last_name,
+                            'email': user.email,
+                            'work_email': user.work_email or '',
+                            'skype': user.skype or '',
+                            'avatar_url': user.avatar.url() or '',
 
-                        'mobile_phone': mobile_phone_number,
-                        'add_mobile_phone': add_mobile_phone_number,
-                        'landline_phone': landline_phone_number,
-                        'add_landline_phone': add_landline_phone_number,
-                    },
-                    'preferences': {
-                        # bool values
-                        'allow_call_requests': preferences.allow_call_requests,
-                        'allow_messaging': preferences.allow_messaging,
-                        'hide_email': preferences.hide_email,
-                        'hide_mobile_phone_number': preferences.hide_mobile_phone_number,
-                        'hide_add_mobile_phone_number': preferences.hide_add_mobile_phone_number,
-                        'hide_landline_phone_number': preferences.hide_landline_phone,
-                        'hide_add_landline_phone_number': preferences.hide_add_landline_phone,
-                        'hide_skype': preferences.hide_skype,
-
-                        # sids
-                        #Todo show to Dima
-                        'send_call_request_notifications_to_sid': str(preferences.send_call_request_notifications_to_sid),
-                        'send_message_notifications_to_sid': str(preferences.send_message_notifications_to_sid),
+                            'mobile_phone': mobile_phone_number,
+                            'add_mobile_phone': add_mobile_phone_number,
+                            'landline_phone': landline_phone_number,
+                            'add_landline_phone': add_landline_phone_number,
+                        },
                     }
-                }
-            })
+                })
+
+            else:
+                return HttpJsonResponse({
+                    'code': 0,
+                    'message': 'OK',
+                    'data': {
+                        'account': {
+                            'first_name': user.first_name,
+                            'last_name': user.last_name,
+                            'email': user.email,
+                            'work_email': user.work_email or '',
+                            'skype': user.skype or '',
+                            'avatar_url': user.avatar.url() or '',
+
+                            'mobile_phone': mobile_phone_number,
+                            'add_mobile_phone': add_mobile_phone_number,
+                            'landline_phone': landline_phone_number,
+                            'add_landline_phone': add_landline_phone_number,
+                        },
+                        'preferences': {
+                            # bool values
+                            'allow_call_requests': preferences.allow_call_requests,
+                            'allow_messaging': preferences.allow_messaging,
+                            'hide_email': preferences.hide_email,
+                            'hide_mobile_phone_number': preferences.hide_mobile_phone_number,
+                            'hide_add_mobile_phone_number': preferences.hide_add_mobile_phone_number,
+                            'hide_landline_phone_number': preferences.hide_landline_phone,
+                            'hide_add_landline_phone_number': preferences.hide_add_landline_phone,
+                            'hide_skype': preferences.hide_skype,
+
+                            # sids
+                            'send_call_request_notifications_to_sid': str(preferences.send_call_request_notifications_to_sid),
+                            'send_message_notifications_to_sid': str(preferences.send_message_notifications_to_sid),
+                        }
+                    }
+                })
 
 
     class PostResponses(object):

@@ -13,7 +13,7 @@ urlpatterns = patterns('apps.cabinet',
     url(r'', include('apps.cabinet.api.sellers.publications.urls')),
     url(r'', include('apps.cabinet.api.sellers.stats.urls')),
     url(r'', include('apps.cabinet.api.sellers.support.urls')),
-    url(r'', include('apps.cabinet.api.sellers.settings.urls')),
+    url(r'', include('apps.common.api.settings.urls')),
 
     # Moderators API
     url(r'', include('apps.cabinet.api.moderators.publications.urls')),

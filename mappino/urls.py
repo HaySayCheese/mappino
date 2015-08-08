@@ -6,6 +6,7 @@ urlpatterns = patterns('apps',
     # common
         # accounts API
         url(r'', include('apps.common.api.accounts.urls')),
+        url(r'', include('apps.common.api.settings.urls')),
 
 
     # main
