@@ -94,29 +94,7 @@ module Mappino.Cabinet.Moderators {
                         }
                     }
                 }
-
-                this.checkIfAllMeansOfCommunicationDisabled();
             });
-        }
-
-
-
-        private checkIfAllMeansOfCommunicationDisabled() {
-            if (!this.$scope.profile) return;
-
-            if (this.$scope.profile.preferences.hide_email && this.$scope.profile.preferences.hide_mobile_phone_number &&
-                this.$scope.profile.preferences.hide_add_mobile_phone_number && this.$scope.profile.preferences.hide_landline_phone_number &&
-                this.$scope.profile.preferences.hide_add_landline_phone_number && this.$scope.profile.preferences.hide_skype) {
-                // ------------------------------------------------------------------------------------------------------
-                var alert = this.$mdDialog.confirm()
-                    .parent(angular.element(document.body))
-                    .title(this.TXT.DIALOGS.ALL_MEANS_OF_COMMUNICATION_DISABLED.TITLE)
-                    .content(this.TXT.DIALOGS.ALL_MEANS_OF_COMMUNICATION_DISABLED.BODY)
-                    .ariaLabel(this.TXT.DIALOGS.ALL_MEANS_OF_COMMUNICATION_DISABLED.ARIA_LABEL)
-                    .ok(this.TXT.DIALOGS.ALL_MEANS_OF_COMMUNICATION_DISABLED.OK_BTN);
-
-                this.$mdDialog.show(alert);
-            }
         }
     }
 }

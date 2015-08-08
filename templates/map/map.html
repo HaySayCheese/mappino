@@ -12,9 +12,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1-rc3/angular-material.min.css">
 
-    {% compress css %}
-        <link rel="stylesheet" href="{{ static }}build/styles/map/base.min.css"/>
-    {% endcompress %}
+    <link rel="stylesheet" href="{{ static }}build/styles/map/base.min.css"/>
 
     <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places"></script>
 
@@ -38,11 +36,9 @@
 
 
 
-    {% compress js %}
-        <script src="{{ static }}build/libraries/markerwithlabel-1.1.9.min.js"></script>
-        <script src="{{ static }}build/libraries/angular-file-upload.js"></script>
-        <script src="{{ static }}build/libraries/angular-carousel.js"></script>
-    {% endcompress %}
+    <script src="{{ static }}build/libraries/markerwithlabel-1.1.9.min.js"></script>
+    <script src="{{ static }}build/libraries/angular-file-upload.js"></script>
+    <script src="{{ static }}build/libraries/angular-carousel.js"></script>
 
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -73,9 +69,7 @@
         </div>
     </main>
 
-    {% compress js %}
-        <!-- mappino.main.map -->
-        <script type="text/javascript" src="{{ static }}build/scripts/map/map.js"></script>
-    {% endcompress %}
+
+    <script type="text/javascript" src="{{ static }}build/scripts/map/map.js"></script>
 </body>
 </html>

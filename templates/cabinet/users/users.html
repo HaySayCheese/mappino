@@ -12,12 +12,12 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1-rc3/angular-material.min.css">
 
-    {% compress css %}
-        <link rel="stylesheet" href="{{ static }}build/styles/cabinet/users/base.min.css"/>
-    {% endcompress %}
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="{{ static }}build/styles/cabinet/users/base.min.css"/>
 
+
+    <!-- Js libs -->
     <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places"></script>
-
 
     <script src="http://yastatic.net/jquery/2.1.4/jquery.min.js"></script>
 
@@ -29,14 +29,10 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-messages.min.js"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
-
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1-rc3/angular-material.min.js"></script>
 
-
-
-    {% compress js %}
-        <script type="text/javascript" src="{{ static }}build/libraries/angular-file-upload.js"></script>
-    {% endcompress %}
+    <!-- Local js libs -->
+    <script type="text/javascript" src="{{ static }}build/libraries/angular-file-upload.js"></script>
 </head>
 <body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()">
 
@@ -95,8 +91,6 @@
     </div>
 
 
-    {% compress js %}
-        <script type="text/javascript" src="{{ static }}build/scripts/cabinet/users/cabinet.users.js"></script>
-    {% endcompress %}
+    <script type="text/javascript" src="{{ static }}build/scripts/cabinet/users/cabinet.users.js"></script>
 </body>
 </html>

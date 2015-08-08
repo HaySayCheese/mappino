@@ -10,90 +10,86 @@
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/angular_material/0.10.0/angular-material.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1-rc3/angular-material.min.css">
 
-    {% compress css %}
-        <link rel="stylesheet" href="{{ static }}build/styles/cabinet/moderators/base.min.css"/>
-    {% endcompress %}
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="{{ static }}build/styles/cabinet/moderators/base.min.css"/>
 
+
+    <!-- Js libs -->
     <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places"></script>
 
-
     <script src="http://yastatic.net/jquery/2.1.4/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 
-
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0/angular.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0/angular-cookies.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0/angular-resource.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0/angular-animate.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0/angular-aria.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.0/angular-messages.min.js"></script>
-
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-cookies.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-resource.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-animate.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-aria.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-messages.min.js"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1-rc3/angular-material.min.js"></script>
 
-    <script src="//ajax.googleapis.com/ajax/libs/angular_material/0.10.0/angular-material.min.js"></script>
-
-
-
-    {% compress js %}
-        <script type="text/javascript" src="{{ static }}build/libraries/angular-file-upload.js"></script>
-    {% endcompress %}
+    <!-- Local js libs -->
+    <script type="text/javascript" src="{{ static }}build/libraries/angular-file-upload.js"></script>
 </head>
 <body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()">
 
-    {% block navbar %}
-        <md-toolbar class="md-whiteframe-z1">
-            <nav class="md-toolbar-tools" show-sm hide-gt-sm>
-                <md-button href class="nav-button" aria-label="Открыть меню" ng-click="cabinetCtrl.toggleSidenav()">
-                    <md-icon>menu</md-icon>
-                </md-button>
-            </nav>
+    <md-toolbar class="md-whiteframe-z1">
+        <nav class="md-toolbar-tools" show-sm hide-gt-sm layout="row" layout-align="start center">
+            <md-button href class="nav-button" aria-label="Открыть меню" ng-click="cabinetCtrl.toggleSidenav()">
+                <md-icon>menu</md-icon>
+            </md-button>
+        </nav>
 
-            <nav class="md-toolbar-tools" hide-sm>
-                <md-button ui-sref="publications" class="nav-button" aria-label="Модерация">
-                    Модерация
-                </md-button>
-                <md-button ui-sref="support" class="nav-button" aria-label="Жалобы">
-                    Жалобы
-                </md-button>
+        <nav class="md-toolbar-tools" hide-sm>
+            <md-button ui-sref="publications" class="nav-button" aria-label="Модерация">
+                Модерация
+            </md-button>
+            <md-button ui-sref="support" class="nav-button" aria-label="Жалобы">
+                Жалобы
+            </md-button>
 
-                <span flex></span>
+            <span flex></span>
 
-                <md-button ui-sref="settings" class="nav-button" aria-label="Настройки">
-                    Настройки
-                </md-button>
-            </nav>
+            <md-button ui-sref="settings" class="nav-button" ng-show="userData.account.full_name">
+                <div layout="row" layour-align="center center">
+                    <img class="navbar-user-avatar" ng-src="[[ userData.account.avatar_url ]]" alt="" ng-show="userData.account.avatar_url"
+                         on-error-src="{{ static }}build/images/cabinet/user.png" />
+                    <img class="navbar-user-avatar" src="{{ static }}build/images/cabinet/user.png" ng-hide="userData.account.avatar_url" alt="" />
+
+                    <span ng-show="userData.account.first_name && userData.account.last_name">[[ userData.account.full_name ]]</span>
+                    <span ng-hide="userData.account.first_name && userData.account.last_name">Настройки</span>
+                </div>
+            </md-button>
+        </nav>
+    </md-toolbar>
+
+    <md-progress-linear md-mode="indeterminate" ng-show="loaders.navbar" ng-cloak></md-progress-linear>
+
+
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav" ng-cloak>
+        <md-toolbar>
+            <h1 class="md-toolbar-tools">mappino</h1>
         </md-toolbar>
-
-        <md-progress-linear md-mode="indeterminate" ng-show="loaders.base" ng-cloak></md-progress-linear>
-    {% endblock %}
-
-
-    {% block sidenav %}
-        <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav" ng-cloak>
-            <md-toolbar>
-                <h1 class="md-toolbar-tools">mappino</h1>
-            </md-toolbar>
-            <md-content layout-padding>
-                <md-button ng-click="close()" class="md-primary">
-                    Close Sidenav Right
-                </md-button>
-            </md-content>
-        </md-sidenav>
-    {% endblock %}
+        <md-content layout-padding>
+            <md-button ng-click="close()" class="md-primary">
+                Close Sidenav Right
+            </md-button>
+        </md-content>
+    </md-sidenav>
 
 
-    {% block wrapper %}
-        <main layout="row" layout-align="center start">
-            <div ui-view flex></div>
-        </main>
-    {% endblock %}
+    <main layout="row" layout-align="center start">
+        <md-content flex ui-view></md-content>
+    </main>
+
+    <div class="overlay-loader -animation" layout="column" layout-align="center center" ng-show="loaders.overlay">
+        <md-progress-circular class="md-accent" md-mode="indeterminate" md-diameter="100"></md-progress-circular>
+    </div>
 
 
-    {% compress js %}
-        <script type="text/javascript" src="{{ static }}build/scripts/cabinet/moderators/cabinet.moderators.js"></script>
-    {% endcompress %}
+    <script type="text/javascript" src="{{ static }}build/scripts/cabinet/moderators/cabinet.moderators.js"></script>
 </body>
 </html>

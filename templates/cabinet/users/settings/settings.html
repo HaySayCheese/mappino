@@ -68,7 +68,7 @@
                                 <label>Код</label>
                                 <input type="text" name="mobile_code" ng-model="profile.account.mobile_code" disabled>
                             </md-input-container>
-                            <md-input-container>
+                            <md-input-container flex="80">
                                 <label>Моб. телефон</label>
                                 <input type="tel" name="mobile_phone" ng-model="profile.account.mobile_phone" minlength="9" maxlength="9" only-number required>
                                 <div ng-messages="userProfileForm.mobile_phone.$error">
@@ -115,7 +115,7 @@
                                 <label>Код</label>
                                 <input type="text" name="add_mobile_code" ng-model="profile.account.add_mobile_code" disabled>
                             </md-input-container>
-                            <md-input-container>
+                            <md-input-container flex="80">
                                 <label>Доп. моб. телефон</label>
                                 <input type="tel" name="add_mobile_phone" ng-model="profile.account.add_mobile_phone" minlength="9" only-number maxlength="9">
                                 <div ng-messages="userProfileForm.add_mobile_phone.$error">
