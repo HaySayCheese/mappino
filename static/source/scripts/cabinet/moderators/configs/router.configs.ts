@@ -8,37 +8,22 @@ module Mappino.Cabinet.Moderators {
 
         constructor(private app: angular.IModule) {
             app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
-                $urlRouterProvider.otherwise("/publications/");
+                $urlRouterProvider.otherwise("/moderating/");
 
                 $stateProvider
-                    .state('publications', {
-                        url: "/publications/",
-                        templateUrl: '/ajax/template/cabinet/publications/briefs/'
+                    .state('moderating', {
+                        url: "/moderating/",
+                        templateUrl: '/ajax/template/cabinet/moderators/publication/'
                     })
 
-
-                    .state('publication_view', {
-                        url: "/publication/:id/view/",
-                        templateUrl: '/ajax/template/cabinet/publications/publication/'
-                    })
-                    .state('publication_edit', {
-                        url: "/publication/:id/edit/",
-                        templateUrl: '/ajax/template/cabinet/publications/publication/'
-                    })
-
-
-                    .state('support', {
-                        url: "/support/",
-                        templateUrl: '/ajax/template/cabinet/support/'
-                    })
-                    .state('ticket_view', {
-                        url: "/support/:ticket_id",
-                        templateUrl: '/ajax/template/cabinet/support/ticket/'
+                    .state('claims', {
+                        url: "/claims/",
+                        templateUrl: '/ajax/template/cabinet/moderators/claims/'
                     })
 
                     .state('settings', {
                         url: "/settings/",
-                        templateUrl: '/ajax/template/cabinet/settings/'
+                        templateUrl: '/ajax/template/cabinet/moderators/settings/'
                     });
 
                 $locationProvider.hashPrefix('!');
