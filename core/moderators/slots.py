@@ -15,9 +15,9 @@ def init_moderators_slots():
 
 
 def __add_publication_to_the_check_queue(sender, **kwargs):
-    PublicationsCheckQueue.add(kwargs['tid'], kwargs['hid'])
+    PublicationsCheckQueue.add(kwargs['tid'], kwargs['hash_id'])
 
 
 
 def __remove_publication_from_the_check_queue(sender, **kwargs):
-    PublicationsCheckQueue.remove_if_exists(kwargs['tid'], kwargs['hid'])
+    PublicationsCheckQueue.remove_if_exists(kwargs['tid'], kwargs['hash_id'])
