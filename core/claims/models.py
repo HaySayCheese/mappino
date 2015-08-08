@@ -16,7 +16,7 @@ class PublicationsClaims(models.Model):
     class Reasons(object):
         other = 0
 
-        owner_is_and_intermediary = 1 # власник оголошення - посередник
+        owner_is_an_intermediary = 1 # власник оголошення - посередник
         untruthful_content = 2
         photos_do_not_correspond_to_reality = 3
 
@@ -66,7 +66,7 @@ class PublicationsClaims(models.Model):
 
     @classmethod
     def new(cls, publication_tid, publication_hid, reason_tid, email, custom_message=None):
-        if reason_tid == cls.Reasons.owner_is_and_intermediary:
+        if reason_tid == cls.Reasons.owner_is_an_intermediary:
             message = cls.Messages.owner_is_intermediary()
 
         elif reason_tid == cls.Reasons.untruthful_content:
