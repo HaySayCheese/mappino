@@ -78,7 +78,11 @@ module Mappino.Map {
                 'message':  message['text']
             })
                 .then(response => {
-                    angular.isFunction(successCallback) && successCallback(response.data)
+                    if (response.data['code'] == 0) {
+                        angular.isFunction(successCallback) && successCallback(response.data)
+                    } else {
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
+                    }
                 }, response => {
                     this.$mdToast.show(
                         this.$mdToast.simple()
@@ -98,11 +102,40 @@ module Mappino.Map {
                 'phone_number': callRequest['phoneNumber']
             })
                 .then(response => {
-                    angular.isFunction(successCallback) && successCallback(response.data)
+                    if (response.data['code'] == 0) {
+                        angular.isFunction(successCallback) && successCallback(response.data)
+                    } else {
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
+                    }
                 }, response => {
                     this.$mdToast.show(
                         this.$mdToast.simple()
                             .content(this.TXT.TOASTS.PUBLICATION.SEND_CALL_REQUEST.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                })
+        }
+
+
+
+        public sendClaim(claim: Object, publicationIds: any, successCallback?, errorCallback?) {
+            this.$http.post(`/ajax/api/publications/${publicationIds.tid}:${publicationIds.hid}/claims/`, {
+                'email':        claim['email'],
+                'reason_sid':   claim['reason_sid'],
+                'message':      claim['another_reason']
+            })
+                .then(response => {
+                    if (response.data['code'] == 0) {
+                        angular.isFunction(successCallback) && successCallback(response.data)
+                    } else {
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
+                    }
+                }, response => {
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.SEND_CLAIM.TITLE)
                             .position(this.toastOptions.position)
                             .hideDelay(this.toastOptions.delay)
                     );

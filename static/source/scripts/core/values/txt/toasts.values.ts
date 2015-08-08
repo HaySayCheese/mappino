@@ -55,6 +55,10 @@ module Mappino.Core.Values {
 
                     'SEND_CALL_REQUEST': {
                         'TITLE': 'Во время запроса обратного звонка возникла ошибка'
+                    },
+
+                    'SEND_CLAIM': {
+                        'TITLE': 'Во время отправки жалобы возникла ошибка'
                     }
                 },
 
