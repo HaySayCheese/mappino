@@ -266,7 +266,7 @@ module Mappino.Map {
             if (this.$scope.claimFormIsVisible) {
                 this.$scope.claim = {
                     email:          null,
-                    reason_sid:     null,
+                    reason_sid:     1,
                     another_reason: null
                 };
 
