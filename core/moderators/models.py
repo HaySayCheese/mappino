@@ -18,23 +18,23 @@ class PublicationsCheckQueue(AbstractPublicationModel):
 
 
     @classmethod
-    def next_publication(cls, moderator):
+    def next_record(cls, moderator):
         # if moderator already have one publication bound for himself -
         # then he must proceed with it.
         bound_record = cls.__record_bound_by_moderator(moderator)
         if bound_record:
-            return bound_record.publication
+            return bound_record
 
 
         # claimed records should be processed firstly
         claimed_record = cls.__record_with_claims(moderator)
         if claimed_record:
-            return claimed_record.publication
+            return claimed_record
 
 
         regular_record = cls.__regular_record(moderator)
         if regular_record:
-            return regular_record.publication
+            return regular_record
 
 
         # no records for check
@@ -64,6 +64,10 @@ class PublicationsCheckQueue(AbstractPublicationModel):
 
         # note: no claims closing is needed
         self.delete()
+
+
+    def claims(self):
+        return PublicationsClaims.objects.by_publication(self.publication_tid, self.publication_hash_id)
 
 
     @classmethod
@@ -195,11 +199,11 @@ class PublicationsClaims(models.Model):
 
     moderator = models.ForeignKey(Users, null=True, related_name='moderator')
     moderator_notice = models.TextField(null=True)
-    message_for_owner = models.TextField(null=True)
 
 
     class Meta:
         db_table = 'moderators_publications_claims'
+        ordering = ['-date_reported', '-closed', ]
 
 
     class ObjectsManager(Manager):
@@ -247,8 +251,8 @@ class PublicationsClaims(models.Model):
 
 
             with transaction.atomic():
-                # add publication to the check queue
-                PublicationsCheckQueue.objects.add(publication_tid, publication_hash_id)
+                # add publication to the check queue or update uts date added if it is already exits
+                PublicationsCheckQueue.objects.add_or_update(publication_tid, publication_hash_id)
 
                 return self.create(
                     reason_tid = reason_tid,

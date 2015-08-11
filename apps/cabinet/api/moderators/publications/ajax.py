@@ -2,7 +2,9 @@
 from django.core.exceptions import ObjectDoesNotExist
 from apps.views_base import ModeratorsView
 from collective.decorators.ajax import json_response, json_response_bad_request
+from collective.http.responses import HttpJsonResponse
 from collective.methods.request_data_getters import angular_post_parameters
+from core.claims.models import PublicationsClaims
 from core.moderators.models import PublicationsCheckQueue
 from core.publications import formatters
 from core.publications.constants import HEAD_MODELS
@@ -25,6 +27,10 @@ class NextPublicationView(ModeratorsView):
 
     @classmethod
     def get(cls, request):
+
+        # if request.get_cookie()
+
+
         while True:
             record = PublicationsCheckQueue.get_next_record()
             if record is None:
@@ -51,65 +57,35 @@ class NextPublicationView(ModeratorsView):
                 'tid': publication.tid,
                 'hash_id': publication.hash_id,
             }
-            return cls.GetResponses.ok(data)
+
+
+            claims = PublicationsClaims.objects.all()
+            data['claims'] = [
+                {
+                    'date_reported': c.date_reported.strftime('%Y-%m-%dT%H:%M:%SZ'),
+
+                    'email': c.email,
+                    'message': c.message,
+                    'publication_tid': c.publication_tid,
+                    'publication_hash_id': c.publication_hash_id,
+
+                    'moderator': {
+                        'hash_id': c.moderator.hash_id,
+                        'first_na<me': c.moderator.first_name,
+                        'last_name': c.moderator.last_name,
+                    }
+                } for c in claims
+            ]
+
+
+            response = HttpJsonResponse(data)
+            response.set_signed_cookie('publication', '{0}:{1}'.format(publication.id, publication.hash_id))
+            return response
 
 
         # todo: перевірити чи в привильному порядку віддаються оголошення
 
 
-class PublicationAcceptOrRejectView(ModeratorsView):
-    class PostResponses(object):
-        @staticmethod
-        @json_response
-        def ok():
-            return {
-                'code': 0,
-                'message': 'OK',
-            }
-
-
-        @staticmethod
-        @json_response_bad_request
-        def invalid_parameters():
-            return {
-                'code': 1,
-                'message': 'Requests contains invalid parameters.'
-            }
-
-
-    @classmethod
-    def post(cls, request, *args):
-        try:
-            publication_id = angular_post_parameters(request, ['publication_id'])['publication_id']
-            tid, hash_id = publication_id.split(':')
-            tid = int(tid)
-
-        except (ValueError, KeyError):
-            return cls.PostResponses.invalid_parameters()
-
-
-        try:
-            record = PublicationsCheckQueue\
-                .queryset_by_publication(tid, hash_id)\
-                .only('publication_tid', 'publication_hash_id')\
-                [:1][0]
-        except IndexError:
-            return cls.PostResponses.invalid_parameters()
-
-
-        operation = args[0]
-        if operation not in ['accept', 'reject']:
-            return cls.PostResponses.invalid_parameters()
-
-
-        if operation == 'accept':
-            record.accept()
-
-        elif operation == 'reject':
-            record.reject()
-
-
-        return cls.PostResponses.ok()
 
 
 class PublicationMessageView(ModeratorsView):

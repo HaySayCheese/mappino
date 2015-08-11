@@ -1,14 +1,15 @@
 #coding=utf-8
 from django.db import models
 from django.db.models import Manager, Q
+from django.utils.timezone import now
 from core.publications.constants import HEAD_MODELS
 from core.users.models import Users
 
 
 class AbstractPublicationModel(models.Model):
     date_added = models.DateTimeField(auto_now_add=True, db_index=True)
-    publication_tid = models.PositiveSmallIntegerField()
-    publication_hash_id = models.TextField()
+    publication_tid = models.PositiveSmallIntegerField(db_index=True)
+    publication_hash_id = models.TextField(db_index=True)
 
 
     class Meta:
@@ -22,6 +23,19 @@ class AbstractPublicationModel(models.Model):
                 publication_tid = tid,
                 publication_hash_id = hash_id,
             )
+
+
+        def add_or_update(self, tid, hash_id):
+            records = self.filter(publication_tid=tid, publication_hash_id=hash_id)
+            for record in records:
+                record.date_added = now()
+                record.save()
+            else:
+                return self.add(tid, hash_id)
+
+
+        def by_tid_and_hash_id(self, tid, hash_id):
+            return self.filter(publication_tid=tid, publication_hash_id=hash_id)
 
 
         def filter_by_publications_ids(self, publications_ids):
