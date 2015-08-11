@@ -126,7 +126,7 @@ class PublicationView(ModeratorsView):
                 'date_closed': claim.date_closed.strftime('%Y-%m-%dT%H:%M:%SZ') if claim.date_closed else None,
                 'email': claim.email,
                 'message': claim.message if claim.message else '',
-                'moderator_name': claim.moderator.full_name() if claim.moderator else None,
+                'moderator_name': claim.moderator.full_name() if claim.moderator and claim.date_closed else None,
                 'moderator_notice': claim.moderator_notice,
 
             } for claim in check_record.claims()
@@ -224,8 +224,8 @@ class ClaimsNoticeView(ModeratorsView):
             raise SuspiciousOperation('Attempt to modify closed claim.')
 
 
-        message = angular_post_parameters(request).get('message', '')
-        claim.message = message
+        notice = angular_post_parameters(request).get('notice', '')
+        claim.moderator_notice = notice
         claim.save()
         return cls.PostResponses.ok()
 
