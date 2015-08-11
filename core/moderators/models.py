@@ -260,7 +260,7 @@ class PublicationsClaims(models.Model):
 
 
         def by_publication(self, tid, hash_id):
-            return self.filter(publication_tid=tid, publication_hid=hash_id)
+            return self.filter(publication_tid=tid, publication_hash_id=hash_id)
 
 
     objects = ObjectsManager()
