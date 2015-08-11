@@ -277,5 +277,5 @@ class PublicationsClaims(models.Model):
 
     def close(self, moderator):
         self.moderator = moderator
-        self.state_sid = self.States.processed
+        self.closed = True
         self.save()

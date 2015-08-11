@@ -3,6 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from apps.views_base import ModeratorsView
 from collective.decorators.ajax import json_response, json_response_bad_request
+from collective.methods.request_data_getters import angular_post_parameters
 from core.moderators.models import PublicationsCheckQueue
 from core.publications import formatters
 from core.publications.constants import HEAD_MODELS
@@ -87,6 +88,15 @@ class PublicationView(ModeratorsView):
             }
 
 
+        @staticmethod
+        @json_response
+        def no_such_publication():
+            return {
+                'code': 2,
+                'message': 'No such publications.'
+            }
+
+
     @classmethod
     def get(cls, request, *args):
         try:
@@ -101,7 +111,7 @@ class PublicationView(ModeratorsView):
             check_record = PublicationsCheckQueue.objects.get(publication_tid=tid, publication_hash_id=hash_id)
             publication = check_record.publication
         except ObjectDoesNotExist:
-            return cls.GetResponses.invalid_parameters()
+            return cls.GetResponses.no_such_publication()
 
 
         if not publication.is_published():
@@ -114,8 +124,9 @@ class PublicationView(ModeratorsView):
                 'hash_id': claim.hash_id,
                 'date_reported': claim.date_reported.strftime('%Y-%m-%dT%H:%M:%SZ'),
                 'closed': claim.closed,
-                'email': claim.mesage,
-                'moderator_hash_id': claim.moderator.hash_id,
+                'email': claim.email,
+                'message': claim.message,
+                'moderator_hash_id': claim.moderator.hash_id if claim.moderator else None,
                 'moderator_notice': claim.moderator_notice,
 
             } for claim in check_record.claims()
@@ -152,29 +163,29 @@ class PublicationAcceptRejectOrHoldView(ModeratorsView):
         except (IndexError, ValueError, KeyError):
             return cls.PostResponses.invalid_parameters()
 
-
         try:
             record = PublicationsCheckQueue.objects.by_tid_and_hash_id(tid, hash_id)[:1][0]
         except IndexError:
             return cls.PostResponses.invalid_parameters()
 
 
-        operation = args[0]
+        operation = args[2]
         if operation not in ['accept', 'reject', 'hold']:
             return cls.PostResponses.invalid_parameters()
 
 
         if operation == 'accept':
-            record.accept()
+            record.accept(request.user)
 
         elif operation == 'reject':
-            record.reject()
+            message = angular_post_parameters(request).get('message')
+            record.reject(request.user, message)
 
         elif operation == 'hold':
-            record.hold()
+            record.hold(request.user)
 
-        else:
-            return cls.PostResponses.ok()
+
+        return cls.PostResponses.ok()
 
 
 
