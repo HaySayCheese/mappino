@@ -34,6 +34,10 @@ class AbstractPublicationModel(models.Model):
                 return self.add(tid, hash_id)
 
 
+        def remove_if_exists(self, tid, hash_id):
+            self.filter(publication_tid=tid, publication_hash_id=hash_id).delete()
+
+
         def by_tid_and_hash_id(self, tid, hash_id):
             return self.filter(publication_tid=tid, publication_hash_id=hash_id)
 

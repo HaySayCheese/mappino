@@ -24,9 +24,8 @@ class RedisHandler(object):
 
     @classmethod
     def publications_bound_by_moderator(cls, moderator):
-        prefix = ''.join(
-            cls.publication_key(moderator, '', '').split(cls.__splitter)[:2])
-
+        prefix, moderator_id  = cls.publication_key(moderator, '', '').split(cls.__splitter)[:2]
+        prefix = prefix + cls.__splitter + moderator_id
 
         keys = cls.__redis.keys(prefix + '*')
 

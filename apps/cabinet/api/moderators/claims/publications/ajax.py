@@ -2,11 +2,12 @@
 from django.core.exceptions import ObjectDoesNotExist
 
 from apps.views_base import ModeratorsView
-from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
+from collective.decorators.ajax import json_response, json_response_bad_request
 from collective.methods.request_data_getters import angular_post_parameters
 from core.moderators.models import PublicationsCheckQueue
 from core.publications import formatters
 from core.publications.constants import HEAD_MODELS
+
 
 
 class NextPublicationToCheckView(ModeratorsView):
@@ -42,7 +43,7 @@ class NextPublicationToCheckView(ModeratorsView):
             check_record = PublicationsCheckQueue.next_record(request.user)
             if check_record:
                 # check if publication exists
-                model = HEAD_MODELS[check_record.pulication_tid]
+                model = HEAD_MODELS[check_record.publication_tid]
                 if model.objects.filter(hash_id=check_record.publication_hash_id).count() > 0:
                     return cls.GetResponses.ok(check_record.publication_tid, check_record.publication_hash_id)
 

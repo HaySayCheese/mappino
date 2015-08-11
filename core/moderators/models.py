@@ -79,14 +79,15 @@ class PublicationsCheckQueue(AbstractPublicationModel):
             return None
 
 
-        try:
-            record = cls.objects.filter_by_publications_ids(publications_ids)[:1][0]
-            publication = record.publication
-            RedisHandler.bind_to_the_moderator(moderator, publication.tid, publication.hash_id) # prolong binding
-            return record
+        for tid, hash_id, _ in publications_ids:
+            try:
+                return cls.objects.get(publication_tid=tid, publication_hash_id=hash_id)
 
-        except IndexError:
-            return None
+            except ObjectDoesNotExist:
+                # redis contains invalid binding
+                RedisHandler.unbind_from_the_moderator(moderator, tid, hash_id)
+
+        return None
 
 
     @classmethod
@@ -128,17 +129,11 @@ class PublicationsCheckQueue(AbstractPublicationModel):
     def __regular_record(cls, moderator):
         # exclude all publications that are already bound to moderators
         already_bound_publications_ids = RedisHandler.all_bound_publications()
-        if not already_bound_publications_ids:
-            # if no ids has been received - than Q-object will be build empty,
-            # and, as a result, - exclude() will be called with empty filter.
-            return None
-
 
         try:
-            claimed_record = cls.objects.exclude_publications_ids(already_bound_publications_ids)[:1][0]
-            publication = claimed_record.publication
-            RedisHandler.bind_to_the_moderator(moderator, publication.tid, publication.hash_id) # prolong binding
-            return claimed_record
+            record = cls.objects.exclude_publications_ids(already_bound_publications_ids)[:1][0]
+            RedisHandler.bind_to_the_moderator(moderator, record.publication_tid, record.publication_hash_id) # prolong binding
+            return record
 
         except IndexError:
             return None
