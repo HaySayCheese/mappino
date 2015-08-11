@@ -269,7 +269,7 @@ class ClaimCloseView(ModeratorsView):
 
 
         claim.close(request.user)
-        return cls.PostResponses.ok()
+        return cls.PostResponses.ok(claim)
 
 
 
