@@ -199,7 +199,7 @@ class PublicationsClaims(models.Model):
 
     class Meta:
         db_table = 'moderators_publications_claims'
-        ordering = ['-date_reported', '-closed', ]
+        ordering = ['-date_reported', ]
 
 
     class ObjectsManager(Manager):
