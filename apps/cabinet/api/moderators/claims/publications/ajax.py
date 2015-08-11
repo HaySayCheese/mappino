@@ -27,11 +27,12 @@ class NextPublicationToCheckView(ModeratorsView):
 
 
         @staticmethod
-        @json_response_not_found
+        @json_response
         def no_publications_to_check():
             return {
                 'code': 0,
-                'message': 'No publications in check queue.',
+                'message': 'OK',
+                'data': None
             }
 
 
