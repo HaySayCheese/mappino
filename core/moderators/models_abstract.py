@@ -44,7 +44,7 @@ class AbstractPublicationModel(models.Model):
 
         def filter_by_publications_ids(self, publications_ids):
             q = Q()
-            for tid, hash_id, _ in publications_ids:
+            for tid, hash_id in publications_ids:
                 q |= Q(publication_tid=tid, publication_hash_id=hash_id)
 
             return self.filter(q)

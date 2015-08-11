@@ -117,8 +117,8 @@ class PublicationsCheckQueue(AbstractPublicationModel):
 
         try:
             claimed_record = query[:1][0]
-            publication = claimed_record.publication
-            RedisHandler.bind_to_the_moderator(moderator, publication.tid, publication.hash_id) # prolong binding
+            RedisHandler.bind_to_the_moderator(
+                moderator, claimed_record.publication_tid, claimed_record.publication_hash_id) # prolong binding
             return claimed_record
 
         except IndexError:
