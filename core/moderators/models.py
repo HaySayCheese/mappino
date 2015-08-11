@@ -95,6 +95,7 @@ class PublicationsCheckQueue(AbstractPublicationModel):
     def __record_with_claims(cls, moderator):
         # filter only publications with claims
         claimed_publications_ids = PublicationsClaims.objects\
+            .filter(date_closed__isnull=True)\
             .values_list('publication_tid', 'publication_hash_id')\
             .distinct()
 
@@ -147,6 +148,9 @@ class PublicationsCheckQueue(AbstractPublicationModel):
 
 
 class RejectedPublications(AbstractProcessedPublicationModel):
+    message = models.TextField()
+
+
     class Meta:
         db_table = 'moderators_publications_rejected'
 

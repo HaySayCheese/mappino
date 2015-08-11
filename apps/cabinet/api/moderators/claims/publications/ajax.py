@@ -190,6 +190,10 @@ class PublicationAcceptRejectOrHoldView(ModeratorsView):
 
 
 
+# class HeldPublicationsView()
+
+
+
 class ClaimsNoticeView(ModeratorsView):
     class PostResponses(object):
         @staticmethod
