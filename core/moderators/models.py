@@ -189,7 +189,7 @@ class PublicationsClaims(models.Model):
     hash_id = models.TextField(default=generate_sha256_unique_id, unique=True)
     reason_tid = models.PositiveSmallIntegerField()
     date_reported = models.DateTimeField(auto_now_add=True)
-    closed = models.BooleanField(db_index=True, db_index=True)
+    closed = models.BooleanField(db_index=True)
 
     email = models.EmailField()
     message = models.TextField(null=True)
