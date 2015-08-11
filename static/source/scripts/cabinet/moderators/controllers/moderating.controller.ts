@@ -3,6 +3,11 @@
 
 module Mappino.Cabinet.Moderators {
     export class ModeratingController {
+        private publicationIds: any = {
+            tid: null,
+            hid: null
+        };
+
         public static $inject = [
             '$scope',
             '$rootScope',
@@ -17,20 +22,47 @@ module Mappino.Cabinet.Moderators {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Модериция mappino';
 
-            $rootScope.loaders.overlay  = true;
-            moderatingService.load(response => {
-                this.$scope.publicationTemplateUrl = `/ajax/template/map/publication/detailed/${response.data.publication.tid}/`;
+            this.load();
+        }
 
-                $scope.publication = response.data;
-                $rootScope.loaders.overlay = false;
-            });
+
+
+        private load() {
+            this.$rootScope.loaders.overlay = true;
+
+            if (this.$state.params['publication_id']) {
+                this.publicationIds.tid = this.$state.params['publication_id'].split(':')[0];
+                this.publicationIds.hid = this.$state.params['publication_id'].split(':')[1];
+
+                this.$scope.publicationTemplateUrl = `/ajax/template/map/publication/detailed/${this.publicationIds.tid}/`;
+
+                this.moderatingService.load(this.publicationIds, response => {
+                    this.$scope.publication = response.data;
+                    this.$rootScope.loaders.overlay = false;
+                });
+            } else {
+                this.moderatingService.getPublicationId(response => {
+                    this.publicationIds.tid = response.data.publication['tid'];
+                    this.publicationIds.hid = response.data.publication['hash_id'];
+
+                    this.$scope.publicationTemplateUrl = `/ajax/template/map/publication/detailed/${this.publicationIds.tid}/`;
+
+                    this.moderatingService.load(this.publicationIds, response => {
+                        this.$scope.publication = response.data;
+                        this.$rootScope.loaders.overlay = false;
+
+                        this.$state.go('moderating', { publication_id: `${this.publicationIds.tid}:${this.publicationIds.hid}` });
+                    });
+                });
+            }
         }
 
 
 
         public acceptPublication() {
+            this.$rootScope.loaders.overlay  = true;
             this.moderatingService.accept(ticketId => {
-                //
+                this.$rootScope.loaders.overlay = false;
             });
         }
 
