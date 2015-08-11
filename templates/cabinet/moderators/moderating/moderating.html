@@ -1,5 +1,7 @@
-<div class="moderating-page" layout="column" layout-align="start center" ng-controller="ModeratingController as modCtrl">
-    <md-card ng-hide="loaders.overlay">
+<div class="moderating-page" layout-wrap layout-padding layout-sm="column" layout-md="column" layout-lg="column" layout-gt-lg="row"
+     layout-align-md="start center" layout-align-lg="start center" layout-align-gt-lg="center start" ng-controller="ModeratingController as modCtrl">
+
+    <md-card ng-hide="loaders.overlay || !publication">
         <md-card-content>
             <div class="publication-view" layout="column">
                 <div layout="column">
@@ -48,5 +50,57 @@
                 Хорошо
             </md-button>
         </div>
+    </md-card>
+
+
+    <div ng-hide="loaders.overlay || !publication.claims">
+        <md-card ng-repeat="claim in publication.claims">
+            <md-card-content layout="column">
+                <div class="md-caption" layout="row" layout-padding>
+                    <span>Создано: [[ claim.date_reported  | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                    <span flex></span>
+                    <span>[[ claim.email ]]</span>
+                </div>
+                <div class="md-body-1" layout="row" layout-align="start center" layout-padding>
+                    <span class="md-body-2">Жалоба:&nbsp;</span>
+                    [[ claim.message ]]
+                </div>
+                <div class="md-body-1" layout="row" layout-align="start center" layout-padding>
+                    <span class="md-body-2">Последняя заметка:&nbsp;</span>
+                    [[ claim.moderator_notice ]]
+                </div>
+                <md-divider></md-divider>
+                <div class="md-caption" layout="row" layout-padding ng-if="claim.date_closed">
+                    <span>Обработано: [[ claim.date_closed | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                    <span flex></span>
+                    <span>Модератором: [[ claim.moderator_name ]]</span>
+                </div>
+                <div layout="row" ng-if="!claim.date_closed">
+                    <md-input-container flex>
+                        <label>Заметка к жалобе (видима только модераторам)</label>
+                        <input type="text" name="claim_notice" ng-model="moderator.moderator_notice" required>
+                    </md-input-container>
+                    <md-button class="md-fab md-primary" ng-disabled="!moderator.moderator_notice" ng-click="modCtrl.sendNotice(claim)">
+                        <md-icon>send</md-icon>
+                        <md-tooltip md-direction="top" md-delay="0">
+                            Добавить заметку
+                        </md-tooltip>
+                    </md-button>
+                    <md-button class="md-fab md-primary" ng-click="modCtrl.closeClaim(claim)">
+                        <md-icon>check</md-icon>
+                        <md-tooltip md-direction="top" md-delay="0">
+                            Закрыть жалобу
+                        </md-tooltip>
+                    </md-button>
+                </div>
+            </md-card-content>
+        </md-card>
+    </div>
+
+
+    <md-card ng-show="!loaders.overlay && !publication">
+        <md-card-content>
+            gdsgsdgsd
+        </md-card-content>
     </md-card>
 </div>

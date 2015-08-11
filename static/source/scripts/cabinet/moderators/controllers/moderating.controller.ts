@@ -22,13 +22,17 @@ module Mappino.Cabinet.Moderators {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Модериция mappino';
 
+            $scope.moderator = {
+                moderator_notice: ""
+            };
+
+
             this.load();
         }
 
 
 
         private load() {
-            console.log('fsfsfsf')
             this.$rootScope.loaders.overlay = true;
 
             if (this.$state.params['publication_id']) {
@@ -40,20 +44,19 @@ module Mappino.Cabinet.Moderators {
                 this.moderatingService.load(this.publicationIds, response => {
                     this.$scope.publication = response.data;
                     this.$rootScope.loaders.overlay = false;
+                }, response => {
+                    this.$state.go('moderating', { publication_id: null });
                 });
             } else {
                 this.moderatingService.getPublicationId(response => {
-                    this.publicationIds.tid = response.data.publication['tid'];
-                    this.publicationIds.hid = response.data.publication['hash_id'];
-
-                    this.$scope.publicationTemplateUrl = `/ajax/template/map/publication/detailed/${this.publicationIds.tid}/`;
-
-                    this.moderatingService.load(this.publicationIds, response => {
-                        this.$scope.publication = response.data;
-                        this.$rootScope.loaders.overlay = false;
+                    if (response.data) {
+                        this.publicationIds.tid = response.data.publication['tid'];
+                        this.publicationIds.hid = response.data.publication['hash_id'];
 
                         this.$state.go('moderating', { publication_id: `${this.publicationIds.tid}:${this.publicationIds.hid}` });
-                    });
+                    } else {
+                        this.$rootScope.loaders.overlay = false;
+                    }
                 });
             }
         }
@@ -64,6 +67,7 @@ module Mappino.Cabinet.Moderators {
             this.$rootScope.loaders.overlay  = true;
             this.moderatingService.accept(this.publicationIds, response => {
                 this.$rootScope.loaders.overlay = false;
+                this.$state.go('moderating', { publication_id: null });
             });
         }
 
@@ -72,6 +76,16 @@ module Mappino.Cabinet.Moderators {
         public declinePublication() {
             this.moderatingService.reject(this.publicationIds, null, response => {
                 //
+            });
+        }
+
+
+
+        public sendNotice(claim) {
+            this.moderatingService.sendNotice(claim, response => {
+                claim.moderator_notice = this.$scope.moderator.moderator_notice;
+                console.log(this.$scope.moderator_notice)
+                console.log(claim.moderator_notice)
             });
         }
     }

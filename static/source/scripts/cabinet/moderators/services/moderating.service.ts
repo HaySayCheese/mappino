@@ -49,7 +49,7 @@ module Mappino.Cabinet.Moderators {
 
 
         public load(publicationIds: any, successCallback?, errorCallback?) {
-            this.$http.get(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}`)
+            this.$http.get(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/`)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         angular.isFunction(successCallback) && successCallback(response.data)
@@ -107,6 +107,30 @@ module Mappino.Cabinet.Moderators {
                     //);
                     angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
+        }
+
+
+
+        public sendNotice(claim: any, successCallback?, errorCallback?) {
+            this.$http.post(`/ajax/api/moderators/claims/${claim.hash_id}/notice/`, {
+                notice: claim.moderator_notice
+            })
+                .then(response => {
+                    if (response.data['code'] === 0) {
+                        angular.isFunction(successCallback) && successCallback(response.data)
+                    } else {
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
+                    }
+                }, response => {
+                    //this.$mdToast.show(
+                    //    this.$mdToast.simple()
+                    //        .content(this.TXT.TOASTS.PUBLICATION.PUBLISH.TITLE)
+                    //        .position(this.toastOptions.position)
+                    //        .hideDelay(this.toastOptions.delay)
+                    //);
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                });
+
         }
     }
 }
