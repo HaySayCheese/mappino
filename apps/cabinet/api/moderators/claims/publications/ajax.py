@@ -147,11 +147,10 @@ class PublicationAcceptRejectOrHoldView(ModeratorsView):
     @classmethod
     def post(cls, request, *args):
         try:
-            publication_id = angular_post_parameters(request, ['publication_id'])['publication_id']
-            tid, hash_id = publication_id.split(':')
+            tid, hash_id = args[0], args[1]
             tid = int(tid)
 
-        except (ValueError, KeyError):
+        except (IndexError, ValueError, KeyError):
             return cls.PostResponses.invalid_parameters()
 
 
