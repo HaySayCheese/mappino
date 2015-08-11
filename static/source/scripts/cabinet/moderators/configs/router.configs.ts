@@ -16,6 +16,11 @@ module Mappino.Cabinet.Moderators {
                         templateUrl: '/ajax/template/cabinet/moderators/publication/'
                     })
 
+                    .state('held_publications', {
+                        url: "/held-publications/",
+                        templateUrl: '/ajax/template/cabinet/moderators/held-publications/'
+                    })
+
                     .state('claims', {
                         url: "/claims/",
                         templateUrl: '/ajax/template/cabinet/moderators/claims/'
