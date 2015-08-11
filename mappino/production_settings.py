@@ -140,7 +140,6 @@ INSTALLED_APPS = (
 
     'core.publications',
     'core.favorites',
-    'core.claims',
     'core.moderators',
     'core.markers_index',
     'core.support',
