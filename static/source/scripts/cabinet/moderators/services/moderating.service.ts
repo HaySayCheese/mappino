@@ -27,8 +27,29 @@ module Mappino.Cabinet.Moderators {
 
 
 
-        public load(successCallback?, errorCallback?) {
+        public getPublicationId(successCallback?, errorCallback?) {
             this.$http.get(`/ajax/api/moderators/publications/next/`)
+                .then(response => {
+                    if (response.data['code'] === 0) {
+                        angular.isFunction(successCallback) && successCallback(response.data)
+                    } else {
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
+                    }
+                }, response => {
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.LOAD.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                });
+        }
+
+
+
+        public load(publicationIds: any, successCallback?, errorCallback?) {
+            this.$http.get(`/ajax/api/moderators/publication/${publicationIds.tid}:${publicationIds.hid}`)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         angular.isFunction(successCallback) && successCallback(response.data)

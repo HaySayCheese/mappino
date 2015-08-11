@@ -12,7 +12,7 @@ module Mappino.Cabinet.Moderators {
 
                 $stateProvider
                     .state('moderating', {
-                        url: "/moderating/",
+                        url: "/moderating/:publication_id",
                         templateUrl: '/ajax/template/cabinet/moderators/publication/'
                     })
 
