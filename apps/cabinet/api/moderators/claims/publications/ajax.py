@@ -2,9 +2,9 @@
 from django.core.exceptions import ObjectDoesNotExist
 
 from apps.views_base import ModeratorsView
-from collective.decorators.ajax import json_response, json_response_bad_request
+from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.methods.request_data_getters import angular_post_parameters
-from core.moderators.models import PublicationsCheckQueue
+from core.moderators.models import PublicationsCheckQueue, PublicationsClaims
 from core.publications import formatters
 from core.publications.constants import HEAD_MODELS
 
@@ -123,9 +123,9 @@ class PublicationView(ModeratorsView):
             {
                 'hash_id': claim.hash_id,
                 'date_reported': claim.date_reported.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                'closed': claim.closed,
+                'date_closed': claim.date_closed.strftime('%Y-%m-%dT%H:%M:%SZ') if claim.date_closed else None,
                 'email': claim.email,
-                'message': claim.message,
+                'message': claim.message if claim.message else '',
                 'moderator_name': claim.moderator.full_name() if claim.moderator else None,
                 'moderator_notice': claim.moderator_notice,
 
@@ -190,8 +190,42 @@ class PublicationAcceptRejectOrHoldView(ModeratorsView):
 
 
 
-# class ClaimsNotices(ModeratorsView):
-#
-#
-#     @classmethod
-#     def
+class ClaimsNotices(ModeratorsView):
+
+    class PostResponses(object):
+        @staticmethod
+        @json_response
+        def ok():
+            return {
+                'code': 0,
+                'message': 'OK',
+            }
+
+
+        @classmethod
+        @json_response_not_found
+        def no_such_claim(cls):
+            return {
+                'code': 2,
+                'message': 'No claim with exact hash_id.'
+            }
+
+
+    @classmethod
+    def post(cls, request, *args):
+        hash_id = args[0]
+
+        try:
+            claim = PublicationsClaims.objects.filter(hash_id=hash_id)[:1][0]
+        except IndexError:
+            return cls.PostResponses.no_such_claim()
+
+        message = angular_post_parameters(request).get('message', '')
+        claim.message = message
+        claim.save()
+        return cls.PostResponses.ok()
+
+
+
+
+

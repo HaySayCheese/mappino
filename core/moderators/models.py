@@ -2,6 +2,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, transaction
 from django.db.models import Manager
+from django.utils.timezone import now
 
 from collective.utils import generate_sha256_unique_id
 from core.moderators.classes import RedisHandler
@@ -184,7 +185,7 @@ class PublicationsClaims(models.Model):
     hash_id = models.TextField(default=generate_sha256_unique_id, unique=True)
     reason_tid = models.PositiveSmallIntegerField()
     date_reported = models.DateTimeField(auto_now_add=True)
-    closed = models.BooleanField(db_index=True)
+    date_closed = models.DateTimeField(null=True)
 
     email = models.EmailField()
     message = models.TextField(null=True)
@@ -277,5 +278,5 @@ class PublicationsClaims(models.Model):
 
     def close(self, moderator):
         self.moderator = moderator
-        self.closed = True
+        self.date_closed = now()
         self.save()
