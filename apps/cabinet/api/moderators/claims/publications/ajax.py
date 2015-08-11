@@ -190,7 +190,7 @@ class PublicationAcceptRejectOrHoldView(ModeratorsView):
 
 
 
-class ClaimsNotices(ModeratorsView):
+class ClaimsNoticeView(ModeratorsView):
     class PostResponses(object):
         @staticmethod
         @json_response
@@ -230,6 +230,43 @@ class ClaimsNotices(ModeratorsView):
         return cls.PostResponses.ok()
 
 
+
+class ClaimCloseView(ModeratorsView):
+    class PostResponses(object):
+        @staticmethod
+        @json_response
+        def ok():
+            return {
+                'code': 0,
+                'message': 'OK',
+            }
+
+
+        @classmethod
+        @json_response_not_found
+        def no_such_claim(cls):
+            return {
+                'code': 2,
+                'message': 'No claim with exact hash_id.'
+            }
+
+
+    @classmethod
+    def post(cls, request, *args):
+        hash_id = args[0]
+
+        try:
+            claim = PublicationsClaims.objects.filter(hash_id=hash_id)[:1][0]
+        except IndexError:
+            return cls.PostResponses.no_such_claim()
+
+
+        if claim.date_closed is not None:
+            raise SuspiciousOperation('Attempt to modify closed claim.')
+
+
+        claim.close(request.user)
+        return cls.PostResponses.ok()
 
 
 
