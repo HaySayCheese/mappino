@@ -43,6 +43,8 @@ class PublicationsCheckQueue(AbstractPublicationModel):
 
 
     def accept(self, moderator):
+        self.publication.reject_by_moderator()
+
         AcceptedPublications.objects.add(self.publication_tid, self.publication_hash_id, moderator.id)
         RedisHandler.unbind_from_the_moderator(moderator, self.publication_tid, self.publication_hash_id)
 
