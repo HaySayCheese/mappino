@@ -20,10 +20,15 @@ module Mappino.Cabinet.Moderators {
                     private $state: angular.ui.IStateService,
                     private moderatingService: ModeratingService) {
             // ---------------------------------------------------------------------------------------------------------
-            $rootScope.pageTitle = 'Модериция mappino';
+            $rootScope.pageTitle = 'Модерация mappino';
+
+            $scope.forms = {};
+
+            $scope.rejectFormIsVisible = false;
 
             $scope.moderator = {
-                moderator_notice: ""
+                moderatorNotice: "",
+                rejectReason: ""
             };
 
 
@@ -56,6 +61,7 @@ module Mappino.Cabinet.Moderators {
                         this.$state.go('moderating', { publication_id: `${this.publicationIds.tid}:${this.publicationIds.hid}` });
                     } else {
                         this.$rootScope.loaders.overlay = false;
+                        this.$state.go('moderating', { publication_id: null });
                     }
                 });
             }
@@ -66,27 +72,58 @@ module Mappino.Cabinet.Moderators {
         public acceptPublication() {
             this.$rootScope.loaders.overlay  = true;
             this.moderatingService.accept(this.publicationIds, response => {
-                this.$rootScope.loaders.overlay = false;
                 this.$state.go('moderating', { publication_id: null });
             });
         }
 
 
 
-        public declinePublication() {
-            this.moderatingService.reject(this.publicationIds, null, response => {
-                //
+        public rejectPublication() {
+            if (this.$scope.forms.rejectReason.$valid) {
+                this.$rootScope.loaders.overlay  = true;
+                this.moderatingService.reject(this.publicationIds, this.$scope.moderator.rejectReason, response => {
+                    this.$state.go('moderating', { publication_id: null });
+                });
+            }
+        }
+
+
+
+        public holdPublication() {
+            this.$rootScope.loaders.overlay  = true;
+            this.moderatingService.hold(this.publicationIds, response => {
+                this.$state.go('moderating', { publication_id: null });
+            });
+        }
+
+
+        public sendNotice(claim) {
+            this.moderatingService.sendNotice(claim.hash_id, this.$scope.moderator.moderatorNotice, response => {
+                claim.moderatorNotice = this.$scope.moderator.moderatorNotice;
             });
         }
 
 
 
-        public sendNotice(claim) {
-            this.moderatingService.sendNotice(claim, response => {
-                claim.moderator_notice = this.$scope.moderator.moderator_notice;
-                console.log(this.$scope.moderator_notice)
-                console.log(claim.moderator_notice)
+        public closeClaim(claim) {
+            this.moderatingService.closeClaim(claim.hash_id, response => {
+                claim.date_closed = response.data.date_closed;
             });
+        }
+
+
+
+        public toggleRejectForm() {
+            if (this.$scope.rejectFormIsVisible) {
+                this.$scope.moderator.rejectReason = null;
+
+                this.$scope.forms.rejectReason.$setPristine();
+                this.$scope.forms.rejectReason.$setUntouched();
+
+                this.$scope.rejectFormIsVisible = false;
+            } else {
+                this.$scope.rejectFormIsVisible = true;
+            }
         }
     }
 }

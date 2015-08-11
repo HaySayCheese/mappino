@@ -39,15 +39,41 @@
                     </header>
 
                     <div ng-include="publicationTemplateUrl"></div>
+
+                    <form class="md-padding" name="forms.rejectReason" layout="column" novalidate ng-show="rejectFormIsVisible">
+                        <md-divider></md-divider>
+                        <div layout="row">
+                            <md-input-container flex>
+                                <label>Причина блокировки</label>
+                                <input type="text" name="reject_reason" ng-model="moderator.rejectReason" required>
+                                <div ng-messages="forms.rejectReason.reject_reason.$error" ng-show="forms.rejectReason.reject_reason.$touched">
+                                    <div ng-message="required">Обязательное поле</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <md-button class="md-primary" flex ng-click="modCtrl.toggleRejectForm()">
+                                Отмена
+                            </md-button>
+                            <md-button class="md-raised md-primary" flex ng-click="modCtrl.rejectPublication()">
+                                Отправить
+                            </md-button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </md-card-content>
         <md-divider></md-divider>
         <div class="md-actions" layout="row">
-            <md-button class="md-warn md-hue-3">Отклонить</md-button>
+            <md-button class="md-warn md-hue-3" ng-click="modCtrl.toggleRejectForm()">
+                Отклонить
+            </md-button>
+            <md-button class="md-primary md-hue-1" ng-click="modCtrl.holdPublication()">
+                Отложить
+            </md-button>
             <span flex></span>
             <md-button class="md-primary md-hue-1" ng-click="modCtrl.acceptPublication()">
-                Хорошо
+                Проверено
             </md-button>
         </div>
     </md-card>
@@ -73,14 +99,14 @@
                 <div class="md-caption" layout="row" layout-padding ng-if="claim.date_closed">
                     <span>Обработано: [[ claim.date_closed | date:'dd.MM.yyyy в HH:mm' ]]</span>
                     <span flex></span>
-                    <span>Модератором: [[ claim.moderator_name ]]</span>
+                    <span>Модератор: [[ claim.moderator_name ]]</span>
                 </div>
                 <div layout="row" ng-if="!claim.date_closed">
                     <md-input-container flex>
                         <label>Заметка к жалобе (видима только модераторам)</label>
-                        <input type="text" name="claim_notice" ng-model="moderator.moderator_notice" required>
+                        <input type="text" name="claim_notice" ng-model="moderator.moderatorNotice">
                     </md-input-container>
-                    <md-button class="md-fab md-primary" ng-disabled="!moderator.moderator_notice" ng-click="modCtrl.sendNotice(claim)">
+                    <md-button class="md-fab md-primary" ng-disabled="!moderator.moderatorNotice" ng-click="modCtrl.sendNotice(claim)">
                         <md-icon>send</md-icon>
                         <md-tooltip md-direction="top" md-delay="0">
                             Добавить заметку

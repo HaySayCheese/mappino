@@ -39,7 +39,7 @@
 </head>
 <body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()">
 
-    <md-toolbar class="md-whiteframe-z1">
+    <md-toolbar class="md-whiteframe-z1" ng-cloak>
         <nav class="md-toolbar-tools" show-sm hide-gt-sm layout="row" layout-align="start center">
             <md-button href class="nav-button" aria-label="Открыть меню" ng-click="cabinetCtrl.toggleSidenav()">
                 <md-icon>menu</md-icon>

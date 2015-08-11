@@ -78,12 +78,12 @@ module Mappino.Cabinet.Moderators {
                         angular.isFunction(errorCallback) && errorCallback(response.data)
                     }
                 }, response => {
-                    //this.$mdToast.show(
-                    //    this.$mdToast.simple()
-                    //        .content(this.TXT.TOASTS.PUBLICATION.REMOVE.TITLE)
-                    //        .position(this.toastOptions.position)
-                    //        .hideDelay(this.toastOptions.delay)
-                    //);
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.ACCEPT_MODERATING.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
                     angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
         }
@@ -91,7 +91,53 @@ module Mappino.Cabinet.Moderators {
 
 
         public reject(publicationIds: any, reject_reason: string, successCallback?, errorCallback?) {
-            this.$http.post(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/reject/`, reject_reason)
+            this.$http.post(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/reject/`, {
+                message: reject_reason
+            })
+                .then(response => {
+                    if (response.data['code'] === 0) {
+                        angular.isFunction(successCallback) && successCallback(response.data)
+                    } else {
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
+                    }
+                }, response => {
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.REJECT_MODERATING.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                });
+        }
+
+
+
+        public hold(publicationIds: any, successCallback?, errorCallback?) {
+            this.$http.post(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/hold/`, null)
+                .then(response => {
+                    if (response.data['code'] === 0) {
+                        angular.isFunction(successCallback) && successCallback(response.data)
+                    } else {
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
+                    }
+                }, response => {
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.HOLD_MODERATING.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                });
+        }
+
+
+
+        public sendNotice(claimId: any, noticeMessage: any, successCallback?, errorCallback?) {
+            this.$http.post(`/ajax/api/moderators/claims/${claimId}/notice/`, {
+                notice: noticeMessage
+            })
                 .then(response => {
                     if (response.data['code'] === 0) {
                         angular.isFunction(successCallback) && successCallback(response.data)
@@ -111,10 +157,8 @@ module Mappino.Cabinet.Moderators {
 
 
 
-        public sendNotice(claim: any, successCallback?, errorCallback?) {
-            this.$http.post(`/ajax/api/moderators/claims/${claim.hash_id}/notice/`, {
-                notice: claim.moderator_notice
-            })
+        public closeClaim(claimId: any, successCallback?, errorCallback?) {
+            this.$http.post(`/ajax/api/moderators/claims/${claimId}/close/`, null)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         angular.isFunction(successCallback) && successCallback(response.data)
