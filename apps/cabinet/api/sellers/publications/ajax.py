@@ -702,6 +702,7 @@ class Briefs(CabinetView):
                 'for_rent':     publication[6], # for_rent
                 'for_sale':     publication[7], # for_sale
 
+                # todo: optimize this, get all messages in one query
                 'moderator_message': RejectedPublications.moderator_message_for_publication(tid, publication[1]) # hash_id
 
                 # ...
