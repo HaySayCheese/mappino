@@ -15,6 +15,13 @@ def publication(request):
 @ensure_csrf_cookie
 @moderator_required_or_forbidden
 @render_jinja2_template
+def held_publications(request):
+    return 'cabinet/moderators/held_publications/held_publications.html'
+
+
+@ensure_csrf_cookie
+@moderator_required_or_forbidden
+@render_jinja2_template
 def claims(request):
     return 'cabinet/moderators/claims/claims.html'
 

@@ -40,4 +40,8 @@ urlpatterns += patterns('apps.cabinet.templates.moderators',
 
     # settings
     url(r'^ajax/template/cabinet/moderators/settings/$', 'settings'),
+
+
+    # settings
+    url(r'^ajax/template/cabinet/moderators/held-publications/$', 'held_publications'),
 )
