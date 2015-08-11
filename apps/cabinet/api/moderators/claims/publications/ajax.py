@@ -1,5 +1,5 @@
 # coding=utf-8
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 
 from apps.views_base import ModeratorsView
 from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
@@ -191,7 +191,6 @@ class PublicationAcceptRejectOrHoldView(ModeratorsView):
 
 
 class ClaimsNotices(ModeratorsView):
-
     class PostResponses(object):
         @staticmethod
         @json_response
@@ -219,6 +218,11 @@ class ClaimsNotices(ModeratorsView):
             claim = PublicationsClaims.objects.filter(hash_id=hash_id)[:1][0]
         except IndexError:
             return cls.PostResponses.no_such_claim()
+
+
+        if claim.date_closed is not None:
+            raise SuspiciousOperation('Attempt to modify closed claim.')
+
 
         message = angular_post_parameters(request).get('message', '')
         claim.message = message
