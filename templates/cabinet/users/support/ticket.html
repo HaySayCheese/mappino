@@ -36,8 +36,8 @@
             <div layout="row" layout-align="[[ message.type_sid == '0' ? 'start' : 'end' ]] start" layout-margin ng-repeat="message in ticket.messages">
                 <div class="ticket-message md-whiteframe-z2" layout="row" layout-align="start start">
                     <img class="message-avatar -user" ng-src="[[ userData.account.avatar_url ]]" alt="" ng-show="userData.account.avatar_url && message.type_sid == 0"
-                         on-error-src="{{ static }}build/images/cabinet/user.png" />
-                    <img class="message-avatar -user" src="{{ static }}build/images/cabinet/user.png" ng-hide="userData.account.avatar_url && message.type_sid == 0" alt="" />
+                         on-error-src="{{ static }}build/images/common/no-user.png" />
+                    <img class="message-avatar -user" src="{{ static }}build/images/common/no-user.png" ng-hide="userData.account.avatar_url && message.type_sid == 0" alt="" />
 
                     <div layout="column" layout-align="space-between start" flex>
                         <div class="message-text">[[ message.text ]]</div>

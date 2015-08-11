@@ -9,8 +9,8 @@
                 <div layout-sm="column" layout="row">
                     <div class="user-block" layout="column" layout-align="center center" flex-gt-sm="45">
                         <div class="user-photo" layout="column" layout-align="center center">
-                            <img ng-src="[[ profile.account.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/user.png" ng-show="profile.account.avatar_url && !loaders.avatar" />
-                            <img src="{{ static }}build/images/cabinet/user.png" ng-hide="profile.account.avatar_url || loaders.avatar" alt="" />
+                            <img ng-src="[[ profile.account.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/no-user.png" ng-show="profile.account.avatar_url && !loaders.avatar" />
+                            <img src="{{ static }}build/images/common/no-user.png" ng-hide="profile.account.avatar_url || loaders.avatar" alt="" />
 
                             <md-progress-circular md-mode="indeterminate" ng-show="loaders.avatar"></md-progress-circular>
                         </div>
@@ -92,8 +92,7 @@
 
                 <div layout="row">
                     <div layout="column" flex-gt-sm="45" hide-sm>
-                        <!--<i class="mdi-communication-contacts large"></i>-->
-                        <blockquote>
+                        <blockquote class="md-body-1">
                             Дополнительные контактные данные
                             увеличивают шансы покупателей связаться с Вами.
                         </blockquote>
@@ -200,7 +199,7 @@
                 </div>
 
                 <div layout="row" ng-show="profile.preferences.hide_email">
-                    <blockquote offset="5">
+                    <blockquote class="md-body-1" offset="5">
                         При запросе Ваших контактов адрес Вашей эл. почты будет скрыт,
                         но клиенты смогут оставить Вам сообщение через форму обратной связи на нашем сайте,
                         если она включена. Обратите внимание, ответив на сообщение клиента со своей почты Вы тем самым раскроете свой эл. адрес.

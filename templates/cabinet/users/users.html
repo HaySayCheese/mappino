@@ -8,16 +8,11 @@
     <meta name='yandex-verification' content='546bbc19b208a750'/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1-rc3/angular-material.min.css">
+    <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1-rc5/angular-material.min.css">
 
-    <!-- Custom styles -->
+    {# Custom styles #}
     <link rel="stylesheet" href="{{ static }}build/styles/cabinet/users/base.min.css"/>
-
-
-    <!-- Js libs -->
-    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places"></script>
 
     <script src="http://yastatic.net/jquery/2.1.4/jquery.min.js"></script>
 
@@ -29,10 +24,13 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-messages.min.js"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1-rc3/angular-material.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1-rc5/angular-material.min.js"></script>
 
-    <!-- Local js libs -->
+    {# Local js libs #}
     <script type="text/javascript" src="{{ static }}build/libraries/angular-file-upload.js"></script>
+
+    {# Js libs #}
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places"></script>
 </head>
 <body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()">
 
@@ -54,11 +52,11 @@
 
             <span flex></span>
 
-            <md-button ui-sref="settings" class="nav-button" ng-show="userData.account.full_name">
+            <md-button ui-sref="settings" class="nav-button" ng-show="userData.account.full_name" ng-cloak>
                 <div layout="row" layour-align="center center">
                     <img class="navbar-user-avatar" ng-src="[[ userData.account.avatar_url ]]" alt="" ng-show="userData.account.avatar_url"
-                         on-error-src="{{ static }}build/images/cabinet/user.png" />
-                    <img class="navbar-user-avatar" src="{{ static }}build/images/cabinet/user.png" ng-hide="userData.account.avatar_url" alt="" />
+                         on-error-src="{{ static }}build/images/common/no-user.png" />
+                    <img class="navbar-user-avatar" src="{{ static }}build/images/common/no-user.png" ng-hide="userData.account.avatar_url" alt="" />
 
                     <span ng-show="userData.account.first_name && userData.account.last_name">[[ userData.account.full_name ]]</span>
                     <span ng-hide="userData.account.first_name && userData.account.last_name">Настройки</span>

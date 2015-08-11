@@ -5,8 +5,8 @@
          ng-hide="messageFormIsVisible || callRequestFormIsVisible || claimFormIsVisible || callRequestSendSuccess || messageSendSuccess || claimSendSuccess">
 
         <div class="avatar" flex="45" layout="column" layout-align="center center">
-            <img ng-src="[[ publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/user.png" ng-show="publication.contacts.avatar_url" />
-            <img src="{{ static }}build/images/cabinet/user.png" ng-hide="publication.contacts.avatar_url" alt="" />
+            <img ng-src="[[ publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/no-user.png" ng-show="publication.contacts.avatar_url" />
+            <img src="{{ static }}build/images/common/no-user.png" ng-hide="publication.contacts.avatar_url" alt="" />
         </div>
         <div flex="55" layout="column">
             <div class="md-title grey-text text-darken-2" layout-padding ng-show="publication.contacts.first_name || publication.contacts.last_name">

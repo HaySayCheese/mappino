@@ -9,8 +9,8 @@
                 <div layout-sm="column" layout="row">
                     <div class="user-block" layout="column" layout-align="center center" flex-gt-sm="45">
                         <div class="user-photo" layout="column" layout-align="center center">
-                            <img ng-src="[[ profile.account.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/user.png" ng-show="profile.account.avatar_url && !loaders.avatar" />
-                            <img src="{{ static }}build/images/cabinet/user.png" ng-hide="profile.account.avatar_url || loaders.avatar" alt="" />
+                            <img ng-src="[[ profile.account.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/no-user.png" ng-show="profile.account.avatar_url && !loaders.avatar" />
+                            <img src="{{ static }}build/images/common/no-user.png" ng-hide="profile.account.avatar_url || loaders.avatar" alt="" />
 
                             <md-progress-circular md-mode="indeterminate" ng-show="loaders.avatar"></md-progress-circular>
                         </div>
