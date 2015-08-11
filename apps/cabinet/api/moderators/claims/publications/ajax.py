@@ -235,10 +235,13 @@ class ClaimCloseView(ModeratorsView):
     class PostResponses(object):
         @staticmethod
         @json_response
-        def ok():
+        def ok(claim):
             return {
                 'code': 0,
                 'message': 'OK',
+                'data': {
+                    'date_closed': claim.date_closed.strftime('%Y-%m-%dT%H:%M:%SZ')
+                }
             }
 
 
