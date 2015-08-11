@@ -49,7 +49,7 @@ module Mappino.Cabinet.Moderators {
 
 
         public load(publicationIds: any, successCallback?, errorCallback?) {
-            this.$http.get(`/ajax/api/moderators/publication/${publicationIds.tid}:${publicationIds.hid}`)
+            this.$http.get(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}`)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         angular.isFunction(successCallback) && successCallback(response.data)
@@ -69,8 +69,8 @@ module Mappino.Cabinet.Moderators {
 
 
 
-        public accept(successCallback?, errorCallback?) {
-            this.$http.post(`/ajax/api/moderators/publications/accept/`, null)
+        public accept(publicationIds: any, successCallback?, errorCallback?) {
+            this.$http.post(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/accept/`, null)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         angular.isFunction(successCallback) && successCallback(response.data)
@@ -90,8 +90,8 @@ module Mappino.Cabinet.Moderators {
 
 
 
-        public reject(reject_reason: string, successCallback?, errorCallback?) {
-            this.$http.post(`/ajax/api/moderators/publications/reject/`, reject_reason)
+        public reject(publicationIds: any, reject_reason: string, successCallback?, errorCallback?) {
+            this.$http.post(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/reject/`, reject_reason)
                 .then(response => {
                     if (response.data['code'] === 0) {
                         angular.isFunction(successCallback) && successCallback(response.data)

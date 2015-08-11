@@ -28,6 +28,7 @@ module Mappino.Cabinet.Moderators {
 
 
         private load() {
+            console.log('fsfsfsf')
             this.$rootScope.loaders.overlay = true;
 
             if (this.$state.params['publication_id']) {
@@ -61,7 +62,7 @@ module Mappino.Cabinet.Moderators {
 
         public acceptPublication() {
             this.$rootScope.loaders.overlay  = true;
-            this.moderatingService.accept(ticketId => {
+            this.moderatingService.accept(this.publicationIds, response => {
                 this.$rootScope.loaders.overlay = false;
             });
         }
@@ -69,7 +70,7 @@ module Mappino.Cabinet.Moderators {
 
 
         public declinePublication() {
-            this.moderatingService.decline(this.ticket.ticket_id, this.$scope.ticket, response => {
+            this.moderatingService.reject(this.publicationIds, null, response => {
                 //
             });
         }
