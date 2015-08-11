@@ -174,6 +174,13 @@ class RejectedPublications(AbstractProcessedPublicationModel):
     objects = ObjectsManager()
 
 
+    @classmethod
+    def moderator_message_for_publication(cls, tid, hash_id):
+        try:
+            return cls.objects.filter(publication_tid=tid, publication_hash_id=hash_id)[:1][0].message
+        except IndexError:
+            return None
+
 
 class AcceptedPublications(AbstractProcessedPublicationModel):
     class Meta:

@@ -5,6 +5,7 @@ from django.http.response import HttpResponseBadRequest
 from apps.views_base import CabinetView
 from collective.decorators.ajax import json_response, json_response_bad_request
 from collective.methods.request_data_getters import angular_parameters
+from core.moderators.models import RejectedPublications
 from core.publications import formatters
 from core.publications.exceptions import PhotosHandlerExceptions, NotEnoughPhotos
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS, OBJECT_STATES
@@ -700,6 +701,8 @@ class Briefs(CabinetView):
                 'description':  publication[5], # body.description
                 'for_rent':     publication[6], # for_rent
                 'for_sale':     publication[7], # for_sale
+
+                'moderator_message': RejectedPublications.moderator_message_for_publication(tid, publication[1]) # hash_id
 
                 # ...
                 # other fields here
