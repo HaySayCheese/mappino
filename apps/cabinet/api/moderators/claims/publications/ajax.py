@@ -3,7 +3,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from apps.views_base import ModeratorsView
 from collective.decorators.ajax import json_response, json_response_bad_request
-from collective.methods.request_data_getters import angular_post_parameters
 from core.moderators.models import PublicationsCheckQueue
 from core.publications import formatters
 from core.publications.constants import HEAD_MODELS
