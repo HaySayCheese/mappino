@@ -3,7 +3,7 @@ from django.http.response import Http404
 from django.views.generic import View
 from collective.decorators.ajax import json_response
 from collective.methods.request_data_getters import angular_parameters
-from core.claims.models import PublicationsClaims
+from core.moderators.models import PublicationsClaims
 from core.publications.constants import HEAD_MODELS
 
 
