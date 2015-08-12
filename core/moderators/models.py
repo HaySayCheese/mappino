@@ -263,7 +263,7 @@ class HeldPublications(PublicationMethodsMixin):
 
     class Meta:
         db_table = 'moderators_publications_held'
-        ordering = '-date_added'
+        ordering = ('-date_added', )
         unique_together = (('publication_tid', 'publication_hash_id'), )
 
 
