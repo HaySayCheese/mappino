@@ -2,61 +2,37 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, transaction
 from django.db.models import Manager, Q
-from django.db.utils import IntegrityError
 from django.utils.timezone import now
 
+from collective.constants import Constant
 from collective.utils import generate_sha256_unique_id
 from core.moderators.classes import RedisHandler
-from core.moderators.models_abstract import AbstractPublicationModel, AbstractProcessedPublicationModel
+from core.moderators.models_abstract import AbstractProcessedPublicationModel
 from core.publications.constants import HEAD_MODELS
 from core.users.models import Users
 
 
+class PublicationsCheckQueue(models.Model):
+    class States(Constant):
+        opened = 0
+        held = 1
 
-class PublicationMethodsMixin(models.Model):
+
+    date_added = models.DateTimeField(auto_now_add=True)
+    publication_tid = models.PositiveSmallIntegerField(db_index=True)
+    publication_hash_id = models.TextField(db_index=True)
+    state_sid = models.PositiveSmallIntegerField(default=States.opened, db_index=True)
+    moderator = models.ForeignKey(Users, null=True, on_delete=models.SET_NULL)
+
+
     class Meta:
-        abstract = True
-
-
-    def claims(self):
-        return PublicationsClaims.objects.by_publication(self.publication_tid, self.publication_hash_id)
-
-
-    def accept(self, moderator):
-        self.publication.reject_by_moderator()
-
-        AcceptedPublications.objects.add(self.publication_tid, self.publication_hash_id, moderator.id)
-        RedisHandler.unbind_from_the_moderator(moderator, self.publication_tid, self.publication_hash_id)
-
-        self.__close_all_claims(moderator)
-        self.delete()
-
-
-    def reject(self, moderator, message):
-        RejectedPublications.objects.add(
-            self.publication_tid, self.publication_hash_id, moderator.id, message) # note message here
-        RedisHandler.unbind_from_the_moderator(moderator, self.publication_tid, self.publication_hash_id)
-
-        # note: no claims closing is needed
-        self.delete()
-
-
-    def __close_all_claims(self, moderator):
-        for claim in PublicationsClaims.objects.by_publication(self.publication_tid, self.publication_hash_id):
-            claim.close(moderator)
-
-
-class PublicationsCheckQueue(AbstractPublicationModel, PublicationMethodsMixin):
-    class Meta:
+        ordering = ['-date_added']
         db_table = 'moderators_publications_check_queue'
         unique_together = (('publication_tid', 'publication_hash_id'), )
 
 
     class ObjectsManager(Manager):
         def add(self, tid, hash_id):
-            if HeldPublications.objects.contains(tid, hash_id):
-                raise IntegrityError('Held publications already contains such publication.')
-
             return self.create(
                 publication_tid = tid,
                 publication_hash_id = hash_id,
@@ -123,12 +99,40 @@ class PublicationsCheckQueue(AbstractPublicationModel, PublicationMethodsMixin):
         return None
 
 
-    def hold(self, moderator):
-        HeldPublications.objects.add(self.publication_tid, self.publication_hash_id, moderator.id)
+    def claims(self):
+        return PublicationsClaims.objects.by_publication(self.publication_tid, self.publication_hash_id)
+
+
+    def accept(self, moderator):
+        AcceptedPublications.objects.add(self.publication_tid, self.publication_hash_id, moderator.id)
         RedisHandler.unbind_from_the_moderator(moderator, self.publication_tid, self.publication_hash_id)
 
-        # note: no claims closing is needed
+        self.__close_all_claims(moderator)
         self.delete()
+
+
+    def reject(self, moderator, message):
+        RejectedPublications.objects.add(
+            self.publication_tid, self.publication_hash_id, moderator.id, message) # note message here
+        RedisHandler.unbind_from_the_moderator(moderator, self.publication_tid, self.publication_hash_id)
+
+        self.publication.reject_by_moderator()
+        self.__close_all_claims(moderator)
+        self.delete()
+
+
+    def hold(self, moderator):
+        self.moderator = moderator
+        self.state_sid = self.States.held
+        self.save()
+
+        RedisHandler.unbind_from_the_moderator(moderator, self.publication_tid, self.publication_hash_id)
+
+
+    @property
+    def publication(self):
+        model = HEAD_MODELS[self.publication_tid]
+        return model.by_hash_id(self.publication_hash_id)
 
 
     @classmethod
@@ -165,7 +169,9 @@ class PublicationsCheckQueue(AbstractPublicationModel, PublicationMethodsMixin):
             return None
 
         else:
-            query = cls.objects.filter_by_publications_ids(claimed_publications_ids)
+            query = cls.objects\
+                .filter_by_publications_ids(claimed_publications_ids)\
+                .filter(state_sid=cls.States.opened)
 
 
         # exclude all publications that are already bound to moderators
@@ -193,7 +199,11 @@ class PublicationsCheckQueue(AbstractPublicationModel, PublicationMethodsMixin):
         already_bound_publications_ids = RedisHandler.all_bound_publications()
 
         try:
-            record = cls.objects.exclude_publications_ids(already_bound_publications_ids)[:1][0]
+            record = cls.objects\
+                .exclude_publications_ids(already_bound_publications_ids)\
+                .filter(state_sid=cls.States.opened)\
+                [:1][0]
+
             RedisHandler.bind_to_the_moderator(moderator, record.publication_tid, record.publication_hash_id) # prolong binding
             return record
 
@@ -201,8 +211,13 @@ class PublicationsCheckQueue(AbstractPublicationModel, PublicationMethodsMixin):
             return None
 
 
+    def __close_all_claims(self, moderator):
+        for claim in PublicationsClaims.objects.by_publication(self.publication_tid, self.publication_hash_id):
+            claim.close(moderator)
 
-class RejectedPublications(AbstractProcessedPublicationModel, PublicationMethodsMixin):
+
+
+class RejectedPublications(AbstractProcessedPublicationModel):
     message = models.TextField()
 
 
@@ -210,7 +225,7 @@ class RejectedPublications(AbstractProcessedPublicationModel, PublicationMethods
         db_table = 'moderators_publications_rejected'
 
 
-    class ObjectsManager(Manager):
+    class ObjectsManager(AbstractProcessedPublicationModel.ObjectsManager):
         def add(self, *args):
             return self.create(
                 publication_tid = args[0],
@@ -218,10 +233,6 @@ class RejectedPublications(AbstractProcessedPublicationModel, PublicationMethods
                 moderator_id = args[2],
                 message = args[3],
             )
-
-
-        def by_moderator(self, moderator):
-            return self.filter(moderator_id=moderator)
 
 
         def by_publications_ids(self, ids):
@@ -238,72 +249,63 @@ class RejectedPublications(AbstractProcessedPublicationModel, PublicationMethods
     objects = ObjectsManager()
 
 
-    @classmethod
-    def moderator_message_for_publication(cls, tid, hash_id):
-        try:
-            return cls.objects.filter(publication_tid=tid, publication_hash_id=hash_id)[:1][0].message
-        except IndexError:
-            return None
-
-
-
-class AcceptedPublications(AbstractProcessedPublicationModel, PublicationMethodsMixin):
+class AcceptedPublications(AbstractProcessedPublicationModel):
     class Meta:
         db_table = 'moderators_publications_accepted'
 
 
 
-class HeldPublications(PublicationMethodsMixin):
-    date_added = models.DateTimeField(auto_now_add=True, db_index=True)
-    publication_tid = models.PositiveSmallIntegerField(db_index=True)
-    publication_hash_id = models.TextField(db_index=True)
-    moderator = models.ForeignKey(Users)
-
-
-    class Meta:
-        db_table = 'moderators_publications_held'
-        ordering = ('-date_added', )
-        unique_together = (('publication_tid', 'publication_hash_id'), )
-
-
-    class ObjectsManager(Manager):
-        def add(self, publication_tid, publication_hash_id, moderator_id):
-            if self.filter(publication_tid=publication_tid, publication_hash_id=publication_hash_id).count() > 0:
-                return
-
-            return self.create(
-                publication_tid = publication_tid,
-                publication_hash_id = publication_hash_id,
-                moderator_id = moderator_id,
-            )
-
-
-        def contains(self, tid, hash_id):
-            return self.filter(publication_tid=tid, publication_hash_id=hash_id).count() > 0
-
-
-        def by_moderator(self, moderator):
-            return self.filter(moderator_id=moderator)
-
-
-        def remove_if_exists(self, tid, hash_id):
-            self.filter(publication_tid=tid, publication_hash_id=hash_id).delete()
-
-
-    objects = ObjectsManager()
-
-
-    def hold(self, moderator):
-        # HeldPublications and PublicationsCheckQueue must implement common interface.
-        # In this model this method may do nothing.
-        pass
-
-
-
-    @property
-    def publication(self):
-        model = HEAD_MODELS[self.publication_tid]
-        return model.by_hash_id(self.publication_hash_id)
+# class HeldPublications(PublicationMethodsMixin):
+#     date_added = models.DateTimeField(auto_now_add=True, db_index=True)
+#     publication_tid = models.PositiveSmallIntegerField(db_index=True)
+#     publication_hash_id = models.TextField(db_index=True)
+#     moderator = models.ForeignKey(Users)
+#
+#
+#     class Meta:
+#         db_table = 'moderators_publications_held'
+#         ordering = ('-date_added', )
+#         unique_together = (('publication_tid', 'publication_hash_id'), )
+#
+#
+#     class ObjectsManager(Manager):
+#         def add(self, publication_tid, publication_hash_id, moderator_id):
+#             if self.filter(publication_tid=publication_tid, publication_hash_id=publication_hash_id).count() > 0:
+#                 return
+#
+#             return self.create(
+#                 publication_tid = publication_tid,
+#                 publication_hash_id = publication_hash_id,
+#                 moderator_id = moderator_id,
+#             )
+#
+#
+#         def contains(self, tid, hash_id):
+#             return self.filter(publication_tid=tid, publication_hash_id=hash_id).count() > 0
+#
+#
+#         def by_moderator(self, moderator):
+#             return self.filter(moderator_id=moderator)
+#
+#
+#         def remove_if_exists(self, tid, hash_id):
+#             self.filter(publication_tid=tid, publication_hash_id=hash_id).delete()
+#
+#
+#     objects = ObjectsManager()
+#
+#
+#     def hold(self, moderator):
+#         # HeldPublications and PublicationsCheckQueue must implement common interface.
+#         # In this model this method may do nothing.
+#         pass
+#
+#
+#
+#     @property
+#     def publication(self):
+#         model = HEAD_MODELS[self.publication_tid]
+#         return model.by_hash_id(self.publication_hash_id)
 
 
 class PublicationsClaims(models.Model):

@@ -6,22 +6,6 @@ from core.publications.constants import HEAD_MODELS
 from core.users.models import Users
 
 
-class AbstractPublicationModel(models.Model):
-    date_added = models.DateTimeField(auto_now_add=True, db_index=True)
-    publication_tid = models.PositiveSmallIntegerField(db_index=True)
-    publication_hash_id = models.TextField(db_index=True)
-
-
-    class Meta:
-        abstract = True
-        ordering = '-date_added'
-
-
-    @property
-    def publication(self):
-        model = HEAD_MODELS[self.publication_tid]
-        return model.by_hash_id(self.publication_hash_id)
-
 
 class AbstractProcessedPublicationModel(models.Model):
     date_added = models.DateTimeField(auto_now_add=True, db_index=True)

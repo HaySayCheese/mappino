@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from apps.views_base import ModeratorsView
 from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.methods.request_data_getters import angular_post_parameters
-from core.moderators.models import PublicationsCheckQueue, PublicationsClaims, HeldPublications
+from core.moderators.models import PublicationsCheckQueue, PublicationsClaims
 from core.publications import formatters
 from core.publications.constants import HEAD_MODELS
 
@@ -111,12 +111,7 @@ class PublicationView(ModeratorsView):
             check_record = PublicationsCheckQueue.objects.get(publication_tid=tid, publication_hash_id=hash_id)
             publication = check_record.publication
         except ObjectDoesNotExist:
-
-            try:
-                check_record = HeldPublications.objects.get(publication_tid=tid, publication_hash_id=hash_id)
-                publication = check_record.publication
-            except ObjectDoesNotExist:
-                return cls.GetResponses.no_such_publication()
+            return cls.GetResponses.no_such_publication()
 
 
         if not publication.is_published():
@@ -174,11 +169,7 @@ class PublicationAcceptRejectOrHoldView(ModeratorsView):
         try:
             record = PublicationsCheckQueue.objects.get(publication_tid=tid, publication_hash_id=hash_id)
         except ObjectDoesNotExist:
-
-            try:
-                record = HeldPublications.objects.get(publication_tid=tid, publication_hash_id=hash_id)
-            except ObjectDoesNotExist:
-                return cls.PostResponses.invalid_parameters()
+            return cls.PostResponses.invalid_parameters()
 
 
         operation = args[2]
@@ -215,8 +206,9 @@ class HeldPublicationsView(ModeratorsView):
 
     @classmethod
     def get(cls, request, *args):
-        held_publications = HeldPublications.objects\
-            .by_moderator(request.user)\
+        held_publications = PublicationsCheckQueue.objects\
+            .filter(moderator=request.user)\
+            .filter(state_sid=PublicationsCheckQueue.States.held)\
             .values_list('publication_tid', 'publication_hash_id')
 
         ids = {}
