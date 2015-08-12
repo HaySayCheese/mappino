@@ -16,7 +16,7 @@ def publication(request):
 @moderator_required_or_forbidden
 @render_jinja2_template
 def held_publications(request):
-    return 'cabinet/moderators/held_publications/held_publications.html'
+    return 'cabinet/moderators/held_publications/held-publications.html'
 
 
 @ensure_csrf_cookie
