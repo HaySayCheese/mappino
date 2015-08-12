@@ -34,7 +34,7 @@
 </head>
 <body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()">
 
-    <md-toolbar class="md-whiteframe-z1">
+    <md-toolbar class="md-whiteframe-z1" ng-cloak>
         <nav class="md-toolbar-tools" show-sm hide-gt-sm layout="row" layout-align="start center">
             <md-button href class="nav-button" aria-label="Открыть меню" ng-click="cabinetCtrl.toggleSidenav()">
                 <md-icon>menu</md-icon>
@@ -52,7 +52,7 @@
 
             <span flex></span>
 
-            <md-button ui-sref="settings" class="nav-button" ng-show="userData.account.full_name" ng-cloak>
+            <md-button ui-sref="settings" class="nav-button" ng-show="userData.account.full_name">
                 <div layout="row" layour-align="center center">
                     <img class="navbar-user-avatar" ng-src="[[ userData.account.avatar_url ]]" alt="" ng-show="userData.account.avatar_url"
                          on-error-src="{{ static }}build/images/common/no-user.png" />
