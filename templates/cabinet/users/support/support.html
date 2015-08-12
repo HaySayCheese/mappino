@@ -74,14 +74,14 @@
 
                             <div class="md-list-item-text">
                                 <h3 class="truncate" ng-show="ticket.subject">
-                                    [[ ticket.subject ]]
+                                    [[ ::ticket.subject ]]
                                 </h3>
                                 <h3 class="grey-text text-darken-1" ng-hide="ticket.subject">
                                     Диалог без темы
                                 </h3>
                                 <p>
-                                    <span>Создано: [[ ticket.created | date:'dd.MM.yyyy в HH:mm' ]]</span>
-                                    <span>Посл. сообщ.: [[ ticket.last_message | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                                    <span>Создано: [[ ::ticket.created | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                                    <span>Посл. сообщ.: [[ ::ticket.last_message | date:'dd.MM.yyyy в HH:mm' ]]</span>
                                 </p>
                             </div>
                             <md-icon>chat_bubble</md-icon>

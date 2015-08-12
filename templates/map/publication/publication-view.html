@@ -2,9 +2,9 @@
     <div layout="column" ng-show="publicationLoadedSuccess && !loaders.publication">
         <header>
             <ul rn-carousel rn-carousel-index="publicationPreviewSlideIndex" class="publication-preview-carousel">
-                <li ng-repeat="photo in publication.photos">
+                <li ng-repeat="photo in ::publication.photos">
                     <div class="layer">
-                        <img ng-src="[[ photo ]]" alt=""/>
+                        <img ng-src="[[ ::photo ]]" alt=""/>
                     </div>
                 </li>
             </ul>
@@ -52,10 +52,10 @@
                     </md-button>
                     <div layout="column" layout-padding>
                         <div class="md-headline">
-                            [[ publication.title ]]
+                            [[ ::publication.title ]]
                         </div>
                         <div class="md-subhead">
-                            [[ publication.address ]]
+                            [[ ::publication.address ]]
                         </div>
                     </div>
                     <md-fab-speed-dial class="md-fling publication-menu" md-direction="up">
@@ -65,10 +65,10 @@
                             </md-button>
                         </md-fab-trigger>
                         <md-fab-actions>
-                            <md-button aria-label="twitter" class="md-fab md-raised md-mini">
+                            <md-button aria-label="Поделится" class="md-fab md-raised md-mini">
                                 <md-icon class="material-icons blue-text">share</md-icon>
                             </md-button>
-                            <md-button aria-label="Google hangout" class="md-fab md-raised md-mini" ng-click="pubCtrl.toggleClaimForm()">
+                            <md-button aria-label="Пожаловатся" class="md-fab md-raised md-mini" ng-click="pubCtrl.toggleClaimForm()">
                                 <md-icon class="material-icons red-text">report</md-icon>
                             </md-button>
                         </md-fab-actions>

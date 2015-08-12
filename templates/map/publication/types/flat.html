@@ -4,8 +4,8 @@
         <div class="md-subhead blue-text">Продажа</div>
         <md-divider></md-divider>
         <div layout-padding>
-            <div><b>[[ publication.sale_price ]]</b></div>
-            <div ng-show="publication.sale_terms">[[ publication.sale_terms ]]</div>
+            <div><b>[[ ::publication.sale_price ]]</b></div>
+            <div ng-show="publication.sale_terms">[[ ::publication.sale_terms ]]</div>
         </div>
     </div>
 
@@ -13,8 +13,8 @@
         <div class="md-subhead blue-text">Аренда</div>
         <md-divider></md-divider>
         <div layout-padding>
-            <div><b>[[ publication.rent_price ]]</b></div>
-            <div ng-show="publication.rent_terms">[[ publication.rent_terms ]]</div>
+            <div><b>[[ ::publication.rent_price ]]</b></div>
+            <div ng-show="publication.rent_terms">[[ ::publication.rent_terms ]]</div>
         </div>
     </div>
 
@@ -27,7 +27,7 @@
                     <div>Тип рынка:</div>
                 </div>
                 <div flex="60">
-                    <div>[[ publication.market_type ]]</div>
+                    <div>[[ ::publication.market_type ]]</div>
                 </div>
             </div>
             <div layout="row">
@@ -35,7 +35,7 @@
                     <div>Тип дома:</div>
                 </div>
                 <div flex="60">
-                    <div>[[ publication.building_type ]]</div>
+                    <div>[[ ::publication.building_type ]]</div>
                 </div>
             </div>
 
@@ -44,7 +44,7 @@
                     <div>Этаж:</div>
                 </div>
                 <div flex="60">
-                    <div>[[ publication.floor ]]</div>
+                    <div>[[ ::publication.floor ]]</div>
                 </div>
             </div>
             <div layout="row">
@@ -52,7 +52,7 @@
                     <div>Этажей:</div>
                 </div>
                 <div flex="60">
-                    <div>[[ publication.floors_count ]]</div>
+                    <div>[[ ::publication.floors_count ]]</div>
                 </div>
             </div>
             <div layout="row">
@@ -60,7 +60,7 @@
                     <div>Состояние:</div>
                 </div>
                 <div flex="60">
-                    <div>[[ publication.condition ]]</div>
+                    <div>[[ ::publication.condition ]]</div>
                 </div>
             </div>
         </div>
@@ -70,7 +70,7 @@
                     <div>Общая площадь:</div>
                 </div>
                 <div flex="30">
-                    <div>[[ publication.total_area ]]</div>
+                    <div>[[ ::publication.total_area ]]</div>
                 </div>
             </div>
             <div layout="row">
@@ -78,7 +78,7 @@
                     <div>Жилая площадь:</div>
                 </div>
                 <div flex="30">
-                    <div>[[ publication.living_area ]]</div>
+                    <div>[[ ::publication.living_area ]]</div>
                 </div>
             </div>
             <div layout="row">
@@ -86,7 +86,7 @@
                     <div>Площадь кухни:</div>
                 </div>
                 <div flex="30">
-                    <div>[[ publication.kitchen_area ]]</div>
+                    <div>[[ ::publication.kitchen_area ]]</div>
                 </div>
             </div>
             <div layout="row">
@@ -94,7 +94,7 @@
                     <div>Количество комнат:</div>
                 </div>
                 <div flex="30">
-                    <div>[[ publication.rooms_count ]]</div>
+                    <div>[[ ::publication.rooms_count ]]</div>
                 </div>
             </div>
             <div layout="row">
@@ -102,7 +102,7 @@
                     <div>Планировка комнат:</div>
                 </div>
                 <div flex="30">
-                    <div>[[ publication.rooms_planning ]]</div>
+                    <div>[[ ::publication.rooms_planning ]]</div>
                 </div>
             </div>
         </div>
@@ -111,14 +111,14 @@
     <div class="md-subhead blue-text">Описание</div>
     <md-divider></md-divider>
     <p layout-padding>
-        [[ publication.description ]]
+        [[ ::publication.description ]]
     </p>
 
     <div ng-show="publication.facilities">
         <div class="md-subhead blue-text">Удобства</div>
         <md-divider></md-divider>
         <p layout-padding>
-            [[ publication.facilities ]]
+            [[ ::publication.facilities ]]
         </p>
     </div>
 
@@ -126,7 +126,7 @@
         <div class="md-subhead blue-text">Коммуникации</div>
         <md-divider></md-divider>
         <p layout-padding>
-            [[ publication.communications ]]
+            [[ ::publication.communications ]]
         </p>
     </div>
 
@@ -134,7 +134,7 @@
         <div class="md-subhead blue-text">Дополнительные постройки</div>
         <md-divider></md-divider>
         <p layout-padding>
-            [[ publication.buildings ]]
+            [[ ::publication.buildings ]]
         </p>
     </div>
 

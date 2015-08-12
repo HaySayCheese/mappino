@@ -1,20 +1,3 @@
-<div class="publication-page" ng-controller="PublicationController as pubCtrl"
-     layout-wrap layout-gt-lg="row" layout-lg="column" ng-clock>
-
-    <!-- Load publication -->
-    <div layout-padding flex="49">
-        <div ng-include="publicationTemplateUrl" include-replace></div>
-    </div>
-
-
-    <!-- Publication preview -->
-    <div class="publication-preview" layout-padding flex="45" hide-sm hide-md hide-lg>
-        <div layout-wrap layout="column" layout-gt-lg="row" layout-align-md="start center" layout-align-lg="start center">
-            <md-card flex>
-                <md-card-content>
-                    safagasg
-                </md-card-content>
-            </md-card>
-        </div>
-    </div>
+<div class="publication-page" ng-controller="PublicationController as pubCtrl">
+    <div ng-include="publicationTemplateUrl" include-replace></div>
 </div>
