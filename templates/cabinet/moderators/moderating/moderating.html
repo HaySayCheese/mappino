@@ -80,7 +80,7 @@
 
 
     <div ng-hide="loaders.overlay || !publication.claims">
-        <md-card ng-repeat="claim in ::publication.claims">
+        <md-card ng-repeat="claim in publication.claims">
             <md-card-content layout="column">
                 <div class="md-caption" layout="row" layout-padding>
                     <span>Создано: [[ ::claim.date_reported | date:'dd.MM.yyyy в HH:mm' ]]</span>
@@ -91,9 +91,9 @@
                     <span class="md-body-2">Жалоба:&nbsp;</span>
                     [[ ::claim.message ]]
                 </div>
-                <div class="md-body-1" layout="row" layout-align="start center" layout-padding>
-                    <span class="md-body-2">Последняя заметка:&nbsp;</span>
-                    [[ ::claim.moderator_notice ]]
+                <div class="md-body-1" layout="row" layout-align="start center" layout-padding ng-show="claim.moderator_notice">
+                    <span>Последняя заметка:&nbsp;</span>
+                    [[ claim.moderator_notice ]]
                 </div>
                 <md-divider></md-divider>
                 <div class="md-caption" layout="row" layout-padding ng-if="claim.date_closed">
@@ -104,9 +104,9 @@
                 <div layout="row" ng-if="!claim.date_closed">
                     <md-input-container flex>
                         <label>Заметка к жалобе (видима только модераторам)</label>
-                        <input type="text" name="claim_notice" ng-model="moderator.moderatorNotice">
+                        <input type="text" name="claim_notice" ng-model="claim.moderatorNotice">
                     </md-input-container>
-                    <md-button class="md-fab md-primary" ng-disabled="!moderator.moderatorNotice" ng-click="modCtrl.sendNotice(claim)">
+                    <md-button class="md-fab md-primary" ng-disabled="!claim.moderatorNotice" ng-click="modCtrl.sendNotice(claim)">
                         <md-icon>send</md-icon>
                         <md-tooltip md-direction="top" md-delay="0">
                             Добавить заметку

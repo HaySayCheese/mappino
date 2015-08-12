@@ -98,8 +98,11 @@ module Mappino.Cabinet.Moderators {
 
 
         public sendNotice(claim) {
-            this.moderatingService.sendNotice(claim.hash_id, this.$scope.moderator.moderatorNotice, response => {
-                claim.moderatorNotice = this.$scope.moderator.moderatorNotice;
+            var notice = claim.moderatorNotice;
+
+            this.moderatingService.sendNotice(claim.hash_id, notice, response => {
+                claim.moderator_notice = notice;
+                claim.moderatorNotice = '';
             });
         }
 
