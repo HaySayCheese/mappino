@@ -128,5 +128,15 @@ module Mappino.Cabinet.Moderators {
                 this.$scope.rejectFormIsVisible = true;
             }
         }
+
+
+
+        public prevSlide() {
+            this.$scope.publicationPreviewSlideIndex -= 1;
+        }
+
+        public nextSlide() {
+            this.$scope.publicationPreviewSlideIndex += 1;
+        }
     }
 }

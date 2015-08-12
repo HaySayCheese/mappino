@@ -27,11 +27,16 @@ module Mappino.Map {
 
         private _visitedMarkers = [];
 
+        private requests = {
+            load: []
+        };
+
         public static $inject = [
             '$rootScope',
             '$state',
             '$http',
             '$timeout',
+            '$q',
             'PublicationHandler',
             'BriefsService',
             'FavoritesService'
@@ -41,6 +46,7 @@ module Mappino.Map {
                     private $state: angular.ui.IStateService,
                     private $http: angular.IHttpService,
                     private $timeout: angular.ITimeoutService,
+                    private $q: angular.IQService,
                     private publicationHandler: PublicationHandler,
                     private briefsService: BriefsService,
                     private favoritesService: FavoritesService) {
@@ -80,39 +86,44 @@ module Mappino.Map {
                 return;
             }
 
+            this.cancelRequestsByGroup('load');
 
-            this.$http.get('/ajax/api/markers/?p=' + angular.toJson(this._filters_for_load_markers))
-                .then(response => {
-                    var responseData = response.data['data'];
+            var deffer = this.$q.defer();
+            this.requests.load.push(deffer);
 
-                    // очищаємо попередньо записані маркери які пришли з сервера
-                    this.clearResponseMarkers();
+            this.$http.get('/ajax/api/markers/?p=' + angular.toJson(this._filters_for_load_markers), {
+                timeout: deffer.promise
+            }).then(response => {
+                var responseData = response.data['data'];
 
-                    // якщо з сервера прийшло хоть шось
-                    if (angular.isDefined(responseData)) {
+                // очищаємо попередньо записані маркери які пришли з сервера
+                this.clearResponseMarkers();
 
-                        // якщо обєкт з маркерами який прийшов з сервера має в собі обєкт/обєкти з кольором фільтрів
-                        // то цей обєкт містить в собі звичайні маркери (не кругові діаграми)
-                        // Тоді видаляємо всі кругові маркери і записуємо звичайні
-                        if (angular.isDefined(responseData.blue) || angular.isDefined(responseData.green)) {
-                            this.clearPieMarkers();
-                            this.responseSimpleMarkers = responseData;
-                        }
-                        // А інакше видаляємо прості маркери і ставимо кругові
-                        else {
-                            this.clearSimpleMarkers();
-                            this.responsePieMarkers = responseData;
-                        }
+                // якщо з сервера прийшло хоть шось
+                if (angular.isDefined(responseData)) {
+
+                    // якщо обєкт з маркерами який прийшов з сервера має в собі обєкт/обєкти з кольором фільтрів
+                    // то цей обєкт містить в собі звичайні маркери (не кругові діаграми)
+                    // Тоді видаляємо всі кругові маркери і записуємо звичайні
+                    if (angular.isDefined(responseData.blue) || angular.isDefined(responseData.green)) {
+                        this.clearPieMarkers();
+                        this.responseSimpleMarkers = responseData;
                     }
-                    // інакше видаляємо всі маркери
+                    // А інакше видаляємо прості маркери і ставимо кругові
                     else {
                         this.clearSimpleMarkers();
-                        this.clearPieMarkers();
+                        this.responsePieMarkers = responseData;
                     }
+                }
+                // інакше видаляємо всі маркери
+                else {
+                    this.clearSimpleMarkers();
+                    this.clearPieMarkers();
+                }
 
-                    // кажемо всім що маркери загружені
-                    this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkersIsLoaded'));
-                }, response => {
+                // кажемо всім що маркери загружені
+                this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkersIsLoaded'));
+            }, response => {
                     // achtung!!1
                 });
         }
@@ -289,7 +300,7 @@ module Mappino.Map {
                     price:  responseMarker.price
                 },
                 labelContent:
-                    `<div class='custom-marker md-whiteframe-z2'>${responseMarker.price}</div>` +
+                    `<div class='custom-marker md-whiteframe-z2'>${responseMarker.price}, 2к</div>` +
                     `<div class='custom-marker-arrow-down'></div>`,
                 labelClass: `custom-marker-container -${color}`,
                 labelAnchor: new google.maps.Point(markerLabelOffsetX, 37)
@@ -436,6 +447,7 @@ module Mappino.Map {
 
         private attachClickEventToPieMarker(marker, map) {
             google.maps.event.addListener(marker, 'click', () => {
+                map.panTo(marker.getPosition());
                 map.setZoom(map.getZoom() + 1);
             });
         }
@@ -697,6 +709,20 @@ module Mappino.Map {
             }
 
             this.favoritesMarkers = {};
+        }
+
+
+
+        private cancelRequestsByGroup(groupName: string) {
+            var requests = this.requests[groupName] || {};
+
+            if (!requests) return;
+
+            for (var request in requests) {
+                if (requests.hasOwnProperty(request)) {
+                    this.requests[groupName][request].resolve();
+                }
+            }
         }
     }
 }
