@@ -690,6 +690,10 @@ class Briefs(CabinetView):
         model = HEAD_MODELS[tid]
 
 
+        # Briefs may contain messages for the users from the moderators.
+        moderators_messages = cls.__load_moderators_messages(tid, publications_list)
+
+
         result = []
         for publication in publications_list:
             record = {
@@ -702,8 +706,7 @@ class Briefs(CabinetView):
                 'for_rent':     publication[6], # for_rent
                 'for_sale':     publication[7], # for_sale
 
-                # todo: optimize this, get all messages in one query
-                'moderator_message': RejectedPublications.moderator_message_for_publication(tid, publication[1]) # hash_id
+                'moderator_message': moderators_messages.get(publication[1]) # hash_id
 
                 # ...
                 # other fields here
@@ -719,3 +722,18 @@ class Briefs(CabinetView):
             result.append(record)
 
         return result
+
+
+    @classmethod
+    def __load_moderators_messages(cls, tid, publications_list):
+        ids = [
+            (tid, p[1]) for p in publications_list
+        ]
+
+        moderators_messages = RejectedPublications.objects\
+            .by_publications_ids(ids)\
+            .values_list('publication_hash_id', 'message')
+
+        return {
+            hash_id: message for hash_id, message in moderators_messages
+        }

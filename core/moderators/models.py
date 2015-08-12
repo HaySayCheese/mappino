@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, transaction
-from django.db.models import Manager
+from django.db.models import Manager, Q
 from django.utils.timezone import now
 
 from collective.utils import generate_sha256_unique_id
@@ -169,6 +169,17 @@ class RejectedPublications(AbstractProcessedPublicationModel):
 
         def by_moderator(self, moderator):
             return self.filter(moderator_id=moderator)
+
+
+        def by_publications_ids(self, ids):
+            if not ids:
+                return self.none()
+
+            q = Q()
+            for tid, hash_id in ids:
+                q |= Q(publication_tid=tid, publication_hash_id=hash_id)
+
+            return self.filter(q)
 
 
     objects = ObjectsManager()
