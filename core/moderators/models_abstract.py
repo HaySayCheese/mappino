@@ -70,8 +70,8 @@ class AbstractPublicationModel(models.Model):
 
 class AbstractProcessedPublicationModel(models.Model):
     date_added = models.DateTimeField(auto_now_add=True, db_index=True)
-    publication_tid = models.PositiveSmallIntegerField()
-    publication_hash_id = models.TextField()
+    publication_tid = models.PositiveSmallIntegerField(db_index=True)
+    publication_hash_id = models.TextField(db_index=True)
     moderator = models.ForeignKey(Users)
 
 

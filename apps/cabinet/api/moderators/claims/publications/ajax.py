@@ -111,7 +111,12 @@ class PublicationView(ModeratorsView):
             check_record = PublicationsCheckQueue.objects.get(publication_tid=tid, publication_hash_id=hash_id)
             publication = check_record.publication
         except ObjectDoesNotExist:
-            return cls.GetResponses.no_such_publication()
+
+            try:
+                check_record = HeldPublications.objects.get(publication_tid=tid, publication_hash_id=hash_id)
+                publication = check_record.publication
+            except ObjectDoesNotExist:
+                return cls.GetResponses.no_such_publication()
 
 
         if not publication.is_published():

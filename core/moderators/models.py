@@ -202,7 +202,6 @@ class AcceptedPublications(AbstractProcessedPublicationModel):
 class HeldPublications(AbstractProcessedPublicationModel):
     class Meta:
         db_table = 'moderators_publications_held'
-        ordering = ('-date_added', )
 
 
 
