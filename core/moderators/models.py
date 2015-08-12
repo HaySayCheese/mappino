@@ -69,10 +69,6 @@ class PublicationsCheckQueue(AbstractPublicationModel):
         self.delete()
 
 
-    def claims(self):
-        return PublicationsClaims.objects.by_publication(self.publication_tid, self.publication_hash_id)
-
-
     @classmethod
     def __record_bound_by_moderator(cls, moderator):
         publications_ids = RedisHandler.publications_bound_by_moderator(moderator)
