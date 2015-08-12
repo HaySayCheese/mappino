@@ -57,17 +57,14 @@ module Mappino.Map {
                 another_reason: null
             };
 
-            $scope.messageFormIsVisible     = false;
-            $scope.callRequestFormIsVisible = false;
-            $scope.claimFormIsVisible       = false;
+            $scope.publicationViewFooterState = 'contacts';
 
 
             this.loadPublicationData();
 
 
             $scope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
-                $scope.messageFormIsVisible     = false;
-                $scope.callRequestFormIsVisible = false;
+                $scope.publicationViewFooterState = 'contacts';
 
                 if (toParams['publication_id'] != 0 && fromParams['publication_id'] != toParams['publication_id']) {
                     $scope.publicationPreviewSlideIndex = 0;
@@ -179,10 +176,10 @@ module Mappino.Map {
         public sendMessage() {
             if (this.$scope.forms.publicationMessage.$valid) {
                 this.publicationService.sendMessage(this.$scope.message, this.publicationIds, response => {
-                    this.toggleMessageForm();
-                    this.$scope.messageSendSuccess = true;
+                    this.resetMessageForm();
+                    this.$scope.publicationViewFooterState = 'sendSuccess';
                     this.$timeout(() => {
-                        this.$scope.messageSendSuccess = false;
+                        this.$scope.publicationViewFooterState = 'contacts';
                         this.scrollToBottom(500);
                     }, 2000);
                 });
@@ -194,10 +191,10 @@ module Mappino.Map {
         public sendCallRequest() {
             if (this.$scope.forms.publicationCallRequest.$valid) {
                 this.publicationService.sendCallRequest(this.$scope.callRequest, this.publicationIds, response => {
-                    this.toggleCallRequestForm();
-                    this.$scope.callRequestSendSuccess = true;
+                    this.resetCallRequestForm();
+                    this.$scope.publicationViewFooterState = 'sendSuccess';
                     this.$timeout(() => {
-                        this.$scope.callRequestSendSuccess = false;
+                        this.$scope.publicationViewFooterState = 'contacts';
                         this.scrollToBottom(500);
                     }, 2000);
                 });
@@ -209,10 +206,10 @@ module Mappino.Map {
         public sendClaim() {
             if (this.$scope.forms.publicationClaim.$valid) {
                 this.publicationService.sendClaim(this.$scope.claim, this.publicationIds, response => {
-                    this.toggleClaimForm();
-                    this.$scope.claimSendSuccess = true;
+                    this.resetClaimForm();
+                    this.$scope.publicationViewFooterState = 'sendSuccess';
                     this.$timeout(() => {
-                        this.$scope.claimSendSuccess = false;
+                        this.$scope.publicationViewFooterState = 'contacts';
                         this.scrollToBottom(500);
                     }, 2000);
                 });
@@ -222,19 +219,11 @@ module Mappino.Map {
 
 
         public toggleMessageForm() {
-            if (this.$scope.messageFormIsVisible) {
-                this.$scope.message = {
-                    userName:   null,
-                    email:      null,
-                    text:       null
-                };
-
-                this.$scope.forms.publicationMessage.$setPristine();
-                this.$scope.forms.publicationMessage.$setUntouched();
-
-                this.$scope.messageFormIsVisible = false;
+            if (this.$scope.publicationViewFooterState == 'sendMessage') {
+                this.resetMessageForm();
+                this.$scope.publicationViewFooterState = 'contacts';
             } else {
-                this.$scope.messageFormIsVisible = true;
+                this.$scope.publicationViewFooterState = 'sendMessage';
             }
 
             this.scrollToBottom();
@@ -243,18 +232,11 @@ module Mappino.Map {
 
 
         public toggleCallRequestForm() {
-            if (this.$scope.callRequestFormIsVisible) {
-                this.$scope.callRequest = {
-                    userName:       null,
-                    phoneNumber:    null
-                };
-
-                this.$scope.forms.publicationCallRequest.$setPristine();
-                this.$scope.forms.publicationCallRequest.$setUntouched();
-
-                this.$scope.callRequestFormIsVisible = false;
+            if (this.$scope.publicationViewFooterState == 'sendCallRequest') {
+                this.resetCallRequestForm();
+                this.$scope.publicationViewFooterState = 'contacts';
             } else {
-                this.$scope.callRequestFormIsVisible = true;
+                this.$scope.publicationViewFooterState = 'sendCallRequest';
             }
 
             this.scrollToBottom();
@@ -262,23 +244,53 @@ module Mappino.Map {
 
 
 
-        private toggleClaimForm() {
-            if (this.$scope.claimFormIsVisible) {
-                this.$scope.claim = {
-                    email:          null,
-                    reason_sid:     1,
-                    another_reason: null
-                };
-
-                this.$scope.forms.publicationClaim.$setPristine();
-                this.$scope.forms.publicationClaim.$setUntouched();
-
-                this.$scope.claimFormIsVisible = false;
+        public toggleClaimForm() {
+            if (this.$scope.publicationViewFooterState == 'sendClaim') {
+                this.resetClaimForm();
+                this.$scope.publicationViewFooterState = 'contacts'
             } else {
-                this.$scope.claimFormIsVisible = true;
+                this.$scope.publicationViewFooterState = 'sendClaim'
             }
 
             this.scrollToBottom();
+        }
+
+
+
+        private resetMessageForm() {
+            this.$scope.message = {
+                userName:   null,
+                email:      null,
+                text:       null
+            };
+
+            this.$scope.forms.publicationMessage.$setPristine();
+            this.$scope.forms.publicationMessage.$setUntouched();
+        }
+
+
+
+        private resetCallRequestForm() {
+            this.$scope.callRequest = {
+                userName:       null,
+                phoneNumber:    null
+            };
+
+            this.$scope.forms.publicationCallRequest.$setPristine();
+            this.$scope.forms.publicationCallRequest.$setUntouched();
+        }
+
+
+
+        private resetClaimForm() {
+            this.$scope.claim = {
+                email:          null,
+                reason_sid:     1,
+                another_reason: null
+            };
+
+            this.$scope.forms.publicationClaim.$setPristine();
+            this.$scope.forms.publicationClaim.$setUntouched();
         }
 
 

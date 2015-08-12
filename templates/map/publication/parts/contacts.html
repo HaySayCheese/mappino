@@ -1,146 +1,164 @@
-<div class="md-subhead blue-text">Контакти</div>
-<md-divider></md-divider>
-<div layout="column" layout-padding>
-    <div class="publication-contacts" layout="row" layout-padding
-         ng-hide="messageFormIsVisible || callRequestFormIsVisible || claimFormIsVisible || callRequestSendSuccess || messageSendSuccess || claimSendSuccess">
-
-        <div class="avatar" flex="45" layout="column" layout-align="center center">
-            <img ng-src="[[ ::publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/no-user.png" ng-show="publication.contacts.avatar_url" />
-            <img src="{{ static }}build/images/common/no-user.png" ng-hide="publication.contacts.avatar_url" alt="" />
-        </div>
-        <div flex="55" layout="column">
-            <div class="md-title grey-text text-darken-2" layout-padding ng-show="publication.contacts.first_name || publication.contacts.last_name">
-                [[ ::publication.contacts.first_name + '&nbsp;' ]][[ ::publication.contacts.last_name ]]
+<div ng-switch="publicationViewFooterState">
+    <div ng-switch-when="contacts">
+        <div class="md-subhead blue-text">Контакти</div>
+        <md-divider></md-divider>
+        <div layout="column" layout-padding>
+            <div class="publication-contacts" layout="row" layout-padding>
+                <div class="avatar" flex="45" layout="column" layout-align="center center">
+                    <img ng-src="[[ ::publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/no-user.png"
+                         ng-if="publication.contacts.avatar_url" />
+                    <img src="{{ static }}build/images/common/no-user.png" ng-if="!publication.contacts.avatar_url" alt="" />
+                </div>
+                <div flex="55" layout="column">
+                    <div class="md-title grey-text text-darken-2" layout-padding ng-if="publication.contacts.first_name || publication.contacts.last_name">
+                        [[ ::publication.contacts.first_name + '&nbsp;' ]][[ ::publication.contacts.last_name ]]
+                    </div>
+                    <div layout-padding>
+                        <div ng-if="publication.contacts.mobile_phone">
+                            <a ng-href="tel:[[ publication.contacts.mobile_phone ]]">[[ ::publication.contacts.mobile_phone ]]</a>
+                        </div>
+                        <div ng-if="publication.contacts.add_mobile_phone">
+                            <a ng-href="tel:[[ publication.contacts.add_mobile_phone ]]">[[ ::publication.contacts.add_mobile_phone ]]</a>
+                        </div>
+                        <div ng-if="publication.contacts.landline_phone">[[ ::publication.contacts.landline_phone ]]</div>
+                        <div ng-if="publication.contacts.add_landline_phone">[[ ::publication.contacts.add_landline_phone ]]</div>
+                        <div ng-if="publication.contacts.email">
+                            <a ng-href="mailto:[[ publication.contacts.email ]]">[[ ::publication.contacts.email ]]</a>
+                        </div>
+                        <div ng-if="publication.contacts.skype">
+                            <a ng-href="skype:[[ publication.contacts.skype ]]?call">[[ ::publication.contacts.skype ]]</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div layout-padding>
-                <div ng-show="publication.contacts.mobile_phone">
-                    <a ng-href="tel:[[ publication.contacts.mobile_phone ]]">[[ ::publication.contacts.mobile_phone ]]</a>
-                </div>
-                <div ng-show="publication.contacts.add_mobile_phone">
-                    <a ng-href="tel:[[ publication.contacts.add_mobile_phone ]]">[[ ::publication.contacts.add_mobile_phone ]]</a>
-                </div>
-                <div ng-show="publication.contacts.landline_phone">[[ ::publication.contacts.landline_phone ]]</div>
-                <div ng-show="publication.contacts.add_landline_phone">[[ ::publication.contacts.add_landline_phone ]]</div>
-                <div ng-show="publication.contacts.email">
-                    <a ng-href="mailto:[[ publication.contacts.email ]]">[[ ::publication.contacts.email ]]</a>
-                </div>
-                <div ng-show="publication.contacts.skype">
-                    <a ng-href="skype:[[ publication.contacts.skype ]]?call">[[ ::publication.contacts.skype ]]</a>
-                </div>
+
+            <div layout="row">
+                <md-button class="md-raised md-primary" flex ng-if="publication.contacts.allow_call_requests" ng-click="pubCtrl.toggleCallRequestForm()">
+                    Заказать обратный звонок
+                </md-button>
+                <md-button class="md-raised md-primary" flex ng-if="publication.contacts.allow_messaging" ng-click="pubCtrl.toggleMessageForm()">
+                    Оставить сообщение
+                </md-button>
             </div>
         </div>
     </div>
 
-    <div layout="row" ng-hide="messageFormIsVisible || callRequestFormIsVisible || claimFormIsVisible || callRequestSendSuccess || messageSendSuccess || claimSendSuccess">
-        <md-button class="md-raised md-primary" flex ng-show="publication.contacts.allow_call_requests" ng-click="pubCtrl.toggleCallRequestForm()">
-            Заказать обратный звонок
-        </md-button>
-        <md-button class="md-raised md-primary" flex ng-show="publication.contacts.allow_messaging" ng-click="pubCtrl.toggleMessageForm()">
-            Оставить сообщение
-        </md-button>
+    <div ng-switch-when="sendMessage">
+        <div class="md-subhead blue-text">Отправка сообщения</div>
+        <md-divider></md-divider>
+        <form novalidate class="animated" name="forms.publicationMessage" layout="column" layout-padding>
+            <div layout="row">
+                <md-input-container flex="40">
+                    <label>Имя</label>
+                    <input name="userName" type="text" ng-model="message.userName" required>
+                    <div ng-messages="forms.publicationMessage.userName.$error" ng-show="forms.publicationMessage.userName.$touched">
+                        <div ng-message="required">Обязательное поле</div>
+                    </div>
+                </md-input-container>
+                <md-input-container flex="60">
+                    <label>Эл. почта</label>
+                    <input name="email" type="email" ng-model="message.email" required>
+                    <div ng-messages="forms.publicationMessage.email.$error" ng-show="forms.publicationMessage.email.$touched">
+                        <div ng-message="required">Обязательное поле</div>
+                        <div ng-message="email">Некоректная эл. почта</div>
+                    </div>
+                </md-input-container>
+            </div>
+            <div layout="row">
+                <md-input-container flex>
+                    <label>Текст сообщения</label>
+                    <textarea name="text" columns="1" ng-model="message.text" required></textarea>
+                    <div ng-messages="forms.publicationMessage.text.$error" ng-show="forms.publicationMessage.text.$touched">
+                        <div ng-message="required">Обязательное поле</div>
+                    </div>
+                </md-input-container>
+            </div>
+            <div layout="row">
+                <md-button class="md-primary" flex ng-click="pubCtrl.toggleMessageForm()">
+                    Отмена
+                </md-button>
+                <md-button class="md-raised md-primary" flex ng-click="pubCtrl.sendMessage()">
+                    Отправить
+                </md-button>
+            </div>
+        </form>
     </div>
 
-    <form novalidate class="animated" name="forms.publicationMessage" layout="column" ng-show="messageFormIsVisible">
-        <div layout="row">
-            <md-input-container flex="40">
-                <label>Имя</label>
-                <input name="userName" type="text" ng-model="message.userName" required>
-                <div ng-messages="forms.publicationMessage.userName.$error" ng-show="forms.publicationMessage.userName.$touched">
-                    <div ng-message="required">Обязательное поле</div>
-                </div>
-            </md-input-container>
-            <md-input-container flex="60">
-                <label>Эл. почта</label>
-                <input name="email" type="email" ng-model="message.email" required>
-                <div ng-messages="forms.publicationMessage.email.$error" ng-show="forms.publicationMessage.email.$touched">
-                    <div ng-message="required">Обязательное поле</div>
-                    <div ng-message="email">Некоректная эл. почта</div>
-                </div>
-            </md-input-container>
-        </div>
-        <div layout="row">
-            <md-input-container flex>
-                <label>Текст сообщения</label>
-                <textarea name="text" columns="1" ng-model="message.text" required></textarea>
-                <div ng-messages="forms.publicationMessage.text.$error" ng-show="forms.publicationMessage.text.$touched">
-                    <div ng-message="required">Обязательное поле</div>
-                </div>
-            </md-input-container>
-        </div>
-        <div layout="row">
-            <md-button class="md-primary" flex ng-click="pubCtrl.toggleMessageForm()">
-                Отмена
-            </md-button>
-            <md-button class="md-raised md-primary" flex ng-click="pubCtrl.sendMessage()">
-                Отправить
-            </md-button>
-        </div>
-    </form>
+    <div ng-switch-when="sendCallRequest">
+        <div class="md-subhead blue-text">Запрос обратного звонка</div>
+        <md-divider></md-divider>
+        <form novalidate class="animated" name="forms.publicationCallRequest" layout="column" layout-padding>
+            <div layout="row">
+                <md-input-container flex="40">
+                    <label>Имя</label>
+                    <input name="userName" type="text" ng-model="callRequest.userName" required>
+                    <div ng-messages="forms.publicationCallRequest.userName.$error" ng-show="forms.publicationCallRequest.userName.$touched">
+                        <div ng-message="required">Обязательное поле</div>
+                    </div>
+                </md-input-container>
+                <md-input-container flex="60">
+                    <label>Моб. телефон</label>
+                    <input name="phoneNumber" type="text" ng-model="callRequest.phoneNumber" only-number required>
+                    <div ng-messages="forms.publicationCallRequest.phoneNumber.$error" ng-show="forms.publicationCallRequest.phoneNumber.$touched">
+                        <div ng-message="required">Обязательное поле</div>
+                    </div>
+                </md-input-container>
+            </div>
+            <div layout="row">
+                <md-button class="md-primary" flex ng-click="pubCtrl.toggleCallRequestForm()">
+                    Отмена
+                </md-button>
+                <md-button class="md-raised md-primary" flex ng-click="pubCtrl.sendCallRequest()">
+                    Отправить
+                </md-button>
+            </div>
+        </form>
+    </div>
 
-    <form novalidate class="animated" name="forms.publicationCallRequest" layout="column" ng-show="callRequestFormIsVisible">
-        <div layout="row">
-            <md-input-container flex="40">
-                <label>Имя</label>
-                <input name="userName" type="text" ng-model="callRequest.userName" required>
-                <div ng-messages="forms.publicationCallRequest.userName.$error" ng-show="forms.publicationCallRequest.userName.$touched">
-                    <div ng-message="required">Обязательное поле</div>
-                </div>
-            </md-input-container>
-            <md-input-container flex="60">
-                <label>Моб. телефон</label>
-                <input name="phoneNumber" type="text" ng-model="callRequest.phoneNumber" only-number required>
-                <div ng-messages="forms.publicationCallRequest.phoneNumber.$error" ng-show="forms.publicationCallRequest.phoneNumber.$touched">
-                    <div ng-message="required">Обязательное поле</div>
-                </div>
-            </md-input-container>
-        </div>
-        <div layout="row">
-            <md-button class="md-primary" flex ng-click="pubCtrl.toggleCallRequestForm()">
-                Отмена
-            </md-button>
-            <md-button class="md-raised md-primary" flex ng-click="pubCtrl.sendCallRequest()">
-                Отправить
-            </md-button>
-        </div>
-    </form>
+    <div ng-switch-when="sendClaim">
+        <div class="md-subhead blue-text">Отправка жалобы</div>
+        <md-divider></md-divider>
+        <form novalidate class="animated" name="forms.publicationClaim" layout-padding>
+            <div layout="column">
+                <md-input-container flex>
+                    <label>Эл. почта</label>
+                    <input name="email" type="email" ng-model="claim.email" required>
+                    <div ng-messages="forms.publicationClaim.email.$error" ng-show="forms.publicationClaim.email.$touched">
+                        <div ng-message="required">Обязательное поле</div>
+                        <div ng-message="email">Некоректная эл. почта</div>
+                    </div>
+                </md-input-container>
+                <md-input-container flex>
+                    <label>Причина жалобы</label>
+                    <md-select ng-model="claim.reason_sid">
+                        <md-option ng-repeat="reason in ::CLAIM.REASONS" value="[[ ::reason.id ]]">[[ ::reason.title ]]</md-option>
+                    </md-select>
+                </md-input-container>
+                <md-input-container flex ng-show="claim.reason_sid == 0">
+                    <label>Введите причину жалобы</label>
+                    <input name="another_reason" type="text" ng-model="claim.another_reason" ng-required="claim.reason_sid == 0">
+                    <div ng-messages="forms.publicationClaim.another_reason.$error" ng-show="forms.publicationClaim.another_reason.$touched">
+                        <div ng-message="required">Обязательное поле</div>
+                    </div>
+                </md-input-container>
+            </div>
+            <div layout="row">
+                <md-button class="md-primary" flex ng-click="pubCtrl.toggleClaimForm()">
+                    Отмена
+                </md-button>
+                <md-button class="md-raised md-primary" flex ng-click="pubCtrl.sendClaim()">
+                    Отправить
+                </md-button>
+            </div>
+        </form>
+    </div>
 
-    <form novalidate class="animated" name="forms.publicationClaim" ng-show="claimFormIsVisible">
-        <div layout="column">
-            <md-input-container flex>
-                <label>Эл. почта</label>
-                <input name="email" type="email" ng-model="claim.email" required>
-                <div ng-messages="forms.publicationClaim.email.$error" ng-show="forms.publicationClaim.email.$touched">
-                    <div ng-message="required">Обязательное поле</div>
-                    <div ng-message="email">Некоректная эл. почта</div>
-                </div>
-            </md-input-container>
-            <md-input-container flex>
-                <label>Причина жалобы</label>
-                <md-select ng-model="claim.reason_sid">
-                    <md-option ng-repeat="reason in ::CLAIM.REASONS" value="[[ ::reason.id ]]">[[ ::reason.title ]]</md-option>
-                </md-select>
-            </md-input-container>
-            <md-input-container flex ng-show="claim.reason_sid == 0">
-                <label>Введите причину жалобы</label>
-                <input name="another_reason" type="text" ng-model="claim.another_reason" ng-required="claim.reason_sid == 0">
-                <div ng-messages="forms.publicationClaim.another_reason.$error" ng-show="forms.publicationClaim.another_reason.$touched">
-                    <div ng-message="required">Обязательное поле</div>
-                </div>
-            </md-input-container>
+    <div ng-switch-when="sendSuccess">
+        <div class="animated" layout-padding layout="column" layout-align="center center">
+            <md-icon class="material-icons md-96 green-text">check</md-icon>
+            <div class="md-headline">Отправлено успешно</div>
         </div>
-        <div layout="row">
-            <md-button class="md-primary" flex ng-click="pubCtrl.toggleClaimForm()">
-                Отмена
-            </md-button>
-            <md-button class="md-raised md-primary" flex ng-click="pubCtrl.sendClaim()">
-                Отправить
-            </md-button>
-        </div>
-    </form>
-
-
-    <div class="animated" layout="column" layout-align="center center" ng-show="callRequestSendSuccess || messageSendSuccess">
-        <md-icon class="material-icons md-96 green-text">check</md-icon>
-        <div class="md-headline">Отправлено успешно</div>
     </div>
 </div>
+
+
