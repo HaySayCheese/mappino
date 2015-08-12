@@ -2,7 +2,6 @@
 from django.db import models
 from django.db.models import Manager, Q
 from django.utils.timezone import now
-from core.moderators.models import PublicationsClaims
 from core.publications.constants import HEAD_MODELS
 from core.users.models import Users
 
@@ -66,10 +65,6 @@ class AbstractPublicationModel(models.Model):
     def publication(self):
         model = HEAD_MODELS[self.publication_tid]
         return model.by_hash_id(self.publication_hash_id)
-
-
-    def claims(self):
-        return PublicationsClaims.objects.by_publication(self.publication_tid, self.publication_hash_id)
 
 
 class AbstractProcessedPublicationModel(models.Model):

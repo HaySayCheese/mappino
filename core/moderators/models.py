@@ -12,7 +12,17 @@ from core.users.models import Users
 
 
 
-class PublicationsCheckQueue(AbstractPublicationModel):
+class PublicationMethodsMixin(models.Model):
+    class Meta:
+        abstract = True
+
+
+    def claims(self):
+        return PublicationsClaims.objects.by_publication(self.publication_tid, self.publication_hash_id)
+
+
+
+class PublicationsCheckQueue(AbstractPublicationModel, PublicationMethodsMixin):
     class Meta:
         db_table = 'moderators_publications_check_queue'
         unique_together = (('publication_tid', 'publication_hash_id'), )
@@ -145,7 +155,7 @@ class PublicationsCheckQueue(AbstractPublicationModel):
 
 
 
-class RejectedPublications(AbstractProcessedPublicationModel):
+class RejectedPublications(AbstractProcessedPublicationModel, PublicationMethodsMixin):
     message = models.TextField()
 
 
@@ -189,13 +199,14 @@ class RejectedPublications(AbstractProcessedPublicationModel):
             return None
 
 
-class AcceptedPublications(AbstractProcessedPublicationModel):
+
+class AcceptedPublications(AbstractProcessedPublicationModel, PublicationMethodsMixin):
     class Meta:
         db_table = 'moderators_publications_accepted'
 
 
 
-class HeldPublications(AbstractProcessedPublicationModel):
+class HeldPublications(AbstractProcessedPublicationModel, PublicationMethodsMixin):
     class Meta:
         db_table = 'moderators_publications_held'
 
