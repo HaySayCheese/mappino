@@ -237,7 +237,7 @@ module Mappino.Core.Auth {
 
         private saveUserToStorage(user: Object) {
             if (localStorage) {
-                localStorage['user'] = JSON.stringify(user);
+                localStorage['user'] = angular.toJson(user);
             }
         }
     }

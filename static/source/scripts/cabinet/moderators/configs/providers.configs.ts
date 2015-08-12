@@ -7,12 +7,10 @@ module Mappino.Cabinet.Moderators {
     export class ProvidersConfigs {
 
         constructor(private app: angular.IModule) {
-            app.config(['$interpolateProvider', '$locationProvider',
-                function($interpolateProvider, $locationProvider) {
-                    $interpolateProvider.startSymbol('[[');
-                    $interpolateProvider.endSymbol(']]');
-                }
-            ]);
+            app.config(['$interpolateProvider', '$locationProvider', ($interpolateProvider, $locationProvider) => {
+                $interpolateProvider.startSymbol('[[');
+                $interpolateProvider.endSymbol(']]');
+            }]);
         }
     }
 }

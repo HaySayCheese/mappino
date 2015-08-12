@@ -7,7 +7,7 @@ module Mappino.Cabinet.Moderators {
     export class MaterialConfigs {
 
         constructor(private app: angular.IModule) {
-            app.config(['$mdThemingProvider', function($mdThemingProvider) {
+            app.config(['$mdThemingProvider', ($mdThemingProvider) => {
                 $mdThemingProvider.theme('default')
                     .primaryPalette('blue')
                     .accentPalette('deep-orange');

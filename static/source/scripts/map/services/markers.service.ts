@@ -80,7 +80,8 @@ module Mappino.Map {
                 return;
             }
 
-            this.$http.get('/ajax/api/markers/?p=' + JSON.stringify(this._filters_for_load_markers))
+
+            this.$http.get('/ajax/api/markers/?p=' + angular.toJson(this._filters_for_load_markers))
                 .then(response => {
                     var responseData = response.data['data'];
 

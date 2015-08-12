@@ -3,7 +3,7 @@
 module Mappino.Map {
     'use strict';
 
-    var app: angular.IModule = angular.module('Mappino.Map', [
+    var app: angular.IModule = angular.module('mappino.map', [
         'ngAnimate',
         'ngMaterial',
         'ngCookies',

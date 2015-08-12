@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="Mappino.Map">
+<html ng-app="mappino.map">
 <head>
     <title>Mappino</title>
     <link rel="author" href="/humans.txt"/>
@@ -8,18 +8,15 @@
     <meta name='yandex-verification' content='546bbc19b208a750'/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1-rc3/angular-material.min.css">
+    <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1-rc5/angular-material.min.css">
 
+    {# Custom styles #}
     <link rel="stylesheet" href="{{ static }}build/styles/map/base.min.css"/>
 
-    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places"></script>
-
-
-    <script src="http://yastatic.net/jquery/2.1.4/jquery.min.js"></script>
+    {# Js libs #}
+    <script src="//yastatic.net/jquery/2.1.4/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-cookies.min.js"></script>
@@ -29,13 +26,13 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-messages.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-touch.min.js"></script>
 
-
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1-rc5/angular-material.min.js"></script>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1-rc3/angular-material.min.js"></script>
+    {# Js libs #}
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places"></script>
 
-
-
+    {# Local js libs #}
     <script src="{{ static }}build/libraries/markerwithlabel-1.1.9.min.js"></script>
     <script src="{{ static }}build/libraries/angular-file-upload.js"></script>
     <script src="{{ static }}build/libraries/angular-carousel.js"></script>

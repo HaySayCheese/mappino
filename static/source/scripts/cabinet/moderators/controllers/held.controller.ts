@@ -3,10 +3,6 @@
 
 module Mappino.Cabinet.Moderators {
     export class HeldController {
-        private publicationIds: any = {
-            tid: null,
-            hid: null
-        };
 
         public static $inject = [
             '$scope',

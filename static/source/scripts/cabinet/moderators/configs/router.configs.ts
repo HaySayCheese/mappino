@@ -7,7 +7,7 @@ module Mappino.Cabinet.Moderators {
     export class RouterConfigs {
 
         constructor(private app: angular.IModule) {
-            app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
+            app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', ($stateProvider, $urlRouterProvider, $locationProvider) => {
                 $urlRouterProvider.otherwise("/moderating/");
 
                 $stateProvider
