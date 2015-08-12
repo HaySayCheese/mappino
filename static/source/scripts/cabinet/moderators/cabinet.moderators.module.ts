@@ -37,6 +37,7 @@ module Mappino.Cabinet.Moderators {
 
     /** Module controllers */
     app.controller('CabinetController', CabinetController);
+    app.controller('HeldController', HeldController);
     app.controller('SettingsController', SettingsController);
     app.controller('ModeratingController', ModeratingController);
 }

@@ -40,6 +40,7 @@
 // Controllers import
 // ####################
 /// <reference path='controllers/cabinet.controller.ts' />
+/// <reference path='controllers/held.controller.ts' />
 /// <reference path='controllers/settings.controller.ts' />
 /// <reference path='controllers/moderating.controller.ts' />
 

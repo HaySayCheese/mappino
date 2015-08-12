@@ -1,1 +1,35 @@
-fasfsa
+<div class="briefs-page" ng-controller="HeldController as heldCtrl" layout-wrap layout-padding layout-sm="column"
+     layout-md="column" layout-lg="row" layout-gt-lg="row" layout-align-sm="start center" layout-align-md="start center"
+     layout-align-lg="center start" layout-align-gt-lg="center start">
+
+
+    <md-card class="-brief" ng-repeat="brief in ::briefs">
+        <img class="md-card-image" ng-src="[[ ::brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png" />
+        <img class="md-card-image" src="{{ static }}build/images/common/image-404.png" ng-hide="brief.photo_url" alt="" />
+
+        <md-card-content>
+            <div layout="row">
+                <span flex></span>
+                <span class="blue-grey-text">[[ ::TYPES.REALTY[brief.tid].titles.singular ]]</span>
+            </div>
+
+            <div ng-show="brief.moderator_message">
+                [[ ::brief.moderator_message ]]
+                <md-divider></md-divider>
+            </div>
+
+            <h2 class="md-title" ng-show="brief.title">[[ ::brief.title ]]</h2>
+            <h2 class="md-title grey-text text-lighten-1" ng-hide="brief.title">Заголовок не указан</h2>
+
+            <p ng-show="brief.description">[[ ::brief.description ]]</p>
+            <p class="grey-text text-lighten-1" ng-hide="brief.description">Описание не указано</p>
+        </md-card-content>
+        <md-divider></md-divider>
+        <div class="md-actions" layout="row" layout-align="end center">
+            <span flex></span>
+            <md-button class="md-primary md-hue-1" ng-show="brief.state_sid == 2" ng-click="briefsCtrl.recoveryBrief($event, brief)">
+                Продолжить модерацию
+            </md-button>
+        </div>
+    </md-card>
+</div>
