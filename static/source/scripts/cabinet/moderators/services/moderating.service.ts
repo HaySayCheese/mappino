@@ -69,6 +69,27 @@ module Mappino.Cabinet.Moderators {
 
 
 
+        public loadHeld(successCallback?, errorCallback?) {
+            this.$http.get(`/ajax/api/moderators/publications/held/briefs/`)
+                .then(response => {
+                    if (response.data['code'] === 0) {
+                        angular.isFunction(successCallback) && successCallback(response.data)
+                    } else {
+                        angular.isFunction(errorCallback) && errorCallback(response.data)
+                    }
+                }, response => {
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.LOAD.TITLE)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
+                    angular.isFunction(errorCallback) && errorCallback(response.data)
+                });
+        }
+
+
+
         public accept(publicationIds: any, successCallback?, errorCallback?) {
             this.$http.post(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/accept/`, null)
                 .then(response => {
