@@ -2,6 +2,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, transaction
 from django.db.models import Manager, Q
+from django.db.utils import IntegrityError
 from django.utils.timezone import now
 
 from collective.utils import generate_sha256_unique_id
@@ -26,6 +27,53 @@ class PublicationsCheckQueue(AbstractPublicationModel, PublicationMethodsMixin):
     class Meta:
         db_table = 'moderators_publications_check_queue'
         unique_together = (('publication_tid', 'publication_hash_id'), )
+
+
+    class ObjectsManager(Manager):
+        def add(self, tid, hash_id):
+            if HeldPublications.objects.contains(tid, hash_id):
+                raise IntegrityError('Held publications already contains such publication.')
+
+            return self.create(
+                publication_tid = tid,
+                publication_hash_id = hash_id,
+            )
+
+
+        def add_or_update(self, tid, hash_id):
+            records = self.filter(publication_tid=tid, publication_hash_id=hash_id)
+            for record in records:
+                record.date_added = now()
+                record.save()
+            else:
+                return self.add(tid, hash_id)
+
+
+        def remove_if_exists(self, tid, hash_id):
+            self.filter(publication_tid=tid, publication_hash_id=hash_id).delete()
+
+
+        def by_tid_and_hash_id(self, tid, hash_id):
+            return self.filter(publication_tid=tid, publication_hash_id=hash_id)
+
+
+        def filter_by_publications_ids(self, publications_ids):
+            q = Q()
+            for tid, hash_id in publications_ids:
+                q |= Q(publication_tid=tid, publication_hash_id=hash_id)
+
+            return self.filter(q)
+
+
+        def exclude_publications_ids(self, publications_ids):
+            q = Q()
+            for tid, hash_id, _ in publications_ids:
+                q |= Q(publication_tid=tid, publication_hash_id=hash_id)
+
+            return self.exclude(q)
+
+
+    objects = ObjectsManager()
 
 
     @classmethod
@@ -231,8 +279,16 @@ class HeldPublications(PublicationMethodsMixin):
             )
 
 
+        def contains(self, tid, hash_id):
+            return self.filter(publication_tid=tid, publication_hash_id=hash_id).count() > 0
+
+
         def by_moderator(self, moderator):
             return self.filter(moderator_id=moderator)
+
+
+        def remove_if_exists(self, tid, hash_id):
+            self.filter(publication_tid=tid, publication_hash_id=hash_id).delete()
 
 
     objects = ObjectsManager()
