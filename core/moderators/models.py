@@ -206,10 +206,42 @@ class AcceptedPublications(AbstractProcessedPublicationModel, PublicationMethods
 
 
 
-class HeldPublications(AbstractProcessedPublicationModel, PublicationMethodsMixin):
+class HeldPublications(PublicationMethodsMixin):
+    date_added = models.DateTimeField(auto_now_add=True, db_index=True)
+    publication_tid = models.PositiveSmallIntegerField(db_index=True)
+    publication_hash_id = models.TextField(db_index=True)
+    moderator = models.ForeignKey(Users)
+
+
     class Meta:
         db_table = 'moderators_publications_held'
+        ordering = '-date_added'
+        unique_together = (('publication_tid', 'publication_hash_id'), )
 
+
+    class ObjectsManager(Manager):
+        def add(self, publication_tid, publication_hash_id, moderator_id):
+            if self.filter(publication_tid=publication_tid, publication_hash_id=publication_hash_id).count() > 0:
+                return
+
+            return self.create(
+                publication_tid = publication_tid,
+                publication_hash_id = publication_hash_id,
+                moderator_id = moderator_id,
+            )
+
+
+        def by_moderator(self, moderator):
+            return self.filter(moderator_id=moderator)
+
+
+    objects = ObjectsManager()
+
+
+    @property
+    def publication(self):
+        model = HEAD_MODELS[self.publication_tid]
+        return model.by_hash_id(self.publication_hash_id)
 
 
 class PublicationsClaims(models.Model):
