@@ -43,7 +43,7 @@
                     <md-input-container flex="33">
                         <label>Валюта</label>
                         <md-select md-on-close="pubCtrl.checkField('sale_currency_sid')" ng-model="publication.sale_terms.currency_sid">
-                            <md-option ng-repeat="currencyType in TYPES.CURRENCY" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
+                            <md-option ng-repeat="currencyType in ::TYPES.CURRENCY" value="[[ ::currencyType.id ]]">[[ ::currencyType.title ]]</md-option>
                         </md-select>
                     </md-input-container>
                     <md-checkbox class="md-primary" name="sale_is_contract" ng-change="pubCtrl.checkField('sale_is_contract')"
@@ -65,7 +65,7 @@
                     <md-input-container flex="33">
                         <label>Срок</label>
                         <md-select md-on-close="pubCtrl.checkField('rent_period_sid')" ng-model="publication.rent_terms.period_sid">
-                            <md-option ng-repeat="periodType in TYPES.PERIOD" value="[[ periodType.id ]]">[[ periodType.title ]]</md-option>
+                            <md-option ng-repeat="periodType in ::TYPES.PERIOD" value="[[ ::periodType.id ]]">[[ ::periodType.title ]]</md-option>
                         </md-select>
                     </md-input-container>
                     <md-input-container flex="33" flex-sm="66" ng-hide="publication.rent_terms.period_sid == 1">
@@ -93,7 +93,7 @@
                     <md-input-container flex="33">
                         <label>Валюта</label>
                         <md-select md-on-close="pubCtrl.checkField('rent_currency_sid')" ng-model="publication.rent_terms.currency_sid">
-                            <md-option ng-repeat="currencyType in TYPES.CURRENCY" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
+                            <md-option ng-repeat="currencyType in ::TYPES.CURRENCY" value="[[ ::currencyType.id ]]">[[ ::currencyType.title ]]</md-option>
                         </md-select>
                     </md-input-container>
                     <md-checkbox class="md-primary" name="rent_is_contract" ng-change="pubCtrl.checkField('rent_is_contract')"
@@ -131,13 +131,13 @@
                     <md-input-container flex="33">
                         <label>Тип рынка</label>
                         <md-select md-on-close="pubCtrl.checkField('market_type_sid')" ng-model="publication.body.market_type_sid">
-                            <md-option ng-repeat="marketType in TYPES.MARKET" value="[[ marketType.id ]]">[[ marketType.title ]]</md-option>
+                            <md-option ng-repeat="marketType in ::TYPES.MARKET" value="[[ ::marketType.id ]]">[[ ::marketType.title ]]</md-option>
                         </md-select>
                     </md-input-container>
                     <md-input-container flex="33">
                         <label>Общее состояние</label>
                         <md-select md-on-close="pubCtrl.checkField('condition_sid')" ng-model="publication.body.condition_sid">
-                            <md-option ng-repeat="conditionType in TYPES.CONDITION" value="[[ conditionType.id ]]">[[ conditionType.title ]]</md-option>
+                            <md-option ng-repeat="conditionType in ::TYPES.CONDITION" value="[[ ::conditionType.id ]]">[[ ::conditionType.title ]]</md-option>
                         </md-select>
                     </md-input-container>
                 </div>
@@ -205,7 +205,7 @@
                     <md-input-container flex="33">
                         <label>Отопление</label>
                         <md-select md-on-close="pubCtrl.checkField('heating_type_sid')" ng-model="publication.body.heating_type_sid">
-                            <md-option ng-repeat="heatingType in TYPES.HEATING" value="[[ heatingType.id ]]">[[ heatingType.title ]]</md-option>
+                            <md-option ng-repeat="heatingType in ::TYPES.HEATING" value="[[ ::heatingType.id ]]">[[ ::heatingType.title ]]</md-option>
                         </md-select>
                     </md-input-container>
                     <md-input-container flex="33" ng-show="publication.body.heating_type_sid == 0">
@@ -219,7 +219,7 @@
                     <md-input-container flex="33" ng-show="publication.body.heating_type_sid == 1">
                         <label>Индивидуальное отопление</label>
                         <md-select md-on-close="pubCtrl.checkField('ind_heating_type_sid')" ng-model="publication.body.ind_heating_type_sid">
-                            <md-option ng-repeat="individualHeatingType in TYPES.INDIVIDUAL_HEATING" value="[[ individualHeatingType.id ]]">[[ individualHeatingType.title ]]</md-option>
+                            <md-option ng-repeat="individualHeatingType in ::TYPES.INDIVIDUAL_HEATING" value="[[ ::individualHeatingType.id ]]">[[ ::individualHeatingType.title ]]</md-option>
                         </md-select>
                     </md-input-container>
                     <md-input-container flex="33" ng-show="publication.body.ind_heating_type_sid == 0 && publication.body.heating_type_sid == 1">

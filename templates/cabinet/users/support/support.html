@@ -67,21 +67,21 @@
                         <div class="md-subhead">Последние диалоги</div>
                         <md-divider></md-divider>
 
-                        <md-list-item ng-click="supportCtrl.goToTicket(ticket.id)" class="md-2-line" ng-repeat="ticket in tickets | orderBy: 'created': true">
+                        <md-list-item ng-click="supportCtrl.goToTicket(ticket.id)" class="md-2-line" ng-repeat="ticket in ::tickets | orderBy: 'created': true">
                             <img class="md-avatar" ng-src="[[ userData.account.avatar_url ]]" alt="" ng-if="userData.account.avatar_url"
                                  on-error-src="{{ static }}build/images/common/no-user.png" />
                             <img class="md-avatar" src="{{ static }}build/images/common/no-user.png" ng-hide="userData.account.avatar_url" alt="" />
 
                             <div class="md-list-item-text">
                                 <h3 class="truncate" ng-show="ticket.subject">
-                                    [[ ticket.subject ]]
+                                    [[ ::ticket.subject ]]
                                 </h3>
                                 <h3 class="grey-text text-darken-1" ng-hide="ticket.subject">
                                     Диалог без темы
                                 </h3>
                                 <p>
-                                    <span>Создано: [[ ticket.created | date:'dd.MM.yyyy в HH:mm' ]]</span>
-                                    <span>Посл. сообщ.: [[ ticket.last_message | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                                    <span>Создано: [[ ::ticket.created | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                                    <span>Посл. сообщ.: [[ ::ticket.last_message | date:'dd.MM.yyyy в HH:mm' ]]</span>
                                 </p>
                             </div>
                             <md-icon>chat_bubble</md-icon>

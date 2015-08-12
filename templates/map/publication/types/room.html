@@ -4,8 +4,8 @@
         <div class="md-subhead blue-text">Продажа</div>
         <md-divider></md-divider>
         <div layout-padding>
-            <div><b>[[ publication.sale_price ]]</b></div>
-            <div ng-show="publication.sale_terms">[[ publication.sale_terms ]]</div>
+            <div><b>[[ ::publication.sale_price ]]</b></div>
+            <div ng-show="publication.sale_terms">[[ ::publication.sale_terms ]]</div>
         </div>
     </div>
 
@@ -13,8 +13,8 @@
         <div class="md-subhead blue-text">Аренда</div>
         <md-divider></md-divider>
         <div layout-padding>
-            <div><b>[[ publication.rent_price ]]</b></div>
-            <div ng-show="publication.rent_terms">[[ publication.rent_terms ]]</div>
+            <div><b>[[ ::publication.rent_price ]]</b></div>
+            <div ng-show="publication.rent_terms">[[ ::publication.rent_terms ]]</div>
         </div>
     </div>
 
@@ -27,7 +27,7 @@
                     <div>Тип рынка:</div>
                 </div>
                 <div flex="60">
-                    <div>[[ publication.market_type ]]</div>
+                    <div>[[ ::publication.market_type ]]</div>
                 </div>
             </div>
 
@@ -36,7 +36,7 @@
                     <div>Состояние:</div>
                 </div>
                 <div flex="60">
-                    <div>[[ publication.condition ]]</div>
+                    <div>[[ ::publication.condition ]]</div>
                 </div>
             </div>
         </div>
@@ -46,7 +46,7 @@
                     <div>Этаж:</div>
                 </div>
                 <div flex="60">
-                    <div>[[ publication.floor ]]</div>
+                    <div>[[ ::publication.floor ]]</div>
                 </div>
             </div>
             <div layout="row">
@@ -54,7 +54,7 @@
                     <div>Этажей:</div>
                 </div>
                 <div flex="60">
-                    <div>[[ publication.floors_count ]]</div>
+                    <div>[[ ::publication.floors_count ]]</div>
                 </div>
             </div>
         </div>
@@ -63,14 +63,14 @@
     <div class="md-subhead blue-text">Описание</div>
     <md-divider></md-divider>
     <p layout-padding>
-        [[ publication.description ]]
+        [[ ::publication.description ]]
     </p>
 
     <div ng-show="publication.facilities">
         <div class="md-subhead blue-text">Удобства</div>
         <md-divider></md-divider>
         <p layout-padding>
-            [[ publication.facilities ]]
+            [[ ::publication.facilities ]]
         </p>
     </div>
 
@@ -78,7 +78,7 @@
         <div class="md-subhead blue-text">Коммуникации</div>
         <md-divider></md-divider>
         <p layout-padding>
-            [[ publication.communications ]]
+            [[ ::publication.communications ]]
         </p>
     </div>
 
@@ -86,7 +86,7 @@
         <div class="md-subhead blue-text">Дополнительные постройки</div>
         <md-divider></md-divider>
         <p layout-padding>
-            [[ publication.buildings ]]
+            [[ ::publication.buildings ]]
         </p>
     </div>
 

@@ -9,7 +9,7 @@
                 <h3 class="md-headline grey-text text-darken-2">Добавить новое объявление</h3>
 
                 <div layout="row">
-                    <md-checkbox class="md-primary" ng-model="newPublication.for_sale" aria-label="Продажа">
+                    <md-checkbox class="md-primary" ng-model="newPublication.for_sale" aria-label="О продаже">
                         О продаже
                     </md-checkbox>
                     <md-checkbox class="md-primary" ng-model="newPublication.for_rent" aria-label="Аренда">
@@ -17,9 +17,12 @@
                     </md-checkbox>
                 </div>
 
-                <md-select placeholder="Realty type" ng-model="newPublication.tid">
-                    <md-option ng-repeat="type in TYPES.REALTY" value="[[ type.id ]]">[[ type.titles.genitive ]]</md-option>
-                </md-select>
+                <md-input-container>
+                    <label>Тип недвижимости</label>
+                    <md-select ng-model="newPublication.tid">
+                        <md-option ng-repeat="type in ::TYPES.REALTY" value="[[ ::type.id ]]">[[ ::type.titles.genitive ]]</md-option>
+                    </md-select>
+                </md-input-container>
             </div>
         </md-card-content>
         <md-divider></md-divider>
@@ -31,8 +34,8 @@
     </md-card>
 
 
-    <md-card class="-brief" ng-repeat="brief in briefs | orderBy: 'state_sid'">
-        <img class="md-card-image" ng-src="[[ brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png" />
+    <md-card class="-brief" ng-repeat="brief in ::briefs | orderBy: 'state_sid'">
+        <img class="md-card-image" ng-src="[[ ::brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png" />
         <img class="md-card-image" src="{{ static }}build/images/common/image-404.png" ng-hide="brief.photo_url" alt="" />
 
         <md-card-content>
@@ -55,18 +58,18 @@
                     <span flex></span>
                 </div>
                 <span flex></span>
-                <span class="blue-grey-text">[[ TYPES.REALTY[brief.tid].titles.singular ]]</span>
+                <span class="blue-grey-text">[[ ::TYPES.REALTY[brief.tid].titles.singular ]]</span>
             </div>
 
             <div ng-show="brief.moderator_message">
-                [[ brief.moderator_message ]]
+                [[ ::brief.moderator_message ]]
                 <md-divider></md-divider>
             </div>
 
-            <h2 class="md-title" ng-show="brief.title">[[ brief.title ]]</h2>
+            <h2 class="md-title" ng-show="brief.title">[[ ::brief.title ]]</h2>
             <h2 class="md-title grey-text text-lighten-1" ng-hide="brief.title">Заголовок не указан</h2>
 
-            <p ng-show="brief.description">[[ brief.description ]]</p>
+            <p ng-show="brief.description">[[ ::brief.description ]]</p>
             <p class="grey-text text-lighten-1" ng-hide="brief.description">Описание не указано</p>
         </md-card-content>
         <md-divider></md-divider>

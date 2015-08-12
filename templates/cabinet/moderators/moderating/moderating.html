@@ -7,9 +7,9 @@
                 <div layout="column">
                     <header>
                         <ul rn-carousel rn-carousel-index="publicationPreviewSlideIndex" class="publication-preview-carousel">
-                            <li ng-repeat="photo in publication.photos">
+                            <li ng-repeat="photo in ::publication.photos">
                                 <div class="layer">
-                                    <img ng-src="[[ photo ]]" alt=""/>
+                                    <img ng-src="[[ ::photo ]]" alt=""/>
                                 </div>
                             </li>
                         </ul>
@@ -28,10 +28,10 @@
                             <div class="publication-view-overlay-description" layout="row" layout-align="start center" layout-padding>
                                 <div layout="column" layout-padding>
                                     <div class="md-headline">
-                                        [[ publication.title ]]
+                                        [[ ::publication.title ]]
                                     </div>
                                     <div class="md-subhead">
-                                        [[ publication.address ]]
+                                        [[ ::publication.address ]]
                                     </div>
                                 </div>
                             </div>
@@ -80,26 +80,26 @@
 
 
     <div ng-hide="loaders.overlay || !publication.claims">
-        <md-card ng-repeat="claim in publication.claims">
+        <md-card ng-repeat="claim in ::publication.claims">
             <md-card-content layout="column">
                 <div class="md-caption" layout="row" layout-padding>
-                    <span>Создано: [[ claim.date_reported  | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                    <span>Создано: [[ ::claim.date_reported | date:'dd.MM.yyyy в HH:mm' ]]</span>
                     <span flex></span>
-                    <span>[[ claim.email ]]</span>
+                    <span>[[ ::claim.email ]]</span>
                 </div>
                 <div class="md-body-1" layout="row" layout-align="start center" layout-padding>
                     <span class="md-body-2">Жалоба:&nbsp;</span>
-                    [[ claim.message ]]
+                    [[ ::claim.message ]]
                 </div>
                 <div class="md-body-1" layout="row" layout-align="start center" layout-padding>
                     <span class="md-body-2">Последняя заметка:&nbsp;</span>
-                    [[ claim.moderator_notice ]]
+                    [[ ::claim.moderator_notice ]]
                 </div>
                 <md-divider></md-divider>
                 <div class="md-caption" layout="row" layout-padding ng-if="claim.date_closed">
-                    <span>Обработано: [[ claim.date_closed | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                    <span>Обработано: [[ ::claim.date_closed | date:'dd.MM.yyyy в HH:mm' ]]</span>
                     <span flex></span>
-                    <span>Модератор: [[ claim.moderator_name ]]</span>
+                    <span>Модератор: [[ ::claim.moderator_name ]]</span>
                 </div>
                 <div layout="row" ng-if="!claim.date_closed">
                     <md-input-container flex>

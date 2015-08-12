@@ -46,7 +46,7 @@
                                         <label>Тип обєкта</label>
                                         <md-select ng-model="filters.blue.b_t_sid">
                                             <md-option value="null">Выбрать тип</md-option>
-                                            <md-option ng-repeat="realtyType in TYPES.REALTY" value="[[ realtyType.id ]]">[[ realtyType.titles.singular ]]</md-option>
+                                            <md-option ng-repeat="realtyType in ::TYPES.REALTY" value="[[ ::realtyType.id ]]">[[ ::realtyType.titles.singular ]]</md-option>
                                         </md-select>
                                     </md-input-container>
                                     <md-input-container flex="40" ng-show="filters.blue.b_t_sid">
@@ -91,7 +91,7 @@
                                             <label>Тип обєкта</label>
                                             <md-select ng-model="filters.green.g_t_sid">
                                                 <md-option value="null">Выбрать тип</md-option>
-                                                <md-option ng-repeat="realtyType in TYPES.REALTY" value="[[ realtyType.id ]]">[[ realtyType.titles.singular ]]</md-option>
+                                                <md-option ng-repeat="realtyType in ::TYPES.REALTY" value="[[ ::realtyType.id ]]">[[ ::realtyType.titles.singular ]]</md-option>
                                             </md-select>
                                         </md-input-container>
                                         <md-input-container flex="40" ng-show="filters.green.g_t_sid">
