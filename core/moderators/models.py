@@ -62,7 +62,7 @@ class PublicationsCheckQueue(AbstractPublicationModel):
 
 
     def hold(self, moderator):
-        PublicationsHeld.objects.add(self.publication_tid, self.publication_hash_id, moderator.id)
+        HeldPublications.objects.add(self.publication_tid, self.publication_hash_id, moderator.id)
         RedisHandler.unbind_from_the_moderator(moderator, self.publication_tid, self.publication_hash_id)
 
         # note: no claims closing is needed
@@ -199,9 +199,10 @@ class AcceptedPublications(AbstractProcessedPublicationModel):
 
 
 
-class PublicationsHeld(AbstractProcessedPublicationModel):
+class HeldPublications(AbstractProcessedPublicationModel):
     class Meta:
         db_table = 'moderators_publications_held'
+        ordering = ('-date_added', )
 
 
 

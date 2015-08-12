@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from apps.views_base import ModeratorsView
 from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.methods.request_data_getters import angular_post_parameters
-from core.moderators.models import PublicationsCheckQueue, PublicationsClaims
+from core.moderators.models import PublicationsCheckQueue, PublicationsClaims, HeldPublications
 from core.publications import formatters
 from core.publications.constants import HEAD_MODELS
 
@@ -190,7 +190,84 @@ class PublicationAcceptRejectOrHoldView(ModeratorsView):
 
 
 
-# class HeldPublicationsView()
+class HeldPublicationsView(ModeratorsView):
+    class GetResponses(object):
+        @staticmethod
+        @json_response
+        def ok(briefs):
+            return {
+                'code': 0,
+                'message': 'OK',
+                'data': briefs,
+            }
+
+
+    @classmethod
+    def get(cls, request, *args):
+        held_publications = HeldPublications.objects\
+            .by_moderator(request.user)\
+            .values_list('publication_tid', 'publication_hash_id')
+
+        ids = {}
+        for tid, hash_id in held_publications:
+            if not tid in ids:
+                ids[tid] = [hash_id]
+            else:
+                ids[tid].append(hash_id)
+
+
+        pubs = []
+        for tid, hash_ids_list in ids.iteritems():
+            query = HEAD_MODELS[tid].objects.filter(hash_id__in=hash_ids_list)
+            pubs.extend(cls.__dump_publications_list(tid, query))
+
+
+        return cls.GetResponses.ok(pubs)
+
+
+    @classmethod
+    def __dump_publications_list(cls, tid, queryset):
+        """
+        Повератає список брифів оголошень, вибраних у queryset.
+
+        Note:
+            queryset передається, а не формуєтсья в даній функції для того,
+            щоб на вищих рівнях можна було накласти додакові умови на вибірку.
+            По суті, дана функція лише дампить результати цієї вибірки в список в певному форматі.
+        """
+        publications_list = queryset.values_list('id', 'hash_id', 'body__title', 'body__description', 'for_rent', 'for_sale')
+        if not publications_list:
+            return []
+
+
+        model = HEAD_MODELS[tid]
+        publications = model.objects\
+            .filter(id__in=[p[0] for p in publications_list])\
+            .only('id')
+
+        title_photos = {
+            p.id: p.title_photo().big_thumb_url for p in publications
+        }
+
+
+        briefs = []
+        for head_id, hash_id, title, description, for_rent, for_sale in publications_list:
+            briefs.append({
+                'tid': tid,
+                'id': hash_id,
+                'title': title,
+                'description': description,
+                'for_rent': for_rent,
+                'for_sale': for_sale,
+
+                'photo_url': title_photos.get(head_id)
+
+                # ...
+                # other fields here
+                # ...
+            })
+        return briefs
+
 
 
 
