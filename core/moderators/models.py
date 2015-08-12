@@ -22,6 +22,29 @@ class PublicationMethodsMixin(models.Model):
         return PublicationsClaims.objects.by_publication(self.publication_tid, self.publication_hash_id)
 
 
+    def accept(self, moderator):
+        self.publication.reject_by_moderator()
+
+        AcceptedPublications.objects.add(self.publication_tid, self.publication_hash_id, moderator.id)
+        RedisHandler.unbind_from_the_moderator(moderator, self.publication_tid, self.publication_hash_id)
+
+        self.__close_all_claims(moderator)
+        self.delete()
+
+
+    def reject(self, moderator, message):
+        RejectedPublications.objects.add(
+            self.publication_tid, self.publication_hash_id, moderator.id, message) # note message here
+        RedisHandler.unbind_from_the_moderator(moderator, self.publication_tid, self.publication_hash_id)
+
+        # note: no claims closing is needed
+        self.delete()
+
+
+    def __close_all_claims(self, moderator):
+        for claim in PublicationsClaims.objects.by_publication(self.publication_tid, self.publication_hash_id):
+            claim.close(moderator)
+
 
 class PublicationsCheckQueue(AbstractPublicationModel, PublicationMethodsMixin):
     class Meta:
@@ -100,25 +123,6 @@ class PublicationsCheckQueue(AbstractPublicationModel, PublicationMethodsMixin):
         return None
 
 
-    def accept(self, moderator):
-        self.publication.reject_by_moderator()
-
-        AcceptedPublications.objects.add(self.publication_tid, self.publication_hash_id, moderator.id)
-        RedisHandler.unbind_from_the_moderator(moderator, self.publication_tid, self.publication_hash_id)
-
-        self.__close_all_claims(moderator)
-        self.delete()
-
-
-    def reject(self, moderator, message):
-        RejectedPublications.objects.add(
-            self.publication_tid, self.publication_hash_id, moderator.id, message) # note message here
-        RedisHandler.unbind_from_the_moderator(moderator, self.publication_tid, self.publication_hash_id)
-
-        # note: no claims closing is needed
-        self.delete()
-
-
     def hold(self, moderator):
         HeldPublications.objects.add(self.publication_tid, self.publication_hash_id, moderator.id)
         RedisHandler.unbind_from_the_moderator(moderator, self.publication_tid, self.publication_hash_id)
@@ -195,11 +199,6 @@ class PublicationsCheckQueue(AbstractPublicationModel, PublicationMethodsMixin):
 
         except IndexError:
             return None
-
-
-    def __close_all_claims(self, moderator):
-        for claim in PublicationsClaims.objects.by_publication(self.publication_tid, self.publication_hash_id):
-            claim.close(moderator)
 
 
 
@@ -292,6 +291,13 @@ class HeldPublications(PublicationMethodsMixin):
 
 
     objects = ObjectsManager()
+
+
+    def hold(self, moderator):
+        # HeldPublications and PublicationsCheckQueue must implement common interface.
+        # In this model this method may do nothing.
+        pass
+
 
 
     @property

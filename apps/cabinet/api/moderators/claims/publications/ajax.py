@@ -120,6 +120,7 @@ class PublicationView(ModeratorsView):
 
 
         if not publication.is_published():
+            check_record.delete()
             return cls.GetResponses.invalid_parameters()
 
 
@@ -169,10 +170,15 @@ class PublicationAcceptRejectOrHoldView(ModeratorsView):
         except (IndexError, ValueError, KeyError):
             return cls.PostResponses.invalid_parameters()
 
+
         try:
-            record = PublicationsCheckQueue.objects.by_tid_and_hash_id(tid, hash_id)[:1][0]
-        except IndexError:
-            return cls.PostResponses.invalid_parameters()
+            record = PublicationsCheckQueue.objects.get(publication_tid=tid, publication_hash_id=hash_id)
+        except ObjectDoesNotExist:
+
+            try:
+                record = HeldPublications.objects.get(publication_tid=tid, publication_hash_id=hash_id)
+            except ObjectDoesNotExist:
+                return cls.PostResponses.invalid_parameters()
 
 
         operation = args[2]
