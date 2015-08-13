@@ -198,7 +198,7 @@ gulp.task('watch', function () {
     gulp.watch(PATHS.SOURCE.STYLES + '/cabinet/moderators/**/*.scss',   ['Sass:Cabinet:Moderators']);
 
 
-    gulp.watch(PATHS.SOURCE.SCRIPTS + '/_common/**/*.ts',               ['TypeScript']);
+    gulp.watch(PATHS.SOURCE.SCRIPTS + '/core/**/*.ts',                  ['TypeScript']);
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/map/**/*.ts',                   ['TypeScript:Map']);
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/landing/**/*.ts',               ['TypeScript:Landing']);
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/cabinet/users/**/*.ts',         ['TypeScript:Cabinet:Users']);

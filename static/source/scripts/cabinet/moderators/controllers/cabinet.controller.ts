@@ -15,7 +15,7 @@ module Mappino.Cabinet.Moderators {
 
         constructor(private $scope: any,
                     private $rootScope: any,
-                    private authService: Mappino.Core.Auth.IAuthService,
+                    private authService: Mappino.Core.BAuth.IAuthService,
                     private $mdSidenav: any,
                     private $mdUtil: any,
                     private $mdMedia: any) {

@@ -7,6 +7,6 @@ module Mappino.Core {
         'Mappino.Core.Constants',
         'Mappino.Core.Directives',
 
-        'Mappino.Core.Auth'
+        'Mappino.Core.bAuth'
     ]);
 }

@@ -2,11 +2,12 @@
 // Materialize include
 // --------------------------------------------------
 @import "../../_common/material/material";
+@import "../../_common/additions/additions";
+@import "../../_common/components/components";
 
 
 
 // additions
-@import "../../_common/additions/md-select";
 @import "additions/md-toolbar";
 @import "additions/md-progress";
 @import "additions/md-card";
@@ -14,9 +15,7 @@
 
 
 // custom components
-@import "components/navbar-user";
 @import "components/publication-controls";
-@import "components/overlay-loader";
 
 
 // pages style

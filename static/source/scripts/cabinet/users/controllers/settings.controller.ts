@@ -3,7 +3,7 @@
 
 module Mappino.Cabinet.Users {
     export class SettingsController {
-        private profile: Mappino.Core.Auth.IUser;
+        private profile: Mappino.Core.BAuth.IUser;
 
         public static $inject = [
             '$scope',
@@ -18,7 +18,7 @@ module Mappino.Cabinet.Users {
                     private $rootScope: any,
                     private $timeout: angular.ITimeoutService,
                     private $mdDialog: any,
-                    private authService: Mappino.Core.Auth.IAuthService,
+                    private authService: Mappino.Core.BAuth.IAuthService,
                     private TXT: any) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Редактирование профиля';
@@ -44,6 +44,7 @@ module Mappino.Cabinet.Users {
 
             this.authService.uploadAvatar(avatar, response => {
                 this.$rootScope.loaders.avatar = false;
+                this.$scope.profile.account.avatar_url = this.authService.user.account.avatar_url;
 
                 this.$scope.imageFatal      = response.code === 1;
                 this.$scope.imageTooLarge   = response.code === 2;
@@ -59,7 +60,7 @@ module Mappino.Cabinet.Users {
 
             this.authService.removeAvatar(response => {
                 this.$rootScope.loaders.avatar = false;
-                console.log(this.$scope.profile)
+                this.$scope.profile.account.avatar_url = null;
             });
         }
 

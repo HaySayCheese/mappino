@@ -3,7 +3,7 @@
 
 module Mappino.Cabinet.Moderators {
     export class SettingsController {
-        private profile: Mappino.Core.Auth.IUser;
+        private profile: Mappino.Core.BAuth.IUser;
 
         public static $inject = [
             '$scope',
@@ -18,7 +18,7 @@ module Mappino.Cabinet.Moderators {
                     private $rootScope: any,
                     private $timeout: angular.ITimeoutService,
                     private $mdDialog: any,
-                    private authService: Mappino.Core.Auth.IAuthService,
+                    private authService: Mappino.Core.BAuth.IAuthService,
                     private TXT: any) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Редактирование профиля';
@@ -44,11 +44,14 @@ module Mappino.Cabinet.Moderators {
 
             this.authService.uploadAvatar(avatar, response => {
                 this.$rootScope.loaders.avatar = false;
+                this.$scope.profile.account.avatar_url = this.authService.user.account.avatar_url;
 
                 this.$scope.imageFatal      = response.code === 1;
                 this.$scope.imageTooLarge   = response.code === 2;
                 this.$scope.ImageTooSmall   = response.code === 3;
                 this.$scope.ImageUndefined  = response.code === 4;
+            }, response => {
+                this.$rootScope.loaders.avatar = false;
             });
         }
 
@@ -59,7 +62,7 @@ module Mappino.Cabinet.Moderators {
 
             this.authService.removeAvatar(response => {
                 this.$rootScope.loaders.avatar = false;
-                console.log(this.$scope.profile)
+                this.$scope.profile.account.avatar_url = null;
             });
         }
 

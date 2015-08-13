@@ -53,15 +53,8 @@
 
             <span flex></span>
 
-            <md-button ui-sref="settings" class="nav-button" ng-show="userData.account.full_name">
-                <div layout="row" layour-align="center center">
-                    <img class="navbar-user-avatar" ng-src="[[ userData.account.avatar_url ]]" alt="" ng-show="userData.account.avatar_url"
-                         on-error-src="{{ static }}build/images/common/no-user.png" />
-                    <img class="navbar-user-avatar" src="{{ static }}build/images/common/no-user.png" ng-hide="userData.account.avatar_url" alt="" />
-
-                    <span ng-show="userData.account.first_name && userData.account.last_name">[[ userData.account.full_name ]]</span>
-                    <span ng-hide="userData.account.first_name && userData.account.last_name">Настройки</span>
-                </div>
+            <md-button ui-sref="settings" class="nav-button">
+                <b-auth-toolbar-button></b-auth-toolbar-button>
             </md-button>
         </nav>
     </md-toolbar>
@@ -85,7 +78,7 @@
         <md-content flex ui-view></md-content>
     </main>
 
-    <div class="overlay-loader -animation" layout="column" layout-align="center center" ng-show="loaders.overlay">
+    <div class="overlay-loader" layout="column" layout-align="center center" ng-show="loaders.overlay">
         <md-progress-circular class="md-accent" md-mode="indeterminate" md-diameter="100"></md-progress-circular>
     </div>
 

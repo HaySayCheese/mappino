@@ -14,7 +14,7 @@ module Mappino.Map {
 
         constructor(private $scope: any,
                     private $cookies: angular.cookies.ICookiesService,
-                    private authService: Mappino.Core.Auth.IAuthService) {
+                    private authService: Mappino.Core.BAuth.IAuthService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.user = authService.user;
             $scope.account = {

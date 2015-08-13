@@ -1,4 +1,4 @@
-module Mappino.Core.Auth {
+module Mappino.Core.BAuth {
 
     export class AuthService implements IAuthService {
         private _user: IUser = {
@@ -89,7 +89,7 @@ module Mappino.Core.Auth {
                 .then(response => {
                     if (response.data['code'] === 0) {
                         this.updateProfileField(response.data['data']);
-                        angular.isFunction(successCallback) && successCallback(response.data)
+                        angular.isFunction(successCallback) && successCallback(angular.copy(this._user))
                     } else {
                         this.clearUserFromStorage();
                         angular.isFunction(errorCallback) && errorCallback(response.data)
@@ -108,7 +108,7 @@ module Mappino.Core.Auth {
                         this.updateProfileField(response.data['data']['account']);
                         this.updateProfileField(response.data['data']['preferences']);
 
-                        angular.isFunction(successCallback) && successCallback(this._user);
+                        angular.isFunction(successCallback) && successCallback(angular.copy(this._user));
                     } else {
                         angular.isFunction(errorCallback) && errorCallback(response.data);
                     }

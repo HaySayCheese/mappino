@@ -1,0 +1,33 @@
+b-auth-user-avatar {
+    border-radius: 50%;
+
+    img {
+        border-radius: 50%;
+    }
+
+
+    &.-mini img {
+        @include square(35px);
+    }
+
+    &.-small img {
+        @include square(100px);
+    }
+
+    &.-medium img {
+        @include square(140px);
+    }
+
+    &.-large img {
+        @include square(180px);
+    }
+
+
+
+    &.-toolbar.-mini {
+        @include square(35px);
+        margin-top: 10px;
+        margin-right: 10px;
+        border: 1px solid color('blue', 'darken-2');
+    }
+}
