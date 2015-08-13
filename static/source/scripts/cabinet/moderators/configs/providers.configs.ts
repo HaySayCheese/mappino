@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module Mappino.Cabinet.Moderators {
+namespace Mappino.Cabinet.Moderators {
     'use strict';
 
     export class ProvidersConfigs {

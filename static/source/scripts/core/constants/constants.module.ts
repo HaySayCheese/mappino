@@ -1,7 +1,7 @@
 /// <reference path='_all.ts' />
 
 
-module Mappino.Core.Constants {
+namespace Mappino.Core.Constants {
     var constants: angular.IModule = angular.module('Mappino.Core.Constants', []);
 
     constants.constant('MAP', {

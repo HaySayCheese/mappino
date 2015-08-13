@@ -1,7 +1,7 @@
 /// <reference path='_all.ts' />
 
 
-module Mappino.Core.Values {
+namespace Mappino.Core.Values {
     var values: angular.IModule = angular.module('Mappino.Core.Values', []);
 
     values.value('TXT', {

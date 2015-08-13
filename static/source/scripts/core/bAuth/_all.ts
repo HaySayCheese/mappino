@@ -2,6 +2,10 @@
 /// <reference path='interfaces/IBAuthService.ts' />
 
 
+/// <reference path='models/User.ts' />
+
+
+
 /// <reference path='services/BAuthService.ts' />
 
 

@@ -1,9 +1,9 @@
 /// <reference path='_references.ts' />
 
-module pages.home {
+namespace pages.home {
     'use strict';
 
-    var app: angular.IModule = angular.module('mappino.pages.home', [
+    var app: angular.IModule = angular.namespace('mappino.pages.home', [
         'ngCookies'
     ]);
 

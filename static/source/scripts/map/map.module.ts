@@ -1,6 +1,6 @@
 /// <reference path='_all.ts' />
 
-module Mappino.Map {
+namespace Mappino.Map {
     'use strict';
 
     var app: angular.IModule = angular.module('mappino.map', [

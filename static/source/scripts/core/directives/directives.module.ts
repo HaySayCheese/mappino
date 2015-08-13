@@ -1,7 +1,7 @@
 /// <reference path='_all.ts' />
 
 
-module Mappino.Core.Directives {
+namespace Mappino.Core.Directives {
     var core: angular.IModule = angular.module('Mappino.Core.Directives', []);
 
     core.directive('includeReplace', includeReplace);

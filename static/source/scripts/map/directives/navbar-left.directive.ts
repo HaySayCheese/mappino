@@ -1,4 +1,4 @@
-module Mappino.Map {
+namespace Mappino.Map {
     export function NavbarLeftDirective(): angular.IDirective {
         return {
             restrict: 'E',

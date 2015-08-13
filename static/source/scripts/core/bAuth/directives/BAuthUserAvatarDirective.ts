@@ -1,6 +1,6 @@
-module Mappino.Core.BAuth {
+namespace Mappino.Core.BAuth {
 
-    export function BAuthUserAvatarDirective(authService: AuthService): angular.IDirective {
+    export function BAuthUserAvatarDirective(bAuthService: BAuthService): angular.IDirective {
 
         var staticUrl = 'http://localhost/mappino_static';
 
@@ -21,10 +21,11 @@ module Mappino.Core.BAuth {
             },
 
             controller: ['$scope', ($scope) => {
-                $scope.user = authService.user;
+                $scope.user = bAuthService.user;
+                console.log($scope.user)
             }]
         };
     }
 
-    BAuthUserAvatarDirective.$inject = ['AuthService'];
+    BAuthUserAvatarDirective.$inject = ['BAuthService'];
 }

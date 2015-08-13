@@ -1,5 +1,7 @@
 var gulp        = require('gulp'),
     del         = require('del'),
+    bump        = require('gulp-bump'),
+
     runSequence = require('run-sequence'),
     rename      = require("gulp-rename"),
 
@@ -212,4 +214,14 @@ gulp.task('watch', function () {
 /** default task (use 'gulp' to build project) **/
 gulp.task('default', function(callback) {
     runSequence('Clean', ['Copy', 'Sass', 'TypeScript'], callback);
+});
+
+
+gulp.task('bump', function(){
+    gulp.src('./package.json')
+        .pipe(bump({
+            type: 'major',
+            indent: 4
+        }))
+        .pipe(gulp.dest('./'));
 });

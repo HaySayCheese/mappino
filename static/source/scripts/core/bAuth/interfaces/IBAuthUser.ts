@@ -1,4 +1,4 @@
-module Mappino.Core.BAuth {
+namespace Mappino.Core.BAuth {
     export interface IUser {
         account: {
             first_name:         string

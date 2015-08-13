@@ -24,7 +24,7 @@
 
 'use strict';
 
-angular.module('ngTinyScrollbar', [])
+angular.namespace('ngTinyScrollbar', [])
     .directive('scrollbar', ['$window', '$timeout', '$parse', '$animate', function($window, $timeout, $parse, $animate) {
         return {
             restrict: 'A',

@@ -1,6 +1,6 @@
 
 // todo: перекласти назви на англ мову
-module Mappino.Core.Values {
+namespace Mappino.Core.Values {
     export class BuildingTypesValues {
         static get Default(): any {
             return [{

@@ -1,7 +1,7 @@
 /// <reference path='_all.ts' />
 
 
-module Mappino.Core.BAuth {
+namespace Mappino.Core.BAuth {
     'use strict';
 
     var auth: angular.IModule = angular.module('Mappino.Core.bAuth', [
@@ -9,7 +9,7 @@ module Mappino.Core.BAuth {
         'ngMaterial'
     ]);
 
-    auth.service('AuthService', AuthService);
+    auth.service('BAuthService', BAuthService);
 
     auth.directive('bAuthToolbarButton', BAuthToolbarButtonDirective);
     auth.directive('bAuthUserAvatar', BAuthUserAvatarDirective);

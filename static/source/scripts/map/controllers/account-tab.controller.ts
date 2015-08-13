@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module Mappino.Map {
+namespace Mappino.Map {
     export class AccountTabController {
         private fullNumber:    string = localStorage['fullNumber'] || '';
         private smsCode:       string;
@@ -9,14 +9,14 @@ module Mappino.Map {
         public static $inject = [
             '$scope',
             '$cookies',
-            'AuthService'
+            'BAuthService'
         ];
 
         constructor(private $scope: any,
                     private $cookies: angular.cookies.ICookiesService,
-                    private authService: Mappino.Core.BAuth.IAuthService) {
+                    private bAuthService: Mappino.Core.BAuth.IBAuthService) {
             // ---------------------------------------------------------------------------------------------------------
-            $scope.user = authService.user;
+            $scope.user = bAuthService.user;
             $scope.account = {
                 phoneCode:      '+380',
                 phoneNumber:    '',
@@ -25,7 +25,7 @@ module Mappino.Map {
 
             $scope.authState = 'enterPhone';
 
-            authService.tryLogin(response => {
+            bAuthService.tryLogin(response => {
                 $scope.authState = 'accountInformation';
             }, response => {
                 $scope.authState = 'enterPhone';
@@ -43,7 +43,7 @@ module Mappino.Map {
                     this.fullNumber = this.$scope.account.phoneCode + this.$scope.account.phoneNumber;
                     //localStorage['fullNumber'] = this.fullNumber;
 
-                    this.authService.checkPhoneNumber(this.fullNumber, () => {
+                    this.bAuthService.checkPhoneNumber(this.fullNumber, () => {
                         this.$scope.authState = 'enterSMSCode';
                     }, () => {
                         this.$scope.loginForm.phoneNumber.$setValidity('invalid', false);
@@ -53,7 +53,7 @@ module Mappino.Map {
                 if (this.$scope.loginForm.smsCode.$valid) {
                     this.smsCode = this.$scope.account.smsCode;
 
-                    this.authService.checkSMSCode(this.fullNumber, this.smsCode, () => {
+                    this.bAuthService.checkSMSCode(this.fullNumber, this.smsCode, () => {
                         window.location.pathname = '/cabinet/';
                     }, () => {
                         this.$scope.loginForm.smsCode.$setValidity('invalid', false);
@@ -65,7 +65,7 @@ module Mappino.Map {
 
 
         public logout() {
-            this.authService.logout(response => {
+            this.bAuthService.logout(response => {
                 this.$scope.authState = 'enterPhone';
             });
         }

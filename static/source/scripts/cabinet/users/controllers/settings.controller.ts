@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module Mappino.Cabinet.Users {
+namespace Mappino.Cabinet.Users {
     export class SettingsController {
         private profile: Mappino.Core.BAuth.IUser;
 
@@ -10,7 +10,7 @@ module Mappino.Cabinet.Users {
             '$rootScope',
             '$timeout',
             '$mdDialog',
-            'AuthService',
+            'BAuthService',
             'TXT'
         ];
 
@@ -18,7 +18,7 @@ module Mappino.Cabinet.Users {
                     private $rootScope: any,
                     private $timeout: angular.ITimeoutService,
                     private $mdDialog: any,
-                    private authService: Mappino.Core.BAuth.IAuthService,
+                    private bAuthService: Mappino.Core.BAuth.IBAuthService,
                     private TXT: any) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Редактирование профиля';
@@ -29,7 +29,7 @@ module Mappino.Cabinet.Users {
 
             this.initInputsChange();
 
-            authService.loadProfile(response => {
+            bAuthService.loadProfile(response => {
                 $scope.profile = response;
                 $rootScope.loaders.overlay = false;
             });
@@ -42,9 +42,9 @@ module Mappino.Cabinet.Users {
 
             this.$rootScope.loaders.avatar = true;
 
-            this.authService.uploadAvatar(avatar, response => {
+            this.bAuthService.uploadAvatar(avatar, response => {
                 this.$rootScope.loaders.avatar = false;
-                this.$scope.profile.account.avatar_url = this.authService.user.account.avatar_url;
+                this.$scope.profile.account.avatar_url = this.bAuthService.user.account.avatar_url;
 
                 this.$scope.imageFatal      = response.code === 1;
                 this.$scope.imageTooLarge   = response.code === 2;
@@ -58,7 +58,7 @@ module Mappino.Cabinet.Users {
         public removeAvatar() {
             this.$rootScope.loaders.avatar = true;
 
-            this.authService.removeAvatar(response => {
+            this.bAuthService.removeAvatar(response => {
                 this.$rootScope.loaders.avatar = false;
                 this.$scope.profile.account.avatar_url = null;
             });
@@ -76,7 +76,7 @@ module Mappino.Cabinet.Users {
 
                 if (!this.$scope.userProfileForm[name].$dirty) return;
 
-                this.authService.checkProfileField({ fieldName: name, fieldValue: value }, response => {
+                this.bAuthService.checkProfileField({ fieldName: name, fieldValue: value }, response => {
                     e.currentTarget['value'] = response;
 
                     this.$scope.userProfileForm[name].$setValidity("invalid",    true);
@@ -91,7 +91,7 @@ module Mappino.Cabinet.Users {
                 if (!angular.isUndefined(newValue) && !angular.isUndefined(oldValue)) {
                     for (var key in newValue) {
                         if (newValue[key] != oldValue[key]) {
-                            this.authService.checkProfileField({ fieldName: key, fieldValue: newValue[key] });
+                            this.bAuthService.checkProfileField({ fieldName: key, fieldValue: newValue[key] });
                         }
                     }
                 }

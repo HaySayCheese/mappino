@@ -1,6 +1,6 @@
 /// <reference path='_all.ts' />
 
-module Mappino.Cabinet.Users {
+namespace Mappino.Cabinet.Users {
     'use strict';
 
     var app: angular.IModule = angular.module('mappino.cabinet.users', [

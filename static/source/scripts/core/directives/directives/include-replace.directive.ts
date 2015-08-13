@@ -1,4 +1,4 @@
-module Mappino.Core.Directives {
+namespace Mappino.Core.Directives {
 
     export function includeReplace(): angular.IDirective {
         return {

@@ -1,6 +1,6 @@
-module Mappino.Core.BAuth {
+namespace Mappino.Core.BAuth {
 
-    export function BAuthToolbarButtonDirective(authService: AuthService): angular.IDirective {
+    export function BAuthToolbarButtonDirective(bAuthService: BAuthService): angular.IDirective {
 
         return {
             restrict: 'E',
@@ -18,10 +18,10 @@ module Mappino.Core.BAuth {
             },
 
             controller: ['$scope', ($scope) => {
-                $scope.user = authService.user;
+                $scope.user = bAuthService.user;
             }]
         };
     }
 
-    BAuthToolbarButtonDirective.$inject = ['AuthService'];
+    BAuthToolbarButtonDirective.$inject = ['BAuthService'];
 }

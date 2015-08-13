@@ -1,4 +1,4 @@
-module Mappino.Map {
+namespace Mappino.Map {
     export function GooglePlaceAutocompleteDirective($rootScope, filtersService): angular.IDirective {
         var autocomplete = null;
 
