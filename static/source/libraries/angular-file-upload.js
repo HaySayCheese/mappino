@@ -449,7 +449,7 @@ if (window.XMLHttpRequest && !(window.FileAPI && FileAPI.shouldLoad)) {
     })(window.XMLHttpRequest.prototype.setRequestHeader);
 }
 
-var ngFileUpload = angular.module('ngFileUpload', []);
+var ngFileUpload = angular.namespace('ngFileUpload', []);
 
 ngFileUpload.version = '6.0.2';
 ngFileUpload.defaults = {};

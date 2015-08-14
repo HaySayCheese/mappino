@@ -8,12 +8,8 @@
 
                 <div layout-sm="column" layout="row">
                     <div class="user-block" layout="column" layout-align="center center" flex-gt-sm="45">
-                        <div class="user-photo" layout="column" layout-align="center center">
-                            <img ng-src="[[ profile.account.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/no-user.png" ng-show="profile.account.avatar_url && !loaders.avatar" />
-                            <img src="{{ static }}build/images/common/no-user.png" ng-hide="profile.account.avatar_url || loaders.avatar" alt="" />
-
-                            <md-progress-circular md-mode="indeterminate" ng-show="loaders.avatar"></md-progress-circular>
-                        </div>
+                        <b-auth-user-avatar class="-large" ng-hide="loaders.avatar"></b-auth-user-avatar>
+                        <md-progress-circular md-mode="indeterminate" ng-show="loaders.avatar"></md-progress-circular>
 
                         <div layout="row">
                             <md-button class="md-warn md-hue-1 md-icon-button" ng-show="profile.account.avatar_url" ng-disabled="loaders.avatar" ng-click="settingsCtrl.removeAvatar()">
@@ -90,8 +86,8 @@
             <md-card-content>
                 <h3 class="md-headline blue-text">Контакты</h3>
 
-                <div layout-gt-sm="row" flex-sm="column">
-                    <div layout="column" flex="50" flex-sm="100">
+                <div layout="row" layout-sm="column">
+                    <div layout="column" flex-gt-sm="50">
                         <div layout="row">
                             <md-input-container flex="20">
                                 <label>Код</label>
@@ -127,7 +123,7 @@
                             </div>
                         </md-input-container>
                     </div>
-                    <div layout="column" flex="50" flex-sm="100">
+                    <div layout="column" flex-gt-sm="50">
                         <md-input-container>
                             <label>Рабочая эл. почта</label>
                             <input type="text" name="work_email" ng-model="profile.account.work_email">

@@ -1,5 +1,7 @@
 var gulp        = require('gulp'),
     del         = require('del'),
+    bump        = require('gulp-bump'),
+
     runSequence = require('run-sequence'),
     rename      = require("gulp-rename"),
 
@@ -198,7 +200,7 @@ gulp.task('watch', function () {
     gulp.watch(PATHS.SOURCE.STYLES + '/cabinet/moderators/**/*.scss',   ['Sass:Cabinet:Moderators']);
 
 
-    gulp.watch(PATHS.SOURCE.SCRIPTS + '/_common/**/*.ts',               ['TypeScript']);
+    gulp.watch(PATHS.SOURCE.SCRIPTS + '/core/**/*.ts',                  ['TypeScript']);
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/map/**/*.ts',                   ['TypeScript:Map']);
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/landing/**/*.ts',               ['TypeScript:Landing']);
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/cabinet/users/**/*.ts',         ['TypeScript:Cabinet:Users']);
@@ -212,4 +214,14 @@ gulp.task('watch', function () {
 /** default task (use 'gulp' to build project) **/
 gulp.task('default', function(callback) {
     runSequence('Clean', ['Copy', 'Sass', 'TypeScript'], callback);
+});
+
+
+gulp.task('bump', function(){
+    gulp.src('./package.json')
+        .pipe(bump({
+            type: 'major',
+            indent: 4
+        }))
+        .pipe(gulp.dest('./'));
 });

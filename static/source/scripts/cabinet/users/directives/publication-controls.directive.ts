@@ -1,4 +1,4 @@
-module Mappino.Cabinet.Users {
+namespace Mappino.Cabinet.Users {
 
     export function publicationControls(window, $timeout): angular.IDirective {
         return {

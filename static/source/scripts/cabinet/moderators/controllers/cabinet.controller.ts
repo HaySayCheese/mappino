@@ -1,13 +1,13 @@
 /// <reference path='../_all.ts' />
 
 
-module Mappino.Cabinet.Moderators {
+namespace Mappino.Cabinet.Moderators {
     export class CabinetController {
 
         public static $inject = [
             '$scope',
             '$rootScope',
-            'AuthService',
+            'BAuthService',
             '$mdSidenav',
             '$mdUtil',
             '$mdMedia'
@@ -15,7 +15,7 @@ module Mappino.Cabinet.Moderators {
 
         constructor(private $scope: any,
                     private $rootScope: any,
-                    private authService: Mappino.Core.Auth.IAuthService,
+                    private bAuthService: Mappino.Core.BAuth.IBAuthService,
                     private $mdSidenav: any,
                     private $mdUtil: any,
                     private $mdMedia: any) {
@@ -26,8 +26,8 @@ module Mappino.Cabinet.Moderators {
                 avatar:     false
             };
 
-            authService.tryLogin(response => {
-                $scope.userData = authService.user;
+            bAuthService.tryLogin(response => {
+                $scope.userData = bAuthService.user;
             });
         }
 

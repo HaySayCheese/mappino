@@ -1,16 +1,16 @@
 /// <reference path='../_all.ts' />
 
 
-module Mappino.Cabinet.Moderators {
+namespace Mappino.Cabinet.Moderators {
     export class SettingsController {
-        private profile: Mappino.Core.Auth.IUser;
+        private profile: Mappino.Core.BAuth.IUser;
 
         public static $inject = [
             '$scope',
             '$rootScope',
             '$timeout',
             '$mdDialog',
-            'AuthService',
+            'BAuthService',
             'TXT'
         ];
 
@@ -18,7 +18,7 @@ module Mappino.Cabinet.Moderators {
                     private $rootScope: any,
                     private $timeout: angular.ITimeoutService,
                     private $mdDialog: any,
-                    private authService: Mappino.Core.Auth.IAuthService,
+                    private bAuthService: Mappino.Core.BAuth.IBAuthService,
                     private TXT: any) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Редактирование профиля';
@@ -29,8 +29,9 @@ module Mappino.Cabinet.Moderators {
 
             this.initInputsChange();
 
-            authService.loadProfile(response => {
+            bAuthService.loadProfile(response => {
                 $scope.profile = response;
+                console.log($scope.profile)
                 $rootScope.loaders.overlay = false;
             });
         }
@@ -42,13 +43,16 @@ module Mappino.Cabinet.Moderators {
 
             this.$rootScope.loaders.avatar = true;
 
-            this.authService.uploadAvatar(avatar, response => {
+            this.bAuthService.uploadAvatar(avatar, response => {
                 this.$rootScope.loaders.avatar = false;
+                this.$scope.profile.account.avatar_url = this.bAuthService.user.account.avatar_url;
 
                 this.$scope.imageFatal      = response.code === 1;
                 this.$scope.imageTooLarge   = response.code === 2;
                 this.$scope.ImageTooSmall   = response.code === 3;
                 this.$scope.ImageUndefined  = response.code === 4;
+            }, response => {
+                this.$rootScope.loaders.avatar = false;
             });
         }
 
@@ -57,9 +61,9 @@ module Mappino.Cabinet.Moderators {
         public removeAvatar() {
             this.$rootScope.loaders.avatar = true;
 
-            this.authService.removeAvatar(response => {
+            this.bAuthService.removeAvatar(response => {
                 this.$rootScope.loaders.avatar = false;
-                console.log(this.$scope.profile)
+                this.$scope.profile.account.avatar_url = null;
             });
         }
 
@@ -75,7 +79,7 @@ module Mappino.Cabinet.Moderators {
 
                 if (!this.$scope.userProfileForm[name].$dirty) return;
 
-                this.authService.checkProfileField({ fieldName: name, fieldValue: value }, response => {
+                this.bAuthService.checkProfileField({ fieldName: name, fieldValue: value }, response => {
                     e.currentTarget['value'] = response;
 
                     this.$scope.userProfileForm[name].$setValidity("invalid",    true);
@@ -90,7 +94,7 @@ module Mappino.Cabinet.Moderators {
                 if (!angular.isUndefined(newValue) && !angular.isUndefined(oldValue)) {
                     for (var key in newValue) {
                         if (newValue[key] != oldValue[key]) {
-                            this.authService.checkProfileField({ fieldName: key, fieldValue: newValue[key] });
+                            this.bAuthService.checkProfileField({ fieldName: key, fieldValue: newValue[key] });
                         }
                     }
                 }

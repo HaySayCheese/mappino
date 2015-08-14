@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module Mappino.Map {
+namespace Mappino.Map {
     export class PublicationService  {
         private publication: any;
 

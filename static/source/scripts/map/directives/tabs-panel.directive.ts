@@ -1,4 +1,4 @@
-module Mappino.Map {
+namespace Mappino.Map {
     export function TabBodyCollapsibleDirective($compile, $timeout): angular.IDirective {
         var CLASSES = {
             CLOSED:         '-closed',

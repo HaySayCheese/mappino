@@ -38,9 +38,14 @@
 
     <md-toolbar class="md-whiteframe-z1" ng-cloak>
         <nav class="md-toolbar-tools" show-sm hide-gt-sm layout="row" layout-align="start center">
-            <md-button href class="nav-button" aria-label="Открыть меню" ng-click="cabinetCtrl.toggleSidenav()">
+            <md-button class="nav-button" aria-label="Открыть меню" ng-click="cabinetCtrl.toggleSidenav()">
                 <md-icon>menu</md-icon>
             </md-button>
+            <span flex></span>
+            <md-button class="nav-button" aria-label="mappino">
+                mappino
+            </md-button>
+            <span flex></span>
         </nav>
 
         <nav class="md-toolbar-tools" hide-sm>
@@ -54,15 +59,9 @@
 
             <span flex></span>
 
-            <md-button ui-sref="settings" class="nav-button" ng-show="userData.account.full_name">
-                <div layout="row" layour-align="center center">
-                    <img class="navbar-user-avatar" ng-src="[[ userData.account.avatar_url ]]" alt="" ng-show="userData.account.avatar_url"
-                         on-error-src="{{ static }}build/images/common/no-user.png" />
-                    <img class="navbar-user-avatar" src="{{ static }}build/images/common/no-user.png" ng-hide="userData.account.avatar_url" alt="" />
 
-                    <span ng-show="userData.account.first_name && userData.account.last_name">[[ userData.account.full_name ]]</span>
-                    <span ng-hide="userData.account.first_name && userData.account.last_name">Настройки</span>
-                </div>
+            <md-button ui-sref="settings" class="nav-button">
+                <b-auth-toolbar-button></b-auth-toolbar-button>
             </md-button>
         </nav>
     </md-toolbar>
@@ -71,13 +70,37 @@
 
 
     <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav" ng-cloak>
-        <md-toolbar>
-            <h1 class="md-toolbar-tools">mappino</h1>
-        </md-toolbar>
-        <md-content layout-padding>
-            <md-button ng-click="close()" class="md-primary">
-                Close Sidenav Right
-            </md-button>
+        <header layout="column" layout-align="center center">
+            <div layout="row">
+                <img ng-src="[[ userData.account.avatar_url ]]" ng-show="userData.account.avatar_url" on-error-src="{{ static }}build/images/common/no-user.png" />
+                <img src="{{ static }}build/images/common/no-user.png" ng-hide="userData.account.avatar_url" />
+            </div>
+            <div class="md-padding md-title white-text" layout="row" ng-show="userData.account.first_name && userData.account.last_name">
+                [[ userData.account.full_name ]]
+            </div>
+        </header>
+        <md-content layout="column" layout-padding>
+            <div layout="row">
+                <md-button class="md-primary" ng-href="#!/moderating/" ng-click="cabinetCtrl.toggleSidenav()">
+                    Модерация
+                </md-button>
+            </div>
+            <div layout="row">
+                <md-button class="md-primary" ng-href="#!/held-publications/" ng-click="cabinetCtrl.toggleSidenav()">
+                    Отложенные объявления
+                </md-button>
+            </div>
+            <div layout="row">
+                <md-button class="md-primary" ui-sref="settings" ng-click="cabinetCtrl.toggleSidenav()">
+                    Настройки
+                </md-button>
+            </div>
+            <md-divider></md-divider>
+            <div layout="row">
+                <md-button class="md-primary" ng-click="cabinetCtrl.logout()">
+                    Выйти
+                </md-button>
+            </div>
         </md-content>
     </md-sidenav>
 
@@ -86,7 +109,7 @@
         <md-content flex ui-view></md-content>
     </main>
 
-    <div class="overlay-loader -animation" layout="column" layout-align="center center" ng-show="loaders.overlay">
+    <div class="overlay-loader" layout="column" layout-align="center center" ng-show="loaders.overlay">
         <md-progress-circular class="md-accent" md-mode="indeterminate" md-diameter="100"></md-progress-circular>
     </div>
 

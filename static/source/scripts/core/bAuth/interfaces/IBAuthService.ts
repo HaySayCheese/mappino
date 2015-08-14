@@ -1,5 +1,5 @@
-module Mappino.Core.Auth {
-    export interface IAuthService {
+namespace Mappino.Core.BAuth {
+    export interface IBAuthService {
         user: IUser
 
         checkPhoneNumber(phoneNumber: string, successCallback?: Function, errorCallback?: Function): void

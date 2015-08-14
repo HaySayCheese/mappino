@@ -1,6 +1,6 @@
 
 
-module Mappino.Core.Constants {
+namespace Mappino.Core.Constants {
     export class MapStyleConstant {
         static get Default(): any {
             return [

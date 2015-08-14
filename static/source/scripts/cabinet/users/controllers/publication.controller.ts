@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module Mappino.Cabinet.Users {
+namespace Mappino.Cabinet.Users {
     export class PublicationController {
         private map: google.maps.Map;
         private marker: google.maps.Marker;

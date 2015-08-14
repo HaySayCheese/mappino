@@ -1,7 +1,7 @@
 /// <reference path='../_all.ts' />
 
 
-module Mappino.Cabinet.Users {
+namespace Mappino.Cabinet.Users {
     export interface ITicket {
         ticket_id:      number
         created?:       string

@@ -1,0 +1,11 @@
+md-sidenav {
+    header {
+        @include size(100%, 200px);
+        background: color('blue', 'base');
+
+        img {
+            @include square(100px);
+            border-radius: 50%;
+        }
+    }
+}

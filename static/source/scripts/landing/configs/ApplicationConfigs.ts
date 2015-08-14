@@ -1,7 +1,7 @@
 /// <reference path='../_references.ts' />
 
 
-module pages.home {
+namespace pages.home {
     'use strict';
 
     export class ApplicationConfigs {

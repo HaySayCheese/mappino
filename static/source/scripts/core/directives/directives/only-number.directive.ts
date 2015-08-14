@@ -1,4 +1,4 @@
-module Mappino.Core.Directives {
+namespace Mappino.Core.Directives {
 
     export function onlyNumber(): angular.IDirective {
         return {
