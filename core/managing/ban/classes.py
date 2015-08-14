@@ -2,7 +2,7 @@
 from django.db import transaction
 
 from core.ban.models import BannedPhoneNumbers
-from core.ban.signals import BanHandlerSignals
+from core.managing.ban.signals import BanHandlerSignals
 
 
 class BanHandler(object):

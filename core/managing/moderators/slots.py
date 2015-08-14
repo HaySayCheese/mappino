@@ -1,5 +1,5 @@
 # coding=utf-8
-from core.moderators.models import PublicationsCheckQueue
+from core.managing.moderators.models import PublicationsCheckQueue
 import core.publications.signals as models_signals
 
 

@@ -136,11 +136,11 @@ INSTALLED_APPS = (
 
     # 'core',
     'core.users',
-    'core.ban',
+    'core.managing.ban',
 
     'core.publications',
     'core.favorites',
-    'core.moderators',
+    'core.managing.moderators',
     'core.markers_index',
     'core.support',
     'core.escaped_fragments_manager',

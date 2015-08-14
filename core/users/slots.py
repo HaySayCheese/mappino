@@ -1,7 +1,7 @@
 #coding=utf-8
 from django.dispatch import receiver
 
-from core.ban.signals import BanHandlerSignals
+from core.managing.ban.signals import BanHandlerSignals
 
 
 class UsersBansManager(object):

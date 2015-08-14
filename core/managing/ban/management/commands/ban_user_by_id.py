@@ -1,7 +1,7 @@
 #coding=utf-8
 from django.core.management import BaseCommand
 
-from core.ban.classes import BanHandler
+from core.managing.ban.classes import BanHandler
 
 
 class Command(BaseCommand):
@@ -31,13 +31,13 @@ class Command(BaseCommand):
 
 
         self.stdout.write('User: {}'.format(user.full_name()))
-        if not BanHandler.check_user(user):
-            self.stderr.write('User is not banned.')
+        if BanHandler.check_user(user):
+            self.stderr.write('User is already banned.')
             return
 
-        if BanHandler.liberate_user(user):
-            self.stdout.write('OK. User was liberated successfully.')
+        if BanHandler.ban_user(user):
+            self.stdout.write('OK. User banned.')
         else:
-            self.stderr.write('Unknown error: user was not liberated.')
+            self.stderr.write('Unknown error: user was not banned.')
 
 

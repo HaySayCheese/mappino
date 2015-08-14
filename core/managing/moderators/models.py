@@ -7,7 +7,7 @@ from django.utils.timezone import now
 from collective.constants import Constant
 from collective.utils import generate_sha256_unique_id
 from core.moderators.classes import RedisHandler
-from core.moderators.models_abstract import AbstractProcessedPublicationModel
+from core.managing.moderators.models_abstract import AbstractProcessedPublicationModel
 from core.publications.constants import HEAD_MODELS
 from core.users.models import Users
 
