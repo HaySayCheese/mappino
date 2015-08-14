@@ -5,7 +5,7 @@ from django.http.response import HttpResponseBadRequest
 from apps.views_base import CabinetView
 from collective.decorators.ajax import json_response, json_response_bad_request
 from collective.methods.request_data_getters import angular_parameters
-from core.moderators.models import RejectedPublications
+from core.managing.moderators.models import RejectedPublications
 from core.publications import formatters
 from core.publications.exceptions import PhotosHandlerExceptions, NotEnoughPhotos
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS, OBJECT_STATES

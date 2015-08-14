@@ -3,17 +3,17 @@ import copy
 import json
 import random
 import string
-from collective.http.responses import HttpJsonResponse
 
 from django.conf import settings
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View
 
+from collective.http.responses import HttpJsonResponse
 from apps.views_base import AnonymousOnlyView, AuthenticatedOnlyView
 from collective.decorators.ajax import json_response, json_response_bad_request
 from collective.methods.request_data_getters import angular_post_parameters
-from core.ban.classes import BanHandler
+from core.managing.ban.classes import BanHandler
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 from core.sms_dispatcher import login_codes_sms_sender
 from core.users.models import Users
