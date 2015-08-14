@@ -3,7 +3,7 @@
 
 namespace Mappino.Map {
     export class AccountTabController {
-        private fullNumber:    string = localStorage['fullNumber'] || '';
+        private fullNumber:    string;
         private smsCode:       string;
 
         public static $inject = [
@@ -14,7 +14,7 @@ namespace Mappino.Map {
 
         constructor(private $scope: any,
                     private $cookies: angular.cookies.ICookiesService,
-                    private bAuthService: Mappino.Core.BAuth.IBAuthService) {
+                    private bAuthService: Mappino.Core.BAuth.BAuthService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.user = bAuthService.user;
             $scope.account = {
@@ -25,10 +25,12 @@ namespace Mappino.Map {
 
             $scope.authState = 'enterPhone';
 
-            bAuthService.tryLogin(response => {
-                $scope.authState = 'accountInformation';
-            }, response => {
-                $scope.authState = 'enterPhone';
+            $scope.$watch('user.account.first_name', () => {
+                if ($scope.user.account.first_name) {
+                    $scope.authState = 'accountInformation';
+                } else {
+                    $scope.authState = 'enterPhone';
+                }
             });
 
             this.initWatchers();
@@ -40,24 +42,25 @@ namespace Mappino.Map {
         public login() {
             if (this.$scope.authState === 'enterPhone') {
                 if (this.$scope.loginForm.phoneNumber.$valid) {
-                    this.fullNumber = this.$scope.account.phoneCode + this.$scope.account.phoneNumber;
-                    //localStorage['fullNumber'] = this.fullNumber;
-
-                    this.bAuthService.checkPhoneNumber(this.fullNumber, () => {
-                        this.$scope.authState = 'enterSMSCode';
-                    }, () => {
-                        this.$scope.loginForm.phoneNumber.$setValidity('invalid', false);
-                    });
+                    this.bAuthService.checkPhoneNumber(this.$scope.account.phoneCode, this.$scope.account.phoneNumber)
+                        .success(response => {
+                            this.$scope.authState = 'enterSMSCode';
+                        })
+                        .error(response => {
+                            this.$scope.loginForm.phoneNumber.$setValidity('invalid', false);
+                        });
                 }
             } else {
                 if (this.$scope.loginForm.smsCode.$valid) {
                     this.smsCode = this.$scope.account.smsCode;
 
-                    this.bAuthService.checkSMSCode(this.fullNumber, this.smsCode, () => {
-                        window.location.pathname = '/cabinet/';
-                    }, () => {
-                        this.$scope.loginForm.smsCode.$setValidity('invalid', false);
-                    });
+                    this.bAuthService.checkSMSCode(this.$scope.account.phoneCode, this.$scope.account.phoneNumber, this.$scope.account.smsCode)
+                        .success(response => {
+                            window.location.pathname = '/cabinet/';
+                        })
+                        .error(response => {
+                            this.$scope.loginForm.smsCode.$setValidity('invalid', false);
+                        });
                 }
             }
         }
@@ -65,9 +68,10 @@ namespace Mappino.Map {
 
 
         public logout() {
-            this.bAuthService.logout(response => {
-                this.$scope.authState = 'enterPhone';
-            });
+            this.bAuthService.logout()
+                .success(response => {
+                    this.$scope.authState = 'enterPhone';
+                });
         }
 
 

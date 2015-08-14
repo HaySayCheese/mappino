@@ -1,22 +1,23 @@
 {
-    "name": "mappino",
-    "version": "1.0.0",
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/HaySayCheese/mappino"
-    },
-    "devDependencies": {
-        "del": "*",
-        "gulp": "*",
-        "gulp-bump": "*",
-        "gulp-minify-css": "*",
-        "gulp-rename": "*",
-        "gulp-sass": "*",
-        "gulp-sourcemaps": "*",
-        "gulp-typescript": "*",
-        "gulp-uglify": "*",
-        "gulp-watch": "*",
-        "run-sequence": "*"
-    }
+  "name": "mappino",
+  "version": "1.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HaySayCheese/mappino"
+  },
+  "devDependencies": {
+    "del": "*",
+    "gulp": "*",
+    "gulp-bump": "*",
+    "gulp-minify-css": "*",
+    "gulp-rename": "*",
+    "gulp-sass": "*",
+    "gulp-sourcemaps": "*",
+    "gulp-typescript": "*",
+    "gulp-uglify": "*",
+    "gulp-watch": "*",
+    "node-sass": "^3.2.0",
+    "run-sequence": "*"
+  }
 }

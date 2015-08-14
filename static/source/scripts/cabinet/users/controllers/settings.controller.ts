@@ -3,8 +3,6 @@
 
 namespace Mappino.Cabinet.Users {
     export class SettingsController {
-        private profile: Mappino.Core.BAuth.IUser;
-
         public static $inject = [
             '$scope',
             '$rootScope',
@@ -18,21 +16,28 @@ namespace Mappino.Cabinet.Users {
                     private $rootScope: any,
                     private $timeout: angular.ITimeoutService,
                     private $mdDialog: any,
-                    private bAuthService: Mappino.Core.BAuth.IBAuthService,
+                    private bAuthService: Mappino.Core.BAuth.BAuthService,
                     private TXT: any) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Редактирование профиля';
 
-            $scope.profile = this.profile;
+            $scope.profile = {
+                account:        {},
+                preferences:    {}
+            };
 
             $rootScope.loaders.overlay = true;
+            bAuthService.loadProfile()
+                .success(response => {
+                    $scope.profile.account      = response.data.account;
+                    $scope.profile.preferences  = response.data.preferences;
 
-            this.initInputsChange();
+                    console.log($scope.profile)
+                    this.initInputsChange();
 
-            bAuthService.loadProfile(response => {
-                $scope.profile = response;
-                $rootScope.loaders.overlay = false;
-            });
+                    $rootScope.loaders.overlay = false;
+                })
+                .error(response => { /* error */ });
         }
 
 
@@ -42,15 +47,17 @@ namespace Mappino.Cabinet.Users {
 
             this.$rootScope.loaders.avatar = true;
 
-            this.bAuthService.uploadAvatar(avatar, response => {
-                this.$rootScope.loaders.avatar = false;
-                this.$scope.profile.account.avatar_url = this.bAuthService.user.account.avatar_url;
+            this.bAuthService.uploadAvatar(avatar)
+                .success(response => {
+                    this.$rootScope.loaders.avatar = false;
+                    this.$scope.profile.account.avatar_url = this.bAuthService.user.account.avatar_url;
 
-                this.$scope.imageFatal      = response.code === 1;
-                this.$scope.imageTooLarge   = response.code === 2;
-                this.$scope.ImageTooSmall   = response.code === 3;
-                this.$scope.ImageUndefined  = response.code === 4;
-            });
+                    this.$scope.imageFatal      = response.code === 1;
+                    this.$scope.imageTooLarge   = response.code === 2;
+                    this.$scope.ImageTooSmall   = response.code === 3;
+                    this.$scope.ImageUndefined  = response.code === 4;
+                })
+                .error(response => { /* error */ });
         }
 
 
@@ -58,10 +65,12 @@ namespace Mappino.Cabinet.Users {
         public removeAvatar() {
             this.$rootScope.loaders.avatar = true;
 
-            this.bAuthService.removeAvatar(response => {
-                this.$rootScope.loaders.avatar = false;
-                this.$scope.profile.account.avatar_url = null;
-            });
+            this.bAuthService.removeAvatar()
+                .success(response => {
+                    this.$rootScope.loaders.avatar = false;
+                    this.$scope.profile.account.avatar_url = null;
+                })
+                .error(response => { /* error */ })
         }
 
 
@@ -74,24 +83,27 @@ namespace Mappino.Cabinet.Users {
                 var name  = e.currentTarget['name'],
                     value = e.currentTarget['value'].replace(/\s+/g, " ");
 
-                if (!this.$scope.userProfileForm[name].$dirty) return;
+                if (!this.$scope.userProfileForm[name].$dirty)
+                    return;
 
-                this.bAuthService.checkProfileField({ fieldName: name, fieldValue: value }, response => {
-                    e.currentTarget['value'] = response;
+                this.bAuthService.checkProfileField({ [name]: value })
+                    .success(response => {
+                        e.currentTarget['value'] = response.data;
 
-                    this.$scope.userProfileForm[name].$setValidity("invalid",    true);
-                    this.$scope.userProfileForm[name].$setValidity("duplicated", true);
-                }, response => {
-                    this.$scope.userProfileForm[name].$setValidity("invalid",       response.code !== 2);
-                    this.$scope.userProfileForm[name].$setValidity("duplicated",    response.code !== 3);
-                });
+                        this.$scope.userProfileForm[name].$setValidity("invalid",       response.code !== 2);
+                        this.$scope.userProfileForm[name].$setValidity("duplicated",    response.code !== 3);
+                    })
+                    .error(response => { /* error */ });
             });
+
 
             this.$scope.$watchCollection('profile.preferences', (newValue, oldValue) => {
                 if (!angular.isUndefined(newValue) && !angular.isUndefined(oldValue)) {
                     for (var key in newValue) {
-                        if (newValue[key] != oldValue[key]) {
-                            this.bAuthService.checkProfileField({ fieldName: key, fieldValue: newValue[key] });
+                        if (newValue.hasOwnProperty(key)) {
+                            if (newValue[key] != oldValue[key]) {
+                                this.bAuthService.checkProfileField({ [key]: newValue[key] });
+                            }
                         }
                     }
                 }
@@ -103,7 +115,8 @@ namespace Mappino.Cabinet.Users {
 
 
         private checkIfAllMeansOfCommunicationDisabled() {
-            if (!this.$scope.profile) return;
+            if (!this.$scope.profile.account || !this.$scope.profile.preferences)
+                return;
 
             if (this.$scope.profile.preferences.hide_email && this.$scope.profile.preferences.hide_mobile_phone_number &&
                 this.$scope.profile.preferences.hide_add_mobile_phone_number && this.$scope.profile.preferences.hide_landline_phone_number &&

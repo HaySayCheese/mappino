@@ -4,13 +4,18 @@
 namespace Mappino.Core.BAuth {
     'use strict';
 
-    var auth: angular.IModule = angular.module('Mappino.Core.bAuth', [
+    var bAuth: angular.IModule = angular.module('Mappino.Core.bAuth', [
         'ngCookies',
         'ngMaterial'
     ]);
 
-    auth.service('BAuthService', BAuthService);
+    bAuth.service('BAuthService', BAuthService);
 
-    auth.directive('bAuthToolbarButton', BAuthToolbarButtonDirective);
-    auth.directive('bAuthUserAvatar', BAuthUserAvatarDirective);
+    bAuth.directive('bAuthToolbarButton', BAuthToolbarButtonDirective);
+    bAuth.directive('bAuthUserAvatar', BAuthUserAvatarDirective);
+
+
+    bAuth.run(['BAuthService', (bAuthService: BAuthService) => {
+        bAuthService.tryLogin();
+    }]);
 }
