@@ -16,7 +16,7 @@ class AbstractProcessedPublicationModel(models.Model):
 
     class Meta:
         abstract = True
-        ordering = '-date_added'
+        ordering = ('-date_added', )
 
 
     class ObjectsManager(Manager):
