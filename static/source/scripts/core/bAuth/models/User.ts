@@ -1,4 +1,3 @@
-
 namespace Mappino.Core.BAuth {
     export class User {
 
@@ -38,7 +37,6 @@ namespace Mappino.Core.BAuth {
         public set(params: any) { // todo: fix this to Object type
             for (var key in params) {
                 if (params.hasOwnProperty(key)) {
-                    // ���� ��������� ����������� � ���� account
                     if (angular.isDefined(this.account[key])) {
                         this.account[key] = params[key];
 
@@ -47,7 +45,6 @@ namespace Mappino.Core.BAuth {
                         }
                     }
 
-                    // ���� ��������� ����������� � ���� preferences
                     if (angular.isDefined(this.preferences[key])) {
                         this.preferences[key] = params[key];
                     }

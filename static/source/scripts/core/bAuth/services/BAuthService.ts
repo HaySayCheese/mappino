@@ -1,6 +1,6 @@
 namespace Mappino.Core.BAuth {
 
-    export class BAuthService implements IBAuthService {
+    export class BAuthService {
         private _user: User;
 
         public static $inject = [
@@ -19,155 +19,127 @@ namespace Mappino.Core.BAuth {
 
 
 
-        public checkPhoneNumber(phoneNumber: string, successCallback?: Function, errorCallback?: Function) {
-            this.$http.post(`/ajax/api/accounts/login/`, {
-                "phone_number": phoneNumber
-            }).then(response => {
-                if (response.data['code'] === 0) {
-                    angular.isFunction(successCallback) && successCallback(response.data)
-                } else {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
-                }
-            }, response => {
-                angular.isFunction(errorCallback) && errorCallback(response.data)
+        public checkPhoneNumber(phoneCode: string, phoneNumber: string): angular.IHttpPromise<any> {
+            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/accounts/login/`, {
+                'phone_code':   phoneCode,
+                'phone_number': phoneNumber
             });
+
+            promise.success(response => { /* success */ });
+
+            promise.error(response => { /* error */ });
+
+            return promise;
         }
 
 
 
-        public checkSMSCode(phoneNumber, smsCode, successCallback?, errorCallback?) {
-            this.$http.post(`/ajax/api/accounts/login/check-code/`, {
+        public checkSMSCode(phoneCode: string, phoneNumber: string, smsCode: string): angular.IHttpPromise<any> {
+            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/accounts/login/check-code/`, {
+                'phone_code':   phoneCode,
                 'phone_number': phoneNumber,
                 'token':        smsCode
-            }).then(response => {
-                if (response.data['code'] === 0) {
-                    this._user.set(response.data['data']);
-                    this.$cookies.remove('mcheck');
-                    angular.isFunction(successCallback) && successCallback(response.data)
-                } else {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
-                }
-            }, response => {
-                angular.isFunction(errorCallback) && errorCallback(response.data)
             });
+
+            promise.success(response => {
+                this._user.set(response.data);
+                this.$cookies.remove('mcheck');
+            });
+
+            promise.error(response => { /* error */ });
+
+            return promise;
         }
 
 
 
 
-        public tryLogin(successCallback?, errorCallback?) {
-            this.$http.get(`/ajax/api/accounts/on-login-info/`)
-                .then(response => {
-                    if (response.data['code'] === 0) {
-                        this._user.set(response.data['data']);
-                        angular.isFunction(successCallback) && successCallback(angular.copy(this._user))
-                    } else {
-                        angular.isFunction(errorCallback) && errorCallback(response.data)
-                    }
-                }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
-                })
+        public tryLogin(): angular.IHttpPromise<any> {
+            if (!this.$cookies.get('sessionid')) return;
+
+            var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/accounts/on-login-info/`);
+
+            promise.success(response => {
+                this._user.set(response.data);
+            });
+
+            promise.error(response => { /* error */ });
+
+            return promise;
         }
 
 
 
-        public loadProfile(successCallback?, errorCallback?) {
-            this.$http.get(`/ajax/api/cabinet/account/`)
-                .then(response => {
-                    if (response.data['code'] === 0) {
-                        this._user.set(response.data['data']['account']);
-                        this._user.set(response.data['data']['preferences']);
+        public loadProfile(): angular.IHttpPromise<any> {
+            var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/account/`);
 
-                        angular.isFunction(successCallback) && successCallback(angular.copy(this._user));
-                    } else {
-                        angular.isFunction(errorCallback) && errorCallback(response.data);
-                    }
-                }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data);
-                });
+            promise.success(response => {
+                this._user.set(response.data.account);
+                this._user.set(response.data.preferences);
+            });
+
+            promise.error(response => { /* error */ });
+
+            return promise;
         }
 
 
 
-        public checkProfileField(field, successCallback?, errorCallback?) {
-            var fullMobileNumber = {
-                fieldName:  null,
-                fieldValue: null
-            };
+        public checkProfileField(field): angular.IHttpPromise<any> {
+            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/account/`, field);
 
-            if (field.fieldName == 'mobile_phone') {
-                fullMobileNumber = {
-                    fieldName:  field.fieldName,
-                    fieldValue: this._user.get().account.mobile_code + field.fieldValue
-                };
-            }
+            promise.success(response => {
+                this._user.set(field);
+            });
 
-            if (field.fieldName == 'add_mobile_phone') {
-                fullMobileNumber = {
-                    fieldName:  field.fieldName,
-                    fieldValue: this._user.get().account.add_mobile_code + field.fieldValue
-                }
-            }
+            promise.error(response => { /* error */ });
 
-            this.$http.post(`/ajax/api/cabinet/account/`, fullMobileNumber.fieldValue ? fullMobileNumber : field)
-                .then(response => {
-                    if (response.data['code'] === 0) {
-                        field['fieldValue'] = response.data['value'] ? response.data['value'] : field['fieldValue'];
-
-                        var _field = {};
-                        _field[field['fieldName']] = field['fieldValue'];
-
-                        this._user.set(_field);
-                        angular.isFunction(successCallback) && successCallback(field['fieldValue']);
-                    } else {
-                        angular.isFunction(errorCallback) && errorCallback(response.data);
-                    }
-                }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data);
-                })
+            return promise;
         }
 
 
 
-        public uploadAvatar(avatar, successCallback?, errorCallback?) {
-            this.Upload.upload({
+        public uploadAvatar(avatar: File): angular.IHttpPromise<any> {
+            var promise: angular.IHttpPromise<any> = this.Upload.upload({
                 url: `/ajax/api/cabinet/account/photo/`,
                 file: avatar
-            }).then(response => {
-                if (response.data['code'] === 0) {
-                    this._user.set({ avatar_url: response.data.data['url'] });
-                    angular.isFunction(successCallback) && successCallback(response.data);
-                } else {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
-                }
-            }, response => {
-                angular.isFunction(errorCallback) && errorCallback(response.data)
-            })
+            });
+
+            promise.success(response => {
+                this._user.set({ avatar_url: response.data.url });
+            });
+
+            promise.error(response => { /* error */ });
+
+            return promise;
         }
 
 
 
+        public removeAvatar(): angular.IHttpPromise<any> {
+            var promise: angular.IHttpPromise<any> = this.$http.delete(`/ajax/api/cabinet/account/photo/`);
 
-        public removeAvatar(successCallback?, errorCallback?) {
-            this.$http.delete(`/ajax/api/cabinet/account/photo/`)
-                .then(response => {
-                    this._user.set({ avatar_url: null });
-                    angular.isFunction(successCallback) && successCallback(this.user);
-                }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response)
-                });
+            promise.success(response => {
+                this._user.set({ avatar_url: null });
+            });
+
+            promise.error(response => { /* error */ });
+
+            return promise;
         }
 
 
 
-        public logout(successCallback?, errorCallback?) {
-            this.$http.post(`/ajax/api/accounts/logout/`, null)
-                .then(response => {
-                    this.$cookies.remove('sessionid');
-                    angular.isFunction(successCallback) && successCallback(response.data);
-                }, response => {
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
-                });
+        public logout(): angular.IHttpPromise<any> {
+            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/accounts/logout/`, null);
+
+            promise.success(response => {
+                this.$cookies.remove('sessionid');
+            });
+
+            promise.error(response => { /* error */ });
+
+            return promise;
         }
 
 

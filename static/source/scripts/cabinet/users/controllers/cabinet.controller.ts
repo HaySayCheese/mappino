@@ -7,7 +7,6 @@ namespace Mappino.Cabinet.Users {
         public static $inject = [
             '$scope',
             '$rootScope',
-            'BAuthService',
             '$mdSidenav',
             '$mdUtil',
             '$mdMedia'
@@ -15,7 +14,6 @@ namespace Mappino.Cabinet.Users {
 
         constructor(private $scope: any,
                     private $rootScope: any,
-                    private bAuthService: Mappino.Core.BAuth.IBAuthService,
                     private $mdSidenav: any,
                     private $mdUtil: any,
                     private $mdMedia: any) {
@@ -26,15 +24,11 @@ namespace Mappino.Cabinet.Users {
                 avatar:     false,
                 tickets:    false
             };
-
-            bAuthService.tryLogin(response => {
-                $scope.userData = bAuthService.user;
-            });
         }
 
 
 
-        private toggleSidenav() {
+        public toggleSidenav() {
             if (!this.$mdMedia('sm')) {
                 return;
             }
