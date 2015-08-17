@@ -9,14 +9,15 @@ from django.http import HttpResponseBadRequest, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View
 
-from collective.http.responses import HttpJsonResponse
 from apps.views_base import AnonymousOnlyView, AuthenticatedOnlyView
+from collective.http.responses import HttpJsonResponse
 from collective.decorators.ajax import json_response, json_response_bad_request
 from collective.methods.request_data_getters import angular_post_parameters
 from core.managing.ban.classes import BanHandler
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 from core.sms_dispatcher import login_codes_sms_sender
 from core.users.models import Users
+
 
 
 class LoginManager(object):
@@ -30,8 +31,7 @@ class LoginManager(object):
                 })
 
                 # This cookie is needed fot the front-end.
-                # By it's presence front-end login will display or hide
-                # state of the login form with the token input
+                # By it's presence front-end login will display or hide the state of the login form with the token input.
                 response.set_signed_cookie('mcheck', ''.join([random.choice(string.ascii_letters) for _ in range(7)]), max_age=60*5)
                 return response
 
@@ -56,8 +56,9 @@ class LoginManager(object):
 
         def post(self, request):
             try:
-                phone_number = angular_post_parameters(request, ['phone_number'])['phone_number']
-                phone_number = Users.objects.parse_phone_number(phone_number)
+                phone_number = Users.objects.parse_phone_number(
+                    angular_post_parameters(request, ['phone_number'])['phone_number'])
+
             except (ValueError, KeyError):
                 return self.PostResponses.invalid_phone_number()
 

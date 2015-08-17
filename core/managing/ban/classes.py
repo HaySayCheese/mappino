@@ -1,7 +1,7 @@
 #coding=utf-8
 from django.db import transaction
 
-from core.ban.models import BannedPhoneNumbers
+from core.managing.ban.models import BannedPhoneNumbers
 from core.managing.ban.signals import BanHandlerSignals
 
 
