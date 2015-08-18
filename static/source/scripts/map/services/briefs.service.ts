@@ -32,7 +32,7 @@ namespace Mappino.Map {
         public remove(briefHid: string) {
             var briefs = this._briefs || undefined;
 
-            for (var i = 0, len = briefs.length; i < len; i++) {
+            for (let i = 0, len = briefs.length; i < len; i++) {
                 var brief = briefs[i];
 
                 if (brief.hid == briefHid) {
@@ -47,7 +47,7 @@ namespace Mappino.Map {
         private toggleFavorite(briefHid: string) {
             var briefs = this._briefs || undefined;
 
-            for (var i = 0, len = briefs.length; i < len; i++) {
+            for (let i = 0, len = briefs.length; i < len; i++) {
                 var brief = briefs[i];
 
                 if (brief.hid == briefHid) {
