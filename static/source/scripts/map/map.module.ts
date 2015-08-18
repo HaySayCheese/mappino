@@ -15,11 +15,9 @@ namespace Mappino.Map {
         'Mappino.Core',
 
         'ngFileUpload',
-        'angular-carousel'
 
-        //'ngTinyScrollbar',
+        'angular-carousel',
     ]);
-
 
 
     /** Providers configuration create */
@@ -53,8 +51,9 @@ namespace Mappino.Map {
     app.directive('googlePlaceAutocomplete', GooglePlaceAutocompleteDirective);
     app.directive('navbarLeft', NavbarLeftDirective);
     app.directive('navbarRight', NavbarRightDirective);
-    app.directive('publicationView', PublcationViewDirective);
+    app.directive('publicationView', PublicationViewDirective);
     app.directive('tabSectionCollapsible', TabBodyCollapsibleDirective);
+    app.directive('navbarLeftSectionScroll', NavbarLeftSectionScrollDirective);
 
 
     /** Controllers */
@@ -63,7 +62,6 @@ namespace Mappino.Map {
     // left navbar controllers
     app.controller('NavbarLeftController', NavbarLeftController);
     app.controller('FiltersTabController', FiltersTabController);
-    // account tab controllers
     app.controller('AccountTabController', AccountTabController);
 
     // right navbar controllers

@@ -26,11 +26,12 @@
 // ####################
 // Directives import
 // ####################
-/// <reference path='directives/google-place-autocomplete.directive.ts' />
-/// <reference path='directives/navbar-left.directive.ts' />
-/// <reference path='directives/navbar-right.directive.ts' />
-/// <reference path='directives/publication-view.directive.ts' />
-/// <reference path='directives/tabs-panel.directive.ts' />
+/// <reference path='directives/GooglePlaceAutocompleteDirective.ts' />
+/// <reference path='directives/NavbarLeftDirective.ts' />
+/// <reference path='directives/NavbarLeftSectionScrollDirective.ts' />
+/// <reference path='directives/NavbarRightDirective.ts' />
+/// <reference path='directives/PublicationViewDirective.ts' />
+/// <reference path='directives/TabBodyCollapsibleDirective.ts' />
 
 
 // ####################

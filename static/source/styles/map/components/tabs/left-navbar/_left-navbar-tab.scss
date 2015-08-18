@@ -1,6 +1,9 @@
 %_left-navbar-tab {
-    padding-right: 10px;
     padding-bottom: 10px;
+
+    &.-has-scroll {
+        overflow: auto;
+    }
 
     section {
         position: relative;

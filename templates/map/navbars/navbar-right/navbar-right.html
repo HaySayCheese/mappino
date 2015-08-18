@@ -7,37 +7,39 @@
                 <md-icon>list</md-icon>
             </md-tab-label>
             <md-tab-body>
-                <section ng-controller="BriefsTabController as briefsCtrl">
-                    <div scrollbar>
-                        <ul class="publication-list" layout="column" layout-align="start start">
-                            <li class="publication-list-item" ng-repeat="brief in briefs"
-                                ng-click="briefsCtrl.publicationHandler.open(brief.tid + ':' + brief.id, true)"
-                                ng-mouseenter="briefsCtrl.onBriefMouseOver(brief)"
-                                ng-mouseleave="briefsCtrl.onBriefMouseLeave()">
+                <section ng-controller="BriefsTabController as briefsCtrl" layout="row">
+                    <ul class="publication-list" layout="column" layout-align="start start" ng-show="briefs.length">
+                        <li class="publication-list-item" ng-repeat="brief in briefs"
+                            ng-click="briefsCtrl.publicationHandler.open(brief.tid + ':' + brief.id, true)"
+                            ng-mouseenter="briefsCtrl.onBriefMouseOver(brief)"
+                            ng-mouseleave="briefsCtrl.onBriefMouseLeave()">
 
-                                <img ng-src="[[ brief.thumbnail_url ]]" alt="" />
-                                <div class="publication-list-item-overlay">
-                                    <md-button class="md-icon-button" ng-hide="brief.is_favorite"
-                                               ng-click="briefsCtrl.toggleFavorite(brief, $event)">
-                                        <md-icon class="material-icons md-light md-dark-shadow">favorite_border</md-icon>
-                                        <md-tooltip md-direction="right" md-delay="0">
-                                            Добавить в избранные
-                                        </md-tooltip>
-                                    </md-button>
-                                    <md-button class="md-icon-button" ng-show="brief.is_favorite"
-                                               ng-click="briefsCtrl.toggleFavorite(brief, $event)">
-                                        <md-icon class="material-icons md-light md-dark-shadow pink-text">favorite</md-icon>
-                                        <md-tooltip md-direction="right" md-delay="0">
-                                            Удалить из избранных
-                                        </md-tooltip>
-                                    </md-button>
-                                    <div class="publication-list-item-description" layout="column">
-                                        <div>[[ brief.title ]]</div>
-                                        <div><b>[[ brief.price ]]</b></div>
-                                    </div>
+                            <img ng-src="[[ brief.thumbnail_url ]]" alt="" />
+                            <div class="publication-list-item-overlay">
+                                <md-button class="md-icon-button" ng-hide="brief.is_favorite"
+                                           ng-click="briefsCtrl.toggleFavorite(brief, $event)">
+                                    <md-icon class="material-icons md-light md-dark-shadow">favorite_border</md-icon>
+                                    <md-tooltip md-direction="right" md-delay="0">
+                                        Добавить в избранные
+                                    </md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button" ng-show="brief.is_favorite"
+                                           ng-click="briefsCtrl.toggleFavorite(brief, $event)">
+                                    <md-icon class="material-icons md-light md-dark-shadow pink-text">favorite</md-icon>
+                                    <md-tooltip md-direction="right" md-delay="0">
+                                        Удалить из избранных
+                                    </md-tooltip>
+                                </md-button>
+                                <div class="publication-list-item-description" layout="column">
+                                    <div>[[ brief.title ]]</div>
+                                    <div><b>[[ brief.price ]]</b></div>
                                 </div>
-                            </li>
-                        </ul>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div layout="column" layout-align="center center" ng-hide="briefs.length">
+                        <span class="md-padding md-body-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Enim, vero!</span>
                     </div>
                 </section>
             </md-tab-body>
@@ -50,28 +52,30 @@
                 <md-icon>stars</md-icon>
             </md-tab-label>
             <md-tab-body>
-                <section ng-controller="FavoritesTabController as favCtrl">
-                    <div scrollbar>
-                        <ul class="favorite-list" layout="column" layout-align="start start">
-                            <li class="favorite-list-item" ng-repeat="favorite in favorites"
-                                ng-click="favCtrl.publicationHandler.open(favorite.tid + ':' + favorite.id, true)"
-                                ng-mouseenter="favCtrl.onBriefMouseOver(favorite)"
-                                ng-mouseleave="favCtrl.onBriefMouseLeave()">
-                                <img ng-src="[[ favorite.thumbnail_url ]]" alt="" />
-                                <div class="favorite-list-item-overlay">
-                                    <md-button class="md-icon-button" ng-click="favCtrl.removeFromFavorites(favorite, $event)">
-                                        <md-icon class="material-icons md-light md-dark-shadow pink-text">favorite</md-icon>
-                                        <md-tooltip md-direction="right" md-delay="0">
-                                            Удалить из избранных
-                                        </md-tooltip>
-                                    </md-button>
-                                    <div class="favorite-list-item-description" layout="column">
-                                        <div>[[ favorite.title ]]</div>
-                                        <div><b>[[ favorite.price ]]</b></div>
-                                    </div>
+                <section ng-controller="FavoritesTabController as favCtrl" layout="row">
+                    <ul class="favorite-list" layout="column" layout-align="start start" ng-show="favorites.length">
+                        <li class="favorite-list-item" ng-repeat="favorite in favorites"
+                            ng-click="favCtrl.publicationHandler.open(favorite.tid + ':' + favorite.id, true)"
+                            ng-mouseenter="favCtrl.onBriefMouseOver(favorite)"
+                            ng-mouseleave="favCtrl.onBriefMouseLeave()">
+                            <img ng-src="[[ favorite.thumbnail_url ]]" alt="" />
+                            <div class="favorite-list-item-overlay">
+                                <md-button class="md-icon-button" ng-click="favCtrl.removeFromFavorites(favorite, $event)">
+                                    <md-icon class="material-icons md-light md-dark-shadow pink-text">favorite</md-icon>
+                                    <md-tooltip md-direction="right" md-delay="0">
+                                        Удалить из избранных
+                                    </md-tooltip>
+                                </md-button>
+                                <div class="favorite-list-item-description" layout="column">
+                                    <div>[[ favorite.title ]]</div>
+                                    <div><b>[[ favorite.price ]]</b></div>
                                 </div>
-                            </li>
-                        </ul>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div layout="column" layout-align="center center" ng-hide="favorites.length">
+                        <span class="md-padding md-body-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Enim, vero!</span>
                     </div>
                 </section>
             </md-tab-body>
