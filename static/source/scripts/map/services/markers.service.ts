@@ -1,4 +1,4 @@
-class MarkerWithLabel extends google.maps.Marker {}
+//class MarkerWithLabel extends google.maps.Marker {}
 
 namespace Mappino.Map {
     'use strict';
