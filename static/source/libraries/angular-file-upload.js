@@ -6,7 +6,7 @@
  */
 
 (function () {
-    /** @namespace FileAPI.noContentTimeout */
+    /** @module FileAPI.noContentTimeout */
 
     function patchXHR(fnName, newFn) {
         window.XMLHttpRequest.prototype[fnName] = newFn(window.XMLHttpRequest.prototype[fnName]);
@@ -221,9 +221,9 @@
 })();
 
 (function () {
-    /** @namespace FileAPI.forceLoad */
-    /** @namespace window.FileAPI.jsUrl */
-    /** @namespace window.FileAPI.jsPath */
+    /** @module FileAPI.forceLoad */
+    /** @module window.FileAPI.jsUrl */
+    /** @module window.FileAPI.jsPath */
 
     function isInputTypeFile(elem) {
         return elem[0].tagName.toLowerCase() === 'input' && elem.attr('type') && elem.attr('type').toLowerCase() === 'file';
@@ -449,7 +449,7 @@ if (window.XMLHttpRequest && !(window.FileAPI && FileAPI.shouldLoad)) {
     })(window.XMLHttpRequest.prototype.setRequestHeader);
 }
 
-var ngFileUpload = angular.namespace('ngFileUpload', []);
+var ngFileUpload = angular.module('ngFileUpload', []);
 
 ngFileUpload.version = '6.0.2';
 ngFileUpload.defaults = {};
@@ -680,20 +680,20 @@ ngFileUpload.service('Upload', ['$http', '$q', '$timeout', function ($http, $q, 
         }]);
 
     function linkFileSelect(scope, elem, attr, ngModel, $parse, $timeout, $compile) {
-        /** @namespace attr.ngfSelect */
-        /** @namespace attr.ngfChange */
-        /** @namespace attr.ngModel */
-        /** @namespace attr.ngModelRejected */
-        /** @namespace attr.ngfModel */
-        /** @namespace attr.ngfMultiple */
-        /** @namespace attr.ngfCapture */
-        /** @namespace attr.ngfAccept */
-        /** @namespace attr.ngfMaxSize */
-        /** @namespace attr.ngfMinSize */
-        /** @namespace attr.ngfResetOnClick */
-        /** @namespace attr.ngfResetModelOnClick */
-        /** @namespace attr.ngfKeep */
-        /** @namespace attr.ngfKeepDistinct */
+        /** @module attr.ngfSelect */
+        /** @module attr.ngfChange */
+        /** @module attr.ngModel */
+        /** @module attr.ngModelRejected */
+        /** @module attr.ngfModel */
+        /** @module attr.ngfMultiple */
+        /** @module attr.ngfCapture */
+        /** @module attr.ngfAccept */
+        /** @module attr.ngfMaxSize */
+        /** @module attr.ngfMinSize */
+        /** @module attr.ngfResetOnClick */
+        /** @module attr.ngfResetModelOnClick */
+        /** @module attr.ngfKeep */
+        /** @module attr.ngfKeepDistinct */
 
         if (elem.attr('__ngf_gen__')) {
             return;
@@ -1239,9 +1239,9 @@ ngFileUpload.service('Upload', ['$http', '$q', '$timeout', function ($http, $q, 
         });
     }
 
-    /** @namespace attr.ngfSrc */
-    /** @namespace attr.ngfDefaultSrc */
-    /** @namespace attr.ngfNoObjectUrl */
+    /** @module attr.ngfSrc */
+    /** @module attr.ngfDefaultSrc */
+    /** @module attr.ngfNoObjectUrl */
     ngFileUpload.directive('ngfSrc', ['$parse', 'Upload', function ($parse, Upload) {
         return {
             restrict: 'AE',
@@ -1253,9 +1253,9 @@ ngFileUpload.service('Upload', ['$http', '$q', '$timeout', function ($http, $q, 
         };
     }]);
 
-    /** @namespace attr.ngfBackground */
-    /** @namespace attr.ngfDefaultBackground */
-    /** @namespace attr.ngfNoObjectUrl */
+    /** @module attr.ngfBackground */
+    /** @module attr.ngfDefaultBackground */
+    /** @module attr.ngfNoObjectUrl */
     ngFileUpload.directive('ngfBackground', ['$parse', 'Upload', function ($parse, Upload) {
         return {
             restrict: 'AE',
@@ -1267,9 +1267,9 @@ ngFileUpload.service('Upload', ['$http', '$q', '$timeout', function ($http, $q, 
         };
     }]);
 
-    /** @namespace attr.ngfDataUrl */
-    /** @namespace attr.ngfDefaultDataUrl */
-    /** @namespace attr.ngfNoObjectUrl */
+    /** @module attr.ngfDataUrl */
+    /** @module attr.ngfDefaultDataUrl */
+    /** @module attr.ngfNoObjectUrl */
     ngFileUpload.directive('ngfDataUrl', ['$parse', 'Upload', function ($parse, Upload) {
         return {
             restrict: 'AE',

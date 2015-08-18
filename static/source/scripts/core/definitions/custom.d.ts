@@ -1,6 +1,1 @@
-interface JQuery {
-    MarkerWithLabel:    any
-
-    // angular file upload
-    upload:             any
-}
+//class MarkerWithLabel extends google.maps.Marker {}

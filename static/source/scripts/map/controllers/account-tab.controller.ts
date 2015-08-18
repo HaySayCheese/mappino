@@ -3,7 +3,6 @@
 
 namespace Mappino.Map {
     export class AccountTabController {
-        private fullNumber:    string;
         private smsCode:       string;
 
         public static $inject = [

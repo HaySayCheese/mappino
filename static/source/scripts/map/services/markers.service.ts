@@ -1,5 +1,4 @@
-/// <reference path='../_all.ts' />
-
+class MarkerWithLabel extends google.maps.Marker {}
 
 namespace Mappino.Map {
     'use strict';

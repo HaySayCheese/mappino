@@ -13,12 +13,12 @@
 
  */
 
-angular.namespace('angular-carousel', [
+angular.module('angular-carousel', [
     'ngTouch',
     'angular-carousel.shifty'
 ]);
 
-angular.namespace('angular-carousel')
+angular.module('angular-carousel')
 
     .directive('rnCarouselAutoSlide', ['$interval', function($interval) {
         return {
@@ -50,7 +50,7 @@ angular.namespace('angular-carousel')
         };
     }]);
 
-angular.namespace('angular-carousel')
+angular.module('angular-carousel')
 
     .directive('rnCarouselIndicators', ['$parse', function($parse) {
         return {
@@ -69,7 +69,7 @@ angular.namespace('angular-carousel')
         };
     }]);
 
-angular.namespace('angular-carousel').run(['$templateCache', function($templateCache) {
+angular.module('angular-carousel').run(['$templateCache', function($templateCache) {
     $templateCache.put('carousel-indicators.html',
         '<div class="rn-carousel-indicator">\n' +
         '<span ng-repeat="slide in slides" ng-class="{active: $index==index}" ng-click="goToSlide($index)">●</span>' +
@@ -80,7 +80,7 @@ angular.namespace('angular-carousel').run(['$templateCache', function($templateC
 (function() {
     "use strict";
 
-    angular.namespace('angular-carousel')
+    angular.module('angular-carousel')
 
         .service('DeviceCapabilities', function() {
 
@@ -675,7 +675,7 @@ angular.namespace('angular-carousel').run(['$templateCache', function($templateC
 
 
 
-angular.namespace('angular-carousel.shifty', [])
+angular.module('angular-carousel.shifty', [])
 
     .factory('Tweenable', function() {
 
@@ -2082,7 +2082,7 @@ angular.namespace('angular-carousel.shifty', [])
 (function() {
     "use strict";
 
-    angular.namespace('angular-carousel')
+    angular.module('angular-carousel')
 
         .filter('carouselSlice', function() {
             return function(collection, start, size) {

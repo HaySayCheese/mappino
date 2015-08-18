@@ -1,5 +1,5 @@
 namespace Mappino.Map {
-    export function PublcationViewDirective($rootScope, $stateParams): angular.IDirective {
+    export function PublicationViewDirective($rootScope, $stateParams): angular.IDirective {
 
         return {
             restrict: 'E',
@@ -56,5 +56,5 @@ namespace Mappino.Map {
         }
     }
 
-    PublcationViewDirective.$inject = ['$rootScope', '$stateParams'];
+    PublicationViewDirective.$inject = ['$rootScope', '$stateParams'];
 }
