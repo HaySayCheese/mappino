@@ -1,6 +1,6 @@
 
 # mappino RC1 #
-![Він уже близько)](https://goo.gl/photos/xhkZMMBe8adQuMwn8)
+![Він уже близько)](https://lh3.googleusercontent.com/r-DWDNdkP4F5af08zADCxBXl4Pmeqs5etUj7HsXMJpU=w745-h993-no)
 
 
 ## Deploy check list ##
