@@ -1,5 +1,3 @@
-/// <reference path='../_all.ts' />
-
 
 namespace Mappino.Map {
     'use strict';
@@ -20,8 +18,6 @@ namespace Mappino.Map {
                     private publicationHandler: PublicationHandler,
                     private favoritesService: FavoritesService) {
             // ---------------------------------------------------------------------------------------------------------
-            this.publicationHandler = publicationHandler;
-
             favoritesService.load(response => {
                 $scope.favorites = response.data;
             });
@@ -29,6 +25,12 @@ namespace Mappino.Map {
 
             this.toggleInfoBlock();
             $rootScope.$on('$stateChangeSuccess', () => this.toggleInfoBlock());
+        }
+
+
+
+        public openPublication(brief) {
+            this.publicationHandler.open(`${brief.tid}:${brief.hid}`, true);
         }
 
 

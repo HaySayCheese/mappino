@@ -320,8 +320,8 @@ namespace Mappino.Map {
 
             // додаємо бриф для панелі справа
             this.briefsService.add({
-                id:             responseMarker.id,
                 tid:            responseMarker.tid,
+                hid:            responseMarker.id,
                 lat:            markerLat,
                 lng:            markerLng,
                 price:          responseMarker.price,
