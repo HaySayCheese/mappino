@@ -78,6 +78,9 @@ namespace Mappino.Map {
         private initWatchers() {
             this.$scope.$watchCollection('account', () => {
                 if (this.$scope.loginForm.$invalid) {
+                    this.$scope.loginForm.$setPristine();
+                    this.$scope.loginForm.$setUntouched();
+
                     if (this.$scope.authState === 'enterPhone') {
                         this.$scope.loginForm.phoneNumber.$setValidity('invalid', true);
                     } else {
