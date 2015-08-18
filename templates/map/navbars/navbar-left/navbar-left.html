@@ -1,7 +1,7 @@
 <div class="navbar-left-container" ng-if="navbarLeftActiveTabIndex !== null">
     <md-tabs md-selected="navbarLeftActiveTabIndex" md-dynamic-height>
 
-        <md-tab>
+        <md-tab id="mappino-tab" md-on-select="navCtrl.tabsHandler.open('mappino');">
             <md-tab-label>
                 mappino
             </md-tab-label>

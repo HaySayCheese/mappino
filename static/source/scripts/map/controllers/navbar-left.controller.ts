@@ -14,7 +14,6 @@ namespace Mappino.Map {
         constructor(private $scope,
                     private tabsHandler: TabsHandler) {
             // ---------------------------------------------------------------------------------------------------------
-
             tabsHandler.initializeNavbarLeftTabs();
         }
     }

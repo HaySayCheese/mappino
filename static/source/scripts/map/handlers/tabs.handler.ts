@@ -4,9 +4,10 @@
 namespace Mappino.Map {
     export class TabsHandler {
         private navbarLeftTabsIndex = {
-            filters:    0,
-            search:     1,
-            account:    2
+            mappino:    0,
+            filters:    1,
+            search:     2,
+            account:    3
         };
 
         private navbarRightTabsIndex = {
