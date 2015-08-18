@@ -1,9 +1,10 @@
-#coding=utf-8
-from django.conf import settings
+# coding=utf-8
 import mandrill
 
-from collective.exceptions import InvalidArgument, RuntimeException
+from django.conf import settings
 
+from collective.exceptions import InvalidArgument, RuntimeException
+from core.utils.jinja2_integration import templates
 
 
 class EmailDispatcher(object):
@@ -11,9 +12,15 @@ class EmailDispatcher(object):
         self.__connect_to_mandrill()
 
 
-    def send_html_email(self, subject, html, addresses_list,
+    @staticmethod
+    def __render_template(template_name, context):
+        return templates.get_template(template_name).render(context)
+
+
+    def send_html_email(self, template_name, context, subject, addresses_list,
                         from_email='mail-dispatcher@mappino.com', from_name='mappino', reply_to=None):
 
+        html = self.__render_template(template_name, context)
         if not html:
             raise InvalidArgument('"html" can\'t be empty or None.')
         if not addresses_list:
