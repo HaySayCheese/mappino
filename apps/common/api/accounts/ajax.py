@@ -14,8 +14,8 @@ from collective.http.responses import HttpJsonResponse
 from collective.decorators.ajax import json_response, json_response_bad_request
 from collective.methods.request_data_getters import angular_post_parameters
 from core.managing.ban.classes import BanHandler
+from core.notifications.sms_dispatcher.common import NotificationsSender
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
-from core.sms_dispatcher import login_codes_sms_sender
 from core.users.models import Users
 
 
@@ -77,7 +77,7 @@ class LoginManager(object):
             user.update_one_time_token()
 
             if not settings.DEBUG:
-                login_codes_sms_sender.send(phone_number, user.one_time_token, request)
+                NotificationsSender.send_login_code(request, phone_number, user.one_time_token)
 
             return self.PostResponses.ok()
 

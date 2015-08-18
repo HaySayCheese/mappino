@@ -1,11 +1,12 @@
 #coding=utf-8
 from django.core.exceptions import SuspiciousOperation
 from django.views.generic import View
-from apps.main.api.correspondence.classes import MessagesHandler, CallRequestsHandler
 
 from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.exceptions import InvalidArgument, RuntimeException
 from collective.methods.request_data_getters import angular_parameters
+from core.notifications.mail_dispatcher.sellers import SellersMailDispatcher
+from core.notifications.sms_dispatcher.sellers import SellersSMSDispatcher
 from core.publications.constants import HEAD_MODELS
 from core.users.constants import Preferences
 
@@ -89,7 +90,7 @@ class ClientNotificationsHandler(object):
 
             try:
                 cls.__send_notification_about_new_message(
-                    request, tid, publication, params['message'], params['email'], params.get('name', '') # is not required
+                    request, publication, params['message'], params['email'], params.get('name', '') # is not required
                 )
 
             except ValueError:
@@ -100,7 +101,7 @@ class ClientNotificationsHandler(object):
 
 
         @staticmethod
-        def __send_notification_about_new_message(request, tid, publication, message, client_email, client_name=None):
+        def __send_notification_about_new_message(request, publication, message, client_email, client_name=None):
             """
             Аналізує налаштування ріелтора, що є власником оголошення publication,
             та обирає спосіб доставки повідомлення, після чого надсилає повідомлення.
@@ -108,7 +109,6 @@ class ClientNotificationsHandler(object):
             :param request:
                 <передаєтьсья в нижчу логіку>
 
-            :param tid: id типу оголошення.
             :param publication: head-запис оголошення, власнику якого слід надіслати повідомлення.
             :param message: повідомлення, яке слід надіслати.
                 WARN: повідомлення message буде надіслано лише за допомогою ел. пошти.
@@ -138,7 +138,7 @@ class ClientNotificationsHandler(object):
             # and sending the notification
             method = preferences.send_message_notifications_to_sid
             if method == Preferences.messaging.email():
-                MessagesHandler.send_email(tid, publication, client_email, client_name, message)
+                SellersMailDispatcher.send_message_email(publication, client_email, client_name, message)
 
             elif method == Preferences.messaging.sms_and_email():
                 # if delivering by one of the methods wasn't successful —
@@ -147,8 +147,8 @@ class ClientNotificationsHandler(object):
 
                 error = None
                 try:
-                    if not MessagesHandler.send_sms_notification(request, publication):
-                        raise RuntimeException('Message can\'t be delivered.')
+                    if not SellersSMSDispatcher.send_sms_about_incoming_email(request, publication.owner.mobile_phone):
+                        raise RuntimeError('Email can not be sent.')
 
                 except Exception as e:
                     # catch all errors here
@@ -156,8 +156,8 @@ class ClientNotificationsHandler(object):
 
 
                 try:
-                    if not MessagesHandler.send_email(tid, publication, client_email, client_name, message):
-                        raise RuntimeException('Message can\'t be delivered.')
+                    if not SellersMailDispatcher.send_message_email(publication, client_email, client_name, message):
+                        raise RuntimeError('Email can not be sent.')
 
                 except Exception as e:
                     # catch all errors here
@@ -169,7 +169,7 @@ class ClientNotificationsHandler(object):
 
             else:
                 # method is unknown
-                raise RuntimeException('Invalid send method sid.')
+                raise RuntimeError('Invalid send method sid.')
 
 
     class CallRequestsHandler(View):
@@ -249,9 +249,11 @@ class ClientNotificationsHandler(object):
 
 
             try:
+                SellersSMSDispatcher.send_sms_about_incoming_call_request(
+                    request, publication.owner.mobile_phone, params['phone_number'], params.get('name', ''))
+
                 cls.__send_notification_about_new_call_request(
-                    request, tid, publication, params['phone_number'], params.get('name', '') # is not required
-                )
+                    request, publication, params['phone_number'], params.get('name', ''))
 
             except ValueError:
                 return cls.PostResponses.invalid_parameters()
@@ -261,7 +263,7 @@ class ClientNotificationsHandler(object):
 
 
         @staticmethod
-        def __send_notification_about_new_call_request(request, tid, publication, client_number, client_name=None):
+        def __send_notification_about_new_call_request(request, publication, client_number, client_name=None):
             """
             Аналізує власника оголошення publication, та обирає спосіб доставки повідомлення,
             після чого надсилає повідомлення.
@@ -269,7 +271,6 @@ class ClientNotificationsHandler(object):
             :param request:
                 <передаєтьсья в нижчу логіку>
 
-            :param tid: id типу оголошення.
             :param publication: head-запис оголошення, власнику якого слід надіслати повідомлення.
             :param client_number: номер мобільного телефону у міжнародному форматі.
             :param client_name: контактна особа.
@@ -294,10 +295,10 @@ class ClientNotificationsHandler(object):
             # and sending the message
             method = preferences.send_call_request_notifications_to_sid
             if method == Preferences.call_requests.sms():
-                CallRequestsHandler.send_sms_notification(request, publication, client_number, client_name)
+                SellersSMSDispatcher.send_sms_about_incoming_call_request(request, publication.owner.mobile_phone, client_number, client_name)
 
             elif method == Preferences.call_requests.email():
-                CallRequestsHandler.send_email_notification(tid, publication, client_number, client_name)
+                SellersMailDispatcher.send_email_about_incoming_call_request(publication, client_number, client_name)
 
             elif method == Preferences.call_requests.sms_and_email():
                 # if delivering through one of the methods wasn't successful —
@@ -306,8 +307,7 @@ class ClientNotificationsHandler(object):
 
                 error = None
                 try:
-                    if not CallRequestsHandler.send_sms_notification(request, publication, client_number, client_name):
-                        raise RuntimeException('Message can\'t be delivered.')
+                    SellersSMSDispatcher.send_sms_about_incoming_call_request(request, publication.owner.mobile_phone, client_number, client_name)
 
                 except Exception as e:
                     # catch all errors here
@@ -315,8 +315,7 @@ class ClientNotificationsHandler(object):
 
 
                 try:
-                    if not CallRequestsHandler.send_email_notification(tid, publication, client_number, client_name):
-                        raise RuntimeException('Message can\'t be delivered.')
+                    SellersMailDispatcher.send_email_about_incoming_call_request(publication, client_number, client_name)
 
                 except Exception as e:
                     # catch all errors here
@@ -328,6 +327,9 @@ class ClientNotificationsHandler(object):
 
             else:
                 raise RuntimeException('Invalid send method sid.')
+
+
+
 
 #
 # class SendMessageFromClient(View):
