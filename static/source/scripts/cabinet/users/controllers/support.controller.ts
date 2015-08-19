@@ -23,7 +23,7 @@ namespace Mappino.Cabinet.Users {
         constructor(private $scope: any,
                     private $rootScope: any,
                     private $state: angular.ui.IStateService,
-                    private ticketsService: ITicketsService) {
+                    private ticketsService: TicketsService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Поддержка mappino';
 
@@ -34,7 +34,8 @@ namespace Mappino.Cabinet.Users {
             $scope.ticketFormIsVisible  = false;
 
 
-            ticketsService.load(response => {
+            ticketsService.load()
+                .success(response => {
                 $scope.tickets = response;
                 $rootScope.loaders.tickets = false;
             });
@@ -43,15 +44,17 @@ namespace Mappino.Cabinet.Users {
 
 
         public createTicket() {
-            this.ticketsService.create(ticketId => {
-                this.$scope.ticket.ticket_id = ticketId;
 
-                this.$scope.ticketFormIsVisible = true;
+            this.ticketsService.create()
+            .success(response => {
+                    this.$scope.ticket.ticket_id = response.data.id;
 
-                if (!this.$scope.$$phase) {
-                    this.$scope.$apply()
-                }
-            });
+                    this.$scope.ticketFormIsVisible = true;
+
+                    if (!this.$scope.$$phase) {
+                        this.$scope.$apply()
+                    }
+                })
         }
 
 
@@ -59,7 +62,8 @@ namespace Mappino.Cabinet.Users {
         public sendMessage() {
             if (this.$scope.ticketForm.$valid) {
                 this.$rootScope.loaders.overlay = true;
-                this.ticketsService.sendMessage(this.ticket.ticket_id, this.$scope.ticket, response => {
+                this.ticketsService.sendMessage(this.ticket.ticket_id, this.$scope.ticket)
+                    .success(response => {
                     this.$rootScope.loaders.overlay = false;
                     this.$state.go('ticket_view', { ticket_id: this.ticket.ticket_id })
                 });

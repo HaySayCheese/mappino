@@ -15,7 +15,7 @@ namespace Mappino.Cabinet.Users {
 
         constructor(private $scope: any,
                     private $rootScope: any,
-                    private ticketsService: ITicketsService) {
+                    private ticketsService: TicketsService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Обращение в службу поддержки mappino';
 
@@ -34,10 +34,11 @@ namespace Mappino.Cabinet.Users {
 
 
             $scope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
-                ticketsService.loadTicketMessages(toParams.ticket_id, response => {
+                ticketsService.loadTicketMessages(toParams.ticket_id)
+                    .success( response => {
                     $scope.ticket.ticket_id = toParams.ticket_id;
-                    $scope.ticket.subject   = response.subject;
-                    $scope.ticket.messages  = response.messages;
+                    $scope.ticket.subject   = response.data.subject;
+                    $scope.ticket.messages  = response.data.messages;
 
                     $scope.ticket = this.ticket;
                     $scope.ticketIsLoaded = true;
@@ -53,25 +54,26 @@ namespace Mappino.Cabinet.Users {
             if (this.$scope.ticketForm.$valid) {
                 this.$rootScope.loaders.overlay = true;
 
-                this.ticketsService.sendMessage(this.ticket.ticket_id, this.$scope.new_message, response => {
-                    this.$rootScope.loaders.overlay = false;
+                this.ticketsService.sendMessage(this.ticket.ticket_id, this.$scope.new_message)
+                    .success(response => {
+                        this.$rootScope.loaders.overlay = false;
 
-                    this.ticket.messages.unshift({
-                        created:    new Date().getTime().toString(),
-                        text:       this.$scope.new_message.message,
-                        type_sid:   0
+                        this.ticket.messages.unshift({
+                            created: new Date().getTime().toString(),
+                            text: this.$scope.new_message.message,
+                            type_sid: 0
+                        });
+
+                        if (this.$scope.new_message.subject) {
+                            this.$scope.ticket.subject = this.$scope.new_message.subject;
+                            this.$scope.new_message.subject = '';
+                        }
+
+                        this.$scope.new_message.message = null;
+
+                        this.$scope.ticketForm.$setPristine();
+                        this.$scope.ticketForm.$setUntouched();
                     });
-
-                    if (this.$scope.new_message.subject) {
-                        this.$scope.ticket.subject = this.$scope.new_message.subject;
-                        this.$scope.new_message.subject = '';
-                    }
-
-                    this.$scope.new_message.message = null;
-
-                    this.$scope.ticketForm.$setPristine();
-                    this.$scope.ticketForm.$setUntouched();
-                });
             }
         }
     }
