@@ -77,7 +77,7 @@ class LoginManager(object):
 
             user.update_one_time_token()
 
-            if not settings.DEBUG:
+            if not settings.SMS_DEBUG:
                 NotificationsSender.send_login_code(request, phone_number, user.one_time_token)
 
             return self.PostResponses.ok()
