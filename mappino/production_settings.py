@@ -141,6 +141,7 @@ INSTALLED_APPS = (
     'core.publications',
     'core.favorites',
     'core.managing.moderators',
+    'core.notifications',
     'core.markers_index',
     'core.support',
     'core.escaped_fragments_manager',

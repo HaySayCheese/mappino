@@ -15,7 +15,6 @@ class SellersNotificationsManager(object):
         :param request:
             <передаєтьсья в нижчу логіку>
 
-        :param tid: id типу оголошення.
         :param publication: head-запис оголошення, власнику якого слід надіслати повідомлення.
         :param client_number: номер мобільного телефону у міжнародному форматі.
         :param client_name: контактна особа.
@@ -48,7 +47,7 @@ class SellersNotificationsManager(object):
 
 
             try:
-                SellersMailDispatcher.send_email_about_incoming_call_request(tid, publication, client_number, client_name)
+                SellersMailDispatcher.send_email_about_incoming_call_request(publication, client_number, client_name)
             except Exception as e:
                 # catch all errors here
                 error = e
@@ -63,4 +62,4 @@ class SellersNotificationsManager(object):
 
     @classmethod
     def notify_about_publication_blocked_by_moderator(cls, user):
-        SellersSMSDispatcher.send_sms_about_publication_blocked_by_moderator(user.mobile)
+        SellersSMSDispatcher.send_sms_about_publication_blocked_by_moderator(user.mobile_phone)
