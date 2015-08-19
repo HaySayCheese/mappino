@@ -1,5 +1,3 @@
-/// <reference path='../_all.ts' />
-
 
 namespace Mappino.Map {
     'use strict';
@@ -18,96 +16,82 @@ namespace Mappino.Map {
                     private $timeout: angular.ITimeoutService,
                     private favoritesService: FavoritesService) {
             // ---------------------------------------------------------------------------------------------------------
-            $rootScope.$on('Mappino.Map.FavoritesService.FavoritesIsLoaded', (event, favorites) => {
-                $timeout(() => {
-                    var briefs = this._briefs || undefined;
-
-                    for (var favorite in favorites) {
-                        if (favorites.hasOwnProperty(favorite)) {
-                            for (var brief in briefs) {
-                                if (briefs.hasOwnProperty(brief)) {
-                                    if (briefs[brief].id == favorites[favorite].id)
-                                        briefs[brief].is_favorite = true;
-                                }
-                            }
-                        }
-                    }
-                }, 0);
-            });
-
-            $rootScope.$on('Mappino.Map.MarkersService.MarkersIsLoaded', (event) => {
-                $timeout(() => {
-                    var favorites   = favoritesService.favorites    || undefined,
-                        briefs      = this._briefs                  || undefined;
-
-                    for (var favorite in favorites) {
-                        if (favorites.hasOwnProperty(favorite)) {
-                            for (var brief in briefs) {
-                                if (briefs.hasOwnProperty(brief)) {
-                                    if (briefs[brief].id == favorites[favorite].id)
-                                        briefs[brief].is_favorite = true;
-                                }
-                            }
-                        }
-                    }
-                }, 0);
-            });
-
-            $rootScope.$on('Mappino.Map.FavoritesService.FavoriteAdded', (event, briefId) => {
-                $timeout(() => {
-                    var briefs = this._briefs || undefined;
-
-                    for (var brief in briefs) {
-                        if (briefs.hasOwnProperty(brief)) {
-                            if (briefs[brief].id == briefId)
-                                briefs[brief].is_favorite = true;
-                        }
-                    }
-                }, 0)
-            });
-
-            $rootScope.$on('Mappino.Map.FavoritesService.FavoriteRemoved', (event, briefId) => {
-                $timeout(() => {
-                    var briefs = this._briefs || undefined;
-
-                    for (var brief in briefs) {
-                        if (briefs.hasOwnProperty(brief)) {
-                            if (briefs[brief].id == briefId)
-                                briefs[brief].is_favorite = false;
-                        }
-                    }
-                }, 0)
-            });
+            this.initEventsListener();
         }
+
 
 
 
         public add(brief: Object) {
             this._briefs.push(brief);
+            console.log(brief)
         }
 
 
 
-        public remove(briefId: string) {
+        public remove(briefHid: string) {
             var briefs = this._briefs || undefined;
 
-            for (var brief in briefs) {
-                if (briefs.hasOwnProperty(brief)) {
-                    if (briefs[brief].id == briefId)
-                        briefs.splice(brief, 1);
+            for (let i = 0, len = briefs.length; i < len; i++) {
+                var brief = briefs[i];
+
+                if (brief.hid == briefHid) {
+                    briefs.splice(i, 1);
+                    break;
                 }
             }
         }
 
 
 
-        public toggleFavorite(_brief) {
+        private toggleFavorite(briefHid: string) {
             var briefs = this._briefs || undefined;
 
-            for (var brief in briefs) {
-                if (briefs.hasOwnProperty(brief)) {
-                    if (briefs[brief].id == _brief.id)
-                        briefs[brief].is_favorite = !briefs[brief].is_favorite;
+            for (let i = 0, len = briefs.length; i < len; i++) {
+                var brief = briefs[i];
+
+                if (brief.hid == briefHid) {
+                    brief.is_favorite = !brief.is_favorite;
+                    break;
+                }
+            }
+        }
+
+
+
+        private initEventsListener() {
+            this.$rootScope.$on('Mappino.Map.FavoritesService.FavoritesIsLoaded', (event) => {
+                this.$timeout(() => this.markBriefsAsFavorite(), 0);
+            });
+
+            this.$rootScope.$on('Mappino.Map.MarkersService.MarkersIsLoaded', (event) => {
+                this.$timeout(() => this.markBriefsAsFavorite(), 0);
+            });
+
+            this.$rootScope.$on('Mappino.Map.FavoritesService.FavoriteAdded', (event, briefHid) => {
+                this.$timeout(() => this.toggleFavorite(briefHid), 0)
+            });
+
+            this.$rootScope.$on('Mappino.Map.FavoritesService.FavoriteRemoved', (event, briefHid) => {
+                this.$timeout(() => this.toggleFavorite(briefHid), 0)
+            });
+        }
+
+
+
+        private markBriefsAsFavorite() {
+            var briefs      = this._briefs                      || undefined,
+                favorites   = this.favoritesService.favorites   || undefined;
+
+            for (let i = 0, len = favorites.length; i < len; i++) {
+                var favorite = favorites[i];
+
+                for (let i = 0, len = briefs.length; i < len; i++) {
+                    var brief = briefs[i];
+
+                    if (favorite.id == brief.hid) {
+                        brief.is_favorite = true;
+                    }
                 }
             }
         }

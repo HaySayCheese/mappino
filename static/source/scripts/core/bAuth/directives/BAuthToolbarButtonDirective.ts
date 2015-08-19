@@ -8,8 +8,8 @@ namespace Mappino.Core.BAuth {
             template: `<div layout="row" layour-align="center center">
                             <b-auth-user-avatar class="-mini -toolbar"></b-auth-user-avatar>
 
-                            <span ng-show="user.account.full_name" ng-cloak>[[ user.account.full_name ]]</span>
-                            <span ng-hide="user.account.full_name">Настройки</span>
+                            <span ng-show="user.account.first_name && user.account.last_name" ng-cloak>[[ user.account.full_name ]]</span>
+                            <span ng-hide="user.account.first_name && user.account.last_name">Настройки</span>
                         </div>`,
 
 

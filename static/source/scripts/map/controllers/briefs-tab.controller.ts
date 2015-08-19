@@ -1,5 +1,3 @@
-/// <reference path='../_all.ts' />
-
 
 namespace Mappino.Map {
     'use strict';
@@ -20,10 +18,12 @@ namespace Mappino.Map {
                     private favoritesService: FavoritesService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.briefs = briefsService.briefs;
+        }
 
-            $scope.$watchCollection('briefs', (newValue) => {
-                console.log(newValue)
-            });
+
+
+        public openPublication(brief) {
+            this.publicationHandler.open(`${brief.tid}:${brief.hid}`, true);
         }
 
 
@@ -31,18 +31,13 @@ namespace Mappino.Map {
         public toggleFavorite(brief, $event) {
             var publicationsIds = {
                 tid: brief.tid,
-                hid: brief.id
+                hid: brief.hid
             };
 
             if (brief.is_favorite) {
-                this.favoritesService.remove(publicationsIds, response => {
-                    this.briefsService.toggleFavorite(brief);
-                });
+                this.favoritesService.remove(publicationsIds);
             } else {
-                this.favoritesService.add(publicationsIds, brief, response => {
-                    console.log(brief)
-                    this.briefsService.toggleFavorite(brief);
-                });
+                this.favoritesService.add(publicationsIds, brief);
             }
 
             $event.preventDefault();
@@ -52,7 +47,7 @@ namespace Mappino.Map {
 
 
         public onBriefMouseOver(brief) {
-            this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseOver', brief.id);
+            this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseOver', brief.hid);
         }
 
 
