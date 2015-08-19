@@ -29,7 +29,7 @@ class Publications(CabinetView):
                 'code': 0,
                 'message': 'OK',
                 'data': {
-                    'id': publication_hash_id,
+                    'hid': publication_hash_id,
                 }
             }
 
@@ -698,7 +698,7 @@ class Briefs(CabinetView):
         for publication in publications_list:
             record = {
                 'tid':          tid,
-                'id':           publication[1], # hash_id
+                'hid':          publication[1], # hash_id
                 'state_sid':    publication[2], # state_sid
                 'created':      publication[3].strftime('%Y-%m-%dT%H:%M:%SZ'),
                 'title':        publication[4], # body.title

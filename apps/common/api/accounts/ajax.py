@@ -8,6 +8,7 @@ from django.conf import settings
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View
+import phonenumbers
 
 from apps.views_base import AnonymousOnlyView, AuthenticatedOnlyView
 from collective.http.responses import HttpJsonResponse
@@ -196,9 +197,15 @@ class LoginManager(object):
 
     @staticmethod
     def on_login_info(user):
+        phone_number = phonenumbers.parse(user.mobile_phone)
+        code = phone_number.country_code
+        number = phone_number.national_number
+
         return {
             'first_name': user.first_name,
             'last_name': user.last_name,
+            'phone_code': code,
+            'phone_number': number,
             'avatar_url': user.avatar.url(),
         }
 

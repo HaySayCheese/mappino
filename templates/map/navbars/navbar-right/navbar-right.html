@@ -38,8 +38,12 @@
                         </li>
                     </ul>
 
-                    <div layout="column" layout-align="center center" ng-hide="briefs.length">
-                        <span class="md-padding md-body-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Enim, vero!</span>
+                    <div class="md-padding center-align" layout="column" layout-align="center center" ng-hide="briefs.length">
+                        <img src="{{ static }}build/images/map/empty_briefs.gif" alt="">
+                        <div class="md-subhead">Слишком высоко!</div>
+                        <span class="md-body-1">
+                            Стоит немного уменьшить масштаб чтобы увидеть предложения
+                        </span>
                     </div>
                 </section>
             </md-tab-body>
@@ -74,8 +78,12 @@
                         </li>
                     </ul>
 
-                    <div layout="column" layout-align="center center" ng-hide="favorites.length">
-                        <span class="md-padding md-body-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Enim, vero!</span>
+                    <div class="md-padding center-align" layout="column" layout-align="center center" ng-hide="favorites.length">
+                        <img src="{{ static }}build/images/map/empty_favorites.gif" alt="">
+                        <div class="md-subhead">Похоже, здесь пусто</div>
+                        <span class="md-body-1">
+                            Пожалуй, стоит добавить сюда несколько интересных обьявлений
+                        </span>
                     </div>
                 </section>
             </md-tab-body>

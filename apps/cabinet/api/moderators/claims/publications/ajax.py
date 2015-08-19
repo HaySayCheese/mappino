@@ -248,16 +248,19 @@ class HeldPublicationsView(ModeratorsView):
             .filter(id__in=[p[0] for p in publications_list])\
             .only('id')
 
-        title_photos = {
-            p.id: p.title_photo().big_thumb_url for p in publications
-        }
+        title_photos = {}
+        for publication in publications:
+            photo = publication.title_photo()
+            # publication may no have title photo
+            if photo:
+                title_photos[photo.id] = photo.big_thumb_url
 
 
         briefs = []
         for head_id, hash_id, title, description, for_rent, for_sale in publications_list:
             briefs.append({
                 'tid': tid,
-                'id': hash_id,
+                'hid': hash_id,
                 'title': title,
                 'description': description,
                 'for_rent': for_rent,
