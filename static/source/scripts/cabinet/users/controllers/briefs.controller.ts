@@ -25,7 +25,7 @@ namespace Mappino.Cabinet.Users {
                     private $mdDialog: any,
                     private $state: angular.ui.IStateService,
                     private TXT: any,
-                    private publicationsService: IPublicationsService) {
+                    private publicationsService: PublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Все объявления';
 
@@ -37,13 +37,17 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public loadBriefs() {
+        private loadBriefs() {
             this.$rootScope.loaders.navbar = true;
 
-            this.publicationsService.loadBriefs(response => {
-                this.$scope.briefs = response;
-                this.$rootScope.loaders.navbar = false;
-            });
+            this.publicationsService.loadBriefs()
+                .success(response => {
+                    this.$scope.briefs = response.data;
+                    this.$rootScope.loaders.navbar = false;
+                })
+                .error(response => {
+                    this.$rootScope.loaders.navbar = false;
+                })
         }
 
 
@@ -61,19 +65,21 @@ namespace Mappino.Cabinet.Users {
 
             this.$mdDialog.show(confirm).then(() => {
                 this.$rootScope.loaders.overlay = true;
-                this.publicationsService.remove({ tid: brief.tid, hid: brief.id }, () => {
-                    angular.forEach(this.$scope.briefs, (_brief, index) => {
-                        this.$rootScope.loaders.overlay = false;
+                this.publicationsService.remove({ tid: brief.tid, hid: brief.id })
+                    .success(response => {
+                        angular.forEach(this.$scope.briefs, (_brief, index) => {
+                            this.$rootScope.loaders.overlay = false;
 
-                        if (_brief.id == brief.id && _brief.state_sid == 2) {
-                            this.$scope.briefs.splice(index, 1);
-                        } else if (_brief.id == brief.id && _brief.state_sid != 2) {
-                            this.$scope.briefs[index].state_sid = 2;
-                        }
-                    });
-                }, response => {
-                    this.$rootScope.loaders.overlay = false;
-                });
+                            if (_brief.id == brief.id && _brief.state_sid == 2) {
+                                this.$scope.briefs.splice(index, 1);
+                            } else if (_brief.id == brief.id && _brief.state_sid != 2) {
+                                this.$scope.briefs[index].state_sid = 2;
+                            }
+                        });
+                    })
+                    .error(response => {
+                        this.$rootScope.loaders.overlay = false;
+                    })
             });
         }
 
@@ -92,12 +98,14 @@ namespace Mappino.Cabinet.Users {
 
             this.$mdDialog.show(confirm).then(() => {
                 this.$rootScope.loaders.overlay = true;
-                this.publicationsService.unpublish({ tid: brief.tid, hid: brief.id }, () => {
-                    this.$rootScope.loaders.overlay = false;
-                    this.$state.go('publication_edit', { id: brief.tid + ':' + brief.id });
-                }, response => {
-                    this.$rootScope.loaders.overlay = false;
-                });
+                this.publicationsService.unpublish({ tid: brief.tid, hid: brief.id })
+                    .success(response => {
+                        this.$rootScope.loaders.overlay = false;
+                        this.$state.go('publication_edit', { id: brief.tid + ':' + brief.id });
+                    })
+                    .error(response => {
+                        this.$rootScope.loaders.overlay = false;
+                    })
             });
         }
 
@@ -116,10 +124,14 @@ namespace Mappino.Cabinet.Users {
             if (brief.state_sid == 0) {
                 this.$mdDialog.show(confirm).then(() => {
                     this.$rootScope.loaders.overlay = true;
-                    this.publicationsService.unpublish({ tid: brief.tid, hid: brief.id }, () => {
-                        this.$rootScope.loaders.overlay = false;
-                        this.$state.go('publication_edit', { id: brief.tid + ':' + brief.id });
-                    });
+                    this.publicationsService.unpublish({ tid: brief.tid, hid: brief.id })
+                        .success(response => {
+                            this.$rootScope.loaders.overlay = false;
+                            this.$state.go('publication_edit', { id: brief.tid + ':' + brief.id });
+                        })
+                        .error(response => {
+                            this.$rootScope.loaders.overlay = false;
+                        })
                 });
             } else {
                 this.$state.go('publication_edit', { id: brief.tid + ':' + brief.id });
@@ -133,12 +145,14 @@ namespace Mappino.Cabinet.Users {
 
             this.$rootScope.loaders.overlay = true;
 
-            this.publicationsService.create(newPublication, response => {
-                this.$rootScope.loaders.overlay = false;
-                this.$state.go('publication_edit', { id: newPublication.tid + ":" + response.data.id });
-            }, response => {
-                this.$rootScope.loaders.overlay = false;
-            });
+            this.publicationsService.create(newPublication)
+                .success(response => {
+                    this.$rootScope.loaders.overlay = false;
+                    this.$state.go('publication_edit', { id: newPublication.tid + ":" + response.data.id });
+                })
+                .error(response => {
+                    this.$rootScope.loaders.overlay = false;
+                })
         }
     }
 }

@@ -34,7 +34,7 @@
     </md-card>
 
 
-    <md-card class="-brief" ng-repeat="brief in ::briefs | orderBy: 'state_sid'">
+    <md-card class="-brief" ng-repeat="brief in briefs | orderBy: 'state_sid'">
         <img class="md-card-image" ng-src="[[ ::brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png" />
         <img class="md-card-image" src="{{ static }}build/images/common/image-404.png" ng-hide="brief.photo_url" alt="" />
 
@@ -53,7 +53,7 @@
                     <span>Удалено</span>
                     <span flex></span>
                 </div>
-                <div class="brief-status -unpublished" layout="row" layout-align="start center" ng-show="brief.state_sid == 1 && brief.moderator_message">
+                <div class="brief-status -unpublished" layout="row" layout-align="start center" ng-show="brief.state_sid == 3">
                     <span>Заблокировано модератором</span>
                     <span flex></span>
                 </div>

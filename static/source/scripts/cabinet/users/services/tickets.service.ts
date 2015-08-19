@@ -2,7 +2,7 @@
 
 
 namespace Mappino.Cabinet.Users {
-    export class TicketsService implements ITicketsService {
+    export class TicketsService {
         private _ticket:    ITicket;
         private _tickets:   ITicket[];
 
@@ -25,88 +25,74 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public create(successCallback, errorCallback) {
-            this.$http.post(`/ajax/api/cabinet/support/tickets/`, null)
-                .then(response => {
-                    if (response.data['code'] === 0) {
-                        angular.isFunction(successCallback) && successCallback(response.data['data'].id)
-                    } else {
-                        angular.isFunction(errorCallback) && errorCallback(response.data)
-                    }
-                }, response => {
-                    this.$mdToast.show(
-                        this.$mdToast.simple()
-                            .content(this.TXT.TOASTS.TICKETS.CREATE.TITLE)
-                            .position(this.toastOptions.position)
-                            .hideDelay(this.toastOptions.delay)
-                    );
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
-                });
+        public create(): angular.IHttpPromise<any> {
+            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/support/tickets/`, null);
+            promise.success(response => {});
+            promise.error(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.TICKETS.CREATE.TITLE)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+            return promise;
+
         }
 
 
 
-        public load(successCallback, errorCallback) {
-            this.$http.get(`/ajax/api/cabinet/support/tickets/`)
-                .then(response => {
-                    if (response.data['code'] === 0) {
-                        this._tickets = response.data['data'];
-                        angular.isFunction(successCallback) && successCallback(this._tickets)
-                    } else {
-                        angular.isFunction(errorCallback) && errorCallback(response.data)
-                    }
-                }, response => {
-                    this.$mdToast.show(
-                        this.$mdToast.simple()
-                            .content(this.TXT.TOASTS.TICKETS.LOAD.TITLE)
-                            .position(this.toastOptions.position)
-                            .hideDelay(this.toastOptions.delay)
-                    );
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
-                });
+        public load(): angular.IHttpPromise<any> {
+            var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/support/tickets/`);
+            promise.success(response => {
+                this._tickets = response.data;
+            });
+            promise.error(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.TICKETS.LOAD.TITLE)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+            return promise;
+
         }
 
 
 
-        public loadTicketMessages(ticketId, successCallback, errorCallback) {
-            this.$http.get(`/ajax/api/cabinet/support/tickets/${ticketId}/messages/`)
-                .then(response => {
-                    if (response.data['code'] === 0) {
-                        this._ticket = response.data['data'];
-                        angular.isFunction(successCallback) && successCallback(this._ticket)
-                    } else {
-                        angular.isFunction(errorCallback) && errorCallback(response.data)
-                    }
-                }, response => {
-                    this.$mdToast.show(
-                        this.$mdToast.simple()
-                            .content(this.TXT.TOASTS.TICKETS.LOAD_TICKET_MESSAGES.TITLE)
-                            .position(this.toastOptions.position)
-                            .hideDelay(this.toastOptions.delay)
-                    );
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
-                });
+        public loadTicketMessages(ticketId): angular.IHttpPromise<any> {
+            var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/support/tickets/${ticketId}/messages/`);
+            promise.success(response => {
+                this._ticket = response.data;
+            });
+            promise.error(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.TICKETS.LOAD_TICKET_MESSAGES.TITLE)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+            return promise;
+
         }
 
 
 
-        public sendMessage(ticketId, ticketMessage, successCallback, errorCallback) {
-            this.$http.post(`/ajax/api/cabinet/support/tickets/${ticketId}/messages/`, ticketMessage)
-                .then(response => {
-                    if (response.data['code'] === 0) {
-                        angular.isFunction(successCallback) && successCallback(response.data['data'])
-                    } else {
-                        angular.isFunction(errorCallback) && errorCallback(response.data)
-                    }
-                }, response => {
-                    this.$mdToast.show(
-                        this.$mdToast.simple()
-                            .content(this.TXT.TOASTS.TICKETS.SEND_TICKET_MESSAGE.TITLE)
-                            .position(this.toastOptions.position)
-                            .hideDelay(this.toastOptions.delay)
-                    );
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
-                });
+        public sendMessage(ticketId, ticketMessage): angular.IHttpPromise<any> {
+            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/support/tickets/${ticketId}/messages/`, ticketMessage);
+            promise.success(response => {});
+            promise.error(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.TICKETS.SEND_TICKET_MESSAGE.TITLE)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+            return promise;
+
         }
 
 

@@ -13,7 +13,7 @@ namespace Mappino.Cabinet.Users {
 
         private tempPublicationPhotos: Array<Object> = [];
 
-        private publicationIds: IPublicationIds = {
+        private publicationIds: any = {
             tid: null,
             hid: null
         };
@@ -36,7 +36,7 @@ namespace Mappino.Cabinet.Users {
                     private $mdDialog: any,
                     private TXT: any,
                     private MAP: any,
-                    private publicationsService: IPublicationsService) {
+                    private publicationsService: PublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Редактирование объявления';
 
@@ -63,15 +63,17 @@ namespace Mappino.Cabinet.Users {
         private loadPublicationData() {
             this.$rootScope.loaders.overlay = true;
 
-            this.publicationsService.load(this.publicationIds, response => {
-                this.$scope.publication = response;
-                this.$rootScope.loaders.overlay = false;
-                
-                this.initMap();
-                this.initInputsChange();
-            }, response => {
-                this.$rootScope.loaders.overlay = false;
-            });
+            this.publicationsService.load(this.publicationIds)
+                .success(response => {
+                    this.$scope.publication = response.data;
+                    this.$rootScope.loaders.overlay = false;
+
+                    this.initMap();
+                    this.initInputsChange();
+                })
+                .error(response => {
+                    this.$rootScope.loaders.overlay = false;
+                })
         }
 
 
@@ -88,19 +90,20 @@ namespace Mappino.Cabinet.Users {
 
             this.$mdDialog.show(confirm).then(() => {
                 this.$rootScope.loaders.overlay = true;
-                this.publicationsService.remove(this.publicationIds, response => {
-                    this.$rootScope.loaders.overlay = false;
-                    this.$state.go('publications');
-                }, response => {
-                    this.$rootScope.loaders.overlay = false;
-                });
+                this.publicationsService.remove(this.publicationIds)
+                    .success(response => {
+                        this.$rootScope.loaders.overlay = false;
+                        this.$state.go('publications');
+                    })
+                    .error(response => {
+                        this.$rootScope.loaders.overlay = false;
+                    })
             });
         }
 
 
 
         public publishPublication($event) {
-            console.log(this.$scope.forms.publicationForm)
             if (this.$scope.forms.publicationForm.$invalid) {
                 var checkboxElement = angular.element("input[type='checkbox'].ng-invalid")[0],
                     inputElement    = angular.element("textarea.ng-invalid, input.ng-invalid")[0];
@@ -116,15 +119,16 @@ namespace Mappino.Cabinet.Users {
             } else {
                 this.$rootScope.loaders.overlay = true;
 
-                this.publicationsService.publish(this.publicationIds, response => {
-                    this.$rootScope.loaders.overlay = false;
-                    this.$state.go('publications');
-                }, response => {
-                    response.code == 3 && (this.$scope.publicationPhotosErrors.minimumPhotos = true);
-                    response.code == 3 && (this.$scope.publicationPhotosErrors.minimumPhotos = true);
+                this.publicationsService.publish(this.publicationIds)
+                    .success(response => {
+                        this.$rootScope.loaders.overlay = false;
+                        this.$state.go('publications');
+                    })
+                    .error(response => {
+                        response.code == 3 && (this.$scope.publicationPhotosErrors.minimumPhotos = true);
 
-                    this.$rootScope.loaders.overlay = false;
-                });
+                        this.$rootScope.loaders.overlay = false;
+                    })
             }
         }
 
@@ -155,15 +159,18 @@ namespace Mappino.Cabinet.Users {
                     this.$scope.tempPublicationPhotos.push({});
                     this.scrollToBottom();
 
-                    this.publicationsService.uploadPhoto(this.publicationIds, file, response => {
-                        this.$scope.tempPublicationPhotos.shift();
-                        this.scrollToBottom();
-                    }, response => {
-                        this.$scope.tempPublicationPhotos.shift();
+                    this.publicationsService.uploadPhoto(this.publicationIds,file)
+                        .success(response => {
+                            this.$scope.tempPublicationPhotos.shift();
+                            this.scrollToBottom();
+                        })
+                        .error(response => {
+                            this.$scope.tempPublicationPhotos.shift();
 
-                        response.code == 4 && (this.$scope.publicationPhotosErrors.photoTooLarge = true);
-                        response.code == 5 && (this.$scope.publicationPhotosErrors.photoTooSmall = true);
-                    });
+                            response.code == 4 && (this.$scope.publicationPhotosErrors.photoTooLarge = true);
+                            response.code == 5 && (this.$scope.publicationPhotosErrors.photoTooSmall = true);
+                        })
+
                 }
             }
 
@@ -177,9 +184,10 @@ namespace Mappino.Cabinet.Users {
         public removePublicationPhoto(photoId) {
             this.$scope.publicationPhotoLoader[photoId] = true;
 
-            this.publicationsService.removePhoto(this.publicationIds, photoId, () => {
-                this.$scope.publicationPhotoLoader[photoId] = false;
-            });
+            this.publicationsService.removePhoto(this.publicationIds, photoId)
+            .success(response => {
+                    this.$scope.publicationPhotoLoader[photoId] = false;
+                })
         }
 
 
@@ -187,9 +195,10 @@ namespace Mappino.Cabinet.Users {
         public setTitlePhoto(photoId) {
             this.$scope.publicationPhotoLoader[photoId] = true;
 
-            this.publicationsService.setTitlePhoto(this.publicationIds, photoId, () => {
-                this.$scope.publicationPhotoLoader[photoId] = false;
-            });
+            this.publicationsService.setTitlePhoto(this.publicationIds, photoId)
+            .success(response => {
+                    this.$scope.publicationPhotoLoader[photoId] = false;
+                })
         }
 
 
@@ -272,8 +281,8 @@ namespace Mappino.Cabinet.Users {
 
                 angular.element(input).trigger("input");
 
-                this.publicationsService.checkField(this.publicationIds, { fieldName: "address", fieldValue: input.value }, null);
-                this.publicationsService.checkField(this.publicationIds, { fieldName: "lat_lng", fieldValue: latLng.lat() + ";" + latLng.lng() }, null);
+                this.publicationsService.checkField(this.publicationIds, { fieldName: "address", fieldValue: input.value });
+                this.publicationsService.checkField(this.publicationIds, { fieldName: "lat_lng", fieldValue: latLng.lat() + ";" + latLng.lng() });
             });
         }
 
@@ -288,15 +297,17 @@ namespace Mappino.Cabinet.Users {
                     return;
                 }
 
-                this.publicationsService.checkField(this.publicationIds, { fieldName: name, fieldValue: value }, response => {
-                    if (response && !angular.element(e.currentTarget).is(":focus")) {
-                        e.currentTarget['value'] = response;
-                    }
+                this.publicationsService.checkField(this.publicationIds, { fieldName: name, fieldValue: value })
+                    .success(response => {
+                        if (response.data && !angular.element(e.currentTarget).is(":focus")) {
+                            e.currentTarget['value'] = response.data.value ? response.data.value : value;
+                        }
 
-                    this.$scope.forms.publicationForm[name].$setValidity("invalid", true);
-                }, response => {
-                    this.$scope.forms.publicationForm[name].$setValidity("invalid", response.code === 0);
-                });
+                        this.$scope.forms.publicationForm[name].$setValidity("invalid", true);
+                    })
+                    .error(response => {
+                        this.$scope.forms.publicationForm[name].$setValidity("invalid", response.code === 0);
+                    })
             });
 
             angular.element(".publication-view-container input[type='checkbox']").bind("change", function(e) {
