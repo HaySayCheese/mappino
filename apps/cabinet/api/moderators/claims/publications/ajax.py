@@ -260,7 +260,7 @@ class HeldPublicationsView(ModeratorsView):
         for head_id, hash_id, title, description, for_rent, for_sale in publications_list:
             briefs.append({
                 'tid': tid,
-                'id': hash_id,
+                'hid': hash_id,
                 'title': title,
                 'description': description,
                 'for_rent': for_rent,
