@@ -84,7 +84,7 @@ class AbstractBaseIndex(models.Model):
 
         return {
             'tid': cls.tid,
-            'id': marker.hash_id,
+            'hid': marker.hash_id,
             'price': u'{0}{1}'.format(cls.currency_to_str(currency), price),
             'thumbnail_url': marker.photo_thumbnail_url,
         }
