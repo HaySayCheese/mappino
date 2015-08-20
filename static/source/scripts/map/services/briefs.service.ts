@@ -33,7 +33,6 @@ namespace Mappino.Map {
                 brief.thumbnail_url,
                 brief.is_favorite
             ));
-            console.log(brief);
         }
 
 
@@ -42,9 +41,9 @@ namespace Mappino.Map {
             var briefs = this._briefs || undefined;
 
             for (let i = 0, len = briefs.length; i < len; i++) {
-                var brief = briefs[i];
+                var _brief = briefs[i];
 
-                if (brief.hid == briefHid) {
+                if (_brief.hid == briefHid) {
                     briefs.splice(i, 1);
                     break;
                 }
@@ -57,10 +56,10 @@ namespace Mappino.Map {
             var briefs = this._briefs || undefined;
 
             for (let i = 0, len = briefs.length; i < len; i++) {
-                var brief = briefs[i];
+                var _brief = briefs[i];
 
-                if (brief.hid == briefHid) {
-                    brief.is_favorite = !brief.is_favorite;
+                if (_brief.hid == briefHid) {
+                    _brief.is_favorite = !_brief.is_favorite;
                     break;
                 }
             }
@@ -97,10 +96,8 @@ namespace Mappino.Map {
 
 
         private markBriefsAsFavorite() {
-            var briefs      = this._briefs                      || undefined,
-                favorites   = this.favoritesService.favorites   || undefined;
-
-            console.log(favorites)
+            var briefs      = this._briefs,
+                favorites   = this.favoritesService.favorites;
 
             for (let i = 0, len = favorites.length; i < len; i++) {
                 var favorite = favorites[i];
@@ -109,7 +106,6 @@ namespace Mappino.Map {
                     var brief = briefs[i];
 
                     if (favorite.hid == brief.hid) {
-                        console.log('jhghtf')
                         brief.is_favorite = true;
                     }
                 }

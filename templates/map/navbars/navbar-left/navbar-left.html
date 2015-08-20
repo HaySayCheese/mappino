@@ -173,13 +173,13 @@
                                         <div layout="row">
                                             <md-input-container flex="20">
                                                 <label>Код</label>
-                                                <input type="text" name="phoneCode" ng-model="account.phoneCode" disabled>
+                                                <input type="text" name="mobileCode" ng-model="account.mobileCode" disabled>
                                             </md-input-container>
                                             <md-input-container flex="80">
                                                 <label>Номер телефона</label>
-                                                <input type="text" name="phoneNumber" ng-model="account.phoneNumber" autofocus only-number required>
-                                                <div ng-messages="loginForm.phoneNumber.$error"
-                                                     ng-show="loginForm.$submitted || loginForm.phoneNumber.$touched">
+                                                <input type="text" name="mobilePhone" ng-model="account.mobilePhone" autofocus only-number required>
+                                                <div ng-messages="loginForm.mobilePhone.$error"
+                                                     ng-show="loginForm.$submitted || loginForm.mobilePhone.$touched">
                                                     <div ng-message="required">Обязательное поле</div>
                                                     <div ng-message="invalid">Номер телефона указан неверно</div>
                                                 </div>

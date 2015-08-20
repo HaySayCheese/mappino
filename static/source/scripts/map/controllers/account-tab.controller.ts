@@ -17,15 +17,15 @@ namespace Mappino.Map {
             // ---------------------------------------------------------------------------------------------------------
             $scope.user = bAuthService.user;
             $scope.account = {
-                phoneCode:      '+380',
-                phoneNumber:    '',
+                mobileCode:     '+380',
+                mobilePhone:    '',
                 smsCode:        ''
             };
 
             $scope.authState = 'enterPhone';
 
-            $scope.$watch('user.account.phone_number', () => {
-                if ($scope.user.account.phone_number) {
+            $scope.$watch('user.account.mobile_phone', () => {
+                if ($scope.user.account.mobile_phone) {
                     $scope.authState = 'accountInformation';
                 } else {
                     $scope.authState = 'enterPhone';
@@ -40,8 +40,8 @@ namespace Mappino.Map {
 
         public login() {
             if (this.$scope.authState === 'enterPhone') {
-                if (this.$scope.loginForm.phoneNumber.$valid) {
-                    this.bAuthService.checkPhoneNumber(this.$scope.account.phoneCode, this.$scope.account.phoneNumber)
+                if (this.$scope.loginForm.mobilePhone.$valid) {
+                    this.bAuthService.checkPhoneNumber(this.$scope.account.mobileCode, this.$scope.account.mobilePhone)
                         .success(response => {
                             this.$scope.authState = 'enterSMSCode';
                         })
@@ -53,7 +53,7 @@ namespace Mappino.Map {
                 if (this.$scope.loginForm.smsCode.$valid) {
                     this.smsCode = this.$scope.account.smsCode;
 
-                    this.bAuthService.checkSMSCode(this.$scope.account.phoneCode, this.$scope.account.phoneNumber, this.$scope.account.smsCode)
+                    this.bAuthService.checkSMSCode(this.$scope.account.mobileCode, this.$scope.account.mobilePhone, this.$scope.account.smsCode)
                         .success(response => {
                             window.location.pathname = '/cabinet/';
                         })
