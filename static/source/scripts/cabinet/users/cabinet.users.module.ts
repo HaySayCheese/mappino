@@ -16,7 +16,6 @@ namespace Mappino.Cabinet.Users {
 
 
 
-
     /** Providers configuration create */
     new ProvidersConfigs(app);
 
