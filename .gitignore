@@ -19,7 +19,6 @@ node_modules
 static/CACHE
 static/CACHE/*
 
-static/build
 static/build/*
 
 static/escaped_fragments
