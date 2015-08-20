@@ -30,15 +30,15 @@ namespace Mappino.Cabinet.Users {
             $scope.ticket   = this.ticket;
             $scope.tickets  = this.tickets = [];
 
-            $rootScope.loaders.tickets     = true;
+            $rootScope.loaders.tickets  = true;
             $scope.ticketFormIsVisible  = false;
-
 
             ticketsService.load()
                 .success(response => {
-                $scope.tickets = response;
-                $rootScope.loaders.tickets = false;
-            });
+                    $scope.tickets = ticketsService.tickets;
+                    console.log($scope.tickets)
+                    $rootScope.loaders.tickets = false;
+                });
         }
 
 
