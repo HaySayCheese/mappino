@@ -20,15 +20,16 @@ class Support(object):
                 return HttpJsonResponse({
                     'code': 0,
                     'messages': "OK",
-                    'data': [{
-                        'id': ticket.id,
-                        'state_sid': ticket.state_sid,
-                        'created': ticket.created.strftime('%Y-%m-%dT%H:%M:00Z'),
-                        'last_message': ticket.last_message_datetime().strftime('%Y-%m-%dT%H:%M:00Z')
-                                            if ticket.last_message_datetime() else '-',
-                        'subject': ticket.subject
-                             } for ticket in tickets
-                             ]
+                    'data': [
+                        {
+                            'id': ticket.id,
+                            'state_sid': ticket.state_sid,
+                            'created': ticket.created.strftime('%Y-%m-%dT%H:%M:00Z'),
+                            'last_message': ticket.last_message_datetime().strftime('%Y-%m-%dT%H:%M:00Z')
+                                                if ticket.last_message_datetime() else '-',
+                            'subject': ticket.subject
+                        } for ticket in tickets
+                     ]
                 })
 
 
@@ -138,19 +139,24 @@ class Support(object):
     class Messages(CabinetView):
         class Get(object):
             @staticmethod
-            def ok(ticket, user):
+            def ok(ticket):
                 return HttpJsonResponse({
                     'code': 0,
                     'message': 'OK',
                     'data': {
+                        'id': ticket.id,
+                        'state_sid': ticket.state_sid,
+                        'created': ticket.created.strftime('%Y-%m-%dT%H:%M:00Z'),
+                        'last_message': ticket.last_message_datetime().strftime('%Y-%m-%dT%H:%M:00Z')
+                            if ticket.last_message_datetime() else '-',
                         'subject': ticket.subject,
-                        'user_avatar': user.avatar.url(),
-#                       'admin_avatar': '', # todo: add admin avatar url here.
-                        'messages': [{
-                            'type_sid': m.type_sid,
-                            'created': m.created.strftime('%Y-%m-%dT%H:%M:00Z'),
-                            'text': m.text,
-                        } for m in ticket.messages()]
+                        'messages': [
+                            {
+                                'type_sid': m.type_sid,
+                                'created': m.created.strftime('%Y-%m-%dT%H:%M:00Z'),
+                                'text': m.text,
+                            } for m in ticket.messages()
+                        ]
                     }
                 })
 
@@ -225,7 +231,7 @@ class Support(object):
 
 
             ticket = tickets[0]
-            return self.Get.ok(ticket, request.user)
+            return self.Get.ok(ticket)
 
 
         def post(self, request, *args):

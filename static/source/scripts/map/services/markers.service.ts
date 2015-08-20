@@ -134,7 +134,6 @@ namespace Mappino.Map {
                 this.clearSimpleMarkers();
                 this.clearPieMarkers();
 
-                console.log(this.favoritesPlaced)
                 if (!this.favoritesPlaced)
                     this.placeFavoriteMarkers(map);
 
@@ -166,16 +165,12 @@ namespace Mappino.Map {
             var favoritesMarkers = this.favoritesService.favorites,
                 counter = 0;
 
-            console.log(this.favoritesPlaced)
-
             for (var marker in favoritesMarkers) {
                 if (favoritesMarkers.hasOwnProperty(marker)) {
                     var favoriteMarker = favoritesMarkers[marker] || undefined,
                         favoriteMarkerLatLng = `${favoriteMarker.lat}:${favoriteMarker.lng}`;
 
                     counter += 1;
-                    console.log(counter)
-                    console.log(favoritesMarkers.length)
 
                     this.createFavoriteMarker(favoriteMarkerLatLng, map, favoriteMarker);
                 }
@@ -183,7 +178,6 @@ namespace Mappino.Map {
 
             if (counter > 0 && counter == favoritesMarkers.length) {
                 this.favoritesPlaced = true;
-                console.log(this.favoritesMarkers)
             }
         }
 
@@ -207,9 +201,9 @@ namespace Mappino.Map {
                                 || (angular.isDefined(responseSimpleMarkerColor) && angular.isUndefined(responseSimpleMarker))
                                 || simpleMarker.params.price != responseSimpleMarker.price) {
 
-                                this.briefsService.remove(simpleMarker.params.id);
+                                this.briefsService.remove(simpleMarker.params.hid);
 
-                                console.log('deleted: ' + simpleMarker.params.id);
+                                console.log('deleted: ' + simpleMarker.params.hid);
 
                                 simpleMarker.setMap(null);
                                 delete this.simpleMarkers[color][latLng];
@@ -295,7 +289,7 @@ namespace Mappino.Map {
                 position: new google.maps.LatLng(markerLat, markerLng),
                 icon: '/../mappino_static/build/images/markers/empty_marker.png',
                 params: {
-                    id:     responseMarker.id,
+                    hid:    responseMarker.hid,
                     tid:    responseMarker.tid,
                     price:  responseMarker.price
                 },
@@ -307,12 +301,12 @@ namespace Mappino.Map {
             });
 
             // якщо маркер є в списку з переглянутими то додаємо йому клас
-            if (this._visitedMarkers.indexOf(responseMarker.id) != -1) {
+            if (this._visitedMarkers.indexOf(responseMarker.hid) != -1) {
                 this.simpleMarkers[color][latLng].labelClass += ' -visited'
             }
 
             // якщо в урлі є ід цього маркера то додаємо йому клас з підсвіткою
-            if (this.$state.params['publication_id'].split(':')[1] == responseMarker.id) {
+            if (this.$state.params['publication_id'].split(':')[1] == responseMarker.hid) {
                 if (this.simpleMarkers[color][latLng].labelClass.indexOf('-active') == -1)
                     this.simpleMarkers[color][latLng].labelClass += ' -active'
             }
@@ -422,7 +416,7 @@ namespace Mappino.Map {
                 position: new google.maps.LatLng(markerLat, markerLng),
                 icon: '/../mappino_static/build/images/markers/empty_marker.png',
                 params: {
-                    id:     marker.id,
+                    hid:    marker.hid,
                     tid:    marker.tid,
                     price:  marker.price
                 },
@@ -434,7 +428,7 @@ namespace Mappino.Map {
             });
 
             // якщо в урлі є ід цього маркера то додаємо йому клас з підсвіткою
-            if (this.$state.params['publication_id'].split(':')[1] == marker.id) {
+            if (this.$state.params['publication_id'].split(':')[1] == marker.hid) {
                 if (this.favoritesMarkers[latLng].labelClass.indexOf('-active') == -1)
                     this.favoritesMarkers[latLng].labelClass += ' -active'
             }
@@ -459,15 +453,15 @@ namespace Mappino.Map {
 
         private attachClickEventToSimpleMarker(marker) {
             google.maps.event.addListener(marker, 'click', () => {
-                this.publicationHandler.open(`${marker.params.tid}:${marker.params.id}`);
+                this.publicationHandler.open(`${marker.params.tid}:${marker.params.hid}`);
             });
 
             google.maps.event.addListener(marker, 'mouseover', () => {
-                this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkerMouseOver', marker.params.id);
+                this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkerMouseOver', marker.params.hid);
             });
 
             google.maps.event.addListener(marker, 'mouseout', () => {
-                this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkerMouseOut', marker.params.id);
+                this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkerMouseOut', marker.params.hid);
             });
         }
 
@@ -534,7 +528,7 @@ namespace Mappino.Map {
                             var marker = simpleMarkers[color][latLng];
                             var markerMap = marker.getMap();
 
-                            if (marker.params.id == markerId && marker.labelClass.indexOf(ACTION_CLASS) == -1) {
+                            if (marker.params.hid == markerId && marker.labelClass.indexOf(ACTION_CLASS) == -1) {
                                 if (marker.labelClass.indexOf(ACTIVE_CLASS) == -1) {
                                     marker.labelClass += ` ${ACTION_CLASS}`;
                                     marker.setMap(null);
@@ -551,7 +545,7 @@ namespace Mappino.Map {
                     var marker = favoritesMarkers[marker];
                     var markerMap = marker.getMap();
 
-                    if (marker.params.id == markerId && marker.labelClass.indexOf(ACTION_CLASS) == -1) {
+                    if (marker.params.hid == markerId && marker.labelClass.indexOf(ACTION_CLASS) == -1) {
                         if (marker.labelClass.indexOf(ACTIVE_CLASS) == -1) {
                             marker.labelClass += ` ${ACTION_CLASS}`;
                             marker.setMap(null);
@@ -679,7 +673,7 @@ namespace Mappino.Map {
                 if (this.simpleMarkers.hasOwnProperty(color)) {
                     for (var latLng in this.simpleMarkers[color]) {
                         if (this.simpleMarkers[color].hasOwnProperty(latLng)) {
-                            this.briefsService.remove(this.simpleMarkers[color][latLng].params.id);
+                            this.briefsService.remove(this.simpleMarkers[color][latLng].params.hid);
                             this.simpleMarkers[color][latLng].setMap(null);
                             delete this.simpleMarkers[color][latLng];
                         }

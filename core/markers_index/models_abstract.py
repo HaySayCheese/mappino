@@ -539,6 +539,7 @@ class AbstractTradesIndex(AbstractBaseIndex):
     def brief(cls, marker, filters=None):
         brief = super(AbstractTradesIndex, cls).brief(marker, filters)
         brief['title'] = u'Торг. помещение, {:.0f} м².'.format(marker.total_area) # tr
+        brief['d0'] = u'{:.0f}м²'.format(marker.total_area)
         return brief
 
 
@@ -595,6 +596,7 @@ class AbstractOfficesIndex(AbstractBaseIndex):
     def brief(cls, marker, filters=None):
         brief = super(AbstractOfficesIndex, cls).brief(marker, filters)
         brief['title'] = u'Офис, {:.0f} м².'.format(marker.total_area) # tr
+        brief['d0'] = u'{:.0f}м²'.format(marker.total_area)
         return brief
 
 
@@ -653,6 +655,7 @@ class AbstractWarehousesIndex(AbstractBaseIndex):
     def brief(cls, marker, filters=None):
         brief = super(AbstractWarehousesIndex, cls).brief(marker, filters)
         brief['title'] = u'Склад, {:.0f} м².'.format(marker.halls_area) # tr
+        brief['d0'] = u'{:.0f}м²'.format(marker.halls_area)
         return brief
 
 
@@ -702,6 +705,7 @@ class AbstractGaragesIndex(AbstractBaseIndex):
     def brief(cls, marker, filters=None):
         brief = super(AbstractGaragesIndex, cls).brief(marker, filters)
         brief['title'] = u'Гараж, {:.0f} м².'.format(marker.area) # tr
+        brief['d0'] = u'{:.0f}м²'.format(marker.area)
         return brief
 
 
@@ -754,4 +758,5 @@ class AbstractLandsIndex(AbstractBaseIndex):
     def brief(cls, marker, filters=None):
         brief = super(AbstractLandsIndex, cls).brief(marker, filters)
         brief['title'] = u'Зем. участок, {:.0f} м².'.format(marker.area) # tr
+        brief['d0'] = u'{:.0f}м²'.format(marker.area)
         return brief

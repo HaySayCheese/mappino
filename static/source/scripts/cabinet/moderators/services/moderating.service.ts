@@ -3,8 +3,6 @@
 
 namespace Mappino.Cabinet.Moderators {
     export class ModeratingService {
-        private publication: any;
-
         private toastOptions = {
             position:   'top right',
             delay:      5000
