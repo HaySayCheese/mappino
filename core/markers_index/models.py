@@ -117,6 +117,7 @@ class FlatsSaleIndex(AbstractBaseIndex):
     def brief(cls, marker, filters=None):
         brief = super(FlatsSaleIndex, cls).brief(marker, filters)
         brief['title'] = u'Квартира, {0} к.'.format(marker.rooms_count) # tr
+        brief['d0'] = u'{:.0f}'.format(marker.rooms_count)
         return brief
 
 
@@ -249,6 +250,7 @@ class FlatsRentIndex(AbstractBaseIndex):
     def brief(cls, marker, filters=None):
         brief = super(FlatsRentIndex, cls).brief(marker, filters)
         brief['title'] = u'Квартира, {0} к.'.format(marker.rooms_count) # tr
+        brief['d0'] = u'{:.0f}'.format(marker.rooms_count)
         return brief
 
 
@@ -365,6 +367,7 @@ class HousesSaleIndex(AbstractBaseIndex):
     def brief(cls, marker, filters=None):
         brief = super(HousesSaleIndex, cls).brief(marker, filters)
         brief['title'] = u'Дом, {:.0f} м².'.format(marker.total_area) # tr
+        brief['d0'] = u'{:.0f}м²'.format(marker.total_area)
         return brief
 
 
@@ -452,6 +455,7 @@ class HousesRentIndex(AbstractBaseIndex):
     def brief(cls, marker, filters=None):
         brief = super(HousesRentIndex, cls).brief(marker, filters)
         brief['title'] = u'Дом, {:.0f} м².'.format(marker.total_area) # tr
+        brief['d0'] = u'{:.0f}м²'.format(marker.total_area)
         return brief
 
 
@@ -570,6 +574,7 @@ class RoomsSaleIndex(AbstractBaseIndex):
     def brief(cls, marker, filters=None):
         brief = super(RoomsSaleIndex, cls).brief(marker, filters)
         brief['title'] = u'Комната, {:.0f} м².'.format(marker.area) # tr
+        brief['d0'] = u'{:.0f}м²'.format(marker.area)
         return brief
 
 
@@ -720,6 +725,7 @@ class RoomsRentIndex(AbstractBaseIndex):
     def brief(cls, marker, filters=None):
         brief = super(RoomsRentIndex, cls).brief(marker, filters)
         brief['title'] = u'Комната, {:.0f} м².'.format(marker.area) # tr
+        brief['d0'] = u'{:.0f}м²'.format(marker.area)
         return brief
 
 

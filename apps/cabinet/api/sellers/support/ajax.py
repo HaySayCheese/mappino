@@ -28,7 +28,7 @@ class Support(object):
                                             if ticket.last_message_datetime() else '-',
                         'subject': ticket.subject
                              } for ticket in tickets
-                             ]
+                     ]
                 })
 
 
@@ -144,8 +144,6 @@ class Support(object):
                     'message': 'OK',
                     'data': {
                         'subject': ticket.subject,
-                        'user_avatar': user.avatar.url(),
-#                       'admin_avatar': '', # todo: add admin avatar url here.
                         'messages': [{
                             'type_sid': m.type_sid,
                             'created': m.created.strftime('%Y-%m-%dT%H:%M:00Z'),
