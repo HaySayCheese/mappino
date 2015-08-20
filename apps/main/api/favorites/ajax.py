@@ -178,7 +178,7 @@ class FavoritesListView(AuthenticatedOnlyView):
             # photos = publication.photos().only('big_thumb_url')
             # big_thumb_urls = [photo.big_thumb_url for photo in photos]
             list_with_publications_info.append({
-                'id': "{tid}:{hid}".format(tid, hash_id),
+                'hid': "{tid}:{hid}".format(tid, hash_id),
                 'title': publication.body.title,
                 #'photos':big_thumb_urls,
 
