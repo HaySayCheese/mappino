@@ -204,7 +204,7 @@ class LoginManager(object):
         return {
             'first_name': user.first_name,
             'last_name': user.last_name,
-            'mobile_code': code,
+            'mobile_code': u'+' + code,
             'mobile_phone': number,
             'avatar_url': user.avatar.url(),
         }
