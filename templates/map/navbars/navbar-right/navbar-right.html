@@ -9,7 +9,7 @@
             <md-tab-body>
                 <section ng-controller="BriefsTabController as briefsCtrl" layout="row">
                     <ul class="publication-list" layout="column" layout-align="start start" ng-show="briefs.length">
-                        <li class="publication-list-item" ng-repeat="brief in briefs"
+                        <li class="publication-list-item" ng-repeat="brief in briefs" ng-class="{ '-hovered': brief.is_hovered }"
                             ng-click="briefsCtrl.openPublication(brief)"
                             ng-mouseenter="briefsCtrl.onBriefMouseOver(brief)"
                             ng-mouseleave="briefsCtrl.onBriefMouseLeave()">
@@ -58,7 +58,7 @@
             <md-tab-body>
                 <section ng-controller="FavoritesTabController as favCtrl" layout="row">
                     <ul class="favorite-list" layout="column" layout-align="start start" ng-show="favorites.length">
-                        <li class="favorite-list-item" ng-repeat="favorite in favorites"
+                        <li class="favorite-list-item" ng-repeat="favorite in favorites" ng-class="{ '-hovered': favorite.is_hovered }"
                             ng-click="favCtrl.openPublication(favorite)"
                             ng-mouseenter="favCtrl.onBriefMouseOver(favorite)"
                             ng-mouseleave="favCtrl.onBriefMouseLeave()">

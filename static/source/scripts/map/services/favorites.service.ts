@@ -16,6 +16,7 @@ namespace Mappino.Map {
                     private $rootScope: angular.IRootScopeService,
                     private $timeout: angular.ITimeoutService) {
             // ---------------------------------------------------------------------------------------------------------
+            this.initEventsListener();
         }
 
 
@@ -72,6 +73,45 @@ namespace Mappino.Map {
                 }, response => {
                     angular.isFunction(errorCallback) && errorCallback(response.data)
                 });
+        }
+
+
+
+        private initEventsListener() {
+            this.$rootScope.$on('Mappino.Map.MarkersService.MarkerMouseOver', (event, briefHid) => {
+                this.$timeout(() => this.highlightBrief(briefHid), 0)
+            });
+
+            this.$rootScope.$on('Mappino.Map.MarkersService.MarkerMouseOut', (event) => {
+                this.$timeout(() => this.clearHighlight(), 0)
+            });
+        }
+
+
+
+        private highlightBrief(briefHid) {
+            var favorites = this._favorites;
+
+            for (let i = 0, len = favorites.length; i < len; i++) {
+                var favorite = favorites[i];
+
+                if (favorite.id == briefHid) {
+                    favorite.is_hovered = true;
+                    return;
+                }
+            }
+        }
+
+
+
+        private clearHighlight() {
+            var favorites = this._favorites;
+
+            for (let i = 0, len = favorites.length; i < len; i++) {
+                var favorite = favorites[i];
+
+                favorite.is_hovered = false;
+            }
         }
 
 
