@@ -57,7 +57,7 @@ class LoginManager(object):
 
         def post(self, request):
             try:
-                params = angular_post_parameters(request, ['phone_code', 'phone_number'])
+                params = angular_post_parameters(request, ['mobile_code', 'mobile_phone'])
                 phone_number = params['phone_code'] + params['phone_number']
                 phone_number = Users.objects.parse_phone_number(phone_number)
 
@@ -127,7 +127,7 @@ class LoginManager(object):
 
         def post(self, request):
             try:
-                params = angular_post_parameters(request, ['phone_code', 'phone_number', 'token'])
+                params = angular_post_parameters(request, ['mobile_code', 'mobile_phone', 'token'])
                 phone_number = params['phone_code'] + params['phone_number']
                 phone_number = Users.objects.parse_phone_number(phone_number)
                 token = params['token']
@@ -205,7 +205,7 @@ class LoginManager(object):
             'first_name': user.first_name,
             'last_name': user.last_name,
             'mobile_code': code,
-            'mobile_number': number,
+            'mobile_phone': number,
             'avatar_url': user.avatar.url(),
         }
 
