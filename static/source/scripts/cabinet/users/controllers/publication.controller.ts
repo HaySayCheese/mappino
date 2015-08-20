@@ -43,17 +43,21 @@ namespace Mappino.Cabinet.Users {
             this.publicationIds.tid = $state.params['id'].split(':')[0];
             this.publicationIds.hid = $state.params['id'].split(':')[1];
 
-            $scope.publicationTemplateUrl = '/ajax/template/cabinet/publications/unpublished/' + this.publicationIds.tid + '/';
-            $scope.publication = this.publication;
-            $scope.tempPublicationPhotos = this.tempPublicationPhotos;
-            $scope.publicationPhotoLoader = {};
-            $scope.forms = {};
+            if ($state.is('publication_view')) {
+                $scope.publicationTemplateUrl = '/ajax/template/cabinet/publications/published/' + this.publicationIds.tid + '/';
+            } else {
+                $scope.publicationTemplateUrl = '/ajax/template/cabinet/publications/unpublished/' + this.publicationIds.tid + '/';
+                $scope.tempPublicationPhotos = this.tempPublicationPhotos;
+                $scope.publicationPhotoLoader = {};
+                $scope.forms = {};
+                $scope.publicationPhotosErrors = {
+                    minimumPhotos: false,
+                    photoTooSmall: false,
+                    photoTooLarge: false,
+                };
+            }
 
-            $scope.publicationPhotosErrors = {
-                minimumPhotos: false,
-                photoTooSmall: false,
-                photoTooLarge: false,
-            };
+            $scope.publication = this.publication;
 
             this.loadPublicationData();
         }
@@ -68,8 +72,10 @@ namespace Mappino.Cabinet.Users {
                     this.$scope.publication = response.data;
                     this.$rootScope.loaders.overlay = false;
 
-                    this.initMap();
-                    this.initInputsChange();
+                    if (this.$state.is('publication_edit')) {
+                        this.initMap();
+                        this.initInputsChange();
+                    }
                 })
                 .error(response => {
                     this.$rootScope.loaders.overlay = false;

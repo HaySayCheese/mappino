@@ -162,7 +162,7 @@
                 </div>
                 <div layout="row">
                     <md-input-container flex="33">
-                        <label>Общая площадь</label>
+                        <label>Общая площадь (м<sup>2</sup>)</label>
                         <input name="total_area" ng-model="publication.body.total_area" only-number-with-dots required>
                         <div ng-messages="forms.publicationForm.total_area.$error"
                              ng-show="forms.publicationForm.$submitted || forms.publicationForm.total_area.$touched">
@@ -180,7 +180,7 @@
                         </div>
                     </md-input-container>
                     <md-input-container flex="33">
-                        <label>Высота потолков</label>
+                        <label>Высота потолков (м)</label>
                         <input name="ceiling_height" ng-model="publication.body.ceiling_height" only-number-with-dots required>
                         <div ng-messages="forms.publicationForm.ceiling_height.$error"
                              ng-show="forms.publicationForm.$submitted || forms.publicationForm.ceiling_height.$touched">

@@ -142,7 +142,7 @@
                 </div>
                 <div layout="row">
                     <md-input-container flex="33">
-                        <label>Общая площадь</label>
+                        <label>Общая площадь (м<sup>2</sup>)</label>
                         <input name="total_area" ng-model="publication.body.total_area" only-number-with-dots required>
                         <div ng-messages="forms.publicationForm.total_area.$error"
                              ng-show="forms.publicationForm.$submitted || forms.publicationForm.total_area.$touched">
@@ -151,7 +151,7 @@
                         </div>
                     </md-input-container>
                     <md-input-container flex="33">
-                        <label>Жилая площадь</label>
+                        <label>Жилая площадь (м<sup>2</sup>)</label>
                         <input name="living_area" ng-model="publication.body.living_area" only-number-with-dots required>
                         <div ng-messages="forms.publicationForm.living_area.$error"
                              ng-show="forms.publicationForm.$submitted || forms.publicationForm.living_area.$touched">
@@ -160,7 +160,7 @@
                         </div>
                     </md-input-container>
                     <md-input-container flex="33">
-                        <label>Площадь кухни</label>
+                        <label>Площадь кухни (м<sup>2</sup>)</label>
                         <input name="kitchen_area" ng-model="publication.body.kitchen_area" only-number-with-dots required>
                         <div ng-messages="forms.publicationForm.kitchen_area.$error"
                              ng-show="forms.publicationForm.$submitted || forms.publicationForm.kitchen_area.$touched">

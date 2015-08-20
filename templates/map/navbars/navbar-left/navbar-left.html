@@ -160,11 +160,16 @@
             </md-tab-label>
             <md-tab-body>
                 <div class="account-tab" ng-controller="AccountTabController as accCtrl">
-                    <section layout-padding>
+                    <section class="md-padding">
                         <div ng-switch="authState">
                             <form name="loginForm" layout="column" ng-submit="accCtrl.login()" novalidate>
                                 <div ng-switch-when="enterPhone">
                                     <div layout="column">
+                                        <div layout="row">
+                                            <p>
+                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, animi asperiores blanditiis dolore dolores hic incidunt iusto nam praesentium quaerat.
+                                            </p>
+                                        </div>
                                         <div layout="row">
                                             <md-input-container flex="20">
                                                 <label>Код</label>

@@ -9,7 +9,7 @@
             <md-tab-body>
                 <section ng-controller="BriefsTabController as briefsCtrl" layout="row">
                     <ul class="publication-list" layout="column" layout-align="start start" ng-show="briefs.length">
-                        <li class="publication-list-item" ng-repeat="brief in briefs"
+                        <li class="publication-list-item" ng-repeat="brief in briefs" ng-class="{ '-hovered': brief.is_hovered }"
                             ng-click="briefsCtrl.openPublication(brief)"
                             ng-mouseenter="briefsCtrl.onBriefMouseOver(brief)"
                             ng-mouseleave="briefsCtrl.onBriefMouseLeave()">
@@ -38,8 +38,12 @@
                         </li>
                     </ul>
 
-                    <div layout="column" layout-align="center center" ng-hide="briefs.length">
-                        <span class="md-padding md-body-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Enim, vero!</span>
+                    <div class="md-padding center-align" layout="column" layout-align="center center" ng-hide="briefs.length">
+                        <img src="{{ static }}build/images/map/empty_briefs.gif" alt="">
+                        <div class="md-subhead">Слишком высоко!</div>
+                        <span class="md-body-1">
+                            Стоит немного уменьшить масштаб чтобы увидеть предложения
+                        </span>
                     </div>
                 </section>
             </md-tab-body>
@@ -54,7 +58,7 @@
             <md-tab-body>
                 <section ng-controller="FavoritesTabController as favCtrl" layout="row">
                     <ul class="favorite-list" layout="column" layout-align="start start" ng-show="favorites.length">
-                        <li class="favorite-list-item" ng-repeat="favorite in favorites"
+                        <li class="favorite-list-item" ng-repeat="favorite in favorites" ng-class="{ '-hovered': favorite.is_hovered }"
                             ng-click="favCtrl.openPublication(favorite)"
                             ng-mouseenter="favCtrl.onBriefMouseOver(favorite)"
                             ng-mouseleave="favCtrl.onBriefMouseLeave()">
@@ -74,8 +78,12 @@
                         </li>
                     </ul>
 
-                    <div layout="column" layout-align="center center" ng-hide="favorites.length">
-                        <span class="md-padding md-body-1">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Enim, vero!</span>
+                    <div class="md-padding center-align" layout="column" layout-align="center center" ng-hide="favorites.length">
+                        <img src="{{ static }}build/images/map/empty_favorites.gif" alt="">
+                        <div class="md-subhead">Похоже, здесь пусто</div>
+                        <span class="md-body-1">
+                            Пожалуй, стоит добавить сюда несколько интересных обьявлений
+                        </span>
                     </div>
                 </section>
             </md-tab-body>

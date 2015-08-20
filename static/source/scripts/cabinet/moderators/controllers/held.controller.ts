@@ -23,11 +23,10 @@ namespace Mappino.Cabinet.Moderators {
 
         private load() {
             this.$rootScope.loaders.overlay = true;
-            this.moderatingService.loadHeld(response => {
+            this.moderatingService.loadHeld()
+                .success(response => {
                 this.$scope.briefs = response.data;
                 this.$rootScope.loaders.overlay = false;
-            }, response => {
-                //
             });
         }
     }

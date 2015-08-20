@@ -3,7 +3,8 @@
 
 namespace Mappino.Cabinet.Users {
     export class PublicationsService {
-        private briefs: IBrief[];
+        private _briefs: Array<Brief> = [];
+
         private publication: IPublication;
 
         private toastOptions = {
@@ -64,13 +65,13 @@ namespace Mappino.Cabinet.Users {
             });
 
             return promise;
-
         }
 
 
 
         public publish(publicationIds: IPublicationIds): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/publish/`, null);
+
             promise.success(response => {});
 
             promise.error(response => {
@@ -89,6 +90,7 @@ namespace Mappino.Cabinet.Users {
 
         public unpublish(publicationIds: IPublicationIds): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/unpublish/`, null);
+
             promise.success(response => {});
 
             promise.error(response => {
@@ -107,9 +109,11 @@ namespace Mappino.Cabinet.Users {
 
         public load(publicationIds: IPublicationIds): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/`);
+
             promise.success(response => {
                 this.publication = response.data;
             });
+
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
@@ -118,6 +122,7 @@ namespace Mappino.Cabinet.Users {
                         .hideDelay(this.toastOptions.delay)
                 );
             });
+
             return promise;
         }
 
@@ -128,12 +133,14 @@ namespace Mappino.Cabinet.Users {
                 url: `/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/photos/`,
                 file: photo
             });
+
             promise.success(response => {
                 if (!this.publication.photos) {
                     this.publication.photos = [];
                 }
                 this.publication.photos.push(response.data);
             });
+
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
@@ -142,6 +149,7 @@ namespace Mappino.Cabinet.Users {
                         .hideDelay(this.toastOptions.delay)
                 );
             });
+
             return promise;
         }
 
@@ -167,8 +175,8 @@ namespace Mappino.Cabinet.Users {
                         photo.is_title = true;
                     }
                 }
-
             });
+
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
@@ -177,20 +185,24 @@ namespace Mappino.Cabinet.Users {
                         .hideDelay(this.toastOptions.delay)
                 );
             });
+
             return promise;
         }
 
 
 
-        public setTitlePhoto(publicationIds: IPublicationIds, photoId): angular.IHttpPromise<any> {
+        public setTitlePhoto(publicationIds: IPublicationIds, photoId: string): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/photos/${photoId}/title/`, null);
+
             promise.success(response => {
                 var photos = this.publication.photos;
+
                 for (let i = 0, len = photos.length; i < len; i++) {
                     var photo = photos[i];
                     photo.hash_id === photoId ? photo.is_title = true : photo.is_title = false;
                 }
             });
+
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
@@ -199,6 +211,7 @@ namespace Mappino.Cabinet.Users {
                         .hideDelay(this.toastOptions.delay)
                 );
             });
+
             return promise;
         }
 
@@ -225,7 +238,22 @@ namespace Mappino.Cabinet.Users {
             var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/publications/briefs/all/`);
 
             promise.success(response => {
-                this.briefs = response.data;
+                for (let i = 0, len = response.data.length; i < len; i++) {
+                    var brief = response.data[i];
+
+                    this._briefs.push(new Brief(
+                        brief.tid,
+                        brief.hid,
+                        brief.created,
+                        brief.for_rent,
+                        brief.for_sale,
+                        brief.photo_url,
+                        brief.state_sid,
+                        brief.title,
+                        brief.description,
+                        brief.moderator_message
+                    ));
+                }
             });
 
             promise.error(response => {
@@ -238,6 +266,12 @@ namespace Mappino.Cabinet.Users {
             });
 
             return promise;
+        }
+
+
+
+        public get briefs() {
+            return this._briefs;
         }
     }
 }

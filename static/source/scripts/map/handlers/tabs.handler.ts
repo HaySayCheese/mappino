@@ -34,7 +34,7 @@ namespace Mappino.Map {
 
         public initializeNavbarLeftTabs() {
             this.$rootScope.navbarLeftActiveTabIndex        = this.$stateParams['navbar_left_tab_index'];
-            this.$rootScope.navbarLeftActiveTabIndexPart    = null;
+            this.$rootScope.navbarLeftActiveTabIndexPart    = undefined;
         }
 
 
@@ -46,16 +46,14 @@ namespace Mappino.Map {
 
 
 
-        public open(tab, tab_state_index?: Number) {
+        public open(tab: string, tab_part?: string|number) {
             if (!_.isUndefined(this.navbarLeftTabsIndex[tab])) {
-
                 this.$state.go('base', {
                     'navbar_left_tab_index': this.navbarLeftTabsIndex[tab]
                 });
             }
 
             if (!_.isUndefined(this.navbarRightTabsIndex[tab])) {
-
                 this.$state.go('base', {
                     'navbar_right_tab_index': this.navbarRightTabsIndex[tab]
                 });
