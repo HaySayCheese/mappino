@@ -24,8 +24,8 @@ namespace Mappino.Map {
 
             $scope.authState = 'enterPhone';
 
-            $scope.$watch('user.account.first_name', () => {
-                if ($scope.user.account.first_name) {
+            $scope.$watch('user.account.phone_number', () => {
+                if ($scope.user.account.phone_number) {
                     $scope.authState = 'accountInformation';
                 } else {
                     $scope.authState = 'enterPhone';

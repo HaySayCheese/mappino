@@ -61,6 +61,7 @@ namespace Mappino.Core.BAuth {
 
             promise.success(response => {
                 this._user.set(response.data);
+                console.log(this._user)
             });
 
             promise.error(response => { /* error */ });
