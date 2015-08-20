@@ -321,12 +321,13 @@ namespace Mappino.Map {
             // додаємо бриф для панелі справа
             this.briefsService.add({
                 tid:            responseMarker.tid,
-                hid:            responseMarker.id,
+                hid:            responseMarker.hid,
                 lat:            markerLat,
                 lng:            markerLng,
                 price:          responseMarker.price,
                 title:          responseMarker.title,
-                thumbnail_url:  responseMarker.thumbnail_url
+                thumbnail_url:  responseMarker.thumbnail_url,
+                is_favorite:    false
             });
 
             console.log('added: ' + this.simpleMarkers[color][latLng]);

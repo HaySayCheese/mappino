@@ -18,9 +18,10 @@ namespace Mappino.Map {
                     private publicationHandler: PublicationHandler,
                     private favoritesService: FavoritesService) {
             // ---------------------------------------------------------------------------------------------------------
-            favoritesService.load(response => {
-                $scope.favorites = response.data;
-            });
+            favoritesService.load()
+                .success(response => {
+                    $scope.favorites = response.data;
+                });
 
 
             this.toggleInfoBlock();
@@ -36,12 +37,7 @@ namespace Mappino.Map {
 
 
         public removeFromFavorites(favorite, $event) {
-            var publicationsIds = {
-                tid: favorite.tid,
-                hid: favorite.id
-            };
-
-            this.favoritesService.remove(publicationsIds);
+            this.favoritesService.remove(favorite);
 
             $event.preventDefault();
             $event.stopPropagation();
@@ -50,7 +46,7 @@ namespace Mappino.Map {
 
 
         public onBriefMouseOver(brief) {
-            this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseOver', brief.id);
+            this.$rootScope.$broadcast('Mappino.Map.BriefsService.BriefMouseOver', brief.hid);
         }
 
 

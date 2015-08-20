@@ -18,6 +18,7 @@ namespace Mappino.Map {
                     private favoritesService: FavoritesService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.briefs = briefsService.briefs;
+            console.log($scope.briefs)
         }
 
 
@@ -29,15 +30,11 @@ namespace Mappino.Map {
 
 
         public toggleFavorite(brief, $event) {
-            var publicationsIds = {
-                tid: brief.tid,
-                hid: brief.hid
-            };
-
             if (brief.is_favorite) {
-                this.favoritesService.remove(publicationsIds);
+                console.log(brief)
+                this.favoritesService.remove(brief);
             } else {
-                this.favoritesService.add(publicationsIds, brief);
+                this.favoritesService.add(brief);
             }
 
             $event.preventDefault();

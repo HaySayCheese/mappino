@@ -22,14 +22,23 @@ namespace Mappino.Map {
 
 
 
-        public add(brief: Object) {
-            this._briefs.push(brief);
-            console.log(brief)
+        public add(brief: Brief) {
+            this._briefs.push(new Brief(
+                brief.tid,
+                brief.hid,
+                brief.lat,
+                brief.lng,
+                brief.price,
+                brief.title,
+                brief.thumbnail_url,
+                brief.is_favorite
+            ));
+            console.log(brief);
         }
 
 
 
-        public remove(briefHid: string) {
+        public remove(briefHid: string|number) {
             var briefs = this._briefs || undefined;
 
             for (let i = 0, len = briefs.length; i < len; i++) {
@@ -44,7 +53,7 @@ namespace Mappino.Map {
 
 
 
-        private toggleFavorite(briefHid: string) {
+        private toggleFavorite(briefHid: string|number) {
             var briefs = this._briefs || undefined;
 
             for (let i = 0, len = briefs.length; i < len; i++) {
@@ -91,13 +100,16 @@ namespace Mappino.Map {
             var briefs      = this._briefs                      || undefined,
                 favorites   = this.favoritesService.favorites   || undefined;
 
+            console.log(favorites)
+
             for (let i = 0, len = favorites.length; i < len; i++) {
                 var favorite = favorites[i];
 
                 for (let i = 0, len = briefs.length; i < len; i++) {
                     var brief = briefs[i];
 
-                    if (favorite.id == brief.hid) {
+                    if (favorite.hid == brief.hid) {
+                        console.log('jhghtf')
                         brief.is_favorite = true;
                     }
                 }

@@ -135,8 +135,8 @@ namespace Mappino.Map {
                 var briefs = this.briefsService.briefs;
                 for (var brief in briefs) {
                     if (briefs.hasOwnProperty(brief)) {
-                        if (briefs[brief].id == this.publicationIds.hid)
-                            this.favoritesService.add(this.publicationIds, briefs[brief]);
+                        if (briefs[brief].hid == this.publicationIds.hid)
+                            this.favoritesService.add(briefs[brief]);
                     }
                 }
             }
@@ -153,7 +153,7 @@ namespace Mappino.Map {
                 for (var key in _favorites) {
                     if (_favorites.hasOwnProperty(key)) {
                         console.log(_favorites);
-                        if (_favorites[key].id == this.publicationIds.hid) {
+                        if (_favorites[key].hid == this.publicationIds.hid) {
                             this.$scope.publication.is_favorite = true;
                         }
                     }
