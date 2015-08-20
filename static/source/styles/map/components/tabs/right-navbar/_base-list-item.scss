@@ -5,10 +5,16 @@
     min-height: 120px;
     max-height: 120px;
 
-    padding: 1px 5px 1px 3px;
+    padding: 1px 3px 1px 3px;
 
     cursor: pointer;
     background: #fff;
+
+    @include transition(background-color .2s ease);
+
+    &.-hovered {
+        background-color: color('blue', 'base');
+    }
 
     &:first-child {
         padding-top: 2px;

@@ -75,6 +75,14 @@ namespace Mappino.Map {
             this.$rootScope.$on('Mappino.Map.FavoritesService.FavoriteRemoved', (event, briefHid) => {
                 this.$timeout(() => this.toggleFavorite(briefHid), 0)
             });
+
+            this.$rootScope.$on('Mappino.Map.MarkersService.MarkerMouseOver', (event, briefHid) => {
+                this.$timeout(() => this.highlightBrief(briefHid), 0)
+            });
+
+            this.$rootScope.$on('Mappino.Map.MarkersService.MarkerMouseOut', (event) => {
+                this.$timeout(() => this.clearHighlight(), 0)
+            });
         }
 
 
@@ -93,6 +101,33 @@ namespace Mappino.Map {
                         brief.is_favorite = true;
                     }
                 }
+            }
+        }
+
+
+
+        private highlightBrief(briefHid) {
+            var briefs = this._briefs;
+
+            for (let i = 0, len = briefs.length; i < len; i++) {
+                var brief = briefs[i];
+
+                if (brief.hid == briefHid) {
+                    brief.is_hovered = true;
+                    return;
+                }
+            }
+        }
+
+
+
+        private clearHighlight() {
+            var briefs = this._briefs;
+
+            for (let i = 0, len = briefs.length; i < len; i++) {
+                var brief = briefs[i];
+
+                brief.is_hovered = false;
             }
         }
 

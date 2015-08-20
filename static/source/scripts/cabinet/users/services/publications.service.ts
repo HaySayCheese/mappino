@@ -65,7 +65,6 @@ namespace Mappino.Cabinet.Users {
             });
 
             return promise;
-
         }
 
 
@@ -176,7 +175,6 @@ namespace Mappino.Cabinet.Users {
                         photo.is_title = true;
                     }
                 }
-
             });
 
             promise.error(response => {

@@ -455,8 +455,15 @@ namespace Mappino.Map {
 
         private attachClickEventToSimpleMarker(marker) {
             google.maps.event.addListener(marker, 'click', () => {
-                console.log(`Clicked on marker ${marker.params.tid}:${marker.params.id}`);
                 this.publicationHandler.open(`${marker.params.tid}:${marker.params.id}`);
+            });
+
+            google.maps.event.addListener(marker, 'mouseover', () => {
+                this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkerMouseOver', marker.params.id);
+            });
+
+            google.maps.event.addListener(marker, 'mouseout', () => {
+                this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkerMouseOut', marker.params.id);
             });
         }
 

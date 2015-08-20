@@ -27,7 +27,9 @@ namespace Mappino.Cabinet.Users {
 
         public create(): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/support/tickets/`, null);
+
             promise.success(response => {});
+
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
@@ -36,17 +38,19 @@ namespace Mappino.Cabinet.Users {
                         .hideDelay(this.toastOptions.delay)
                 );
             });
-            return promise;
 
+            return promise;
         }
 
 
 
         public load(): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/support/tickets/`);
+
             promise.success(response => {
                 this._tickets = response.data;
             });
+
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
@@ -55,17 +59,19 @@ namespace Mappino.Cabinet.Users {
                         .hideDelay(this.toastOptions.delay)
                 );
             });
-            return promise;
 
+            return promise;
         }
 
 
 
         public loadTicketMessages(ticketId): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/support/tickets/${ticketId}/messages/`);
+
             promise.success(response => {
                 this._ticket = response.data;
             });
+
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
@@ -74,15 +80,17 @@ namespace Mappino.Cabinet.Users {
                         .hideDelay(this.toastOptions.delay)
                 );
             });
-            return promise;
 
+            return promise;
         }
 
 
 
         public sendMessage(ticketId, ticketMessage): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/support/tickets/${ticketId}/messages/`, ticketMessage);
+
             promise.success(response => {});
+
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
@@ -91,8 +99,8 @@ namespace Mappino.Cabinet.Users {
                         .hideDelay(this.toastOptions.delay)
                 );
             });
-            return promise;
 
+            return promise;
         }
 
 
