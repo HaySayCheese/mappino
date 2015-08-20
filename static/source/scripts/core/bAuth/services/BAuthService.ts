@@ -19,10 +19,10 @@ namespace Mappino.Core.BAuth {
 
 
 
-        public checkPhoneNumber(phoneCode: string, phoneNumber: string): angular.IHttpPromise<any> {
+        public checkPhoneNumber(phoneCode: string, phonePhone: string): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/accounts/login/`, {
-                'phone_code':   phoneCode,
-                'phone_number': phoneNumber
+                'mobile_code':   phoneCode,
+                'mobile_phone':  phonePhone
             });
 
             promise.success(response => { /* success */ });
@@ -34,10 +34,10 @@ namespace Mappino.Core.BAuth {
 
 
 
-        public checkSMSCode(phoneCode: string, phoneNumber: string, smsCode: string): angular.IHttpPromise<any> {
+        public checkSMSCode(phoneCode: string, phonePhone: string, smsCode: string): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/accounts/login/check-code/`, {
-                'phone_code':   phoneCode,
-                'phone_number': phoneNumber,
+                'mobile_code':  phoneCode,
+                'mobile_phone': phonePhone,
                 'token':        smsCode
             });
 

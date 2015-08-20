@@ -20,7 +20,7 @@ namespace Mappino.Map {
             // ---------------------------------------------------------------------------------------------------------
             favoritesService.load()
                 .success(response => {
-                    $scope.favorites = response.data;
+                    $scope.favorites = favoritesService.favorites;
                 });
 
 
