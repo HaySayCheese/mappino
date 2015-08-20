@@ -284,6 +284,7 @@ namespace Mappino.Map {
                 markerLabelOffsetX = this.calcMarkerLabelOffsetX(responseMarker.price.length);
             }
 
+            //noinspection TypeScriptUnresolvedFunction
             this.simpleMarkers[color][latLng] = new MarkerWithLabel({
                 position: new google.maps.LatLng(markerLat, markerLng),
                 icon: '/../mappino_static/build/images/markers/empty_marker.png',
@@ -359,6 +360,7 @@ namespace Mappino.Map {
                 _uuid = _.uniqueId('pie-marker-');
 
 
+            //noinspection TypeScriptUnresolvedFunction
             this.pieMarkers[latLng] = new MarkerWithLabel({
                 position: new google.maps.LatLng(markerLat, markerLng),
                 icon: '/../mappino_static/build/images/markers/empty_marker.png',
@@ -409,6 +411,7 @@ namespace Mappino.Map {
                 markerLabelOffsetX = this.calcMarkerLabelOffsetX(marker.price.length);
             }
 
+            //noinspection TypeScriptUnresolvedFunction
             this.favoritesMarkers[latLng] = new MarkerWithLabel({
                 position: new google.maps.LatLng(markerLat, markerLng),
                 icon: '/../mappino_static/build/images/markers/empty_marker.png',
