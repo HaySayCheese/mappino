@@ -59,7 +59,6 @@ namespace Mappino.Map {
                     this.$scope.authState = 'enterPhone';
 
                     this.clearUserData();
-                    this.resetLoginForm();
                 });
         }
 
@@ -107,6 +106,9 @@ namespace Mappino.Map {
                 mobilePhone:    '',
                 smsCode:        ''
             };
+
+            localStorage.removeItem('mobile_code');
+            localStorage.removeItem('mobile_phone');
         }
 
 
