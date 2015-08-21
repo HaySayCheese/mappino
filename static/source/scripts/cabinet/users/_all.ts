@@ -28,6 +28,7 @@
 // Models import
 // ####################
 /// <reference path='models/Brief.ts' />
+/// <reference path='models/Ticket.ts' />
 
 
 

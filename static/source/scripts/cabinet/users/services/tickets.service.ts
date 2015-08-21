@@ -3,8 +3,8 @@
 
 namespace Mappino.Cabinet.Users {
     export class TicketsService {
-        private _ticket:    ITicket;
-        private _tickets:   ITicket[];
+        private _ticket:    Ticket;
+        private _tickets:   Ticket[];
 
         private toastOptions = {
             position:   'top right',
@@ -48,7 +48,19 @@ namespace Mappino.Cabinet.Users {
             var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/support/tickets/`);
 
             promise.success(response => {
-                this._tickets = response.data;
+                var tickets = response.data;
+
+                for (let i = 0, len = tickets.length; i < len; i++) {
+                    var ticket = tickets[i];
+
+                    this._tickets.push(new Ticket(
+                        ticket.id,
+                        ticket.created,
+                        ticket.state_sid,
+                        ticket.subject,
+                        ticket.last_message
+                    ));
+                }
             });
 
             promise.error(response => {
@@ -65,11 +77,30 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public loadTicketMessages(ticketId): angular.IHttpPromise<any> {
+        public loadTicketMessages(ticketId: string|number): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/support/tickets/${ticketId}/messages/`);
 
             promise.success(response => {
-                this._ticket = response.data;
+                var ticket: Ticket = response.data,
+                    ticketMessages = ticket.messages;
+
+                this._ticket = new Ticket(
+                    ticket.id,
+                    ticket.created,
+                    ticket.state_sid,
+                    ticket.subject,
+                    ticket.last_message
+                );
+
+                for (let i = 0, len = ticketMessages.length; i < len; i++) {
+                    var message: TicketMessage = ticketMessages[i];
+
+                    this._ticket.messages.push(new TicketMessage(
+                        message.text,
+                        message.type_sid,
+                        message.created
+                    ));
+                }
             });
 
             promise.error(response => {
@@ -86,7 +117,7 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public sendMessage(ticketId, ticketMessage): angular.IHttpPromise<any> {
+        public sendMessage(ticketId: string|number, ticketMessage): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/support/tickets/${ticketId}/messages/`, ticketMessage);
 
             promise.success(response => {});
