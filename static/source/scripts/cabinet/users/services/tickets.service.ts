@@ -4,7 +4,7 @@
 namespace Mappino.Cabinet.Users {
     export class TicketsService {
         private _ticket:    Ticket;
-        private _tickets:   Ticket[];
+        private _tickets:   Array<Ticket> = [];
 
         private toastOptions = {
             position:   'top right',
@@ -92,6 +92,7 @@ namespace Mappino.Cabinet.Users {
                     ticket.last_message
                 );
 
+                this._ticket.messages = [];
                 for (let i = 0, len = ticketMessages.length; i < len; i++) {
                     var message: TicketMessage = ticketMessages[i];
 
@@ -120,7 +121,13 @@ namespace Mappino.Cabinet.Users {
         public sendMessage(ticketId: string|number, ticketMessage): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/support/tickets/${ticketId}/messages/`, ticketMessage);
 
-            promise.success(response => {});
+            promise.success(response => {
+                this._ticket.messages.unshift(new TicketMessage(
+                    ticketMessage.message,
+                    0,
+                    new Date().getTime().toString()
+                ));
+            });
 
             promise.error(response => {
                 this.$mdToast.show(
@@ -136,9 +143,14 @@ namespace Mappino.Cabinet.Users {
 
 
 
+        public get ticket() {
+            return this._ticket;
+        }
+
+
+
         public get tickets() {
             return this._tickets;
         }
     }
 }
-
