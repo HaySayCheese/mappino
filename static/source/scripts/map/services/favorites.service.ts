@@ -9,12 +9,15 @@ namespace Mappino.Map {
         public static $inject = [
             '$http',
             '$rootScope',
-            '$timeout'
+            '$timeout',
+            'TabsHandler'
         ];
 
-        constructor(private $http: angular.IHttpService,
-                    private $rootScope: angular.IRootScopeService,
-                    private $timeout: angular.ITimeoutService) {
+        constructor(
+            private $http: angular.IHttpService,
+            private $rootScope: any,
+            private $timeout: angular.ITimeoutService,
+            private tabsHandler: TabsHandler) {
             // ---------------------------------------------------------------------------------------------------------
             this.initEventsListener();
         }
@@ -70,6 +73,13 @@ namespace Mappino.Map {
             });
 
             promise.error(response => {});
+
+            promise.then(null, response => {
+                if (response.status == 403) {
+                    this.tabsHandler.open('account');
+                    this.$rootScope.navbarLeftActiveTabIndexPart = 'favorites';
+                }
+            });
 
             return promise;
         }

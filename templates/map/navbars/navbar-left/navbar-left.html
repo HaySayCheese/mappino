@@ -164,6 +164,7 @@
                             <form name="loginForm" layout="column" ng-submit="accCtrl.login()" novalidate>
                                 <div ng-switch-when="enterPhone">
                                     <div layout="column">
+                                        <div ng-show="navbarLeftActiveTabIndexPart == 'favorites'">
                                             <div layout="row" layout-align="center center">
                                                 <md-icon class="material-icons md-84 pink-text animated-heart">favorite</md-icon>
                                             </div>
@@ -172,6 +173,7 @@
                                                     Чтобы добавить предложение в избранные, пожалуйста, введите <br>номер телефона
                                                 </p>
                                             </div>
+                                        </div>
                                         <div layout="row">
                                             <md-input-container flex="20">
                                                 <label>Код</label>

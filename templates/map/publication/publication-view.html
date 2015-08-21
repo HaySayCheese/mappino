@@ -81,8 +81,15 @@
     </div>
 
 
-    <div layout="column" layout-align="center center" ng-hide="publicationLoadedSuccess || loaders.publication" flex>
-        <md-icon class="material-icons md-48">error_outline</md-icon>
+    <div class="publication-error" layout="column" layout-align="center center" ng-hide="publicationLoadedSuccess || loaders.publication" flex>
+        <div class="md-headline white-text">Случилось страшное...</div>
+        <p class="md-padding white-text center-align">
+            Похоже, что это объявление снято с публикации.
+        </p>
+        <img src="{{ static }}build/images/map/no-publication-image.gif">
+        <md-button class="md-raised md-primary" ng-click="pubCtrl.closePublication()">
+            Уйти
+        </md-button>
     </div>
 
 
