@@ -1,5 +1,5 @@
-<div class="navbar-left-container" ng-if="navbarLeftActiveTabIndex !== null">
-    <md-tabs md-selected="navbarLeftActiveTabIndex" md-dynamic-height>
+<div class="navbar-left-container" ng-if="tabIndexes.navbarLeft != undefined">
+    <md-tabs md-selected="tabIndexes.navbarLeft" md-dynamic-height>
 
         <md-tab id="mappino-tab" md-on-select="navCtrl.tabsHandler.open('mappino');">
             <md-tab-label>
@@ -36,6 +36,7 @@
                 </div>
             </md-tab-body>
         </md-tab>
+
 
         <md-tab id="filters-tab" md-on-select="navCtrl.tabsHandler.open('filters');">
             <md-tab-label>
@@ -136,7 +137,6 @@
         </md-tab>
 
 
-
         <md-tab id="search-tab" md-on-select="navCtrl.tabsHandler.open('search');">
             <md-tab-label>
                 <md-icon>place</md-icon>
@@ -164,7 +164,7 @@
                             <form name="loginForm" layout="column" ng-submit="accCtrl.login()" novalidate>
                                 <div ng-switch-when="enterPhone">
                                     <div layout="column">
-                                        <div ng-show="navbarLeftActiveTabIndexPart == 'favorites'">
+                                        <div ng-show="tabParts.navbarLeft == 'favorites'">
                                             <div layout="row" layout-align="center center">
                                                 <md-icon class="material-icons md-84 pink-text animated-heart">favorite</md-icon>
                                             </div>
@@ -175,11 +175,13 @@
                                             </div>
                                         </div>
                                         <div layout="row">
-                                            <md-input-container flex="20">
+                                            <md-input-container flex="25">
                                                 <label>Код</label>
-                                                <input type="text" name="mobileCode" ng-model="account.mobileCode" disabled>
+                                                <md-select ng-model="account.mobileCode" disabled>
+                                                    <md-option ng-repeat="code in ::COUNTRY.CODES" value="[[ ::code ]]">[[ ::code ]]</md-option>
+                                                </md-select>
                                             </md-input-container>
-                                            <md-input-container flex="80">
+                                            <md-input-container flex="75">
                                                 <label>Номер телефона</label>
                                                 <input type="text" name="mobilePhone" ng-model="account.mobilePhone" autofocus only-number required>
                                                 <div ng-messages="loginForm.mobilePhone.$error"

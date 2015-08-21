@@ -1,5 +1,3 @@
-/// <reference path='../_all.ts' />
-
 
 namespace Mappino.Map {
     export class AccountTabController {
@@ -41,8 +39,12 @@ namespace Mappino.Map {
                 if (this.$scope.loginForm.smsCode.$valid) {
                     this.bAuthService.checkSMSCode(this.$scope.account.mobileCode, this.$scope.account.mobilePhone, this.$scope.account.smsCode)
                         .success(response => {
-                            this.clearUserData();
-                            this.changeAuthState();
+                            if (response.code == 3) {
+                                this.clearUserData();
+                                this.changeAuthState();
+                            } else {
+                                this.$scope.loginForm.smsCode.$setValidity('invalid', false);
+                            }
                         })
                         .error(response => {
                             this.$scope.loginForm.smsCode.$setValidity('invalid', false);

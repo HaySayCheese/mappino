@@ -1,4 +1,3 @@
-//class MarkerWithLabel extends google.maps.Marker {}
 
 namespace Mappino.Map {
     'use strict';
@@ -203,8 +202,6 @@ namespace Mappino.Map {
 
                                 this.briefsService.remove(simpleMarker.params.hid);
 
-                                console.log('deleted: ' + simpleMarker.params.hid);
-
                                 simpleMarker.setMap(null);
                                 delete this.simpleMarkers[color][latLng];
                             }
@@ -249,8 +246,6 @@ namespace Mappino.Map {
                     if (angular.isUndefined(responsePieMarker)
                             || pieMarker.params.blue_markers != responsePieMarker.blue
                             || pieMarker.params.green_markers != responsePieMarker.green) {
-
-                        console.log('deleted pie marker: ' + latLng);
 
                         pieMarker.setMap(null);
                         delete this.pieMarkers[latLng];
@@ -325,8 +320,6 @@ namespace Mappino.Map {
                 is_favorite:    false
             });
 
-            console.log('added: ' + this.simpleMarkers[color][latLng]);
-
             this.attachClickEventToSimpleMarker(this.simpleMarkers[color][latLng]);
         }
 
@@ -348,8 +341,8 @@ namespace Mappino.Map {
                 pieGreenMarkersCountInDeg   = Math.round((360 / 100 * ((pieGreenMarkers / pieMarkersCount) * 100))  || 0),
 
                 // клас який визначає заливку діаграми в залежності від процентного співвідношення маркерів
-                blueAdditionalClass      = pieBlueMarkersCountInDeg  > 180 ? ' full' : '',
-                greenAdditionalClass     = pieGreenMarkersCountInDeg > 180 ? ' full' : '',
+                blueAdditionalClass      = pieBlueMarkersCountInDeg  > 180 ? 'full' : '',
+                greenAdditionalClass     = pieGreenMarkersCountInDeg > 180 ? 'full' : '',
 
                 // розмір сомого маркера з круговою діаграмою для того що б поміщався весь текст з кількістю
                 sizeOfPieChart = pieMarkersCount < 100 ? "small" :
@@ -370,32 +363,30 @@ namespace Mappino.Map {
                     green_markers:      pieGreenMarkers
                 },
                 labelContent:
-                    "<style>" +
-                        "." + _uuid + ".pie.pie-blue {" +
-                            "transform: rotate(0deg);" +
-                        "}"+
-                        "." + _uuid + ".pie.pie-blue:before {" +
-                            "transform: rotate(" + pieBlueMarkersCountInDeg + "deg);" +
-                        "}"+
-                        "." + _uuid + ".pie.pie-green {" +
-                            "transform: rotate(" + pieBlueMarkersCountInDeg + "deg);" +
-                        "}"+
-                        "." + _uuid + ".pie.pie-green:before {" +
-                            "transform: rotate(" + pieGreenMarkersCountInDeg + "deg);" +
-                        "}"+
-                    "</style>"+
-                    "<div>" +
-                        "<div class='marker-pie-chart-inner'>" + pieMarkersCount + "</div>" +
-                        "<div class='" + _uuid + " pie pie-blue" + blueAdditionalClass + "'></div>" +
-                        "<div class='" + _uuid + " pie pie-green" + greenAdditionalClass + "'></div>" +
-                    "</div>",
+                    `<style>
+                        .${_uuid}.pie.pie-blue {
+                            transform: rotate(0deg);
+                        }
+                        .${_uuid}.pie.pie-blue:before {
+                            transform: rotate(${pieBlueMarkersCountInDeg}deg);
+                        }
+                        .${_uuid}.pie.pie-green {
+                            transform: rotate(${pieBlueMarkersCountInDeg}deg);
+                        }
+                        .${_uuid}.pie.pie-green:before {
+                            transform: rotate(${pieGreenMarkersCountInDeg}deg);
+                        }
+                    </style>
+                    <div>
+                        <div class='marker-pie-chart-inner'>${pieMarkersCount}</div>
+                        <div class='${_uuid} pie pie-blue ${blueAdditionalClass}'></div>
+                        <div class='${_uuid} pie pie-green ${greenAdditionalClass}'></div>
+                    </div>`,
                 labelClass: `marker-pie-chart ${sizeOfPieChart} md-whiteframe-z2`,
                 labelAnchor: new google.maps.Point(30, 45),
             });
 
             this.pieMarkers[latLng].setMap(map);
-
-            console.log('added: ' + this.pieMarkers[latLng]);
 
             this.attachClickEventToPieMarker(this.pieMarkers[latLng], map);
         }
@@ -434,8 +425,6 @@ namespace Mappino.Map {
             }
 
             this.favoritesMarkers[latLng].setMap(map);
-
-            console.log('added: ' + this.favoritesMarkers[latLng]);
 
             this.attachClickEventToSimpleMarker(this.favoritesMarkers[latLng]);
         }

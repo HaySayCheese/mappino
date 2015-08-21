@@ -76,8 +76,7 @@ namespace Mappino.Map {
 
             promise.then(null, response => {
                 if (response.status == 403) {
-                    this.tabsHandler.open('account');
-                    this.$rootScope.navbarLeftActiveTabIndexPart = 'favorites';
+                    this.tabsHandler.setActive('account', 'favorites');
                 }
             });
 
@@ -104,6 +103,12 @@ namespace Mappino.Map {
             });
 
             promise.error(response => {});
+
+            promise.then(null, response => {
+                if (response.status == 403) {
+                    this.tabsHandler.setActive('account', 'favorites');
+                }
+            });
 
             return promise;
         }

@@ -8,4 +8,4 @@
 
 /// <reference path='bAuth/_all.ts' />
 
-/// <reference path='core.module.ts' />
+/// <reference path='CoreModule.ts' />

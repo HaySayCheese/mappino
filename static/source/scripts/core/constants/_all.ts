@@ -1,3 +1,5 @@
-/// <reference path='map/map-style.constant.ts' />
+/// <reference path='country/CountryCodesConstant.ts' />
 
-/// <reference path='constants.module.ts' />
+/// <reference path='map/MapStylesConstant.ts' />
+
+/// <reference path='ConstantsModule.ts' />

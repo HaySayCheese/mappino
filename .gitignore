@@ -14,7 +14,11 @@ mappino/passwords.py
 mappino/keys/*
 mappino/keys
 
+node_modules/*
 node_modules
+
+bower_components/*
+bower_components
 
 static/CACHE
 static/CACHE/*
@@ -26,8 +30,7 @@ static/build/*
 static/escaped_fragments
 static/escaped_fragments/*
 
-.gitignore
-
 *.pyc
 *.log
-bower_components
+
+.gitignore
