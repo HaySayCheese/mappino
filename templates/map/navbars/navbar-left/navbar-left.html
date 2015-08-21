@@ -139,7 +139,7 @@
 
         <md-tab id="search-tab" md-on-select="navCtrl.tabsHandler.open('search');">
             <md-tab-label>
-                <md-icon>search</md-icon>
+                <md-icon>place</md-icon>
             </md-tab-label>
             <md-tab-body>
                 <div class="search-tab">
@@ -226,12 +226,15 @@
                                         </div>
 
                                         <div layout="column" flex="60" layout-padding>
-                                            <div class="md-title grey-text text-darken-2">[[ user.account.full_name ]]</div>
-                                            <div>[[ user.account.mobile_number ]]</div>
+                                            <div class="md-title grey-text text-darken-2">[[ ::user.account.full_name ]]</div>
+                                            <div>[[ ::user.account.mobile_code ]][[ ::user.account.mobile_phone ]]</div>
                                         </div>
                                     </div>
                                     <div layout="row">
-                                        <md-button class="md-raised md-primary" href="/cabinet/">
+                                        <md-button class="md-primary" ng-click="accCtrl.logout()">
+                                            Выйти
+                                        </md-button>
+                                        <md-button class="md-raised md-primary" href="/cabinet/" flex>
                                             Перейти в кабинет
                                         </md-button>
                                     </div>
