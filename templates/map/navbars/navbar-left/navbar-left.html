@@ -165,11 +165,14 @@
                             <form name="loginForm" layout="column" ng-submit="accCtrl.login()" novalidate>
                                 <div ng-switch-when="enterPhone">
                                     <div layout="column">
-                                        <div layout="row">
-                                            <p>
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, animi asperiores blanditiis dolore dolores hic incidunt iusto nam praesentium quaerat.
-                                            </p>
-                                        </div>
+                                            <div layout="row" layout-align="center center">
+                                                <md-icon class="material-icons md-84 pink-text animated-heart">favorite</md-icon>
+                                            </div>
+                                            <div layout="row" layout-align="center center">
+                                                <p class="center-align">
+                                                    Чтобы добавить предложение в избранные, пожалуйста, введите <br>номер телефона
+                                                </p>
+                                            </div>
                                         <div layout="row">
                                             <md-input-container flex="20">
                                                 <label>Код</label>
@@ -193,6 +196,12 @@
 
                                 <div ng-switch-when="enterSMSCode">
                                     <div layout="column">
+                                        <div layout="row" layout-align="center center">
+                                            <md-icon class="material-icons md-84 blue-grey-text text-lighten-3 animated-email">email</md-icon>
+                                        </div>
+                                        <div layout="row" layout-align="center center">
+                                            Пожалуйста, введите код из SMS
+                                        </div>
                                         <md-input-container flex="100">
                                             <label>Код подтверждения</label>
                                             <input type="text" name="smsCode" ng-model="account.smsCode" autofocus only-number required>
@@ -223,7 +232,6 @@
                                         </div>
                                     </div>
                                     <div layout="row">
-                                        <md-icon class="material-icons md-84 pink-text animated-heart">favorite</md-icon>
                                         <md-button class="md-raised md-primary" href="/cabinet/">
                                             Перейти в кабинет
                                         </md-button>
