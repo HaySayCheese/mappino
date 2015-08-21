@@ -3,15 +3,8 @@
 
 namespace Mappino.Cabinet.Users {
     export class SupportController {
-        private ticket: ITicket = {
-            ticket_id:             null,
-            created:        null,
-            last_message:   null,
-            state_sid:      null,
-            subject:        null,
-            messages:       null
-        };
-        private tickets: ITicket[];
+        private ticket: Ticket;
+        private tickets: Ticket[];
 
         public static $inject = [
             '$scope',
@@ -30,15 +23,14 @@ namespace Mappino.Cabinet.Users {
             $scope.ticket   = this.ticket;
             $scope.tickets  = this.tickets = [];
 
-            $rootScope.loaders.tickets     = true;
+            $rootScope.loaders.tickets  = true;
             $scope.ticketFormIsVisible  = false;
-
 
             ticketsService.load()
                 .success(response => {
-                $scope.tickets = response;
-                $rootScope.loaders.tickets = false;
-            });
+                    $scope.tickets = ticketsService.tickets;
+                    $rootScope.loaders.tickets = false;
+                });
         }
 
 
@@ -62,10 +54,10 @@ namespace Mappino.Cabinet.Users {
         public sendMessage() {
             if (this.$scope.ticketForm.$valid) {
                 this.$rootScope.loaders.overlay = true;
-                this.ticketsService.sendMessage(this.ticket.ticket_id, this.$scope.ticket)
+                this.ticketsService.sendMessage(this.ticket.id, this.$scope.ticket)
                     .success(response => {
                     this.$rootScope.loaders.overlay = false;
-                    this.$state.go('ticket_view', { ticket_id: this.ticket.ticket_id })
+                    this.$state.go('ticket_view', { ticket_id: this.ticket.id })
                 });
             }
         }

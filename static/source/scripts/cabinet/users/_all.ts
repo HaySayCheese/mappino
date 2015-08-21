@@ -17,9 +17,7 @@
 // ####################
 // Interfaces import
 // ####################
-/// <reference path='interfaces/ticket.interface.ts' />
 /// <reference path='interfaces/publication.interface.ts' />
-/// <reference path='interfaces/tickets.service.interface.ts' />
 
 
 
@@ -28,6 +26,7 @@
 // Models import
 // ####################
 /// <reference path='models/Brief.ts' />
+/// <reference path='models/Ticket.ts' />
 
 
 
