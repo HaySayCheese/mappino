@@ -187,9 +187,11 @@
                                                 </div>
                                             </md-input-container>
                                         </div>
-                                        <md-button class="md-raised md-primary">
-                                            Войти
-                                        </md-button>
+                                        <div layout="row">
+                                            <md-button class="md-raised md-primary" type="submit" flex>
+                                                Войти
+                                            </md-button>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -210,9 +212,14 @@
                                                 <div ng-message="invalid">Неверный код подтверждения</div>
                                             </div>
                                         </md-input-container>
-                                        <md-button class="md-raised md-primary">
-                                            Войти
-                                        </md-button>
+                                        <div layout="row">
+                                            <md-button class="md-primary" ng-click="accCtrl.returnToEnterPhoneState()">
+                                                Назад
+                                            </md-button>
+                                            <md-button class="md-raised md-primary" type="submit" flex>
+                                                Войти
+                                            </md-button>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
