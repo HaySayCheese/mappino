@@ -30,7 +30,6 @@ namespace Mappino.Cabinet.Users {
                 ticketsService.loadTicketMessages(toParams.ticket_id)
                     .success(response => {
                         $scope.ticket = this.ticketsService.ticket;
-                        console.log($scope.ticket)
                         $scope.ticketIsLoaded = true;
                         $rootScope.loaders.overlay = false;
                     });
