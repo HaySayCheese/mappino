@@ -3,8 +3,6 @@
 
 namespace Mappino.Map {
     export class AccountTabController {
-        private smsCode:       string;
-
         public static $inject = [
             '$scope',
             '$cookies',
@@ -17,20 +15,12 @@ namespace Mappino.Map {
             // ---------------------------------------------------------------------------------------------------------
             $scope.user = bAuthService.user;
             $scope.account = {
-                mobileCode:     '+380',
-                mobilePhone:    '',
+                mobileCode:     localStorage.getItem('mobile_code')     || '+380',
+                mobilePhone:    localStorage.getItem('mobile_phone')    || '',
                 smsCode:        ''
             };
 
             $scope.authState = 'enterPhone';
-
-            $scope.$watch('user.account.mobile_phone', () => {
-                if ($scope.user.account.mobile_phone) {
-                    $scope.authState = 'accountInformation';
-                } else {
-                    $scope.authState = 'enterPhone';
-                }
-            });
 
             this.initWatchers();
             this.initAuthState();
@@ -43,16 +33,17 @@ namespace Mappino.Map {
                 if (this.$scope.loginForm.mobilePhone.$valid) {
                     this.bAuthService.checkPhoneNumber(this.$scope.account.mobileCode, this.$scope.account.mobilePhone)
                         .success(response => {
+                            localStorage.setItem('mobile_code', this.$scope.account.mobileCode);
+                            localStorage.setItem('mobile_phone', this.$scope.account.mobilePhone);
+
                             this.$scope.authState = 'enterSMSCode';
                         })
                         .error(response => {
-                            this.$scope.loginForm.phoneNumber.$setValidity('invalid', false);
+                            this.$scope.loginForm.mobilePhone.$setValidity('invalid', false);
                         });
                 }
             } else {
                 if (this.$scope.loginForm.smsCode.$valid) {
-                    this.smsCode = this.$scope.account.smsCode;
-
                     this.bAuthService.checkSMSCode(this.$scope.account.mobileCode, this.$scope.account.mobilePhone, this.$scope.account.smsCode)
                         .success(response => {
                             window.location.pathname = '/cabinet/';
