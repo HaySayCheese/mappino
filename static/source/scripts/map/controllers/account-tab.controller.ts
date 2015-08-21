@@ -14,16 +14,11 @@ namespace Mappino.Map {
                     private bAuthService: Mappino.Core.BAuth.BAuthService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.user = bAuthService.user;
-            $scope.account = {
-                mobileCode:     localStorage.getItem('mobile_code')     || '+380',
-                mobilePhone:    localStorage.getItem('mobile_phone')    || '',
-                smsCode:        ''
-            };
-
             $scope.authState = 'enterPhone';
 
+            this.initUserData();
             this.initWatchers();
-            this.initAuthState();
+            this.changeAuthState();
         }
 
 
@@ -46,7 +41,8 @@ namespace Mappino.Map {
                 if (this.$scope.loginForm.smsCode.$valid) {
                     this.bAuthService.checkSMSCode(this.$scope.account.mobileCode, this.$scope.account.mobilePhone, this.$scope.account.smsCode)
                         .success(response => {
-                            window.location.pathname = '/cabinet/';
+                            this.clearUserData();
+                            this.changeAuthState();
                         })
                         .error(response => {
                             this.$scope.loginForm.smsCode.$setValidity('invalid', false);
@@ -61,7 +57,19 @@ namespace Mappino.Map {
             this.bAuthService.logout()
                 .success(response => {
                     this.$scope.authState = 'enterPhone';
+
+                    this.clearUserData();
+                    this.resetLoginForm();
                 });
+        }
+
+
+
+        public returnToEnterPhoneState() {
+            this.$cookies.remove('mcheck');
+            this.clearUserData();
+            this.resetLoginForm();
+            this.$scope.authState = 'enterPhone';
         }
 
 
@@ -69,24 +77,49 @@ namespace Mappino.Map {
         private initWatchers() {
             this.$scope.$watchCollection('account', () => {
                 if (this.$scope.loginForm.$invalid) {
-
-                    this.$scope.loginForm.$setPristine();
-                    this.$scope.loginForm.$setUntouched();
-
-                    if (this.$scope.authState === 'enterPhone') {
-                        this.$scope.loginForm.mobilePhone.$setValidity('invalid', true);
-                    } else {
-                        this.$scope.loginForm.smsCode.$setValidity('invalid', true);
-                    }
+                    this.resetLoginForm();
                 }
             });
         }
 
 
 
-        private initAuthState() {
+        private changeAuthState() {
             this.$scope.authState = this.$cookies.get('mcheck') ? 'enterSMSCode' :
                 this.$cookies.get('sessionid') ? 'accountInformation' : 'enterPhone';
+        }
+
+
+
+        private initUserData() {
+            this.$scope.account = {
+                mobileCode:     localStorage.getItem('mobile_code')     || '+380',
+                mobilePhone:    localStorage.getItem('mobile_phone')    || '',
+                smsCode:        ''
+            };
+        }
+
+
+
+        private clearUserData() {
+            this.$scope.account = {
+                mobileCode:     '+380',
+                mobilePhone:    '',
+                smsCode:        ''
+            };
+        }
+
+
+
+        private resetLoginForm() {
+            if (this.$scope.authState == 'enterPhone') {
+                this.$scope.loginForm.mobilePhone.$setValidity('invalid', true);
+            } else {
+                this.$scope.loginForm.smsCode.$setValidity('invalid', true);
+            }
+
+            this.$scope.loginForm.$setPristine();
+            this.$scope.loginForm.$setUntouched();
         }
     }
 }
