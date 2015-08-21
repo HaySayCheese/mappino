@@ -128,7 +128,7 @@ class LoginManager(object):
         def post(self, request):
             try:
                 params = angular_post_parameters(request, ['mobile_code', 'mobile_phone', 'token'])
-                phone_number = params['phone_code'] + params['phone_phone']
+                phone_number = params['mobile_code'] + params['mobile_phone']
                 phone_number = Users.objects.parse_phone_number(phone_number)
                 token = params['token']
             except (ValueError, KeyError):
