@@ -27,7 +27,10 @@ publication-view {
 
     .publication-view-container {
         min-height: 100%;
-        //@include square(100%);
+
+        .publication-error {
+            background-color: #94d6d6;
+        }
     }
 
 

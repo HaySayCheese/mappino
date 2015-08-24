@@ -16,10 +16,10 @@
 // ####################
 // Configs import
 // ####################
-/// <reference path='configs/providers.configs.ts' />
-/// <reference path='configs/router.configs.ts' />
-/// <reference path='configs/material.configs.ts' />
-/// <reference path='configs/application.configs.ts' />
+/// <reference path='configs/ProvidersConfigs.ts' />
+/// <reference path='configs/RouterConfigs.ts' />
+/// <reference path='configs/MaterialConfigs.ts' />
+/// <reference path='configs/ApplicationConfigs.ts' />
 
 
 
@@ -46,8 +46,8 @@
 // ####################
 // Handlers import
 // ####################
-/// <reference path='handlers/tabs.handler.ts' />
-/// <reference path='handlers/publication.handler.ts' />
+/// <reference path='handlers/TabsHandler.ts' />
+/// <reference path='handlers/PublicationHandler.ts' />
 
 
 
@@ -55,11 +55,11 @@
 // ####################
 // Services import
 // ####################
-/// <reference path='services/briefs.service.ts' />
-/// <reference path='services/favorites.service.ts' />
-/// <reference path='services/filters.service.ts' />
-/// <reference path='services/markers.service.ts' />
-/// <reference path='services/publication.service.ts' />
+/// <reference path='services/BriefsService.ts' />
+/// <reference path='services/FavoritesService.ts' />
+/// <reference path='services/FiltersService.ts' />
+/// <reference path='services/MarkersService.ts' />
+/// <reference path='services/PublicationService.ts' />
 
 
 
@@ -68,25 +68,25 @@
 // ####################
 // Controllers import
 // ####################
-/// <reference path='controllers/application.controller.ts' />
+/// <reference path='controllers/ApplicationController.ts' />
 
-/// <reference path='controllers/navbar-left.controller.ts' />
-/// <reference path='controllers/filters-tab.controller.ts' />
-/// <reference path='controllers/account-tab.controller.ts' />
+/// <reference path='controllers/NavbarLeftController.ts' />
+/// <reference path='controllers/FiltersTabController.ts' />
+/// <reference path='controllers/AccountTabController.ts' />
 
-/// <reference path='controllers/navbar-right.controller.ts' />
-/// <reference path='controllers/favorites-tab.controller.ts' />
-/// <reference path='controllers/briefs-tab.controller.ts' />
+/// <reference path='controllers/NavbarRightController.ts' />
+/// <reference path='controllers/FavoritesTabController.ts' />
+/// <reference path='controllers/BriefsTabController.ts' />
 
-/// <reference path='controllers/publication.controller.ts' />
+/// <reference path='controllers/PublicationController.ts' />
 
-/// <reference path='controllers/map.controller.ts' />
-/// <reference path='controllers/place-autocomplete.controller.ts' />
+/// <reference path='controllers/MapController.ts' />
+/// <reference path='controllers/PlaceAutocompleteController.ts' />
 
 
 
 // ####################
 // App init
 // ####################
-/// <reference path='map.module.ts' />
+/// <reference path='MapModule.ts' />
 

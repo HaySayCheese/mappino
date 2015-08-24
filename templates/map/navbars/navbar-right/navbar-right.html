@@ -1,6 +1,6 @@
-<div class="navbar-right-container" ng-if="navbarRightActiveTabIndex !== null">
+<div class="navbar-right-container" ng-if="tabIndexes.navbarRight != undefined">
 
-    <md-tabs md-selected="navbarRightActiveTabIndex">
+    <md-tabs md-selected="tabIndexes.navbarRight">
 
         <md-tab id="publication-list-tab" md-on-select="navCtrl.tabsHandler.open('publication_list');">
             <md-tab-label>

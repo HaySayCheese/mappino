@@ -8,10 +8,12 @@ namespace Mappino.Map {
 
         public static $inject = [
             '$scope',
+            '$rootScope',
             'TabsHandler'
         ];
 
         constructor(private $scope,
+                    private $rootScope: any,
                     private tabsHandler: TabsHandler) {
             // ---------------------------------------------------------------------------------------------------------
             tabsHandler.initializeNavbarLeftTabs();

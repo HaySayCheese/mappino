@@ -18,10 +18,6 @@ namespace Mappino.Map {
                     private favoritesService: FavoritesService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.briefs = briefsService.briefs;
-
-            $scope.$watchCollection('briefs', () => {
-                console.log(briefsService.briefs)
-            })
         }
 
 
@@ -38,8 +34,6 @@ namespace Mappino.Map {
             } else {
                 this.favoritesService.add(brief);
             }
-
-            console.log(brief)
 
             $event.preventDefault();
             $event.stopPropagation();

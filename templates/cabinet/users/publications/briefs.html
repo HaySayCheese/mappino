@@ -36,13 +36,13 @@
 
     <md-card class="-brief" ng-repeat="brief in briefs | orderBy: 'state_sid'">
         <a ng-if="brief.state_sid == 0" ui-sref="publication_view({ id: brief.tid + ':' + brief.hid })">
-            <img class="md-card-image" ng-src="[[ ::brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png"/>
+            <img class="md-card-image" ng-src="[[ ::brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/cabinetno-publication-image.gif"/>
         </a>
 
         <a ng-if="brief.state_sid != 0" ui-sref="publication_edit({ id: brief.tid + ':' + brief.hid })">
-            <img class="md-card-image" ng-src="[[ ::brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png"
+            <img class="md-card-image" ng-src="[[ ::brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/no-publication-image.gif"
                  ng-show="brief.photo_url"/>
-            <img class="md-card-image" src="{{ static }}build/images/common/image-404.png" ng-hide="brief.photo_url" alt="" />
+            <img class="md-card-image" src="{{ static }}build/images/cabinet/no-publication-image.gif" ng-hide="brief.photo_url" alt="" />
         </a>
 
         <md-card-content>
