@@ -46,7 +46,7 @@ INDEXES_DATABASE_NAME = 'default'
 DATABASES = {
     'default': {
         'ENGINE':'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mappino',
+        'NAME': 'mappino-user',
         'USER': 'mappino',
         'PASSWORD': passwords.DB_PASSWORD,
         'HOST': EVE1_INTERNAL_IP,
