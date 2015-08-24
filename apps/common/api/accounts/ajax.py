@@ -31,8 +31,8 @@ class LoginManager(object):
                     'message': 'OK',
                 })
 
-                # This cookie is needed fot the front-end.
-                # By it's presence front-end login will display or hide the state of the login form with the token input.
+                # This cookie is needed for the front-end.
+                # By it's presence front-end logig will display or hide the state of the login form with the token input.
                 response.set_signed_cookie('mcheck', ''.join([random.choice(string.ascii_letters) for _ in range(7)]), max_age=60*5)
                 return response
 
@@ -42,7 +42,7 @@ class LoginManager(object):
             def invalid_phone_number():
                 return {
                     'code': 1,
-                    'message': 'Parameter "phone_number" is invalid or absent.'
+                    'message': 'Parameter "mobile_phone" is invalid or absent.'
                 }
 
 

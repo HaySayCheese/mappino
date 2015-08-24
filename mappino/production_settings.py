@@ -42,6 +42,10 @@ HUL1_INTERNAL_IP = '10.133.187.144'
 EVE1_INTERNAL_IP = '10.133.187.40'
 
 
+INDEXES_DATABASE_NAME = 'default'
+if not DEBUG and INDEXES_DATABASE_NAME == 'default':
+    raise AssertionError('default database is used for the markers in non testing environment.')
+
 DATABASES = {
     'default': {
         'ENGINE':'django.db.backends.postgresql_psycopg2',
