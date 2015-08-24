@@ -46,8 +46,8 @@ INDEXES_DATABASE_NAME = 'default'
 DATABASES = {
     'default': {
         'ENGINE':'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mappino-user',
-        'USER': 'mappino',
+        'NAME': 'mappino',
+        'USER': 'mappino-user',
         'PASSWORD': passwords.DB_PASSWORD,
         'HOST': EVE1_INTERNAL_IP,
         'PORT': 6432, # pg_bounce is used
