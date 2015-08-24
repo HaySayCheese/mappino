@@ -18,11 +18,12 @@ ADMINS = (
     ('Dima Chizhevsky', 'dima@mappino.com'),
 )
 MANAGERS = (
-    ('Dima Chizhevsky', 'support@mappino.com')
+    ('Dima Chizhevsky', 'dima@mappino.com')
 )
 SUPPORT_EMAIL =  MANAGERS[0][1]
 BILLING_MANAGER_EMAIL = MANAGERS[0][1]
 MODERATORS = MANAGERS[0][1]
+
 
 # Configuration for emails about server error.
 # This is used only for django-internal email sending mechanism,
@@ -37,15 +38,11 @@ EMAIL_USE_TLS = True
 SERVER_EMAIL = 'wall-e@mappino.com'
 
 
-
-HUL1_INTERNAL_IP = '10.133.187.144'
-EVE1_INTERNAL_IP = '10.133.187.40'
+EVE1_INTERNAL_IP = '10.133.24.200'
+HUL1_INTERNAL_IP = EVE1_INTERNAL_IP
 
 
 INDEXES_DATABASE_NAME = 'default'
-if not DEBUG and INDEXES_DATABASE_NAME == 'default':
-    raise AssertionError('default database is used for the markers in non testing environment.')
-
 DATABASES = {
     'default': {
         'ENGINE':'django.db.backends.postgresql_psycopg2',
@@ -53,18 +50,9 @@ DATABASES = {
         'USER': 'mappino',
         'PASSWORD': passwords.DB_PASSWORD,
         'HOST': EVE1_INTERNAL_IP,
-    'PORT': 6432, # pg_bounce is used
-    },
-    'markers_index': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mappino-indexes',
-        'USER': 'mappino',
-        'PASSWORD': passwords.INDEX_DB_PASSWORD,
-        'HOST': EVE1_INTERNAL_IP, # todo: create separate database for indexes
         'PORT': 6432, # pg_bounce is used
-    }
+    },
 }
-DATABASE_ROUTERS = ['core.database_router.Router', ]
 
 
 REDIS_DATABASES = {
@@ -86,32 +74,26 @@ REDIS_DATABASES = {
     },
 }
 
-SPHINX_SEARCH_DATABASE = {
-    'HOST': HUL1_INTERNAL_IP,
-    'PORT': 9306
-}
-ENABLE_SPHINX_SEARCH = True
 
-
-CACHES = {
-    'default': {
-        # Даний кеш неявно використовується django-compressor для зберігання імен опрацьованих файлів.
-
-        'BACKEND': 'redis_cache.RedisCache',
-        'LOCATION': '{0}:{1}'.format(
-            REDIS_DATABASES['cache']['HOST'],
-            REDIS_DATABASES['cache']['PORT']
-        ),
-        'OPTIONS': {
-            'DB': 15,
-            'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
-            'CONNECTION_POOL_CLASS_KWARGS': {
-                'max_connections': 10,
-                'timeout': 20
-            }
-        }
-    }
-}
+# CACHES = {
+#     'default': {
+#         # Даний кеш неявно використовується django-compressor для зберігання імен опрацьованих файлів.
+#
+#         'BACKEND': 'redis_cache.RedisCache',
+#         'LOCATION': '{0}:{1}'.format(
+#             REDIS_DATABASES['cache']['HOST'],
+#             REDIS_DATABASES['cache']['PORT']
+#         ),
+#         'OPTIONS': {
+#             'DB': 15,
+#             'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
+#             'CONNECTION_POOL_CLASS_KWARGS': {
+#                 'max_connections': 10,
+#                 'timeout': 20
+#             }
+#         }
+#     }
+# }
 
 
 BROKER_URL = 'redis://{0}:{1}/0'.format(
@@ -138,10 +120,8 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
 
-    # 'core',
     'core.users',
     'core.managing.ban',
-
     'core.publications',
     'core.favorites',
     'core.managing.moderators',
@@ -149,10 +129,9 @@ INSTALLED_APPS = (
     'core.markers_index',
     'core.support',
     'core.escaped_fragments_manager',
-
-    # todo: shift this apps into core
-
     'apps.main.api.correspondence',
+
+    'core',
 )
 
 
@@ -188,7 +167,6 @@ USE_TZ = True
 
 
 ALLOWED_HOSTS = (
-    'm.w.ua1.binno.com.ua',
     'mappino.com', 'www.mappino.com',
     'mappino.com.ua', 'www.mappino.com.ua',
 )
@@ -207,18 +185,9 @@ SERVE_STATIC_FILES = False
 MEDIA_URL = 'http://mappino.com.ua/media/'
 MEDIA_ROOT = 'media/'
 
-COMPRESS_ENABLED = False
-COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
-COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.SlimItFilter']
-
-
-PROCESSES_PER_NODE_COUNT = 3
-
 
 ROOT_URLCONF = 'mappino.urls'
 WSGI_APPLICATION = 'mappino.wsgi.application'
-
-
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
