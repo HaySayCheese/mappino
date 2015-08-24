@@ -1,3 +1,4 @@
+#coding=utf-8
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -6,8 +7,7 @@ from core.utils.jinja2_integration import templates
 
 @ensure_csrf_cookie
 def homepage(request):
-    template = templates.get_template('main/home/home.html')
-    return HttpResponse(content=template.render())
+    return HttpResponseRedirect('/map/')
 
 
 @ensure_csrf_cookie
