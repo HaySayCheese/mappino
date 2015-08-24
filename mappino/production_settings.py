@@ -178,11 +178,11 @@ MAIN_DOMAIN_URL = 'http://mappino.com.ua'
 REDIRECT_DOMAIN_URL = 'http://mappino.com'
 
 
-STATIC_URL = 'http://mappino.com.ua/static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = 'static/'
 SERVE_STATIC_FILES = False
 
-MEDIA_URL = 'http://mappino.com.ua/media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media/'
 
 
