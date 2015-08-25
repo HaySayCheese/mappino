@@ -13,20 +13,22 @@
                     <div class="md-title grey-text text-darken-2" layout-padding ng-if="publication.contacts.first_name || publication.contacts.last_name">
                         [[ ::publication.contacts.first_name + '&nbsp;' ]][[ ::publication.contacts.last_name ]]
                     </div>
+                    <div ng-if="!( publication.contacts.first_name || publication.contacts.last_name )" >Продавец не указал имени.</div>
                     <div layout-padding>
+
                         <div ng-if="publication.contacts.mobile_phone">
-                            <a ng-href="tel:[[ publication.contacts.mobile_phone ]]">[[ ::publication.contacts.mobile_phone ]]</a>
+                            Моб. телефон: <a ng-href="tel:[[ publication.contacts.mobile_phone ]]">[[ ::publication.contacts.mobile_phone ]]</a>
                         </div>
                         <div ng-if="publication.contacts.add_mobile_phone">
-                            <a ng-href="tel:[[ publication.contacts.add_mobile_phone ]]">[[ ::publication.contacts.add_mobile_phone ]]</a>
+                            Доп. моб. телефон: <a ng-href="tel:[[ publication.contacts.add_mobile_phone ]]">[[ ::publication.contacts.add_mobile_phone ]]</a>
                         </div>
-                        <div ng-if="publication.contacts.landline_phone">[[ ::publication.contacts.landline_phone ]]</div>
-                        <div ng-if="publication.contacts.add_landline_phone">[[ ::publication.contacts.add_landline_phone ]]</div>
+                        <div ng-if="publication.contacts.landline_phone">Раб. телефон: [[ ::publication.contacts.landline_phone ]]</div>
+                        <div ng-if="publication.contacts.add_landline_phone">Доп. раб. телефон[[ ::publication.contacts.add_landline_phone ]]</div>
                         <div ng-if="publication.contacts.email">
-                            <a ng-href="mailto:[[ publication.contacts.email ]]">[[ ::publication.contacts.email ]]</a>
+                            <a ng-href="mailto:[[ publication.contacts.email ]]">E-mail: [[ ::publication.contacts.email ]]</a>
                         </div>
                         <div ng-if="publication.contacts.skype">
-                            <a ng-href="skype:[[ publication.contacts.skype ]]?call">[[ ::publication.contacts.skype ]]</a>
+                            <a ng-href="skype:[[ publication.contacts.skype ]]?call">Skype: [[ ::publication.contacts.skype ]]</a>
                         </div>
                     </div>
                 </div>
