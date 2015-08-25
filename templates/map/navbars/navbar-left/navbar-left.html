@@ -18,7 +18,7 @@
                             <md-divider></md-divider>
                             <div layout="row" layout-align="start center">
                                 <md-button class="md-primary" href="/">
-                                    Частые воопросы
+                                    Частые вопросы
                                 </md-button>
                             </div>
                             <div layout="row" layout-align="start-center">
@@ -67,7 +67,7 @@
                             <div layout="column" layout-padding>
                                 <div layout="row">
                                     <md-input-container flex="60">
-                                        <label>Тип обєкта</label>
+                                        <label>Тип объекта</label>
                                         <md-select ng-model="filters.blue.b_t_sid">
                                             <md-option value="null">Выбрать тип</md-option>
                                             <md-option ng-repeat="realtyType in ::TYPES.REALTY" value="[[ ::realtyType.id ]]">[[ ::realtyType.titles.singular ]]</md-option>
@@ -92,7 +92,7 @@
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
                             <md-icon>place</md-icon>
                             <span class="md-body-1" ng-hide="filters.green.g_t_sid">
-                                Виберите тип
+                                Указать условия для сравнения
                             </span>
                             <span class="md-body-1" ng-show="filters.green.g_t_sid">
                                 [[ TYPES.REALTY[filters.green.g_t_sid].titles.plural ]]&nbsp;
@@ -111,7 +111,7 @@
                             <div layout="column" layout-padding>
                                 <div layout="row">
                                     <md-input-container flex="60">
-                                        <label>Тип обєкта</label>
+                                        <label>Тип объекта</label>
                                         <md-select ng-model="filters.green.g_t_sid">
                                             <md-option value="null">Выбрать тип</md-option>
                                             <md-option ng-repeat="realtyType in ::TYPES.REALTY" value="[[ ::realtyType.id ]]">[[ ::realtyType.titles.singular ]]</md-option>
