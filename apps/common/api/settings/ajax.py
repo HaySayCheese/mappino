@@ -58,21 +58,21 @@ class AccountView(CabinetView):
                     'message': 'OK',
                     'data': {
                         'account': {
-                            'first_name': user.first_name,
-                            'last_name': user.last_name,
-                            'email': user.email,
-                            'work_email': user.work_email or '',
-                            'skype': user.skype or '',
-                            'avatar_url': user.avatar.url() or '',
+                             'first_name': user.first_name,
+                             'last_name': user.last_name,
+                             'email': user.email,
+                             'work_email': user.work_email or '',
+                             'skype': user.skype or '',
+                             'avatar_url': user.avatar.url() or '',
 
-                            'mobile_code': mobile_phone_code,
-                            'mobile_phone': mobile_phone_number,
-                            'add_mobile_code': add_mobile_phone_code,
-                            'add_mobile_phone': add_mobile_phone_number,
+                             'mobile_code': '+{0}'.format(mobile_phone_code) if mobile_phone_code else None,
+                             'mobile_phone': mobile_phone_number,
+                             'add_mobile_code': '+{0}'.format(add_mobile_phone_code) if add_mobile_phone_code else None,
+                             'add_mobile_phone': add_mobile_phone_number,
 
-                            'landline_phone': landline_phone_number,
-                            'add_landline_phone': add_landline_phone_number,
-                        },
+                             'landline_phone': landline_phone_number,
+                             'add_landline_phone': add_landline_phone_number,
+                         },
                     }
                 })
 
@@ -89,9 +89,9 @@ class AccountView(CabinetView):
                             'skype': user.skype or '',
                             'avatar_url': user.avatar.url() or '',
 
-                            'mobile_code': mobile_phone_code,
+                            'mobile_code': '+{0}'.format(mobile_phone_code) if mobile_phone_code else None,
                             'mobile_phone': mobile_phone_number,
-                            'add_mobile_code': add_mobile_phone_code,
+                            'add_mobile_code': '+{0}'.format(add_mobile_phone_code) if add_mobile_phone_code else None,
                             'add_mobile_phone': add_mobile_phone_number,
 
                             'landline_phone': landline_phone_number,
