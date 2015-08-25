@@ -119,10 +119,13 @@ class AccountView(CabinetView):
     class PostResponses(object):
         @staticmethod
         @json_response
-        def ok():
+        def ok(value=None):
             return {
                 'code': 0,
                 'message': 'OK',
+                'data': {
+                    'value': value
+                }
             }
 
 
@@ -199,8 +202,7 @@ class AccountView(CabinetView):
     def post(self, request):
         try:
             params = angular_post_parameters(request)
-            field = params['fieldName']
-            value = params.get('fieldValue', '') # value can be empty
+            field, value = params.iteritems().next()
         except (ValueError, KeyError):
             return self.PostResponses.invalid_parameters()
 
@@ -219,10 +221,10 @@ class AccountView(CabinetView):
             return self.PostResponses.value_required()
 
         if not user.first_name == name:
-            user.first_name = name
+            user.first_name = name.capitalize()
             user.save()
 
-        return self.PostResponses.ok()
+        return self.PostResponses.ok(user.first_name)
 
 
     def __update_last_name(self, user, name):
@@ -230,10 +232,10 @@ class AccountView(CabinetView):
             return self.PostResponses.value_required()
 
         if not user.last_name == name:
-            user.last_name = name
+            user.last_name = name.capitalize()
             user.save()
 
-        return self.PostResponses.ok()
+        return self.PostResponses.ok(user.last_name)
 
 
     def __update_email(self, user, email):
