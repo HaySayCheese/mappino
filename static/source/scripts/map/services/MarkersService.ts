@@ -285,7 +285,7 @@ namespace Mappino.Map {
             //noinspection TypeScriptUnresolvedFunction
             this.simpleMarkers[color][latLng] = new MarkerWithLabel({
                 position: new google.maps.LatLng(markerLat, markerLng),
-                icon: '/../mappino_static/build/images/markers/empty_marker.png',
+                icon: '/../static/build/images/markers/empty_marker.png',
                 params: {
                     hid:    responseMarker.hid,
                     tid:    responseMarker.tid,
@@ -361,7 +361,7 @@ namespace Mappino.Map {
             //noinspection TypeScriptUnresolvedFunction
             this.pieMarkers[latLng] = new MarkerWithLabel({
                 position: new google.maps.LatLng(markerLat, markerLng),
-                icon: '/../mappino_static/build/images/markers/empty_marker.png',
+                icon: '/../static/build/images/markers/empty_marker.png',
                 params: {
                     count:              pieMarkersCount,
                     blue_markers:       pieBlueMarkers,
@@ -410,7 +410,7 @@ namespace Mappino.Map {
             //noinspection TypeScriptUnresolvedFunction
             this.favoritesMarkers[latLng] = new MarkerWithLabel({
                 position: new google.maps.LatLng(markerLat, markerLng),
-                icon: '/../mappino_static/build/images/markers/empty_marker.png',
+                icon: '/../static/build/images/markers/empty_marker.png',
                 params: {
                     hid:    marker.hid,
                     tid:    marker.tid,
