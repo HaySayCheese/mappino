@@ -39,7 +39,7 @@ namespace Mappino.Map {
                 if (this.$scope.loginForm.smsCode.$valid) {
                     this.bAuthService.checkSMSCode(this.$scope.account.mobileCode, this.$scope.account.mobilePhone, this.$scope.account.smsCode)
                         .success(response => {
-                            if (response.code == 3) {
+                            if (response.code == 0) {
                                 this.clearUserData();
                                 this.changeAuthState();
                             } else {

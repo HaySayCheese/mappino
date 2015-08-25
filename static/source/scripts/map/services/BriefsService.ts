@@ -28,6 +28,7 @@ namespace Mappino.Map {
                 brief.hid,
                 brief.lat,
                 brief.lng,
+                brief.d0,
                 brief.price,
                 brief.title,
                 brief.thumbnail_url,

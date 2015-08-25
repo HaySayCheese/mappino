@@ -237,7 +237,10 @@
                                         </div>
 
                                         <div layout="column" flex="60" layout-padding>
-                                            <div class="md-title grey-text text-darken-2">[[ ::user.account.full_name ]]</div>
+                                            <div class="md-title grey-text text-darken-2" ng-if="user.account.full_name">[[ ::user.account.full_name ]]</div>
+                                            <p ng-if="!user.account.full_name">
+                                                Пожалуйста, укажите Ваше имя в <a href="/cabinet/#!/settings/">настройках</a>
+                                            </p>
                                             <div>[[ ::user.account.mobile_code ]][[ ::user.account.mobile_phone ]]</div>
                                         </div>
                                     </div>

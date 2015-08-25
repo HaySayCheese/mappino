@@ -141,6 +141,7 @@ namespace Mappino.Map {
                 this.clearFavoritesMarkers();
             }
 
+
             // якщо обєкт/обєкти з кольором фільтрів з маркерами які прийшли з сервера не пустий
             // то видаляємо лишні і записуємо нові маркери
             if (Object.keys(this.responseSimpleMarkers.blue).length || Object.keys(this.responseSimpleMarkers.green).length) {
@@ -148,6 +149,10 @@ namespace Mappino.Map {
 
                 this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkersPlaced'));
                 return;
+            } else if (!Object.keys(this.responseSimpleMarkers.blue).length) {
+                this.clearSimpleMarkers('blue');
+            } else if (!Object.keys(this.responseSimpleMarkers.green).length) {
+                this.clearSimpleMarkers('green');
             }
 
             // якщо з сервера прийшли не прості а кругові маркери то робимо те саме що і для простих
@@ -188,17 +193,16 @@ namespace Mappino.Map {
                 if (this.simpleMarkers.hasOwnProperty(color)) {
                     for (var latLng in this.simpleMarkers[color]) {
                         if (this.simpleMarkers[color].hasOwnProperty(latLng)) {
-                            var simpleMarker                = this.simpleMarkers[color][latLng]         || undefined,
-                                responseSimpleMarker        = this.responseSimpleMarkers[color][latLng] || undefined,
-                                responseSimpleMarkerColor   = this.responseSimpleMarkers[color]         || undefined;
+                            var simpleMarker = this.simpleMarkers[color][latLng];
 
+                            //console.log(responseSimpleMarker)
                             // Видаляємо маркер якщо:
                             //  - в обєкті з маркерами який прийшов з сервера немає обєкта з одним із кольорів маркерів
                             //  - в обєкті з маркерами який прийшов з сервера немає обєкта з тілом маркера
                             //  - в обєкті з маркерами який прийшов з сервера ціна маркера відрізняється від ціни існуючого маркера
-                            if (angular.isUndefined(responseSimpleMarkerColor)
-                                || (angular.isDefined(responseSimpleMarkerColor) && angular.isUndefined(responseSimpleMarker))
-                                || simpleMarker.params.price != responseSimpleMarker.price) {
+                            if (angular.isUndefined(this.responseSimpleMarkers[color])
+                                || (angular.isDefined(this.responseSimpleMarkers[color]) && angular.isUndefined(this.responseSimpleMarkers[color][latLng]))
+                                || simpleMarker.params.price != this.responseSimpleMarkers[color][latLng].price) {
 
                                 this.briefsService.remove(simpleMarker.params.hid);
 
@@ -216,12 +220,11 @@ namespace Mappino.Map {
                 if (this.responseSimpleMarkers.hasOwnProperty(color)) {
                     for (var latLng in this.responseSimpleMarkers[color]) {
                         if (this.responseSimpleMarkers[color].hasOwnProperty(latLng)) {
-                            var simpleMarker                = this.simpleMarkers[color][latLng]         || undefined,
-                                responseSimpleMarker        = this.responseSimpleMarkers[color][latLng] || undefined;
+                            var responseSimpleMarker = this.responseSimpleMarkers[color][latLng];
 
                             // Додаємо новий маркер якщо:
                             //  - в обєкті з маркерами який прийшов з сервера є маркер якого нема у вже існуючих маркерах
-                            if (angular.isUndefined(simpleMarker)) {
+                            if (angular.isUndefined(this.simpleMarkers[color][latLng])) {
                                 this.createSimpleMarker(color, latLng, map, responseSimpleMarker);
                             }
                         }
@@ -286,10 +289,11 @@ namespace Mappino.Map {
                 params: {
                     hid:    responseMarker.hid,
                     tid:    responseMarker.tid,
+                    d0:     responseMarker.d0,
                     price:  responseMarker.price
                 },
                 labelContent:
-                    `<div class='custom-marker md-whiteframe-z2'>${responseMarker.price}, 2к</div>` +
+                    `<div class='custom-marker md-whiteframe-z2'>${responseMarker.price}, ${responseMarker.d0}к</div>` +
                     `<div class='custom-marker-arrow-down'></div>`,
                 labelClass: `custom-marker-container -${color}`,
                 labelAnchor: new google.maps.Point(markerLabelOffsetX, 37)
@@ -314,6 +318,7 @@ namespace Mappino.Map {
                 hid:            responseMarker.hid,
                 lat:            markerLat,
                 lng:            markerLng,
+                d0:             responseMarker.d0,
                 price:          responseMarker.price,
                 title:          responseMarker.title,
                 thumbnail_url:  responseMarker.thumbnail_url,
@@ -409,10 +414,11 @@ namespace Mappino.Map {
                 params: {
                     hid:    marker.hid,
                     tid:    marker.tid,
+                    d0:     marker.d0,
                     price:  marker.price
                 },
                 labelContent:
-                    `<div class='custom-marker md-whiteframe-z2'>${marker.price}</div>` +
+                    `<div class='custom-marker md-whiteframe-z2'>${marker.price}, ${marker.d0}к</div>` +
                     `<div class='custom-marker-arrow-down'></div>`,
                 labelClass: `custom-marker-container -pink`,
                 labelAnchor: new google.maps.Point(markerLabelOffsetX, 37)
@@ -657,22 +663,35 @@ namespace Mappino.Map {
 
 
 
-        private clearSimpleMarkers() {
-            for (var color in this.simpleMarkers) {
-                if (this.simpleMarkers.hasOwnProperty(color)) {
-                    for (var latLng in this.simpleMarkers[color]) {
-                        if (this.simpleMarkers[color].hasOwnProperty(latLng)) {
-                            this.briefsService.remove(this.simpleMarkers[color][latLng].params.hid);
-                            this.simpleMarkers[color][latLng].setMap(null);
-                            delete this.simpleMarkers[color][latLng];
+        private clearSimpleMarkers(color?: any) {
+            if (color) {
+                var simpleMarkers = this.simpleMarkers;
+
+                for (var latLng in simpleMarkers[color]) {
+                    if (simpleMarkers[color].hasOwnProperty(latLng)) {
+                        this.briefsService.remove(simpleMarkers[color][latLng].params.hid);
+                        simpleMarkers[color][latLng].setMap(null);
+                        delete simpleMarkers[color][latLng];
+                    }
+                }
+                this.simpleMarkers[color] = {};
+            } else {
+                for (var color in this.simpleMarkers) {
+                    if (this.simpleMarkers.hasOwnProperty(color)) {
+                        for (var latLng in this.simpleMarkers[color]) {
+                            if (this.simpleMarkers[color].hasOwnProperty(latLng)) {
+                                this.briefsService.remove(this.simpleMarkers[color][latLng].params.hid);
+                                this.simpleMarkers[color][latLng].setMap(null);
+                                delete this.simpleMarkers[color][latLng];
+                            }
                         }
                     }
                 }
-            }
 
-            this.simpleMarkers = {
-                blue:   {},
-                green:  {}
+                this.simpleMarkers = {
+                    blue:   {},
+                    green:  {}
+                }
             }
         }
 

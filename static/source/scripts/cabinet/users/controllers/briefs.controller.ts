@@ -29,7 +29,7 @@ namespace Mappino.Cabinet.Users {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Все объявления';
 
-            $scope.briefs = this.briefs;
+            $scope.briefs = this.briefs = [];
             $scope.newPublication = this.newPublication;
 
             this.loadBriefs();
@@ -42,7 +42,24 @@ namespace Mappino.Cabinet.Users {
 
             this.publicationsService.loadBriefs()
                 .success(response => {
-                    this.$scope.briefs = this.publicationsService.briefs;
+                    var briefs = response.data;
+
+                    for (let i = 0, len = briefs.length; i < len; i++) {
+                        var brief = briefs[i];
+
+                        this.$scope.briefs.push(new Brief(
+                            brief.tid,
+                            brief.hid,
+                            brief.created,
+                            brief.for_rent,
+                            brief.for_sale,
+                            brief.photo_url,
+                            brief.state_sid,
+                            brief.title,
+                            brief.description,
+                            brief.moderator_message
+                        ))
+                    }
                     this.$rootScope.loaders.navbar = false;
                 })
                 .error(response => {

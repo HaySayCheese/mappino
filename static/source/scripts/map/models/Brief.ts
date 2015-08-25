@@ -5,6 +5,7 @@ namespace Mappino.Map {
             public hid:             string|number,
             public lat:             string,
             public lng:             string,
+            public d0:              string,
             public price:           string,
             public title:           string,
             public thumbnail_url:   string,
