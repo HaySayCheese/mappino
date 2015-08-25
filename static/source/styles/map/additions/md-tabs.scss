@@ -1,8 +1,9 @@
-md-tabs {
+md-tabs.md-blue-theme {
     border-radius: 0 !important;
 
     md-tabs-wrapper {
         box-shadow: 0 3px 5px -1px rgba(0,0,0,.14), 0 6px 10px 0 rgba(0,0,0,.098), 0 1px 18px 0 rgba(0,0,0,.084);
+        background-color: color('blue', 'base');
 
 
         md-tabs-canvas {
@@ -29,20 +30,10 @@ md-tabs {
             color: #fff !important;
             background: #fff !important;
         }
+
+        md-prev-button md-icon,
+        md-next-button md-icon {
+            color: color('blue', 'darken-4') !important;
+        }
     }
 }
-
-
-navbar-left md-tabs {
-    md-tabs-wrapper {
-        //margin-right: 10px;
-    }
-
-    md-tabs-content-wrapper {
-        //margin-right: 10px;
-        //margin-bottom: 10px;
-    }
-}
-
-
-
