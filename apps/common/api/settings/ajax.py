@@ -22,21 +22,35 @@ class AccountView(CabinetView):
 
             # Дані з фронтенду приходять у міжнародному форматі.
             # Віддати їх треба в національному форматі щоб помістити дані в маску вводу.
-            mobile_phone_number = ''
             if user.mobile_phone:
-                mobile_phone_number = phonenumbers.format_number(
-                    phonenumbers.parse(user.mobile_phone),
-                    phonenumbers.PhoneNumberFormat.NATIONAL).replace(' ', '')[1:] # зайві пробіли і початкові нулі видаляються
+                mobile_phone =  phonenumbers.parse(user.mobile_phone)
+                mobile_phone_code = str(mobile_phone.country_code)
+                mobile_phone_number = phonenumbers\
+                    .format_number(mobile_phone, phonenumbers.PhoneNumberFormat.NATIONAL)\
+                    .replace(' ', '')[1:] # зайві пробіли і початкові нулі видаляються
 
-            add_mobile_phone_number = ''
+            else:
+                mobile_phone_code = None
+                mobile_phone_number = None
+
+
             if user.add_mobile_phone:
-                add_mobile_phone_number = phonenumbers.format_number(
-                    phonenumbers.parse(user.add_mobile_phone),
-                    phonenumbers.PhoneNumberFormat.NATIONAL).replace(' ', '')[1:] # зайві пробіли і поч. 0 видаляються
+                add_mobile_phone =  phonenumbers.parse(user.add_mobile_phone)
+                add_mobile_phone_code = str(add_mobile_phone.country_code)
+                add_mobile_phone_number = phonenumbers\
+                    .format_number(add_mobile_phone, phonenumbers.PhoneNumberFormat.NATIONAL)\
+                    .replace(' ', '')[1:] # зайві пробіли і початкові нулі видаляються
+
+            else:
+                add_mobile_phone_code = None
+                add_mobile_phone_number = None
+
 
             # Стаціонарні і робочі телефони ніяк не валідуються
             landline_phone_number = user.landline_phone if user.landline_phone else ''
             add_landline_phone_number = user.add_landline_phone if user.add_landline_phone else ''
+
+
 
             if user.is_moderator:
                 return HttpJsonResponse({
@@ -51,8 +65,11 @@ class AccountView(CabinetView):
                             'skype': user.skype or '',
                             'avatar_url': user.avatar.url() or '',
 
+                            'mobile_code': mobile_phone_code,
                             'mobile_phone': mobile_phone_number,
+                            'add_mobile_code': add_mobile_phone_code,
                             'add_mobile_phone': add_mobile_phone_number,
+
                             'landline_phone': landline_phone_number,
                             'add_landline_phone': add_landline_phone_number,
                         },
@@ -72,8 +89,11 @@ class AccountView(CabinetView):
                             'skype': user.skype or '',
                             'avatar_url': user.avatar.url() or '',
 
+                            'mobile_code': mobile_phone_code,
                             'mobile_phone': mobile_phone_number,
+                            'add_mobile_code': add_mobile_phone_code,
                             'add_mobile_phone': add_mobile_phone_number,
+
                             'landline_phone': landline_phone_number,
                             'add_landline_phone': add_landline_phone_number,
                         },
