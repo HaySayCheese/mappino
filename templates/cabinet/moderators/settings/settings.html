@@ -60,13 +60,13 @@
                         </md-input-container>
 
                         <div layout="row">
-                            <md-input-container flex="25">
+                            <md-input-container flex="30">
                                 <label>Код</label>
-                                <md-select ng-model="profile.account.mobile_code" disabled>
+                                <md-select ng-model="profile.account.mobile_code">
                                     <md-option ng-repeat="code in ::COUNTRY.CODES" value="[[ ::code ]]">[[ ::code ]]</md-option>
                                 </md-select>
                             </md-input-container>
-                            <md-input-container flex="75">
+                            <md-input-container flex="70">
                                 <label>Моб. телефон</label>
                                 <input type="tel" name="mobile_phone" ng-model="profile.account.mobile_phone" minlength="9" maxlength="9" only-number required>
                                 <div ng-messages="userProfileForm.mobile_phone.$error">
@@ -91,13 +91,13 @@
                 <div layout="row" layout-sm="column">
                     <div layout="column" flex-gt-sm="50">
                         <div layout="row">
-                            <md-input-container flex="25">
+                            <md-input-container flex="30">
                                 <label>Код</label>
-                                <md-select ng-model="profile.account.add_mobile_code" disabled>
+                                <md-select ng-model="profile.account.add_mobile_code">
                                     <md-option ng-repeat="code in ::COUNTRY.CODES" value="[[ ::code ]]">[[ ::code ]]</md-option>
                                 </md-select>
                             </md-input-container>
-                            <md-input-container flex="75">
+                            <md-input-container flex="70">
                                 <label>Доп. моб. телефон</label>
                                 <input type="tel" name="add_mobile_phone" ng-model="profile.account.add_mobile_phone" minlength="9" only-number maxlength="9">
                                 <div ng-messages="userProfileForm.add_mobile_phone.$error">
