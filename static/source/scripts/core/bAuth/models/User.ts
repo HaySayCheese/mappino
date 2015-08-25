@@ -41,7 +41,9 @@ namespace Mappino.Core.BAuth {
                         this.account[key] = params[key];
 
                         if (key === 'first_name' || key === 'last_name') {
-                            this.account.full_name = this.account.first_name + ' ' + this.account.last_name;
+                            if (this.account.first_name != null && this.account.last_name != null) {
+                                this.account.full_name = this.account.first_name + ' ' + this.account.last_name;
+                            }
                         }
                     }
 

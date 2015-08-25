@@ -231,14 +231,11 @@
                             <div ng-switch-when="accountInformation">
                                 <div class="account-info-state" layout="column">
                                     <div layout="row"layout-align="start start"  layout-padding>
-                                        <div layout="column" flex="40">
-                                            <img ng-src="[[ user.account.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/no-user.png" ng-show="user.account.avatar_url" />
-                                            <img src="{{ static }}build/images/common/no-user.png" ng-hide="user.account.avatar_url" alt="" />
-                                        </div>
+                                        <b-auth-user-avatar class="-medium" ng-hide="loaders.avatar"></b-auth-user-avatar>
 
                                         <div layout="column" flex="60" layout-padding>
-                                            <div class="md-title grey-text text-darken-2" ng-if="user.account.full_name">[[ ::user.account.full_name ]]</div>
-                                            <p ng-if="!user.account.full_name">
+                                            <div class="md-title grey-text text-darken-2" ng-if="user.account.full_name != null">[[ ::user.account.full_name ]]</div>
+                                            <p ng-if="user.account.full_name == null">
                                                 Пожалуйста, укажите Ваше имя в <a href="/cabinet/#!/settings/">настройках</a>
                                             </p>
                                             <div>[[ ::user.account.mobile_code ]][[ ::user.account.mobile_phone ]]</div>
