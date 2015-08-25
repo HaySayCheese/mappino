@@ -52,7 +52,7 @@
                     <span>Опубликовано</span>
                     <span flex></span>
                 </div>
-                <div class="brief-status -unpublished" layout="row" layout-align="start center" ng-show="brief.state_sid == 1 && !brief.moderator_message">
+                <div class="brief-status -unpublished" layout="row" layout-align="start center" ng-show="brief.state_sid == 1">
                     <span>Не опубликовано</span>
                     <span flex></span>
                 </div>
@@ -68,7 +68,7 @@
                 <span class="blue-grey-text">[[ ::TYPES.REALTY[brief.tid].titles.singular ]]</span>
             </div>
 
-            <div ng-show="brief.moderator_message">
+            <div ng-show="brief.state_sid == 3 && brief.moderator_message">
                 [[ ::brief.moderator_message ]]
                 <md-divider></md-divider>
             </div>
