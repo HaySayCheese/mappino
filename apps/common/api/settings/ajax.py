@@ -42,7 +42,10 @@ class AccountView(CabinetView):
                     .replace(' ', '')[1:] # зайві пробіли і початкові нулі видаляються
 
             else:
-                add_mobile_phone_code = None
+                if mobile_phone_code:
+                    add_mobile_phone_code = mobile_phone_code
+                else:
+                    add_mobile_phone_code = None
                 add_mobile_phone_number = None
 
 
@@ -58,20 +61,20 @@ class AccountView(CabinetView):
                     'message': 'OK',
                     'data': {
                         'account': {
-                            'first_name': user.first_name,
-                            'last_name': user.last_name,
-                            'email': user.email,
+                            'first_name': user.first_name or None,
+                            'last_name': user.last_name or None,
+                            'email': user.email or None,
                             'work_email': user.work_email or '',
                             'skype': user.skype or '',
                             'avatar_url': user.avatar.url() or '',
 
                             'mobile_code': '+{0}'.format(mobile_phone_code) if mobile_phone_code else None,
-                            'mobile_phone': mobile_phone_number,
+                            'mobile_phone': mobile_phone_number or None,
                             'add_mobile_code': '+{0}'.format(add_mobile_phone_code) if add_mobile_phone_code else None,
-                            'add_mobile_phone': add_mobile_phone_number,
+                            'add_mobile_phone': add_mobile_phone_number or None,
 
-                            'landline_phone': landline_phone_number,
-                            'add_landline_phone': add_landline_phone_number,
+                            'landline_phone': landline_phone_number or None,
+                            'add_landline_phone': add_landline_phone_number or None,
                         },
                     }
                 })
@@ -82,20 +85,20 @@ class AccountView(CabinetView):
                     'message': 'OK',
                     'data': {
                         'account': {
-                            'first_name': user.first_name,
-                            'last_name': user.last_name,
-                            'email': user.email,
-                            'work_email': user.work_email or '',
-                            'skype': user.skype or '',
-                            'avatar_url': user.avatar.url() or '',
+                            'first_name': user.first_name or None,
+                            'last_name': user.last_name or None,
+                            'email': user.email or None,
+                            'work_email': user.work_email or None,
+                            'skype': user.skype or None,
+                            'avatar_url': user.avatar.url() or None,
 
                             'mobile_code': '+{0}'.format(mobile_phone_code) if mobile_phone_code else None,
-                            'mobile_phone': mobile_phone_number,
+                            'mobile_phone': mobile_phone_number or None,
                             'add_mobile_code': '+{0}'.format(add_mobile_phone_code) if add_mobile_phone_code else None,
-                            'add_mobile_phone': add_mobile_phone_number,
+                            'add_mobile_phone': add_mobile_phone_number or None,
 
-                            'landline_phone': landline_phone_number,
-                            'add_landline_phone': add_landline_phone_number,
+                            'landline_phone': landline_phone_number or None,
+                            'add_landline_phone': add_landline_phone_number or None,
                         },
                         'preferences': {
                             # bool values
