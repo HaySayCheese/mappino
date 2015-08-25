@@ -24,9 +24,8 @@
             </div>
 
             <div layout="column" ng-hide="loaders.tickets">
-                <div class="md-padding center-align" ng-hide="ticketFormIsVisible">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Dicta ducimus esse facere fugit laborum officia veniam. Magnam molestiae officia sed!
+                <div class="md-padding center-align" ng-hide="ticketFormIsVisible || tickets.length">
+                    Похоже, что вы еще не обращались в службу поддержки.
                 </div>
 
                 <div layout="column" ng-show="ticketFormIsVisible">
