@@ -77,8 +77,8 @@ namespace Mappino.Cabinet.Users {
 
         private initInputsChange() {
             angular.element(".settings-page input[type='text'], " +
-                            ".settings-page input[type='tel'], " +
-                            ".settings-page input[type='email']").bind("focusout", (e) => {
+                ".settings-page input[type='tel'], " +
+                ".settings-page input[type='email']").bind("focusout", (e) => {
                 // -----------------------------------------------------------------------------------------------------
                 var name  = e.currentTarget['name'],
                     value = e.currentTarget['value'].replace(/\s+/g, " ");
@@ -86,14 +86,28 @@ namespace Mappino.Cabinet.Users {
                 if (!this.$scope.userProfileForm[name].$dirty)
                     return;
 
+                if (name == 'mobile_phone' || name == 'mobile_code') {
+                    value = this.$scope.profile.account.mobile_code + this.$scope.profile.account.mobile_phone;
+                }
+
+                if (name == 'add_mobile_phone' || name == 'add_mobile_code') {
+                    value = this.$scope.profile.account.add_mobile_code + this.$scope.profile.account.add_mobile_phone;
+                }
+
                 this.bAuthService.checkProfileField({ [name]: value })
                     .success(response => {
-                        e.currentTarget['value'] = response.data;
-
-                        this.$scope.userProfileForm[name].$setValidity("invalid",       response.code !== 2);
-                        this.$scope.userProfileForm[name].$setValidity("duplicated",    response.code !== 3);
+                        if (response.code == 0) {
+                            if (response.data.value) {
+                                e.currentTarget['value'] = response.data.value;
+                            }
+                            this.$scope.userProfileForm[name].$setValidity("invalid",    true);
+                            this.$scope.userProfileForm[name].$setValidity("duplicated", true);
+                        } else {
+                            this.$scope.userProfileForm[name].$setValidity("invalid",       response.code !== 2);
+                            this.$scope.userProfileForm[name].$setValidity("duplicated",    response.code !== 3);
+                        }
                     })
-                    .error(response => { /* error */ });
+                    .error(response => {});
             });
 
 

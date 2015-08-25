@@ -68,10 +68,9 @@
                             </md-input-container>
                             <md-input-container flex="70">
                                 <label>Моб. телефон</label>
-                                <input type="tel" name="mobile_phone" ng-model="profile.account.mobile_phone" minlength="9" maxlength="9" only-number required>
+                                <input type="tel" name="mobile_phone" ng-model="profile.account.mobile_phone" only-number required>
                                 <div ng-messages="userProfileForm.mobile_phone.$error">
                                     <div ng-message="required">Обязательное поле</div>
-                                    <div ng-message="minlength">Некоректный номер</div>
                                     <div ng-message="invalid">Некоректный номер</div>
                                     <div ng-message="duplicated">Указанный номер уже используется</div>
                                 </div>
@@ -116,10 +115,9 @@
                             </md-input-container>
                             <md-input-container flex="70">
                                 <label>Доп. моб. телефон</label>
-                                <input type="tel" name="add_mobile_phone" ng-model="profile.account.add_mobile_phone" minlength="9" only-number maxlength="9">
+                                <input type="tel" name="add_mobile_phone" ng-model="profile.account.add_mobile_phone" only-number>
                                 <div ng-messages="userProfileForm.add_mobile_phone.$error">
                                     <div ng-message="required">Обязательное поле</div>
-                                    <div ng-message="minlength">Некоректный номер</div>
                                     <div ng-message="invalid">Некоректный номер</div>
                                     <div ng-message="duplicated">Указанный номер уже используется</div>
                                 </div>

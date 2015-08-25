@@ -65,15 +65,15 @@ namespace Mappino.Map {
                 this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkersIsLoaded'));
             });
 
-            $rootScope.$on('Mappino.Map.BriefsService.BriefMouseOver', (event, markerId) => this.highlightMarker(markerId, 'hover'));
+            $rootScope.$on('Mappino.Map.BriefsService.BriefMouseOver', (event, markerHid) => this.highlightMarker(markerHid, 'hover'));
             $rootScope.$on('Mappino.Map.BriefsService.BriefMouseLeave', event => this.clearHighlight('hover'));
-            $rootScope.$on('Mappino.Map.PublicationService.PublicationActive', (event, markerId) => this.highlightMarker(markerId, 'active'));
+            $rootScope.$on('Mappino.Map.PublicationService.PublicationActive', (event, markerHid) => this.highlightMarker(markerHid, 'active'));
             $rootScope.$on('Mappino.Map.PublicationService.PublicationClosed', event => this.clearHighlight('active'));
-            $rootScope.$on('Mappino.Map.PublicationService.PublicationVisited', (event, markerId) => {
-                this.highlightMarker(markerId, 'visited');
-                this.addMarkerToVisited(markerId);
+            $rootScope.$on('Mappino.Map.PublicationService.PublicationVisited', (event, markerHid) => {
+                this.highlightMarker(markerHid, 'visited');
+                this.addMarkerToVisited(markerHid);
             });
-            $rootScope.$on('Mappino.Map.PublicationService.PublicationFavorite', (event, markerId) => this.addMarkerToFavorites(markerId));
+            $rootScope.$on('Mappino.Map.FavoritesService.FavoriteRemoved', (event, markerHid) => this.removeMarkerFromFavorites(markerHid));
         }
 
 
@@ -293,7 +293,7 @@ namespace Mappino.Map {
                     price:  responseMarker.price
                 },
                 labelContent:
-                    `<div class='custom-marker md-whiteframe-z2'>${responseMarker.price}, ${responseMarker.d0}к</div>` +
+                    `<div class='custom-marker md-whiteframe-z2'>${responseMarker.price},&nbsp;${responseMarker.d0}к</div>` +
                     `<div class='custom-marker-arrow-down'></div>`,
                 labelClass: `custom-marker-container -${color}`,
                 labelAnchor: new google.maps.Point(markerLabelOffsetX, 37)
@@ -418,7 +418,7 @@ namespace Mappino.Map {
                     price:  marker.price
                 },
                 labelContent:
-                    `<div class='custom-marker md-whiteframe-z2'>${marker.price}, ${marker.d0}к</div>` +
+                    `<div class='custom-marker md-whiteframe-z2'>${marker.price},&nbsp;${marker.d0}к</div>` +
                     `<div class='custom-marker-arrow-down'></div>`,
                 labelClass: `custom-marker-container -pink`,
                 labelAnchor: new google.maps.Point(markerLabelOffsetX, 37)
@@ -627,17 +627,17 @@ namespace Mappino.Map {
 
 
 
-        private addMarkerToFavorites(markersId: string) {
-            var favorites = [];
+        private removeMarkerFromFavorites(markerHid: string) {
+            var favorites = this.favoritesMarkers;
 
-            if (sessionStorage) {
-                if (sessionStorage.getItem('favoritesMarkers')) {
-                    favorites.push(sessionStorage.getItem('favoritesMarkers').split());
-                }
+            for (let favorite in favorites) {
+                if (favorites.hasOwnProperty(favorite)) {
+                    var _favorite = favorites[favorite];
 
-                if (favorites.join().indexOf(markersId) == -1) {
-                    favorites.push(markersId);
-                    sessionStorage.setItem('favoritesMarkers', favorites.join());
+                    if (_favorite.params.hid == markerHid) {
+                        _favorite.setMap(null);
+                        delete favorites[favorite];
+                    }
                 }
             }
         }

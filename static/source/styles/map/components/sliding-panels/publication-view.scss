@@ -8,6 +8,10 @@ publication-view {
     background: #fff;
     @include transition(right .5s ease);
 
+    @media (max-width: 600px) {
+        width: 100% !important;
+    }
+
 
     &.-opened {
         right: 0;

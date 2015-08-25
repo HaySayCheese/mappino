@@ -1,5 +1,3 @@
-/// <reference path='../_all.ts' />
-
 
 namespace Mappino.Map {
     export class PublicationService  {
