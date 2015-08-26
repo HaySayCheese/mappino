@@ -230,15 +230,22 @@
 
                             <div ng-switch-when="accountInformation">
                                 <div class="account-info-state" layout="column">
-                                    <div layout="row"layout-align="start start"  layout-padding>
-                                        <b-auth-user-avatar class="-medium" ng-hide="loaders.avatar"></b-auth-user-avatar>
+                                    <div layout="row" layout-padding>
+                                        <div layout="column" flex="40" layout-align="center center">
+                                            <b-auth-user-avatar class="-medium" ng-hide="loaders.avatar"></b-auth-user-avatar>
+                                        </div>
 
-                                        <div layout="column" flex="60" layout-padding>
-                                            <div class="md-title grey-text text-darken-2" ng-if="user.account.full_name != null">[[ user.account.full_name ]]</div>
-                                            <p class="md-body-1" ng-if="user.account.full_name == null">
-                                                Пожалуйста, укажите Ваше имя в <a href="/cabinet/#!/settings/">настройках</a>
-                                            </p>
-                                            <div>[[ user.account.mobile_code ]][[ user.account.mobile_phone ]]</div>
+                                        <div layout="column" flex="60">
+                                            <div layout="row" layout-padding>
+                                                <div class="md-title grey-text text-darken-2" ng-if="user.account.full_name != null">[[ user.account.full_name ]]</div>
+                                                <p class="md-body-1" ng-if="user.account.full_name == null">
+                                                    Пожалуйста, укажите Ваше имя в <a href="/cabinet/#!/settings/">настройках</a>
+                                                </p>
+                                            </div>
+                                            <div layout="column" layout-padding>
+                                                <div class="md-body-1">Моб .телефон:</div>
+                                                <div>[[ user.account.mobile_code ]][[ user.account.mobile_phone ]]</div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div layout="row">
