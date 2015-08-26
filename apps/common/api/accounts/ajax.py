@@ -181,12 +181,13 @@ class LoginManager(object):
     class Logout(AuthenticatedOnlyView):
         class PostResponses(object):
             @staticmethod
-            @json_response
             def ok():
-                return {
+                response = HttpJsonResponse({
                     'code': 0,
                     'message': 'OK',
-                }
+                })
+                response.delete_cookie('sessionid')
+                return response
 
 
         @classmethod
