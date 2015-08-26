@@ -1,5 +1,5 @@
 namespace Mappino.Map {
-    export function NavbarLeftSectionScrollDirective(window, $timeout): angular.IDirective {
+    export function NavbarLeftSectionScrollDirective(window, $timeout, $interval): angular.IDirective {
         return {
             restrict: 'A',
 
@@ -11,6 +11,8 @@ namespace Mappino.Map {
 
                 $timeout(() => checkHeight($window, $navbarLeft, $element, $mdTabsWrapper), 1000);
 
+                $interval(() => checkHeight($window, $navbarLeft, $element, $mdTabsWrapper), 1000, 10);
+
                 $window.on('resize', () => {
                     checkHeight($window, $navbarLeft, $element, $mdTabsWrapper);
                 });
@@ -18,6 +20,9 @@ namespace Mappino.Map {
         };
 
         function checkHeight($window, $navbarLeft, $element, $mdTabsWrapper) {
+            if ($navbarLeft.height() == $window.height())
+                return;
+
             if ($navbarLeft.height() > $window.height()) {
                 $navbarLeft.css('height', $window.height());
                 $element.css('height', $navbarLeft.height() - $mdTabsWrapper.height());
@@ -29,5 +34,5 @@ namespace Mappino.Map {
             }
         }
     }
-    NavbarLeftSectionScrollDirective.$inject = ['$window', '$timeout'];
+    NavbarLeftSectionScrollDirective.$inject = ['$window', '$timeout', '$interval'];
 }
