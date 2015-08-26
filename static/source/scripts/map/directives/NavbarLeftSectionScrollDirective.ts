@@ -20,6 +20,9 @@ namespace Mappino.Map {
         };
 
         function checkHeight($window, $navbarLeft, $element, $mdTabsWrapper) {
+            if ($navbarLeft.height() == $window.height())
+                return;
+
             if ($navbarLeft.height() > $window.height()) {
                 $navbarLeft.css('height', $window.height());
                 $element.css('height', $navbarLeft.height() - $mdTabsWrapper.height());
