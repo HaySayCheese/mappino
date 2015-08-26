@@ -160,6 +160,8 @@ namespace Mappino.Map {
                 this.intersectionPieMarkers(map);
 
                 this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.MarkersService.MarkersPlaced'));
+            } else if (!Object.keys(this.responsePieMarkers).length) {
+                this.clearPieMarkers();
             }
         }
 
@@ -239,16 +241,15 @@ namespace Mappino.Map {
             // видаляємо маркери з карти яких нема в відповіді з сервера
             for (var latLng in this.pieMarkers) {
                 if (this.pieMarkers.hasOwnProperty(latLng)) {
-                    var pieMarker           = this.pieMarkers[latLng]           || undefined,
-                        responsePieMarker   = this.responsePieMarkers[latLng]   || undefined;
+                    var pieMarker = this.pieMarkers[latLng];
 
                     // Видаляємо маркер якщо:
                     //  - в обєкті з маркерами який прийшов з сервера немає обєкта з одним із кольорів маркерів
                     //  - в обєкті з маркерами який прийшов з сервера немає обєкта з тілом маркера
                     //  - в обєкті з маркерами який прийшов з сервера ціна маркера відрізняється від ціни існуючого маркера
-                    if (angular.isUndefined(responsePieMarker)
-                            || pieMarker.params.blue_markers != responsePieMarker.blue
-                            || pieMarker.params.green_markers != responsePieMarker.green) {
+                    if (angular.isUndefined(this.responsePieMarkers[latLng])
+                            || pieMarker.params.blue_markers != this.responsePieMarkers[latLng].blue
+                            || pieMarker.params.green_markers != this.responsePieMarkers[latLng].green) {
 
                         pieMarker.setMap(null);
                         delete this.pieMarkers[latLng];
@@ -259,13 +260,12 @@ namespace Mappino.Map {
             // додаємо нові маркери на карту
             for (var latLng in this.responsePieMarkers) {
                 if (this.responsePieMarkers.hasOwnProperty(latLng)) {
-                    var pieMarker                = this.pieMarkers[latLng]         || undefined,
-                        responsePieMarker        = this.responsePieMarkers[latLng] || undefined;
+                    var pieMarker = this.pieMarkers[latLng];
 
                     // Додаємо новий маркер якщо:
                     //  - в обєкті з маркерами який прийшов з сервера є маркер якого нема у вже існуючих маркерах
                     if (angular.isUndefined(pieMarker)) {
-                        this.createPieMarker(latLng, map, responsePieMarker);
+                        this.createPieMarker(latLng, map, this.responsePieMarkers[latLng]);
                     }
                 }
             }

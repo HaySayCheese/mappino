@@ -235,7 +235,7 @@
 
                                         <div layout="column" flex="60" layout-padding>
                                             <div class="md-title grey-text text-darken-2" ng-if="user.account.full_name != null">[[ ::user.account.full_name ]]</div>
-                                            <p ng-if="user.account.full_name == null">
+                                            <p class="md-body-1" ng-if="user.account.full_name == null">
                                                 Пожалуйста, укажите Ваше имя в <a href="/cabinet/#!/settings/">настройках</a>
                                             </p>
                                             <div>[[ ::user.account.mobile_code ]][[ ::user.account.mobile_phone ]]</div>
