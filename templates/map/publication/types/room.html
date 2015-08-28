@@ -1,26 +1,29 @@
 <section class="md-padding">
-
     <div layout="column" ng-show="publication.sale_price">
         <div class="md-subhead blue-text">Продажа</div>
         <md-divider></md-divider>
-        <div layout-padding>
-            <div><b>[[ publication.sale_price ]]</b></div>
-            <div ng-show="publication.sale_terms">[[ publication.sale_terms ]]</div>
+        <div class="md-body-2 inset">
+            [[ publication.sale_price ]]
         </div>
+        <p class="md-body-1 inset" ng-show="publication.sale_terms">
+            [[ publication.sale_terms ]]
+        </p>
     </div>
 
     <div layout="column" ng-show="publication.rent_price">
         <div class="md-subhead blue-text">Аренда</div>
         <md-divider></md-divider>
-        <div layout-padding>
-            <div><b>[[ publication.rent_price ]]</b></div>
-            <div ng-show="publication.rent_terms">[[ publication.rent_terms ]]</div>
+        <div class="md-body-2 inset">
+            [[ publication.rent_price ]]
         </div>
+        <p class="md-body-1 inset" ng-show="publication.rent_terms">
+            [[ publication.rent_terms ]]
+        </p>
     </div>
 
     <div class="md-subhead blue-text">Характеристики</div>
     <md-divider></md-divider>
-    <div layout="row" layout-padding>
+    <div class="md-body-1 inset" layout="row" layout-sm="column">
         <div flex="50">
             <div layout="row">
                 <div flex="40">
@@ -62,14 +65,14 @@
 
     <div class="md-subhead blue-text">Описание</div>
     <md-divider></md-divider>
-    <p layout-padding>
+    <p class="md-body-1 inset">
         [[ publication.description ]]
     </p>
 
     <div ng-show="publication.facilities">
         <div class="md-subhead blue-text">Удобства</div>
         <md-divider></md-divider>
-        <p layout-padding>
+        <p class="md-body-1 inset">
             [[ publication.facilities ]]
         </p>
     </div>
@@ -77,7 +80,7 @@
     <div ng-show="publication.communications">
         <div class="md-subhead blue-text">Коммуникации</div>
         <md-divider></md-divider>
-        <p layout-padding>
+        <p class="md-body-1 inset">
             [[ publication.communications ]]
         </p>
     </div>
@@ -85,7 +88,7 @@
     <div ng-show="publication.buildings">
         <div class="md-subhead blue-text">Дополнительные постройки</div>
         <md-divider></md-divider>
-        <p layout-padding>
+        <p class="md-body-1 inset">
             [[ publication.buildings ]]
         </p>
     </div>

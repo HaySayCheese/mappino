@@ -6,7 +6,7 @@ publication-view {
     overflow: auto;
 
     background: #fff;
-    @include transition(right .5s ease);
+    @include transition(all .5s ease);
 
     @media (max-width: 600px) {
         width: 100% !important;
@@ -16,9 +16,11 @@ publication-view {
     &.-opened {
         right: 0;
     }
+
     &.-closed {
         right: -1000px !important;
     }
+
     &.-with-navbar-right {
         right: 220px;
 
@@ -27,7 +29,6 @@ publication-view {
             left: 0;
         }
     }
-
 
     .publication-view-container {
         min-height: 100%;

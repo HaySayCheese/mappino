@@ -263,6 +263,12 @@ namespace Mappino.Map {
 
 
 
+        public openFullScreen() {
+
+        }
+
+
+
         private resetMessageForm() {
             this.$scope.message = {
                 userName:   null,

@@ -1,26 +1,29 @@
 <section class="md-padding">
-
     <div layout="column" ng-show="publication.sale_price">
         <div class="md-subhead blue-text">Продажа</div>
         <md-divider></md-divider>
-        <div layout-padding>
-            <div><b>[[ publication.sale_price ]]</b></div>
-            <div ng-show="publication.sale_terms">[[ publication.sale_terms ]]</div>
+        <div class="md-body-2 inset">
+            [[ publication.sale_price ]]
         </div>
+        <p class="md-body-1 inset" ng-show="publication.sale_terms">
+            [[ publication.sale_terms ]]
+        </p>
     </div>
 
     <div layout="column" ng-show="publication.rent_price">
         <div class="md-subhead blue-text">Аренда</div>
         <md-divider></md-divider>
-        <div layout-padding>
-            <div><b>[[ publication.rent_price ]]</b></div>
-            <div ng-show="publication.rent_terms">[[ publication.rent_terms ]]</div>
+        <div class="md-body-2 inset">
+            [[ publication.rent_price ]]
         </div>
+        <p class="md-body-1 inset" ng-show="publication.rent_terms">
+            [[ publication.rent_terms ]]
+        </p>
     </div>
 
     <div class="md-subhead blue-text">Характеристики</div>
     <md-divider></md-divider>
-    <div layout="row" layout-padding>
+    <div class="md-body-1 inset" layout="row" layout-sm="column">
         <div flex="55">
             <div layout="row">
                 <div flex="70">
