@@ -26,10 +26,15 @@ namespace Mappino.Map {
                 if (this.$scope.loginForm.mobilePhone.$valid) {
                     this.bAuthService.checkPhoneNumber(this.$scope.account.mobileCode, this.$scope.account.mobilePhone)
                         .success(response => {
-                            localStorage.setItem('mobile_code', this.$scope.account.mobileCode);
-                            localStorage.setItem('mobile_phone', this.$scope.account.mobilePhone);
+                            if (response.code == 10) {
+                                window.location = '/cabinet/';
+                            } else {
+                                localStorage.setItem('mobile_code', this.$scope.account.mobileCode);
+                                localStorage.setItem('mobile_phone', this.$scope.account.mobilePhone);
 
-                            this.$scope.authState = 'enterSMSCode';
+                                this.$scope.authState = 'enterSMSCode';
+                            }
+
                         })
                         .error(response => {
                             this.$scope.loginForm.mobilePhone.$setValidity('invalid', false);
