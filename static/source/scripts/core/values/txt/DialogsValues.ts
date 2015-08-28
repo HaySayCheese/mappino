@@ -13,15 +13,6 @@ namespace Mappino.Core.Values {
                 },
 
 
-                'RECOVERY_PUBLICATION': {
-                    TITLE:      'RECOVERY_PUBLICATION_TITLE',
-                    BODY:       'RECOVERY_PUBLICATION_BODY',
-                    ARIA_LABEL: 'RECOVERY_PUBLICATION_BODY',
-                    OK_BTN:     'RECOVERY_PUBLICATION_OK_BTN',
-                    CANCEL_BTN: 'RECOVERY_PUBLICATION_CANCEL_BTN'
-                },
-
-
                 'DONE_EDITING_LATER_PUBLICATION': {
                     TITLE:      'Сохранение объявления',
                     BODY:       'Объявление успешно сохранено',
