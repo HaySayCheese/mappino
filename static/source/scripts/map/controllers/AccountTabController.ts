@@ -27,7 +27,7 @@ namespace Mappino.Map {
                     this.bAuthService.checkPhoneNumber(this.$scope.account.mobileCode, this.$scope.account.mobilePhone)
                         .success(response => {
                             if (response.code == 10) {
-                                window.location = '/cabinet/';
+                                window.location.pathname = '/cabinet/';
                             } else {
                                 localStorage.setItem('mobile_code', this.$scope.account.mobileCode);
                                 localStorage.setItem('mobile_phone', this.$scope.account.mobilePhone);
