@@ -64,10 +64,10 @@ namespace Mappino.Map {
 
 
             $scope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
-                this.$scope.publication = {};
-                $scope.publicationViewFooterState = 'contacts';
-
                 if (toParams['publication_id'] != 0 && fromParams['publication_id'] != toParams['publication_id']) {
+                    this.$scope.publication = {};
+                    $scope.publicationViewFooterState = 'contacts';
+
                     $scope.publicationPreviewSlideIndex = 0;
                     this.loadPublicationData();
                 }
