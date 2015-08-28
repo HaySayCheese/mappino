@@ -27,32 +27,37 @@ namespace Mappino.Cabinet.Moderators {
 
         public getPublicationId(): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/moderators/publications/next/`);
+
             promise.success(response => {});
+
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.LOAD.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.LOAD.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
             });
-            return promise;
 
+            return promise;
         }
 
 
 
         public load(publicationIds: any): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/`);
+
             promise.success(response => {});
+
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.LOAD.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.LOAD.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
             });
+
             return promise;
         }
 
@@ -60,15 +65,18 @@ namespace Mappino.Cabinet.Moderators {
 
         public loadHeld(): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/moderators/publications/held/briefs/`);
+
             promise.success(response => {});
+
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.LOAD.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.LOAD.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
             });
+
             return promise;
         }
 
@@ -76,15 +84,18 @@ namespace Mappino.Cabinet.Moderators {
 
         public accept(publicationIds: any): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/accept/`, null);
+
             promise.success(response => {});
+
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.ACCEPT_MODERATING.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.ACCEPT_MODERATING.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
             });
+
             return promise;
         }
 
@@ -94,15 +105,18 @@ namespace Mappino.Cabinet.Moderators {
             var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/reject/`, {
                 message: reject_reason
             });
+
             promise.success(response => {});
+
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.REJECT_MODERATING.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.REJECT_MODERATING.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
             });
+
             return promise;
         }
 
@@ -110,15 +124,18 @@ namespace Mappino.Cabinet.Moderators {
 
         public hold(publicationIds: any): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/hold/`, null);
+
             promise.success(response => {});
+
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.HOLD_MODERATING.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.HOLD_MODERATING.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
             });
+
             return promise;
         }
 
@@ -128,8 +145,11 @@ namespace Mappino.Cabinet.Moderators {
             var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/claims/${claimId}/notice/`, {
                 notice: noticeMessage
             });
+
             promise.success(response => {});
+
             promise.error(response => {});
+
             return promise;
         }
 
@@ -137,10 +157,12 @@ namespace Mappino.Cabinet.Moderators {
 
         public closeClaim(claimId: any): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/claims/${claimId}/close/`, null);
-            promise.success(response => {});
-            promise.error(response => {});
-            return promise;
 
+            promise.success(response => {});
+
+            promise.error(response => {});
+
+            return promise;
         }
     }
 }
