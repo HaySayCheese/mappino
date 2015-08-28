@@ -24,7 +24,6 @@ namespace Mappino.Cabinet.Users {
             $scope.tickets  = this.tickets = [];
 
             $rootScope.loaders.tickets  = true;
-            $scope.ticketFormIsVisible  = false;
 
             ticketsService.load()
                 .success(response => {
@@ -36,31 +35,12 @@ namespace Mappino.Cabinet.Users {
 
 
         public createTicket() {
-
             this.ticketsService.create()
-            .success(response => {
-                    this.$scope.ticket.ticket_id = response.data.id;
-
-                    this.$scope.ticketFormIsVisible = true;
-
-                    if (!this.$scope.$$phase) {
-                        this.$scope.$apply()
-                    }
+                .success(response => {
+                    this.$state.go('ticket_view', { ticket_id: response.data.id });
                 })
         }
 
-
-
-        public sendMessage() {
-            if (this.$scope.ticketForm.$valid) {
-                this.$rootScope.loaders.overlay = true;
-                this.ticketsService.sendMessage(this.ticket.id, this.$scope.ticket)
-                    .success(response => {
-                    this.$rootScope.loaders.overlay = false;
-                    this.$state.go('ticket_view', { ticket_id: this.ticket.id })
-                });
-            }
-        }
 
 
         public goToTicket(ticketId) {

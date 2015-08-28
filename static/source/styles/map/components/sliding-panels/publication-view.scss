@@ -39,26 +39,32 @@ publication-view {
 
 
     header {
-        min-height: 330px;
+        height: auto;
+        min-height: 300px;
+        max-height: 400px;
         position: relative;
 
         .publication-preview-carousel {
-            @include size(100%, 330px);
+            @include size(100%, 100%);
+            height: auto;
+            min-height: 300px;
+            max-height: 400px;
+
+            .slide-photo {
+                @include square(100%);
+                background-size: cover;
+                background-repeat: no-repeat;
+            }
         }
 
-        .publication-view-image-overlay {
-            @include square(100%);
-            position: absolute;
-            top: 0;
-        }
-
-        .publication-view-overlay-description {
+        .publication-header-description {
             position: absolute;
             left: 0;
             right: 0;
             bottom: 0;
 
             color: #fff;
+            background-color: rgba(0, 0, 0, .2);
             text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 1px color('grey', 'darken-4');
 
 
@@ -70,18 +76,33 @@ publication-view {
         }
 
 
-        .slide-prev,
-        .slide-next {
+        .fullscreen-slider-button,
+        .close-publication-button {
+            position: absolute;
+            top: 0;
+        }
+
+        .fullscreen-slider-button {
+            left: 0;
+        }
+
+        .close-publication-button {
+            right: 0;
+        }
+
+
+        .slide-prev-button,
+        .slide-next-button {
             position: absolute;
             top: 50%;
             @include translate(0, -50%);
         }
 
-        .slide-prev {
+        .slide-prev-button {
             left: 0;
         }
 
-        .slide-next {
+        .slide-next-button {
             right: 0;
         }
     }
