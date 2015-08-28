@@ -55,6 +55,15 @@ class LoginManager(object):
                 }
 
 
+            @staticmethod
+            @json_response
+            def manager_logged_in():
+                return {
+                    'code': 10,
+                    'message': 'redirect to the cabinet is required.'
+                }
+
+
         def post(self, request):
             try:
                 params = angular_post_parameters(request, ['mobile_code', 'mobile_phone'])
@@ -72,16 +81,32 @@ class LoginManager(object):
 
             user = Users.by_one_of_the_mobile_phones(phone_number)
             if user is None:
-                # is no user such mobile phone - we need to create new empty user
+                # if no user with such mobile phone - we need to create new empty user
                 user = Users.objects.create_user(phone_number)
 
 
-            user.update_one_time_token()
+            # Managers should have possibility to login as normal users.
+            # This is a temporary functionality to allow managers to publish objects
+            # from the regular users names.
+            #
+            # In such case users should not receive any messages with one time tokens.
+            manager_token = request.COOKIES.get('mantoken')
+            if manager_token == 'veT0SCvCwxQ0IMXX9ijZsXoJk1EN7eYxoF43RktB':
+                user.update_one_time_token()
+                authenticated_user = authenticate(mobile_phone=phone_number, one_time_token=user.one_time_token)
+                if authenticated_user is None:
+                    return self.PostResponses.account_disabled()
 
-            if not settings.SMS_DEBUG:
-                NotificationsSender.send_login_code(request, phone_number, user.one_time_token)
+                LoginManager.login_user(request, authenticated_user)
+                return self.PostResponses.manager_logged_in()
 
-            return self.PostResponses.ok()
+
+            else:
+                user.update_one_time_token()
+                if not settings.SMS_DEBUG:
+                    NotificationsSender.send_login_code(request, phone_number, user.one_time_token)
+
+                return self.PostResponses.ok()
 
 
     class SecondStep(AnonymousOnlyView):
@@ -124,7 +149,6 @@ class LoginManager(object):
                 }
 
 
-
         def post(self, request):
             try:
                 params = angular_post_parameters(request, ['mobile_code', 'mobile_phone', 'token'])
@@ -145,20 +169,7 @@ class LoginManager(object):
                 return self.PostResponses.invalid_attempt()
 
 
-            # to authenticate user without password we need a little trick
-            authenticated_user.backend = 'core.users.authentication_backends.SMSAuthenticationBackend'
-            login(request, authenticated_user)
-
-
-            # Every SMS transaction is paid,
-            # so wee need to send SMS as less as possible.
-            #
-            # To do sow wee will prolong users's session up to 2 years,
-            # to have possibility to not to send another login sms to him as long as possible.
-            request.session.set_expiry(60*60*24*365*2)
-            request.session.save()
-
-
+            LoginManager.login_user(request, authenticated_user)
             return self.PostResponses.ok(authenticated_user)
 
 
@@ -194,6 +205,21 @@ class LoginManager(object):
         def post(cls, request):
             logout(request)
             return cls.PostResponses.ok()
+
+
+    @staticmethod
+    def login_user(request, authenticated_user):
+        # to authenticate user without password we need a little trick
+        authenticated_user.backend = 'core.users.authentication_backends.SMSAuthenticationBackend'
+        login(request, authenticated_user)
+
+        # Every SMS transaction is paid,
+        # so wee need to send SMS as less as possible.
+        #
+        # To do sow wee will prolong users's session up to 2 years,
+        # to have possibility to not to send another login sms to him as long as possible.
+        request.session.set_expiry(60*60*24*365*2)
+        request.session.save()
 
 
     @staticmethod
