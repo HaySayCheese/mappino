@@ -67,16 +67,22 @@
                             ng-mouseenter="favCtrl.onBriefMouseOver(favorite)"
                             ng-mouseleave="favCtrl.onBriefMouseLeave()">
                             <img ng-src="[[ favorite.thumbnail_url ]]" alt="" />
-                            <div class="favorite-list-item-overlay">
-                                <md-button class="md-icon-button" ng-click="favCtrl.removeFromFavorites(favorite, $event)">
-                                    <md-icon class="material-icons md-light md-dark-shadow pink-text">favorite</md-icon>
-                                    <md-tooltip md-direction="right" md-delay="0">
-                                        Удалить из избранных
-                                    </md-tooltip>
-                                </md-button>
-                                <div class="favorite-list-item-description" layout="column">
-                                    <div>[[ favorite.title ]]</div>
-                                    <div><b>[[ favorite.price ]]</b></div>
+
+                            <div class="favorite-list-item-overlay" layout="column">
+                                <div layout="row">
+                                    <md-button class="md-icon-button" ng-click="favCtrl.removeFromFavorites(favorite, $event)">
+                                        <md-icon class="material-icons md-light md-dark-shadow pink-text">favorite</md-icon>
+                                        <md-tooltip md-direction="right" md-delay="0">
+                                            Удалить из избранных
+                                        </md-tooltip>
+                                    </md-button>
+                                </div>
+                                <span flex></span>
+                                <div layout="column">
+                                    <div class="favorite-list-item-description" layout="column">
+                                        <div>[[ favorite.title ]]</div>
+                                        <div><b>[[ favorite.price ]]</b></div>
+                                    </div>
                                 </div>
                             </div>
                         </li>
