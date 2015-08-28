@@ -234,6 +234,7 @@ class LoginManager(object):
             'mobile_code': u'+{0}'.format(code),
             'mobile_phone': u'{0}'.format(number),
             'avatar_url': user.avatar.url(),
+            'email': user.email,
         }
 
 
