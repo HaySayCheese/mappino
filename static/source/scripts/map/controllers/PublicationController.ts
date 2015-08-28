@@ -96,26 +96,28 @@ namespace Mappino.Map {
                 this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationVisited', this.publicationIds.hid);
                 this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationActive', this.publicationIds.hid);
 
-                this.publicationService.load(this.publicationIds, response => {
-                    this.$scope.publication = response.data;
-                    this.$scope.publication.is_favorite     = false;
-                    this.$rootScope.loaders.publication     = false;
-                    this.$scope.publicationLoadedSuccess    = true;
-                    this.checkIfPublicationIsFavorite();
+                this.publicationService.load(this.publicationIds)
+                    .success(response => {
+                        this.$scope.publication = response.data;
+                        this.$scope.publication.is_favorite     = false;
+                        this.$rootScope.loaders.publication     = false;
+                        this.$scope.publicationLoadedSuccess    = true;
+                        this.checkIfPublicationIsFavorite();
 
+                        this.publicationService.loadContacts(this.publicationIds)
+                            .success(response => {
+                                this.$scope.publication.contacts = {};
+                                this.$scope.publication.contacts = response.data;
+                            });
 
-                    this.publicationService.loadContacts(this.publicationIds, response => {
-                        this.$scope.publication.contacts = {};
-                        this.$scope.publication.contacts = response.data;
+                        this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationClosed');
+                        this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationVisited', this.publicationIds.hid);
+                        this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationActive', this.publicationIds.hid);
+                    })
+                    .error(response => {
+                        this.$rootScope.loaders.publication     = false;
+                        this.$scope.publicationLoadedSuccess    = false;
                     });
-
-                    this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationClosed');
-                    this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationVisited', this.publicationIds.hid);
-                    this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationActive', this.publicationIds.hid);
-                }, response => {
-                    this.$rootScope.loaders.publication     = false;
-                    this.$scope.publicationLoadedSuccess    = false;
-                });
             }
         }
 
@@ -176,14 +178,15 @@ namespace Mappino.Map {
 
         public sendMessage() {
             if (this.$scope.forms.publicationMessage.$valid) {
-                this.publicationService.sendMessage(this.$scope.message, this.publicationIds, response => {
-                    this.resetMessageForm();
-                    this.$scope.publicationViewFooterState = 'sendSuccess';
-                    this.$timeout(() => {
-                        this.$scope.publicationViewFooterState = 'contacts';
-                        this.scrollToBottom(500);
-                    }, 2000);
-                });
+                this.publicationService.sendMessage(this.$scope.message, this.publicationIds)
+                    .success(response => {
+                        this.resetMessageForm();
+                        this.$scope.publicationViewFooterState = 'sendSuccess';
+                        this.$timeout(() => {
+                            this.$scope.publicationViewFooterState = 'contacts';
+                            this.scrollToBottom(500);
+                        }, 2000);
+                    });
             }
         }
 
@@ -191,14 +194,15 @@ namespace Mappino.Map {
 
         public sendCallRequest() {
             if (this.$scope.forms.publicationCallRequest.$valid) {
-                this.publicationService.sendCallRequest(this.$scope.callRequest, this.publicationIds, response => {
-                    this.resetCallRequestForm();
-                    this.$scope.publicationViewFooterState = 'sendSuccess';
-                    this.$timeout(() => {
-                        this.$scope.publicationViewFooterState = 'contacts';
-                        this.scrollToBottom(500);
-                    }, 2000);
-                });
+                this.publicationService.sendCallRequest(this.$scope.callRequest, this.publicationIds)
+                    .success(response => {
+                        this.resetCallRequestForm();
+                        this.$scope.publicationViewFooterState = 'sendSuccess';
+                        this.$timeout(() => {
+                            this.$scope.publicationViewFooterState = 'contacts';
+                            this.scrollToBottom(500);
+                        }, 2000);
+                    });
             }
         }
 
@@ -206,14 +210,15 @@ namespace Mappino.Map {
 
         public sendClaim() {
             if (this.$scope.forms.publicationClaim.$valid) {
-                this.publicationService.sendClaim(this.$scope.claim, this.publicationIds, response => {
-                    this.resetClaimForm();
-                    this.$scope.publicationViewFooterState = 'sendSuccess';
-                    this.$timeout(() => {
-                        this.$scope.publicationViewFooterState = 'contacts';
-                        this.scrollToBottom(500);
-                    }, 2000);
-                });
+                this.publicationService.sendClaim(this.$scope.claim, this.publicationIds)
+                    .success(response => {
+                        this.resetClaimForm();
+                        this.$scope.publicationViewFooterState = 'sendSuccess';
+                        this.$timeout(() => {
+                            this.$scope.publicationViewFooterState = 'contacts';
+                            this.scrollToBottom(500);
+                        }, 2000);
+                    });
             }
         }
 

@@ -25,7 +25,7 @@ namespace Mappino.Map {
 
 
 
-        public load(publicationIds: any, successCallback?, errorCallback?) {
+        public load(publicationIds: any): angular.IHttpPromise<any>  {
             var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/detailed/publication/${publicationIds.tid}:${publicationIds.hid}/`);
 
             promise.success(response => {
@@ -46,98 +46,91 @@ namespace Mappino.Map {
 
 
 
-        public loadContacts(publicationIds: any, successCallback?, errorCallback?) {
-            this.$http.get(`/ajax/api/detailed/publication/${publicationIds.tid}:${publicationIds.hid}/contacts/`)
-                .then(response => {
-                    if (response.data['code'] === 0) {
-                        this.publication = response.data['data'];
-                        angular.isFunction(successCallback) && successCallback(response.data)
-                    } else {
-                        angular.isFunction(errorCallback) && errorCallback(response.data)
-                    }
-                }, response => {
-                    this.$mdToast.show(
-                        this.$mdToast.simple()
-                            .content(this.TXT.TOASTS.PUBLICATION.LOAD_CONTACTS.TITLE)
-                            .position(this.toastOptions.position)
-                            .hideDelay(this.toastOptions.delay)
-                    );
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
-                });
+        public loadContacts(publicationIds: any): angular.IHttpPromise<any> {
+            var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/detailed/publication/${publicationIds.tid}:${publicationIds.hid}/contacts/`);
+
+            promise.success(response => {
+                this.publication.contacts = response.data;
+            });
+
+            promise.error(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.PUBLICATION.LOAD_CONTACTS.ERROR)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+
+            return promise;
         }
 
 
 
-        public sendMessage(message: Object, publicationIds: any, successCallback?, errorCallback?) {
-            this.$http.post(`/ajax/api/notifications/send-message/${publicationIds.tid}:${publicationIds.hid}/`, {
+        public sendMessage(message: Object, publicationIds: any): angular.IHttpPromise<any> {
+            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/notifications/send-message/${publicationIds.tid}:${publicationIds.hid}/`, {
                 'name':     message['userName'],
                 'email':    message['email'],
                 'message':  message['text']
-            })
-                .then(response => {
-                    if (response.data['code'] == 0) {
-                        angular.isFunction(successCallback) && successCallback(response.data)
-                    } else {
-                        angular.isFunction(errorCallback) && errorCallback(response.data)
-                    }
-                }, response => {
-                    this.$mdToast.show(
-                        this.$mdToast.simple()
-                            .content(this.TXT.TOASTS.PUBLICATION.SEND_MESSAGE.TITLE)
-                            .position(this.toastOptions.position)
-                            .hideDelay(this.toastOptions.delay)
-                    );
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
-                })
+            });
+
+            promise.success(response => {});
+
+            promise.error(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.PUBLICATION.SEND_MESSAGE.ERROR)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+
+            return promise;
         }
 
 
 
-        public sendCallRequest(callRequest: Object, publicationIds: any, successCallback?, errorCallback?) {
-            this.$http.post(`/ajax/api/notifications/send-call-request/${publicationIds.tid}:${publicationIds.hid}/`, {
+        public sendCallRequest(callRequest: Object, publicationIds: any): angular.IHttpPromise<any> {
+            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/notifications/send-call-request/${publicationIds.tid}:${publicationIds.hid}/`, {
                 'name': callRequest['userName'],
                 'phone_number': callRequest['phoneNumber']
-            })
-                .then(response => {
-                    if (response.data['code'] == 0) {
-                        angular.isFunction(successCallback) && successCallback(response.data)
-                    } else {
-                        angular.isFunction(errorCallback) && errorCallback(response.data)
-                    }
-                }, response => {
-                    this.$mdToast.show(
-                        this.$mdToast.simple()
-                            .content(this.TXT.TOASTS.PUBLICATION.SEND_CALL_REQUEST.TITLE)
-                            .position(this.toastOptions.position)
-                            .hideDelay(this.toastOptions.delay)
-                    );
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
-                })
+            });
+
+            promise.success(response => {});
+
+            promise.error(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.PUBLICATION.SEND_CALL_REQUEST.ERROR)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+
+            return promise;
         }
 
 
 
-        public sendClaim(claim: Object, publicationIds: any, successCallback?, errorCallback?) {
-            this.$http.post(`/ajax/api/publications/${publicationIds.tid}:${publicationIds.hid}/claims/`, {
+        public sendClaim(claim: Object, publicationIds: any): angular.IHttpPromise<any> {
+            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/publications/${publicationIds.tid}:${publicationIds.hid}/claims/`, {
                 'email':        claim['email'],
                 'reason_sid':   claim['reason_sid'],
                 'message':      claim['another_reason']
-            })
-                .then(response => {
-                    if (response.data['code'] == 0) {
-                        angular.isFunction(successCallback) && successCallback(response.data)
-                    } else {
-                        angular.isFunction(errorCallback) && errorCallback(response.data)
-                    }
-                }, response => {
-                    this.$mdToast.show(
-                        this.$mdToast.simple()
-                            .content(this.TXT.TOASTS.PUBLICATION.SEND_CLAIM.TITLE)
-                            .position(this.toastOptions.position)
-                            .hideDelay(this.toastOptions.delay)
-                    );
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
-                })
+            });
+
+            promise.success(response => {});
+
+            promise.error(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.PUBLICATION.SEND_CLAIM.ERROR)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+
+            return promise;
         }
     }
 }
