@@ -24,38 +24,11 @@
             </div>
 
             <div layout="column" ng-hide="loaders.tickets">
-                <div class="md-padding center-align" ng-hide="ticketFormIsVisible || tickets.length">
+                <div class="md-padding center-align" ng-hide="tickets.length">
                     Похоже, что вы еще не обращались в службу поддержки.
                 </div>
 
-                <div layout="column" ng-show="ticketFormIsVisible">
-                    <form class="md-padding" name="ticketForm" ng-submit="supportCtrl.sendMessage()" novalidate>
-                        <md-input-container flex>
-                            <label>Тема обращения</label>
-                            <input type="text" name="subject" ng-model="ticket.subject">
-                        </md-input-container>
-
-                        <md-input-container flex>
-                            <label>Описание обращения</label>
-                            <textarea name="message" ng-model="ticket.message" columns="1" required></textarea>
-                            <div ng-messages="ticketForm.message.$error" ng-show="ticketForm.$submitted || ticketForm.message.$touched">
-                                <div ng-message="required">Укажите, пожалуйста, тему обращения.</div>
-                            </div>
-                        </md-input-container>
-
-                        <div layout="row" layout-align="end center">
-                            <md-button class="md-primary md-hue-1" ng-click="ticketFormIsVisible = false;">
-                                Отмена
-                            </md-button>
-
-                            <md-button class="md-raised md-primary">
-                                Отправить
-                            </md-button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="md-padding" layout="row" layout-align="center center" ng-hide="ticketFormIsVisible">
+                <div class="md-padding" layout="row" layout-align="center center">
                     <md-button class="md-raised md-primary" ng-click="supportCtrl.createTicket()">
                         Связаться со службой поддержки
                     </md-button>

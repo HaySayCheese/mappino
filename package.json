@@ -17,7 +17,7 @@
     "gulp-typescript": "*",
     "gulp-uglify": "*",
     "gulp-watch": "*",
-    "node-sass": "^3.2.0",
+    "node-sass": "*",
     "run-sequence": "*"
   }
 }

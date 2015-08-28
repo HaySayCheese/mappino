@@ -13,11 +13,13 @@ namespace Mappino.Cabinet.Users {
 
         public static $inject = [
             '$http',
+            '$state',
             '$mdToast',
             'TXT'
         ];
 
         constructor(private $http: angular.IHttpService,
+                    private $state: angular.ui.IStateService,
                     private $mdToast: any,
                     private TXT: any) {
             //----------------------------------------------------------------------------------------------------------
