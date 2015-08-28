@@ -86,9 +86,6 @@ namespace Mappino.Map {
                     this.$rootScope.tabIndexes.navbarLeft = -1;
                 }
 
-                if (!_.isUndefined(this.navbarRightTabsIndex[tab])) {
-                    this.$rootScope.tabIndexes.navbarRight = -1;
-                }
             }
 
 

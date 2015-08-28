@@ -151,8 +151,8 @@
             <md-tab-body>
                 <div class="search-tab">
                     <section class="md-padding">
-                        <div layout="row">
-                            <span flex>Искать квартиры</span>
+                        <div layout="row" layout-align="start center">
+                            <span flex class="blue-text">Опредиление геолокации</span>
                             <md-button class="md-icon-button" ng-click="navCtrl.tabsHandler.close('search')">
                                 <md-icon>close</md-icon>
                             </md-button>
@@ -174,8 +174,8 @@
                 <div class="account-tab" ng-controller="AccountTabController as accCtrl">
                     <section class="md-padding">
                         <div ng-switch="authState">
-                            <div layout="row">
-                                <span flex>Введите свой номер телефона</span>
+                            <div layout="row" layout-align="start center">
+                                <span class="md-subhead blue-text" flex>Добро пожаловать</span>
                                 <md-button class="md-icon-button"  ng-click="navCtrl.tabsHandler.close('account')">
                                     <md-icon>close</md-icon>
                                 </md-button>
