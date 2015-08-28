@@ -3,13 +3,13 @@
         <div class="md-subhead blue-text">Контакты</div>
         <md-divider></md-divider>
         <div layout="column" layout-padding>
-            <div class="publication-contacts" layout="row" layout-padding>
-                <div class="avatar" flex="45" layout="column" layout-align="center center">
+            <div class="publication-contacts" layout-gt-sm="row" layout-sm="column" layout-padding>
+                <div class="avatar" flex-sm="100" flex-gt-sm="45" layout="column" layout-align="center center">
                     <img ng-src="[[ ::publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/no-user.png"
                          ng-if="publication.contacts.avatar_url" />
                     <img src="{{ static }}build/images/common/no-user.png" ng-if="!publication.contacts.avatar_url" alt="" />
                 </div>
-                <div flex="55" layout="column">
+                <div flex-sm="100" flex-gt-sm="55" layout="column">
                     <div class="md-title grey-text text-darken-2" layout-padding ng-if="publication.contacts.first_name || publication.contacts.last_name">
                         [[ ::publication.contacts.first_name + '&nbsp;' ]][[ ::publication.contacts.last_name ]]
                     </div>

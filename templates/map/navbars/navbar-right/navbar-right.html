@@ -14,22 +14,26 @@
                             ng-mouseenter="briefsCtrl.onBriefMouseOver(brief)"
                             ng-mouseleave="briefsCtrl.onBriefMouseLeave()">
 
-                            <img ng-src="[[ brief.thumbnail_url ]]" alt="" />
-                            <div class="publication-list-item-overlay">
-                                <md-button class="md-icon-button" ng-hide="brief.is_favorite"
-                                           ng-click="briefsCtrl.toggleFavorite(brief, $event)">
-                                    <md-icon class="material-icons md-light md-dark-shadow">favorite_border</md-icon>
-                                    <md-tooltip md-direction="right" md-delay="0">
-                                        Добавить в избранные
-                                    </md-tooltip>
-                                </md-button>
-                                <md-button class="md-icon-button" ng-show="brief.is_favorite"
-                                           ng-click="briefsCtrl.toggleFavorite(brief, $event)">
-                                    <md-icon class="material-icons md-light md-dark-shadow pink-text">favorite</md-icon>
-                                    <md-tooltip md-direction="right" md-delay="0">
-                                        Удалить из избранных
-                                    </md-tooltip>
-                                </md-button>
+                            <img ng-src="[[ brief.thumbnail_url ]]" alt="[[ brief.title ]]" />
+
+                            <div class="publication-list-item-overlay" layout="column">
+                                <div layout="row">
+                                    <md-button class="md-icon-button" ng-hide="brief.is_favorite"
+                                               ng-click="briefsCtrl.toggleFavorite(brief, $event)">
+                                        <md-icon class="material-icons md-light md-dark-shadow">favorite_border</md-icon>
+                                        <md-tooltip md-direction="right" md-delay="0">
+                                            Добавить в избранные
+                                        </md-tooltip>
+                                    </md-button>
+                                    <md-button class="md-icon-button" ng-show="brief.is_favorite"
+                                               ng-click="briefsCtrl.toggleFavorite(brief, $event)">
+                                        <md-icon class="material-icons md-light md-dark-shadow pink-text">favorite</md-icon>
+                                        <md-tooltip md-direction="right" md-delay="0">
+                                            Удалить из избранных
+                                        </md-tooltip>
+                                    </md-button>
+                                </div>
+                                <span flex></span>
                                 <div class="publication-list-item-description" layout="column">
                                     <div>[[ brief.title ]]</div>
                                     <div><b>[[ brief.price ]]</b></div>
