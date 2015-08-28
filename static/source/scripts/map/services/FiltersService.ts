@@ -291,7 +291,6 @@ namespace Mappino.Map {
                 }
             }
 
-            console.info('updateUrlFromPanelsFilters method: panels filters updated');
 
             this.$location.search(location_search);
 

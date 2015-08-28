@@ -155,7 +155,6 @@ namespace Mappino.Map {
 
                 for (var key in _favorites) {
                     if (_favorites.hasOwnProperty(key)) {
-                        console.log(_favorites);
                         if (_favorites[key].hid == this.publicationIds.hid) {
                             this.$scope.publication.is_favorite = true;
                         }

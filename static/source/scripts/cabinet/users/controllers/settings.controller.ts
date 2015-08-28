@@ -32,7 +32,6 @@ namespace Mappino.Cabinet.Users {
                     $scope.profile.account      = response.data.account;
                     $scope.profile.preferences  = response.data.preferences;
 
-                    console.log($scope.profile)
                     this.initInputsChange();
 
                     $rootScope.loaders.overlay = false;

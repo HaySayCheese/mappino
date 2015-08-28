@@ -22,7 +22,6 @@ namespace Mappino.Core.BAuth {
 
             controller: ['$scope', ($scope) => {
                 $scope.user = bAuthService.user;
-                console.log($scope.user)
             }]
         };
     }

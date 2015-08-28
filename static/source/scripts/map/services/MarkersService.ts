@@ -197,7 +197,6 @@ namespace Mappino.Map {
                         if (this.simpleMarkers[color].hasOwnProperty(latLng)) {
                             var simpleMarker = this.simpleMarkers[color][latLng];
 
-                            //console.log(responseSimpleMarker)
                             // Видаляємо маркер якщо:
                             //  - в обєкті з маркерами який прийшов з сервера немає обєкта з одним із кольорів маркерів
                             //  - в обєкті з маркерами який прийшов з сервера немає обєкта з тілом маркера
