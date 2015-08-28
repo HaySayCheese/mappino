@@ -76,6 +76,25 @@ namespace Mappino.Map {
         }
 
 
+        public close(tab: string) {
+            if (!_.isUndefined(this.navbarLeftTabsIndex[tab])) {
+                this.$state.go('base', {
+                    'navbar_left_tab_index': -1
+                });
+
+                if (!_.isUndefined(this.navbarLeftTabsIndex[tab])) {
+                    this.$rootScope.tabIndexes.navbarLeft = -1;
+                }
+
+                if (!_.isUndefined(this.navbarRightTabsIndex[tab])) {
+                    this.$rootScope.tabIndexes.navbarRight = -1;
+                }
+            }
+
+
+        }
+
+
 
         public setActive(tab: string, part?: string) {
             if (!_.isUndefined(this.navbarLeftTabsIndex[tab])) {

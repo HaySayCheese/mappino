@@ -14,20 +14,27 @@
                                     <md-icon>home</md-icon>
                                     На главную
                                 </md-button>
+                                <span flex></span>
+                                <md-button class="md-icon-button" ng-click="navCtrl.tabsHandler.close('mappino');">
+                                    <md-icon>close</md-icon>
+                                </md-button>
                             </div>
                             <md-divider></md-divider>
                             <div layout="row" layout-align="start center">
                                 <md-button class="md-primary" href="/">
+                                    <md-icon>forum</md-icon>
                                     Частые вопросы
                                 </md-button>
                             </div>
                             <div layout="row" layout-align="start-center">
                                 <md-button class="md-primary" href="/">
+                                    <md-icon>contacts</md-icon>
                                     Контакты
                                 </md-button>
                             </div>
                             <div layout="row" layout-align="start-center">
                                 <md-button class="md-primary" href="/">
+                                    <md-icon>loyalty</md-icon>
                                     О сервисе
                                 </md-button>
                             </div>
@@ -144,6 +151,12 @@
             <md-tab-body>
                 <div class="search-tab">
                     <section class="md-padding">
+                        <div layout="row">
+                            <span flex>Искать квартиры</span>
+                            <md-button class="md-icon-button" ng-click="navCtrl.tabsHandler.close('search')">
+                                <md-icon>close</md-icon>
+                            </md-button>
+                        </div>
                         <md-input-container>
                             <input google-place-autocomplete type="text" ng-model="autocomplete" aria-label="Местоположение">
                         </md-input-container>
@@ -161,6 +174,12 @@
                 <div class="account-tab" ng-controller="AccountTabController as accCtrl">
                     <section class="md-padding">
                         <div ng-switch="authState">
+                            <div layout="row">
+                                <span flex>Введите свой номер телефона</span>
+                                <md-button class="md-icon-button"  ng-click="navCtrl.tabsHandler.close('account')">
+                                    <md-icon>close</md-icon>
+                                </md-button>
+                            </div>
                             <form name="loginForm" layout="column" ng-submit="accCtrl.login()" novalidate>
                                 <div ng-switch-when="enterPhone">
                                     <div layout="column">
