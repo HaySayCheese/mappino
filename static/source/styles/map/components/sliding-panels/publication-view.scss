@@ -39,16 +39,21 @@ publication-view {
 
 
     header {
+        height: auto;
+        min-height: 300px;
         max-height: 400px;
-        max-width: 100%;
-        height:auto
         position: relative;
 
         .publication-preview-carousel {
             @include size(100%, 100%);
+            height: auto;
+            min-height: 300px;
+            max-height: 400px;
 
-            img {
-
+            .slide-photo {
+                @include square(100%);
+                background-size: cover;
+                background-repeat: no-repeat;
             }
         }
 
