@@ -16,7 +16,7 @@ namespace Mappino.Core.Values {
                     },
 
                     'PUBLISH': {
-                        'SUCCESS':  'fsafsafsa',
+                        'SUCCESS':  'Объявление успешно опубликовано',
                         'ERROR':    'Во время публикации объяления возникла ошибка'
                     },
 

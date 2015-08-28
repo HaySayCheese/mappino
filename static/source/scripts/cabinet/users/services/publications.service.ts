@@ -73,7 +73,12 @@ namespace Mappino.Cabinet.Users {
             var promise: angular.IHttpPromise<any> = this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/publish/`, null);
 
             promise.success(response => {
-
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.PUBLICATION.PUBLISH.SUCCESS)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
             });
 
             promise.error(response => {
