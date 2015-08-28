@@ -4,8 +4,8 @@
         <div class="md-subhead blue-text">Продажа</div>
         <md-divider></md-divider>
         <div layout-padding>
-            <div><b>[[ ::publication.sale_price ]]</b></div>
-            <div ng-show="publication.sale_terms">[[ ::publication.sale_terms ]]</div>
+            <div><b>[[ publication.sale_price ]]</b></div>
+            <div ng-show="publication.sale_terms">[[ publication.sale_terms ]]</div>
         </div>
     </div>
 
@@ -13,8 +13,8 @@
         <div class="md-subhead blue-text">Аренда</div>
         <md-divider></md-divider>
         <div layout-padding>
-            <div><b>[[ ::publication.rent_price ]]</b></div>
-            <div ng-show="publication.rent_terms">[[ ::publication.rent_terms ]]</div>
+            <div><b>[[ publication.rent_price ]]</b></div>
+            <div ng-show="publication.rent_terms">[[ publication.rent_terms ]]</div>
         </div>
     </div>
 
@@ -27,7 +27,7 @@
                     <div>Общая площадь:</div>
                 </div>
                 <div flex="60">
-                    <div>[[ ::publication.area ]]</div>
+                    <div>[[ publication.area ]]</div>
                 </div>
             </div>
         </div>
@@ -36,14 +36,14 @@
     <div class="md-subhead blue-text">Описание</div>
     <md-divider></md-divider>
     <p layout-padding>
-        [[ ::publication.description ]]
+        [[ publication.description ]]
     </p>
 
     <div ng-show="publication.facilities">
         <div class="md-subhead blue-text">Удобства</div>
         <md-divider></md-divider>
         <p layout-padding>
-            [[ ::publication.facilities ]]
+            [[ publication.facilities ]]
         </p>
     </div>
 
@@ -51,7 +51,7 @@
         <div class="md-subhead blue-text">Коммуникации</div>
         <md-divider></md-divider>
         <p layout-padding>
-            [[ ::publication.communications ]]
+            [[ publication.communications ]]
         </p>
     </div>
 
@@ -59,7 +59,7 @@
         <div class="md-subhead blue-text">Дополнительные постройки</div>
         <md-divider></md-divider>
         <p layout-padding>
-            [[ ::publication.buildings ]]
+            [[ publication.buildings ]]
         </p>
     </div>
 

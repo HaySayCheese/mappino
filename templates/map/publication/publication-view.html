@@ -3,8 +3,8 @@
         <header>
             <ul publication-photos-slider rn-carousel rn-carousel-transition="fadeAndSlide" rn-carousel-easing="easeFromTo" rn-carousel-index="publicationPreviewSlideIndex"
                 class="publication-preview-carousel">
-                <li ng-repeat="photo in ::publication.photos">
-                    <div class="slide-photo" ng-style="{ 'background-image': 'url([[ ::photo ]])' }"></div>
+                <li ng-repeat="photo in publication.photos">
+                    <div class="slide-photo" ng-style="{ 'background-image': 'url([[ photo ]])' }"></div>
                 </li>
             </ul>
 
@@ -45,8 +45,8 @@
                 </md-button>
 
                 <div layout="column" layout-padding>
-                    <div class="md-headline">[[ ::publication.title ]]</div>
-                    <div class="md-subhead">[[ ::publication.address ]]</div>
+                    <div class="md-headline">[[ publication.title ]]</div>
+                    <div class="md-subhead">[[ publication.address ]]</div>
                 </div>
 
                 <md-fab-speed-dial class="md-fling publication-menu" md-direction="up">

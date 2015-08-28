@@ -65,10 +65,6 @@ namespace Mappino.Map {
 
             $scope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
                 if (toParams['publication_id'] != 0 && fromParams['publication_id'] != toParams['publication_id']) {
-                    this.$scope.publication = {};
-                    $scope.publicationViewFooterState = 'contacts';
-
-                    $scope.publicationPreviewSlideIndex = 0;
                     this.loadPublicationData();
                 }
             });
@@ -82,6 +78,11 @@ namespace Mappino.Map {
 
 
         private loadPublicationData() {
+            this.$scope.publication = {};
+            this.$scope.publicationViewFooterState = 'contacts';
+
+            this.$scope.publicationPreviewSlideIndex = 0;
+
             this.$rootScope.$broadcast('Mappino.Map.PublicationService.PublicationClosed');
 
             if (this.$state.params['publication_id'] != 0) {

@@ -5,36 +5,36 @@
         <div layout="column" layout-padding>
             <div class="publication-contacts" layout-gt-sm="row" layout-sm="column" layout-padding>
                 <div class="avatar" flex-sm="100" flex-gt-sm="45" layout="column" layout-align="center center">
-                    <img ng-src="[[ ::publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/no-user.png"
+                    <img ng-src="[[ publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/no-user.png"
                          ng-if="publication.contacts.avatar_url" />
                     <img src="{{ static }}build/images/common/no-user.png" ng-if="!publication.contacts.avatar_url" alt="" />
                 </div>
                 <div flex-sm="100" flex-gt-sm="55" layout="column">
                     <div class="md-title grey-text text-darken-2" layout-padding ng-if="publication.contacts.first_name || publication.contacts.last_name">
-                        [[ ::publication.contacts.first_name + '&nbsp;' ]][[ ::publication.contacts.last_name ]]
+                        [[ publication.contacts.first_name + '&nbsp;' ]][[ publication.contacts.last_name ]]
                     </div>
                     <div ng-if="!( publication.contacts.first_name || publication.contacts.last_name )" >Продавец не указал имени.</div>
                     <div layout-padding>
 
                         <div ng-if="publication.contacts.mobile_phone">
                          <div class="md-body-1">Моб. телефон:</div>
-                            <a ng-href="tel:[[ publication.contacts.mobile_phone ]]">[[ ::publication.contacts.mobile_phone ]]</a>
+                            <a ng-href="tel:[[ publication.contacts.mobile_phone ]]">[[ publication.contacts.mobile_phone ]]</a>
                         </div>
                         <div ng-if="publication.contacts.add_mobile_phone">
                           <div class="md-body-1">Доп. моб. телефон:</div>
-                            <a ng-href="tel:[[ publication.contacts.add_mobile_phone ]]">[[ ::publication.contacts.add_mobile_phone ]]</a>
+                            <a ng-href="tel:[[ publication.contacts.add_mobile_phone ]]">[[ publication.contacts.add_mobile_phone ]]</a>
                         </div>
                         <div ng-if="publication.contacts.landline_phone">
-                           <div class="md-body-1">Раб. телефон:</div> [[ ::publication.contacts.landline_phone ]]</div>
+                           <div class="md-body-1">Раб. телефон:</div> [[ publication.contacts.landline_phone ]]</div>
                         <div ng-if="publication.contacts.add_landline_phone">
-                           <div class="md-body-1">Доп. раб. телефон:</div> [[ ::publication.contacts.add_landline_phone ]]</div>
+                           <div class="md-body-1">Доп. раб. телефон:</div> [[ publication.contacts.add_landline_phone ]]</div>
                         <div ng-if="publication.contacts.email">
                            <div class="md-body-1">E-mail:</div>
-                            <a ng-href="mailto:[[ publication.contacts.email ]]">[[ ::publication.contacts.email ]]</a>
+                            <a ng-href="mailto:[[ publication.contacts.email ]]">[[ publication.contacts.email ]]</a>
                         </div>
                         <div ng-if="publication.contacts.skype">
                            <div class="md-body-1">Skype:</div>
-                            <a ng-href="skype:[[ publication.contacts.skype ]]?call">[[ ::publication.contacts.skype ]]</a>
+                            <a ng-href="skype:[[ publication.contacts.skype ]]?call">[[ publication.contacts.skype ]]</a>
                         </div>
                     </div>
                 </div>
@@ -139,7 +139,7 @@
                 <md-input-container flex>
                     <label>Причина жалобы</label>
                     <md-select ng-model="claim.reason_sid">
-                        <md-option ng-repeat="reason in ::CLAIM.REASONS" value="[[ ::reason.id ]]">[[ ::reason.title ]]</md-option>
+                        <md-option ng-repeat="reason in CLAIM.REASONS" value="[[ reason.id ]]">[[ reason.title ]]</md-option>
                     </md-select>
                 </md-input-container>
                 <md-input-container flex ng-show="claim.reason_sid == 0">
