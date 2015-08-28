@@ -110,27 +110,15 @@ namespace Mappino.Cabinet.Users {
 
 
         public recoveryBrief($event, brief: Brief) {
-            var confirm = this.$mdDialog.confirm()
-                .parent(angular.element(document.body))
-                .title(this.TXT.DIALOGS.RECOVERY_PUBLICATION.TITLE)
-                .content(this.TXT.DIALOGS.RECOVERY_PUBLICATION.BODY)
-                .ariaLabel(this.TXT.DIALOGS.RECOVERY_PUBLICATION.ARIA_LABEL)
-                .ok(this.TXT.DIALOGS.RECOVERY_PUBLICATION.OK_BTN)
-                .cancel(this.TXT.DIALOGS.RECOVERY_PUBLICATION.CANCEL_BTN)
-                .targetEvent($event);
-
-
-            this.$mdDialog.show(confirm).then(() => {
-                this.$rootScope.loaders.overlay = true;
-                this.publicationsService.unpublish({ tid: brief.tid, hid: brief.hid })
-                    .success(response => {
-                        this.$rootScope.loaders.overlay = false;
-                        this.$state.go('publication_edit', { id: brief.tid + ':' + brief.hid });
-                    })
-                    .error(response => {
-                        this.$rootScope.loaders.overlay = false;
-                    });
-            });
+            this.$rootScope.loaders.overlay = true;
+            this.publicationsService.unpublish({ tid: brief.tid, hid: brief.hid })
+                .success(response => {
+                    this.$rootScope.loaders.overlay = false;
+                    this.$state.go('publication_edit', { id: brief.tid + ':' + brief.hid });
+                })
+                .error(response => {
+                    this.$rootScope.loaders.overlay = false;
+                });
         }
 
 

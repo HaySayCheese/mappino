@@ -26,23 +26,22 @@ namespace Mappino.Map {
 
 
         public load(publicationIds: any, successCallback?, errorCallback?) {
-            this.$http.get(`/ajax/api/detailed/publication/${publicationIds.tid}:${publicationIds.hid}/`)
-                .then(response => {
-                    if (response.data['code'] === 0) {
-                        this.publication = response.data['data'];
-                        angular.isFunction(successCallback) && successCallback(response.data)
-                    } else {
-                        angular.isFunction(errorCallback) && errorCallback(response.data)
-                    }
-                }, response => {
-                    this.$mdToast.show(
-                        this.$mdToast.simple()
-                            .content(this.TXT.TOASTS.PUBLICATION.LOAD.TITLE)
-                            .position(this.toastOptions.position)
-                            .hideDelay(this.toastOptions.delay)
-                    );
-                    angular.isFunction(errorCallback) && errorCallback(response.data)
-                });
+            var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/detailed/publication/${publicationIds.tid}:${publicationIds.hid}/`);
+
+            promise.success(response => {
+                this.publication = response.data;
+            });
+
+            promise.error(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.PUBLICATION.LOAD.ERROR)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+
+            return promise;
         }
 
 
