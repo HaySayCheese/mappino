@@ -33,7 +33,7 @@ namespace Mappino.Cabinet.Users {
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.TICKETS.CREATE.TITLE)
+                        .content(this.TXT.TOASTS.TICKETS.CREATE.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
@@ -66,7 +66,7 @@ namespace Mappino.Cabinet.Users {
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.TICKETS.LOAD.TITLE)
+                        .content(this.TXT.TOASTS.TICKETS.LOAD.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
@@ -107,7 +107,7 @@ namespace Mappino.Cabinet.Users {
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.TICKETS.LOAD_TICKET_MESSAGES.TITLE)
+                        .content(this.TXT.TOASTS.TICKETS.LOAD_TICKET_MESSAGES.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
@@ -132,7 +132,7 @@ namespace Mappino.Cabinet.Users {
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.TICKETS.SEND_TICKET_MESSAGE.TITLE)
+                        .content(this.TXT.TOASTS.TICKETS.SEND_TICKET_MESSAGE.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );

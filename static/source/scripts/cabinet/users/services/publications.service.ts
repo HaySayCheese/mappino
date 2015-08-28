@@ -39,7 +39,7 @@ namespace Mappino.Cabinet.Users {
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.CREATE.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.CREATE.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
@@ -58,7 +58,7 @@ namespace Mappino.Cabinet.Users {
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.REMOVE.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.REMOVE.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
@@ -72,12 +72,14 @@ namespace Mappino.Cabinet.Users {
         public publish(publicationIds: IPublicationIds): angular.IHttpPromise<any> {
             var promise: angular.IHttpPromise<any> = this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/publish/`, null);
 
-            promise.success(response => {});
+            promise.success(response => {
+
+            });
 
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.PUBLISH.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.PUBLISH.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
@@ -96,7 +98,7 @@ namespace Mappino.Cabinet.Users {
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.UNPUBLISH.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.UNPUBLISH.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
@@ -117,7 +119,7 @@ namespace Mappino.Cabinet.Users {
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.LOAD.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.LOAD.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
@@ -144,7 +146,7 @@ namespace Mappino.Cabinet.Users {
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.UPLOAD_PHOTO.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.UPLOAD_PHOTO.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
@@ -180,7 +182,7 @@ namespace Mappino.Cabinet.Users {
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.REMOVE_PHOTO.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.REMOVE_PHOTO.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
@@ -206,7 +208,7 @@ namespace Mappino.Cabinet.Users {
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.SET_TITLE_PHOTO.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.SET_TITLE_PHOTO.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
@@ -224,7 +226,7 @@ namespace Mappino.Cabinet.Users {
 
             promise.error(response => {
                 this.$mdToast.show(this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.CHECK_FIELD.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.CHECK_FIELD.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
@@ -259,7 +261,7 @@ namespace Mappino.Cabinet.Users {
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.LOAD_BRIEFS.TITLE)
+                        .content(this.TXT.TOASTS.PUBLICATION.LOAD_BRIEFS.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
