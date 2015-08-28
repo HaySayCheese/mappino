@@ -1,7 +1,7 @@
 <div class="publication-view-container" layout="column">
     <div layout="column" ng-show="publicationLoadedSuccess && !loaders.publication">
         <header>
-            <ul rn-carousel rn-carousel-index="publicationPreviewSlideIndex" class="publication-preview-carousel">
+            <ul rn-carousel rn-carousel-transition="fadeAndSlide" rn-carousel-easing="easeFromTo" rn-carousel-index="publicationPreviewSlideIndex" class="publication-preview-carousel">
                 <li ng-repeat="photo in ::publication.photos">
                     <div class="layer">
                         <img ng-src="[[ ::photo ]]" alt=""/>
