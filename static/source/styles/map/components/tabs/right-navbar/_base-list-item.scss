@@ -38,12 +38,10 @@
 }
 
 %_base-list-item-description {
-    position: absolute;
-    bottom: 0;
-
     padding: 10px 20px;
 
     color: #fff;
     font-size: 13px;
+    background-color: rgba(0, 0, 0, .2);
     text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 1px color('grey', 'darken-4');
 }
