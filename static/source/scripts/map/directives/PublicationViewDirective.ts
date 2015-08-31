@@ -28,9 +28,9 @@ namespace Mappino.Map {
                         close($element)
                     } else {
                         if ($stateParams['navbar_right'] == 0) {
-                            open($element, false)
+                            open($element, false);
                         } else {
-                            open($element, true)
+                            open($element, true);
                         }
                     }
                 });
@@ -38,7 +38,7 @@ namespace Mappino.Map {
         };
 
 
-        function open($element, with_navbar_right) {
+        function open($element, with_navbar_right: boolean) {
             if (!$element.hasClass('-opened') || !$element.hasClass('-with-navbar-right')) {
                 if (with_navbar_right && with_navbar_right == true) {
                     $element.removeClass('-closed -opened').addClass('-with-navbar-right');
@@ -49,7 +49,7 @@ namespace Mappino.Map {
             }
         }
 
-        function close($element) {
+        function close($element: angular.IAugmentedJQuery) {
             if (!$element.hasClass('-closed') || !$element.hasClass('-with-navbar-right')) {
                 $element.removeClass('-opened -with-navbar-right').addClass('-closed');
             }

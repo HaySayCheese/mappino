@@ -28,13 +28,14 @@ namespace Mappino.Map {
                         .success(response => {
                             if (response.code == 10) {
                                 window.location.pathname = '/cabinet/';
+                            } else if (response.code == 1) {
+                                this.$scope.loginForm.mobilePhone.$setValidity('invalid', false);
                             } else {
                                 localStorage.setItem('mobile_code', this.$scope.account.mobileCode);
                                 localStorage.setItem('mobile_phone', this.$scope.account.mobilePhone);
 
                                 this.$scope.authState = 'enterSMSCode';
                             }
-
                         })
                         .error(response => {
                             this.$scope.loginForm.mobilePhone.$setValidity('invalid', false);
@@ -72,7 +73,7 @@ namespace Mappino.Map {
 
 
         public returnToEnterPhoneState() {
-            this.$cookies.remove('mcheck');
+            this.$cookies.remove("mcheck");
             this.clearUserData();
             this.resetLoginForm();
             this.$scope.authState = 'enterPhone';
@@ -81,11 +82,7 @@ namespace Mappino.Map {
 
 
         private initWatchers() {
-            this.$scope.$watchCollection('account', () => {
-                if (this.$scope.loginForm.$invalid) {
-                    this.resetLoginForm();
-                }
-            });
+            this.$scope.$watchCollection('account', () => this.resetLoginForm());
         }
 
 
@@ -128,7 +125,6 @@ namespace Mappino.Map {
             }
 
             this.$scope.loginForm.$setPristine();
-            this.$scope.loginForm.$setUntouched();
         }
     }
 }

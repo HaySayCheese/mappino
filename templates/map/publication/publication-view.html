@@ -3,12 +3,12 @@
         <header>
             <ul publication-photos-slider rn-carousel rn-carousel-transition="fadeAndSlide" rn-carousel-easing="easeFromTo" rn-carousel-index="publicationPreviewSlideIndex"
                 class="publication-preview-carousel">
-                <li ng-repeat="photo in ::publication.photos">
-                    <div class="slide-photo" ng-style="{ 'background-image': 'url([[ ::photo ]])' }"></div>
+                <li ng-repeat="photo in publication.photos">
+                    <div class="slide-photo" ng-style="{ 'background-image': 'url([[ photo ]])' }"></div>
                 </li>
             </ul>
 
-            <md-button class="md-icon-button fullscreen-slider-button">
+            <md-button class="md-icon-button fullscreen-slider-button" ng-click="pubCtrl.openFullScreen()">
                 <md-icon class="material-icons md-light md-36 md-dark-shadow">fullscreen</md-icon>
                 <md-tooltip md-direction="right" md-delay="0">
                     Посмотреть все фотографии
@@ -45,8 +45,8 @@
                 </md-button>
 
                 <div layout="column" layout-padding>
-                    <div class="md-headline">[[ ::publication.title ]]</div>
-                    <div class="md-subhead">[[ ::publication.address ]]</div>
+                    <div class="md-headline">[[ publication.title ]]</div>
+                    <div class="md-subhead">[[ publication.address ]]</div>
                 </div>
 
                 <md-fab-speed-dial class="md-fling publication-menu" md-direction="up">

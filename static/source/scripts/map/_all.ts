@@ -39,7 +39,6 @@
 /// <reference path='directives/NavbarLeftDirective.ts' />
 /// <reference path='directives/NavbarLeftSectionScrollDirective.ts' />
 /// <reference path='directives/NavbarRightDirective.ts' />
-/// <reference path='directives/PublicationPhotosSliderDirective.ts' />
 /// <reference path='directives/PublicationViewDirective.ts' />
 /// <reference path='directives/TabBodyCollapsibleDirective.ts' />
 

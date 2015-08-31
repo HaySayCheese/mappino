@@ -202,7 +202,7 @@
                                             </md-input-container>
                                             <md-input-container flex="75">
                                                 <label>Номер телефона</label>
-                                                <input type="text" name="mobilePhone" ng-model="account.mobilePhone" autofocus only-number required>
+                                                <input type="tel" name="mobilePhone" ng-model="account.mobilePhone" autofocus only-number required>
                                                 <div ng-messages="loginForm.mobilePhone.$error"
                                                      ng-show="loginForm.$submitted || loginForm.mobilePhone.$touched">
                                                     <div ng-message="required">Обязательное поле</div>
@@ -236,7 +236,7 @@
                                             </div>
                                         </md-input-container>
                                         <div layout="row">
-                                            <md-button class="md-primary" ng-click="accCtrl.returnToEnterPhoneState()">
+                                            <md-button class="md-primary" type="button" ng-click="accCtrl.returnToEnterPhoneState()">
                                                 Назад
                                             </md-button>
                                             <md-button class="md-raised md-primary" type="submit" flex>

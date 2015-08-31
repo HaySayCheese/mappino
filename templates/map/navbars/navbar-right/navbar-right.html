@@ -34,9 +34,10 @@
                                     </md-button>
                                 </div>
                                 <span flex></span>
-                                <div class="publication-list-item-description" layout="column">
-                                    <div>[[ brief.title ]]</div>
-                                    <div><b>[[ brief.price ]]</b></div>
+                                <div class="publication-list-item-description" layout="row">
+                                    <span>[[ brief.title ]]</span>
+                                    <span flex></span>
+                                    <span>[[ brief.price ]]</span>
                                 </div>
                             </div>
                         </li>
@@ -74,27 +75,34 @@
                             ng-mouseenter="favCtrl.onBriefMouseOver(favorite)"
                             ng-mouseleave="favCtrl.onBriefMouseLeave()">
                             <img ng-src="[[ favorite.thumbnail_url ]]" alt="" />
-                            <div class="favorite-list-item-overlay">
-                                <md-button class="md-icon-button" ng-click="favCtrl.removeFromFavorites(favorite, $event)">
-                                    <md-icon class="material-icons md-light md-dark-shadow pink-text">favorite</md-icon>
-                                    <md-tooltip md-direction="right" md-delay="0">
-                                        Удалить из избранных
-                                    </md-tooltip>
-                                </md-button>
-                                <div class="favorite-list-item-description" layout="column">
-                                    <div>[[ favorite.title ]]</div>
-                                    <div><b>[[ favorite.price ]]</b></div>
+
+                            <div class="favorite-list-item-overlay" layout="column">
+                                <div layout="row">
+                                    <md-button class="md-icon-button" ng-click="favCtrl.removeFromFavorites(favorite, $event)">
+                                        <md-icon class="material-icons md-light md-dark-shadow pink-text">favorite</md-icon>
+                                        <md-tooltip md-direction="right" md-delay="0">
+                                            Удалить из избранных
+                                        </md-tooltip>
+                                    </md-button>
+                                </div>
+                                <span flex></span>
+                                <div class="favorite-list-item-description" layout="row">
+                                    <span>[[ favorite.title ]]</span>
+                                    <span flex></span>
+                                    <span><b>[[ favorite.price ]]</b></span>
                                 </div>
                             </div>
                         </li>
                     </ul>
 
-                    <div class="md-padding center-align" layout="column" layout-align="center center" ng-hide="favorites.length">
-                        <div class="md-subhead"><md-icon class="material-icons md-84 pink-text animated-heart">favorite</md-icon></div>
-                        <div class="md-subhead">Похоже, здесь пусто</div>
-                        <span class="md-body-1">
-                            Пожалуй, стоит добавить сюда несколько интересных обьявлений
-                        </span>
+                    <div class="center-align" layout="column" layout-align="center center" ng-hide="favorites.length">
+                        <div>
+                            <md-icon class="material-icons md-84 pink-text animated-heart">favorite</md-icon>
+                            <div class="md-subhead inset">Похоже, здесь пусто</div>
+                            <div class="md-body-1 inset">
+                                Пожалуй, стоит добавить сюда несколько интересных обьявлений
+                            </div>
+                        </div>
                     </div>
                 </section>
             </md-tab-body>
