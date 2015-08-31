@@ -38,7 +38,7 @@ class LoginManager(object):
 
 
             @staticmethod
-            @json_response_bad_request
+            @json_response
             def invalid_phone_number():
                 return {
                     'code': 1,
