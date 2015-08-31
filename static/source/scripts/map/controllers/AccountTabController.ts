@@ -82,7 +82,7 @@ namespace Mappino.Map {
 
 
         private initWatchers() {
-            this.$scope.$watchCollection('account', () => this.resetLoginForm());
+            this.$scope.$watchCollection('account', (newValue) => this.resetLoginForm());
         }
 
 
@@ -119,9 +119,11 @@ namespace Mappino.Map {
 
         private resetLoginForm() {
             if (this.$scope.authState == 'enterPhone') {
-                this.$scope.loginForm.mobilePhone.$setValidity('invalid', true);
+                if (angular.isDefined(this.$scope.loginForm.mobilePhone))
+                    this.$scope.loginForm.mobilePhone.$setValidity('invalid', true);
             } else {
-                this.$scope.loginForm.smsCode.$setValidity('invalid', true);
+                if (angular.isDefined(this.$scope.loginForm.smsCode))
+                    this.$scope.loginForm.smsCode.$setValidity('invalid', true);
             }
 
             this.$scope.loginForm.$setPristine();
