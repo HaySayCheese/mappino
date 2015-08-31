@@ -49,35 +49,35 @@
             <div layout="row">
                 <div class="brief-status -published" layout="row" layout-align="start center" ng-show="brief.state_sid == 0">
                     <md-icon>done</md-icon>
-                    <span>Опубликовано</span>
+                    <span class="md-body-1">Опубликовано</span>
                     <span flex></span>
                 </div>
                 <div class="brief-status -unpublished" layout="row" layout-align="start center" ng-show="brief.state_sid == 1">
-                    <span>Не опубликовано</span>
+                    <span class="md-body-1">Не опубликовано</span>
                     <span flex></span>
                 </div>
                 <div class="brief-status -removed" layout="row" layout-align="start center" ng-show="brief.state_sid == 2">
-                    <span>Удалено</span>
+                    <span class="md-body-1">Удалено</span>
                     <span flex></span>
                 </div>
                 <div class="brief-status -unpublished" layout="row" layout-align="start center" ng-show="brief.state_sid == 3">
-                    <span>Заблокировано модератором</span>
+                    <span class="md-body-1">Заблокировано модератором</span>
                     <span flex></span>
                 </div>
                 <span flex></span>
-                <span class="blue-grey-text">[[ ::TYPES.REALTY[brief.tid].titles.singular ]]</span>
+                <span class="md-body-1 blue-grey-text">[[ ::TYPES.REALTY[brief.tid].titles.singular ]]</span>
             </div>
 
             <div ng-show="brief.state_sid == 3 && brief.moderator_message">
-                [[ ::brief.moderator_message ]]
+                <p class="md-body-2">[[ ::brief.moderator_message ]]</p>
                 <md-divider></md-divider>
             </div>
 
             <h2 class="md-title" ng-show="brief.title">[[ ::brief.title ]]</h2>
             <h2 class="md-title grey-text text-lighten-1" ng-hide="brief.title">Заголовок не указан</h2>
 
-            <p ng-show="brief.description">[[ ::brief.description ]]</p>
-            <p class="grey-text text-lighten-1" ng-hide="brief.description">Описание не указано</p>
+            <p class="md-body-1" ng-show="brief.description">[[ ::brief.description ]]</p>
+            <p class="md-body-1 grey-text text-lighten-1" ng-hide="brief.description">Описание не указано</p>
         </md-card-content>
         <md-divider></md-divider>
         <div class="md-actions" layout="row" layout-align="end center">
