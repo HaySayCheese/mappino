@@ -37,7 +37,12 @@ namespace Mappino.Map {
             var map_options: google.maps.MapOptions = {
                 center:     new google.maps.LatLng(this.filtersService.filters['map']['l'].split(',')[0], this.filtersService.filters['map']['l'].split(',')[1]),
                 zoom:       parseInt(this.filtersService.filters['map']['z']),
-                //mapTypeId:  google.maps.MapTypeId.ROADMAP,
+                mapTypeId:  google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: true,
+                mapTypeControlOptions: {
+                    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+                    position: google.maps.ControlPosition.LEFT_BOTTOM
+                },
                 disableDefaultUI: true,
                 styles: this.MAP.STYLES
             };

@@ -213,7 +213,7 @@ namespace Mappino.Cabinet.Users {
             this.$timeout(() => {
                 var center = new google.maps.LatLng(this.$scope.publication.head.lat || 50.448159, this.$scope.publication.head.lng || 30.524654);
 
-                var mapOptions = {
+                var mapOptions: google.maps.MapOptions = {
                         center: center,
                         zoom: this.$scope.publication.head.lat ? 17 : 8,
                         mapTypeId: google.maps.MapTypeId['ROADMAP'],
@@ -280,10 +280,13 @@ namespace Mappino.Cabinet.Users {
             var geocoder = new google.maps.Geocoder();
 
             geocoder.geocode({
-                'latLng': latLng
+                location: latLng,
+                region: 'ru'
             }, (results, status) => {
                 if(status == google.maps.GeocoderStatus.OK)
                     angular.element(input).val(results[0].formatted_address);
+
+                console.log(results)
 
                 angular.element(input).trigger("input");
 
