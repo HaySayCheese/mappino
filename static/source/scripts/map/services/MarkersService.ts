@@ -292,7 +292,7 @@ namespace Mappino.Map {
                     price:  responseMarker.price
                 },
                 labelContent:
-                    `<div class='custom-marker md-whiteframe-z2'>${responseMarker.price},&nbsp;${responseMarker.d0}к</div>` +
+                    `<div class='custom-marker md-whiteframe-z2'>${responseMarker.price},&nbsp;${responseMarker.d0}</div>` +
                     `<div class='custom-marker-arrow-down'></div>`,
                 labelClass: `custom-marker-container -${color}`,
                 labelAnchor: new google.maps.Point(markerLabelOffsetX, 37)
@@ -417,7 +417,7 @@ namespace Mappino.Map {
                     price:  marker.price
                 },
                 labelContent:
-                    `<div class='custom-marker md-whiteframe-z2'>${marker.price},&nbsp;${marker.d0}к</div>` +
+                    `<div class='custom-marker md-whiteframe-z2'>${marker.price},&nbsp;${marker.d0}</div>` +
                     `<div class='custom-marker-arrow-down'></div>`,
                 labelClass: `custom-marker-container -pink`,
                 labelAnchor: new google.maps.Point(markerLabelOffsetX, 37)
