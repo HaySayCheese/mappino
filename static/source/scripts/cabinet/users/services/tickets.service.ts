@@ -51,6 +51,7 @@ namespace Mappino.Cabinet.Users {
 
             promise.success(response => {
                 var tickets = response.data;
+                this._tickets = [];
 
                 for (let i = 0, len = tickets.length; i < len; i++) {
                     var ticket = tickets[i];
