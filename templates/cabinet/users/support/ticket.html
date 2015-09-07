@@ -36,13 +36,13 @@
         <md-card-content>
             <div layout="row" layout-align="[[ message.type_sid == '0' ? 'start' : 'end' ]] start" layout-margin ng-repeat="message in ticket.messages">
                 <div class="ticket-message md-whiteframe-z2" layout="row" layout-align="start start">
-                    <img class="message-avatar -user" ng-src="[[ userData.account.avatar_url ]]"
-                         ng-class="{ user: message.type_sid == '0', admin: message.type_sid == '1' }"
+                    <img class="message-avatar" ng-src="[[ userData.account.avatar_url ]]"
+                         ng-class="{ '-user': message.type_sid == '0', '-support': message.type_sid == '1' }"
                          ng-show="userData.account.avatar_url && message.type_sid == 0"
                          on-error-src="{{ static }}build/images/common/no-user.png" />
 
-                    <img class="message-avatar -user" src="{{ static }}build/images/common/no-user.png"
-                         ng-class="{ user: message.type_sid == '0', admin: message.type_sid == '1' }"
+                    <img class="message-avatar" src="{{ static }}build/images/common/no-user.png"
+                         ng-class="{ '-user': message.type_sid == '0', '-support': message.type_sid == '1' }"
                          ng-hide="userData.account.avatar_url && message.type_sid == 0" alt="" />
 
                     <div layout="column" layout-align="space-between start" flex>
