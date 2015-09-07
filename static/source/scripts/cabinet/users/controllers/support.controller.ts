@@ -10,13 +10,19 @@ namespace Mappino.Cabinet.Users {
             '$scope',
             '$rootScope',
             '$state',
-            'TicketsService'
+            '$mdDialog',
+            'TXT',
+            'TicketsService',
+            'BAuthService'
         ];
 
         constructor(private $scope: any,
                     private $rootScope: any,
                     private $state: angular.ui.IStateService,
-                    private ticketsService: TicketsService) {
+                    private $mdDialog: any,
+                    private TXT: any,
+                    private ticketsService: TicketsService,
+                    private bAuthService: Mappino.Core.BAuth.BAuthService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Поддержка mappino';
 
@@ -34,11 +40,25 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public createTicket() {
-            this.ticketsService.create()
-                .success(response => {
-                    this.$state.go('ticket_view', { ticket_id: response.data.id });
-                })
+        public createTicket($event) {
+            if (this.bAuthService.user.account.email) {
+                this.ticketsService.create()
+                    .success(response => {
+                        this.$state.go('ticket_view', { ticket_id: response.data.id });
+                    })
+            } else {
+                var alert = this.$mdDialog.alert()
+                    .parent(angular.element(document.body))
+                    .clickOutsideToClose(false)
+                    .title(this.TXT.DIALOGS.USER_EMAIL_IS_EMPTY.TITLE)
+                    .content(this.TXT.DIALOGS.USER_EMAIL_IS_EMPTY.BODY)
+                    .ariaLabel(this.TXT.DIALOGS.USER_EMAIL_IS_EMPTY.ARIA_LABEL)
+                    .ok(this.TXT.DIALOGS.USER_EMAIL_IS_EMPTY.OK_BTN)
+                    .targetEvent($event);
+
+                    this.$mdDialog.show(alert);
+
+            }
         }
 
 
