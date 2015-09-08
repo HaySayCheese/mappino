@@ -17,7 +17,7 @@
 // ####################
 // Interfaces import
 // ####################
-/// <reference path='interfaces/publication.interface.ts' />
+/// <reference path='interfaces/PublicationInterface.ts' />
 
 
 
@@ -34,10 +34,10 @@
 // ####################
 // Configs import
 // ####################
-/// <reference path='configs/providers.configs.ts' />
-/// <reference path='configs/router.configs.ts' />
-/// <reference path='configs/material.configs.ts' />
-/// <reference path='configs/application.configs.ts' />
+/// <reference path='configs/ProvidersConfigs.ts' />
+/// <reference path='configs/RouterConfigs.ts' />
+/// <reference path='configs/MaterialConfigs.ts' />
+/// <reference path='configs/ApplicationConfigs.ts' />
 
 
 
@@ -46,8 +46,8 @@
 // ####################
 // Services import
 // ####################
-/// <reference path='services/publications.service.ts' />
-/// <reference path='services/tickets.service.ts' />
+/// <reference path='services/PublicationsService.ts' />
+/// <reference path='services/TicketsService.ts' />
 
 
 
@@ -55,7 +55,7 @@
 // ####################
 // Directives import
 // ####################
-/// <reference path='directives/publication-controls.directive.ts' />
+/// <reference path='directives/PublicationControlsDirective.ts' />
 
 
 
@@ -63,17 +63,17 @@
 // ####################
 // Controllers import
 // ####################
-/// <reference path='controllers/cabinet.controller.ts' />
-/// <reference path='controllers/briefs.controller.ts' />
-/// <reference path='controllers/publication.controller.ts' />
-/// <reference path='controllers/settings.controller.ts' />
-/// <reference path='controllers/support.controller.ts' />
-/// <reference path='controllers/ticket.controller.ts' />
+/// <reference path='controllers/CabinetController.ts' />
+/// <reference path='controllers/BriefsController.ts' />
+/// <reference path='controllers/PublicationController.ts' />
+/// <reference path='controllers/SettingsController.ts' />
+/// <reference path='controllers/SupportController.ts' />
+/// <reference path='controllers/TicketController.ts' />
 
 
 
 // ####################
 // App init
 // ####################
-/// <reference path='cabinet.users.module.ts' />
+/// <reference path='CabinetUsersModule.ts' />
 

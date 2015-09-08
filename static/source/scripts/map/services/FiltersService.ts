@@ -302,6 +302,10 @@ namespace Mappino.Map {
 
         private createFormattedObjectForLoadMarkers() {
             this._filters_for_load_markers['zoom'] = this._filters['map']['z'];
+
+            if (!this._filters['map']['v'])
+                return;
+
             this.createFormattedViewportForLoadMarkers();
 
             this.$timeout(() => this.$rootScope.$broadcast('Mappino.Map.FiltersService.CreatedFormattedFilters', this._filters_for_load_markers));
@@ -311,7 +315,7 @@ namespace Mappino.Map {
 
         private createFormattedViewportForLoadMarkers() {
             var filters_map = this._filters['map'];
-
+                                                                                                                                                                                    
             var sneLat = filters_map['v'].getNorthEast().lat().toString(),
                 sneLng = filters_map['v'].getNorthEast().lng().toString(),
                 sswLat = filters_map['v'].getSouthWest().lat().toString(),

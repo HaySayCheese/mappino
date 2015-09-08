@@ -10,6 +10,7 @@
     "del": "*",
     "gulp": "*",
     "gulp-bump": "*",
+    "gulp-imagemin": "^2.3.0",
     "gulp-minify-css": "*",
     "gulp-rename": "*",
     "gulp-sass": "*",
@@ -17,6 +18,7 @@
     "gulp-typescript": "*",
     "gulp-uglify": "*",
     "gulp-watch": "*",
+    "imagemin-pngquant": "^4.2.0",
     "node-sass": "*",
     "run-sequence": "*"
   }

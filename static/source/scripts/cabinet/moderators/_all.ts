@@ -18,10 +18,10 @@
 // ####################
 // Configs import
 // ####################
-/// <reference path='configs/providers.configs.ts' />
-/// <reference path='configs/router.configs.ts' />
-/// <reference path='configs/material.configs.ts' />
-/// <reference path='configs/application.configs.ts' />
+/// <reference path='configs/ProvidersConfigs.ts' />
+/// <reference path='configs/RouterConfigs.ts' />
+/// <reference path='configs/MaterialConfigs.ts' />
+/// <reference path='configs/ApplicationConfigs.ts' />
 
 
 
@@ -30,7 +30,7 @@
 // ####################
 // Services import
 // ####################
-/// <reference path='services/moderating.service.ts' />
+/// <reference path='services/ModeratingService.ts' />
 
 
 
@@ -39,15 +39,15 @@
 // ####################
 // Controllers import
 // ####################
-/// <reference path='controllers/cabinet.controller.ts' />
-/// <reference path='controllers/held.controller.ts' />
-/// <reference path='controllers/settings.controller.ts' />
-/// <reference path='controllers/moderating.controller.ts' />
+/// <reference path='controllers/CabinetController.ts' />
+/// <reference path='controllers/HeldController.ts' />
+/// <reference path='controllers/SettingsController.ts' />
+/// <reference path='controllers/ModeratingController.ts' />
 
 
 
 // ####################
 // App init
 // ####################
-/// <reference path='cabinet.moderators.module.ts' />
+/// <reference path='CabinetModeratorsModule.ts' />
 

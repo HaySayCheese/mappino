@@ -1,14 +1,16 @@
 var gulp        = require('gulp'),
     del         = require('del'),
-    bump        = require('gulp-bump'),
+    rename      = require("gulp-rename"),
 
     runSequence = require('run-sequence'),
-    rename      = require("gulp-rename"),
 
     sass        = require('gulp-sass'),
     minifyCSS   = require('gulp-minify-css'),
 
-    ts          = require('gulp-typescript'),
+    typescript  = require('gulp-typescript'),
+
+    imagemin    = require('gulp-imagemin'),
+    pngquant    = require('imagemin-pngquant'),
 
     uglify      = require('gulp-uglify'),
     sourcemaps  = require('gulp-sourcemaps');
@@ -56,6 +58,11 @@ gulp.task('Copy:Fonts', function() {
 /** Task Copy:Images: Copy images to build folder **/
 gulp.task('Copy:Images', function() {
     gulp.src(PATHS.SOURCE.IMAGES + '/**/*.{png,jpg,jpeg,gif}')
+        .pipe(imagemin({
+            progressive: true,
+            svgoPlugins: [{ removeViewBox: false }],
+            use: [pngquant()]
+        }))
         .pipe(gulp.dest(PATHS.BUILD.IMAGES));
 });
 
@@ -63,6 +70,7 @@ gulp.task('Copy:Libraries', function() {
     gulp.src(PATHS.SOURCE.LIBRARIES + '/**/*.{js,ts}')
         .pipe(sourcemaps.init())
         .pipe(uglify())
+        .pipe(rename({ suffix: '.min' }))
         .pipe(sourcemaps.write('/maps'))
         .pipe(gulp.dest(PATHS.BUILD.LIBRARIES));
 });
@@ -127,13 +135,13 @@ gulp.task('Sass', [
 gulp.task('TypeScript:Landing', function() {
     return gulp.src(PATHS.SOURCE.SCRIPTS + '/landing/_all.ts')
         .pipe(sourcemaps.init())
-        .pipe(ts({
+        .pipe(typescript({
             noImplicitAny: false,
             target: 'ES5',
-            sortOutput: true,
             out: 'landing.js'
         }))
         .pipe(uglify())
+        .pipe(rename({ suffix: '.min' }))
         .pipe(sourcemaps.write('/'))
         .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/landing/'));
 });
@@ -141,13 +149,13 @@ gulp.task('TypeScript:Landing', function() {
 gulp.task('TypeScript:Map', function() {
     return gulp.src(PATHS.SOURCE.SCRIPTS + '/map/_all.ts')
         .pipe(sourcemaps.init())
-        .pipe(ts({
+        .pipe(typescript({
             noImplicitAny: false,
             target: 'ES5',
-            sortOutput: true,
             out: 'map.js'
         }))
         .pipe(uglify())
+        .pipe(rename({ suffix: '.min' }))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/map/'));
 });
@@ -155,13 +163,13 @@ gulp.task('TypeScript:Map', function() {
 gulp.task('TypeScript:Cabinet:Users', function() {
     return gulp.src(PATHS.SOURCE.SCRIPTS + '/cabinet/users/_all.ts')
         .pipe(sourcemaps.init())
-        .pipe(ts({
+        .pipe(typescript({
             noImplicitAny: false,
             target: 'ES5',
-            sortOutput: true,
             out: 'cabinet.users.js'
         }))
         .pipe(uglify())
+        .pipe(rename({ suffix: '.min' }))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/cabinet/users/'));
 });
@@ -169,13 +177,13 @@ gulp.task('TypeScript:Cabinet:Users', function() {
 gulp.task('TypeScript:Cabinet:Moderators', function() {
     return gulp.src(PATHS.SOURCE.SCRIPTS + '/cabinet/moderators/_all.ts')
         .pipe(sourcemaps.init())
-        .pipe(ts({
+        .pipe(typescript({
             noImplicitAny: false,
             target: 'ES5',
-            sortOutput: true,
             out: 'cabinet.moderators.js'
         }))
         .pipe(uglify())
+        .pipe(rename({ suffix: '.min' }))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/cabinet/moderators/'));
 });
@@ -214,14 +222,4 @@ gulp.task('watch', function () {
 /** default task (use 'gulp' to build project) **/
 gulp.task('default', function(callback) {
     runSequence('Clean', ['Copy', 'Sass', 'TypeScript'], callback);
-});
-
-
-gulp.task('bump', function(){
-    gulp.src('./package.json')
-        .pipe(bump({
-            type: 'major',
-            indent: 4
-        }))
-        .pipe(gulp.dest('./'));
 });
