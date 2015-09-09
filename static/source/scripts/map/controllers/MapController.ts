@@ -40,7 +40,6 @@ namespace Mappino.Map {
                 mapTypeId:  google.maps.MapTypeId.ROADMAP,
                 mapTypeControl: true,
                 mapTypeControlOptions: {
-                    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
                     position: google.maps.ControlPosition.LEFT_BOTTOM
                 },
                 disableDefaultUI: true,

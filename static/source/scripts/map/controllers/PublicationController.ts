@@ -15,6 +15,7 @@ namespace Mappino.Map {
             '$rootScope',
             '$timeout',
             '$state',
+            '$mdDialog',
             'PublicationHandler',
             'PublicationService',
             'FavoritesService',
@@ -26,6 +27,7 @@ namespace Mappino.Map {
                     private $rootScope,
                     private $timeout: angular.ITimeoutService,
                     private $state: angular.ui.IStateService,
+                    private $mdDialog: any,
                     private publicationHandler: PublicationHandler,
                     private publicationService: PublicationService,
                     private favoritesService: FavoritesService,
@@ -263,8 +265,23 @@ namespace Mappino.Map {
 
 
 
-        public openFullScreen() {
-
+        public openFullScreen($event) {
+            this.$mdDialog.show({
+                template: `
+                    <md-dialog aria-label="Publication photos">
+                        <md-dialog-content>
+                            <ul publication-photos-slider rn-carousel rn-carousel-transition="fadeAndSlide" rn-carousel-easing="easeFromTo" rn-carousel-index="publicationPreviewSlideIndex"
+                                class="publication-preview-carousel">
+                                <li ng-repeat="photo in publication.photos">
+                                    <div class="slide-photo" ng-style="{ 'background-image': 'url([[ photo ]])' }"></div>
+                                </li>
+                            </ul>
+                        </md-dialog-content>
+                    </md-dialog>`,
+                parent: angular.element(document.body),
+                targetEvent: $event,
+                clickOutsideToClose: true
+            })
         }
 
 

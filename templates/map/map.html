@@ -8,8 +8,6 @@
     <meta name='yandex-verification' content='546bbc19b208a750'/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=true&language=ru&libraries=places"></script>
-
     <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1/angular-material.min.css">
 
@@ -27,7 +25,7 @@
     </script>
 </head>
 <body ng-controller="AppController as appCtrl">
-    <main>
+    <main ng-if="true">
         <div id="map" ng-controller="MapController as mapCtrl"></div>
 
         <navbar-left></navbar-left>
@@ -48,6 +46,8 @@
 
 
     {# Js libs #}
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=true&language=ru&libraries=places"></script>
+
     <script src="//yastatic.net/jquery/2.1.4/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 
@@ -59,7 +59,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.4/angular-messages.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.4/angular-touch.min.js"></script>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1/angular-material.min.js"></script>
 
     {# Local js libs #}
@@ -67,6 +67,6 @@
     <script src="{{ static }}build/libraries/angular-file-upload.min.js"></script>
     <script src="{{ static }}build/libraries/angular-carousel.min.js"></script>
 
-    <script type="text/javascript" src="{{ static }}build/scripts/map/map.min.js"></script>
+    <script src="{{ static }}build/scripts/map/map.min.js"></script>
 </body>
 </html>
