@@ -75,25 +75,25 @@ REDIS_DATABASES = {
 }
 
 
-# CACHES = {
-#     'default': {
-#         # Даний кеш неявно використовується django-compressor для зберігання імен опрацьованих файлів.
-#
-#         'BACKEND': 'redis_cache.RedisCache',
-#         'LOCATION': '{0}:{1}'.format(
-#             REDIS_DATABASES['cache']['HOST'],
-#             REDIS_DATABASES['cache']['PORT']
-#         ),
-#         'OPTIONS': {
-#             'DB': 15,
-#             'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
-#             'CONNECTION_POOL_CLASS_KWARGS': {
-#                 'max_connections': 10,
-#                 'timeout': 20
-#             }
-#         }
-#     }
-# }
+CACHES = {
+    'default': {
+        # Даний кеш неявно використовується django-compressor для зберігання імен опрацьованих файлів.
+
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '{0}:{1}'.format(
+            REDIS_DATABASES['cache']['HOST'],
+            REDIS_DATABASES['cache']['PORT']
+        ),
+        'OPTIONS': {
+            'DB': 15,
+            'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
+            'CONNECTION_POOL_CLASS_KWARGS': {
+                'max_connections': 10,
+                'timeout': 20
+            }
+        }
+    }
+}
 
 
 BROKER_URL = 'redis://{0}:{1}/0'.format(
@@ -116,6 +116,8 @@ CELERY_RESULT_BACKEND = BROKER_URL
 
 
 INSTALLED_APPS = (
+    'compressor',
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -129,6 +131,8 @@ INSTALLED_APPS = (
     'core.markers_index',
     'core.support',
     'core.escaped_fragments_manager',
+
+    # todo: shift this apps into core
     'apps.main.api.correspondence',
 
     'core',
@@ -136,14 +140,18 @@ INSTALLED_APPS = (
 
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.BrokenLinkEmailsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+
+    # todo: enable csrf middleware
+    # 'django.middleware.csrf.CsrfViewMiddleware',
+
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'middlewares.auto_prolong_session.AutoProlongSession', # custom
+    'middlewares.auto_prolong_session.AutoProlongSession',  # custom
 )
+
 
 
 SECRET_KEY = passwords.SECRET_KEY
@@ -184,6 +192,13 @@ SERVE_STATIC_FILES = False
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media/'
+
+
+COMPRESS_ENABLED = True
+COMPRESS_STORAGE = 'compressor.storage.GzipCompressorFileStorage'
+STATICFILES_FINDERS = (
+    'compressor.finders.CompressorFinder',
+)
 
 
 ROOT_URLCONF = 'mappino.urls'

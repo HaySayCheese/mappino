@@ -14,7 +14,9 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1/angular-material.min.css">
 
     {# Custom styles #}
-    <link rel="stylesheet" href="{{ static }}build/styles/cabinet/users/cabinet.users.min.css"/>
+    {% compress css %}
+        <link rel="stylesheet" href="{{ static }}build/styles/cabinet/users/cabinet.users.min.css"/>
+    {% endcompress %}
 </head>
 <body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()">
 
@@ -110,8 +112,10 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1/angular-material.min.js"></script>
 
     {# Local js libs #}
-    <script type="text/javascript" src="{{ static }}build/libraries/angular-file-upload.min.js"></script>
+    {% compress js %}
+        <script type="text/javascript" src="{{ static }}build/libraries/angular-file-upload.min.js"></script>
 
-    <script type="text/javascript" src="{{ static }}build/scripts/cabinet/users/cabinet.users.min.js"></script>
+        <script type="text/javascript" src="{{ static }}build/scripts/cabinet/users/cabinet.users.min.js"></script>
+    {% endcompress %}
 </body>
 </html>

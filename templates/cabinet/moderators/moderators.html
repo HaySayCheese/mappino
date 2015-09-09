@@ -12,7 +12,9 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1/angular-material.min.css">
 
     {# Custom styles #}
-    <link rel="stylesheet" href="{{ static }}build/styles/cabinet/moderators/cabinet.moderators.min.css"/>
+    {% compress css %}
+        <link rel="stylesheet" href="{{ static }}build/styles/cabinet/moderators/cabinet.moderators.min.css"/>
+    {% endcompress %}
 
     <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places"></script>
 </head>
@@ -112,9 +114,11 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.10.1/angular-material.min.js"></script>
 
     {# Local js libs #}
-    <script type="text/javascript" src="{{ static }}build/libraries/angular-file-upload.min.js"></script>
-    <script type="text/javascript" src="{{ static }}build/libraries/angular-carousel.min.js"></script>
+    {% compress js %}
+        <script type="text/javascript" src="{{ static }}build/libraries/angular-file-upload.min.js"></script>
+        <script type="text/javascript" src="{{ static }}build/libraries/angular-carousel.min.js"></script>
 
-    <script type="text/javascript" src="{{ static }}build/scripts/cabinet/moderators/cabinet.moderators.min.js"></script>
+        <script type="text/javascript" src="{{ static }}build/scripts/cabinet/moderators/cabinet.moderators.min.js"></script>
+    {% endcompress %}
 </body>
 </html>
