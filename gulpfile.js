@@ -18,7 +18,6 @@ var gulp        = require('gulp'),
 
 
 
-var COMPILED_CSS_FILE_NAME = 'base.min.css';
 var PATHS = {
     BUILD: {
         PATH:       './static/build/',
@@ -49,9 +48,11 @@ gulp.task('Clean', function(cb) {
 
 
 gulp.task('RevAll', function() {
-    var revAll = new RevAll();
-    return gulp.src([PATHS.BUILD.PATH + '/**/*.*', '!**/*/*.map'])
-        //.pipe(gulp.dest(PATHS.BUILD.PATH + 'cache/'))
+    var revAll = new RevAll({
+        fileNameVersion:    'version.json',
+        fileNameManifest:   'manifest.json'
+    });
+    return gulp.src([PATHS.BUILD.PATH + '**'])
         .pipe(revAll.revision())
         .pipe(gulp.dest(PATHS.BUILD.PATH + 'cache/'))
         .pipe(revAll.versionFile())
@@ -68,7 +69,6 @@ gulp.task('Copy:Fonts', function() {
         .pipe(gulp.dest(PATHS.BUILD.FONTS));
 });
 
-/** Task Copy:Images: Copy images to build folder **/
 gulp.task('Copy:Images', function() {
     gulp.src(PATHS.SOURCE.IMAGES + '/**/*.{png,jpg,jpeg,gif}')
         .pipe(imagemin({
@@ -104,31 +104,31 @@ gulp.task('Sass:Landing', function () {
     return gulp.src(PATHS.SOURCE.STYLES + '/landing/base.scss')
         .pipe(sass())
         .pipe(minifyCSS())
-        .pipe(rename(COMPILED_CSS_FILE_NAME))
+        .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest(PATHS.BUILD.STYLES + '/landing/'));
 });
 
 gulp.task('Sass:Map', function () {
-    return gulp.src(PATHS.SOURCE.STYLES + '/map/base.scss')
+    return gulp.src(PATHS.SOURCE.STYLES + '/map/map.scss')
         .pipe(sass())
         .pipe(minifyCSS())
-        .pipe(rename(COMPILED_CSS_FILE_NAME))
+        .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest(PATHS.BUILD.STYLES + '/map/'));
 });
 
 gulp.task('Sass:Cabinet:Users', function () {
-    return gulp.src(PATHS.SOURCE.STYLES + '/cabinet/users/users.scss')
+    return gulp.src(PATHS.SOURCE.STYLES + '/cabinet/users/cabinet.users.scss')
         .pipe(sass())
         .pipe(minifyCSS())
-        .pipe(rename(COMPILED_CSS_FILE_NAME))
+        .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest(PATHS.BUILD.STYLES + '/cabinet/users/'));
 });
 
 gulp.task('Sass:Cabinet:Moderators', function () {
-    return gulp.src(PATHS.SOURCE.STYLES + '/cabinet/moderators/moderators.scss')
+    return gulp.src(PATHS.SOURCE.STYLES + '/cabinet/moderators/cabinet.moderators.scss')
         .pipe(sass())
         .pipe(minifyCSS())
-        .pipe(rename(COMPILED_CSS_FILE_NAME))
+        .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest(PATHS.BUILD.STYLES + '/cabinet/moderators/'));
 });
 
@@ -232,7 +232,6 @@ gulp.task('watch', function () {
 
 
 
-/** default task (use 'gulp' to build project) **/
 gulp.task('default', function(callback) {
     runSequence('Clean', ['Copy', 'Sass', 'TypeScript'], 'RevAll', callback);
 });
