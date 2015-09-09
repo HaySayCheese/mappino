@@ -46,7 +46,8 @@
                          ng-hide="userData.account.avatar_url && message.type_sid == 0" alt="" />
 
                     <div layout="column" layout-align="space-between start" flex>
-                        <div class="message-text">[[ message.text ]]</div>
+                        <div class="message-text" ng-show="message.type_sid == 0">[[ message.text ]]</div>
+                        <div class="message-text" ng-show="message.type_sid == 1" ng-bind-html="message.text"></div>
                         <div class="message-created grey-text" ng-class="{ '-user': message.type_sid == '0', '-support': message.type_sid != '0' }">
                             [[ message.created | date:'dd.MM.yyyy в HH:mm' ]]
                         </div>
