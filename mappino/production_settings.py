@@ -15,14 +15,14 @@ TEMPLATE_DEBUG = DEBUG
 
 
 ADMINS = (
-    ('Dima Chizhevsky', 'dima@mappino.com'),
+    ('Dima Chizhevsky', 'dima@mappino.com', ),
 )
 MANAGERS = (
-    ('Dima Chizhevsky', 'dima@mappino.com')
+    ('Dima Chizhevsky', 'dima@mappino.com', ),
 )
-SUPPORT_EMAIL =  MANAGERS[0][1]
+SUPPORT_EMAIL = MANAGERS[0][1]
 BILLING_MANAGER_EMAIL = MANAGERS[0][1]
-MODERATORS = MANAGERS[0][1]
+MODERATORS = MANAGERS[0]
 
 
 # Configuration for emails about server error.
