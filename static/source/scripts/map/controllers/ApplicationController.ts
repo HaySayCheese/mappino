@@ -14,8 +14,8 @@ namespace Mappino.Map {
                     private $rootScope) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.loaders = {
-                'publication':  false,
-                'infoBlock':    false
+                publication:    false,
+                infoBlock:      false
             };
         }
     }
