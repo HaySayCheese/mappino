@@ -13,6 +13,7 @@
     "gulp-imagemin": "^2.3.0",
     "gulp-minify-css": "*",
     "gulp-rename": "*",
+    "gulp-rev-all": "^0.8.21",
     "gulp-sass": "*",
     "gulp-sourcemaps": "*",
     "gulp-typescript": "*",
