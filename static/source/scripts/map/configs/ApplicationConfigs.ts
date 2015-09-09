@@ -11,7 +11,6 @@ namespace Mappino.Map {
                 $http.defaults.headers.common['X-CSRFToken'] = $cookies.csrftoken;
 
 
-
                 /** Логіка для відновлення параметрів пошука в урлі після входу на сайт або зміни урла */
                 var locationSearch = $location.search();
                 $rootScope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams) => {
@@ -34,7 +33,7 @@ namespace Mappino.Map {
                 $rootScope.$on('$locationChangeSuccess', () => {
                     if (_.keys(locationSearch).length)
                         $location.search(locationSearch);
-                })
+                });
             }]);
         }
     }

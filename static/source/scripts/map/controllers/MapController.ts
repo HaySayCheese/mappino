@@ -19,16 +19,13 @@ namespace Mappino.Map {
                     private filtersService: FiltersService,
                     private markersService: MarkersService) {
             // ---------------------------------------------------------------------------------------------------------
-            var self = this;
-            google.maps.event.addDomListener(window, "load", () => this.initMap(this));
+            this.initMap(this);
 
-            $scope.$on('Mappino.Map.MarkersService.MarkersIsLoaded', () => {
-                markersService.place(this._map)
-            });
+            $scope.$on('Mappino.Map.MarkersService.MarkersIsLoaded', () => markersService.place(this._map));
 
             $scope.$on('Mappino.Map.PlaceAutocompleteController.PlaceChanged', (event, place) => {
                 this.positioningMap(place);
-            })
+            });
         }
 
 

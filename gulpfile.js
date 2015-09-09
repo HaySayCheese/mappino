@@ -3,7 +3,6 @@ var gulp        = require('gulp'),
     rename      = require("gulp-rename"),
 
     runSequence = require('run-sequence'),
-    RevAll      = require('gulp-rev-all'),
 
     sass        = require('gulp-sass'),
     minifyCSS   = require('gulp-minify-css'),
@@ -45,21 +44,6 @@ gulp.task('Clean', function(cb) {
     del([PATHS.BUILD.PATH + '*'], cb);
 });
 
-
-
-gulp.task('RevAll', function() {
-    var revAll = new RevAll({
-        fileNameVersion:    'version.json',
-        fileNameManifest:   'manifest.json'
-    });
-    return gulp.src([PATHS.BUILD.PATH + '**'])
-        .pipe(revAll.revision())
-        .pipe(gulp.dest(PATHS.BUILD.PATH + 'cache/'))
-        .pipe(revAll.versionFile())
-        .pipe(gulp.dest(PATHS.BUILD.PATH + 'cache/'))
-        .pipe(revAll.manifestFile())
-        .pipe(gulp.dest(PATHS.BUILD.PATH + 'cache/'));
-});
 
 
 
@@ -233,5 +217,5 @@ gulp.task('watch', function () {
 
 
 gulp.task('default', function(callback) {
-    runSequence('Clean', ['Copy', 'Sass', 'TypeScript'], 'RevAll', callback);
+    runSequence('Clean', ['Copy', 'Sass', 'TypeScript'], callback);
 });
