@@ -255,10 +255,10 @@ class ClientNotificationsHandler(object):
             try:
                 if CallRequestChecker.check_call_request(request, publication.owner.mobile_phone, params['phone_number']):
                     SellersSMSDispatcher.send_sms_about_incoming_call_request(
-                        request, publication.owner.mobile_phone, params['phone_number'], params.get('name', ''))
+                            request, publication.owner.mobile_phone, params['phone_number'], params.get('name', ''))
 
-                    cls.__send_notification_about_new_call_request(
-                        request, publication, params['phone_number'], params.get('name', ''))
+                else:
+                    raise ValueError('You are already passed the limit of sms')
 
             except ValueError:
                 return cls.PostResponses.invalid_parameters()
