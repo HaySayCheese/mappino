@@ -8,6 +8,7 @@ urlpatterns = patterns('apps.main.templates.templates',
     url(r'^ajax/template/map/filters/(\w+)/(\d+)/$', 'filters_form_by_tid'),
 
     url(r'^ajax/template/map/publication/view/$', 'publication_view'),
+    url(r'^ajax/template/map/publication/full-slider/$', 'full_slider'),
     url(r'^ajax/template/map/publication/seller-contacts/$', 'seller_contacts'),
     url(r'^ajax/template/map/publication/detailed/(\d+)/$', 'publication_detailed'),
 )
