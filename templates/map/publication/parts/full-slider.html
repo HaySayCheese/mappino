@@ -1,0 +1,11 @@
+<md-dialog ng-controller="PublicationFullSliderController as pubFullSliderCtrl" aria-label="Publication photos">
+    <md-dialog-content>
+        <ul publication-photos-slider rn-carousel rn-carousel-transition="fadeAndSlide" rn-carousel-easing="easeFromTo" rn-carousel-index="publicationFullSliderSlideIndex"
+            class="publication-preview-carousel">
+
+            <li ng-repeat="photo in photos">
+                <div class="slide-photo" ng-style="{ 'background-image': 'url([[ photo ]])' }"></div>
+            </li>
+        </ul>
+    </md-dialog-content>
+</md-dialog>

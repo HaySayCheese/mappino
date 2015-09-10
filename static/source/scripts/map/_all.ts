@@ -79,6 +79,7 @@
 /// <reference path='controllers/BriefsTabController.ts' />
 
 /// <reference path='controllers/PublicationController.ts' />
+/// <reference path='controllers/PublicationFullSliderController.ts' />
 
 /// <reference path='controllers/MapController.ts' />
 /// <reference path='controllers/PlaceAutocompleteController.ts' />

@@ -1,7 +1,7 @@
 
 namespace Mappino.Map {
     export class PublicationService  {
-        private publication: any;
+        private _publication: any;
 
         private toastOptions = {
             position:   'top right',
@@ -29,7 +29,7 @@ namespace Mappino.Map {
             var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/detailed/publication/${publicationIds.tid}:${publicationIds.hid}/`);
 
             promise.success(response => {
-                this.publication = response.data;
+                this._publication = response.data;
             });
 
             promise.error(response => {
@@ -50,7 +50,7 @@ namespace Mappino.Map {
             var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/detailed/publication/${publicationIds.tid}:${publicationIds.hid}/contacts/`);
 
             promise.success(response => {
-                this.publication.contacts = response.data;
+                this._publication.contacts = response.data;
             });
 
             promise.error(response => {
@@ -131,6 +131,12 @@ namespace Mappino.Map {
             });
 
             return promise;
+        }
+
+
+
+        public get publication() {
+            return this._publication;
         }
     }
 }
