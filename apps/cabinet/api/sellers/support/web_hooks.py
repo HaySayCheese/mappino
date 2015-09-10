@@ -1,7 +1,7 @@
 #coding=utf-8
-from django.db import transaction
 import json
 
+from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseBadRequest
 from django.http.response import HttpResponse
@@ -49,22 +49,6 @@ class IncomingAgentResponseHook(View):
                 message = event['msg'].get('html', '')
                 if not message:
                     raise ValueError('Empty message.')
-
-
-                try:
-                    # Пробуємо розпарсити і відформатувати відповідь, припускаючи, що вона надійшла від gmail.
-                    message = message[:message.index('<div class="gmail_quote">')]
-
-                    extra = message[message.index('<div class="gmail_extra">'):]
-                    extra = extra.replace('<br>','')
-                    extra = extra.replace('\r','')
-                    extra = extra.replace('\n','')
-                    extra = extra.replace('<br clear="all">','<br/>')
-                    message = message[:message.index('<div class="gmail_extra">')] + extra
-                except:
-                    # Розпарсити не вдається.
-                    # Отже відповідь надійшла з yandex і її парсити не треба.
-                    pass
 
 
                 # Searching the ticket and adding the agent's response.

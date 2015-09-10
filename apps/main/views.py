@@ -2,6 +2,8 @@
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import etag
+from core.cache.utils import generate_template_etag
 from core.utils.jinja2_integration import templates
 
 
@@ -11,23 +13,7 @@ def homepage(request):
 
 
 @ensure_csrf_cookie
+@etag(generate_template_etag('map/map.html'))
 def map(request):
     template = templates.get_template('map/map.html')
-    return HttpResponse(content=template.render())
-
-
-@ensure_csrf_cookie
-def offer(request):
-    return HttpResponseRedirect('/offer/realtors/')
-
-
-@ensure_csrf_cookie
-def offer_for_realtors(request):
-    template = templates.get_template('main/offer/realtors.html')
-    return HttpResponse(content=template.render())
-
-
-@ensure_csrf_cookie
-def offer_for_agencies(request):
-    template = templates.get_template('main/offer/agencies.html')
     return HttpResponse(content=template.render())

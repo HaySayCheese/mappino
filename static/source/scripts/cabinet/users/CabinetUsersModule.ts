@@ -7,6 +7,7 @@ namespace Mappino.Cabinet.Users {
         'ngMaterial',
         'ngCookies',
         'ngMessages',
+        'ngSanitize',
         'ngFileUpload',
 
         'ui.router',

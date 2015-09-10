@@ -92,7 +92,13 @@ CACHES = {
                 'timeout': 20
             }
         }
-    }
+    },
+    'templates_etags': {
+        # on several nodes templates may differ,
+        # local memory is used instead of redis to avoid etags duplications on several machines.
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'templates_etags',
+    },
 }
 
 
