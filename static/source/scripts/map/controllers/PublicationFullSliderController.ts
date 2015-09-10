@@ -7,7 +7,6 @@ namespace Mappino.Map {
         public static $inject = [
             '$scope',
             '$rootScope',
-
             'PublicationService',
         ];
 
@@ -17,6 +16,7 @@ namespace Mappino.Map {
             private publicationService: PublicationService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.photos = publicationService.publication.photos;
+            console.log(publicationService.publication.photos)
         }
     }
 }

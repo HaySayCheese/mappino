@@ -1,0 +1,41 @@
+.publication-full-slider-dialog {
+    max-height: 95% !important;
+
+    md-dialog-content {
+        @include square(100%);
+        padding: 0 !important;
+        border-radius: 0 !important;
+
+        img {
+            display: block;
+            height: 100%;
+        }
+    }
+
+    @media (max-width: 600px) {
+        @include square(100%);
+
+        max-width: 100% !important;
+        max-height: 100% !important;
+
+        md-dialog-content {
+            img {
+                display: block;
+                @include square(100%);
+            }
+        }
+    }
+}
+
+.publication-full-slider {
+    @include size(1000px, auto);
+
+    li {
+        @include size(1000px, auto);
+    }
+
+    img {
+        display: block;
+        height: 100%;
+    }
+}

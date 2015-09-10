@@ -71,6 +71,7 @@ namespace Mappino.Map {
 
     // publication controllers
     app.controller('PublicationController', PublicationController);
+    app.controller('PublicationFullSliderController', PublicationFullSliderController);
 
 
     app.controller('MapController', MapController);
