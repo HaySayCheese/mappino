@@ -1,17 +1,6 @@
 .publication-full-slider-dialog {
     max-height: 95% !important;
 
-    md-dialog-content {
-        @include square(100%);
-        padding: 0 !important;
-        border-radius: 0 !important;
-
-        img {
-            display: block;
-            height: 100%;
-        }
-    }
-
     @media (max-width: 600px) {
         @include square(100%);
 
@@ -25,17 +14,63 @@
             }
         }
     }
+
+    @media (min-width: 600px) and (max-width: 1000px) {
+        @include size(900px, 95%);
+
+        md-dialog-content {
+            img {
+                display: block;
+                @include square(100%);
+            }
+        }
+    }
+
+    @media (min-width: 1000px) {
+        @include size(1000px, 95%);
+
+        md-dialog-content {
+            img {
+                display: block;
+                @include square(100%);
+            }
+        }
+    }
+
+    md-dialog-content {
+        @include square(100%);
+        padding: 0 !important;
+        border-radius: 0 !important;
+
+        img {
+            display: block;
+            height: 100%;
+        }
+    }
+
+
+    .close-publication-full-slider {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    .slide-prev-button,
+    .slide-next-button {
+        position: absolute;
+        top: 50%;
+        @include translate(0, -50%);
+    }
+
+    .slide-prev-button {
+        left: 0;
+    }
+
+    .slide-next-button {
+        right: 0;
+    }
 }
 
 .publication-full-slider {
-    @include size(1000px, auto);
-
-    li {
-        @include size(1000px, auto);
-    }
-
-    img {
-        display: block;
-        height: 100%;
-    }
+    @include square(100%);
 }

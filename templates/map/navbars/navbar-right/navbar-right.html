@@ -43,18 +43,22 @@
                         </li>
                     </ul>
 
-                    <div class="md-padding center-align" layout="column" layout-align="center center" ng-hide="briefs.length">
-                        <img src="{{ static }}build/images/map/too-high.gif" alt="">
-                        <div class="md-subhead">Слишком высоко!</div>
-                        <span class="md-body-1">
-                            Стоит немного уменьшить масштаб чтобы увидеть предложения
-                        </span>
-                    </div>
-                    <div class="md-padding center-align" layout="column" layout-align="center center" ng-hide="briefs.length">
-                        <div class="md-subhead">Здесь объявлений нет</div>
-                        <span class="md-body-1">
-                            Перейдите на другую часть карты, где есть объявления
-                        </span>
+                    <!--<div class="md-padding center-align" layout="column" layout-align="center center" ng-hide="briefs.length">-->
+                        <!--<div>-->
+                            <!--<img src="{{ static }}build/images/map/too-high.gif" alt="">-->
+                            <!--<div class="md-subhead">Слишком высоко!</div>-->
+                        <!--<span class="md-body-1">-->
+                            <!--Стоит немного уменьшить масштаб чтобы увидеть предложения-->
+                        <!--</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <div class="md-padding center-align" layout="column" layout-align="center center" flex ng-hide="briefs.length">
+                        <div>
+                            <div class="md-subhead">Здесь объявлений нет</div>
+                            <p class="md-body-1">
+                                Перейдите на другую часть карты, где есть объявления
+                            </p>
+                        </div>
                     </div>
                 </section>
             </md-tab-body>
