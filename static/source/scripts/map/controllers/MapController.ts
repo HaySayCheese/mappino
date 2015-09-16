@@ -62,7 +62,7 @@ namespace Mappino.Map {
                     v: this._map.getBounds(),
                     l: this._map.getCenter().toUrlValue()
                 });
-                self.$rootScope.mapZoom = self._map.getZoom();
+                this.$rootScope.mapZoom = this._map.getZoom();
             });
         }
 
