@@ -6,8 +6,7 @@ namespace Mappino.Map {
         private navbarLeftTabsIndex = {
             mappino:    0,
             filters:    1,
-            search:     2,
-            account:    3
+            account:    2
         };
 
         private navbarRightTabsIndex = {

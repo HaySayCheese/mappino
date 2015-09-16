@@ -18,7 +18,7 @@ namespace Mappino.Map {
                     }
                 });
 
-                google.maps.event.addListener(autocomplete, 'place_changed', function() {
+                google.maps.event.addListener(autocomplete, 'place_changed', () => {
                     filtersService.update('map', {
                         c: autocomplete.getPlace().formatted_address
                     });
