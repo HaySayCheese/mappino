@@ -43,12 +43,12 @@ namespace Mappino.Map {
 
                 zoomControl: true,
                 zoomControlOptions: {
-                    position: google.maps.ControlPosition.LEFT_CENTER
+                    position: google.maps.ControlPosition.LEFT_BOTTOM
                 },
 
                 mapTypeControl: true,
                 mapTypeControlOptions: {
-                    position: google.maps.ControlPosition.LEFT_BOTTOM
+                    position: google.maps.ControlPosition.BOTTOM_LEFT
                 },
 
                 styles: this.MAP.STYLES
