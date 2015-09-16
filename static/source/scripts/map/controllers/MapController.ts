@@ -41,6 +41,11 @@ namespace Mappino.Map {
                 mapTypeId:  google.maps.MapTypeId.ROADMAP,
                 disableDefaultUI: true,
 
+                streetViewControl: true,
+                streetViewControlOptions: {
+                    position: google.maps.ControlPosition.LEFT_BOTTOM
+                },
+
                 zoomControl: true,
                 zoomControlOptions: {
                     position: google.maps.ControlPosition.LEFT_BOTTOM
