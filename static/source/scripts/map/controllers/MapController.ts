@@ -9,12 +9,14 @@ namespace Mappino.Map {
 
         public static $inject = [
             '$scope',
+            '$rootScope',
             'MAP',
             'FiltersService',
             'MarkersService'
         ];
 
         constructor(private $scope,
+                    private $rootScope: any,
                     private MAP: any,
                     private filtersService: FiltersService,
                     private markersService: MarkersService) {
@@ -60,6 +62,7 @@ namespace Mappino.Map {
                     v: this._map.getBounds(),
                     l: this._map.getCenter().toUrlValue()
                 });
+                self.$rootScope.mapZoom = self._map.getZoom();
             });
         }
 
