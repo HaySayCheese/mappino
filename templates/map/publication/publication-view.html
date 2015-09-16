@@ -30,14 +30,14 @@
                 <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_right</md-icon>
             </md-button>
 
-            <div class="publication-header-description" layout="row" layout-align="start center" layout-padding>
-                <md-button class="md-icon-button" ng-hide="publication.is_favorite" ng-click="pubCtrl.toggleFavorite($event)">
+            <div class="publication-header-description" layout="row" layout-align="start center">
+                <md-button class="md-icon-button favorite-button" ng-hide="publication.is_favorite" ng-click="pubCtrl.toggleFavorite($event)">
                     <md-icon class="material-icons md-light md-48 md-dark-shadow">favorite_border</md-icon>
                     <md-tooltip md-direction="top" md-delay="0">
                         Добавить в избранные
                     </md-tooltip>
                 </md-button>
-                <md-button class="md-icon-button" ng-show="publication.is_favorite" ng-click="pubCtrl.toggleFavorite($event)">
+                <md-button class="md-icon-button favorite-button" ng-show="publication.is_favorite" ng-click="pubCtrl.toggleFavorite($event)">
                     <md-icon class="material-icons md-light md-48 md-dark-shadow pink-text">favorite</md-icon>
                     <md-tooltip md-direction="top" md-delay="0">
                         Удалить из избранных
