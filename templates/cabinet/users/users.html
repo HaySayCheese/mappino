@@ -11,12 +11,12 @@
     <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.css">
 
-    {# Custom styles #}
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=true&language=ru&libraries=places"></script>
+
+
     {% compress css %}
         <link rel="stylesheet" href="{{ static }}build/styles/cabinet/users/cabinet.users.min.css"/>
     {% endcompress %}
-
-    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=true&language=ru&libraries=places"></script>
 </head>
 <body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()">
     <md-toolbar class="md-whiteframe-z1" ng-cloak>
