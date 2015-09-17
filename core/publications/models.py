@@ -31,6 +31,10 @@ class FlatsRentTerms(LivingRentTermsModel):
         db_table = 'o_flats_rent_terms'
 
 
+class FlatsDailyRentReservations(LivingDailyRentModel):
+    publication = models.ForeignKey(FlatsHeads)
+
+
 class FlatsBodies(BodyModel):
     class Meta:
         db_table = 'o_flats_bodies'
@@ -322,6 +326,10 @@ class HousesRentTerms(LivingRentTermsModel):
         return terms
 
 
+class HousesDailyRentReservations(LivingDailyRentModel):
+    publication = models.ForeignKey(HousesHeads)
+
+
 class HousesBodies(BodyModel):
     class Meta:
         db_table = 'o_houses_bodies'
@@ -602,6 +610,10 @@ class RoomsRentTerms(LivingRentTermsModel):
 
         if self.period_sid == LIVING_RENT_PERIODS.daily() and self.persons_count is None:
             raise EmptyPersonsCount('Persons count is None.')
+
+
+class RoomsDailyRentReservations(LivingDailyRentModel):
+    publication = models.ForeignKey(RoomsHeads)
 
 
 class RoomsBodies(BodyModel):

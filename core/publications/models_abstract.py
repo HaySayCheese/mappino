@@ -691,6 +691,60 @@ class LivingRentTermsModel(AbstractModel):
         return u'{dol} ({uah}, {eur})'.format(dol=dol, uah=uah, eur=eur)
 
 
+class LivingDailyRentModel(AbstractModel):
+    class AlreadyBooked(ValueError): pass
+
+    # fields
+    publication = None # override, FK to real publications model
+
+    date_enter = models.DateField(db_index=True)
+    date_leave = models.DateField(db_index=True)
+    client_name = models.TextField(null=True)
+
+
+    class M(models.Manager):
+        def make_reservation(self, publication, date_enter, date_leave, client_name=None):
+            """
+            Checks if range date_date_enter..date_date_leave do not intersects with already existing ranges.
+            If so - LivingDailyRentModel.AlreadyBooked will be thrown.
+
+            :return:
+                record with newly added reservation.
+            """
+
+            if self.intersects_with_existing(publication, date_enter):
+                raise LivingDailyRentModel.AlreadyBooked(
+                    'It seems that this place is already booked for this days.')
+
+            record = self.create(
+                publication=publication,
+                date_enter=date_enter,
+                date_leave=date_leave,
+                client_name=client_name
+            )
+
+            signals.DailyRentSignals.booked.send(
+                record, tid=record.tid, publciation_id=publication.id, date_enter=date_enter, date_leave=date_leave)
+
+            return record
+
+
+        def intersects_with_existing(self, publication, date_enter, exclude_last_day=False):
+            """
+            :returns: True if date_leave intersects with already existing range.
+            :param exclude_last_day:
+                if True - this method will not consider last day of the ranges.
+                It may be useful, because last day is always available for rent.
+
+                if False - the last day will be considered.
+            """
+
+            if exclude_last_day:
+                return self.filter(publciation=publication, date_leave__gt=date_enter)
+            else:
+                return self.filter(publciation=publication, date_leave__gte=date_enter)
+
+
 class CommercialRentTermsModel(AbstractModel):
     class Meta:
         abstract = True
