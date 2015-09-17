@@ -4,7 +4,7 @@ from django.conf.urls import patterns, url, include
 
 urlpatterns = patterns('apps.main.views',
     # flatpages
-    url(r'^$', 'homepage'),
+    url(r'^$', 'landing'),
     url(r'^map/$', 'map'),
 
     # templates

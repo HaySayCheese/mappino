@@ -7,6 +7,7 @@ namespace Mappino.Core {
         'Mappino.Core.Constants',
         'Mappino.Core.Directives',
 
-        'Mappino.Core.bAuth'
+        'Mappino.Core.bAuth',
+        'Mappino.Core.RentCalendar'
     ]);
 }
