@@ -32,7 +32,7 @@ class FlatsRentTerms(LivingRentTermsModel):
 
 
 class FlatsDailyRentReservations(LivingDailyRentModel):
-    publication = models.ForeignKey(FlatsHeads)
+    publication = models.ForeignKey('FlatsHeads')
 
 
 class FlatsBodies(BodyModel):
@@ -327,7 +327,7 @@ class HousesRentTerms(LivingRentTermsModel):
 
 
 class HousesDailyRentReservations(LivingDailyRentModel):
-    publication = models.ForeignKey(HousesHeads)
+    publication = models.ForeignKey('HousesHeads')
 
 
 class HousesBodies(BodyModel):
@@ -613,7 +613,7 @@ class RoomsRentTerms(LivingRentTermsModel):
 
 
 class RoomsDailyRentReservations(LivingDailyRentModel):
-    publication = models.ForeignKey(RoomsHeads)
+    publication = models.ForeignKey('RoomsHeads')
 
 
 class RoomsBodies(BodyModel):
