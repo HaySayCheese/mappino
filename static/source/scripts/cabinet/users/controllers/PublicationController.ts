@@ -44,7 +44,8 @@ namespace Mappino.Cabinet.Users {
             this.publicationIds.hid = $state.params['id'].split(':')[1];
 
             if ($state.is('publication_view')) {
-                $scope.publicationTemplateUrl = '/ajax/template/cabinet/publications/published/' + this.publicationIds.tid + '/';
+                $scope.publicationTemplateUrl       = '/ajax/template/cabinet/publications/published/';
+                $scope.publicationPartTemplateUrl   = `/ajax/template/map/publication/detailed/${this.publicationIds.tid}/`;
             } else {
                 $scope.publicationTemplateUrl = '/ajax/template/cabinet/publications/unpublished/' + this.publicationIds.tid + '/';
                 $scope.tempPublicationPhotos = this.tempPublicationPhotos;

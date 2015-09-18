@@ -46,7 +46,7 @@
                     position: absolute;
                     top: 50%;
                     left: 50%;
-                    @include transform(translate(-50%, -50%) scale(1) !important)
+                    @include transform(translate(-50%, -50%) scale(0.8) !important)
                 }
             }
         }
@@ -65,11 +65,57 @@
 
 
 
-    .publication-preview {
-        @media screen and (max-width: 1300px) {
-            md-card {
-                width: 100% !important;
+    .publication-preview-container {
+        header {
+            position: relative;
+        }
+
+        .publication-preview-carousel {
+            @include size(100%, 100%);
+            height: auto;
+            min-height: 300px;
+            max-height: 400px;
+
+            .slide-photo {
+                @include square(100%);
+                background-size: cover;
+                background-repeat: no-repeat;
             }
         }
+
+        .publication-header-description {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+
+            color: #fff;
+            background-color: rgba(0, 0, 0, .2);
+            text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 1px color('grey', 'darken-4');
+        }
+
+        .fullscreen-slider-button {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .slide-prev-button,
+        .slide-next-button {
+            position: absolute;
+            top: 50%;
+            @include translate(0, -50%);
+        }
+
+        .slide-prev-button {
+            left: 0;
+        }
+
+        .slide-next-button {
+            right: 0;
+        }
     }
+
+
+
 }

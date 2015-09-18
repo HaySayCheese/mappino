@@ -4,8 +4,10 @@ namespace Mappino.Cabinet.Users {
     'use strict';
 
     var app: angular.IModule = angular.module('mappino.cabinet.users', [
+        'ngAnimate',
         'ngMaterial',
         'ngCookies',
+        'ngResource',
         'ngMessages',
         'ngSanitize',
         'ngFileUpload',
@@ -13,6 +15,8 @@ namespace Mappino.Cabinet.Users {
         'ui.router',
 
         'Mappino.Core',
+
+        'angular-carousel',
     ]);
 
 
