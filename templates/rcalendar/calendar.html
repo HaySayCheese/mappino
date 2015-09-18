@@ -1,0 +1,78 @@
+<div>
+    <div layout="row">
+        <div layout="column">
+            <md-button type="button" class="md-icon-button" ng-click="move(-1)">
+                <md-icon>chevron_left</md-icon>
+            </md-button>
+        </div>
+        <div layout="column" flex layout-align="center center">
+            <strong>[[ selectedDate.label ]] [[title]]</strong>
+        </div>
+        <div layout="column">
+            <md-button type="button" class="md-icon-button" ng-click="move(1)">
+                <md-icon>chevron_right</md-icon>
+            </md-button>
+        </div>
+    </div>
+
+
+
+    <table>
+        <thead>
+        <tr>
+            <th ng-show="showWeeks">#</th>
+            <th ng-repeat="label in labels track by $index">
+                <small>[[label]]</small>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="row in rows track by $index">
+            <td ng-show="showWeeks">
+                <small><em>[[ weekNumbers[$index] ]]</em></small>
+            </td>
+            <td ng-repeat="dt in row track by dt.date">
+
+                <md-button class="md-fab md-mini -transparent-bg"
+                           ng-class="{
+                               '-event-secondary': dt.secondary&&dt.hasEvent,
+                               '-muted': dt.secondary,
+                               '-selected': dt.selected,
+                               '-has-event':!dt.secondary&&dt.hasEvent&&!dt.selected,
+                               '-current': dt.current&&!dt.selected&&!dt.hasEvent,
+                               '-event-on-current-date': dt.current&&dt.hasEvent
+                            }"
+                           ng-click="select(dt.date)">
+                    [[dt.label]]
+                    <md-tooltip ng-if="dt.current && !dt.hasEvent" md-direction="top" md-delay="0">
+                        сегодня [[dt.label]]
+                    </md-tooltip>
+                    <md-tooltip ng-if="dt.hasEvent" md-direction="top" md-delay="0">
+                        Lorem ipsum dolor sit amet.
+                    </md-tooltip>
+                </md-button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+
+
+<!--<div ng-if="showEventDetail">-->
+<!--<div >-->
+<!--<table>-->
+<!--<tr ng-repeat="event in selectedDate.events" ng-if="selectedDate.events">-->
+<!--<td ng-if="!event.allDay">[[event.startTime|date: 'HH:mm']] - [[event.endTime|date: 'HH:mm']]-->
+<!--</td>-->
+<!--<td ng-if="event.allDay">All day</td>-->
+<!--<td class="event-detail" ng-click="eventSelected({event:event})">[[event.title]]</td>-->
+<!--</tr>-->
+<!--<tr ng-if="!selectedDate.events"><td>No Events</td></tr>-->
+<!--</table>-->
+<!--</div>-->
+<!--</div>-->

@@ -1,0 +1,35 @@
+.-transparent-bg {
+    color: grey !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+.-has-event {
+    color: #fff !important;
+    background-color: #f44336 !important;
+    box-shadow: none !important;
+}
+.-event-on-current-date {
+    color: #c5cae9 !important;
+    background-color: #f44336 !important;
+    box-shadow: none !important;
+}
+.-muted {
+    color: #cccccc !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+.-event-secondary {
+    color: #fff !important;
+    background-color: #ef9a9a !important;
+    box-shadow: none !important;
+}
+.-current {
+    color: #3f51b5 !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+.-selected {
+    color: #fff !important;
+    background-color: #d500f9 !important;
+    box-shadow: none !important;
+}
