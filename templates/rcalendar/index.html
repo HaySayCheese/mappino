@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html ng-app="calendarDemoApp">
+<head lang="ru">
+    <meta charset="UTF-8">
+    <meta name="description" content="AngularJS Responsive Calendar Demo">
+    <title>AngularJS Responsive Calendar Demo</title>
+
+    <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.css">
+    {% compress css %}
+    <link rel="stylesheet" href="{{ static }}source/styles/rcalendar/calendar.css"/>
+    {% endcompress %}
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular.min.js"></script>
+    {% compress js %}
+    <script src="{{ static }}build/libraries/rcalendar/calendar.min.js"></script>
+    <script src="{{ static }}build/libraries/rcalendar/calendarDemoCtrl.min.js"></script>
+    {% endcompress %}
+    <script src="https://code.angularjs.org/1.4.5/i18n/angular-locale_ru-ru.js"></script>
+</head>
+<body>
+{# Js libs #}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-resource.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-animate.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-aria.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-messages.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-touch.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.js"></script>
+
+
+<md-content>
+    <section layout="row" layout-align="center center" layout-wrap>
+        <div  ng-controller="CalendarDemoCtrl" ng-init="loadEvents()">
+            <div layout="row"  layout-align="center center">
+                <md-button type="button" class="md-raised" ng-disabled="isToday()"
+                           ng-click="today()">сегодня
+                </md-button>
+            </div>
+            <section layout="row" layout-align="center center">
+                <div>
+                    <calendar ng-model="currentDate" calendar-mode="mode" event-source="eventSource"
+                              range-changed="reloadSource(startTime, endTime)"
+                              event-selected="onEventSelected(event)">
+                    </calendar>
+                </div>
+            </section>
+        </div>
+    </section>
+</md-content>
+
+
+</body>
+</html>
