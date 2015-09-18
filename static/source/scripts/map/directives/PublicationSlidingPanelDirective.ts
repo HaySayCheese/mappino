@@ -1,11 +1,10 @@
 namespace Mappino.Map {
-    export function PublicationViewDirective($rootScope, $stateParams): angular.IDirective {
+    export function PublicationSlidingPanelDirective($rootScope, $stateParams): angular.IDirective {
 
         return {
             restrict: 'E',
             controller: PublicationController,
             controllerAs: 'pubCtrl',
-            templateUrl: '/ajax/template/map/publication/view/',
 
             link: function(scope, element, attrs, modelCtrl) {
                 var $element = angular.element(element);
@@ -56,5 +55,5 @@ namespace Mappino.Map {
         }
     }
 
-    PublicationViewDirective.$inject = ['$rootScope', '$stateParams'];
+    PublicationSlidingPanel.$inject = ['$rootScope', '$stateParams'];
 }

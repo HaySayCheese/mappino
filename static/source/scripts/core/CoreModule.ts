@@ -9,5 +9,6 @@ namespace Mappino.Core {
 
         'Mappino.Core.bAuth',
         //'Mappino.Core.RentCalendar'
+        'Mappino.Core.PublicationPreview'
     ]);
 }

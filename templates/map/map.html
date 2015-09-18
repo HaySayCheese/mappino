@@ -38,7 +38,11 @@
 
         <div ui-view></div>
 
-        <publication-view class="-closed"></publication-view>
+
+        <publication-sliding-panel class="-closed">
+            <pulication-preview></pulication-preview>
+        </publication-sliding-panel>
+
 
         <div class="map-info-block md-padding md-whiteframe-z2" ng-show="loaders.infoBlock" ng-cloak>
             Сейчас вы находитесь на странице избранных объявлений

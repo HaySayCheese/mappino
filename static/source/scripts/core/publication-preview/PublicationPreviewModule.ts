@@ -7,7 +7,9 @@ namespace Mappino.Core.PublicationPreview {
 
     publicationPreviewModule.directive('publicationPreview', PublicationPreviewDirective);
     publicationPreviewModule.directive('publicationPreviewHeader', PublicationPreviewHeaderDirective);
+    publicationPreviewModule.directive('publicationPreviewBody', PublicationPreviewBodyDirective);
     publicationPreviewModule.directive('publicationPreviewContacts', PublicationPreviewContactsDirective);
+    publicationPreviewModule.directive('publicationPreviewError', PublicationPreviewErrorDirective);
 
     publicationPreviewModule.controller('PublicationPreviewController', PublicationPreviewController);
 }
