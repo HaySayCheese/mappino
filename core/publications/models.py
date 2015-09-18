@@ -288,6 +288,7 @@ class FlatsHeads(AbstractHeadModel):
     tid = OBJECTS_TYPES.flat()
     photos_model = FlatsPhotos
 
+    # overridden fields
     body = models.ForeignKey(FlatsBodies)
     sale_terms = models.OneToOneField(FlatsSaleTerms)
     rent_terms = models.OneToOneField(FlatsRentTerms)
@@ -566,6 +567,7 @@ class HousesHeads(AbstractHeadModel):
     tid = OBJECTS_TYPES.house()
     photos_model = HousesPhotos
 
+    # overridden fields
     body = models.ForeignKey(HousesBodies)
     sale_terms = models.OneToOneField(HousesSaleTerms)
     rent_terms = models.OneToOneField(HousesRentTerms)
@@ -761,6 +763,7 @@ class RoomsHeads(AbstractHeadModel):
     tid = OBJECTS_TYPES.room()
     photos_model = RoomsPhotos
 
+    # overridden fields
     body = models.ForeignKey(RoomsBodies)
     sale_terms = models.OneToOneField(RoomsSaleTerms)
     rent_terms = models.OneToOneField(RoomsRentTerms)

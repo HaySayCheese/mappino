@@ -1,8 +1,7 @@
 #coding=utf-8
 from django.conf.urls import patterns, url
 
-from apps.cabinet.api.sellers.publications.ajax import Publications, Publication, Briefs
-
+from apps.cabinet.api.sellers.publications.ajax import Publications, Publication, Briefs, DailyRent
 
 urlpatterns = patterns('',
     # list
@@ -17,6 +16,9 @@ urlpatterns = patterns('',
         url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/photos/$', Publication.UploadPhoto.as_view()),
         url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/(\w+)/$', Publication.Photos.as_view()),
         url(r'^ajax/api/cabinet/publications/(\d+:\w+)/photos/(\w+)/title/$', Publication.TitlePhoto.as_view()),
+
+        # daily rent
+        url(r'^ajax/api/cabinet/publications/(\d+):(\w+)/daily-rent-reservations/$', DailyRent.Reservations.as_view()),
 
 
     # briefs

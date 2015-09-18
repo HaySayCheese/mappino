@@ -2,6 +2,7 @@
 import math
 
 from django.conf import settings
+from django.contrib.postgres.fields.array import ArrayField
 from django.db import models, connections
 
 from djorm_pgarray.fields import BigIntegerArrayField
@@ -164,6 +165,11 @@ class FlatsRentIndex(AbstractBaseIndex):
     gas = models.BooleanField(db_index=True)
     electricity = models.BooleanField(db_index=True)
     heating_type_sid = models.PositiveSmallIntegerField(db_index=True)
+
+    # WARN: index for this field is added into migration by RunSQL.
+    # django does not support indexing in array fields.
+    days_booked = ArrayField(
+        base_field=models.PositiveIntegerField(), null=False, default='{}') # note: db_index is not useful for querying.
 
 
     class Meta:
@@ -410,6 +416,12 @@ class HousesRentIndex(AbstractBaseIndex):
     heating_type_sid = models.PositiveSmallIntegerField(db_index=True)
 
 
+    # WARN: index for this field is added into migration by RunSQL.
+    # django does not support indexing in array fields.
+    days_booked = ArrayField(
+        base_field=models.PositiveIntegerField(), null=False, default='{}') # note: db_index is not useful for querying.
+
+
     class Meta:
         db_table = 'index_houses_rent'
 
@@ -646,6 +658,12 @@ class RoomsRentIndex(AbstractBaseIndex):
     cold_water = models.BooleanField(db_index=True)
     gas = models.BooleanField(db_index=True)
     electricity = models.BooleanField(db_index=True)
+
+
+    # WARN: index for this field is added into migration by RunSQL.
+    # django does not support indexing in array fields.
+    days_booked = ArrayField(
+        base_field=models.PositiveIntegerField(), null=False, default='{}') # note: db_index is not useful for querying.
 
 
     class Meta:
