@@ -25,14 +25,6 @@ def held_publications(request):
 
 @ensure_csrf_cookie
 @moderator_required_or_forbidden
-@etag(generate_template_etag('cabinet/moderators/claims/claims.html'))
-@render_jinja2_template
-def claims(request):
-    return 'cabinet/moderators/claims/claims.html'
-
-
-@ensure_csrf_cookie
-@moderator_required_or_forbidden
 @etag(generate_template_etag('cabinet/moderators/settings/settings.html'))
 @render_jinja2_template
 def settings(request):

@@ -6,7 +6,8 @@ namespace Mappino.Core.BAuth {
 
     var bAuth: angular.IModule = angular.module('Mappino.Core.bAuth', [
         'ngCookies',
-        'ngMaterial'
+        'ngMaterial',
+        'ngFileUpload'
     ]);
 
     bAuth.service('BAuthService', BAuthService);

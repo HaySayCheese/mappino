@@ -59,7 +59,7 @@
                             <div class="publication-photo" layout="column" layout-align="center center" ng-class="{ '-main': photo.is_title }">
                                 <img ng-src="[[ photo.thumbnail_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png" />
 
-                                <md-progress-circular md-mode="indeterminate" ng-show="publicationPhotoLoader[photo.hash_id]"></md-progress-circular>
+                                <md-progress-circular md-mode="indeterminate" md-diameter="50px" ng-show="publicationPhotoLoader[photo.hash_id]"></md-progress-circular>
 
                                 <md-fab-speed-dial class="md-fling" md-direction="left" ng-hide="publicationPhotoLoader[photo.hash_id]">
                                     <md-fab-trigger>

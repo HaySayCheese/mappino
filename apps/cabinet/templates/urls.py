@@ -34,10 +34,6 @@ urlpatterns += patterns('apps.cabinet.templates.moderators',
     url(r'^ajax/template/cabinet/moderators/publication/$', 'publication'),
 
 
-    # claims
-    url(r'^ajax/template/cabinet/moderators/claims/$', 'claims'),
-
-
     # settings
     url(r'^ajax/template/cabinet/moderators/settings/$', 'settings'),
 
