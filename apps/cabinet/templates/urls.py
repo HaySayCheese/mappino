@@ -16,7 +16,7 @@ urlpatterns = patterns('apps.cabinet.templates.users',
 
 
     # published publications forms
-    # url(r'^ajax/template/cabinet/publications/published/$', ''), # todo: fix me
+    url(r'^ajax/template/cabinet/publications/published/$', 'publications_published_form'),
 
 
     # settings

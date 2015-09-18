@@ -44,6 +44,14 @@ def publications_unpublished_form(request, tid):
 
 @ensure_csrf_cookie
 @login_required_or_forbidden
+@etag(generate_template_etag('cabinet/users/publications/published/published.html'))
+@render_jinja2_template
+def publications_published_form(request):
+    return 'cabinet/users/publications/published/published.html'
+
+
+@ensure_csrf_cookie
+@login_required_or_forbidden
 @etag(generate_template_etag('cabinet/users/publications/unpublished/parts/unpublished-footer.html'))
 @render_jinja2_template
 def publications_unpublished_footer(request):
