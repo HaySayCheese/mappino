@@ -1,0 +1,33 @@
+.header-media {
+    @include size(100%, 500px);
+    min-height: 400px;
+    max-height: 1080px;
+
+    position: relative;
+
+    overflow: hidden;
+    color: #fff;
+
+    img {
+        width: 100%;
+    }
+
+    .text-shadow {
+        text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 1px color('grey', 'darken-4');
+    }
+
+    .header-media-overlay {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, .3);
+    }
+
+
+    .header-search {
+        background-color: #fff;
+        border-radius: 3px;
+    }
+}

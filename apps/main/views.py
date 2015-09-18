@@ -8,8 +8,10 @@ from core.utils.jinja2_integration import templates
 
 
 @ensure_csrf_cookie
-def homepage(request):
-    return HttpResponseRedirect('/map/')
+@etag(generate_template_etag('landing/landing.html'))
+def landing(request):
+    template = templates.get_template('landing/landing.html')
+    return HttpResponse(content=template.render())
 
 
 @ensure_csrf_cookie

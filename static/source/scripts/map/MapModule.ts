@@ -51,6 +51,7 @@ namespace Mappino.Map {
     app.directive('googlePlaceAutocomplete', GooglePlaceAutocompleteDirective);
     app.directive('navbarLeft', NavbarLeftDirective);
     app.directive('navbarRight', NavbarRightDirective);
+    app.directive('publicationContacts', PublicationContactsDirective);
     app.directive('publicationView', PublicationViewDirective);
     app.directive('tabSectionCollapsible', TabBodyCollapsibleDirective);
     app.directive('navbarLeftSectionScroll', NavbarLeftSectionScrollDirective);
@@ -71,6 +72,7 @@ namespace Mappino.Map {
 
     // publication controllers
     app.controller('PublicationController', PublicationController);
+    app.controller('PublicationFullSliderController', PublicationFullSliderController);
 
 
     app.controller('MapController', MapController);

@@ -9,17 +9,19 @@ namespace Mappino.Map {
 
         public static $inject = [
             '$scope',
+            '$rootScope',
             'MAP',
             'FiltersService',
             'MarkersService'
         ];
 
         constructor(private $scope,
+                    private $rootScope: any,
                     private MAP: any,
                     private filtersService: FiltersService,
                     private markersService: MarkersService) {
             // ---------------------------------------------------------------------------------------------------------
-            this.initMap(this);
+            this.initMap();
 
             $scope.$on('Mappino.Map.MarkersService.MarkersIsLoaded', () => markersService.place(this._map));
 
@@ -30,27 +32,42 @@ namespace Mappino.Map {
 
 
 
-        private initMap(self) {
-            var map_options: google.maps.MapOptions = {
-                center:     new google.maps.LatLng(this.filtersService.filters['map']['l'].split(',')[0], this.filtersService.filters['map']['l'].split(',')[1]),
-                zoom:       parseInt(this.filtersService.filters['map']['z']),
+        private initMap() {
+            var mapFilters = this.filtersService.filters['map'];
+
+            var mapOptions: google.maps.MapOptions = {
+                center:     new google.maps.LatLng(mapFilters['l'].split(',')[0], mapFilters['l'].split(',')[1]),
+                zoom:       parseInt(mapFilters['z']),
                 mapTypeId:  google.maps.MapTypeId.ROADMAP,
-                mapTypeControl: true,
-                mapTypeControlOptions: {
+                disableDefaultUI: true,
+
+                streetViewControl: true,
+                streetViewControlOptions: {
                     position: google.maps.ControlPosition.LEFT_BOTTOM
                 },
-                disableDefaultUI: true,
+
+                zoomControl: true,
+                zoomControlOptions: {
+                    position: google.maps.ControlPosition.LEFT_BOTTOM
+                },
+
+                mapTypeControl: true,
+                mapTypeControlOptions: {
+                    position: google.maps.ControlPosition.BOTTOM_LEFT
+                },
+
                 styles: this.MAP.STYLES
             };
 
-            self._map = new google.maps.Map(document.getElementById("map"), map_options);
+            this._map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
-            google.maps.event.addListener(self._map, 'idle', function() {
-                self.filtersService.update('map', {
-                    z: self._map.getZoom(),
-                    v: self._map.getBounds(),
-                    l: self._map.getCenter().toUrlValue()
+            google.maps.event.addListener(this._map, 'idle', () => {
+                this.filtersService.update('map', {
+                    z: this._map.getZoom(),
+                    v: this._map.getBounds(),
+                    l: this._map.getCenter().toUrlValue()
                 });
+                this.$rootScope.mapZoom = this._map.getZoom();
             });
         }
 

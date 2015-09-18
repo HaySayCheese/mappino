@@ -1,7 +1,4 @@
-/// <reference path='../_references.ts' />
-
-
-namespace pages.home {
+namespace Mappino.Landing {
     'use strict';
 
     export class ApplicationConfigs {

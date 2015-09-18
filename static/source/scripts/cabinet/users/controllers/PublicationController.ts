@@ -115,8 +115,10 @@ namespace Mappino.Cabinet.Users {
                     inputElement    = angular.element("textarea.ng-invalid, input.ng-invalid")[0];
 
                 if (checkboxElement) {
+                    //noinspection TypeScriptUnresolvedFunction
                     checkboxElement.parentNode.scrollIntoView(true);
                 } else {
+                    //noinspection TypeScriptUnresolvedFunction
                     inputElement.parentNode.scrollIntoView(true);
                     inputElement.focus();
                 }
@@ -217,12 +219,21 @@ namespace Mappino.Cabinet.Users {
                         center: center,
                         zoom: this.$scope.publication.head.lat ? 17 : 8,
                         mapTypeId: google.maps.MapTypeId['ROADMAP'],
-                        mapTypeControl: false,
-                        streetViewControl: false,
-                        scrollwheel: true,
-                        disableDoubleClickZoom: false,
+                        disableDefaultUI: true,
+
+                        zoomControl: true,
+                        zoomControlOptions: {
+                            position: google.maps.ControlPosition.LEFT_BOTTOM
+                        },
+
+                        mapTypeControl: true,
+                        mapTypeControlOptions: {
+                            position: google.maps.ControlPosition.BOTTOM_LEFT
+                        },
+
                         styles: this.MAP.STYLES
                     },
+
                     autocompleteOptions = {
                         componentRestrictions: {
                             country: "ua"

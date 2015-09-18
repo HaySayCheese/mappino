@@ -85,7 +85,7 @@ gulp.task('Copy', [
 
 
 gulp.task('Sass:Landing', function () {
-    return gulp.src(PATHS.SOURCE.STYLES + '/landing/base.scss')
+    return gulp.src(PATHS.SOURCE.STYLES + '/landing/landing.scss')
         .pipe(sass())
         .pipe(minifyCSS())
         .pipe(rename({ suffix: '.min' }))

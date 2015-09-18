@@ -9,17 +9,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
     <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.css">
 
-    {# Custom styles #}
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=true&language=ru&libraries=places"></script>
+
+
     {% compress css %}
         <link rel="stylesheet" href="{{ static }}build/styles/cabinet/users/cabinet.users.min.css"/>
     {% endcompress %}
-
-    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=true&language=ru&libraries=places"></script>
 </head>
 <body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()">
-
     <md-toolbar class="md-whiteframe-z1" ng-cloak>
         <nav class="md-toolbar-tools" show-sm hide-gt-sm layout="row" layout-align="start center">
             <md-button class="nav-button" aria-label="Открыть меню" ng-click="cabinetCtrl.toggleSidenav()">
@@ -107,6 +107,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-animate.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-aria.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-messages.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-sanitize.min.js"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.js"></script>

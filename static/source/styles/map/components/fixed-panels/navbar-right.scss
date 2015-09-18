@@ -23,6 +23,14 @@ navbar-right {
         display: block;
 
         background: #fff;
+
+        md-tab-content {
+            overflow-x: hidden;
+
+            > div:first-child {
+                height: 100%;
+            }
+        }
     }
 
     md-tabs {

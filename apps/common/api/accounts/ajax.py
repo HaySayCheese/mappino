@@ -19,6 +19,7 @@ from core.notifications.sms_dispatcher.common import NotificationsSender
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 from core.users.models import Users
 
+from core.notifications.sms_dispatcher.checkers import LoginChecker
 
 
 class LoginManager(object):
@@ -103,6 +104,8 @@ class LoginManager(object):
 
             else:
                 user.update_one_time_token()
+                if not LoginChecker.check_login(request, phone_number):
+                    raise ValueError('You are already passed the limit of sms')
                 if not settings.SMS_DEBUG:
                     NotificationsSender.send_login_code(request, phone_number, user.one_time_token)
 

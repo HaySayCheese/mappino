@@ -1,11 +1,29 @@
-<md-dialog ng-controller="PublicationFullSliderController as pubFullSliderCtrl" aria-label="Publication photos">
+<md-dialog class="publication-full-slider-dialog" aria-label="Publication photos">
     <md-dialog-content>
-        <ul publication-photos-slider rn-carousel rn-carousel-transition="fadeAndSlide" rn-carousel-easing="easeFromTo" rn-carousel-index="publicationFullSliderSlideIndex"
-            class="publication-preview-carousel">
-
+        <ul rn-carousel rn-carousel-transition="fadeAndSlide" rn-carousel-easing="easeFromTo" rn-carousel-index="publicationFullSliderIndex"
+            class="publication-full-slider">
             <li ng-repeat="photo in photos">
-                <div class="slide-photo" ng-style="{ 'background-image': 'url([[ photo ]])' }"></div>
+                <div class="slide-photo">
+                    <img ng-src="[[ photo ]]" alt="[[ photo ]]">
+                </div>
             </li>
         </ul>
+
+
+        <md-button class="md-icon-button close-publication-full-slider" ng-click="pubFullSliderCtrl.close()">
+            <md-icon class="material-icons md-light md-36 md-dark-shadow">close</md-icon>
+            <md-tooltip md-direction="left" md-delay="0">
+                Закрыть просмотр фотографий
+            </md-tooltip>
+        </md-button>
+
+        <md-button class="md-icon-button slide-prev-button" ng-hide="publicationFullSliderIndex == 0"
+                   ng-click="pubFullSliderCtrl.prevSlide()">
+            <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_left</md-icon>
+        </md-button>
+        <md-button class="md-icon-button slide-next-button" ng-hide="publicationFullSliderIndex == photos.length - 1"
+                   ng-click="pubFullSliderCtrl.nextSlide()">
+            <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_right</md-icon>
+        </md-button>
     </md-dialog-content>
 </md-dialog>

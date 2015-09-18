@@ -9,6 +9,7 @@ from core.notifications.mail_dispatcher.sellers import SellersMailDispatcher
 from core.notifications.sms_dispatcher.sellers import SellersSMSDispatcher
 from core.publications.constants import HEAD_MODELS
 from core.users.constants import Preferences
+from core.notifications.sms_dispatcher.checkers import MessageChecker, CallRequestChecker
 
 
 class ClientNotificationsHandler(object):
@@ -147,8 +148,11 @@ class ClientNotificationsHandler(object):
 
                 error = None
                 try:
-                    if not SellersSMSDispatcher.send_sms_about_incoming_email(request, publication.owner.mobile_phone):
-                        raise RuntimeError('Email can not be sent.')
+                    if MessageChecker.check_message(request, publication.owner.mobile_phone):
+                        if not SellersSMSDispatcher.send_sms_about_incoming_email(request, publication.owner.mobile_phone):
+                            raise RuntimeError('Email can not be sent.')
+                    else:
+                        raise ValueError('You are already passed the limit of sms')
 
                 except Exception as e:
                     # catch all errors here
@@ -249,11 +253,12 @@ class ClientNotificationsHandler(object):
 
 
             try:
-                SellersSMSDispatcher.send_sms_about_incoming_call_request(
-                    request, publication.owner.mobile_phone, params['phone_number'], params.get('name', ''))
+                if CallRequestChecker.check_call_request(request, publication.owner.mobile_phone, params['phone_number']):
+                    SellersSMSDispatcher.send_sms_about_incoming_call_request(
+                            request, publication.owner.mobile_phone, params['phone_number'], params.get('name', ''))
 
-                cls.__send_notification_about_new_call_request(
-                    request, publication, params['phone_number'], params.get('name', ''))
+                else:
+                    raise ValueError('You are already passed the limit of sms')
 
             except ValueError:
                 return cls.PostResponses.invalid_parameters()
@@ -295,7 +300,11 @@ class ClientNotificationsHandler(object):
             # and sending the message
             method = preferences.send_call_request_notifications_to_sid
             if method == Preferences.call_requests.sms():
-                SellersSMSDispatcher.send_sms_about_incoming_call_request(request, publication.owner.mobile_phone, client_number, client_name)
+                if CallRequestChecker.check_call_request(request, publication.owner.mobile_phone, client_number):
+                    SellersSMSDispatcher.send_sms_about_incoming_call_request(
+                        request, publication.owner.mobile_phone, client_number, client_name)
+                else:
+                    raise ValueError('You are already passed the limit of sms')
 
             elif method == Preferences.call_requests.email():
                 SellersMailDispatcher.send_email_about_incoming_call_request(publication, client_number, client_name)
@@ -307,7 +316,11 @@ class ClientNotificationsHandler(object):
 
                 error = None
                 try:
-                    SellersSMSDispatcher.send_sms_about_incoming_call_request(request, publication.owner.mobile_phone, client_number, client_name)
+                    if CallRequestChecker.check_call_request(request, publication.owner.mobile_phone, client_number):
+                        SellersSMSDispatcher.send_sms_about_incoming_call_request(
+                            request, publication.owner.mobile_phone, client_number, client_name)
+                    else:
+                        raise ValueError('You are already passed the limit of sms')
 
                 except Exception as e:
                     # catch all errors here

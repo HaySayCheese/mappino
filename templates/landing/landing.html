@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html ng-app="mappino.landing">
+<head>
+    <title>Mappino</title>
+    <link rel="author" href="/humans.txt"/>
+
+    {# перевірка для яндекс.вебмастер #}
+    <meta name='yandex-verification' content='546bbc19b208a750'/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.css">
+
+    {% compress css %}
+        <link rel="stylesheet" href="{{ static }}build/styles/landing/landing.min.css"/>
+    {% endcompress %}
+
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-26396742-1', 'mappino.com.ua');
+        ga('send', 'pageview');
+    </script>
+</head>
+<body ng-controller="LandingController as landingCtrl">
+    <div class="header-media" header-media>
+        <img src="{{ static }}build/images/landing/landing-bg.jpg" alt="">
+
+        <div class="header-media-overlay" layout="column" layout-align="center center">
+            <md-toolbar class="-transparent" ng-cloak>
+                <nav class="md-toolbar-tools">
+                    <md-button href="/">
+                        mappino
+                    </md-button>
+                    <span flex></span>
+                    <md-button>
+                        Объявления
+                    </md-button>
+                    <md-button>
+                        Поддержка
+                    </md-button>
+                </nav>
+            </md-toolbar>
+
+            <span flex></span>
+
+            <div class="text-shadow">
+                <h1 class="md-display-3">mappino</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque ex nostrum perspiciatis repudiandae? Debitis, sequi sit. Dicta nemo provident vitae?</p>
+            </div>
+
+            <span flex></span>
+
+            <div class="header-search" layout-padding>
+                aaaaaaaaaaaaaaaa
+            </div>
+
+            <span flex></span>
+        </div>
+    </div>
+
+
+    <main>
+
+    </main>
+
+
+
+    {# Js libs #}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-animate.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-aria.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-touch.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.js"></script>
+
+    {# Local js libs #}
+    {% compress js %}
+        <script src="{{ static }}build/scripts/landing/landing.min.js"></script>
+    {% endcompress %}
+</body>
+</html>

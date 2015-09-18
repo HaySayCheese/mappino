@@ -99,11 +99,11 @@ namespace Mappino.Map {
 
                 // якщо з сервера прийшло хоть шось
                 if (angular.isDefined(responseData)) {
-
                     // якщо обєкт з маркерами який прийшов з сервера має в собі обєкт/обєкти з кольором фільтрів
                     // то цей обєкт містить в собі звичайні маркери (не кругові діаграми)
                     // Тоді видаляємо всі кругові маркери і записуємо звичайні
-                    if (angular.isDefined(responseData.blue) || angular.isDefined(responseData.green)) {
+                    if ((angular.isDefined(responseData.blue) && Object.keys(responseData.blue).length) ||
+                        (angular.isDefined(responseData.green) && Object.keys(responseData.green).length)) {
                         this.clearPieMarkers();
                         this.responseSimpleMarkers = responseData;
                     }

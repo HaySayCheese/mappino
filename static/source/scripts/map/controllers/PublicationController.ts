@@ -265,21 +265,13 @@ namespace Mappino.Map {
 
         public openFullScreen($event) {
             this.$mdDialog.show({
-                template: `
-                    <md-dialog aria-label="Publication photos">
-                        <md-dialog-content>
-                            <ul publication-photos-slider rn-carousel rn-carousel-transition="fadeAndSlide" rn-carousel-easing="easeFromTo" rn-carousel-index="publicationPreviewSlideIndex"
-                                class="publication-preview-carousel">
-                                <li ng-repeat="photo in publication.photos">
-                                    <div class="slide-photo" ng-style="{ 'background-image': 'url([[ photo ]])' }"></div>
-                                </li>
-                            </ul>
-                        </md-dialog-content>
-                    </md-dialog>`,
+                controller: PublicationFullSliderController,
+                controllerAs: 'pubFullSliderCtrl',
+                templateUrl: '/ajax/template/map/publication/full-slider/',
                 parent: angular.element(document.body),
                 targetEvent: $event,
                 clickOutsideToClose: true
-            })
+            });
         }
 
 

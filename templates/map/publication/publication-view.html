@@ -1,7 +1,7 @@
 <div class="publication-view-container" layout="column">
     <div layout="column" ng-show="publicationLoadedSuccess && !loaders.publication">
         <header>
-            <ul publication-photos-slider rn-carousel rn-carousel-transition="fadeAndSlide" rn-carousel-easing="easeFromTo" rn-carousel-index="publicationPreviewSlideIndex"
+            <ul rn-carousel rn-carousel-transition="fadeAndSlide" rn-carousel-easing="easeFromTo" rn-carousel-index="publicationPreviewSlideIndex"
                 class="publication-preview-carousel">
                 <li ng-repeat="photo in publication.photos">
                     <div class="slide-photo" ng-style="{ 'background-image': 'url([[ photo ]])' }"></div>
@@ -30,14 +30,14 @@
                 <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_right</md-icon>
             </md-button>
 
-            <div class="publication-header-description" layout="row" layout-align="start center" layout-padding>
-                <md-button class="md-icon-button" ng-hide="publication.is_favorite" ng-click="pubCtrl.toggleFavorite($event)">
+            <div class="publication-header-description" layout="row" layout-align="start center">
+                <md-button class="md-icon-button favorite-button" ng-hide="publication.is_favorite" ng-click="pubCtrl.toggleFavorite($event)">
                     <md-icon class="material-icons md-light md-48 md-dark-shadow">favorite_border</md-icon>
                     <md-tooltip md-direction="top" md-delay="0">
                         Добавить в избранные
                     </md-tooltip>
                 </md-button>
-                <md-button class="md-icon-button" ng-show="publication.is_favorite" ng-click="pubCtrl.toggleFavorite($event)">
+                <md-button class="md-icon-button favorite-button" ng-show="publication.is_favorite" ng-click="pubCtrl.toggleFavorite($event)">
                     <md-icon class="material-icons md-light md-48 md-dark-shadow pink-text">favorite</md-icon>
                     <md-tooltip md-direction="top" md-delay="0">
                         Удалить из избранных
@@ -65,6 +65,8 @@
         </header>
 
         <div ng-include="publicationTemplateUrl"></div>
+
+        <publication-contacts ng-if="publication.contacts"></publication-contacts>
     </div>
 
 
