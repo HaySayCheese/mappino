@@ -4,10 +4,7 @@ from django.conf.urls import patterns, url, include
 
 urlpatterns = patterns('apps',
     # common
-        # accounts API
-        url(r'', include('apps.common.api.accounts.urls')),
-        url(r'', include('apps.common.api.settings.urls')),
-
+    url(r'', include('apps.common.urls')),
 
     # main
     url(r'', include('apps.main.urls')),
@@ -15,8 +12,8 @@ urlpatterns = patterns('apps',
     # cabinet
     url(r'', include('apps.cabinet.urls')),
 
-
-    # core
-        # API # todo: move it to the apps
-        url(r'', include('core.escaped_fragments_manager.urls')),
+    # todo: move it to the apps
+    # # core
+    #     # API
+    #     url(r'', include('core.escaped_fragments_manager.urls')),
 )

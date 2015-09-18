@@ -37,28 +37,6 @@ def full_slider(request):
     return 'map/publication/parts/full-slider.html'
 
 
-__MAP_TEMPLATES_PATHS = {
-        OBJECTS_TYPES.house():      'map/publication/types/house.html',
-        OBJECTS_TYPES.flat():       'map/publication/types/flat.html',
-        OBJECTS_TYPES.room():       'map/publication/types/room.html',
-
-        OBJECTS_TYPES.trade():      'map/publication/types/trade.html',
-        OBJECTS_TYPES.office():     'map/publication/types/office.html',
-        OBJECTS_TYPES.warehouse():  'map/publication/types/warehouse.html',
-        OBJECTS_TYPES.garage():     'map/publication/types/garage.html',
-        OBJECTS_TYPES.land():       'map/publication/types/land.html',
-    }
-
-# todo: add etag cache here
-@ensure_csrf_cookie
-@render_jinja2_template
-def publication_detailed(request, tid):
-    try:
-        return __MAP_TEMPLATES_PATHS[int(tid)]
-    except KeyError:
-        raise Http404()
-
-
 __FILTERS_TEMPLATES_PATHS = {
     OBJECTS_TYPES.house():      'map/navbars/navbar-left/filters/houses.html',
     OBJECTS_TYPES.flat():       'map/navbars/navbar-left/filters/flats.html',
