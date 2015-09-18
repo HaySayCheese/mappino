@@ -14,7 +14,7 @@ namespace Mappino.Map {
 
         'Mappino.Core',
 
-        'ngFileUpload',
+        //'ngFileUpload',
 
         'angular-carousel',
     ]);
