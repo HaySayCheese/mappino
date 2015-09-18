@@ -594,6 +594,16 @@ class LivingRentTermsModel(AbstractModel):
     home_theater = models.BooleanField(default=False)
 
 
+    @property
+    def is_daily(self):
+        return self.period_sid == LIVING_RENT_PERIODS.daily()
+
+
+    @property
+    def is_long_period(self):
+        return self.period_sid == LIVING_RENT_PERIODS.long_period()
+
+
     #-- validation
     def check_required_fields(self):
         """
