@@ -1,4 +1,4 @@
-<div class="publication-view-page" layout-padding layout-wrap layout="column" layout-gt-lg="row"
+<div class="publication-page" layout-padding layout-wrap layout="column" layout-gt-lg="row"
      layout-align-md="start center" layout-align-lg="start center" layout-align-gt-lg="center start" ng-show="!loaders.overlay">
 
     <md-card flex="32">
@@ -13,7 +13,7 @@
 
     <md-card flex="32">
         <md-card-content>
-            <div layout="column">
+            <div class="publication-preview-container" layout="column">
                 <header>
                     <ul rn-carousel rn-carousel-index="0" class="publication-preview-carousel">
                         <li ng-repeat="photo in ::publication.photos">
@@ -23,36 +23,25 @@
                         </li>
                     </ul>
 
-                    <div class="publication-view-image-overlay">
-                        <div layout="row">
-                            <md-button class="md-icon-button">
-                                <md-icon class="material-icons md-light md-36 md-dark-shadow">fullscreen</md-icon>
-                                <md-tooltip md-direction="right" md-delay="0">
-                                    Посмотреть все фотографии
-                                </md-tooltip>
-                            </md-button>
-                            <span flex></span>
-                        </div>
+                    <md-button class="md-icon-button fullscreen-slider-button" ng-click="pubCtrl.openFullScreen($event)">
+                        <md-icon class="material-icons md-light md-36 md-dark-shadow">fullscreen</md-icon>
+                        <md-tooltip md-direction="right" md-delay="0">
+                            Посмотреть все фотографии
+                        </md-tooltip>
+                    </md-button>
+                    <md-button class="md-icon-button slide-prev-button" ng-hide="publicationPreviewSlideIndex == 0"
+                               ng-click="pubCtrl.prevSlide()">
+                        <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_left</md-icon>
+                    </md-button>
+                    <md-button class="md-icon-button slide-next-button" ng-hide="publicationPreviewSlideIndex == publication.photos.length - 1"
+                               ng-click="pubCtrl.nextSlide()">
+                        <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_right</md-icon>
+                    </md-button>
 
-                        <md-button class="md-icon-button slide-prev" ng-hide="publicationPreviewSlideIndex == 0"
-                                   ng-click="pubCtrl.prevSlide()">
-                            <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_left</md-icon>
-                        </md-button>
-                        <md-button class="md-icon-button slide-next" ng-hide="publicationPreviewSlideIndex == publication.photos.length - 1"
-                                   ng-click="pubCtrl.nextSlide()">
-                            <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_right</md-icon>
-                        </md-button>
-
-
-                        <div class="publication-view-overlay-description" layout="row" layout-align="start center" layout-padding>
-                            <div layout="column" layout-padding>
-                                <div class="md-headline">
-                                    [[ ::publication.title ]]
-                                </div>
-                                <div class="md-subhead">
-                                    [[ ::publication.address ]]
-                                </div>
-                            </div>
+                    <div class="publication-header-description" layout="row" layout-align="start center">
+                        <div layout="column" layout-padding>
+                            <div class="md-headline">[[ publication.title ]]</div>
+                            <div class="md-subhead">[[ publication.address ]]</div>
                         </div>
                     </div>
                 </header>
