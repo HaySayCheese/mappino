@@ -55,5 +55,5 @@ namespace Mappino.Map {
         }
     }
 
-    PublicationSlidingPanel.$inject = ['$rootScope', '$stateParams'];
+    PublicationSlidingPanelDirective.$inject = ['$rootScope', '$stateParams'];
 }
