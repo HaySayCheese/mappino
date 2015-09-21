@@ -1,14 +1,17 @@
 # coding=utf-8
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
+import datetime
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError, SuspiciousOperation
 from django.http.response import HttpResponseBadRequest
+from pytz import timezone
 
 from apps.views_base import CabinetView
-from collective.decorators.ajax import json_response, json_response_bad_request
+from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.methods.request_data_getters import angular_parameters
 from core.managing.moderators.models import RejectedPublications
 from core.publications import formatters
 from core.publications.exceptions import PhotosHandlerExceptions, NotEnoughPhotos
-from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS, OBJECT_STATES
+from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS, OBJECT_STATES, \
+    DAILY_RENT_RESERVATIONS_MODELS
 from core.publications.signals import record_updated
 from core.publications.update_methods.flats import update_flat
 from core.publications.update_methods.houses import update_house
@@ -630,6 +633,182 @@ class Publication(CabinetView):
 
             # seems to be ok
             return cls.PutResponses.ok()
+
+
+class DailyRent(object):
+    class Reservations(CabinetView):
+        class PostResponses(object):
+            @staticmethod
+            @json_response
+            def ok():
+                return {
+                    'code': 0,
+                    'message': 'OK',
+                }
+
+
+            @staticmethod
+            @json_response_bad_request
+            def invalid_tid():
+                return {
+                    'code': 1,
+                    'message': 'request contains invalid tid.'
+                }
+
+
+            @staticmethod
+            @json_response_not_found
+            def hash_id_not_found():
+                return {
+                    'code': 2,
+                    'message': 'publication with exact hash id does not exists.'
+                }
+
+
+            @staticmethod
+            @json_response_bad_request
+            def invalid_date_enter():
+                return {
+                    'code': 3,
+                    'message': 'invalid enter date'
+                }
+
+
+            @staticmethod
+            @json_response_bad_request
+            def invalid_date_leave():
+                return {
+                    'code': 4,
+                    'message': 'invalid leave date'
+                }
+
+
+        class GetResponses(object):
+            @staticmethod
+            @json_response
+            def ok(reservations):
+                return {
+                    'code': 0,
+                    'message': 'OK',
+                    'data': [
+                        {
+                            'date_enter': reservation.date_enter.strftime('%Y-%m-%d'),
+                            'date_leave': reservation.date_leave.strftime('%Y-%m-%d'),
+                            'client_name': reservation.client_name or '',
+                        } for reservation in reservations
+                    ]
+                }
+
+
+            @staticmethod
+            @json_response_bad_request
+            def invalid_tid():
+                return {
+                    'code': 1,
+                    'message': 'request contains invalid tid.'
+                }
+
+
+            @staticmethod
+            @json_response_not_found
+            def hash_id_not_found():
+                return {
+                    'code': 2,
+                    'message': 'publication with exact hash id does not exists.'
+                }
+
+
+        @classmethod
+        def post(cls, request, *args):
+            publication_tid, publication_hash_id = args[:]
+
+
+            params = angular_parameters(request, ['date_enter', 'date_leave'])
+
+            # Service potentially will work in several countries.
+            # Each of this country may have different time zone code.
+            # But reservations must be done in ime zone of country, publication is from.
+            #
+            # Currently it is not necessary.
+            # Ukraine time zone should be used.
+            # todo: add timezone handling here
+
+            try:
+                # format is 2015-09-18T09:00:00.000Z
+                date_enter = params['date_enter'][:10]
+                date_enter = datetime.datetime.strptime(date_enter, '%Y-%m-%d')
+                date_enter = date_enter.replace(tzinfo=timezone('Europe/Kiev'))
+                date_enter = date_enter.date()
+            except ValueError:
+                return cls.PostResponses.invalid_date_enter()
+
+            try:
+                date_leave = params['date_leave'][:10]
+                date_leave = datetime.datetime.strptime(date_leave, '%Y-%m-%d')
+                date_leave = date_leave.replace(tzinfo=timezone('Europe/Kiev'))
+                date_leave = date_leave.date()
+            except ValueError:
+                return cls.PostResponses.invalid_date_leave()
+
+
+            publications_model = HEAD_MODELS.get(publication_tid)
+            if not publications_model:
+                return cls.PostResponses.invalid_tid()
+
+
+            try:
+                publication = publications_model.objects\
+                    .filter(hash_id=publication_hash_id)\
+                    .only('id', 'owner')\
+                    [:1][0]
+
+                if publication.owner != request.user:
+                    raise SuspiciousOperation()
+
+            except IndexError:
+                return cls.PostResponses.hash_id_not_found()
+
+
+            daily_rent_reservations_model = DAILY_RENT_RESERVATIONS_MODELS.get(publication_tid)
+            if not daily_rent_reservations_model:
+                return cls.PostResponses.invalid_tid()
+
+            daily_rent_reservations_model.objects.make_reservation(
+                publication, date_enter, date_leave, params.get('client_name'))
+
+
+            return cls.PostResponses.ok()
+
+
+        @classmethod
+        def get(cls, request, *args):
+            publication_tid, publication_hash_id = args[:]
+
+
+            publications_model = HEAD_MODELS.get(publication_tid)
+            if not publications_model:
+                return cls.GetResponses.invalid_tid()
+
+            try:
+                publication = publications_model.objects\
+                    .filter(hash_id=publication_hash_id)\
+                    .only('id', 'owner')\
+                    [:1][0]
+
+                if publication.owner != request.user:
+                    raise SuspiciousOperation()
+
+            except IndexError:
+                return cls.GetResponses.hash_id_not_found()
+
+
+            daily_rent_reservations_model = DAILY_RENT_RESERVATIONS_MODELS.get(publication_tid)
+            if not daily_rent_reservations_model:
+                return cls.PostResponses.invalid_tid()
+
+
+            reservations = daily_rent_reservations_model.objects.filter(publication=publication)
+            return cls.GetResponses.ok(reservations)
 
 
 class Briefs(CabinetView):

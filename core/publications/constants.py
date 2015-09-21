@@ -350,3 +350,13 @@ PHOTOS_MODELS = {
     OBJECTS_TYPES.garage(): GaragesPhotos,
     OBJECTS_TYPES.land(): LandsPhotos,
 }
+
+
+from core.publications.models import \
+    FlatsDailyRentReservations, HousesDailyRentReservations, RoomsDailyRentReservations
+
+DAILY_RENT_RESERVATIONS_MODELS = {
+    OBJECTS_TYPES.flat(): FlatsDailyRentReservations,
+    OBJECTS_TYPES.house(): HousesDailyRentReservations,
+    OBJECTS_TYPES.room(): RoomsDailyRentReservations,
+}

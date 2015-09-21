@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.core import serializers
 
-from core.publications.constants import OBJECTS_TYPES
+from core.publications.constants import OBJECTS_TYPES, DAILY_RENT_RESERVATIONS_MODELS
 
 
 class PublishedDataSource(object):
@@ -89,6 +89,24 @@ class PublishedDataSource(object):
             'rent_terms': p.rent_terms.print_terms(),
             'rent_facilities': p.rent_terms.print_facilities()
         })
+
+
+        if p.rent_terms.is_daily:
+            model = DAILY_RENT_RESERVATIONS_MODELS[p.tid]
+            reservations = model.objects.filter(publication=p)
+
+            description.update({
+                'daily_rent': {
+                    'reservations': [
+                        {
+                            'date_enter': reservation.date_enter.strftime('%Y-%m-%dT12:00:00.0003'), # todo: change time zone
+                            'date_leave': reservation.date_leave.strftime('%Y-%m-%dT12:00:00.0003'), # todo: change time zone
+                            'client_name': reservation.client_name or '',
+                        } for reservation in reservations
+                    ]
+                }
+            })
+
         return description
 
 

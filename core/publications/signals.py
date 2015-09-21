@@ -18,3 +18,9 @@ deleted_permanent = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 
 
 before_rejection_by_moderator = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])
 rejected_by_moderator = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])
+
+
+
+class DailyRentSignals(object):
+    booked = Signal(['tid', 'publication_id', 'date_enter', 'date_leave'])
+    order_removed = Signal(['tid', 'publication_id', 'date_enter', 'date_leave'])

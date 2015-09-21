@@ -128,18 +128,21 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
 
+    'core.cache',
+    'core.currencies',
+
     'core.users',
-    'core.managing.ban',
     'core.publications',
     'core.favorites',
-    'core.managing.moderators',
     'core.notifications',
-    'core.markers_index',
     'core.support',
-    'core.escaped_fragments_manager',
 
-    # todo: shift this apps into core
-    'apps.main.api.correspondence',
+    'core.managing.ban',
+    'core.managing.managers',
+    'core.managing.moderators',
+
+    'core.markers_index',
+    'core.escaped_fragments_manager',
 
     'core',
 )
