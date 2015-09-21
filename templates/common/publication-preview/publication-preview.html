@@ -1,13 +1,13 @@
-<div layout="column" ng-show="publicationLoadedSuccess && !loaders.publication">
+<div layout="column" ng-show="publicationLoadedSuccess && !loadingPublication">
     <publication-preview-header></publication-preview-header>
     <publication-preview-body></publication-preview-body>
     <publication-preview-contacts></publication-preview-contacts>
 </div>
 
 
-<div class="publication-preview-loader" layout="row" layout-align="center center" ng-show="loaders.publication" flex>
+<div class="publication-preview-loader" layout="row" layout-align="center center" ng-show="loadingPublication" flex>
     <md-progress-circular md-mode="indeterminate"></md-progress-circular>
 </div>
 
 
-<publication-preview-error ng-hide="publicationLoadedSuccess || loaders.publication"></publication-preview-error>
+<publication-preview-error ng-hide="publicationLoadedSuccess || loadingPublication"></publication-preview-error>

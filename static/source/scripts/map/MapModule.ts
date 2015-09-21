@@ -36,7 +36,6 @@ namespace Mappino.Map {
     app.service('FavoritesService', FavoritesService);
     app.service('FiltersService', FiltersService);
     app.service('MarkersService', MarkersService);
-    //app.service('PublicationService', PublicationService);
 
 
     /** Handlers */
@@ -68,7 +67,7 @@ namespace Mappino.Map {
     app.controller('BriefsTabController', BriefsTabController);
 
     // publication controllers
-    //app.controller('PublicationController', PublicationController);
+    app.controller('PublicationController', PublicationController);
     app.controller('PublicationFullSliderController', PublicationFullSliderController);
 
 

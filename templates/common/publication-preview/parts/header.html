@@ -5,13 +5,17 @@
     </li>
 </ul>
 
-<md-button class="md-icon-button fullscreen-slider-button" ng-click="pubCtrl.openFullScreen($event)">
+<md-button class="md-icon-button fullscreen-slider-button"
+           ng-hide="hiddenControls['fullscreen-slider-button']"
+           ng-click="pubPreviewCtrl.openFullScreen($event)">
     <md-icon class="material-icons md-light md-36 md-dark-shadow">fullscreen</md-icon>
     <md-tooltip md-direction="right" md-delay="0">
         Посмотреть все фотографии
     </md-tooltip>
 </md-button>
-<md-button class="md-icon-button close-publication-button" ng-click="pubCtrl.closePublication()">
+<md-button class="md-icon-button close-publication-button"
+           ng-hide="hiddenControls['close-publication-button']"
+           ng-click="pubPreviewCtrl.closePublication()">
     <md-icon class="material-icons md-light md-36 md-dark-shadow">close</md-icon>
     <md-tooltip md-direction="left" md-delay="0">
         Закрыть объявления
@@ -19,22 +23,26 @@
 </md-button>
 
 <md-button class="md-icon-button slide-prev-button" ng-hide="publicationPreviewSlideIndex == 0"
-           ng-click="pubCtrl.prevSlide()">
+           ng-click="pubPreviewCtrl.prevSlide()">
     <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_left</md-icon>
 </md-button>
 <md-button class="md-icon-button slide-next-button" ng-hide="publicationPreviewSlideIndex == publication.photos.length - 1"
-           ng-click="pubCtrl.nextSlide()">
+           ng-click="pubPreviewCtrl.nextSlide()">
     <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_right</md-icon>
 </md-button>
 
 <div class="publication-header-description" layout="row" layout-align="start center">
-    <md-button class="md-icon-button favorite-button" ng-hide="publication.is_favorite" ng-click="pubCtrl.toggleFavorite($event)">
+    <md-button class="md-icon-button favorite-button"
+               ng-hide="publication.is_favorite || hiddenControls['favorite-button']"
+               ng-click="pubCtrl.toggleFavorite($event)">
         <md-icon class="material-icons md-light md-48 md-dark-shadow">favorite_border</md-icon>
         <md-tooltip md-direction="top" md-delay="0">
             Добавить в избранные
         </md-tooltip>
     </md-button>
-    <md-button class="md-icon-button favorite-button" ng-show="publication.is_favorite" ng-click="pubCtrl.toggleFavorite($event)">
+    <md-button class="md-icon-button favorite-button"
+               ng-show="publication.is_favorite && !hiddenControls['favorite-button']"
+               ng-click="pubCtrl.toggleFavorite($event)">
         <md-icon class="material-icons md-light md-48 md-dark-shadow pink-text">favorite</md-icon>
         <md-tooltip md-direction="top" md-delay="0">
             Удалить из избранных
@@ -46,14 +54,14 @@
         <div class="md-subhead">[[ publication.address ]]</div>
     </div>
 
-    <md-fab-speed-dial class="md-fling publication-menu" md-direction="up">
+    <md-fab-speed-dial class="md-fling publication-menu" md-direction="up" ng-hide="hiddenControls['publication-menu']">
         <md-fab-trigger>
             <md-button aria-label="publication menu" class="md-fab md-primary">
                 <md-icon>more_vert</md-icon>
             </md-button>
         </md-fab-trigger>
         <md-fab-actions>
-            <md-button aria-label="Пожаловатся" class="md-fab md-raised md-mini" ng-click="pubCtrl.toggleClaimForm()">
+            <md-button aria-label="Пожаловатся" class="md-fab md-raised md-mini" ng-click="pubPreviewCtrl.toggleClaimForm()">
                 <md-icon class="material-icons red-text">report</md-icon>
             </md-button>
         </md-fab-actions>

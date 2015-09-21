@@ -15,10 +15,7 @@ namespace Mappino.Core.PublicationPreview {
             '$state',
             '$timeout',
             '$mdDialog',
-            'PublicationHandler',
             'PublicationPreviewService',
-            'BriefsService',
-            'FavoritesService'
         ];
 
         constructor(
@@ -27,15 +24,15 @@ namespace Mappino.Core.PublicationPreview {
             private $state: angular.ui.IStateService,
             private $timeout: angular.ITimeoutService,
             private $mdDialog: any,
-            private publicationHandler: Mappino.Map.PublicationHandler,
-            private publicationPreviewService: PublicationPreviewService,
-            private briefsService: Mappino.Map.BriefsService,
-            private favoritesService: Mappino.Map.FavoritesService) {
+            private publicationPreviewService: PublicationPreviewService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.forms = {};
 
             $scope.publication = undefined;
+
+            $scope.loadingPublication       = false;
             $scope.publicationLoadedSuccess = false;
+
             $scope.publicationPreviewSlideIndex = 0;
             $scope.publicationTemplateUrl = undefined;
 
@@ -67,11 +64,6 @@ namespace Mappino.Core.PublicationPreview {
                     this.loadPublicationData();
                 }
             });
-
-
-            $rootScope.$on('Mappino.Map.FavoritesService.FavoritesIsLoaded', (event, favorites) => this.checkIfPublicationIsFavorite(favorites));
-            $rootScope.$on('Mappino.Map.FavoritesService.FavoriteAdded', () => this.checkIfPublicationIsFavorite());
-            $rootScope.$on('Mappino.Map.FavoritesService.FavoriteRemoved', () => this.checkIfPublicationIsFavorite());
         }
 
 
@@ -90,7 +82,7 @@ namespace Mappino.Core.PublicationPreview {
 
                 this.$scope.publicationPreviewPartTemplateUrl = `/ajax/template/common/publication-preview/types/${this.publicationIds.tid}/`;
 
-                this.$rootScope.loaders.publication     = true;
+                this.$scope.loadingPublication          = true;
                 this.$scope.publicationLoadedSuccess    = false;
 
                 this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationVisited', this.publicationIds.hid);
@@ -100,22 +92,25 @@ namespace Mappino.Core.PublicationPreview {
                     .success(response => {
                         this.$scope.publication = response.data;
                         this.$scope.publication.is_favorite     = false;
-                        this.$rootScope.loaders.publication     = false;
+                        this.$scope.loadingPublication          = false;
                         this.$scope.publicationLoadedSuccess    = true;
-                        this.checkIfPublicationIsFavorite();
 
                         this.publicationPreviewService.loadPublicationContacts(this.publicationIds)
                             .success(response => {
-                            this.$scope.publication.contacts = {};
-                            this.$scope.publication.contacts = response.data;
-                        });
+                                this.$scope.publication.contacts = {};
+                                this.$scope.publication.contacts = response.data;
+                            });
 
                         this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationClosed');
                         this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationVisited', this.publicationIds.hid);
                         this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationActive', this.publicationIds.hid);
+
+
+                        console.log(this.$scope.loadingPublication)
+                        console.log(this.$scope.publicationLoadedSuccess)
                     })
                     .error(response => {
-                        this.$rootScope.loaders.publication     = false;
+                        this.$scope.loadingPublication          = false;
                         this.$scope.publicationLoadedSuccess    = false;
                     });
             }
@@ -124,43 +119,12 @@ namespace Mappino.Core.PublicationPreview {
 
 
         public closePublication() {
-            this.publicationHandler.close();
+            this.$rootScope.$broadcast('Mappino.Map.PublicationHandler.ClosePublication', {
+                tid: this.publicationIds.tid,
+                hid: this.publicationIds.hid
+            });
             this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationClosed');
             this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationVisited', this.publicationIds.hid);
-        }
-
-
-
-        public toggleFavorite($event) {
-            if (this.$scope.publication.is_favorite) {
-                this.favoritesService.remove(this.publicationIds);
-            } else {
-                var briefs = this.briefsService.briefs;
-                for (var brief in briefs) {
-                    if (briefs.hasOwnProperty(brief)) {
-                        if (briefs[brief].hid == this.publicationIds.hid)
-                            this.favoritesService.add(briefs[brief]);
-                    }
-                }
-            }
-        }
-
-
-
-        private checkIfPublicationIsFavorite(favorites?) {
-            var _favorites = favorites || this.favoritesService.favorites;
-
-            if (this.$scope.publicationLoadedSuccess) {
-                this.$scope.publication.is_favorite = false;
-
-                for (var key in _favorites) {
-                    if (_favorites.hasOwnProperty(key)) {
-                        if (_favorites[key].hid == this.publicationIds.hid) {
-                            this.$scope.publication.is_favorite = true;
-                        }
-                    }
-                }
-            }
         }
 
 
