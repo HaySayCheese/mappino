@@ -1,6 +1,6 @@
 <div class="navbar-right-container" ng-if="tabIndexes.navbarRight != undefined">
 
-    <md-tabs md-selected="tabIndexes.navbarRight">
+    <md-tabs md-selected="tabIndexes.navbarRight" md-no-pagination="true" md-center-tabs="true">
 
         <md-tab id="publication-list-tab" md-on-select="navCtrl.tabsHandler.open('publication_list');">
             <md-tab-label>
@@ -69,6 +69,7 @@
         <md-tab id="favorites-tab" md-on-select="navCtrl.tabsHandler.open('favorite_list');">
             <md-tab-label>
                 <md-icon>favorite</md-icon>
+                <span>Избранные</span>
             </md-tab-label>
             <md-tab-body>
                 <section ng-controller="FavoritesTabController as favCtrl" layout="row">

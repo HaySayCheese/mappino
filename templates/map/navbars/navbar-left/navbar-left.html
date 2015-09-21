@@ -1,5 +1,5 @@
 <div class="navbar-left-container" ng-if="tabIndexes.navbarLeft != undefined">
-    <md-tabs md-selected="tabIndexes.navbarLeft" md-dynamic-height>
+    <md-tabs md-selected="tabIndexes.navbarLeft" md-dynamic-height md-no-pagination="true" md-center-tabs="true">
 
         <md-tab id="mappino-tab" md-on-select="navCtrl.tabsHandler.open('mappino');">
             <md-tab-label>
@@ -163,7 +163,7 @@
         <md-tab id="account-tab" md-on-select="navCtrl.tabsHandler.open('account');">
             <md-tab-label>
                 <md-icon>perm_identity</md-icon>
-                <span>Про</span>
+                <span>Профиль</span>
             </md-tab-label>
             <md-tab-body>
                 <div class="account-tab" ng-controller="AccountTabController as accCtrl">
