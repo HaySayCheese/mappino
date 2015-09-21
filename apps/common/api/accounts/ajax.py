@@ -16,6 +16,7 @@ from collective.decorators.ajax import json_response, json_response_bad_request
 from collective.methods.request_data_getters import angular_post_parameters
 from core.managing.ban.classes import BanHandler
 from core.notifications.sms_dispatcher.common import NotificationsSender
+from core.notifications.sms_dispatcher.exceptions import ResourceThrottled
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 from core.users.models import Users
 
@@ -65,6 +66,15 @@ class LoginManager(object):
                 }
 
 
+            @staticmethod
+            @json_response
+            def request_throttled():
+                return {
+                    'code': 200,
+                    'message': 'Request was throttled.'
+                }
+
+
         def post(self, request):
             try:
                 params = angular_post_parameters(request, ['mobile_code', 'mobile_phone'])
@@ -104,8 +114,12 @@ class LoginManager(object):
 
             else:
                 user.update_one_time_token()
-                if not LoginChecker.check_login(request, phone_number):
-                    raise ValueError('You are already passed the limit of sms')
+
+                try:
+                    LoginChecker.check_for_throttling(request, phone_number)
+                except ResourceThrottled:
+                    return self.PostResponses.request_throttled()
+
                 if not settings.SMS_DEBUG:
                     NotificationsSender.send_login_code(request, phone_number, user.one_time_token)
 
@@ -188,8 +202,8 @@ class LoginManager(object):
                 }
 
 
-        def get(self, reguest):
-            return self.GetResponses.ok(reguest.user)
+        def get(self, request):
+            return self.GetResponses.ok(request.user)
 
 
     class Logout(AuthenticatedOnlyView):

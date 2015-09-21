@@ -1,5 +1,6 @@
 # coding=utf-8
 from core import redis_connections
+from core.notifications.sms_dispatcher.exceptions import SMSSendingThrottled
 
 
 PRIVATE_IPS_PREFIX = ('10.', '172.', '192.', )
@@ -30,17 +31,17 @@ def get_client_ip(request):
 
 class LoginChecker(object):
     @classmethod
-    def check_login(cls, request, number):
+    def check_for_throttling(cls, request, number):
         client_ip = get_client_ip(request)
         redis = redis_connections['throttle']
-        is_ok = True
+        ok = True
 
         # Не більше 3 смс на один номер за 1 хвилину
         login_for_second = redis.get('login_by_' + number + '_for_minute')
         if not login_for_second:
             redis.setex('login_by_' + number + '_for_minute', 60, 1)
         elif int(login_for_second) >= 3:
-            is_ok = False
+            ok = False
 
 
         # Не більше 6 смс з одного номера за годину
@@ -51,7 +52,7 @@ class LoginChecker(object):
         else:
             redis.incr('login_by_' + number + '_for_hour')
             if int(login_for_hour) >= 6:
-                is_ok = False
+                ok = False
 
 
         # Не більше 20 смс з однієї ip-адреси за 10 хвилин
@@ -61,7 +62,7 @@ class LoginChecker(object):
         else:
             redis.incr('login_by_ip_' + client_ip + '_for_10minutes')
             if int(login_by_ip_for_10minutes) >= 20:
-                is_ok = False
+                ok = False
 
 
         # Не більше 60 смс з однієї ip-адреси за годину
@@ -71,7 +72,7 @@ class LoginChecker(object):
         else:
             redis.incr('login_by_ip_' + client_ip + '_for_hour')
             if int(login_by_ip_for_hour) >= 60:
-                is_ok = False
+                ok = False
 
 
         # Загальний потік не більше 138 смс за годину
@@ -82,18 +83,19 @@ class LoginChecker(object):
         else:
             redis.incr('login_total_flow')
             if int(login_total_flow) >= 138:
-                is_ok = False
+                ok = False
 
-        return is_ok
+        if not ok:
+            raise SMSSendingThrottled()
 
 
 class CallRequestChecker(object):
     @classmethod
-    def check_call_request(cls, request, number, client_number):
+    def check_for_throttling(cls, request, number, client_number):
         client_ip = get_client_ip(request)
         day = 86400
         redis = redis_connections['throttle']
-        is_ok = True
+        ok = True
 
         # 2 смс з номера клієнта на номер продавця за день
         call_requests_from_number_for_day = redis.get('call_requests_to' + number + '_from_' + client_number + '_for_day')
@@ -102,7 +104,7 @@ class CallRequestChecker(object):
         else:
             redis.incr('call_requests_to' + number + '_from_' + client_number + '_for_day')
             if int(call_requests_from_number_for_day) >= 2:
-                is_ok = False
+                ok = False
 
         # 60 смс на номер продавця за день
         call_requests_count_from_numbers_for_day = redis.get('call_requests_count_from_numbers_to_' + number)
@@ -111,14 +113,14 @@ class CallRequestChecker(object):
         else:
             redis.incr('call_requests_count_from_numbers_to_' + number)
             if int(call_requests_count_from_numbers_for_day) >= 60:
-                is_ok = False
+                ok = False
 
         # 1 смс на номер продавця за 30 секунд
         call_requests_to_number = redis.get('call_requests_to' + number + '_for_30seconds')
         if not call_requests_to_number:
             redis.setex('call_requests_to' + number + '_for_30seconds', 30, 1)
         elif int(call_requests_to_number) >= 1:
-                is_ok = False
+                ok = False
 
         # 60 смс на номер продавця з однієї ip-адреси за день
         call_requests_from_ip_to_number = redis.get('call_requests_by_ip_' + client_ip + '_to_' + number + '_for_day')
@@ -127,7 +129,7 @@ class CallRequestChecker(object):
         else:
             redis.incr('call_requests_by_ip_' + client_ip + '_to_' + number + '_for_day')
             if int(call_requests_from_ip_to_number) >= 60:
-                is_ok = False
+                ok = False
 
         # 75 смс з однієї ip-адреси за годину
         call_requests_from_ip_for_hour = redis.get('call_requests_from_ip_' + client_ip + '_for_hour')
@@ -136,7 +138,7 @@ class CallRequestChecker(object):
         else:
             redis.incr('call_requests_from_ip_' + client_ip + '_for_hour')
             if int(call_requests_from_ip_for_hour) >= 75:
-                is_ok = False
+                ok = False
 
         # 1800 смс з однієї ip-адреси за день
         call_requests_from_ip_for_day = redis.get('call_requests_from_ip_' + client_ip + '_for_day')
@@ -145,7 +147,7 @@ class CallRequestChecker(object):
         else:
             redis.incr('call_requests_from_ip_' + client_ip + '_for_day')
             if int(call_requests_from_ip_for_day) >= 1800:
-                is_ok = False
+                ok = False
 
         # загальний потік 150 смс за годину
         call_requests_total_flow = redis.get('call_requests_total_flow')
@@ -154,14 +156,15 @@ class CallRequestChecker(object):
         else:
             redis.incr('call_requests_total_flow')
             if int(call_requests_total_flow) >= 150:
-                is_ok = False
+                ok = False
 
-        return is_ok
+        if not ok:
+            raise SMSSendingThrottled()
 
 
 class MessageChecker(object):
     @classmethod
-    def check_message(cls, request,  number):
+    def check_for_throttling(cls, request,  number):
         client_ip = get_client_ip(request)
         day = 86400
         redis = redis_connections['throttle']
@@ -219,4 +222,5 @@ class MessageChecker(object):
             if int(messages_total_flow) >= 75:
                 ok = False
 
-        return ok
+        if not ok:
+            raise SMSSendingThrottled()
