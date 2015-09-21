@@ -11,9 +11,10 @@ class UserCookie(object):
 
     @classmethod
     def process_response(cls, request, response):
-        if not request.user.is_authenticated():
-            response.delete_cookie(cls.cookie_name)
+        if request.user.is_authenticated():
+            response.set_cookie(cls.cookie_name, '')
+
         else:
-            response.COOKIES[cls.cookie_name] = ''
+            response.delete_cookie(cls.cookie_name)
 
         return response

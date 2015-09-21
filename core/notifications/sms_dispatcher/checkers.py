@@ -55,7 +55,7 @@ class AbstractChecker(object):
 
 class LoginChecker(AbstractChecker):
     @classmethod
-    def check_per_throttling(cls, request, number):
+    def check_for_throttling(cls, request, number):
         client_ip = get_client_ip(request)
         redis = redis_connections['throttle']
         ok = True
