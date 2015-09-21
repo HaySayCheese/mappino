@@ -20,6 +20,9 @@ def generate_template_etag(template_path):
 
     :param template_path: path of the template from the templates dir.
     """
+    if settings.DEBUG:
+        return lambda x: None
+
 
     cached_etag = templates_etags_cache.get(template_path)
     if cached_etag:
