@@ -69,10 +69,10 @@
                     <section class="-closable -filters-blue">
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
                             <md-icon>place</md-icon>
-                            <span class="md-body-1" ng-hide="filters.panels.blue.b_t_sid">
+                            <span class="md-body-1" ng-hide="filters.panels.blue.b_t_sid != null">
                                 Виберите тип
                             </span>
-                            <span class="md-body-1" ng-show="filters.panels.blue.b_t_sid">
+                            <span class="md-body-1" ng-show="filters.panels.blue.b_t_sid != null">
                                 [[ TYPES.REALTY[filters.panels.blue.b_t_sid].titles.plural ]]&nbsp;
                             </span>
                             <span class="md-body-1" ng-show="filters.panels.blue.b_p_min && filters.panels.blue.b_p_max">
@@ -113,10 +113,10 @@
                     <section class="-closable -filters-green -closed">
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
                             <md-icon>place</md-icon>
-                            <span class="md-body-1" ng-hide="filters.panels.green.g_t_sid">
+                            <span class="md-body-1" ng-hide="filters.panels.green.g_t_sid != null">
                                 Указать условия для сравнения
                             </span>
-                            <span class="md-body-1" ng-show="filters.panels.green.g_t_sid">
+                            <span class="md-body-1" ng-show="filters.panels.green.g_t_sid != null">
                                 [[ TYPES.REALTY[filters.panels.green.g_t_sid].titles.plural ]]&nbsp;
                             </span>
                             <span class="md-body-1" ng-show="filters.panels.green.g_p_min && filters.panels.green.g_p_max">
