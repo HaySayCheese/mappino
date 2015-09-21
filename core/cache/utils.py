@@ -1,8 +1,5 @@
 # coding=utf-8
-try:
-    import mmh3
-except ImportError:
-    mmh3 = None
+import mmh3
 import os
 
 from django.conf import settings
