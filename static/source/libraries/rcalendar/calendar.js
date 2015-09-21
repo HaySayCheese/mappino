@@ -239,7 +239,7 @@ angular.module('ui.rCalendar', [])
         'use strict';
         return {
             restrict: 'E',
-            templateUrl: '/calendar-part/',
+            templateUrl: '/ajax/template/cabinet/publications/rent-calendar/calendar/',
             scope: {
                 rangeChanged: '&',
                 eventSelected: '&',
