@@ -15,10 +15,6 @@ urlpatterns = patterns('apps.cabinet.templates.users',
     url(r'^ajax/template/cabinet/publications/unpublished/footer/$', 'publications_unpublished_footer'),
 
 
-    # published publications forms
-    url(r'^ajax/template/cabinet/publications/published/$', 'publications_published_form'),
-
-
     # settings
     url(r'^ajax/template/cabinet/settings/$', 'settings'),
 
@@ -32,12 +28,9 @@ urlpatterns = patterns('apps.cabinet.templates.users',
 urlpatterns += patterns('apps.cabinet.templates.moderators',
     # moderating
     url(r'^ajax/template/cabinet/moderators/publication/$', 'publication'),
+    url(r'^ajax/template/cabinet/moderators/held-publications/$', 'held_publications'),
 
 
     # settings
     url(r'^ajax/template/cabinet/moderators/settings/$', 'settings'),
-
-
-    # settings
-    url(r'^ajax/template/cabinet/moderators/held-publications/$', 'held_publications'),
 )
