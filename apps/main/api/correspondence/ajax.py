@@ -5,7 +5,7 @@ from django.views.generic import View
 from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.methods.request_data_getters import angular_parameters
 from core.notifications.mail_dispatcher.sellers import SellersMailDispatcher
-from core.notifications.sms_dispatcher.exceptions import ResourceThrottled
+from core.notifications.sms_dispatcher.exceptions import ResourceThrottled, SMSSendingThrottled
 from core.notifications.sms_dispatcher.sellers import SellersSMSDispatcher
 from core.publications.constants import HEAD_MODELS
 from core.users.constants import Preferences
@@ -61,15 +61,6 @@ class ClientNotificationsHandler(object):
                 }
 
 
-            @staticmethod
-            @json_response
-            def request_throttled():
-                return {
-                    'code': 200,
-                    'message': 'Request was throttled.'
-                }
-
-
         @classmethod
         def post(cls, request, *args):
             try:
@@ -105,9 +96,6 @@ class ClientNotificationsHandler(object):
 
             except ValueError:
                 return cls.PostResponses.invalid_parameters()
-
-            except ResourceThrottled:
-                return cls.PostResponses.request_throttled()
 
 
             return cls.PostResponses.ok()
@@ -160,9 +148,14 @@ class ClientNotificationsHandler(object):
 
                 error = None
                 try:
-                    MessageChecker.check_for_throttling(request, publication.owner.mobile_phone)
-                    if not SellersSMSDispatcher.send_sms_about_incoming_email(request, publication.owner.mobile_phone):
-                        raise RuntimeError('Email can not be sent.')
+                    try:
+                        MessageChecker.check_for_throttling(request, publication.owner.mobile_phone)
+                        if not SellersSMSDispatcher.send_sms_about_incoming_email(request, publication.owner.mobile_phone):
+                            raise RuntimeError('Email can not be sent.')
+                    except SMSSendingThrottled:
+                        # If sms notification can't be sent - there is nothing critical here,
+                        # email notification should be sent in any case.
+                        pass
 
 
                 except Exception as e:
@@ -235,15 +228,6 @@ class ClientNotificationsHandler(object):
                 }
 
 
-            @staticmethod
-            @json_response
-            def request_throttled():
-                return {
-                    'code': 200,
-                    'message': 'Request was throttled.'
-                }
-
-
         @classmethod
         def post(cls, request, *args):
             try:
@@ -276,7 +260,7 @@ class ClientNotificationsHandler(object):
                 CallRequestChecker.check_for_throttling(
                     request, publication.owner.mobile_phone, params['phone_number'])
             except ResourceThrottled:
-                return cls.PostResponses.request_throttled()
+                return cls.PostResponses.ok()
 
             try:
                 SellersSMSDispatcher.send_sms_about_incoming_call_request(
