@@ -737,7 +737,7 @@ class LivingDailyRentModel(AbstractModel):
             )
 
             signals.DailyRentSignals.booked.send(
-                record, tid=record.tid, publciation_id=publication.id, date_enter=date_enter, date_leave=date_leave)
+                record, tid=record.publication.tid, publciation_id=publication.id, date_enter=date_enter, date_leave=date_leave)
 
             return record
 
