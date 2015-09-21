@@ -1,7 +1,7 @@
 
 // todo: перекласти назви на англ мову
-namespace Mappino.Core.Values {
-    export class BuildingTypesValues {
+namespace Mappino.Core.Constants {
+    export class BuildingTypes {
         static get Default(): any {
             return [{
                 id:     '0',

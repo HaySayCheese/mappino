@@ -1,7 +1,7 @@
 
 
-namespace Mappino.Core.Values {
-    export class RealtyTypesValues {
+namespace Mappino.Core.Constants {
+    export class RealtyTypes {
         static get Default(): any {
             return [
                 {

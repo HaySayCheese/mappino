@@ -9,29 +9,13 @@ namespace Mappino.Core.Values {
         'TOASTS':   ToastsValues.Default
     });
 
-    values.value('TYPES', {
-        'BUILDING':           BuildingTypesValues.Default,
-        'TRADE_BUILDING':     BuildingTypesValues.Trade,
-        'CONDITION':          ConditionTypesValues.Default,
-        'CURRENCY':           CurrencyTypesValues.Default,
-        'FLAT':               FlatTypesValues.Default,
-        'FLOOR':              FloorTypesValues.Default,
-        'HEATING':            HeatingTypesValues.Default,
-        'INDIVIDUAL_HEATING': HeatingTypesValues.Individual,
-        'MARKET':             MarketTypesValues.Default,
-        'PERIOD':             PeriodTypesValues.Default,
-        'REALTY':             RealtyTypesValues.Default,
-        'ROOM_PLANNING':      RoomPlanningTypesValues.Default
-    });
-
     values.value('CLAIM', {
         'REASONS':  ClaimReasonsValues.Default,
     });
 
 
-    values.run(['$rootScope', 'CLAIM', 'TXT', 'TYPES', ($rootScope, CLAIM, TXT, TYPES) => {
+    values.run(['$rootScope', 'CLAIM', 'TXT', ($rootScope, CLAIM, TXT) => {
         $rootScope.CLAIM    = CLAIM;
         $rootScope.TXT      = TXT;
-        $rootScope.TYPES    = TYPES;
     }]);
 }

@@ -55,7 +55,7 @@ namespace Mappino.Core.BAuth {
 
 
         public tryLogin(): ng.IHttpPromise<any> {
-            if (!this.$cookies.get('user')) return;
+            //if (!this.$cookies.get('user')) return;
 
             var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/accounts/on-login-info/`);
 
@@ -63,7 +63,10 @@ namespace Mappino.Core.BAuth {
                 this._user.set(response.data);
             });
 
-            promise.error(response => { /* error */ });
+            promise.error(response => {
+                this.$cookies.remove('user');
+                this.$cookies.remove('sessionid');
+            });
 
             return promise;
         }

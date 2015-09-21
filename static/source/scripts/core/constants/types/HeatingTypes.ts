@@ -1,7 +1,7 @@
 
 
-namespace Mappino.Core.Values {
-    export class HeatingTypesValues {
+namespace Mappino.Core.Constants {
+    export class HeatingTypes {
         static get Default(): any {
             return [{
                 id:     '0',

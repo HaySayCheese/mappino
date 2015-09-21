@@ -1,7 +1,7 @@
 
 
-namespace Mappino.Core.Values {
-    export class MarketTypesValues {
+namespace Mappino.Core.Constants {
+    export class MarketTypes {
         static get Default(): any {
             return [{
                 id:     '0',

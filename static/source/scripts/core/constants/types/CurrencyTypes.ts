@@ -1,7 +1,7 @@
 
 
-namespace Mappino.Core.Values {
-    export class CurrencyTypesValues {
+namespace Mappino.Core.Constants {
+    export class CurrencyTypes {
         static get Default(): any {
             return [{
                 id:     '0',
