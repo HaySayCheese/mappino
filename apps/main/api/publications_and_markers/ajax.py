@@ -6,7 +6,7 @@ from django.views.generic import View
 from apps.main.api.publications_and_markers.utils import *
 from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.exceptions import InvalidArgument
-from core.markers_index import SegmentsIndex
+from core.markers_index.models import SegmentsIndex
 from core.markers_index.exceptions import TooBigTransaction
 from core.publications import formatters
 from core.publications.constants import HEAD_MODELS, OBJECTS_TYPES
