@@ -230,7 +230,7 @@ namespace Mappino.Core.PublicationPreview {
             this.$mdDialog.show({
                 controller: Mappino.Map.PublicationFullSliderController,
                 controllerAs: 'pubFullSliderCtrl',
-                templateUrl: '/ajax/template/map/publication/full-slider/',
+                templateUrl: '/ajax/template/common/full-screen-slider/body/',
                 parent: angular.element(document.body),
                 targetEvent: $event,
                 clickOutsideToClose: true

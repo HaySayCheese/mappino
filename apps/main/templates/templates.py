@@ -30,13 +30,6 @@ def publication_view(request):
     return 'map/publication/publication-view.html'
 
 
-@ensure_csrf_cookie
-@etag(generate_template_etag('map/publication/parts/full-slider.html'))
-@render_jinja2_template
-def full_slider(request):
-    return 'map/publication/parts/full-slider.html'
-
-
 __FILTERS_TEMPLATES_PATHS = {
     OBJECTS_TYPES.house():      'map/navbars/navbar-left/filters/houses.html',
     OBJECTS_TYPES.flat():       'map/navbars/navbar-left/filters/flats.html',

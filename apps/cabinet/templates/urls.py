@@ -19,11 +19,6 @@ urlpatterns = patterns('apps.cabinet.templates.users',
     url(r'^ajax/template/cabinet/publications/published/$', 'publications_published_form'),
 
 
-    # rent calendar templates
-    url(r'^ajax/template/cabinet/publications/rent-calendar/calendar/$', 'calendar'),
-    url(r'^ajax/template/cabinet/publications/rent-calendar/calendar-view/$', 'calendar_view'),
-
-
     # settings
     url(r'^ajax/template/cabinet/settings/$', 'settings'),
 

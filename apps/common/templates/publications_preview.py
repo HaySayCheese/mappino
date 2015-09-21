@@ -17,31 +17,31 @@ def container(request):
 
 
 @ensure_csrf_cookie
-@etag(generate_template_etag('common/publication-preview/parts/header.html'))
+@etag(generate_template_etag('common/publication-preview/parts/publication-preview-header.html'))
 @render_jinja2_template
 def header(request):
-    return 'common/publication-preview/parts/header.html'
+    return 'common/publication-preview/parts/publication-preview-header.html'
 
 
 @ensure_csrf_cookie
-@etag(generate_template_etag('common/publication-preview/parts/body.html'))
+@etag(generate_template_etag('common/publication-preview/parts/publication-preview-body.html'))
 @render_jinja2_template
 def body(request):
-    return 'common/publication-preview/parts/body.html'
+    return 'common/publication-preview/parts/publication-preview-body.html'
 
 
 @ensure_csrf_cookie
-@etag(generate_template_etag('common/publication-preview/parts/contacts.html'))
+@etag(generate_template_etag('common/publication-preview/parts/publication-preview-contacts.html'))
 @render_jinja2_template
 def contacts(request):
-    return 'common/publication-preview/parts/contacts.html'
+    return 'common/publication-preview/parts/publication-preview-contacts.html'
 
 
 @ensure_csrf_cookie
-@etag(generate_template_etag('common/publication-preview/parts/error.html'))
+@etag(generate_template_etag('common/publication-preview/parts/publication-preview-error.html'))
 @render_jinja2_template
 def error(request):
-    return 'common/publication-preview/parts/error.html'
+    return 'common/publication-preview/parts/publication-preview-error.html'
 
 
 __MAP_TEMPLATES_PATHS = {

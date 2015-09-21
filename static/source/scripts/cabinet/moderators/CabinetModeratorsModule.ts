@@ -11,7 +11,13 @@ namespace Mappino.Cabinet.Moderators {
 
         'angular-carousel',
 
-        'Mappino.Core',
+
+        'Mappino.Core.Values',
+        'Mappino.Core.Constants',
+        'Mappino.Core.Directives',
+
+        'Mappino.Core.BAuth',
+        'Mappino.Core.PublicationPreview'
     ]);
 
 

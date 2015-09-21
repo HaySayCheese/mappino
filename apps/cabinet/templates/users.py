@@ -88,19 +88,3 @@ def support(request):
 @render_jinja2_template
 def support_ticket(request):
     return 'cabinet/users/support/ticket.html'
-
-
-@ensure_csrf_cookie
-@login_required_or_forbidden
-@etag(generate_template_etag('cabinet/users/publications/parts/rcalendar/calendar.html'))
-@render_jinja2_template
-def calendar(request):
-    return 'cabinet/users/publications/parts/rcalendar/calendar.html'
-
-
-@ensure_csrf_cookie
-@login_required_or_forbidden
-@etag(generate_template_etag('cabinet/users/publications/parts/rcalendar/rent-calendar-view.html'))
-@render_jinja2_template
-def calendar_view(request):
-    return 'cabinet/users/publications/parts/rcalendar/rent-calendar-view.html'

@@ -10,9 +10,16 @@ namespace Mappino.Map {
 
         'ui.router',
 
-        'Mappino.Core',
-
         'angular-carousel',
+
+
+        'Mappino.Core.Values',
+        'Mappino.Core.Constants',
+        'Mappino.Core.Directives',
+
+        'Mappino.Core.BAuth',
+        'Mappino.Core.RentCalendar',
+        'Mappino.Core.PublicationPreview'
     ]);
 
 

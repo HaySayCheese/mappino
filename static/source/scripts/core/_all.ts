@@ -6,8 +6,6 @@
 
 /// <reference path='directives/_all.ts' />
 
-/// <reference path='bAuth/_all.ts' />
+/// <reference path='b-auth/_all.ts' />
 /// <reference path='rent-calendar/_all.ts' />
 /// <reference path='publication-preview/_all.ts' />
-
-/// <reference path='CoreModule.ts' />
