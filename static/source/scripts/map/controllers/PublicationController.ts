@@ -89,7 +89,7 @@ namespace Mappino.Map {
                 this.publicationIds.tid = this.$state.params['publication_id'].split(':')[0];
                 this.publicationIds.hid = this.$state.params['publication_id'].split(':')[1];
 
-                this.$scope.publicationTemplateUrl = `/ajax/template/map/publication/detailed/${this.publicationIds.tid}/`;
+                this.$scope.publicationTemplateUrl = `/ajax/template/common/publication-preview/types/${this.publicationIds.tid}/`;
 
                 this.$rootScope.loaders.publication     = true;
                 this.$scope.publicationLoadedSuccess    = false;

@@ -40,7 +40,7 @@
 /// <reference path='directives/NavbarLeftSectionScrollDirective.ts' />
 /// <reference path='directives/NavbarRightDirective.ts' />
 /// <reference path='directives/PublicationContactsDirective.ts' />
-/// <reference path='directives/PublicationViewDirective.ts' />
+/// <reference path='directives/PublicationSlidingPanelDirective.ts' />
 /// <reference path='directives/TabBodyCollapsibleDirective.ts' />
 
 
