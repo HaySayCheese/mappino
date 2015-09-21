@@ -51,10 +51,16 @@
             </div>
 
             <div layout="row">
-                <md-button class="md-raised md-primary" flex ng-if="publication.contacts.allow_call_requests" ng-click="pubCtrl.toggleCallRequestForm()">
+                <md-button class="md-raised md-primary" flex
+                           ng-hide="hiddenControls['call-requests-button']"
+                           ng-if="publication.contacts.allow_call_requests"
+                           ng-click="pubPreviewCtrl.toggleCallRequestForm()">
                     Заказать обратный звонок
                 </md-button>
-                <md-button class="md-raised md-primary" flex ng-if="publication.contacts.allow_messaging" ng-click="pubCtrl.toggleMessageForm()">
+                <md-button class="md-raised md-primary" flex
+                           ng-hide="hiddenControls['messaging-button']"
+                           ng-if="publication.contacts.allow_messaging"
+                           ng-click="pubPreviewCtrl.toggleMessageForm()">
                     Оставить сообщение
                 </md-button>
             </div>
@@ -92,10 +98,10 @@
                 </md-input-container>
             </div>
             <div layout="row">
-                <md-button class="md-primary" flex ng-click="pubCtrl.toggleMessageForm()">
+                <md-button class="md-primary" flex ng-click="pubPreviewCtrl.toggleMessageForm()">
                     Отмена
                 </md-button>
-                <md-button class="md-raised md-primary" flex ng-click="pubCtrl.sendMessage()">
+                <md-button class="md-raised md-primary" flex ng-click="pubPreviewCtrl.sendMessage()">
                     Отправить
                 </md-button>
             </div>
@@ -123,10 +129,10 @@
                 </md-input-container>
             </div>
             <div layout="row">
-                <md-button class="md-primary" flex ng-click="pubCtrl.toggleCallRequestForm()">
+                <md-button class="md-primary" flex ng-click="pubPreviewCtrl.toggleCallRequestForm()">
                     Отмена
                 </md-button>
-                <md-button class="md-raised md-primary" flex ng-click="pubCtrl.sendCallRequest()">
+                <md-button class="md-raised md-primary" flex ng-click="pubPreviewCtrl.sendCallRequest()">
                     Отправить
                 </md-button>
             </div>
@@ -161,10 +167,10 @@
                 </md-input-container>
             </div>
             <div layout="row">
-                <md-button class="md-primary" flex ng-click="pubCtrl.toggleClaimForm()">
+                <md-button class="md-primary" flex ng-click="pubPreviewCtrl.toggleClaimForm()">
                     Отмена
                 </md-button>
-                <md-button class="md-raised md-primary" flex ng-click="pubCtrl.sendClaim()">
+                <md-button class="md-raised md-primary" flex ng-click="pubPreviewCtrl.sendClaim()">
                     Отправить
                 </md-button>
             </div>

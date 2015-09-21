@@ -1,6 +1,3 @@
-/// <reference path='../_all.ts' />
-
-
 namespace Mappino.Cabinet.Moderators {
     export class ModeratingController {
         private publicationIds: any = {

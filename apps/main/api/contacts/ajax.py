@@ -30,7 +30,7 @@ class Contacts(View):
 
                 # preferences
                 'allow_call_requests': preferences.allow_call_requests,
-                'allow_messaging': preferences.allow_messaging,
+                'allow_messaging': preferences.is_message_sending_is_allowed,
             }
 
             # Not all fields may be present.

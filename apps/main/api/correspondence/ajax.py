@@ -3,9 +3,9 @@ from django.core.exceptions import SuspiciousOperation
 from django.views.generic import View
 
 from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
-from collective.exceptions import InvalidArgument, RuntimeException
 from collective.methods.request_data_getters import angular_parameters
 from core.notifications.mail_dispatcher.sellers import SellersMailDispatcher
+from core.notifications.sms_dispatcher.exceptions import ResourceThrottled, SMSSendingThrottled
 from core.notifications.sms_dispatcher.sellers import SellersSMSDispatcher
 from core.publications.constants import HEAD_MODELS
 from core.users.constants import Preferences
@@ -148,11 +148,15 @@ class ClientNotificationsHandler(object):
 
                 error = None
                 try:
-                    if MessageChecker.check_message(request, publication.owner.mobile_phone):
+                    try:
+                        MessageChecker.check_for_throttling(request, publication.owner.mobile_phone)
                         if not SellersSMSDispatcher.send_sms_about_incoming_email(request, publication.owner.mobile_phone):
                             raise RuntimeError('Email can not be sent.')
-                    else:
-                        raise ValueError('You are already passed the limit of sms')
+                    except SMSSendingThrottled:
+                        # If sms notification can't be sent - there is nothing critical here,
+                        # email notification should be sent in any case.
+                        pass
+
 
                 except Exception as e:
                     # catch all errors here
@@ -253,90 +257,18 @@ class ClientNotificationsHandler(object):
 
 
             try:
-                if CallRequestChecker.check_call_request(request, publication.owner.mobile_phone, params['phone_number']):
-                    SellersSMSDispatcher.send_sms_about_incoming_call_request(
-                            request, publication.owner.mobile_phone, params['phone_number'], params.get('name', ''))
+                CallRequestChecker.check_for_throttling(
+                    request, publication.owner.mobile_phone, params['phone_number'])
+            except ResourceThrottled:
+                # client should not know about throttled sms request
+                # to not to start bruteforcing
+                return cls.PostResponses.ok()
 
-                else:
-                    raise ValueError('You are already passed the limit of sms')
-
+            try:
+                SellersSMSDispatcher.send_sms_about_incoming_call_request(
+                    request, publication.owner.mobile_phone, params['phone_number'], params.get('name', ''))
             except ValueError:
                 return cls.PostResponses.invalid_parameters()
 
 
             return cls.PostResponses.ok()
-
-
-        @staticmethod
-        def __send_notification_about_new_call_request(request, publication, client_number, client_name=None):
-            """
-            Аналізує власника оголошення publication, та обирає спосіб доставки повідомлення,
-            після чого надсилає повідомлення.
-
-            :param request:
-                <передаєтьсья в нижчу логіку>
-
-            :param publication: head-запис оголошення, власнику якого слід надіслати повідомлення.
-            :param client_number: номер мобільного телефону у міжнародному форматі.
-            :param client_name: контактна особа.
-            """
-
-            # todo: додати перевірку, чи не надсилався недавно рієлтору запит на дзвінок на цей номер
-            # можна використати інтервал в 2-3 години перед наступним повідомленням.
-
-            # checks
-            try:
-                int(client_number)
-            except ValueError:
-                raise InvalidArgument('Invalid phone number.')
-
-
-            preferences = publication.owner.preferences
-            if not preferences.allow_call_requests:
-                raise SuspiciousOperation('Attempt to send call request to the realtor that was disabled this future.')
-
-
-            # choosing delivery method for the notification
-            # and sending the message
-            method = preferences.send_call_request_notifications_to_sid
-            if method == Preferences.call_requests.sms():
-                if CallRequestChecker.check_call_request(request, publication.owner.mobile_phone, client_number):
-                    SellersSMSDispatcher.send_sms_about_incoming_call_request(
-                        request, publication.owner.mobile_phone, client_number, client_name)
-                else:
-                    raise ValueError('You are already passed the limit of sms')
-
-            elif method == Preferences.call_requests.email():
-                SellersMailDispatcher.send_email_about_incoming_call_request(publication, client_number, client_name)
-
-            elif method == Preferences.call_requests.sms_and_email():
-                # if delivering through one of the methods wasn't successful —
-                # delivering by other methods should not break,
-                # but on the end of the method the error should be raised.
-
-                error = None
-                try:
-                    if CallRequestChecker.check_call_request(request, publication.owner.mobile_phone, client_number):
-                        SellersSMSDispatcher.send_sms_about_incoming_call_request(
-                            request, publication.owner.mobile_phone, client_number, client_name)
-                    else:
-                        raise ValueError('You are already passed the limit of sms')
-
-                except Exception as e:
-                    # catch all errors here
-                    error = e
-
-
-                try:
-                    SellersMailDispatcher.send_email_about_incoming_call_request(publication, client_number, client_name)
-
-                except Exception as e:
-                    # catch all errors here
-                    error = e
-
-
-                if error is not None:
-                    raise error
-
-            else:
-                raise RuntimeException('Invalid send method sid.')

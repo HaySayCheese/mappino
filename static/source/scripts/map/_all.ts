@@ -77,6 +77,7 @@
 /// <reference path='controllers/FavoritesTabController.ts' />
 /// <reference path='controllers/BriefsTabController.ts' />
 
+/// <reference path='controllers/PublicationController.ts' />
 /// <reference path='controllers/PublicationFullSliderController.ts' />
 
 /// <reference path='controllers/MapController.ts' />

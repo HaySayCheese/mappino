@@ -15,6 +15,10 @@ urlpatterns = patterns('apps.cabinet.templates.users',
     url(r'^ajax/template/cabinet/publications/unpublished/footer/$', 'publications_unpublished_footer'),
 
 
+    # published forms
+    url(r'^ajax/template/cabinet/publications/published/$', 'publications_published_form'),
+
+
     # settings
     url(r'^ajax/template/cabinet/settings/$', 'settings'),
 

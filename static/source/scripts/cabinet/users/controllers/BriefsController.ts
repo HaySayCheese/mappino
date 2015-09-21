@@ -114,7 +114,7 @@ namespace Mappino.Cabinet.Users {
             this.publicationsService.unpublish({ tid: brief.tid, hid: brief.hid })
                 .success(response => {
                     this.$rootScope.loaders.overlay = false;
-                    this.$state.go('publication_edit', { id: brief.tid + ':' + brief.hid });
+                    this.$state.go('publication_edit', { publication_id: brief.tid + ':' + brief.hid });
                 })
                 .error(response => {
                     this.$rootScope.loaders.overlay = false;
@@ -140,14 +140,14 @@ namespace Mappino.Cabinet.Users {
                     this.publicationsService.unpublish({ tid: brief.tid, hid: brief.hid })
                         .success(response => {
                             this.$rootScope.loaders.overlay = false;
-                            this.$state.go('publication_edit', { id: brief.tid + ':' + brief.hid });
+                            this.$state.go('publication_edit', { publication_id: brief.tid + ':' + brief.hid });
                         })
                         .error(response => {
                             this.$rootScope.loaders.overlay = false;
                         });
                 });
             } else {
-                this.$state.go('publication_edit', { id: brief.tid + ':' + brief.hid });
+                this.$state.go('publication_edit', { publication_id: brief.tid + ':' + brief.hid });
             }
         }
 
@@ -161,7 +161,7 @@ namespace Mappino.Cabinet.Users {
             this.publicationsService.create(newPublication)
                 .success(response => {
                     this.$rootScope.loaders.overlay = false;
-                    this.$state.go('publication_edit', { id: newPublication.tid + ":" + response.data.hid });
+                    this.$state.go('publication_edit', { publication_id: newPublication.tid + ":" + response.data.hid });
                 })
                 .error(response => {
                     this.$rootScope.loaders.overlay = false;

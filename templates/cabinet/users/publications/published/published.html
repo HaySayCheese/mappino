@@ -11,43 +11,11 @@
 
 
 
-    <md-card flex="32">
+    <md-card class="publication-preview-card" flex="32">
         <md-card-content>
-            <div class="publication-preview-container" layout="column">
-                <header>
-                    <ul rn-carousel rn-carousel-index="0" class="publication-preview-carousel">
-                        <li ng-repeat="photo in ::publication.photos">
-                            <div class="layer">
-                                <img ng-src="[[ ::photo ]]" alt=""/>
-                            </div>
-                        </li>
-                    </ul>
-
-                    <md-button class="md-icon-button fullscreen-slider-button" ng-click="pubCtrl.openFullScreen($event)">
-                        <md-icon class="material-icons md-light md-36 md-dark-shadow">fullscreen</md-icon>
-                        <md-tooltip md-direction="right" md-delay="0">
-                            Посмотреть все фотографии
-                        </md-tooltip>
-                    </md-button>
-                    <md-button class="md-icon-button slide-prev-button" ng-hide="publicationPreviewSlideIndex == 0"
-                               ng-click="pubCtrl.prevSlide()">
-                        <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_left</md-icon>
-                    </md-button>
-                    <md-button class="md-icon-button slide-next-button" ng-hide="publicationPreviewSlideIndex == publication.photos.length - 1"
-                               ng-click="pubCtrl.nextSlide()">
-                        <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_right</md-icon>
-                    </md-button>
-
-                    <div class="publication-header-description" layout="row" layout-align="start center">
-                        <div layout="column" layout-padding>
-                            <div class="md-headline">[[ publication.title ]]</div>
-                            <div class="md-subhead">[[ publication.address ]]</div>
-                        </div>
-                    </div>
-                </header>
-
-                <div ng-include="publicationPartTemplateUrl"></div>
-            </div>
+            <publication-preview
+                    hidden-controls="fullscreen-slider-button close-publication-button favorite-button publication-menu call-requests-button messaging-button">
+            </publication-preview>
         </md-card-content>
     </md-card>
 

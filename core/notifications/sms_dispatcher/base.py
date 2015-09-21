@@ -45,9 +45,6 @@ class BaseSMSSender(object):
         # todo: додати перевірку номеру на відповідність формату
 
 
-        cls.__throttle(number, purpose, request)
-
-
         params = urllib.urlencode({
             'login': settings.SMS_GATE_LOGIN,
             'psw': settings.SMS_GATE_PASSWORD,
@@ -68,9 +65,3 @@ class BaseSMSSender(object):
 
         response = urllib.urlopen("http://smsc.ru/sys/send.php", params).read()
         return 'OK' in response
-
-
-    @staticmethod
-    def __throttle(request, number, purpose):
-        # todo: add throttling
-        pass
