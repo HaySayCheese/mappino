@@ -31,6 +31,10 @@ class FlatsRentTerms(LivingRentTermsModel):
         db_table = 'o_flats_rent_terms'
 
 
+class FlatsDailyRentReservations(LivingDailyRentModel):
+    publication = models.ForeignKey('FlatsHeads')
+
+
 class FlatsBodies(BodyModel):
     class Meta:
         db_table = 'o_flats_bodies'
@@ -284,6 +288,7 @@ class FlatsHeads(AbstractHeadModel):
     tid = OBJECTS_TYPES.flat()
     photos_model = FlatsPhotos
 
+    # overridden fields
     body = models.ForeignKey(FlatsBodies)
     sale_terms = models.OneToOneField(FlatsSaleTerms)
     rent_terms = models.OneToOneField(FlatsRentTerms)
@@ -320,6 +325,10 @@ class HousesRentTerms(LivingRentTermsModel):
         if self.rent_type_sid == HOUSE_RENT_TYPES.part():
             return u'Часть дома, ' + terms
         return terms
+
+
+class HousesDailyRentReservations(LivingDailyRentModel):
+    publication = models.ForeignKey('HousesHeads')
 
 
 class HousesBodies(BodyModel):
@@ -558,6 +567,7 @@ class HousesHeads(AbstractHeadModel):
     tid = OBJECTS_TYPES.house()
     photos_model = HousesPhotos
 
+    # overridden fields
     body = models.ForeignKey(HousesBodies)
     sale_terms = models.OneToOneField(HousesSaleTerms)
     rent_terms = models.OneToOneField(HousesRentTerms)
@@ -602,6 +612,10 @@ class RoomsRentTerms(LivingRentTermsModel):
 
         if self.period_sid == LIVING_RENT_PERIODS.daily() and self.persons_count is None:
             raise EmptyPersonsCount('Persons count is None.')
+
+
+class RoomsDailyRentReservations(LivingDailyRentModel):
+    publication = models.ForeignKey('RoomsHeads')
 
 
 class RoomsBodies(BodyModel):
@@ -749,6 +763,7 @@ class RoomsHeads(AbstractHeadModel):
     tid = OBJECTS_TYPES.room()
     photos_model = RoomsPhotos
 
+    # overridden fields
     body = models.ForeignKey(RoomsBodies)
     sale_terms = models.OneToOneField(RoomsSaleTerms)
     rent_terms = models.OneToOneField(RoomsRentTerms)

@@ -1,14 +1,17 @@
 # coding=utf-8
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
+import datetime
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError, SuspiciousOperation
 from django.http.response import HttpResponseBadRequest
+from pytz import timezone
 
 from apps.views_base import CabinetView
-from collective.decorators.ajax import json_response, json_response_bad_request
+from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.methods.request_data_getters import angular_parameters
 from core.managing.moderators.models import RejectedPublications
 from core.publications import formatters
 from core.publications.exceptions import PhotosHandlerExceptions, NotEnoughPhotos
-from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS, OBJECT_STATES
+from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS, OBJECT_STATES, \
+    DAILY_RENT_RESERVATIONS_MODELS
 from core.publications.signals import record_updated
 from core.publications.update_methods.flats import update_flat
 from core.publications.update_methods.houses import update_house
@@ -716,37 +719,6 @@ class DailyRent(object):
 
 
         @classmethod
-        def get(cls, request, *args):
-            publication_tid, publication_hash_id = args[:]
-
-
-            publications_model = HEAD_MODELS.get(publication_tid)
-            if not publications_model:
-                return cls.GetResponses.invalid_tid()
-
-            try:
-                publication = publications_model.objects\
-                    .filter(hash_id=publication_hash_id)\
-                    .only('id', 'owner')\
-                    [:1][0]
-
-                if publication.owner != request.user:
-                    raise SuspiciousOperation()
-
-            except IndexError:
-                return cls.GetResponses.hash_id_not_found()
-
-
-            daily_rent_reservations_model = DAILY_RENT_RESERVATIONS_MODELS.get(publication_tid)
-            if not daily_rent_reservations_model:
-                return cls.PostResponses.invalid_tid()
-
-
-            reservations = daily_rent_reservations_model.objects.filter(publication=publication)
-            return cls.GetResponses.ok(reservations)
-
-
-        @classmethod
         def post(cls, request, *args):
             publication_tid, publication_hash_id = args[:]
 
@@ -806,6 +778,37 @@ class DailyRent(object):
 
 
             return cls.PostResponses.ok()
+
+
+        @classmethod
+        def get(cls, request, *args):
+            publication_tid, publication_hash_id = args[:]
+
+
+            publications_model = HEAD_MODELS.get(publication_tid)
+            if not publications_model:
+                return cls.GetResponses.invalid_tid()
+
+            try:
+                publication = publications_model.objects\
+                    .filter(hash_id=publication_hash_id)\
+                    .only('id', 'owner')\
+                    [:1][0]
+
+                if publication.owner != request.user:
+                    raise SuspiciousOperation()
+
+            except IndexError:
+                return cls.GetResponses.hash_id_not_found()
+
+
+            daily_rent_reservations_model = DAILY_RENT_RESERVATIONS_MODELS.get(publication_tid)
+            if not daily_rent_reservations_model:
+                return cls.PostResponses.invalid_tid()
+
+
+            reservations = daily_rent_reservations_model.objects.filter(publication=publication)
+            return cls.GetResponses.ok(reservations)
 
 
 class Briefs(CabinetView):
