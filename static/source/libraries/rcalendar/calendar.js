@@ -70,8 +70,8 @@ angular.module('ui.rCalendar', [])
 
         self.refreshView = function () {
             if (this.mode) {
-                this.range = this._getRange(this.currentCalendarDate);
-                this._refreshView();
+                this.range = this.getRange(this.currentCalendarDate);
+                this.refreshMonthView();
                 this.rangeChanged();
             }
         };
@@ -87,8 +87,8 @@ angular.module('ui.rCalendar', [])
 
         self.onEventSourceChanged = function (value) {
             self.eventSource = value;
-            if (self._onDataLoaded) {
-                self._onDataLoaded();
+            if (self.onDataLoaded) {
+                self.onDataLoaded();
             }
         };
 
@@ -115,8 +115,8 @@ angular.module('ui.rCalendar', [])
 
         self.rangeChanged = function () {
             if (self.queryMode === 'local') {
-                if (self.eventSource && self._onDataLoaded) {
-                    self._onDataLoaded();
+                if (self.eventSource && self.onDataLoaded) {
+                    self.onDataLoaded();
                 }
             } else if (self.queryMode === 'remote') {
                 if ($scope.rangeChanged) {
@@ -239,7 +239,7 @@ angular.module('ui.rCalendar', [])
         'use strict';
         return {
             restrict: 'E',
-            templateUrl: '/ajax/template/calendar/',
+            templateUrl: '/calendar-part/',
             scope: {
                 rangeChanged: '&',
                 eventSelected: '&',
@@ -315,7 +315,7 @@ angular.module('ui.rCalendar', [])
                                 }
                             }
                         } else {
-                            ctrl._refreshView();
+                            ctrl.refreshView();
                         }
 
                         if (scope.timeSelected) {
@@ -324,7 +324,7 @@ angular.module('ui.rCalendar', [])
                     }
                 };
 
-                ctrl._refreshView = function () {
+                ctrl.refreshMonthView = function () {
                     var startDate = ctrl.range.startTime,
                         date = startDate.getDate(),
                         month = (startDate.getMonth() + (date !== 1 ? 1 : 0)) % 12,
@@ -379,7 +379,7 @@ angular.module('ui.rCalendar', [])
                     }
                 }
 
-                ctrl._onDataLoaded = function () {
+                ctrl.onDataLoaded = function () {
                     var eventSource = ctrl.eventSource,
                         len = eventSource ? eventSource.length : 0,
                         startTime = ctrl.range.startTime,
@@ -489,7 +489,7 @@ angular.module('ui.rCalendar', [])
                     return (new Date(date1.getFullYear(), date1.getMonth(), date1.getDate()) - new Date(date2.getFullYear(), date2.getMonth(), date2.getDate()) );
                 };
 
-                ctrl._getRange = function getRange(currentDate) {
+                ctrl.getRange = function (currentDate) {
                     var year = currentDate.getFullYear(),
                         month = currentDate.getMonth(),
                         firstDayOfMonth = new Date(year, month, 1),
