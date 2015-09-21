@@ -58,6 +58,18 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='FlatsDailyRentReservations',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, help_text='', auto_created=True)),
+                ('date_enter', models.DateField(db_index=True, help_text='')),
+                ('date_leave', models.DateField(db_index=True, help_text='')),
+                ('client_name', models.TextField(null=True, help_text='')),
+            ],
+            options={
+                'db_table': 'o_flats_daily_rent_reservations',
+            },
+        ),
+        migrations.CreateModel(
             name='FlatsHeads',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, help_text='', auto_created=True)),
@@ -275,6 +287,18 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='HousesDailyRentReservations',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, help_text='', auto_created=True)),
+                ('date_enter', models.DateField(db_index=True, help_text='')),
+                ('date_leave', models.DateField(db_index=True, help_text='')),
+                ('client_name', models.TextField(null=True, help_text='')),
+            ],
+            options={
+                'db_table': 'o_houses_daily_rent_reservations',
+            },
+        ),
+        migrations.CreateModel(
             name='HousesHeads',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, help_text='', auto_created=True)),
@@ -450,18 +474,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='LivingDailyRentModel',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, help_text='', auto_created=True)),
-                ('date_enter', models.DateField(db_index=True, help_text='')),
-                ('date_leave', models.DateField(db_index=True, help_text='')),
-                ('client_name', models.TextField(null=True, help_text='')),
-            ],
-            options={
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
             name='OfficesBodies',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, help_text='', auto_created=True)),
@@ -603,6 +615,18 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'o_rooms_bodies',
+            },
+        ),
+        migrations.CreateModel(
+            name='RoomsDailyRentReservations',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, help_text='', auto_created=True)),
+                ('date_enter', models.DateField(db_index=True, help_text='')),
+                ('date_leave', models.DateField(db_index=True, help_text='')),
+                ('client_name', models.TextField(null=True, help_text='')),
+            ],
+            options={
+                'db_table': 'o_rooms_daily_rent_reservations',
             },
         ),
         migrations.CreateModel(
@@ -927,36 +951,6 @@ class Migration(migrations.Migration):
                 'db_table': 'o_warehouses_sale_terms',
             },
         ),
-        migrations.CreateModel(
-            name='FlatsDailyRentReservations',
-            fields=[
-                ('livingdailyrentmodel_ptr', models.OneToOneField(primary_key=True, serialize=False, help_text='', auto_created=True, parent_link=True, to='publications.LivingDailyRentModel')),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=('publications.livingdailyrentmodel',),
-        ),
-        migrations.CreateModel(
-            name='HousesDailyRentReservations',
-            fields=[
-                ('livingdailyrentmodel_ptr', models.OneToOneField(primary_key=True, serialize=False, help_text='', auto_created=True, parent_link=True, to='publications.LivingDailyRentModel')),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=('publications.livingdailyrentmodel',),
-        ),
-        migrations.CreateModel(
-            name='RoomsDailyRentReservations',
-            fields=[
-                ('livingdailyrentmodel_ptr', models.OneToOneField(primary_key=True, serialize=False, help_text='', auto_created=True, parent_link=True, to='publications.LivingDailyRentModel')),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=('publications.livingdailyrentmodel',),
-        ),
         migrations.AddField(
             model_name='warehousesheads',
             name='rent_terms',
@@ -986,6 +980,11 @@ class Migration(migrations.Migration):
             model_name='roomsheads',
             name='sale_terms',
             field=models.OneToOneField(help_text='', to='publications.RoomsSaleTerms'),
+        ),
+        migrations.AddField(
+            model_name='roomsdailyrentreservations',
+            name='publication',
+            field=models.ForeignKey(help_text='', to='publications.RoomsHeads'),
         ),
         migrations.AddField(
             model_name='officesheads',
@@ -1018,6 +1017,11 @@ class Migration(migrations.Migration):
             field=models.OneToOneField(help_text='', to='publications.HousesSaleTerms'),
         ),
         migrations.AddField(
+            model_name='housesdailyrentreservations',
+            name='publication',
+            field=models.ForeignKey(help_text='', to='publications.HousesHeads'),
+        ),
+        migrations.AddField(
             model_name='garagesheads',
             name='rent_terms',
             field=models.OneToOneField(help_text='', to='publications.GaragesRentTerms'),
@@ -1036,16 +1040,6 @@ class Migration(migrations.Migration):
             model_name='flatsheads',
             name='sale_terms',
             field=models.OneToOneField(help_text='', to='publications.FlatsSaleTerms'),
-        ),
-        migrations.AddField(
-            model_name='roomsdailyrentreservations',
-            name='publication',
-            field=models.ForeignKey(help_text='', to='publications.RoomsHeads'),
-        ),
-        migrations.AddField(
-            model_name='housesdailyrentreservations',
-            name='publication',
-            field=models.ForeignKey(help_text='', to='publications.HousesHeads'),
         ),
         migrations.AddField(
             model_name='flatsdailyrentreservations',

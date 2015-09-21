@@ -34,6 +34,9 @@ class FlatsRentTerms(LivingRentTermsModel):
 class FlatsDailyRentReservations(LivingDailyRentModel):
     publication = models.ForeignKey('FlatsHeads')
 
+    class Meta:
+        db_table = 'o_flats_daily_rent_reservations'
+
 
 class FlatsBodies(BodyModel):
     class Meta:
@@ -330,6 +333,10 @@ class HousesRentTerms(LivingRentTermsModel):
 class HousesDailyRentReservations(LivingDailyRentModel):
     publication = models.ForeignKey('HousesHeads')
 
+    class Meta:
+        db_table = 'o_houses_daily_rent_reservations'
+
+
 
 class HousesBodies(BodyModel):
     class Meta:
@@ -616,6 +623,10 @@ class RoomsRentTerms(LivingRentTermsModel):
 
 class RoomsDailyRentReservations(LivingDailyRentModel):
     publication = models.ForeignKey('RoomsHeads')
+
+    class Meta:
+        db_table = 'o_rooms_daily_rent_reservations'
+
 
 
 class RoomsBodies(BodyModel):
