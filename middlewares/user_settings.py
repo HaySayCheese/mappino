@@ -11,6 +11,11 @@ class UserCookie(object):
 
     @classmethod
     def process_response(cls, request, response):
+        # ignore redirect responses
+        if 300 < response.status_code < 399:
+            return response
+
+
         if request.user.is_authenticated():
             response.set_cookie(cls.cookie_name, '')
 
