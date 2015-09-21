@@ -55,70 +55,70 @@ class AbstractChecker(object):
 
 class LoginChecker(AbstractChecker):
     @classmethod
-    def check_for_throttling(cls, request, number):
+    def check_per_throttling(cls, request, number):
         client_ip = get_client_ip(request)
         redis = redis_connections['throttle']
         ok = True
 
         # Не більше 3 смс на один номер за 1 хвилину
-        login_for_second = redis.get('login_by_' + number + '_for_minute')
-        if not login_for_second:
-            redis.setex('login_by_' + number + '_for_minute', 60, 1)
-        elif int(login_for_second) >= 3:
+        login_per_second = redis.get('login_by_' + number + '_per_minute')
+        if not login_per_second:
+            redis.setex('login_by_' + number + '_per_minute', 60, 1)
+        elif int(login_per_second) >= 3:
             ok = False
             cls._notify_admins_about_throttling_turned_on(
                 'Rule: not more than 3 sms per minute; \n'
                 'Number: {0}; \n'
                 'Attempts count: {1}.'
-                    .format(number, login_for_second))
+                    .format(number, login_per_second))
 
 
         # Не більше 6 смс з одного номера за годину
         # (5 входів за годину + 15% вірогідність помилки = 5.75 = 6)
-        login_for_hour = redis.get('login_by_' + number + '_for_hour')
-        if not login_for_hour:
-            redis.setex('login_by_' + number + '_for_hour', 3600, 1)
+        login_per_hour = redis.get('login_by_' + number + '_per_hour')
+        if not login_per_hour:
+            redis.setex('login_by_' + number + '_per_hour', 3600, 1)
         else:
-            redis.incr('login_by_' + number + '_for_hour')
-            if int(login_for_hour) >= 6:
+            redis.incr('login_by_' + number + '_per_hour')
+            if int(login_per_hour) >= 6:
                 ok = False
                 cls._notify_admins_about_throttling_turned_on(
                     'Rule: not more than 6 sms per hour; \n'
                     'Number: {0}; \n'
                     'Attempts count: {1}.'
-                        .format(number, login_for_hour))
+                        .format(number, login_per_hour))
 
 
         # Не більше 20 смс з однієї ip-адреси за 10 хвилин
-        login_by_ip_for_10minutes = redis.get('login_by_ip_' + client_ip + '_for_10minutes')
-        if not login_by_ip_for_10minutes:
-            redis.setex('login_by_ip_' + client_ip + '_for_10minutes', 600, 1)
+        login_by_ip_per_10minutes = redis.get('login_by_ip_' + client_ip + '_per_10minutes')
+        if not login_by_ip_per_10minutes:
+            redis.setex('login_by_ip_' + client_ip + '_per_10minutes', 600, 1)
         else:
-            redis.incr('login_by_ip_' + client_ip + '_for_10minutes')
-            if int(login_by_ip_for_10minutes) >= 20:
+            redis.incr('login_by_ip_' + client_ip + '_per_10minutes')
+            if int(login_by_ip_per_10minutes) >= 20:
                 ok = False
                 cls._notify_admins_about_throttling_turned_on(
                     'Rule: not more than 20 sms per ip per 10 minutes; \n'
                     'Number: {0}; \n'
                     'IP-address: {1} \n'
                     'Attempts count: {2}.'
-                        .format(number, client_ip, login_by_ip_for_10minutes))
+                        .format(number, client_ip, login_by_ip_per_10minutes))
 
 
         # Не більше 60 смс з однієї ip-адреси за годину
-        login_by_ip_for_hour = redis.get('login_by_ip_' + client_ip + '_for_hour')
-        if not login_by_ip_for_hour:
-            redis.setex('login_by_ip_' + client_ip + '_for_hour', 3600, 1)
+        login_by_ip_per_hour = redis.get('login_by_ip_' + client_ip + '_per_hour')
+        if not login_by_ip_per_hour:
+            redis.setex('login_by_ip_' + client_ip + '_per_hour', 3600, 1)
         else:
-            redis.incr('login_by_ip_' + client_ip + '_for_hour')
-            if int(login_by_ip_for_hour) >= 60:
+            redis.incr('login_by_ip_' + client_ip + '_per_hour')
+            if int(login_by_ip_per_hour) >= 60:
                 ok = False
                 cls._notify_admins_about_throttling_turned_on(
                     'Rule: not more than 60 sms per ip per hour; \n'
                     'Number: {0}; \n'
                     'IP-address: {1} \n'
                     'Attempts count: {2}.'
-                        .format(number, client_ip, login_by_ip_for_hour))
+                        .format(number, client_ip, login_by_ip_per_hour))
 
 
         # Загальний потік не більше 138 смс за годину
@@ -148,11 +148,11 @@ class CallRequestChecker(AbstractChecker):
         ok = True
 
         # 2 смс з номера клієнта на номер продавця за день
-        call_requests_per_number_per_day = redis.get('call_requests_to' + number + '_from_' + client_number + '_for_day')
+        call_requests_per_number_per_day = redis.get('call_requests_to' + number + '_from_' + client_number + '_per_day')
         if not call_requests_per_number_per_day:
-            redis.setex('call_requests_to' + number + '_from_' + client_number + '_for_day', day, 1)
+            redis.setex('call_requests_to' + number + '_from_' + client_number + '_per_day', day, 1)
         else:
-            redis.incr('call_requests_to' + number + '_from_' + client_number + '_for_day')
+            redis.incr('call_requests_to' + number + '_from_' + client_number + '_per_day')
             if int(call_requests_per_number_per_day) >= 2:
                 ok = False
                 cls._notify_admins_about_throttling_turned_on(
@@ -179,9 +179,9 @@ class CallRequestChecker(AbstractChecker):
 
 
         # 1 смс на номер продавця за 30 секунд
-        call_requests_to_number_per_30secs = redis.get('call_requests_to' + number + '_for_30seconds')
+        call_requests_to_number_per_30secs = redis.get('call_requests_to' + number + '_per_30seconds')
         if not call_requests_to_number_per_30secs:
-            redis.setex('call_requests_to' + number + '_for_30seconds', 30, 1)
+            redis.setex('call_requests_to' + number + '_per_30seconds', 30, 1)
         elif int(call_requests_to_number_per_30secs) >= 1:
                 ok = False
                 cls._notify_admins_about_throttling_turned_on(
@@ -192,11 +192,11 @@ class CallRequestChecker(AbstractChecker):
 
 
         # 60 смс на номер продавця з однієї ip-адреси за день
-        call_requests_from_ip_to_number = redis.get('call_requests_by_ip_' + client_ip + '_to_' + number + '_for_day')
+        call_requests_from_ip_to_number = redis.get('call_requests_by_ip_' + client_ip + '_to_' + number + '_per_day')
         if not call_requests_from_ip_to_number:
-            redis.setex('call_requests_by_ip_' + client_ip + '_to_' + number + '_for_day', day, 1)
+            redis.setex('call_requests_by_ip_' + client_ip + '_to_' + number + '_per_day', day, 1)
         else:
-            redis.incr('call_requests_by_ip_' + client_ip + '_to_' + number + '_for_day')
+            redis.incr('call_requests_by_ip_' + client_ip + '_to_' + number + '_per_day')
             if int(call_requests_from_ip_to_number) >= 60:
                 ok = False
                 cls._notify_admins_about_throttling_turned_on(
@@ -208,28 +208,28 @@ class CallRequestChecker(AbstractChecker):
 
 
         # 75 смс з однієї ip-адреси за годину
-        call_requests_from_ip_for_hour = redis.get('call_requests_from_ip_' + client_ip + '_for_hour')
-        if not call_requests_from_ip_for_hour:
-            redis.setex('call_requests_from_ip_' + client_ip + '_for_hour', 3600, 1)
+        call_requests_from_ip_per_hour = redis.get('call_requests_from_ip_' + client_ip + '_per_hour')
+        if not call_requests_from_ip_per_hour:
+            redis.setex('call_requests_from_ip_' + client_ip + '_per_hour', 3600, 1)
         else:
-            redis.incr('call_requests_from_ip_' + client_ip + '_for_hour')
-            if int(call_requests_from_ip_for_hour) >= 75:
+            redis.incr('call_requests_from_ip_' + client_ip + '_per_hour')
+            if int(call_requests_from_ip_per_hour) >= 75:
                 ok = False
                 cls._notify_admins_about_throttling_turned_on(
                     'Rule: 75 call requests per seller per IP-address per hour; \n'
                     'Seller number: {0}; \n'
                     'IP-address: {1}; \n'
                     'Attempts count: {2}.'
-                        .format(number, client_ip, call_requests_from_ip_for_hour))
+                        .format(number, client_ip, call_requests_from_ip_per_hour))
 
 
         # 1800 смс з однієї ip-адреси за день
-        call_requests_from_ip_for_day = redis.get('call_requests_from_ip_' + client_ip + '_for_day')
-        if not call_requests_from_ip_for_day:
-            redis.setex('call_requests_from_ip_' + client_ip + '_for_day', day, 1)
+        call_requests_from_ip_per_day = redis.get('call_requests_from_ip_' + client_ip + '_per_day')
+        if not call_requests_from_ip_per_day:
+            redis.setex('call_requests_from_ip_' + client_ip + '_per_day', day, 1)
         else:
-            redis.incr('call_requests_from_ip_' + client_ip + '_for_day')
-            if int(call_requests_from_ip_for_day) >= 1800:
+            redis.incr('call_requests_from_ip_' + client_ip + '_per_day')
+            if int(call_requests_from_ip_per_day) >= 1800:
                 ok = False
                 cls._notify_admins_about_throttling_turned_on(
                     'Rule: 1800 call requests per IP-address per day; \n'
@@ -265,9 +265,9 @@ class MessageChecker(AbstractChecker):
 
 
         # 1 смс на один номер за 30 секунд
-        messages_to_number_per_30seconds = redis.get('message_to' + number + '_for_30seconds')
+        messages_to_number_per_30seconds = redis.get('message_to' + number + '_per_30seconds')
         if not messages_to_number_per_30seconds:
-            redis.setex('message_to' + number + '_for_30seconds', 30, 1)
+            redis.setex('message_to' + number + '_per_30seconds', 30, 1)
         elif int(messages_to_number_per_30seconds) >= 1:
             ok = False
             cls._notify_admins_about_throttling_turned_on(
@@ -278,11 +278,11 @@ class MessageChecker(AbstractChecker):
 
 
         # 30 смс на номер за день
-        messages_to_number_per_day = redis.get('message_to_' + number + '_for_day')
+        messages_to_number_per_day = redis.get('message_to_' + number + '_per_day')
         if not messages_to_number_per_day:
-            redis.setex('message_to_' + number + '_for_day', day, 1)
+            redis.setex('message_to_' + number + '_per_day', day, 1)
         else:
-            redis.incr('message_to_' + number + '_for_day')
+            redis.incr('message_to_' + number + '_per_day')
             if int(messages_to_number_per_day) >= 30:
                 ok = False
                 cls._notify_admins_about_throttling_turned_on(
@@ -293,11 +293,11 @@ class MessageChecker(AbstractChecker):
 
 
         # 30 смс з однієї ip-адреси на номер за день
-        messages_from_ip_to_number = redis.get('messages_by_ip_' + client_ip + '_to_' + number + '_for_day')
+        messages_from_ip_to_number = redis.get('messages_by_ip_' + client_ip + '_to_' + number + '_per_day')
         if not messages_from_ip_to_number:
-            redis.setex('messages_by_ip_' + client_ip + '_to_' + number + '_for_day', day, 1)
+            redis.setex('messages_by_ip_' + client_ip + '_to_' + number + '_per_day', day, 1)
         else:
-            redis.incr('messages_by_ip_' + client_ip + '_to_' + number + '_for_day')
+            redis.incr('messages_by_ip_' + client_ip + '_to_' + number + '_per_day')
             if int(messages_from_ip_to_number) >= 30:
                 ok = False
                 cls._notify_admins_about_throttling_turned_on(
@@ -309,11 +309,11 @@ class MessageChecker(AbstractChecker):
 
 
         # 900 смс з однієї ip-адреси за день
-        messages_from_ip_per_day = redis.get('messages_from_ip_' + client_ip + '_for_day')
+        messages_from_ip_per_day = redis.get('messages_from_ip_' + client_ip + '_per_day')
         if not messages_from_ip_per_day:
-            redis.setex('messages_from_ip_' + client_ip + '_for_day', day, 1)
+            redis.setex('messages_from_ip_' + client_ip + '_per_day', day, 1)
         else:
-            redis.incr('messages_from_ip_' + client_ip + '_for_day')
+            redis.incr('messages_from_ip_' + client_ip + '_per_day')
             if int(messages_from_ip_per_day) >= 900:
                 ok = False
                 cls._notify_admins_about_throttling_turned_on(
