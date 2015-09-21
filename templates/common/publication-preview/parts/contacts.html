@@ -52,13 +52,13 @@
 
             <div layout="row">
                 <md-button class="md-raised md-primary" flex
-                           ng-hide="hiddenControls['allow-call-requests-button']"
+                           ng-hide="hiddenControls['call-requests-button']"
                            ng-if="publication.contacts.allow_call_requests"
                            ng-click="pubPreviewCtrl.toggleCallRequestForm()">
                     Заказать обратный звонок
                 </md-button>
                 <md-button class="md-raised md-primary" flex
-                           ng-hide="hiddenControls['allow-messaging-button']"
+                           ng-hide="hiddenControls['messaging-button']"
                            ng-if="publication.contacts.allow_messaging"
                            ng-click="pubPreviewCtrl.toggleMessageForm()">
                     Оставить сообщение

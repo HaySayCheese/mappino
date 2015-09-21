@@ -10,8 +10,8 @@ namespace Mappino.Core.PublicationPreview {
                 var $element = angular.element(element),
                     hiddenControls = [];
 
-                if (angular.isDefined(attrs['hideControls'])) {
-                    hiddenControls = attrs['hideControls'].split(' ');
+                if (angular.isDefined(attrs['hiddenControls'])) {
+                    hiddenControls = attrs['hiddenControls'].split(' ');
                 }
 
                 model.$scope.pubPreviewCtrl.$scope.hiddenControls = {};
