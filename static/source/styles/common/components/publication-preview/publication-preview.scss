@@ -1,0 +1,15 @@
+@import "publication-preview-header";
+@import "publication-preview-body";
+@import "publication-preview-contacts";
+@import "publication-preview-error";
+
+
+publication-preview {
+    height: 100%;
+    display: block;
+
+
+    .publication-preview-loader {
+        @include square(100%);
+    }
+}

@@ -10,7 +10,7 @@ namespace Mappino.Map {
         return {
             restrict: 'E',
 
-            link: function(scope, element, attrs, modelCtrl) {
+            link: (scope, element, attrs, modelCtrl) => {
                 var toggleTabSectionBtn = angular.element(element).parent().find('[toggle-tab-section]'),
                     headerControllers = angular.element(
                         "<span flex></span>" +

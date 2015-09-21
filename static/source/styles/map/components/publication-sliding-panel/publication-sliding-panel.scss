@@ -1,0 +1,43 @@
+publication-sliding-panel {
+    @include size(600px, auto);
+
+    position: fixed;
+    top: 0;
+    right: -1000px;
+    bottom: 0;
+
+    z-index: 70;
+
+    background: #fff;
+    overflow: auto;
+
+    @include transition(all .5s ease);
+
+
+    @media (max-width: 600px) {
+        width: 100% !important;
+    }
+
+
+    &.-opened {
+        right: 0;
+    }
+
+    &.-closed {
+        right: -1000px !important;
+    }
+
+    &.-with-navbar-right {
+        right: 220px;
+
+        @media (max-width: 825px) {
+            width: auto;
+            left: 0;
+        }
+    }
+
+    .publication-view-container {
+        min-height: 100%;
+    }
+
+}

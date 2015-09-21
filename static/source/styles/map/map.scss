@@ -1,20 +1,20 @@
 //
-// Materialize include
+// Common include
 // --------------------------------------------------
-@import "../_common/material/material";
+@import "../common/material/material";
+@import "../common/additions/additions";
+@import "../common/components/components";
 
 
-// additions
-@import "../_common/additions/additions";
+
+// Additions include
 @import "additions/md-tabs";
+
 
 
 //
 // custom components
 // --------------------------------------------------
-@import "../_common/components/components";
-
-
 
 // navbars
 @import "components/fixed-panels/_fixed-panel";
@@ -41,9 +41,8 @@
 
 
 
-// publication panel
-@import "components/sliding-panels/_right-sliding-panel";
-@import "components/sliding-panels/publication-view";
+// publication-sliding-panel
+@import "components/publication-sliding-panel/publication-sliding-panel";
 
 
 @import "components/map-info-block";

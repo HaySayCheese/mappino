@@ -5,9 +5,9 @@
 </div>
 
 
-<publication-preview-error></publication-preview-error>
-
-
-<div layout="column" layout-align="center center" ng-show="loaders.publication" flex>
+<div class="publication-preview-loader" layout="row" layout-align="center center" ng-show="loaders.publication" flex>
     <md-progress-circular md-mode="indeterminate"></md-progress-circular>
 </div>
+
+
+<publication-preview-error ng-hide="publicationLoadedSuccess || loaders.publication"></publication-preview-error>

@@ -3,8 +3,6 @@ namespace Mappino.Map {
 
         return {
             restrict: 'E',
-            controller: PublicationController,
-            controllerAs: 'pubCtrl',
 
             link: function(scope, element, attrs, modelCtrl) {
                 var $element = angular.element(element);

@@ -1,9 +1,10 @@
 namespace Mappino.Core.PublicationPreview {
     var publicationPreviewModule: angular.IModule = angular.module('Mappino.Core.PublicationPreview', [
-
+        'ngMaterial'
     ]);
 
     publicationPreviewModule.service('PublicationPreviewService', PublicationPreviewService);
+    publicationPreviewModule.controller('PublicationPreviewController', PublicationPreviewController);
 
     publicationPreviewModule.directive('publicationPreview', PublicationPreviewDirective);
     publicationPreviewModule.directive('publicationPreviewHeader', PublicationPreviewHeaderDirective);
@@ -11,5 +12,4 @@ namespace Mappino.Core.PublicationPreview {
     publicationPreviewModule.directive('publicationPreviewContacts', PublicationPreviewContactsDirective);
     publicationPreviewModule.directive('publicationPreviewError', PublicationPreviewErrorDirective);
 
-    publicationPreviewModule.controller('PublicationPreviewController', PublicationPreviewController);
 }

@@ -8,18 +8,18 @@ namespace Mappino.Map {
             '$scope',
             '$rootScope',
             '$mdDialog',
-            'PublicationService',
+            'PublicationPreviewService',
         ];
 
         constructor(
             private $scope,
             private $rootScope,
             private $mdDialog: any,
-            private publicationService: PublicationService) {
+            private publicationPreviewService: Mappino.Core.PublicationPreview.PublicationPreviewService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.publicationFullSliderIndex = 0;
 
-            $scope.photos = publicationService.publication.photos;
+            $scope.photos = publicationPreviewService.publication.photos;
         }
 
 
