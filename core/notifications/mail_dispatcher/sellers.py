@@ -7,6 +7,11 @@ from core.notifications.mail_dispatcher import email_sender
 class SellersMailDispatcher(object):
     @staticmethod
     def send_email_about_incoming_call_request(publication, number, name):
+        email = publication.owner.contact_email()
+        if not email:
+            raise RuntimeError('It seems that seller does not specified contact email.')
+
+
         return email_sender.send_html_email(
             template_name = 'email/notifications/incoming_call_request.html',
             context = {
@@ -19,7 +24,7 @@ class SellersMailDispatcher(object):
                 },
             },
             subject = u'Запрос обратного звонка ({0})'.format(number), # tr
-            addresses_list = [publication.owner.contact_email(), ],
+            addresses_list = [email, ],
         )
 
 
@@ -27,6 +32,11 @@ class SellersMailDispatcher(object):
     def send_message_email(publication, reply_email, name, message):
         subject = u'Сообщение от заинтересованного клиента ({0})'.format(name) \
             if name else u'Сообщение от заинтересованного клиента', # tr # note: name may be omitted
+
+
+        email = publication.owner.contact_email()
+        if not email:
+            raise RuntimeError('It seems that seller does not specified contact email.')
 
 
         return email_sender.send_html_email(
@@ -41,6 +51,6 @@ class SellersMailDispatcher(object):
                 'message': message
             },
             subject = subject,
-            addresses_list = [publication.owner.contact_email()],
+            addresses_list = [email, ],
             reply_to=reply_email
         )

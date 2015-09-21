@@ -281,3 +281,9 @@ class Preferences(models.Model):
 
     def email_may_be_shown(self):
         return not self.hide_email
+
+
+    @property
+    def is_message_sending_is_allowed(self):
+        return self.allow_messaging and \
+               (self.user.email or self.user.work_email)
