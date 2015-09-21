@@ -131,11 +131,10 @@ class AbstractBaseIndex(models.Model):
         як індикатор того, що ціна в отриманій валюті приблизна.
         """
         converted_price = convert_price(price, base_currency, destination_currency)
-        converted_price = int(converted_price)  # копійок в кінці ціни нам не потрібно
-        result = u'{0}'.format(converted_price).replace(',', ' ')  # форматування на наш лад
+        result = u'{:.0f}'\
+            .format(converted_price)\
+            .replace(',', ' ')  # форматування на наш лад
 
-        if base_currency != destination_currency:
-            return u'≈' + result
         return result
 
 
