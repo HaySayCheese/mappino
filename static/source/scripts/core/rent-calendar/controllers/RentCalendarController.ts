@@ -7,6 +7,7 @@ namespace Mappino.Core.RentCalendar {
         ];
 
         constructor( private $scope) {
+            this.$scope.showRentDetails = false;
             this.$scope.eventSource = this.createRandomEvents();
         }
 

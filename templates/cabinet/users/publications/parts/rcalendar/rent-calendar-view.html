@@ -1,0 +1,21 @@
+<div ng-controller="rentCalendarController">
+    <section layout="column" layout-align="center center">
+        <div>
+            <calendar ng-model="currentDate" calendar-mode="mode" event-source="eventSource"
+                      range-changed="reloadSource(startTime, endTime)"
+                      event-selected="onEventSelected(event)">
+            </calendar>
+        </div>
+        <md-button ng-click="showRentDetails = true">Добавить бронь</md-button>
+        <div layout="row" layout-align="start center" ng-show="showRentDetails">
+            <md-datepicker ng-model="myDate" md-placeholder="Дата от"></md-datepicker>
+            <md-datepicker ng-model="myDate" md-placeholder="Дата до"></md-datepicker>
+            <md-input-container flex="33">
+                <label>Имя клиента</label>
+                <input>
+
+            </md-input-container>
+
+            </div>
+    </section>
+</div>
