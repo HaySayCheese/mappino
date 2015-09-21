@@ -16,6 +16,7 @@ namespace Mappino.Map {
                     private $rootScope: angular.IRootScopeService,
                     private $location: angular.ILocationService) {
             // ---------------------------------------------------------------------------------------------------------
+            $rootScope.$on('Mappino.Map.PublicationHandler.ClosePublication', () => this.close());
         }
 
 

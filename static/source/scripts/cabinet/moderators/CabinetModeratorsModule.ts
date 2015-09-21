@@ -11,9 +11,9 @@ namespace Mappino.Cabinet.Moderators {
 
         'ui.router',
 
-        'Mappino.Core',
+        'angular-carousel',
 
-        'angular-carousel'
+        'Mappino.Core',
     ]);
 
 

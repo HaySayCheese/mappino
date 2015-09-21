@@ -18,11 +18,11 @@ namespace Mappino.Cabinet.Users {
 
 
                     .state('publication_view', {
-                        url: "/publication/:id/view/",
+                        url: "/publication/:publication_id/view/",
                         templateUrl: '/ajax/template/cabinet/publications/publication/'
                     })
                     .state('publication_edit', {
-                        url: "/publication/:id/edit/",
+                        url: "/publication/:publication_id/edit/",
                         templateUrl: '/ajax/template/cabinet/publications/publication/'
                     })
 
