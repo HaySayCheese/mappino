@@ -1,6 +1,5 @@
 # coding=utf-8
-from core.favorites.models import *
-from core.publications.constants import OBJECTS_TYPES
+from core.users.favorites.models import *
 
 
 FAVORITES_MODELS = {

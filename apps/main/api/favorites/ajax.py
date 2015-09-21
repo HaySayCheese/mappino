@@ -3,7 +3,7 @@ from apps.views_base import AuthenticatedOnlyView
 from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.http.responses import *
 from collective.methods.request_data_getters import angular_parameters
-from core.favorites.constants import FAVORITES_MODELS
+from core.users.favorites.constants import FAVORITES_MODELS
 from core.markers_index.models import SegmentsIndex
 from core.publications.models import HEAD_MODELS
 
