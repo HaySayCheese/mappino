@@ -9,7 +9,6 @@ from core.publications.constants import OBJECTS_TYPES
 
 
 @ensure_csrf_cookie
-@moderator_required_or_forbidden
 @etag(generate_template_etag('common/publication-preview/publication-preview.html'))
 @render_jinja2_template
 def container(request):
@@ -18,7 +17,6 @@ def container(request):
 
 
 @ensure_csrf_cookie
-@moderator_required_or_forbidden
 @etag(generate_template_etag('common/publication-preview/parts/header.html'))
 @render_jinja2_template
 def header(request):
@@ -26,7 +24,6 @@ def header(request):
 
 
 @ensure_csrf_cookie
-@moderator_required_or_forbidden
 @etag(generate_template_etag('common/publication-preview/parts/body.html'))
 @render_jinja2_template
 def body(request):
@@ -34,7 +31,6 @@ def body(request):
 
 
 @ensure_csrf_cookie
-@moderator_required_or_forbidden
 @etag(generate_template_etag('common/publication-preview/parts/contacts.html'))
 @render_jinja2_template
 def contacts(request):
@@ -42,7 +38,6 @@ def contacts(request):
 
 
 @ensure_csrf_cookie
-@moderator_required_or_forbidden
 @etag(generate_template_etag('common/publication-preview/parts/error.html'))
 @render_jinja2_template
 def error(request):

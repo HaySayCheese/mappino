@@ -1,45 +1,5 @@
-publication-view {
-    @extend %_right-sliding-panel;
-
-    right: -1000px;
-    width: 600px;
-    overflow: auto;
-
-    background: #fff;
-    @include transition(all .5s ease);
-
-    @media (max-width: 600px) {
-        width: 100% !important;
-    }
-
-
-    &.-opened {
-        right: 0;
-    }
-
-    &.-closed {
-        right: -1000px !important;
-    }
-
-    &.-with-navbar-right {
-        right: 220px;
-
-        @media (max-width: 825px) {
-            width: auto;
-            left: 0;
-        }
-    }
-
-    .publication-view-container {
-        min-height: 100%;
-
-        .publication-error {
-            background-color: #94d6d6;
-        }
-    }
-
-
-    header {
+publication-preview {
+    publication-preview-header {
         height: auto;
         min-height: 300px;
         max-height: 400px;
@@ -109,35 +69,6 @@ publication-view {
 
         .slide-next-button {
             right: 0;
-        }
-    }
-
-    section {
-        width: 100%;
-        display: block;
-
-        p {
-            margin-top: 0;
-        }
-    }
-
-
-    .publication-contacts {
-        .avatar img {
-            @include square(140px);
-            border-radius: 50%;
-        }
-    }
-
-    .animated {
-        @include transition(opacity .5s ease);
-
-        &.ng-hide {
-            opacity: 0;
-        }
-
-        &.ng-show {
-            opacity: 1;
         }
     }
 }

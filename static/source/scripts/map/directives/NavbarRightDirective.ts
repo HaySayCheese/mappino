@@ -6,7 +6,7 @@ namespace Mappino.Map {
             controllerAs: 'navCtrl',
             templateUrl: '/ajax/template/map/navbar-right/',
 
-            link: function(scope, element, attrs, modelCtrl) {
+            link: (scope, element, attrs, modelCtrl) => {
                 var $element = angular.element(element);
 
                 $element.addClass('md-whiteframe-z3');

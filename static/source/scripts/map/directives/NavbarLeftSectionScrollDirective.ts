@@ -3,7 +3,7 @@ namespace Mappino.Map {
         return {
             restrict: 'A',
 
-            link: function(scope, element, attrs, modelCtrl) {
+            link: (scope, element, attrs, modelCtrl) => {
                 var $element                = angular.element(element),
                     $sections               = $element.find('section'),
                     $mdTabsWrapper          = angular.element('md-tabs-wrapper'),

@@ -3,6 +3,6 @@ namespace Mappino.Core.PublicationPreview {
         return {
             restrict: 'E',
             templateUrl: '/ajax/template/common/publication-preview/contacts/',
-        }
+        };
     }
 }

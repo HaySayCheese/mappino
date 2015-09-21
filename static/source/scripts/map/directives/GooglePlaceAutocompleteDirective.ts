@@ -6,7 +6,7 @@ namespace Mappino.Map {
             restrict: 'A',
             require: 'ngModel',
 
-            link: function(scope, element, attrs, model) {
+            link: (scope, element, attrs, model) => {
                 var $element = angular.element(element);
 
                 $element.val(filtersService.filters['map']['c']);

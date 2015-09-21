@@ -39,7 +39,6 @@
 /// <reference path='directives/NavbarLeftDirective.ts' />
 /// <reference path='directives/NavbarLeftSectionScrollDirective.ts' />
 /// <reference path='directives/NavbarRightDirective.ts' />
-/// <reference path='directives/PublicationContactsDirective.ts' />
 /// <reference path='directives/PublicationSlidingPanelDirective.ts' />
 /// <reference path='directives/TabBodyCollapsibleDirective.ts' />
 
@@ -60,7 +59,6 @@
 /// <reference path='services/FavoritesService.ts' />
 /// <reference path='services/FiltersService.ts' />
 /// <reference path='services/MarkersService.ts' />
-/// <reference path='services/PublicationService.ts' />
 
 
 
@@ -79,7 +77,6 @@
 /// <reference path='controllers/FavoritesTabController.ts' />
 /// <reference path='controllers/BriefsTabController.ts' />
 
-/// <reference path='controllers/PublicationController.ts' />
 /// <reference path='controllers/PublicationFullSliderController.ts' />
 
 /// <reference path='controllers/MapController.ts' />

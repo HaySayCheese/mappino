@@ -67,9 +67,9 @@ namespace Mappino.Map {
 
             $rootScope.$on('Mappino.Map.BriefsService.BriefMouseOver', (event, markerHid) => this.highlightMarker(markerHid, 'hover'));
             $rootScope.$on('Mappino.Map.BriefsService.BriefMouseLeave', event => this.clearHighlight('hover'));
-            $rootScope.$on('Mappino.Map.PublicationService.PublicationActive', (event, markerHid) => this.highlightMarker(markerHid, 'active'));
-            $rootScope.$on('Mappino.Map.PublicationService.PublicationClosed', event => this.clearHighlight('active'));
-            $rootScope.$on('Mappino.Map.PublicationService.PublicationVisited', (event, markerHid) => {
+            $rootScope.$on('Mappino.Core.PublicationPreviewService.PublicationActive', (event, markerHid) => this.highlightMarker(markerHid, 'active'));
+            $rootScope.$on('Mappino.Core.PublicationPreviewService.PublicationClosed', event => this.clearHighlight('active'));
+            $rootScope.$on('Mappino.Core.PublicationPreviewService.PublicationVisited', (event, markerHid) => {
                 this.highlightMarker(markerHid, 'visited');
                 this.addMarkerToVisited(markerHid);
             });
