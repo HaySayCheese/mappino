@@ -33,61 +33,58 @@ class LoginChecker(object):
     def check_login(cls, request, number):
         client_ip = get_client_ip(request)
         redis = redis_connections['throttle']
-        ok = True
+        is_ok = True
 
-        # 1 смс з одного номера за 1 хвилину
+        # Не більше 3 смс на один номер за 1 хвилину
         login_for_second = redis.get('login_by_' + number + '_for_minute')
         if not login_for_second:
             redis.setex('login_by_' + number + '_for_minute', 60, 1)
-        elif int(login_for_second) >= 1:
-            ok = False
+        elif int(login_for_second) >= 3:
+            is_ok = False
 
-        # 3 смс з одного номера за 3 хвилини
-        login_for_3minutes = redis.get('login_by_' + number + '_for_3minutes')
-        if not login_for_3minutes:
-            redis.setex('login_by_' + number + '_for_3minutes', 180, 1)
-        else:
-            redis.incr('login_by_' + number + '_for_3minutes')
-            if int(login_for_3minutes) >= 3:
-                ok = False
 
-        # 5 смс з одного номера за годину
+        # Не більше 6 смс з одного номера за годину
+        # (5 входів за годину + 15% вірогідність помилки = 5.75 = 6)
         login_for_hour = redis.get('login_by_' + number + '_for_hour')
         if not login_for_hour:
             redis.setex('login_by_' + number + '_for_hour', 3600, 1)
         else:
             redis.incr('login_by_' + number + '_for_hour')
-            if int(login_for_hour) >= 5:
-                ok = False
+            if int(login_for_hour) >= 6:
+                is_ok = False
 
-        # 20 смс з однієї ip-адреси за 10 хвилин
+
+        # Не більше 20 смс з однієї ip-адреси за 10 хвилин
         login_by_ip_for_10minutes = redis.get('login_by_ip_' + client_ip + '_for_10minutes')
         if not login_by_ip_for_10minutes:
             redis.setex('login_by_ip_' + client_ip + '_for_10minutes', 600, 1)
         else:
             redis.incr('login_by_ip_' + client_ip + '_for_10minutes')
             if int(login_by_ip_for_10minutes) >= 20:
-                ok = False
+                is_ok = False
 
-        # 60 смс з однієї ip-адреси за годину
+
+        # Не більше 60 смс з однієї ip-адреси за годину
         login_by_ip_for_hour = redis.get('login_by_ip_' + client_ip + '_for_hour')
         if not login_by_ip_for_hour:
             redis.setex('login_by_ip_' + client_ip + '_for_hour', 3600, 1)
         else:
             redis.incr('login_by_ip_' + client_ip + '_for_hour')
             if int(login_by_ip_for_hour) >= 60:
-                ok = False
+                is_ok = False
 
-        # загальний потік 90 смс за годину
+
+        # Загальний потік не більше 138 смс за годину
+        # (1 логін/30 сек, або 120 логінів/годину) + 15% помилок = 138.
         login_total_flow = redis.get('login_total_flow')
         if not login_total_flow:
             redis.setex('login_total_flow', 3600, 1)
         else:
             redis.incr('login_total_flow')
-            if int(login_total_flow) >= 90:
-                ok = False
+            if int(login_total_flow) >= 138:
+                is_ok = False
 
-        return ok
+        return is_ok
 
 
 class CallRequestChecker(object):
@@ -96,7 +93,7 @@ class CallRequestChecker(object):
         client_ip = get_client_ip(request)
         day = 86400
         redis = redis_connections['throttle']
-        ok = True
+        is_ok = True
 
         # 2 смс з номера клієнта на номер продавця за день
         call_requests_from_number_for_day = redis.get('call_requests_to' + number + '_from_' + client_number + '_for_day')
@@ -105,7 +102,7 @@ class CallRequestChecker(object):
         else:
             redis.incr('call_requests_to' + number + '_from_' + client_number + '_for_day')
             if int(call_requests_from_number_for_day) >= 2:
-                ok = False
+                is_ok = False
 
         # 60 смс на номер продавця за день
         call_requests_count_from_numbers_for_day = redis.get('call_requests_count_from_numbers_to_' + number)
@@ -114,14 +111,14 @@ class CallRequestChecker(object):
         else:
             redis.incr('call_requests_count_from_numbers_to_' + number)
             if int(call_requests_count_from_numbers_for_day) >= 60:
-                ok = False
+                is_ok = False
 
         # 1 смс на номер продавця за 30 секунд
         call_requests_to_number = redis.get('call_requests_to' + number + '_for_30seconds')
         if not call_requests_to_number:
             redis.setex('call_requests_to' + number + '_for_30seconds', 30, 1)
         elif int(call_requests_to_number) >= 1:
-                ok = False
+                is_ok = False
 
         # 60 смс на номер продавця з однієї ip-адреси за день
         call_requests_from_ip_to_number = redis.get('call_requests_by_ip_' + client_ip + '_to_' + number + '_for_day')
@@ -130,7 +127,7 @@ class CallRequestChecker(object):
         else:
             redis.incr('call_requests_by_ip_' + client_ip + '_to_' + number + '_for_day')
             if int(call_requests_from_ip_to_number) >= 60:
-                ok = False
+                is_ok = False
 
         # 75 смс з однієї ip-адреси за годину
         call_requests_from_ip_for_hour = redis.get('call_requests_from_ip_' + client_ip + '_for_hour')
@@ -139,7 +136,7 @@ class CallRequestChecker(object):
         else:
             redis.incr('call_requests_from_ip_' + client_ip + '_for_hour')
             if int(call_requests_from_ip_for_hour) >= 75:
-                ok = False
+                is_ok = False
 
         # 1800 смс з однієї ip-адреси за день
         call_requests_from_ip_for_day = redis.get('call_requests_from_ip_' + client_ip + '_for_day')
@@ -148,7 +145,7 @@ class CallRequestChecker(object):
         else:
             redis.incr('call_requests_from_ip_' + client_ip + '_for_day')
             if int(call_requests_from_ip_for_day) >= 1800:
-                ok = False
+                is_ok = False
 
         # загальний потік 150 смс за годину
         call_requests_total_flow = redis.get('call_requests_total_flow')
@@ -157,9 +154,9 @@ class CallRequestChecker(object):
         else:
             redis.incr('call_requests_total_flow')
             if int(call_requests_total_flow) >= 150:
-                ok = False
+                is_ok = False
 
-        return ok
+        return is_ok
 
 
 class MessageChecker(object):
