@@ -3,7 +3,6 @@ from django.http import Http404
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import etag
 from collective.decorators.jinja2_shortcuts import render_jinja2_template
-from collective.decorators.views import moderator_required_or_forbidden
 from core.cache.utils import generate_template_etag
 from core.publications.constants import OBJECTS_TYPES
 
@@ -45,16 +44,16 @@ def error(request):
 
 
 __MAP_TEMPLATES_PATHS = {
-        OBJECTS_TYPES.house():      'common/publication-preview/types/house.html',
-        OBJECTS_TYPES.flat():       'common/publication-preview/types/flat.html',
-        OBJECTS_TYPES.room():       'common/publication-preview/types/room.html',
+    OBJECTS_TYPES.house():      'common/publication-preview/types/house.html',
+    OBJECTS_TYPES.flat():       'common/publication-preview/types/flat.html',
+    OBJECTS_TYPES.room():       'common/publication-preview/types/room.html',
 
-        OBJECTS_TYPES.trade():      'common/publication-preview/types/trade.html',
-        OBJECTS_TYPES.office():     'common/publication-preview/types/office.html',
-        OBJECTS_TYPES.warehouse():  'common/publication-preview/types/warehouse.html',
-        OBJECTS_TYPES.garage():     'common/publication-preview/types/garage.html',
-        OBJECTS_TYPES.land():       'common/publication-preview/types/land.html',
-    }
+    OBJECTS_TYPES.trade():      'common/publication-preview/types/trade.html',
+    OBJECTS_TYPES.office():     'common/publication-preview/types/office.html',
+    OBJECTS_TYPES.warehouse():  'common/publication-preview/types/warehouse.html',
+    OBJECTS_TYPES.garage():     'common/publication-preview/types/garage.html',
+    OBJECTS_TYPES.land():       'common/publication-preview/types/land.html',
+}
 
 # todo: add etag cache here
 @ensure_csrf_cookie
