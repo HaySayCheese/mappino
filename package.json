@@ -18,7 +18,8 @@
     "gulp-uglify": "*",
     "gulp-watch": "*",
     "imagemin-pngquant": "^4.2.0",
-    "node-sass": "*",
-    "run-sequence": "*"
+    "node-sass": "^3.3.3",
+    "run-sequence": "*",
+    "tsd": "^0.6.4"
   }
 }

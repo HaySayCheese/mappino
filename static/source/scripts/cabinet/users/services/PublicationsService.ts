@@ -21,8 +21,8 @@ namespace Mappino.Cabinet.Users {
         ];
 
 
-        constructor(private $http: angular.IHttpService,
-                    private $state: angular.ui.IStateService,
+        constructor(private $http: ng.IHttpService,
+                    private $state: ng.ui.IStateService,
                     private $mdToast: any,
                     private Upload: any,
                     private TXT: any) {
@@ -31,8 +31,8 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public create(publication: IPublicationNew): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/publications/`, publication);
+        public create(publication: IPublicationNew): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/publications/`, publication);
 
             promise.success(response => {});
 
@@ -50,8 +50,8 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public remove(publicationIds: IPublicationIds): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.delete(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/`);
+        public remove(publicationIds: IPublicationIds): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.delete(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/`);
 
             promise.success(response => {});
 
@@ -69,8 +69,8 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public publish(publicationIds: IPublicationIds): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/publish/`, null);
+        public publish(publicationIds: IPublicationIds): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/publish/`, null);
 
             promise.success(response => {
                 this.$mdToast.show(
@@ -95,8 +95,8 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public unpublish(publicationIds: IPublicationIds): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/unpublish/`, null);
+        public unpublish(publicationIds: IPublicationIds): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/unpublish/`, null);
 
             promise.success(response => {});
 
@@ -114,8 +114,8 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public load(publicationIds: IPublicationIds): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/`);
+        public load(publicationIds: IPublicationIds): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/`);
 
             promise.success(response => {
                 this.publication = response.data;
@@ -135,8 +135,8 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public uploadPhoto(publicationIds: IPublicationIds, photo: File): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.Upload.upload({
+        public uploadPhoto(publicationIds: IPublicationIds, photo: File): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.Upload.upload({
                 url: `/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/photos/`,
                 file: photo
             });
@@ -162,8 +162,8 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public removePhoto(publicationIds: IPublicationIds, photoId): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.delete(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/photos/${photoId}/`);
+        public removePhoto(publicationIds: IPublicationIds, photoId): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.delete(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/photos/${photoId}/`);
 
             promise.success(response => {
                 var photos = this.publication.photos;
@@ -198,8 +198,8 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public setTitlePhoto(publicationIds: IPublicationIds, photoId: string): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/photos/${photoId}/title/`, null);
+        public setTitlePhoto(publicationIds: IPublicationIds, photoId: string): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/photos/${photoId}/title/`, null);
 
             promise.success(response => {
                 var photos = this.publication.photos;
@@ -224,8 +224,8 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public checkField(publicationIds: IPublicationIds, field: IPublicationCheckField): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/`, field);
+        public checkField(publicationIds: IPublicationIds, field: IPublicationCheckField): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/`, field);
 
             promise.success(response => {});
 
@@ -241,8 +241,8 @@ namespace Mappino.Cabinet.Users {
         }
 
 
-        public loadBriefs(): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/publications/briefs/all/`);
+        public loadBriefs(): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/publications/briefs/all/`);
 
             promise.success(response => {
                 console.debug(response.data)

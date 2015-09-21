@@ -6,7 +6,7 @@ namespace Mappino.Map {
 
     export class ApplicationConfigs {
 
-        constructor(private app: angular.IModule) {
+        constructor(private app: ng.IModule) {
             app.run(['$http', '$cookies', '$rootScope', '$location', ($http, $cookies, $rootScope, $location) => {
                 $http.defaults.headers.common['X-CSRFToken'] = $cookies.csrftoken;
 

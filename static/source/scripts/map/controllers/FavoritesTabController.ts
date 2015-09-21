@@ -12,7 +12,7 @@ namespace Mappino.Map {
         ];
 
 
-        constructor(private $state: angular.ui.IStateService,
+        constructor(private $state: ng.ui.IStateService,
                     private $scope,
                     private $rootScope: any,
                     private publicationHandler: PublicationHandler,

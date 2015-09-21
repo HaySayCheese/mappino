@@ -1,5 +1,5 @@
 namespace Mappino.Landing {
-    export function HeaderMediaDirective(window): angular.IDirective {
+    export function HeaderMediaDirective(window): ng.IDirective {
         return {
             restrict: 'A',
 

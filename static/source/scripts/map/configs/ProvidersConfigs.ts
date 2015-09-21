@@ -6,7 +6,7 @@ namespace Mappino.Map {
 
     export class ProvidersConfigs {
 
-        constructor(private app: angular.IModule) {
+        constructor(private app: ng.IModule) {
             app.config(['$interpolateProvider', '$resourceProvider', '$locationProvider',
                 function($interpolateProvider, $resourceProvider, $locationProvider) {
                     $interpolateProvider.startSymbol('[[');

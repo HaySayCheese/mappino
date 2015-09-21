@@ -1,5 +1,5 @@
 namespace Mappino.Map {
-    export function TabBodyCollapsibleDirective($compile, $timeout): angular.IDirective {
+    export function TabBodyCollapsibleDirective($compile, $timeout): ng.IDirective {
         var CLASSES = {
             CLOSED: '-closed',
             SHADOW: 'md-whiteframe-z2',

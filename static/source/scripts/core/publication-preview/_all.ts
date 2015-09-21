@@ -1,4 +1,4 @@
-/// <reference path='../definitions/_all.ts' />
+/// <reference path='../../../typings/tsd.d.ts' />
 
 
 /// <reference path='services/PublicationPreviewService.ts' />

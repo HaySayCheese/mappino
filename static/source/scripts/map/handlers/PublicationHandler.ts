@@ -11,10 +11,10 @@ namespace Mappino.Map {
             '$location'
         ];
 
-        constructor(private $state: angular.ui.IStateService,
-                    private $stateParams: angular.ui.IStateParamsService,
-                    private $rootScope: angular.IRootScopeService,
-                    private $location: angular.ILocationService) {
+        constructor(private $state: ng.ui.IStateService,
+                    private $stateParams: ng.ui.IStateParamsService,
+                    private $rootScope: ng.IRootScopeService,
+                    private $location: ng.ILocationService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.$on('Mappino.Map.PublicationHandler.ClosePublication', () => this.close());
         }

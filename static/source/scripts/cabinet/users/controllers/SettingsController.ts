@@ -14,7 +14,7 @@ namespace Mappino.Cabinet.Users {
 
         constructor(private $scope: any,
                     private $rootScope: any,
-                    private $timeout: angular.ITimeoutService,
+                    private $timeout: ng.ITimeoutService,
                     private $mdDialog: any,
                     private bAuthService: Mappino.Core.BAuth.BAuthService,
                     private TXT: any) {

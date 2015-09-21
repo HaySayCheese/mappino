@@ -1,12 +1,12 @@
 namespace Mappino.Map {
-    export function GooglePlaceAutocompleteDirective($rootScope, filtersService): angular.IDirective {
+    export function GooglePlaceAutocompleteDirective($rootScope, filtersService): ng.IDirective {
         var autocomplete = null;
 
         return {
             restrict: 'A',
             require: 'ngModel',
 
-            link: (scope, element, attrs, model) => {
+            link: (scope, element, attrs, model: any) => {
                 var $element = angular.element(element);
 
                 $element.val(filtersService.filters['map']['c']);

@@ -1,1 +1,0 @@
-//class MarkerWithLabel extends google.maps.Marker {}

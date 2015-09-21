@@ -2,7 +2,7 @@
 
 
 namespace Mappino.Core.Directives {
-    var core: angular.IModule = angular.module('Mappino.Core.Directives', []);
+    var core: ng.IModule = angular.module('Mappino.Core.Directives', []);
 
     core.directive('includeReplace', includeReplace);
     core.directive('onlyNumber', onlyNumber);

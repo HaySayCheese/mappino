@@ -3,7 +3,7 @@ namespace Mappino.Landing {
 
     export class ApplicationConfigs {
 
-        constructor(private app: angular.IModule) {
+        constructor(private app: ng.IModule) {
 
         }
     }

@@ -16,8 +16,8 @@ namespace Mappino.Cabinet.Moderators {
         ];
 
 
-        constructor(private $http: angular.IHttpService,
-                    private $state: angular.ui.IStateService,
+        constructor(private $http: ng.IHttpService,
+                    private $state: ng.ui.IStateService,
                     private $mdToast: any,
                     private TXT: any) {
             // ---------------------------------------------------------------------------------------------------------
@@ -25,8 +25,8 @@ namespace Mappino.Cabinet.Moderators {
 
 
 
-        public getPublicationId(): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/moderators/publications/next/`);
+        public getPublicationId(): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/moderators/publications/next/`);
 
             promise.success(response => {});
 
@@ -44,8 +44,8 @@ namespace Mappino.Cabinet.Moderators {
 
 
 
-        public load(publicationIds: any): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/`);
+        public load(publicationIds: any): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/`);
 
             promise.success(response => {});
 
@@ -63,8 +63,8 @@ namespace Mappino.Cabinet.Moderators {
 
 
 
-        public loadHeld(): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/moderators/publications/held/briefs/`);
+        public loadHeld(): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/moderators/publications/held/briefs/`);
 
             promise.success(response => {});
 
@@ -82,8 +82,8 @@ namespace Mappino.Cabinet.Moderators {
 
 
 
-        public accept(publicationIds: any): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/accept/`, null);
+        public accept(publicationIds: any): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/accept/`, null);
 
             promise.success(response => {});
 
@@ -101,8 +101,8 @@ namespace Mappino.Cabinet.Moderators {
 
 
 
-        public reject(publicationIds: any, reject_reason: string): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/reject/`, {
+        public reject(publicationIds: any, reject_reason: string): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/reject/`, {
                 message: reject_reason
             });
 
@@ -122,8 +122,8 @@ namespace Mappino.Cabinet.Moderators {
 
 
 
-        public hold(publicationIds: any): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/hold/`, null);
+        public hold(publicationIds: any): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/publications/${publicationIds.tid}:${publicationIds.hid}/hold/`, null);
 
             promise.success(response => {});
 
@@ -141,8 +141,8 @@ namespace Mappino.Cabinet.Moderators {
 
 
 
-        public sendNotice(claimId: any, noticeMessage: any): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/claims/${claimId}/notice/`, {
+        public sendNotice(claimId: any, noticeMessage: any): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/claims/${claimId}/notice/`, {
                 notice: noticeMessage
             });
 
@@ -155,8 +155,8 @@ namespace Mappino.Cabinet.Moderators {
 
 
 
-        public closeClaim(claimId: any): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/claims/${claimId}/close/`, null);
+        public closeClaim(claimId: any): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/claims/${claimId}/close/`, null);
 
             promise.success(response => {});
 

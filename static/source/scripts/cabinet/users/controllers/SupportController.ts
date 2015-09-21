@@ -18,7 +18,7 @@ namespace Mappino.Cabinet.Users {
 
         constructor(private $scope: any,
                     private $rootScope: any,
-                    private $state: angular.ui.IStateService,
+                    private $state: ng.ui.IStateService,
                     private $mdDialog: any,
                     private TXT: any,
                     private ticketsService: TicketsService,

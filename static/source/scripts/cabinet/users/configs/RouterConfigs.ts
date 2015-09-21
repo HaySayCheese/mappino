@@ -6,7 +6,7 @@ namespace Mappino.Cabinet.Users {
 
     export class RouterConfigs {
 
-        constructor(private app: angular.IModule) {
+        constructor(private app: ng.IModule) {
             app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', ($stateProvider, $urlRouterProvider, $locationProvider) => {
                 $urlRouterProvider.otherwise("/publications/");
 

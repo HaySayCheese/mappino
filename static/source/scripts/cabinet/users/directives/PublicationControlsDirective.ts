@@ -1,6 +1,6 @@
 namespace Mappino.Cabinet.Users {
 
-    export function publicationControls(window, $timeout): angular.IDirective {
+    export function publicationControls(window, $timeout): ng.IDirective {
         return {
             restrict:'A',
 

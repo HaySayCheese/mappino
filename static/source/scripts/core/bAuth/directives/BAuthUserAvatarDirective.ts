@@ -1,6 +1,6 @@
 namespace Mappino.Core.BAuth {
 
-    export function BAuthUserAvatarDirective(bAuthService: BAuthService): angular.IDirective {
+    export function BAuthUserAvatarDirective(bAuthService: BAuthService): ng.IDirective {
 
         var staticUrl = '/static';
 

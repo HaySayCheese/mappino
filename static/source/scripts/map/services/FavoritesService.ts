@@ -14,9 +14,9 @@ namespace Mappino.Map {
         ];
 
         constructor(
-            private $http: angular.IHttpService,
+            private $http: ng.IHttpService,
             private $rootScope: any,
-            private $timeout: angular.ITimeoutService,
+            private $timeout: ng.ITimeoutService,
             private tabsHandler: TabsHandler) {
             // ---------------------------------------------------------------------------------------------------------
             this.initEventsListener();
@@ -24,8 +24,8 @@ namespace Mappino.Map {
 
 
 
-        public load(): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.get(`/ajax/api/user/favorites/`);
+        public load(): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/user/favorites/`);
 
             promise.success(response => {
                 var data = response.data;
@@ -54,8 +54,8 @@ namespace Mappino.Map {
 
 
 
-        public add(favorite: Brief): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.post(`/ajax/api/user/favorites/`, {
+        public add(favorite: Brief): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/user/favorites/`, {
                 'publication_id': `${favorite.tid}:${favorite.hid}`
             });
 
@@ -87,8 +87,8 @@ namespace Mappino.Map {
 
 
 
-        public remove(favorite: Brief): angular.IHttpPromise<any> {
-            var promise: angular.IHttpPromise<any> = this.$http.delete(`/ajax/api/user/favorites/${favorite.tid}:${favorite.hid}`);
+        public remove(favorite: Brief): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.delete(`/ajax/api/user/favorites/${favorite.tid}:${favorite.hid}`);
 
             promise.success(response => {
                 var favorites = this._favorites;

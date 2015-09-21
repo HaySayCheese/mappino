@@ -6,7 +6,7 @@ namespace Mappino.Map {
 
     export class RoutersConfigs {
 
-        constructor(private app: angular.IModule) {
+        constructor(private app: ng.IModule) {
             app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
 
                 $urlRouterProvider.otherwise("/0/1/0/0/");

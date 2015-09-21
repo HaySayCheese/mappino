@@ -1,6 +1,6 @@
 namespace Mappino.Core.BAuth {
 
-    export function BAuthToolbarButtonDirective(bAuthService: BAuthService): angular.IDirective {
+    export function BAuthToolbarButtonDirective(bAuthService: BAuthService): ng.IDirective {
 
         return {
             restrict: 'E',

@@ -1,6 +1,6 @@
 namespace Mappino.Core.Directives {
 
-    export function onlyNumberWithDots(): angular.IDirective {
+    export function onlyNumberWithDots(): ng.IDirective {
         return {
             restrict:'A',
             require: 'ngModel',

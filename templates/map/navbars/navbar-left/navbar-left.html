@@ -55,7 +55,7 @@
                     <section class="-closable">
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
                             <md-icon>place</md-icon>
-                            <span>[[ allFilters['map']['c'] ]]</span>
+                            <span>[[ filters.map.c ]]</span>
                         </header>
                         <tab-section-collapsible>
                             <div class="md-padding">
@@ -69,20 +69,20 @@
                     <section class="-closable -filters-blue">
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
                             <md-icon>place</md-icon>
-                            <span class="md-body-1" ng-hide="panelFilters.blue.b_t_sid">
+                            <span class="md-body-1" ng-hide="filters.panels.blue.b_t_sid">
                                 Виберите тип
                             </span>
-                            <span class="md-body-1" ng-show="panelFilters.blue.b_t_sid">
-                                [[ TYPES.REALTY[panelFilters.blue.b_t_sid].titles.plural ]]&nbsp;
+                            <span class="md-body-1" ng-show="filters.panels.blue.b_t_sid">
+                                [[ TYPES.REALTY[filters.panels.blue.b_t_sid].titles.plural ]]&nbsp;
                             </span>
-                            <span class="md-body-1" ng-show="panelFilters.blue.b_p_min && panelFilters.blue.b_p_max">
-                                ([[ panelFilters.blue.b_p_min ]] - [[ panelFilters.blue.b_p_max ]] [[ TYPES.CURRENCY[panelFilters.blue.b_cu_sid].title ]])
+                            <span class="md-body-1" ng-show="filters.panels.blue.b_p_min && filters.panels.blue.b_p_max">
+                                ([[ filters.panels.blue.b_p_min ]] - [[ filters.panels.blue.b_p_max ]] [[ TYPES.CURRENCY[filters.panels.blue.b_cu_sid].title ]])
                             </span>
-                            <span class="md-body-1" ng-show="panelFilters.blue.b_p_min && !panelFilters.blue.b_p_max">
-                                (от [[ panelFilters.blue.b_p_min ]] [[ TYPES.CURRENCY[panelFilters.blue.b_cu_sid].title ]])
+                            <span class="md-body-1" ng-show="filters.panels.blue.b_p_min && !filters.panels.blue.b_p_max">
+                                (от [[ filters.panels.blue.b_p_min ]] [[ TYPES.CURRENCY[filters.panels.blue.b_cu_sid].title ]])
                             </span>
-                            <span class="md-body-1" ng-show="!panelFilters.blue.b_p_min && panelFilters.blue.b_p_max">
-                                (до [[ panelFilters.blue.b_p_max ]] [[ TYPES.CURRENCY[panelFilters.blue.b_cu_sid].title ]])
+                            <span class="md-body-1" ng-show="!filters.panels.blue.b_p_min && filters.panels.blue.b_p_max">
+                                (до [[ filters.panels.blue.b_p_max ]] [[ TYPES.CURRENCY[filters.panels.blue.b_cu_sid].title ]])
                             </span>
                         </header>
                         <tab-section-collapsible>
@@ -90,20 +90,20 @@
                                 <div layout="row">
                                     <md-input-container flex="60">
                                         <label>Тип объекта</label>
-                                        <md-select ng-model="panelFilters.blue.b_t_sid">
+                                        <md-select ng-model="filters.panels.blue.b_t_sid">
                                             <md-option value="null">Выбрать тип</md-option>
                                             <md-option ng-repeat="realtyType in ::TYPES.REALTY" value="[[ ::realtyType.id ]]">[[ ::realtyType.titles.singular ]]</md-option>
                                         </md-select>
                                     </md-input-container>
-                                    <md-input-container flex="40" ng-show="panelFilters.blue.b_t_sid != null">
+                                    <md-input-container flex="40" ng-show="filters.panels.blue.b_t_sid != null">
                                         <label>Операция</label>
-                                        <md-select ng-model="panelFilters.blue.b_op_sid">
+                                        <md-select ng-model="filters.panels.blue.b_op_sid">
                                             <md-option value="0">Продажа</md-option>
                                             <md-option value="1">Оренда</md-option>
                                         </md-select>
                                     </md-input-container>
                                 </div>
-                                <div ng-if="panelFilters.blue.b_t_sid != 'null'" ng-include="'/ajax/template/map/filters/blue/' + [[ panelFilters.blue.b_t_sid ]] + '/'"></div>
+                                <div ng-if="filters.panels.blue.b_t_sid != 'null'" ng-include="'/ajax/template/map/filters/blue/' + [[ filters.panels.blue.b_t_sid ]] + '/'"></div>
                                 <md-button class="md-raised md-primary" ng-click="filCtrl.updateFilters('blue');">
                                     Обновить поиск
                                 </md-button>
@@ -113,20 +113,20 @@
                     <section class="-closable -filters-green -closed">
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
                             <md-icon>place</md-icon>
-                            <span class="md-body-1" ng-hide="panelFilters.green.g_t_sid">
+                            <span class="md-body-1" ng-hide="filters.panels.green.g_t_sid">
                                 Указать условия для сравнения
                             </span>
-                            <span class="md-body-1" ng-show="panelFilters.green.g_t_sid">
-                                [[ TYPES.REALTY[panelFilters.green.g_t_sid].titles.plural ]]&nbsp;
+                            <span class="md-body-1" ng-show="filters.panels.green.g_t_sid">
+                                [[ TYPES.REALTY[filters.panels.green.g_t_sid].titles.plural ]]&nbsp;
                             </span>
-                            <span class="md-body-1" ng-show="panelFilters.green.g_p_min && panelFilters.green.g_p_max">
-                                ([[ panelFilters.green.g_p_min ]] - [[ panelFilters.green.g_p_max ]] [[ TYPES.CURRENCY[panelFilters.green.g_cu_sid].title ]])
+                            <span class="md-body-1" ng-show="filters.panels.green.g_p_min && filters.panels.green.g_p_max">
+                                ([[ filters.panels.green.g_p_min ]] - [[ filters.panels.green.g_p_max ]] [[ TYPES.CURRENCY[filters.panels.green.g_cu_sid].title ]])
                             </span>
-                            <span class="md-body-1" ng-show="panelFilters.green.g_p_min && !panelFilters.green.g_p_max">
-                                (от [[ panelFilters.green.g_p_min ]] [[ TYPES.CURRENCY[panelFilters.green.g_cu_sid].title ]])
+                            <span class="md-body-1" ng-show="filters.panels.green.g_p_min && !filters.panels.green.g_p_max">
+                                (от [[ filters.panels.green.g_p_min ]] [[ TYPES.CURRENCY[filters.panels.green.g_cu_sid].title ]])
                             </span>
-                            <span class="md-body-1" ng-show="!panelFilters.green.g_p_min && panelFilters.green.g_p_max">
-                                (до [[ panelFilters.green.g_p_max ]] [[ TYPES.CURRENCY[panelFilters.green.g_cu_sid].title ]])
+                            <span class="md-body-1" ng-show="!filters.panels.green.g_p_min && filters.panels.green.g_p_max">
+                                (до [[ filters.panels.green.g_p_max ]] [[ TYPES.CURRENCY[filters.panels.green.g_cu_sid].title ]])
                             </span>
                         </header>
                         <tab-section-collapsible>
@@ -134,20 +134,20 @@
                                 <div layout="row">
                                     <md-input-container flex="60">
                                         <label>Тип объекта</label>
-                                        <md-select ng-model="panelFilters.green.g_t_sid">
+                                        <md-select ng-model="filters.panels.green.g_t_sid">
                                             <md-option value="null">Выбрать тип</md-option>
                                             <md-option ng-repeat="realtyType in ::TYPES.REALTY" value="[[ ::realtyType.id ]]">[[ ::realtyType.titles.singular ]]</md-option>
                                         </md-select>
                                     </md-input-container>
-                                    <md-input-container flex="40" ng-show="panelFilters.green.g_t_sid != null">
+                                    <md-input-container flex="40" ng-show="filters.panels.green.g_t_sid != null">
                                         <label>Операция</label>
-                                        <md-select ng-model="panelFilters.green.g_op_sid">
+                                        <md-select ng-model="filters.panels.green.g_op_sid">
                                             <md-option value="0">Продажа</md-option>
                                             <md-option value="1">Оренда</md-option>
                                         </md-select>
                                     </md-input-container>
                                 </div>
-                                <div ng-if="panelFilters.green.g_t_sid != null" ng-include="'/ajax/template/map/filters/green/' + [[ panelFilters.green.g_t_sid ]] + '/'"></div>
+                                <div ng-if="filters.panels.green.g_t_sid != null" ng-include="'/ajax/template/map/filters/green/' + [[ filters.panels.green.g_t_sid ]] + '/'"></div>
                                 <md-button class="md-raised md-primary" ng-click="filCtrl.updateFilters('green');">
                                     Обновить поиск
                                 </md-button>

@@ -2,7 +2,7 @@
 
 
 namespace Mappino.Core.Constants {
-    var constants: angular.IModule = angular.module('Mappino.Core.Constants', []);
+    var constants: ng.IModule = angular.module('Mappino.Core.Constants', []);
 
     constants.constant('MAP', {
         'STYLES':  MapStylesConstant.Default,

@@ -6,7 +6,7 @@ namespace Mappino.Landing {
         ];
 
         constructor(
-            private $scope: angular.IScope) {
+            private $scope: ng.IScope) {
             // -
         }
     }

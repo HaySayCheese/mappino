@@ -2,7 +2,7 @@
 
 
 namespace Mappino.Core.Values {
-    var values: angular.IModule = angular.module('Mappino.Core.Values', []);
+    var values: ng.IModule = angular.module('Mappino.Core.Values', []);
 
     values.value('TXT', {
         'DIALOGS':  DialogsValues.Default,

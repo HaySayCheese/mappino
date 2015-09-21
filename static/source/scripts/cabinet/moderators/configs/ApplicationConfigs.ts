@@ -6,7 +6,7 @@ namespace Mappino.Cabinet.Moderators {
 
     export class ApplicationConfigs {
 
-        constructor(private app: angular.IModule) {
+        constructor(private app: ng.IModule) {
 
         }
     }

@@ -8,7 +8,7 @@ namespace Mappino.Map {
         ];
 
         constructor(private $scope: any,
-                    private $cookies: angular.cookies.ICookiesService,
+                    private $cookies: ng.cookies.ICookiesService,
                     private bAuthService: Mappino.Core.BAuth.BAuthService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.user = bAuthService.user;

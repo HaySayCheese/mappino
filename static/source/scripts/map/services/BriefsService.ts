@@ -12,8 +12,8 @@ namespace Mappino.Map {
             'FavoritesService'
         ];
 
-        constructor(private $rootScope: angular.IRootScopeService,
-                    private $timeout: angular.ITimeoutService,
+        constructor(private $rootScope: ng.IRootScopeService,
+                    private $timeout: ng.ITimeoutService,
                     private favoritesService: FavoritesService) {
             // ---------------------------------------------------------------------------------------------------------
             this.initEventsListener();

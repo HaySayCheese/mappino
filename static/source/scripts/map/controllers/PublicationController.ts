@@ -17,7 +17,7 @@ namespace Mappino.Map {
         constructor(
             private $scope,
             private $rootScope,
-            private $state: angular.ui.IStateService,
+            private $state: ng.ui.IStateService,
             private briefsService: BriefsService,
             private favoritesService: FavoritesService) {
             // ---------------------------------------------------------------------------------------------------------

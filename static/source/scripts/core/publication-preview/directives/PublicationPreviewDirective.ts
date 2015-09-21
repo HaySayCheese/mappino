@@ -1,12 +1,12 @@
 namespace Mappino.Core.PublicationPreview {
-    export function PublicationPreviewDirective(): angular.IDirective {
+    export function PublicationPreviewDirective(): ng.IDirective {
         return {
             restrict: 'E',
             controller: PublicationPreviewController,
             controllerAs: 'pubPreviewCtrl',
             templateUrl: '/ajax/template/common/publication-preview/container/',
 
-            link: (scope, element, attrs, model) => {
+            link: (scope, element, attrs, model: any) => {
                 var $element = angular.element(element),
                     hiddenControls = [];
 

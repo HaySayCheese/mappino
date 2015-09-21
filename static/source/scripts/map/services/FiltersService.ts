@@ -89,9 +89,9 @@ namespace Mappino.Map {
             'TYPES'
         ];
 
-        constructor(private $rootScope: angular.IRootScopeService,
-                    private $timeout: angular.ITimeoutService,
-                    private $location: angular.ILocationService,
+        constructor(private $rootScope: ng.IRootScopeService,
+                    private $timeout: ng.ITimeoutService,
+                    private $location: ng.ILocationService,
                     private TYPES: any) {
             // ---------------------------------------------------------------------------------------------------------
 

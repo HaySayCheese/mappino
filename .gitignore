@@ -29,6 +29,7 @@ static/build/*
 
 static/escaped_fragments
 static/escaped_fragments/*
+/.vscode
 
 *.pyc
 *.log

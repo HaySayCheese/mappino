@@ -4,7 +4,7 @@
 namespace Mappino.Core.BAuth {
     'use strict';
 
-    var bAuth: angular.IModule = angular.module('Mappino.Core.bAuth', [
+    var bAuth: ng.IModule = angular.module('Mappino.Core.bAuth', [
         'ngCookies',
         'ngMaterial',
         'ngFileUpload'

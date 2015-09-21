@@ -1,9 +1,7 @@
-/// <reference path='_all.ts' />
-
 namespace Mappino.Cabinet.Moderators {
     'use strict';
 
-    var app: angular.IModule = angular.module('mappino.cabinet.moderators', [
+    var app: ng.IModule = angular.module('mappino.cabinet.moderators', [
         'ngMaterial',
         'ngCookies',
         'ngMessages',

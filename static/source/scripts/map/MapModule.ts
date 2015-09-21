@@ -1,9 +1,7 @@
-/// <reference path='_all.ts' />
-
 namespace Mappino.Map {
     'use strict';
 
-    var app: angular.IModule = angular.module('mappino.map', [
+    var app: ng.IModule = angular.module('mappino.map', [
         'ngAnimate',
         'ngMaterial',
         'ngCookies',

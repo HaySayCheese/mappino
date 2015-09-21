@@ -1,7 +1,7 @@
 // ####################
 // Declarations import
 // ####################
-/// <reference path='../../core/definitions/_all.ts' />
+/// <reference path='../../../typings/tsd.d.ts' />
 
 
 

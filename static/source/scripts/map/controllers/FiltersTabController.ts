@@ -15,37 +15,35 @@ namespace Mappino.Map {
                     private $timeout,
                     private filtersService: FiltersService) {
             // ---------------------------------------------------------------------------------------------------------
-            $scope.allFilters   = filtersService.filters;
-            $scope.mapFilters   = $scope.allFilters['map'];
-            $scope.panelFilters = $scope.allFilters['panels'];
+            $scope.filters = filtersService.filters;
 
 
-            $scope.$watch('panelFilters.blue.b_t_sid', newValue => {
-                if (this.$scope.panelFilters.blue.b_t_sid == 'null')
-                    this.$scope.panelFilters.blue.b_t_sid = null;
+            $scope.$watch('filters.blue.b_t_sid', newValue => {
+                if (newValue == 'null')
+                    this.$scope.filters.blue.b_t_sid = null;
 
-                this.filtersService.update('panels', this.$scope.panelFilters['blue'], 'blue')
+                this.filtersService.update('panels', this.$scope.filters.panels.blue, 'blue')
             });
 
-            $scope.$watch('panelFilters.green.g_t_sid', newValue => {
-                if (this.$scope.panelFilters.green.g_t_sid == 'null')
-                    this.$scope.panelFilters.green.g_t_sid = null;
+            $scope.$watch('filters.green.g_t_sid', newValue => {
+                if (newValue == 'null')
+                    this.$scope.filters.green.g_t_sid = null;
 
-                this.filtersService.update('panels', this.$scope.panelFilters['green'], 'green')
+                this.filtersService.update('panels', this.$scope.filters.panels.green, 'green')
             });
         }
 
 
 
         public updateFilters(panel: string) {
-            if (this.$scope.panelFilters.blue.b_t_sid == 'null')
-                this.$scope.panelFilters.blue.b_t_sid = null;
+            if (this.$scope.filters.panels.blue.b_t_sid == 'null')
+                this.$scope.filters.panels.blue.b_t_sid = null;
 
-            if (this.$scope.panelFilters.green.g_t_sid == 'null')
-                this.$scope.panelFilters.green.g_t_sid = null;
+            if (this.$scope.filters.panels.green.g_t_sid == 'null')
+                this.$scope.filters.panels.green.g_t_sid = null;
 
 
-            this.filtersService.update('panels', this.$scope.panelFilters[panel], panel)
+            this.filtersService.update('panels', this.$scope.filters.panels[panel], panel)
         }
     }
 }

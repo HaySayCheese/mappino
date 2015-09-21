@@ -23,10 +23,10 @@ namespace Mappino.Map {
         ];
 
         constructor(
-            private $state: angular.ui.IStateService,
-            private $stateParams: angular.ui.IStateParamsService,
+            private $state: ng.ui.IStateService,
+            private $stateParams: ng.ui.IStateParamsService,
             private $rootScope: any,
-            private $timeout: angular.ITimeoutService) {
+            private $timeout: ng.ITimeoutService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.tabIndexes = {
                 navbarLeft:     undefined,

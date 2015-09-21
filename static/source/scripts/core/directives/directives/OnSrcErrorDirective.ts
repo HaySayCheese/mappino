@@ -1,6 +1,6 @@
 namespace Mappino.Core.Directives {
 
-    export function onErrorSrc(): angular.IDirective {
+    export function onErrorSrc(): ng.IDirective {
         return {
             restrict: 'A',
 

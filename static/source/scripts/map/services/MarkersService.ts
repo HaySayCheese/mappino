@@ -40,11 +40,11 @@ namespace Mappino.Map {
             'FavoritesService'
         ];
 
-        constructor(private $rootScope: angular.IRootScopeService,
-                    private $state: angular.ui.IStateService,
-                    private $http: angular.IHttpService,
-                    private $timeout: angular.ITimeoutService,
-                    private $q: angular.IQService,
+        constructor(private $rootScope: ng.IRootScopeService,
+                    private $state: ng.ui.IStateService,
+                    private $http: ng.IHttpService,
+                    private $timeout: ng.ITimeoutService,
+                    private $q: ng.IQService,
                     private publicationHandler: PublicationHandler,
                     private briefsService: BriefsService,
                     private favoritesService: FavoritesService) {

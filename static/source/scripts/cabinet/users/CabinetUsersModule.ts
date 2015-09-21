@@ -3,7 +3,7 @@
 namespace Mappino.Cabinet.Users {
     'use strict';
 
-    var app: angular.IModule = angular.module('mappino.cabinet.users', [
+    var app: ng.IModule = angular.module('mappino.cabinet.users', [
         'ngAnimate',
         'ngMaterial',
         'ngCookies',

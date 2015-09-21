@@ -1,5 +1,5 @@
 namespace Mappino.Core.PublicationPreview {
-    var publicationPreviewModule: angular.IModule = angular.module('Mappino.Core.PublicationPreview', [
+    var publicationPreviewModule: ng.IModule = angular.module('Mappino.Core.PublicationPreview', [
         'ngMaterial'
     ]);
 

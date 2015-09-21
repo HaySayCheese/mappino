@@ -1,5 +1,5 @@
 namespace Mappino.Map {
-    export function PublicationSlidingPanelDirective($rootScope, $stateParams): angular.IDirective {
+    export function PublicationSlidingPanelDirective($rootScope, $stateParams): ng.IDirective {
 
         return {
             restrict: 'E',
@@ -46,7 +46,7 @@ namespace Mappino.Map {
             }
         }
 
-        function close($element: angular.IAugmentedJQuery) {
+        function close($element: ng.IAugmentedJQuery) {
             if (!$element.hasClass('-closed') || !$element.hasClass('-with-navbar-right')) {
                 $element.removeClass('-opened -with-navbar-right').addClass('-closed');
             }

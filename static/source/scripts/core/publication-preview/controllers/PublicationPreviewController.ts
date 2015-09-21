@@ -21,8 +21,8 @@ namespace Mappino.Core.PublicationPreview {
         constructor(
             private $scope,
             private $rootScope,
-            private $state: angular.ui.IStateService,
-            private $timeout: angular.ITimeoutService,
+            private $state: ng.ui.IStateService,
+            private $timeout: ng.ITimeoutService,
             private $mdDialog: any,
             private publicationPreviewService: PublicationPreviewService) {
             // ---------------------------------------------------------------------------------------------------------

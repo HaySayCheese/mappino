@@ -14,7 +14,7 @@ namespace Mappino.Cabinet.Moderators {
 
         constructor(private $scope: any,
                     private $rootScope: any,
-                    private $state: angular.ui.IStateService,
+                    private $state: ng.ui.IStateService,
                     private moderatingService: ModeratingService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Модерация mappino';

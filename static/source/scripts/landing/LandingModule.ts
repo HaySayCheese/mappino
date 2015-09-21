@@ -1,9 +1,7 @@
-/// <reference path='_all.ts' />
-
 namespace Mappino.Landing {
     'use strict';
 
-    var app: angular.IModule = angular.module('mappino.landing', [
+    var app: ng.IModule = angular.module('mappino.landing', [
         'ngMaterial'
     ]);
 

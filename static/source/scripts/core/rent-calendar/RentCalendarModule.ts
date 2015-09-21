@@ -2,7 +2,7 @@
 
 
 namespace Mappino.Core.RentCalendar {
-    var rentCalendar: angular.IModule = angular.module('Mappino.Core.RentCalendar', [
+    var rentCalendar: ng.IModule = angular.module('Mappino.Core.RentCalendar', [
         'ngMaterial',
         'ui.rCalendar'
     ]);

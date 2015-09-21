@@ -1,5 +1,5 @@
 namespace Mappino.Map {
-    export function NavbarLeftDirective(): angular.IDirective {
+    export function NavbarLeftDirective(): ng.IDirective {
         return {
             restrict: 'E',
             controller: NavbarLeftController,

@@ -1,5 +1,5 @@
 namespace Mappino.Map {
-    export function NavbarLeftSectionScrollDirective(window, $timeout, $interval): angular.IDirective {
+    export function NavbarLeftSectionScrollDirective(window, $timeout, $interval): ng.IDirective {
         return {
             restrict: 'A',
 

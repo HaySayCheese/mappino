@@ -6,7 +6,7 @@ namespace Mappino.Cabinet.Users {
 
     export class MaterialConfigs {
 
-        constructor(private app: angular.IModule) {
+        constructor(private app: ng.IModule) {
             app.config(['$mdThemingProvider', ($mdThemingProvider) => {
                 $mdThemingProvider.theme('default')
                     .primaryPalette('blue')
