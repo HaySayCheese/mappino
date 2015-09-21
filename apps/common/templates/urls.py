@@ -11,8 +11,9 @@ urlpatterns = patterns('apps.common.templates',
 
     url(r'^ajax/template/common/publication-preview/types/(\d+)/$', 'publications_preview.types'),
 
+
     # full screen slider
-    url(r'^ajax/template/common/full-screen-slider/body/$', 'full_screen_slider.full_screen_slider_body'),
+    url(r'^ajax/template/common/full-screen-slider/body/$', 'publications_preview.full_screen_slider_body'),
 
 
     # rent calendar templates
