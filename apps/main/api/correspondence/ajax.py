@@ -260,6 +260,8 @@ class ClientNotificationsHandler(object):
                 CallRequestChecker.check_for_throttling(
                     request, publication.owner.mobile_phone, params['phone_number'])
             except ResourceThrottled:
+                # client should not know about throttled sms request
+                # to not to start bruteforcing
                 return cls.PostResponses.ok()
 
             try:
