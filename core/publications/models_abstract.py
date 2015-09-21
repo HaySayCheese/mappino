@@ -711,6 +711,9 @@ class LivingDailyRentModel(AbstractModel):
     date_leave = models.DateField(db_index=True)
     client_name = models.TextField(null=True)
 
+    class Meta:
+        abstract = True
+
 
     class M(models.Manager):
         def make_reservation(self, publication, date_enter, date_leave, client_name=None):
@@ -750,9 +753,12 @@ class LivingDailyRentModel(AbstractModel):
             """
 
             if exclude_last_day:
-                return self.filter(publciation=publication, date_leave__gt=date_enter)
+                return self.filter(publication=publication, date_leave__gt=date_enter)
             else:
-                return self.filter(publciation=publication, date_leave__gte=date_enter)
+                return self.filter(publication=publication, date_leave__gte=date_enter) # note: gtE
+
+
+    objects = M()
 
 
 class CommercialRentTermsModel(AbstractModel):

@@ -721,6 +721,7 @@ class DailyRent(object):
         @classmethod
         def post(cls, request, *args):
             publication_tid, publication_hash_id = args[:]
+            publication_tid = int(publication_tid)
 
 
             params = angular_parameters(request, ['date_enter', 'date_leave'])
@@ -750,6 +751,9 @@ class DailyRent(object):
             except ValueError:
                 return cls.PostResponses.invalid_date_leave()
 
+            if date_enter > date_leave:
+                return cls.PostResponses.invalid_date_enter()
+
 
             publications_model = HEAD_MODELS.get(publication_tid)
             if not publications_model:
@@ -759,11 +763,15 @@ class DailyRent(object):
             try:
                 publication = publications_model.objects\
                     .filter(hash_id=publication_hash_id)\
-                    .only('id', 'owner')\
+                    .only('id', 'owner', 'rent_terms__period_sid')\
                     [:1][0]
 
                 if publication.owner != request.user:
                     raise SuspiciousOperation()
+                
+                if not publication.rent_terms.is_daily:
+                    raise SuspiciousOperation(
+                        'Trying to add daily reservation to publciation that is not published as daily rent.')
 
             except IndexError:
                 return cls.PostResponses.hash_id_not_found()

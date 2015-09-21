@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('gas', models.BooleanField(db_index=True, help_text='')),
                 ('electricity', models.BooleanField(db_index=True, help_text='')),
                 ('heating_type_sid', models.PositiveSmallIntegerField(db_index=True, help_text='')),
-                ('days_booked', django.contrib.postgres.fields.ArrayField(help_text='', base_field=models.PositiveIntegerField(help_text=''), size=None)),
+                ('days_booked', django.contrib.postgres.fields.ArrayField(default=b'{}', help_text='', base_field=models.PositiveIntegerField(help_text=''), size=None)),
             ],
             options={
                 'db_table': 'index_flats_rent',
@@ -131,7 +131,7 @@ class Migration(migrations.Migration):
                 ('gas', models.BooleanField(db_index=True, help_text='')),
                 ('electricity', models.BooleanField(db_index=True, help_text='')),
                 ('heating_type_sid', models.PositiveSmallIntegerField(db_index=True, help_text='')),
-                ('days_booked', django.contrib.postgres.fields.ArrayField(help_text='', base_field=models.PositiveIntegerField(help_text=''), size=None)),
+                ('days_booked', django.contrib.postgres.fields.ArrayField(default=b'{}', help_text='', base_field=models.PositiveIntegerField(help_text=''), size=None)),
             ],
             options={
                 'db_table': 'index_houses_rent',
@@ -272,7 +272,7 @@ class Migration(migrations.Migration):
                 ('cold_water', models.BooleanField(db_index=True, help_text='')),
                 ('gas', models.BooleanField(db_index=True, help_text='')),
                 ('electricity', models.BooleanField(db_index=True, help_text='')),
-                ('days_booked', django.contrib.postgres.fields.ArrayField(help_text='', base_field=models.PositiveIntegerField(help_text=''), size=None)),
+                ('days_booked', django.contrib.postgres.fields.ArrayField(default=b'{}', help_text='', base_field=models.PositiveIntegerField(help_text=''), size=None)),
             ],
             options={
                 'db_table': 'index_rooms_rent',
