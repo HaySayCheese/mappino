@@ -1,7 +1,7 @@
 # coding=utf-8
 import phonenumbers
 
-from core.notifications.sms_dispatcher.base import BaseSMSSender
+from core.users.notifications.sms_dispatcher.base import BaseSMSSender
 
 
 

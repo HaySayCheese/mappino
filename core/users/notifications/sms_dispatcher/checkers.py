@@ -1,9 +1,9 @@
 # coding=utf-8
 import mandrill
-
 from django.conf import settings
+
 from core import redis_connections
-from core.notifications.sms_dispatcher.exceptions import SMSSendingThrottled
+from core.users.notifications.sms_dispatcher.exceptions import SMSSendingThrottled
 
 
 PRIVATE_IPS_PREFIX = ('10.', '172.', '192.', )

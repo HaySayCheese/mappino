@@ -4,12 +4,12 @@ from django.views.generic import View
 
 from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.methods.request_data_getters import angular_parameters
-from core.notifications.mail_dispatcher.sellers import SellersMailDispatcher
-from core.notifications.sms_dispatcher.exceptions import ResourceThrottled, SMSSendingThrottled
-from core.notifications.sms_dispatcher.sellers import SellersSMSDispatcher
+from core.users.notifications.mail_dispatcher.sellers import SellersMailDispatcher
+from core.users.notifications.sms_dispatcher.checkers import MessageChecker, CallRequestChecker
+from core.users.notifications.sms_dispatcher.exceptions import ResourceThrottled, SMSSendingThrottled
 from core.publications.constants import HEAD_MODELS
 from core.users.constants import Preferences
-from core.notifications.sms_dispatcher.checkers import MessageChecker, CallRequestChecker
+from core.users.notifications.sms_dispatcher.sellers import SellersSMSDispatcher
 
 
 class ClientNotificationsHandler(object):

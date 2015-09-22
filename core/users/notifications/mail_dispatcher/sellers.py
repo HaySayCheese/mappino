@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.conf import settings
 
-from core.notifications.mail_dispatcher import email_sender
+from core.users.notifications.mail_dispatcher import email_sender
 
 
 class SellersMailDispatcher(object):

@@ -15,12 +15,11 @@ from collective.http.responses import HttpJsonResponse
 from collective.decorators.ajax import json_response, json_response_bad_request
 from collective.methods.request_data_getters import angular_post_parameters
 from core.managing.ban.classes import BanHandler
-from core.notifications.sms_dispatcher.common import NotificationsSender
-from core.notifications.sms_dispatcher.exceptions import ResourceThrottled
+from core.users.notifications.sms_dispatcher.checkers import LoginChecker
+from core.users.notifications.sms_dispatcher.common import NotificationsSender
+from core.users.notifications.sms_dispatcher.exceptions import ResourceThrottled
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 from core.users.models import Users
-
-from core.notifications.sms_dispatcher.checkers import LoginChecker
 
 
 class LoginManager(object):

@@ -133,8 +133,8 @@ INSTALLED_APPS = (
 
     'core.users',
     'core.publications',
-    'core.favorites',
-    'core.notifications',
+    'core.users.favorites',
+    'core.users.notifications',
     'core.support',
 
     'core.managing.ban',
