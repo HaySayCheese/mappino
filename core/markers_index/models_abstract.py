@@ -111,7 +111,7 @@ class AbstractBaseIndex(models.Model):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects.\
-            filter(id=publication_head_id)\
+            filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'degree_lat',

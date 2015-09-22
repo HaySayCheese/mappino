@@ -79,7 +79,7 @@ class FlatsSaleIndex(AbstractBaseIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(id=publication_head_id)\
+            .filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -215,7 +215,7 @@ class FlatsRentIndex(AbstractBaseIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(id=publication_head_id)\
+            .filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -337,7 +337,7 @@ class HousesSaleIndex(AbstractBaseIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(id=publication_head_id)\
+            .filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -394,7 +394,7 @@ class HousesSaleIndex(AbstractBaseIndex):
 
 
 class HousesRentIndex(AbstractBaseIndex):
-    # costants
+    # constants
     tid = OBJECTS_TYPES.house()
 
 
@@ -476,7 +476,7 @@ class HousesRentIndex(AbstractBaseIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(id=publication_head_id)\
+            .filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -595,7 +595,7 @@ class RoomsSaleIndex(AbstractBaseIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(id=publication_head_id)\
+            .filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -706,7 +706,7 @@ class RoomsRentIndex(AbstractBaseIndex):
         model = HEAD_MODELS[OBJECTS_TYPES.room()]
 
         return model.objects\
-            .filter(id=publication_head_id)\
+            .filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -804,7 +804,7 @@ class TradesSaleIndex(AbstractTradesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(id=publication_head_id)\
+            .filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -869,7 +869,7 @@ class TradesRentIndex(AbstractTradesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(id=publication_head_id)\
+            .filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -932,7 +932,7 @@ class OfficesSaleIndex(AbstractOfficesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(id=publication_head_id)\
+            .filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -993,7 +993,7 @@ class OfficesRentIndex(AbstractOfficesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects.\
-            filter(id=publication_head_id)\
+            filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -1055,7 +1055,7 @@ class WarehousesSaleIndex(AbstractWarehousesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(id=publication_head_id)\
+            .filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -1118,7 +1118,7 @@ class WarehousesRentIndex(AbstractWarehousesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(id=publication_head_id)\
+            .filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -1152,7 +1152,7 @@ class GaragesSaleIndex(AbstractGaragesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(id=publication_head_id)\
+            .filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -1229,7 +1229,7 @@ class GaragesRentIndex(AbstractGaragesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(id=publication_head_id)\
+            .filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -1284,7 +1284,7 @@ class LandsSaleIndex(AbstractLandsIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(id=publication_head_id)\
+            .filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -1341,7 +1341,7 @@ class LandsRentIndex(AbstractLandsIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(id=publication_head_id)\
+            .filter(publication_id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
