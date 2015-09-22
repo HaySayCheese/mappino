@@ -25,7 +25,7 @@ namespace Mappino.Map {
                 op_sid:     '0',  // operation_sid
 
                 // Дропдауни
-                cu_sid:     '0',  // currency_sid
+                cu_sid:     '2',  // currency_sid
                 h_t_sid:    '0',  // heating_type_sid
                 pr_sid:     '0',  // period_sid
                 pl_sid:     '0',  // planing_sid
