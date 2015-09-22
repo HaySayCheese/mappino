@@ -1,12 +1,6 @@
 .filters-tab {
     @extend %_left-navbar-tab;
     section {
-        .-text-truncate {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
         md-icon:first-child {
             margin-right: 3px;
         }

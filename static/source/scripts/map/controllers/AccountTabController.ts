@@ -123,6 +123,7 @@ namespace Mappino.Map {
             if (this.$scope.authState == 'enterPhone') {
                 if (angular.isDefined(this.$scope.loginForm.mobilePhone))
                     this.$scope.loginForm.mobilePhone.$setValidity('invalid', true);
+                    this.$scope.loginForm.mobilePhone.$setValidity('throttled', true);
             } else {
                 if (angular.isDefined(this.$scope.loginForm.smsCode))
                     this.$scope.loginForm.smsCode.$setValidity('invalid', true);
