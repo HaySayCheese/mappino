@@ -30,6 +30,8 @@ namespace Mappino.Map {
                                 window.location.pathname = '/cabinet/';
                             } else if (response.code == 1) {
                                 this.$scope.loginForm.mobilePhone.$setValidity('invalid', false);
+                            } else if (response.code == 200) {
+                                this.$scope.loginForm.mobilePhone.$setValidity('throttled', false);
                             } else {
                                 localStorage.setItem('mobile_code', this.$scope.account.mobileCode);
                                 localStorage.setItem('mobile_phone', this.$scope.account.mobilePhone);
