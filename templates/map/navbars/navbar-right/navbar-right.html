@@ -8,11 +8,12 @@
             </md-tab-label>
             <md-tab-body>
                 <section ng-controller="BriefsTabController as briefsCtrl" layout="row">
-                    <ul class="publication-list" layout="column" layout-align="start start" ng-show="briefs.length">
-                        <li class="publication-list-item" ng-repeat="brief in briefs" ng-class="{ '-hovered': brief.is_hovered }"
-                            ng-click="briefsCtrl.openPublication(brief)"
-                            ng-mouseenter="briefsCtrl.onBriefMouseOver(brief)"
-                            ng-mouseleave="briefsCtrl.onBriefMouseLeave()">
+                    <md-virtual-repeat-container class="publication-list" layout="column" layout-align="start start" ng-show="briefs.length">
+                        <div class="publication-list-item" md-virtual-repeat="brief in briefs" flex
+                             ng-class="{ '-hovered': brief.is_hovered }"
+                             ng-click="briefsCtrl.openPublication(brief)"
+                             ng-mouseenter="briefsCtrl.onBriefMouseOver(brief)"
+                             ng-mouseleave="briefsCtrl.onBriefMouseLeave()">
 
                             <img ng-src="[[ brief.thumbnail_url ]]" alt="[[ brief.title ]]" />
 
@@ -40,8 +41,43 @@
                                     <span>[[ brief.price ]]</span>
                                 </div>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </md-virtual-repeat-container>
+
+                    <!--<ul class="publication-list" layout="column" layout-align="start start" ng-show="briefs.length">-->
+                        <!--<li class="publication-list-item" ng-repeat="brief in briefs" ng-class="{ '-hovered': brief.is_hovered }"-->
+                            <!--ng-click="briefsCtrl.openPublication(brief)"-->
+                            <!--ng-mouseenter="briefsCtrl.onBriefMouseOver(brief)"-->
+                            <!--ng-mouseleave="briefsCtrl.onBriefMouseLeave()">-->
+
+                            <!--<img ng-src="[[ brief.thumbnail_url ]]" alt="[[ brief.title ]]" />-->
+
+                            <!--<div class="publication-list-item-overlay" layout="column">-->
+                                <!--<div layout="row">-->
+                                    <!--<md-button class="md-icon-button" ng-hide="brief.is_favorite"-->
+                                               <!--ng-click="briefsCtrl.toggleFavorite(brief, $event)">-->
+                                        <!--<md-icon class="material-icons md-light md-dark-shadow">favorite_border</md-icon>-->
+                                        <!--<md-tooltip md-direction="right" md-delay="0">-->
+                                            <!--Добавить в избранные-->
+                                        <!--</md-tooltip>-->
+                                    <!--</md-button>-->
+                                    <!--<md-button class="md-icon-button" ng-show="brief.is_favorite"-->
+                                               <!--ng-click="briefsCtrl.toggleFavorite(brief, $event)">-->
+                                        <!--<md-icon class="material-icons md-light md-dark-shadow pink-text">favorite</md-icon>-->
+                                        <!--<md-tooltip md-direction="right" md-delay="0">-->
+                                            <!--Удалить из избранных-->
+                                        <!--</md-tooltip>-->
+                                    <!--</md-button>-->
+                                <!--</div>-->
+                                <!--<span flex></span>-->
+                                <!--<div class="publication-list-item-description" layout="row">-->
+                                    <!--<span>[[ brief.title ]]</span>-->
+                                    <!--<span flex></span>-->
+                                    <!--<span>[[ brief.price ]]</span>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</li>-->
+                    <!--</ul>-->
 
                     <div class="md-padding center-align" layout="column" layout-align="center center" ng-hide="mapZoom > 14">
                         <div>
