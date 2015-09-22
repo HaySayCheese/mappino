@@ -1,5 +1,5 @@
 # coding=utf-8
-from core.users.notifications import BaseSMSSender
+from core.users.notifications.sms_dispatcher.base import BaseSMSSender
 
 
 
