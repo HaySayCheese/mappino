@@ -730,7 +730,7 @@ class DailyRent(object):
 
         @classmethod
         def post(cls, request, *args):
-            publication_tid, publication_hash_id = args[:]
+            publication_tid, publication_hash_id = args[:2]
             publication_tid = int(publication_tid)
 
 
@@ -805,7 +805,8 @@ class DailyRent(object):
 
         @classmethod
         def get(cls, request, *args):
-            publication_tid, publication_hash_id = args[:]
+            publication_tid, publication_hash_id = args[:2]
+            publication_tid = int(publication_tid)
 
 
             publications_model = HEAD_MODELS.get(publication_tid)
@@ -815,11 +816,8 @@ class DailyRent(object):
             try:
                 publication = publications_model.objects\
                     .filter(hash_id=publication_hash_id)\
-                    .only('id', 'owner')\
+                    .only('id')\
                     [:1][0]
-
-                if publication.owner != request.user:
-                    raise SuspiciousOperation()
 
             except IndexError:
                 return cls.GetResponses.hash_id_not_found()
