@@ -1,11 +1,28 @@
-<div class="publication-page" layout-padding layout-wrap layout="column" layout-gt-lg="row"
-     layout-align-md="start center" layout-align-lg="start center" layout-align-gt-lg="center start" ng-show="!loaders.overlay">
+<div ng-controller="PublishedPublicationController as publishedCtrl" class="publication-page" layout-padding layout-wrap layout="column" layout-gt-lg="row"
+     layout-align-md="start center" layout-align-lg="start center" layout-align-gt-lg="center start">
 
     <md-card flex="32">
         <md-card-content>
             <h3 class="md-headline blue-text">Календарь бронирований</h3>
             <rent-calendar-view ng-show="publication.rent_terms.contains('посуточно')"></rent-calendar-view>
-
+            <div>
+            <md-button layout="row" layout-align="center center" class="md-raised md-primary" ng-click="showRentDetails = true" ng-show="!showRentDetails">Добавить бронь</md-button>
+            <div ng-show="showRentDetails" layout="column">
+                <form novalidate class="animated" name="forms.reservationDetails">
+                    <div layout="row" layout-align="start center">
+                        <md-datepicker ng-model="reservation.dateEnter" md-placeholder="Дата от" flex="50" required></md-datepicker>
+                        <md-datepicker ng-model="reservation.dateLeave" md-placeholder="Дата до" flex="50" required></md-datepicker>
+                    </div>
+                    <div layout="row">
+                        <md-input-container flex>
+                            <label>Имя клиента</label>
+                            <input name="clientName" type="text" ng-model="reservation.clientName">
+                        </md-input-container>
+                    </div>
+                    <md-button class="md-raised md-primary" ng-click="publishedCtrl.reserveDailyRent()">Забронировать</md-button>
+                </form>
+            </div>
+            </div>
         </md-card-content>
     </md-card>
 

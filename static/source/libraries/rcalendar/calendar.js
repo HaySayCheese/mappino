@@ -34,6 +34,11 @@ angular.module('ui.rCalendar', [])
             self.onEventSourceChanged(value);
         });
 
+        setInterval(function () {
+            self.onEventSourceChanged($scope.$parent.eventSource);
+        }, 1000, 5);
+
+
 
         if (angular.isDefined($attrs.initDate)) {
             self.currentCalendarDate = $scope.$parent.$eval($attrs.initDate);
@@ -86,6 +91,7 @@ angular.module('ui.rCalendar', [])
         };
 
         self.onEventSourceChanged = function (value) {
+            console.log(value);
             self.eventSource = value;
             if (self.onDataLoaded) {
                 self.onDataLoaded();

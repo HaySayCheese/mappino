@@ -1,24 +1,10 @@
-<div ng-controller="rentCalendarController">
+<div ng-controller="rentCalendarController as rentCalendarCtrl">
     <section layout="column" layout-align="center center">
         <div>
             <calendar ng-model="currentDate" calendar-mode="mode" event-source="eventSource"
                       range-changed="reloadSource(startTime, endTime)"
                       event-selected="onEventSelected(event)">
             </calendar>
-        </div>
-        <md-button class="md-raised md-primary" ng-click="showRentDetails = true" ng-show="!showRentDetails">Добавить бронь</md-button>
-        <div ng-show="showRentDetails" layout="column">
-            <div layout="row" layout-align="start center">
-                <md-datepicker ng-model="myDate" md-placeholder="Дата от" flex="50"></md-datepicker>
-                <md-datepicker ng-model="myDate" md-placeholder="Дата до" flex="50"></md-datepicker>
-            </div>
-            <div layout="row">
-                <md-input-container flex>
-                    <label>Имя клиента</label>
-                    <input>
-                </md-input-container>
-            </div>
-            <md-button class="md-raised md-primary">Забронировать</md-button>
         </div>
     </section>
 </div>

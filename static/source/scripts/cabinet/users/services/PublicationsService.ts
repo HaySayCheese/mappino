@@ -245,7 +245,6 @@ namespace Mappino.Cabinet.Users {
             var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/publications/briefs/all/`);
 
             promise.success(response => {
-                console.debug(response.data)
                 for (let i = 0, len = response.data.length; i < len; i++) {
                     var brief = response.data[i];
 
