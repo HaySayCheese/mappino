@@ -21,4 +21,16 @@
             }
         }
     }
+
+
+    md-datepicker {
+        .md-datepicker-button {
+            margin: 0 !important;
+        }
+
+        .md-datepicker-input-container {
+            width: 102px;
+            margin: 0 !important;
+        }
+    }
 }

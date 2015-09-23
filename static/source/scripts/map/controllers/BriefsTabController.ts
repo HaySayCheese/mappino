@@ -18,7 +18,7 @@ namespace Mappino.Map {
             private briefsService: BriefsService,
             private favoritesService: FavoritesService) {
             // ---------------------------------------------------------------------------------------------------------
-            $scope.briefs = [1,2,3,4,5,6];
+            $scope.briefs = briefsService.briefs;
         }
 
 

@@ -13,9 +13,12 @@ namespace Mappino.Core.Constants {
                         genitive:   "Квартиры"
                     },
                     filters: [
-                        "op_sid", "pr_sid", "p_min", "p_max", "cu_sid", "p_c_min", "p_c_max", "n_b",
-                        "s_m", "fml", "frg", "r_c_min", "r_c_max", "t_a_min", "t_a_max", "f_min", "f_max",
-                        "msd", "grd", "pl_sid", "lft", "elt", "h_w", "c_w", "gas", "h_t_sid"
+                        "op_sid", "pr_sid",
+                        "p_c_min", "p_c_max",
+                        "r_d_min", "r_d_max",
+                        "p_min", "p_max", "cu_sid",
+                        "r_c_min", "r_c_max",
+                        "t_a_min", "t_a_max"
                     ]
                 }, {
                     id:             1,
@@ -26,9 +29,12 @@ namespace Mappino.Core.Constants {
                         genitive:   "Дома"
                     },
                     filters: [
-                        "op_sid", "pr_sid", "p_min", "p_max", "cu_sid", "p_c_min", "p_c_max", "n_b",
-                        "s_m", "fml", "frg", "r_c_min", "r_c_max", "f_c_min", "f_c_max", "elt", "h_w",
-                        "gas", "c_w", "swg", "h_t_sid"
+                        "op_sid", "pr_sid",
+                        "p_c_min", "p_c_max",
+                        "r_d_min", "r_d_max",
+                        "p_min", "p_max", "cu_sid",
+                        "r_c_min", "r_c_max",
+                        "t_a_min", "t_a_max"
                     ]
                 }, {
                     id:             2,
