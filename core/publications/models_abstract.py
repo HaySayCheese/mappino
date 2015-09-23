@@ -743,10 +743,24 @@ class LivingDailyRentModel(AbstractModel):
                 )
 
                 signals.DailyRentSignals.booked.send(
-                    record, tid=record.publication.tid, publication_id=publication.id, date_enter=date_enter, date_leave=date_leave)
+                    record, tid=publication.tid, publication_id=publication.id, date_enter=date_enter, date_leave=date_leave)
 
 
             return record
+
+
+        def cancel_reservation(self, publication, date_enter, date_leave):
+            with transaction.atomic():
+                self\
+                    .filter(
+                        publication=publication,
+                        date_enter=date_enter,
+                        date_leave=date_leave,
+                    )\
+                    .delete()
+
+                signals.DailyRentSignals.reservation_canceled.send(
+                    None, tid=publication.tid, publication_id=publication.id, date_enter=date_enter, date_leave=date_leave)
 
 
         def intersects_with_existing(self, publication, date_enter, exclude_last_day=True):

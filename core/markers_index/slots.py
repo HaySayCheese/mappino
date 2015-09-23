@@ -20,7 +20,7 @@ class SlotsInitializer(object):
 
         # slots that handles publication daily reservations updates
         publication.DailyRentSignals.booked.connect(self.__update_daily_rent_reservations_index)
-        publication.DailyRentSignals.order_removed.connect(self.__update_daily_rent_reservations_index)
+        publication.DailyRentSignals.reservation_canceled.connect(self.__update_daily_rent_reservations_index)
 
 
     def __add_publication_marker(self, sender, **kwargs):
