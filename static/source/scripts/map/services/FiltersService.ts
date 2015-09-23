@@ -55,6 +55,9 @@ namespace Mappino.Map {
                 a_min:      null,   // area_min
                 a_max:      null,   // area_max
 
+                r_d_min:    null,   // rent_date_min
+                r_d_max:    null,   // rent_date_max
+
                 // Чекбокси
                 n_b:    true,   // new_buildings
                 s_m:    true,   // secondary_market
@@ -195,6 +198,9 @@ namespace Mappino.Map {
                     }
                     if (key.toString().indexOf("_sid") !== -1) {
                         location_search[key] = location_search[key];
+                    }
+                    if (key.toString().indexOf("r_d_min") !== -1 || key.toString().indexOf("r_d_max") !== -1) {
+                        location_search[key] = new Date(location_search[key]);
                     }
                     if (/^b_/.test(key.toString())) {
                         filters_panels['blue'][key] = location_search[key];
