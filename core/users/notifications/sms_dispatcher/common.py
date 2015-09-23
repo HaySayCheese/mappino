@@ -2,7 +2,6 @@
 from core.users.notifications.sms_dispatcher.base import BaseSMSSender
 
 
-
 class NotificationsSender(BaseSMSSender):
     @classmethod
     def send_login_code(cls, request, number, code):

@@ -17,8 +17,9 @@ def cabinet(request):
     if user.is_moderator:
         template = templates.get_template('cabinet/moderators/moderators.html')
 
-    elif user.is_manager:
-        template = templates.get_template('cabinet/managers/managers.html')
+    # todo: enable me back when managers will be done
+    # elif user.is_manager:
+    #     template = templates.get_template('cabinet/managers/managers.html')
 
     else:
         template = templates.get_template('cabinet/users/users.html')

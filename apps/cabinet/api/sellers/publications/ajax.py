@@ -12,6 +12,7 @@ from core.publications import formatters
 from core.publications.exceptions import PhotosHandlerExceptions, NotEnoughPhotos
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS, OBJECT_STATES, \
     DAILY_RENT_RESERVATIONS_MODELS
+from core.publications.models_abstract import LivingDailyRentModel
 from core.publications.signals import record_updated
 from core.publications.update_methods.flats import update_flat
 from core.publications.update_methods.houses import update_house
@@ -683,6 +684,15 @@ class DailyRent(object):
                 }
 
 
+            @staticmethod
+            @json_response
+            def already_booked():
+                return {
+                    'code': 5,
+                    'message': 'Period is already booked',
+                }
+
+
         class GetResponses(object):
             @staticmethod
             @json_response
@@ -718,13 +728,63 @@ class DailyRent(object):
                 }
 
 
+        class DeleteResponses(object):
+            @staticmethod
+            @json_response
+            def ok():
+                return {
+                    'code': 0,
+                    'message': 'OK',
+                }
+
+
+            @staticmethod
+            @json_response_bad_request
+            def invalid_tid():
+                return {
+                    'code': 1,
+                    'message': 'request contains invalid tid.'
+                }
+
+
+            @staticmethod
+            @json_response_not_found
+            def hash_id_not_found():
+                return {
+                    'code': 2,
+                    'message': 'publication with exact hash id does not exists.'
+                }
+
+
+            @staticmethod
+            @json_response_bad_request
+            def invalid_date_enter():
+                return {
+                    'code': 3,
+                    'message': 'invalid enter date'
+                }
+
+
+            @staticmethod
+            @json_response_bad_request
+            def invalid_date_leave():
+                return {
+                    'code': 4,
+                    'message': 'invalid leave date'
+                }
+
+
         @classmethod
         def post(cls, request, *args):
-            publication_tid, publication_hash_id = args[:]
+            publication_tid, publication_hash_id = args[:2]
             publication_tid = int(publication_tid)
 
 
-            params = angular_parameters(request, ['date_enter', 'date_leave'])
+            try:
+                params = angular_parameters(request, ['date_enter', 'date_leave'])
+            except ValueError:
+                return cls.PostResponses.invalid_date_enter()
+
 
             # Service potentially will work in several countries.
             # Each of this country may have different time zone code.
@@ -771,7 +831,7 @@ class DailyRent(object):
                 
                 if not publication.rent_terms.is_daily:
                     raise SuspiciousOperation(
-                        'Trying to add daily reservation to publciation that is not published as daily rent.')
+                        'Trying to add daily reservation to publication that is not published as daily rent.')
 
             except IndexError:
                 return cls.PostResponses.hash_id_not_found()
@@ -781,8 +841,13 @@ class DailyRent(object):
             if not daily_rent_reservations_model:
                 return cls.PostResponses.invalid_tid()
 
-            daily_rent_reservations_model.objects.make_reservation(
-                publication, date_enter, date_leave, params.get('client_name'))
+
+            try:
+                daily_rent_reservations_model.objects.make_reservation(
+                    publication, date_enter, date_leave, params.get('client_name'))
+
+            except LivingDailyRentModel.AlreadyBooked:
+                return cls.PostResponses.already_booked()
 
 
             return cls.PostResponses.ok()
@@ -790,7 +855,8 @@ class DailyRent(object):
 
         @classmethod
         def get(cls, request, *args):
-            publication_tid, publication_hash_id = args[:]
+            publication_tid, publication_hash_id = args[:2]
+            publication_tid = int(publication_tid)
 
 
             publications_model = HEAD_MODELS.get(publication_tid)
@@ -800,11 +866,8 @@ class DailyRent(object):
             try:
                 publication = publications_model.objects\
                     .filter(hash_id=publication_hash_id)\
-                    .only('id', 'owner')\
+                    .only('id')\
                     [:1][0]
-
-                if publication.owner != request.user:
-                    raise SuspiciousOperation()
 
             except IndexError:
                 return cls.GetResponses.hash_id_not_found()
@@ -817,6 +880,78 @@ class DailyRent(object):
 
             reservations = daily_rent_reservations_model.objects.filter(publication=publication)
             return cls.GetResponses.ok(reservations)
+
+
+        @classmethod
+        def delete(cls, request, *args):
+            publication_tid, publication_hash_id = args[:2]
+            publication_tid = int(publication_tid)
+
+
+            try:
+                params = angular_parameters(request, ['date_enter', 'date_leave'])
+            except ValueError:
+                return cls.DeleteResponses.invalid_date_enter()
+
+
+            # Service potentially will work in several countries.
+            # Each of this country may have different time zone code.
+            # But reservations must be done in ime zone of country, publication is from.
+            #
+            # Currently it is not necessary.
+            # Ukraine time zone should be used.
+            # todo: add timezone handling here
+
+            try:
+                # format is 2015-09-18T09:00:00.000Z
+                date_enter = params['date_enter'][:10]
+                date_enter = datetime.datetime.strptime(date_enter, '%Y-%m-%d')
+                date_enter = date_enter.replace(tzinfo=timezone('Europe/Kiev'))
+                date_enter = date_enter.date()
+            except ValueError:
+                return cls.DeleteResponses.invalid_date_enter()
+
+            try:
+                date_leave = params['date_leave'][:10]
+                date_leave = datetime.datetime.strptime(date_leave, '%Y-%m-%d')
+                date_leave = date_leave.replace(tzinfo=timezone('Europe/Kiev'))
+                date_leave = date_leave.date()
+            except ValueError:
+                return cls.DeleteResponses.invalid_date_leave()
+
+            if date_enter > date_leave:
+                return cls.PostResponses.invalid_date_enter()
+
+
+            publications_model = HEAD_MODELS.get(publication_tid)
+            if not publications_model:
+                return cls.DeleteResponses.invalid_tid()
+
+
+            try:
+                publication = publications_model.objects\
+                    .filter(hash_id=publication_hash_id)\
+                    .only('id', 'owner', 'rent_terms__period_sid')\
+                    [:1][0]
+
+                if publication.owner != request.user:
+                    raise SuspiciousOperation()
+
+                if not publication.rent_terms.is_daily:
+                    raise SuspiciousOperation(
+                        'Trying to add daily reservation to publication that is not published as daily rent.')
+
+            except IndexError:
+                return cls.DeleteResponses.hash_id_not_found()
+
+
+            daily_rent_reservations_model = DAILY_RENT_RESERVATIONS_MODELS.get(publication_tid)
+            if not daily_rent_reservations_model:
+                return cls.DeleteResponses.invalid_tid()
+
+
+            daily_rent_reservations_model.objects.cancel_reservation(publication, date_enter, date_leave)
+            return cls.DeleteResponses.ok()
 
 
 class Briefs(CabinetView):

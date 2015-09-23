@@ -1,11 +1,14 @@
 # coding=utf-8
+import datetime
+
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import Q
 from collective.exceptions import InvalidArgument
 from core.currencies.constants import CURRENCIES
 from core.currencies.currencies_manager import convert as convert_price
 from core.publications.constants import HEAD_MODELS, FLOOR_TYPES, LIVING_RENT_PERIODS, MARKET_TYPES, HEATING_TYPES, \
-    OBJECTS_TYPES
+    OBJECTS_TYPES, DAILY_RENT_RESERVATIONS_MODELS
 from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
 
@@ -479,6 +482,41 @@ class AbstractBaseIndex(models.Model):
         if filters.get('pit') is True:
             return markers.filter(pit=True)
         return markers
+
+
+class AbstractIndexWithDailyRent(AbstractBaseIndex):
+    # WARN: index for this field is added into migration by RunSQL.
+    # django does not support indexing in array fields.
+    days_booked = ArrayField(
+        base_field=models.PositiveIntegerField(), null=False, default='{}') # note: db_index is not useful for querying.
+
+
+    class Meta:
+        abstract = True
+
+
+    def reload_booked_days(self):
+        assert self.tid is not None
+        reservations_model = DAILY_RENT_RESERVATIONS_MODELS[self.tid]
+
+
+        # To achieve the best performance, booked days are stored as int values.
+        # Int values takes less space in memory and indexes on them are more efficient.
+        # The format for int value is "yyyymmdd".
+        days_booked = []
+
+        for period in reservations_model.objects.reserved_periods(self.publication_id):
+            current_date = period.date_enter
+            while current_date < period.date_leave:
+                date_str = '{yyyy:04d}{mm:02d}{dd:02d}'\
+                    .format(yyyy=current_date.year, mm=current_date.month, dd=current_date.day)
+
+                days_booked.append(int(date_str))
+                current_date += datetime.timedelta(days=1)
+
+
+        self.days_booked = list(set(days_booked))
+        self.save()
 
 
 class AbstractTradesIndex(AbstractBaseIndex):

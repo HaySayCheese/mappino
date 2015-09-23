@@ -2,8 +2,6 @@
 from core.publications.models import *
 from core.users.favorites.models_abstract import AbstractFavorites
 from core.publications.types_bases import *
-from core.users.models import Users
-
 
 
 class FlatsFavorites(FlatBase, AbstractFavorites):

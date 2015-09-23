@@ -23,4 +23,4 @@ rejected_by_moderator = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sal
 
 class DailyRentSignals(object):
     booked = Signal(['tid', 'publication_id', 'date_enter', 'date_leave'])
-    order_removed = Signal(['tid', 'publication_id', 'date_enter', 'date_leave'])
+    reservation_canceled = Signal(['tid', 'publication_id', 'date_enter', 'date_leave'])
