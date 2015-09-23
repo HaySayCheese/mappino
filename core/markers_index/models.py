@@ -1,19 +1,17 @@
 # coding=utf-8
 import math
+import itertools
 
 from django.conf import settings
-from django.contrib.postgres.fields.array import ArrayField
 from django.db import models, connections
-
 from djorm_pgarray.fields import BigIntegerArrayField
-import itertools
 
 from collective.exceptions import InvalidArgument
 from core.markers_index.classes import Grid
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 from core.markers_index.models_abstract import \
     AbstractBaseIndex, AbstractTradesIndex, AbstractOfficesIndex, AbstractWarehousesIndex, \
-    AbstractGaragesIndex, AbstractLandsIndex
+    AbstractGaragesIndex, AbstractLandsIndex, AbstractIndexWithDailyRent
 
 
 class FlatsSaleIndex(AbstractBaseIndex):
@@ -79,7 +77,7 @@ class FlatsSaleIndex(AbstractBaseIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(publication_id=publication_head_id)\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -140,7 +138,7 @@ class FlatsSaleIndex(AbstractBaseIndex):
         return markers
 
 
-class FlatsRentIndex(AbstractBaseIndex):
+class FlatsRentIndex(AbstractIndexWithDailyRent):
     # constants
     tid = OBJECTS_TYPES.flat()
 
@@ -165,12 +163,6 @@ class FlatsRentIndex(AbstractBaseIndex):
     gas = models.BooleanField(db_index=True)
     electricity = models.BooleanField(db_index=True)
     heating_type_sid = models.PositiveSmallIntegerField(db_index=True)
-
-    # WARN: index for this field is added into migration by RunSQL.
-    # django does not support indexing in array fields.
-    days_booked = ArrayField(
-        base_field=models.PositiveIntegerField(), null=False, default='{}') # note: db_index is not useful for querying.
-
 
     class Meta:
         db_table = 'index_flats_rent'
@@ -215,7 +207,7 @@ class FlatsRentIndex(AbstractBaseIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(publication_id=publication_head_id)\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -337,7 +329,7 @@ class HousesSaleIndex(AbstractBaseIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(publication_id=publication_head_id)\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -393,7 +385,7 @@ class HousesSaleIndex(AbstractBaseIndex):
         return markers
 
 
-class HousesRentIndex(AbstractBaseIndex):
+class HousesRentIndex(AbstractIndexWithDailyRent):
     # constants
     tid = OBJECTS_TYPES.house()
 
@@ -414,12 +406,6 @@ class HousesRentIndex(AbstractBaseIndex):
     gas = models.BooleanField(db_index=True)
     electricity = models.BooleanField(db_index=True)
     heating_type_sid = models.PositiveSmallIntegerField(db_index=True)
-
-
-    # WARN: index for this field is added into migration by RunSQL.
-    # django does not support indexing in array fields.
-    days_booked = ArrayField(
-        base_field=models.PositiveIntegerField(), null=False, default='{}') # note: db_index is not useful for querying.
 
 
     class Meta:
@@ -476,7 +462,7 @@ class HousesRentIndex(AbstractBaseIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(publication_id=publication_head_id)\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -595,7 +581,7 @@ class RoomsSaleIndex(AbstractBaseIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(publication_id=publication_head_id)\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -636,7 +622,7 @@ class RoomsSaleIndex(AbstractBaseIndex):
         return markers
 
 
-class RoomsRentIndex(AbstractBaseIndex):
+class RoomsRentIndex(AbstractIndexWithDailyRent):
     # constants
     tid = OBJECTS_TYPES.room()
 
@@ -658,13 +644,6 @@ class RoomsRentIndex(AbstractBaseIndex):
     cold_water = models.BooleanField(db_index=True)
     gas = models.BooleanField(db_index=True)
     electricity = models.BooleanField(db_index=True)
-
-
-    # WARN: index for this field is added into migration by RunSQL.
-    # django does not support indexing in array fields.
-    days_booked = ArrayField(
-        base_field=models.PositiveIntegerField(), null=False, default='{}') # note: db_index is not useful for querying.
-
 
     class Meta:
         db_table = 'index_rooms_rent'
@@ -706,7 +685,7 @@ class RoomsRentIndex(AbstractBaseIndex):
         model = HEAD_MODELS[OBJECTS_TYPES.room()]
 
         return model.objects\
-            .filter(publication_id=publication_head_id)\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -804,7 +783,7 @@ class TradesSaleIndex(AbstractTradesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(publication_id=publication_head_id)\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -869,7 +848,7 @@ class TradesRentIndex(AbstractTradesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(publication_id=publication_head_id)\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -932,7 +911,7 @@ class OfficesSaleIndex(AbstractOfficesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(publication_id=publication_head_id)\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -1055,7 +1034,7 @@ class WarehousesSaleIndex(AbstractWarehousesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(publication_id=publication_head_id)\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -1118,7 +1097,7 @@ class WarehousesRentIndex(AbstractWarehousesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(publication_id=publication_head_id)\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -1152,7 +1131,7 @@ class GaragesSaleIndex(AbstractGaragesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(publication_id=publication_head_id)\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -1229,7 +1208,7 @@ class GaragesRentIndex(AbstractGaragesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(publication_id=publication_head_id)\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -1284,7 +1263,7 @@ class LandsSaleIndex(AbstractLandsIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(publication_id=publication_head_id)\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -1341,7 +1320,7 @@ class LandsRentIndex(AbstractLandsIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects\
-            .filter(publication_id=publication_head_id)\
+            .filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',
@@ -1536,6 +1515,23 @@ class SegmentsIndex(models.Model):
 
         index.remove(hid, using=cls.index_db_name)
         # todo: transaction end
+
+
+    @classmethod
+    def update_daily_rent_reservation_days(cls, tid, hid):
+        index = cls.living_rent_indexes.get(tid)
+        if index is None:
+            raise InvalidArgument('No rent index with exact tid.')
+
+        try:
+            record = index.objects\
+                .filter(publication_id=hid)\
+                [:1][0]
+            record.reload_booked_days()
+
+        except IndexError:
+            # seems that no record with this publication is present
+            return
 
 
     @classmethod

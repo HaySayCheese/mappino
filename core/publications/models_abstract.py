@@ -707,8 +707,8 @@ class LivingDailyRentModel(AbstractModel):
     # fields
     publication = None # override, FK to real publications model
 
-    date_enter = models.DateField(db_index=True)
-    date_leave = models.DateField(db_index=True)
+    date_enter = models.DateField()
+    date_leave = models.DateField()
     client_name = models.TextField(null=True)
 
     class Meta:
@@ -716,6 +716,10 @@ class LivingDailyRentModel(AbstractModel):
 
 
     class M(models.Manager):
+        def reserved_periods(self, publication_id):
+            return self.filter(publication_id=publication_id).only('date_enter', 'date_leave')
+
+
         def make_reservation(self, publication, date_enter, date_leave, client_name=None):
             """
             Checks if range date_date_enter..date_date_leave do not intersects with already existing ranges.
@@ -729,20 +733,23 @@ class LivingDailyRentModel(AbstractModel):
                 raise LivingDailyRentModel.AlreadyBooked(
                     'It seems that this place is already booked for this days.')
 
-            record = self.create(
-                publication=publication,
-                date_enter=date_enter,
-                date_leave=date_leave,
-                client_name=client_name
-            )
 
-            signals.DailyRentSignals.booked.send(
-                record, tid=record.publication.tid, publciation_id=publication.id, date_enter=date_enter, date_leave=date_leave)
+            with transaction.atomic():
+                record = self.create(
+                    publication=publication,
+                    date_enter=date_enter,
+                    date_leave=date_leave,
+                    client_name=client_name
+                )
+
+                signals.DailyRentSignals.booked.send(
+                    record, tid=record.publication.tid, publication_id=publication.id, date_enter=date_enter, date_leave=date_leave)
+
 
             return record
 
 
-        def intersects_with_existing(self, publication, date_enter, exclude_last_day=False):
+        def intersects_with_existing(self, publication, date_enter, exclude_last_day=True):
             """
             :returns: True if date_leave intersects with already existing range.
             :param exclude_last_day:

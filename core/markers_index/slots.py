@@ -18,6 +18,10 @@ class SlotsInitializer(object):
         publication.moved_to_trash.connect(self.__remove_publication_marker)
         publication.deleted_permanent.connect(self.__remove_publication_marker)
 
+        # slots that handles publication daily reservations updates
+        publication.DailyRentSignals.booked.connect(self.__update_daily_rent_reservations_index)
+        publication.DailyRentSignals.order_removed.connect(self.__update_daily_rent_reservations_index)
+
 
     def __add_publication_marker(self, sender, **kwargs):
         tid = kwargs['tid']
@@ -45,3 +49,10 @@ class SlotsInitializer(object):
             self.segments_index_model.remove_record(tid, hid, True, False)
         if for_rent:
             self.segments_index_model.remove_record(tid, hid, False, True)
+
+
+    def __update_daily_rent_reservations_index(self, sender, **kwargs):
+        tid = kwargs['tid']
+        hid = kwargs['publication_id']
+
+        self.segments_index_model.update_daily_rent_reservation_days(tid, hid)

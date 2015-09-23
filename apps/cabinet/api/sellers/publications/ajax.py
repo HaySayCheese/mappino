@@ -12,6 +12,7 @@ from core.publications import formatters
 from core.publications.exceptions import PhotosHandlerExceptions, NotEnoughPhotos
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS, PHOTOS_MODELS, OBJECT_STATES, \
     DAILY_RENT_RESERVATIONS_MODELS
+from core.publications.models_abstract import LivingDailyRentModel
 from core.publications.signals import record_updated
 from core.publications.update_methods.flats import update_flat
 from core.publications.update_methods.houses import update_house
@@ -683,6 +684,15 @@ class DailyRent(object):
                 }
 
 
+            @staticmethod
+            @json_response
+            def already_booked():
+                return {
+                    'code': 5,
+                    'message': 'Period is already booked',
+                }
+
+
         class GetResponses(object):
             @staticmethod
             @json_response
@@ -771,7 +781,7 @@ class DailyRent(object):
                 
                 if not publication.rent_terms.is_daily:
                     raise SuspiciousOperation(
-                        'Trying to add daily reservation to publciation that is not published as daily rent.')
+                        'Trying to add daily reservation to publication that is not published as daily rent.')
 
             except IndexError:
                 return cls.PostResponses.hash_id_not_found()
@@ -781,8 +791,13 @@ class DailyRent(object):
             if not daily_rent_reservations_model:
                 return cls.PostResponses.invalid_tid()
 
-            daily_rent_reservations_model.objects.make_reservation(
-                publication, date_enter, date_leave, params.get('client_name'))
+
+            try:
+                daily_rent_reservations_model.objects.make_reservation(
+                    publication, date_enter, date_leave, params.get('client_name'))
+
+            except LivingDailyRentModel.AlreadyBooked:
+                return cls.PostResponses.already_booked()
 
 
             return cls.PostResponses.ok()
