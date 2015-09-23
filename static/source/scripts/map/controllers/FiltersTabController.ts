@@ -42,11 +42,5 @@ namespace Mappino.Map {
 
             this.filtersService.update('panels', this.$scope.filters.panels[panel], panel)
         }
-
-
-
-        public formatDate(date: string) {
-            return new Date(date).toLocaleDateString();
-        }
     }
 }
