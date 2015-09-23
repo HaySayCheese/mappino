@@ -23,7 +23,8 @@ namespace Mappino.Cabinet.Users {
 
         'Mappino.Core.BAuth',
         'Mappino.Core.RentCalendar',
-        'Mappino.Core.PublicationPreview'
+        'Mappino.Core.PublicationPreview',
+        'Mappino.Core.RentCalendar'
     ]);
 
 
@@ -52,6 +53,8 @@ namespace Mappino.Cabinet.Users {
     app.controller('CabinetController', CabinetController);
     app.controller('BriefsController', BriefsController);
     app.controller('PublicationController', PublicationController);
+    app.controller('PublishedPublicationController', PublishedPublicationController);
+    app.controller('UnpublishedPublicationController', UnpublishedPublicationController);
     app.controller('SettingsController', SettingsController);
     app.controller('SupportController', SupportController);
     app.controller('TicketController', TicketController);
