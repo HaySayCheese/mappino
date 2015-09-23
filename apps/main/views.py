@@ -1,6 +1,5 @@
 #coding=utf-8
 from django.http import HttpResponse
-from django.http.response import HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import etag
 from core.cache.utils import generate_template_etag
