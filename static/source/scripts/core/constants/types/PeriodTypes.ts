@@ -9,10 +9,6 @@ namespace Mappino.Core.Constants {
                 title:  'Посуточно'
             }, {
                 id:     '1',
-                name:   'monthly',
-                title:  'Помесячно'
-            }, {
-                id:     '2',
                 name:   'long_term',
                 title:  'Долгосрочная'
             }];

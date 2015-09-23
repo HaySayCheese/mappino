@@ -88,7 +88,7 @@ namespace Mappino.Map {
 
 
         public remove(favorite: Brief): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.delete(`/ajax/api/user/favorites/${favorite.tid}:${favorite.hid}`);
+            var promise: ng.IHttpPromise<any> = this.$http.delete(`/ajax/api/user/favorites/${favorite.tid}:${favorite.hid}/`);
 
             promise.success(response => {
                 var favorites = this._favorites;

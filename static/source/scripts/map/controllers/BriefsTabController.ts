@@ -11,11 +11,12 @@ namespace Mappino.Map {
             'FavoritesService'
         ];
 
-        constructor(private $scope,
-                    private $rootScope: any,
-                    private publicationHandler: PublicationHandler,
-                    private briefsService: BriefsService,
-                    private favoritesService: FavoritesService) {
+        constructor(
+            private $scope,
+            private $rootScope: any,
+            private publicationHandler: PublicationHandler,
+            private briefsService: BriefsService,
+            private favoritesService: FavoritesService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.briefs = [1,2,3,4,5,6];
         }

@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding=utf-8
 from django.core.management import BaseCommand
 
 from core.managing.ban.classes import BanHandler
@@ -31,13 +31,12 @@ class Command(BaseCommand):
 
 
         self.stdout.write('User: {}'.format(user.full_name()))
-        if not (BanHandler.check_user(user) or BanHandler.check_suspicious_user(user)):
-            self.stderr.write('User is not banned or suspicious.')
+        if BanHandler.check_suspicious_user(user):
+            self.stderr.write('User is already in suspicious list.')
             return
 
-        if BanHandler.liberate_user(user):
-            self.stdout.write('OK. User was liberated successfully.')
+        if BanHandler.add_suspicious_user(user):
+            self.stdout.write('OK. User is added to suspicious list.')
         else:
-            self.stderr.write('Unknown error: user was not liberated.')
-
+            self.stderr.write('Unknown error: user was not added to suspicious list.')
 

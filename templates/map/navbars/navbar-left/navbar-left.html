@@ -55,7 +55,7 @@
                     <section class="-closable">
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
                             <md-icon>place</md-icon>
-                            <span>[[ filters.map.c ]]</span>
+                            <span class="md-body-1 truncate">[[ filters.map.c ]]</span>
                         </header>
                         <tab-section-collapsible>
                             <div class="md-padding">
@@ -99,13 +99,13 @@
                                         <label>Операция</label>
                                         <md-select ng-model="filters.panels.blue.b_op_sid">
                                             <md-option value="0">Продажа</md-option>
-                                            <md-option value="1">Оренда</md-option>
+                                            <md-option value="1">Аренда</md-option>
                                         </md-select>
                                     </md-input-container>
                                 </div>
                                 <div ng-if="filters.panels.blue.b_t_sid != 'null'" ng-include="'/ajax/template/map/filters/blue/' + [[ filters.panels.blue.b_t_sid ]] + '/'"></div>
                                 <md-button class="md-raised md-primary" ng-click="filCtrl.updateFilters('blue');">
-                                    Обновить поиск
+                                    Обновить предложения
                                 </md-button>
                             </div>
                         </tab-section-collapsible>
@@ -144,13 +144,13 @@
                                         <label>Операция</label>
                                         <md-select ng-model="filters.panels.green.g_op_sid">
                                             <md-option value="0">Продажа</md-option>
-                                            <md-option value="1">Оренда</md-option>
+                                            <md-option value="1">Аренда</md-option>
                                         </md-select>
                                     </md-input-container>
                                 </div>
                                 <div ng-if="filters.panels.green.g_t_sid != null" ng-include="'/ajax/template/map/filters/green/' + [[ filters.panels.green.g_t_sid ]] + '/'"></div>
                                 <md-button class="md-raised md-primary" ng-click="filCtrl.updateFilters('green');">
-                                    Обновить поиск
+                                    Обновить предложения
                                 </md-button>
                             </div>
                         </tab-section-collapsible>
@@ -202,6 +202,7 @@
                                                      ng-show="loginForm.$submitted || loginForm.mobilePhone.$touched">
                                                     <div ng-message="required">Обязательное поле</div>
                                                     <div ng-message="invalid">Номер телефона указан неверно</div>
+                                                    <div ng-message="throttled">Достигнут лимит отправки sms</div>
                                                 </div>
                                             </md-input-container>
                                         </div>
