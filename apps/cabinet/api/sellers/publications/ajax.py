@@ -885,7 +885,7 @@ class DailyRent(object):
 
         @classmethod
         def delete(cls, request, *args):
-            publication_tid, publication_hash_id, reservation_id = args[:2]
+            publication_tid, publication_hash_id = args[:2]
             publication_tid = int(publication_tid)
 
 
