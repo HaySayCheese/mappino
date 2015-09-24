@@ -6,6 +6,24 @@
         </md-select>
     </md-input-container>
 </div>
+<div layout="row" ng-show="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 1">
+    <md-input-container flex="50">
+        <label>Мест от</label>
+        <input type="text" ng-model="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_p_c_min" only-number>
+    </md-input-container>
+    <md-input-container flex="50">
+        <label>Мест до</label>
+        <input type="text" ng-model="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_p_c_max" only-number>
+    </md-input-container>
+</div>
+<div layout="row" ng-show="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 1">
+    <md-datepicker ng-model="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_r_d_min"
+                   md-placeholder="Дата въезда" flex="50">
+    </md-datepicker>
+    <md-datepicker ng-model="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_r_d_max"
+                   md-placeholder="Дата выезда" flex="50">
+    </md-datepicker>
+</div>
 <div layout="row">
     <md-input-container flex="33">
         <label>Цена от</label>
@@ -18,11 +36,11 @@
     <md-input-container flex="33">
         <label>Валюта</label>
         <md-select ng-model="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_cu_sid">
-            <md-option ng-repeat="currencyType in TYPES.CURRENCY" value="[[ currencyType.id ]]">[[ currencyType.title ]]</md-option>
+            <md-option ng-repeat="currencyType in ::TYPES.CURRENCY" value="[[ ::currencyType.id ]]">[[ ::currencyType.title ]]</md-option>
         </md-select>
     </md-input-container>
 </div>
-<div layout="row">
+<div layout="row" ng-hide="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 1">
     <md-input-container flex="50">
         <label>Площадь от</label>
         <input type="text" ng-model="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_t_a_min" only-number-with-dots>

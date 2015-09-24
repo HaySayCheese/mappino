@@ -88,6 +88,21 @@ namespace Mappino.Core.Values {
                     'HOLD_MODERATING': {
                         'SUCCESS':  '',
                         'ERROR':    'Во время отложения модерации возникла ошибка'
+                    },
+
+                    'RESERVE_DAILY_RENT': {
+                        'SUCCESS':  '',
+                        'ERROR':    'Во время бронирования возникла ошибка'
+                    },
+
+                    'LOAD_RESERVATION_DATA': {
+                        'SUCCESS':  '',
+                        'ERROR':    'Во время загрузки забронированых дат возникла ошибка'
+                    },
+
+                    'REMOVE_DAILY_RENT': {
+                        'SUCCESS':  '',
+                        'ERROR':    'Во время удаления бронирования возникла ошибка'
                     }
                 },
 

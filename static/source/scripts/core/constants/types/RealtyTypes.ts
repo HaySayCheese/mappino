@@ -45,9 +45,11 @@ namespace Mappino.Core.Constants {
                         genitive:   "Комнаты"
                     },
                     filters: [
-                        "op_sid", "pr_sid", "p_min", "p_max", "cu_sid", "p_c_min", "p_c_max", "n_b",
-                        "s_m", "fml", "frg", "r_c_min", "r_c_max", "t_a_min", "t_a_max", "f_min", "f_max",
-                        "msd", "grd", "lft", "elt", "h_w", "c_w", "gas", "h_t_sid"
+                        "op_sid", "pr_sid",
+                        "p_c_min", "p_c_max",
+                        "r_d_min", "r_d_max",
+                        "p_min", "p_max", "cu_sid",
+                        "t_a_min", "t_a_max"
                     ]
                 }, {
                     id:             3,
@@ -58,7 +60,9 @@ namespace Mappino.Core.Constants {
                         genitive:   "Земельного участка"
                     },
                     filters: [
-                        "op_sid", "p_min", "p_max", "cu_sid", "a_min", "a_max", "gas", "elt", "wtr", "swg"
+                        "op_sid", "pr_sid",
+                        "p_min", "p_max", "cu_sid",
+                        "t_a_min", "t_a_max"
                     ]
                 }, {
                     id:             4,
@@ -69,7 +73,9 @@ namespace Mappino.Core.Constants {
                         genitive:   "Гаража"
                     },
                     filters: [
-                        "op_sid", "p_min", "p_max", "cu_sid", "t_a_min", "t_a_max"
+                        "op_sid", "pr_sid",
+                        "p_min", "p_max", "cu_sid",
+                        "t_a_min", "t_a_max"
                     ]
                 }, {
                     id:             5,
@@ -80,8 +86,11 @@ namespace Mappino.Core.Constants {
                         genitive:   "Офиса"
                     },
                     filters: [
-                        "op_sid", "p_min", "p_max", "cu_sid", "n_b", "s_m", "t_a_min", "t_a_max",
-                        "c_c_min", "c_c_max", "sct", "ktn", "h_w", "c_w"
+                        "op_sid", "pr_sid",
+                        "r_d_min", "r_d_max",
+                        "p_min", "p_max", "cu_sid",
+                        "c_c_min", "c_c_max",
+                        "t_a_min", "t_a_max"
                     ]
                 }, {
                     id:             6,
@@ -92,8 +101,10 @@ namespace Mappino.Core.Constants {
                         genitive:   "Торгового помещения"
                     },
                     filters: [
-                        "op_sid", "p_min", "p_max", "cu_sid", "n_b", "s_m", "h_a_min", "h_a_max",
-                        "t_a_min", "t_a_max", "b_t_sid", "gas", "elt", "h_w", "c_w", "swg"
+                        "op_sid", "pr_sid",
+                        "r_d_min", "r_d_max",
+                        "p_min", "p_max", "cu_sid",
+                        "t_a_min", "t_a_max"
                     ]
                 }, {
                     id:             7,
@@ -104,8 +115,9 @@ namespace Mappino.Core.Constants {
                         genitive:   "Склада"
                     },
                     filters: [
-                        "op_sid", "p_min", "p_max", "cu_sid", "n_b", "s_m", "h_a_min", "h_a_max",
-                        "gas", "elt", "h_w", "c_w", "s_a", "f_a"
+                        "op_sid", "pr_sid",
+                        "p_min", "p_max", "cu_sid",
+                        "t_a_min", "t_a_max"
                     ]
                 }
             ];

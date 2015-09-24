@@ -1,11 +1,3 @@
-<div layout="row" ng-show="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 1">
-    <md-input-container flex>
-        <label>Период</label>
-        <md-select ng-model="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_pr_sid">
-            <md-option ng-repeat="periodType in ::TYPES.PERIOD" value="[[ ::periodType.id ]]">[[ ::periodType.title ]]</md-option>
-        </md-select>
-    </md-input-container>
-</div>
 <div layout="row">
     <md-input-container flex="33">
         <label>Цена от</label>

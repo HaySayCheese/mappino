@@ -2,34 +2,59 @@ namespace Mappino.Core.RentCalendar {
     'use strict';
 
     export class RentCalendarController {
+
+        private publicationIds: any = {
+            tid: undefined,
+            hid: undefined
+        };
+
         public static $inject = [
-            '$scope'
+            '$scope',
+            '$state',
+            'RentCalendarService'
         ];
 
-        constructor( private $scope) {
-            this.$scope.showRentDetails = false;
-            this.$scope.eventSource = this.createRandomEvents();
+        constructor( private $scope,
+                     private $state,
+                     private rentCalendarService: RentCalendarService) {
+            // ---------------------------------------------------------------------------------------------------------
+            $scope.showRentDetails = false;
+            $scope.reservations = [];
+
+            if ($state.params['publication_id'] && $state.params['publication_id'] != 0) {
+                this.publicationIds.tid = $state.params['publication_id'].split(':')[0];
+                this.publicationIds.hid = $state.params['publication_id'].split(':')[1];
+            }
+
+            //this.loadReservations();
+            this.loadReservations();
         }
 
-        public today() {
-            this.$scope.currentDate = new Date();
-        }
-
-        public isToday() {
-            var today = new Date(),
-                currentCalendarDate = new Date(this.$scope.currentDate);
-
-            today.setHours(0, 0, 0, 0);
-            currentCalendarDate.setHours(0, 0, 0, 0);
-            return today.getTime() === currentCalendarDate.getTime();
-        }
-
-        public changeMode(mode) {
-            this.$scope.mode = mode;
-        }
 
         public onEventSelected() {
             this.$scope.event = event;
+        }
+
+
+
+        private loadReservations() {
+
+            this.rentCalendarService.loadReservationsData(this.publicationIds)
+                .success(response => {
+                    var responseData = response.data;
+
+                    for (let i = 0, len = responseData.length; i < len; i++) {
+                        var reservation = responseData[i];
+
+                        this.$scope.eventSource.push({
+                            title: 'забронировано',
+                            startTime: reservation['date_enter'],
+                            endTime: reservation['date_leave'],
+                            allDay: true
+                        });
+                    }
+            });
+
         }
 
         public createRandomEvents() {
@@ -69,5 +94,6 @@ namespace Mappino.Core.RentCalendar {
             return events;
 
         }
+
     }
 }

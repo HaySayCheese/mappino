@@ -13,7 +13,7 @@
                     </div>
                 </md-input-container>
 
-                <div id="publication-map"></div>
+                <div id="publication-map" ng-init="u_pubCtrl.initMap()"></div>
             </div>
         </div>
     </md-card-content>
@@ -25,7 +25,7 @@
     <md-card-content>
         <div class="md-subhead blue-text">Фото и видео</div>
         <div class="drop-container" ngf-drop ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
-             ngf-accept="'image/*'" ngf-change="pubCtrl.uploadPublicationPhotos($files)">
+             ngf-accept="'image/*'" ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
 
             <div class="md-padding">
                 <div class="drop-box" layout="column" layout-align="center center">
@@ -33,7 +33,7 @@
                     <p>Перенесите сюда фото или видео файл</p>
 
                     <md-button class="md-primary" ngf-select ngf-multiple="true" accept="image/*"
-                               ngf-change="pubCtrl.uploadPublicationPhotos($files)">
+                               ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
                         Выбрать файл
                     </md-button>
                 </div>
@@ -69,11 +69,11 @@
                                     </md-fab-trigger>
                                     <md-fab-actions>
                                         <md-button aria-label="twitter" class="md-fab md-raised md-mini md-warn"
-                                                   ng-click="pubCtrl.removePublicationPhoto(photo.hash_id)">
+                                                   ng-click="u_pubCtrl.removePublicationPhoto(photo.hash_id)">
                                             <md-icon>delete</md-icon>
                                         </md-button>
                                         <md-button aria-label="facebook" class="md-fab md-raised md-mini md-primary" ng-hide="photo.is_title"
-                                                   ng-click="pubCtrl.setTitlePhoto(photo.hash_id)">
+                                                   ng-click="u_pubCtrl.setTitlePhoto(photo.hash_id)">
                                             <md-icon>check</md-icon>
                                         </md-button>
                                     </md-fab-actions>
@@ -96,20 +96,20 @@
 
 
 <div class="md-whiteframe-z2" layout="row" publication-controls>
-    <md-button class="md-warn md-hue-3" hide-sm ng-click="pubCtrl.removePublication($event)">
+    <md-button class="md-warn md-hue-3" hide-sm ng-click="u_pubCtrl.removePublication($event)">
         Удалить
     </md-button>
-    <md-button class="md-icon-button md-warn md-hue-3" hide-gt-sm show-sm ng-click="pubCtrl.removePublication($event)">
+    <md-button class="md-icon-button md-warn md-hue-3" hide-gt-sm show-sm ng-click="u_pubCtrl.removePublication($event)">
         <md-icon>delete</md-icon>
     </md-button>
 
-    <md-button class="md-primary md-hue-1" ng-click="pubCtrl.doneEditingLaterPublication($event)">
+    <md-button class="md-primary md-hue-1" ng-click="u_pubCtrl.doneEditingLaterPublication($event)">
         Заполнить позже
     </md-button>
 
     <span flex></span>
 
-    <md-button class="md-raised md-primary" ng-click="pubCtrl.publishPublication()">
+    <md-button class="md-raised md-primary" ng-click="u_pubCtrl.publishPublication()">
         Опубликовать
     </md-button>
 </div>
