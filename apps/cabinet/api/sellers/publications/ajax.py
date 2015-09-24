@@ -705,15 +705,15 @@ class DailyRent(object):
         class GetResponses(object):
             @staticmethod
             @json_response
-            def ok(reservations):
+            def ok(reservations, tz):
                 return {
                     'code': 0,
                     'message': 'OK',
                     'data': [
                         {
                             'reservation_id': reservation.id,
-                            'date_enter': reservation.date_enter.strftime('%Y-%m-%d'),
-                            'date_leave': reservation.date_leave.strftime('%Y-%m-%d'),
+                            'date_enter': datetime.datetime(reservation.date_enter).replace(tzinfo=tz).strftime('%Y-%m-%dT%H:%M:%SZ'),
+                            'date_leave': datetime.datetime(reservation.date_leave).replace(tzinfo=tz).strftime('%Y-%m-%dT%H:%M:%SZ'),
                             'client_name': reservation.client_name or '',
                         } for reservation in reservations
                     ]
@@ -880,7 +880,7 @@ class DailyRent(object):
 
 
             reservations = daily_rent_reservations_model.objects.filter(publication=publication)
-            return cls.GetResponses.ok(reservations)
+            return cls.GetResponses.ok(reservations, timezone('Europe/Kiev'))
 
 
         @classmethod
