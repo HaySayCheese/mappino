@@ -123,8 +123,8 @@ class PublicationView(ModeratorsView):
         data['claims'] = [
             {
                 'hash_id': claim.hash_id,
-                'date_reported': claim.date_reported.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                'date_closed': claim.date_closed.strftime('%Y-%m-%dT%H:%M:%SZ') if claim.date_closed else None,
+                'date_reported': claim.date_reported.strftime('%Y-%m-%dT%H:%M:%S%z'),
+                'date_closed': claim.date_closed.strftime('%Y-%m-%dT%H:%M:%S%z') if claim.date_closed else None,
                 'email': claim.email,
                 'message': claim.message if claim.message else '',
                 'moderator_name': claim.moderator.full_name() if claim.moderator and claim.date_closed else None,
@@ -327,7 +327,7 @@ class ClaimCloseView(ModeratorsView):
                 'code': 0,
                 'message': 'OK',
                 'data': {
-                    'date_closed': claim.date_closed.strftime('%Y-%m-%dT%H:%M:%SZ')
+                    'date_closed': claim.date_closed.strftime('%Y-%m-%dT%H:%M:%S%z')
                 }
             }
 

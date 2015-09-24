@@ -146,14 +146,14 @@ class Support(object):
                     'data': {
                         'id': ticket.id,
                         'state_sid': ticket.state_sid,
-                        'created': ticket.created.strftime('%Y-%m-%dT%H:%M:00Z'),
-                        'last_message': ticket.last_message_datetime().strftime('%Y-%m-%dT%H:%M:00Z')
+                        'created': ticket.created.strftime('%Y-%m-%dT%H:%M:00%z'),
+                        'last_message': ticket.last_message_datetime().strftime('%Y-%m-%dT%H:%M:00%z')
                             if ticket.last_message_datetime() else '-',
                         'subject': ticket.subject,
                         'messages': [
                             {
                                 'type_sid': m.type_sid,
-                                'created': m.created.strftime('%Y-%m-%dT%H:%M:00Z'),
+                                'created': m.created.strftime('%Y-%m-%dT%H:%M:00%z'),
                                 'text': m.text,
                             } for m in ticket.messages()
                         ]

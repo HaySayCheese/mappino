@@ -76,7 +76,7 @@ class Stats(object):
 			current_date = now()
 			data = [
 				{
-					'date': (current_date - timedelta(days=i)).strftime('%Y-%m-%dT00:00:00Z'),
+					'date': (current_date - timedelta(days=i)).strftime('%Y-%m-%dT00:00:00%z'),
 				    'views': 0,
 				    'contacts_requests': 0,
 				} for i in xrange(count)

@@ -708,12 +708,12 @@ class DailyRent(object):
             def ok(reservations, tz):
                 return {
                     'code': 0,
-                    'message': 'OK',
+                    'message': 'OK', '%Y-%m-%dT%H:%M:%S%z'
                     'data': [
                         {
                             'reservation_id': reservation.id,
-                            'date_enter': datetime.datetime(reservation.date_enter).replace(tzinfo=tz).strftime('%Y-%m-%dT%H:%M:%SZ'),
-                            'date_leave': datetime.datetime(reservation.date_leave).replace(tzinfo=tz).strftime('%Y-%m-%dT%H:%M:%SZ'),
+                            'date_enter': datetime.datetime.fromordinal(reservation.date_enter.toordinal()).replace(tzinfo=tz).strftime('%Y-%m-%dT%H:%M:%S%z'),
+                            'date_leave': datetime.datetime.fromordinal(reservation.date_leave.toordinal()).replace(tzinfo=tz).strftime('%Y-%m-%dT%H:%M:%S%z'),
                             'client_name': reservation.client_name or '',
                         } for reservation in reservations
                     ]
@@ -995,7 +995,7 @@ class Briefs(CabinetView):
                 'tid':          tid,
                 'hid':          publication[1], # hash_id
                 'state_sid':    publication[2], # state_sid
-                'created':      publication[3].strftime('%Y-%m-%dT%H:%M:%SZ'),
+                'created':      publication[3].strftime('%Y-%m-%dT%H:%M:%S%z'),
                 'title':        publication[4], # body.title
                 'description':  publication[5], # body.description
                 'for_rent':     publication[6], # for_rent
