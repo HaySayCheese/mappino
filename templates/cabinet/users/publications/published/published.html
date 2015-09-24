@@ -6,16 +6,16 @@
             <h3 class="md-headline blue-text">Календарь бронирований</h3>
             <rent-calendar-view></rent-calendar-view>
             <div>
+                <md-divider></md-divider>
                 <div layout="row" layout-align="center center">
                     <md-button class="md-raised md-primary" ng-click="showRentDetails = true" ng-show="!showRentDetails">Добавить бронь</md-button>
                 </div>
 
-                <form novalidate class="md-padding" name="reservationDetails" ng-show="showRentDetails" layout="column">
+                <form novalidate class="md-padding" name="reservationDetails" layout="column" ng-show="showRentDetails">
                     <div layout="row" layout-align="center center">
-                        <div layout="column">
+                        <div flex-gt-md="60">
                             <md-datepicker name="dateEnter" ng-model="reservation.dateEnter" md-placeholder="Дата от" required></md-datepicker>
-                        </div>
-                        <div layout="column">
+                            <span flex></span>
                             <md-datepicker name="dateLeave" ng-model="reservation.dateLeave" md-placeholder="Дата до" required></md-datepicker>
                         </div>
                     </div>
