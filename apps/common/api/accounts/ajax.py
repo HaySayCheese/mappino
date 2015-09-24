@@ -93,6 +93,9 @@ class LoginManager(object):
             if user is None:
                 # if no user with such mobile phone - we need to create new empty user
                 user = Users.objects.create_user(phone_number)
+            else:
+                if not user.is_active:
+                    return self.PostResponses.account_disabled()
 
 
             # Managers should have possibility to login as normal users.
