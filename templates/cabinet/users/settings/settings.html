@@ -1,5 +1,5 @@
 <div class="settings-page" ng-controller="SettingsController as settingsCtrl">
-    <form name="userProfileForm" ng-hide="loaders.base" layout-wrap layout-padding layout-sm="column" layout-md="column"
+    <form name="userProfileForm" ng-hide="loaders.overlay" layout-wrap layout-padding layout-sm="column" layout-md="column"
           layout-lg="column" layout-gt-lg="row" layout-align-md="start center" layout-align-lg="start center" novalidate>
 
         <md-card flex="32">
@@ -12,7 +12,7 @@
                         <md-progress-circular md-mode="indeterminate" ng-show="loaders.avatar"></md-progress-circular>
 
                         <div layout="row">
-                            <md-button class="md-warn md-hue-1 md-icon-button" ng-show="profile.account.avatar_url" ng-disabled="loaders.avatar" ng-click="settingsCtrl.removeAvatar()">
+                            <md-button class="md-warn md-hue-1 md-icon-button" ng-show="profile.avatar_url" ng-disabled="loaders.avatar" ng-click="settingsCtrl.removeAvatar()">
                                 <md-icon>remove_circle_outline</md-icon>
                                 <md-tooltip md-direction="top" md-delay="0">
                                     Удалить фото
@@ -35,7 +35,7 @@
                     <div layout="column" layout-align="start right" flex-gt-sm="50" offset-gt-sm="5">
                         <md-input-container flex>
                             <label>Имя</label>
-                            <input type="text" name="first_name" ng-model="profile.account.first_name" required>
+                            <input type="text" name="first_name" ng-model="profile.first_name" required>
                             <div ng-messages="userProfileForm.first_name.$error">
                                 <div ng-message="required">Обязательное поле</div>
                             </div>
@@ -43,7 +43,7 @@
 
                         <md-input-container>
                             <label>Фамилия</label>
-                            <input type="text" name="last_name" ng-model="profile.account.last_name" required>
+                            <input type="text" name="last_name" ng-model="profile.last_name" required>
                             <div ng-messages="userProfileForm.last_name.$error">
                                 <div ng-message="required">Обязательное поле</div>
                             </div>
@@ -51,7 +51,7 @@
 
                         <md-input-container>
                             <label>Эл. почта</label>
-                            <input type="text" name="email" ng-model="profile.account.email" required>
+                            <input type="text" name="email" ng-model="profile.email" required>
                             <div ng-messages="userProfileForm.email.$error">
                                 <div ng-message="required">Обязательное поле</div>
                                 <div ng-message="invalid">Некоректная эл. почта</div>
@@ -62,13 +62,13 @@
                         <div layout="row">
                             <md-input-container flex="30">
                                 <label>Код</label>
-                                <md-select ng-model="profile.account.mobile_code">
+                                <md-select ng-model="profile.mobile_code">
                                     <md-option ng-repeat="code in ::COUNTRY.CODES" value="[[ ::code ]]">[[ ::code ]]</md-option>
                                 </md-select>
                             </md-input-container>
                             <md-input-container flex="70">
                                 <label>Моб. телефон</label>
-                                <input type="tel" name="mobile_phone" ng-model="profile.account.mobile_phone" only-number required>
+                                <input type="tel" name="mobile_phone" ng-model="profile.mobile_phone" only-number required>
                                 <div ng-messages="userProfileForm.mobile_phone.$error">
                                     <div ng-message="required">Обязательное поле</div>
                                     <div ng-message="invalid">Некоректный номер</div>
@@ -99,7 +99,7 @@
                     <div layout="column" flex="50" flex-sm="100" offset-gt-sm="5">
                         <md-input-container flex>
                             <label>Рабочая эл. почта</label>
-                            <input type="text" name="work_email" ng-model="profile.account.work_email">
+                            <input type="text" name="work_email" ng-model="profile.work_email">
                             <div ng-messages="userProfileForm.work_email.$error">
                                 <div ng-message="invalid">Некоректная эл. почта</div>
                                 <div ng-message="duplicated">Указанная эл. почта уже используется</div>
@@ -109,13 +109,13 @@
                         <div layout="row">
                             <md-input-container flex="30">
                                 <label>Код</label>
-                                <md-select ng-model="profile.account.add_mobile_code">
+                                <md-select ng-model="profile.add_mobile_code">
                                     <md-option ng-repeat="code in ::COUNTRY.CODES" value="[[ ::code ]]">[[ ::code ]]</md-option>
                                 </md-select>
                             </md-input-container>
                             <md-input-container flex="70">
                                 <label>Доп. моб. телефон</label>
-                                <input type="tel" name="add_mobile_phone" ng-model="profile.account.add_mobile_phone" only-number>
+                                <input type="tel" name="add_mobile_phone" ng-model="profile.add_mobile_phone" only-number>
                                 <div ng-messages="userProfileForm.add_mobile_phone.$error">
                                     <div ng-message="required">Обязательное поле</div>
                                     <div ng-message="invalid">Некоректный номер</div>
@@ -126,7 +126,7 @@
 
                         <md-input-container flex>
                             <label>Раб. телефон</label>
-                            <input type="text" name="landline_phone" ng-model="profile.account.landline_phone" only-number>
+                            <input type="text" name="landline_phone" ng-model="profile.landline_phone" only-number>
                             <div ng-messages="userProfileForm.landline_phone.$error">
                                 <div ng-message="invalid">Некоректный номер</div>
                                 <div ng-message="duplicated">Указанный номер уже используется</div>
@@ -135,7 +135,7 @@
 
                         <md-input-container flex>
                             <label>Доп. раб. телефон</label>
-                            <input type="text" name="add_landline_phone" ng-model="profile.account.add_landline_phone" only-number>
+                            <input type="text" name="add_landline_phone" ng-model="profile.add_landline_phone" only-number>
                             <div ng-messages="userProfileForm.add_landline_phone.$error">
                                 <div ng-message="invalid">Некоректный номер</div>
                                 <div ng-message="duplicated">Указанный номер уже используется</div>
@@ -144,7 +144,7 @@
 
                         <md-input-container flex>
                             <label>Skype</label>
-                            <input type="text" name="skype" ng-model="profile.account.skype">
+                            <input type="text" name="skype" ng-model="profile.skype">
                         </md-input-container>
                     </div>
                 </div>
@@ -159,12 +159,13 @@
 
                 <div layout="row">
                     <div layout="column" flex>
-                        <md-checkbox class="md-primary" name="allow_call_requests" ng-model="profile.preferences.allow_call_requests">
+                        <md-checkbox class="md-primary" name="allow_call_requests" ng-model="profile.allow_call_requests"
+                                     ng-change="settingsCtrl.checkboxOnChange('allow_call_requests')">
                             Разрешать запрос обратного звонка
                         </md-checkbox>
-                        <div layout="row" layout-sm="column" layout-align="start center" ng-show="profile.preferences.allow_call_requests">
+                        <div layout="row" layout-sm="column" layout-align="start center" ng-show="profile.allow_call_requests">
                             <span flex="45" fxel="100" offset-gt-sm="10">Присылать уведомления на</span>
-                            <md-select placeholder="Присылать уведомления на" name="send_call_request_notifications_to_sid" ng-model="profile.preferences.send_call_request_notifications_to_sid">
+                            <md-select placeholder="Присылать уведомления на" name="send_call_request_notifications_to_sid" ng-model="profile.send_call_request_notifications_to_sid">
                                 <md-option value="0">телефон посредством sms</md-option>
                                 <md-option value="1">почту</md-option>
                                 <md-option value="2">телефон и почту</md-option>
@@ -175,12 +176,13 @@
 
                 <div layout="row">
                     <div layout="column" flex>
-                        <md-checkbox class="md-primary" name="allow_messaging" ng-model="profile.preferences.allow_messaging">
+                        <md-checkbox class="md-primary" name="allow_messaging" ng-model="profile.allow_messaging"
+                                     ng-change="settingsCtrl.checkboxOnChange('allow_messaging')">
                             Разрешать оставлять сообщения через форму обратной связи
                         </md-checkbox>
-                        <div layout="row" layout-sm="column" layout-align="start center" ng-show="profile.preferences.allow_messaging">
+                        <div layout="row" layout-sm="column" layout-align="start center" ng-show="profile.allow_messaging">
                             <span flex="45" fxel-sm="100" offset-gt-sm="10">Присылать уведомления на</span>
-                            <md-select placeholder="Присылать уведомления на" name="send_call_request_notifications_to_sid" ng-model="profile.preferences.send_message_notifications_to_sid">
+                            <md-select placeholder="Присылать уведомления на" name="send_call_request_notifications_to_sid" ng-model="profile.send_message_notifications_to_sid">
                                 <md-option value="1">почту</md-option>
                                 <md-option value="2">телефон и почту</md-option>
                             </md-select>
@@ -191,12 +193,13 @@
                 <md-divider></md-divider>
 
                 <div layout="row">
-                    <md-checkbox class="md-primary" name="hide_email" ng-model="profile.preferences.hide_email">
+                    <md-checkbox class="md-primary" name="hide_email" ng-model="profile.hide_email"
+                                 ng-change="settingsCtrl.checkboxOnChange('hide_email')">
                         Скрывать почту
                     </md-checkbox>
                 </div>
 
-                <div layout="row" ng-show="profile.preferences.hide_email">
+                <div layout="row" ng-show="profile.hide_email">
                     <blockquote class="md-body-1" offset="5">
                         При запросе Ваших контактов адрес Вашей эл. почты будет скрыт,
                         но клиенты смогут оставить Вам сообщение через форму обратной связи на нашем сайте,
@@ -205,31 +208,36 @@
                 </div>
 
                 <div layout="row">
-                    <md-checkbox class="md-primary" name="hide_mobile_phone_number" ng-model="profile.preferences.hide_mobile_phone_number">
+                    <md-checkbox class="md-primary" name="hide_mobile_phone_number" ng-model="profile.hide_mobile_phone_number"
+                                 ng-change="settingsCtrl.checkboxOnChange('hide_mobile_phone_number')">
                         Скрывать основной мобильный телефон
                     </md-checkbox>
                 </div>
 
                 <div layout="row">
-                    <md-checkbox class="md-primary" name="hide_add_mobile_phone_number" ng-model="profile.preferences.hide_add_mobile_phone_number">
+                    <md-checkbox class="md-primary" name="hide_add_mobile_phone_number" ng-model="profile.hide_add_mobile_phone_number"
+                                 ng-change="settingsCtrl.checkboxOnChange('hide_add_mobile_phone_number')">
                         Скрывать дополнительный мобильный телефон
                     </md-checkbox>
                 </div>
 
                 <div layout="row">
-                    <md-checkbox class="md-primary" name="hide_landline_phone_number" ng-model="profile.preferences.hide_landline_phone_number">
+                    <md-checkbox class="md-primary" name="hide_landline_phone_number" ng-model="profile.hide_landline_phone_number"
+                                 ng-change="settingsCtrl.checkboxOnChange('hide_landline_phone_number')">
                         Скрывать рабочий телефон
                     </md-checkbox>
                 </div>
 
                 <div layout="row">
-                    <md-checkbox class="md-primary" name="hide_add_landline_phone_number" ng-model="profile.preferences.hide_add_landline_phone_number">
+                    <md-checkbox class="md-primary" name="hide_add_landline_phone_number" ng-model="profile.hide_add_landline_phone_number"
+                                 ng-change="settingsCtrl.checkboxOnChange('hide_add_landline_phone_number')">
                         Скрывать дополнительный рабочий телефон
                     </md-checkbox>
                 </div>
 
                 <div layout="row">
-                    <md-checkbox class="md-primary" name="hide_skype" ng-model="profile.preferences.hide_skype">
+                    <md-checkbox class="md-primary" name="hide_skype" ng-model="profile.hide_skype"
+                                 ng-change="settingsCtrl.checkboxOnChange('hide_skype')">
                         Скрывать skype
                     </md-checkbox>
                 </div>

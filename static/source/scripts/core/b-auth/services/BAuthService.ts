@@ -1,5 +1,13 @@
 namespace Mappino.Core.BAuth {
+    'use strict';
 
+    import IHttpService     = angular.IHttpService;
+    import IHttpPromise     = angular.IHttpPromise;
+    import ICookiesService  = angular.cookies.ICookiesService;
+    import IUploadService   = angular.angularFileUpload.IUploadService;
+    import IUploadPromise   = angular.angularFileUpload.IUploadPromise;
+
+    
     export class BAuthService {
         private _user: User;
 
@@ -10,17 +18,17 @@ namespace Mappino.Core.BAuth {
         ];
 
 
-        constructor(private $http: ng.IHttpService,
-                    private $cookies: ng.cookies.ICookiesService,
-                    private Upload: any) {
+        constructor(private $http: IHttpService,
+                    private $cookies: ICookiesService,
+                    private Upload: IUploadService) {
             // ---------------------------------------------------------------------------------------------------------
             this._user = new User();
         }
 
 
 
-        public checkPhoneNumber(phoneCode: string, phonePhone: string): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/accounts/login/`, {
+        public checkPhoneNumber(phoneCode: string, phonePhone: string): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.post(`/ajax/api/accounts/login/`, {
                 'mobile_code':   phoneCode,
                 'mobile_phone':  phonePhone
             });
@@ -34,15 +42,21 @@ namespace Mappino.Core.BAuth {
 
 
 
-        public checkSMSCode(phoneCode: string, phonePhone: string, smsCode: string): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/accounts/login/check-code/`, {
-                'mobile_code':  phoneCode,
-                'mobile_phone': phonePhone,
-                'token':        smsCode
+        public checkSMSCode(mobileCode: string, mobilePhone: string, token: string): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.post(`/ajax/api/accounts/login/check-code/`, {
+                'mobile_code':  mobileCode,
+                'mobile_phone': mobilePhone,
+                'token':        token
             });
 
             promise.success(response => {
-                this._user.set(response.data);
+                var userData = response.data;
+
+                for (var key in userData) {
+                    if (userData.hasOwnProperty(key))
+                        this._user.set(key, userData[key]);
+                }
+
                 this.$cookies.remove('mcheck');
             });
 
@@ -54,13 +68,16 @@ namespace Mappino.Core.BAuth {
 
 
 
-        public tryLogin(): ng.IHttpPromise<any> {
-            //if (!this.$cookies.get('user')) return;
-
-            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/accounts/on-login-info/`);
+        public tryLogin(): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.get(`/ajax/api/accounts/on-login-info/`);
 
             promise.success(response => {
-                this._user.set(response.data);
+                var userData = response.data;
+
+                for (var key in userData) {
+                    if (userData.hasOwnProperty(key))
+                        this._user.set(key, userData[key]);
+                }
             });
 
             promise.error(response => {
@@ -73,12 +90,23 @@ namespace Mappino.Core.BAuth {
 
 
 
-        public loadProfile(): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/account/`);
+        public loadProfile(): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/account/`);
 
             promise.success(response => {
-                this._user.set(response.data.account);
-                this._user.set(response.data.preferences);
+                var userData            = response.data;
+                var userDataAccount     = userData.account;
+                var userDataPreferences = userData.preferences;
+
+                for (var key in userDataAccount) {
+                    if (userDataAccount.hasOwnProperty(key))
+                        this._user.set(key, userDataAccount[key]);
+                }
+
+                for (var key in userDataPreferences) {
+                    if (userDataPreferences.hasOwnProperty(key))
+                        this._user.set(key, userDataPreferences[key]);
+                }
             });
 
             promise.error(response => { /* error */ });
@@ -88,11 +116,13 @@ namespace Mappino.Core.BAuth {
 
 
 
-        public checkProfileField(field): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/account/`, field);
+        public updateProfileField(fieldName: string, fieldValue: number|string): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/account/`, {
+                [fieldName]:  fieldValue
+            });
 
             promise.success(response => {
-                this._user.set(field);
+                this._user.set(fieldName, fieldValue);
             });
 
             promise.error(response => { /* error */ });
@@ -102,14 +132,15 @@ namespace Mappino.Core.BAuth {
 
 
 
-        public uploadAvatar(avatar: File): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.Upload.upload({
+        public uploadAvatar(avatar: File): IUploadPromise<any> {
+            var promise: IUploadPromise<any> = this.Upload.upload({
                 url: `/ajax/api/cabinet/account/photo/`,
+                method: 'POST',
                 file: avatar
             });
 
             promise.success(response => {
-                this._user.set({ avatar_url: response.data.url });
+                this._user.set('avatar_url', response.data.url);
             });
 
             promise.error(response => { /* error */ });
@@ -119,11 +150,11 @@ namespace Mappino.Core.BAuth {
 
 
 
-        public removeAvatar(): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.delete(`/ajax/api/cabinet/account/photo/`);
+        public removeAvatar(): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.delete(`/ajax/api/cabinet/account/photo/`);
 
             promise.success(response => {
-                this._user.set({ avatar_url: null });
+                this._user.set('avatar_url', undefined);
             });
 
             promise.error(response => { /* error */ });
@@ -133,11 +164,12 @@ namespace Mappino.Core.BAuth {
 
 
 
-        public logout(): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/accounts/logout/`, null);
+        public logout(): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.post(`/ajax/api/accounts/logout/`, null);
 
             promise.success(response => {
                 this.$cookies.remove('user');
+                this.$cookies.remove('sessionid');
             });
 
             promise.error(response => { /* error */ });

@@ -5,3 +5,4 @@
 /// <reference path="underscore/underscore.d.ts" />
 /// <reference path="googlemaps/google.maps.d.ts" />
 /// <reference path="angular-ui-router/angular-ui-router.d.ts" />
+/// <reference path="ng-file-upload/ng-file-upload.d.ts" />

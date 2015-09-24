@@ -1,14 +1,17 @@
-/// <reference path='_all.ts' />
-
-
 namespace Mappino.Core.BAuth {
     'use strict';
 
-    var bAuth: ng.IModule = angular.module('Mappino.Core.BAuth', [
+    import IModule = angular.IModule;
+
+
+    var bAuth: IModule = angular.module('Mappino.Core.BAuth', [
         'ngCookies',
         'ngMaterial',
-        'ngFileUpload'
+        'ngFileUpload',
+
+        'Mappino.Core.Directives'
     ]);
+
 
     bAuth.service('BAuthService', BAuthService);
 

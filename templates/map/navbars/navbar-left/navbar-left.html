@@ -252,14 +252,14 @@
 
                                         <div layout="column" flex="60">
                                             <div layout="row" layout-padding>
-                                                <div class="md-title grey-text text-darken-2" ng-if="user.account.full_name != null">[[ user.account.full_name ]]</div>
-                                                <p class="md-body-1" ng-if="user.account.full_name == null">
+                                                <div class="md-title grey-text text-darken-2" ng-if="user.full_name">[[ user.full_name ]]</div>
+                                                <p class="md-body-1" ng-if="!user.full_name">
                                                     Пожалуйста, укажите Ваше имя в <a href="/cabinet/#!/settings/">настройках</a>
                                                 </p>
                                             </div>
                                             <div layout="column" layout-padding>
                                                 <div class="md-body-1">Моб .телефон:</div>
-                                                <div>[[ user.account.mobile_code ]][[ user.account.mobile_phone ]]</div>
+                                                <div>[[ user.mobile_code ]][[ user.mobile_phone ]]</div>
                                             </div>
                                         </div>
                                     </div>

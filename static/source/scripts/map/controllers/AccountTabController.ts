@@ -12,6 +12,7 @@ namespace Mappino.Map {
                     private bAuthService: Mappino.Core.BAuth.BAuthService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.user = bAuthService.user;
+            console.log($scope.user)
             $scope.authState = 'enterPhone';
 
             this.initUserData();

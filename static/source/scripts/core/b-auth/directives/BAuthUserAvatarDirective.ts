@@ -1,24 +1,22 @@
 namespace Mappino.Core.BAuth {
+    'use strict';
 
-    export function BAuthUserAvatarDirective(bAuthService: BAuthService): ng.IDirective {
+    import IDirective = angular.IDirective;
 
-        var staticUrl = '/static';
 
+    export function BAuthUserAvatarDirective(bAuthService: BAuthService): IDirective {
         return {
             restrict: 'E',
             scope: {},
             template: `<div layout="row" layout-align="center center">
-                            <img ng-src="[[ user.account.avatar_url ]]" on-error-src="${staticUrl}/build/images/common/no-user.png"
-                                ng-show="user.account.avatar_url" />
+                            <img ng-src="[[ user.avatar_url ]]" on-error-src="${EMPTY_OR_ERROR_USER_AVATAR_URL}"
+                                ng-show="user.avatar_url" alt="[[ user.full_name ]]" />
 
-                            <img src="${staticUrl}/build/images/common/no-user.png" ng-hide="user.account.avatar_url"
-                                alt="[[ user.account.full_name ]]" />
+                            <img src="${EMPTY_OR_ERROR_USER_AVATAR_URL}" ng-hide="user.avatar_url" alt="[[ user.full_name ]]" />
                         </div>`,
             
 
-            link: (scope, element, attrs) => {
-                //
-            },
+            link: (scope, element, attrs) => {  },
 
             controller: ['$scope', ($scope) => {
                 $scope.user = bAuthService.user;

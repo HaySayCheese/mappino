@@ -1,65 +1,107 @@
 namespace Mappino.Core.BAuth {
     export class User {
 
-        private account: any = {
-            first_name:         null,
-            last_name:          null,
-            full_name:          null,
-            avatar_url:         null,
-            mobile_code:        '+380',
-            mobile_phone:       null,
-            add_mobile_code:    '+380',
-            add_mobile_phone:   null,
-            landline_phone:     null,
-            add_landline_phone: null,
-            email:              null,
-            skype:              null,
-            work_email:         null
+        private _fields: any = {
+            // account
+            first_name:             undefined,
+            last_name:              undefined,
+            full_name:              undefined,
+
+            mobile_code:            undefined,
+            mobile_phone:           undefined,
+            full_mobile_phone:      undefined,
+
+            add_mobile_code:        undefined,
+            add_mobile_phone:       undefined,
+            full_add_mobile_phone:  undefined,
+
+            landline_phone:         undefined,
+            add_landline_phone:     undefined,
+
+            email:                  undefined,
+            work_email:             undefined,
+
+            skype:                  undefined,
+
+            avatar_url:             undefined,
+
+
+            // preferences
+            allow_call_requests:            undefined,
+            allow_messaging:                undefined,
+
+            hide_add_landline_phone_number: undefined,
+            hide_add_mobile_phone_number:   undefined,
+            hide_email:                     undefined,
+            hide_landline_phone_number:     undefined,
+            hide_mobile_phone_number:       undefined,
+            hide_skype:                     undefined,
+
+            send_call_request_notifications_to_sid: undefined, //0,
+            send_message_notifications_to_sid:      undefined //0
         };
 
-        private preferences: any = {
-            allow_call_requests:            true,
-            allow_messaging:                true,
-            hide_add_landline_phone_number: true,
-            hide_add_mobile_phone_number:   true,
-            hide_email:                     true,
-            hide_landline_phone_number:     true,
-            hide_mobile_phone_number:       true,
-            hide_skype:                     true,
-            send_call_request_notifications_to_sid: 0,
-            send_message_notifications_to_sid:      0
-        };
 
         constructor() {}
 
 
 
-        public set(params: any) { // todo: fix this to Object type
-            for (var key in params) {
-                if (params.hasOwnProperty(key)) {
-                    if (angular.isDefined(this.account[key])) {
-                        this.account[key] = params[key];
-
-                        if (key === 'first_name' || key === 'last_name') {
-                            if (this.account.first_name != null && this.account.last_name != null) {
-                                this.account.full_name = this.account.first_name + ' ' + this.account.last_name;
-                            }
-                        }
-                    }
-
-                    if (angular.isDefined(this.preferences[key])) {
-                        this.preferences[key] = params[key];
-                    }
-                }
+        public set(key: string, value: any) {
+            if (this._fields.hasOwnProperty(key)) {
+                this._fields[key] = value;
             }
+
+            switch (key) {
+                case 'first_name':
+                    this.createFullName();
+                    break;
+                case 'last_name':
+                    this.createFullName();
+                    break;
+
+                case 'mobile_code':
+                    this.createFullMobilePhone();
+                    break;
+                case 'mobile_phone':
+                    this.createFullMobilePhone();
+                    break;
+
+                case 'add_mobile_code':
+                    this.createFullAddMobilePhone();
+                    break;
+                case 'add_mobile_phone':
+                    this.createFullAddMobilePhone();
+                    break;
+            }
+
+            console.log(this._fields)
         }
 
 
+
         public get() {
-            return {
-                account:        this.account,
-                preferences:    this.preferences
-            }
+            return this._fields;
+        }
+
+
+
+        private createFullName() {
+            this._fields.full_name =
+                `${this._fields.first_name ? this._fields.first_name : ''} ${this._fields.last_name ? this._fields.last_name: ''}`;
+        }
+
+
+
+        private createFullMobilePhone() {
+            if (this._fields.mobile_code && this._fields.mobile_phone)
+                this._fields.full_mobile_phone = `${this._fields.mobile_code}${this._fields.mobile_phone}`;
+        }
+
+
+
+        private createFullAddMobilePhone() {
+            if (this._fields.add_mobile_code && this._fields.add_mobile_phone)
+                this._fields.full_add_mobile_phone = `${this._fields.add_mobile_code}${this._fields.add_mobile_phone}`;
         }
     }
 }

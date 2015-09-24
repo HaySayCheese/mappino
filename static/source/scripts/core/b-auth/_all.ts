@@ -1,3 +1,5 @@
+/// <reference path='constants/BAuthConstants.ts' />
+
 /// <reference path='models/User.ts' />
 
 /// <reference path='services/BAuthService.ts' />

@@ -12,7 +12,7 @@
                         <md-progress-circular md-mode="indeterminate" ng-show="loaders.avatar"></md-progress-circular>
 
                         <div layout="row">
-                            <md-button class="md-warn md-hue-1 md-icon-button" ng-show="profile.account.avatar_url" ng-disabled="loaders.avatar" ng-click="settingsCtrl.removeAvatar()">
+                            <md-button class="md-warn md-hue-1 md-icon-button" ng-show="profile.avatar_url" ng-disabled="loaders.avatar" ng-click="settingsCtrl.removeAvatar()">
                                 <md-icon>remove_circle_outline</md-icon>
                                 <md-tooltip md-direction="top" md-delay="0">
                                     Удалить фото
@@ -35,7 +35,7 @@
                     <div layout="column" layout-align="start right" flex-gt-sm="50" offset-gt-sm="5">
                         <md-input-container flex>
                             <label>Имя</label>
-                            <input type="text" name="first_name" ng-model="profile.account.first_name" required>
+                            <input type="text" name="first_name" ng-model="profile.first_name" required>
                             <div ng-messages="userProfileForm.first_name.$error">
                                 <div ng-message="required">Обязательное поле</div>
                             </div>
@@ -43,7 +43,7 @@
 
                         <md-input-container>
                             <label>Фамилия</label>
-                            <input type="text" name="last_name" ng-model="profile.account.last_name" required>
+                            <input type="text" name="last_name" ng-model="profile.last_name" required>
                             <div ng-messages="userProfileForm.last_name.$error">
                                 <div ng-message="required">Обязательное поле</div>
                             </div>
@@ -51,7 +51,7 @@
 
                         <md-input-container>
                             <label>Эл. почта</label>
-                            <input type="text" name="email" ng-model="profile.account.email" required>
+                            <input type="text" name="email" ng-model="profile.email" required>
                             <div ng-messages="userProfileForm.email.$error">
                                 <div ng-message="required">Обязательное поле</div>
                                 <div ng-message="invalid">Некоректная эл. почта</div>
@@ -62,13 +62,13 @@
                         <div layout="row">
                             <md-input-container flex="30">
                                 <label>Код</label>
-                                <md-select ng-model="profile.account.mobile_code">
+                                <md-select ng-model="profile.mobile_code">
                                     <md-option ng-repeat="code in ::COUNTRY.CODES" value="[[ ::code ]]">[[ ::code ]]</md-option>
                                 </md-select>
                             </md-input-container>
                             <md-input-container flex="70">
                                 <label>Моб. телефон</label>
-                                <input type="tel" name="mobile_phone" ng-model="profile.account.mobile_phone" minlength="9" maxlength="9" only-number required>
+                                <input type="tel" name="mobile_phone" ng-model="profile.mobile_phone" minlength="9" maxlength="9" only-number required>
                                 <div ng-messages="userProfileForm.mobile_phone.$error">
                                     <div ng-message="required">Обязательное поле</div>
                                     <div ng-message="minlength">Некоректный номер</div>
@@ -93,13 +93,13 @@
                         <div layout="row">
                             <md-input-container flex="30">
                                 <label>Код</label>
-                                <md-select ng-model="profile.account.add_mobile_code">
+                                <md-select ng-model="profile.add_mobile_code">
                                     <md-option ng-repeat="code in ::COUNTRY.CODES" value="[[ ::code ]]">[[ ::code ]]</md-option>
                                 </md-select>
                             </md-input-container>
                             <md-input-container flex="70">
                                 <label>Доп. моб. телефон</label>
-                                <input type="tel" name="add_mobile_phone" ng-model="profile.account.add_mobile_phone" minlength="9" only-number maxlength="9">
+                                <input type="tel" name="add_mobile_phone" ng-model="profile.add_mobile_phone" minlength="9" only-number maxlength="9">
                                 <div ng-messages="userProfileForm.add_mobile_phone.$error">
                                     <div ng-message="required">Обязательное поле</div>
                                     <div ng-message="minlength">Некоректный номер</div>
@@ -111,7 +111,7 @@
 
                         <md-input-container>
                             <label>Раб. телефон</label>
-                            <input type="text" name="landline_phone" ng-model="profile.account.landline_phone" only-number>
+                            <input type="text" name="landline_phone" ng-model="profile.landline_phone" only-number>
                             <div ng-messages="userProfileForm.landline_phone.$error">
                                 <div ng-message="invalid">Некоректный номер</div>
                                 <div ng-message="duplicated">Указанный номер уже используется</div>
@@ -120,7 +120,7 @@
 
                         <md-input-container>
                             <label>Доп. раб. телефон</label>
-                            <input type="text" name="add_landline_phone" ng-model="profile.account.add_landline_phone" only-number>
+                            <input type="text" name="add_landline_phone" ng-model="profile.add_landline_phone" only-number>
                             <div ng-messages="userProfileForm.add_landline_phone.$error">
                                 <div ng-message="invalid">Некоректный номер</div>
                                 <div ng-message="duplicated">Указанный номер уже используется</div>
@@ -130,7 +130,7 @@
                     <div layout="column" flex-gt-sm="50">
                         <md-input-container>
                             <label>Рабочая эл. почта</label>
-                            <input type="text" name="work_email" ng-model="profile.account.work_email">
+                            <input type="text" name="work_email" ng-model="profile.work_email">
                             <div ng-messages="userProfileForm.work_email.$error">
                                 <div ng-message="invalid">Некоректная эл. почта</div>
                                 <div ng-message="duplicated">Указанная эл. почта уже используется</div>
@@ -138,7 +138,7 @@
                         </md-input-container>
                         <md-input-container>
                             <label>Skype</label>
-                            <input type="text" name="skype" ng-model="profile.account.skype">
+                            <input type="text" name="skype" ng-model="profile.skype">
                         </md-input-container>
                     </div>
                 </div>

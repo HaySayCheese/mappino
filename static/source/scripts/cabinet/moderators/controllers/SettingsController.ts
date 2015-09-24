@@ -99,7 +99,7 @@ namespace Mappino.Cabinet.Moderators {
                     value = this.$scope.profile.account.add_mobile_code + this.$scope.profile.account.add_mobile_phone;
                 }
 
-                this.bAuthService.checkProfileField({ [name]: value })
+                this.bAuthService.updateProfileField({ [name]: value })
                     .success(response => {
                         if (response.code == 0) {
                             if (response.data.value) {
