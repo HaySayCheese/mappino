@@ -6,5 +6,15 @@
                       event-selected="onEventSelected(event)">
             </calendar>
         </div>
+        <div layout="row" layout-align="start center" layout-fill layout-padding ng-repeat="event in eventSource">
+            <span>[[ event.startTime ]]&nbsp;-&nbsp;</span>
+            <span>[[ event.endTime ]]</span>
+            <span flex="1"></span>
+            <span>[[ event.clientName ]]</span>
+            <span flex></span>
+            <md-button class="md-fab md-mini md-primary">
+                <md-icon class="white-text">delete</md-icon>
+            </md-button>
+        </div>
     </section>
 </div>

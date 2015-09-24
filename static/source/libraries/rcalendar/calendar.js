@@ -36,7 +36,7 @@ angular.module('ui.rCalendar', [])
 
         setInterval(function () {
             self.onEventSourceChanged($scope.$parent.eventSource);
-        }, 1000, 5);
+        }, 1000, 1);
 
 
 
@@ -91,7 +91,6 @@ angular.module('ui.rCalendar', [])
         };
 
         self.onEventSourceChanged = function (value) {
-            console.log(value);
             self.eventSource = value;
             if (self.onDataLoaded) {
                 self.onDataLoaded();

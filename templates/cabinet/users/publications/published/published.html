@@ -1,27 +1,50 @@
 <div ng-controller="PublishedPublicationController as publishedCtrl" class="publication-page" layout-padding layout-wrap layout="column" layout-gt-lg="row"
      layout-align-md="start center" layout-align-lg="start center" layout-align-gt-lg="center start">
 
-    <md-card flex="32">
+    <md-card flex="32" ng-show="publication.daily_rent" ng-cloak>
         <md-card-content>
             <h3 class="md-headline blue-text">Календарь бронирований</h3>
-            <rent-calendar-view ng-show="publication.rent_terms.contains('посуточно')"></rent-calendar-view>
+            <rent-calendar-view></rent-calendar-view>
             <div>
-            <md-button layout="row" layout-align="center center" class="md-raised md-primary" ng-click="showRentDetails = true" ng-show="!showRentDetails">Добавить бронь</md-button>
-            <div ng-show="showRentDetails" layout="column">
-                <form novalidate class="animated" name="forms.reservationDetails">
-                    <div layout="row" layout-align="start center">
-                        <md-datepicker ng-model="reservation.dateEnter" md-placeholder="Дата от" flex="50" required></md-datepicker>
-                        <md-datepicker ng-model="reservation.dateLeave" md-placeholder="Дата до" flex="50" required></md-datepicker>
+                <div layout="row" layout-align="center center">
+                    <md-button class="md-raised md-primary" ng-click="showRentDetails = true" ng-show="!showRentDetails">Добавить бронь</md-button>
+                </div>
+
+                <form novalidate class="md-padding" name="reservationDetails" ng-show="showRentDetails" layout="column">
+                    <div layout="row" layout-align="center center">
+                        <div layout="column">
+                            <md-datepicker name="dateEnter" ng-model="reservation.dateEnter" md-placeholder="Дата от" required></md-datepicker>
+                        </div>
+                        <div layout="column">
+                            <md-datepicker name="dateLeave" ng-model="reservation.dateLeave" md-placeholder="Дата до" required></md-datepicker>
+                        </div>
                     </div>
-                    <div layout="row">
-                        <md-input-container flex>
+                    <div layout="row" layout-align="center center">
+                        <md-input-container flex-gt-md="60">
                             <label>Имя клиента</label>
                             <input name="clientName" type="text" ng-model="reservation.clientName">
+                            <div ng-messages="reservationDetails.dateEnter.$error"
+                                 ng-show="reservationDetails.$submitted || reservationDetails.dateEnter.$touched">
+                                <div ng-message="required">Пожалуйста, укажите дату въезда</div>
+                            </div>
+                            <div ng-messages="reservationDetails.dateLeave.$error"
+                                 ng-show="(reservationDetails.$submitted || reservationDetails.dateLeave.$touched) && reservationDetails.dateEnter.$valid">
+                                <div ng-message="required">Пожалуйста, укажите дату выезда</div>
+                            </div>
+                            <div ng-messages="reservationDetails.clientName.$error"
+                                 ng-show="reservationDetails.$submitted">
+                                <div ng-message="booked">Похоже, что даный период времени уже зарезервированый</div>
+                            </div>
+                            <div ng-messages="reservationDetails.clientName.$error"
+                                 ng-show="reservationDetails.$submitted">
+                                <div ng-message="invalidPeriod">Дата въезда должна быть раньше чем дата выезда</div>
+                            </div>
                         </md-input-container>
                     </div>
-                    <md-button class="md-raised md-primary" ng-click="publishedCtrl.reserveDailyRent()">Забронировать</md-button>
+                    <div layout="row"  layout-align="center center">
+                        <md-button class="md-raised md-primary" ng-click="publishedCtrl.reserveDailyRent()">Забронировать</md-button>
+                    </div>
                 </form>
-            </div>
             </div>
         </md-card-content>
     </md-card>
