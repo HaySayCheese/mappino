@@ -7,7 +7,7 @@ class SMSAuthenticationBackend(object):
     def authenticate(mobile_phone, one_time_token):
         try:
             user = Users.by_one_of_the_mobile_phones(mobile_phone)
-            if user is None:
+            if user is None or not user.is_active:
                 raise ValueError()
 
         except ValueError:
