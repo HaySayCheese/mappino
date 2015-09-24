@@ -48,7 +48,14 @@ namespace Mappino.Core.RentCalendar {
                 'client_name':  reservation['clientName']
             });
 
-            promise.success(response => {});
+            promise.success(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.PUBLICATION.RESERVE_DAILY_RENT.SUCCESS)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
 
             promise.error(response => {
                 this.$mdToast.show(

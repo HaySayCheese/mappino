@@ -48,7 +48,6 @@ namespace Mappino.Cabinet.Users  {
                             this.$scope.reservationDetails.clientName.$setValidity('booked', false);
                             return;
                         }
-                        console.log('khugfc')
                         this.$scope.eventSource.push({
                             id: this.$scope.reservation.id,
                             title: `Забронировано ${this.$scope.reservation.clientName}`,

@@ -91,7 +91,7 @@ namespace Mappino.Core.Values {
                     },
 
                     'RESERVE_DAILY_RENT': {
-                        'SUCCESS':  '',
+                        'SUCCESS':  'Бронирование успешно добавлено',
                         'ERROR':    'Во время бронирования возникла ошибка'
                     },
 
