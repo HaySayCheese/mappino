@@ -36,7 +36,7 @@ angular.module('ui.rCalendar', [])
 
         setInterval(function () {
             self.onEventSourceChanged($scope.$parent.eventSource);
-        }, 1000, 1);
+        }, 1000, 5);
 
 
 
@@ -416,7 +416,6 @@ angular.module('ui.rCalendar', [])
                         var eventEndTime = new Date(event.endTime);
                         var st;
                         var et;
-
                         if (event.allDay) {
                             if (eventEndTime <= utcStartTime || eventStartTime >= utcEndTime) {
                                 continue;

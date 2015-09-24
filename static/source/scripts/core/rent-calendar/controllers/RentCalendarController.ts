@@ -50,7 +50,7 @@ namespace Mappino.Core.RentCalendar {
                             clientName: reservation['client_name'],
                             startTime: reservation['date_enter'],
                             endTime: reservation['date_leave'],
-                            allDay: true
+                            allDay: false
                         });
                     }
             });

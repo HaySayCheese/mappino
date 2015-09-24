@@ -42,16 +42,21 @@ namespace Mappino.Cabinet.Users  {
                     .success(response => {
                         if (response.code == 6) {
                             this.$scope.reservationDetails.clientName.$setValidity('invalidPeriod', false);
+                            return;
                         }
                         if (response.code == 5) {
                             this.$scope.reservationDetails.clientName.$setValidity('booked', false);
+                            return;
                         }
-                    //this.$scope.eventSource.push({
-                    //    title: 'забронировано',
-                    //    startTime: this.$scope.reservation.dateEnter,
-                    //    endTime: this.$scope.reservation.dateLeave,
-                    //    allDay: true
-                    //})
+                        console.log('khugfc')
+                        this.$scope.eventSource.push({
+                            id: this.$scope.reservation.id,
+                            title: `Забронировано ${this.$scope.reservation.clientName}`,
+                            clientName: this.$scope.reservation.clientName,
+                            startTime: this.$scope.reservation.dateEnter,
+                            endTime: this.$scope.reservation.dateLeave,
+                            allDay: false
+                        })
                 });
             }
         }
