@@ -40,7 +40,7 @@ namespace Mappino.Cabinet.Users  {
             if (this.$scope.reservationDetails.$valid) {
                 this.rentCalendarService.reserveDailyRent(this.$scope.reservation, this.publicationIds)
                     .success(response => {
-                        if (response.code == 3) {
+                        if (response.code == 6) {
                             this.$scope.reservationDetails.clientName.$setValidity('invalidPeriod', false);
                         }
                         if (response.code == 5) {
