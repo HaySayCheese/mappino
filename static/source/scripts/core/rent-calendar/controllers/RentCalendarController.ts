@@ -37,7 +37,6 @@ namespace Mappino.Core.RentCalendar {
 
 
         private loadReservations() {
-
             this.rentCalendarService.loadReservationsData(this.publicationIds)
                 .success(response => {
                     var responseData = response.data;
@@ -46,6 +45,7 @@ namespace Mappino.Core.RentCalendar {
                         var reservation = responseData[i];
 
                         this.$scope.eventSource.push({
+                            id: reservation['reservation_id'],
                             title: `Забронировано ${reservation['client_name']}`,
                             clientName: reservation['client_name'],
                             startTime: reservation['date_enter'],
@@ -54,6 +54,22 @@ namespace Mappino.Core.RentCalendar {
                         });
                     }
             });
+
+        }
+
+        public removeReservation(reservationId: string) {
+            this.rentCalendarService.removeDailyRent(reservationId, this.publicationIds)
+                .success(response => {
+                    var reservations = this.$scope.eventSource;
+
+                    for (let i = 0, len = reservations.length; i < len; i++) {
+                        var reservation = reservations[i];
+
+                        if (reservation.id == reservationId) {
+                            this.$scope.eventSource.splice(i, 1);
+                        }
+                    }
+                })
 
         }
 

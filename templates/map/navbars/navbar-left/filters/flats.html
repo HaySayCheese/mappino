@@ -16,7 +16,8 @@
         <input type="text" ng-model="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_p_c_max" only-number>
     </md-input-container>
 </div>
-<div layout="row" ng-show="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 1">
+<div layout="row" ng-show="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 1
+                            && filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_pr_sid == 0">
     <md-datepicker ng-model="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_r_d_min"
                    md-placeholder="Дата въезда" flex="50">
     </md-datepicker>
