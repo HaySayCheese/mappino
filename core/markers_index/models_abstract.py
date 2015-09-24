@@ -1,16 +1,14 @@
 # coding=utf-8
 import datetime
-
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import Q
+
 from collective.exceptions import InvalidArgument
 from core.currencies.constants import CURRENCIES
 from core.currencies.currencies_manager import convert as convert_price
-from core.publications.constants import HEAD_MODELS, FLOOR_TYPES, LIVING_RENT_PERIODS, MARKET_TYPES, HEATING_TYPES, \
-    OBJECTS_TYPES, DAILY_RENT_RESERVATIONS_MODELS
-from core.publications.objects_constants.flats import FLAT_ROOMS_PLANNINGS
-from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
+from core.publications.constants import \
+    HEAD_MODELS, LIVING_RENT_PERIODS, MARKET_TYPES, OBJECTS_TYPES, DAILY_RENT_RESERVATIONS_MODELS
 
 
 class AbstractBaseIndex(models.Model):
@@ -254,51 +252,6 @@ class AbstractBaseIndex(models.Model):
 
 
     @staticmethod  # range
-    def apply_floor_filter(filters, markers):
-        floor_min = filters.get('f_min')
-        if floor_min is not None:
-            markers = markers.filter(floor__gte=floor_min)
-
-        floor_max = filters.get('f_max')
-        if floor_max is not None:
-            markers = markers.filter(floor_lte=floor_max)
-
-        if 'msd' in filters and not 'grd' in filters: # grd: ground, msd: mansard
-            markers = markers.exclude(floor_type_sid=FLOOR_TYPES.mansard())
-
-        if 'grd' in filters and not 'msd' in filters: # grd: ground, msd: mansard
-            markers = markers.exclude(floor_type_sid=FLOOR_TYPES.ground())
-
-        return markers
-
-
-    @staticmethod  # range
-    def apply_floors_count_filter(filters, markers):
-        floor_min = filters.get('f_c_min')
-        if floor_min is not None:
-            markers = markers.filter(floors_count__gte=floor_min)
-
-        floor_max = filters.get('f_c_max')
-        if floor_max is not None:
-            markers = markers.filter(floors_count__lte=floor_max)
-
-        return markers
-
-
-    @staticmethod  # range
-    def apply_ceiling_height_filter(filters, markers):
-        height_min = filters.get('c_h_min')
-        if height_min is not None:
-            markers = markers.filter(ceiling_height__gte=height_min)
-
-        height_max = filters.get('c_h_max')
-        if height_max is not None:
-            markers = markers.filter(ceiling_height__lte=height_max)
-
-        return markers
-
-
-    @staticmethod  # range
     def apply_rooms_count_filter(filters, markers):
         rooms_count_min = filters.get('r_c_min')
         if rooms_count_min is not None:
@@ -342,9 +295,8 @@ class AbstractBaseIndex(models.Model):
         period = int(filters.get('pr_sid'))
         if period == 1:
             markers = markers.filter(period_sid=LIVING_RENT_PERIODS.daily())
-
-        elif period == 2:
-            markers = markers.filter(period_sid=LIVING_RENT_PERIODS.monthly())
+        else:
+            markers = markers.filter(~Q(period_sid=LIVING_RENT_PERIODS.daily()))
 
         return markers
 
@@ -357,130 +309,6 @@ class AbstractBaseIndex(models.Model):
         elif 's_m' in filters and not 'n_b' in filters:
             markers = markers.filter(market_type_sid=MARKET_TYPES.secondary_market())
 
-        return markers
-
-
-    @classmethod  # sid
-    def apply_rooms_planning_filter(cls, filters, markers):
-        rooms_planning_sid = int(filters.get('pl_sid'))
-
-        if rooms_planning_sid == cls.Filters.RoomsPlanning.free:
-            markers = markers.filter(rooms_planning_sid=FLAT_ROOMS_PLANNINGS.free())
-        elif rooms_planning_sid == cls.Filters.RoomsPlanning.preliminary:
-            markers = markers.exclude(rooms_planning_sid=FLAT_ROOMS_PLANNINGS.free()) # note: exclude here!
-
-        return markers
-
-
-    @staticmethod # sid
-    def apply_trade_building_type_filter(filters, markers):
-        building_type = int(filters.get('b_t_sid'))
-
-        if building_type == 1:
-            markers = markers.filter(building_type_sid=TRADE_BUILDING_TYPES.entertainment())
-        elif building_type == 2:
-            markers = markers.filter(building_type_sid=TRADE_BUILDING_TYPES.business())
-        elif building_type == 3:
-            markers = markers.filter(building_type_sid=TRADE_BUILDING_TYPES.separate())
-
-        return markers
-
-
-    @staticmethod  # sid
-    def apply_heating_type_filter(filters, markers):
-        heating = int(filters.get('h_t_sid'))
-
-        if heating == 1:
-            markers = markers.filter(heating_type_sid=HEATING_TYPES.central())
-        elif heating == 2:
-            markers = markers.filter(heating_type_sid=HEATING_TYPES.individual())
-        elif heating == 3:
-            markers = markers.filter(heating_type_sid=HEATING_TYPES.none())
-
-        return markers
-
-
-    @staticmethod  # bool
-    def apply_electricity_filter(filters, markers):
-        if filters.get('elt') is True:
-            return markers.filter(electricity=True)
-        return markers
-
-
-    @staticmethod  # bool
-    def apply_gas_filter(filters, markers):
-        if filters.get('gas') is True:
-            return markers.filter(gas=True)
-        return markers
-
-
-    @staticmethod  # bool
-    def apply_hot_water_filter(filters, markers):
-        if filters.get('h_w') is True:
-            return markers.filter(hot_water=True)
-        return markers
-
-
-    @staticmethod  # bool
-    def apply_cold_water_filter(filters, markers):
-        if filters.get('c_w') is True:
-            return markers.filter(cold_water=True)
-        return markers
-
-
-    @staticmethod  # bool
-    def apply_water_filter(filters, markers):
-        if filters.get('wtr') is True:
-            return markers.filter(water=True)
-        return markers
-
-
-    @staticmethod  # bool
-    def apply_sewerage_filter(filters, markers):
-        if filters.get('swg') is True:
-            return markers.filter(sewerage=True)
-        return markers
-
-
-    @staticmethod  # bool
-    def apply_lift_filter(filters, markers):
-        if filters.get('lft') is True:
-            return markers.filter(lift=True)
-        return markers
-
-
-    @staticmethod  # bool
-    def apply_security_filter(filters, markers):
-        if filters.get('sct') is True:
-            return markers.filter(security=True)
-        return markers
-
-
-    @staticmethod  # bool
-    def apply_kitchen_filter(filters, markers):
-        if filters.get('ktn') is True:
-            return markers.filter(kitchen=True)
-        return markers
-
-
-    @staticmethod  # bool
-    def apply_fire_alarm_filter(filters, markers):
-        if filters.get('f_a') is True:
-            return markers.filter(fire_alarm=True)
-        return markers
-
-
-    @staticmethod  # bool
-    def apply_security_alarm_filter(filters, markers):
-        if filters.get('s_a') is True:
-            return markers.filter(security_alarm=True)
-        return markers
-
-
-    @staticmethod  # bool
-    def apply_pit_filter(filters, markers):
-        if filters.get('pit') is True:
-            return markers.filter(pit=True)
         return markers
 
 
@@ -554,15 +382,8 @@ class AbstractTradesIndex(AbstractBaseIndex):
     def apply_filters(cls, filters, markers):
         markers = cls.apply_price_filter(filters, markers)
 
-        markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_halls_area_filter(filters, markers)
         markers = cls.apply_total_area_filter(filters, markers)
-        markers = cls.apply_trade_building_type_filter(filters, markers)
-        markers = cls.apply_electricity_filter(filters, markers)
-        markers = cls.apply_gas_filter(filters, markers)
-        markers = cls.apply_hot_water_filter(filters, markers)
-        markers = cls.apply_cold_water_filter(filters, markers)
-        markers = cls.apply_sewerage_filter(filters, markers)
         return markers
 
 
@@ -613,13 +434,8 @@ class AbstractOfficesIndex(AbstractBaseIndex):
     def apply_filters(cls, filters, markers):
         markers = cls.apply_price_filter(filters, markers)
 
-        markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_total_area_filter(filters, markers)
         markers = cls.apply_cabinets_count_filter(filters, markers)
-        markers = cls.apply_hot_water_filter(filters, markers)
-        markers = cls.apply_cold_water_filter(filters, markers)
-        markers = cls.apply_kitchen_filter(filters, markers)
-        markers = cls.apply_security_filter(filters, markers)
         return markers
 
 
@@ -671,14 +487,7 @@ class AbstractWarehousesIndex(AbstractBaseIndex):
     def apply_filters(cls, filters, markers):
         markers = cls.apply_price_filter(filters, markers)
 
-        markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_halls_area_filter(filters, markers)
-        markers = cls.apply_hot_water_filter(filters, markers)
-        markers = cls.apply_cold_water_filter(filters, markers)
-        markers = cls.apply_electricity_filter(filters, markers)
-        markers = cls.apply_gas_filter(filters, markers)
-        markers = cls.apply_fire_alarm_filter(filters, markers)
-        markers = cls.apply_security_alarm_filter(filters, markers)
         return markers
 
 
@@ -727,8 +536,6 @@ class AbstractGaragesIndex(AbstractBaseIndex):
 
         markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_area_filter(filters, markers)
-        markers = cls.apply_ceiling_height_filter(filters, markers)
-        markers = cls.apply_pit_filter(filters, markers)
         return markers
 
 
@@ -775,13 +582,8 @@ class AbstractLandsIndex(AbstractBaseIndex):
 
     @classmethod
     def apply_filters(cls, filters, markers):
-        markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_price_filter(filters, markers)
         markers = cls.apply_area_filter(filters, markers)
-        markers = cls.apply_water_filter(filters, markers)
-        markers = cls.apply_electricity_filter(filters, markers)
-        markers = cls.apply_gas_filter(filters, markers)
-        markers = cls.apply_sewerage_filter(filters, markers)
         return markers
 
 
