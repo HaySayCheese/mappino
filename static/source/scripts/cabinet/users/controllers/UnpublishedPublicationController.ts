@@ -101,12 +101,15 @@ namespace Mappino.Cabinet.Users {
 
                 this.publicationsService.publish(this.publicationIds)
                     .success(response => {
-                    this.$rootScope.loaders.overlay = false;
-                    this.$state.go('publications');
+                        if (response.code == 3) {
+                            this.$scope.publicationPhotosErrors.minimumPhotos = true;
+                            this.$rootScope.loaders.overlay = false;
+                            return;
+                        }
+                        this.$rootScope.loaders.overlay = false;
+                        this.$state.go('publications');
                 })
-                    .error(response => {
-                    response.code == 3 && (this.$scope.publicationPhotosErrors.minimumPhotos = true);
-
+                .error(response => {
                     this.$rootScope.loaders.overlay = false;
                 })
             }
@@ -141,16 +144,15 @@ namespace Mappino.Cabinet.Users {
 
                     this.publicationsService.uploadPhoto(this.publicationIds,file)
                         .success(response => {
-                        this.$scope.tempPublicationPhotos.shift();
-                        this.scrollToBottom();
-                    })
+                            this.$scope.tempPublicationPhotos.shift();
+                            this.scrollToBottom();
+                        })
                         .error(response => {
-                        this.$scope.tempPublicationPhotos.shift();
+                            this.$scope.tempPublicationPhotos.shift();
 
-                        response.code == 4 && (this.$scope.publicationPhotosErrors.photoTooLarge = true);
-                        response.code == 5 && (this.$scope.publicationPhotosErrors.photoTooSmall = true);
-                    })
-
+                            response.code == 4 && (this.$scope.publicationPhotosErrors.photoTooLarge = true);
+                            response.code == 5 && (this.$scope.publicationPhotosErrors.photoTooSmall = true);
+                        })
                 }
             }
 
@@ -166,8 +168,8 @@ namespace Mappino.Cabinet.Users {
 
             this.publicationsService.removePhoto(this.publicationIds, photoId)
                 .success(response => {
-                this.$scope.publicationPhotoLoader[photoId] = false;
-            })
+                    this.$scope.publicationPhotoLoader[photoId] = false;
+                })
         }
 
 

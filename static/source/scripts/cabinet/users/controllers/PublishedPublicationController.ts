@@ -23,9 +23,7 @@ namespace Mappino.Cabinet.Users  {
                 this.publicationIds.tid = $state.params['publication_id'].split(':')[0];
                 this.publicationIds.hid = $state.params['publication_id'].split(':')[1];
             }
-            $scope.forms = {
-                reservationDetails: undefined,
-            };
+
 
             $scope.reservation = {
                 dateEnter: undefined,
@@ -36,9 +34,18 @@ namespace Mappino.Cabinet.Users  {
         }
 
         public reserveDailyRent() {
-            //if (this.$scope.forms.reservationDetails.$valid) {
+            this.$scope.reservationDetails.clientName.$setValidity('invalidPeriod', true);
+            this.$scope.reservationDetails.clientName.$setValidity('booked', true);
+
+            if (this.$scope.reservationDetails.$valid) {
                 this.rentCalendarService.reserveDailyRent(this.$scope.reservation, this.publicationIds)
                     .success(response => {
+                        if (response.code == 6) {
+                            this.$scope.reservationDetails.clientName.$setValidity('invalidPeriod', false);
+                        }
+                        if (response.code == 5) {
+                            this.$scope.reservationDetails.clientName.$setValidity('booked', false);
+                        }
                     //this.$scope.eventSource.push({
                     //    title: 'забронировано',
                     //    startTime: this.$scope.reservation.dateEnter,
@@ -46,7 +53,7 @@ namespace Mappino.Cabinet.Users  {
                     //    allDay: true
                     //})
                 });
-            //}
+            }
         }
     }
 }
