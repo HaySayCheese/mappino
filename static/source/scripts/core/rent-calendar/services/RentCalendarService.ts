@@ -62,8 +62,8 @@ namespace Mappino.Core.RentCalendar {
             return promise;
         }
 
-        public removeDailyRent(publicationIds: any): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.delete(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/daily-rent-reservations/`);
+        public removeDailyRent(reservationId: string, publicationIds: any): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.delete(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/daily-rent-reservations/?reservation_id=${reservationId}`);
 
             promise.success(response => {});
 
