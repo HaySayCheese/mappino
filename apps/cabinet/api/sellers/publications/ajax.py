@@ -693,6 +693,15 @@ class DailyRent(object):
                 }
 
 
+            @staticmethod
+            @json_response
+            def invalid_period():
+                return {
+                    'code': 6,
+                    'message': 'Date enter must be earlier or equal with date leave.',
+                }
+
+
         class GetResponses(object):
             @staticmethod
             @json_response
@@ -774,6 +783,15 @@ class DailyRent(object):
                 }
 
 
+            @staticmethod
+            @json_response
+            def invalid_period():
+                return {
+                    'code': 6,
+                    'message': 'Date enter must be earlier or equal with date leave.'
+                }
+
+
         @classmethod
         def post(cls, request, *args):
             publication_tid, publication_hash_id = args[:2]
@@ -812,7 +830,7 @@ class DailyRent(object):
                 return cls.PostResponses.invalid_date_leave()
 
             if date_enter > date_leave:
-                return cls.PostResponses.invalid_date_enter()
+                return cls.PostResponses.invalid_period()
 
 
             publications_model = HEAD_MODELS.get(publication_tid)
@@ -920,7 +938,7 @@ class DailyRent(object):
                 return cls.DeleteResponses.invalid_date_leave()
 
             if date_enter > date_leave:
-                return cls.PostResponses.invalid_date_enter()
+                return cls.DeleteResponses.invalid_period()
 
 
             publications_model = HEAD_MODELS.get(publication_tid)
