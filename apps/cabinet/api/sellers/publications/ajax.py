@@ -711,6 +711,7 @@ class DailyRent(object):
                     'message': 'OK',
                     'data': [
                         {
+                            'reservation_id': reservation.id,
                             'date_enter': reservation.date_enter.strftime('%Y-%m-%d'),
                             'date_leave': reservation.date_leave.strftime('%Y-%m-%d'),
                             'client_name': reservation.client_name or '',
@@ -767,28 +768,10 @@ class DailyRent(object):
 
             @staticmethod
             @json_response_bad_request
-            def invalid_date_enter():
+            def invalid_reservation_id():
                 return {
                     'code': 3,
-                    'message': 'invalid enter date'
-                }
-
-
-            @staticmethod
-            @json_response_bad_request
-            def invalid_date_leave():
-                return {
-                    'code': 4,
-                    'message': 'invalid leave date'
-                }
-
-
-            @staticmethod
-            @json_response
-            def invalid_period():
-                return {
-                    'code': 6,
-                    'message': 'Date enter must be earlier or equal with date leave.'
+                    'message': 'invalid reservation id'
                 }
 
 
@@ -902,43 +885,15 @@ class DailyRent(object):
 
         @classmethod
         def delete(cls, request, *args):
-            publication_tid, publication_hash_id = args[:2]
+            publication_tid, publication_hash_id, reservation_id = args[:2]
             publication_tid = int(publication_tid)
 
 
             try:
-                params = angular_parameters(request, ['date_enter', 'date_leave'])
+                reservation_id = request.GET.get('reservation_id')
+                reservation_id = int(reservation_id)
             except ValueError:
-                return cls.DeleteResponses.invalid_date_enter()
-
-
-            # Service potentially will work in several countries.
-            # Each of this country may have different time zone code.
-            # But reservations must be done in ime zone of country, publication is from.
-            #
-            # Currently it is not necessary.
-            # Ukraine time zone should be used.
-            # todo: add timezone handling here
-
-            try:
-                # format is 2015-09-18T09:00:00.000Z
-                date_enter = params['date_enter'][:10]
-                date_enter = datetime.datetime.strptime(date_enter, '%Y-%m-%d')
-                date_enter = date_enter.replace(tzinfo=timezone('Europe/Kiev'))
-                date_enter = date_enter.date()
-            except ValueError:
-                return cls.DeleteResponses.invalid_date_enter()
-
-            try:
-                date_leave = params['date_leave'][:10]
-                date_leave = datetime.datetime.strptime(date_leave, '%Y-%m-%d')
-                date_leave = date_leave.replace(tzinfo=timezone('Europe/Kiev'))
-                date_leave = date_leave.date()
-            except ValueError:
-                return cls.DeleteResponses.invalid_date_leave()
-
-            if date_enter > date_leave:
-                return cls.DeleteResponses.invalid_period()
+                return cls.DeleteResponses.invalid_reservation_id()
 
 
             publications_model = HEAD_MODELS.get(publication_tid)
@@ -968,7 +923,7 @@ class DailyRent(object):
                 return cls.DeleteResponses.invalid_tid()
 
 
-            daily_rent_reservations_model.objects.cancel_reservation(publication, date_enter, date_leave)
+            daily_rent_reservations_model.objects.cancel_reservation(publication, reservation_id)
             return cls.DeleteResponses.ok()
 
 

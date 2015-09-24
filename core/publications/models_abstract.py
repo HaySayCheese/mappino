@@ -749,15 +749,13 @@ class LivingDailyRentModel(AbstractModel):
             return record
 
 
-        def cancel_reservation(self, publication, date_enter, date_leave):
+        def cancel_reservation(self, publication, reservation_id):
             with transaction.atomic():
-                self\
-                    .filter(
-                        publication=publication,
-                        date_enter=date_enter,
-                        date_leave=date_leave,
-                    )\
-                    .delete()
+                reservation = self.filter(id=reservation_id, publication=publication)[:1][0]
+
+                date_enter = reservation.date_enter
+                date_leave = reservation.date_leave
+                reservation.delete()
 
                 signals.DailyRentSignals.reservation_canceled.send(
                     None, tid=publication.tid, publication_id=publication.id, date_enter=date_enter, date_leave=date_leave)
