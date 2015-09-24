@@ -123,18 +123,8 @@ class FlatsSaleIndex(AbstractBaseIndex):
     @classmethod
     def apply_filters(cls, filters, markers):
         markers = cls.apply_price_filter(filters, markers)
-
-        markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_rooms_count_filter(filters, markers)
-        markers = cls.apply_rooms_planning_filter(filters, markers)
         markers = cls.apply_total_area_filter(filters, markers)
-        markers = cls.apply_floor_filter(filters, markers)
-        markers = cls.apply_electricity_filter(filters, markers)
-        markers = cls.apply_gas_filter(filters, markers)
-        markers = cls.apply_hot_water_filter(filters, markers)
-        markers = cls.apply_cold_water_filter(filters, markers)
-        markers = cls.apply_lift_filter(filters, markers)
-        markers = cls.apply_heating_type_filter(filters, markers)
         return markers
 
 
@@ -258,17 +248,8 @@ class FlatsRentIndex(AbstractIndexWithDailyRent):
         markers = cls.apply_living_rent_period_filter(filters, markers)
         markers = cls.apply_persons_count_filter(filters, markers)
 
-        markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_rooms_count_filter(filters, markers)
-        markers = cls.apply_rooms_planning_filter(filters, markers)
         markers = cls.apply_total_area_filter(filters, markers)
-        markers = cls.apply_floor_filter(filters, markers)
-        markers = cls.apply_electricity_filter(filters, markers)
-        markers = cls.apply_gas_filter(filters, markers)
-        markers = cls.apply_hot_water_filter(filters, markers)
-        markers = cls.apply_cold_water_filter(filters, markers)
-        markers = cls.apply_lift_filter(filters, markers)
-        markers = cls.apply_heating_type_filter(filters, markers)
         return markers
 
 
@@ -373,15 +354,8 @@ class HousesSaleIndex(AbstractBaseIndex):
     def apply_filters(cls, filters, markers):
         markers = cls.apply_price_filter(filters, markers)
 
-        markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_total_area_filter(filters, markers)
         markers = cls.apply_rooms_count_filter(filters, markers)
-        markers = cls.apply_floors_count_filter(filters, markers)
-        markers = cls.apply_electricity_filter(filters, markers)
-        markers = cls.apply_gas_filter(filters, markers)
-        markers = cls.apply_hot_water_filter(filters, markers)
-        markers = cls.apply_cold_water_filter(filters, markers)
-        markers = cls.apply_heating_type_filter(filters, markers)
         return markers
 
 
@@ -496,15 +470,8 @@ class HousesRentIndex(AbstractIndexWithDailyRent):
         markers = cls.apply_living_rent_period_filter(filters, markers)
         markers = cls.apply_persons_count_filter(filters, markers)
 
-        markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_total_area_filter(filters, markers)
         markers = cls.apply_rooms_count_filter(filters, markers)
-        markers = cls.apply_floors_count_filter(filters, markers)
-        markers = cls.apply_electricity_filter(filters, markers)
-        markers = cls.apply_gas_filter(filters, markers)
-        markers = cls.apply_hot_water_filter(filters, markers)
-        markers = cls.apply_cold_water_filter(filters, markers)
-        markers = cls.apply_heating_type_filter(filters, markers)
         return markers
 
 
@@ -611,14 +578,7 @@ class RoomsSaleIndex(AbstractBaseIndex):
     def apply_filters(cls, filters, markers):
         markers = cls.apply_price_filter(filters, markers)
 
-        markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_area_filter(filters, markers)
-        markers = cls.apply_floor_filter(filters, markers)
-        markers = cls.apply_electricity_filter(filters, markers)
-        markers = cls.apply_gas_filter(filters, markers)
-        markers = cls.apply_hot_water_filter(filters, markers)
-        markers = cls.apply_cold_water_filter(filters, markers)
-        markers = cls.apply_lift_filter(filters, markers)
         return markers
 
 
