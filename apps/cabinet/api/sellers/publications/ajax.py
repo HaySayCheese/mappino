@@ -708,7 +708,7 @@ class DailyRent(object):
             def ok(reservations, tz):
                 return {
                     'code': 0,
-                    'message': 'OK', '%Y-%m-%dT%H:%M:%S%z'
+                    'message': 'OK',
                     'data': [
                         {
                             'reservation_id': reservation.id,
