@@ -18,13 +18,12 @@ namespace Mappino.Core.PublicationPreview {
             'PublicationPreviewService',
         ];
 
-        constructor(
-            private $scope,
-            private $rootScope,
-            private $state: ng.ui.IStateService,
-            private $timeout: ng.ITimeoutService,
-            private $mdDialog: any,
-            private publicationPreviewService: PublicationPreviewService) {
+        constructor(private $scope,
+                private $rootScope,
+                private $state: ng.ui.IStateService,
+                private $timeout: ng.ITimeoutService,
+                private $mdDialog: any,
+                private publicationPreviewService: PublicationPreviewService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.forms = {};
 
@@ -104,10 +103,6 @@ namespace Mappino.Core.PublicationPreview {
                         this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationClosed');
                         this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationVisited', this.publicationIds.hid);
                         this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationActive', this.publicationIds.hid);
-
-
-                        console.log(this.$scope.loadingPublication)
-                        console.log(this.$scope.publicationLoadedSuccess)
                     })
                     .error(response => {
                         this.$scope.loadingPublication          = false;
