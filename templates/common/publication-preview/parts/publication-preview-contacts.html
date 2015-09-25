@@ -5,9 +5,9 @@
         <div layout="column" layout-padding>
             <div class="publication-contacts" layout-gt-sm="row" layout-sm="column" layout-padding>
                 <div class="avatar" flex-sm="100" flex-gt-sm="40" layout="column" layout-align="center center">
-                    <img ng-src="[[ publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/no-user.png"
+                    <img ng-src="[[ publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/empty-or-error-user-avatar.png"
                          ng-if="publication.contacts.avatar_url" />
-                    <img src="{{ static }}build/images/common/no-user.png" ng-if="!publication.contacts.avatar_url" alt="" />
+                    <img src="{{ static }}build/images/common/empty-or-error-user-avatar.png" ng-if="!publication.contacts.avatar_url" alt="" />
                 </div>
                 <div flex-sm="100" flex-gt-sm="60" layout="column">
                     <div class="md-title grey-text text-darken-2" layout-padding ng-if="publication.contacts.first_name || publication.contacts.last_name">
