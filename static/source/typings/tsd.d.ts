@@ -6,3 +6,5 @@
 /// <reference path="googlemaps/google.maps.d.ts" />
 /// <reference path="angular-ui-router/angular-ui-router.d.ts" />
 /// <reference path="ng-file-upload/ng-file-upload.d.ts" />
+/// <reference path="moment/moment-node.d.ts" />
+/// <reference path="moment/moment.d.ts" />

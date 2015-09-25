@@ -19,12 +19,12 @@
 
     <table>
         <thead>
-        <tr>
-            <th ng-show="showWeeks">#</th>
-            <th ng-repeat="label in labels track by $index">
-                <small>[[label]]</small>
-            </th>
-        </tr>
+            <tr>
+                <th ng-show="showWeeks">#</th>
+                <th class="md-caption" ng-repeat="label in labels track by $index">
+                    [[label]]
+                </th>
+            </tr>
         </thead>
         <tbody>
         <tr ng-repeat="row in rows track by $index">
@@ -32,7 +32,6 @@
                 <small><em>[[ weekNumbers[$index] ]]</em></small>
             </td>
             <td ng-repeat="dt in row track by dt.date">
-
                 <md-button class="md-fab md-mini -transparent-bg"
                            ng-class="{
                                '-event-secondary': dt.secondary&&dt.hasEvent,
