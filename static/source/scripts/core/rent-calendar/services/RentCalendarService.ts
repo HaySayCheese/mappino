@@ -1,7 +1,13 @@
 namespace Mappino.Core.RentCalendar {
+
+    import IHttpPromise = angular.IHttpPromise;
+
+    "use strict";
+
+
     export class RentCalendarService {
 
-        public reservations: any;
+        private _reservations: any = [];
 
         private toastOptions = {
             position:   'top right',
@@ -22,11 +28,24 @@ namespace Mappino.Core.RentCalendar {
         }
 
 
-        public loadReservationsData(publicationIds: any): ng.IHttpPromise<any>  {
-            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/daily-rent-reservations/`);
+        public loadReservationsData(publicationIds: any): IHttpPromise<any>  {
+            var promise: IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/daily-rent-reservations/`);
 
             promise.success(response => {
-                this.reservations = response.data;
+                var responseData = response.data;
+
+                for (let i = 0, len = responseData.length; i < len; i++) {
+                    var reservation = responseData[i];
+
+                    this._reservations.push({
+                        title: 'gsg',
+                        reservationId: reservation.reservation_id,
+                        clientName: reservation.client_name,
+                        startTime: reservation.date_enter,
+                        endTime: reservation.date_leave,
+                        allDay: false
+                    });
+                }
             });
 
             promise.error(response => {
@@ -43,23 +62,24 @@ namespace Mappino.Core.RentCalendar {
 
 
 
-        public reserveDailyRent(reservation: any, publicationIds: any): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/daily-rent-reservations/`, {
-                'date_enter':     reservation['dateEnter'],
-                'date_leave':    reservation['dateLeave'],
-                'client_name':  reservation['clientName']
+        public reserveDailyRent(reservation: any, publicationIds: any): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/daily-rent-reservations/`, {
+                'date_enter':   reservation.dateEnter,
+                'date_leave':   reservation.dateLeave,
+                'client_name':  reservation.clientName
             });
 
             promise.success(response => {
-                this.reservations.push({
-                    id: reservation.id,
-                    title: `Забронировано ${reservation.clientName}`,
-                    clientName: reservation.clientName,
-                    startTime: reservation.dateEnter,
-                    endTime: reservation.dateLeave,
-                    allDay: false
-                });
 
+
+                this._reservations.push({
+                    title: 'gsg',
+                    reservationId:  reservation.reservationId,
+                    clientName:     reservation.clientName,
+                    startTime:      reservation.dateEnter,
+                    endTime:        reservation.dateLeave,
+                    allDay:         false
+                });
                 if (response.code == 0) {
                     this.$mdToast.show(
                         this.$mdToast.simple()
@@ -84,14 +104,13 @@ namespace Mappino.Core.RentCalendar {
 
 
 
-        public removeDailyRent(reservationId: string, publicationIds: any): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.delete(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/daily-rent-reservations/?reservation_id=${reservationId}`);
+        public removeDailyRent(reservationId: string, publicationIds: any): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.delete(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/daily-rent-reservations/?reservation_id=${reservationId}`);
 
             promise.success(response => {
                 for (let i = 0, len = this.reservations.length; i < len; i++) {
                     var reservation = this.reservations[i];
-
-                    if (reservation.id == reservationId) {
+                    if (reservation.reservationId == reservationId) {
                         this.reservations.splice(i, 1);
                     }
                 }
@@ -107,6 +126,12 @@ namespace Mappino.Core.RentCalendar {
             });
 
             return promise;
+        }
+
+
+
+        public get reservations() {
+            return this._reservations;
         }
     }
 }

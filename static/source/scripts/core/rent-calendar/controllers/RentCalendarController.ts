@@ -18,28 +18,22 @@ namespace Mappino.Core.RentCalendar {
                      private $state,
                      private rentCalendarService: RentCalendarService) {
             // ---------------------------------------------------------------------------------------------------------
-            $scope.showRentDetails = false;
-
             if ($state.params['publication_id'] && $state.params['publication_id'] != 0) {
                 this.publicationIds.tid = $state.params['publication_id'].split(':')[0];
                 this.publicationIds.hid = $state.params['publication_id'].split(':')[1];
             }
-            this.$scope.eventSource = {};
-            this.$scope.eventSource.reservations = [];
-            this.loadReservations();
+
+            $scope.showRentDetails = false;
+
+            $scope.reservation = {};
+            $scope.reservations = rentCalendarService.reservations;
+
+            console.log($scope.reservations)
         }
 
 
         public onEventSelected() {
             this.$scope.event = event;
-        }
-
-
-
-        private loadReservations() {
-            this.rentCalendarService.loadReservationsData(this.publicationIds)
-                .success(response => { });
-
         }
 
         public removeReservation(reservationId: string) {
@@ -48,8 +42,11 @@ namespace Mappino.Core.RentCalendar {
 
         }
 
-        public addReservation() {
-            //this.rentCalendarService.reserveDailyRent()
+        public reserveDailyRent() {
+            this.rentCalendarService.reserveDailyRent(this.$scope.reservation, this.publicationIds)
+            .success(response => {
+
+            })
         }
 
     }

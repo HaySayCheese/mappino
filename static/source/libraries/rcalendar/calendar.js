@@ -9,13 +9,8 @@ angular.module('ui.rCalendar', [])
         showWeeks: false,
         showEventDetail: true,
         startingDay: 1,
-        eventSource: null,
         queryMode: 'local'
     })
-    .config(['$interpolateProvider', function ($interpolateProvider) {
-        $interpolateProvider.startSymbol('[[');
-        $interpolateProvider.endSymbol(']]');
-    }])
     .controller('CalendarController', ['$scope', '$attrs', '$parse', '$interpolate', '$log', 'dateFilter', 'calendarConfig', function ($scope, $attrs, $parse, $interpolate, $log, dateFilter, calendarConfig) {
         'use strict';
         var self = this,
@@ -24,29 +19,26 @@ angular.module('ui.rCalendar', [])
 
         // Configuration attributes
         angular.forEach(['formatDay', 'formatDayHeader', 'formatDayTitle', 'formatWeekTitle', 'formatMonthTitle',
-            'showWeeks', 'showEventDetail', 'startingDay', 'eventSource', 'queryMode'], function (key, index) {
+            'showWeeks', 'showEventDetail', 'startingDay', 'queryMode'], function (key, index) {
             self[key] = angular.isDefined($attrs[key])
-                ? (index < 5 ? $interpolate($attrs[key])($scope.$parent)
-                    : $scope.$parent.$eval($attrs[key])) : calendarConfig[key];
+                ? (index < 5 ? $interpolate($attrs[key])($scope)
+                : $scope.$eval($attrs[key])) : calendarConfig[key];
         });
 
-        $scope.$parent.$watch('eventSource.reservations', function (value) {
+        $scope.$watchCollection('eventSource', function(value) {
+            console.log(value);
             self.onEventSourceChanged(value);
         });
-
-        setInterval(function () {
-            self.onEventSourceChanged($scope.$parent.eventSource.reservations);
-        }, 1000, 5);
 
 
 
         if (angular.isDefined($attrs.initDate)) {
-            self.currentCalendarDate = $scope.$parent.$eval($attrs.initDate);
+            self.currentCalendarDate = $scope.$eval($attrs.initDate);
         }
         if (!self.currentCalendarDate) {
             self.currentCalendarDate = new Date();
-            if ($attrs.ngModel && !$scope.$parent.$eval($attrs.ngModel)) {
-                $parse($attrs.ngModel).assign($scope.$parent, self.currentCalendarDate);
+            if ($attrs.ngModel && !$scope.$eval($attrs.ngModel)) {
+                $parse($attrs.ngModel).assign($scope, self.currentCalendarDate);
             }
         }
 
@@ -91,6 +83,7 @@ angular.module('ui.rCalendar', [])
         };
 
         self.onEventSourceChanged = function (value) {
+            console.log(value)
             self.eventSource = value;
             if (self.onDataLoaded) {
                 self.onDataLoaded();
@@ -246,12 +239,14 @@ angular.module('ui.rCalendar', [])
             restrict: 'E',
             templateUrl: '/ajax/template/common/rent-calendar/body/',
             scope: {
+                eventSource: '=eventSource',
                 rangeChanged: '&',
                 eventSelected: '&',
                 timeSelected: '&'
             },
             require: ['calendar', '?^ngModel'],
             controller: 'CalendarController',
+
             link: function (scope, element, attrs, ctrls) {
                 var ctrl = ctrls[0],
                     ngModelCtrl = ctrls[1];
@@ -297,6 +292,7 @@ angular.module('ui.rCalendar', [])
                         var selectedMonth = selectedDate.getMonth();
                         var selectedYear = selectedDate.getFullYear();
                         var direction = 0;
+
                         if (currentYear === selectedYear) {
                             if (currentMonth !== selectedMonth) {
                                 direction = currentMonth < selectedMonth ? 1 : -1;
@@ -374,18 +370,19 @@ angular.module('ui.rCalendar', [])
                     };
                 }
 
-                function compareEvent(event1, event2) {
-                    if (event1.allDay) {
-                        return 1;
-                    } else if (event2.allDay) {
-                        return -1;
-                    } else {
-                        return (event1.startTime.getTime() - event2.startTime.getTime());
-                    }
-                }
+                //function compareEvent(event1, event2) {
+                //    if (event1.allDay) {
+                //        return 1;
+                //    } else if (event2.allDay) {
+                //        return -1;
+                //    } else {
+                //        return (event1.startTime.getTime() - event2.startTime.getTime());
+                //    }
+                //}
 
                 ctrl.onDataLoaded = function () {
-                    var eventSource = ctrl.eventSource,
+                    console.log(scope)
+                    var eventSource = scope.eventSource,
                         len = eventSource ? eventSource.length : 0,
                         startTime = ctrl.range.startTime,
                         endTime = ctrl.range.endTime,
@@ -468,7 +465,7 @@ angular.module('ui.rCalendar', [])
                         for (date = 0; date < 7; date += 1) {
                             if (rows[row][date].hasEvent) {
                                 hasEvent = true;
-                                rows[row][date].events.sort(compareEvent);
+                                //rows[row][date].events.sort(compareEvent);
                             }
                         }
                     }
