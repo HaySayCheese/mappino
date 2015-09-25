@@ -1,8 +1,7 @@
-
 <div>
     <div layout="row">
         <div layout="column">
-            <md-button type="button" class="md-icon-button" ng-click="move(-1)">
+            <md-button type="button" class="md-icon-button" ng-click="calendarCtrl.move(-1)">
                 <md-icon>chevron_left</md-icon>
             </md-button>
         </div>
@@ -10,7 +9,7 @@
             <strong>[[ selectedDate.label ]] [[title]]</strong>
         </div>
         <div layout="column">
-            <md-button type="button" class="md-icon-button" ng-click="move(1)">
+            <md-button type="button" class="md-icon-button" ng-click="calendarCtrl.move(1)">
                 <md-icon>chevron_right</md-icon>
             </md-button>
         </div>
@@ -43,7 +42,7 @@
                                '-current': dt.current&&!dt.selected&&!dt.hasEvent,
                                '-event-on-current-date': dt.current&&dt.hasEvent
                             }"
-                           ng-click="select(dt.date)">
+                           ng-click="calendarCtrl.select(dt.date)">
                     [[dt.label]]
                     <md-tooltip ng-if="dt.current && !dt.hasEvent" md-direction="top" md-delay="0">
                         сегодня [[dt.label]]
