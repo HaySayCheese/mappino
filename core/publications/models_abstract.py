@@ -581,7 +581,7 @@ class LivingRentTermsModel(AbstractModel):
     price = models.DecimalField(null=True, max_digits=AbstractModel.max_price_symbols_count, decimal_places=2)
     currency_sid = models.SmallIntegerField(default=currencies_constants.dol())
     is_contract = models.BooleanField(default=False)
-    period_sid = models.SmallIntegerField(default=LIVING_RENT_PERIODS.monthly())
+    period_sid = models.SmallIntegerField(default=LIVING_RENT_PERIODS.long_period())
 
     # persons count may be omitted if period_sid is not daily.
     persons_count = models.SmallIntegerField(null=True)
@@ -792,7 +792,7 @@ class CommercialRentTermsModel(AbstractModel):
     price = models.DecimalField(null=True, max_digits=18, decimal_places=2)
     currency_sid = models.SmallIntegerField(default=currencies_constants.dol())
     is_contract = models.BooleanField(default=False)
-    period_sid = models.SmallIntegerField(default=COMMERCIAL_RENT_PERIODS.monthly())
+    period_sid = models.SmallIntegerField(default=COMMERCIAL_RENT_PERIODS.long_period())
     add_terms = models.TextField(default='')
 
 

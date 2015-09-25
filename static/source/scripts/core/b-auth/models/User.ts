@@ -84,8 +84,8 @@ namespace Mappino.Core.BAuth {
 
 
         private createFullName() {
-            this._fields.full_name =
-                `${this._fields.first_name ? this._fields.first_name : ''} ${this._fields.last_name ? this._fields.last_name: ''}`;
+            if (this._fields.first_name && this._fields.last_name)
+                this._fields.full_name = `${this._fields.first_name} ${this._fields.last_name}`;
         }
 
 

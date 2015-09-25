@@ -179,17 +179,12 @@ class LivingRentPeriods(AbstractConstant):
         super(LivingRentPeriods, self).__init__()
         self.set_ids({
             'daily':        0,
-            'monthly':      1,
-            'long_period':  2
+            'long_period':  1,
         })
 
 
     def daily(self):
         return self.ids['daily']
-
-
-    def monthly(self):
-        return self.ids['monthly']
 
 
     def long_period(self):
@@ -201,13 +196,8 @@ class CommercialRentPeriods(AbstractConstant):
     def __init__(self):
         super(CommercialRentPeriods, self).__init__()
         self.set_ids({
-            'monthly':      1,
             'long_period':  2
         })
-
-
-    def monthly(self):
-        return self.ids['monthly']
 
 
     def long_period(self):
