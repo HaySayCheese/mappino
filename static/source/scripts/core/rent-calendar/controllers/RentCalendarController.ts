@@ -27,7 +27,7 @@ namespace Mappino.Core.RentCalendar {
 
             $scope.reservation = {};
             $scope.reservations = rentCalendarService.reservations;
-
+            $scope.forms = {};
             console.log($scope.reservations)
         }
 
@@ -43,10 +43,26 @@ namespace Mappino.Core.RentCalendar {
         }
 
         public reserveDailyRent() {
-            this.rentCalendarService.reserveDailyRent(this.$scope.reservation, this.publicationIds)
-            .success(response => {
 
-            })
+            this.$scope.forms.reservationDetails.clientName.$setValidity('invalidPeriod', true);
+            this.$scope.forms.reservationDetails.clientName.$setValidity('booked', true);
+
+
+
+
+            if (this.$scope.forms.reservationDetails.$valid) {
+                this.rentCalendarService.reserveDailyRent(this.$scope.reservation, this.publicationIds)
+                    .success(response => {
+                    if (response.code == 6) {
+                        this.$scope.forms.reservationDetails.clientName.$setValidity('invalidPeriod', false);
+                        return;
+                    }
+                    if (response.code == 5) {
+                        this.$scope.forms.reservationDetails.clientName.$setValidity('booked', false);
+                        return;
+                    }
+                });
+            }
         }
 
     }
