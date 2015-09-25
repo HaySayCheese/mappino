@@ -541,15 +541,15 @@ class BodyModel(AbstractModel):
 
 
     def print_title(self):
-        return self.title if self.title else u''
+        return self.title.capitalize() if self.title else u''
 
 
     def print_description(self):
-        return self.description if self.description else u''
+        return self.description.capitalize() if self.description else u''
 
 
     def print_address(self):
-        return self.address if self.address else u''
+        return self.address.capitalize() if self.address else u''
 
 
 class SaleTermsModel(AbstractModel):
@@ -623,17 +623,16 @@ class LivingRentTermsModel(AbstractModel):
     def print_terms(self):
         terms = u''
         if self.period_sid == LIVING_RENT_PERIODS.daily():
-            terms += u', посуточно'
-        elif self.period_sid == LIVING_RENT_PERIODS.monthly():
-            terms += u', помесячно'
-        elif self.period_sid == LIVING_RENT_PERIODS.long_period():
-            terms += u', долгосрочная аренда'
+            terms += u'посуточно'
+            if self.persons_count:
+                terms += u', количество мест — ' + unicode(self.persons_count)
 
-        if self.persons_count:
-            terms += u', количество мест — ' + unicode(self.persons_count)
+        else:
+            terms += u'долгосрочная аренда'
+
 
         if terms:
-            return terms[2:]
+            return terms.capitalize()
         return u''
 
 
@@ -653,7 +652,7 @@ class LivingRentTermsModel(AbstractModel):
             facilities += u', домашний кинотеатр'
 
         if facilities:
-            return facilities[2:]
+            return facilities[2:].capitalize()
         return u''
 
 
@@ -751,7 +750,10 @@ class LivingDailyRentModel(AbstractModel):
 
         def cancel_reservation(self, publication, reservation_id):
             with transaction.atomic():
-                reservation = self.filter(id=reservation_id, publication=publication)[:1][0]
+                try:
+                    reservation = self.filter(id=reservation_id, publication=publication)[:1][0]
+                except IndentationError:
+                    raise ObjectDoesNotExist()
 
                 date_enter = reservation.date_enter
                 date_leave = reservation.date_leave
@@ -851,18 +853,11 @@ class CommercialRentTermsModel(AbstractModel):
 
     #-- output
     def print_terms(self):
-        terms = u''
-        if self.period_sid == COMMERCIAL_RENT_PERIODS.monthly():
-            terms += u', помесячно'
-        elif self.period_sid == COMMERCIAL_RENT_PERIODS.long_period():
-            terms += u', долгосрочная аренда'
-
+        terms = u'долгосрочная аренда'
         if self.add_terms:
-            terms += u'. ' + self.add_terms
+            terms += u'. ' + self.add_terms.capitalize()
 
-        if terms:
-            return terms[2:]
-        return u''
+        return terms.capitalize()
 
 
 class PhotosModel(AbstractModel):

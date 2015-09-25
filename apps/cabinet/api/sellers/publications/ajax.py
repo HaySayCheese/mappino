@@ -928,8 +928,12 @@ class DailyRent(object):
                 return cls.DeleteResponses.invalid_tid()
 
 
-            daily_rent_reservations_model.objects.cancel_reservation(publication, reservation_id)
-            return cls.DeleteResponses.ok()
+            try:
+                daily_rent_reservations_model.objects.cancel_reservation(publication, reservation_id)
+                return cls.DeleteResponses.ok()
+
+            except ObjectDoesNotExist:
+                return cls.DeleteResponses.invalid_reservation_id()
 
 
 class Briefs(CabinetView):
