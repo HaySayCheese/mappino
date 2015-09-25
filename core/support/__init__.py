@@ -1,4 +1,9 @@
+# coding=utf-8
+from django.apps import AppConfig
+
 from core.support.classes import SupportAgentsNotifier
 
 
-support_agents_notifier = SupportAgentsNotifier()
+class SupportApp(AppConfig):
+    name = 'core.support'
+    agents_notifier = SupportAgentsNotifier()
