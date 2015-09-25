@@ -1,4 +1,4 @@
-<div layout="column" layout-align="center center">
+<div layout="column" layout-align="start center">
     <calendar ng-model="currentDate" calendar-mode="mode" event-source="reservations"
               range-changed="reloadSource(date_enter, date_leave)"
               event-selected="onEventSelected(event)">
@@ -25,7 +25,7 @@
 
         <form novalidate class="md-padding" name="reservationDetails" layout="column" ng-show="showRentDetails">
             <div layout="row" layout-align="center center">
-                <div flex-gt-md="70">
+                <div layout="row" layout-align="center center" flex-gt-md="70">
                     <md-datepicker name="dateEnter" ng-model="reservation.dateEnter" md-placeholder="Дата от" required></md-datepicker>
                     <span flex></span>
                     <md-datepicker name="dateLeave" ng-model="reservation.dateLeave" md-placeholder="Дата до" required></md-datepicker>
@@ -53,7 +53,7 @@
                     </div>
                 </md-input-container>
             </div>
-            <div layout="row"  layout-align="center center">
+            <div layout="row" layout-align="center center">
                 <md-button class="md-raised md-primary" ng-click="rentCalendarCtrl.reserveDailyRent()">Забронировать</md-button>
             </div>
         </form>
