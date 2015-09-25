@@ -81,14 +81,17 @@ class PublishedDataSource(object):
             'buildings': p.body.print_provided_add_buildings(),
         }
 
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-            'rent_facilities': p.rent_terms.print_facilities()
-        })
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+            })
+
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+                'rent_facilities': p.rent_terms.print_facilities()
+            })
 
 
         if p.rent_terms.is_daily:
@@ -128,14 +131,17 @@ class PublishedDataSource(object):
             'buildings': p.body.print_provided_add_buildings(),
         }
 
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-            'rent_facilities': p.rent_terms.print_facilities()
-        })
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+            })
+
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+                'rent_facilities': p.rent_terms.print_facilities()
+            })
         return description
 
 
@@ -153,14 +159,18 @@ class PublishedDataSource(object):
             'communications': p.body.print_communications(),
         }
 
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-            'rent_facilities': p.rent_terms.print_facilities()
-        })
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+            })
+
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+                'rent_facilities': p.rent_terms.print_facilities()
+            })
+
         return description
 
 
@@ -187,13 +197,16 @@ class PublishedDataSource(object):
             'buildings': p.body.print_provided_add_buildings(),
         }
 
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-        })
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+            })
+
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+            })
         return description
 
 
@@ -215,14 +228,17 @@ class PublishedDataSource(object):
             'buildings': p.body.print_provided_add_buildings(),
         }
 
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-            'rent_facilities': p.rent_terms.print_facilities()
-        })
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+            })
+
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+                'rent_facilities': p.rent_terms.print_facilities()
+            })
         return description
 
 
@@ -239,13 +255,16 @@ class PublishedDataSource(object):
             'buildings': p.body.print_provided_add_buildings(),
         }
 
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-        })
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+            })
+
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+            })
         return description
 
 
@@ -259,13 +278,16 @@ class PublishedDataSource(object):
             'facilities': p.body.print_facilities(),
         }
 
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-        })
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+            })
+
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+            })
         return description
 
 
@@ -277,13 +299,16 @@ class PublishedDataSource(object):
             'buildings': p.body.print_provided_add_buildings(),
         }
 
-        description.update({
-            'sale_price': p.sale_terms.print_price(),
-        })
-        description.update({
-            'rent_price': p.rent_terms.print_price(),
-            'rent_terms': p.rent_terms.print_terms(),
-        })
+        if p.for_sale:
+            description.update({
+                'sale_price': p.sale_terms.print_price(),
+            })
+
+        if p.for_rent:
+            description.update({
+                'rent_price': p.rent_terms.print_price(),
+                'rent_terms': p.rent_terms.print_terms(),
+            })
         return description
 
 

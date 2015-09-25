@@ -293,7 +293,7 @@ class AbstractBaseIndex(models.Model):
     @staticmethod  # sid
     def apply_living_rent_period_filter(filters, markers):
         period = int(filters.get('pr_sid'))
-        if period == 1:
+        if period == 0:
             markers = markers.filter(period_sid=LIVING_RENT_PERIODS.daily())
         else:
             markers = markers.filter(~Q(period_sid=LIVING_RENT_PERIODS.daily()))
