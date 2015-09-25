@@ -25,14 +25,14 @@
 
         <form novalidate class="md-padding" name="forms.reservationDetails" layout="column" ng-show="showRentDetails">
             <div layout="row" layout-align="center center">
-                <div layout="row" layout-align="center center" flex-gt-md="70">
+                <div layout="row" layout-align="center center" flex-gt-md="70" layout-sm="column">
                     <md-datepicker name="dateEnter" ng-model="reservation.dateEnter" md-placeholder="Дата от" required></md-datepicker>
                     <span flex></span>
                     <md-datepicker name="dateLeave" ng-model="reservation.dateLeave" md-placeholder="Дата до" required></md-datepicker>
                 </div>
             </div>
             <div layout="row" layout-align="center center">
-                <md-input-container>
+                <md-input-container flex="90">
                     <label>Имя клиента</label>
                     <input name="clientName" type="text" ng-model="reservation.clientName">
                     <div ng-messages="forms.reservationDetails.dateEnter.$error"
@@ -45,7 +45,7 @@
                     </div>
                     <div ng-messages="forms.reservationDetails.clientName.$error"
                          ng-show="forms.reservationDetails.$submitted">
-                        <div ng-message="booked">Похоже, что даный период времени уже зарезервированый</div>
+                        <div ng-message="booked">Даный период времени уже зарезервирован</div>
                     </div>
                     <div ng-messages="forms.reservationDetails.clientName.$error"
                          ng-show="forms.reservationDetails.$submitted">

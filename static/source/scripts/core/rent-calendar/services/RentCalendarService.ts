@@ -74,7 +74,7 @@ namespace Mappino.Core.RentCalendar {
                 if (response.code == 0) {
                     this._reservations.push({
                         title: 'зарезервировано',
-                        reservationId:  reservation.reservationId,
+                        reservationId:  response.data.reservation.id,
                         clientName:     reservation.clientName,
                         startTime:      reservation.dateEnter,
                         endTime:        reservation.dateLeave,

@@ -9,7 +9,8 @@ namespace Mappino.Core.RentCalendar {
         'ngMaterial',
 
         'ui.router',
-        'ui.rCalendar'
+
+        'Mappino.Core.Calendar'
     ]);
 
 
