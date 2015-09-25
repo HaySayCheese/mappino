@@ -1,16 +1,15 @@
 #coding=utf-8
-from django.dispatch import receiver
-
 from core.managing.ban.signals import BanHandlerSignals
 
 
-class UsersBansManager(object):
-    """
-    Handles all users modifications on ban/liberation.
-    """
+class SlotsInitializer(object):
+    def connect_all(self):
+        BanHandlerSignals.user_banned.connect(self.deactivate_the_user)
+
+        BanHandlerSignals.user_liberated.connect(self.activate_user_back)
+
 
     @staticmethod
-    @receiver(BanHandlerSignals.user_banned)
     def deactivate_the_user(sender, **kwargs):
         user = kwargs['user']
         user.is_active = False
@@ -18,7 +17,6 @@ class UsersBansManager(object):
 
 
     @staticmethod
-    @receiver(BanHandlerSignals.user_liberated)
     def activate_user_back(sender, **kwargs):
         user = kwargs['user']
         user.is_activated = True
