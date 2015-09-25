@@ -29,6 +29,7 @@ class PublicationsCheckQueue(models.Model):
         ordering = ['-date_added']
         db_table = 'moderators_publications_check_queue'
         unique_together = (('publication_tid', 'publication_hash_id'), )
+        app_label = 'moderators'
 
 
     class ObjectsManager(Manager):
@@ -216,13 +217,13 @@ class PublicationsCheckQueue(models.Model):
             claim.close(moderator)
 
 
-
 class RejectedPublications(AbstractProcessedPublicationModel):
     message = models.TextField()
 
 
     class Meta:
         db_table = 'moderators_publications_rejected'
+        app_label = 'moderators'
 
 
     class ObjectsManager(AbstractProcessedPublicationModel.ObjectsManager):
@@ -252,60 +253,7 @@ class RejectedPublications(AbstractProcessedPublicationModel):
 class AcceptedPublications(AbstractProcessedPublicationModel):
     class Meta:
         db_table = 'moderators_publications_accepted'
-
-
-
-# class HeldPublications(PublicationMethodsMixin):
-#     date_added = models.DateTimeField(auto_now_add=True, db_index=True)
-#     publication_tid = models.PositiveSmallIntegerField(db_index=True)
-#     publication_hash_id = models.TextField(db_index=True)
-#     moderator = models.ForeignKey(Users)
-#
-#
-#     class Meta:
-#         db_table = 'moderators_publications_held'
-#         ordering = ('-date_added', )
-#         unique_together = (('publication_tid', 'publication_hash_id'), )
-#
-#
-#     class ObjectsManager(Manager):
-#         def add(self, publication_tid, publication_hash_id, moderator_id):
-#             if self.filter(publication_tid=publication_tid, publication_hash_id=publication_hash_id).count() > 0:
-#                 return
-#
-#             return self.create(
-#                 publication_tid = publication_tid,
-#                 publication_hash_id = publication_hash_id,
-#                 moderator_id = moderator_id,
-#             )
-#
-#
-#         def contains(self, tid, hash_id):
-#             return self.filter(publication_tid=tid, publication_hash_id=hash_id).count() > 0
-#
-#
-#         def by_moderator(self, moderator):
-#             return self.filter(moderator_id=moderator)
-#
-#
-#         def remove_if_exists(self, tid, hash_id):
-#             self.filter(publication_tid=tid, publication_hash_id=hash_id).delete()
-#
-#
-#     objects = ObjectsManager()
-#
-#
-#     def hold(self, moderator):
-#         # HeldPublications and PublicationsCheckQueue must implement common interface.
-#         # In this model this method may do nothing.
-#         pass
-#
-#
-#
-#     @property
-#     def publication(self):
-#         model = HEAD_MODELS[self.publication_tid]
-#         return model.by_hash_id(self.publication_hash_id)
+        app_label = 'moderators'
 
 
 class PublicationsClaims(models.Model):
@@ -327,6 +275,7 @@ class PublicationsClaims(models.Model):
     class Meta:
         db_table = 'moderators_publications_claims'
         ordering = ['-date_reported', ]
+        app_label = 'moderators'
 
 
     class ObjectsManager(Manager):

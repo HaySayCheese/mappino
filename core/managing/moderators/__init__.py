@@ -1,5 +1,15 @@
 # coding=utf-8
-from core.managing.moderators.slots import init_moderators_slots
+from django.apps import AppConfig
+
+from core.managing.moderators.slots import SlotsInitializer
 
 
-init_moderators_slots()
+class Moderators(AppConfig):
+    name = 'core.managing.moderators'
+
+
+    def ready(self):
+        check_queue_model = self.get_model('PublicationsCheckQueue')
+
+        self.slots_initializer = SlotsInitializer(check_queue_model)
+        self.slots_initializer.connect_all()
