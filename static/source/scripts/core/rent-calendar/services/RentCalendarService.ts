@@ -41,7 +41,9 @@ namespace Mappino.Core.RentCalendar {
             return promise;
         }
 
-        public reserveDailyRent(reservation: Object, publicationIds: any): ng.IHttpPromise<any> {
+
+
+        public reserveDailyRent(reservation: any, publicationIds: any): ng.IHttpPromise<any> {
             var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/daily-rent-reservations/`, {
                 'date_enter':     reservation['dateEnter'],
                 'date_leave':    reservation['dateLeave'],
@@ -49,12 +51,23 @@ namespace Mappino.Core.RentCalendar {
             });
 
             promise.success(response => {
-                this.$mdToast.show(
-                    this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.RESERVE_DAILY_RENT.SUCCESS)
-                        .position(this.toastOptions.position)
-                        .hideDelay(this.toastOptions.delay)
-                );
+                this.reservations.push({
+                    id: reservation.id,
+                    title: `Забронировано ${reservation.clientName}`,
+                    clientName: reservation.clientName,
+                    startTime: reservation.dateEnter,
+                    endTime: reservation.dateLeave,
+                    allDay: false
+                });
+
+                if (response.code == 0) {
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.PUBLICATION.RESERVE_DAILY_RENT.SUCCESS)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
+                }
             });
 
             promise.error(response => {
@@ -69,10 +82,20 @@ namespace Mappino.Core.RentCalendar {
             return promise;
         }
 
+
+
         public removeDailyRent(reservationId: string, publicationIds: any): ng.IHttpPromise<any> {
             var promise: ng.IHttpPromise<any> = this.$http.delete(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/daily-rent-reservations/?reservation_id=${reservationId}`);
 
-            promise.success(response => {});
+            promise.success(response => {
+                for (let i = 0, len = this.reservations.length; i < len; i++) {
+                    var reservation = this.reservations[i];
+
+                    if (reservation.id == reservationId) {
+                        this.reservations.splice(i, 1);
+                    }
+                }
+            });
 
             promise.error(response => {
                 this.$mdToast.show(

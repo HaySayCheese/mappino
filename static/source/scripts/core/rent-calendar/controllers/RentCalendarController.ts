@@ -19,13 +19,13 @@ namespace Mappino.Core.RentCalendar {
                      private rentCalendarService: RentCalendarService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.showRentDetails = false;
-            $scope.reservations = [];
 
             if ($state.params['publication_id'] && $state.params['publication_id'] != 0) {
                 this.publicationIds.tid = $state.params['publication_id'].split(':')[0];
                 this.publicationIds.hid = $state.params['publication_id'].split(':')[1];
             }
-            this.$scope.eventSource = [];
+            this.$scope.eventSource = {};
+            this.$scope.eventSource.reservations = [];
             this.loadReservations();
         }
 
@@ -38,39 +38,18 @@ namespace Mappino.Core.RentCalendar {
 
         private loadReservations() {
             this.rentCalendarService.loadReservationsData(this.publicationIds)
-                .success(response => {
-                    var responseData = response.data;
-
-                    for (let i = 0, len = responseData.length; i < len; i++) {
-                        var reservation = responseData[i];
-
-                        this.$scope.eventSource.push({
-                            id: reservation['reservation_id'],
-                            title: `Забронировано ${reservation['client_name']}`,
-                            clientName: reservation['client_name'],
-                            startTime: reservation['date_enter'],
-                            endTime: reservation['date_leave'],
-                            allDay: false
-                        });
-                    }
-            });
+                .success(response => { });
 
         }
 
         public removeReservation(reservationId: string) {
             this.rentCalendarService.removeDailyRent(reservationId, this.publicationIds)
-                .success(response => {
-                    var reservations = this.$scope.eventSource;
+                .success(response => { })
 
-                    for (let i = 0, len = reservations.length; i < len; i++) {
-                        var reservation = reservations[i];
+        }
 
-                        if (reservation.id == reservationId) {
-                            this.$scope.eventSource.splice(i, 1);
-                        }
-                    }
-                })
-
+        public addReservation() {
+            //this.rentCalendarService.reserveDailyRent()
         }
 
     }

@@ -48,7 +48,8 @@ namespace Mappino.Cabinet.Users  {
                             this.$scope.reservationDetails.clientName.$setValidity('booked', false);
                             return;
                         }
-                        this.$scope.eventSource.push({
+
+                        this.$scope.eventSource.reservations.push({
                             id: this.$scope.reservation.id,
                             title: `Забронировано ${this.$scope.reservation.clientName}`,
                             clientName: this.$scope.reservation.clientName,

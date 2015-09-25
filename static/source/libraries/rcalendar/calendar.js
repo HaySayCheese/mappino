@@ -30,12 +30,12 @@ angular.module('ui.rCalendar', [])
                     : $scope.$parent.$eval($attrs[key])) : calendarConfig[key];
         });
 
-        $scope.$parent.$watch('eventSource', function (value) {
+        $scope.$parent.$watch('eventSource.reservations', function (value) {
             self.onEventSourceChanged(value);
         });
 
         setInterval(function () {
-            self.onEventSourceChanged($scope.$parent.eventSource);
+            self.onEventSourceChanged($scope.$parent.eventSource.reservations);
         }, 1000, 5);
 
 
