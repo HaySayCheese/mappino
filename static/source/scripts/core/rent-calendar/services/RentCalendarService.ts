@@ -71,18 +71,17 @@ namespace Mappino.Core.RentCalendar {
 
             promise.success(response => {
 
-
-                this._reservations.push({
-                    title: 'gsg',
-                    reservationId:  reservation.reservationId,
-                    clientName:     reservation.clientName,
-                    startTime:      reservation.dateEnter,
-                    endTime:        reservation.dateLeave,
-                    allDay:         false
-                });
                 if (response.code == 0) {
+                    this._reservations.push({
+                        title: 'зарезервировано',
+                        reservationId:  reservation.reservationId,
+                        clientName:     reservation.clientName,
+                        startTime:      reservation.dateEnter,
+                        endTime:        reservation.dateLeave,
+                        allDay:         false
+                    });
                     this.$mdToast.show(
-                        this.$mdToast.simple()
+                    this.$mdToast.simple()
                             .content(this.TXT.TOASTS.PUBLICATION.RESERVE_DAILY_RENT.SUCCESS)
                             .position(this.toastOptions.position)
                             .hideDelay(this.toastOptions.delay)

@@ -1,4 +1,4 @@
-<div layout="column" layout-align="center center">
+<div layout="column" layout-align="start center">
     <calendar ng-model="currentDate" calendar-mode="mode" event-source="reservations"
               range-changed="reloadSource(date_enter, date_leave)"
               event-selected="onEventSelected(event)">
@@ -23,38 +23,40 @@
             <md-button class="md-raised md-primary" ng-click="showRentDetails = true" ng-show="!showRentDetails">Добавить бронь</md-button>
         </div>
 
-        <form novalidate class="md-padding" name="reservationDetails" layout="column" ng-show="showRentDetails">
+        <form novalidate class="md-padding" name="forms.reservationDetails" layout="column" ng-show="showRentDetails">
             <div layout="row" layout-align="center center">
-                <div flex-gt-md="70">
+                <div layout="row" layout-align="center center" flex-gt-md="70">
                     <md-datepicker name="dateEnter" ng-model="reservation.dateEnter" md-placeholder="Дата от" required></md-datepicker>
                     <span flex></span>
                     <md-datepicker name="dateLeave" ng-model="reservation.dateLeave" md-placeholder="Дата до" required></md-datepicker>
                 </div>
             </div>
             <div layout="row" layout-align="center center">
-                <md-input-container flex-gt-md="70">
+                <md-input-container>
                     <label>Имя клиента</label>
                     <input name="clientName" type="text" ng-model="reservation.clientName">
-                    <div ng-messages="reservationDetails.dateEnter.$error"
-                         ng-show="reservationDetails.$submitted || reservationDetails.dateEnter.$touched">
+                    <div ng-messages="forms.reservationDetails.dateEnter.$error"
+                         ng-show="forms.reservationDetails.$submitted || forms.reservationDetails.dateEnter.$touched">
                         <div ng-message="required">Пожалуйста, укажите дату въезда</div>
                     </div>
-                    <div ng-messages="reservationDetails.dateLeave.$error"
-                         ng-show="(reservationDetails.$submitted || reservationDetails.dateLeave.$touched) && reservationDetails.dateEnter.$valid">
+                    <div ng-messages="forms.reservationDetails.dateLeave.$error"
+                         ng-show="(forms.reservationDetails.$submitted || forms.reservationDetails.dateLeave.$touched) && forms.reservationDetails.dateEnter.$valid">
                         <div ng-message="required">Пожалуйста, укажите дату выезда</div>
                     </div>
-                    <div ng-messages="reservationDetails.clientName.$error"
-                         ng-show="reservationDetails.$submitted">
+                    <div ng-messages="forms.reservationDetails.clientName.$error"
+                         ng-show="forms.reservationDetails.$submitted">
                         <div ng-message="booked">Похоже, что даный период времени уже зарезервированый</div>
                     </div>
-                    <div ng-messages="reservationDetails.clientName.$error"
-                         ng-show="reservationDetails.$submitted">
+                    <div ng-messages="forms.reservationDetails.clientName.$error"
+                         ng-show="forms.reservationDetails.$submitted">
                         <div ng-message="invalidPeriod">Дата въезда должна быть раньше чем дата выезда</div>
                     </div>
                 </md-input-container>
             </div>
-            <div layout="row"  layout-align="center center">
-                <md-button class="md-raised md-primary" ng-click="rentCalendarCtrl.reserveDailyRent()">Забронировать</md-button>
+            <div layout="row" layout-align="center center">
+                <md-button class="md-raised md-primary" ng-click="rentCalendarCtrl.reserveDailyRent()">
+                    Забронировать
+                </md-button>
             </div>
         </form>
     </div>
