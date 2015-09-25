@@ -729,7 +729,7 @@ class LivingDailyRentModel(AbstractModel):
                 record with newly added reservation.
             """
 
-            if self.intersects_with_existing(publication, date_enter):
+            if self.intersects_with_existing(publication, date_enter, date_leave):
                 raise LivingDailyRentModel.AlreadyBooked(
                     'It seems that this place is already booked for this days.')
 
@@ -761,7 +761,7 @@ class LivingDailyRentModel(AbstractModel):
                     None, tid=publication.tid, publication_id=publication.id, date_enter=date_enter, date_leave=date_leave)
 
 
-        def intersects_with_existing(self, publication, date_enter, exclude_last_day=True):
+        def intersects_with_existing(self, publication, date_enter, date_leave, exclude_last_day=True):
             """
             :returns: True if date_leave intersects with already existing range.
             :param exclude_last_day:
@@ -771,10 +771,12 @@ class LivingDailyRentModel(AbstractModel):
                 if False - the last day will be considered.
             """
 
-            if exclude_last_day:
-                return self.filter(publication=publication, date_leave__gt=date_enter)
-            else:
-                return self.filter(publication=publication, date_leave__gte=date_enter) # note: gtE
+            reserved_periods = self.filter(publication=publication).values_list('date_enter', 'date_leave')
+            for reserved_date_enter, reserved_date_leave in reserved_periods:
+                if date_enter >= reserved_date_enter or date_leave < reserved_date_leave:
+                    return True
+
+            return False
 
 
     objects = M()

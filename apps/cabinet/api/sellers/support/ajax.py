@@ -5,7 +5,7 @@ from apps.views_base import CabinetView
 from collective.http.responses import *
 from collective.exceptions import EmptyArgument
 from collective.methods.request_data_getters import angular_parameters
-from core.support import support_agents_notifier
+from core.support import SupportApp
 from core.support.models import Tickets, Messages
 
 
@@ -284,7 +284,7 @@ class Support(object):
             # sending notification to the support about new ticket.
             # separate method is used to have possibility to implement
             # notifications balancing between support agents
-            support_agents_notifier.send_notification(ticket, message, request.user.full_name())
+            SupportApp.agents_notifier.send_notification(ticket, message, request.user.full_name())
 
             return self.Post.ok()
 
