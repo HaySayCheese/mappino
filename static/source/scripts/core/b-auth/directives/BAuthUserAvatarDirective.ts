@@ -16,7 +16,11 @@ namespace Mappino.Core.BAuth {
                         </div>`,
             
 
-            link: (scope, element, attrs) => {  },
+            link: (scope, element, attrs) => {
+                var $element = angular.element(element);
+
+                $element.addClass('b-auth-user-avatar');
+            },
 
             controller: ['$scope', ($scope) => {
                 $scope.user = bAuthService.user;

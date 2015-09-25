@@ -42,9 +42,7 @@
                         <md-divider></md-divider>
 
                         <md-list-item ng-click="supportCtrl.goToTicket(ticket.id)" class="md-2-line" ng-repeat="ticket in tickets | orderBy: 'created': true">
-                            <img class="md-avatar" ng-src="[[ userData.account.avatar_url ]]" alt="" ng-if="userData.account.avatar_url"
-                                 on-error-src="{{ static }}build/images/common/no-user.png" />
-                            <img class="md-avatar" src="{{ static }}build/images/common/no-user.png" ng-hide="userData.account.avatar_url" alt="" />
+                            <b-auth-user-avatar class="b-auth-user-avatar--mini md-avatar"></b-auth-user-avatar>
 
                             <div class="md-list-item-text">
                                 <h3 class="truncate" ng-show="ticket.subject">

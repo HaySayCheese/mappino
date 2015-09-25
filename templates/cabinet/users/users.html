@@ -56,10 +56,7 @@
 
     <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav" ng-cloak>
         <header layout="column" layout-align="center center">
-            <div layout="row">
-                <img ng-src="[[ userData.account.avatar_url ]]" ng-show="userData.account.avatar_url" on-error-src="{{ static }}build/images/common/no-user.png" />
-                <img src="{{ static }}build/images/common/no-user.png" ng-hide="userData.account.avatar_url" />
-            </div>
+            <b-auth-user-avatar class="b-auth-user-avatar--large"></b-auth-user-avatar>
             <div class="md-padding md-title white-text" layout="row" ng-show="userData.account.first_name && userData.account.last_name">
                 [[ userData.account.full_name ]]
             </div>

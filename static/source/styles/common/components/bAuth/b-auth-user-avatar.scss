@@ -1,31 +1,29 @@
-b-auth-user-avatar {
+.b-auth-user-avatar {
     border-radius: 50%;
 
     img {
         border-radius: 50%;
     }
 
-
-    &.-mini img {
+    &--toolbar img {
         @include square(35px);
+        margin-top: 10px;
+        margin-right: 10px;
     }
 
-    &.-small img {
+    &--mini img {
+        @include square(40px);
+    }
+
+    &--small img {
+        @include square(60px);
+    }
+
+    &--medium img {
         @include square(100px);
     }
 
-    &.-medium img {
-        @include square(140px);
-    }
-
-    &.-large img {
-        @include square(180px);
-    }
-
-
-
-    &.-toolbar.-mini {
-        margin-top: 10px;
-        margin-right: 10px;
+    &--large img {
+        @include square(160px);
     }
 }

@@ -73,8 +73,6 @@ namespace Mappino.Core.BAuth {
                     this.createFullAddMobilePhone();
                     break;
             }
-
-            console.log(this._fields)
         }
 
 

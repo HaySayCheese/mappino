@@ -9,7 +9,7 @@ namespace Mappino.Core.BAuth {
             restrict: 'E',
             scope: {},
             template: `<div layout="row" layour-align="center center">
-                            <b-auth-user-avatar class="-mini -toolbar"></b-auth-user-avatar>
+                            <b-auth-user-avatar class="b-auth-user-avatar--toolbar"></b-auth-user-avatar>
 
                             <span ng-show="user.full_name" ng-cloak>[[ user.full_name ]]</span>
                             <span ng-hide="user.full_name">Настройки</span>

@@ -9,7 +9,7 @@
   "devDependencies": {
     "del": "*",
     "gulp": "*",
-    "gulp-imagemin": "^2.3.0",
+    "gulp-imagemin": "*",
     "gulp-minify-css": "*",
     "gulp-rename": "*",
     "gulp-sass": "*",
@@ -17,9 +17,9 @@
     "gulp-typescript": "*",
     "gulp-uglify": "*",
     "gulp-watch": "*",
-    "imagemin-pngquant": "^4.2.0",
-    "node-sass": "^3.3.3",
+    "imagemin-pngquant": "*",
+    "node-sass": "*",
     "run-sequence": "*",
-    "tsd": "^0.6.4"
+    "tsd": "*"
   }
 }
