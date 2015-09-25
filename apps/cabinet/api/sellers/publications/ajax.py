@@ -641,10 +641,15 @@ class DailyRent(object):
         class PostResponses(object):
             @staticmethod
             @json_response
-            def ok():
+            def ok(reservation):
                 return {
                     'code': 0,
                     'message': 'OK',
+                    'data': {
+                        'reservation': {
+                            'id': reservation.id
+                        }
+                    }
                 }
 
 
@@ -844,14 +849,14 @@ class DailyRent(object):
 
 
             try:
-                daily_rent_reservations_model.objects.make_reservation(
+                reservation = daily_rent_reservations_model.objects.make_reservation(
                     publication, date_enter, date_leave, params.get('client_name'))
 
             except LivingDailyRentModel.AlreadyBooked:
                 return cls.PostResponses.already_booked()
 
 
-            return cls.PostResponses.ok()
+            return cls.PostResponses.ok(reservation)
 
 
         @classmethod
