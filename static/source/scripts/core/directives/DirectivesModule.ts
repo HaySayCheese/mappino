@@ -1,8 +1,11 @@
-/// <reference path='_all.ts' />
-
-
 namespace Mappino.Core.Directives {
-    var core: ng.IModule = angular.module('Mappino.Core.Directives', []);
+
+    import IModule = angular.IModule;
+
+    "use strict";
+
+
+    var core: IModule = angular.module('Mappino.Core.Directives', []);
 
     core.directive('includeReplace', includeReplace);
     core.directive('onlyNumber', onlyNumber);

@@ -1,7 +1,10 @@
 namespace Mappino.Map {
+
+    import IModule = angular.IModule;
+
     'use strict';
 
-    var app: ng.IModule = angular.module('mappino.map', [
+    var app: IModule = angular.module('mappino.map', [
         'ngAnimate',
         'ngMaterial',
         'ngCookies',

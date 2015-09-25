@@ -1,6 +1,11 @@
 namespace Mappino.Core.Directives {
 
-    export function includeReplace(): ng.IDirective {
+    import IDirective = angular.IDirective;
+
+    "use strict";
+
+
+    export function includeReplace(): IDirective {
         return {
             require: 'ngInclude',
             restrict: 'A',

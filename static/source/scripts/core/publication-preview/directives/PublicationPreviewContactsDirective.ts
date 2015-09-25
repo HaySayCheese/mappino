@@ -1,5 +1,11 @@
 namespace Mappino.Core.PublicationPreview {
-    export function PublicationPreviewContactsDirective(): ng.IDirective {
+
+    import IDirective = angular.IDirective;
+
+    "use strict";
+
+
+    export function PublicationPreviewContactsDirective(): IDirective {
         return {
             restrict: 'E',
             templateUrl: '/ajax/template/common/publication-preview/contacts/',

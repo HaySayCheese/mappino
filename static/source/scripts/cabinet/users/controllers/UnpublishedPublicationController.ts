@@ -87,11 +87,9 @@ namespace Mappino.Cabinet.Users {
                     inputElement    = angular.element("textarea.ng-invalid, input.ng-invalid")[0];
 
                 if (checkboxElement) {
-                    //noinspection TypeScriptUnresolvedFunction
-                    checkboxElement.parentNode.scrollIntoView(true);
+                    checkboxElement.scrollIntoView(true);
                 } else {
-                    //noinspection TypeScriptUnresolvedFunction
-                    inputElement.parentNode.scrollIntoView(true);
+                    inputElement.scrollIntoView(true);
                     inputElement.focus();
                 }
             } else if (!this.$scope.publication.photos || !this.$scope.publication.photos.length) {

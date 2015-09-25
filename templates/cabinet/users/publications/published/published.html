@@ -13,14 +13,14 @@
 
                 <form novalidate class="md-padding" name="reservationDetails" layout="column" ng-show="showRentDetails">
                     <div layout="row" layout-align="center center">
-                        <div flex-gt-md="60">
+                        <div flex-gt-md="70">
                             <md-datepicker name="dateEnter" ng-model="reservation.dateEnter" md-placeholder="Дата от" required></md-datepicker>
                             <span flex></span>
                             <md-datepicker name="dateLeave" ng-model="reservation.dateLeave" md-placeholder="Дата до" required></md-datepicker>
                         </div>
                     </div>
                     <div layout="row" layout-align="center center">
-                        <md-input-container flex-gt-md="60">
+                        <md-input-container flex-gt-md="70">
                             <label>Имя клиента</label>
                             <input name="clientName" type="text" ng-model="reservation.clientName">
                             <div ng-messages="reservationDetails.dateEnter.$error"

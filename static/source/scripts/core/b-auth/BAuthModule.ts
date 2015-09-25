@@ -1,7 +1,8 @@
 namespace Mappino.Core.BAuth {
-    'use strict';
 
     import IModule = angular.IModule;
+
+    'use strict';
 
 
     var bAuth: IModule = angular.module('Mappino.Core.BAuth', [

@@ -1,9 +1,11 @@
 /// <reference path='_all.ts' />
 
 namespace Mappino.Cabinet.Users {
+    import IModule = angular.IModule;
+
     'use strict';
 
-    var app: ng.IModule = angular.module('mappino.cabinet.users', [
+    var app: IModule = angular.module('mappino.cabinet.users', [
         'ngAnimate',
         'ngMaterial',
         'ngCookies',

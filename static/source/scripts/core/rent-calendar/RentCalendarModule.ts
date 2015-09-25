@@ -9,5 +9,5 @@ namespace Mappino.Core.RentCalendar {
 
     rentCalendar.service('RentCalendarService', RentCalendarService);
     rentCalendar.controller('rentCalendarController', RentCalendarController);
-    rentCalendar.directive('rentCalendarView', RentCalendarViewDirective);
+    rentCalendar.directive('rentCalendar', RentCalendarDirective);
 }

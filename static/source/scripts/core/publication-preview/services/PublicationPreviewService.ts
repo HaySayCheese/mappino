@@ -1,4 +1,12 @@
 namespace Mappino.Core.PublicationPreview {
+
+    import IHttpService = angular.IHttpService;
+    import IStateService = angular.ui.IStateService;
+    import IHttpPromise = angular.IHttpPromise;
+
+    "use strict";
+
+
     export class PublicationPreviewService {
         private _publication: any;
 
@@ -15,8 +23,8 @@ namespace Mappino.Core.PublicationPreview {
         ];
 
         constructor(
-            private $http: ng.IHttpService,
-            private $state: ng.ui.IStateService,
+            private $http: IHttpService,
+            private $state: IStateService,
             private $mdToast: any,
             private TXT: any) {
             // ---------------------------------------------------------------------------------------------------------
@@ -25,8 +33,8 @@ namespace Mappino.Core.PublicationPreview {
         }
 
 
-        public loadPublicationData(publicationIds: any): ng.IHttpPromise<any>  {
-            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/detailed/publication/${publicationIds.tid}:${publicationIds.hid}/`);
+        public loadPublicationData(publicationIds: any): IHttpPromise<any>  {
+            var promise: IHttpPromise<any> = this.$http.get(`/ajax/api/detailed/publication/${publicationIds.tid}:${publicationIds.hid}/`);
 
             promise.success(response => {
                 this._publication = response.data;
@@ -46,8 +54,8 @@ namespace Mappino.Core.PublicationPreview {
 
 
 
-        public loadPublicationContacts(publicationIds: any): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/detailed/publication/${publicationIds.tid}:${publicationIds.hid}/contacts/`);
+        public loadPublicationContacts(publicationIds: any): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.get(`/ajax/api/detailed/publication/${publicationIds.tid}:${publicationIds.hid}/contacts/`);
 
             promise.success(response => {
                 this._publication.contacts = response.data;
@@ -67,8 +75,8 @@ namespace Mappino.Core.PublicationPreview {
 
 
 
-        public sendMessage(message: Object, publicationIds: any): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/notifications/send-message/${publicationIds.tid}:${publicationIds.hid}/`, {
+        public sendMessage(message: Object, publicationIds: any): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.post(`/ajax/api/notifications/send-message/${publicationIds.tid}:${publicationIds.hid}/`, {
                 'name':     message['userName'],
                 'email':    message['email'],
                 'message':  message['text']
@@ -90,8 +98,8 @@ namespace Mappino.Core.PublicationPreview {
 
 
 
-        public sendCallRequest(callRequest: Object, publicationIds: any): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/notifications/send-call-request/${publicationIds.tid}:${publicationIds.hid}/`, {
+        public sendCallRequest(callRequest: Object, publicationIds: any): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.post(`/ajax/api/notifications/send-call-request/${publicationIds.tid}:${publicationIds.hid}/`, {
                 'name': callRequest['userName'],
                 'phone_number': callRequest['phoneNumber']
             });
@@ -112,8 +120,8 @@ namespace Mappino.Core.PublicationPreview {
 
 
 
-        public sendClaim(claim: Object, publicationIds: any): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/publications/${publicationIds.tid}:${publicationIds.hid}/claims/`, {
+        public sendClaim(claim: Object, publicationIds: any): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.post(`/ajax/api/publications/${publicationIds.tid}:${publicationIds.hid}/claims/`, {
                 'email':        claim['email'],
                 'reason_sid':   claim['reason_sid'],
                 'message':      claim['another_reason']

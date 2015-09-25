@@ -6,7 +6,7 @@
                       event-selected="onEventSelected(event)">
             </calendar>
         </div>
-        <div layout="row" layout-align="start center" layout-fill layout-padding ng-repeat="event in eventSource">
+        <div layout="row" layout-align="start center" layout-fill layout-padding ng-repeat="event in eventSource.reservations">
             <span>[[ event.startTime | date:'dd.MM.yyyy' ]]&nbsp;-&nbsp;</span>
             <span>[[ event.endTime | date:'dd.MM.yyyy' ]]</span>
             <span flex="1"></span>
