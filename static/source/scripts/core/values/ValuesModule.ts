@@ -1,8 +1,11 @@
-/// <reference path='_all.ts' />
-
-
 namespace Mappino.Core.Values {
-    var values: ng.IModule = angular.module('Mappino.Core.Values', []);
+
+    import IModule = angular.IModule;
+
+    "use strict";
+
+
+    var values: IModule = angular.module('Mappino.Core.Values', []);
 
     values.value('TXT', {
         'DIALOGS':  DialogsValues.Default,

@@ -1,11 +1,17 @@
 namespace Mappino.Core.Directives {
 
-    export function onlyNumber(): ng.IDirective {
+    import IDirective = angular.IDirective;
+    import INgModelController = angular.INgModelController;
+
+    "use strict";
+
+
+    export function onlyNumber(): IDirective {
         return {
             restrict:'A',
             require: 'ngModel',
 
-            link: function(scope, element: JQuery, attrs, modelCtrl) {
+            link: function(scope, element: JQuery, attrs, modelCtrl: INgModelController) {
                 modelCtrl.$parsers.push(function (inputValue) {
                     // this next if is necessary for when using ng-required on your input.
                     // In such cases, when a letter is typed first, this parser will be called

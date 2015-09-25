@@ -29,16 +29,10 @@ namespace Mappino.Cabinet.Moderators {
             $rootScope.loaders.overlay = true;
             bAuthService.loadProfile()
                 .success(response => {
-                    $scope.profile.account      = response.data.account;
-                    $scope.profile.preferences  = response.data.preferences;
-
                     this.initInputsChange();
-
                     $rootScope.loaders.overlay = false;
                 })
-                .error(response => {
-
-                });
+                .error(response => { /* error */ });
         }
 
 
@@ -51,16 +45,13 @@ namespace Mappino.Cabinet.Moderators {
             this.bAuthService.uploadAvatar(avatar)
                 .success(response => {
                     this.$rootScope.loaders.avatar = false;
-                    this.$scope.profile.account.avatar_url = this.bAuthService.user.account.avatar_url;
 
                     this.$scope.imageFatal      = response.code === 1;
                     this.$scope.imageTooLarge   = response.code === 2;
                     this.$scope.ImageTooSmall   = response.code === 3;
                     this.$scope.ImageUndefined  = response.code === 4;
                 })
-                .error(response => {
-
-                });
+                .error(response => { /* error */ });
         }
 
 
@@ -71,11 +62,8 @@ namespace Mappino.Cabinet.Moderators {
             this.bAuthService.removeAvatar()
                 .success(response => {
                     this.$rootScope.loaders.avatar = false;
-                    this.$scope.profile.account.avatar_url = null;
                 })
-                .error(response => {
-
-                })
+                .error(response => { /* error */ })
         }
 
 
@@ -85,33 +73,33 @@ namespace Mappino.Cabinet.Moderators {
                 ".settings-page input[type='tel'], " +
                 ".settings-page input[type='email']").bind("focusout", (e) => {
                 // -----------------------------------------------------------------------------------------------------
-                var name  = e.currentTarget['name'],
-                    value = e.currentTarget['value'].replace(/\s+/g, " ");
+                var fieldName  = e.currentTarget['name'],
+                    fieldValue = e.currentTarget['value'].replace(/\s+/g, " ");
 
-                if (!this.$scope.userProfileForm[name].$dirty)
+                if (!this.$scope.userProfileForm[fieldName].$dirty || this.$scope.userProfileForm[fieldName].$invalid)
                     return;
 
-                if (name == 'mobile_phone' || name == 'mobile_code') {
-                    value = this.$scope.profile.account.mobile_code + this.$scope.profile.account.mobile_phone;
+                if (fieldName == 'mobile_phone' || fieldName == 'mobile_code') {
+                    fieldValue = this.$scope.profile.mobile_code + this.$scope.profile.mobile_phone;
                 }
 
-                if (name == 'add_mobile_phone' || name == 'add_mobile_code') {
-                    value = this.$scope.profile.account.add_mobile_code + this.$scope.profile.account.add_mobile_phone;
+                if (fieldName == 'add_mobile_phone' || fieldName == 'add_mobile_code') {
+                    fieldValue = this.$scope.profile.add_mobile_code + this.$scope.profile.add_mobile_phone;
                 }
 
-                this.bAuthService.updateProfileField({ [name]: value })
+                this.bAuthService.updateProfileField(fieldName, fieldValue)
                     .success(response => {
-                        if (response.code == 0) {
-                            if (response.data.value) {
-                                e.currentTarget['value'] = response.data.value;
-                            }
-                            this.$scope.userProfileForm[name].$setValidity("invalid",    true);
-                            this.$scope.userProfileForm[name].$setValidity("duplicated", true);
-                        } else {
-                            this.$scope.userProfileForm[name].$setValidity("invalid",       response.code !== 2);
-                            this.$scope.userProfileForm[name].$setValidity("duplicated",    response.code !== 3);
+                    if (response.code == 0) {
+                        if (response.data.value) {
+                            e.currentTarget['value'] = response.data.value;
                         }
-                    })
+                        this.$scope.userProfileForm[fieldName].$setValidity("invalid",    true);
+                        this.$scope.userProfileForm[fieldName].$setValidity("duplicated", true);
+                    } else {
+                        this.$scope.userProfileForm[fieldName].$setValidity("invalid",       response.code !== 2);
+                        this.$scope.userProfileForm[fieldName].$setValidity("duplicated",    response.code !== 3);
+                    }
+                })
                     .error(response => {});
             });
         }

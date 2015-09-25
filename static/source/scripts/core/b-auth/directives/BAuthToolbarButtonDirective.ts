@@ -1,7 +1,9 @@
 namespace Mappino.Core.BAuth {
-    'use strict';
 
     import IDirective = angular.IDirective;
+
+    'use strict';
+
 
     export function BAuthToolbarButtonDirective(bAuthService: BAuthService): IDirective {
 

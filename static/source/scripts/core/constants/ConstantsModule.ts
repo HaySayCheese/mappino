@@ -1,8 +1,11 @@
-/// <reference path='_all.ts' />
-
-
 namespace Mappino.Core.Constants {
-    var constants: ng.IModule = angular.module('Mappino.Core.Constants', []);
+
+    import IModule = angular.IModule;
+
+    "use strict";
+
+
+    var constants: IModule = angular.module('Mappino.Core.Constants', []);
 
     constants.constant('MAP', {
         'STYLES':  MapStylesConstant.Default,

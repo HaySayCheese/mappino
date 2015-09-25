@@ -1,6 +1,14 @@
+/// <reference path='../../../map/controllers/PublicationFullSliderController.ts' />
+
 
 namespace Mappino.Core.PublicationPreview {
+
+    import ITimeoutService = angular.ITimeoutService;
+    import IStateService = angular.ui.IStateService;
+    import PublicationFullSliderController = Mappino.Map.PublicationFullSliderController;
+
     'use strict';
+
 
     export class PublicationPreviewController {
 
@@ -20,8 +28,8 @@ namespace Mappino.Core.PublicationPreview {
 
         constructor(private $scope,
                 private $rootScope,
-                private $state: ng.ui.IStateService,
-                private $timeout: ng.ITimeoutService,
+                private $state: IStateService,
+                private $timeout: ITimeoutService,
                 private $mdDialog: any,
                 private publicationPreviewService: PublicationPreviewService) {
             // ---------------------------------------------------------------------------------------------------------
@@ -223,7 +231,7 @@ namespace Mappino.Core.PublicationPreview {
 
         public openFullScreen($event) {
             this.$mdDialog.show({
-                controller: Mappino.Map.PublicationFullSliderController,
+                controller: PublicationFullSliderController,
                 controllerAs: 'pubFullSliderCtrl',
                 templateUrl: '/ajax/template/common/full-screen-slider/body/',
                 parent: angular.element(document.body),

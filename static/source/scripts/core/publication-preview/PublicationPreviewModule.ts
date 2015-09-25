@@ -1,5 +1,11 @@
 namespace Mappino.Core.PublicationPreview {
-    var publicationPreviewModule: ng.IModule = angular.module('Mappino.Core.PublicationPreview', [
+
+    import IModule = angular.IModule;
+
+    "use strict";
+
+
+    var publicationPreviewModule: IModule = angular.module('Mappino.Core.PublicationPreview', [
         'ngMaterial'
     ]);
 

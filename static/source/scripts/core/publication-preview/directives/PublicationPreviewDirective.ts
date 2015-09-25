@@ -1,5 +1,11 @@
 namespace Mappino.Core.PublicationPreview {
-    export function PublicationPreviewDirective(): ng.IDirective {
+
+    import IDirective = angular.IDirective;
+
+    "use strict";
+
+
+    export function PublicationPreviewDirective(): IDirective {
         return {
             restrict: 'E',
             controller: PublicationPreviewController,

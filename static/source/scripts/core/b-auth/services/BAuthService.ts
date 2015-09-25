@@ -1,5 +1,4 @@
 namespace Mappino.Core.BAuth {
-    'use strict';
 
     import IHttpService     = angular.IHttpService;
     import IHttpPromise     = angular.IHttpPromise;
@@ -7,7 +6,9 @@ namespace Mappino.Core.BAuth {
     import IUploadService   = angular.angularFileUpload.IUploadService;
     import IUploadPromise   = angular.angularFileUpload.IUploadPromise;
 
-    
+    'use strict';
+
+
     export class BAuthService {
         private _user: User;
 
