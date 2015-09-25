@@ -624,9 +624,7 @@ class LivingRentTermsModel(AbstractModel):
         terms = u''
         if self.period_sid == LIVING_RENT_PERIODS.daily():
             terms += u', посуточно'
-        elif self.period_sid == LIVING_RENT_PERIODS.monthly():
-            terms += u', помесячно'
-        elif self.period_sid == LIVING_RENT_PERIODS.long_period():
+        else:
             terms += u', долгосрочная аренда'
 
         if self.persons_count:
@@ -851,11 +849,7 @@ class CommercialRentTermsModel(AbstractModel):
 
     #-- output
     def print_terms(self):
-        terms = u''
-        if self.period_sid == COMMERCIAL_RENT_PERIODS.monthly():
-            terms += u', помесячно'
-        elif self.period_sid == COMMERCIAL_RENT_PERIODS.long_period():
-            terms += u', долгосрочная аренда'
+        terms = u', долгосрочная аренда'
 
         if self.add_terms:
             terms += u'. ' + self.add_terms
