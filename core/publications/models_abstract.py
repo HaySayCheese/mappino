@@ -750,7 +750,10 @@ class LivingDailyRentModel(AbstractModel):
 
         def cancel_reservation(self, publication, reservation_id):
             with transaction.atomic():
-                reservation = self.filter(id=reservation_id, publication=publication)[:1][0]
+                try:
+                    reservation = self.filter(id=reservation_id, publication=publication)[:1][0]
+                except IndentationError:
+                    raise ObjectDoesNotExist()
 
                 date_enter = reservation.date_enter
                 date_leave = reservation.date_leave
