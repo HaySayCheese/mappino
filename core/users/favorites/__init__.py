@@ -2,5 +2,5 @@
 from django.apps.config import AppConfig
 
 
-class Favorites(AppConfig):
+class FavoritesApp(AppConfig):
     name = 'core.users.favorites'

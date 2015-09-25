@@ -4,7 +4,7 @@ from django.apps import AppConfig
 from core.publications.slots import SlotsInitializer
 
 
-class Publications(AppConfig):
+class PublicationsApp(AppConfig):
     name = 'core.publications'
 
 

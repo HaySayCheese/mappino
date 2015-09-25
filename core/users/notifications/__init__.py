@@ -3,7 +3,7 @@ from django.apps.config import AppConfig
 from core.users.notifications.slots import SlotsInitializer
 
 
-class Notifications(AppConfig):
+class NotificationsApp(AppConfig):
     name = 'core.users.notifications'
 
 

@@ -4,7 +4,7 @@ from django.apps.config import AppConfig
 from core.markers_index.slots import SlotsInitializer
 
 
-class MarkersIndex(AppConfig):
+class MarkersIndexApp(AppConfig):
     name = 'core.markers_index'
 
 

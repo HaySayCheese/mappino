@@ -2,5 +2,5 @@
 from django.apps import AppConfig
 
 
-class Managers(AppConfig):
+class ManagersApp(AppConfig):
     name = 'core.managing.managers'

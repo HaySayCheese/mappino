@@ -131,19 +131,19 @@ INSTALLED_APPS = (
     'core.cache',
     'core.currencies',
 
-    'core.publications',
+    'core.publications.PublicationsApp',
 
-    'core.users',
-    'core.users.favorites.Favorites',
-    'core.users.notifications.Notifications',
+    'core.users.UsersApp',
+    'core.users.favorites.FavoritesApp',
+    'core.users.notifications.NotificationsApp',
 
-    'core.support',
+    'core.support.SupportApp',
 
-    'core.managing.ban',
-    'core.managing.managers',
-    'core.managing.moderators',
+    'core.managing.ban.BanApp',
+    'core.managing.managers.ManagersApp',
+    'core.managing.moderators.ModeratorsApp',
 
-    'core.markers_index.MarkersIndex',
+    'core.markers_index.MarkersIndexApp',
     # 'core.escaped_fragments_manager',
 
     'core',

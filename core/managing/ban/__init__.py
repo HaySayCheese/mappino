@@ -2,6 +2,6 @@
 from django.apps import AppConfig
 
 
-class Ban(AppConfig):
+class BanApp(AppConfig):
     name = 'core.managing.ban'
 

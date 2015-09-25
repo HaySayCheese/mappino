@@ -4,7 +4,7 @@ from django.apps import AppConfig
 from core.managing.moderators.slots import SlotsInitializer
 
 
-class Moderators(AppConfig):
+class ModeratorsApp(AppConfig):
     name = 'core.managing.moderators'
 
 
