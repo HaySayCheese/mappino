@@ -70,6 +70,7 @@ djorm-pgarray               # custom array field for indexes tables
                             #(was added to the project before django 1.8)
 
 pytz                        # proper time zones for the python
+python-dateutil
 django-appconf
 
 

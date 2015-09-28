@@ -1,5 +1,7 @@
 # coding=utf-8
 import datetime
+import dateutil.parser
+import pytz
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import Q
@@ -323,8 +325,30 @@ class AbstractIndexWithDailyRent(AbstractBaseIndex):
         abstract = True
 
 
+    @classmethod  # range
+    def apply_daily_rent_dates_filter(cls, filters, markers):
+        date_enter = filters.get('r_d_min')
+        date_leave = filters.get('r_d_max')
+
+        if not date_enter or not date_leave:
+            # dates range can't be build
+            return markers
+
+        # the input dates should be converted to utc for prefer processing requests from various timezones
+        date_enter = dateutil.parser.parse(date_enter).replace(hour=12).astimezone(pytz.utc)
+        date_leave = dateutil.parser.parse(date_leave).replace(hour=12).astimezone(pytz.utc)
+
+        dates_should_be_free = cls.generate_optimized_integer_dates_range(date_enter, date_leave)
+        dates_should_be_free = "'" + str(dates_should_be_free).replace('[', '{').replace(']', '}') + "'"
+        markers = markers.exclude(days_booked__contains=dates_should_be_free)
+
+        return markers
+
+
     def reload_booked_days(self):
         assert self.tid is not None
+
+
         reservations_model = DAILY_RENT_RESERVATIONS_MODELS[self.tid]
 
 
@@ -334,17 +358,29 @@ class AbstractIndexWithDailyRent(AbstractBaseIndex):
         days_booked = []
 
         for period in reservations_model.objects.reserved_periods(self.publication_id):
-            current_date = period.date_enter
-            while current_date < period.date_leave:
-                date_str = '{yyyy:04d}{mm:02d}{dd:02d}'\
-                    .format(yyyy=current_date.year, mm=current_date.month, dd=current_date.day)
-
-                days_booked.append(int(date_str))
-                current_date += datetime.timedelta(days=1)
-
+            days_booked.extend(self.generate_optimized_integer_dates_range(period.date_from, period.date_to))
 
         self.days_booked = list(set(days_booked))
         self.save()
+
+
+    @staticmethod
+    def generate_optimized_integer_dates_range(datetime_from, datetime_to):
+        assert datetime_from.tzinfo == pytz.utc
+        assert datetime_to.tzinfo == pytz.utc
+
+
+        dates = []
+
+        current_dt = datetime_from
+        while current_dt < datetime_to:
+            date_str = '{yyyy:04d}{mm:02d}{dd:02d}'\
+                .format(yyyy=current_dt.year, mm=current_dt.month, dd=current_dt.day)
+
+            dates.append(int(date_str))
+            current_dt += datetime.timedelta(days=1)
+
+        return dates
 
 
 class AbstractTradesIndex(AbstractBaseIndex):
