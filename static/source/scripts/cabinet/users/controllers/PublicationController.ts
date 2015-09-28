@@ -27,14 +27,16 @@ namespace Mappino.Cabinet.Users {
                     private MAP: any,
                     private publicationsService: PublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
-            $rootScope.pageTitle = 'Редактирование объявления';
 
             this.publicationIds.tid = $state.params['publication_id'].split(':')[0];
             this.publicationIds.hid = $state.params['publication_id'].split(':')[1];
 
             if ($state.is('publication_view')) {
+                $rootScope.pageTitle = 'Просмотр объявления';
                 $scope.publicationTemplateUrl = '/ajax/template/cabinet/publications/published/';
             } else {
+                $rootScope.pageTitle = 'Редактирование объявления';
+
                 $scope.publicationTemplateUrl = '/ajax/template/cabinet/publications/unpublished/' + this.publicationIds.tid + '/';
             }
 
