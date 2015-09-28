@@ -29,6 +29,8 @@ namespace Mappino.Core.RentCalendar {
 
 
         public loadReservationsData(publicationIds: any): IHttpPromise<any>  {
+            this._reservations = [];
+
             var promise: IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/daily-rent-reservations/`);
 
             promise.success(response => {
@@ -70,7 +72,6 @@ namespace Mappino.Core.RentCalendar {
             });
 
             promise.success(response => {
-
                 if (response.code == 0) {
                     this._reservations.push({
                         title: 'зарезервировано',

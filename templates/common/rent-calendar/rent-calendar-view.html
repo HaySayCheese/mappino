@@ -6,11 +6,11 @@
 
 
     <div layout="row" layout-fill>
-        <md-list flex ng-if="showRentCalendarEvents">
+        <md-list flex ng-if="showRentCalendarEvents && reservations.length">
             <div class="md-subhead">Забронированные даты</div>
             <md-divider></md-divider>
 
-            <md-list-item class="md-2-line" layout="row" layout-align="start center" ng-repeat="reservation in reservations | orderBy: $index">
+            <md-list-item class="md-2-line" layout="row" layout-align="start center" ng-repeat="reservation in reservations">
                 <div class="md-list-item-text" layout="row" layout-align="start center">
                     <div flex>
                         <h3 class="truncate" ng-show="reservation.clientName">
