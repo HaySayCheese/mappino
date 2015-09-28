@@ -17,7 +17,7 @@ namespace Mappino.Core.Calendar {
         };
 
         private formatDay:           string  = 'dd';
-        private formatDayHeader:     string  = 'dd';
+        private formatDayHeader:     string  = 'EEE';
         private formatDayTitle:      string  = 'MMMM dd, yyyy';
         //public formatWeekTitle:     string  = 'MMMM yyyy, Week w';
         private formatMonthTitle:    string  = 'MMMM yyyy';
@@ -178,7 +178,7 @@ namespace Mappino.Core.Calendar {
                 this.$scope.labels[j] = this.$filter('date')(days[j].date, this.formatDayHeader);
             }
 
-            var headerDate = new Date(year, month, 1);
+            var headerDate: any = new Date(year, month, 1);
             this.$scope.title = this.$filter('date')(headerDate, this.formatMonthTitle);
 
             this.$scope.rows = this.split(days, 7);
@@ -384,8 +384,11 @@ namespace Mappino.Core.Calendar {
 
 
 
-        private compare(date1: any, date2: any) {
-            return (new Date(date1.getFullYear(), date1.getMonth(), date1.getDate()) - new Date(date2.getFullYear(), date2.getMonth(), date2.getDate()));
+        private compare(date1: Date, date2: Date) {
+            var firstDate: any  = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+            var secondDate: any = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+
+            return (firstDate - secondDate);
         };
 
 

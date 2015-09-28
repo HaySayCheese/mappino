@@ -14,7 +14,6 @@ namespace Mappino.Map {
                     .primaryPalette('blue');
 
 
-
                 $mdDateLocaleProvider.days = ['Понедылок', 'Вывторок', 'Середа', 'Четвер', 'Пятниця', 'Субота', 'Неділя'];
                 $mdDateLocaleProvider.shortDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
             }]);

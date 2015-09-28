@@ -1,3 +1,11 @@
+<div layout="row">
+    <md-input-container flex>
+        <label>Тип рынка</label>
+        <md-select ng-model="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_m_t_sid">
+            <md-option ng-repeat="marketType in ::TYPES.MARKET" value="[[ ::marketType.id ]]">[[ ::marketType.title ]]</md-option>
+        </md-select>
+    </md-input-container>
+</div>
 <div layout="row" ng-show="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 1
                             && filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_pr_sid == 0">
     <md-datepicker ng-model="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_r_d_min"
