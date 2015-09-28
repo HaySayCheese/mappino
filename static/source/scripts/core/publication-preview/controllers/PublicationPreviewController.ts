@@ -101,7 +101,7 @@ namespace Mappino.Core.PublicationPreview {
                         this.$scope.publication.is_favorite     = false;
                         this.$scope.loadingPublication          = false;
                         this.$scope.publicationLoadedSuccess    = true;
-                        console.log(this.$scope.publication)
+
                         this.publicationPreviewService.loadPublicationContacts(this.publicationIds)
                             .success(response => {
                                 this.$scope.publication.contacts = {};
