@@ -339,7 +339,6 @@ class AbstractIndexWithDailyRent(AbstractBaseIndex):
         date_leave = dateutil.parser.parse(date_leave).replace(hour=12).astimezone(pytz.utc)
 
         dates_should_be_free = cls.generate_optimized_integer_dates_range(date_enter, date_leave)
-        dates_should_be_free = "'" + str(dates_should_be_free).replace('[', '{').replace(']', '}') + "'"
         markers = markers.exclude(days_booked__contains=dates_should_be_free)
 
         return markers
