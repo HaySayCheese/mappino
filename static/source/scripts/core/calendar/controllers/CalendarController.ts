@@ -17,10 +17,10 @@ namespace Mappino.Core.Calendar {
         };
 
         private formatDay:           string  = 'dd';
-        private formatDayHeader:     string  = 'EEE';
+        private formatDayHeader:     string  = 'ddd';
         private formatDayTitle:      string  = 'MMMM dd, yyyy';
         //public formatWeekTitle:     string  = 'MMMM yyyy, Week w';
-        private formatMonthTitle:    string  = 'MMMM yyyy';
+        private formatMonthTitle:    string  = 'MMMM YYYY';
         //public calendarMode:        string  = 'month';
         private showWeeks:           boolean = false;
         private showEventDetail:     boolean = true;
@@ -48,7 +48,6 @@ namespace Mappino.Core.Calendar {
             };
 
             $scope.$watchCollection('eventSource', (value) => {
-                console.log(value);
                 this.onEventSourceChanged(value);
             });
 
@@ -151,7 +150,6 @@ namespace Mappino.Core.Calendar {
 
 
         private onEventSourceChanged(value) {
-            console.log(value)
             this.$scope.eventSource = value;
             if (this.onDataLoaded) {
                 this.onDataLoaded();
@@ -175,11 +173,11 @@ namespace Mappino.Core.Calendar {
 
             this.$scope.labels = new Array(7);
             for (var j = 0; j < 7; j++) {
-                this.$scope.labels[j] = this.$filter('date')(days[j].date, this.formatDayHeader);
+                this.$scope.labels[j] = moment(days[j].date).format(this.formatDayHeader);
             }
 
-            var headerDate: any = new Date(year, month, 1);
-            this.$scope.title = this.$filter('date')(headerDate, this.formatMonthTitle);
+            var headerDate: Date = new Date(year, month, 1);
+            this.$scope.title = moment(headerDate).format(this.formatMonthTitle);
 
             this.$scope.rows = this.split(days, 7);
 

@@ -41,7 +41,7 @@ namespace Mappino.Cabinet.Users {
 
 
         public createTicket($event) {
-            if (this.bAuthService.user.account.email) {
+            if (this.bAuthService.user.email) {
                 this.ticketsService.create()
                     .success(response => {
                         this.$state.go('ticket_view', { ticket_id: response.data.id });
