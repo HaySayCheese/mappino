@@ -14,14 +14,28 @@ namespace Mappino.Core.RentCalendar {
             'RentCalendarService'
         ];
 
-        constructor( private $scope,
-                     private $state,
-                     private rentCalendarService: RentCalendarService) {
+        constructor(private $scope,
+                    private $state,
+                    private rentCalendarService: RentCalendarService) {
             // ---------------------------------------------------------------------------------------------------------
             if ($state.params['publication_id'] && $state.params['publication_id'] != 0) {
                 this.publicationIds.tid = $state.params['publication_id'].split(':')[0];
                 this.publicationIds.hid = $state.params['publication_id'].split(':')[1];
+
+                rentCalendarService.loadReservationsData(this.publicationIds)
             }
+
+            $scope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
+                if (toParams['publication_id']) {
+                    if (toParams['publication_id'] != 0 && fromParams['publication_id'] != toParams['publication_id']) {
+                        this.publicationIds.tid = $state.params['publication_id'].split(':')[0];
+                        this.publicationIds.hid = $state.params['publication_id'].split(':')[1];
+
+                        rentCalendarService.loadReservationsData(this.publicationIds)
+                    }
+                }
+            });
+
 
             $scope.showRentDetails = false;
 

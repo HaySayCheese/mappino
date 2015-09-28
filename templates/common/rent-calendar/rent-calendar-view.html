@@ -5,18 +5,18 @@
     </calendar>
 
 
-    <div layout="row" layout-align="start center" layout-fill layout-padding ng-repeat="event in reservations" ng-if="showRentCalendarEvents">
-        <md-list flex>
+    <div layout="row" layout-fill>
+        <md-list flex ng-if="showRentCalendarEvents">
             <div class="md-subhead">Забронированные даты</div>
             <md-divider></md-divider>
 
             <md-list-item class="md-2-line" layout="row" layout-align="start center" ng-repeat="reservation in reservations | orderBy: $index">
                 <div class="md-list-item-text" layout="row" layout-align="start center">
                     <div flex>
-                        <h3 class="truncate" ng-show="reservation.client_name">
-                            [[ reservation.client_name ]]
+                        <h3 class="truncate" ng-show="reservation.clientName">
+                            [[ reservation.clientName ]]
                         </h3>
-                        <h3 class="grey-text text-darken-1" ng-hide="reservation.client_name">
+                        <h3 class="grey-text text-darken-1" ng-hide="reservation.clientName">
                             Имя клиента не указано
                         </h3>
                         <p>
@@ -28,28 +28,29 @@
                         <md-icon class="material-icons">delete</md-icon>
                     </md-button>
                 </div>
-
             </md-list-item>
         </md-list>
     </div>
 
 
-    <div layout="column" ng-if="showRentCalendarEvents">
+    <div layout="column" flex="100" ng-if="showRentCalendarEvents">
         <md-divider></md-divider>
         <div layout="row" layout-align="center center">
-            <md-button class="md-raised md-primary" ng-click="showRentDetails = true" ng-show="!showRentDetails">Добавить бронь</md-button>
+            <md-button class="md-raised md-primary" ng-click="showRentDetails = true" ng-show="!showRentDetails">
+                Добавить бронь
+            </md-button>
         </div>
 
-        <form novalidate class="md-padding" name="forms.reservationDetails" layout="column" ng-show="showRentDetails">
+        <form novalidate class="md-padding" name="forms.reservationDetails" layout="column" flex="70" ng-show="showRentDetails">
             <div layout="row" layout-align="center center">
-                <div layout="row" layout-align="center center" flex-gt-md="70" layout-sm="column">
+                <div layout="row" layout-align="center center" layout-sm="column">
                     <md-datepicker name="dateEnter" ng-model="reservation.dateEnter" md-placeholder="Дата от" required></md-datepicker>
                     <span flex></span>
                     <md-datepicker name="dateLeave" ng-model="reservation.dateLeave" md-placeholder="Дата до" required></md-datepicker>
                 </div>
             </div>
             <div layout="row" layout-align="center center">
-                <md-input-container flex="90">
+                <md-input-container flex>
                     <label>Имя клиента</label>
                     <input name="clientName" type="text" ng-model="reservation.clientName">
                     <div ng-messages="forms.reservationDetails.dateEnter.$error"
