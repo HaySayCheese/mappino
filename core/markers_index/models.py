@@ -1528,7 +1528,11 @@ class SegmentsIndex(models.Model):
         # Використовуєтсья спільний для обох методів (markers та estimate_count) спосіб обробки фільтрів
         # на основі django-ORM
         markers = index.apply_filters(filters, index.objects.all())
-        markers_query = str(markers.query)
+        markers_query = str(markers.query)\
+            .replace('integer[]', 'integer<>')\
+            .replace('[', '\'{')\
+            .replace(']', '}\'')\
+            .replace('integer<>', 'integer[]')
 
         # Далі, зі сформованого запиту виокремлюємо блок WHERE щоб вставити його в кастомний запит.
         # Django-ORM не дозволяє виконати запит такого типу,
