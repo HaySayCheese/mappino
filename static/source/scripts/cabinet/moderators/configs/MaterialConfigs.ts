@@ -7,10 +7,14 @@ namespace Mappino.Cabinet.Moderators {
     export class MaterialConfigs {
 
         constructor(private app: ng.IModule) {
-            app.config(['$mdThemingProvider', ($mdThemingProvider) => {
+            app.config(['$mdThemingProvider', '$mdDateLocaleProvider', ($mdThemingProvider, $mdDateLocaleProvider) => {
                 $mdThemingProvider.theme('default')
                     .primaryPalette('blue')
                     .accentPalette('deep-orange');
+
+                $mdDateLocaleProvider.formatDate = (date) => {
+                    return moment(date).format('L');
+                }
             }]);
         }
     }

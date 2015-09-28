@@ -6,7 +6,7 @@
             </md-button>
         </div>
         <div layout="column" flex layout-align="center center">
-            <strong>[[ selectedDate.label ]] [[title]]</strong>
+            <strong>[[title | uppercase ]]</strong>
         </div>
         <div layout="column">
             <md-button type="button" class="md-icon-button" ng-click="calendarCtrl.move(1)">
@@ -55,23 +55,3 @@
         </tbody>
     </table>
 </div>
-
-
-
-
-
-
-
-<!--<div ng-if="showEventDetail">-->
-<!--<div >-->
-<!--<table>-->
-<!--<tr ng-repeat="event in selectedDate.events" ng-if="selectedDate.events">-->
-<!--<td ng-if="!event.allDay">[[event.startTime|date: 'HH:mm']] - [[event.endTime|date: 'HH:mm']]-->
-<!--</td>-->
-<!--<td ng-if="event.allDay">All day</td>-->
-<!--<td class="event-detail" ng-click="eventSelected({event:event})">[[event.title]]</td>-->
-<!--</tr>-->
-<!--<tr ng-if="!selectedDate.events"><td>No Events</td></tr>-->
-<!--</table>-->
-<!--</div>-->
-<!--</div>-->

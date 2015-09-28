@@ -1,6 +1,3 @@
-/// <reference path='../_all.ts' />
-
-
 namespace Mappino.Map {
     'use strict';
 
@@ -13,9 +10,9 @@ namespace Mappino.Map {
                 $mdThemingProvider.theme('blue')
                     .primaryPalette('blue');
 
-
-                $mdDateLocaleProvider.days = ['Понедылок', 'Вывторок', 'Середа', 'Четвер', 'Пятниця', 'Субота', 'Неділя'];
-                $mdDateLocaleProvider.shortDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
+                $mdDateLocaleProvider.formatDate = (date) => {
+                    return moment(date).format('L');
+                };
             }]);
         }
     }

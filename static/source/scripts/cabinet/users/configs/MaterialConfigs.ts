@@ -1,6 +1,3 @@
-/// <reference path='../_all.ts' />
-
-
 namespace Mappino.Cabinet.Users {
 
     import IFilterService = angular.IFilterService;
@@ -18,11 +15,8 @@ namespace Mappino.Cabinet.Users {
                     .primaryPalette('blue')
                     .accentPalette('deep-orange');
 
-                $mdDateLocaleProvider.days = ['Понедылок', 'Вывторок', 'Середа', 'Четвер', 'Пятниця', 'Субота', 'Неділя'];
-                $mdDateLocaleProvider.shortDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
-
                 $mdDateLocaleProvider.formatDate = (date) => {
-                    return moment(date).format('dd/mm/yyyy');
+                    return moment(date).format('L');
                 }
             }]);
         }

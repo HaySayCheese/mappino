@@ -56,8 +56,8 @@ namespace Mappino.Map {
                 a_min:      null,   // area_min
                 a_max:      null,   // area_max
 
-                r_d_min:    null,   // rent_date_min
-                r_d_max:    null,   // rent_date_max
+                r_d_min:    new Date(),   // rent_date_min
+                r_d_max:    new Date(),   // rent_date_max
 
                 // Чекбокси
                 n_b:    true,   // new_buildings

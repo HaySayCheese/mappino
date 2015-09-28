@@ -6,14 +6,31 @@
 
 
     <div layout="row" layout-align="start center" layout-fill layout-padding ng-repeat="event in reservations" ng-if="showRentCalendarEvents">
-        <span>[[ event.startTime | date:'dd.MM.yyyy' ]]&nbsp;-&nbsp;</span>
-        <span>[[ event.endTime | date:'dd.MM.yyyy' ]]</span>
-        <span flex="1"></span>
-        <span>[[ event.client_name ]]</span>
-        <span flex></span>
-        <md-button class="md-fab md-mini md-primary" ng-click="rentCalendarCtrl.removeReservation(event.reservationId)">
-            <md-icon class="white-text">delete</md-icon>
-        </md-button>
+        <md-list flex>
+            <div class="md-subhead">Забронированные даты</div>
+            <md-divider></md-divider>
+
+            <md-list-item class="md-2-line" layout="row" layout-align="start center" ng-repeat="reservation in reservations | orderBy: $index">
+                <div class="md-list-item-text" layout="row" layout-align="start center">
+                    <div flex>
+                        <h3 class="truncate" ng-show="reservation.client_name">
+                            [[ reservation.client_name ]]
+                        </h3>
+                        <h3 class="grey-text text-darken-1" ng-hide="reservation.client_name">
+                            Имя клиента не указано
+                        </h3>
+                        <p>
+                            <span>Дата въезда: [[ reservation.startTime | date:'dd.MM.yyyy' ]]</span>
+                            <span>Дата выезда: [[ reservation.endTime | date:'dd.MM.yyyy' ]]</span>
+                        </p>
+                    </div>
+                    <md-button class="md-icon-button md-primary" ng-click="rentCalendarCtrl.removeReservation(event.reservationId)">
+                        <md-icon class="material-icons">delete</md-icon>
+                    </md-button>
+                </div>
+
+            </md-list-item>
+        </md-list>
     </div>
 
 
