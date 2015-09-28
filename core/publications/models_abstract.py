@@ -1,5 +1,6 @@
 #coding=utf-8
 import datetime
+import pytz
 import redis_lock
 
 from django.db.utils import DatabaseError
@@ -727,6 +728,9 @@ class LivingDailyRentModel(AbstractModel):
             :return:
                 record with newly added reservation.
             """
+            assert date_enter.tzinfo == pytz.utc
+            assert date_leave.tzinfo == pytz.utc
+
 
             if self.intersects_with_existing(publication, date_enter, date_leave):
                 raise LivingDailyRentModel.AlreadyBooked(
@@ -772,10 +776,13 @@ class LivingDailyRentModel(AbstractModel):
 
                 if False - the last day will be considered.
             """
+            assert date_enter.tzinfo == pytz.utc
+            assert date_leave.tzinfo == pytz.utc
+
 
             reserved_periods = self.filter(publication=publication).values_list('date_enter', 'date_leave')
             for reserved_date_enter, reserved_date_leave in reserved_periods:
-                if date_enter >= reserved_date_enter or date_leave < reserved_date_leave:
+                if date_enter >= reserved_date_enter and date_leave < reserved_date_leave:
                     return True
 
             return False
