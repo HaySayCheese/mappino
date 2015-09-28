@@ -13,10 +13,10 @@
             <md-list-item class="md-2-line" layout="row" layout-align="start center" ng-repeat="reservation in reservations | orderBy: $index">
                 <div class="md-list-item-text" layout="row" layout-align="start center">
                     <div flex>
-                        <h3 class="truncate" ng-show="reservation.client_name">
-                            [[ reservation.client_name ]]
+                        <h3 class="truncate" ng-show="reservation.clientName">
+                            [[ reservation.clientName ]]
                         </h3>
-                        <h3 class="grey-text text-darken-1" ng-hide="reservation.client_name">
+                        <h3 class="grey-text text-darken-1" ng-hide="reservation.clientName">
                             Имя клиента не указано
                         </h3>
                         <p>
