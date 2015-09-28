@@ -1,6 +1,11 @@
 <div layout="column" ng-show="publicationLoadedSuccess && !loadingPublication">
     <publication-preview-header></publication-preview-header>
     <publication-preview-body></publication-preview-body>
+    <div ng-show="publication.daily_rent && !hiddenControls['rent-calendar']" class="md-padding">
+        <div class="md-subhead blue-text">Календарь бронирований</div>
+        <md-divider></md-divider>
+        <rent-calendar-view></rent-calendar-view>
+    </div>
     <publication-preview-contacts></publication-preview-contacts>
 </div>
 
