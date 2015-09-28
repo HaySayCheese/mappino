@@ -55,6 +55,7 @@
                     <section class="-closable">
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
                             <md-icon>place</md-icon>
+                            <span ng-if="!filters.map.c.length">Местоположение не указано</span>
                             <span class="md-body-1 truncate">[[ filters.map.c ]]</span>
                         </header>
                         <tab-section-collapsible>

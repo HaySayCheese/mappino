@@ -13,10 +13,10 @@
             <md-list-item class="md-2-line" layout="row" layout-align="start center" ng-repeat="reservation in reservations | orderBy: $index">
                 <div class="md-list-item-text" layout="row" layout-align="start center">
                     <div flex>
-                        <h3 class="truncate" ng-show="reservation.client_name">
-                            [[ reservation.client_name ]]
+                        <h3 class="truncate" ng-show="reservation.clientName">
+                            [[ reservation.clientName ]]
                         </h3>
-                        <h3 class="grey-text text-darken-1" ng-hide="reservation.client_name">
+                        <h3 class="grey-text text-darken-1" ng-hide="reservation.clientName">
                             Имя клиента не указано
                         </h3>
                         <p>
@@ -24,7 +24,7 @@
                             <span>Дата выезда: [[ reservation.endTime | date:'dd.MM.yyyy' ]]</span>
                         </p>
                     </div>
-                    <md-button class="md-icon-button md-primary" ng-click="rentCalendarCtrl.removeReservation(event.reservationId)">
+                    <md-button class="md-icon-button md-primary" ng-click="rentCalendarCtrl.removeReservation(reservation.reservationId)">
                         <md-icon class="material-icons">delete</md-icon>
                     </md-button>
                 </div>
@@ -34,7 +34,6 @@
 
 
     <div layout="column" flex="100" ng-if="showRentCalendarEvents">
-        <md-divider></md-divider>
         <div layout="row" layout-align="center center">
             <md-button class="md-raised md-primary" ng-click="showRentDetails = true" ng-show="!showRentDetails">
                 Добавить бронь
@@ -74,6 +73,9 @@
             <div layout="row" layout-align="center center">
                 <md-button class="md-raised md-primary" ng-click="rentCalendarCtrl.reserveDailyRent()">
                     Забронировать
+                </md-button>
+                <md-button class="md-primary" ng-click="showRentDetails = false">
+                    Отмена
                 </md-button>
             </div>
         </form>
