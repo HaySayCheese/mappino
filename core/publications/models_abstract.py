@@ -707,8 +707,8 @@ class LivingDailyRentModel(AbstractModel):
     # fields
     publication = None # override, FK to real publications model
 
-    date_enter = models.DateField()
-    date_leave = models.DateField()
+    date_enter = models.DateTimeField()
+    date_leave = models.DateTimeField()
     client_name = models.TextField(null=True)
 
     class Meta:
@@ -782,7 +782,10 @@ class LivingDailyRentModel(AbstractModel):
 
             reserved_periods = self.filter(publication=publication).values_list('date_enter', 'date_leave')
             for reserved_date_enter, reserved_date_leave in reserved_periods:
-                if date_enter >= reserved_date_enter and date_leave < reserved_date_leave:
+                latest_start = max(reserved_date_enter, date_enter)
+                earliest_end = min(reserved_date_leave, date_leave)
+                days_overlap = (earliest_end - latest_start).days + 1
+                if days_overlap > 0:
                     return True
 
             return False

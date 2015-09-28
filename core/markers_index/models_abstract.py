@@ -358,7 +358,7 @@ class AbstractIndexWithDailyRent(AbstractBaseIndex):
         days_booked = []
 
         for period in reservations_model.objects.reserved_periods(self.publication_id):
-            days_booked.extend(self.generate_optimized_integer_dates_range(period.date_from, period.date_to))
+            days_booked.extend(self.generate_optimized_integer_dates_range(period.date_enter, period.date_leave))
 
         self.days_booked = list(set(days_booked))
         self.save()
