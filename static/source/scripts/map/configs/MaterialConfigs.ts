@@ -10,6 +10,15 @@ namespace Mappino.Map {
                 $mdThemingProvider.theme('blue')
                     .primaryPalette('blue');
 
+
+                $mdDateLocaleProvider.months = moment.months();
+                $mdDateLocaleProvider.shortMonths = moment.monthsShort();
+
+                $mdDateLocaleProvider.days = moment.weekdays();
+                $mdDateLocaleProvider.shortDays = moment.weekdaysShort();
+
+                $mdDateLocaleProvider.firstDayOfWeek = 1;
+
                 $mdDateLocaleProvider.formatDate = (date) => {
                     return moment(date).format('L');
                 };

@@ -21,7 +21,7 @@ namespace Mappino.Cabinet.Users {
                 $mdDateLocaleProvider.days = moment.weekdays();
                 $mdDateLocaleProvider.shortDays = moment.weekdaysShort();
 
-                $mdDateLocaleProvider.firstDayOfWeek = moment.weekdays()[1];
+                $mdDateLocaleProvider.firstDayOfWeek = 1;
 
                 $mdDateLocaleProvider.formatDate = (date) => {
                     return moment(date).format('L');
