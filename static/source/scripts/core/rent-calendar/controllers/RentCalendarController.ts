@@ -28,7 +28,6 @@ namespace Mappino.Core.RentCalendar {
             $scope.reservation = {};
             $scope.reservations = rentCalendarService.reservations;
             $scope.forms = {};
-            console.log($scope.reservations)
         }
 
 

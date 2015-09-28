@@ -15,6 +15,14 @@ namespace Mappino.Cabinet.Users {
                     .primaryPalette('blue')
                     .accentPalette('deep-orange');
 
+                $mdDateLocaleProvider.months = moment.months();
+                $mdDateLocaleProvider.shortMonths = moment.monthsShort();
+
+                $mdDateLocaleProvider.days = moment.weekdays();
+                $mdDateLocaleProvider.shortDays = moment.weekdaysShort();
+
+                $mdDateLocaleProvider.firstDayOfWeek = moment.weekdays()[1];
+
                 $mdDateLocaleProvider.formatDate = (date) => {
                     return moment(date).format('L');
                 }
