@@ -1,5 +1,3 @@
-
-
 namespace Mappino.Core.Constants {
     export class MarketTypes {
         static get Default(): any {
