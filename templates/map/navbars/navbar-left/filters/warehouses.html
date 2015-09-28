@@ -1,4 +1,4 @@
-<div layout="row">
+<div layout="row" ng-show="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 0">
     <md-input-container flex>
         <label>Тип рынка</label>
         <md-select ng-model="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_m_t_sid">
