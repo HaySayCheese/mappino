@@ -1,5 +1,7 @@
 # coding=utf-8
 import datetime
+import dateutil.parser
+import pytz
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError, SuspiciousOperation
 from django.http.response import HttpResponseBadRequest
 from pytz import timezone
@@ -658,7 +660,7 @@ class DailyRent(object):
             def invalid_tid():
                 return {
                     'code': 1,
-                    'message': 'request contains invalid tid.'
+                    'message': 'Request contains invalid tid.'
                 }
 
 
@@ -667,25 +669,25 @@ class DailyRent(object):
             def hash_id_not_found():
                 return {
                     'code': 2,
-                    'message': 'publication with exact hash id does not exists.'
+                    'message': 'Publication with exact hash id does not exists.'
                 }
 
 
             @staticmethod
             @json_response_bad_request
-            def invalid_date_enter():
+            def invalid_enter_datetime():
                 return {
                     'code': 3,
-                    'message': 'invalid enter date'
+                    'message': 'Request contains invalid enter datetime.'
                 }
 
 
             @staticmethod
             @json_response_bad_request
-            def invalid_date_leave():
+            def invalid_leave_datetime():
                 return {
                     'code': 4,
-                    'message': 'invalid leave date'
+                    'message': 'Request contains invalid leave datetime.'
                 }
 
 
@@ -694,7 +696,7 @@ class DailyRent(object):
             def already_booked():
                 return {
                     'code': 5,
-                    'message': 'Period is already booked',
+                    'message': 'Period is already booked.',
                 }
 
 
@@ -730,7 +732,7 @@ class DailyRent(object):
             def invalid_tid():
                 return {
                     'code': 1,
-                    'message': 'request contains invalid tid.'
+                    'message': 'Request contains invalid tid.'
                 }
 
 
@@ -739,7 +741,7 @@ class DailyRent(object):
             def hash_id_not_found():
                 return {
                     'code': 2,
-                    'message': 'publication with exact hash id does not exists.'
+                    'message': 'Publication with exact hash id does not exists.'
                 }
 
 
@@ -758,7 +760,7 @@ class DailyRent(object):
             def invalid_tid():
                 return {
                     'code': 1,
-                    'message': 'request contains invalid tid.'
+                    'message': 'Request contains invalid tid.'
                 }
 
 
@@ -767,7 +769,7 @@ class DailyRent(object):
             def hash_id_not_found():
                 return {
                     'code': 2,
-                    'message': 'publication with exact hash id does not exists.'
+                    'message': 'Publication with exact hash id does not exists.'
                 }
 
 
@@ -776,7 +778,7 @@ class DailyRent(object):
             def invalid_reservation_id():
                 return {
                     'code': 3,
-                    'message': 'invalid reservation id'
+                    'message': 'Invalid reservation id'
                 }
 
 
@@ -789,69 +791,61 @@ class DailyRent(object):
             try:
                 params = angular_parameters(request, ['date_enter', 'date_leave'])
             except ValueError:
-                return cls.PostResponses.invalid_date_enter()
+                return cls.PostResponses.invalid_enter_datetime()
 
 
             # Service potentially will work in several countries.
             # Each of this country may have different time zone code.
-            # But reservations must be done in ime zone of country, publication is from.
-            #
-            # Currently it is not necessary.
-            # Ukraine time zone should be used.
-            # todo: add timezone handling here
+            # But reservations must be done in time zone of the country, publication is from.
+            try:
+                datetime_enter = params['date_enter']
+                datetime_enter = dateutil.parser.parse(datetime_enter)
+                datetime_enter = datetime_enter.astimezone(pytz.utc)
+            except ValueError:
+                return cls.PostResponses.invalid_enter_datetime()
 
             try:
-                # format is 2015-09-18T09:00:00.000Z
-                date_enter = params['date_enter'][:10]
-                date_enter = datetime.datetime.strptime(date_enter, '%Y-%m-%d')
-                date_enter = date_enter.replace(tzinfo=timezone('Europe/Kiev'))
-                date_enter = date_enter.date()
+                datetime_leave = params['date_leave']
+                datetime_leave = dateutil.parser.parse(datetime_leave)
+                datetime_leave = datetime_leave.astimezone(pytz.utc)
             except ValueError:
-                return cls.PostResponses.invalid_date_enter()
+                return cls.PostResponses.invalid_leave_datetime()
 
-            try:
-                date_leave = params['date_leave'][:10]
-                date_leave = datetime.datetime.strptime(date_leave, '%Y-%m-%d')
-                date_leave = date_leave.replace(tzinfo=timezone('Europe/Kiev'))
-                date_leave = date_leave.date()
-            except ValueError:
-                return cls.PostResponses.invalid_date_leave()
 
-            if date_enter > date_leave:
+            if datetime_enter > datetime_leave:
                 return cls.PostResponses.invalid_period()
 
 
+            # publication processing
             publications_model = HEAD_MODELS.get(publication_tid)
             if not publications_model:
                 return cls.PostResponses.invalid_tid()
-
 
             try:
                 publication = publications_model.objects\
                     .filter(hash_id=publication_hash_id)\
                     .only('id', 'owner', 'rent_terms__period_sid')\
                     [:1][0]
-
-                if publication.owner != request.user:
-                    raise SuspiciousOperation()
-                
-                if not publication.rent_terms.is_daily:
-                    raise SuspiciousOperation(
-                        'Trying to add daily reservation to publication that is not published as daily rent.')
-
             except IndexError:
                 return cls.PostResponses.hash_id_not_found()
 
+            if publication.owner != request.user:
+                raise SuspiciousOperation(
+                    'Attempt to change publication by user, that is not it\'s owner.')
 
-            daily_rent_reservations_model = DAILY_RENT_RESERVATIONS_MODELS.get(publication_tid)
-            if not daily_rent_reservations_model:
+            if not publication.rent_terms.is_daily:
+                raise SuspiciousOperation(
+                    'Attempt to add daily reservation to publication that is not published as daily rent.')
+
+
+            # daily rent reservation creating
+            reservations_model = DAILY_RENT_RESERVATIONS_MODELS.get(publication_tid)
+            if not reservations_model:
                 return cls.PostResponses.invalid_tid()
 
-
             try:
-                reservation = daily_rent_reservations_model.objects.make_reservation(
-                    publication, date_enter, date_leave, params.get('client_name'))
-
+                reservation = reservations_model.objects.make_reservation(
+                    publication, datetime_enter, datetime_leave, params.get('client_name'))
             except LivingDailyRentModel.AlreadyBooked:
                 return cls.PostResponses.already_booked()
 
