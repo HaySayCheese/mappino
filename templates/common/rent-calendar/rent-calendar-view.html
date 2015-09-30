@@ -24,7 +24,7 @@
                             <span>Дата выезда: [[ reservation.endTime | date:'dd.MM.yyyy' ]]</span>
                         </p>
                     </div>
-                    <md-button class="md-icon-button md-primary" ng-click="rentCalendarCtrl.removeReservation(reservation.reservationId)">
+                    <md-button class="md-icon-button md-primary" ng-click="rentCalendarCtrl.removeReservation(event.reservationId)">
                         <md-icon class="material-icons">delete</md-icon>
                     </md-button>
                 </div>
@@ -34,6 +34,7 @@
 
 
     <div layout="column" flex="100" ng-if="showRentCalendarEvents">
+
         <div layout="row" layout-align="center center">
             <md-button class="md-raised md-primary" ng-click="showRentDetails = true" ng-show="!showRentDetails">
                 Добавить бронь
@@ -42,7 +43,7 @@
 
         <form novalidate class="md-padding" name="forms.reservationDetails" layout="column" flex="70" ng-show="showRentDetails">
             <div layout="row" layout-align="center center">
-                <div layout="row" layout-align="center center" layout-sm="column">
+                <div layout-align="center center" layout="column" layout-gt-md="row">
                     <md-datepicker name="dateEnter" ng-model="reservation.dateEnter" md-placeholder="Дата от" required></md-datepicker>
                     <span flex></span>
                     <md-datepicker name="dateLeave" ng-model="reservation.dateLeave" md-placeholder="Дата до" required></md-datepicker>

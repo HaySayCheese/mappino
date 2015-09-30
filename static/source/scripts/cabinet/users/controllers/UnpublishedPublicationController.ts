@@ -35,7 +35,6 @@ namespace Mappino.Cabinet.Users {
                     private MAP: any,
                     private publicationsService: PublicationsService) {
             // ---------------------------------------------------------------------------------------------------------
-            $rootScope.pageTitle = 'Редактирование объявления';
 
             this.publicationIds.tid = $state.params['publication_id'].split(':')[0];
             this.publicationIds.hid = $state.params['publication_id'].split(':')[1];
