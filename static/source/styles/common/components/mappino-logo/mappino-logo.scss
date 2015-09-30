@@ -1,0 +1,22 @@
+.mappino-logo {
+    @include square(36px);
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    @include translate(-50%, -50%);
+
+
+    &--small {
+        @include square(24px);
+    }
+
+    &--medium {
+        @include square(36px);
+    }
+
+    &--large {
+        @include square(48px);
+    }
+}

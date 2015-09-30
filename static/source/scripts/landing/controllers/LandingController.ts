@@ -5,9 +5,12 @@ namespace Mappino.Landing {
             '$scope'
         ];
 
-        constructor(
-            private $scope: ng.IScope) {
-            // -
+        constructor(private $scope: any) {
+            // ---------------------------------------------------------------------------------------------------------
+            $scope.search = {
+                realty_type_sid: 0,
+                operation_sid: 0
+            }
         }
     }
 }

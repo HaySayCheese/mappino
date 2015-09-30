@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html>
-<head ng-app="mappino.help">
+<html ng-app="mappino.help">
+<head>
     <title>Справка</title>
     {# перевірка для яндекс.вебмастер #}
     <meta name='yandex-verification' content='546bbc19b208a750'/>
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.css">
 
     {% compress css %}
-    <link rel="stylesheet" href="{{ static }}build/styles/help/help.min.css"/>
+        <link rel="stylesheet" href="{{ static }}build/styles/help/help.min.css"/>
     {% endcompress %}
 
     <script>
@@ -26,7 +26,9 @@
 </head>
 <body ng-controller="HelpController as helpCtrl">
 
-<md-button>olololololo</md-button>
+<md-button ng-href="/help#">
+    Продавцам
+</md-button>
 
 <!--<md-toolbar>-->
     <!--<nav class="md-toolbar-tools" show-sm hide-gt-sm layout="row" layout-align="start center">-->
@@ -86,19 +88,19 @@
 
 
 
-{# Js libs #}
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    {# Js libs #}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-animate.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-aria.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-touch.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-animate.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-aria.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-touch.min.js"></script>
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.js"></script>
 
-{# Local js libs #}
-{% compress js %}
-<script src="{{ static }}build/scripts/help/help.min.js"></script>
-{% endcompress %}
+    {# Local js libs #}
+    {% compress js %}
+        <script src="{{ static }}build/scripts/help/help.min.js"></script>
+    {% endcompress %}
 </body>
 </html>

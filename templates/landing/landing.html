@@ -28,35 +28,60 @@
 </head>
 <body ng-controller="LandingController as landingCtrl">
     <div class="header-media" header-media>
-        <img src="{{ static }}build/images/landing/landing-bg.jpg" alt="">
+        <img class="landing-bg" src="{{ static }}build/images/landing/landing-bg.jpg" alt="">
 
         <div class="header-media-overlay" layout="column" layout-align="center center">
-            <md-toolbar class="-transparent" ng-cloak>
+            <md-toolbar class="-transparent">
                 <nav class="md-toolbar-tools">
-                    <md-button href="/">
-                        mappino
+                    <md-button md-no-ink href="/" aria-label="Mappino logo">
+                        <mappino-logo class="mappino-logo--medium"></mappino-logo>
                     </md-button>
                     <span flex></span>
-                    <md-button>
-                        Объявления
+                    <md-button ng-href="/help#">
+                        Покупателям
                     </md-button>
-                    <md-button>
-                        Поддержка
+                    <md-button ng-href="/help#">
+                        Продавцам
+                    </md-button>
+                    <md-button ng-href="/help#">
+                        Арендодателям
                     </md-button>
                 </nav>
             </md-toolbar>
 
             <span flex></span>
 
-            <div class="text-shadow">
+            <div class="text-shadow white-text">
                 <h1 class="md-display-3">mappino</h1>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque ex nostrum perspiciatis repudiandae? Debitis, sequi sit. Dicta nemo provident vitae?</p>
             </div>
 
             <span flex></span>
 
-            <div class="header-search" layout-padding>
-                aaaaaaaaaaaaaaaa
+            <div class="header-search" layout="row" layout-padding>
+                <md-input-container>
+                    <label>Тип объекта</label>
+                    <md-select ng-model="search.realty_type_sid">
+                        <md-option ng-repeat="realtyType in ::TYPES.REALTY" value="[[ ::realtyType.id ]]">
+                            [[ ::realtyType.titles.singular ]]
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-input-container>
+                    <label>Операция</label>
+                    <md-select ng-model="search.operation_sid">
+                        <md-option value="0">Продажа</md-option>
+                        <md-option value="1">Аренда</md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-input-container>
+                    <label>Местоположение</label>
+                    <input type="text" ng-model="search.city" aria-label="Местоположение">
+                </md-input-container>
+
+                <md-button class="md-primary md-hue-1">Найти</md-button>
             </div>
 
             <span flex></span>

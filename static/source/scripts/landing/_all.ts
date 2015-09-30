@@ -6,14 +6,10 @@
 
 
 // ####################
-// Interfaces import
-// ####################
-
-
-
-// ####################
 // _modules import
 // ####################
+/// <reference path='../core/constants/_all.ts' />
+/// <reference path='../core/directives/_all.ts' />
 
 
 
