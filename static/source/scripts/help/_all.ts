@@ -14,7 +14,7 @@
 // ####################
 // _modules import
 // ####################
-
+/// <reference path='../core/directives/_all.ts' />
 
 
 // ####################

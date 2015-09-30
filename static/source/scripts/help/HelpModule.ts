@@ -3,7 +3,8 @@ namespace Mappino.Help {
     'use strict';
 
     var app: ng.IModule = angular.module('mappino.help', [
-        'ngMaterial'
+        'ngMaterial',
+        'Mappino.Core.Directives'
     ]);
 
 
