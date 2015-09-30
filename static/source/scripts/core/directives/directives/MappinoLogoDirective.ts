@@ -1,21 +1,18 @@
 namespace Mappino.Core.Directives {
 
     import IDirective = angular.IDirective;
+    import IAttributes = angular.IAttributes;
+    import IAugmentedJQuery = angular.IAugmentedJQuery;
 
     'use strict';
-
-    const MAPPINO_LOGO_URL = `${window.location.protocol}//${window.location.hostname}/mappino_static/build/images/common/mappino-logo.svg`;
 
 
     export function mappinoLogoDirective(): IDirective {
         return {
             restrict: 'E',
-            replace: true,
             scope: false,
-            template: `<img src="${MAPPINO_LOGO_URL}">`,
 
-
-            link: (scope, element, attrs) => {
+            link: (scope, element: IAugmentedJQuery, attrs: IAttributes) => {
                 var $element = angular.element(element);
 
                 $element.addClass('mappino-logo');
