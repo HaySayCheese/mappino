@@ -31,15 +31,7 @@
         <md-button>
             <mappino-logo class="mappino-logo--medium"></mappino-logo>
         </md-button>
-        <md-button href="#!" class="nav-button">
-            Частые вопросы
-        </md-button>
-        <md-button href="#!" class="nav-button">
-            Контакты
-        </md-button>
-        <md-button href="#!" class="nav-button">
-            О сервисе
-        </md-button>
+
 
         <span flex></span>
     </nav>
@@ -69,37 +61,36 @@
         </div>
         <div layout="row">
             <md-button class="md-primary" ui-sref="base" ng-click="helpCtrl.toggleSidenav()">
-                Объявления
+                Частые вопросы
             </md-button>
         </div>
         <div layout="row">
             <md-button class="md-primary" ui-sref="support" ng-click="helpCtrl.toggleSidenav()">
-                Поддержка
+                Контакты
             </md-button>
         </div>
         <div layout="row">
             <md-button class="md-primary" ui-sref="settings" ng-click="helpCtrl.toggleSidenav()">
-                Настройки
+                О сервисе
             </md-button>
         </div>
     </md-content>
 </md-sidenav>
 <div layout="row" layout-padding>
     <div layout="column" flex="20" hide-sm>
-
         <div layout="row">
             <md-button ui-sref="publications" ng-click="helpCtrl.toggleSidenav()" class="sidenav-button">
-                Объявления
+                Частые вопросы
             </md-button>
         </div>
         <div layout="row">
             <md-button ui-sref="support" ng-click="helpCtrl.toggleSidenav()" class="sidenav-button">
-                Поддержка
+                Контакты
             </md-button>
         </div>
         <div layout="row">
             <md-button ui-sref="settings" ng-click="helpCtrl.toggleSidenav()" class="sidenav-button">
-                Настройки
+                О сервисе
             </md-button>
         </div>
     </div>
