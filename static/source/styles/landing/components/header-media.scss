@@ -4,12 +4,9 @@
     max-height: 1080px;
 
     position: relative;
-
     overflow: hidden;
 
-    .landing-bg {
-        width: 100%;
-    }
+    background: url('../../images/landing/landing-bg.jpg') center center no-repeat;
 
     .text-shadow {
         text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 1px color('grey', 'darken-4');

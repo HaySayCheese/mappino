@@ -54,7 +54,7 @@ gulp.task('Copy:Fonts', function() {
 });
 
 gulp.task('Copy:Images', function() {
-    gulp.src(PATHS.SOURCE.IMAGES + '/**/*.{png,jpg,jpeg,gif}')
+    gulp.src(PATHS.SOURCE.IMAGES + '/**/*.{png,jpg,jpeg,gif,svg}')
         .pipe(imagemin({
             progressive: true,
             svgoPlugins: [{ removeViewBox: false }],

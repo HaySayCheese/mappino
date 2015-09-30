@@ -16,6 +16,9 @@
         <link rel="stylesheet" href="{{ static }}build/styles/landing/landing.min.css"/>
     {% endcompress %}
 
+
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=true&language=ru&libraries=places"></script>
+
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -26,13 +29,12 @@
         ga('send', 'pageview');
     </script>
 </head>
-<body ng-controller="LandingController as landingCtrl">
+<body ng-controller="LandingController as landingCtrl"  md-swipe-right="landingCtrl.toggleSidenav()" ng-cloak>
     <div class="header-media" header-media>
-        <img class="landing-bg" src="{{ static }}build/images/landing/landing-bg.jpg" alt="">
-
-        <div class="header-media-overlay" layout="column" layout-align="center center">
-            <md-toolbar class="-transparent">
-                <nav class="md-toolbar-tools">
+        <div class="header-media-overlay" layout="column">
+            <md-toolbar class="-transparent" layout="row">
+                <span flex-gt-lg="10"></span>
+                <nav class="md-toolbar-tools" layout="row" hide-sm>
                     <md-button md-no-ink href="/" aria-label="Mappino logo">
                         <mappino-logo class="mappino-logo--medium"></mappino-logo>
                     </md-button>
@@ -47,45 +49,89 @@
                         Арендодателям
                     </md-button>
                 </nav>
+                <span flex-gt-lg="10"></span>
+
+
+                <nav class="md-toolbar-tools" show-sm hide-gt-sm layout="row">
+                    <md-button class="nav-button" aria-label="Открыть меню" ng-click="landingCtrl.toggleSidenav()">
+                        <md-icon>menu</md-icon>
+                    </md-button>
+                    <span flex></span>
+                    <md-button md-no-ink href="/" aria-label="Mappino logo">
+                        <mappino-logo class="mappino-logo--medium"></mappino-logo>
+                    </md-button>
+                </nav>
             </md-toolbar>
 
             <span flex></span>
 
-            <div class="text-shadow white-text">
-                <h1 class="md-display-3">mappino</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque ex nostrum perspiciatis repudiandae? Debitis, sequi sit. Dicta nemo provident vitae?</p>
+            <div class="text-shadow white-text md-padding" layout="row" flex="100">
+                <span flex-gt-lg="10"></span>
+                <div layout="column">
+                    <h1 class="md-display-3">mappino</h1>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque ex nostrum perspiciatis repudiandae? Debitis, sequi sit. Dicta nemo provident vitae?</p>
+                </div>
+                <span flex-gt-lg="10"></span>
             </div>
 
             <span flex></span>
 
-            <div class="header-search" layout="row" layout-padding>
-                <md-input-container>
-                    <label>Тип объекта</label>
-                    <md-select ng-model="search.realty_type_sid">
-                        <md-option ng-repeat="realtyType in ::TYPES.REALTY" value="[[ ::realtyType.id ]]">
-                            [[ ::realtyType.titles.singular ]]
-                        </md-option>
-                    </md-select>
-                </md-input-container>
 
-                <md-input-container>
-                    <label>Операция</label>
-                    <md-select ng-model="search.operation_sid">
-                        <md-option value="0">Продажа</md-option>
-                        <md-option value="1">Аренда</md-option>
-                    </md-select>
-                </md-input-container>
+            <div layout="column" layout-align="center center">
+                <div class="header-search md-padding md-whiteframe-z1">
+                    <div layout="row" layout-align="left center">
+                        <md-input-container flex>
+                            <label>Тип объекта</label>
+                            <md-select ng-model="search.realty_type_sid">
+                                <md-option ng-repeat="realtyType in ::TYPES.REALTY" value="[[ ::realtyType.id ]]">
+                                    [[ ::realtyType.titles.singular ]]
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
 
-                <md-input-container>
-                    <label>Местоположение</label>
-                    <input type="text" ng-model="search.city" aria-label="Местоположение">
-                </md-input-container>
+                        <md-input-container flex>
+                            <label>Операция</label>
+                            <md-select ng-model="search.operation_sid">
+                                <md-option value="0">Продажа</md-option>
+                                <md-option value="1">Аренда</md-option>
+                            </md-select>
+                        </md-input-container>
 
-                <md-button class="md-primary md-hue-1">Найти</md-button>
+                        <md-input-container flex ng-show="search.operation_sid == 1">
+                            <label>Период</label>
+                            <md-select ng-model="search.period_type_sid">
+                                <md-option ng-repeat="periodType in ::TYPES.PERIOD" value="[[ ::periodType.id ]]">[[ ::periodType.title ]]</md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                    <div layout="row" ng-show="search.period_type_sid == 1">
+                        <md-datepicker ng-model="search.date_enter" md-placeholder="Дата въезда" flex="50"></md-datepicker>
+                        <md-datepicker ng-model="search.date_leave" md-placeholder="Дата выезда" flex="50"></md-datepicker>
+                    </div>
+                    <div layout="row">
+                        <md-input-container flex>
+                            <!--<label>Местоположение</label>-->
+                            <input id="landing-autucomplete" type="text" ng-model="search.city" aria-label="Местоположение">
+                        </md-input-container>
+
+                        <md-button class="md-primary md-hue-1">Найти</md-button>
+                    </div>
+                </div>
             </div>
 
             <span flex></span>
         </div>
+
+
+
+        <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav">
+            <md-toolbar class="md-theme-indigo">
+                <h1 class="md-toolbar-tools">Sidenav Left</h1>
+            </md-toolbar>
+            <md-content layout-padding>
+                hdhfdh
+            </md-content>
+        </md-sidenav>
     </div>
 
 
@@ -97,6 +143,8 @@
 
     {# Js libs #}
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/locale/ru.js"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-animate.min.js"></script>

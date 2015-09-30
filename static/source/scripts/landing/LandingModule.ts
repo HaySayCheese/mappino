@@ -13,15 +13,11 @@ namespace Mappino.Landing {
     /** Providers configuration create */
     new ProvidersConfigs(app);
 
-    /** Application configuration create */
-    new ApplicationConfigs(app);
-
     /** Material configuration create */
     new MaterialFrameworkConfigs(app);
 
-
-    /** Module services */
-    //app.service('RealtyTypesService', bModules.Types.RealtyTypesService);
+    /** Application configuration create */
+    new ApplicationConfigs(app);
 
 
     /** Module directives */

@@ -4,7 +4,7 @@ namespace Mappino.Map {
     export class MaterialFrameworkConfigs {
 
         constructor(private app: ng.IModule) {
-            app.config(['$mdThemingProvider', '$mdDateLocaleProvider', function($mdThemingProvider, $mdDateLocaleProvider) {
+            app.config(['$mdThemingProvider', '$mdDateLocaleProvider', ($mdThemingProvider, $mdDateLocaleProvider) => {
                 $mdThemingProvider.setDefaultTheme('blue');
 
                 $mdThemingProvider.theme('blue')
