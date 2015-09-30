@@ -6,6 +6,7 @@ urlpatterns = patterns('apps.main.views',
     # flatpages
     url(r'^$', 'landing'),
     url(r'^map/$', 'map'),
+    url(r'^help/$', 'help'),
 
     # templates
     url(r'', include('apps.main.templates.urls')),

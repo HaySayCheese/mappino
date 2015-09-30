@@ -14,6 +14,13 @@ def landing(request):
 
 
 @ensure_csrf_cookie
+@etag(generate_template_etag('help/help.html'))
+def help(request):
+    template = templates.get_template('help/help.html')
+    return HttpResponse(content=template.render())
+
+
+@ensure_csrf_cookie
 @etag(generate_template_etag('map/map.html'))
 def map(request):
     template = templates.get_template('map/map.html')
