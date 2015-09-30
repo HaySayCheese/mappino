@@ -92,6 +92,16 @@ gulp.task('Sass:Landing', function () {
         .pipe(gulp.dest(PATHS.BUILD.STYLES + '/landing/'));
 });
 
+
+gulp.task('Sass:Help', function () {
+    return gulp.src(PATHS.SOURCE.STYLES + '/help/help.scss')
+        .pipe(sass())
+        .pipe(minifyCSS())
+        .pipe(rename({ suffix: '.min' }))
+        .pipe(gulp.dest(PATHS.BUILD.STYLES + '/help/'));
+});
+
+
 gulp.task('Sass:Map', function () {
     return gulp.src(PATHS.SOURCE.STYLES + '/map/map.scss')
         .pipe(sass())
@@ -118,6 +128,7 @@ gulp.task('Sass:Cabinet:Moderators', function () {
 
 gulp.task('Sass', [
     'Sass:Landing',
+    'Sass:Help',
     'Sass:Map',
     'Sass:Cabinet:Users',
     'Sass:Cabinet:Moderators'
@@ -141,6 +152,20 @@ gulp.task('TypeScript:Landing', function() {
         .pipe(rename({ suffix: '.min' }))
         .pipe(sourcemaps.write('/'))
         .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/landing/'));
+});
+
+gulp.task('TypeScript:Help', function() {
+    return gulp.src(PATHS.SOURCE.SCRIPTS + '/help/_all.ts')
+        .pipe(sourcemaps.init())
+        .pipe(typescript({
+            noImplicitAny: false,
+            target: 'ES5',
+            out: 'help.js'
+        }))
+        .pipe(uglify())
+        .pipe(rename({ suffix: '.min' }))
+        .pipe(sourcemaps.write('/'))
+        .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/help/'));
 });
 
 gulp.task('TypeScript:Map', function() {
@@ -187,6 +212,7 @@ gulp.task('TypeScript:Cabinet:Moderators', function() {
 
 gulp.task('TypeScript', [
     'TypeScript:Landing',
+    'TypeScript:Help',
     'TypeScript:Map',
     'TypeScript:Cabinet:Users',
     'TypeScript:Cabinet:Moderators'
@@ -201,6 +227,7 @@ gulp.task('watch', function () {
     gulp.watch(PATHS.SOURCE.STYLES + '/common/**/*.scss',                 ['Sass']);
     gulp.watch(PATHS.SOURCE.STYLES + '/map/**/*.scss',                  ['Sass:Map']);
     gulp.watch(PATHS.SOURCE.STYLES + '/landing/**/*.scss',              ['Sass:Landing']);
+    gulp.watch(PATHS.SOURCE.STYLES + '/help/**/*.scss',                 ['Sass:Help']);
     gulp.watch(PATHS.SOURCE.STYLES + '/cabinet/users/**/*.scss',        ['Sass:Cabinet:Users']);
     gulp.watch(PATHS.SOURCE.STYLES + '/cabinet/moderators/**/*.scss',   ['Sass:Cabinet:Moderators']);
 
@@ -208,6 +235,7 @@ gulp.task('watch', function () {
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/core/**/*.ts',                  ['TypeScript']);
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/map/**/*.ts',                   ['TypeScript:Map']);
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/landing/**/*.ts',               ['TypeScript:Landing']);
+    gulp.watch(PATHS.SOURCE.SCRIPTS + '/help/**/*.ts',                  ['TypeScript:Help']);
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/cabinet/users/**/*.ts',         ['TypeScript:Cabinet:Users']);
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/cabinet/moderators/**/*.ts',    ['TypeScript:Cabinet:Moderators']);
 });
