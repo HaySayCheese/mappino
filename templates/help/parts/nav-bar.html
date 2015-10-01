@@ -28,10 +28,9 @@
 
 <md-toolbar>
     <nav class="md-toolbar-tools" hide-sm>
-        <md-button>
+        <md-button href="/">
             <mappino-logo class="mappino-logo--medium"></mappino-logo>
         </md-button>
-
 
         <span flex></span>
     </nav>
@@ -41,7 +40,7 @@
             <md-icon>menu</md-icon>
         </md-button>
         <span flex></span>
-        <md-button>
+        <md-button href="/">
             <mappino-logo class="mappino-logo--medium"></mappino-logo>
         </md-button>
     </nav>
@@ -54,11 +53,7 @@
 
     </header>
     <md-content layout="column" layout-padding>
-        <div layout="row">
-            <md-button class="md-primary" ng-disabled="true" ui-sref="publications" ng-click="helpCtrl.toggleSidenav()">
-                Навигация
-            </md-button>
-        </div>
+
         <div layout="row">
             <md-button class="md-primary" ui-sref="base" ng-click="helpCtrl.toggleSidenav()">
                 Частые вопросы
@@ -79,17 +74,17 @@
 <div layout="row" layout-padding>
     <div layout="column" flex="20" hide-sm>
         <div layout="row">
-            <md-button ui-sref="publications" ng-click="helpCtrl.toggleSidenav()" class="sidenav-button">
+            <md-button ng-click="helpCtrl.toggleSidenav()" class="sidenav-button">
                 Частые вопросы
             </md-button>
         </div>
         <div layout="row">
-            <md-button ui-sref="support" ng-click="helpCtrl.toggleSidenav()" class="sidenav-button">
+            <md-button ng-click="helpCtrl.toggleSidenav()" class="sidenav-button">
                 Контакты
             </md-button>
         </div>
         <div layout="row">
-            <md-button ui-sref="settings" ng-click="helpCtrl.toggleSidenav()" class="sidenav-button">
+            <md-button ng-click="helpCtrl.toggleSidenav()" class="sidenav-button">
                 О сервисе
             </md-button>
         </div>
