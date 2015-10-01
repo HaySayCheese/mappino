@@ -1,6 +1,6 @@
 .header-media {
     @include size(100%, 500px);
-    min-height: 400px;
+    min-height: 575px;
     max-height: 1080px;
 
     position: relative;
@@ -12,23 +12,42 @@
         text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 1px color('grey', 'darken-4');
     }
 
+
     .header-media-overlay {
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        bottom: 0;
+        @include square(100%);
+        position: relative;
         background-color: rgba(0, 0, 0, .2);
     }
 
 
     .header-search {
         min-width: 340px;
-        background-color: #fff;
         border-radius: 3px;
     }
 
     .header-button {
         text-transform: none !important;
     }
+
+    #publication-button {
+        border: solid rgba(255, 255, 255, 0.2) !important;
+    }
+
+    //*:not(button span) {
+    //    color: #fff !important;
+    //}
+
+    #landing-autucomplete {
+        @include placeholder(#fff)
+    }
+}
+
+main {
+
+    .logo {
+        position: relative;
+        top: -32px;
+        overflow: visible !important;
+    }
+
 }

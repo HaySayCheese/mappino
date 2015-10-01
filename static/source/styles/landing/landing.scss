@@ -5,11 +5,16 @@
 @import "../common/additions/additions";
 @import "../common/components/mappino-logo/mappino-logo";
 
+
 // additions
 @import "additions/md-toolbar";
 @import "additions/md-input-container";
+@import "additions/md-datepicker";
+@import "additions/md-select";
+
 
 
 // custom components
 // --------------------------------------------------
 @import "components/header-media";
+@import "components/text-media";

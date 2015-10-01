@@ -1,5 +1,15 @@
 md-toolbar {
     &.-transparent {
-        background-color: rgba(0, 0, 0, .2) !important;
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#dddddd+0,ffffff+100 */
+        background: rgba(0, 0, 0, .2); /* Old browsers */
+        background: -moz-linear-gradient(top,  rgb(107, 107, 107) 0%, rgba(255, 255, 255, 0) 100%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgb(107, 107, 107)), color-stop(100%,#ffffff)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top,  rgb(107, 107, 107) 0%,rgba(255, 255, 255, 0) 100%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top,  rgb(107, 107, 107) 0%,rgba(255, 255, 255, 0) 100%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top,  rgb(107, 107, 107) 0%,rgba(255, 255, 255, 0) 100%); /* IE10+ */
+        background: linear-gradient(to bottom,  rgb(107, 107, 107) 0%,rgba(255, 255, 255, 0) 100%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=rgb(107, 107, 107), endColorstr=rgba(255, 255, 255, 0),GradientType=0 ); /* IE6-9 */
+
+        background-color: transparent !important;
     }
 }

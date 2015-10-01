@@ -28,6 +28,8 @@
         ga('create', 'UA-26396742-1', 'mappino.com.ua');
         ga('send', 'pageview');
     </script>
+
+
 </head>
 <body ng-controller="LandingController as landingCtrl"  md-swipe-right="landingCtrl.toggleSidenav()" ng-cloak>
     <div class="header-media" header-media>
@@ -48,7 +50,7 @@
                     <md-button ng-href="/help#" class="header-button">
                         Арендодателям
                     </md-button>
-                    <md-button  class="header-button">
+                    <md-button  class="header-button" id="publication-button">
                         Подать объявление
                     </md-button>
                 </nav>
@@ -67,7 +69,7 @@
             </md-toolbar>
 
 
-            <div class="text-shadow white-text md-padding" layout="row" flex="100">
+            <div class="text-shadow white-text md-padding" layout="row">
                 <span flex-gt-lg="20"></span>
                 <div layout="column" layout-align="center center">
                     <h1 class="md-display-3">Потому что жилье может быть доступнее</h1>
@@ -77,12 +79,11 @@
 
             <span flex></span>
 
-
             <div layout="column" layout-align="center center">
-                <div class="header-search md-padding md-whiteframe-z1">
+                <div class="header-search md-padding md-whiteframe-z1 blue">
                     <div layout="row" layout-align="left center">
-                        <md-input-container flex>
-                            <label>Тип объекта</label>
+                        <md-input-container class="white-text" flex>
+                            <label class="white-text">Тип объекта</label>
                             <md-select ng-model="search.realty_type_sid">
                                 <md-option ng-repeat="realtyType in ::TYPES.REALTY" value="[[ ::realtyType.id ]]">
                                     [[ ::realtyType.titles.singular ]]
@@ -90,8 +91,8 @@
                             </md-select>
                         </md-input-container>
 
-                        <md-input-container flex>
-                            <label>Операция</label>
+                        <md-input-container class="white-text" flex>
+                            <label class="white-text">Операция</label>
                             <md-select ng-model="search.operation_sid">
                                 <md-option value="0">Продажа</md-option>
                                 <md-option value="1">Аренда</md-option>
@@ -108,14 +109,15 @@
                             <input id="landing-autucomplete" type="text" ng-model="search.city" aria-label="Местоположение">
                         </md-input-container>
                     </div>
-                    <div layout="row" layout-align="center center">
-                        <md-button class="md-primary md-raised">Найти</md-button>
+                    <div layout="row" layout-align="center center" class="search">
+                        <md-button class="md-primary md-raised white blue-text">Найти</md-button>
                     </div>
                 </div>
             </div>
 
             <span flex></span>
         </div>
+
 
 
 
@@ -131,7 +133,61 @@
 
 
     <main>
-
+        <div class="text-media">
+        <div layout="column" layout-align="center center" class="logo">
+            <md-button class="md-fab blue">
+                <mappino-logo></mappino-logo>
+            </md-button>
+        </div>
+        <div layout="row" layout-align="center center">
+            <span flex="10"></span>
+            <h1 class="md-display-1" layout-align="center center">
+                Недвижимость без посредников и коммисий. Бесплатно.
+            </h1>
+            <span flex="10"></span>
+        </div>
+            <div layout="row" layout-align="center center" class="layout-padding">
+                <span flex="10"></span>
+                <span>
+                    Все предложения на mappino размещены владельцами.
+                </span>
+                <span flex="10"></span>
+            </div>
+            <div layout="row" class="layout-padding"  layout-align="center center">
+                <span flex="10"></span>
+                <span>
+                    Мы не работаем с риэлтерами и не представляем интересы риэлтерских агентств.
+                </span>
+                <span flex="10"></span>
+            </div>
+            <div layout="row" class="layout-padding" layout-align="center center">
+                <span flex="10"></span>
+                <span>
+                    А еще сервис работает бесплатно, как для покупателей, так и для продавцов.
+                </span>
+                <span flex="10"></span>
+            </div>
+            <div  layout="row" layout-align="center center" class="layout-padding">
+                <md-button class="md-raised md-primary">подать объявление</md-button>
+            </div>
+            <div  layout="row" layout-align="center center" class="layout-padding">
+                <span class="blue-text">Займет не больше 5 минут, если у Вас уже есть фото</span>
+            </div>
+            <div  layout="row" class="layout-padding"></div>
+        </div>
+        <div class="blue white-text">
+            <div layout="row">
+                <div layout="column" flex="33">
+                    <md-icon class="material-icons md-96 white-text">loyalty</md-icon>
+                </div>
+                <div layout="column" flex="33">
+                    <md-icon class="material-icons md-96 white-text">done_all</md-icon>
+                </div>
+                <div layout="column" flex>
+                    <md-icon class="material-icons md-96 white-text">message</md-icon>
+                </div>
+            </div>
+        </div>
     </main>
 
 
