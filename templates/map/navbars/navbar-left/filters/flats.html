@@ -27,10 +27,10 @@
 <div layout="row" ng-show="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_op_sid == 1
                             && filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_pr_sid == 0">
     <md-datepicker ng-model="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_r_d_min"
-                   md-placeholder="Дата въезда" flex="50">
+                   md-placeholder="Дата въезда" flex="50" ng-keyup="filCtrl.prettyRentEnterDate($event)">
     </md-datepicker>
     <md-datepicker ng-model="filters.panels.{{ current_panel }}.{{ current_panel_prefix }}_r_d_max"
-                   md-placeholder="Дата выезда" flex="50">
+                   md-placeholder="Дата выезда" flex="50" ng-keyup="filCtrl.prettyRentEnterDate($event)">
     </md-datepicker>
 </div>
 <div layout="row">

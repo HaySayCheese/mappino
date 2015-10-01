@@ -35,7 +35,7 @@ namespace Mappino.Core.PublicationPreview {
             // ---------------------------------------------------------------------------------------------------------
             $scope.forms = {};
 
-            $scope.publication = undefined;
+            $scope.publication = {};
 
             $scope.loadingPublication       = false;
             $scope.publicationLoadedSuccess = false;
@@ -97,20 +97,25 @@ namespace Mappino.Core.PublicationPreview {
 
                 this.publicationPreviewService.loadPublicationData(this.publicationIds)
                     .success(response => {
-                        this.$scope.publication = response.data;
-                        this.$scope.publication.is_favorite     = false;
-                        this.$scope.loadingPublication          = false;
-                        this.$scope.publicationLoadedSuccess    = true;
+                        if (response.code == 0) {
+                            this.$scope.publication = response.data;
+                            this.$scope.publication.is_favorite     = false;
+                            this.$scope.loadingPublication          = false;
+                            this.$scope.publicationLoadedSuccess    = true;
 
-                        this.publicationPreviewService.loadPublicationContacts(this.publicationIds)
-                            .success(response => {
-                                this.$scope.publication.contacts = {};
-                                this.$scope.publication.contacts = response.data;
-                            });
+                            this.publicationPreviewService.loadPublicationContacts(this.publicationIds)
+                                .success(response => {
+                                    this.$scope.publication.contacts = {};
+                                    this.$scope.publication.contacts = response.data;
+                                });
 
-                        this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationClosed');
-                        this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationVisited', this.publicationIds.hid);
-                        this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationActive', this.publicationIds.hid);
+                            this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationClosed');
+                            this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationVisited', this.publicationIds.hid);
+                            this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationActive', this.publicationIds.hid);
+                        } else {
+                            this.$scope.loadingPublication          = false;
+                            this.$scope.publicationLoadedSuccess    = false;
+                        }
                     })
                     .error(response => {
                         this.$scope.loadingPublication          = false;

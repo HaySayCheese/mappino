@@ -50,6 +50,7 @@ namespace Mappino.Cabinet.Users {
 
             angular.element(document).ready(() => {
                 this.initInputsChange();
+                this.initMap();
             });
         }
 
@@ -182,7 +183,7 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public initMap() {
+        private initMap() {
             this.$timeout(() => {
                 var center = new google.maps.LatLng(this.$scope.publication.head.lat || 50.448159, this.$scope.publication.head.lng || 30.524654);
 
@@ -253,7 +254,7 @@ namespace Mappino.Cabinet.Users {
                         this.publicationsService.checkField(this.publicationIds, { fieldName: "lat_lng", fieldValue: latLng.lat() + ";" + latLng.lng() });
                     }, 1000);
                 });
-            }, 1000)
+            }, 2000)
         }
 
 
