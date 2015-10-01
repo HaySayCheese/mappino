@@ -4,7 +4,6 @@
         <div class="md-padding">
             <div layout="column">
                 <md-input-container>
-                    <!--<label>Местоположение</label>-->
                     <input id="publication-map-input" name="address" aria-label="Местоположение" ng-model="publication.body.address" required>
                     <div ng-messages="publicationForm.address.$error"
                          ng-show="publicationForm.$submitted || publicationForm.address.$touched">
@@ -13,7 +12,7 @@
                     </div>
                 </md-input-container>
 
-                <div id="publication-map" ng-init="u_pubCtrl.initMap()"></div>
+                <div id="publication-map"></div>
             </div>
         </div>
     </md-card-content>

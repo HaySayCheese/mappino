@@ -1,7 +1,12 @@
-/// <reference path='../_all.ts' />
-
-
 namespace Mappino.Cabinet.Users {
+
+    import IHttpService = angular.IHttpService;
+    import IStateService = angular.ui.IStateService;
+    import IHttpPromise = angular.IHttpPromise;
+
+    "use strict";
+
+
     export class TicketsService {
         private _ticket:    Ticket;
         private _tickets:   Array<Ticket> = [];
@@ -18,8 +23,8 @@ namespace Mappino.Cabinet.Users {
             'TXT'
         ];
 
-        constructor(private $http: ng.IHttpService,
-                    private $state: ng.ui.IStateService,
+        constructor(private $http: IHttpService,
+                    private $state: IStateService,
                     private $mdToast: any,
                     private TXT: any) {
             //----------------------------------------------------------------------------------------------------------
@@ -27,8 +32,8 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public create(): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/support/tickets/`, null);
+        public create(): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/support/tickets/`, null);
 
             promise.success(response => {});
 
@@ -46,8 +51,8 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public load(): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/support/tickets/`);
+        public load(): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/support/tickets/`);
 
             promise.success(response => {
                 var tickets = response.data;
@@ -80,8 +85,8 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public loadTicketMessages(ticketId: string|number): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/support/tickets/${ticketId}/messages/`);
+        public loadTicketMessages(ticketId: string|number): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/support/tickets/${ticketId}/messages/`);
 
             promise.success(response => {
                 var ticket: Ticket = response.data,
@@ -121,8 +126,8 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        public sendMessage(ticketId: string|number, ticketMessage): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/support/tickets/${ticketId}/messages/`, ticketMessage);
+        public sendMessage(ticketId: string|number, ticketMessage): IHttpPromise<any> {
+            var promise: IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/support/tickets/${ticketId}/messages/`, ticketMessage);
 
             promise.success(response => {
                 this._ticket.messages.unshift(new TicketMessage(
