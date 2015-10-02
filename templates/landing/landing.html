@@ -33,7 +33,7 @@
 </head>
 <body ng-controller="LandingController as landingCtrl"  md-swipe-right="landingCtrl.toggleSidenav()" ng-cloak>
     <div class="header-media" header-media>
-        <div class="header-media-overlay" layout="column">
+        <div layout="column">
             <md-toolbar class="-transparent" layout="row">
                 <span flex-gt-lg="10"></span>
                 <nav class="md-toolbar-tools" layout="row" hide-sm>
@@ -69,10 +69,10 @@
             </md-toolbar>
 
 
-            <div class="text-shadow white-text md-padding" layout="row">
+            <div class="text-blur-shadow white-text md-padding" layout="row">
                 <span flex-gt-lg="20"></span>
                 <div layout="column" layout-align="center center">
-                    <h1 class="md-display-3 center-align">Потому что жилье может быть доступнее</h1>
+                    <h1 class="md-display-3 center-align">Потому, что жилье может быть доступнее</h1>
                 </div>
                 <span flex-gt-lg="20"></span>
             </div>
@@ -96,7 +96,7 @@
                             <md-select ng-model="search.operation_sid">
                                 <md-option value="0">Продажа</md-option>
                                 <md-option value="1">Аренда</md-option>
-                                <md-option value="2">Аренда посуточно</md-option>
+                                <md-option value="2" ng-if="search.realty_type_sid < 3">Аренда посуточно</md-option>
                             </md-select>
                         </md-input-container>
                     </div>
@@ -104,13 +104,13 @@
                         <md-datepicker ng-model="search.date_enter" md-placeholder="Дата въезда" flex="50"></md-datepicker>
                         <md-datepicker ng-model="search.date_leave" md-placeholder="Дата выезда" flex="50"></md-datepicker>
                     </div>
-                    <div layout="row">
+                    <div layout="row" class="md-padding">
                         <md-input-container flex>
-                            <input id="landing-autucomplete" type="text" ng-model="search.city" aria-label="Местоположение">
+                            <input id="landing-autucomplete" class="white-text" type="text" ng-model="search.city" aria-label="Местоположение">
                         </md-input-container>
                     </div>
                     <div layout="row" layout-align="center center" class="search">
-                        <md-button class="md-primary md-raised white blue-text">Найти</md-button>
+                        <md-button ng-href="map/#!/1/1/0/0/?c=[[ search.city ]]&l=[[ search.l ]]&z=15&b_t_sid=0&b_m_t_sid=[[ search.realty_type_sid ]]&b_cu_sid=2&b_op_sid=[[ operation_sid ]][[ url_part1 ]][[ search.date_enter ]][[ url_part2 ]][[ search.date_leave ]][[ url_part3 ]]" class="md-primary md-raised white blue-text">Найти</md-button>
                     </div>
                 </div>
             </div>
@@ -152,7 +152,7 @@
                 <p class="center-align">
                     Все предложения на mappino размещены владельцами. <br>
                     Мы не работаем с риэлтерами и не представляем интересы риэлтерских агентств. <br>
-                    А еще сервис работает бесплатно, как для покупателей, так и для продавц
+                    А еще сервис работает бесплатно, как для покупателей, так и для продавцов.
                 </p>
                 <span flex="10"></span>
             </div>
@@ -160,41 +160,84 @@
                 <md-button class="md-raised md-primary">подать объявление</md-button>
             </div>
             <div  layout="row" layout-align="center center" class="layout-padding">
-                <span class="blue-text">Займет не больше 5 минут, если у Вас уже есть фото</span>
+                <span class="blue-text md-body-1">Займет не больше 5 минут, если у Вас уже есть фото</span>
             </div>
         </div>
         </div>
         <div class="blue white-text top-padding bottom-padding">
             <div layout="row">
                 <div layout="column" flex="10"></div>
-                <div layout="column" flex layout-align="center center">
+                <div layout="column" flex layout-align="start center">
                     <md-icon class="material-icons md-96 white-text">loyalty</md-icon>
                     <h1 class="md-headline">БЕЗ ПЕРЕПЛАТ</h1>
-                    <div class="md-padding center-align">
+                    <div class="md-padding center-align" flex>
                     Mappino не является посредником.
                     Мы хотим, чтобы мир стал ближе,
                     и в каждом его уголке Вы смогли найти свой дом.
                     <br>
-                    <br>
                     Поэтому любые дополнительные издержки исключены.</div>
                 </div>
-                <div layout="column" flex layout-align="center center">
+                <div layout="column" flex layout-align="start center">
                     <md-icon class="material-icons md-96 white-text">done_all</md-icon>
                     <h1 class="md-headline">БЕЗОПАСНОСТЬ</h1>
-                    <div class="md-padding center-align">
+                    <div class="md-padding center-align" flex>
                         Каждое предложение проходит тщательную проверку касательно
                         прав собственности, а также состояния квартиры.
                         <br>
                         Ведь разве безопасность не является обязательным условием дома?</div>
                 </div>
-                <div layout="column" flex layout-align="center center">
+                <div layout="column" flex layout-align="start center">
                     <md-icon class="material-icons md-96 white-text">message</md-icon>
                     <h1 class="md-headline">ДОСТОВЕРНОСТЬ</h1>
-                <div class="md-padding center-align">Будь то дом, квартира, или, даже, офис, благодаря тому, что Вы общаетесь с реальным владельцем объекта, Вы можете узнать о нем абсолютно все.
+                <div class="md-padding center-align" flex>
+                    Будь то дом, квартира, или, даже, офис, благодаря тому, что Вы общаетесь с реальным владельцем объекта, Вы можете узнать о нем абсолютно все.
                     <br>
                     Даже о какой порог чаще всего спотыкаются.</div>
                 </div>
                 <div layout="column" flex="10"></div>
+            </div>
+        </div>
+        <div layout="row" class="search-frame">
+            <div layout="column" flex></div>
+            <div layout="column" layout-align="center center" class="white blue-text md-padding md-whiteframe-z1">
+                <md-button class="md-raised md-primary">Начать поиск</md-button>
+                <span class="center-align md-subhead"> Сервис сейчас тестируеться. Возможны осадки из фрикаделек</span>
+            </div>
+            <div layout="column" flex></div>
+        </div>
+        <div class="support-text white-text" layout="column" layout-align="center center">
+            <div layout="row" flex></div>
+            <div layout="row" layout-align="start center">
+            <div layout="column" layout-align="center center">
+                <span class="center-align white-text md-display-2">Поддерживаем владельцев</span>
+            </div></div>
+            <div layout="row" flex layout-align="start center" class="center-align">
+                <div layout="column" flex layout-align="center center">
+                    <md-icon class="material-icons md-96 white-text">camera_alt</md-icon>
+                    Бесплатно предоставляем <br> фотографа
+                </div>
+                <div layout="column" flex="10"></div>
+                <div layout="column" flex layout-align="center center">
+                    <md-icon class="material-icons md-96 white-text">assignment</md-icon>
+                    Бесплатно предоставляем образцы договоров
+                </div>
+            </div>
+
+        </div>
+        <div class="bottom-padding">
+            <div layout="column"  layout-align="center center">
+                <div layout="row" layout-align="center center">
+                    <span class="md-display-2">Свяжитесь с нами!</span>
+                    </div>
+                    <div layout="row" layout-align="start start">
+                    <div layout="column"  layout-align="center start" class="md-headline">
+                    <span class="contact-padding"><md-icon class="material-icons md-36 blue-text">mail</md-icon> &nbsp;
+                        <a ng-href="mailto:hello@mappino.com">hello@mappino.com</a></span>
+                    <span class="contact-padding"><md-icon class="material-icons md-36 blue-text">phone</md-icon>&nbsp;
+                        <a ng-href="tel:+380996055588">+380 99 605 55 88</a> </span>
+                    <span class="contact-padding"><md-icon class="material-icons md-36 blue-text">phone</md-icon>&nbsp;
+                       <a href="tel:+380372909901">+380 372 909 901</a> </span></div>
+            </div>
             </div>
         </div>
     </main>

@@ -1,0 +1,11 @@
+.support-text {
+    @include size(100%, 500px);
+    min-height: 575px;
+    max-height: 1080px;
+    padding-top: 0;
+    position: relative !important;
+    top: -104px;
+    overflow: hidden;
+    z-index: 1;
+    background: url('../../images/landing/block1.jpg') center center no-repeat;
+}

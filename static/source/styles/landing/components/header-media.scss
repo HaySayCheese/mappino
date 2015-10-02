@@ -9,9 +9,25 @@
     background: url('../../images/landing/landing-bg.jpg') center center no-repeat;
 
     .text-shadow {
-        text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 1px color('grey', 'darken-4');
+        text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 100px color('grey', 'darken-4');
+
+
     }
 
+    .text-blur-shadow {
+        background: rgba(84, 84, 84, 0.69); /* Old browsers */
+        background: -moz-radial-gradient(center, ellipse cover,  rgba(64, 64, 64, 0.55) 0%, rgba(10, 255, 186, 0) 55%); /* FF3.6+ */
+        background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(64, 64, 64, 0.55)), color-stop(55%,rgba(10, 255, 186, 0))); /* Chrome,Safari4+ */
+        background: -webkit-radial-gradient(center, ellipse cover,  rgba(64, 64, 64, 0.55) 0%,rgba(10, 255, 186, 0) 55%); /* Chrome10+,Safari5.1+ */
+        background: -o-radial-gradient(center, ellipse cover,  rgba(64, 64, 64, 0.55) 0%,rgba(10, 255, 186, 0) 55%); /* Opera 12+ */
+        background: -ms-radial-gradient(center, ellipse cover,  rgba(64, 64, 64, 0.55) 0%,rgba(10, 255, 186, 0) 55%); /* IE10+ */
+        background: radial-gradient(ellipse at center,  rgba(64, 64, 64, 0.55) 0%,rgba(10, 255, 186, 0) 55%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=rgba(64, 64, 64, 0.55), endColorstr=rgba(10, 255, 186, 0),GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+    }
+
+    h1 {
+        font-weight: bold;
+    }
 
     .header-media-overlay {
         @include square(100%);
@@ -21,7 +37,7 @@
 
 
     .header-search {
-        min-width: 340px;
+        min-width: 415px;
         border-radius: 3px;
     }
 
@@ -30,7 +46,7 @@
     }
 
     #publication-button {
-        border: solid rgba(158,158,158,0.2) !important;
+        border: solid rgba(255, 255, 255, 0.30) !important;
     }
 
     //*:not(button span) {

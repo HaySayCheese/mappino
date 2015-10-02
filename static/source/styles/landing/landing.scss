@@ -18,3 +18,9 @@
 // --------------------------------------------------
 @import "components/header-media";
 @import "components/text-media";
+@import "components/support-text";
+@import "components/contacts";
+
+div {
+    line-height: 1.5;
+}

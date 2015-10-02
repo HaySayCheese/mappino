@@ -1,15 +1,14 @@
 md-toolbar {
     &.-transparent {
-        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#dddddd+0,ffffff+100 */
         background: rgba(0, 0, 0, .2); /* Old browsers */
-        background: -moz-linear-gradient(top,  rgb(107, 107, 107) 0%, rgba(255, 255, 255, 0) 100%); /* FF3.6+ */
-        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgb(107, 107, 107)), color-stop(100%,#ffffff)); /* Chrome,Safari4+ */
-        background: -webkit-linear-gradient(top,  rgb(107, 107, 107) 0%,rgba(255, 255, 255, 0) 100%); /* Chrome10+,Safari5.1+ */
-        background: -o-linear-gradient(top,  rgb(107, 107, 107) 0%,rgba(255, 255, 255, 0) 100%); /* Opera 11.10+ */
-        background: -ms-linear-gradient(top,  rgb(107, 107, 107) 0%,rgba(255, 255, 255, 0) 100%); /* IE10+ */
-        background: linear-gradient(to bottom,  rgb(107, 107, 107) 0%,rgba(255, 255, 255, 0) 100%); /* W3C */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=rgb(107, 107, 107), endColorstr=rgba(255, 255, 255, 0),GradientType=0 ); /* IE6-9 */
-
+        background: -moz-linear-gradient(top,  rgb(128, 128, 128) 0%, rgba(255, 255, 255, 0.02) 100%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgb(128, 128, 128)), color-stop(100%,#ffffff)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top,  rgb(128, 128, 128) 0%,rgba(255, 255, 255, 0.02) 100%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top,  rgb(128, 128, 128) 0%,rgba(255, 255, 255, 0.02) 100%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top,  rgb(128, 128, 128) 0%,rgba(255, 255, 255, 0.02) 100%); /* IE10+ */
+        background: linear-gradient(to bottom,  rgb(128, 128, 128) 0%,rgba(255, 255, 255, 0.02) 100%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=rgb(128, 128, 128), endColorstr=rgba(255, 255, 255, 0.02),GradientType=0 ); /* IE6-9 */
+        //-webkit-filter: blur(5px);
         background-color: transparent !important;
     }
 }

@@ -1,9 +1,11 @@
 md-datepicker {
     background: transparent !important;
-
+    color: #fff !important;
+    md-icon.md-blue-theme {
+        color: #fff !important;
+    }
     .md-datepicker-expand-triangle {
         border-top-color: #fff !important;
-
     }
 
 

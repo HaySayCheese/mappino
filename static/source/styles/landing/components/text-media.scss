@@ -8,3 +8,11 @@
 .top-padding {
     padding-top: 50px;
 }
+
+.search-frame {
+    position: relative !important;
+    top: -40px;
+    overflow: visible !important;
+    padding-bottom: 0;
+    z-index: 2;
+}
