@@ -100,8 +100,8 @@
                             </md-select>
                         </md-input-container>
                     </div>
-                    <div layout="row" layout-sm="column" ng-show="search.operation_sid == 2">
-                        <md-datepicker ng-model="search.date_enter" md-placeholder="Дата въезда" flex="50"></md-datepicker>
+                    <div layout="row" layout-sm="column" ng-show="search.operation_sid == 2 && search.realty_type_sid < 3">
+                        <md-datepicker  ng-model="search.date_enter" md-placeholder="Дата въезда" flex="50"></md-datepicker>
                         <md-datepicker ng-model="search.date_leave" md-placeholder="Дата выезда" flex="50"></md-datepicker>
                     </div>
                     <div layout="row" class="md-padding">
