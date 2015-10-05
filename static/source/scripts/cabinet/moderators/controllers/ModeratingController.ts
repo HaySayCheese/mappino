@@ -19,7 +19,7 @@ namespace Mappino.Cabinet.Moderators {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Модерация mappino';
 
-            $scope.forms = {};
+            $scope.rejectReasonForm = {};
 
             $scope.rejectFormIsVisible = false;
 
@@ -41,28 +41,29 @@ namespace Mappino.Cabinet.Moderators {
                 this.publicationIds.tid = this.$state.params['publication_id'].split(':')[0];
                 this.publicationIds.hid = this.$state.params['publication_id'].split(':')[1];
 
-                this.$scope.publicationTemplateUrl = `/ajax/template/map/publication/detailed/${this.publicationIds.tid}/`;
+                this.$scope.publicationTemplateUrl = `/ajax/template/common/publication-preview/types/${this.publicationIds.tid}/`;
 
                 this.moderatingService.load(this.publicationIds)
                     .success(response => {
                         this.$scope.publication = response.data;
+                        console.log(this.$scope.publication)
                         this.$rootScope.loaders.overlay = false;
                     })
-                .error(response => {
+                    .error(response => {
                         this.$state.go('moderating', { publication_id: null });
                     })
             } else {
                 this.moderatingService.getPublicationId()
                     .success(response => {
-                    if (response.data) {
-                        this.publicationIds.tid = response.data.publication['tid'];
-                        this.publicationIds.hid = response.data.publication['hash_id'];
+                        if (response.data) {
+                            this.publicationIds.tid = response.data.publication['tid'];
+                            this.publicationIds.hid = response.data.publication['hash_id'];
 
-                        this.$state.go('moderating', { publication_id: `${this.publicationIds.tid}:${this.publicationIds.hid}` });
-                    } else {
-                        this.$rootScope.loaders.overlay = false;
-                        this.$state.go('moderating', { publication_id: null });
-                    }
+                            this.$state.go('moderating', { publication_id: `${this.publicationIds.tid}:${this.publicationIds.hid}` });
+                        } else {
+                            this.$rootScope.loaders.overlay = false;
+                            this.$state.go('moderating', { publication_id: null });
+                        }
                 });
             }
         }
@@ -73,19 +74,19 @@ namespace Mappino.Cabinet.Moderators {
             this.$rootScope.loaders.overlay  = true;
             this.moderatingService.accept(this.publicationIds)
                 .success(response => {
-                this.$state.go('moderating', { publication_id: null });
-            });
+                    this.$state.go('moderating', { publication_id: null });
+                });
         }
 
 
 
         public rejectPublication() {
-            if (this.$scope.forms.rejectReason.$valid) {
+            if (this.$scope.rejectReasonForm.$valid) {
                 this.$rootScope.loaders.overlay  = true;
                 this.moderatingService.reject(this.publicationIds, this.$scope.moderator.rejectReason)
                     .success(response => {
-                    this.$state.go('moderating', { publication_id: null });
-                });
+                        this.$state.go('moderating', { publication_id: null });
+                    });
             }
         }
 
@@ -95,8 +96,8 @@ namespace Mappino.Cabinet.Moderators {
             this.$rootScope.loaders.overlay  = true;
             this.moderatingService.hold(this.publicationIds)
                 .success(response => {
-                this.$state.go('moderating', { publication_id: null });
-            });
+                    this.$state.go('moderating', { publication_id: null });
+                });
         }
 
 
@@ -125,8 +126,8 @@ namespace Mappino.Cabinet.Moderators {
             if (this.$scope.rejectFormIsVisible) {
                 this.$scope.moderator.rejectReason = null;
 
-                this.$scope.forms.rejectReason.$setPristine();
-                this.$scope.forms.rejectReason.$setUntouched();
+                this.$scope.rejectReasonForm.$setPristine();
+                this.$scope.rejectReasonForm.$setUntouched();
 
                 this.$scope.rejectFormIsVisible = false;
             } else {

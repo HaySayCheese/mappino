@@ -1,4 +1,8 @@
 .moderating-page {
+    .publication-card md-card-content {
+        padding: 0 !important;
+    }
+
     .publication-view {
         header {
             min-height: 330px;

@@ -72,12 +72,12 @@
             <div class="text-blur-shadow white-text md-padding" layout="row">
                 <span flex-gt-lg="20"></span>
                 <div layout="column" layout-align="center center">
-                    <h1 class="md-display-3 center-align">Потому, что жилье может быть доступнее</h1>
+                    <h1 class="big-text md-display-2 center-align">Потому, что жилье может быть доступнее</h1>
                 </div>
                 <span flex-gt-lg="20"></span>
             </div>
 
-            <span flex></span>
+            <span flex-gt-lg></span>
 
             <div layout="column" layout-align="center center">
                 <div class="header-search md-padding md-whiteframe-z1 blue">
@@ -115,7 +115,7 @@
                 </div>
             </div>
 
-            <span flex></span>
+            <span flex-gt-lg></span>
         </div>
 
 
@@ -123,10 +123,21 @@
 
         <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav">
             <md-toolbar class="md-theme-indigo">
-                <h1 class="md-toolbar-tools">Sidenav Left</h1>
+                <h1 class="md-toolbar-tools">Mappino</h1>
             </md-toolbar>
-            <md-content layout-padding>
-                hdhfdh
+            <md-content layout="column" layout-padding layout-align="center start">
+                <md-button ng-href="/help#" class="header-button">
+                    Покупателям
+                </md-button>
+                <md-button ng-href="/help#" class="header-button">
+                    Продавцам
+                </md-button>
+                <md-button ng-href="/help#" class="header-button">
+                    Арендодателям
+                </md-button>
+                <md-button ng-click="landingCtrl.scrollToLoginForm()" class="header-button">
+                    Подать объявление
+                </md-button>
             </md-content>
         </md-sidenav>
     </div>
@@ -142,7 +153,7 @@
         <div class="bottom-padding">
         <div layout="row" layout-align="center center" >
             <span flex="10"></span>
-            <h1 class="md-display-1" layout-align="center center">
+            <h1 class="big-text md-display-1 center-align" layout-align="center center">
                 Недвижимость без посредников и коммисий. Бесплатно.
             </h1>
             <span flex="10"></span>
@@ -159,7 +170,7 @@
             <div  layout="row" layout-align="center center" class="layout-padding">
                 <md-button aria-label="Подать объявление" ng-hide="showLoginForm" ng-click="landingCtrl.toggleLoginForm()" class="md-raised md-primary">подать объявление</md-button>
 
-                <form ng-switch="authState" ng-show="showLoginForm" name="loginForm" layout="column" ng-submit="landingCtrl.login()" novalidate>
+                <form layout="column" flex-gt-lg="25" flex-sm="100" ng-switch="authState" ng-show="showLoginForm" name="loginForm" layout="column" ng-submit="landingCtrl.login()" novalidate>
                     <div ng-switch-when="enterPhone">
                         <div layout="column">
 
@@ -181,8 +192,8 @@
                                     </div>
                                 </md-input-container>
                             </div>
-                            <div layout="row">
-                                <md-button class="md-raised md-primary md-padding" type="submit" flex>
+                            <div layout="row" class="md-padding">
+                                <md-button class="md-raised md-primary" type="submit" flex>
                                     Войти
                                 </md-button>
                             </div>
@@ -226,7 +237,7 @@
         </div>
         </div>
         <div class="blue white-text top-padding bottom-padding">
-            <div layout="row">
+            <div layout="row" layout-sm="column">
                 <div layout="column" flex="10"></div>
                 <div layout="column" flex layout-align="start center">
                     <md-icon class="material-icons md-96 white-text">loyalty</md-icon>
@@ -238,6 +249,7 @@
                     <br>
                     Поэтому любые дополнительные издержки исключены.</div>
                 </div>
+                <div show-sm class="md-padding"></div>
                 <div layout="column" flex layout-align="start center">
                     <md-icon class="material-icons md-96 white-text">done_all</md-icon>
                     <h1 class="md-headline">БЕЗОПАСНОСТЬ</h1>
@@ -247,6 +259,7 @@
                         <br>
                         Ведь разве безопасность не является обязательным условием дома?</div>
                 </div>
+                <div show-sm class="md-padding"></div>
                 <div layout="column" flex layout-align="start center">
                     <md-icon class="material-icons md-96 white-text">message</md-icon>
                     <h1 class="md-headline">ДОСТОВЕРНОСТЬ</h1>
@@ -270,7 +283,7 @@
             <div layout="row" flex></div>
             <div layout="row" layout-align="start center">
             <div layout="column" layout-align="center center">
-                <span class="center-align white-text md-display-2">Поддерживаем владельцев</span>
+                <span class="center-align white-text big-text md-display-2">Поддерживаем владельцев</span>
             </div></div>
             <div layout="row" flex layout-align="start center" class="center-align">
                 <div layout="column" flex layout-align="center center">
@@ -288,7 +301,7 @@
         <div class="bottom-padding">
             <div layout="column"  layout-align="center center">
                 <div layout="row" layout-align="center center">
-                    <span class="md-display-2">Свяжитесь с нами!</span>
+                    <span class="md-display-2 big-text">Свяжитесь с нами!</span>
                     </div>
                     <div layout="row" layout-align="start start">
                     <div layout="column"  layout-align="center start" class="md-headline">

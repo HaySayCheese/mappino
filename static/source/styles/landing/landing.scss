@@ -23,3 +23,10 @@
 div {
     line-height: 1.5;
 }
+
+@media (max-width: 320px) {
+    .big-text {
+        font-size: 1.6rem !important;
+        line-height: 1.5;
+    }
+}

@@ -1,19 +1,106 @@
 <div class="moderating-page" layout-wrap layout-padding layout-sm="column" layout-md="column" layout-lg="column" layout-gt-lg="row"
      layout-align-md="start center" layout-align-lg="start center" layout-align-gt-lg="center start" ng-controller="ModeratingController as modCtrl">
 
-    <md-card ng-hide="loaders.overlay || !publication">
+    <md-card class="publication-card" ng-hide="loaders.overlay || !publication">
         <md-card-content>
             <div class="publication-view" layout="column">
                 <div layout="column">
-                    <publication-preview></publication-preview>
+                    <header>
+                        <ul rn-carousel rn-carousel-index="publicationPreviewSlideIndex" class="publication-preview-carousel">
+                            <li ng-repeat="photo in ::publication.photos">
+                                <div class="layer">
+                                    <img ng-src="[[ ::photo ]]" alt=""/>
+                                </div>
+                            </li>
+                        </ul>
 
-                    <form class="md-padding" name="forms.rejectReason" layout="column" novalidate ng-show="rejectFormIsVisible">
+                        <div class="publication-view-image-overlay">
+                            <md-button class="md-icon-button slide-prev" ng-hide="publicationPreviewSlideIndex == 0"
+                                       ng-click="modCtrl.prevSlide()">
+                                <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_left</md-icon>
+                            </md-button>
+                            <md-button class="md-icon-button slide-next" ng-hide="publicationPreviewSlideIndex == publication.photos.length - 1"
+                                       ng-click="modCtrl.nextSlide()">
+                                <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_right</md-icon>
+                            </md-button>
+
+
+                            <div class="publication-view-overlay-description" layout="row" layout-align="start center" layout-padding>
+                                <div layout="column" layout-padding>
+                                    <div class="md-headline">
+                                        [[ ::publication.title ]]
+                                    </div>
+                                    <div class="md-subhead">
+                                        [[ ::publication.address ]]
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div ng-include="publicationTemplateUrl"></div>
+
+                    <!--<div layout="column" class="md-padding">-->
+                        <!--<div class="md-subhead blue-text">Контакты</div>-->
+                        <!--<md-divider></md-divider>-->
+                        <!--<div layout="column" layout-padding>-->
+                            <!--<div class="publication-contacts" layout-gt-sm="row" layout-sm="column" layout-padding>-->
+                                <!--<div class="avatar" flex-sm="100" flex-gt-sm="40" layout="column" layout-align="center center">-->
+                                    <!--<img ng-src="[[ publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/empty-or-error-user-avatar.png"-->
+                                         <!--ng-if="publication.contacts.avatar_url" />-->
+                                    <!--<img src="{{ static }}build/images/common/empty-or-error-user-avatar.png" ng-if="!publication.contacts.avatar_url" alt="" />-->
+                                <!--</div>-->
+                                <!--<div flex-sm="100" flex-gt-sm="60" layout="column">-->
+                                    <!--<div class="md-title grey-text text-darken-2" layout-padding ng-if="publication.contacts.first_name || publication.contacts.last_name">-->
+                                        <!--[[ publication.contacts.first_name + '&nbsp;' ]][[ publication.contacts.last_name ]]-->
+                                    <!--</div>-->
+                                    <!--<div ng-if="!( publication.contacts.first_name || publication.contacts.last_name )">Продавец не указал имени.</div>-->
+
+                                    <!--<div layout="row">-->
+                                        <!--<div class="inset" ng-if="publication.contacts.mobile_phone" flex="50">-->
+                                            <!--<div class="md-caption">Моб. телефон:</div>-->
+                                            <!--<a ng-href="tel:[[ publication.contacts.mobile_phone ]]">-->
+                                                <!--[[ publication.contacts.mobile_phone ]]-->
+                                            <!--</a>-->
+                                        <!--</div>-->
+                                        <!--<div class="inset" ng-if="publication.contacts.add_mobile_phone" flex="50">-->
+                                            <!--<div class="md-caption">Доп. моб. телефон:</div>-->
+                                            <!--<a ng-href="tel:[[ publication.contacts.add_mobile_phone ]]">-->
+                                                <!--[[ publication.contacts.add_mobile_phone ]]-->
+                                            <!--</a>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div layout="row">-->
+                                        <!--<div class="inset" ng-if="publication.contacts.landline_phone" flex="50">-->
+                                            <!--<div class="md-caption">Раб. телефон:</div>-->
+                                            <!--[[ publication.contacts.landline_phone ]]-->
+                                        <!--</div>-->
+                                        <!--<div class="inset" ng-if="publication.contacts.add_landline_phone" flex="50">-->
+                                            <!--<div class="md-caption">Доп. раб. телефон:</div>-->
+                                            <!--[[ publication.contacts.add_landline_phone ]]-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="inset" ng-if="publication.contacts.email">-->
+                                        <!--<div class="md-caption">E-mail:</div>-->
+                                        <!--<a ng-href="mailto:[[ publication.contacts.email ]]">[[ publication.contacts.email ]]</a>-->
+                                    <!--</div>-->
+                                    <!--<div class="inset" ng-if="publication.contacts.skype">-->
+                                        <!--<div class="md-caption">Skype:</div>-->
+                                        <!--<a ng-href="skype:[[ publication.contacts.skype ]]?call">[[ publication.contacts.skype ]]</a>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+
+                    <form class="md-padding" name="rejectReasonForm" layout="column" novalidate ng-show="rejectFormIsVisible">
                         <md-divider></md-divider>
                         <div layout="row">
                             <md-input-container flex>
                                 <label>Причина блокировки</label>
                                 <input type="text" name="reject_reason" ng-model="moderator.rejectReason" required>
-                                <div ng-messages="forms.rejectReason.reject_reason.$error" ng-show="forms.rejectReason.reject_reason.$touched">
+                                <div ng-messages="rejectReasonForm.reject_reason.$error" ng-show="rejectReasonForm.reject_reason.$touched">
                                     <div ng-message="required">Обязательное поле</div>
                                 </div>
                             </md-input-container>
@@ -91,7 +178,7 @@
     </div>
 
 
-    <md-card ng-show="!loaders.overlay && !publication">
+    <md-card ng-show="!loaders.overlay && publication == null">
         <md-card-content class="center-align">
             Объявлений для модерации нету. Nach laufen gehen :)
         </md-card-content>

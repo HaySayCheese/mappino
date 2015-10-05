@@ -21,10 +21,11 @@ namespace Mappino.Cabinet.Moderators {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Редактирование профиля';
 
-            $scope.profile = {
-                account: null,
-                preferences: null
-            };
+            $scope.profile = bAuthService.user;
+
+            $scope.$watch('profile', (newValue) => {
+                console.log($rootScope.COUNTRY.CODES)
+            })
 
             $rootScope.loaders.overlay = true;
             bAuthService.loadProfile()
