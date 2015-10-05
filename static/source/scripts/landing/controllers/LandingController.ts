@@ -40,7 +40,6 @@ namespace Mappino.Landing {
             this.initUserData();
 
             $scope.$watch(() => $mdMedia('sm'), (isSmall) => !isSmall && this.$mdSidenav('left-sidenav').close());
-            this.$scope.search.l = "48.455935,34.41285";
             this.initAutocomplete(document.getElementById('landing-autucomplete'));
         }
 
@@ -65,6 +64,15 @@ namespace Mappino.Landing {
         }
 
         public search() {
+            if (this.$scope.search.city.length) {
+                this.$scope.zoom = '&z=15';
+                this.$scope.lat_lng = '&l=' + this.$scope.search.l;
+            }
+            else {
+                this.$scope.zoom = '';
+                this.$scope.lat_lng = '';
+
+            }
             if (this.$scope.search.operation_sid == 2) {
                 this.$scope.operation_sid = 1;
                 this.$scope.url_date_enter = '&b_r_d_min=' + this.$scope.search.date_enter;
@@ -75,7 +83,7 @@ namespace Mappino.Landing {
                 this.$scope.operation_sid = this.$scope.search.operation_sid;
                 this.$scope.url_date_enter = '';
                 this.$scope.url_date_leave ='';
-                this.$scope.url_pr_sid ='';
+                this.$scope.url_pr_sid ='&b_pr_sid=1';
 
             }
         }
