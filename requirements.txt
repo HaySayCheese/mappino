@@ -73,7 +73,8 @@ pytz                        # proper time zones for the python
 python-dateutil
 django-appconf
 
-
+django_compressor
+mmh3                        # django templates caching and etag generation
 
 
 
@@ -83,16 +84,14 @@ django-appconf
 #
 ####
 
-MySQL-python
-celery
-mmh3
-pysqlite
-billiard
-kombu
-django_compressor
-amqp
-anyjson
-six
-mock
-nose
+#MySQL-python
+#celery
+#pysqlite
+#billiard
+#kombu
+#amqp
+#anyjson
+#six
+#mock
+#nose
 #rjsmin                     # js minifier
