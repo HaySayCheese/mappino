@@ -2,10 +2,14 @@ namespace Mappino.Landing {
     'use strict';
 
     var app: ng.IModule = angular.module('mappino.landing', [
+        'ngAnimate',
         'ngMaterial',
+        'ngCookies',
+        'ngMessages',
 
         'Mappino.Core.Constants',
-        'Mappino.Core.Directives'
+        'Mappino.Core.Directives',
+        'Mappino.Core.BAuth'
     ]);
 
 

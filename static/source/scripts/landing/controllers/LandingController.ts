@@ -1,5 +1,6 @@
 namespace Mappino.Landing {
     import IAugmentedJQuery = angular.IAugmentedJQuery;
+    import ITimeoutService = angular.ITimeoutService;
 
     export class LandingController {
 
@@ -8,15 +9,22 @@ namespace Mappino.Landing {
             '$mdMedia',
             '$mdSidenav',
             '$location',
-            '$rootScope'
+            '$rootScope',
+            '$timeout',
+            'BAuthService',
+            '$cookies'
         ];
 
         constructor(private $scope: any,
                     private $mdMedia: any,
                     private $mdSidenav: any,
                     private $location: ng.ILocationService,
-                    private $rootScope: any) {
+                    private $rootScope: any,
+                    private $timeout: ITimeoutService,
+                    private bAuthService: Mappino.Core.BAuth.BAuthService,
+                    private $cookies: ng.cookies.ICookiesService) {
             // ---------------------------------------------------------------------------------------------------------
+
             $scope.search = {
                 realty_type_sid: 0,
                 operation_sid: 0,
@@ -26,23 +34,58 @@ namespace Mappino.Landing {
                 city: '',
                 l: ''
             };
-            $scope.$watch(() => $mdMedia('sm'), (isSmall) => !isSmall && this.$mdSidenav('left-sidenav').close());
-            this.$scope.search.l = "48.455935,34.41285";
-            $scope.$watch('search.operation_sid', newValue => {
-                if (newValue == 2) {
-                    this.$scope.operation_sid = 1;
-                    this.$scope.url_part1 = '&b_r_d_min=';
-                    this.$scope.url_part2 ='&b_r_d_max=';
-                    this.$scope.url_part3 ='&b_pr_sid=0';
-                }
-                else {
-                    this.$scope.operation_sid = this.$scope.search.operation_sid;
-                    this.$scope.url_part1 = '';
-                    this.$scope.url_part2 = '';
 
-                }
-            });
+            $scope.authState = 'enterPhone';
+
+            this.initUserData();
+
+            $scope.$watch(() => $mdMedia('sm'), (isSmall) => !isSmall && this.$mdSidenav('left-sidenav').close());
             this.initAutocomplete(document.getElementById('landing-autucomplete'));
+        }
+
+
+
+        public scrollToTop() {
+            this.$timeout(() => {
+                angular.element('html,body').animate({
+                    scrollTop: 0
+                }, 'slow');
+            }, 50);
+        }
+
+        public scrollToLoginForm() {
+            this.$timeout(() => {
+                angular.element('html,body').animate({
+                    scrollTop: 700
+                }, 'slow');
+                this.toggleLoginForm();
+            }, 50);
+
+        }
+
+        public search() {
+            if (this.$scope.search.city.length) {
+                this.$scope.zoom = '&z=15';
+                this.$scope.lat_lng = '&l=' + this.$scope.search.l;
+            }
+            else {
+                this.$scope.zoom = '';
+                this.$scope.lat_lng = '';
+
+            }
+            if (this.$scope.search.operation_sid == 2) {
+                this.$scope.operation_sid = 1;
+                this.$scope.url_date_enter = '&b_r_d_min=' + this.$scope.search.date_enter;
+                this.$scope.url_date_leave ='&b_r_d_max=' + this.$scope.search.date_leave;
+                this.$scope.url_pr_sid ='&b_pr_sid=0';
+            }
+            else {
+                this.$scope.operation_sid = this.$scope.search.operation_sid;
+                this.$scope.url_date_enter = '';
+                this.$scope.url_date_leave ='';
+                this.$scope.url_pr_sid ='&b_pr_sid=1';
+
+            }
         }
 
 
@@ -55,6 +98,89 @@ namespace Mappino.Landing {
         }
 
 
+
+
+
+
+
+        public login() {
+            if (this.$scope.authState === 'enterPhone') {
+                if (this.$scope.loginForm.mobilePhone.$valid) {
+                    this.bAuthService.checkPhoneNumber(this.$scope.account.mobileCode, this.$scope.account.mobilePhone)
+                        .success(response => {
+                            if (response.code == 10) {
+                                window.location.pathname = '/cabinet/';
+                            } else if (response.code == 1) {
+                                this.$scope.loginForm.mobilePhone.$setValidity('invalid', false);
+                            } else if (response.code == 200) {
+                                this.$scope.loginForm.mobilePhone.$setValidity('throttled', false);
+                            } else {
+                                localStorage.setItem('mobile_code', this.$scope.account.mobileCode);
+                                localStorage.setItem('mobile_phone', this.$scope.account.mobilePhone);
+
+                                this.$scope.authState = 'enterSMSCode';
+                            }
+                        })
+                        .error(response => {
+                            this.$scope.loginForm.mobilePhone.$setValidity('invalid', false);
+                        });
+                }
+            } else {
+                if (this.$scope.loginForm.smsCode.$valid) {
+                    this.bAuthService.checkSMSCode(this.$scope.account.mobileCode, this.$scope.account.mobilePhone, this.$scope.account.smsCode)
+                        .success(response => {
+                            if (response.code == 0) {
+                                this.clearUserData();
+                                window.location.pathname = '/cabinet/';
+
+                            } else {
+                                this.$scope.loginForm.smsCode.$setValidity('invalid', false);
+                            }
+                        })
+                        .error(response => {
+                            this.$scope.loginForm.smsCode.$setValidity('invalid', false);
+                        });
+                }
+            }
+        }
+
+
+
+        public toggleLoginForm() {
+            if (this.$cookies.get('sessionid')) {
+                window.location.pathname = '/cabinet/';
+            } else {
+                this.$scope.showLoginForm = true;
+            }
+        }
+
+
+        private changeAuthState() {
+            this.$scope.authState = this.$cookies.get('mcheck') ? 'enterSMSCode' : 'enterPhone';
+        }
+
+
+
+        private initUserData() {
+            this.$scope.account = {
+                mobileCode:     localStorage.getItem('mobile_code')     || '+380',
+                mobilePhone:    localStorage.getItem('mobile_phone')    || '',
+                smsCode:        ''
+            };
+        }
+
+
+
+        private clearUserData() {
+            this.$scope.account = {
+                mobileCode:     '+380',
+                mobilePhone:    '',
+                smsCode:        ''
+            };
+
+            localStorage.removeItem('mobile_code');
+            localStorage.removeItem('mobile_phone');
+        }
 
         private initAutocomplete(element: HTMLElement) {
             var autocomplete = new google.maps.places.Autocomplete(<HTMLInputElement>element, {
@@ -72,6 +198,5 @@ namespace Mappino.Landing {
 
             });
         }
-
     }
 }

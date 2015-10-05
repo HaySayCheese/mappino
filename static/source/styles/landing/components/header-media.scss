@@ -56,6 +56,14 @@
     #landing-autucomplete {
         @include placeholder(#fff)
     }
+
+    md-select {
+        color: #ffffff !important;
+
+        .md-select-value {
+            color: #fff !important;
+        }
+    }
 }
 
 main {
