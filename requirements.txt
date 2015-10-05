@@ -53,7 +53,7 @@
 
 django==1.8
 jinja2
-redis
+redis==2.9                  # WARN: 2.10 is broken
 hiredis
 pillow
 mandrill                    # email subsystem
@@ -75,7 +75,7 @@ django-appconf
 
 django_compressor
 mmh3                        # django templates caching and etag generation
-
+celery
 
 
 ####
@@ -85,7 +85,6 @@ mmh3                        # django templates caching and etag generation
 ####
 
 #MySQL-python
-#celery
 #pysqlite
 #billiard
 #kombu
