@@ -20,7 +20,7 @@ namespace Mappino.Landing {
                 $mdDateLocaleProvider.firstDayOfWeek = 1;
 
                 $mdDateLocaleProvider.formatDate = (date) => {
-                    return moment(date).format('L');
+                    return moment(date).isValid() ? moment(date).format('L'): date;
                 };
             }]);
         }

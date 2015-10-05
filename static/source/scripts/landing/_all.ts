@@ -10,6 +10,7 @@
 // ####################
 /// <reference path='../core/constants/_all.ts' />
 /// <reference path='../core/directives/_all.ts' />
+/// <reference path='../core/b-auth/_all.ts' />
 
 
 
