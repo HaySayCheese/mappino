@@ -52,7 +52,7 @@
             </md-tab-label>
             <md-tab-body>
                 <div class="filters-tab" ng-controller="FiltersTabController as filCtrl" navbar-left-section-scroll>
-                    <section class="-closable">
+                    <section class="-closable -closed -without-margin-bottom ">
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
                             <md-icon>place</md-icon>
                             <span class="md-body-1" ng-show="!filters.map.c.length">Местоположение не указано</span>
@@ -69,7 +69,7 @@
                         </tab-section-collapsible>
                     </section>
 
-                    <section class="-closable -filters-blue">
+                    <section class="-closable -filters-blue -closed -without-margin-bottom ">
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
                             <md-icon>place</md-icon>
                             <span class="md-body-1" ng-hide="filters.panels.blue.b_t_sid != null">
