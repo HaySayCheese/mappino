@@ -415,6 +415,7 @@ class AbstractTradesIndex(AbstractBaseIndex):
 
     @classmethod
     def apply_filters(cls, filters, markers):
+        markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_price_filter(filters, markers)
 
         markers = cls.apply_halls_area_filter(filters, markers)
@@ -467,6 +468,7 @@ class AbstractOfficesIndex(AbstractBaseIndex):
 
     @classmethod
     def apply_filters(cls, filters, markers):
+        markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_price_filter(filters, markers)
 
         markers = cls.apply_total_area_filter(filters, markers)
@@ -520,6 +522,7 @@ class AbstractWarehousesIndex(AbstractBaseIndex):
 
     @classmethod
     def apply_filters(cls, filters, markers):
+        markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_price_filter(filters, markers)
 
         markers = cls.apply_halls_area_filter(filters, markers)
@@ -567,9 +570,8 @@ class AbstractGaragesIndex(AbstractBaseIndex):
 
     @classmethod
     def apply_filters(cls, filters, markers):
-        markers = cls.apply_price_filter(filters, markers)
-
         markers = cls.apply_market_type_filter(filters, markers)
+        markers = cls.apply_price_filter(filters, markers)
         markers = cls.apply_area_filter(filters, markers)
         return markers
 
@@ -617,6 +619,7 @@ class AbstractLandsIndex(AbstractBaseIndex):
 
     @classmethod
     def apply_filters(cls, filters, markers):
+        markers = cls.apply_market_type_filter(filters, markers)
         markers = cls.apply_price_filter(filters, markers)
         markers = cls.apply_area_filter(filters, markers)
         return markers
