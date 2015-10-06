@@ -115,7 +115,7 @@
                             </div>
                         </tab-section-collapsible>
                     </section>
-                    <section class="-closable -filters-green -closed">
+                    <section class="-closable -filters-green -closed" hide-sm>
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
                             <md-icon>place</md-icon>
                             <span class="md-body-1" ng-hide="filters.panels.green.g_t_sid != null">
@@ -230,7 +230,7 @@
                                         </div>
                                         <md-input-container flex="100">
                                             <label>Код подтверждения</label>
-                                            <input type="text" name="smsCode" ng-model="account.smsCode" autofocus only-number required>
+                                            <input type="tel" name="smsCode" ng-model="account.smsCode" autofocus only-number required>
                                             <div ng-messages="loginForm.smsCode.$error"
                                                  ng-show="loginForm.smsCode.$touched">
                                                 <div ng-message="required">Обязательное поле</div>
