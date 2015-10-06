@@ -192,19 +192,6 @@ class LivingRentPeriods(AbstractConstant):
 LIVING_RENT_PERIODS = LivingRentPeriods()
 
 
-class CommercialRentPeriods(AbstractConstant):
-    def __init__(self):
-        super(CommercialRentPeriods, self).__init__()
-        self.set_ids({
-            'long_period':  2
-        })
-
-
-    def long_period(self):
-        return self.ids['long_period']
-COMMERCIAL_RENT_PERIODS = CommercialRentPeriods()
-
-
 class MarketType(AbstractConstant):
     def __init__(self):
         super(MarketType, self).__init__()

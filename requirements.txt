@@ -76,6 +76,7 @@ django-appconf
 django_compressor
 mmh3                        # django templates caching and etag generation
 celery
+dateutil
 
 
 ####

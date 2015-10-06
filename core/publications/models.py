@@ -1181,7 +1181,6 @@ class OfficesBodies(BodyModel):
 
     market_type_sid = models.SmallIntegerField(default=MARKET_TYPES.secondary_market()) # Тип ринку
     building_type_sid = models.SmallIntegerField(default=TRADE_BUILDING_TYPES.business())
-    build_year = models.PositiveSmallIntegerField(null=True)
     condition_sid = models.SmallIntegerField(default=OBJECT_CONDITIONS.cosmetic_repair()) # загальний стан
 
     floor = models.SmallIntegerField(null=True) # номер поверху
@@ -1189,7 +1188,6 @@ class OfficesBodies(BodyModel):
     floors_count = models.SmallIntegerField(null=True)
 
     cabinets_count = models.PositiveSmallIntegerField(null=True)
-    cabinets_area = models.FloatField(null=True)
     total_area = models.FloatField(null=True)
     closed_area = models.BooleanField(default=False)
 
@@ -1217,7 +1215,6 @@ class OfficesBodies(BodyModel):
 
     # Комунікації
     phone = models.BooleanField(default=False)
-    phone_lines_count = models.PositiveSmallIntegerField(null=True)
     internet = models.BooleanField(default=False)
     mobile_coverage = models.BooleanField(default=False) # покриття моб. операторами
     cable_tv = models.BooleanField(default=False) # кабельне / супутникове тб

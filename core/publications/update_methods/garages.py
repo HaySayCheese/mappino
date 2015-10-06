@@ -1,14 +1,12 @@
 #coding=utf-8
 from decimal import InvalidOperation
-from collective.methods.formatters import format_text, format_title
 
 from django.db import DatabaseError, IntegrityError
 
+from collective.methods.formatters import format_text, format_title
 from core.currencies.constants import CURRENCIES
-from core.publications.constants import MARKET_TYPES, COMMERCIAL_RENT_PERIODS, SALE_TRANSACTION_TYPES
+from core.publications.constants import MARKET_TYPES
 from core.publications.models import GaragesBodies, GaragesRentTerms, GaragesSaleTerms
-from core.publications.objects_constants.garages import GARAGE_DRIVE_WAYS
-
 
 
 # Оновлює інформацію про гараж.
@@ -95,18 +93,6 @@ def update_garage(h, field, value, tid):
                 return
             else:
                 raise ValueError()
-
-
-        # sid
-        elif field == 'rent_period_sid':
-            value = int(value)
-            if value not in COMMERCIAL_RENT_PERIODS.values():
-                raise ValueError()
-
-            rt = GaragesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-            rt.period_sid = value
-            rt.save(force_update=True)
-            return
 
 
         # blank or decimal

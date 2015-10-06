@@ -189,7 +189,6 @@ class PublishedDataSource(object):
             'halls_area': p.body.print_halls_area(),
             'total_area': p.body.print_total_area(),
 
-            'wcs_count': p.body.print_wcs_count(),
             'ceiling_height': p.body.print_ceiling_height(),
 
             'facilities': p.body.print_facilities(),

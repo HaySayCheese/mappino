@@ -6,7 +6,8 @@ from collective.methods.formatters import format_title
 from django.db import DatabaseError, IntegrityError
 
 from core.currencies.constants import CURRENCIES
-from core.publications.constants import COMMERCIAL_RENT_PERIODS, SALE_TRANSACTION_TYPES, MARKET_TYPES, INDIVIDUAL_HEATING_TYPES, HEATING_TYPES, FLOOR_TYPES, OBJECT_CONDITIONS, RED_LINE_VALUES
+from core.publications.constants import SALE_TRANSACTION_TYPES, MARKET_TYPES, INDIVIDUAL_HEATING_TYPES, HEATING_TYPES, \
+    FLOOR_TYPES, OBJECT_CONDITIONS
 from core.publications.models import OfficesRentTerms, OfficesBodies, OfficesSaleTerms
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
 
@@ -124,18 +125,6 @@ def update_office(h, field, value, tid):
                 raise ValueError()
 
 
-        # sid
-        elif field == 'rent_period_sid':
-            value = int(value)
-            if value not in COMMERCIAL_RENT_PERIODS.values():
-                raise ValueError()
-
-            rt = OfficesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-            rt.period_sid = value
-            rt.save(force_update=True)
-            return
-
-
         # blank or decimal
         elif field == 'rent_price':
             if not value:
@@ -195,18 +184,6 @@ def update_office(h, field, value, tid):
                 rt.add_terms = value
                 rt.save(force_update=True)
                 return value
-
-
-        # sid
-        elif field == 'red_line_sid':
-            value = int(value)
-            if value not in RED_LINE_VALUES.values():
-                raise ValueError()
-
-            b = OfficesBodies.objects.filter(id=h.body_id).only('id')[0]
-            b.red_line = value
-            b.save(force_update=True)
-            return
 
 
         # text
