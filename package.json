@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "del": "*",
-    "gulp": "*",
+    "gulp": "^3.9.0",
     "gulp-imagemin": "*",
     "gulp-minify-css": "*",
     "gulp-rename": "*",

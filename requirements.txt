@@ -53,7 +53,7 @@
 
 django==1.8
 jinja2
-redis
+redis==2.9                  # WARN: 2.10 is broken
 hiredis
 pillow
 mandrill                    # email subsystem
@@ -73,8 +73,9 @@ pytz                        # proper time zones for the python
 python-dateutil
 django-appconf
 
-
-
+django_compressor
+mmh3                        # django templates caching and etag generation
+celery
 
 
 ####
@@ -83,16 +84,13 @@ django-appconf
 #
 ####
 
-MySQL-python
-celery
-mmh3
-pysqlite
-billiard
-kombu
-django_compressor
-amqp
-anyjson
-six
-mock
-nose
+#MySQL-python
+#pysqlite
+#billiard
+#kombu
+#amqp
+#anyjson
+#six
+#mock
+#nose
 #rjsmin                     # js minifier
