@@ -49,24 +49,29 @@
 
 
 <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav">
-    <header layout="column" layout-align="center center">
+    <md-toolbar layout="row" layout-align="center center">
+        <span>Mappino</span>
+    </md-toolbar>
 
-    </header>
     <md-content layout="column" layout-padding>
-
         <div layout="row">
-            <md-button class="md-primary" ui-sref="base" ng-click="helpCtrl.toggleSidenav()">
+            <md-button layout-fill class="md-primary sidenav-button" ng-click="helpCtrl.toggleSidenav()">
+                О нас
+            </md-button>
+        </div>
+        <div layout="row">
+            <md-button layout-fill class="md-primary sidenav-button" ng-click="helpCtrl.toggleSidenav()">
                 Частые вопросы
             </md-button>
         </div>
         <div layout="row">
-            <md-button class="md-primary" ui-sref="support" ng-click="helpCtrl.toggleSidenav()">
+            <md-button layout-fill class="md-primary sidenav-button" ng-click="helpCtrl.toggleSidenav()">
                 Контакты
             </md-button>
         </div>
         <div layout="row">
-            <md-button class="md-primary" ui-sref="settings" ng-click="helpCtrl.toggleSidenav()">
-                О сервисе
+            <md-button layout-fill class="md-primary sidenav-button" ng-click="helpCtrl.toggleSidenav()">
+                Почему именно Mappino?
             </md-button>
         </div>
     </md-content>
@@ -74,26 +79,31 @@
 <div layout="row" layout-padding>
     <div layout="column" flex="20" hide-sm>
         <div layout="row">
-            <md-button ng-click="helpCtrl.toggleSidenav()" class="sidenav-button">
+            <md-button layout-fill class="md-primary sidenav-button" ng-click="helpCtrl.toggleSidenav()">
+                О нас
+            </md-button>
+        </div>
+        <div layout="row">
+            <md-button layout-fill class="md-primary sidenav-button" ng-click="helpCtrl.toggleSidenav()">
                 Частые вопросы
             </md-button>
         </div>
         <div layout="row">
-            <md-button ng-click="helpCtrl.toggleSidenav()" class="sidenav-button">
+            <md-button layout-fill class="md-primary sidenav-button" ng-click="helpCtrl.toggleSidenav()">
                 Контакты
             </md-button>
         </div>
         <div layout="row">
-            <md-button ng-click="helpCtrl.toggleSidenav()" class="sidenav-button">
-                О сервисе
+            <md-button layout-fill class="md-primary sidenav-button" ng-click="helpCtrl.toggleSidenav()">
+                Почему именно Mappino?
             </md-button>
         </div>
     </div>
     <div layout="column" flex="5"></div>
-    <div layout="column" flex>
+    <main layout="column" flex>
         {% block help %}
         {% endblock %}
-    </div>
+    </main>
 </div>
 
 {# Js libs #}
