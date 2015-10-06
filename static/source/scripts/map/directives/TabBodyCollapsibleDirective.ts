@@ -12,18 +12,9 @@ namespace Mappino.Map {
 
             link: (scope, element, attrs, modelCtrl) => {
                 var toggleTabSectionBtn = angular.element(element).parent().find('[toggle-tab-section]'),
-                    headerControllers = angular.element(
-                        "<span flex></span>" +
-                        "<md-icon>keyboard_arrow_up</md-icon>"
-                    ),
                     $mdTabsWrapper          = angular.element(element).parents().find('md-tabs-wrapper'),
                     $mdTabsContentWrapper   = angular.element(element).parents().find('md-tabs-content-wrapper'),
                     $sections = $mdTabsContentWrapper.find('section.-closable');
-
-
-                $compile(headerControllers)(scope);
-                toggleTabSectionBtn.append(headerControllers);
-
 
                 toggleSectionsShadow($sections, $mdTabsWrapper);
 

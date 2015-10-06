@@ -51,12 +51,12 @@ namespace Mappino.Core.RentCalendar {
             });
 
             promise.error(response => {
-                this.$mdToast.show(
-                    this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.LOAD_RESERVATION_DATA.ERROR)
-                        .position(this.toastOptions.position)
-                        .hideDelay(this.toastOptions.delay)
-                );
+                //this.$mdToast.show(
+                //    this.$mdToast.simple()
+                //        .content(this.TXT.TOASTS.PUBLICATION.LOAD_RESERVATION_DATA.ERROR)
+                //        .position(this.toastOptions.position)
+                //        .hideDelay(this.toastOptions.delay)
+                //);
             });
 
             return promise;

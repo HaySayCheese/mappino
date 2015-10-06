@@ -57,6 +57,8 @@
                             <md-icon>place</md-icon>
                             <span class="md-body-1" ng-show="!filters.map.c.length">Местоположение не указано</span>
                             <span class="md-body-1 truncate">[[ filters.map.c ]]</span>
+                            <span flex></span>
+                            <md-icon>keyboard_arrow_up</md-icon>
                         </header>
                         <tab-section-collapsible>
                             <div class="md-padding">
@@ -85,6 +87,8 @@
                             <span class="md-body-1" ng-show="!filters.panels.blue.b_p_min && filters.panels.blue.b_p_max">
                                 (до [[ filters.panels.blue.b_p_max ]] [[ TYPES.CURRENCY[filters.panels.blue.b_cu_sid].title ]])
                             </span>
+                            <span flex></span>
+                            <md-icon>keyboard_arrow_up</md-icon>
                         </header>
                         <tab-section-collapsible>
                             <div class="md-padding" layout="column">
@@ -105,7 +109,7 @@
                                     </md-input-container>
                                 </div>
                                 <div ng-if="filters.panels.blue.b_t_sid != 'null'" ng-include="'/ajax/template/map/filters/blue/' + [[ filters.panels.blue.b_t_sid ]] + '/'"></div>
-                                <md-button class="md-raised md-primary" ng-click="filCtrl.updateFilters('blue');">
+                                <md-button class="md-raised md-primary" ng-click="filCtrl.updateFilters('blue');" toggle-tab-section>
                                     Обновить предложения
                                 </md-button>
                             </div>
@@ -129,6 +133,8 @@
                             <span class="md-body-1" ng-show="!filters.panels.green.g_p_min && filters.panels.green.g_p_max">
                                 (до [[ filters.panels.green.g_p_max ]] [[ TYPES.CURRENCY[filters.panels.green.g_cu_sid].title ]])
                             </span>
+                            <span flex></span>
+                            <md-icon>keyboard_arrow_up</md-icon>
                         </header>
                         <tab-section-collapsible>
                             <div class="md-padding" layout="column">
@@ -149,7 +155,7 @@
                                     </md-input-container>
                                 </div>
                                 <div ng-if="filters.panels.green.g_t_sid != null" ng-include="'/ajax/template/map/filters/green/' + [[ filters.panels.green.g_t_sid ]] + '/'"></div>
-                                <md-button class="md-raised md-primary" ng-click="filCtrl.updateFilters('green');">
+                                <md-button class="md-raised md-primary" ng-click="filCtrl.updateFilters('green');" toggle-tab-section>
                                     Обновить предложения
                                 </md-button>
                             </div>
