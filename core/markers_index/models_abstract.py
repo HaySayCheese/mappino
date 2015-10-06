@@ -305,11 +305,17 @@ class AbstractBaseIndex(models.Model):
 
     @staticmethod  # sid
     def apply_market_type_filter(filters, markers):
-        if 'n_b' in filters and not 's_m' in filters:
-            markers = markers.filter(market_type_sid=MARKET_TYPES.new_building())
+        market_type_sid = filters.get(u'm_t_sid')
+        if market_type_sid is None:
+            return markers
 
-        elif 's_m' in filters and not 'n_b' in filters:
+        if market_type_sid == MARKET_TYPES.new_building():
+            markers = markers.filter(market_type_sid=MARKET_TYPES.new_building())
+        elif market_type_sid == MARKET_TYPES.secondary_market():
             markers = markers.filter(market_type_sid=MARKET_TYPES.secondary_market())
+        else:
+            # filters may contain value that should be ignored.
+            pass
 
         return markers
 
