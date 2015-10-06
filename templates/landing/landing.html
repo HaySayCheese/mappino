@@ -41,13 +41,13 @@
                         <mappino-logo class="mappino-logo--medium"></mappino-logo>
                     </md-button>
                     <span flex></span>
-                    <md-button ng-href="/help#" class="header-button">
+                    <md-button ng-href="/" class="header-button">
                         Покупателям
                     </md-button>
-                    <md-button ng-href="/help#" class="header-button">
+                    <md-button ng-href="/" class="header-button">
                         Продавцам
                     </md-button>
-                    <md-button ng-href="/help#" class="header-button">
+                    <md-button ng-href="/" class="header-button">
                         Арендодателям
                     </md-button>
                     <md-button ng-click="landingCtrl.scrollToLoginForm()" class="header-button" id="publication-button">
@@ -121,21 +121,21 @@
 
 
 
-        <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav">
+        <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav" md-swipe-left="landingCtrl.toggleSidenav()">
             <md-toolbar class="md-theme-indigo">
                 <h1 class="md-toolbar-tools">Mappino</h1>
             </md-toolbar>
             <md-content layout="column" layout-padding layout-align="center start">
-                <md-button ng-href="/help#" class="header-button">
+                <md-button ng-click="landingCtrl.toggleSidenav()" ng-href="/" class="header-button">
                     Покупателям
                 </md-button>
-                <md-button ng-href="/help#" class="header-button">
+                <md-button ng-click="landingCtrl.toggleSidenav()" ng-href="/" class="header-button">
                     Продавцам
                 </md-button>
-                <md-button ng-href="/help#" class="header-button">
+                <md-button ng-click="landingCtrl.toggleSidenav()" ng-href="/" class="header-button">
                     Арендодателям
                 </md-button>
-                <md-button ng-click="landingCtrl.scrollToLoginForm()" class="header-button">
+                <md-button ng-click="landingCtrl.scrollToLoginForm(); landingCtrl.toggleSidenav()" class="header-button">
                     Подать объявление
                 </md-button>
             </md-content>
@@ -306,7 +306,7 @@
                     <span class="contact-padding"><md-icon class="material-icons md-36 blue-text">mail</md-icon> &nbsp;
                         <a ng-href="mailto:hello@mappino.com">hello@mappino.com</a></span>
                     <span class="contact-padding"><md-icon class="material-icons md-36 blue-text">phone</md-icon>&nbsp;
-                        <a ng-href="tel:+380996055588">+380 99 605 55 88</a> </span>
+                        <a ng-href="tel:+380996055588">+380 99 60 555 88</a> </span>
                     <span class="contact-padding"><md-icon class="material-icons md-36 blue-text">phone</md-icon>&nbsp;
                        <a href="tel:+380372909901">+380 372 909 901</a> </span></div>
             </div>

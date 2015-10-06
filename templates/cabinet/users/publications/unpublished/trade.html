@@ -60,14 +60,6 @@
         <md-card-content>
             <div class="md-subhead blue-text">Условия аренды</div>
             <div class="md-padding" ng-show="publication.head.for_rent">
-                <div layout="row">
-                    <md-input-container flex="33">
-                        <label>Срок</label>
-                        <md-select md-on-close="u_pubCtrl.checkField('rent_period_sid')" ng-model="publication.rent_terms.period_sid">
-                            <md-option ng-repeat="periodType in ::TYPES.PERIOD" ng-if="$index > 0" value="[[ ::periodType.id ]]">[[ ::periodType.title ]]</md-option>
-                        </md-select>
-                    </md-input-container>
-                </div>
                 <div layout="row" layout-align="start center">
                     <md-input-container flex="33">
                         <label>Цена</label>

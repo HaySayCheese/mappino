@@ -62,7 +62,7 @@
             <div class="md-padding" ng-show="publication.head.for_rent">
                 <div layout="row">
                     <md-input-container>
-                        <label>Срок</label>
+                        <label>Период</label>
                         <md-select md-on-close="u_pubCtrl.checkField('rent_period_sid')" ng-model="publication.rent_terms.period_sid" flex="33">
                             <md-option ng-repeat="periodType in ::TYPES.PERIOD" value="[[ ::periodType.id ]]">[[ ::periodType.title ]]</md-option>
                         </md-select>
