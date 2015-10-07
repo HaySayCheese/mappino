@@ -291,7 +291,6 @@ class AbstractBaseIndex(models.Model):
 
         return markers
 
-
     @staticmethod  # sid
     def apply_living_rent_period_filter(filters, markers):
         period = int(filters.get('pr_sid'))
@@ -302,21 +301,23 @@ class AbstractBaseIndex(models.Model):
 
         return markers
 
-
     @staticmethod  # sid
     def apply_market_type_filter(filters, markers):
         market_type_sid = filters.get(u'm_t_sid')
         if market_type_sid is None:
+            # note: filters may not contain market type sid.
             return markers
 
-        if market_type_sid == MARKET_TYPES.new_building():
+        elif market_type_sid == MARKET_TYPES.new_building():
             markers = markers.filter(market_type_sid=MARKET_TYPES.new_building())
+            return markers
+
         elif market_type_sid == MARKET_TYPES.secondary_market():
             markers = markers.filter(market_type_sid=MARKET_TYPES.secondary_market())
-        else:
-            # filters may contain value that should be ignored.
-            pass
+            return markers
 
+        # note: filters may not contain valid market type sid.
+        # in this case this filter should not be applied.
         return markers
 
 
@@ -474,9 +475,9 @@ class AbstractOfficesIndex(AbstractBaseIndex):
 
     @classmethod
     def apply_filters(cls, filters, markers):
-        markers = cls.apply_market_type_filter(filters, markers)
-        markers = cls.apply_price_filter(filters, markers)
+        # note: offices should not have market type filter because it is not logic.
 
+        markers = cls.apply_price_filter(filters, markers)
         markers = cls.apply_total_area_filter(filters, markers)
         markers = cls.apply_cabinets_count_filter(filters, markers)
         return markers
@@ -576,7 +577,8 @@ class AbstractGaragesIndex(AbstractBaseIndex):
 
     @classmethod
     def apply_filters(cls, filters, markers):
-        markers = cls.apply_market_type_filter(filters, markers)
+        # note: garages should not have market type filter because it is not logic.
+
         markers = cls.apply_price_filter(filters, markers)
         markers = cls.apply_area_filter(filters, markers)
         return markers
@@ -625,7 +627,8 @@ class AbstractLandsIndex(AbstractBaseIndex):
 
     @classmethod
     def apply_filters(cls, filters, markers):
-        markers = cls.apply_market_type_filter(filters, markers)
+        # note: lands should not have market type filter because it is not logic.
+
         markers = cls.apply_price_filter(filters, markers)
         markers = cls.apply_area_filter(filters, markers)
         return markers
