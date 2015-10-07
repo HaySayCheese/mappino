@@ -55,8 +55,8 @@
                     <section class="-closable -closed -without-margin-bottom ">
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
                             <md-icon>place</md-icon>
-                            <span class="md-body-1" ng-show="!filters.map.c.length">Местоположение не указано</span>
-                            <span class="md-body-1 truncate">[[ filters.map.c ]]</span>
+                            <span class="md-body-1" ng-hide="filters.map.c.length">Местоположение не указано</span>
+                            <span class="md-body-1 truncate" flex ng-show="filters.map.c.length">[[ filters.map.c ]]</span>
                             <span flex></span>
                             <md-icon>keyboard_arrow_up</md-icon>
                         </header>
