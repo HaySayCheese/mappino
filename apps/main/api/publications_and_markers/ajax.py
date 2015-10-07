@@ -164,8 +164,7 @@ class Markers(View):
 
                 if briefs:
                     response[panel] = briefs
-                else:
-                    response[panel] = {}
+
 
                 # on the next iteration we need to receive only ids
                 # that was not received on previous iterations

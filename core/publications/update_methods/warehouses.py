@@ -6,7 +6,7 @@ from collective.methods.formatters import format_title
 from django.db import DatabaseError, IntegrityError
 
 from core.currencies.constants import CURRENCIES
-from core.publications.constants import RED_LINE_VALUES, SALE_TRANSACTION_TYPES, INDIVIDUAL_HEATING_TYPES, HEATING_TYPES, MARKET_TYPES, COMMERCIAL_RENT_PERIODS
+from core.publications.constants import SALE_TRANSACTION_TYPES, INDIVIDUAL_HEATING_TYPES, HEATING_TYPES, MARKET_TYPES
 from core.publications.models import WarehousesBodies, WarehousesRentTerms, WarehousesSaleTerms
 
 
@@ -123,18 +123,6 @@ def update_warehouse(h, field, value, tid):
                 raise ValueError()
 
 
-        # sid
-        elif field == 'rent_period_sid':
-            value = int(value)
-            if value not in COMMERCIAL_RENT_PERIODS.values():
-                raise ValueError()
-
-            rt = WarehousesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-            rt.period_sid = value
-            rt.save(force_update=True)
-            return
-
-
         # blank or decimal
         elif field == 'rent_price':
             if not value:
@@ -194,18 +182,6 @@ def update_warehouse(h, field, value, tid):
                 rt.add_terms = value
                 rt.save(force_update=True)
                 return value
-
-
-        # sid
-        elif field == 'red_line_sid':
-            value = int(value)
-            if value not in RED_LINE_VALUES.values():
-                raise ValueError()
-
-            b = WarehousesBodies.objects.filter(id=h.body_id).only('id')[0]
-            b.red_line = value
-            b.save(force_update=True)
-            return
 
 
         # text

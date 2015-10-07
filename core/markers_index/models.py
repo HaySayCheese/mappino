@@ -935,7 +935,7 @@ class OfficesRentIndex(AbstractOfficesIndex):
         model = HEAD_MODELS[cls.tid]
 
         return model.objects.\
-            filter(publication_id=publication_head_id)\
+            filter(id=publication_head_id)\
             .only(
                 'id',
                 'hash_id',

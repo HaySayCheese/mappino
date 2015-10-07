@@ -16,7 +16,7 @@ from core.publications.handlers import PublicationsPhotosHandler
 from core.currencies import currencies_manager as currencies
 from core.currencies.constants import CURRENCIES as currencies_constants
 from core.publications import signals
-from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, COMMERCIAL_RENT_PERIODS, \
+from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, \
     OBJECTS_TYPES
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
     EmptyRentPrice, EmptyPersonsCount, NotEnoughPhotos
@@ -802,7 +802,6 @@ class CommercialRentTermsModel(AbstractModel):
     price = models.DecimalField(null=True, max_digits=18, decimal_places=2)
     currency_sid = models.SmallIntegerField(default=currencies_constants.dol())
     is_contract = models.BooleanField(default=False)
-    period_sid = models.SmallIntegerField(default=COMMERCIAL_RENT_PERIODS.long_period())
     add_terms = models.TextField(default='')
 
 

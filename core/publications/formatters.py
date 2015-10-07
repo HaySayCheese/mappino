@@ -179,7 +179,7 @@ class PublishedDataSource(object):
         description = {
             'market_type': p.body.print_market_type(),
             'building_type': p.body.print_building_type(),
-            'build_year': p.body.print_build_year(),
+            # 'build_year': p.body.print_build_year(),
             'condition': p.body.print_condition(),
 
             'floor': p.body.print_floor(),
@@ -189,7 +189,6 @@ class PublishedDataSource(object):
             'halls_area': p.body.print_halls_area(),
             'total_area': p.body.print_total_area(),
 
-            'wcs_count': p.body.print_wcs_count(),
             'ceiling_height': p.body.print_ceiling_height(),
 
             'facilities': p.body.print_facilities(),
@@ -215,7 +214,6 @@ class PublishedDataSource(object):
         description = {
             'market_type': p.body.print_market_type(),
             'building_type': p.body.print_building_type(),
-            'build_year': p.body.print_build_year(),
             'condition': p.body.print_condition(),
 
             'floor': p.body.print_floor(),

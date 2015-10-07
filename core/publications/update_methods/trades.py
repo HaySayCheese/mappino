@@ -6,7 +6,8 @@ from collective.methods.formatters import format_text
 from django.db import DatabaseError, IntegrityError
 
 from core.currencies.constants import CURRENCIES
-from core.publications.constants import RED_LINE_VALUES, INDIVIDUAL_HEATING_TYPES, FLOOR_TYPES, HEATING_TYPES, OBJECT_CONDITIONS, MARKET_TYPES, COMMERCIAL_RENT_PERIODS, SALE_TRANSACTION_TYPES
+from core.publications.constants import INDIVIDUAL_HEATING_TYPES, FLOOR_TYPES, HEATING_TYPES, \
+    OBJECT_CONDITIONS, MARKET_TYPES, SALE_TRANSACTION_TYPES
 from core.publications.models import TradesBodies, TradesRentTerms, TradesSaleTerms
 from core.publications.objects_constants.trades import TRADE_BUILDING_TYPES
 
@@ -123,18 +124,6 @@ def update_trade(h, field, value, tid):
                 raise ValueError()
 
 
-        # sid
-        elif field == 'rent_period_sid':
-            value = int(value)
-            if value not in COMMERCIAL_RENT_PERIODS.values():
-                raise ValueError()
-
-            rt = TradesRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-            rt.period_sid = value
-            rt.save(force_update=True)
-            return
-
-
         # blank or decimal
         elif field == 'rent_price':
             if not value:
@@ -194,17 +183,6 @@ def update_trade(h, field, value, tid):
                 rt.add_terms = value
                 rt.save(force_update=True)
                 return value
-
-
-        # sid
-        elif field == 'red_line_sid':
-            value = int(value)
-            if value not in RED_LINE_VALUES.values():
-                raise ValueError()
-
-            b = TradesBodies.by_id(h.body_id).only('id')
-            b.red_line = value
-            b.save(force_update=True)
 
 
         # text

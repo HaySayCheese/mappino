@@ -5,7 +5,7 @@ from collective.methods.formatters import format_text, format_title
 from django.db import DatabaseError, IntegrityError
 
 from core.currencies.constants import CURRENCIES
-from core.publications.constants import COMMERCIAL_RENT_PERIODS, SALE_TRANSACTION_TYPES, RED_LINE_VALUES
+from core.publications.constants import SALE_TRANSACTION_TYPES
 from core.publications.models import LandsBodies, LandsRentTerms, LandsSaleTerms
 from core.publications.objects_constants.lands import LAND_DRIVEWAYS
 
@@ -123,18 +123,6 @@ def update_land(h, field, value, tid):
                 raise ValueError()
 
 
-        # sid
-        elif field == 'rent_period_sid':
-            value = int(value)
-            if value not in COMMERCIAL_RENT_PERIODS.values():
-                raise ValueError()
-
-            rt = LandsRentTerms.objects.filter(id=h.rent_terms_id).only('id')[0]
-            rt.period_sid = value
-            rt.save(force_update=True)
-            return
-
-
         # blank or decimal
         elif field == 'rent_price':
             if not value:
@@ -194,17 +182,6 @@ def update_land(h, field, value, tid):
                 rt.add_terms = value
                 rt.save(force_update=True)
                 return value
-
-
-        # sid
-        elif field == 'red_line':
-            value = int(value)
-            if value not in RED_LINE_VALUES.values():
-                raise ValueError()
-
-            b = LandsBodies.by_id(h.body_id).only('id')
-            b.red_line = value
-            b.save(force_update=True)
 
 
         # text

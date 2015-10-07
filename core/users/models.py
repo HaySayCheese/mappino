@@ -233,23 +233,17 @@ class Preferences(models.Model):
     class Meta:
         db_table = "users_preferences"
 
-
     user = models.ForeignKey(Users)
     hide_email = models.BooleanField(default=False)
     hide_mobile_phone_number = models.BooleanField(default=False)
     hide_add_mobile_phone_number = models.BooleanField(default=False)
     hide_landline_phone = models.BooleanField(default=False)
-    hide_add_landline_phone = models.BooleanField(default=True)
-    hide_skype = models.BooleanField(default=True)
-
+    hide_add_landline_phone = models.BooleanField(default=False)
+    hide_skype = models.BooleanField(default=False)
     allow_call_requests = models.BooleanField(default=True)
-    send_call_request_notifications_to_sid = models.SmallIntegerField(
-        default=constants.Preferences.call_requests.sms())
-
+    send_call_request_notifications_to_sid = models.SmallIntegerField(default=constants.Preferences.call_requests.sms())
     allow_messaging = models.BooleanField(default=True)
-    send_message_notifications_to_sid = models.SmallIntegerField(
-        default=constants.Preferences.messaging.email())
-
+    send_message_notifications_to_sid = models.SmallIntegerField(default=constants.Preferences.messaging.email())
 
     @classmethod
     def by_user(cls, user):
@@ -258,30 +252,23 @@ class Preferences(models.Model):
         except IndexError:
             return cls.objects.create(user=user)
 
-
     def mobile_phone_may_be_shown(self):
         return not self.hide_mobile_phone_number
-
 
     def add_mobile_phone_may_be_shown(self):
         return not self.hide_add_mobile_phone_number
 
-
     def landline_phone_may_be_shown(self):
         return not self.hide_landline_phone
-
 
     def add_landline_phone_may_be_shown(self):
         return not self.hide_landline_phone
 
-
     def skype_may_be_shown(self):
         return not self.hide_skype
 
-
     def email_may_be_shown(self):
         return not self.hide_email
-
 
     @property
     def is_message_sending_is_allowed(self):

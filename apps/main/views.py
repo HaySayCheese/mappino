@@ -1,27 +1,24 @@
-#coding=utf-8
-from django.http import HttpResponse
+# coding=utf-8
+from django.http.response import HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import etag
+from collective.decorators.jinja2_shortcuts import render_jinja2_template
 from core.cache.utils import generate_template_etag
-from core.utils.jinja2_integration import templates
 
 
-@ensure_csrf_cookie
-@etag(generate_template_etag('landing/landing.html'))
-def landing(request):
-    template = templates.get_template('landing/landing.html')
-    return HttpResponse(content=template.render())
-
-
-@ensure_csrf_cookie
-@etag(generate_template_etag('help/help.html'))
 def help(request):
-    template = templates.get_template('help/help.html')
-    return HttpResponse(content=template.render())
+    return HttpResponseRedirect('help/about/')
 
 
+@etag(generate_template_etag('landing/landing.html'))
 @ensure_csrf_cookie
+@render_jinja2_template
+def landing(request):
+    return 'landing/landing.html'
+
+
 @etag(generate_template_etag('map/map.html'))
+@ensure_csrf_cookie
+@render_jinja2_template
 def map(request):
-    template = templates.get_template('map/map.html')
-    return HttpResponse(content=template.render())
+    return 'map/map.html'

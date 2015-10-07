@@ -53,22 +53,19 @@ class AbstractBaseIndex(models.Model):
     lat = models.FloatField()
     lng = models.FloatField()
 
-
     class Meta:
         abstract = True
 
-
-    class Filters(object):
-        class RoomsPlanning(object):
-            any = 0
-            free = 1
-            preliminary = 2
-
-
     @classmethod
     def remove(cls, hid, using=None):
-        cls.objects.using(using).filter(publication_id=hid).delete()
+        """
+        Removes publication with head id == hid.
 
+        :param hid: id of the head record.
+        """
+        cls.objects.using(using)\
+            .filter(publication_id=hid)\
+            .delete()
 
     @classmethod
     def brief_queryset(cls):
@@ -78,7 +75,6 @@ class AbstractBaseIndex(models.Model):
         """
         return cls.objects.all().only(
             'hash_id', 'lat', 'lng', 'photo_thumbnail_url', 'price', 'currency_sid')
-
 
     @classmethod
     def brief(cls, marker, filters=None):
@@ -91,7 +87,6 @@ class AbstractBaseIndex(models.Model):
             'price': u'{0}{1}'.format(cls.currency_to_str(currency), price),
             'thumbnail_url': marker.photo_thumbnail_url,
         }
-
 
     @classmethod
     def min_add_queryset(cls, publication_head_id):  # virtual
@@ -107,7 +102,6 @@ class AbstractBaseIndex(models.Model):
             щоб була можливість вказувати специфічний набір полів під конкретний індекс.
         """
         raise Exception('Abstract method was called.')
-
 
     @classmethod
     def min_remove_queryset(cls, publication_head_id):
@@ -125,7 +119,6 @@ class AbstractBaseIndex(models.Model):
                 'pos_lng',
             )[:1]
 
-
     @staticmethod
     def convert_and_format_price(price, base_currency, destination_currency):
         """
@@ -140,7 +133,6 @@ class AbstractBaseIndex(models.Model):
 
         return result
 
-
     @staticmethod
     def currency_to_str(currency):
         if currency == CURRENCIES.dol():
@@ -152,7 +144,6 @@ class AbstractBaseIndex(models.Model):
         else:
             raise InvalidArgument('Invalid currency.')
 
-
     @staticmethod
     def currency_from_filters(filters):
         # Гривня як базова валюта обирається згідно з чинним законодавством,
@@ -161,7 +152,6 @@ class AbstractBaseIndex(models.Model):
             return CURRENCIES.uah()
 
         return int(filters.get('cu_sid', CURRENCIES.uah()))
-
 
     # -- filters methods
 
@@ -205,7 +195,6 @@ class AbstractBaseIndex(models.Model):
 
         return markers
 
-
     @staticmethod  # range
     def apply_area_filter(filters, markers):
         # This filter si similar to the total area.
@@ -221,7 +210,6 @@ class AbstractBaseIndex(models.Model):
             markers = markers.filter(area__lte=a_max)
 
         return markers
-
 
     @staticmethod  # range
     def apply_total_area_filter(filters, markers):
@@ -239,7 +227,6 @@ class AbstractBaseIndex(models.Model):
 
         return markers
 
-
     @staticmethod  # range
     def apply_halls_area_filter(filters, markers):
         ha_min = filters.get('h_a_min')
@@ -251,7 +238,6 @@ class AbstractBaseIndex(models.Model):
             markers = markers.filter(halls_area__lte=ha_max)
 
         return markers
-
 
     @staticmethod  # range
     def apply_rooms_count_filter(filters, markers):
@@ -265,7 +251,6 @@ class AbstractBaseIndex(models.Model):
 
         return markers
 
-
     @staticmethod  # range
     def apply_persons_count_filter(filters, markers):
         count_min = filters.get('p_c_min')
@@ -277,7 +262,6 @@ class AbstractBaseIndex(models.Model):
             markers = markers.filter(persons_count__lte=count_max)
 
         return markers
-
 
     @staticmethod  # range
     def apply_cabinets_count_filter(filters, markers):
@@ -291,7 +275,6 @@ class AbstractBaseIndex(models.Model):
 
         return markers
 
-
     @staticmethod  # sid
     def apply_living_rent_period_filter(filters, markers):
         period = int(filters.get('pr_sid'))
@@ -302,34 +285,36 @@ class AbstractBaseIndex(models.Model):
 
         return markers
 
-
     @staticmethod  # sid
     def apply_market_type_filter(filters, markers):
         market_type_sid = filters.get(u'm_t_sid')
         if market_type_sid is None:
+            # note: filters may not contain market type sid.
             return markers
 
-        if market_type_sid == MARKET_TYPES.new_building():
+        elif market_type_sid == MARKET_TYPES.new_building():
             markers = markers.filter(market_type_sid=MARKET_TYPES.new_building())
+            return markers
+
         elif market_type_sid == MARKET_TYPES.secondary_market():
             markers = markers.filter(market_type_sid=MARKET_TYPES.secondary_market())
-        else:
-            # filters may contain value that should be ignored.
-            pass
+            return markers
 
+        # note: filters may not contain valid market type sid.
+        # in this case this filter should not be applied.
         return markers
 
 
 class AbstractIndexWithDailyRent(AbstractBaseIndex):
     # WARN: index for this field is added into migration by RunSQL.
     # django does not support indexing in array fields.
-    days_booked = ArrayField(
-        base_field=models.PositiveIntegerField(), null=False, default='{}') # note: db_index is not useful for querying.
 
+    # note: db_index is not useful for querying.
+    days_booked = ArrayField(
+        base_field=models.PositiveIntegerField(), null=False, default='{}')
 
     class Meta:
         abstract = True
-
 
     @classmethod  # range
     def apply_daily_rent_dates_filter(cls, filters, markers):
@@ -349,13 +334,10 @@ class AbstractIndexWithDailyRent(AbstractBaseIndex):
 
         return markers
 
-
     def reload_booked_days(self):
         assert self.tid is not None
 
-
         reservations_model = DAILY_RENT_RESERVATIONS_MODELS[self.tid]
-
 
         # To achieve the best performance, booked days are stored as int values.
         # Int values takes less space in memory and indexes on them are more efficient.
@@ -368,15 +350,12 @@ class AbstractIndexWithDailyRent(AbstractBaseIndex):
         self.days_booked = list(set(days_booked))
         self.save()
 
-
     @staticmethod
     def generate_optimized_integer_dates_range(datetime_from, datetime_to):
         assert datetime_from.tzinfo == pytz.utc
         assert datetime_to.tzinfo == pytz.utc
 
-
         dates = []
-
         current_dt = datetime_from
         while current_dt < datetime_to:
             date_str = '{yyyy:04d}{mm:02d}{dd:02d}'\
@@ -414,10 +393,8 @@ class AbstractTradesIndex(AbstractBaseIndex):
     electricity = models.BooleanField(db_index=True)
     sewerage = models.BooleanField(db_index=True)
 
-
     class Meta:
         abstract = True
-
 
     @classmethod
     def apply_filters(cls, filters, markers):
@@ -428,17 +405,15 @@ class AbstractTradesIndex(AbstractBaseIndex):
         markers = cls.apply_total_area_filter(filters, markers)
         return markers
 
-
     @classmethod
     def brief_queryset(cls):
         queryset = super(AbstractTradesIndex, cls).brief_queryset()
         return queryset.only('total_area')
 
-
     @classmethod
     def brief(cls, marker, filters=None):
         brief = super(AbstractTradesIndex, cls).brief(marker, filters)
-        brief['title'] = u'Торг. помещение, {:.0f} м².'.format(marker.total_area) # tr
+        brief['title'] = u'Торг. помещение, {:.0f} м².'.format(marker.total_area)   # tr
         brief['d0'] = u'{:.0f}м²'.format(marker.total_area)
         return brief
 
@@ -467,26 +442,22 @@ class AbstractOfficesIndex(AbstractBaseIndex):
     security = models.BooleanField(db_index=True)
     kitchen = models.BooleanField(db_index=True)
 
-
     class Meta:
         abstract = True
 
-
     @classmethod
     def apply_filters(cls, filters, markers):
-        markers = cls.apply_market_type_filter(filters, markers)
-        markers = cls.apply_price_filter(filters, markers)
+        # note: offices should not have market type filter because it is not logic.
 
+        markers = cls.apply_price_filter(filters, markers)
         markers = cls.apply_total_area_filter(filters, markers)
         markers = cls.apply_cabinets_count_filter(filters, markers)
         return markers
-
 
     @classmethod
     def brief_queryset(cls):
         queryset = super(AbstractOfficesIndex, cls).brief_queryset()
         return queryset.only('total_area')
-
 
     @classmethod
     def brief(cls, marker, filters=None):
@@ -521,10 +492,8 @@ class AbstractWarehousesIndex(AbstractBaseIndex):
     security_alarm = models.BooleanField(db_index=True)
     fire_alarm = models.BooleanField(db_index=True)
 
-
     class Meta:
         abstract = True
-
 
     @classmethod
     def apply_filters(cls, filters, markers):
@@ -534,12 +503,10 @@ class AbstractWarehousesIndex(AbstractBaseIndex):
         markers = cls.apply_halls_area_filter(filters, markers)
         return markers
 
-
     @classmethod
     def brief_queryset(cls):
         queryset = super(AbstractWarehousesIndex, cls).brief_queryset()
         return queryset.only('halls_area')
-
 
     @classmethod
     def brief(cls, marker, filters=None):
@@ -569,24 +536,21 @@ class AbstractGaragesIndex(AbstractBaseIndex):
     ceiling_height = models.FloatField(db_index=True)
     pit = models.BooleanField(db_index=True)
 
-
     class Meta:
         abstract = True
 
-
     @classmethod
     def apply_filters(cls, filters, markers):
-        markers = cls.apply_market_type_filter(filters, markers)
+        # note: garages should not have market type filter because it is not logic.
+
         markers = cls.apply_price_filter(filters, markers)
         markers = cls.apply_area_filter(filters, markers)
         return markers
-
 
     @classmethod
     def brief_queryset(cls):
         queryset = super(AbstractGaragesIndex, cls).brief_queryset()
         return queryset.only('area')
-
 
     @classmethod
     def brief(cls, marker, filters=None):
@@ -618,28 +582,25 @@ class AbstractLandsIndex(AbstractBaseIndex):
     gas = models.BooleanField(db_index=True)
     sewerage = models.BooleanField(db_index=True)
 
-
     class Meta:
         abstract = True
 
-
     @classmethod
     def apply_filters(cls, filters, markers):
-        markers = cls.apply_market_type_filter(filters, markers)
+        # note: lands should not have market type filter because it is not logic.
+
         markers = cls.apply_price_filter(filters, markers)
         markers = cls.apply_area_filter(filters, markers)
         return markers
-
 
     @classmethod
     def brief_queryset(cls):
         queryset = super(AbstractLandsIndex, cls).brief_queryset()
         return queryset.only('area')
 
-
     @classmethod
     def brief(cls, marker, filters=None):
         brief = super(AbstractLandsIndex, cls).brief(marker, filters)
-        brief['title'] = u'Зем. участок, {:.0f} м².'.format(marker.area) # tr
+        brief['title'] = u'Зем. участок, {:.0f} м².'.format(marker.area)    # tr
         brief['d0'] = u'{:.0f}м²'.format(marker.area)
         return brief

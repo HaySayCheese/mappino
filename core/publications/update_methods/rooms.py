@@ -6,7 +6,8 @@ from collective.methods.formatters import format_title
 from django.db import DatabaseError, IntegrityError
 
 from core.currencies.constants import CURRENCIES
-from core.publications.constants import SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, MARKET_TYPES, OBJECT_CONDITIONS, HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, FLOOR_TYPES
+from core.publications.constants import SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, MARKET_TYPES, OBJECT_CONDITIONS, \
+    HEATING_TYPES, INDIVIDUAL_HEATING_TYPES, FLOOR_TYPES
 from core.publications.models import RoomsBodies, RoomsRentTerms, RoomsSaleTerms
 from core.publications.objects_constants.flats import FLAT_BUILDING_TYPES, FLAT_ROOMS_PLANNINGS
 
