@@ -14,4 +14,17 @@
 
 .sidenav-button {
     text-transform: none !important;
+    text-align: left !important;
+
+}
+
+.items {
+    md-icon {
+        margin-top: 10px !important;
+        margin-bottom: 5px !important;
+    }
+
+    md-list-item {
+        min-height: 30px !important;
+    }
 }

@@ -36,6 +36,8 @@ namespace Mappino.Cabinet.Users {
                     $rootScope.loaders.overlay = false;
                 })
                 .error(response => { /* error */ });
+
+            this.restoreFieldState();
         }
 
 
@@ -87,23 +89,24 @@ namespace Mappino.Cabinet.Users {
                 ".settings-page input[type='email']").bind("focusout", (e) => {
                 // -----------------------------------------------------------------------------------------------------
                 var fieldName  = e.currentTarget['name'],
-                    fieldValue = e.currentTarget['value'].replace(/\s+/g, " ");
+                    fieldValue = e.currentTarget['value'].replace(/\s+/g, " "),
+                    fieldValuePrefix = '';
 
                 if (!this.$scope.userProfileForm[fieldName].$dirty || this.$scope.userProfileForm[fieldName].$invalid)
                     return;
 
                 if (fieldName == 'mobile_phone' || fieldName == 'mobile_code') {
-                    fieldValue = this.$scope.profile.mobile_code + this.$scope.profile.mobile_phone;
+                    fieldValuePrefix = this.$scope.profile.mobile_code;
                 }
 
                 if (fieldName == 'add_mobile_phone' || fieldName == 'add_mobile_code') {
-                    fieldValue = this.$scope.profile.add_mobile_code + this.$scope.profile.add_mobile_phone;
+                    fieldValuePrefix = this.$scope.profile.add_mobile_code;
                 }
 
-                this.bAuthService.updateProfileField(fieldName, fieldValue)
+                this.bAuthService.updateProfileField(fieldName, fieldValue, fieldValuePrefix)
                     .success(response => {
                         if (response.code == 0) {
-                            if (response.data.value) {
+                            if (response.data && response.data.value) {
                                 e.currentTarget['value'] = response.data.value;
                             }
                             this.$scope.userProfileForm[fieldName].$setValidity("invalid",    true);
@@ -117,6 +120,18 @@ namespace Mappino.Cabinet.Users {
             });
         }
 
+
+
+        private restoreFieldState() {
+            angular.element(".settings-page input[type='text'], " +
+                ".settings-page input[type='tel'], " +
+                ".settings-page input[type='email']").on('input', (e) => {
+                var fieldName  = e.currentTarget['name'];
+
+                this.$scope.userProfileForm[fieldName].$setValidity("invalid",    true);
+                this.$scope.userProfileForm[fieldName].$setValidity("duplicated", true);
+            })
+        }
 
 
         private checkIfAllMeansOfCommunicationDisabled() {
