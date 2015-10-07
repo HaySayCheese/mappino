@@ -295,29 +295,33 @@ class AccountView(CabinetView):
 
 
     def __update_mobile_phone_number(self, user, phone):
-        if not phone:
-            return self.PostResponses.value_required()
-
-
-        try:
-            phone = Users.objects.parse_phone_number(phone)
-        except ValueError:
-            return self.PostResponses.invalid_value()
-
-
-        if user.mobile_phone == phone:
-            # already the same
-            return self.PostResponses.ok()
-
-        # check for duplicates
-        if not user.mobile_phone_number_is_free(phone):
-            return self.PostResponses.duplicated_value()
-
-        if not user.mobile_phone == phone:
-            user.mobile_phone = phone
-            user.save()
-
         return self.PostResponses.ok()
+
+        # note: mobile phone temporary can not be changed.
+
+        # if not phone:
+        #     return self.PostResponses.value_required()
+        #
+        #
+        # try:
+        #     phone = Users.objects.parse_phone_number(phone)
+        # except ValueError:
+        #     return self.PostResponses.invalid_value()
+        #
+        #
+        # if user.mobile_phone == phone:
+        #     # already the same
+        #     return self.PostResponses.ok()
+        #
+        # # check for duplicates
+        # if not user.mobile_phone_number_is_free(phone):
+        #     return self.PostResponses.duplicated_value()
+        #
+        # if not user.mobile_phone == phone:
+        #     user.mobile_phone = phone
+        #     user.save()
+        #
+        # return self.PostResponses.ok()
 
 
     def __update_add_mobile_phone_number(self, user, phone):

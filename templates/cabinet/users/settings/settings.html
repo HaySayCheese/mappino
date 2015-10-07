@@ -68,7 +68,7 @@
                             </md-input-container>
                             <md-input-container flex="70">
                                 <label>Моб. телефон</label>
-                                <input type="tel" name="mobile_phone" ng-model="profile.mobile_phone" only-number required>
+                                <input type="tel" name="mobile_phone" ng-model="profile.mobile_phone" only-number required disabled>
                                 <div ng-messages="userProfileForm.mobile_phone.$error">
                                     <div ng-message="required">Обязательное поле</div>
                                     <div ng-message="invalid">Некоректный номер</div>
