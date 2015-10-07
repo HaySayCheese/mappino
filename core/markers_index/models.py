@@ -1431,12 +1431,6 @@ class SegmentsIndex(models.Model):
 
 
         record = index.min_remove_queryset(hid)[0]
-
-        # If publication was not published - it should not be in index.
-        if not record.is_published():
-            return
-
-
         lat, lng = cls.record_lat_lng(record)
         lat, lng = cls.grid.normalize_lat_lng(lat, lng)
 
