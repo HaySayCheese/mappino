@@ -179,7 +179,7 @@ class PublishedDataSource(object):
         description = {
             'market_type': p.body.print_market_type(),
             'building_type': p.body.print_building_type(),
-            'build_year': p.body.print_build_year(),
+            # 'build_year': p.body.print_build_year(),
             'condition': p.body.print_condition(),
 
             'floor': p.body.print_floor(),
@@ -214,7 +214,6 @@ class PublishedDataSource(object):
         description = {
             'market_type': p.body.print_market_type(),
             'building_type': p.body.print_building_type(),
-            'build_year': p.body.print_build_year(),
             'condition': p.body.print_condition(),
 
             'floor': p.body.print_floor(),
