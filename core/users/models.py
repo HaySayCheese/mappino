@@ -239,8 +239,8 @@ class Preferences(models.Model):
     hide_mobile_phone_number = models.BooleanField(default=False)
     hide_add_mobile_phone_number = models.BooleanField(default=False)
     hide_landline_phone = models.BooleanField(default=False)
-    hide_add_landline_phone = models.BooleanField(default=True)
-    hide_skype = models.BooleanField(default=True)
+    hide_add_landline_phone = models.BooleanField(default=False)
+    hide_skype = models.BooleanField(default=False)
 
     allow_call_requests = models.BooleanField(default=True)
     send_call_request_notifications_to_sid = models.SmallIntegerField(
