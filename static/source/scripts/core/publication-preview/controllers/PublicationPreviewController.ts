@@ -23,14 +23,17 @@ namespace Mappino.Core.PublicationPreview {
             '$state',
             '$timeout',
             '$mdDialog',
+            '$window',
             'PublicationPreviewService',
         ];
 
-        constructor(private $scope,
+        constructor(
+                private $scope,
                 private $rootScope,
                 private $state: IStateService,
                 private $timeout: ITimeoutService,
                 private $mdDialog: any,
+                private $window: any,
                 private publicationPreviewService: PublicationPreviewService) {
             // ---------------------------------------------------------------------------------------------------------
             $scope.forms = {};
@@ -108,6 +111,9 @@ namespace Mappino.Core.PublicationPreview {
                                     this.$scope.publication.contacts = {};
                                     this.$scope.publication.contacts = response.data;
                                 });
+
+                            this.$window.ga('send', 'pageview');
+                            this.$window.ga('send', 'event', 'Publication', 'Viewed', `${this.publicationIds.tid}:${this.publicationIds.hid}`);
 
                             this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationClosed');
                             this.$rootScope.$broadcast('Mappino.Core.PublicationPreviewService.PublicationVisited', this.publicationIds.hid);

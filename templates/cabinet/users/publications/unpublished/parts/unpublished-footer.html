@@ -29,7 +29,7 @@
             <div class="md-padding">
                 <div class="drop-box" layout="column" layout-align="center center">
 
-                    <p>Перенесите сюда фото или видео файл</p>
+                    <p class="center-align">Перенесите сюда фото или видео файл</p>
 
                     <md-button class="md-primary" ngf-select ngf-multiple="true" accept="image/*"
                                ngf-change="u_pubCtrl.uploadPublicationPhotos($files)">
@@ -103,7 +103,7 @@
     </md-button>
 
     <md-button class="md-primary md-hue-1" ng-click="u_pubCtrl.doneEditingLaterPublication($event)">
-        Заполнить позже
+        Отложить
     </md-button>
 
     <span flex></span>

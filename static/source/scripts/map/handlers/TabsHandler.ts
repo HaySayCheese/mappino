@@ -19,14 +19,16 @@ namespace Mappino.Map {
             '$state',
             '$stateParams',
             '$rootScope',
-            '$timeout'
+            '$timeout',
+            '$window'
         ];
 
         constructor(
             private $state: ng.ui.IStateService,
             private $stateParams: ng.ui.IStateParamsService,
             private $rootScope: any,
-            private $timeout: ng.ITimeoutService) {
+            private $timeout: ng.ITimeoutService,
+            private $window: any) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.tabIndexes = {
                 navbarLeft:     undefined,
@@ -65,12 +67,16 @@ namespace Mappino.Map {
                 this.$state.go('base', {
                     'navbar_left_tab_index': this.navbarLeftTabsIndex[tab]
                 });
+
+                this.$window.ga('send', 'event', 'Tabs', 'Opened', tab);
             }
 
             if (!_.isUndefined(this.navbarRightTabsIndex[tab])) {
                 this.$state.go('base', {
                     'navbar_right_tab_index': this.navbarRightTabsIndex[tab]
                 });
+
+                this.$window.ga('send', 'event', 'Tabs', 'Opened', tab);
             }
         }
 
