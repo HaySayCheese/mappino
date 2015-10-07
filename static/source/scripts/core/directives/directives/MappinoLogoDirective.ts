@@ -11,11 +11,19 @@ namespace Mappino.Core.Directives {
         return {
             restrict: 'E',
             scope: false,
+            replace: true,
+            template:
+                '<div class="mappino-logo">' +
+                    '<span class="mappino-logo_img"></span>' +
+                '</div>',
 
-            link: (scope, element: IAugmentedJQuery, attrs: IAttributes) => {
+            link: (scope: any, element: IAugmentedJQuery, attrs: any) => {
                 var $element = angular.element(element);
 
-                $element.addClass('mappino-logo');
+                if (attrs.size && angular.isString(attrs.size)) {
+                    $element.addClass('mappino-logo--' + attrs.size);
+                    $element.find('.mappino-logo_img').addClass('mappino-logo_img--' + attrs.size);
+                }
             }
         };
     }

@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
     <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.css">
 
     <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=true&language=ru&libraries=places"></script>
@@ -19,7 +19,7 @@
         <link rel="stylesheet" href="{{ static }}build/styles/cabinet/users/cabinet.users.min.css"/>
     {% endcompress %}
 </head>
-<body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()">
+<body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()" ng-cloak>
     <md-toolbar class="md-whiteframe-z1" ng-cloak>
         <nav class="md-toolbar-tools" show-sm hide-gt-sm layout="row" layout-align="start center">
             <md-button class="nav-button" aria-label="Открыть меню" ng-click="cabinetCtrl.toggleSidenav()">
@@ -27,14 +27,13 @@
             </md-button>
             <span flex></span>
             <md-button class="nav-button" aria-label="mappino">
-                mappino
+                <mappino-logo></mappino-logo>
             </md-button>
-            <span flex></span>
         </nav>
 
         <nav class="md-toolbar-tools" hide-sm>
-            <md-button href="/map/" class="nav-button">
-                mappino
+            <md-button href="/map/" class="nav-button" aria-label="Перейти к поиску на карте">
+                <mappino-logo></mappino-logo>
             </md-button>
             <md-button ui-sref="publications" class="nav-button">
                 Объявления
@@ -50,9 +49,6 @@
             </md-button>
         </nav>
     </md-toolbar>
-
-    <md-progress-linear md-mode="indeterminate" ng-show="loaders.navbar" ng-cloak></md-progress-linear>
-
 
     <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav" ng-cloak>
         <header layout="column" layout-align="center center">
@@ -88,6 +84,7 @@
 
 
     <main layout="row" layout-align="center start">
+        <md-progress-linear md-mode="indeterminate" ng-show="loaders.navbar" ng-cloak></md-progress-linear>
         <md-content flex ui-view></md-content>
     </main>
 

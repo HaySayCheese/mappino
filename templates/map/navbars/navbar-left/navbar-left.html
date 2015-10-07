@@ -2,8 +2,8 @@
     <md-tabs md-selected="tabIndexes.navbarLeft" md-dynamic-height md-no-pagination="true" md-center-tabs="true">
 
         <md-tab id="mappino-tab" md-on-select="navCtrl.tabsHandler.open('mappino');">
-            <md-tab-label>
-                mappino
+            <md-tab-label class="logo-md-tab-label">
+                <mappino-logo size="small"></mappino-logo>
             </md-tab-label>
             <md-tab-body>
                 <div class="project-tab">
@@ -71,7 +71,7 @@
 
                     <section class="-closable -filters-blue -closed -without-margin-bottom ">
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
-                            <md-icon>place</md-icon>
+                            <md-icon>filter_list</md-icon>
                             <span class="md-body-1" ng-hide="filters.panels.blue.b_t_sid != null">
                                 Виберите тип
                             </span>
@@ -117,7 +117,7 @@
                     </section>
                     <section class="-closable -filters-green -closed" hide-sm>
                         <header layout="row" layout-align="start center" layout-padding toggle-tab-section>
-                            <md-icon>place</md-icon>
+                            <md-icon>filter_list</md-icon>
                             <span class="md-body-1" ng-hide="filters.panels.green.g_t_sid != null">
                                 Указать условия для сравнения
                             </span>

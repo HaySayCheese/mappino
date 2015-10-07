@@ -1,14 +1,44 @@
-md-toolbar {
-    &.-transparent {
-        background: rgba(0, 0, 0, .2); /* Old browsers */
-        background: -moz-linear-gradient(top,  rgb(128, 128, 128) 0%, rgba(255, 255, 255, 0.02) 100%); /* FF3.6+ */
-        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgb(128, 128, 128)), color-stop(100%,#ffffff)); /* Chrome,Safari4+ */
-        background: -webkit-linear-gradient(top,  rgb(128, 128, 128) 0%,rgba(255, 255, 255, 0.02) 100%); /* Chrome10+,Safari5.1+ */
-        background: -o-linear-gradient(top,  rgb(128, 128, 128) 0%,rgba(255, 255, 255, 0.02) 100%); /* Opera 11.10+ */
-        background: -ms-linear-gradient(top,  rgb(128, 128, 128) 0%,rgba(255, 255, 255, 0.02) 100%); /* IE10+ */
-        background: linear-gradient(to bottom,  rgb(128, 128, 128) 0%,rgba(255, 255, 255, 0.02) 100%); /* W3C */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=rgb(128, 128, 128), endColorstr=rgba(255, 255, 255, 0.02),GradientType=0 ); /* IE6-9 */
-        //-webkit-filter: blur(5px);
-        background-color: transparent !important;
+//md-toolbar {
+//    &.-transparent {
+//        background: rgba(0, 0, 0, .2); /* Old browsers */
+//        background: -moz-linear-gradient(top,  rgb(128, 128, 128) 0%, rgba(255, 255, 255, 0.02) 100%); /* FF3.6+ */
+//        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgb(128, 128, 128)), color-stop(100%,#ffffff)); /* Chrome,Safari4+ */
+//        background: -webkit-linear-gradient(top,  rgb(128, 128, 128) 0%,rgba(255, 255, 255, 0.02) 100%); /* Chrome10+,Safari5.1+ */
+//        background: -o-linear-gradient(top,  rgb(128, 128, 128) 0%,rgba(255, 255, 255, 0.02) 100%); /* Opera 11.10+ */
+//        background: -ms-linear-gradient(top,  rgb(128, 128, 128) 0%,rgba(255, 255, 255, 0.02) 100%); /* IE10+ */
+//        background: linear-gradient(to bottom,  rgb(128, 128, 128) 0%,rgba(255, 255, 255, 0.02) 100%); /* W3C */
+//        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=rgb(128, 128, 128), endColorstr=rgba(255, 255, 255, 0.02),GradientType=0 ); /* IE6-9 */
+//        //-webkit-filter: blur(5px);
+//        background-color: transparent !important;
+//    }
+//
+//
+//    .nav-button {
+//
+//    }
+//}
+
+
+$toolbar-height: 56px;
+
+.md-toolbar {
+    height: $toolbar-height;
+    min-height: $toolbar-height;
+
+    &--transparent {
+        @include gradient(transparent, rgba(128, 128, 128, 0.2), rgba(128, 128, 128, 0));
+    }
+
+    ul {
+        margin: 0;
+    }
+
+    .nav-button {
+        line-height: $toolbar-height;
+        height: $toolbar-height;
+        padding: 0 16px;
+        text-transform: uppercase;
+        border-radius: 0;
+        position: relative;
     }
 }
