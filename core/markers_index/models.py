@@ -1823,8 +1823,8 @@ class SegmentsIndex(models.Model):
     @classmethod
     def clear(cls):
         for index in itertools.chain(
-                cls.living_sale_indexes, cls.living_rent_indexes,
-                cls.commercial_sale_indexes, cls.commercial_rent_indexes):
+                cls.living_sale_indexes.values(), cls.living_rent_indexes.values(),
+                cls.commercial_sale_indexes.values(), cls.commercial_rent_indexes.values()):
             index.objects.all().delete()
 
         cls.objects.all().delete()
