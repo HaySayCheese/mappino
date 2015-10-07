@@ -119,7 +119,7 @@ namespace Mappino.Core.BAuth {
 
         public updateProfileField(fieldName: string, fieldValue: number|string, fieldValuePrefix?: number|string): IHttpPromise<any> {
             var promise: IHttpPromise<any> = this.$http.post(`/ajax/api/cabinet/account/`, {
-                [fieldName]:  `${fieldValuePrefix}${fieldValue}`
+                [fieldName]: `${fieldValuePrefix ? fieldValuePrefix : ''}${fieldValue}`
             });
 
             promise.success(response => {

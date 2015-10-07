@@ -205,7 +205,6 @@ class AccountView(CabinetView):
         except (ValueError, KeyError):
             return self.PostResponses.invalid_parameters()
 
-
         try:
             update_method = self.update_methods.get(field)
             return update_method(request.user, value)
@@ -323,7 +322,7 @@ class AccountView(CabinetView):
             return self.PostResponses.ok()
 
         try:
-            phone =Users.objects.parse_phone_number(phone)
+            phone = Users.objects.parse_phone_number(phone)
         except ValueError:
             return self.PostResponses.invalid_value()
 
@@ -389,8 +388,10 @@ class AccountView(CabinetView):
         return self.PostResponses.ok()
 
     def __update_allow_call_request(self, user, allow):
-        if allow not in (True, False):
+        if allow not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        allow = True if allow == 'true' else False
 
         preferences = user.preferences
         if not preferences.allow_call_requests == allow:
@@ -412,8 +413,10 @@ class AccountView(CabinetView):
         return self.PostResponses.ok()
 
     def __update_allow_messaging(self, user, allow):
-        if allow not in (True, False):
+        if allow not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        allow = True if allow == 'true' else False
 
         preferences = user.preferences
         if not preferences.allow_messaging == allow:
@@ -435,8 +438,10 @@ class AccountView(CabinetView):
         return self.PostResponses.ok()
 
     def __update_hide_email(self, user, hide):
-        if hide not in (True, False):
+        if hide not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        hide = True if hide == 'true' else False
 
         preferences = user.preferences
         if not preferences.hide_email == hide:
@@ -446,8 +451,10 @@ class AccountView(CabinetView):
         return self.PostResponses.ok()
 
     def __update_hide_mobile_phone(self, user, hide):
-        if hide not in (True, False):
+        if hide not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        hide = True if hide == 'true' else False
 
         preferences = user.preferences
         if not preferences.hide_mobile_phone_number == hide:
@@ -457,8 +464,10 @@ class AccountView(CabinetView):
         return self.PostResponses.ok()
 
     def __update_hide_add_mobile_phone(self, user, hide):
-        if hide not in (True, False):
+        if hide not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        hide = True if hide == 'true' else False
 
         preferences = user.preferences
         if not preferences.hide_add_mobile_phone_number == hide:
@@ -468,8 +477,10 @@ class AccountView(CabinetView):
         return self.PostResponses.ok()
 
     def __update_hide_landline_phone(self, user, hide):
-        if hide not in (True, False):
+        if hide not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        hide = True if hide == 'true' else False
 
         preferences = user.preferences
         if not preferences.hide_landline_phone == hide:
@@ -479,8 +490,10 @@ class AccountView(CabinetView):
         return self.PostResponses.ok()
 
     def __update_hide_add_landline_phone(self, user, hide):
-        if hide not in (True, False):
+        if hide not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        hide = True if hide == 'true' else False
 
         preferences = user.preferences
         if not preferences.hide_add_landline_phone == hide:
@@ -490,8 +503,10 @@ class AccountView(CabinetView):
         return self.PostResponses.ok()
 
     def __update_hide_skype(self, user, hide):
-        if hide not in (True, False):
+        if hide not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        hide = True if hide == 'true' else False
 
         preferences = user.preferences
         if not preferences.hide_skype == hide:
