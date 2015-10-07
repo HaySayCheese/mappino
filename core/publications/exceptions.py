@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 
 
 #-- head
+class OperationIsNotSpecified(ValidationError): pass
 class EmptyCoordinates(ValidationError): pass
 
 

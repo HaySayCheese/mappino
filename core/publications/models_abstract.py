@@ -19,7 +19,7 @@ from core.publications import signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, \
     OBJECTS_TYPES
 from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
-    EmptyRentPrice, EmptyPersonsCount, NotEnoughPhotos
+    EmptyRentPrice, EmptyPersonsCount, NotEnoughPhotos, OperationIsNotSpecified
 
 
 class AbstractModel(models.Model):
@@ -448,6 +448,9 @@ class AbstractHeadModel(models.Model):
         Не перевіряє інформацію в полях на коректність, оскільки передбачається,
         що некоректні дані не можуть потрапити в БД через обробники зміни даних.
         """
+
+        if not self.for_sale and not self.for_rent:
+            raise OperationIsNotSpecified('Publication must be for sale or for rent')
 
         #-- lat lng
         if (self.degree_lng is None) or (self.degree_lat is None):

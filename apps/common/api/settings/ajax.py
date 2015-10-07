@@ -118,7 +118,6 @@ class AccountView(CabinetView):
                     }
                 })
 
-
     class PostResponses(object):
         @staticmethod
         @json_response
@@ -167,7 +166,6 @@ class AccountView(CabinetView):
                 'message': 'Request does not contains parameters or one of them is invalid.'
             }
 
-
     def __init__(self):
         super(AccountView, self).__init__()
         self.update_methods = {
@@ -196,11 +194,9 @@ class AccountView(CabinetView):
             'hide_skype': self.__update_hide_skype,
         }
 
-
     @classmethod
     def get(cls, request):
         return cls.GetResponses.ok(request.user)
-
 
     def post(self, request):
         try:
@@ -209,15 +205,12 @@ class AccountView(CabinetView):
         except (ValueError, KeyError):
             return self.PostResponses.invalid_parameters()
 
-
         try:
             update_method = self.update_methods.get(field)
             return update_method(request.user, value)
 
         except KeyError:
             return self.PostResponses.invalid_parameters()
-
-
 
     def __update_first_name(self, user, name):
         if not name:
@@ -229,7 +222,6 @@ class AccountView(CabinetView):
 
         return self.PostResponses.ok(user.first_name)
 
-
     def __update_last_name(self, user, name):
         if not name:
             return self.PostResponses.value_required()
@@ -239,7 +231,6 @@ class AccountView(CabinetView):
             user.save()
 
         return self.PostResponses.ok(user.last_name)
-
 
     def __update_email(self, user, email):
         if not email:
@@ -264,7 +255,6 @@ class AccountView(CabinetView):
         user.email = email
         user.save()
         return self.PostResponses.ok()
-
 
     def __update_work_email(self, user, email):
         if not email:
@@ -292,7 +282,6 @@ class AccountView(CabinetView):
         user.work_email = email
         user.save()
         return self.PostResponses.ok()
-
 
     def __update_mobile_phone_number(self, user, phone):
         return self.PostResponses.ok()
@@ -323,7 +312,6 @@ class AccountView(CabinetView):
         #
         # return self.PostResponses.ok()
 
-
     def __update_add_mobile_phone_number(self, user, phone):
         if not phone:
             # add mobile phone may be empty
@@ -333,12 +321,10 @@ class AccountView(CabinetView):
 
             return self.PostResponses.ok()
 
-
         try:
-            phone =Users.objects.parse_phone_number(phone)
+            phone = Users.objects.parse_phone_number(phone)
         except ValueError:
             return self.PostResponses.invalid_value()
-
 
         if user.add_mobile_phone == phone:
             # already the same
@@ -353,7 +339,6 @@ class AccountView(CabinetView):
             user.save()
 
         return self.PostResponses.ok()
-
 
     def __update_landline_phone_number(self, user, phone):
         if not phone:
@@ -375,7 +360,6 @@ class AccountView(CabinetView):
 
         return self.PostResponses.ok()
 
-
     def __update_add_landline_phone_number(self, user, phone):
         if not phone:
             # add landline phone may be empty
@@ -396,7 +380,6 @@ class AccountView(CabinetView):
 
         return self.PostResponses.ok()
 
-
     def __update_skype(self, user, login):
         if not user.skype == login:
             user.skype = login
@@ -404,10 +387,11 @@ class AccountView(CabinetView):
 
         return self.PostResponses.ok()
 
-
     def __update_allow_call_request(self, user, allow):
-        if allow not in (True, False):
+        if allow not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        allow = True if allow == 'true' else False
 
         preferences = user.preferences
         if not preferences.allow_call_requests == allow:
@@ -415,7 +399,6 @@ class AccountView(CabinetView):
             preferences.save()
 
         return self.PostResponses.ok()
-
 
     def __update_send_call_request_notifications_to_sid(self, user, sid):
         sid = int(sid)
@@ -429,10 +412,11 @@ class AccountView(CabinetView):
 
         return self.PostResponses.ok()
 
-
     def __update_allow_messaging(self, user, allow):
-        if allow not in (True, False):
+        if allow not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        allow = True if allow == 'true' else False
 
         preferences = user.preferences
         if not preferences.allow_messaging == allow:
@@ -440,7 +424,6 @@ class AccountView(CabinetView):
             preferences.save()
 
         return self.PostResponses.ok()
-
 
     def __update_send_message_notifications_to_sid(self, user, sid):
         sid = int(sid)
@@ -454,10 +437,11 @@ class AccountView(CabinetView):
 
         return self.PostResponses.ok()
 
-
     def __update_hide_email(self, user, hide):
-        if hide not in (True, False):
+        if hide not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        hide = True if hide == 'true' else False
 
         preferences = user.preferences
         if not preferences.hide_email == hide:
@@ -466,10 +450,11 @@ class AccountView(CabinetView):
 
         return self.PostResponses.ok()
 
-
     def __update_hide_mobile_phone(self, user, hide):
-        if hide not in (True, False):
+        if hide not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        hide = True if hide == 'true' else False
 
         preferences = user.preferences
         if not preferences.hide_mobile_phone_number == hide:
@@ -478,10 +463,11 @@ class AccountView(CabinetView):
 
         return self.PostResponses.ok()
 
-
     def __update_hide_add_mobile_phone(self, user, hide):
-        if hide not in (True, False):
+        if hide not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        hide = True if hide == 'true' else False
 
         preferences = user.preferences
         if not preferences.hide_add_mobile_phone_number == hide:
@@ -490,10 +476,11 @@ class AccountView(CabinetView):
 
         return self.PostResponses.ok()
 
-
     def __update_hide_landline_phone(self, user, hide):
-        if hide not in (True, False):
+        if hide not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        hide = True if hide == 'true' else False
 
         preferences = user.preferences
         if not preferences.hide_landline_phone == hide:
@@ -502,10 +489,11 @@ class AccountView(CabinetView):
 
         return self.PostResponses.ok()
 
-
     def __update_hide_add_landline_phone(self, user, hide):
-        if hide not in (True, False):
+        if hide not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        hide = True if hide == 'true' else False
 
         preferences = user.preferences
         if not preferences.hide_add_landline_phone == hide:
@@ -514,10 +502,11 @@ class AccountView(CabinetView):
 
         return self.PostResponses.ok()
 
-
     def __update_hide_skype(self, user, hide):
-        if hide not in (True, False):
+        if hide not in ('true', 'false'):
             return self.PostResponses.invalid_value()
+
+        hide = True if hide == 'true' else False
 
         preferences = user.preferences
         if not preferences.hide_skype == hide:

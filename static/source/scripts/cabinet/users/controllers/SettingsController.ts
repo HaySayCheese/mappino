@@ -75,6 +75,7 @@ namespace Mappino.Cabinet.Users {
 
         public checkboxOnChange(fieldName: string) {
             var fieldValue = this.$scope.profile[fieldName];
+            console.log(fieldValue);
 
             this.bAuthService.updateProfileField(fieldName, fieldValue);
 
