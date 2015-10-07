@@ -15,7 +15,7 @@
                     </md-checkbox>
                     <md-checkbox class="md-primary" name="for_rent" ng-change="u_pubCtrl.checkField('for_rent')"
                                  ng-model="publication.head.for_rent">
-                        Об аранде
+                        Об аренде
                     </md-checkbox>
                 </div>
             </div>
@@ -28,8 +28,8 @@
         <md-card-content>
             <div class="md-subhead blue-text">Условия продажы</div>
             <div class="md-padding" ng-show="publication.head.for_sale">
-                <div layout="row" layout-align="start center">
-                    <md-input-container flex="33">
+                <div layout="row" layout-wrap layout-align="start center">
+                    <md-input-container flex-gt-sm="33" flex-sm="50">
                         <label>Цена</label>
                         <input name="sale_price" ng-model="publication.sale_terms.price"
                                ng-required="publication.head.for_sale" only-number-with-dots>
@@ -39,7 +39,7 @@
                             <div ng-message="invalid">Цена указана неверно</div>
                         </div>
                     </md-input-container>
-                    <md-input-container flex="33">
+                    <md-input-container flex-gt-sm="33" flex-sm="50">
                         <label>Валюта</label>
                         <md-select md-on-close="u_pubCtrl.checkField('sale_currency_sid')" ng-model="publication.sale_terms.currency_sid">
                             <md-option ng-repeat="currencyType in ::TYPES.CURRENCY" value="[[ ::currencyType.id ]]">[[ ::currencyType.title ]]</md-option>
@@ -60,8 +60,8 @@
         <md-card-content>
             <div class="md-subhead blue-text">Условия аренды</div>
             <div class="md-padding" ng-show="publication.head.for_rent">
-                <div layout="row" layout-align="start center">
-                    <md-input-container flex="33">
+                <div layout="row" layout-wrap layout-align="start center">
+                    <md-input-container flex-gt-sm="33" flex-sm="50">
                         <label>Цена</label>
                         <input name="rent_price" ng-model="publication.rent_terms.price"
                                ng-required="publication.head.for_rent" only-number-with-dots required>
@@ -71,7 +71,7 @@
                             <div ng-message="invalid">Цена указана неверно</div>
                         </div>
                     </md-input-container>
-                    <md-input-container flex="33">
+                    <md-input-container flex-gt-sm="33" flex-sm="50">
                         <label>Валюта</label>
                         <md-select md-on-close="u_pubCtrl.checkField('rent_currency_sid')" ng-model="publication.rent_terms.currency_sid">
                             <md-option ng-repeat="currencyType in ::TYPES.CURRENCY" value="[[ ::currencyType.id ]]">[[ ::currencyType.title ]]</md-option>
@@ -108,14 +108,14 @@
                         <div ng-message="required">Обязательное поле</div>
                     </div>
                 </md-input-container>
-                <div layout="row">
-                    <md-input-container flex="33">
+                <div layout="row" layout-sm="column">
+                    <md-input-container flex-gt-sm="33" flex-sm="99">
                         <label>Тип рынка</label>
                         <md-select md-on-close="u_pubCtrl.checkField('market_type_sid')" ng-model="publication.body.market_type_sid">
                             <md-option ng-repeat="marketType in ::TYPES.MARKET" value="[[ ::marketType.id ]]">[[ ::marketType.title ]]</md-option>
                         </md-select>
                     </md-input-container>
-                    <md-input-container flex="33">
+                    <md-input-container flex-gt-sm="33" flex-sm="99">
                         <label>Площадь (м<sup>2</sup>)</label>
                         <input name="area" ng-model="publication.body.area" only-number-with-dots required>
                         <div ng-messages="forms.publicationForm.area.$error"
@@ -124,7 +124,7 @@
                             <div ng-message="invalid">Площадь указана неверно</div>
                         </div>
                     </md-input-container>
-                    <md-input-container flex="33">
+                    <md-input-container flex-gt-sm="33" flex-sm="99">
                         <label>Высота потолков (м)</label>
                         <input name="ceiling_height" ng-model="publication.body.ceiling_height" only-number-with-dots required>
                         <div ng-messages="forms.publicationForm.ceiling_height.$error"

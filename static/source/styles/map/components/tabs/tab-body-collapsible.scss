@@ -5,7 +5,8 @@ tab-section-collapsible {
 }
 
 
-[toggle-tab-section] {
+[toggle-tab-section]:not(button) {
+
     cursor: pointer;
     border-bottom: 1px solid color('grey', 'lighten-3');
     @include transition(border .3s ease);

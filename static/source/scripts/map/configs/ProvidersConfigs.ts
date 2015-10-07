@@ -8,7 +8,7 @@ namespace Mappino.Map {
 
         constructor(private app: ng.IModule) {
             app.config(['$interpolateProvider', '$resourceProvider', '$locationProvider',
-                function($interpolateProvider, $resourceProvider, $locationProvider) {
+                ($interpolateProvider, $resourceProvider, $locationProvider) => {
                     $interpolateProvider.startSymbol('[[');
                     $interpolateProvider.endSymbol(']]');
 
