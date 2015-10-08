@@ -1,13 +1,16 @@
+$toolbar-height: 56px;
+
 md-toolbar {
-    height: 56px;
-    min-height: 56px;
+    height: $toolbar-height;
+    min-height: $toolbar-height;
     
     ul {
         margin: 0;
     }
 
     .nav-button {
-        line-height: 56px;
+        line-height: $toolbar-height;
+        height: $toolbar-height;
         padding: 0 16px;
         text-transform: uppercase;
         border-radius: 0;

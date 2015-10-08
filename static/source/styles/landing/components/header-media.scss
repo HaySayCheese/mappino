@@ -10,8 +10,6 @@
 
     .text-shadow {
         text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 100px color('grey', 'darken-4');
-
-
     }
 
     .text-blur-shadow {
@@ -42,28 +40,14 @@
         border-radius: 3px;
     }
 
-    .header-button {
-        text-transform: none !important;
-    }
 
     #publication-button {
         border: solid rgba(255, 255, 255, 0.30) !important;
     }
 
-    //*:not(button span) {
-    //    color: #fff !important;
-    //}
 
     #landing-autucomplete {
         @include placeholder(#fff)
-    }
-
-    md-select {
-        color: #ffffff !important;
-
-        .md-select-value {
-            color: #fff !important;
-        }
     }
 }
 

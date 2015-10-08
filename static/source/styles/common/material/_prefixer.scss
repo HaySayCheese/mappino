@@ -231,7 +231,7 @@
     @include linear-gradient-top($default,$start,0%,$stop,100%);
 }
 @mixin linear-gradient-top($default,$color1,$stop1,$color2,$stop2) {
-    background-color: $default;
+    background-color: $default !important;
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop($stop1, $color1), color-stop($stop2 $color2));
     background-image: -webkit-linear-gradient(top, $color1 $stop1, $color2 $stop2);
     background-image: -moz-linear-gradient(top, $color1 $stop1, $color2 $stop2);

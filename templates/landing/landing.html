@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.2/angular-material.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.css">
 
     {% compress css %}
         <link rel="stylesheet" href="{{ static }}build/styles/landing/landing.min.css"/>
@@ -34,23 +34,23 @@
 <body ng-controller="LandingController as landingCtrl"  md-swipe-right="landingCtrl.toggleSidenav()" ng-cloak>
     <div class="header-media" header-media>
         <div layout="column">
-            <md-toolbar class="-transparent" layout="row">
+            <md-toolbar class="md-toolbar md-toolbar--transparent" layout="row">
                 <span flex-gt-lg="10"></span>
                 <nav class="md-toolbar-tools" layout="row" hide-sm>
-                    <md-button md-no-ink href="/" aria-label="Mappino logo">
-                        <mappino-logo class="mappino-logo--medium"></mappino-logo>
+                    <md-button href="/" class="nav-button" md-no-ink aria-label="Перейти на главную страницу">
+                        <mappino-logo></mappino-logo>
                     </md-button>
                     <span flex></span>
-                    <md-button ng-href="/" class="header-button">
+                    <md-button ng-href="/" class="nav-button">
                         Покупателям
                     </md-button>
-                    <md-button ng-href="/" class="header-button">
+                    <md-button ng-href="/" class="nav-button">
                         Продавцам
                     </md-button>
-                    <md-button ng-href="/" class="header-button">
+                    <md-button ng-href="/" class="nav-button">
                         Арендодателям
                     </md-button>
-                    <md-button ng-click="landingCtrl.scrollToLoginForm()" class="header-button" id="publication-button">
+                    <md-button id="publication-button" class="nav-button" ng-click="landingCtrl.scrollToLoginForm()">
                         Подать объявление
                     </md-button>
                 </nav>
@@ -62,14 +62,14 @@
                         <md-icon>menu</md-icon>
                     </md-button>
                     <span flex></span>
-                    <md-button md-no-ink href="/" aria-label="Mappino logo">
-                        <mappino-logo class="mappino-logo--medium"></mappino-logo>
+                    <md-button href="/" class="nav-button" md-no-ink aria-label="Перейти на главную страницу">
+                        <mappino-logo></mappino-logo>
                     </md-button>
                 </nav>
             </md-toolbar>
 
 
-            <div class="text-blur-shadow white-text md-padding" layout="row">
+            <div class="md-padding text-blur-shadow white-text" layout="row">
                 <span flex-gt-lg="20"></span>
                 <div layout="column" layout-align="center center">
                     <h1 class="big-text md-display-2 center-align">Потому, что жилье может быть доступнее</h1>
@@ -104,7 +104,7 @@
                         <md-datepicker  ng-model="search.date_enter" md-placeholder="Дата въезда" flex="50"></md-datepicker>
                         <md-datepicker ng-model="search.date_leave" md-placeholder="Дата выезда" flex="50"></md-datepicker>
                     </div>
-                    <div layout="row" class="md-padding">
+                    <div layout="row">
                         <md-input-container flex>
                             <input id="landing-autucomplete" class="white-text" type="text" ng-model="search.city" aria-label="Местоположение">
                         </md-input-container>
@@ -123,7 +123,14 @@
 
         <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav" md-swipe-left="landingCtrl.toggleSidenav()">
             <md-toolbar class="md-theme-indigo">
-                <h1 class="md-toolbar-tools">Mappino</h1>
+                <div layout="row" layout-fill layout-padding>
+                    <div layout="column" layout-align="center center">
+                        <mappino-logo></mappino-logo>
+                    </div>
+                    <div layout="column" layout-align="end start" layout-fill>
+                        <span>Mappino</span>
+                    </div>
+                </div>
             </md-toolbar>
             <md-content layout="column" layout-padding layout-align="center start">
                 <md-button ng-click="landingCtrl.toggleSidenav()" ng-href="/" class="header-button">
@@ -146,7 +153,7 @@
     <main>
         <div class="text-media">
         <div layout="column" layout-align="center center" class="logo">
-            <md-button class="md-fab blue">
+            <md-button class="md-fab md-primary">
                 <mappino-logo></mappino-logo>
             </md-button>
         </div>
@@ -350,7 +357,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-messages.min.js"></script>
 
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.2/angular-material.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.js"></script>
 
     {# Local js libs #}
     {% compress js %}

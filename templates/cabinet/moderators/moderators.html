@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.2/angular-material.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.css">
 
     {# Custom styles #}
     {% compress css %}
@@ -28,14 +28,13 @@
             </md-button>
             <span flex></span>
             <md-button class="nav-button" aria-label="mappino">
-                mappino
+                <mappino-logo></mappino-logo>
             </md-button>
-            <span flex></span>
         </nav>
 
         <nav class="md-toolbar-tools" hide-sm>
             <md-button href="/map/" class="nav-button">
-                mappino
+                <mappino-logo></mappino-logo>
             </md-button>
             <md-button ng-href="#!/moderating/" class="nav-button" aria-label="Модерация">
                 Модерация
@@ -52,8 +51,6 @@
             </md-button>
         </nav>
     </md-toolbar>
-
-    <md-progress-linear md-mode="indeterminate" ng-show="loaders.navbar" ng-cloak></md-progress-linear>
 
 
     <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav" ng-cloak>
@@ -93,6 +90,7 @@
 
 
     <main layout="row" layout-align="center start">
+        <md-progress-linear md-mode="indeterminate" ng-show="loaders.navbar" ng-cloak></md-progress-linear>
         <md-content flex ui-view></md-content>
     </main>
 
@@ -114,7 +112,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-touch.min.js"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.2/angular-material.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.js"></script>
 
     {# Local js libs #}
     {% compress js %}
