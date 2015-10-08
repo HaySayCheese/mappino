@@ -204,7 +204,7 @@
                                             <md-input-container flex="75">
                                                 <label>Номер телефона</label>
                                                 <input type="tel" name="mobilePhone" ng-model="account.mobilePhone" autofocus only-number required>
-                                                <div ng-messages="loginForm.mobilePhone.$error"
+                                                <div ng-messages="forms.loginForm.mobilePhone.$error"
                                                      ng-show="forms.loginForm.$submitted || forms.loginForm.mobilePhone.$touched">
                                                     <div ng-message="required">Обязательное поле</div>
                                                     <div ng-message="invalid">Номер телефона указан неверно</div>
@@ -231,7 +231,7 @@
                                         <md-input-container flex="100">
                                             <label>Код подтверждения</label>
                                             <input type="tel" name="smsCode" ng-model="account.smsCode" autofocus only-number required>
-                                            <div ng-messages="loginForm.smsCode.$error"
+                                            <div ng-messages="forms.loginForm.smsCode.$error"
                                                  ng-show="forms.loginForm.smsCode.$touched">
                                                 <div ng-message="required">Обязательное поле</div>
                                                 <div ng-message="invalid">Неверный код подтверждения</div>
