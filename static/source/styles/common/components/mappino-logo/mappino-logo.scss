@@ -5,6 +5,7 @@ $mappino-logo-large-size:   48px;
 
 .mappino-logo {
     position: relative;
+    display: inline-block;
     @include square(100%);
 
     

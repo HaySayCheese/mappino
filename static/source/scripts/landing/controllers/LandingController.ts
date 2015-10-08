@@ -106,8 +106,6 @@ namespace Mappino.Landing {
         public login() {
             if (this.$scope.authState === 'enterPhone') {
                 if (this.$scope.loginForm.mobilePhone.$valid) {
-                    console.log(this.$scope.account)
-
                     this.bAuthService.checkPhoneNumber(this.$scope.account.mobileCode, this.$scope.account.mobilePhone)
                         .success(response => {
                             if (response.code == 10) {
@@ -156,6 +154,26 @@ namespace Mappino.Landing {
             }
         }
 
+
+        public returnToEnterPhoneState() {
+            this.$cookies.remove("mcheck");
+            this.clearUserData();
+            this.resetLoginForm();
+            this.$scope.authState = 'enterPhone';
+        }
+
+        private resetLoginForm() {
+            if (this.$scope.authState == 'enterPhone') {
+                if (angular.isDefined(this.$scope.loginForm.mobilePhone))
+                    this.$scope.loginForm.mobilePhone.$setValidity('invalid', true);
+                this.$scope.loginForm.mobilePhone.$setValidity('throttled', true);
+            } else {
+                if (angular.isDefined(this.$scope.loginForm.smsCode))
+                    this.$scope.loginForm.smsCode.$setValidity('invalid', true);
+            }
+
+            this.$scope.loginForm.$setPristine();
+        }
 
         private changeAuthState() {
             this.$scope.authState = this.$cookies.get('mcheck') ? 'enterSMSCode' : 'enterPhone';
