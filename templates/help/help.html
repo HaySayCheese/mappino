@@ -70,7 +70,7 @@
 </md-sidenav>
 
 <div layout="row" layout-padding>
-    <div layout="column" flex="20" hide-sm>
+    <div layout="column" flex-gt-md="22" flex-md="40" hide-sm>
         <div layout="row">
             <div class="md-title grey-text">Основное</div>
         </div>
@@ -90,15 +90,17 @@
             </md-button>
         </div>
         <div layout="row">
-            <md-button layout-fill class="md-primary sidenav-button" ng-click="helpCtrl.toggleSidenav()">
+            <md-button  layout-wrap layout-fill class="md-primary sidenav-button" ng-click="helpCtrl.toggleSidenav()">
                 Почему именно Mappino?
             </md-button>
         </div>
     </div>
-    <div layout="column" flex="5"></div>
-    <main layout="column" flex>
-        {% block help %}
-        {% endblock %}
+    <main layout="column" flex-gt-md="75" flex-md="60">
+        <md-content>
+            <div class="md-padding">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci blanditiis delectus eum, ex exercitationem explicabo in ipsam itaque iure maxime neque omnis quae sed, sequi ullam veniam voluptate? Adipisci assumenda consequuntur facere ipsam, quas suscipit? Culpa, deserunt eos excepturi harum illum natus nobis qui reiciendis reprehenderit sunt. A aliquam consequatur cumque eius maiores minus officia perferendis, quasi repellat vitae! Ad aliquid consectetur dolor dolore dolores, ex, itaque libero neque optio quis, recusandae reiciendis sint? A assumenda culpa ducimus eaque eos, error esse est excepturi incidunt iure necessitatibus nemo quibusdam sed, soluta vel? Ab delectus dignissimos earum id ipsum iusto, officiis.
+            </div>
+        </md-content>
     </main>
 </div>
 
