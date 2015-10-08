@@ -160,7 +160,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'middlewares.auto_prolong_session.AutoProlongSession',  # custom
+    'middlewares.auto_prolong_session.AutoProlongSession',
+    'middlewares.user_settings.UserCookie',
 )
 
 
