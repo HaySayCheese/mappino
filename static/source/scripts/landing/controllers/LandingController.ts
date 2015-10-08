@@ -106,8 +106,6 @@ namespace Mappino.Landing {
         public login() {
             if (this.$scope.authState === 'enterPhone') {
                 if (this.$scope.loginForm.mobilePhone.$valid) {
-                    console.log(this.$scope.account)
-
                     this.bAuthService.checkPhoneNumber(this.$scope.account.mobileCode, this.$scope.account.mobilePhone)
                         .success(response => {
                             if (response.code == 10) {
