@@ -9,10 +9,10 @@
                 <h3 class="md-headline grey-text text-darken-2">Добавить новое объявление</h3>
 
                 <div layout="row">
-                    <md-checkbox class="md-primary" ng-model="newPublication.for_sale" aria-label="О продаже">
+                    <md-checkbox ng-change="briefsCtrl.validatePublicationOperation();" class="md-primary" ng-model="newPublication.for_sale" aria-label="О продаже">
                         О продаже
                     </md-checkbox>
-                    <md-checkbox class="md-primary" ng-model="newPublication.for_rent" aria-label="Аренда">
+                    <md-checkbox ng-change="briefsCtrl.validatePublicationOperation();" class="md-primary" ng-model="newPublication.for_rent" aria-label="Аренда">
                         Об аренде
                     </md-checkbox>
                 </div>

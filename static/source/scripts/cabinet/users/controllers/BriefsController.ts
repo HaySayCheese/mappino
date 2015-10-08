@@ -167,5 +167,12 @@ namespace Mappino.Cabinet.Users {
                     this.$rootScope.loaders.overlay = false;
                 })
         }
+
+
+        public validatePublicationOperation() {
+            if (this.$scope.newPublication.for_sale == false && this.$scope.newPublication.for_rent == false) {
+                this.$scope.newPublication.for_sale = true;
+            }
+        }
     }
 }
