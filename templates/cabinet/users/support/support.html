@@ -31,8 +31,11 @@
                 </div>
 
                 <div class="md-padding" layout="row" layout-align="center center">
-                    <md-button class="md-raised md-primary" ng-click="supportCtrl.createTicket()">
-                        Связаться со службой поддержки
+                    <md-button hide-sm class="md-raised md-primary" ng-click="supportCtrl.createTicket()">
+                        Написать в службу поддержки
+                    </md-button>
+                    <md-button hide-gt-sm class="md-raised md-primary" ng-click="supportCtrl.createTicket()">
+                        Написать
                     </md-button>
                 </div>
 

@@ -22,3 +22,7 @@
         color: gray !important;
     }
 }
+
+.text-shadow {
+    text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 60px color('grey', 'darken-4'), 0 0 200px color('grey', 'darken-4') ;
+}
