@@ -11,6 +11,7 @@ namespace Mappino.Map {
                     private $cookies: ng.cookies.ICookiesService,
                     private bAuthService: Mappino.Core.BAuth.BAuthService) {
             // ---------------------------------------------------------------------------------------------------------
+            $scope.forms = {};
             $scope.user = bAuthService.user;
             $scope.authState = 'enterPhone';
 
@@ -23,15 +24,15 @@ namespace Mappino.Map {
 
         public login() {
             if (this.$scope.authState === 'enterPhone') {
-                if (this.$scope.loginForm.mobilePhone.$valid) {
+                if (this.$scope.forms.loginForm.mobilePhone.$valid) {
                     this.bAuthService.checkPhoneNumber(this.$scope.account.mobileCode, this.$scope.account.mobilePhone)
                         .success(response => {
                             if (response.code == 10) {
                                 window.location.pathname = '/cabinet/';
                             } else if (response.code == 1) {
-                                this.$scope.loginForm.mobilePhone.$setValidity('invalid', false);
+                                this.$scope.forms.loginForm.mobilePhone.$setValidity('invalid', false);
                             } else if (response.code == 200) {
-                                this.$scope.loginForm.mobilePhone.$setValidity('throttled', false);
+                                this.$scope.forms.loginForm.mobilePhone.$setValidity('throttled', false);
                             } else {
                                 localStorage.setItem('mobile_code', this.$scope.account.mobileCode);
                                 localStorage.setItem('mobile_phone', this.$scope.account.mobilePhone);
@@ -40,22 +41,22 @@ namespace Mappino.Map {
                             }
                         })
                         .error(response => {
-                            this.$scope.loginForm.mobilePhone.$setValidity('invalid', false);
+                            this.$scope.forms.loginForm.mobilePhone.$setValidity('invalid', false);
                         });
                 }
             } else {
-                if (this.$scope.loginForm.smsCode.$valid) {
+                if (this.$scope.forms.loginForm.smsCode.$valid) {
                     this.bAuthService.checkSMSCode(this.$scope.account.mobileCode, this.$scope.account.mobilePhone, this.$scope.account.smsCode)
                         .success(response => {
                             if (response.code == 0) {
                                 this.clearUserData();
                                 this.changeAuthState();
                             } else {
-                                this.$scope.loginForm.smsCode.$setValidity('invalid', false);
+                                this.$scope.forms.loginForm.smsCode.$setValidity('invalid', false);
                             }
                         })
                         .error(response => {
-                            this.$scope.loginForm.smsCode.$setValidity('invalid', false);
+                            this.$scope.forms.loginForm.smsCode.$setValidity('invalid', false);
                         });
                 }
             }
@@ -121,15 +122,16 @@ namespace Mappino.Map {
 
         private resetLoginForm() {
             if (this.$scope.authState == 'enterPhone') {
-                if (angular.isDefined(this.$scope.loginForm.mobilePhone))
-                    this.$scope.loginForm.mobilePhone.$setValidity('invalid', true);
-                    this.$scope.loginForm.mobilePhone.$setValidity('throttled', true);
+                if (angular.isDefined(this.$scope.forms.loginForm.mobilePhone)) {
+                    this.$scope.forms.loginForm.mobilePhone.$setValidity('invalid', true);
+                    this.$scope.forms.loginForm.mobilePhone.$setValidity('throttled', true);
+                }
             } else {
-                if (angular.isDefined(this.$scope.loginForm.smsCode))
-                    this.$scope.loginForm.smsCode.$setValidity('invalid', true);
+                if (angular.isDefined(this.$scope.forms.loginForm.smsCode))
+                    this.$scope.forms.loginForm.smsCode.$setValidity('invalid', true);
             }
 
-            this.$scope.loginForm.$setPristine();
+            this.$scope.forms.loginForm.$setPristine();
         }
     }
 }

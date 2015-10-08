@@ -181,7 +181,7 @@
                                     <md-icon>close</md-icon>
                                 </md-button>
                             </div>
-                            <form name="loginForm" layout="column" ng-submit="accCtrl.login()" novalidate>
+                            <form name="forms.loginForm" layout="column" ng-submit="accCtrl.login()" novalidate>
                                 <div ng-switch-when="enterPhone">
                                     <div layout="column">
                                         <div ng-show="tabParts.navbarLeft == 'favorites'">
@@ -205,7 +205,7 @@
                                                 <label>Номер телефона</label>
                                                 <input type="tel" name="mobilePhone" ng-model="account.mobilePhone" autofocus only-number required>
                                                 <div ng-messages="loginForm.mobilePhone.$error"
-                                                     ng-show="loginForm.$submitted || loginForm.mobilePhone.$touched">
+                                                     ng-show="forms.loginForm.$submitted || forms.loginForm.mobilePhone.$touched">
                                                     <div ng-message="required">Обязательное поле</div>
                                                     <div ng-message="invalid">Номер телефона указан неверно</div>
                                                     <div ng-message="throttled">Достигнут лимит отправки sms</div>
@@ -232,7 +232,7 @@
                                             <label>Код подтверждения</label>
                                             <input type="tel" name="smsCode" ng-model="account.smsCode" autofocus only-number required>
                                             <div ng-messages="loginForm.smsCode.$error"
-                                                 ng-show="loginForm.smsCode.$touched">
+                                                 ng-show="forms.loginForm.smsCode.$touched">
                                                 <div ng-message="required">Обязательное поле</div>
                                                 <div ng-message="invalid">Неверный код подтверждения</div>
                                             </div>

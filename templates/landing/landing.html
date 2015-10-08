@@ -135,7 +135,7 @@
 
 
     <main>
-        <div class="text-media" header-media>
+        <div class="text-media">
         <div layout="column" layout-align="center center" class="logo">
             <md-button class="md-fab md-primary">
                 <mappino-logo></mappino-logo>
@@ -267,20 +267,20 @@
             </div>
             <div layout="column" flex></div>
         </div>
-        <div class="support-text white-text" layout="column" layout-align="center center">
+        <div class="support-text white-text" layout="column" layout-align="center center" header-media>
             <div layout="row" flex></div>
             <div layout="row" layout-align="start center">
             <div layout="column" layout-align="center center">
-                <span class="center-align white-text big-text md-display-2">Поддерживаем владельцев</span>
+                <span class="center-align white-text text-shadow big-text md-display-2">Поддерживаем владельцев</span>
             </div></div>
             <div layout="row" flex layout-align="start center" class="center-align">
-                <div layout="column" flex layout-align="center center">
-                    <md-icon class="material-icons md-96 white-text">camera_alt</md-icon>
+                <div layout="column" text-shadow flex layout-align="center center" class="text-shadow">
+                    <md-icon class="material-icons md-96 white-text text-shadow">camera_alt</md-icon>
                     Бесплатно предоставляем <br> фотографа
                 </div>
                 <div layout="column" flex="10"></div>
-                <div layout="column" flex layout-align="center center">
-                    <md-icon class="material-icons md-96 white-text">assignment</md-icon>
+                <div layout="column" text-shadow flex layout-align="center center" class="text-shadow">
+                    <md-icon class="material-icons md-96 white-text text-shadow">assignment</md-icon>
                     Бесплатно предоставляем образцы договоров
                 </div>
             </div>
@@ -291,9 +291,9 @@
                 <div layout="row" layout-align="center center">
                     <span class="md-display-1 big-text md-padding">Свяжитесь с нами!</span>
                 </div>
-                <div layout="row" layout-align="start start" layout-sm="column" layout-fill>
+                <div layout="column" layout-align="center center" layout-sm="column" >
                     <span flex-gt-lg="10"></span>
-                    <div layout="column" flex layout-fill layout-align="center center" class="md-subhead center-align md-padding">
+                    <div layout="column" flex layout-fill layout-align="center start" class="md-subhead ">
                         <span class="contact-padding">
                             <md-icon class="material-icons md-36 blue-text">phone</md-icon>&nbsp;
                             <a ng-href="tel:+380996065588">+380 99 606 55 88</a>
@@ -302,18 +302,16 @@
                             <md-icon class="material-icons md-36 blue-text">phone</md-icon>&nbsp;
                            <a href="tel:+380372909901">+380 372 909 901</a>
                         </span>
-                    </div>
-                    <div layout="column" flex layout-fill layout-align="center center" class="md-subhead center-align md-padding">
-
                         <span class="contact-padding">
                             <md-icon class="material-icons md-36 blue-text">mail</md-icon> &nbsp;
                             <a ng-href="mailto:hello@mappino.com">hello@mappino.com</a>
                         </span>
+                        <span class="contact-padding">
+                            <md-icon class="material-icons md-36 blue-text">place</md-icon>&nbsp;
+                            address goes here
+                        </span>
+
                     </div>
-                    <div layout="column" flex layout-fill layout-align="center center" class="md-subhead center-align md-padding">
-                        address goes here
-                    </div>
-                    <span flex-gt-lg="10"></span>
                 </div>
 
             </div>
