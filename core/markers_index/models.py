@@ -18,6 +18,7 @@ class FlatsSaleIndex(AbstractBaseIndex):
     # constants
     tid = OBJECTS_TYPES.flat()
 
+    # fields
     price = models.FloatField(db_index=True)
     currency_sid = models.PositiveSmallIntegerField()
     market_type_sid = models.PositiveSmallIntegerField(db_index=True)
@@ -35,10 +36,8 @@ class FlatsSaleIndex(AbstractBaseIndex):
     electricity = models.BooleanField(db_index=True)
     heating_type_sid = models.PositiveSmallIntegerField(db_index=True)
 
-
     class Meta:
         db_table = 'index_flats_sale'
-
 
     @classmethod
     def add(cls, record, using=None):
@@ -70,7 +69,6 @@ class FlatsSaleIndex(AbstractBaseIndex):
             electricity=record.body.electricity,
             heating_type_sid=record.body.heating_type_sid,
         )
-
 
     @classmethod
     def min_add_queryset(cls, publication_head_id):
@@ -105,12 +103,10 @@ class FlatsSaleIndex(AbstractBaseIndex):
                 'body__heating_type_sid',
             )[:1]
 
-
     @classmethod
     def brief_queryset(cls):
         queryset = super(FlatsSaleIndex, cls).brief_queryset()
         return queryset.only('rooms_count')
-
 
     @classmethod
     def brief(cls, marker, filters=None):
@@ -119,11 +115,9 @@ class FlatsSaleIndex(AbstractBaseIndex):
         brief['d0'] = u'{:.0f}'.format(marker.rooms_count)
         return brief
 
-
     @classmethod
     def apply_filters(cls, filters, markers):
         markers = cls.apply_market_type_filter(filters, markers)
-
         markers = cls.apply_price_filter(filters, markers)
         markers = cls.apply_rooms_count_filter(filters, markers)
         markers = cls.apply_total_area_filter(filters, markers)
