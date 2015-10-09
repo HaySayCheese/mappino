@@ -122,7 +122,7 @@ namespace Mappino.Map {
 
         private resetLoginForm() {
             if (this.$scope.authState == 'enterPhone') {
-                if (angular.isDefined(this.$scope.forms.loginForm.mobilePhone)) {
+                if (angular.isDefined(this.$scope.forms.loginForm) && angular.isDefined(this.$scope.forms.loginForm.mobilePhone)) {
                     this.$scope.forms.loginForm.mobilePhone.$setValidity('invalid', true);
                     this.$scope.forms.loginForm.mobilePhone.$setValidity('throttled', true);
                 }

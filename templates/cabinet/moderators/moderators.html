@@ -2,22 +2,18 @@
 <html ng-app="mappino.cabinet.moderators">
 <head>
     <title ng-bind="pageTitle">Личный кабинет</title>
-    <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
-
-    {# перевірка для яндекс.вебмастер #}
-    <meta name='yandex-verification' content='546bbc19b208a750'/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
     <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/angular-material/0.11.0/angular-material.min.css">
 
-    {# Custom styles #}
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places"></script>
+
     {% compress css %}
         <link rel="stylesheet" href="{{ static }}build/styles/cabinet/moderators/cabinet.moderators.min.css"/>
     {% endcompress %}
 
-    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAXPqXPqCTwyFFs9KufrwZL5qtHCmQ_6zQ&sensor=false&language=ru&libraries=places"></script>
+    {% include 'common/templates_head.html' %}
 </head>
 <body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()">
 

@@ -55,3 +55,11 @@ $mappino-logo-large-size:   48px;
 
     @include translate(-50%, -50%);
 }
+
+.md-tab .mappino-logo {
+    height: 16px !important;
+
+    .mappino-logo_img {
+        top: 60%;
+    }
+}

@@ -228,15 +228,17 @@
                                         <div layout="row" layout-align="center center">
                                             Пожалуйста, введите код из SMS
                                         </div>
-                                        <md-input-container flex="100">
-                                            <label>Код подтверждения</label>
-                                            <input type="tel" name="smsCode" ng-model="account.smsCode" autofocus only-number required>
-                                            <div ng-messages="forms.loginForm.smsCode.$error"
-                                                 ng-show="forms.loginForm.smsCode.$touched">
-                                                <div ng-message="required">Обязательное поле</div>
-                                                <div ng-message="invalid">Неверный код подтверждения</div>
-                                            </div>
-                                        </md-input-container>
+                                        <div layout="row">
+                                            <md-input-container flex="100">
+                                                <label>Код подтверждения</label>
+                                                <input type="tel" name="smsCode" ng-model="account.smsCode" autofocus only-number required>
+                                                <div ng-messages="forms.loginForm.smsCode.$error"
+                                                     ng-show="forms.loginForm.smsCode.$touched">
+                                                    <div ng-message="required">Обязательное поле</div>
+                                                    <div ng-message="invalid">Неверный код подтверждения</div>
+                                                </div>
+                                            </md-input-container>
+                                        </div>
                                         <div layout="row">
                                             <md-button class="md-primary" type="button" ng-click="accCtrl.returnToEnterPhoneState()">
                                                 Назад

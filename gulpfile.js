@@ -40,8 +40,8 @@ var PATHS = {
 
 
 
-gulp.task('Clean', function(cb) {
-    del([PATHS.BUILD.PATH + '*'], cb);
+gulp.task('Clean', function(callback) {
+    del([PATHS.BUILD.PATH + '*'], callback());
 });
 
 
