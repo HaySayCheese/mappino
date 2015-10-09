@@ -21,7 +21,8 @@
             <md-toolbar class="md-toolbar md-toolbar--transparent" layout="row">
                 <span flex-gt-lg="10"></span>
                 <nav class="md-toolbar-tools" layout="row" hide-sm>
-                    <md-button href="/" class="nav-button" md-no-ink aria-label="Перейти на главную страницу" layout="row" layout-align="center center">
+                    <md-button href="/" class="nav-button" md-no-ink aria-label="Перейти на главную страницу" layout="row"
+                               layout-align="center center">
                         <mappino-logo size="medium"></mappino-logo>
                     </md-button>
                     <span flex></span>
@@ -136,8 +137,8 @@
 
     <main>
         <div class="text-media">
-        <div layout="column" layout-align="center center" class="logo">
-            <md-button class="md-fab md-primary">
+        <div layout="column" layout-align="center center" class="logo-button">
+            <md-button class="md-fab md-primary" aria-label="">
                 <mappino-logo></mappino-logo>
             </md-button>
         </div>
@@ -342,9 +343,9 @@
 
     {# Local js libs #}
     {% compress js %}
-    <script src="{{ static }}build/libraries/ng-file-upload.min.js"></script>
+        <script src="{{ static }}build/libraries/ng-file-upload.min.js"></script>
 
-    <script src="{{ static }}build/scripts/landing/landing.min.js"></script>
+        <script src="{{ static }}build/scripts/landing/landing.min.js"></script>
     {% endcompress %}
 </body>
 </html>
