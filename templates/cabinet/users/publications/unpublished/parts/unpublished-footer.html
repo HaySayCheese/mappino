@@ -63,7 +63,7 @@
                                 <md-progress-circular md-mode="indeterminate" ng-show="publicationPhotoLoader[photo.hash_id]"></md-progress-circular>
 
 
-                                <md-button aria-label="Удалить фотографию" class="md-icon-button publication-photo_remove-btn"
+                                <md-button aria-label="Удалить фотографию" class="md-fab md-mini white publication-photo_remove-btn"
                                            ng-disabled="publicationPhotoLoader[photo.hash_id]"
                                            ng-click="u_pubCtrl.removePublicationPhoto(photo.hash_id)">
                                     <md-icon class="red-text">delete</md-icon>
@@ -72,7 +72,7 @@
                                     </md-tooltip>
                                 </md-button>
 
-                                <md-button aria-label="Сделать основной фотографией" class="md-icon-button publication-photo_set-title-btn"
+                                <md-button aria-label="Сделать основной фотографией" class="md-fab md-mini white publication-photo_set-title-btn"
                                            ng-hide="photo.is_title"
                                            ng-disabled="publicationPhotoLoader[photo.hash_id]"
                                            ng-click="u_pubCtrl.setTitlePhoto(photo.hash_id)">
