@@ -2,7 +2,7 @@
 import uuid
 
 import os
-from PIL import Image
+from PIL import Image, ExifTags
 from django.conf import settings
 
 from core.publications.exceptions import PhotosHandlerExceptions
@@ -28,7 +28,6 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
     thumbnail_suffix = '_big_thumb'
     thumbnail_size = (350, 250)
 
-
     @classmethod
     def process_and_upload_to_gcs(cls, tid, image):
         """
@@ -36,25 +35,27 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
         uploads them to the google cloud storage and,
         finally, removes them all from the temp dir.
 
+        If image has exif metadata and it seems that camera was rotated -
+        this info will be used to correct image transformation.
+
         :param tid: type id of the publication.
         :param image: image file that should be processed.
-
-        :return:
+        :returns:
             public links to the original image, processed photo,
             big thumbnail, and to the small thumbnail.
         """
 
-        # check file size
-        if image.size >  1024 * 1024 * 5: # 5mb
+        # check for max file size
+        if image.size > 1024 * 1024 * 5:                                # 5mb
             image.close()
             raise PhotosHandlerExceptions.ImageIsTooLarge()
 
-        # check file type
+        # check for file type
         if 'image/' not in image.content_type:
             image.close()
             raise PhotosHandlerExceptions.UnsupportedImageType('Not an image.')
 
-        # exclude .gif'name': bucket_filename,
+        # exclude .gif
         # pillow sometimes generates incorrect thumbs from .gif
         if 'gif' in image.content_type:
             image.close()
@@ -87,6 +88,29 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
             os.remove(original_image_path)
             raise PhotosHandlerExceptions.ProcessingFailed('Unknown I/O error.')
 
+        # check exif metadata and rotate photo if needed
+        if hasattr(image, '_getexif'):                                  # only present in JPEGs
+            for orientation in ExifTags.TAGS.keys():
+                if ExifTags.TAGS[orientation] == 'Orientation':
+                    e = image._getexif()                                # returns None if no EXIF data
+                    if e is not None:
+                        exif = dict(e.items())
+                        orientation = exif.get(orientation)
+                        if orientation is None:
+                            break
+
+                        if orientation == 3:
+                            image = image.transpose(Image.ROTATE_180)
+                        elif orientation == 6:
+                            image = image.transpose(Image.ROTATE_270)
+                        elif orientation == 8:
+                            image = image.transpose(Image.ROTATE_90)
+                        break
+
+        # this copy is needed on further processing
+        original_image = image
+
+        # thumbs processing
         image_width, image_height = image.size
         photo_width, photo_height, = cls.photo_size
 
@@ -101,8 +125,7 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
         else:
             # Всеодно виконати операцію над зображенням, інакше PIL не збереже файл.
             # Розміри зображення при цьому слід залишити без змін, щоб уникнути небажаного розширення.
-            image.thumbnail(image.size, Image.ANTIALIAS)
-
+            image.thumbnail((image_height, image_width, ), Image.ANTIALIAS)
 
         photo_name = '{uid}{photo_suffix}.jpg'.format(uid=uid, photo_suffix=cls.photo_suffix)
         photo_path = os.path.join(temporary_dir, photo_name)
@@ -137,17 +160,11 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
 
         # The image is scaled/cropped vertically or horizontally depending on the ratio
         # This is needed to guarantee that thumb will be cropped exactly by it's size
-
-
-        image = Image.open(original_image_path)
-        if image.mode != "RGB":
-            image = image.convert("RGB")
-
+        image = original_image
         image_width, image_height = image.size # image size may change at this pos by thumb() method
 
         image_ratio = image_width / float(image_height)
         ratio = thumb_width / float(thumb_height)
-
 
         if ratio > image_ratio:
             size = thumb_width, thumb_height
@@ -166,7 +183,6 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
         else:
             image = image.resize((thumb_width, thumb_height), Image.ANTIALIAS)
 
-
         try:
             image.save(thumb_path, 'JPEG', quality=100)
         except Exception as e:
@@ -174,8 +190,7 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
             os.remove(photo_path)
             raise e
 
-
-
+        # uploading
         bucket_path = os.path.join(cls.bucket_root_path, str(tid))
 
         original_image_bucket_path = cls.upload_photo_to_google_cloud_storage(

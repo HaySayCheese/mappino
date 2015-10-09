@@ -8,7 +8,6 @@ from core.google_api_auth import init_google_cloud_storage
 class GoogleCSPhotoUploader(object):
     bucket = 'mappino'
 
-
     @classmethod
     def upload_photo_to_google_cloud_storage(cls, path, cloud_path, cache_control_seconds=8035200):
         """
@@ -31,17 +30,17 @@ class GoogleCSPhotoUploader(object):
 
         storage = init_google_cloud_storage()
         resp = storage.objects().insert(
-            bucket = cls.bucket,
-            name = cloud_path,
-            body = metadata,
-            media_body = media
+            bucket=cls.bucket,
+            name=cloud_path,
+            body=metadata,
+            media_body=media
         ).execute()
 
         if 'selfLink' in resp:
             return '{domain}/{bucket}/{path}'.format(
-                domain = 'https://storage.googleapis.com',
-                bucket = cls.bucket,
-                path = cloud_path
+                domain='https://storage.googleapis.com',
+                bucket=cls.bucket,
+                path=cloud_path
             )
 
         else:
