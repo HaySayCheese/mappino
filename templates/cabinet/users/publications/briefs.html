@@ -5,8 +5,7 @@
     <md-card class="-brief">
         <md-card-content layout="column">
             <div layout="column" layout-align="center center">
-                <img hide-sm src="{{ static }}build/images/cabinet/brief-new-publication.gif" alt=""/>
-                <img hide-gt-sm class="brief-image" src="{{ static }}build/images/cabinet/brief-new-publication-static.jpg" alt=""/>
+                <img class="brief-image" src="{{ static }}build/images/cabinet/brief-new-publication.jpg" alt=""/>
                 <h3 class="md-headline center-align grey-text text-darken-2">Добавить новое объявление</h3>
 
                 <div layout="row">
@@ -37,14 +36,16 @@
 
     <md-card class="-brief" ng-repeat="brief in briefs | orderBy: 'state_sid'">
         <a ng-if="brief.state_sid == 0" ui-sref="publication_view({ publication_id: brief.tid + ':' + brief.hid })">
-            <img class="md-card-image" ng-src="[[ ::brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/no-publication-image.gif"/>
+            <img class="md-card-image" ng-src="[[ ::brief.photo_url ]]" alt=""
+                 on-error-src="{{ static }}build/images/cabinet/no-publication-image.jpg"/>
         </a>
 
-        <a  ng-if="brief.state_sid != 0" ui-sref="publication_edit({ publication_id: brief.tid + ':' + brief.hid })">
-            <img class="md-card-image" ng-src="[[ ::brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/no-publication-image.gif"
+        <a ng-if="brief.state_sid != 0" ui-sref="publication_edit({ publication_id: brief.tid + ':' + brief.hid })">
+            <img class="md-card-image" ng-src="[[ ::brief.photo_url ]]" alt=""
+                 on-error-src="{{ static }}build/images/cabinet/no-publication-image.jpg"
                  ng-show="brief.photo_url"/>
-            <img hide-sm class="md-card-image" src="{{ static }}build/images/cabinet/no-publication-image.gif" ng-hide="brief.photo_url" alt="" />
-            <img hide-gt-sm class="md-card-image" src="{{ static }}build/images/cabinet/no-publication-static.png" ng-hide="brief.photo_url" alt="" />
+
+            <img class="md-card-image" src="{{ static }}build/images/cabinet/no-publication-image.jpg" ng-hide="brief.photo_url" alt="" />
         </a>
 
         <md-card-content>
@@ -75,7 +76,7 @@
                 <md-divider></md-divider>
             </div>
 
-            <h2 class="md-title" ng-show="brief.title">[[ ::brief.title ]]</h2>
+            <h2 class="md-title truncate" ng-show="brief.title">[[ ::brief.title ]]</h2>
             <h2 class="md-title grey-text text-lighten-1" ng-hide="brief.title">Заголовок не указан</h2>
 
             <p class="md-body-1" ng-show="brief.description">[[ ::brief.description ]]</p>

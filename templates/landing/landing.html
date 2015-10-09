@@ -137,95 +137,97 @@
 
     <main>
         <div class="text-media">
-        <div layout="column" layout-align="center center" class="logo-button">
-            <md-button class="md-fab md-primary" aria-label="">
-                <mappino-logo></mappino-logo>
-            </md-button>
-        </div>
-        <div class="bottom-padding">
-        <div layout="row" layout-align="center center" >
-            <span flex="10"></span>
-            <h1 class="big-text md-display-1 center-align" layout-align="center center">
-                Недвижимость без посредников и коммисий. Бесплатно.
-            </h1>
-            <span flex="10"></span>
-        </div>
-            <div layout="row" layout-align="center center" class="layout-padding">
-                <span flex="10"></span>
-                <p class="center-align">
-                    Все предложения на mappino размещены владельцами. <br>
-                    Мы не работаем с риэлтерами и не представляем интересы риэлтерских агентств. <br>
-                    А еще сервис работает бесплатно, как для покупателей, так и для продавцов.
-                </p>
-                <span flex="10"></span>
+            <div layout="column" layout-align="center center" class="logo-button">
+                <md-button class="md-fab md-primary" aria-label="">
+                    <mappino-logo></mappino-logo>
+                </md-button>
             </div>
-            <div  layout="row" layout-align="center center" class="layout-padding">
-                <md-button aria-label="Подать объявление" ng-hide="showLoginForm" ng-click="landingCtrl.toggleLoginForm()" class="md-raised md-primary">подать объявление</md-button>
+            <div class="bottom-padding">
+                <div layout="row" layout-align="center center" >
+                    <span flex="10"></span>
+                    <h1 class="big-text md-display-1 center-align" layout-align="center center">
+                        Недвижимость без посредников и коммисий. Бесплатно.
+                    </h1>
+                    <span flex="10"></span>
+                </div>
+                <div layout="row" layout-align="center center" class="layout-padding">
+                    <span flex="10"></span>
+                    <p class="center-align">
+                        Все предложения на mappino размещены владельцами. <br>
+                        Мы не работаем с риэлтерами и не представляем интересы риэлтерских агентств. <br>
+                        А еще сервис работает бесплатно, как для покупателей, так и для продавцов.
+                    </p>
+                    <span flex="10"></span>
+                </div>
+                <div  layout="row" layout-align="center center" class="layout-padding">
+                    <md-button aria-label="Подать объявление" ng-hide="showLoginForm" ng-click="landingCtrl.toggleLoginForm()" class="md-raised md-primary">подать объявление</md-button>
 
-                <form layout="column" flex-gt-lg="25" flex-sm="100" ng-switch="authState" ng-show="showLoginForm" name="loginForm" layout="column" ng-submit="landingCtrl.login()" novalidate>
-                    <div ng-switch-when="enterPhone">
-                        <div layout="column">
+                    <form layout="column" flex-gt-lg="25" flex-sm="100" ng-switch="authState" ng-show="showLoginForm" name="loginForm" layout="column" ng-submit="landingCtrl.login()" novalidate>
+                        <div ng-switch-when="enterPhone">
+                            <div layout="column">
 
-                            <div layout="row">
-                                <md-input-container flex="30">
-                                    <label>Код</label>
-                                    <md-select ng-model="account.mobileCode" disabled class="select-number">
-                                        <md-option class="black-text" ng-repeat="code in COUNTRY.CODES" selected>[[ code ]]</md-option>
-                                    </md-select>
-                                </md-input-container>
-                                <md-input-container flex="70">
-                                    <label>Номер телефона</label>
-                                    <input type="tel" name="mobilePhone" ng-model="account.mobilePhone" autofocus only-number required>
-                                    <div ng-messages="loginForm.mobilePhone.$error"
-                                         ng-show="loginForm.$submitted || loginForm.mobilePhone.$touched">
+                                <div layout="row">
+                                    <md-input-container flex="30">
+                                        <label>Код</label>
+                                        <md-select ng-model="account.mobileCode" disabled class="select-number">
+                                            <md-option class="black-text" ng-repeat="code in COUNTRY.CODES" selected>[[ code ]]</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                    <md-input-container flex="70">
+                                        <label>Номер телефона</label>
+                                        <input type="tel" name="mobilePhone" ng-model="account.mobilePhone" autofocus only-number required>
+                                        <div ng-messages="loginForm.mobilePhone.$error"
+                                             ng-show="loginForm.$submitted || loginForm.mobilePhone.$touched">
+                                            <div ng-message="required">Обязательное поле</div>
+                                            <div ng-message="invalid">Номер телефона указан неверно</div>
+                                            <div ng-message="throttled">Достигнут лимит отправки sms</div>
+                                        </div>
+                                    </md-input-container>
+                                </div>
+                                <div layout="row" class="md-padding">
+                                    <md-button class="md-raised md-primary" type="submit" flex>
+                                        Войти
+                                    </md-button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div ng-switch-when="enterSMSCode">
+                            <div layout="column">
+                                <div layout="row" layout-align="center center">
+                                    <md-icon class="material-icons md-84 blue-grey-text text-lighten-3 animated-email">email</md-icon>
+                                </div>
+                                <div layout="row" layout-align="center center">
+                                    Пожалуйста, введите код из SMS
+                                </div>
+                                <md-input-container flex="100">
+                                    <label>Код подтверждения</label>
+                                    <input type="text" name="smsCode" ng-model="account.smsCode" autofocus only-number required>
+                                    <div ng-messages="loginForm.smsCode.$error"
+                                         ng-show="loginForm.smsCode.$touched">
                                         <div ng-message="required">Обязательное поле</div>
-                                        <div ng-message="invalid">Номер телефона указан неверно</div>
-                                        <div ng-message="throttled">Достигнут лимит отправки sms</div>
+                                        <div ng-message="invalid">Неверный код подтверждения</div>
                                     </div>
                                 </md-input-container>
-                            </div>
-                            <div layout="row" class="md-padding">
-                                <md-button class="md-raised md-primary" type="submit" flex>
-                                    Войти
-                                </md-button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div ng-switch-when="enterSMSCode">
-                        <div layout="column">
-                            <div layout="row" layout-align="center center">
-                                <md-icon class="material-icons md-84 blue-grey-text text-lighten-3 animated-email">email</md-icon>
-                            </div>
-                            <div layout="row" layout-align="center center">
-                                Пожалуйста, введите код из SMS
-                            </div>
-                            <md-input-container flex="100">
-                                <label>Код подтверждения</label>
-                                <input type="text" name="smsCode" ng-model="account.smsCode" autofocus only-number required>
-                                <div ng-messages="loginForm.smsCode.$error"
-                                     ng-show="loginForm.smsCode.$touched">
-                                    <div ng-message="required">Обязательное поле</div>
-                                    <div ng-message="invalid">Неверный код подтверждения</div>
+                                <div layout="row">
+                                    <md-button class="md-primary" type="button" ng-click="landingCtrl.returnToEnterPhoneState()">
+                                        Назад
+                                    </md-button>
+                                    <md-button class="md-raised md-primary" type="submit" flex>
+                                        Войти
+                                    </md-button>
                                 </div>
-                            </md-input-container>
-                            <div layout="row">
-                                <md-button class="md-primary" type="button" ng-click="landingCtrl.returnToEnterPhoneState()">
-                                    Назад
-                                </md-button>
-                                <md-button class="md-raised md-primary" type="submit" flex>
-                                    Войти
-                                </md-button>
                             </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-            <div  layout="row" layout-align="center center" class="layout-padding">
-                <span class="blue-text md-body-1 center-align">Займет не больше 5 минут, если у Вас уже есть фото</span>
+                    </form>
+                </div>
+                <div  layout="row" layout-align="center center" class="layout-padding">
+                    <span class="blue-text md-body-1 center-align">Займет не больше 5 минут, если у Вас уже есть фото</span>
+                </div>
             </div>
         </div>
-        </div>
+
+
         <div class="blue white-text top-padding bottom-padding">
             <div layout="row" layout-sm="column">
                 <div layout="column" flex="10"></div>
@@ -260,6 +262,8 @@
                 <div layout="column" flex="10"></div>
             </div>
         </div>
+
+
         <div layout="row" class="search-frame">
             <div layout="column" flex></div>
             <div layout="column" layout-align="center center" class="white blue-text md-padding md-whiteframe-z1">
@@ -268,12 +272,13 @@
             </div>
             <div layout="column" flex></div>
         </div>
-        <div class="support-text white-text" layout="column" layout-align="center center" header-media>
-            <div layout="row" flex></div>
-            <div layout="row" layout-align="start center">
-            <div layout="column" layout-align="center center">
+
+
+        <div class="support-text white-text" layout="column" layout-align="center center">
+            <span flex></span>
+            <div layout="row" layout-align="center center">
                 <span class="center-align white-text text-shadow big-text md-display-2">Поддерживаем владельцев</span>
-            </div></div>
+            </div>
             <div layout="row" flex layout-align="start center" class="center-align">
                 <div layout="column" text-shadow flex layout-align="center center" class="text-shadow">
                     <md-icon class="material-icons md-96 white-text text-shadow">camera_alt</md-icon>
@@ -314,7 +319,6 @@
 
                     </div>
                 </div>
-
             </div>
         </div>
     </main>
