@@ -14,13 +14,13 @@
 
     .text-blur-shadow {
         background: rgba(84, 84, 84, 0.69); /* Old browsers */
-        background: -moz-radial-gradient(center, ellipse cover,  rgba(64, 64, 64, 0.55) 0%, rgba(10, 255, 186, 0) 55%); /* FF3.6+ */
-        background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(64, 64, 64, 0.55)), color-stop(55%,rgba(10, 255, 186, 0))); /* Chrome,Safari4+ */
-        background: -webkit-radial-gradient(center, ellipse cover,  rgba(64, 64, 64, 0.55) 0%,rgba(10, 255, 186, 0) 55%); /* Chrome10+,Safari5.1+ */
-        background: -o-radial-gradient(center, ellipse cover,  rgba(64, 64, 64, 0.55) 0%,rgba(10, 255, 186, 0) 55%); /* Opera 12+ */
-        background: -ms-radial-gradient(center, ellipse cover,  rgba(64, 64, 64, 0.55) 0%,rgba(10, 255, 186, 0) 55%); /* IE10+ */
-        background: radial-gradient(ellipse at center,  rgba(64, 64, 64, 0.55) 0%,rgba(10, 255, 186, 0) 55%); /* W3C */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=rgba(64, 64, 64, 0.55), endColorstr=rgba(10, 255, 186, 0),GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+        background: -moz-radial-gradient(center, ellipse cover,  rgba(64, 64, 64, 0.55) 0%, rgba(64, 64, 64, 0) 55%); /* FF3.6+ */
+        background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(64, 64, 64, 0.55)), color-stop(55%,rgba(64, 64, 64, 0))); /* Chrome,Safari4+ */
+        background: -webkit-radial-gradient(center, ellipse cover,  rgba(64, 64, 64, 0.55) 0%,rgba(64, 64, 64, 0) 55%); /* Chrome10+,Safari5.1+ */
+        background: -o-radial-gradient(center, ellipse cover,  rgba(64, 64, 64, 0.55) 0%,rgba(64, 64, 64, 0) 55%); /* Opera 12+ */
+        background: -ms-radial-gradient(center, ellipse cover,  rgba(64, 64, 64, 0.55) 0%,rgba(64, 64, 64, 0) 55%); /* IE10+ */
+        background: radial-gradient(ellipse at center,  rgba(64, 64, 64, 0.55) 0%,rgba(64, 64, 64, 0) 55%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=rgba(64, 64, 64, 0.55), endColorstr=rgba(64, 64, 64, 0),GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
     }
 
     h1 {
