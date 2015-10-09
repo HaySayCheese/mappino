@@ -49,6 +49,20 @@
                     @include transform(translate(-50%, -50%) scale(0.8) !important)
                 }
             }
+
+            &_remove-btn,
+            &_set-title-btn {
+                position: absolute;
+                top: 5px;
+            }
+
+            &_remove-btn {
+                right: 5px;
+            }
+
+            &_set-title-btn {
+                left: 5px;
+            }
         }
 
         img {
