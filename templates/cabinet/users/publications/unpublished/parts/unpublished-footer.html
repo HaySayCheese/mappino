@@ -56,7 +56,9 @@
                     <div layout-sm="column" layout-gt-sm="row" layout-wrap layout-padding>
                         <div flex-gt-sm="50" ng-repeat="photo in publication.photos" >
                             <div class="publication-photo" layout="column" layout-align="center center" ng-class="{ '-main': photo.is_title }">
-                                <img ng-src="[[ photo.thumbnail_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png" />
+                                <div layout="row">
+                                    <img ng-src="[[ photo.thumbnail_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png" />
+                                </div>
 
                                 <md-progress-circular md-mode="indeterminate" ng-show="publicationPhotoLoader[photo.hash_id]"></md-progress-circular>
 
