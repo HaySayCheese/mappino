@@ -151,6 +151,12 @@ INSTALLED_APPS = (
 
 
 MIDDLEWARE_CLASSES = (
+    # This middleware processes responses(!) and sets special cookie in some cases.
+    # It is linked with authentication middleware and checks "request.user" object.
+    # Django processes middlewares in reverse order, so this one must be before
+    # django.authentication, otherwise request will not have "user" object.
+    'middlewares.user_settings.UserCookie',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
 
@@ -161,7 +167,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'middlewares.auto_prolong_session.AutoProlongSession',
-    'middlewares.user_settings.UserCookie',
 )
 
 
