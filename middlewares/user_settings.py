@@ -11,15 +11,12 @@ class UserCookie(object):
 
     @classmethod
     def process_response(cls, request, response):
-        # ignore redirect responses
-        if 300 < response.status_code < 399:
-            return response
+        if 200 < response.status_code < 299:
+            if request.user.is_authenticated():
+                response.set_cookie(cls.cookie_name, '')
+            else:
+                response.delete_cookie(cls.cookie_name)
 
-
-        if request.user.is_authenticated():
-            response.set_cookie(cls.cookie_name, '')
-
-        else:
-            response.delete_cookie(cls.cookie_name)
+        # responses about errors and redirects should not be modified
 
         return response
