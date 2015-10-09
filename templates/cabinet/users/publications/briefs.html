@@ -5,8 +5,9 @@
     <md-card class="-brief">
         <md-card-content layout="column">
             <div layout="column" layout-align="center center">
-                <img src="{{ static }}build/images/cabinet/brief-new-publication.gif" alt=""/>
-                <h3 class="md-headline grey-text text-darken-2">Добавить новое объявление</h3>
+                <img hide-sm src="{{ static }}build/images/cabinet/brief-new-publication.gif" alt=""/>
+                <img hide-gt-sm class="brief-image" src="{{ static }}build/images/cabinet/brief-new-publication-static.jpg" alt=""/>
+                <h3 class="md-headline center-align grey-text text-darken-2">Добавить новое объявление</h3>
 
                 <div layout="row">
                     <md-checkbox ng-change="briefsCtrl.validatePublicationOperation();" class="md-primary" ng-model="newPublication.for_sale" aria-label="О продаже">
@@ -39,10 +40,11 @@
             <img class="md-card-image" ng-src="[[ ::brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/no-publication-image.gif"/>
         </a>
 
-        <a ng-if="brief.state_sid != 0" ui-sref="publication_edit({ publication_id: brief.tid + ':' + brief.hid })">
+        <a  ng-if="brief.state_sid != 0" ui-sref="publication_edit({ publication_id: brief.tid + ':' + brief.hid })">
             <img class="md-card-image" ng-src="[[ ::brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/no-publication-image.gif"
                  ng-show="brief.photo_url"/>
-            <img class="md-card-image" src="{{ static }}build/images/cabinet/no-publication-image.gif" ng-hide="brief.photo_url" alt="" />
+            <img hide-sm class="md-card-image" src="{{ static }}build/images/cabinet/no-publication-image.gif" ng-hide="brief.photo_url" alt="" />
+            <img hide-gt-sm class="md-card-image" src="{{ static }}build/images/cabinet/no-publication-static.png" ng-hide="brief.photo_url" alt="" />
         </a>
 
         <md-card-content>
