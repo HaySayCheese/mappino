@@ -4,15 +4,15 @@
         <md-divider></md-divider>
         <div layout="column" layout-padding>
             <div class="publication-contacts" layout-gt-sm="row" layout-sm="column" layout-padding>
-                <div layout-sm="row">
-                    <div class="avatar" flex-sm="100" flex-gt-sm="40" layout="column" layout-align="center center">
+                <div layout-gt-sm="column" layout-sm="row" flex-sm="100" flex-gt-sm="35">
+                    <div class="avatar" layout="column" layout-align="center center">
                         <img ng-src="[[ publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/empty-or-error-user-avatar.png"
                              ng-if="publication.contacts.avatar_url" />
                         <img src="{{ static }}build/images/common/empty-or-error-user-avatar.png" ng-if="!publication.contacts.avatar_url" alt="" />
                     </div>
                 </div>
-                <div layout-sm="row">
-                    <div flex-sm="100" flex-gt-sm="60" layout="column">
+
+                <div layout-gt-sm="column" layout-sm="row" flex-sm="100" flex-gt-sm="65">
                     <div class="md-title grey-text text-darken-2" layout-padding ng-if="publication.contacts.first_name || publication.contacts.last_name">
                         [[ publication.contacts.first_name + '&nbsp;' ]][[ publication.contacts.last_name ]]
                     </div>
@@ -50,7 +50,6 @@
                         <div class="md-caption">Skype:</div>
                         <a ng-href="skype:[[ publication.contacts.skype ]]?call">[[ publication.contacts.skype ]]</a>
                     </div>
-                </div>
                 </div>
             </div>
 

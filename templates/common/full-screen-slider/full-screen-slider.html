@@ -1,11 +1,12 @@
-<md-dialog class="publication-full-slider-dialog" aria-label="Publication photos">
+<md-dialog class="publication-full-slider-dialog" aria-label="Полноэкранный просмотр фотографий"
+           ng-keyup="pubFullSliderCtrl.toggleSlide($event);">
+
     <md-dialog-content>
+
         <ul rn-carousel rn-carousel-transition="fadeAndSlide" rn-carousel-easing="easeFromTo" rn-carousel-index="publicationFullSliderIndex"
             class="publication-full-slider">
             <li ng-repeat="photo in photos">
-                <div class="slide-photo">
-                    <img ng-src="[[ photo ]]" alt="[[ photo ]]">
-                </div>
+                <div class="publication-full-slider_slide-photo" ng-style="{ 'background-image': 'url([[ photo ]])' }"></div>
             </li>
         </ul>
 
