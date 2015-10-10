@@ -40,7 +40,6 @@ class PublishedDataSource(object):
         :raise: RuntimeException - broken list of data generators.
         """
         data = {
-            'title':        publication_head.body.print_title(),
             'description':  publication_head.body.print_description(),
             'address':      publication_head.body.print_address(),
 

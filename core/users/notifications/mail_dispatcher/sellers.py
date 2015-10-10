@@ -18,7 +18,6 @@ class SellersMailDispatcher(object):
                 'client_name': name,
                 'phone_number': number,
                 'publication': {
-                    'title': publication.body.title,
                     'url': settings.REDIRECT_DOMAIN_URL + '/cabinet/#!/publications/published/{0}:{1}'.format(
                          publication.tid, publication.hash_id)
                 },
@@ -44,7 +43,6 @@ class SellersMailDispatcher(object):
             context = {
                 'client_name': name,
                 'publication': {
-                    'title': publication.body.title,
                     'url': settings.REDIRECT_DOMAIN_URL + '/cabinet/#!/publications/published/{0}:{1}'.format(
                         publication.tid, publication.hash_id)
                 },

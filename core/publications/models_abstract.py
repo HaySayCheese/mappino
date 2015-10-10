@@ -541,10 +541,6 @@ class BodyModel(AbstractModel):
         return
 
 
-    def print_title(self):
-        return self.title.capitalize() if self.title else u''
-
-
     def print_description(self):
         return self.description.capitalize() if self.description else u''
 

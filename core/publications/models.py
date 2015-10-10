@@ -1494,12 +1494,6 @@ class WarehousesBodies(BodyModel):
 
 
     # output
-    def print_title(self):
-        if not self.title:
-            return u''
-        return self.title
-
-
     def print_description(self):
         if not self.description:
             return u''
@@ -1736,18 +1730,10 @@ class GaragesBodies(BodyModel):
             raise EmptyTotalArea('Total area is None.')
 
 
-    # output
-    def print_title(self):
-        if not self.title:
-            return u''
-        return self.title
-
-
     def print_description(self):
         if not self.description:
             return u''
         return self.description
-
 
     def print_market_type(self):
         return self.substitutions['market_type'][self.market_type_sid]
@@ -1870,12 +1856,6 @@ class LandsBodies(BodyModel):
 
 
     # output
-    def print_title(self):
-        if not self.title:
-            return u''
-        return self.title
-
-
     def print_description(self):
         if self.description is None:
             return u''

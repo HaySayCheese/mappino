@@ -12,7 +12,6 @@ class EmptyRentPrice(ValidationError): pass
 
 
 #-- body
-class EmptyTitle(ValidationError): pass
 class EmptyDescription(ValidationError): pass
 
 
