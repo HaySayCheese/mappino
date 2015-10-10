@@ -275,7 +275,6 @@ namespace Mappino.Cabinet.Users {
                         brief.for_sale,
                         brief.photo_url,
                         brief.state_sid,
-                        brief.title,
                         brief.description,
                         brief.moderator_message
                     ));

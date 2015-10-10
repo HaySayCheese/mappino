@@ -112,16 +112,6 @@
             <div class="md-padding" layout="column">
                 <div layout="row">
                     <md-input-container layout-fill>
-                        <label>Заголовок обьявления</label>
-                        <input name="title" ng-model="publication.body.title" required>
-                        <div ng-messages="forms.publicationForm.title.$error"
-                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.title.$touched">
-                            <div ng-message="required">Обязательное поле</div>
-                        </div>
-                    </md-input-container>
-                </div>
-                <div layout="row">
-                    <md-input-container layout-fill>
                         <label>Описание</label>
                         <textarea columns="1" rows="2" name="description" ng-model="publication.body.description" required></textarea>
                         <div ng-messages="forms.publicationForm.description.$error"
