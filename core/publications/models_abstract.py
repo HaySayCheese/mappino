@@ -546,7 +546,7 @@ class BodyModel(AbstractModel):
 
 
     def print_address(self):
-        return self.address.capitalize() if self.address else u''
+        return self.address if self.address else u''
 
 
 class SaleTermsModel(AbstractModel):
