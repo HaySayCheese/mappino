@@ -9,7 +9,6 @@ from core.publications import formatters
 from core.publications.constants import HEAD_MODELS
 
 
-
 class NextPublicationToCheckView(ModeratorsView):
     class GetResponses(object):
         @staticmethod
@@ -26,7 +25,6 @@ class NextPublicationToCheckView(ModeratorsView):
                 }
             }
 
-
         @staticmethod
         @json_response
         def no_publications_to_check():
@@ -35,7 +33,6 @@ class NextPublicationToCheckView(ModeratorsView):
                 'message': 'OK',
                 'data': None
             }
-
 
     @classmethod
     def get(cls, request, *args):
@@ -63,10 +60,8 @@ class NextPublicationToCheckView(ModeratorsView):
                 return cls.GetResponses.no_publications_to_check()
 
 
-
 class PublicationView(ModeratorsView):
     formatter = formatters.PublishedDataSource()
-
 
     class GetResponses(object):
         @staticmethod
@@ -78,7 +73,6 @@ class PublicationView(ModeratorsView):
                 'data': data
             }
 
-
         @staticmethod
         @json_response_bad_request
         def invalid_parameters():
@@ -87,7 +81,6 @@ class PublicationView(ModeratorsView):
                 'message': 'Request does not contains valid parameters or one of them is incorrect.'
             }
 
-
         @staticmethod
         @json_response
         def no_such_publication():
@@ -95,7 +88,6 @@ class PublicationView(ModeratorsView):
                 'code': 2,
                 'message': 'No such publications.'
             }
-
 
     @classmethod
     def get(cls, request, *args):
@@ -106,18 +98,15 @@ class PublicationView(ModeratorsView):
         except (IndexError, ValueError, KeyError):
             return cls.GetResponses.invalid_parameters()
 
-
         try:
             check_record = PublicationsCheckQueue.objects.get(publication_tid=tid, publication_hash_id=hash_id)
             publication = check_record.publication
         except ObjectDoesNotExist:
             return cls.GetResponses.no_such_publication()
 
-
         if not publication.is_published():
             check_record.delete()
             return cls.GetResponses.invalid_parameters()
-
 
         data = cls.formatter.format(tid, publication)
         data['claims'] = [
@@ -131,9 +120,8 @@ class PublicationView(ModeratorsView):
                 'moderator_notice': claim.moderator_notice,
 
             } for claim in check_record.claims()
-        ]
+            ]
         return cls.GetResponses.ok(data)
-
 
 
 class PublicationAcceptRejectOrHoldView(ModeratorsView):
@@ -146,7 +134,6 @@ class PublicationAcceptRejectOrHoldView(ModeratorsView):
                 'message': 'OK',
             }
 
-
         @staticmethod
         @json_response_bad_request
         def invalid_parameters():
@@ -154,7 +141,6 @@ class PublicationAcceptRejectOrHoldView(ModeratorsView):
                 'code': 1,
                 'message': 'Requests contains invalid parameters.'
             }
-
 
     @classmethod
     def post(cls, request, *args):
@@ -165,17 +151,14 @@ class PublicationAcceptRejectOrHoldView(ModeratorsView):
         except (IndexError, ValueError, KeyError):
             return cls.PostResponses.invalid_parameters()
 
-
         try:
             record = PublicationsCheckQueue.objects.get(publication_tid=tid, publication_hash_id=hash_id)
         except ObjectDoesNotExist:
             return cls.PostResponses.invalid_parameters()
 
-
         operation = args[2]
         if operation not in ['accept', 'reject', 'hold']:
             return cls.PostResponses.invalid_parameters()
-
 
         if operation == 'accept':
             record.accept(request.user)
@@ -187,9 +170,7 @@ class PublicationAcceptRejectOrHoldView(ModeratorsView):
         elif operation == 'hold':
             record.hold(request.user)
 
-
         return cls.PostResponses.ok()
-
 
 
 class HeldPublicationsView(ModeratorsView):
@@ -203,12 +184,11 @@ class HeldPublicationsView(ModeratorsView):
                 'data': briefs,
             }
 
-
     @classmethod
     def get(cls, request, *args):
-        held_publications = PublicationsCheckQueue.objects\
-            .filter(moderator=request.user)\
-            .filter(state_sid=PublicationsCheckQueue.States.held)\
+        held_publications = PublicationsCheckQueue.objects \
+            .filter(moderator=request.user) \
+            .filter(state_sid=PublicationsCheckQueue.States.held) \
             .values_list('publication_tid', 'publication_hash_id')
 
         ids = {}
@@ -218,15 +198,12 @@ class HeldPublicationsView(ModeratorsView):
             else:
                 ids[tid].append(hash_id)
 
-
         pubs = []
         for tid, hash_ids_list in ids.iteritems():
             query = HEAD_MODELS[tid].objects.filter(hash_id__in=hash_ids_list)
             pubs.extend(cls.__dump_publications_list(tid, query))
 
-
         return cls.GetResponses.ok(pubs)
-
 
     @classmethod
     def __dump_publications_list(cls, tid, queryset):
@@ -242,10 +219,9 @@ class HeldPublicationsView(ModeratorsView):
         if not publications_list:
             return []
 
-
         model = HEAD_MODELS[tid]
-        publications = model.objects\
-            .filter(id__in=[p[0] for p in publications_list])\
+        publications = model.objects \
+            .filter(id__in=[p[0] for p in publications_list]) \
             .only('id')
 
         title_photos = {}
@@ -254,7 +230,6 @@ class HeldPublicationsView(ModeratorsView):
             # publication may no have title photo
             if photo:
                 title_photos[photo.id] = photo.big_thumb_url
-
 
         briefs = []
         for head_id, hash_id, title, description, for_rent, for_sale in publications_list:
@@ -274,8 +249,6 @@ class HeldPublicationsView(ModeratorsView):
         return briefs
 
 
-
-
 class ClaimsNoticeView(ModeratorsView):
     class PostResponses(object):
         @staticmethod
@@ -286,7 +259,6 @@ class ClaimsNoticeView(ModeratorsView):
                 'message': 'OK',
             }
 
-
         @classmethod
         @json_response_not_found
         def no_such_claim(cls):
@@ -294,7 +266,6 @@ class ClaimsNoticeView(ModeratorsView):
                 'code': 2,
                 'message': 'No claim with exact hash_id.'
             }
-
 
     @classmethod
     def post(cls, request, *args):
@@ -305,16 +276,13 @@ class ClaimsNoticeView(ModeratorsView):
         except IndexError:
             return cls.PostResponses.no_such_claim()
 
-
         if claim.date_closed is not None:
             raise SuspiciousOperation('Attempt to modify closed claim.')
-
 
         notice = angular_post_parameters(request).get('notice', '')
         claim.moderator_notice = notice
         claim.save()
         return cls.PostResponses.ok()
-
 
 
 class ClaimCloseView(ModeratorsView):
@@ -330,7 +298,6 @@ class ClaimCloseView(ModeratorsView):
                 }
             }
 
-
         @classmethod
         @json_response_not_found
         def no_such_claim(cls):
@@ -338,7 +305,6 @@ class ClaimCloseView(ModeratorsView):
                 'code': 2,
                 'message': 'No claim with exact hash_id.'
             }
-
 
     @classmethod
     def post(cls, request, *args):
@@ -349,13 +315,8 @@ class ClaimCloseView(ModeratorsView):
         except IndexError:
             return cls.PostResponses.no_such_claim()
 
-
         if claim.date_closed is not None:
             raise SuspiciousOperation('Attempt to modify closed claim.')
 
-
         claim.close(request.user)
         return cls.PostResponses.ok(claim)
-
-
-

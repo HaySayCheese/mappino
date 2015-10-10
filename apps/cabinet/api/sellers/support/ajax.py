@@ -1,9 +1,9 @@
-#coding=utf-8
+# coding=utf-8
 from django.db.models import Q
 
 from apps.views_base import CabinetView
-from collective.http.responses import *
 from collective.exceptions import EmptyArgument
+from collective.http.responses import *
 from collective.methods.request_data_getters import angular_parameters
 from core.support import SupportApp
 from core.support.models import Tickets, Messages
@@ -26,12 +26,11 @@ class Support(object):
                             'state_sid': ticket.state_sid,
                             'created': ticket.created.strftime('%Y-%m-%dT%H:%M:00%z'),
                             'last_message': ticket.last_message_datetime().strftime('%Y-%m-%dT%H:%M:00%z')
-                                                if ticket.last_message_datetime() else '-',
+                            if ticket.last_message_datetime() else '-',
                             'subject': ticket.subject
                         } for ticket in tickets
-                     ]
+                        ]
                 })
-
 
         class Post(object):
             @staticmethod
@@ -39,9 +38,8 @@ class Support(object):
                 return HttpJsonResponse({
                     'code': 0,
                     'messages': "OK",
-                    'data' : {'id': ticket_id},
+                    'data': {'id': ticket_id},
                 })
-
 
         #
         # view methods
@@ -56,7 +54,6 @@ class Support(object):
             tickets = Tickets.by_owner(request.user.id)
             return self.Get.ok(tickets)
 
-
         def post(self, request, *args):
             """
             Creates new ticket and returns JSON-response with it's id.
@@ -66,18 +63,18 @@ class Support(object):
             # If user already has one empty ticket -
             # lets force him to use it, instead of creating new one.
             empty_tickets = Tickets.objects.filter(
-                 Q(
-                     # owner check
-                     owner=request.user.id
-                 ),
-                 Q(
-                     # contains no subject
-                     Q(subject__isnull=True) or Q(subject='')
-                 ),
+                Q(
+                    # owner check
+                    owner=request.user.id
+                ),
+                Q(
+                    # contains no subject
+                    Q(subject__isnull=True) or Q(subject='')
+                ),
                 ~Q(
                     # contains no one message
                     id__in=Messages.objects.values_list('ticket_id')
-                 )
+                )
             ).only('id')[:1]
 
             if empty_tickets:
@@ -87,7 +84,6 @@ class Support(object):
             else:
                 ticket = Tickets.open(request.user)
                 return self.Post.ok(ticket.id)
-
 
     class CloseTicket(CabinetView):
         class Post(object):
@@ -111,8 +107,6 @@ class Support(object):
                     'message': 'There is no such ticket with exact id.',
                 })
 
-
-
         def post(self, request, *args):
             """
             Closes the ticket with id from the url-params.
@@ -124,17 +118,14 @@ class Support(object):
             except IndexError:
                 return self.Post.invalid_ticket_id()
 
-
             # note: owner check is done
             ticket = Tickets.objects.filter(id=ticket_id, owner=request.user).only('id')[:1]
             if not ticket:
                 return self.Post.no_such_ticket()
 
-
             ticket = ticket[0]
             ticket.close()
             return self.Post.ok()
-
 
     class Messages(CabinetView):
         class Get(object):
@@ -148,7 +139,7 @@ class Support(object):
                         'state_sid': ticket.state_sid,
                         'created': ticket.created.strftime('%Y-%m-%dT%H:%M:00%z'),
                         'last_message': ticket.last_message_datetime().strftime('%Y-%m-%dT%H:%M:00%z')
-                            if ticket.last_message_datetime() else '-',
+                        if ticket.last_message_datetime() else '-',
                         'subject': ticket.subject,
                         'messages': [
                             {
@@ -156,10 +147,9 @@ class Support(object):
                                 'created': m.created.strftime('%Y-%m-%dT%H:%M:00%z'),
                                 'text': m.text,
                             } for m in ticket.messages()
-                        ]
+                            ]
                     }
                 })
-
 
             @staticmethod
             def no_param_ticket_id():
@@ -168,14 +158,12 @@ class Support(object):
                     'message': 'Request does not contains required positional parameter "ticket_id".'
                 })
 
-
             @staticmethod
             def no_such_ticket():
                 return HttpJsonResponseNotFound({
                     'code': 2,
                     'message': 'There is not such ticket wth exact id.'
                 })
-
 
         class Post(object):
             @staticmethod
@@ -185,14 +173,12 @@ class Support(object):
                     'message': 'OK',
                 })
 
-
             @staticmethod
             def no_param_ticket_id():
                 return HttpJsonResponseBadRequest({
                     'code': 1,
                     'message': 'Request does not contains required positional parameter "ticket_id".'
                 })
-
 
             @staticmethod
             def no_such_ticket():
@@ -201,14 +187,12 @@ class Support(object):
                     'message': 'There is not such ticket wth exact id.'
                 })
 
-
             @staticmethod
-            def invalid_request(): # it's to lazy now to implement error per method
+            def invalid_request():  # it's to lazy now to implement error per method
                 return HttpJsonResponseBadRequest({
                     'code': 3,
                     'message': 'Request does not contains required parameter, or contains invalid data.'
                 })
-
 
         def get(self, request, *args):
             """
@@ -223,16 +207,13 @@ class Support(object):
             except IndexError:
                 return self.Get.no_param_ticket_id()
 
-
             # note: owner check is done
             tickets = Tickets.objects.filter(id=ticket_id, owner=request.user).only('id')[:1]
             if not tickets:
                 return self.Get.no_such_ticket()
 
-
             ticket = tickets[0]
             return self.Get.ok(ticket)
-
 
         def post(self, request, *args):
             """
@@ -255,7 +236,6 @@ class Support(object):
             except ValueError:
                 return self.Post.invalid_request()
 
-
             # note: owner check is done
             tickets = Tickets.objects.filter(id=ticket_id, owner=request.user).only('id')[:1]
             if not tickets:
@@ -263,14 +243,12 @@ class Support(object):
             else:
                 ticket = tickets[0]
 
-
             subject = params.get('subject', '')
             if subject:
                 try:
                     ticket.set_subject(subject)
                 except EmptyArgument:
                     return self.Post.invalid_request()
-
 
             message = params.get('message')
             if not message:
@@ -287,4 +265,3 @@ class Support(object):
             SupportApp.agents_notifier.send_notification(ticket, message, request.user.full_name())
 
             return self.Post.ok()
-

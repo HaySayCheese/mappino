@@ -1,18 +1,15 @@
-#coding=utf-8
+# coding=utf-8
 import datetime
 import pytz
 import redis_lock
-
-from django.db.utils import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.db import models, transaction
+from django.db.utils import DatabaseError
 from django.utils.timezone import now
 
-from collective.utils import generate_sha256_unique_id
 from collective.exceptions import InvalidArgument, RuntimeException
+from collective.utils import generate_sha256_unique_id
 from core import redis_connections
-from core.users.models import Users
-from core.publications.handlers import PublicationsPhotosHandler
 from core.currencies import currencies_manager as currencies
 from core.currencies.constants import CURRENCIES as currencies_constants
 from core.publications import signals
@@ -20,13 +17,15 @@ from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, L
     OBJECTS_TYPES
 from core.publications.exceptions import EmptyCoordinates, EmptyDescription, EmptySalePrice, \
     EmptyRentPrice, EmptyPersonsCount, NotEnoughPhotos, OperationIsNotSpecified
+from core.publications.handlers import PublicationsPhotosHandler
+from core.users.models import Users
 
 
 class AbstractModel(models.Model):
     class Meta:
         abstract = True
 
-    #-- constraints
+    # -- constraints
     max_price_symbols_count = 18
 
     @classmethod
@@ -36,7 +35,6 @@ class AbstractModel(models.Model):
     @classmethod
     def by_id(cls, record_id):
         return cls.objects.filter(id=record_id)
-
 
     def print_price(self):
         if self.price is None:
@@ -60,7 +58,6 @@ class AbstractModel(models.Model):
         if self.is_contract:
             dol += u', договорная'
 
-
         # Додаємо ціну в інших валютах
         uah = u'{:,.2f}'.format(currencies.convert(self.price, self.currency_sid, currencies_constants.uah()))
         uah = uah.replace(',', ' ')
@@ -73,7 +70,6 @@ class AbstractModel(models.Model):
         uah += u' грн.'
         if self.transaction_sid == SALE_TRANSACTION_TYPES.for_square_meter():
             uah += u'/м²'
-
 
         eur = u'{:,.2f}'.format(currencies.convert(self.price, self.currency_sid, currencies_constants.eur()))
         eur = eur.replace(',', ' ')
@@ -94,14 +90,14 @@ class AbstractHeadModel(models.Model):
     class Meta:
         abstract = True
 
-    #-- override
+    # -- override
     tid = None
     body = None
     sale_terms = None
     rent_terms = None
     photos_model = None
 
-    #-- fields
+    # -- fields
     #
     # hash_id використовується для передачі ссилок на клієнт.
     # Передача id у відкритому вигляді небезпечна тим, що:
@@ -109,7 +105,6 @@ class AbstractHeadModel(models.Model):
     #   * відкриває внутрішню структуру таблиць в БД і наяні зв’язки.
     hash_id = models.TextField(unique=True, db_index=True, default=generate_sha256_unique_id)
     owner = models.ForeignKey(Users)
-
 
     state_sid = models.SmallIntegerField(default=OBJECT_STATES.unpublished(), db_index=True)
     for_sale = models.BooleanField(default=False)
@@ -120,7 +115,7 @@ class AbstractHeadModel(models.Model):
     deleted = models.DateTimeField(null=True)
     actual = models.DateTimeField(null=True)
 
-    #-- map coordinates
+    # -- map coordinates
     degree_lat = models.TextField(null=True)
     degree_lng = models.TextField(null=True)
 
@@ -130,18 +125,17 @@ class AbstractHeadModel(models.Model):
     pos_lat = models.TextField(null=True)
     pos_lng = models.TextField(null=True)
 
-
     @classmethod
     def new(cls, owner, for_sale=False, for_rent=False):
         model = cls.objects.create(
-            body_id = cls._meta.get_field_by_name('body')[0].rel.to.new().id,
-            sale_terms_id = cls._meta.get_field_by_name('sale_terms')[0].rel.to.new().id,
-            rent_terms_id = cls._meta.get_field_by_name('rent_terms')[0].rel.to.new().id,
+            body_id=cls._meta.get_field_by_name('body')[0].rel.to.new().id,
+            sale_terms_id=cls._meta.get_field_by_name('sale_terms')[0].rel.to.new().id,
+            rent_terms_id=cls._meta.get_field_by_name('rent_terms')[0].rel.to.new().id,
 
-            owner = owner,
-            for_sale = for_sale,
-            for_rent = for_rent,
-            state_sid = OBJECT_STATES.unpublished(),
+            owner=owner,
+            for_sale=for_sale,
+            for_rent=for_rent,
+            state_sid=OBJECT_STATES.unpublished(),
         )
 
         # По сигналу про створення запису відбувається оновлення індексу маркерів та
@@ -151,11 +145,10 @@ class AbstractHeadModel(models.Model):
 
         return model
 
-
     @classmethod
     def by_id(cls, head_id, select_body=False, select_sale=False, select_rent=False, select_owner=False):
         try:
-            query = cls.objects.filter(id = head_id)
+            query = cls.objects.filter(id=head_id)
             if select_body:
                 query = query.select_related('body')
             if select_sale:
@@ -167,12 +160,11 @@ class AbstractHeadModel(models.Model):
             return query[:1][0]
         except IndexError:
             raise ObjectDoesNotExist()
-
 
     @classmethod
     def by_hash_id(cls, hash_id, select_body=False, select_sale=False, select_rent=False, select_owner=False):
         try:
-            query = cls.objects.filter(hash_id = hash_id)
+            query = cls.objects.filter(hash_id=hash_id)
 
             if select_body:
                 query = query.select_related('body')
@@ -187,15 +179,13 @@ class AbstractHeadModel(models.Model):
         except IndexError:
             raise ObjectDoesNotExist()
 
-
     @classmethod
     def queryset_by_hash_id(cls, hash_id):
-        return cls.objects.filter(hash_id = hash_id).only('id')
-
+        return cls.objects.filter(hash_id=hash_id).only('id')
 
     @classmethod
     def by_user_id(cls, user_id, select_body=False, select_sale=False, select_rent=False, select_owner=False):
-        query = cls.objects.filter(owner_id = user_id).only('id')
+        query = cls.objects.filter(owner_id=user_id).only('id')
         if select_body:
             query = query.select_related('body')
         if select_sale:
@@ -206,11 +196,9 @@ class AbstractHeadModel(models.Model):
             query = query.select_related('owner')
         return query
 
-
     @classmethod
     def all_published(cls):
         return cls.objects.filter(state_sid=OBJECT_STATES.published())
-
 
     def set_lat_lng(self, lat_lng):
         if not lat_lng or lat_lng is None:
@@ -226,7 +214,7 @@ class AbstractHeadModel(models.Model):
             raise InvalidArgument('lat_lng doesnt contains ')
 
         lat, lng = lat_lng.split(splitter)
-        if (not lat) or (not lng): # lat & lng are strings, it's OK
+        if (not lat) or (not lng):  # lat & lng are strings, it's OK
             raise ValueError()
 
         if len(lat) <= 6:
@@ -266,11 +254,9 @@ class AbstractHeadModel(models.Model):
         self.pos_lng = pos_lng
         self.save(force_update=True)
 
-
     def publish(self, pub_date_should_be_updated=True):
         if self.is_deleted():
             raise SuspiciousOperation('Attempt to publish deleted publication.')
-
 
         self.check_required_fields()
 
@@ -281,7 +267,6 @@ class AbstractHeadModel(models.Model):
         # here should be added another check for videos
         self.check_photos_are_present()
 
-
         # All the signals emitters are wrapped into the atomic transaction.
         #
         # This is needed to guarantee that impact of all signals handlers
@@ -289,12 +274,12 @@ class AbstractHeadModel(models.Model):
         with transaction.atomic():
 
             signals.before_publish.send(
-                sender = None,
-                tid = self.tid,
-                hid = self.id,
-                hash_id = self.hash_id,
-                for_sale = self.for_sale,
-                for_rent = self.for_rent
+                sender=None,
+                tid=self.tid,
+                hid=self.id,
+                hash_id=self.hash_id,
+                for_sale=self.for_sale,
+                for_rent=self.for_rent
             )
 
             self.state_sid = OBJECT_STATES.published()
@@ -309,10 +294,8 @@ class AbstractHeadModel(models.Model):
             signals.published.send(
                 None, tid=self.tid, hid=self.id, hash_id=self.hash_id, for_sale=self.for_sale, for_rent=self.for_rent)
 
-
     def is_published(self):
         return self.state_sid == OBJECT_STATES.published()
-
 
     def unpublish(self):
         # Moves the publication to unpublished publications.
@@ -323,12 +306,12 @@ class AbstractHeadModel(models.Model):
         # sender=None для того, щоб django-orm не витягував автоматично дані з БД,
         # які, швидше за все, не знадобляться в подальшій обробці.
         signals.before_unpublish.send(
-            sender = None,
-            tid = self.tid,
-            hid = self.id,
-            hash_id = self.hash_id,
-            for_sale = self.for_sale,
-            for_rent = self.for_rent,
+            sender=None,
+            tid=self.tid,
+            hid=self.id,
+            hash_id=self.hash_id,
+            for_sale=self.for_sale,
+            for_rent=self.for_rent,
         )
 
         self.state_sid = OBJECT_STATES.unpublished()
@@ -339,40 +322,36 @@ class AbstractHeadModel(models.Model):
         # sender=None для того, щоб django-orm не витягував автоматично дані з БД,
         # які, швидше за все, не знадобляться в подальшій обробці.
         signals.unpublished.send(
-            sender = None,
-            tid = self.tid,
-            hid = self.id,
-            hash_id = self.hash_id,
-            for_sale = self.for_sale,
-            for_rent = self.for_rent,
+            sender=None,
+            tid=self.tid,
+            hid=self.id,
+            hash_id=self.hash_id,
+            for_sale=self.for_sale,
+            for_rent=self.for_rent,
         )
-
 
     def reject_by_moderator(self):
         signals.before_rejection_by_moderator.send(
-            sender = None,
-            tid = self.tid,
-            hid = self.id,
-            hash_id = self.hash_id,
-            for_sale = self.for_sale,
-            for_rent = self.for_rent,
+            sender=None,
+            tid=self.tid,
+            hid=self.id,
+            hash_id=self.hash_id,
+            for_sale=self.for_sale,
+            for_rent=self.for_rent,
         )
-
 
         self.unpublish()
         self.state_sid = OBJECT_STATES.rejected_by_moderator()
         self.save()
 
-
         signals.rejected_by_moderator.send(
-            sender = None,
-            tid = self.tid,
-            hid = self.id,
-            hash_id = self.hash_id,
-            for_sale = self.for_sale,
-            for_rent = self.for_rent,
+            sender=None,
+            tid=self.tid,
+            hid=self.id,
+            hash_id=self.hash_id,
+            for_sale=self.for_sale,
+            for_rent=self.for_rent,
         )
-
 
     def prolong(self, days=14):
         """
@@ -384,7 +363,6 @@ class AbstractHeadModel(models.Model):
         else:
             self.actual += datetime.timedelta(days=days)
         self.save(force_update=True)
-
 
     def mark_as_deleted(self):
         """
@@ -399,24 +377,21 @@ class AbstractHeadModel(models.Model):
         self.save()
 
         signals.moved_to_trash.send(
-            sender = None,
-            tid = self.tid,
-            hid = self.id,
-            hash_id = self.hash_id,
-            for_sale = self.for_sale,
-            for_rent = self.for_rent,
+            sender=None,
+            tid=self.tid,
+            hid=self.id,
+            hash_id=self.hash_id,
+            for_sale=self.for_sale,
+            for_rent=self.for_rent,
         )
-
 
     def is_deleted(self):
         return self.state_sid == OBJECT_STATES.deleted() or self.deleted is not None
-
 
     def delete(self, using=None):
         # Standard delete method does not emits useful signals about deletion.
         # So this method was locked for prevent mistakes usages.
         raise RuntimeException('Method not allowed.')
-
 
     def delete_permanent(self):
         """
@@ -431,16 +406,15 @@ class AbstractHeadModel(models.Model):
         # So, for the correct work of all handlers related to this signal,
         # it is emitted before the physical record removing.
         signals.deleted_permanent.send(
-            sender = None,
-            tid = self.tid,
-            hid = self.id,
-            hash_id = self.hash_id,
-            for_sale = self.for_sale,
-            for_rent = self.for_rent,
+            sender=None,
+            tid=self.tid,
+            hid=self.id,
+            hash_id=self.hash_id,
+            for_sale=self.for_sale,
+            for_rent=self.for_rent,
         )
 
         super(AbstractHeadModel, self).delete()
-
 
     def check_required_fields(self):
         """
@@ -452,7 +426,7 @@ class AbstractHeadModel(models.Model):
         if not self.for_sale and not self.for_rent:
             raise OperationIsNotSpecified('Publication must be for sale or for rent')
 
-        #-- lat lng
+        # -- lat lng
         if (self.degree_lng is None) or (self.degree_lat is None):
             raise EmptyCoordinates('@degree is None')
         if (self.segment_lat is None) or (self.segment_lng is None):
@@ -460,17 +434,16 @@ class AbstractHeadModel(models.Model):
         if (self.pos_lng is None) or (self.pos_lat is None):
             raise EmptyCoordinates('@pos is None')
 
-        #-- sale terms
+        # -- sale terms
         if self.for_sale:
             self.sale_terms.check_required_fields()
 
-        #-- rent terms
+        # -- rent terms
         if self.for_rent:
             self.rent_terms.check_required_fields()
 
-        #-- body
+        # -- body
         self.body.check_required_fields()
-
 
     def check_photos_are_present(self):
         """
@@ -485,10 +458,8 @@ class AbstractHeadModel(models.Model):
         else:
             min_photos_count = 3
 
-
         if self.photos().count() < min_photos_count:
             raise NotEnoughPhotos('Publication should contains at least {0} photo(s).'.format(min_photos_count))
-
 
     def photos(self):
         """
@@ -497,8 +468,7 @@ class AbstractHeadModel(models.Model):
             queryset with all photos of the publication.
             If publication has title photo - it will be first.
         """
-        return self.photos_model.objects.filter(publication = self.id).order_by('-is_title', 'created')
-
+        return self.photos_model.objects.filter(publication=self.id).order_by('-is_title', 'created')
 
     def title_photo(self):
         photos = self.photos()
@@ -532,7 +502,6 @@ class BodyModel(AbstractModel):
 
         self.check_extended_fields()
 
-
     def check_extended_fields(self):
         """
         Abstract.
@@ -540,26 +509,24 @@ class BodyModel(AbstractModel):
         """
         return
 
-
     def print_description(self):
         return self.description.capitalize() if self.description else u''
 
-
     def print_address(self):
-        return self.address.capitalize() if self.address else u''
+        return self.address if self.address else u''
 
 
 class SaleTermsModel(AbstractModel):
     class Meta:
         abstract = True
 
-    #-- fields
+    # -- fields
     price = models.DecimalField(null=True, max_digits=AbstractModel.max_price_symbols_count, decimal_places=2)
     currency_sid = models.SmallIntegerField(default=currencies_constants.dol())
     is_contract = models.BooleanField(default=False)
     transaction_sid = models.SmallIntegerField(default=SALE_TRANSACTION_TYPES.for_all())
 
-    #-- validation
+    # -- validation
     def check_required_fields(self):
         """
         Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
@@ -574,7 +541,7 @@ class LivingRentTermsModel(AbstractModel):
     class Meta:
         abstract = True
 
-    #-- fields
+    # -- fields
     price = models.DecimalField(null=True, max_digits=AbstractModel.max_price_symbols_count, decimal_places=2)
     currency_sid = models.SmallIntegerField(default=currencies_constants.dol())
     is_contract = models.BooleanField(default=False)
@@ -590,18 +557,15 @@ class LivingRentTermsModel(AbstractModel):
     conditioner = models.BooleanField(default=False)
     home_theater = models.BooleanField(default=False)
 
-
     @property
     def is_daily(self):
         return self.period_sid == LIVING_RENT_PERIODS.daily()
-
 
     @property
     def is_long_period(self):
         return self.period_sid == LIVING_RENT_PERIODS.long_period()
 
-
-    #-- validation
+    # -- validation
     def check_required_fields(self):
         """
         Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
@@ -616,7 +580,6 @@ class LivingRentTermsModel(AbstractModel):
             if self.persons_count is None:
                 raise EmptyPersonsCount('"period_sid" is daily, but persons count is empty.')
 
-
     def print_terms(self):
         terms = u''
         if self.period_sid == LIVING_RENT_PERIODS.daily():
@@ -627,11 +590,9 @@ class LivingRentTermsModel(AbstractModel):
         else:
             terms += u'долгосрочная аренда'
 
-
         if terms:
             return terms.capitalize()
         return u''
-
 
     def print_facilities(self):
         facilities = u''
@@ -652,7 +613,6 @@ class LivingRentTermsModel(AbstractModel):
             return facilities[2:].capitalize()
         return u''
 
-
     def print_price(self):
         if self.price is None:
             return u''
@@ -671,7 +631,6 @@ class LivingRentTermsModel(AbstractModel):
         dol += u' дол.'
         if self.is_contract:
             dol += u', договорная'
-
 
         # Додаємо ціну в інших валютах
         uah = u'{:,.2f}'.format(currencies.convert(self.price, self.currency_sid, currencies_constants.uah()))
@@ -698,10 +657,11 @@ class LivingRentTermsModel(AbstractModel):
 
 
 class LivingDailyRentModel(AbstractModel):
-    class AlreadyBooked(ValueError): pass
+    class AlreadyBooked(ValueError):
+        pass
 
     # fields
-    publication = None # override, FK to real publications model
+    publication = None  # override, FK to real publications model
 
     date_enter = models.DateTimeField()
     date_leave = models.DateTimeField()
@@ -710,11 +670,9 @@ class LivingDailyRentModel(AbstractModel):
     class Meta:
         abstract = True
 
-
     class M(models.Manager):
         def reserved_periods(self, publication_id):
             return self.filter(publication_id=publication_id).only('date_enter', 'date_leave')
-
 
         def make_reservation(self, publication, date_enter, date_leave, client_name=None):
             """
@@ -727,11 +685,9 @@ class LivingDailyRentModel(AbstractModel):
             assert date_enter.tzinfo == pytz.utc
             assert date_leave.tzinfo == pytz.utc
 
-
             if self.intersects_with_existing(publication, date_enter, date_leave):
                 raise LivingDailyRentModel.AlreadyBooked(
                     'It seems that this place is already booked for this days.')
-
 
             with transaction.atomic():
                 record = self.create(
@@ -742,11 +698,10 @@ class LivingDailyRentModel(AbstractModel):
                 )
 
                 signals.DailyRentSignals.booked.send(
-                    record, tid=publication.tid, publication_id=publication.id, date_enter=date_enter, date_leave=date_leave)
-
+                    record, tid=publication.tid, publication_id=publication.id, date_enter=date_enter,
+                    date_leave=date_leave)
 
             return record
-
 
         def cancel_reservation(self, publication, reservation_id):
             with transaction.atomic():
@@ -760,8 +715,8 @@ class LivingDailyRentModel(AbstractModel):
                 reservation.delete()
 
                 signals.DailyRentSignals.reservation_canceled.send(
-                    None, tid=publication.tid, publication_id=publication.id, date_enter=date_enter, date_leave=date_leave)
-
+                    None, tid=publication.tid, publication_id=publication.id, date_enter=date_enter,
+                    date_leave=date_leave)
 
         def intersects_with_existing(self, publication, date_enter, date_leave, exclude_last_day=True):
             """
@@ -775,7 +730,6 @@ class LivingDailyRentModel(AbstractModel):
             assert date_enter.tzinfo == pytz.utc
             assert date_leave.tzinfo == pytz.utc
 
-
             reserved_periods = self.filter(publication=publication).values_list('date_enter', 'date_leave')
             for reserved_date_enter, reserved_date_leave in reserved_periods:
                 latest_start = max(reserved_date_enter, date_enter)
@@ -786,7 +740,6 @@ class LivingDailyRentModel(AbstractModel):
 
             return False
 
-
     objects = M()
 
 
@@ -794,14 +747,13 @@ class CommercialRentTermsModel(AbstractModel):
     class Meta:
         abstract = True
 
-    #-- fields
+    # -- fields
     price = models.DecimalField(null=True, max_digits=18, decimal_places=2)
     currency_sid = models.SmallIntegerField(default=currencies_constants.dol())
     is_contract = models.BooleanField(default=False)
     add_terms = models.TextField(default='')
 
-
-    #-- validation
+    # -- validation
     def check_required_fields(self):
         """
         Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
@@ -810,7 +762,6 @@ class CommercialRentTermsModel(AbstractModel):
         """
         if self.price is None:
             raise EmptyRentPrice('Rent price is None.')
-
 
     def print_price(self):
         if self.price is None:
@@ -830,7 +781,6 @@ class CommercialRentTermsModel(AbstractModel):
         dol += u' дол.'
         if self.is_contract:
             dol += u', договорная'
-
 
         # Додаємо ціну в інших валютах
         uah = u'{:,.2f}'.format(currencies.convert(self.price, self.currency_sid, currencies_constants.uah()))
@@ -855,8 +805,7 @@ class CommercialRentTermsModel(AbstractModel):
 
         return u'{dol} ({uah}, {eur})'.format(dol=dol, uah=uah, eur=eur)
 
-
-    #-- output
+    # -- output
     def print_terms(self):
         terms = u'долгосрочная аренда'
         if self.add_terms:
@@ -867,11 +816,11 @@ class CommercialRentTermsModel(AbstractModel):
 
 class PhotosModel(AbstractModel):
     # class variables
-    tid = None # note: override to real tid # todo: inherit this model from the special model to prevent manual tid handling
+    tid = None  # note: override to real tid # todo: inherit this model from the special model to prevent manual tid handling
     photos_handler = PublicationsPhotosHandler
 
     # fields
-    publication = None # note: override to FK(PublicationHeadModel)
+    publication = None  # note: override to FK(PublicationHeadModel)
 
     hash_id = models.TextField(db_index=True)
     original_image_url = models.TextField()
@@ -880,16 +829,13 @@ class PhotosModel(AbstractModel):
     is_title = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
 
-
     class Meta:
         abstract = True
-        unique_together = (('hid', 'is_title'), )
-
+        unique_together = (('hid', 'is_title'),)
 
     @classmethod
     def by_publication(cls, publication_id):
         return cls.objects.filter(hid=publication_id).order_by('-created', '-is_title')
-
 
     @classmethod
     def add(cls, img, publication_head):
@@ -904,7 +850,6 @@ class PhotosModel(AbstractModel):
         original_image_url, \
         photo_url, \
         big_thumb_url = cls.photos_handler.process_and_upload_to_gcs(cls.tid, img)
-
 
         # If user will send several photos at a time - there are no guarantee about photos order.
         # Oly one photo should be marked as a title, so some kind of transaction is needed here.
@@ -925,11 +870,11 @@ class PhotosModel(AbstractModel):
 
         try:
             record = cls.objects.create(
-                publication = publication_head,
-                original_image_url = original_image_url,
-                photo_url = photo_url,
-                big_thumb_url = big_thumb_url,
-                is_title = photo_is_title,
+                publication=publication_head,
+                original_image_url=original_image_url,
+                photo_url=photo_url,
+                big_thumb_url=big_thumb_url,
+                is_title=photo_is_title,
             )
 
             try:
@@ -963,7 +908,6 @@ class PhotosModel(AbstractModel):
 
             raise e
 
-
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         # This method is overridden to automatically save hash_id for the photo.
         if not self.hash_id:
@@ -985,7 +929,8 @@ class PhotosModel(AbstractModel):
         try:
             # In some cases photos are already removed from the GCS and one more delete request will generate 404 error.
             # In this case photo record should be removed from the database too, and 404 error should be ignored.
-            self.photos_handler.remove_photo_from_google_cloud_storage(self.original_image_url.split('.com/mappino/')[1])
+            self.photos_handler.remove_photo_from_google_cloud_storage(
+                self.original_image_url.split('.com/mappino/')[1])
             # todo: add message about inappropriate deletion to the log.
         except:
             pass
@@ -1015,7 +960,6 @@ class PhotosModel(AbstractModel):
                 return next_title_photo
 
         super(PhotosModel, self).delete()
-
 
     def check_is_title(self):
         """
@@ -1053,7 +997,6 @@ class PhotosModel(AbstractModel):
             return True
 
         return False
-
 
     def mark_as_title(self):
         """

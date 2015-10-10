@@ -1,13 +1,13 @@
-#coding=utf-8
+# coding=utf-8
 import json
 
-from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
 from django.http import HttpResponseBadRequest
 from django.http.response import HttpResponse
 from django.views.generic import View
-from collective.exceptions import RuntimeException
 
+from collective.exceptions import RuntimeException
 from collective.methods.request_data_getters import POST_parameter
 from core.support.models import Tickets
 
@@ -21,7 +21,6 @@ class IncomingAgentResponseHook(View):
         """
         return HttpResponse()
 
-
     @staticmethod
     def post(request):
         try:
@@ -33,7 +32,6 @@ class IncomingAgentResponseHook(View):
         if not events:
             return HttpResponseBadRequest('Empty @mandrill_events is not allowed.')
 
-
         with transaction.atomic():
             for event in events:
                 # subject
@@ -44,12 +42,10 @@ class IncomingAgentResponseHook(View):
                 if 'Re: ' in subject:
                     subject = subject[4:]
 
-
                 # message = event['msg'].get('text', '')
                 message = event['msg'].get('html', '')
                 if not message:
                     raise ValueError('Empty message.')
-
 
                 # Searching the ticket and adding the agent's response.
                 try:

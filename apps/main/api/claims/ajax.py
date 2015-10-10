@@ -18,7 +18,6 @@ class ClaimsView(View):
                 'message': 'OK',
             }
 
-
         @staticmethod
         @json_response
         def invalid_params():
@@ -27,7 +26,6 @@ class ClaimsView(View):
                 'message': 'Request contains invalid parameters.',
             }
 
-
         @staticmethod
         @json_response
         def publication_does_not_exists():
@@ -35,7 +33,6 @@ class ClaimsView(View):
                 'code': 2,
                 'message': 'Publication does not exists.',
             }
-
 
     @classmethod
     def post(cls, request, *args):
@@ -58,7 +55,6 @@ class ClaimsView(View):
         except (ValueError, IndexError):
             return cls.PostResponses.invalid_params()
 
-
         # check if publication exists and is published
         try:
             model = HEAD_MODELS[tid]
@@ -72,14 +68,12 @@ class ClaimsView(View):
         except (IndexError, Http404):
             return cls.PostResponses.publication_does_not_exists()
 
-
         try:
             PublicationsClaims.new(
                 publication.tid, publication.hash_id, reason_tid, email, message)
 
         except PublicationsClaims.InvalidClaimTypeId:
             return cls.PostResponses.invalid_params()
-
 
         # seems to be ok
         return cls.PostResponses.ok()

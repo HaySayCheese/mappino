@@ -26,7 +26,7 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
     photo_size = (1000, 900)
 
     thumbnail_suffix = '_big_thumb'
-    thumbnail_size = (350, 250)
+    thumbnail_size = (500, 400)
 
     @classmethod
     def process_and_upload_to_gcs(cls, tid, image):

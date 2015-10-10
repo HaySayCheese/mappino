@@ -1,14 +1,14 @@
-#coding=utf-8
+# coding=utf-8
 from django.core.exceptions import SuspiciousOperation
 from django.views.generic import View
 
 from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.methods.request_data_getters import angular_parameters
+from core.publications.constants import HEAD_MODELS
+from core.users.constants import Preferences
 from core.users.notifications.mail_dispatcher.sellers import SellersMailDispatcher
 from core.users.notifications.sms_dispatcher.checkers import MessageChecker, CallRequestChecker
 from core.users.notifications.sms_dispatcher.exceptions import ResourceThrottled, SMSSendingThrottled
-from core.publications.constants import HEAD_MODELS
-from core.users.constants import Preferences
 from core.users.notifications.sms_dispatcher.sellers import SellersSMSDispatcher
 
 
@@ -24,7 +24,6 @@ class ClientNotificationsHandler(object):
                     'message': 'OK',
                 }
 
-
             @staticmethod
             @json_response_bad_request
             def invalid_tid():
@@ -32,7 +31,6 @@ class ClientNotificationsHandler(object):
                     'code': 1,
                     'message': 'Request contains invalid tid.',
                 }
-
 
             @staticmethod
             @json_response_bad_request
@@ -42,7 +40,6 @@ class ClientNotificationsHandler(object):
                     'message': 'Request contains invalid hash id.',
                 }
 
-
             @staticmethod
             @json_response_bad_request
             def invalid_parameters():
@@ -50,7 +47,6 @@ class ClientNotificationsHandler(object):
                     'code': 3,
                     'message': 'Request contains invalid parameters.',
                 }
-
 
             @staticmethod
             @json_response_not_found
@@ -60,7 +56,6 @@ class ClientNotificationsHandler(object):
                     'message': 'There is no publication with such id.',
                 }
 
-
         @classmethod
         def post(cls, request, *args):
             try:
@@ -69,37 +64,31 @@ class ClientNotificationsHandler(object):
             except (ValueError, IndexError, KeyError):
                 return cls.PostResponses.invalid_parameters()
 
-
             try:
                 params = angular_parameters(request, ['email', 'message'])
-            except (ValueError, ):
+            except (ValueError,):
                 return cls.PostResponses.invalid_parameters()
 
-
-            try: # todo: test if no params
-                publication = model.queryset_by_hash_id(hash_hid)\
-                    .only('id', 'owner', 'state_sid')\
+            try:  # todo: test if no params
+                publication = model.queryset_by_hash_id(hash_hid) \
+                                  .only('id', 'owner', 'state_sid') \
                     [:1][0]
-            except (IndexError, ):
+            except (IndexError,):
                 return cls.PostResponses.no_such_publication()
-
 
             # security checks
             if not publication.is_published():
                 raise SuspiciousOperation('Attempt to comment unpublished publication.')
 
-
             try:
                 cls.__send_notification_about_new_message(
-                    request, publication, params['message'], params['email'], params.get('name', '') # is not required
+                    request, publication, params['message'], params['email'], params.get('name', '')  # is not required
                 )
 
             except ValueError:
                 return cls.PostResponses.invalid_parameters()
 
-
             return cls.PostResponses.ok()
-
 
         @staticmethod
         def __send_notification_about_new_message(request, publication, message, client_email, client_name=None):
@@ -134,7 +123,6 @@ class ClientNotificationsHandler(object):
             if not preferences.allow_messaging:
                 raise SuspiciousOperation('Attempt to send message to the realtor that was disabled this future.')
 
-
             # choosing delivery method for the notification
             # and sending the notification
             method = preferences.send_message_notifications_to_sid
@@ -150,7 +138,8 @@ class ClientNotificationsHandler(object):
                 try:
                     try:
                         MessageChecker.check_for_throttling(request, publication.owner.mobile_phone)
-                        if not SellersSMSDispatcher.send_sms_about_incoming_email(request, publication.owner.mobile_phone):
+                        if not SellersSMSDispatcher.send_sms_about_incoming_email(request,
+                                                                                  publication.owner.mobile_phone):
                             raise RuntimeError('Email can not be sent.')
                     except SMSSendingThrottled:
                         # If sms notification can't be sent - there is nothing critical here,
@@ -162,7 +151,6 @@ class ClientNotificationsHandler(object):
                     # catch all errors here
                     error = e
 
-
                 try:
                     if not SellersMailDispatcher.send_message_email(publication, client_email, client_name, message):
                         raise RuntimeError('Email can not be sent.')
@@ -171,14 +159,12 @@ class ClientNotificationsHandler(object):
                     # catch all errors here
                     error = e
 
-
                 if error is not None:
                     raise error
 
             else:
                 # method is unknown
                 raise RuntimeError('Invalid send method sid.')
-
 
     class CallRequestsHandler(View):
         class PostResponses(object):
@@ -191,7 +177,6 @@ class ClientNotificationsHandler(object):
                     'message': 'OK',
                 }
 
-
             @staticmethod
             @json_response_bad_request
             def invalid_tid():
@@ -199,7 +184,6 @@ class ClientNotificationsHandler(object):
                     'code': 1,
                     'message': 'Request contains invalid tid.',
                 }
-
 
             @staticmethod
             @json_response_bad_request
@@ -209,7 +193,6 @@ class ClientNotificationsHandler(object):
                     'message': 'Request contains invalid hash id.',
                 }
 
-
             @staticmethod
             @json_response_bad_request
             def invalid_parameters():
@@ -217,7 +200,6 @@ class ClientNotificationsHandler(object):
                     'code': 3,
                     'message': 'Request contains invalid parameters.',
                 }
-
 
             @staticmethod
             @json_response_not_found
@@ -227,7 +209,6 @@ class ClientNotificationsHandler(object):
                     'message': 'There is no publication with such id.',
                 }
 
-
         @classmethod
         def post(cls, request, *args):
             try:
@@ -236,25 +217,21 @@ class ClientNotificationsHandler(object):
             except (ValueError, IndexError, KeyError):
                 return cls.PostResponses.invalid_parameters()
 
-
             try:
-                params = angular_parameters(request, ['phone_number']) # note: name may be omitted
-            except (ValueError, ):
+                params = angular_parameters(request, ['phone_number'])  # note: name may be omitted
+            except (ValueError,):
                 return cls.PostResponses.invalid_parameters()
 
-
-            try: # todo: test if no params
-                publication = model.queryset_by_hash_id(hash_hid)\
-                    .only('id', 'owner', 'state_sid')\
+            try:  # todo: test if no params
+                publication = model.queryset_by_hash_id(hash_hid) \
+                                  .only('id', 'owner', 'state_sid') \
                     [:1][0]
-            except (IndexError, ):
+            except (IndexError,):
                 return cls.PostResponses.no_such_publication()
-
 
             # security checks
             if not publication.is_published():
                 raise SuspiciousOperation('Attempt to comment unpublished publication.')
-
 
             try:
                 CallRequestChecker.check_for_throttling(
@@ -269,6 +246,5 @@ class ClientNotificationsHandler(object):
                     request, publication.owner.mobile_phone, params['phone_number'], params.get('name', ''))
             except ValueError:
                 return cls.PostResponses.invalid_parameters()
-
 
             return cls.PostResponses.ok()
