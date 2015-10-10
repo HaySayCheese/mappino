@@ -1,4 +1,5 @@
-<form  ng-controller="UnpublishedPublicationController as u_pubCtrl" name="forms.publicationForm" layout="column" layout-align="start center" layout-padding novalidate>
+<form  ng-controller="UnpublishedPublicationController as u_pubCtrl" name="forms.publicationForm" layout="column"
+       layout-align="start center" layout-padding novalidate>
 
     <md-card>
         <md-card-content>
@@ -92,22 +93,17 @@
         <md-card-content>
             <div class="md-subhead blue-text">Описание обьекта</div>
             <div class="md-padding" layout="column">
-                <md-input-container>
-                    <label>Заголовок обьявления</label>
-                    <input name="title" ng-model="publication.body.title" required>
-                    <div ng-messages="forms.publicationForm.title.$error"
-                         ng-show="forms.publicationForm.$submitted || forms.publicationForm.title.$touched">
-                        <div ng-message="required">Обязательное поле</div>
-                    </div>
-                </md-input-container>
-                <md-input-container>
-                    <label>Рекламный текст</label>
-                    <textarea columns="1" name="description" ng-model="publication.body.description" required></textarea>
-                    <div ng-messages="forms.publicationForm.description.$error"
-                         ng-show="forms.publicationForm.$submitted || forms.publicationForm.description.$touched">
-                        <div ng-message="required">Обязательное поле</div>
-                    </div>
-                </md-input-container>
+                <div layout="row">
+                    <md-input-container layout-fill>
+                        <label>Описание</label>
+                        <textarea columns="1" rows="2" name="description" ng-model="publication.body.description" required></textarea>
+                        <div ng-messages="forms.publicationForm.description.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.description.$touched">
+                            <div ng-message="required">Обязательное поле</div>
+                        </div>
+                    </md-input-container>
+                </div>
+
                 <div layout-gt-sm="row" layout-align="center center">
                     <md-input-container flex-gt-sm="50" flex-sm="99">
                         <label>Площадь участка (м<sup>2</sup>)</label>
@@ -134,7 +130,7 @@
             <div class="md-subhead blue-text">Удобства</div>
             <div class="md-padding" layout="column">
                 <div layout-sm="column" layout-gt-sm="row">
-                    <div layout="column" flex="50">
+                    <div layout="column" flex-gt-sm="50">
                         <md-checkbox class="md-primary" name="electricity" ng-change="u_pubCtrl.checkField('electricity')"
                                      ng-model="publication.body.electricity">
                             Электричество
@@ -145,7 +141,7 @@
                         </md-checkbox>
                         </md-checkbox>
                     </div>
-                    <div layout="column" flex="50">
+                    <div layout="column" flex-gt-sm="50">
                         <md-checkbox class="md-primary" name="water" ng-change="u_pubCtrl.checkField('water')"
                                      ng-model="publication.body.water">
                             Вода
@@ -171,7 +167,7 @@
             <div class="md-subhead blue-text">Дополнительные постройки</div>
             <div class="md-padding" layout="column">
                 <div layout-sm="column" layout-gt-sm="row">
-                    <div layout="column" flex="50">
+                    <div layout="column" flex-gt-sm="50">
                         <md-checkbox class="md-primary" name="well" ng-change="u_pubCtrl.checkField('well')"
                                      ng-model="publication.body.well">
                             Колодец / Скважина

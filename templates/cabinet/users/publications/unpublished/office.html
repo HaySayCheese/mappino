@@ -1,4 +1,5 @@
-<form  ng-controller="UnpublishedPublicationController as u_pubCtrl" name="forms.publicationForm" layout="column" layout-align="start center" layout-padding novalidate>
+<form  ng-controller="UnpublishedPublicationController as u_pubCtrl" name="forms.publicationForm" layout="column"
+       layout-align="start center" layout-padding novalidate>
 
     <md-card>
         <md-card-content>
@@ -98,22 +99,17 @@
         <md-card-content>
             <div class="md-subhead blue-text">Описание обьекта</div>
             <div class="md-padding" layout="column">
-                <md-input-container>
-                    <label>Заголовок обьявления</label>
-                    <input name="title" ng-model="publication.body.title" required>
-                    <div ng-messages="forms.publicationForm.title.$error"
-                         ng-show="forms.publicationForm.$submitted || forms.publicationForm.title.$touched">
-                        <div ng-message="required">Обязательное поле</div>
-                    </div>
-                </md-input-container>
-                <md-input-container>
-                    <label>Рекламный текст</label>
-                    <textarea columns="1" name="description" ng-model="publication.body.description" required></textarea>
-                    <div ng-messages="forms.publicationForm.description.$error"
-                         ng-show="forms.publicationForm.$submitted || forms.publicationForm.description.$touched">
-                        <div ng-message="required">Обязательное поле</div>
-                    </div>
-                </md-input-container>
+                <div layout="row">
+                    <md-input-container layout-fill>
+                        <label>Описание</label>
+                        <textarea columns="1" rows="2" name="description" ng-model="publication.body.description" required></textarea>
+                        <div ng-messages="forms.publicationForm.description.$error"
+                             ng-show="forms.publicationForm.$submitted || forms.publicationForm.description.$touched">
+                            <div ng-message="required">Обязательное поле</div>
+                        </div>
+                    </md-input-container>
+                </div>
+
                 <div layout="row" layout-sm="column">
                     <md-input-container flex-gt-sm="33" flex-sm="99">
                         <label>Тип рынка</label>
@@ -236,7 +232,7 @@
             <div class="md-subhead blue-text">Удобства</div>
             <div class="md-padding" layout="column">
                 <div layout-sm="column" layout-gt-sm="row">
-                    <div layout="column" flex="50">
+                    <div layout="column" flex-gt-sm="50">
                         <md-checkbox class="md-primary" name="kitchen" ng-change="u_pubCtrl.checkField('kitchen')"
                                      ng-model="publication.body.kitchen">
                             Кухня
@@ -250,7 +246,7 @@
                             Холодная вода
                         </md-checkbox>
                     </div>
-                    <div layout="column" flex="50">
+                    <div layout="column" flex-gt-sm="50">
                         <md-checkbox class="md-primary" name="security_alarm" ng-change="u_pubCtrl.checkField('security_alarm')"
                                      ng-model="publication.body.security_alarm">
                             Охранная сигнализация
@@ -270,13 +266,13 @@
             <div class="md-subhead" ng-show="publication.head.for_rent">Удобства, предоставляемые с орендой</div>
             <div class="md-padding" layout="column" ng-show="publication.head.for_rent">
                 <div layout-sm="column" layout-gt-sm="row">
-                    <div layout="column" flex="50">
+                    <div layout="column" flex-gt-sm="50">
                         <md-checkbox class="md-primary" name="furniture" ng-change="u_pubCtrl.checkField('furniture')"
                                      ng-model="publication.rent_terms.furniture">
                             Мебель
                         </md-checkbox>
                     </div>
-                    <div layout="column" flex="50">
+                    <div layout="column" flex-gt-sm="50">
                         <md-checkbox class="md-primary" name="conditioner" ng-change="u_pubCtrl.checkField('conditioner')"
                                      ng-model="publication.rent_terms.conditioner">
                             Кондиционер
@@ -300,7 +296,7 @@
         <md-card-content>
             <div class="md-subhead blue-text">Коммуникации</div>
             <div class="md-padding" layout-sm="column" layout-gt-sm="row">
-                <div layout="column" flex="50">
+                <div layout="column" flex-gt-sm="50">
                     <md-checkbox class="md-primary" name="phone" ng-change="u_pubCtrl.checkField('phone')"
                                  ng-model="publication.body.phone">
                         Телефон
@@ -314,7 +310,7 @@
                         Локальная сеть
                     </md-checkbox>
                 </div>
-                <div layout="column" flex="50">
+                <div layout="column" flex-gt-sm="50">
                     <md-checkbox class="md-primary" name="mobile_coverage" ng-change="u_pubCtrl.checkField('mobile_coverage')"
                                  ng-model="publication.body.mobile_coverage">
                         Покрытие моб. операторов
@@ -335,13 +331,13 @@
             <div class="md-subhead blue-text">Дополнительные постройки</div>
             <div class="md-padding" layout="column">
                 <div layout-sm="column" layout-gt-sm="row">
-                    <div layout="column" flex="50">
+                    <div layout="column" flex-gt-sm="50">
                         <md-checkbox class="md-primary" name="parking" ng-change="u_pubCtrl.checkField('parking')"
                                      ng-model="publication.body.parking">
                             Парковка
                         </md-checkbox>
                     </div>
-                    <div layout="column" flex="50">
+                    <div layout="column" flex-gt-sm="50">
                         <md-checkbox class="md-primary" name="open_air" ng-change="u_pubCtrl.checkField('open_air')"
                                      ng-model="publication.body.open_air">
                             Открытая площадка

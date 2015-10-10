@@ -15,7 +15,8 @@
 
     {% include 'common/templates_head.html' %}
 </head>
-<body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()" ng-cloak md-swipe-left="cabinetCtrl.toggleSidenav()">
+<body ng-controller="CabinetController as cabinetCtrl" md-swipe-right="cabinetCtrl.toggleSidenav()" ng-cloak>
+
     <md-toolbar class="md-whiteframe-z1" ng-cloak>
         <nav class="md-toolbar-tools" show-sm hide-gt-sm layout="row" layout-align="start center">
             <md-button class="nav-button" aria-label="Открыть меню" ng-click="cabinetCtrl.toggleSidenav()">
@@ -46,7 +47,7 @@
         </nav>
     </md-toolbar>
 
-    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav" ng-cloak>
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav" md-swipe-left="cabinetCtrl.toggleSidenav()" ng-cloak>
         <header layout="column" layout-align="center center">
             <b-auth-user-avatar class="b-auth-user-avatar--large"></b-auth-user-avatar>
             <div class="md-padding md-title white-text" layout="row" ng-show="userData.account.first_name && userData.account.last_name">
@@ -55,23 +56,34 @@
         </header>
         <md-content layout="column" layout-padding>
             <div layout="row">
-                <md-button class="md-primary" ui-sref="publications" ng-click="cabinetCtrl.toggleSidenav()">
+                <md-button class="md-primary left-align" href="/" layout-fill>
+                     На главную
+                </md-button>
+            </div>
+            <div layout="row">
+                <md-button class="md-primary left-align" href="/map" layout-fill>
+                    Перейти к поиску
+                </md-button>
+            </div>
+            <md-divider></md-divider>
+            <div layout="row">
+                <md-button class="md-primary left-align" ui-sref="publications" ng-click="cabinetCtrl.toggleSidenav()" layout-fill>
                     Объявления
                 </md-button>
             </div>
             <div layout="row">
-                <md-button class="md-primary" ui-sref="support" ng-click="cabinetCtrl.toggleSidenav()">
+                <md-button class="md-primary left-align" ui-sref="support" ng-click="cabinetCtrl.toggleSidenav()" layout-fill>
                     Поддержка
                 </md-button>
             </div>
             <div layout="row">
-                <md-button class="md-primary" ui-sref="settings" ng-click="cabinetCtrl.toggleSidenav()">
+                <md-button class="md-primary left-align" ui-sref="settings" ng-click="cabinetCtrl.toggleSidenav()" layout-fill>
                     Настройки
                 </md-button>
             </div>
             <md-divider></md-divider>
             <div layout="row">
-                <md-button class="md-primary" ng-click="cabinetCtrl.logout()">
+                <md-button class="md-primary left-align" ng-click="cabinetCtrl.logout()" layout-fill>
                     Выйти
                 </md-button>
             </div>
