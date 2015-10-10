@@ -517,22 +517,19 @@ class BodyModel(AbstractModel):
     class Meta:
         abstract = True
 
-    #-- fields
-    title = models.TextField(null=True)
+    # fields
     description = models.TextField(null=True)
     address = models.TextField(null=True)
-
 
     def check_required_fields(self):
         """
         Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
-        Не перевіряє інформацію в полях на коректність, оскільки передбачається,
-        що некоректні дані не можуть потрапити в БД через обробники зміни даних.
+        Не перевіряє інформацію в полях на логічну коректність,
+        оскільки передбачається, що некоректні дані не можуть потрапити в БД через обробники зміни даних.
         """
-        if (self.title is None) or (not self.title):
-            raise EmptyTitle('Title is empty')
-        if (self.description is None) or (not self.description):
+        if not self.description:
             raise EmptyDescription('Description is empty')
+
         self.check_extended_fields()
 
 

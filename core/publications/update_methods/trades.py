@@ -184,21 +184,6 @@ def update_trade(h, field, value, tid):
                 rt.save(force_update=True)
                 return value
 
-
-        # text
-        elif field == 'title':
-            b = TradesBodies.objects.filter(id=h.body_id).only('id')[0]
-            if not value:
-                b.title = u''
-                b.save(force_update=True)
-                return
-            else:
-                value = format_title(value)
-                b.title = value
-                b.save(force_update=True)
-                return value
-
-
         # text
         elif field == 'description':
             b = TradesBodies.objects.filter(id=h.body_id).only('id')[0]
