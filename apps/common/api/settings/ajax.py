@@ -1,16 +1,15 @@
 # coding=utf-8
 import phonenumbers
-
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
 from apps.views_base import CabinetView
 from collective.decorators.ajax import json_response
-from core.users.exceptions import AvatarExceptions
 from collective.exceptions import RuntimeException
 from collective.http.responses import HttpJsonResponse
 from collective.methods.request_data_getters import angular_post_parameters
 from core.users.constants import Preferences
+from core.users.exceptions import AvatarExceptions
 from core.users.models import Users
 
 
@@ -23,23 +22,22 @@ class AccountView(CabinetView):
             # Дані з фронтенду приходять у міжнародному форматі.
             # Віддати їх треба в національному форматі щоб помістити дані в маску вводу.
             if user.mobile_phone:
-                mobile_phone =  phonenumbers.parse(user.mobile_phone)
+                mobile_phone = phonenumbers.parse(user.mobile_phone)
                 mobile_phone_code = str(mobile_phone.country_code)
-                mobile_phone_number = phonenumbers\
-                    .format_number(mobile_phone, phonenumbers.PhoneNumberFormat.NATIONAL)\
-                    .replace(' ', '')[1:] # зайві пробіли і початкові нулі видаляються
+                mobile_phone_number = phonenumbers \
+                                          .format_number(mobile_phone, phonenumbers.PhoneNumberFormat.NATIONAL) \
+                                          .replace(' ', '')[1:]  # зайві пробіли і початкові нулі видаляються
 
             else:
                 mobile_phone_code = None
                 mobile_phone_number = None
 
-
             if user.add_mobile_phone:
-                add_mobile_phone =  phonenumbers.parse(user.add_mobile_phone)
+                add_mobile_phone = phonenumbers.parse(user.add_mobile_phone)
                 add_mobile_phone_code = str(add_mobile_phone.country_code)
-                add_mobile_phone_number = phonenumbers\
-                    .format_number(add_mobile_phone, phonenumbers.PhoneNumberFormat.NATIONAL)\
-                    .replace(' ', '')[1:] # зайві пробіли і початкові нулі видаляються
+                add_mobile_phone_number = phonenumbers \
+                                              .format_number(add_mobile_phone, phonenumbers.PhoneNumberFormat.NATIONAL) \
+                                              .replace(' ', '')[1:]  # зайві пробіли і початкові нулі видаляються
 
             else:
                 if mobile_phone_code:
@@ -48,12 +46,9 @@ class AccountView(CabinetView):
                     add_mobile_phone_code = None
                 add_mobile_phone_number = None
 
-
             # Стаціонарні і робочі телефони ніяк не валідуються
             landline_phone_number = user.landline_phone if user.landline_phone else ''
             add_landline_phone_number = user.add_landline_phone if user.add_landline_phone else ''
-
-
 
             if user.is_moderator:
                 return HttpJsonResponse({
@@ -112,7 +107,8 @@ class AccountView(CabinetView):
                             'hide_skype': preferences.hide_skype,
 
                             # sids
-                            'send_call_request_notifications_to_sid': str(preferences.send_call_request_notifications_to_sid),
+                            'send_call_request_notifications_to_sid': str(
+                                preferences.send_call_request_notifications_to_sid),
                             'send_message_notifications_to_sid': str(preferences.send_message_notifications_to_sid),
                         }
                     }
@@ -130,7 +126,6 @@ class AccountView(CabinetView):
                 }
             }
 
-
         @staticmethod
         @json_response
         def value_required():
@@ -138,7 +133,6 @@ class AccountView(CabinetView):
                 'code': 1,
                 'message': 'Value is required.'
             }
-
 
         @staticmethod
         @json_response
@@ -148,7 +142,6 @@ class AccountView(CabinetView):
                 'message': 'Value is invalid.'
             }
 
-
         @staticmethod
         @json_response
         def duplicated_value():
@@ -156,7 +149,6 @@ class AccountView(CabinetView):
                 'code': 3,
                 'message': 'Value is duplicated.'
             }
-
 
         @staticmethod
         @json_response
@@ -179,7 +171,6 @@ class AccountView(CabinetView):
             'add_landline_phone': self.__update_add_landline_phone_number,
             'skype': self.__update_skype,
 
-    
             'allow_call_requests': self.__update_allow_call_request,
             'send_call_request_notifications_to_sid': self.__update_send_call_request_notifications_to_sid,
 
@@ -245,11 +236,9 @@ class AccountView(CabinetView):
         except ValidationError:
             return self.PostResponses.invalid_value()
 
-
         # check for duplicates
         if not Users.email_is_free(email):
             return self.PostResponses.duplicated_value()
-
 
         # todo: add email normalization here
         user.email = email
@@ -563,7 +552,6 @@ class AvatarUpdate(CabinetView):
                 'message': 'Unknown error.',
             })
 
-
     class DeleteCodes(object):
         @staticmethod
         @json_response
@@ -572,7 +560,6 @@ class AvatarUpdate(CabinetView):
                 'code': 0,
                 'message': 'OK',
             }
-
 
     @classmethod
     def post(cls, request):
@@ -598,7 +585,6 @@ class AvatarUpdate(CabinetView):
 
         # seems to be ok
         return cls.PostResponses.ok(request.user.avatar.url())
-
 
     @classmethod
     def delete(cls, request):

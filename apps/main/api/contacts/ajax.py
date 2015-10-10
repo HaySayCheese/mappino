@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding=utf-8
 from django.views.generic import View
 
 from collective.decorators.ajax import json_response, json_response_bad_request
@@ -27,7 +27,6 @@ class Contacts(View):
                 # note: work email wil lbe shown if main email address should be hidden
                 'email': user.email if preferences.email_may_be_shown() else user.work_email,
 
-
                 # preferences
                 'allow_call_requests': preferences.allow_call_requests,
                 'allow_messaging': preferences.is_message_sending_is_allowed,
@@ -38,7 +37,7 @@ class Contacts(View):
             # so wee need to remove empty entries here
             contacts = {
                 k: v for k, v in contacts.items() if v
-            }
+                }
 
             return {
                 'code': 0,
@@ -46,15 +45,13 @@ class Contacts(View):
                 'data': contacts
             }
 
-
         @staticmethod
         @json_response_bad_request
         def invalid_parameters():
             return {
-                'code': 1,
-                'message': 'Request contains invalid parameters.'
-            },
-
+                       'code': 1,
+                       'message': 'Request contains invalid parameters.'
+                   },
 
     @classmethod
     def get(cls, request, *args):
@@ -64,14 +61,12 @@ class Contacts(View):
         except (ValueError, IndexError, KeyError):
             return cls.GetResponses.invalid_parameters()
 
-
         try:
-            publication = model.queryset_by_hash_id(hash_hid)\
-                .only('id')\
-                .prefetch_related('owner')\
+            publication = model.queryset_by_hash_id(hash_hid) \
+                              .only('id') \
+                              .prefetch_related('owner') \
                 [:1][0]
         except IndexError:
             return cls.GetResponses.invalid_parameters()
-
 
         return cls.GetResponses.ok(publication.owner)

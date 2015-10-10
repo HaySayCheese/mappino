@@ -6,8 +6,8 @@ from django.views.generic import View
 from apps.main.api.publications_and_markers.utils import *
 from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.exceptions import InvalidArgument
-from core.markers_index.models import SegmentsIndex
 from core.markers_index.exceptions import TooBigTransaction
+from core.markers_index.models import SegmentsIndex
 from core.publications import formatters
 from core.publications.constants import HEAD_MODELS, OBJECTS_TYPES
 
@@ -24,7 +24,6 @@ class Markers(View):
                 'data': data,
             }
 
-
         @staticmethod
         @json_response_bad_request
         def invalid_publication_id():
@@ -32,7 +31,6 @@ class Markers(View):
                 'code': 1,
                 'message': 'Request contains invalid publication id.'
             }
-
 
         @staticmethod
         @json_response_bad_request
@@ -42,7 +40,6 @@ class Markers(View):
                 'message': 'Request contains invalid coordinates.'
             }
 
-
         @staticmethod
         @json_response_bad_request
         def invalid_conditions():
@@ -51,7 +48,6 @@ class Markers(View):
                 'message': 'Request contains invalid filter conditions.'
             }
 
-
         @staticmethod
         @json_response_bad_request
         def invalid_request():
@@ -59,7 +55,6 @@ class Markers(View):
                 'code': 4,
                 'message': 'Request contains invalid data.'
             }
-
 
     filters_parsers = {
         OBJECTS_TYPES.flat(): parse_flats_filters,
@@ -73,7 +68,6 @@ class Markers(View):
         OBJECTS_TYPES.trade(): parse_trades_filters,
         OBJECTS_TYPES.warehouse(): parse_warehouses_filters,
     }
-
 
     @classmethod
     def get(cls, request, *args):
@@ -89,12 +83,10 @@ class Markers(View):
             # json decoder will throw value error on attempt to decode empty string
             return cls.GetResponses.invalid_request()
 
-
         if zoom <= 14:
             return cls.__markers_count_per_segment(params)
         else:
             return cls.__markers_briefs(params)
-
 
     @classmethod
     def __markers_briefs(cls, params):
@@ -111,12 +103,10 @@ class Markers(View):
         except ValueError:
             return cls.GetResponses.invalid_coordinates()
 
-
         try:
             tids_panels_and_filters = cls.parse_tids_panels_and_filters(params)
         except ValueError:
             return cls.GetResponses.invalid_publication_id()
-
 
         # by default, markers are shown on a 14 zoom level.
         # at this point zoom parameter received from the client will be ignored.
@@ -136,8 +126,7 @@ class Markers(View):
         # so we need to handle ids per tid.
         excluded_ids_per_tid = {
             tid: [] for tid, _, _ in tids_panels_and_filters
-        }
-
+            }
 
         response = {}
         try:
@@ -154,7 +143,6 @@ class Markers(View):
                     # In this case this panel should be ignored, but the rest panels should be processed.
                     continue
 
-
                 # Generating of the briefs.
                 # This method will also return ids (not hash ids) of the publications from the viewport.
                 # This ids will be used on next iterations to exclude duplicates.
@@ -164,7 +152,6 @@ class Markers(View):
 
                 if briefs:
                     response[panel] = briefs
-
 
                 # on the next iteration we need to receive only ids
                 # that was not received on previous iterations
@@ -178,10 +165,8 @@ class Markers(View):
         except InvalidArgument:
             return cls.GetResponses.invalid_coordinates()
 
-
         # seems to be ok
         return cls.GetResponses.ok(response)
-
 
     @classmethod
     def __markers_count_per_segment(cls, params):
@@ -199,18 +184,15 @@ class Markers(View):
         except ValueError:
             return cls.GetResponses.invalid_coordinates()
 
-
         try:
             tids_panels_and_filters = cls.parse_tids_panels_and_filters(params)
         except ValueError:
             return cls.GetResponses.invalid_publication_id()
 
-
         try:
             zoom = int(params['zoom'])
         except (IndexError, ValueError):
             return cls.GetResponses.invalid_request()
-
 
         # all markers should be displayed on a same viewport coordinates,
         # so we can calculate and prepare it only once per all requested object types.
@@ -219,7 +201,6 @@ class Markers(View):
         sw_segment_x, \
         sw_segment_y = SegmentsIndex.normalize_viewport_coordinates(ne_lat, ne_lng, sw_lat, sw_lng, zoom)
 
-
         # we need to prevent duplicates in output,
         # so we should exclude already used markers from every next iteration.
         # ids of different object types may be the same
@@ -227,8 +208,7 @@ class Markers(View):
         # so we need to handle ids per tid.
         excluded_ids_per_tid = {
             tid: [] for tid, _, _ in tids_panels_and_filters
-        }
-
+            }
 
         panels = {}
         try:
@@ -248,7 +228,6 @@ class Markers(View):
                     tid, ne_segment_x, ne_segment_y, sw_segment_x, sw_segment_y, zoom,
                     filter_conditions, excluded_ids_per_tid[tid])
 
-
                 if segments:
                     panels[panel] = segments
                 else:
@@ -266,7 +245,6 @@ class Markers(View):
         except InvalidArgument:
             return cls.GetResponses.invalid_coordinates()
 
-
         data = {}
         for panel_color in panels.keys():
             for coordinates, count in panels[panel_color].iteritems():
@@ -280,10 +258,8 @@ class Markers(View):
                         panel_color: count
                     }
 
-
         # seems to be ok
         return cls.GetResponses.ok(data)
-
 
     @staticmethod
     def parse_viewport_coordinates(params):
@@ -313,7 +289,6 @@ class Markers(View):
         # seems to be ok
         return ne_lat, ne_lng, sw_lat, sw_lng
 
-
     @staticmethod
     def parse_tids_panels_and_filters(params):
         """
@@ -336,7 +311,7 @@ class Markers(View):
 
                 panel = filters['panel']
                 parsed_tids_and_filters.append(
-                    (tid, panel, filters, ) # note: tuple here
+                    (tid, panel, filters,)  # note: tuple here
                 )
 
         except (IndexError, ValueError):
@@ -347,7 +322,7 @@ class Markers(View):
 
 
 class DetailedView(View):
-    formatter = formatters.PublishedDataSource() # this is a description generator for the publications.
+    formatter = formatters.PublishedDataSource()  # this is a description generator for the publications.
 
     class GetResponses(object):
         @staticmethod
@@ -383,7 +358,6 @@ class DetailedView(View):
                 'message': 'This publication was unpublished.'
             }
 
-
     @classmethod
     def get(cls, request, *args):
         try:
@@ -392,21 +366,18 @@ class DetailedView(View):
         except (KeyError, ValueError):
             return cls.GetResponses.invalid_tid_hid()
 
-
         try:
-            publication = model.queryset_by_hash_id(hash_id)\
-                .only('for_sale', 'for_rent')\
-                .prefetch_related('body')\
-                .prefetch_related('sale_terms')\
-                .prefetch_related('rent_terms')\
+            publication = model.queryset_by_hash_id(hash_id) \
+                              .only('for_sale', 'for_rent') \
+                              .prefetch_related('body') \
+                              .prefetch_related('sale_terms') \
+                              .prefetch_related('rent_terms') \
                 [:1][0]
         except IndexError:
             return cls.GetResponses.no_such_publication()
 
-
         if not publication.is_published():
             return cls.GetResponses.publication_is_unpublished()
-
 
         data = cls.formatter.format(tid, publication)
         return cls.GetResponses.ok(data)

@@ -1,25 +1,25 @@
-#coding=utf-8
+# coding=utf-8
 import copy
 import json
 import random
 import string
 
-from django.conf import settings
-from django.http import HttpResponseBadRequest, HttpResponse
-from django.contrib.auth import authenticate, login, logout
-from django.views.generic import View
 import phonenumbers
+from django.conf import settings
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponseBadRequest, HttpResponse
+from django.views.generic import View
 
 from apps.views_base import AnonymousOnlyView, AuthenticatedOnlyView
-from collective.http.responses import HttpJsonResponse
 from collective.decorators.ajax import json_response, json_response_bad_request
+from collective.http.responses import HttpJsonResponse
 from collective.methods.request_data_getters import angular_post_parameters
 from core.managing.ban.classes import BanHandler
+from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
+from core.users.models import Users
 from core.users.notifications.sms_dispatcher.checkers import LoginChecker
 from core.users.notifications.sms_dispatcher.common import NotificationsSender
 from core.users.notifications.sms_dispatcher.exceptions import ResourceThrottled
-from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
-from core.users.models import Users
 
 
 class LoginManager(object):
@@ -34,9 +34,9 @@ class LoginManager(object):
 
                 # This cookie is needed for the front-end.
                 # By it's presence front-end logig will display or hide the state of the login form with the token input.
-                response.set_signed_cookie('mcheck', ''.join([random.choice(string.ascii_letters) for _ in range(7)]), max_age=60*5)
+                response.set_signed_cookie('mcheck', ''.join([random.choice(string.ascii_letters) for _ in range(7)]),
+                                           max_age=60 * 5)
                 return response
-
 
             @staticmethod
             @json_response
@@ -46,7 +46,6 @@ class LoginManager(object):
                     'message': 'Parameter "mobile_phone" is invalid or absent.'
                 }
 
-
             @staticmethod
             @json_response
             def account_disabled():
@@ -54,7 +53,6 @@ class LoginManager(object):
                     'code': 2,
                     'message': 'Account associated with this phone number was deactivated.'
                 }
-
 
             @staticmethod
             @json_response
@@ -64,7 +62,6 @@ class LoginManager(object):
                     'message': 'redirect to the cabinet is required.'
                 }
 
-
             @staticmethod
             @json_response
             def request_throttled():
@@ -72,7 +69,6 @@ class LoginManager(object):
                     'code': 200,
                     'message': 'Request was throttled.'
                 }
-
 
         def post(self, request):
             try:
@@ -89,11 +85,9 @@ class LoginManager(object):
             except (ValueError, KeyError):
                 return self.PostResponses.invalid_phone_number()
 
-
             # check if phone number was not banned
             if BanHandler.contains_number(phone_number):
                 return self.PostResponses.account_disabled()
-
 
             user = Users.by_one_of_the_mobile_phones(phone_number)
             if user is None:
@@ -102,7 +96,6 @@ class LoginManager(object):
             else:
                 if not user.is_active:
                     return self.PostResponses.account_disabled()
-
 
             # Managers should have possibility to login as normal users.
             # This is a temporary functionality to allow managers to publish objects
@@ -133,7 +126,6 @@ class LoginManager(object):
 
                 return self.PostResponses.ok()
 
-
     class SecondStep(AnonymousOnlyView):
         class PostResponses(object):
             @staticmethod
@@ -155,7 +147,6 @@ class LoginManager(object):
                     'message': 'Parameter "phone_number" is invalid or absent.'
                 }
 
-
             @staticmethod
             @json_response
             def account_disabled():
@@ -164,7 +155,6 @@ class LoginManager(object):
                     'message': 'Account associated with this phone number was deactivated.'
                 }
 
-
             @staticmethod
             @json_response
             def invalid_attempt():
@@ -172,7 +162,6 @@ class LoginManager(object):
                     'code': 3,
                     'message': 'Code is invalid.'
                 }
-
 
         def post(self, request):
             try:
@@ -188,20 +177,16 @@ class LoginManager(object):
             except (ValueError, KeyError):
                 return self.PostResponses.invalid_phone_number()
 
-
             # check if phone number was not banned
             if BanHandler.contains_number(phone_number):
                 return self.PostResponses.account_disabled()
-
 
             authenticated_user = authenticate(mobile_phone=phone_number, one_time_token=token)
             if authenticated_user is None:
                 return self.PostResponses.invalid_attempt()
 
-
             LoginManager.login_user(request, authenticated_user)
             return self.PostResponses.ok(authenticated_user)
-
 
     class OnLoginInfo(AuthenticatedOnlyView):
         class GetResponses(object):
@@ -214,10 +199,8 @@ class LoginManager(object):
                     'data': LoginManager.on_login_info(user)
                 }
 
-
         def get(self, request):
             return self.GetResponses.ok(request.user)
-
 
     class Logout(AuthenticatedOnlyView):
         class PostResponses(object):
@@ -230,12 +213,10 @@ class LoginManager(object):
                 response.delete_cookie('sessionid')
                 return response
 
-
         @classmethod
         def post(cls, request):
             logout(request)
             return cls.PostResponses.ok()
-
 
     @staticmethod
     def login_user(request, authenticated_user):
@@ -248,9 +229,8 @@ class LoginManager(object):
         #
         # To do sow wee will prolong users's session up to 2 years,
         # to have possibility to not to send another login sms to him as long as possible.
-        request.session.set_expiry(60*60*24*365*2)
+        request.session.set_expiry(60 * 60 * 24 * 365 * 2)
         request.session.save()
-
 
     @staticmethod
     def on_login_info(user):
@@ -275,7 +255,7 @@ class Contacts(View):
     get_codes = {
         'OK': {
             'code': 0,
-            'contacts': None, # WARN: owner's contacts here
+            'contacts': None,  # WARN: owner's contacts here
         },
         'invalid_parameters': {
             'code': 1
@@ -287,7 +267,6 @@ class Contacts(View):
             'code': 3
         },
     }
-
 
     def get(self, request, *args):
         """
@@ -301,11 +280,9 @@ class Contacts(View):
             return HttpResponseBadRequest(
                 json.dumps(self.get_codes['invalid_parameters']), content_type='application/json')
 
-
         if tid not in OBJECTS_TYPES.values():
             return HttpResponseBadRequest(
                 json.dumps(self.get_codes['invalid_tid']), content_type='application/json')
-
 
         model = HEAD_MODELS[tid]
         try:
@@ -314,7 +291,6 @@ class Contacts(View):
             return HttpResponseBadRequest(
                 json.dumps(self.get_codes['invalid_hid']), content_type='application/json')
 
-
-        data = copy.deepcopy(self.get_codes['OK']) # WARN: deep copy here
+        data = copy.deepcopy(self.get_codes['OK'])  # WARN: deep copy here
         data['contacts'] = publication.owner.contacts_dict()
         return HttpResponse(json.dumps(data), content_type='application/json')

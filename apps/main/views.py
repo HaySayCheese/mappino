@@ -1,6 +1,7 @@
 # coding=utf-8
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import etag
+
 from collective.decorators.jinja2_shortcuts import render_jinja2_template
 from core.cache.utils import generate_template_etag
 

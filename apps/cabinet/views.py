@@ -11,8 +11,7 @@ def cabinet(request):
     user = request.user
 
     if not user.is_authenticated():
-        return redirect('/map/#!/3/1/1/0/') # login page :)
-
+        return redirect('/map/#!/3/1/1/0/')  # login page :)
 
     if user.is_moderator:
         template = templates.get_template('cabinet/moderators/moderators.html')
@@ -23,6 +22,5 @@ def cabinet(request):
 
     else:
         template = templates.get_template('cabinet/users/users.html')
-
 
     return HttpResponse(content=template.render())

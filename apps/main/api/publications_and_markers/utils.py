@@ -218,5 +218,5 @@ def __rooms_rent_filters(params):
 def __get_operation_sid(params):
     try:
         return int(params['op_sid'])
-    except (KeyError, ValueError, ):
+    except (KeyError, ValueError,):
         raise OperationSIDParseError('"params" does not contains required param "op_sid".')

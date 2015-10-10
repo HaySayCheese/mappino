@@ -3,9 +3,9 @@ from apps.views_base import AuthenticatedOnlyView
 from collective.decorators.ajax import json_response, json_response_bad_request, json_response_not_found
 from collective.http.responses import *
 from collective.methods.request_data_getters import angular_parameters
-from core.users.favorites.constants import FAVORITES_MODELS
 from core.markers_index.models import SegmentsIndex
 from core.publications.models import HEAD_MODELS
+from core.users.favorites.constants import FAVORITES_MODELS
 
 
 class FavoritesListView(AuthenticatedOnlyView):
@@ -19,7 +19,6 @@ class FavoritesListView(AuthenticatedOnlyView):
                 'data': [record for record in favorites_list]
             }
 
-
         @staticmethod
         @json_response
         def anonymous_user():
@@ -27,7 +26,6 @@ class FavoritesListView(AuthenticatedOnlyView):
                 'code': 1,
                 'message': 'User must be authenticated.'
             }
-
 
     class PostResponses(object):
         @staticmethod
@@ -38,7 +36,6 @@ class FavoritesListView(AuthenticatedOnlyView):
                 'message': 'OK'
             }
 
-
         @staticmethod
         @json_response_bad_request
         def invalid_params():
@@ -46,7 +43,6 @@ class FavoritesListView(AuthenticatedOnlyView):
                 'code': 1,
                 'message': 'Request does not contains valid parameters.'
             }
-
 
         @staticmethod
         @json_response_not_found
@@ -56,7 +52,6 @@ class FavoritesListView(AuthenticatedOnlyView):
                 'message': 'There is no publication with exact id.'
             }
 
-
     class DeleteResponses(object):
         @staticmethod
         @json_response
@@ -65,7 +60,6 @@ class FavoritesListView(AuthenticatedOnlyView):
                 'code': 0,
                 'message': 'OK'
             }
-
 
     @classmethod
     def get(cls, request):
@@ -80,10 +74,8 @@ class FavoritesListView(AuthenticatedOnlyView):
             if favorites:
                 tids_and_publications_ids[tid] = [f.publication_id for f in favorites]
 
-
         briefs = SegmentsIndex.format_favorites(tids_and_publications_ids)
         return cls.GetResponses.ok(briefs)
-
 
     @classmethod
     def post(cls, request):
@@ -97,16 +89,14 @@ class FavoritesListView(AuthenticatedOnlyView):
         except ValueError:
             return cls.PostResponses.invalid_params()
 
-
         try:
             model = HEAD_MODELS[tid]
             publication = model.objects.filter(hash_id=hash_id).only('id')[:1][0]
-        except (KeyError, IndexError, ):
+        except (KeyError, IndexError,):
             return cls.PostResponses.invalid_params()
 
         except IndexError:
             return cls.PostResponses.no_such_publication()
-
 
         try:
             favorites_model = FAVORITES_MODELS[tid]
@@ -115,9 +105,7 @@ class FavoritesListView(AuthenticatedOnlyView):
         except KeyError:
             return cls.PostResponses.invalid_params()
 
-
         return cls.PostResponses.ok()
-
 
     @classmethod
     def delete(cls, request, *args):
@@ -130,7 +118,6 @@ class FavoritesListView(AuthenticatedOnlyView):
         except ValueError:
             return cls.PostResponses.invalid_params()
 
-
         try:
             model = HEAD_MODELS[tid]
             publication = model.objects.filter(hash_id=hash_id).only('id')[:1][0]
@@ -140,19 +127,14 @@ class FavoritesListView(AuthenticatedOnlyView):
         except IndexError:
             return cls.PostResponses.no_such_publication()
 
-
         try:
             favorites_model = FAVORITES_MODELS[tid]
-            favorites_model.objects.filter(publication_id = publication.id).delete()
+            favorites_model.objects.filter(publication_id=publication.id).delete()
 
         except KeyError:
             return cls.PostResponses.invalid_params()
 
-
         return cls.PostResponses.ok()
-
-
-
 
     @classmethod
     def __get_information_about_publications(cls, record_with_favorites):
@@ -165,10 +147,10 @@ class FavoritesListView(AuthenticatedOnlyView):
         """
         publications_ids = json.loads(record_with_favorites.publications_ids)
 
-        list_with_publications_ids = [publication_ids.split(":",2) for publication_ids in publications_ids]
+        list_with_publications_ids = [publication_ids.split(":", 2) for publication_ids in publications_ids]
         list_with_publications_ids = [
             (int(publication_ids[0]), publication_ids[1]) for publication_ids in list_with_publications_ids
-        ]
+            ]
 
         list_with_publications_info = []
         for tid, hash_id in list_with_publications_ids:
