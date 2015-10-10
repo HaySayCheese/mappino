@@ -1,10 +1,10 @@
 navbar-left {
-    @extend %_fixed-panel;
-
     @include size(365px, auto);
+
+    position: fixed;
     top: 0;
     left: 0;
-    z-index: 60;
+    z-index: 47;
 
 
     @media (max-width: 600px) {
