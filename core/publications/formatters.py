@@ -8,20 +8,19 @@ class PublishedDataSource(object):
     def __init__(self):
         self.data_generators = {
             # living
-            OBJECTS_TYPES.flat():       self.compose_flat_description,
-            OBJECTS_TYPES.house():      self.compose_house_description,
-            OBJECTS_TYPES.room():       self.compose_room_description,
+            OBJECTS_TYPES.flat(): self.compose_flat_description,
+            OBJECTS_TYPES.house(): self.compose_house_description,
+            OBJECTS_TYPES.room(): self.compose_room_description,
 
             # commercial
-            OBJECTS_TYPES.trade():      self.compose_trade_description,
-            OBJECTS_TYPES.office():     self.compose_office_description,
-            OBJECTS_TYPES.warehouse():  self.compose_warehouse_description,
+            OBJECTS_TYPES.trade(): self.compose_trade_description,
+            OBJECTS_TYPES.office(): self.compose_office_description,
+            OBJECTS_TYPES.warehouse(): self.compose_warehouse_description,
 
             # other
-            OBJECTS_TYPES.garage():     self.compose_garage_description,
-            OBJECTS_TYPES.land():       self.compose_land_description,
+            OBJECTS_TYPES.garage(): self.compose_garage_description,
+            OBJECTS_TYPES.land(): self.compose_land_description,
         }
-
 
     def format(self, tid, publication_head):
         """
@@ -40,11 +39,9 @@ class PublishedDataSource(object):
         :raise: RuntimeException - broken list of data generators.
         """
         data = {
-            'description':  publication_head.body.print_description(),
-            'address':      publication_head.body.print_address(),
-
-            'photos':       [photo.photo_url for photo in publication_head.photos().only('photo_url')],
-
+            'description': publication_head.body.print_description(),
+            'address': publication_head.body.print_address(),
+            'photos': [photo.photo_url for photo in publication_head.photos().only('photo_url')],
             # todo: add video here
         }
 
@@ -54,9 +51,7 @@ class PublishedDataSource(object):
 
         # clearing the results from all empty and None entries, that potentially can occurs
         data = {k: v for k, v in data.iteritems() if v}
-
         return data
-
 
     @staticmethod
     def compose_flat_description(p):
@@ -73,7 +68,7 @@ class PublishedDataSource(object):
             'floors_count': p.body.print_floors_count(),
 
             'rooms_count': p.body.print_rooms_count(),
-            'rooms_planning': p.body.print_rooms_planning() ,
+            'rooms_planning': p.body.print_rooms_planning(),
             'facilities': p.body.print_facilities(),
 
             'communications': p.body.print_communications(),
@@ -92,7 +87,6 @@ class PublishedDataSource(object):
                 'rent_facilities': p.rent_terms.print_facilities()
             })
 
-
         if p.rent_terms.is_daily:
             model = DAILY_RENT_RESERVATIONS_MODELS[p.tid]
             reservations = model.objects.filter(publication=p)
@@ -101,8 +95,10 @@ class PublishedDataSource(object):
                 'daily_rent': {
                     'reservations': [
                         {
-                            'date_enter': reservation.date_enter.strftime('%Y-%m-%dT12:00:00.0003'), # todo: change time zone
-                            'date_leave': reservation.date_leave.strftime('%Y-%m-%dT12:00:00.0003'), # todo: change time zone
+                            # todo: change time zone
+                            'date_enter': reservation.date_enter.strftime('%Y-%m-%dT12:00:00.0003'),
+                            # todo: change time zone
+                            'date_leave': reservation.date_leave.strftime('%Y-%m-%dT12:00:00.0003'),
                             'client_name': reservation.client_name or '',
                         } for reservation in reservations
                     ]
@@ -110,7 +106,6 @@ class PublishedDataSource(object):
             })
 
         return description
-
 
     @staticmethod
     def compose_house_description(p):
@@ -143,7 +138,6 @@ class PublishedDataSource(object):
             })
         return description
 
-
     @staticmethod
     def compose_room_description(p):
         description = {
@@ -171,7 +165,6 @@ class PublishedDataSource(object):
             })
 
         return description
-
 
     @staticmethod
     def compose_trade_description(p):
@@ -207,7 +200,6 @@ class PublishedDataSource(object):
             })
         return description
 
-
     @staticmethod
     def compose_office_description(p):
         description = {
@@ -238,7 +230,6 @@ class PublishedDataSource(object):
             })
         return description
 
-
     @staticmethod
     def compose_warehouse_description(p):
         description = {
@@ -264,7 +255,6 @@ class PublishedDataSource(object):
             })
         return description
 
-
     @staticmethod
     def compose_garage_description(p):
         description = {
@@ -286,7 +276,6 @@ class PublishedDataSource(object):
                 'rent_terms': p.rent_terms.print_terms(),
             })
         return description
-
 
     @staticmethod
     def compose_land_description(p):
@@ -319,7 +308,6 @@ class UnpublishedFormatter(object):
             )
         )[0]['fields']
 
-
         body = serializers.serialize('python', [record.body])[0]['fields']
         sale_terms = serializers.serialize('python', [record.sale_terms])[0]['fields']
         rent_terms = serializers.serialize('python', [record.rent_terms])[0]['fields']
@@ -336,10 +324,9 @@ class UnpublishedFormatter(object):
                     'is_title': photo.check_is_title(),
                     'hash_id': photo.hash_id,
                 } for photo in record.photos()
-            ]
+                ]
         }
         return cls.format_output_data(data)
-
 
     @classmethod
     def format_output_data(cls, data):
@@ -383,7 +370,6 @@ class UnpublishedFormatter(object):
         del data['head']['pos_lng']
         data['head'].update(coordinates)
 
-
         # sale terms
         s_terms = data.get('sale_terms')
         if s_terms:
@@ -396,7 +382,6 @@ class UnpublishedFormatter(object):
                     # Інакше - округлити до 2х знаків після коми
                     data['sale_terms']['price'] = "%.2f" % s_price
 
-
         # rent terms
         r_terms = data.get('rent_terms')
         if r_terms:
@@ -408,6 +393,5 @@ class UnpublishedFormatter(object):
                 else:
                     # Інакше - округлити до 2х знаків після коми
                     data['rent_terms']['price'] = "%.2f" % r_price
-
 
         return data
