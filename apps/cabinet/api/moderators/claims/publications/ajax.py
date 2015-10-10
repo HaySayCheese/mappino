@@ -238,7 +238,7 @@ class HeldPublicationsView(ModeratorsView):
             щоб на вищих рівнях можна було накласти додакові умови на вибірку.
             По суті, дана функція лише дампить результати цієї вибірки в список в певному форматі.
         """
-        publications_list = queryset.values_list('id', 'hash_id', 'body__title', 'body__description', 'for_rent', 'for_sale')
+        publications_list = queryset.values_list('id', 'hash_id', 'body__description', 'for_rent', 'for_sale')
         if not publications_list:
             return []
 
@@ -261,7 +261,6 @@ class HeldPublicationsView(ModeratorsView):
             briefs.append({
                 'tid': tid,
                 'hid': hash_id,
-                'title': title,
                 'description': description,
                 'for_rent': for_rent,
                 'for_sale': for_sale,

@@ -18,7 +18,7 @@ from core.currencies.constants import CURRENCIES as currencies_constants
 from core.publications import signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, \
     OBJECTS_TYPES
-from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
+from core.publications.exceptions import EmptyCoordinates, EmptyDescription, EmptySalePrice, \
     EmptyRentPrice, EmptyPersonsCount, NotEnoughPhotos, OperationIsNotSpecified
 
 
@@ -517,22 +517,19 @@ class BodyModel(AbstractModel):
     class Meta:
         abstract = True
 
-    #-- fields
-    title = models.TextField(null=True)
+    # fields
     description = models.TextField(null=True)
     address = models.TextField(null=True)
-
 
     def check_required_fields(self):
         """
         Перевіряє чи обов’язкові поля не None, інакше - генерує виключну ситуацію.
-        Не перевіряє інформацію в полях на коректність, оскільки передбачається,
-        що некоректні дані не можуть потрапити в БД через обробники зміни даних.
+        Не перевіряє інформацію в полях на логічну коректність,
+        оскільки передбачається, що некоректні дані не можуть потрапити в БД через обробники зміни даних.
         """
-        if (self.title is None) or (not self.title):
-            raise EmptyTitle('Title is empty')
-        if (self.description is None) or (not self.description):
+        if not self.description:
             raise EmptyDescription('Description is empty')
+
         self.check_extended_fields()
 
 
@@ -542,10 +539,6 @@ class BodyModel(AbstractModel):
         Призначений для валідації моделей, унаслідуваних від поточної.
         """
         return
-
-
-    def print_title(self):
-        return self.title.capitalize() if self.title else u''
 
 
     def print_description(self):

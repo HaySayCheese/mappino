@@ -248,6 +248,7 @@ class Markers(View):
                     tid, ne_segment_x, ne_segment_y, sw_segment_x, sw_segment_y, zoom,
                     filter_conditions, excluded_ids_per_tid[tid])
 
+
                 if segments:
                     panels[panel] = segments
                 else:

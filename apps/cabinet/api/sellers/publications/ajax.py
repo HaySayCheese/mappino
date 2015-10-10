@@ -981,7 +981,7 @@ class Briefs(CabinetView):
             По суті, дана функція лише дампить результати цієї вибірки в список в певному форматі.
         """
         publications_list = queryset.values_list(
-            'id', 'hash_id', 'state_sid', 'created', 'body__title', 'body__description', 'for_rent', 'for_sale')
+            'id', 'hash_id', 'state_sid', 'created', 'body__description', 'for_rent', 'for_sale')
         if not publications_list:
             return []
 
@@ -995,14 +995,13 @@ class Briefs(CabinetView):
         result = []
         for publication in publications_list:
             record = {
-                'tid':          tid,
-                'hid':          publication[1], # hash_id
-                'state_sid':    publication[2], # state_sid
-                'created':      publication[3].strftime('%Y-%m-%dT%H:%M:%S%z'),
-                'title':        publication[4], # body.title
-                'description':  publication[5], # body.description
-                'for_rent':     publication[6], # for_rent
-                'for_sale':     publication[7], # for_sale
+                'tid': tid,
+                'hid': publication[1],                                      # hash_id
+                'state_sid': publication[2],                                # state_sid
+                'created': publication[3].strftime('%Y-%m-%dT%H:%M:%S%z'),
+                'description': publication[4],                              # body.description
+                'for_rent': publication[5],                                 # for_rent
+                'for_sale': publication[6],                                 # for_sale
 
                 'moderator_message': moderators_messages.get(publication[1]) # hash_id
 

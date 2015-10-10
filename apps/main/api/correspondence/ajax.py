@@ -78,7 +78,7 @@ class ClientNotificationsHandler(object):
 
             try: # todo: test if no params
                 publication = model.queryset_by_hash_id(hash_hid)\
-                    .only('id', 'owner', 'state_sid', 'body__title')\
+                    .only('id', 'owner', 'state_sid')\
                     [:1][0]
             except (IndexError, ):
                 return cls.PostResponses.no_such_publication()
@@ -245,7 +245,7 @@ class ClientNotificationsHandler(object):
 
             try: # todo: test if no params
                 publication = model.queryset_by_hash_id(hash_hid)\
-                    .only('id', 'owner', 'state_sid', 'body__title')\
+                    .only('id', 'owner', 'state_sid')\
                     [:1][0]
             except (IndexError, ):
                 return cls.PostResponses.no_such_publication()

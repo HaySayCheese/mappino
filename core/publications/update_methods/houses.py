@@ -288,20 +288,6 @@ def update_house(h, field, value, tid):
 
 
         # text
-        elif field == 'title':
-            b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
-            if not value:
-                b.title = u''
-                b.save(force_update=True)
-                return
-            else:
-                value = format_title(value)
-                b.title = value
-                b.save(force_update=True)
-                return value
-
-
-        # text
         elif field == 'description':
             b = HousesBodies.objects.filter(id=h.body_id).only('id')[0]
             if not value:

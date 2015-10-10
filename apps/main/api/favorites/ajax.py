@@ -172,16 +172,10 @@ class FavoritesListView(AuthenticatedOnlyView):
 
         list_with_publications_info = []
         for tid, hash_id in list_with_publications_ids:
-            model = HEAD_MODELS[tid]
-            publication = model.objects.filter(hash_id=hash_id).only('body__title')[:1][0]
-
             # photos = publication.photos().only('big_thumb_url')
             # big_thumb_urls = [photo.big_thumb_url for photo in photos]
             list_with_publications_info.append({
                 'hid': "{tid}:{hid}".format(tid, hash_id),
-                'title': publication.body.title,
-                #'photos':big_thumb_urls,
-
             })
 
         return list_with_publications_info
