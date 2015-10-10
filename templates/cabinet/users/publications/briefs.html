@@ -76,10 +76,9 @@
                 <md-divider></md-divider>
             </div>
 
-            <h2 class="md-title truncate" ng-show="brief.title">[[ ::brief.title ]]</h2>
-            <h2 class="md-title grey-text text-lighten-1" ng-hide="brief.title">Заголовок не указан</h2>
-
-            <p class="md-body-1" ng-show="brief.description">[[ ::brief.description ]]</p>
+            <p class="md-body-1" ng-show="brief.description">
+                <span><b>Описание: </b></span>[[ ::brief.description ]]
+            </p>
             <p class="md-body-1 grey-text text-lighten-1" ng-hide="brief.description">Описание не указано</p>
         </md-card-content>
         <md-divider></md-divider>

@@ -1,7 +1,7 @@
 <ul rn-carousel rn-carousel-transition="fadeAndSlide" rn-carousel-easing="easeFromTo" rn-carousel-index="publicationPreviewSlideIndex"
     class="publication-preview-carousel">
     <li ng-repeat="photo in publication.photos">
-        <div class="slide-photo" ng-style="{ 'background-image': 'url([[ photo ]])' }"></div>
+        <div class="publication-preview-carousel_slide-photo" ng-style="{ 'background-image': 'url([[ photo ]])' }"></div>
     </li>
 </ul>
 
@@ -35,7 +35,7 @@
     <md-button hide-sm class="md-icon-button favorite-button"
                ng-hide="publication.is_favorite || hiddenControls['favorite-button']"
                ng-click="pubCtrl.toggleFavorite($event)">
-        <md-icon class="material-icons md-light md-48 md-dark-shadow">favorite_border</md-icon>
+        <md-icon class="material-icons md-light md-36 md-dark-shadow">favorite_border</md-icon>
         <md-tooltip md-direction="top" md-delay="0">
             Добавить в избранные
         </md-tooltip>
@@ -43,14 +43,13 @@
     <md-button hide-sm class="md-icon-button favorite-button"
                ng-show="publication.is_favorite && !hiddenControls['favorite-button']"
                ng-click="pubCtrl.toggleFavorite($event)">
-        <md-icon class="material-icons md-light md-48 md-dark-shadow pink-text">favorite</md-icon>
+        <md-icon class="material-icons md-light md-36 md-dark-shadow pink-text">favorite</md-icon>
         <md-tooltip md-direction="top" md-delay="0">
             Удалить из избранных
         </md-tooltip>
     </md-button>
 
     <div layout="column" layout-padding>
-        <div class="md-headline">[[ publication.title ]]</div>
         <div class="md-subhead">[[ publication.address ]]</div>
     </div>
 

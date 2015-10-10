@@ -1,5 +1,6 @@
 .publication-full-slider-dialog {
     max-height: 95% !important;
+    background-color: #000 !important;
 
     @media (max-width: 600px) {
         @include square(100%);
@@ -73,4 +74,12 @@
 
 .publication-full-slider {
     @include square(100%);
+
+
+    &_slide-photo {
+        @include square(100%);
+        background-size: contain;
+        background-position: center center;
+        background-repeat: no-repeat;
+    }
 }
