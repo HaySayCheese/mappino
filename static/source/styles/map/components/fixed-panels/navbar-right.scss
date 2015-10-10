@@ -4,6 +4,7 @@ navbar-right {
     @include size(220px, auto);
     top: 0;
     bottom: 0;
+    z-index: 49;
 
     @include transition(right .5s ease);
 
