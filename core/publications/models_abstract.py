@@ -18,7 +18,7 @@ from core.currencies.constants import CURRENCIES as currencies_constants
 from core.publications import signals
 from core.publications.constants import OBJECT_STATES, SALE_TRANSACTION_TYPES, LIVING_RENT_PERIODS, \
     OBJECTS_TYPES
-from core.publications.exceptions import EmptyCoordinates, EmptyTitle, EmptyDescription, EmptySalePrice, \
+from core.publications.exceptions import EmptyCoordinates, EmptyDescription, EmptySalePrice, \
     EmptyRentPrice, EmptyPersonsCount, NotEnoughPhotos, OperationIsNotSpecified
 
 

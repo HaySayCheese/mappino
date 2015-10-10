@@ -16,7 +16,6 @@ namespace Mappino.Cabinet.Users {
             public for_sale:            boolean,
             public photo_url:           string,
             public state_sid:           string|number,
-            public title:               string,
             public description:         string,
             public moderator_message:   string) {
 
