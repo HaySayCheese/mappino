@@ -261,7 +261,6 @@ class HeldPublicationsView(ModeratorsView):
             briefs.append({
                 'tid': tid,
                 'hid': hash_id,
-                'title': title,
                 'description': description,
                 'for_rent': for_rent,
                 'for_sale': for_sale,
