@@ -1,6 +1,8 @@
 /// <reference path='../../../typings/tsd.d.ts' />
 
 
+/// <reference path='filters/CapitalizeFilter.ts' />
+
 /// <reference path='services/PublicationPreviewService.ts' />
 
 /// <reference path='directives/PublicationPreviewDirective.ts' />

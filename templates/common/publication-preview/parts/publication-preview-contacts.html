@@ -54,18 +54,22 @@
             </div>
 
             <div layout-gt-sm="row" layout-sm="column">
-                <md-button class="md-raised md-primary" flex
-                           ng-hide="hiddenControls['call-requests-button']"
-                           ng-if="publication.contacts.allow_call_requests"
-                           ng-click="pubPreviewCtrl.toggleCallRequestForm()">
-                    Заказать обратный звонок
-                </md-button>
-                <md-button class="md-raised md-primary" flex
-                           ng-hide="hiddenControls['messaging-button']"
-                           ng-if="publication.contacts.allow_messaging"
-                           ng-click="pubPreviewCtrl.toggleMessageForm()">
-                    Оставить сообщение
-                </md-button>
+                <div layout-sm="row">
+                    <md-button class="md-raised md-primary" flex
+                               ng-hide="hiddenControls['call-requests-button']"
+                               ng-if="publication.contacts.allow_call_requests"
+                               ng-click="pubPreviewCtrl.toggleCallRequestForm()">
+                        Заказать обратный звонок
+                    </md-button>
+                </div>
+                <div layout-sm="row">
+                    <md-button class="md-raised md-primary" flex
+                               ng-hide="hiddenControls['messaging-button']"
+                               ng-if="publication.contacts.allow_messaging"
+                               ng-click="pubPreviewCtrl.toggleMessageForm()">
+                        Оставить сообщение
+                    </md-button>
+                </div>
             </div>
         </div>
     </div>
