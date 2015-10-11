@@ -7,8 +7,10 @@ namespace Mappino.Core.PublicationPreview {
     export function CapitalizeFilter() : IFilterFunc {
         return function (input, all) {
 
+            if (input == undefined) {
+                return;
+            }
             return input.charAt(0).toUpperCase() + input.substr(1);
-
         }
 
     }
