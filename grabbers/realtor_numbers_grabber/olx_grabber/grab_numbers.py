@@ -1,10 +1,10 @@
 import time
 import requests
-from seleniumrequests import Firefox
+from selenium.webdriver import Firefox
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from core.file_manager import add_to_file
+from grabbers.realtor_numbers_grabber.file_manager import add_to_file
 
 driver = Firefox()
 # go to olx

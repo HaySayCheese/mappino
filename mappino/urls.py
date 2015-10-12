@@ -12,6 +12,9 @@ urlpatterns = patterns('apps',
     # cabinet
     url(r'', include('apps.cabinet.urls')),
 
+
+    url(r'', include('apps.system.urls')),
+
     # todo: move it to the apps
     # # core
     #     # API
