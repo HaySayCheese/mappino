@@ -68,14 +68,14 @@
     <div class="md-subhead blue-text">Описание</div>
     <md-divider></md-divider>
     <p class="md-body-1 inset">
-        [[ publication.description ]]
+        [[ publication.description | capitalize ]]
     </p>
 
     <div ng-show="publication.facilities">
         <div class="md-subhead blue-text">Удобства</div>
         <md-divider></md-divider>
         <p class="md-body-1 inset">
-            [[ publication.facilities ]]
+            [[ publication.facilities | capitalize ]]
         </p>
     </div>
 
@@ -83,7 +83,7 @@
         <div class="md-subhead blue-text">Коммуникации</div>
         <md-divider></md-divider>
         <p class="md-body-1 inset">
-            [[ publication.communications ]]
+            [[ publication.communications | capitalize ]]
         </p>
     </div>
 
@@ -91,7 +91,7 @@
         <div class="md-subhead blue-text">Дополнительные постройки</div>
         <md-divider></md-divider>
         <p class="md-body-1 inset">
-            [[ publication.buildings ]]
+            [[ publication.buildings | capitalize ]]
         </p>
     </div>
 </section>

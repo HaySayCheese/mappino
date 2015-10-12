@@ -2,17 +2,17 @@
     <div ng-switch-when="contacts">
         <div class="md-subhead blue-text">Контакты</div>
         <md-divider></md-divider>
-        <div layout="column" layout-padding>
+        <div layout-gt-sm="column" layout-padding>
             <div class="publication-contacts" layout-gt-sm="row" layout-sm="column" layout-padding>
-                <div layout-gt-sm="column" layout-sm="row" flex-sm="100" flex-gt-sm="35">
-                    <div class="avatar" layout="column" layout-align="center center">
+                <div layout-gt-sm="column" layout-sm="row"  flex-gt-sm="35">
+                    <div class="avatar" layout="column" layout-align="center center" layout-fill>
                         <img ng-src="[[ publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/empty-or-error-user-avatar.png"
                              ng-if="publication.contacts.avatar_url" />
                         <img src="{{ static }}build/images/common/empty-or-error-user-avatar.png" ng-if="!publication.contacts.avatar_url" alt="" />
                     </div>
                 </div>
 
-                <div layout-gt-sm="column" layout-sm="row" flex-sm="100" flex-gt-sm="65">
+                <div layout="column" flex-gt-sm="65">
                     <div class="md-title grey-text text-darken-2" layout-padding ng-if="publication.contacts.first_name || publication.contacts.last_name">
                         [[ publication.contacts.first_name + '&nbsp;' ]][[ publication.contacts.last_name ]]
                     </div>
@@ -54,18 +54,22 @@
             </div>
 
             <div layout-gt-sm="row" layout-sm="column">
-                <md-button class="md-raised md-primary" flex
-                           ng-hide="hiddenControls['call-requests-button']"
-                           ng-if="publication.contacts.allow_call_requests"
-                           ng-click="pubPreviewCtrl.toggleCallRequestForm()">
-                    Заказать обратный звонок
-                </md-button>
-                <md-button class="md-raised md-primary" flex
-                           ng-hide="hiddenControls['messaging-button']"
-                           ng-if="publication.contacts.allow_messaging"
-                           ng-click="pubPreviewCtrl.toggleMessageForm()">
-                    Оставить сообщение
-                </md-button>
+                <div layout-sm="row">
+                    <md-button class="md-raised md-primary" flex-sm="100"
+                               ng-hide="hiddenControls['call-requests-button']"
+                               ng-if="publication.contacts.allow_call_requests"
+                               ng-click="pubPreviewCtrl.toggleCallRequestForm()">
+                        Заказать обратный звонок
+                    </md-button>
+                </div>
+                <div layout-sm="row">
+                    <md-button class="md-raised md-primary" flex-sm="100"
+                               ng-hide="hiddenControls['messaging-button']"
+                               ng-if="publication.contacts.allow_messaging"
+                               ng-click="pubPreviewCtrl.toggleMessageForm()">
+                        Оставить сообщение
+                    </md-button>
+                </div>
             </div>
         </div>
     </div>

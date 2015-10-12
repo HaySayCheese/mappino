@@ -10,6 +10,9 @@ namespace Mappino.Core.PublicationPreview {
     ]);
 
     publicationPreviewModule.service('PublicationPreviewService', PublicationPreviewService);
+
+    publicationPreviewModule.filter('capitalize', CapitalizeFilter);
+
     publicationPreviewModule.controller('PublicationPreviewController', PublicationPreviewController);
 
     publicationPreviewModule.directive('publicationPreview', PublicationPreviewDirective);
