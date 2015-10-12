@@ -48,3 +48,22 @@
         }
     }
 }
+
+.fixed-panel {
+    width: 300px;
+    position: fixed;
+    height: 100%;
+}
+
+.panel-item {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}
+
+@media  (min-width: 600px) {
+
+    main {
+        margin-left: 300px;
+    }
+}
