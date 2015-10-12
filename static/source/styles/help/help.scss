@@ -28,3 +28,23 @@
         min-height: 30px !important;
     }
 }
+
+.description {
+    .section-title{
+        margin-top: 20px;
+        margin-bottom: 15px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #eeeeee;
+    }
+
+    section{
+        display: inline-block;
+        margin-bottom: 30px;
+        text-align: justify;
+
+        .md-title{
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+    }
+}
