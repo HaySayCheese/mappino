@@ -20,13 +20,13 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
     bucket_root_path = 'models/photos/'
 
     original_image_suffix = '_original'
-    min_original_image_size = (600, 500)
+    min_original_image_size = (600, 400)
 
     photo_suffix = '_processed'
     photo_size = (1000, 900)
 
     thumbnail_suffix = '_big_thumb'
-    thumbnail_size = (500, 400)
+    thumbnail_size = (550, 450)
 
     @classmethod
     def process_and_upload_to_gcs(cls, tid, image):
@@ -111,21 +111,21 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
         original_image = image
 
         # thumbs processing
-        image_width, image_height = image.size
-        photo_width, photo_height, = cls.photo_size
+        # image_width, image_height = image.size
+        # photo_width, photo_height, = cls.photo_size
 
-        # checking if received image is bigger than minimum allowed size.
-        if image_width < cls.min_original_image_size[0] or image_height < cls.min_original_image_size[1]:
-            os.remove(original_image_path)
-            raise PhotosHandlerExceptions.ImageIsTooSmall()
-
-        elif image_width > photo_width or image_height > photo_height:
-            image.thumbnail(cls.photo_size, Image.ANTIALIAS)
-
-        else:
-            # Всеодно виконати операцію над зображенням, інакше PIL не збереже файл.
-            # Розміри зображення при цьому слід залишити без змін, щоб уникнути небажаного розширення.
-            image.thumbnail((image_height, image_width, ), Image.ANTIALIAS)
+        # # checking if received image is bigger than minimum allowed size.
+        # if image_width < cls.min_original_image_size[0] or image_height < cls.min_original_image_size[1]:
+        #     os.remove(original_image_path)
+        #     raise PhotosHandlerExceptions.ImageIsTooSmall()
+        #
+        # elif image_width > photo_width or image_height > photo_height:
+        #     image.thumbnail(cls.photo_size, Image.ANTIALIAS)
+        #
+        # else:
+        #     # Всеодно виконати операцію над зображенням, інакше PIL не збереже файл.
+        #     # Розміри зображення при цьому слід залишити без змін, щоб уникнути небажаного розширення.
+        #     image.thumbnail((image_height, image_width, ), Image.ANTIALIAS)
 
         photo_name = '{uid}{photo_suffix}.jpg'.format(uid=uid, photo_suffix=cls.photo_suffix)
         photo_path = os.path.join(temporary_dir, photo_name)
