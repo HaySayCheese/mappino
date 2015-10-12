@@ -121,9 +121,7 @@ class LoginManager(object):
                 except ResourceThrottled:
                     return self.PostResponses.request_throttled()
 
-                if not settings.SMS_DEBUG:
-                    NotificationsSender.send_login_code(request, phone_number, user.one_time_token)
-
+                NotificationsSender.send_login_code(request, phone_number, user.one_time_token)
                 return self.PostResponses.ok()
 
     class SecondStep(AnonymousOnlyView):

@@ -7,7 +7,6 @@ from collective.exceptions import InvalidArgument
 from mappino import settings
 
 
-
 def parse_redirect_domain_for_including_in_sms():
     domain = settings.REDIRECT_DOMAIN_URL
     parsed_uri = urlparse(domain)
@@ -17,15 +16,12 @@ def parse_redirect_domain_for_including_in_sms():
 class BaseSMSSender(object):
     redirect_domain = parse_redirect_domain_for_including_in_sms()
 
-
     class Purposes(Constant):
-        common_login_code               = 0
+        common_login_code = 0
 
-        sellers_incoming_email          = 1
-        sellers_incoming_call_request   = 2
-        sellers_publication_blocked     = 3
-
-
+        sellers_incoming_email = 1
+        sellers_incoming_call_request = 2
+        sellers_publication_blocked = 3
 
     @classmethod
     def process_transaction(cls, number, message, purpose=None, request=None):
@@ -44,7 +40,6 @@ class BaseSMSSender(object):
             raise InvalidArgument('Number can not be empty.')
         # todo: додати перевірку номеру на відповідність формату
 
-
         params = urllib.urlencode({
             'login': settings.SMS_GATE_LOGIN,
             'psw': settings.SMS_GATE_PASSWORD,
@@ -56,10 +51,9 @@ class BaseSMSSender(object):
         # Відправляти повторно, якщо перша передача не пройшла.
         return cls.__send_request(params) or cls.__send_request(params)
 
-
     @staticmethod
     def __send_request(params):
-        if settings.SMS_DEBUG:
+        if not settings.SMS_DEBUG:
             print('SMS sent.', params)
             return True
 
