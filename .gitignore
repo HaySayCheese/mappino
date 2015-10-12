@@ -30,3 +30,6 @@ static/escaped_fragments/*
 *.log
 
 .gitignore
+
+grabbers/escaped_fragments_grabber/templates
+grabbers/escaped_fragments_grabber/templates_gziped
