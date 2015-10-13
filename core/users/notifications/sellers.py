@@ -1,9 +1,9 @@
 # coding=utf-8
 from django.core.exceptions import SuspiciousOperation
 
-from core.users.notifications.mail_dispatcher.sellers import SellersMailDispatcher
-from core.users.notifications.sms_dispatcher.sellers import SellersSMSDispatcher
 from core.users.constants import Preferences
+from core.users.notifications.mail_dispatcher.sellers import SellersMailDispatcher
+from core.users.notifications.sms_dispatcher.senders.sellers import SellersSMSDispatcher
 
 
 class SellersNotificationsManager(object):

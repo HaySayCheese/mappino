@@ -18,7 +18,7 @@ from core.managing.ban.classes import BanHandler
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 from core.users.models import Users
 from core.users.notifications.sms_dispatcher.checkers import LoginChecker
-from core.users.notifications.sms_dispatcher.common import NotificationsSender
+from core.users.notifications.sms_dispatcher.senders.common import NotificationsSender
 from core.users.notifications.sms_dispatcher.exceptions import ResourceThrottled
 
 

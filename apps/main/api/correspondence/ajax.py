@@ -9,7 +9,7 @@ from core.users.constants import Preferences
 from core.users.notifications.mail_dispatcher.sellers import SellersMailDispatcher
 from core.users.notifications.sms_dispatcher.checkers import MessageChecker, CallRequestChecker
 from core.users.notifications.sms_dispatcher.exceptions import ResourceThrottled, SMSSendingThrottled
-from core.users.notifications.sms_dispatcher.sellers import SellersSMSDispatcher
+from core.users.notifications.sms_dispatcher.senders.sellers import SellersSMSDispatcher
 
 
 class ClientNotificationsHandler(object):
