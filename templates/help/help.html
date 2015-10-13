@@ -15,15 +15,12 @@
 </head>
 <body ng-controller="HelpController as helpCtrl">
 
-<md-toolbar  show-sm hide-gt-sm>
+<md-toolbar  show-sm hide-gt-sm class="fixed">
     <nav class="md-toolbar-tools">
         <md-button class="nav-button" aria-label="Открыть меню" ng-click="helpCtrl.openSidenav()">
             <md-icon>menu</md-icon>
         </md-button>
         <span flex></span>
-        <md-button href="/">
-            <mappino-logo class="mappino-logo--medium"></mappino-logo>
-        </md-button>
     </nav>
 </md-toolbar>
 
@@ -31,27 +28,27 @@
 
 <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav">
     <md-toolbar layout="row" layout-align="center center">
-        <span>mappino</span>
+        <a href="/" class="white-text">Mappino</a>
     </md-toolbar>
 
     <md-content layout="column" layout-padding>
         <div layout="row">
-            <a ng-click="helpCtrl.closeSidenav()" href="#main" class="panel-item">
+            <a ng-click="helpCtrl.closeSidenav('main')" class="panel-item">
                 Основное
             </a>
         </div>
         <div layout="row">
-            <a ng-click="helpCtrl.closeSidenav()" href="#sellers-faq" class="panel-item" >
+            <a ng-click="helpCtrl.closeSidenav('sellers-faq')" class="panel-item" >
                 Частые вопросы продавцов
             </a>
         </div>
         <div layout="row">
-            <a ng-click="helpCtrl.closeSidenav()"  href="#users-faq" layout-fill class="panel-item" >
+            <a ng-click="helpCtrl.closeSidenav('users-faq')" layout-fill class="panel-item" >
                 Частые вопросы покупателей
             </a>
         </div>
         <div layout="row">
-            <a ng-click="helpCtrl.closeSidenav()" href="#contacts" layout-fill class="panel-item">
+            <a ng-click="helpCtrl.closeSidenav('contacts')" layout-fill class="panel-item">
                 Контакты
             </a>
         </div>
@@ -60,26 +57,33 @@
 
 <div layout="row">
     <div layout="column" hide-sm class="fixed-panel blue white-text" layout-padding>
-        <div layout="row">
-            <div class="md-title bold-text white-text"></div>
+        <div class="toolbar" layout="row" layout-align="center center">
+                <md-button href="/" class="nav-button" md-no-ink aria-label="Перейти на главную страницу" >
+                    <mappino-logo size="medium"></mappino-logo>
+                </md-button>
+            <a href="/">
+            <span class="md-title bold-text white-text">Mappino</span>
+            </a>
+            <span flex="10"></span>
         </div>
+        <md-divider></md-divider>
         <div layout="row">
-            <a layout-fill href="#main" class="white-text panel-item" >
+            <a layout-fill ng-click="helpCtrl.moveToAnchor('main')" class="white-text panel-item" >
                 Основное
             </a>
         </div>
         <div layout="row">
-            <a layout-fill href="#sellers-faq" class="white-text panel-item" >
+            <a layout-fill ng-click="helpCtrl.moveToAnchor('sellers-faq')" class="white-text panel-item" >
                 Частые вопросы продавцов
             </a>
         </div>
         <div layout="row">
-            <a  layout-wrap href="#users-faq" layout-fill class="white-text panel-item">
+            <a  layout-wrap ng-click="helpCtrl.moveToAnchor('users-faq')" layout-fill class="white-text panel-item">
                 Частые вопросы покупателей
             </a>
         </div>
         <div layout="row">
-            <a  layout-wrap href="#contacts" layout-fill class="white-text panel-item">
+            <a  layout-wrap ng-click="helpCtrl.moveToAnchor('contacts')" layout-fill class="white-text panel-item">
                 Контакты
             </a>
         </div>
@@ -308,10 +312,25 @@
                     <div class="md-headline grey-text section-title">КОНТАКТЫ</div>
                 </a>
                 <section>
-                    +380 99 606 55 88 <br>
-                    +380 372 909 901 <br><br>
-                    hello@mappino.com <br><br>
-                    address goes here
+                        <div layout="column" flex layout-fill layout-align="center start" class="md-subhead">
+                        <span class="contact-padding">
+                            <md-icon class="material-icons md-36 blue-text">phone</md-icon>&nbsp;
+                            <a ng-href="tel:+380996065588">+380 99 606 55 88</a>
+                        </span>
+                        <span class="contact-padding">
+                            <md-icon class="material-icons md-36 blue-text">phone</md-icon>&nbsp;
+                           <a href="tel:+380372909901">+380 372 909 901</a>
+                        </span>
+                        <span class="contact-padding">
+                            <md-icon class="material-icons md-36 blue-text">mail</md-icon> &nbsp;
+                            <a ng-href="mailto:hello@mappino.com">hello@mappino.com</a>
+                        </span>
+                        <span class="contact-padding">
+                            <md-icon class="material-icons md-36 blue-text">place</md-icon>&nbsp;
+                            г.Черновцы, ул. Доброго, 5. Бизнес-хаб "Horizont".
+                        </span>
+
+                        </div>
                 </section>
             </div>
         </md-content>

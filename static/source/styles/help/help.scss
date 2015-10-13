@@ -15,7 +15,6 @@
 .sidenav-button {
     text-transform: none !important;
     text-align: left !important;
-
 }
 
 .items {
@@ -53,17 +52,38 @@
     width: 300px;
     position: fixed;
     height: 100%;
+
+    .toolbar {
+        height: 70px;
+
+    }
 }
 
 .panel-item {
     padding-top: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
+    cursor: pointer;
 }
 
 @media  (min-width: 600px) {
-
     main {
         margin-left: 300px;
     }
+}
+
+@media  (max-width: 600px) {
+    main {
+        margin-top: 50px;
+    }
+}
+
+.fixed {
+    position: fixed;
+}
+
+.contact-padding {
+    padding-top: 10px;
+    padding-bottom: 10px;
+
 }
