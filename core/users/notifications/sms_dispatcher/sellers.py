@@ -10,8 +10,7 @@ class SellersSMSDispatcher(BaseSMSSender):
     def send_sms_about_incoming_email(cls, request, number):
         # WARN: message can't be encoded in unicode, because of urlencode can process only ASCII
         message = 'Заинтересованный клиент оставил Вам сообщение. Проверьте, пожалуйста, почту.' # tr
-        return cls.process_transaction(
-            number, message, purpose=BaseSMSSender.Purposes.sellers_incoming_email, request=request)
+        return cls.process_transaction(number, message, message=BaseSMSSender.Purposes.sellers_incoming_email)
 
 
     @classmethod
@@ -41,8 +40,7 @@ class SellersSMSDispatcher(BaseSMSSender):
                 .format(parsed_phone_number)
 
 
-        return cls.process_transaction(
-            number, message, purpose=BaseSMSSender.Purposes.sellers_incoming_call_request, request=request)
+        return cls.process_transaction(number, message, message=BaseSMSSender.Purposes.sellers_incoming_call_request)
 
 
     @classmethod
@@ -51,5 +49,4 @@ class SellersSMSDispatcher(BaseSMSSender):
         message = 'Ваше объявление не прошло проверку и было снято с публикации. ' \
                   'Детальная информация доступна в личном кабинете на {0}.'\
             .format(cls.redirect_domain) # tr
-        return cls.process_transaction(
-            number, message, purpose=BaseSMSSender.Purposes.sellers_publication_blocked)
+        return cls.process_transaction(number, message, message=BaseSMSSender.Purposes.sellers_publication_blocked)

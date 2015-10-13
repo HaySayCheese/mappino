@@ -24,7 +24,7 @@ class BaseSMSSender(object):
         sellers_publication_blocked = 3
 
     @classmethod
-    def process_transaction(cls, number, message, purpose=None, request=None):
+    def process_transaction(cls, number, message):
         """
         Повертає True, якщо повідомлення message було вдало надіслано на номер number.
         Інакше повертає False.
