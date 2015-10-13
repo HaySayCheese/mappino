@@ -3,3 +3,4 @@ Host: mappino.com.ua
 Disallow: /ajax/
 Disallow: /cabinet/
 Allow: /
+Sitemap: http://mappino.com.ua/sitemap.xml

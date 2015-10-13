@@ -5,6 +5,6 @@ from django.conf.urls import patterns, url
 
 urlpatterns = patterns('',
     # list
-    url(r'^ajax/api/get_publications/$', GetPublications.as_view()),
+    url(r'^ajax/api/v1/system/publications/published-ids/$', GetPublications.as_view()),
 
 )
