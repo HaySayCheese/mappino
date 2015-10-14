@@ -265,7 +265,9 @@ class AbstractHeadModel(models.Model):
         # but it's enough to publish it only with video or only with photos.
         #
         # here should be added another check for videos
-        self.check_photos_are_present()
+
+        # todo: enable me back
+        # self.check_photos_are_present()
 
         # All the signals emitters are wrapped into the atomic transaction.
         #

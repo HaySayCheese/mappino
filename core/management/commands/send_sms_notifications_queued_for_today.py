@@ -7,6 +7,11 @@ from core.users.notifications.sms_dispatcher.senders.queued import FromQueueSend
 
 
 class Command(BaseCommand):
+    """
+    Sends all queued sms notifications that are queued for today.
+    It's also will send all notifications, that was not sent before.
+    """
+
     def handle(self, *args, **options):
         today = now().date()
         enqueued_records = SendQueue.enqueued_for(today)

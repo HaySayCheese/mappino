@@ -41,7 +41,7 @@ class SendQueue(models.Model):
             raise ValueError('Phone number can not be parsed.')
 
         record = cls.objects.create(
-            date_queued=date_queued, message=message, phone_number=parsed_number)
+            date_enqueued=date_queued, message=message, phone_number=parsed_number)
         return record
 
     @classmethod

@@ -309,6 +309,19 @@ HEAD_MODELS = {
     OBJECTS_TYPES.garage(): GaragesHeads,
     OBJECTS_TYPES.land(): LandsHeads,
 }
+LIVING_HEAD_MODELS = {
+    OBJECTS_TYPES.flat(): FlatsHeads,
+    OBJECTS_TYPES.house(): HousesHeads,
+    OBJECTS_TYPES.room(): RoomsHeads,
+}
+COMMERCIAL_HEAD_MODELS = {
+    OBJECTS_TYPES.trade(): TradesHeads,
+    OBJECTS_TYPES.office(): OfficesHeads,
+    OBJECTS_TYPES.warehouse(): WarehousesHeads,
+
+    OBJECTS_TYPES.garage(): GaragesHeads,
+    OBJECTS_TYPES.land(): LandsHeads,
+}
 
 
 
