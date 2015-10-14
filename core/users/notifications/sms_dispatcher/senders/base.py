@@ -40,6 +40,12 @@ class BaseSMSSender(object):
             raise InvalidArgument('Number can not be empty.')
         # todo: додати перевірку номеру на відповідність формату
 
+        if type(message) is unicode:
+            message = message.encode('utf-8')
+
+        if type(number) is unicode:
+            number = number.encode('utf-8')
+
         params = urllib.urlencode({
             'login': settings.SMS_GATE_LOGIN,
             'psw': settings.SMS_GATE_PASSWORD,
@@ -53,7 +59,7 @@ class BaseSMSSender(object):
 
     @staticmethod
     def __send_request(params):
-        if not settings.SMS_DEBUG:
+        if settings.SMS_DEBUG:
             print('SMS sent.', params)
             return True
 
