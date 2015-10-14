@@ -332,6 +332,31 @@ class AbstractHeadModel(models.Model):
             for_rent=self.for_rent,
         )
 
+    def mark_as_outdated_and_unpublish(self):
+        signals.before_marking_as_outdated.send(
+            sender=None,
+            tid=self.tid,
+            hid=self.id,
+            hash_id=self.hash_id,
+            for_sale=self.for_sale,
+            for_rent=self.for_rent,
+        )
+
+        self.unpublish()
+        self.state_sid = OBJECT_STATES.outdated()
+        self.save(force_update=True)
+
+        # sender=None для того, щоб django-orm не витягував автоматично дані з БД,
+        # які, швидше за все, не знадобляться в подальшій обробці.
+        signals.after_marking_as_outdated.send(
+            sender=None,
+            tid=self.tid,
+            hid=self.id,
+            hash_id=self.hash_id,
+            for_sale=self.for_sale,
+            for_rent=self.for_rent,
+        )
+
     def reject_by_moderator(self):
         signals.before_rejection_by_moderator.send(
             sender=None,

@@ -1,32 +1,28 @@
 # coding=utf-8
+import itertools
 from collections import Counter
 
-import itertools
 from datetime import timedelta
 from django.core.management import BaseCommand
 from django.utils.timezone import now
 
-from core.publications.constants import LIVING_HEAD_MODELS
+from core.publications.constants import LIVING_HEAD_MODELS, \
+    LIVING_RENT_PUBLICATION_MAY_BE_ACTIVE, LIVING_SALE_PUBLICATION_MAY_BE_ACTIVE, \
+    COMMERCIAL_RENT_PUBLICATION_MAY_ACTIVE, COMMERCIAL_SALE_PUBLICATION_MAY_ACTIVE
 from core.users.models import Users
 from core.users.notifications.sms_dispatcher.models import SendQueue
 
 
 class Command(BaseCommand):
-    living_rent_publication_may_be_active = 14     # days
-    living_sale_publication_may_be_active = 30     # days
-
-    commercial_rent_publication_may_active = 30    # days
-    commercial_sale_publication_may_active = 45    # days
-
     def handle(self, *args, **options):
-        print('Searching for possible outdated publications is started.')
+        print('Searching for possible outdated publications is started..')
 
         today = now().date()
 
         #
         # check living rent publications
         living_rent_min_published_date = \
-            today - timedelta(days=self.living_rent_publication_may_be_active)
+            today - timedelta(days=LIVING_RENT_PUBLICATION_MAY_BE_ACTIVE)
 
         living_rent_owners_ids = []
         for _, model in LIVING_HEAD_MODELS.iteritems():
@@ -37,7 +33,7 @@ class Command(BaseCommand):
         #
         # check living sale publications
         living_sale_min_published_date = \
-            today - timedelta(days=self.living_sale_publication_may_be_active)
+            today - timedelta(days=LIVING_SALE_PUBLICATION_MAY_BE_ACTIVE)
 
         living_sale_owners_ids = []
         for _, model in LIVING_HEAD_MODELS.iteritems():
@@ -48,7 +44,7 @@ class Command(BaseCommand):
         #
         # check commercial rent publications
         commercial_rent_min_published_date = \
-            today - timedelta(days=self.commercial_rent_publication_may_active)
+            today - timedelta(days=COMMERCIAL_RENT_PUBLICATION_MAY_ACTIVE)
 
         commercial_rent_owners_ids = []
         for _, model in LIVING_HEAD_MODELS.iteritems():
@@ -57,9 +53,9 @@ class Command(BaseCommand):
                 .values_list('owner_id', flat=True)
 
         #
-        # check living sale publications
+        # check living commercial publications
         commercial_sale_min_published_date = \
-            today - timedelta(days=self.commercial_sale_publication_may_active)
+            today - timedelta(days=COMMERCIAL_SALE_PUBLICATION_MAY_ACTIVE)
 
         commercial_sale_owners_ids = []
         for _, model in LIVING_HEAD_MODELS.iteritems():

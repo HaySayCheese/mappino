@@ -19,6 +19,8 @@ deleted_permanent = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 
 before_rejection_by_moderator = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])
 rejected_by_moderator = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])
 
+before_marking_as_outdated = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])
+after_marking_as_outdated = Signal(providing_args=['tid', 'hid', 'hash_id', 'for_sale', 'for_rent'])
 
 
 class DailyRentSignals(object):
