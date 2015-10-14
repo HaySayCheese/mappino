@@ -31,6 +31,11 @@
     @include square(96px);
     font-size: 96px;
 }
+.material-icons.md-200 {
+    @include square(200px);
+    font-size: 200px;
+
+}
 .material-icons.md-dark-shadow {
     text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 1px color('grey', 'darken-4');
 }
