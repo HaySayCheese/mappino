@@ -6,14 +6,16 @@ namespace Mappino.Help {
             '$scope',
             '$mdSidenav',
             '$mdMedia',
-            '$location'
+            '$location',
+            '$anchorScroll'
         ];
 
         constructor(
             private $scope: ng.IScope,
             private $mdSidenav: ISidenavService,
             private $mdMedia: any,
-            private $location: any) {
+            private $location: ng.ILocationService,
+            private $anchorScroll: any) {
             // -
         }
 
@@ -26,22 +28,21 @@ namespace Mappino.Help {
         }
 
 
-        public closeSidenav() {
+        public closeSidenav(anchor) {
             if (!this.$mdMedia('sm')) {
                 return;
             }
             this.$mdSidenav('left-sidenav')
                 .close().then(() => {
-                //this.$location.move()
+                this.moveToAnchor(anchor)
             })
         }
-        //
-        //public toggleSidenav() {
-        //    if (!this.$mdMedia('sm')) {
-        //        return;
-        //    }
-        //    this.$mdSidenav('left-sidenav')
-        //        .toggle();
-        //}
+
+
+        public moveToAnchor(anchor) {
+            this.$location.hash(anchor);
+            this.$anchorScroll();
+        }
+
     }
 }

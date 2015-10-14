@@ -1,7 +1,7 @@
 <ul rn-carousel rn-carousel-transition="fadeAndSlide" rn-carousel-easing="easeFromTo" rn-carousel-index="publicationPreviewSlideIndex"
     class="publication-preview-carousel">
     <li ng-repeat="photo in publication.photos">
-        <div class="publication-preview-carousel_slide-photo"
+        <div ng-click="pubPreviewCtrl.sliderOnClick($event)" class="publication-preview-carousel_slide-photo"
              ng-style="{ 'background-image': 'url([[ photo ]])' }">
         </div>
     </li>

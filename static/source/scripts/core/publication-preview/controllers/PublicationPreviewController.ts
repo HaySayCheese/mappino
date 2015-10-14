@@ -151,6 +151,11 @@ namespace Mappino.Core.PublicationPreview {
             this.$scope.publicationPreviewSlideIndex += 1;
         }
 
+        public sliderOnClick($event) {
+            if (this.$scope.hiddenControls['full-slider']) {
+                this.openFullScreen($event);
+            }
+        }
 
 
         public sendMessage() {
