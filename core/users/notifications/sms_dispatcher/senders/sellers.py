@@ -1,5 +1,8 @@
 # coding=utf-8
 import phonenumbers
+from django.utils.timezone import now
+
+from core.users.notifications.sms_dispatcher.models import SendQueue
 from core.users.notifications.sms_dispatcher.senders.base import BaseSMSSender
 
 
@@ -34,7 +37,7 @@ class SellersSMSDispatcher(BaseSMSSender):
             message = 'Заинтересованный клиент просит перезвонить на номер {0}.'\
                 .format(parsed_phone_number)
 
-        return cls.process_transaction(number, message)
+        SendQueue.enqueue(message, number, now().date())
 
     @classmethod
     def send_sms_about_publication_blocked_by_moderator(cls, number):

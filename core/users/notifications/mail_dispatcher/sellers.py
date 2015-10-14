@@ -11,7 +11,6 @@ class SellersMailDispatcher(object):
         if not email:
             raise RuntimeError('It seems that seller does not specified contact email.')
 
-
         return email_sender.send_html_email(
             template_name = 'email/notifications/incoming_call_request.html',
             context = {
@@ -25,7 +24,6 @@ class SellersMailDispatcher(object):
             subject = u'Запрос обратного звонка ({0})'.format(number), # tr
             addresses_list = [email, ],
         )
-
 
     @staticmethod
     def send_message_email(publication, reply_email, name, message):

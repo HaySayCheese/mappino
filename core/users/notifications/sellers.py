@@ -3,6 +3,7 @@ from django.core.exceptions import SuspiciousOperation
 
 from core.users.constants import Preferences
 from core.users.notifications.mail_dispatcher.sellers import SellersMailDispatcher
+from core.users.notifications.sms_dispatcher.models import SendQueue
 from core.users.notifications.sms_dispatcher.senders.sellers import SellersSMSDispatcher
 
 
