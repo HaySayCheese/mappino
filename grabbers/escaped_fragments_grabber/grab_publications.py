@@ -7,7 +7,7 @@ import requests
 from selenium.webdriver import Firefox
 
 
-if os.path.exists('../../static/escaped_fragments'):
+if os.path.exists('../../static/escaped_fragments/1/0/0/'):
     print 'Would you like to delete previous parsed files? '
     answer = raw_input('Yes/no: ')
     if answer.lower() == 'yes' or answer.lower() == 'y' or not answer:
@@ -15,7 +15,7 @@ if os.path.exists('../../static/escaped_fragments'):
         os.mkdir('../../static/escaped_fragments')
 
 else:
-    os.mkdir('../../static/escaped_fragments')
+    os.makedirs('../../static/escaped_fragments/1/0/0/')
 
 
 driver = Firefox()
@@ -53,7 +53,7 @@ for publication_id in hash_ids:
         'http://mappino.com.ua/map/#!/1/0/0/' + str(publication_id[0]) + ':' + publication_id[1] + '/'))
 
     # gzip html file
-    publication_file = gzip.open('../../static/escaped_fragments/' + str(publication_id[0]) + ':' + publication_id[1] + '.html.gz', 'wb', 9)
+    publication_file = gzip.open('../../static/escaped_fragments/1/0/0/' + str(publication_id[0]) + ':' + publication_id[1] + '.html.gz', 'wb', 9)
     publication_file.writelines(html.encode('utf-8'))
     publication_file.close()
     print 'Created gziped template'
@@ -62,4 +62,4 @@ for publication_id in hash_ids:
 sitemap_file.write('</urlset>')
 sitemap_file.close()
 driver.quit()
-print 'Congratulations! You did it! Parsing is over:3 You parsed ' + iterations + ' templates'
+print 'Congratulations! You did it! Parsing is over:3 You parsed ' + str(iterations) + ' templates'
