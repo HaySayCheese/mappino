@@ -70,23 +70,23 @@ class ObjectStates(AbstractConstant):
             'unpublished':              1,
             'deleted':                  2,
             'rejected_by_moderator':    3,
+            'outdated':                 4,
         })
-
 
     def published(self):
         return self.ids['published']
 
-
     def unpublished(self):
         return self.ids['unpublished']
-
 
     def deleted(self):
         return self.ids['deleted']
 
-
     def rejected_by_moderator(self):
         return self.ids['rejected_by_moderator']
+
+    def outdated(self):
+        return self.ids['outdated']
 OBJECT_STATES = ObjectStates()
 
 
@@ -309,6 +309,19 @@ HEAD_MODELS = {
     OBJECTS_TYPES.garage(): GaragesHeads,
     OBJECTS_TYPES.land(): LandsHeads,
 }
+LIVING_HEAD_MODELS = {
+    OBJECTS_TYPES.flat(): FlatsHeads,
+    OBJECTS_TYPES.house(): HousesHeads,
+    OBJECTS_TYPES.room(): RoomsHeads,
+}
+COMMERCIAL_HEAD_MODELS = {
+    OBJECTS_TYPES.trade(): TradesHeads,
+    OBJECTS_TYPES.office(): OfficesHeads,
+    OBJECTS_TYPES.warehouse(): WarehousesHeads,
+
+    OBJECTS_TYPES.garage(): GaragesHeads,
+    OBJECTS_TYPES.land(): LandsHeads,
+}
 
 
 
@@ -337,3 +350,10 @@ DAILY_RENT_RESERVATIONS_MODELS = {
     OBJECTS_TYPES.house(): HousesDailyRentReservations,
     OBJECTS_TYPES.room(): RoomsDailyRentReservations,
 }
+
+
+LIVING_RENT_PUBLICATION_MAY_BE_ACTIVE = 14     # days
+LIVING_SALE_PUBLICATION_MAY_BE_ACTIVE = 30     # days
+
+COMMERCIAL_RENT_PUBLICATION_MAY_ACTIVE = 30    # days
+COMMERCIAL_SALE_PUBLICATION_MAY_ACTIVE = 45    # days

@@ -18,7 +18,7 @@ from core.managing.ban.classes import BanHandler
 from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 from core.users.models import Users
 from core.users.notifications.sms_dispatcher.checkers import LoginChecker
-from core.users.notifications.sms_dispatcher.common import NotificationsSender
+from core.users.notifications.sms_dispatcher.senders.common import NotificationsSender
 from core.users.notifications.sms_dispatcher.exceptions import ResourceThrottled
 
 
@@ -121,9 +121,7 @@ class LoginManager(object):
                 except ResourceThrottled:
                     return self.PostResponses.request_throttled()
 
-                if not settings.SMS_DEBUG:
-                    NotificationsSender.send_login_code(request, phone_number, user.one_time_token)
-
+                NotificationsSender.send_login_code(request, phone_number, user.one_time_token)
                 return self.PostResponses.ok()
 
     class SecondStep(AnonymousOnlyView):

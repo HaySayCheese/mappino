@@ -265,7 +265,9 @@ class AbstractHeadModel(models.Model):
         # but it's enough to publish it only with video or only with photos.
         #
         # here should be added another check for videos
-        self.check_photos_are_present()
+
+        # todo: enable me back
+        # self.check_photos_are_present()
 
         # All the signals emitters are wrapped into the atomic transaction.
         #
@@ -322,6 +324,31 @@ class AbstractHeadModel(models.Model):
         # sender=None для того, щоб django-orm не витягував автоматично дані з БД,
         # які, швидше за все, не знадобляться в подальшій обробці.
         signals.unpublished.send(
+            sender=None,
+            tid=self.tid,
+            hid=self.id,
+            hash_id=self.hash_id,
+            for_sale=self.for_sale,
+            for_rent=self.for_rent,
+        )
+
+    def mark_as_outdated_and_unpublish(self):
+        signals.before_marking_as_outdated.send(
+            sender=None,
+            tid=self.tid,
+            hid=self.id,
+            hash_id=self.hash_id,
+            for_sale=self.for_sale,
+            for_rent=self.for_rent,
+        )
+
+        self.unpublish()
+        self.state_sid = OBJECT_STATES.outdated()
+        self.save(force_update=True)
+
+        # sender=None для того, щоб django-orm не витягував автоматично дані з БД,
+        # які, швидше за все, не знадобляться в подальшій обробці.
+        signals.after_marking_as_outdated.send(
             sender=None,
             tid=self.tid,
             hid=self.id,

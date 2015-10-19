@@ -1,5 +1,3 @@
-/// <reference path='_all.ts' />
-
 namespace Mappino.Cabinet.Users {
     import IModule = angular.IModule;
 
