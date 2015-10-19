@@ -1,6 +1,5 @@
 # coding=utf-8
 import os
-import redis_lock
 from django.core.management import BaseCommand
 from django.utils.timezone import now
 
