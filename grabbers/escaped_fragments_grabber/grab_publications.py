@@ -53,7 +53,7 @@ for publication_id in hash_ids:
         'http://mappino.com.ua/map/#!/1/0/0/' + str(publication_id[0]) + ':' + publication_id[1] + '/'))
 
     # gzip html file
-    publication_file = gzip.open('../../static/escaped_fragments/' + str(publication_id[0]) + ':' + publication_id[1] + '.html.gz', 'wb', 9)
+    publication_file = gzip.open('../../static/escaped_fragments/' + str(publication_id[0]) + ':' + publication_id[1], 'wb', 9)
     publication_file.writelines(html.encode('utf-8'))
     publication_file.close()
     print 'Created gziped template'
