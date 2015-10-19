@@ -22,10 +22,10 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
     original_image_suffix = '_original'
     min_original_image_size = (600, 400)
 
-    photo_suffix = '_processed'
+    photo_suffix = u'_processed'
     photo_size = (1000, 900)
 
-    thumbnail_suffix = '_big_thumb'
+    thumbnail_suffix = u'_big_thumb'
     thumbnail_size = (550, 450)
 
     @classmethod
@@ -62,7 +62,7 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
             raise PhotosHandlerExceptions.UnsupportedImageType('.gif')
 
         # photo processing
-        temporary_dir = os.path.join(settings.BASE_DIR, 'media/')
+        temporary_dir = os.path.join(settings.BASE_DIR, u'media/')
         if not os.path.exists(temporary_dir):
             os.makedirs(temporary_dir)
 
@@ -72,7 +72,7 @@ class PublicationsPhotosHandler(GoogleCSPhotoUploader):
         # original photo saving
         original_photo_extension = os.path.splitext(image.name)[1].lower()
         original_photo_name = uid + cls.original_image_suffix + original_photo_extension
-        original_image_path = os.path.join(temporary_dir, original_photo_name)
+        original_image_path = os.path.join(ubicode(temporary_dir), unicode(original_photo_name))
 
         with open(original_image_path, 'wb+') as original_img:
             for chunk in image.chunks():
