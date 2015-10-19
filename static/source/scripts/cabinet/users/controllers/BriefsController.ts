@@ -2,6 +2,7 @@
 
 
 namespace Mappino.Cabinet.Users {
+    import BAuthService = Mappino.Core.BAuth.BAuthService;
     export class BriefsController {
         private briefs: Array<Brief> = [];
 
@@ -17,7 +18,8 @@ namespace Mappino.Cabinet.Users {
             '$mdDialog',
             '$state',
             'TXT',
-            'PublicationsService'
+            'PublicationsService',
+            'BAuthService'
         ];
 
         constructor(private $scope: any,
@@ -25,10 +27,12 @@ namespace Mappino.Cabinet.Users {
                     private $mdDialog: any,
                     private $state: ng.ui.IStateService,
                     private TXT: any,
-                    private publicationsService: PublicationsService) {
+                    private publicationsService: PublicationsService,
+                    private bAuthService: BAuthService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Все объявления';
 
+            $scope.profile = bAuthService.user;
             $scope.briefs = this.briefs = [];
             $scope.newPublication = this.newPublication;
 
