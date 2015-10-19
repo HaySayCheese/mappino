@@ -32,7 +32,7 @@ except:
     exit()
 
 
-sitemap_file = codecs.open('../../publications_sitemap.xml', 'w', 'utf-8')
+sitemap_file = codecs.open('../../static/publications_sitemap.xml', 'w', 'utf-8')
 sitemap_file.write('<?xml version="1.0" encoding="UTF-8"?>\n'
                    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
 for publication_id in hash_ids:
