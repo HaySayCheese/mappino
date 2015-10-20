@@ -28,6 +28,10 @@ namespace Mappino.Map {
             $scope.$on('Mappino.Map.PlaceAutocompleteController.PlaceChanged', (event, place) => {
                 this.positioningMap(place);
             });
+
+            $scope.$on('Mappino.Map.FindMyLocationButton.Find', (event, location) => {
+                this.positionToUserLocation(location);
+            });
         }
 
 
@@ -83,6 +87,13 @@ namespace Mappino.Map {
                 this._map.panTo(place.geometry.location);
                 this._map.setZoom(17);
             }
+        }
+
+
+
+        private positionToUserLocation(location) {
+            this._map.panTo(new google.maps.LatLng(location.lat, location.lng));
+            this._map.setZoom(17);
         }
     }
 }
