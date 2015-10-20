@@ -1,5 +1,5 @@
 namespace Mappino.Map {
-    export function FindMyLocationButtonDirective(filtersService): ng.IDirective {
+    export function FindMyLocationButtonDirective($rootScope, filtersService): ng.IDirective {
 
         return {
             restrict: 'A',
@@ -12,13 +12,12 @@ namespace Mappino.Map {
                 $element.on('click', () => {
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition((position) => {
-                            var lat = position.coords.latitude,
-                                lng = position.coords.longitude;
+                            var location = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude
+                            };
 
-                                filtersService.update('map', {
-                                    l: new google.maps.LatLng(lat, lng).toUrlValue(),
-                                    z: 15
-                                });
+                            $rootScope.$broadcast('Mappino.Map.FindMyLocationButton.Find', location)
                         });
                     } else {
                         console.log('fssgsgsg')
@@ -28,5 +27,5 @@ namespace Mappino.Map {
         };
     }
 
-    FindMyLocationButtonDirective.$inject = ['FiltersService'];
+    FindMyLocationButtonDirective.$inject = ['$rootScope', 'FiltersService'];
 }
