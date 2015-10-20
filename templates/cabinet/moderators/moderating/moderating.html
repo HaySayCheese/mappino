@@ -177,6 +177,22 @@
         </md-card>
     </div>
 
+    <div layout="column" layout-align="center center">
+        <md-card>
+            <md-card-content>
+                <div layout="row" layout-align="center center">
+                    <md-button ng-click="modCtrl.banUser()" class="md-raised md-primary red white-text">
+                        Заблокировать
+                    </md-button>
+
+                    <md-button ng-click="modCtrl.addSuspiciousUser()" class="md-raised md-primary red white-text">
+                        Заподозрить -_-
+                    </md-button>
+                </div>
+            </md-card-content>
+        </md-card>
+    </div>
+
 
     <md-card ng-show="!loaders.overlay && publication == null">
         <md-card-content class="center-align">

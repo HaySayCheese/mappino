@@ -8,6 +8,8 @@ namespace Mappino.Cabinet.Moderators {
             delay:      5000
         };
 
+        private publication: any;
+
         public static $inject = [
             '$http',
             '$state',
@@ -21,6 +23,9 @@ namespace Mappino.Cabinet.Moderators {
                     private $mdToast: any,
                     private TXT: any) {
             // ---------------------------------------------------------------------------------------------------------
+            this.publication = {
+                contacts: undefined
+            };
         }
 
 
@@ -61,6 +66,27 @@ namespace Mappino.Cabinet.Moderators {
             return promise;
         }
 
+
+
+        public loadPublicationContacts(publicationIds: any): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/detailed/publication/${publicationIds.tid}:${publicationIds.hid}/contacts/`);
+
+
+            promise.success(response => {
+                this.publication.contacts = response.data;
+            });
+
+            promise.error(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.PUBLICATION.LOAD_CONTACTS.ERROR)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+
+            return promise;
+        }
 
 
         public loadHeld(): ng.IHttpPromise<any> {
@@ -164,6 +190,62 @@ namespace Mappino.Cabinet.Moderators {
 
             return promise;
         }
+
+        public banUser(phone_number: number|string): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/ban/ban_user/`, {
+                phone_number: phone_number
+            });
+
+            promise.success(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.BAN.BAN_USER.SUCCESS)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+            promise.error(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.BAN.BAN_USER.ERROR)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+
+            return promise;
+        }
+
+
+        public addSuspiciousUser(phone_number: number|string): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/ban/add_suspicious_user/`, {
+                phone_number: phone_number
+            });
+
+            promise.success(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.BAN.SUSPICIOUS_USER.SUCCESS)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+            promise.error(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.BAN.SUSPICIOUS_USER.ERROR)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+
+            return promise;
+        }
+
+        public get contacts() {
+            return this.publication.contacts;
+        }
+
     }
 }
 

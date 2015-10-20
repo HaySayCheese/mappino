@@ -46,12 +46,16 @@ namespace Mappino.Cabinet.Moderators {
                 this.moderatingService.load(this.publicationIds)
                     .success(response => {
                         this.$scope.publication = response.data;
-                        console.log(this.$scope.publication)
                         this.$rootScope.loaders.overlay = false;
                     })
                     .error(response => {
                         this.$state.go('moderating', { publication_id: null });
+                    });
+                this.moderatingService.loadPublicationContacts(this.publicationIds)
+                    .success(response => {
+                        this.$scope.contacts = this.moderatingService.contacts;
                     })
+
             } else {
                 this.moderatingService.getPublicationId()
                     .success(response => {
@@ -64,7 +68,7 @@ namespace Mappino.Cabinet.Moderators {
                             this.$rootScope.loaders.overlay = false;
                             this.$state.go('moderating', { publication_id: null });
                         }
-                });
+                    });
             }
         }
 
@@ -106,9 +110,9 @@ namespace Mappino.Cabinet.Moderators {
 
             this.moderatingService.sendNotice(claim.hash_id, notice)
                 .success(response => {
-                claim.moderator_notice = notice;
-                claim.moderatorNotice = '';
-            });
+                    claim.moderator_notice = notice;
+                    claim.moderatorNotice = '';
+                });
         }
 
 
@@ -116,8 +120,8 @@ namespace Mappino.Cabinet.Moderators {
         public closeClaim(claim) {
             this.moderatingService.closeClaim(claim.hash_id)
                 .success(response => {
-                claim.date_closed = response.data.date_closed;
-            });
+                    claim.date_closed = response.data.date_closed;
+                });
         }
 
 
@@ -143,6 +147,18 @@ namespace Mappino.Cabinet.Moderators {
 
         public nextSlide() {
             this.$scope.publicationPreviewSlideIndex += 1;
+        }
+
+        public banUser() {
+
+            this.moderatingService.banUser(this.$scope.contacts.mobile_phone)
+                .success(response => {});
+        }
+
+        public addSuspiciousUser() {
+
+            this.moderatingService.addSuspiciousUser(this.$scope.contacts.mobile_phone)
+                .success(response => {});
         }
     }
 }
