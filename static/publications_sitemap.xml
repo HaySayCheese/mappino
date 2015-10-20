@@ -57,6 +57,10 @@
 	<priority>0.8</priority>
 </url>
 <url>
+	<loc>http://mappino.com.ua/map/#!/1/0/0/0:5ff0290d2c61f1c628cbfc9c707a4d6160011275809d47e54fe246a488fd11a8/</loc>
+	<priority>0.8</priority>
+</url>
+<url>
 	<loc>http://mappino.com.ua/map/#!/1/0/0/0:e439cba1e7245cb463107f3998167fd8498ed96357efd346adb5a7cecdf94c98/</loc>
 	<priority>0.8</priority>
 </url>
@@ -90,10 +94,6 @@
 </url>
 <url>
 	<loc>http://mappino.com.ua/map/#!/1/0/0/0:f0b6cf0a5bd1eaee9253b8187e8f85372b6779e359ac4279e545282f37f3fd20/</loc>
-	<priority>0.8</priority>
-</url>
-<url>
-	<loc>http://mappino.com.ua/map/#!/1/0/0/0:5ff0290d2c61f1c628cbfc9c707a4d6160011275809d47e54fe246a488fd11a8/</loc>
 	<priority>0.8</priority>
 </url>
 <url>

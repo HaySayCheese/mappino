@@ -11,8 +11,10 @@ class Command(BaseCommand):
         from core.users.models import Users
         # read realtors numbers from file: number_details[0] - realtor phone number,
         # number_details[1] - count of publications by current realtor
-        file_with_numbers = open('grabber/realtors_numbers.txt', 'r')
+
+        file_with_numbers = open('mappino/grabbers/realtor_numbers_grabber/realtors_numbers.csv', 'r')
         csvreader = csv.reader(file_with_numbers, delimiter=' ', quotechar='|', quoting=csv.QUOTE_NONNUMERIC)
+
         for number_details in csvreader:
             # if user is not exist ban or add to suspicious list phone number,
             # else ban or add to suspicious list user
@@ -41,7 +43,7 @@ class Command(BaseCommand):
             else:
                 user = user[0]
 
-                self.stdout.write('User: {}'.format(user.full_name()))
+                self.stdout.write(u'User: {0}'.format(user.full_name()))
 
                 # if count of publications by current realtor == 2 add user to suspicious list
                 if number_details[1] == 2:
