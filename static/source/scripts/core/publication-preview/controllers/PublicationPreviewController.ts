@@ -192,6 +192,9 @@ namespace Mappino.Core.PublicationPreview {
 
         public sendClaim() {
             if (this.$scope.forms.publicationClaim.$valid) {
+                if (!this.$scope.claim.another_reason) {
+                    this.$scope.claim.another_reason = 'a'
+                }
                 this.publicationPreviewService.sendClaim(this.$scope.claim, this.publicationIds)
                     .success(response => {
                         this.resetClaimForm();

@@ -40,58 +40,7 @@
 
                     <div ng-include="publicationTemplateUrl"></div>
 
-                    <!--<div layout="column" class="md-padding">-->
-                        <!--<div class="md-subhead blue-text">Контакты</div>-->
-                        <!--<md-divider></md-divider>-->
-                        <!--<div layout="column" layout-padding>-->
-                            <!--<div class="publication-contacts" layout-gt-sm="row" layout-sm="column" layout-padding>-->
-                                <!--<div class="avatar" flex-sm="100" flex-gt-sm="40" layout="column" layout-align="center center">-->
-                                    <!--<img ng-src="[[ publication.contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/empty-or-error-user-avatar.png"-->
-                                         <!--ng-if="publication.contacts.avatar_url" />-->
-                                    <!--<img src="{{ static }}build/images/common/empty-or-error-user-avatar.png" ng-if="!publication.contacts.avatar_url" alt="" />-->
-                                <!--</div>-->
-                                <!--<div flex-sm="100" flex-gt-sm="60" layout="column">-->
-                                    <!--<div class="md-title grey-text text-darken-2" layout-padding ng-if="publication.contacts.first_name || publication.contacts.last_name">-->
-                                        <!--[[ publication.contacts.first_name + '&nbsp;' ]][[ publication.contacts.last_name ]]-->
-                                    <!--</div>-->
-                                    <!--<div ng-if="!( publication.contacts.first_name || publication.contacts.last_name )">Продавец не указал имени.</div>-->
 
-                                    <!--<div layout="row">-->
-                                        <!--<div class="inset" ng-if="publication.contacts.mobile_phone" flex="50">-->
-                                            <!--<div class="md-caption">Моб. телефон:</div>-->
-                                            <!--<a ng-href="tel:[[ publication.contacts.mobile_phone ]]">-->
-                                                <!--[[ publication.contacts.mobile_phone ]]-->
-                                            <!--</a>-->
-                                        <!--</div>-->
-                                        <!--<div class="inset" ng-if="publication.contacts.add_mobile_phone" flex="50">-->
-                                            <!--<div class="md-caption">Доп. моб. телефон:</div>-->
-                                            <!--<a ng-href="tel:[[ publication.contacts.add_mobile_phone ]]">-->
-                                                <!--[[ publication.contacts.add_mobile_phone ]]-->
-                                            <!--</a>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                    <!--<div layout="row">-->
-                                        <!--<div class="inset" ng-if="publication.contacts.landline_phone" flex="50">-->
-                                            <!--<div class="md-caption">Раб. телефон:</div>-->
-                                            <!--[[ publication.contacts.landline_phone ]]-->
-                                        <!--</div>-->
-                                        <!--<div class="inset" ng-if="publication.contacts.add_landline_phone" flex="50">-->
-                                            <!--<div class="md-caption">Доп. раб. телефон:</div>-->
-                                            <!--[[ publication.contacts.add_landline_phone ]]-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                    <!--<div class="inset" ng-if="publication.contacts.email">-->
-                                        <!--<div class="md-caption">E-mail:</div>-->
-                                        <!--<a ng-href="mailto:[[ publication.contacts.email ]]">[[ publication.contacts.email ]]</a>-->
-                                    <!--</div>-->
-                                    <!--<div class="inset" ng-if="publication.contacts.skype">-->
-                                        <!--<div class="md-caption">Skype:</div>-->
-                                        <!--<a ng-href="skype:[[ publication.contacts.skype ]]?call">[[ publication.contacts.skype ]]</a>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
 
 
                     <form class="md-padding" name="rejectReasonForm" layout="column" novalidate ng-show="rejectFormIsVisible">
@@ -132,65 +81,116 @@
         </div>
     </md-card>
 
+    <div layout="column" >
 
-    <div ng-hide="loaders.overlay || !publication.claims">
-        <md-card ng-repeat="claim in publication.claims">
-            <md-card-content layout="column">
-                <div class="md-caption" layout="row" layout-padding>
-                    <span>Создано: [[ ::claim.date_reported | date:'dd.MM.yyyy в HH:mm' ]]</span>
-                    <span flex></span>
-                    <span>[[ ::claim.email ]]</span>
-                </div>
-                <div class="md-body-1" layout="row" layout-align="start center" layout-padding>
-                    <span class="md-body-2">Жалоба:&nbsp;</span>
-                    [[ ::claim.message ]]
-                </div>
-                <div class="md-body-1" layout="row" layout-align="start center" layout-padding ng-show="claim.moderator_notice">
-                    <span>Последняя заметка:&nbsp;</span>
-                    [[ claim.moderator_notice ]]
-                </div>
-                <md-divider></md-divider>
-                <div class="md-caption" layout="row" layout-padding ng-if="claim.date_closed">
-                    <span>Обработано: [[ ::claim.date_closed | date:'dd.MM.yyyy в HH:mm' ]]</span>
-                    <span flex></span>
-                    <span>Модератор: [[ ::claim.moderator_name ]]</span>
-                </div>
-                <div layout="row" ng-if="!claim.date_closed">
-                    <md-input-container flex>
-                        <label>Заметка к жалобе (видима только модераторам)</label>
-                        <input type="text" name="claim_notice" ng-model="claim.moderatorNotice">
-                    </md-input-container>
-                    <md-button class="md-fab md-primary" ng-disabled="!claim.moderatorNotice" ng-click="modCtrl.sendNotice(claim)">
-                        <md-icon>send</md-icon>
-                        <md-tooltip md-direction="top" md-delay="0">
-                            Добавить заметку
-                        </md-tooltip>
-                    </md-button>
-                    <md-button class="md-fab md-primary" ng-click="modCtrl.closeClaim(claim)">
-                        <md-icon>check</md-icon>
-                        <md-tooltip md-direction="top" md-delay="0">
-                            Закрыть жалобу
-                        </md-tooltip>
-                    </md-button>
-                </div>
-            </md-card-content>
-        </md-card>
-    </div>
 
-    <div layout="column" layout-align="center center">
-        <md-card>
+        <md-card layout-align="center center" ng-hide="loaders.overlay || !contacts">
             <md-card-content>
+                <div class="publication-contacts" layout="column" layout-padding>
+                    <div layout-gt-sm="column" layout-sm="row"  flex-gt-sm="35">
+                        <div class="avatar" layout="column" layout-align="center center" layout-fill>
+                            <img ng-src="[[ contacts.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/empty-or-error-user-avatar.png"
+                                 ng-if="contacts.avatar_url" />
+                            <img src="{{ static }}build/images/common/empty-or-error-user-avatar.png" ng-if="!contacts.avatar_url" alt="" />
+                        </div>
+                    </div>
+
+                    <div layout="column" flex-gt-sm="65">
+                        <div class="md-title grey-text text-darken-2" layout-padding ng-if="contacts.first_name || contacts.last_name">
+                            [[ contacts.first_name + '&nbsp;' ]][[ contacts.last_name ]]
+                        </div>
+                        <div ng-if="!(contacts.first_name || contacts.last_name )">Продавец не указал имени.</div>
+
+                        <div layout="row">
+                            <div class="inset" ng-if="contacts.mobile_phone" flex="50">
+                                <div class="md-caption">Моб. телефон:</div>
+                                <a ng-href="tel:[[ contacts.mobile_phone ]]">
+                                    [[ contacts.mobile_phone ]]
+                                </a>
+                            </div>
+                            <div class="inset" ng-if="contacts.add_mobile_phone" flex="50">
+                                <div class="md-caption">Доп. моб. телефон:</div>
+                                <a ng-href="tel:[[ contacts.add_mobile_phone ]]">
+                                    [[ contacts.add_mobile_phone ]]
+                                </a>
+                            </div>
+                        </div>
+                        <div layout="row">
+                            <div class="inset" ng-if="contacts.landline_phone" flex="50">
+                                <div class="md-caption">Раб. телефон:</div>
+                                [[ contacts.landline_phone ]]
+                            </div>
+                            <div class="inset" ng-if="contacts.add_landline_phone" flex="50">
+                                <div class="md-caption">Доп. раб. телефон:</div>
+                                [[ contacts.add_landline_phone ]]
+                            </div>
+                        </div>
+                        <div class="inset" ng-if="contacts.email">
+                            <div class="md-caption">E-mail:</div>
+                            <a ng-href="mailto:[[ contacts.email ]]">[[ contacts.email ]]</a>
+                        </div>
+                        <div class="inset" ng-if="contacts.skype">
+                            <div class="md-caption">Skype:</div>
+                            <a ng-href="skype:[[ contacts.skype ]]?call">[[ contacts.skype ]]</a>
+                        </div>
+                    </div>
+                </div>
                 <div layout="row" layout-align="center center">
                     <md-button ng-click="modCtrl.banUser()" class="md-raised md-primary red white-text">
                         Заблокировать
                     </md-button>
 
                     <md-button ng-click="modCtrl.addSuspiciousUser()" class="md-raised md-primary red white-text">
-                        Заподозрить -_-
+                        Добавить в подозрительные
                     </md-button>
                 </div>
             </md-card-content>
         </md-card>
+
+        <div ng-hide="loaders.overlay || !publication.claims">
+            <md-card ng-repeat="claim in publication.claims">
+                <md-card-content layout="column">
+                    <div class="md-caption" layout="row" layout-padding>
+                        <span>Создано: [[ ::claim.date_reported | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                        <span flex></span>
+                        <span>[[ ::claim.email ]]</span>
+                    </div>
+                    <div class="md-body-1" layout="row" layout-align="start center" layout-padding>
+                        <span class="md-body-2">Жалоба:&nbsp;</span>
+                        [[ ::claim.message ]]
+                    </div>
+                    <div class="md-body-1" layout="row" layout-align="start center" layout-padding ng-show="claim.moderator_notice">
+                        <span>Последняя заметка:&nbsp;</span>
+                        [[ claim.moderator_notice ]]
+                    </div>
+                    <md-divider></md-divider>
+                    <div class="md-caption" layout="row" layout-padding ng-if="claim.date_closed">
+                        <span>Обработано: [[ ::claim.date_closed | date:'dd.MM.yyyy в HH:mm' ]]</span>
+                        <span flex></span>
+                        <span>Модератор: [[ ::claim.moderator_name ]]</span>
+                    </div>
+                    <div layout="row" ng-if="!claim.date_closed">
+                        <md-input-container flex>
+                            <label>Заметка к жалобе (видима только модераторам)</label>
+                            <input type="text" name="claim_notice" ng-model="claim.moderatorNotice">
+                        </md-input-container>
+                        <md-button class="md-fab md-primary" ng-disabled="!claim.moderatorNotice" ng-click="modCtrl.sendNotice(claim)">
+                            <md-icon>send</md-icon>
+                            <md-tooltip md-direction="top" md-delay="0">
+                                Добавить заметку
+                            </md-tooltip>
+                        </md-button>
+                        <md-button class="md-fab md-primary" ng-click="modCtrl.closeClaim(claim)">
+                            <md-icon>check</md-icon>
+                            <md-tooltip md-direction="top" md-delay="0">
+                                Закрыть жалобу
+                            </md-tooltip>
+                        </md-button>
+                    </div>
+                </md-card-content>
+            </md-card>
+        </div>
+
     </div>
 
 

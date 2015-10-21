@@ -42,9 +42,10 @@ class PublicationsCheckQueue(models.Model):
 
         def add_or_update(self, tid, hash_id):
             records = self.filter(publication_tid=tid, publication_hash_id=hash_id)
-            for record in records:
-                record.date_added = now()
-                record.save()
+            if records:
+                for record in records:
+                    record.date_added = now()
+                    record.save()
             else:
                 return self.add(tid, hash_id)
 

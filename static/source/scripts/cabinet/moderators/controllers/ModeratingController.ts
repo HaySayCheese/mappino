@@ -54,6 +54,8 @@ namespace Mappino.Cabinet.Moderators {
                 this.moderatingService.loadPublicationContacts(this.publicationIds)
                     .success(response => {
                         this.$scope.contacts = this.moderatingService.contacts;
+                        console.log(this.$scope.contacts);
+
                     })
 
             } else {
