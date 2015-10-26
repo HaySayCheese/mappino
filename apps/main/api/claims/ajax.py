@@ -42,13 +42,13 @@ class ClaimsView(View):
         hash_id = args[1]
 
         try:
-            params = angular_parameters(request, ['reason_tid', 'message', 'email'])
+            params = angular_parameters(request, ['reason_tid', 'email'])
 
             reason_tid = int(params['reason_tid'])
-            if reason_tid == PublicationsClaims.Reasons.other:
-                message = params['message']
+            if reason_tid == PublicationsClaims.ObjectsManager.Reasons.other:
+                message = angular_parameters(request, ['message']).get('message')
             else:
-                message = params.get('message')
+                message = ''
 
             email = params['email']
 
@@ -69,10 +69,9 @@ class ClaimsView(View):
             return cls.PostResponses.publication_does_not_exists()
 
         try:
-            PublicationsClaims.new(
-                publication.tid, publication.hash_id, reason_tid, email, message)
+            PublicationsClaims.objects.add(publication.tid, publication.hash_id, reason_tid, email, message)
 
-        except PublicationsClaims.InvalidClaimTypeId:
+        except:
             return cls.PostResponses.invalid_params()
 
         # seems to be ok

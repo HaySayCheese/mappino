@@ -215,7 +215,7 @@ class HeldPublicationsView(ModeratorsView):
             щоб на вищих рівнях можна було накласти додакові умови на вибірку.
             По суті, дана функція лише дампить результати цієї вибірки в список в певному форматі.
         """
-        publications_list = queryset.values_list('id', 'hash_id', 'body__description', 'for_rent', 'for_sale')
+        publications_list = queryset.values_list('id', 'hash_id', 'body__address', 'body__description', 'for_rent', 'for_sale')
         if not publications_list:
             return []
 
@@ -229,17 +229,17 @@ class HeldPublicationsView(ModeratorsView):
             photo = publication.title_photo()
             # publication may no have title photo
             if photo:
-                title_photos[photo.id] = photo.big_thumb_url
+                title_photos[publication.id] = photo.big_thumb_url
 
         briefs = []
-        for head_id, hash_id, title, description, for_rent, for_sale in publications_list:
+        for head_id, hash_id, address, description, for_rent, for_sale in publications_list:
             briefs.append({
                 'tid': tid,
                 'hid': hash_id,
                 'description': description,
                 'for_rent': for_rent,
                 'for_sale': for_sale,
-
+                'title': address,
                 'photo_url': title_photos.get(head_id)
 
                 # ...
@@ -294,7 +294,8 @@ class ClaimCloseView(ModeratorsView):
                 'code': 0,
                 'message': 'OK',
                 'data': {
-                    'date_closed': claim.date_closed.strftime('%Y-%m-%dT%H:%M:%S%z')
+                    'date_closed': claim.date_closed.strftime('%Y-%m-%dT%H:%M:%S%z'),
+                    'moderator_name': claim.moderator.full_name()
                 }
             }
 

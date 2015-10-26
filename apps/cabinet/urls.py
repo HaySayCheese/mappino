@@ -16,4 +16,5 @@ urlpatterns = patterns('apps.cabinet',
 
    # Moderators API
    url(r'', include('apps.cabinet.api.moderators.claims.publications.urls')),
+   url(r'', include('apps.cabinet.api.moderators.ban.urls')),
 )

@@ -106,12 +106,6 @@
 
                 <div layout="row" layout-sm="column">
                     <md-input-container flex-gt-sm="33" flex-sm="99">
-                        <label>Тип рынка</label>
-                        <md-select md-on-close="u_pubCtrl.checkField('market_type_sid')" ng-model="publication.body.market_type_sid">
-                            <md-option ng-repeat="marketType in ::TYPES.MARKET" value="[[ ::marketType.id ]]">[[ ::marketType.title ]]</md-option>
-                        </md-select>
-                    </md-input-container>
-                    <md-input-container flex-gt-sm="33" flex-sm="99">
                         <label>Площадь (м<sup>2</sup>)</label>
                         <input name="area" ng-model="publication.body.area" only-number-with-dots required>
                         <div ng-messages="forms.publicationForm.area.$error"

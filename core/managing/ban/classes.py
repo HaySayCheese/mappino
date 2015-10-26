@@ -106,7 +106,7 @@ class BanHandler(object):
         if user.mobile_phone and cls.remove_suspicious_number(user.mobile_phone):
             liberated = True
 
-        if user.add_mobile_phone and cls.remove_suspicious_number(user.mobile_phone):
+        if user.add_mobile_phone and cls.remove_suspicious_number(user.add_mobile_phone):
             liberated = True
 
         if user.landline_phone and cls.remove_suspicious_number(user.landline_phone):

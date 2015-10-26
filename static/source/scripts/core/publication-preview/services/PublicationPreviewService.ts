@@ -123,9 +123,10 @@ namespace Mappino.Core.PublicationPreview {
         public sendClaim(claim: Object, publicationIds: any): IHttpPromise<any> {
             var promise: IHttpPromise<any> = this.$http.post(`/ajax/api/publications/${publicationIds.tid}:${publicationIds.hid}/claims/`, {
                 'email':        claim['email'],
-                'reason_sid':   claim['reason_sid'],
+                'reason_tid':   claim['reason_sid'],
                 'message':      claim['another_reason']
             });
+
 
             promise.success(response => {});
 
