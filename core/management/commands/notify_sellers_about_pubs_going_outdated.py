@@ -10,7 +10,7 @@ from core.publications.constants import LIVING_HEAD_MODELS, \
     LIVING_RENT_PUBLICATION_MAY_BE_ACTIVE, LIVING_SALE_PUBLICATION_MAY_BE_ACTIVE, \
     COMMERCIAL_RENT_PUBLICATION_MAY_ACTIVE, COMMERCIAL_SALE_PUBLICATION_MAY_ACTIVE
 from core.users.models import Users
-from core.users.notifications.sms_dispatcher.models import SendQueue
+from core.users.notifications.sms_dispatcher.senders.base import TimeGentleSMSSender
 
 
 class Command(BaseCommand):
@@ -76,16 +76,16 @@ class Command(BaseCommand):
                 [:1][0]
 
             if possible_inactive_publications_count > 1:
-                SendQueue.enqueue(
+                TimeGentleSMSSender.process_transaction(
+                    user_mobile_phone,
                     'Похоже, что Вы давно не продлевали несколько своих объявлений. '
-                    'Пожалуйста, зайдите в личный кабинет mappino, чтобы автоматически продлить их.',
-                    user_mobile_phone, today)
+                    'Пожалуйста, зайдите в личный кабинет mappino, чтобы автоматически продлить их.')
 
             elif possible_inactive_publications_count == 1:
-                SendQueue.enqueue(
+                TimeGentleSMSSender.process_transaction(
+                    user_mobile_phone,
                     'Похоже, что Вы давно не продлевали одно из своих объявлений. '
-                    'Пожалуйста, зайдите в личный кабинет mappino, чтобы автоматически продлить его.',
-                    user_mobile_phone, today)
+                    'Пожалуйста, зайдите в личный кабинет mappino, чтобы автоматически продлить его.')
 
             print('User {phone} is alerted about {count} publication(s).'.format(
                 phone=user_mobile_phone, count=possible_inactive_publications_count))

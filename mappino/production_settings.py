@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     'core.users.UsersApp',
     'core.users.favorites.FavoritesApp',
     'core.users.notifications.NotificationsApp',
+    'core.users.notifications.sms_dispatcher.SMSDispatcherApp',
 
     'core.support.SupportApp',
 

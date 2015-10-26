@@ -1,16 +1,17 @@
 # coding=utf-8
 import phonenumbers
-from django.utils.timezone import now
 
-from core.users.notifications.sms_dispatcher.models import SendQueue
-from core.users.notifications.sms_dispatcher.senders.base import BaseSMSSender
+from core.users.notifications.sms_dispatcher.senders.base import TimeGentleSMSSender
 
 
-class SellersSMSDispatcher(BaseSMSSender):
+class SellersSMSDispatcher(TimeGentleSMSSender):
     @classmethod
     def send_sms_about_incoming_email(cls, request, number):
         # WARN: message can't be encoded in unicode, because of urlencode can process only ASCII
         message = 'Заинтересованный клиент оставил Вам сообщение. Проверьте, пожалуйста, почту.' # tr
+
+        # TimeGentleSMSSender is used to enqueue sms if in country of the owner of the publication
+        # is now night.
         return cls.process_transaction(number, message)
 
     @classmethod
@@ -37,7 +38,9 @@ class SellersSMSDispatcher(BaseSMSSender):
             message = 'Заинтересованный клиент просит перезвонить на номер {0}.'\
                 .format(parsed_phone_number)
 
-        SendQueue.enqueue(message, number, now().date())
+        # TimeGentleSMSSender is used to enqueue sms if in country of the owner of the publication
+        # is now night.
+        TimeGentleSMSSender.process_transaction(number, message)
 
     @classmethod
     def send_sms_about_publication_blocked_by_moderator(cls, number):

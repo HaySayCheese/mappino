@@ -441,6 +441,10 @@ class AbstractHeadModel(models.Model):
             for_rent=self.for_rent,
         )
 
+        # removing all the photos of the publication
+        for photo in self.photos():
+            photo.remove()
+
         super(AbstractHeadModel, self).delete()
 
     def check_required_fields(self):
