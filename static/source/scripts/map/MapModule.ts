@@ -53,6 +53,7 @@ namespace Mappino.Map {
 
 
     /** Directives */
+    app.directive('findMyLocationButton', FindMyLocationButtonDirective);
     app.directive('googlePlaceAutocomplete', GooglePlaceAutocompleteDirective);
     app.directive('navbarLeft', NavbarLeftDirective);
     app.directive('navbarRight', NavbarRightDirective);

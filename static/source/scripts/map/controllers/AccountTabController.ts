@@ -33,6 +33,8 @@ namespace Mappino.Map {
                                 this.$scope.forms.loginForm.mobilePhone.$setValidity('invalid', false);
                             } else if (response.code == 200) {
                                 this.$scope.forms.loginForm.mobilePhone.$setValidity('throttled', false);
+                            } else if (response.code == 2) {
+                                this.$scope.forms.loginForm.mobilePhone.$setValidity('disabled', false);
                             } else {
                                 localStorage.setItem('mobile_code', this.$scope.account.mobileCode);
                                 localStorage.setItem('mobile_phone', this.$scope.account.mobilePhone);

@@ -6,12 +6,8 @@
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>http://mappino.com.ua/map/</loc>
-        <priority>1.0</priority>
-    </url>
-    <url>
         <loc>http://mappino.com.ua/help/</loc>
-        <priority>1.0</priority>
+        <priority>0.5</priority>
     </url>
 
 </urlset>

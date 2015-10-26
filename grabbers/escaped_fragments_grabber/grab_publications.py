@@ -7,7 +7,7 @@ import requests
 from selenium.webdriver import Firefox
 
 
-if os.path.exists('../../static/escaped_fragments'):
+if os.path.exists('../../static/escaped_fragments/1/0/0/'):
     print 'Would you like to delete previous parsed files? '
     answer = raw_input('Yes/no: ')
     if answer.lower() == 'yes' or answer.lower() == 'y' or not answer:
@@ -15,7 +15,7 @@ if os.path.exists('../../static/escaped_fragments'):
         os.mkdir('../../static/escaped_fragments')
 
 else:
-    os.mkdir('../../static/escaped_fragments')
+    os.makedirs('../../static/escaped_fragments/1/0/0/')
 
 
 driver = Firefox()
@@ -32,7 +32,7 @@ except:
     exit()
 
 
-sitemap_file = codecs.open('../../publications_sitemap.xml', 'w', 'utf-8')
+sitemap_file = codecs.open('../../static/publications_sitemap.xml', 'w', 'utf-8')
 sitemap_file.write('<?xml version="1.0" encoding="UTF-8"?>\n'
                    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
 for publication_id in hash_ids:
@@ -62,4 +62,4 @@ for publication_id in hash_ids:
 sitemap_file.write('</urlset>')
 sitemap_file.close()
 driver.quit()
-print 'Congratulations! You did it! Parsing is over:3 You parsed ' + iterations + ' templates'
+print 'Congratulations! You did it! Parsing is over:3 You parsed ' + str(iterations) + ' templates'

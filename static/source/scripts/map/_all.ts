@@ -35,6 +35,7 @@
 // ####################
 // Directives import
 // ####################
+/// <reference path='directives/FindMyLocationButtonDirective.ts' />
 /// <reference path='directives/GooglePlaceAutocompleteDirective.ts' />
 /// <reference path='directives/NavbarLeftDirective.ts' />
 /// <reference path='directives/NavbarLeftSectionScrollDirective.ts' />
