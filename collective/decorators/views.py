@@ -33,6 +33,14 @@ def moderator_required_or_forbidden(func):
     return wrapper
 
 
+def manager_required_or_forbidden(func):
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated() or not request.user.is_manager:
+            return HttpResponseForbidden()
+        return func(request, *args, **kwargs)
+    return wrapper
+
+
 def anonymous_required(func):
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated():

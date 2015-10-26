@@ -1,0 +1,85 @@
+<div class="moderating-page" layout-wrap layout-padding layout-sm="column" layout-md="column" layout-lg="column" layout-gt-lg="row"
+     layout-align-md="start center" layout-align-lg="start center" layout-align-gt-lg="center start" ng-controller="ModeratingController as modCtrl">
+
+    <md-card class="publication-card" ng-hide="loaders.overlay || !publication">
+        <md-card-content>
+            <div class="publication-view" layout="column">
+                <div layout="column">
+                    <header>
+                        <ul rn-carousel rn-carousel-index="publicationPreviewSlideIndex" class="publication-preview-carousel">
+                            <li ng-repeat="photo in ::publication.photos">
+                                <div class="layer">
+                                    <img ng-src="[[ ::photo ]]" alt=""/>
+                                </div>
+                            </li>
+                        </ul>
+
+                        <div class="publication-view-image-overlay">
+                            <md-button class="md-icon-button slide-prev" ng-hide="publicationPreviewSlideIndex == 0"
+                                       ng-click="modCtrl.prevSlide()">
+                                <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_left</md-icon>
+                            </md-button>
+                            <md-button class="md-icon-button slide-next" ng-hide="publicationPreviewSlideIndex == publication.photos.length - 1"
+                                       ng-click="modCtrl.nextSlide()">
+                                <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_right</md-icon>
+                            </md-button>
+
+
+                            <div class="publication-view-overlay-description" layout="row" layout-align="start center" layout-padding>
+                                <div layout="column" layout-padding>
+                                    <div class="md-headline">
+                                        [[ ::publication.title ]]
+                                    </div>
+                                    <div class="md-subhead">
+                                        [[ ::publication.address ]]
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div ng-include="publicationTemplateUrl"></div>
+
+
+
+
+                    <form class="md-padding" name="rejectReasonForm" layout="column" novalidate ng-show="rejectFormIsVisible">
+                        <md-divider></md-divider>
+                        <div layout="row">
+                            <md-input-container flex>
+                                <label>Причина блокировки</label>
+                                <input type="text" name="reject_reason" ng-model="moderator.rejectReason" required>
+                                <div ng-messages="rejectReasonForm.reject_reason.$error" ng-show="rejectReasonForm.reject_reason.$touched">
+                                    <div ng-message="required">Обязательное поле</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div layout="row">
+                            <md-button class="md-primary" flex ng-click="modCtrl.toggleRejectForm()">
+                                Отмена
+                            </md-button>
+                            <md-button class="md-raised md-primary" flex ng-click="modCtrl.rejectPublication()">
+                                Отправить
+                            </md-button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </md-card-content>
+        <md-divider></md-divider>
+        <div class="md-actions" layout="row">
+            <md-button class="md-warn md-hue-3" ng-click="modCtrl.toggleRejectForm()">
+                Отклонить
+            </md-button>
+            <md-button class="md-primary md-hue-1" ng-click="modCtrl.holdPublication()">
+                Отложить
+            </md-button>
+            <span flex></span>
+            <md-button class="md-primary md-hue-1" ng-click="modCtrl.acceptPublication()">
+                Проверено
+            </md-button>
+        </div>
+    </md-card>
+
+
+</div>

@@ -1,0 +1,42 @@
+md-card {
+    @include size(600px, auto);
+    min-width: 480px;
+    max-width: 750px;
+
+
+    &.-brief {
+        width: 550px;
+    }
+
+
+    @media screen and (max-width: 775px) {
+        @include size(100% !important, auto);
+        min-width: 100% !important;
+        margin: 7px 0 !important;
+    }
+
+    @media screen and (min-width: 1700px) {
+        &.-fake:not([ng-hide]) {
+            display: none !important;
+        }
+    }
+
+
+    &.-fake,
+    &.-transparent {
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+
+
+    &.-no-padding {
+        md-card-content {
+            padding: 0 !important;
+        }
+    }
+
+
+    .md-headline {
+        margin-top: 5px !important;
+    }
+}

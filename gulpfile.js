@@ -126,12 +126,21 @@ gulp.task('Sass:Cabinet:Moderators', function () {
         .pipe(gulp.dest(PATHS.BUILD.STYLES + '/cabinet/moderators/'));
 });
 
+gulp.task('Sass:Cabinet:Managers', function () {
+    return gulp.src(PATHS.SOURCE.STYLES + '/cabinet/managers/cabinet.managers.scss')
+        .pipe(sass())
+        .pipe(minifyCSS())
+        .pipe(rename({ suffix: '.min' }))
+        .pipe(gulp.dest(PATHS.BUILD.STYLES + '/cabinet/managers/'));
+});
+
 gulp.task('Sass', [
     'Sass:Landing',
     'Sass:Help',
     'Sass:Map',
     'Sass:Cabinet:Users',
-    'Sass:Cabinet:Moderators'
+    'Sass:Cabinet:Moderators',
+    'Sass:Cabinet:Managers'
 ]);
 
 
@@ -210,12 +219,28 @@ gulp.task('TypeScript:Cabinet:Moderators', function() {
         .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/cabinet/moderators/'));
 });
 
+
+gulp.task('TypeScript:Cabinet:Managers', function() {
+    return gulp.src(PATHS.SOURCE.SCRIPTS + '/cabinet/managers/_all.ts')
+        .pipe(sourcemaps.init())
+        .pipe(typescript({
+            noImplicitAny: false,
+            target: 'ES5',
+            out: 'cabinet.managers.js'
+        }))
+        .pipe(uglify())
+        .pipe(rename({ suffix: '.min' }))
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(PATHS.BUILD.SCRIPTS + '/cabinet/managers/'));
+});
+
 gulp.task('TypeScript', [
     'TypeScript:Landing',
     'TypeScript:Help',
     'TypeScript:Map',
     'TypeScript:Cabinet:Users',
-    'TypeScript:Cabinet:Moderators'
+    'TypeScript:Cabinet:Moderators',
+    'TypeScript:Cabinet:Managers'
 ]);
 
 
@@ -230,6 +255,7 @@ gulp.task('watch', function () {
     gulp.watch(PATHS.SOURCE.STYLES + '/help/**/*.scss',                 ['Sass:Help']);
     gulp.watch(PATHS.SOURCE.STYLES + '/cabinet/users/**/*.scss',        ['Sass:Cabinet:Users']);
     gulp.watch(PATHS.SOURCE.STYLES + '/cabinet/moderators/**/*.scss',   ['Sass:Cabinet:Moderators']);
+    gulp.watch(PATHS.SOURCE.STYLES + '/cabinet/managers/**/*.scss',     ['Sass:Cabinet:Managers']);
 
 
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/core/**/*.ts',                  ['TypeScript']);
@@ -238,6 +264,7 @@ gulp.task('watch', function () {
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/help/**/*.ts',                  ['TypeScript:Help']);
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/cabinet/users/**/*.ts',         ['TypeScript:Cabinet:Users']);
     gulp.watch(PATHS.SOURCE.SCRIPTS + '/cabinet/moderators/**/*.ts',    ['TypeScript:Cabinet:Moderators']);
+    gulp.watch(PATHS.SOURCE.SCRIPTS + '/cabinet/managers/**/*.ts',      ['TypeScript:Cabinet:Managers']);
 });
 
 

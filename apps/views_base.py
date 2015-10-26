@@ -39,3 +39,13 @@ class ModeratorsView(AuthenticatedOnlyView):
             return HttpResponseForbidden('User should have moderators permissions.')
 
         return super(ModeratorsView, self).dispatch(*args, **kwargs)
+
+
+class ManagersView(AuthenticatedOnlyView):
+    def dispatch(self, *args, **kwargs):
+        request = args[0]
+        if not request.user.is_manager:
+            return HttpResponseForbidden('User should have managers permissions.')
+
+        return super(ManagersView, self).dispatch(*args, **kwargs)
+

@@ -32,3 +32,13 @@ urlpatterns += patterns('apps.cabinet.templates.moderators',
     # settings
     url(r'^ajax/template/cabinet/moderators/settings/$', 'settings'),
 )
+
+
+urlpatterns += patterns('apps.cabinet.templates.managers',
+
+    # users
+    url(r'^ajax/template/cabinet/managers/users/$', 'users'),
+
+    # settings
+    url(r'^ajax/template/cabinet/managers/settings/$', 'settings'),
+)

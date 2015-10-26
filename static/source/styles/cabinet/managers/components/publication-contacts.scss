@@ -1,0 +1,6 @@
+.publication-contacts {
+    .avatar img {
+        @include square(200px);
+        border-radius: 50%;
+    }
+}

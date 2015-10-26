@@ -252,9 +252,10 @@ namespace Mappino.Cabinet.Users {
                         var latLng = new google.maps.LatLng(this.$scope.publication.head.lat || 50.448159, this.$scope.publication.head.lng || 30.524654);
                         this.map.setCenter(latLng);
                         this.publicationsService.checkField(this.publicationIds, { fieldName: "lat_lng", fieldValue: latLng.lat() + ";" + latLng.lng() });
-                    }, 1000);
+                    }, 2000);
+
                 });
-            }, 2000)
+            }, 3000)
         }
 
 

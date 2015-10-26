@@ -1,0 +1,15 @@
+<div class="moderating-page" layout-wrap layout-padding layout-sm="column" layout-md="column" layout-lg="column" layout-gt-lg="row"
+     layout-align-md="start center" layout-align-lg="start center" layout-align-gt-lg="center start" ng-controller="ManagingController as manCtrl">
+    <md-card>
+        <md-card-content>
+            <md-list>
+                <md-list-item ng-repeat="user in users" layout="column" layout-align="center start">
+                    <span>[[ user.first_name ]] [[ user.last_name ]]</span>
+                    <span>[[ user.mobile_phone ]]</span>
+                    <md-divider></md-divider>
+                </md-list-item>
+            </md-list>
+        </md-card-content>
+    </md-card>
+
+</div>

@@ -1,0 +1,44 @@
+//
+// Materialize include
+// --------------------------------------------------
+@import "../../common/material/material";
+@import "../../common/additions/additions";
+@import "../../common/components/components";
+
+
+
+// additions
+@import "additions/md-toolbar";
+@import "additions/md-progress";
+@import "additions/md-card";
+
+
+
+// custom components
+@import "components/publication-controls";
+@import "components/publication-contacts";
+
+
+// pages style
+@import "pages/users";
+@import "pages/settings";
+
+
+
+
+// sets size to 100%
+html,
+body {
+    @include square(100%);
+    overflow: hidden;
+    background: url('../../../images/cabinet/cabinet-bg.jpg') center center no-repeat fixed;
+}
+
+main {
+    height: calc(100% - 56px);
+    overflow: auto;
+    
+    md-content {
+        background: transparent !important;
+    }
+}

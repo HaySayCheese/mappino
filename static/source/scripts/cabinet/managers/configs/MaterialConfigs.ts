@@ -1,0 +1,29 @@
+/// <reference path='../_all.ts' />
+
+
+namespace Mappino.Cabinet.Managers {
+    'use strict';
+
+    export class MaterialConfigs {
+
+        constructor(private app: ng.IModule) {
+            app.config(['$mdThemingProvider', '$mdDateLocaleProvider', ($mdThemingProvider, $mdDateLocaleProvider) => {
+                $mdThemingProvider.theme('default')
+                    .primaryPalette('blue')
+                    .accentPalette('deep-orange');
+
+                $mdDateLocaleProvider.months = moment.months();
+                $mdDateLocaleProvider.shortMonths = moment.monthsShort();
+
+                $mdDateLocaleProvider.days = moment.weekdays();
+                $mdDateLocaleProvider.shortDays = moment.weekdaysShort();
+
+                $mdDateLocaleProvider.firstDayOfWeek = 1;
+
+                $mdDateLocaleProvider.formatDate = (date) => {
+                    return moment(date).format('L');
+                };
+            }]);
+        }
+    }
+}

@@ -122,6 +122,13 @@ namespace Mappino.Core.Values {
                     }
                 },
 
+                'MANAGERS': {
+                    'LOAD_USERS': {
+                        'ERROR': 'Не удалось загрузить данные пользователей'
+                    }
+                },
+
+
 
                 'TICKETS': {
                     'CREATE': {
