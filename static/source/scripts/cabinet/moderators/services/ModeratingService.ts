@@ -192,7 +192,7 @@ namespace Mappino.Cabinet.Moderators {
         }
 
         public banUser(phone_number: number|string): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/ban/ban_user/`, {
+            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/ban/ban-user/`, {
                 phone_number: phone_number
             });
 
@@ -218,7 +218,7 @@ namespace Mappino.Cabinet.Moderators {
 
 
         public addSuspiciousUser(phone_number: number|string): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/ban/add_suspicious_user/`, {
+            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/ban/add-suspicious-user/`, {
                 phone_number: phone_number
             });
 
@@ -234,6 +234,31 @@ namespace Mappino.Cabinet.Moderators {
                 this.$mdToast.show(
                     this.$mdToast.simple()
                         .content(this.TXT.TOASTS.BAN.SUSPICIOUS_USER.ERROR)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+
+            return promise;
+        }
+
+        public removeSuspiciousUser(phone_number: number|string): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/moderators/ban/remove-suspicious-user/`, {
+                phone_number: phone_number
+            });
+
+            promise.success(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.BAN.REMOVE_SUSPICIOUS_USER.SUCCESS)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+            promise.error(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.BAN.REMOVE_SUSPICIOUS_USER.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );

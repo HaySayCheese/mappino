@@ -54,10 +54,10 @@ class AddSuspiciousUser(ModeratorsView):
 
         @classmethod
         @json_response_not_found
-        def number_already_exist(cls):
+        def user_already_suspicious(cls):
             return {
                 'code': 2,
-                'message': 'Number already suspicious'
+                'message': 'User already suspicious'
             }
 
     @classmethod
@@ -68,10 +68,46 @@ class AddSuspiciousUser(ModeratorsView):
         user = Users.objects.filter(mobile_phone=phone_number)[0]
 
         if BanHandler.check_suspicious_user(user):
-            return cls.PostResponses.number_already_exist()
+            return cls.PostResponses.user_already_suspicious()
 
         if not BanHandler.add_suspicious_user(user):
-            return cls.PostResponses.number_already_exist()
+            return cls.PostResponses.user_already_suspicious()
+
+        else:
+            return cls.PostResponses.ok()
+
+
+class RemoveSuspiciousUser(ModeratorsView):
+
+    class PostResponses(object):
+        @staticmethod
+        @json_response
+        def ok():
+            return {
+                'code': 0,
+                'message': 'OK'
+            }
+
+        @classmethod
+        @json_response_not_found
+        def user_not_suspicious(cls):
+            return {
+                'code': 2,
+                'message': 'User is not suspicious'
+            }
+
+    @classmethod
+    def post(cls, request):
+
+        phone_number = angular_post_parameters(request).get('phone_number', '')
+
+        user = Users.objects.filter(mobile_phone=phone_number)[0]
+
+        if not BanHandler.check_suspicious_user(user):
+            return cls.PostResponses.user_not_suspicious()
+
+        if not BanHandler.liberate_user(user):
+            return cls.PostResponses.user_not_suspicious()
 
         else:
             return cls.PostResponses.ok()

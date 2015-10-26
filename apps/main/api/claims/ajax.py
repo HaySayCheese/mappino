@@ -42,13 +42,13 @@ class ClaimsView(View):
         hash_id = args[1]
 
         try:
-            params = angular_parameters(request, ['reason_tid', 'message', 'email'])
+            params = angular_parameters(request, ['reason_tid', 'email'])
 
             reason_tid = int(params['reason_tid'])
             if reason_tid == PublicationsClaims.ObjectsManager.Reasons.other:
-                message = params['message']
+                message = angular_parameters(request, ['message']).get('message')
             else:
-                message = params.get('message')
+                message = ''
 
             email = params['email']
 
@@ -68,11 +68,11 @@ class ClaimsView(View):
         except (IndexError, Http404):
             return cls.PostResponses.publication_does_not_exists()
 
-        # try:
-        PublicationsClaims.objects.add(publication.tid, publication.hash_id, reason_tid, email, message)
+        try:
+            PublicationsClaims.objects.add(publication.tid, publication.hash_id, reason_tid, email, message)
 
-        # except:
-        #     return cls.PostResponses.invalid_params()
+        except:
+            return cls.PostResponses.invalid_params()
 
         # seems to be ok
         return cls.PostResponses.ok()

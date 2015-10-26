@@ -99,8 +99,8 @@
                         <div class="md-title grey-text text-darken-2" layout-padding ng-if="contacts.first_name || contacts.last_name">
                             [[ contacts.first_name + '&nbsp;' ]][[ contacts.last_name ]]
                         </div>
-                        <div ng-if="!(contacts.first_name || contacts.last_name )">Продавец не указал имени.</div>
-
+                        <div layout-padding ng-if="!(contacts.first_name || contacts.last_name )">Продавец не указал имени.</div>
+                        <div layout-padding ng-if="contacts.is_suspicious" class="red-text">Подозрительный пользователь</div>
                         <div layout="row">
                             <div class="inset" ng-if="contacts.mobile_phone" flex="50">
                                 <div class="md-caption">Моб. телефон:</div>
@@ -140,8 +140,12 @@
                         Заблокировать
                     </md-button>
 
-                    <md-button ng-click="modCtrl.addSuspiciousUser()" class="md-raised md-primary red white-text">
+                    <md-button ng-if="!contacts.is_suspicious" ng-click="modCtrl.addSuspiciousUser()" class="md-raised md-primary red white-text">
                         Добавить в подозрительные
+                    </md-button>
+
+                    <md-button ng-if="contacts.is_suspicious" ng-click="modCtrl.removeSuspiciousUser()" class="md-raised md-primary red white-text">
+                        Убрать из подозрительных
                     </md-button>
                 </div>
             </md-card-content>

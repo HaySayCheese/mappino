@@ -294,7 +294,8 @@ class ClaimCloseView(ModeratorsView):
                 'code': 0,
                 'message': 'OK',
                 'data': {
-                    'date_closed': claim.date_closed.strftime('%Y-%m-%dT%H:%M:%S%z')
+                    'date_closed': claim.date_closed.strftime('%Y-%m-%dT%H:%M:%S%z'),
+                    'moderator_name': claim.moderator.full_name()
                 }
             }
 

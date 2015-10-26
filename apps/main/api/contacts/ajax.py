@@ -1,4 +1,5 @@
 # coding=utf-8
+from core.managing.ban.classes import BanHandler
 from django.views.generic import View
 
 from collective.decorators.ajax import json_response, json_response_bad_request
@@ -9,7 +10,7 @@ class Contacts(View):
     class GetResponses(object):
         @staticmethod
         @json_response
-        def ok(user):
+        def ok(request, user):
             preferences = user.preferences
             contacts = {
                 'first_name': user.first_name,
@@ -31,6 +32,9 @@ class Contacts(View):
                 'allow_call_requests': preferences.allow_call_requests,
                 'allow_messaging': preferences.is_message_sending_is_allowed,
             }
+
+            if request.user.is_moderator:
+                contacts['is_suspicious'] = BanHandler.check_suspicious_user(user)
 
             # Not all fields may be present.
             # User may omit some of them,
@@ -69,4 +73,4 @@ class Contacts(View):
         except IndexError:
             return cls.GetResponses.invalid_parameters()
 
-        return cls.GetResponses.ok(publication.owner)
+        return cls.GetResponses.ok(request, publication.owner)

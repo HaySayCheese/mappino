@@ -54,8 +54,6 @@ namespace Mappino.Cabinet.Moderators {
                 this.moderatingService.loadPublicationContacts(this.publicationIds)
                     .success(response => {
                         this.$scope.contacts = this.moderatingService.contacts;
-                        console.log(this.$scope.contacts);
-
                     })
 
             } else {
@@ -123,6 +121,7 @@ namespace Mappino.Cabinet.Moderators {
             this.moderatingService.closeClaim(claim.hash_id)
                 .success(response => {
                     claim.date_closed = response.data.date_closed;
+                    claim.moderator_name = response.data.moderator_name;
                 });
         }
 
@@ -160,7 +159,17 @@ namespace Mappino.Cabinet.Moderators {
         public addSuspiciousUser() {
 
             this.moderatingService.addSuspiciousUser(this.$scope.contacts.mobile_phone)
-                .success(response => {});
+                .success(response => {
+                    this.$scope.contacts.is_suspicious = true;
+                });
+        }
+
+        public removeSuspiciousUser() {
+
+            this.moderatingService.removeSuspiciousUser(this.$scope.contacts.mobile_phone)
+                .success(response => {
+                    this.$scope.contacts.is_suspicious = false;
+                });
         }
     }
 }
