@@ -2,8 +2,11 @@
 import urllib
 from urlparse import urlparse
 
+from django.utils.timezone import now
+
 from collective.constants import Constant
 from collective.exceptions import InvalidArgument
+from core.users.notifications.sms_dispatcher.models import SendQueue
 from mappino import settings
 
 
@@ -65,3 +68,18 @@ class BaseSMSSender(object):
 
         response = urllib.urlopen("http://smsc.ru/sys/send.php", params).read()
         return 'OK' in response
+
+
+class TimeGentleSMSSender(BaseSMSSender):
+    @classmethod
+    def process_transaction(cls, number, message):
+        current_time = now()
+        if 19 <= current_time.hour <= 20:
+            super(TimeGentleSMSSender, cls).process_transaction(number, message)
+
+        else:
+            cls.enqueue(message, number, now().date())
+
+    @staticmethod
+    def enqueue(message, phone_number, date):
+        return SendQueue.enqueue(message, phone_number, date)

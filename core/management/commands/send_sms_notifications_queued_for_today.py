@@ -5,7 +5,7 @@ from django.utils.timezone import now
 
 from core import redis_connections
 from core.users.notifications.sms_dispatcher.models import SendQueue
-from core.users.notifications.sms_dispatcher.senders.queued import FromQueueSender
+from core.users.notifications.sms_dispatcher.senders.base import TimeGentleSMSSender
 
 
 class Command(BaseCommand):
@@ -26,7 +26,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         redis = redis_connections['cache']
-        current_sender_pid = int(redis.get('sms_queue_sender'))
+        current_sender_pid = redis.get('sms_queue_sender')
+        if current_sender_pid is not None:
+            current_sender_pid = int(current_sender_pid)
+
         if current_sender_pid is not None and self.check_pid(current_sender_pid):
             print('It seems that queue sender is already running.')
             exit(-1)
@@ -45,7 +48,7 @@ class Command(BaseCommand):
                 print('Notifications sending started...')
 
                 for record in enqueued_records:
-                    if FromQueueSender.process_transaction(record.phone_number, record.message):
+                    if TimeGentleSMSSender.process_transaction(record.phone_number, record.message):
                         print(u'Message sent: {message}; Phone number: {number}'.format(
                             message=record.message, number=record.phone_number))
 
