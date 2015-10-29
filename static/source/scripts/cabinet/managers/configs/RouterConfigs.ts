@@ -19,7 +19,17 @@ namespace Mappino.Cabinet.Managers {
                     .state('settings', {
                         url: "/settings/",
                         templateUrl: '/ajax/template/cabinet/managers/settings/'
+                    })
+                    .state('userBriefs', {
+                        url: "/users/:user_hid/briefs/",
+                        templateUrl: '/ajax/template/cabinet/managers/briefs/'
+                    })
+                    .state('editing', {
+                        url: "/users/:user_hid/briefs/:publication_id/edit/",
+                        templateUrl: '/ajax/template/cabinet/managers/publication/'
                     });
+
+
 
 
                 $locationProvider.hashPrefix('!');

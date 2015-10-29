@@ -41,4 +41,15 @@ urlpatterns += patterns('apps.cabinet.templates.managers',
 
     # settings
     url(r'^ajax/template/cabinet/managers/settings/$', 'settings'),
+
+    #briefs
+    url(r'^ajax/template/cabinet/managers/briefs/$', 'briefs'),
+
+    #publication
+    url(r'^ajax/template/cabinet/managers/publication/$', 'publication'),
+
+    # unpublished publications forms
+    url(r'^ajax/template/cabinet/managers/publications/unpublished/(\d+)/$', 'publications_unpublished_form'),
+    url(r'^ajax/template/cabinet/managers/publications/unpublished/footer/$', 'publications_unpublished_footer'),
+
 )

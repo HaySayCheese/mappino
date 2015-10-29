@@ -1,10 +1,8 @@
 /// <reference path='../_all.ts' />
 
 
-namespace Mappino.Cabinet.Users {
-    import BAuthService = Mappino.Core.BAuth.BAuthService;
+namespace Mappino.Cabinet.Managers {
     export class BriefsController {
-        private briefs: Array<Brief> = [];
 
         private newPublication: IPublicationNew = {
             tid:        0,
@@ -15,59 +13,62 @@ namespace Mappino.Cabinet.Users {
         public static $inject = [
             '$scope',
             '$rootScope',
-            '$mdDialog',
             '$state',
-            'TXT',
+            'ManagingService',
             'PublicationsService',
-            'BAuthService'
+            '$mdDialog',
+            'TXT'
         ];
 
         constructor(private $scope: any,
                     private $rootScope: any,
-                    private $mdDialog: any,
                     private $state: ng.ui.IStateService,
-                    private TXT: any,
+                    private managingService: ManagingService,
                     private publicationsService: PublicationsService,
-                    private bAuthService: BAuthService) {
+                    private $mdDialog: any,
+                    private TXT: any) {
             // ---------------------------------------------------------------------------------------------------------
-            $rootScope.pageTitle = 'Все объявления';
-
-            $scope.profile = bAuthService.user;
-            $scope.briefs = this.briefs = [];
+            $rootScope.loaders = {
+                overlay:    false,
+                navbar:     false,
+                avatar:     false
+            };
             $scope.newPublication = this.newPublication;
 
-            this.loadBriefs();
+            $scope.userHid = $state.params['user_hid'];
+            this.loadUserBriefs($scope.userHid);
         }
 
 
+        private loadUserBriefs(userHid: string|number) {
+            this.$rootScope.loaders.overlay = true;
 
-        private loadBriefs() {
-            this.$rootScope.loaders.navbar = true;
-
-            this.publicationsService.loadBriefs()
+            this.managingService.loadUserBriefs(userHid)
                 .success(response => {
-                    var briefs = response.data;
+                    this.$rootScope.loaders.overlay = false;
+                    this.$scope.briefs = response.data;
+                });
+        }
 
-                    for (let i = 0, len = briefs.length; i < len; i++) {
-                        var brief = briefs[i];
+        public createPublication() {
+            var newPublication = this.$scope.newPublication;
 
-                        this.$scope.briefs.push(new Brief(
-                            brief.tid,
-                            brief.hid,
-                            brief.created,
-                            brief.for_rent,
-                            brief.for_sale,
-                            brief.photo_url,
-                            brief.state_sid,
-                            brief.description,
-                            brief.moderator_message
-                        ))
-                    }
-                    this.$rootScope.loaders.navbar = false;
+            this.$rootScope.loaders.overlay = true;
+
+            this.managingService.createPublication(this.$scope.userHid, newPublication)
+                .success(response => {
+                    this.$rootScope.loaders.overlay = false;
+                    this.$state.go('editing', { user_hid: this.$scope.userHid, publication_id: newPublication.tid + ":" + response.data.hid });
                 })
                 .error(response => {
-                    this.$rootScope.loaders.navbar = false;
-                });
+                    this.$rootScope.loaders.overlay = false;
+                })
+        }
+
+        public validatePublicationOperation() {
+            if (this.$scope.newPublication.for_sale == false && this.$scope.newPublication.for_rent == false) {
+                this.$scope.newPublication.for_sale = true;
+            }
         }
 
 
@@ -92,17 +93,17 @@ namespace Mappino.Cabinet.Users {
 
                         for (let i = 0, len = briefs.length; i < len; i++) {
                             var _brief = briefs[i];
+                            console.log(briefs[i]);
 
                             if (_brief.hid == brief.hid) {
                                 if (_brief.state_sid == BRIEF_STATES.REMOVED) {
                                     briefs.splice(i, 1);
                                     len--;
                                 } else {
-                                    _brief.state_sid = BRIEF_STATES.REMOVED;
+                                    brief.state_sid = BRIEF_STATES.REMOVED;
                                 }
                             }
                         }
-
                         this.$rootScope.loaders.overlay = false;
                     })
                     .error(response => {
@@ -118,13 +119,12 @@ namespace Mappino.Cabinet.Users {
             this.publicationsService.unpublish({ tid: brief.tid, hid: brief.hid })
                 .success(response => {
                     this.$rootScope.loaders.overlay = false;
-                    this.$state.go('publication_edit', { publication_id: brief.tid + ':' + brief.hid });
+                    this.$state.go('editing', { 'user_hid': this.$scope.userHid, 'publication_id': brief.tid + ':' + brief.hid });
                 })
                 .error(response => {
                     this.$rootScope.loaders.overlay = false;
                 });
         }
-
 
 
         public editPublication($event, brief: Brief) {
@@ -144,39 +144,17 @@ namespace Mappino.Cabinet.Users {
                     this.publicationsService.unpublish({ tid: brief.tid, hid: brief.hid })
                         .success(response => {
                             this.$rootScope.loaders.overlay = false;
-                            this.$state.go('publication_edit', { publication_id: brief.tid + ':' + brief.hid });
+                            this.$state.go('editing', { 'user_hid': this.$scope.userHid, 'publication_id': brief.tid + ':' + brief.hid });
                         })
                         .error(response => {
                             this.$rootScope.loaders.overlay = false;
                         });
                 });
             } else {
-                this.$state.go('publication_edit', { publication_id: brief.tid + ':' + brief.hid });
+                this.$state.go('editing', { 'user_hid': this.$scope.userHid, 'publication_id': brief.tid + ':' + brief.hid });
             }
         }
 
 
-
-        public createPublication() {
-            var newPublication = this.$scope.newPublication;
-
-            this.$rootScope.loaders.overlay = true;
-
-            this.publicationsService.create(newPublication)
-                .success(response => {
-                    this.$rootScope.loaders.overlay = false;
-                    this.$state.go('publication_edit', { publication_id: newPublication.tid + ":" + response.data.hid });
-                })
-                .error(response => {
-                    this.$rootScope.loaders.overlay = false;
-                })
-        }
-
-
-        public validatePublicationOperation() {
-            if (this.$scope.newPublication.for_sale == false && this.$scope.newPublication.for_rent == false) {
-                this.$scope.newPublication.for_sale = true;
-            }
-        }
     }
 }

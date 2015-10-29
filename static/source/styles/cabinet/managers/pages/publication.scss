@@ -1,0 +1,136 @@
+.publication-page {
+    form {
+        position: relative;
+    }
+
+    #publication-map {
+        @include size(100%, 400px);
+    }
+
+    .drop-container {
+        .drop-box {
+            height: 200px;
+            color: color('blue-grey', 'lighten-2');
+            border: 3px dashed color('blue-grey', 'lighten-4');
+            border-radius: 10px;
+
+            @include animation(border-color .5s ease);
+
+        }
+
+        &:hover,
+        &.dragover {
+            .drop-box {
+                border-color: color('blue-grey', 'lighten-3');
+            }
+        }
+    }
+
+
+    .publication-photos-list {
+        position: relative;
+
+        .publication-photo {
+            min-height: 150px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid color('blue-grey', 'lighten-4');
+            border-radius: 3px;
+
+
+            &.-main {
+                border-color: color('green', 'base');
+            }
+
+            &:not(.-temp) {
+                md-progress-circular {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    @include transform(translate(-50%, -50%) scale(0.8) !important)
+                }
+            }
+
+            &_remove-btn,
+            &_set-title-btn {
+                position: absolute;
+                top: 5px;
+            }
+
+            &_remove-btn {
+                right: 5px;
+            }
+
+            &_set-title-btn {
+                left: 5px;
+            }
+        }
+
+        img {
+            @include square(100%)
+        }
+
+
+        md-fab-speed-dial {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+    }
+
+
+
+    .publication-preview-container {
+        header {
+            position: relative;
+        }
+
+        .publication-preview-carousel {
+            @include size(100%, 100%);
+            height: auto;
+            min-height: 300px;
+            max-height: 400px;
+
+            .slide-photo {
+                @include square(100%);
+                background-size: cover;
+                background-repeat: no-repeat;
+            }
+        }
+
+        .publication-header-description {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+
+            color: #fff;
+            background-color: rgba(0, 0, 0, .2);
+            text-shadow: 0 0 5px color('grey', 'darken-2'), 0 0 1px color('grey', 'darken-4');
+        }
+
+        .fullscreen-slider-button {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .slide-prev-button,
+        .slide-next-button {
+            position: absolute;
+            top: 50%;
+            @include translate(0, -50%);
+        }
+
+        .slide-prev-button {
+            left: 0;
+        }
+
+        .slide-next-button {
+            right: 0;
+        }
+    }
+
+
+
+}

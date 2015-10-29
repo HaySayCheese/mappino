@@ -1,0 +1,116 @@
+<md-card>
+    <md-card-content>
+        <div class="md-subhead blue-text">Местоположение</div>
+        <div class="md-padding">
+            <div layout="column">
+                <md-input-container>
+                    <input id="publication-map-input" name="address" aria-label="Местоположение" ng-model="publication.body.address" required>
+                    <div ng-messages="publicationForm.address.$error"
+                         ng-show="publicationForm.$submitted || publicationForm.address.$touched">
+                        <div ng-message="required">Обязательное поле</div>
+                        <div ng-message="invalid">Местоположение указано неверно</div>
+                    </div>
+                </md-input-container>
+
+                <div id="publication-map"></div>
+            </div>
+        </div>
+    </md-card-content>
+</md-card>
+
+<md-card>
+    <md-card-content>
+        <div class="md-subhead blue-text">Фото и видео</div>
+        <div class="drop-container" ngf-drop ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
+             ngf-accept="'image/*'" ngf-change="pubCtrl.uploadPublicationPhotos($files)">
+
+            <div class="md-padding">
+                <div class="drop-box" layout="column" layout-align="center center">
+
+                    <p class="center-align">Перенесите сюда фото или видео файл</p>
+
+                    <md-button class="md-primary" ngf-select ngf-multiple="true" accept="image/*"
+                               ngf-change="pubCtrl.uploadPublicationPhotos($files)">
+                        Выбрать файл
+                    </md-button>
+                </div>
+            </div>
+
+            <div class="md-padding center-align red-text text-lighten-2" ng-show="!publication.photos.length">
+                Публикация объявления без фотографий невозможна
+            </div>
+            <div class="md-padding center-align red-text text-lighten-2" ng-show="publicationPhotosErrors.minimumPhotos">
+                Нужно больше фотографий для публикации этого объявления
+            </div>
+            <div class="md-padding center-align red-text text-lighten-2" ng-show="publicationPhotosErrors.photoTooSmall">
+                Изображение слишком маленькое
+            </div>
+            <div class="md-padding center-align red-text text-lighten-2" ng-show="publicationPhotosErrors.photoTooLarge">
+                Изображение слишком большое
+            </div>
+
+            <div class="publication-photos-list">
+                <div layout="column">
+                    <div layout-sm="column" layout-gt-sm="row" layout-wrap layout-padding>
+                        <div flex-gt-sm="50" ng-repeat="photo in publication.photos" >
+                            <div class="publication-photo" layout="column" layout-align="center center" ng-class="{ '-main': photo.is_title }">
+                                <div layout="row">
+                                    <img ng-src="[[ photo.thumbnail_url ]]" alt="" on-error-src="{{ static }}build/images/common/image-404.png" />
+                                </div>
+
+                                <md-progress-circular md-mode="indeterminate" ng-show="publicationPhotoLoader[photo.hash_id]"></md-progress-circular>
+
+
+                                <md-button aria-label="Удалить фотографию" class="md-fab md-mini white publication-photo_remove-btn"
+                                           ng-disabled="publicationPhotoLoader[photo.hash_id]"
+                                           ng-click="pubCtrl.removePublicationPhoto(photo.hash_id)">
+                                    <md-icon class="red-text">delete</md-icon>
+                                    <md-tooltip md-direction="bottom" md-delay="0">
+                                        Удалить фотографию
+                                    </md-tooltip>
+                                </md-button>
+
+                                <md-button aria-label="Сделать основной фотографией" class="md-fab md-mini white publication-photo_set-title-btn"
+                                           ng-hide="photo.is_title"
+                                           ng-disabled="publicationPhotoLoader[photo.hash_id]"
+                                           ng-click="pubCtrl.setTitlePhoto(photo.hash_id)">
+                                    <md-icon class="blue-text">check</md-icon>
+                                    <md-tooltip md-direction="bottom" md-delay="0">
+                                        Сделать основной фотографией
+                                    </md-tooltip>
+                                </md-button>
+                            </div>
+                        </div>
+
+                        <div flex-gt-sm="50" ng-repeat="tempPhoto in tempPublicationPhotos">
+                            <div class="publication-photo" layout="column" layout-align="center center">
+                                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </md-card-content>
+</md-card>
+
+
+
+<div class="md-whiteframe-z2" layout="row" publication-controls>
+    <md-button class="md-warn md-hue-3" hide-sm ng-click="pubCtrl.removePublication($event)">
+        Удалить
+    </md-button>
+    <md-button class="md-icon-button md-warn md-hue-3" hide-gt-sm show-sm ng-click="pubCtrl.removePublication($event)">
+        <md-icon>delete</md-icon>
+    </md-button>
+
+    <md-button class="md-primary md-hue-1" ng-click="pubCtrl.doneEditingLaterPublication($event)">
+        Отложить
+    </md-button>
+
+    <span flex></span>
+
+    <md-button class="md-raised md-primary" ng-click="pubCtrl.publishPublication()">
+        Опубликовать
+    </md-button>
+</div>

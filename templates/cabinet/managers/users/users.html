@@ -1,14 +1,140 @@
-<div class="moderating-page" layout-wrap layout-padding layout-sm="column" layout-md="column" layout-lg="column" layout-gt-lg="row"
+<div class="users-page" layout-wrap layout-padding layout-sm="column" layout-md="column" layout-lg="column" layout-gt-lg="row"
      layout-align-md="start center" layout-align-lg="start center" layout-align-gt-lg="center start" ng-controller="ManagingController as manCtrl">
-    <md-card>
+
+    <md-card ng-show="!loaders.overlay">
         <md-card-content>
-            <md-list>
-                <md-list-item ng-repeat="user in users" layout="column" layout-align="center start">
-                    <span>[[ user.first_name ]] [[ user.last_name ]]</span>
-                    <span>[[ user.mobile_phone ]]</span>
-                    <md-divider></md-divider>
+            <div layout="column" flex-gt-md="80">
+                <div layout="row">
+                    <md-input-container flex="30">
+                        <label>Код</label>
+                        <md-select ng-model="account.mobileCode" disabled class="select-number">
+                            <md-option class="black-text" ng-repeat="code in COUNTRY.CODES" selected>[[ code ]]</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container flex="70">
+                        <label>Номер телефона</label>
+                        <input type="tel" name="mobilePhone" ng-model="account.mobilePhone" autofocus only-number required>
+                        <div ng-messages="loginForm.mobilePhone.$error"
+                             ng-show="loginForm.$submitted || loginForm.mobilePhone.$touched">
+                            <div ng-message="required">Обязательное поле</div>
+                            <div ng-message="invalid">Номер телефона указан неверно</div>
+                            <div ng-message="existed">Етот аккаунт уже существует</div>
+
+                        </div>
+                    </md-input-container>
+                </div>
+                <div layout="row" class="md-padding">
+                    <md-button class="md-raised md-primary" type="submit" flex>
+                        Создать
+                    </md-button>
+                </div>
+            </div>
+        </md-card-content>
+    </md-card>
+
+    <md-card ng-show="!loaders.overlay">
+        <md-card-content>
+            <md-list class="md-body-1">
+                <md-list-item class="user-block" ng-repeat="user in users" layout="row" layout-align="start start" flex>
+
+                    <div layout-gt-sm="column" layout-sm="row"  flex-gt-sm="20">
+                        <div class="avatar" layout="column" layout-align="center center">
+                            <img ng-src="[[ user.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/empty-or-error-user-avatar.png"
+                                 ng-if="user.avatar_url" />
+                            <img src="{{ static }}build/images/common/empty-or-error-user-avatar.png" ng-if="!user.avatar_url" alt="" />
+                        </div>
+                    </div>
+                    <div layout="column" flex>
+                        <div class="user-data">
+                            <span layout="row" class="grey-text">Имя пользователя:</span>
+                            <span>[[ user.first_name ]] [[ user.last_name ]]</span>
+                        </div>
+                        <div class="user-data">
+                            <span layout="row" class="grey-text">Номер телефона:</span>
+                            <span>[[ user.mobile_phone ]]</span>
+                        </div>
+
+                        <div class="user-data">
+                            <span layout="row" class="grey-text">Доп. номер телефона:</span>
+                            <span>[[ user.add_mobile_phone ]]</span>
+                            <span ng-if="!user.add_mobile_phone">Не указан</span>
+                        </div>
+
+                    </div>
+                    <div layout="column" flex>
+                        <div class="user-data">
+                            <span layout="row" flex class="grey-text">Рабочий телефон:</span>
+                            <span>[[ user.landline_phone ]]</span>
+                            <span ng-if="!user.landline_phone.length">Не указан</span>
+                        </div>
+
+                        <div class="user-data">
+                            <span layout="row" class="grey-text">Доп. рабочий телефон:</span>
+                            <span>[[ user.add_landline_phone ]]</span>
+                            <span ng-if="!user.add_landline_phone.length">Не указан</span>
+                        </div>
+
+                    </div>
+                    <div layout="column" flex="25">
+                        <div class="user-data">
+                            <span layout="row" flex class="grey-text">Skype:</span>
+                            <span>[[ user.skype ]]</span>
+                            <span ng-if="!user.skype.length">Не указан</span>
+                        </div>
+
+                        <div class="user-data">
+                            <span layout="row" flex class="grey-text">Почта:</span>
+                            <span>[[ user.email ]]</span>
+                            <span ng-if="!user.email.length">Не указан</span>
+                        </div>
+
+                    </div>
+                    <div layout="column" flex="15">
+                        <div class="user-data">
+                            <span layout="row" flex class="grey-text">Всего объявлений:</span>
+                            <span>[[ user.pub_count.all ]]</span>
+                        </div>
+
+                        <div class="user-data">
+                            <span layout="row" flex class="grey-text">Из них опубликовано:</span>
+                            <span>[[ user.pub_count.published ]]</span>
+                        </div>
+                        <md-button class="md-raised md-primary" ui-sref="userBriefs({ user_hid: user.hid})">Просмотреть</md-button>
+                    </div>
+                    <div layout="row">
+                    <md-divider></md-divider></div>
                 </md-list-item>
             </md-list>
+
+            <!--<table class="bordered md-body-1">-->
+                <!--<thead>-->
+                    <!--<tr>-->
+                        <!--<th>Имя пользователя</th>-->
+                        <!--<th>Моб. телефон</th>-->
+                        <!--<th>Доп. моб. телефон</th>-->
+                        <!--<th>Раб. телефон</th>-->
+                        <!--<th>Доп. раб.телефон</th>-->
+                        <!--<th>Skype</th>-->
+                        <!--<th>Почта</th>-->
+                        <!--<th>Количество объявлений</th>-->
+                        <!--<th>Активных объявлений</th>-->
+
+                    <!--</tr>-->
+                <!--</thead>-->
+                <!--<tbody>-->
+                    <!--<tr ng-repeat="user in users">-->
+                        <!--<td flex>[[ user.first_name ]] [[ user.last_name ]]</td>-->
+                        <!--<td flex>[[ user.mobile_phone ]]</td>-->
+                        <!--<td flex>[[ user.add_mobile_phone ]]</td>-->
+                        <!--<td flex>[[ user.landline_phone ]]</td>-->
+                        <!--<td flex>[[ user.add_landline_phone ]]</td>-->
+                        <!--<td flex>[[ user.skype ]]</td>-->
+                        <!--<td flex>[[ user.email ]]</td>-->
+                        <!--<td flex>[[ user.all_pub_count ]]</td>-->
+                        <!--<td flex>[[ user.published_pub_count ]]</td>-->
+                    <!--</tr>-->
+                <!--</tbody>-->
+            <!--</table>-->
         </md-card-content>
     </md-card>
 

@@ -35,12 +35,16 @@ namespace Mappino.Cabinet.Managers {
     /** Application configuration create */
     new ApplicationConfigs(app);
 
-
     app.service('ManagingService', ManagingService);
+    app.service('PublicationsService', PublicationsService);
+
+    app.directive('publicationControls', publicationControls);
 
 
     /** Module controllers */
+    app.controller('BriefsController', BriefsController);
     app.controller('CabinetController', CabinetController);
     app.controller('SettingsController', SettingsController);
     app.controller('ManagingController', ManagingController);
+    app.controller('PublicationController', PublicationController);
 }

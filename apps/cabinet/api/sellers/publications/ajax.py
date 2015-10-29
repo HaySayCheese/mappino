@@ -146,7 +146,7 @@ class Publication(CabinetView):
             return cls.GetResponses.invalid_parameters()
 
         # check owner
-        if head.owner.id != request.user.id:
+        if head.owner.id != request.user.id and (not request.user.is_manager):
             raise PermissionDenied()
 
         # seems to be ok
@@ -177,7 +177,7 @@ class Publication(CabinetView):
             return cls.PutResponses.invalid_parameters()
 
         # check owner
-        if head.owner.id != request.user.id:
+        if head.owner.id != request.user.id and (not request.user.is_manager):
             raise PermissionDenied()
 
         returned_value = None
@@ -240,7 +240,7 @@ class Publication(CabinetView):
             return cls.DeleteResponses.invalid_parameters()
 
         # check owner
-        if head.owner.id != request.user.id:
+        if head.owner.id != request.user.id and (not request.user.is_manager):
             raise PermissionDenied()
 
         if not head.is_deleted():
@@ -306,7 +306,7 @@ class Publication(CabinetView):
                 return cls.PutResponses.invalid_publication()
 
             # check owner
-            if head.owner.id != request.user.id:
+            if head.owner.id != request.user.id and (not request.user.is_manager):
                 raise PermissionDenied()
 
             operation = kwargs['operation']
@@ -429,7 +429,7 @@ class Publication(CabinetView):
                 return cls.PostResponses.invalid_hash_id()
 
             # check owner
-            if publication.owner.id != request.user.id:
+            if publication.owner.id != request.user.id and (not request.user.is_manager):
                 # no http response is needed here.
                 # django will generate special error response automatically.
                 raise PermissionDenied()
@@ -493,7 +493,7 @@ class Publication(CabinetView):
                 return cls.DeleteResponses.invalid_params()
 
             # check owner
-            if publication.owner.id != request.user.id:
+            if publication.owner.id != request.user.id and (not request.user.is_manager):
                 raise PermissionDenied()
 
             # process photo deletion
@@ -565,7 +565,7 @@ class Publication(CabinetView):
                 return cls.PutResponses.invalid_hid()
 
             # check owner
-            if publication.owner.id != request.user.id:
+            if publication.owner.id != request.user.id and (not request.user.is_manager):
                 raise PermissionDenied()
 
             # process image

@@ -1,85 +1,90 @@
-<div class="moderating-page" layout-wrap layout-padding layout-sm="column" layout-md="column" layout-lg="column" layout-gt-lg="row"
-     layout-align-md="start center" layout-align-lg="start center" layout-align-gt-lg="center start" ng-controller="ModeratingController as modCtrl">
-
-    <md-card class="publication-card" ng-hide="loaders.overlay || !publication">
-        <md-card-content>
-            <div class="publication-view" layout="column">
-                <div layout="column">
-                    <header>
-                        <ul rn-carousel rn-carousel-index="publicationPreviewSlideIndex" class="publication-preview-carousel">
-                            <li ng-repeat="photo in ::publication.photos">
-                                <div class="layer">
-                                    <img ng-src="[[ ::photo ]]" alt=""/>
-                                </div>
-                            </li>
-                        </ul>
-
-                        <div class="publication-view-image-overlay">
-                            <md-button class="md-icon-button slide-prev" ng-hide="publicationPreviewSlideIndex == 0"
-                                       ng-click="modCtrl.prevSlide()">
-                                <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_left</md-icon>
-                            </md-button>
-                            <md-button class="md-icon-button slide-next" ng-hide="publicationPreviewSlideIndex == publication.photos.length - 1"
-                                       ng-click="modCtrl.nextSlide()">
-                                <md-icon class="material-icons md-light md-48 md-dark-shadow">chevron_right</md-icon>
-                            </md-button>
+<div class="briefs-page" layout-wrap layout-padding  layout-sm="column" layout-md="column" layout-lg="row" layout-gt-lg="row" layout-align-sm="start center" layout-align-md="start center"
+     layout-align-lg="center start" layout-align-gt-lg="center start" ng-controller="BriefsController as briefsCtrl">
 
 
-                            <div class="publication-view-overlay-description" layout="row" layout-align="start center" layout-padding>
-                                <div layout="column" layout-padding>
-                                    <div class="md-headline">
-                                        [[ ::publication.title ]]
-                                    </div>
-                                    <div class="md-subhead">
-                                        [[ ::publication.address ]]
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </header>
+    <md-card class="-brief" ng-hide="loaders.overlay">
+        <md-card-content layout="column">
+            <div layout="column" layout-align="center center">
+                <img class="brief-image" src="{{ static }}build/images/cabinet/brief-new-publication.jpg" alt=""/>
+                <h3 class="md-headline center-align grey-text text-darken-2">Добавить новое объявление</h3>
 
-                    <div ng-include="publicationTemplateUrl"></div>
-
-
-
-
-                    <form class="md-padding" name="rejectReasonForm" layout="column" novalidate ng-show="rejectFormIsVisible">
-                        <md-divider></md-divider>
-                        <div layout="row">
-                            <md-input-container flex>
-                                <label>Причина блокировки</label>
-                                <input type="text" name="reject_reason" ng-model="moderator.rejectReason" required>
-                                <div ng-messages="rejectReasonForm.reject_reason.$error" ng-show="rejectReasonForm.reject_reason.$touched">
-                                    <div ng-message="required">Обязательное поле</div>
-                                </div>
-                            </md-input-container>
-                        </div>
-                        <div layout="row">
-                            <md-button class="md-primary" flex ng-click="modCtrl.toggleRejectForm()">
-                                Отмена
-                            </md-button>
-                            <md-button class="md-raised md-primary" flex ng-click="modCtrl.rejectPublication()">
-                                Отправить
-                            </md-button>
-                        </div>
-                    </form>
+                <div layout="row">
+                    <md-checkbox ng-change="briefsCtrl.validatePublicationOperation();" class="md-primary" ng-model="newPublication.for_sale" aria-label="О продаже">
+                        О продаже
+                    </md-checkbox>
+                    <md-checkbox ng-change="briefsCtrl.validatePublicationOperation();" class="md-primary" ng-model="newPublication.for_rent" aria-label="Аренда">
+                        Об аренде
+                    </md-checkbox>
                 </div>
+
+                <md-input-container>
+                    <label>Тип недвижимости</label>
+                    <md-select ng-model="newPublication.tid">
+                        <md-option ng-repeat="type in ::TYPES.REALTY" value="[[ ::type.id ]]">[[ ::type.titles.genitive ]]</md-option>
+                    </md-select>
+                </md-input-container>
             </div>
         </md-card-content>
         <md-divider></md-divider>
-        <div class="md-actions" layout="row">
-            <md-button class="md-warn md-hue-3" ng-click="modCtrl.toggleRejectForm()">
-                Отклонить
-            </md-button>
-            <md-button class="md-primary md-hue-1" ng-click="modCtrl.holdPublication()">
-                Отложить
-            </md-button>
-            <span flex></span>
-            <md-button class="md-primary md-hue-1" ng-click="modCtrl.acceptPublication()">
-                Проверено
+        <div class="md-actions" layout="row" layout-align="center center">
+            <md-button class="md-raised md-primary" ng-click="briefsCtrl.createPublication()">
+                Создать объявление
             </md-button>
         </div>
     </md-card>
 
+
+
+
+    <md-card ng-hide="loaders.overlay || briefs.length">
+        <md-card-content>
+            У пользовалеля пока нет объявлений
+        </md-card-content>
+    </md-card>
+
+    <md-card ng-repeat="brief in briefs| orderBy: 'state_sid'" ng-hide="loaders.overlay || !briefs.length">
+        <img class="md-card-image" ng-src="[[ ::brief.photo_url ]]" alt="" on-error-src="{{ static }}build/images/cabinet/no-publication-image.jpg" />
+        <img class="md-card-image" src="{{ static }}build/images/cabinet/no-publication-image.jpg" ng-hide="brief.photo_url" alt="" />
+        <ul rn-carousel rn-carousel-index="publicationPreviewSlideIndex" class="publication-preview-carousel">
+            <li ng-repeat="photo in ::brief.photos">
+                <div class="layer">
+                    <img ng-src="[[ ::photo ]]" alt=""/>
+                </div>
+            </li>
+        </ul>
+        <md-card-content>
+            <div layout="row">
+                <span flex></span>
+                <span class="md-body-1 blue-grey-text">[[ ::TYPES.REALTY[brief.tid].titles.singular ]]</span>
+            </div>
+
+            <div ng-show="brief.moderator_message">
+                <p class="md-body-2">[[ ::brief.moderator_message ]]</p>
+                <md-divider></md-divider>
+            </div>
+
+            <h2 class="md-title" ng-show="brief.address">[[ ::brief.address ]]</h2>
+            <h2 class="md-title grey-text text-lighten-1" ng-hide="brief.address">Заголовок не указан</h2>
+
+            <p class="md-body-1" ng-show="brief.description">[[ ::brief.description ]]</p>
+            <p class="md-body-1 grey-text text-lighten-1" ng-hide="brief.description">Описание не указано</p>
+        </md-card-content>
+        <md-divider></md-divider>
+        <div class="md-actions" layout="row" layout-align="end center">
+            <md-button class="md-warn md-hue-3" ng-hide="brief.state_sid == 2" ng-click="briefsCtrl.removeBrief($event, brief)">
+                Удалить
+            </md-button>
+            <md-button class="md-warn md-hue-3" ng-show="brief.state_sid == 2" ng-click="briefsCtrl.removeBrief($event, brief)">
+                Удалить навсегда
+            </md-button>
+            <span flex></span>
+            <md-button class="md-primary md-hue-1" ng-show="brief.state_sid == 2" ng-click="briefsCtrl.recoveryBrief($event, brief)">
+                Восстановить
+            </md-button>
+            <md-button class="md-primary md-hue-1" ng-click="briefsCtrl.editPublication($event, brief)">
+                Редактировать
+            </md-button>
+        </div>
+    </md-card>
 
 </div>
