@@ -9,7 +9,9 @@
 
                         <div layout-sm="column" layout="row">
                             <div class="user-block" layout="column" layout-align="center center" flex-gt-sm="45">
-                                <b-auth-user-avatar class="b-auth-user-avatar--large" ng-hide="loaders.avatar"></b-auth-user-avatar>
+                                <b-auth-user-avatar ng-if="managerUser" class="b-auth-user-avatar--large" ng-hide="loaders.avatar"></b-auth-user-avatar>
+                                <img ng-if="!managerUser" ng-src="[[ profile.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/empty-or-error-user-avatar.png"
+                                     ng-if="profile.avatar_url" />
                                 <md-progress-circular md-mode="indeterminate" ng-show="loaders.avatar"></md-progress-circular>
 
                                 <div layout="row">
@@ -63,8 +65,8 @@
                                 <div layout="row">
                                     <md-input-container flex="30">
                                         <label>Код</label>
-                                        <md-select ng-model="profile.mobile_code_old" disabled>
-                                            <md-option ng-repeat="code in COUNTRY.CODES" value="[[ code ]]" selected>[[ code ]]</md-option>
+                                        <md-select ng-model="profile.mobile_code" disabled>
+                                            <md-option ng-repeat="code in COUNTRY.CODES" selected>[[ code ]]</md-option>
                                         </md-select>
                                     </md-input-container>
                                     <md-input-container flex="70">
@@ -94,8 +96,8 @@
                                 <div layout="row">
                                     <md-input-container flex="30">
                                         <label>Код</label>
-                                        <md-select ng-model="profile.add_mobile_code_old" disabled>
-                                            <md-option ng-repeat="code in COUNTRY.CODES" value="[[ code ]]" selected>[[ code ]]</md-option>
+                                        <md-select ng-model="profile.add_mobile_code" disabled>
+                                            <md-option ng-repeat="code in COUNTRY.CODES" selected>[[ code ]]</md-option>
                                         </md-select>
                                     </md-input-container>
                                     <md-input-container flex="70">

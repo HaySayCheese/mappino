@@ -125,8 +125,14 @@ namespace Mappino.Map {
         private resetLoginForm() {
             if (this.$scope.authState == 'enterPhone') {
                 if (angular.isDefined(this.$scope.forms.loginForm) && angular.isDefined(this.$scope.forms.loginForm.mobilePhone)) {
-                    this.$scope.forms.loginForm.mobilePhone.$setValidity('invalid', true);
+                    if (this.$scope.account.mobilePhone.length > 9) {
+                        this.$scope.forms.loginForm.mobilePhone.$setValidity('invalid', false);
+                    }
+                    else {
+                        this.$scope.forms.loginForm.mobilePhone.$setValidity('invalid', true);
+                    }
                     this.$scope.forms.loginForm.mobilePhone.$setValidity('throttled', true);
+                    this.$scope.forms.loginForm.mobilePhone.$setValidity('disabled', true);
                 }
             } else {
                 if (angular.isDefined(this.$scope.forms.loginForm.smsCode))

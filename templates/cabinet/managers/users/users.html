@@ -3,17 +3,17 @@
 
     <md-card ng-show="!loaders.overlay">
         <md-card-content>
-            <div layout="column" flex-gt-md="80">
+            <form name="loginForm" layout="column" flex-gt-md="80" ng-submit="manCtrl.createUser()" novalidate>
                 <div layout="row">
                     <md-input-container flex="30">
                         <label>Код</label>
-                        <md-select ng-model="account.mobileCode" disabled class="select-number">
+                        <md-select ng-model="account.mobile_code" disabled class="select-number">
                             <md-option class="black-text" ng-repeat="code in COUNTRY.CODES" selected>[[ code ]]</md-option>
                         </md-select>
                     </md-input-container>
                     <md-input-container flex="70">
                         <label>Номер телефона</label>
-                        <input type="tel" name="mobilePhone" ng-model="account.mobilePhone" autofocus only-number required>
+                        <input type="tel" name="mobilePhone" ng-model="account.mobile_phone" autofocus only-number required>
                         <div ng-messages="loginForm.mobilePhone.$error"
                              ng-show="loginForm.$submitted || loginForm.mobilePhone.$touched">
                             <div ng-message="required">Обязательное поле</div>
@@ -28,15 +28,15 @@
                         Создать
                     </md-button>
                 </div>
-            </div>
+            </form>
         </md-card-content>
     </md-card>
 
     <md-card ng-show="!loaders.overlay">
         <md-card-content>
             <md-list class="md-body-1">
-                <md-list-item class="user-block" ng-repeat="user in users" layout="row" layout-align="start start" flex>
-
+                <md-list-item class="user-block" ng-repeat="user in users" layout="column" layout-align="start start" flex="100">
+                    <div layout="row" layout-fill>
                     <div layout-gt-sm="column" layout-sm="row"  flex-gt-sm="20">
                         <div class="avatar" layout="column" layout-align="center center">
                             <img ng-src="[[ user.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/empty-or-error-user-avatar.png"
@@ -101,8 +101,16 @@
                         </div>
                         <md-button class="md-raised md-primary" ui-sref="userBriefs({ user_hid: user.hid})">Просмотреть</md-button>
                     </div>
+                    </div>
                     <div layout="row">
-                    <md-divider></md-divider></div>
+                        <md-divider></md-divider>
+                    </div>
+                    <div layout="row">
+                        <md-button ui-sref="userSettings({ user_hid: user.hid})">Настроить аккаунт</md-button>
+                        <span flex></span>
+
+                    </div>
+
                 </md-list-item>
             </md-list>
 

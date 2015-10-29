@@ -20,12 +20,19 @@ namespace Mappino.Cabinet.Managers {
                         url: "/settings/",
                         templateUrl: '/ajax/template/cabinet/managers/settings/'
                     })
+
                     .state('userBriefs', {
-                        url: "/users/:user_hid/briefs/",
+                        url: "/users/:user_hid/publications/",
                         templateUrl: '/ajax/template/cabinet/managers/briefs/'
                     })
+
+                    .state('userSettings', {
+                        url: "/users/:user_hid/settings/",
+                        templateUrl: '/ajax/template/cabinet/managers/settings/'
+                    })
+
                     .state('editing', {
-                        url: "/users/:user_hid/briefs/:publication_id/edit/",
+                        url: "/users/:user_hid/publications/:publication_id/edit/",
                         templateUrl: '/ajax/template/cabinet/managers/publication/'
                     });
 

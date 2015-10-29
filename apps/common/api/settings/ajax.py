@@ -521,7 +521,7 @@ class AvatarUpdate(CabinetView):
         def invalid_parameters():
             return HttpJsonResponse({
                 'code': 1,
-                'message': 'Image is too large.',
+                'message': 'Image is invalid',
             })
 
         @staticmethod

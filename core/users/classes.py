@@ -61,10 +61,6 @@ class Avatar(GoogleCSPhotoUploader):
             public links to the avatar.
         """
 
-        # check file size
-        if img.size > 5 * 1024 * 1024: # 1024 * 1024 * 5: # 5mb
-            img.close()
-            raise AvatarExceptions.ImageIsTooLarge()
 
         # check file type
         if 'image/' not in img.content_type:

@@ -9,28 +9,28 @@ namespace Mappino.Cabinet.Managers {
             '$timeout',
             '$mdDialog',
             'BAuthService',
-            'TXT'
+            'TXT',
+            '$state',
+            'ManagingService'
         ];
+
+        public userHid : any;
 
         constructor(private $scope: any,
                     private $rootScope: any,
                     private $timeout: ng.ITimeoutService,
                     private $mdDialog: any,
                     private bAuthService: Mappino.Core.BAuth.BAuthService,
-                    private TXT: any) {
+                    private TXT: any,
+                    private $state: ng.ui.IStateService,
+                    private managingService: ManagingService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.pageTitle = 'Редактирование профиля';
 
-            $scope.profile = bAuthService.user;
+            this.userHid = this.$state.params['user_hid'];
 
             $rootScope.loaders.overlay = true;
-            bAuthService.loadProfile()
-                .success(response => {
-                    this.initInputsChange();
-                    $rootScope.loaders.overlay = false;
-                })
-                .error(response => { /* error */ });
-
+            this.loadUserData();
             this.restoreFieldState();
         }
 
@@ -66,6 +66,30 @@ namespace Mappino.Cabinet.Managers {
         }
 
 
+        private loadUserData() {
+            if (this.$state.includes('settings')) {
+                this.$scope.managerUser = true;
+                this.$scope.profile = this.bAuthService.user;
+                console.log(this.$scope.profile);
+                this.bAuthService.loadProfile()
+                    .success(response => {
+                        this.initInputsChange();
+                        this.$rootScope.loaders.overlay = false;
+                    })
+                    .error(response => {
+                    });
+            }
+            else {
+                this.$scope.managerUser = false;
+                this.managingService.getUserData(this.userHid)
+                    .success(response => {
+                        this.$scope.profile = response.data;
+                        this.initInputsChange();
+                    })
+                    .error(response => {});
+                this.$rootScope.loaders.overlay = false;
+            }
+        }
 
         private initInputsChange() {
             angular.element(".settings-page input[type='text'], " +
@@ -86,21 +110,38 @@ namespace Mappino.Cabinet.Managers {
                 if (fieldName == 'add_mobile_phone' || fieldName == 'add_mobile_code') {
                     fieldValuePrefix = this.$scope.profile.add_mobile_code;
                 }
-
-                this.bAuthService.updateProfileField(fieldName, fieldValue, fieldValuePrefix)
-                    .success(response => {
-                        if (response.code == 0) {
-                            if (response.data && response.data.value) {
-                                e.currentTarget['value'] = response.data.value;
+                if (this.$state.includes('settings')) {
+                    this.bAuthService.updateProfileField(fieldName, fieldValue, fieldValuePrefix)
+                        .success(response => {
+                            if (response.code == 0) {
+                                if (response.data && response.data.value) {
+                                    e.currentTarget['value'] = response.data.value;
+                                }
+                                this.$scope.userProfileForm[fieldName].$setValidity("invalid",    true);
+                                this.$scope.userProfileForm[fieldName].$setValidity("duplicated", true);
+                            } else {
+                                this.$scope.userProfileForm[fieldName].$setValidity("invalid",       response.code !== 2);
+                                this.$scope.userProfileForm[fieldName].$setValidity("duplicated",    response.code !== 3);
                             }
-                            this.$scope.userProfileForm[fieldName].$setValidity("invalid",    true);
-                            this.$scope.userProfileForm[fieldName].$setValidity("duplicated", true);
-                        } else {
-                            this.$scope.userProfileForm[fieldName].$setValidity("invalid",       response.code !== 2);
-                            this.$scope.userProfileForm[fieldName].$setValidity("duplicated",    response.code !== 3);
-                        }
-                    })
-                    .error(response => {});
+                        })
+                        .error(response => {});
+                } else {
+                    this.managingService.updateUserProfileField(this.userHid, fieldName, fieldValue, fieldValuePrefix)
+                        .success(response => {
+                            if (response.code == 0) {
+                                if (response.data && response.data.value) {
+                                    e.currentTarget['value'] = response.data.value;
+                                }
+                                this.$scope.userProfileForm[fieldName].$setValidity("invalid",    true);
+                                this.$scope.userProfileForm[fieldName].$setValidity("duplicated", true);
+                            } else {
+                                this.$scope.userProfileForm[fieldName].$setValidity("invalid",       response.code !== 2);
+                                this.$scope.userProfileForm[fieldName].$setValidity("duplicated",    response.code !== 3);
+                            }
+                        })
+                        .error(response => {});
+                }
+
             });
         }
 

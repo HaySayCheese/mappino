@@ -65,3 +65,12 @@ def publications_unpublished_form(request, tid):
 @render_jinja2_template
 def publications_unpublished_footer(request):
     return 'cabinet/managers/publications/unpublished/parts/unpublished-footer.html'
+
+
+
+@ensure_csrf_cookie
+@manager_required_or_forbidden
+@etag(generate_template_etag('cabinet/managers/publications/unpublished/parts/unpublished-footer.html'))
+@render_jinja2_template
+def publications_unpublished_footer(request):
+    return 'cabinet/managers/publications/unpublished/parts/unpublished-footer.html'

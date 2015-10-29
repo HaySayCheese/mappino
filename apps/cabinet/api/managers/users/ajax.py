@@ -1,12 +1,16 @@
 # coding=utf-8
+from apps.common.api.accounts.ajax import LoginManager
 
 from apps.views_base import ManagersView
 from collective.decorators.ajax import json_response, json_response_not_found, json_response_bad_request
-from collective.methods.request_data_getters import angular_post_parameters, angular_parameters
+from collective.methods.request_data_getters import angular_post_parameters, angular_parameters, angular_put_parameters
 from core.managing.moderators.models import RejectedPublications
 from core.publications.constants import OBJECTS_TYPES, OBJECT_STATES, HEAD_MODELS
 
 from core.users.models import Users
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+import phonenumbers
 
 
 class AllUsers(ManagersView):
@@ -199,3 +203,349 @@ class UsersPublications(ManagersView):
 
         record = model.new(user, is_sale, is_rent)
         return cls.PostResponses.ok(record.hash_id)
+
+
+class UserView(ManagersView):
+    class PostResponses(object):
+        @staticmethod
+        @json_response
+        def ok(user_id):
+            return {
+                'code': 0,
+                'message': 'OK',
+                'data': {
+                    'user_hid': user_id
+                }
+            }
+
+        @staticmethod
+        @json_response
+        def invalid_phone_number():
+            return {
+                'code': 1,
+                'message': 'Parameter "mobile_phone" is invalid or absent.'
+            }
+
+        @staticmethod
+        @json_response
+        def user_already_exist():
+            return {
+                'code': 2,
+                'message': 'User already exist.'
+            }
+
+    class GetResponses(object):
+        @staticmethod
+        @json_response
+        def ok(user):
+            phone_number = phonenumbers.parse(user.mobile_phone)
+            code = phone_number.country_code
+            number = phone_number.national_number
+            add_number = None
+            add_code = code
+            if user.add_mobile_phone is not None:
+                add_phone_number = phonenumbers.parse(user.add_mobile_phone)
+                add_code = add_phone_number.country_code
+                add_number = add_phone_number.national_number
+
+            return {
+                'code': 0,
+                'message': 'OK',
+                'data': {
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'mobile_code': u'+{0}'.format(code),
+                    'mobile_phone': u'{0}'.format(number),
+                    'avatar_url': user.avatar.url(),
+                    'email': user.email,
+                    'work_email': user.work_email,
+
+                    'add_mobile_phone': add_number,
+                    'add_mobile_code': u'+{0}'.format(add_code),
+                    'landline_phone': user.landline_phone,
+                    'add_landline_phone': user.add_landline_phone,
+
+                    'skype': user.skype,
+
+                }
+            }
+
+
+    class PutResponses(object):
+        @staticmethod
+        @json_response
+        def ok(value=None):
+            return {
+                'code': 0,
+                'message': 'OK',
+                'data': {
+                    'value': value
+                }
+            }
+
+        @staticmethod
+        @json_response
+        def value_required():
+            return {
+                'code': 1,
+                'message': 'Value is required.'
+            }
+
+        @staticmethod
+        @json_response
+        def invalid_value():
+            return {
+                'code': 2,
+                'message': 'Value is invalid.'
+            }
+
+        @staticmethod
+        @json_response
+        def duplicated_value():
+            return {
+                'code': 3,
+                'message': 'Value is duplicated.'
+            }
+
+        @staticmethod
+        @json_response
+        def invalid_parameters():
+            return {
+                'code': 100,
+                'message': 'Request does not contains parameters or one of them is invalid.'
+            }
+
+    def __init__(self):
+        super(UserView, self).__init__()
+        self.update_methods = {
+            'first_name': self.__update_first_name,
+            'last_name': self.__update_last_name,
+            'email': self.__update_email,
+            'work_email': self.__update_work_email,
+            'mobile_phone': self.__update_mobile_phone_number,
+            'add_mobile_phone': self.__update_add_mobile_phone_number,
+            'landline_phone': self.__update_landline_phone_number,
+            'add_landline_phone': self.__update_add_landline_phone_number,
+            'skype': self.__update_skype,
+        }
+
+
+    @classmethod
+    def get(self, request, *args):
+        user = Users.objects.filter(hash_id=args[0])[0]
+        return self.GetResponses.ok(user)
+
+
+
+    @classmethod
+    def post(cls, request):
+        try:
+            params = angular_post_parameters(request, ['mobile_code', 'mobile_phone'])
+
+            number, code = str(params['mobile_phone']), str(params['mobile_code'])
+            if code[0] != '+':
+                code = '+' + code
+
+            phone_number = u'{0}{1}'.format(code, number)
+
+            phone_number = Users.objects.parse_phone_number(phone_number)
+
+        except (ValueError, KeyError):
+            return cls.PostResponses.invalid_phone_number()
+
+        user = Users.by_one_of_the_mobile_phones(phone_number)
+        if user is None:
+            # if no user with such mobile phone - we need to create new empty user
+            user = Users.objects.create_user(phone_number)
+            return cls.PostResponses.ok(user.hash_id)
+        else:
+            return cls.PostResponses.user_already_exist()
+
+
+    def put(self, request, *args):
+        user = Users.objects.filter(hash_id=args[0])[0]
+        try:
+            params = angular_put_parameters(request)
+            field, value = params.iteritems().next()
+        except (ValueError, KeyError):
+            return self.PutResponses.invalid_parameters()
+
+        try:
+            update_method = self.update_methods.get(field)
+            return update_method(user, value)
+
+        except KeyError:
+            return self.PutResponses.invalid_parameters()
+
+    def __update_first_name(self, user, name):
+        if not name:
+            return self.PutResponses.value_required()
+
+        if not user.first_name == name:
+            user.first_name = name.capitalize()
+            user.save()
+
+        return self.PutResponses.ok(user.first_name)
+
+    def __update_last_name(self, user, name):
+        if not name:
+            return self.PutResponses.value_required()
+
+        if not user.last_name == name:
+            user.last_name = name.capitalize()
+            user.save()
+
+        return self.PutResponses.ok(user.last_name)
+
+    def __update_email(self, user, email):
+        if not email:
+            return self.PutResponses.value_required()
+
+        if user.email == email:
+            # no validation and DB write
+            return self.PutResponses.ok()
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            return self.PutResponses.invalid_value()
+
+        # check for duplicates
+        if not Users.email_is_free(email):
+            return self.PutResponses.duplicated_value()
+
+        # todo: add email normalization here
+        user.email = email
+        user.save()
+        return self.PutResponses.ok()
+
+    def __update_work_email(self, user, email):
+        if not email:
+            # work email may be empty
+            if user.work_email:
+                user.work_email = ''
+                user.save()
+
+            return self.PutResponses.ok()
+
+        if user.work_email == email:
+            # no validation and DB write
+            return self.PutResponses.ok()
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            return self.PutResponses.invalid_value()
+
+        # check for duplicates
+        if not Users.email_is_free(email):
+            return self.PutResponses.duplicated_value()
+
+        # todo: add email normalization here
+        user.work_email = email
+        user.save()
+        return self.PutResponses.ok()
+
+    def __update_mobile_phone_number(self, user, phone):
+        return self.PutResponses.ok()
+
+        # note: mobile phone temporary can not be changed.
+
+        # if not phone:
+        #     return self.PutResponses.value_required()
+        #
+        #
+        # try:
+        #     phone = Users.objects.parse_phone_number(phone)
+        # except ValueError:
+        #     return self.PutResponses.invalid_value()
+        #
+        #
+        # if user.mobile_phone == phone:
+        #     # already the same
+        #     return self.PutResponses.ok()
+        #
+        # # check for duplicates
+        # if not user.mobile_phone_number_is_free(phone):
+        #     return self.PutResponses.duplicated_value()
+        #
+        # if not user.mobile_phone == phone:
+        #     user.mobile_phone = phone
+        #     user.save()
+        #
+        # return self.PutResponses.ok()
+
+    def __update_add_mobile_phone_number(self, user, phone):
+        if not phone:
+            # add mobile phone may be empty
+            if user.add_mobile_phone:
+                user.add_mobile_phone = ''
+                user.save()
+
+            return self.PutResponses.ok()
+
+        try:
+            phone = Users.objects.parse_phone_number(phone)
+        except ValueError:
+            return self.PutResponses.invalid_value()
+
+        if user.add_mobile_phone == phone:
+            # already the same
+            return self.PutResponses.ok()
+
+        # check for duplicates
+        if user.mobile_phone == phone or not user.mobile_phone_number_is_free(phone):
+            return self.PutResponses.duplicated_value()
+
+        if not user.add_landline_phone == phone:
+            user.add_mobile_phone = phone
+            user.save()
+
+        return self.PutResponses.ok()
+
+    def __update_landline_phone_number(self, user, phone):
+        if not phone:
+            # landline phone may be empty
+            if user.landline_phone:
+                user.landline_phone = ''
+                user.save()
+
+            return self.PutResponses.ok()
+
+        # note: several users may have common landline phone,
+        # so wee need to check for duplication only with other landline_phone
+        if user.add_landline_phone == phone:
+            return self.PutResponses.duplicated_value()
+
+        if not user.landline_phone == phone:
+            user.landline_phone = phone
+            user.save()
+
+        return self.PutResponses.ok()
+
+    def __update_add_landline_phone_number(self, user, phone):
+        if not phone:
+            # add landline phone may be empty
+            if user.add_landline_phone:
+                user.add_landline_phone = ''
+                user.save()
+
+            return self.PutResponses.ok()
+
+        # note: several users may have common landline phone,
+        # so wee need to check for duplication only with other landline_phone
+        if user.landline_phone == phone:
+            return self.PutResponses.duplicated_value()
+
+        if not user.add_landline_phone == phone:
+            user.add_landline_phone = phone
+            user.save()
+
+        return self.PutResponses.ok()
+
+    def __update_skype(self, user, login):
+        if not user.skype == login:
+            user.skype = login
+            user.save()
+
+        return self.PutResponses.ok()

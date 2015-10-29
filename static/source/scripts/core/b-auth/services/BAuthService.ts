@@ -139,7 +139,7 @@ namespace Mappino.Core.BAuth {
             var promise: IUploadPromise<any> = this.Upload.upload({
                 url: `/ajax/api/cabinet/account/photo/`,
                 method: 'POST',
-                file: avatar
+                file: avatar[0]
             });
 
             promise.success(response => {

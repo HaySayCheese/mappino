@@ -14,7 +14,6 @@ namespace Mappino.Cabinet.Managers {
             '$scope',
             '$rootScope',
             '$state',
-            'ManagingService',
             'PublicationsService',
             '$mdDialog',
             'TXT'
@@ -23,7 +22,6 @@ namespace Mappino.Cabinet.Managers {
         constructor(private $scope: any,
                     private $rootScope: any,
                     private $state: ng.ui.IStateService,
-                    private managingService: ManagingService,
                     private publicationsService: PublicationsService,
                     private $mdDialog: any,
                     private TXT: any) {
@@ -43,7 +41,7 @@ namespace Mappino.Cabinet.Managers {
         private loadUserBriefs(userHid: string|number) {
             this.$rootScope.loaders.overlay = true;
 
-            this.managingService.loadUserBriefs(userHid)
+            this.publicationsService.loadUserBriefs(userHid)
                 .success(response => {
                     this.$rootScope.loaders.overlay = false;
                     this.$scope.briefs = response.data;
@@ -55,7 +53,7 @@ namespace Mappino.Cabinet.Managers {
 
             this.$rootScope.loaders.overlay = true;
 
-            this.managingService.createPublication(this.$scope.userHid, newPublication)
+            this.publicationsService.createPublication(this.$scope.userHid, newPublication)
                 .success(response => {
                     this.$rootScope.loaders.overlay = false;
                     this.$state.go('editing', { user_hid: this.$scope.userHid, publication_id: newPublication.tid + ":" + response.data.hid });

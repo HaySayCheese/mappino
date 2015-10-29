@@ -50,15 +50,24 @@ namespace Mappino.Cabinet.Managers {
         }
 
 
-        public loadUserBriefs(userHid): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/managers/users/${userHid}/publications/`);
+        public createUser(userData): ng.IHttpPromise<any> {
+            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/managers/user/`, userData);
 
-            promise.success(response => {});
+            promise.success(response => {
+                if (response.code == 0) {
+                    this.$mdToast.show(
+                        this.$mdToast.simple()
+                            .content(this.TXT.TOASTS.MANAGERS.CREATE_USER.SUCCESS)
+                            .position(this.toastOptions.position)
+                            .hideDelay(this.toastOptions.delay)
+                    );
+                }
+            });
 
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.MANAGERS.LOAD_USERS.ERROR)
+                        .content(this.TXT.TOASTS.MANAGERS.CREATE_USER.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
@@ -67,15 +76,15 @@ namespace Mappino.Cabinet.Managers {
             return promise;
         }
 
-        public createPublication(userHid: string|number, publication: IPublicationNew): IHttpPromise<any> {
-            var promise: IHttpPromise<any> = this.$http.post(`/ajax/api/managers/users/${userHid}/publications/`, publication);
+        public getUserData(userHid) {
+            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/managers/user/${userHid}/`);
 
             promise.success(response => {});
 
             promise.error(response => {
                 this.$mdToast.show(
                     this.$mdToast.simple()
-                        .content(this.TXT.TOASTS.PUBLICATION.CREATE.ERROR)
+                        .content(this.TXT.TOASTS.MANAGERS.USER_DATA.ERROR)
                         .position(this.toastOptions.position)
                         .hideDelay(this.toastOptions.delay)
                 );
@@ -84,7 +93,20 @@ namespace Mappino.Cabinet.Managers {
             return promise;
         }
 
+        public updateUserProfileField(userHid: number|string, fieldName: string,
+                                      fieldValue: number|string, fieldValuePrefix?: number|string) {
+            var promise: IHttpPromise<any> = this.$http.put(`/ajax/api/managers/user/${userHid}/`, {
+                [fieldName]: `${fieldValuePrefix ? fieldValuePrefix : ''}${fieldValue}`
+            });
 
+            promise.success(response => {
+            });
+
+            promise.error(response => { /* error */ });
+
+            return promise;
+
+        }
     }
 }
 
