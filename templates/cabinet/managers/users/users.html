@@ -39,10 +39,14 @@
 
     <md-card ng-show="!loaders.overlay">
         <md-card-content>
+            <div layout-align="center center" layout="row" class="md-headline">
+                Данные зарегестрированых пользователей
+            </div>
             <md-list class="md-body-1">
-                <md-list-item class="user-block" ng-repeat="user in users" layout="column" layout-align="start start" flex="100">
-                    <div layout="row" layout-fill>
-                    <div layout-gt-sm="column" layout-sm="row"  flex-gt-sm="20">
+                <div ng-repeat="user in users" >
+                <md-list-item class="user-block" layout="column" layout-align="start start" flex="100">
+                    <div layout-gt-md="row" layout-fill layout-ls-lg="column">
+                    <div layout-gt-sm="column" class="md-padding" layout-align="center center" layout-sm="row"  flex-gt-sm="20" layout-padding>
                         <div class="avatar" layout="column" layout-align="center center">
                             <img ng-src="[[ user.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/empty-or-error-user-avatar.png"
                                  ng-if="user.avatar_url" />
@@ -50,72 +54,71 @@
                         </div>
                     </div>
                     <div layout="column" flex>
-                        <div class="user-data">
-                            <span layout="row" class="grey-text">Имя пользователя:</span>
+                        <div class="user-data" layout-sm="row" layout-md="row">
+                            <span flex-sm="50" flex-md="30" layout-gt-md="row" class="grey-text">Имя пользователя:</span>
                             <span>[[ user.first_name ]] [[ user.last_name ]]</span>
+                            <span ng-hide="user.first_name && user.last_name">Не указано</span>
                         </div>
-                        <div class="user-data">
-                            <span layout="row" class="grey-text">Номер телефона:</span>
+                        <div class="user-data" layout-sm="row" layout-md="row">
+                            <span flex-sm="50" flex-md="30" layout-gt-md="row" class="grey-text">Номер телефона:</span>
                             <span>[[ user.mobile_phone ]]</span>
                         </div>
 
-                        <div class="user-data">
-                            <span layout="row" class="grey-text">Доп. номер телефона:</span>
+                        <div class="user-data" layout-sm="row" layout-md="row">
+                            <span flex-sm="50" flex-md="30" layout-gt-md="row" class="grey-text">Доп. номер телефона:</span>
                             <span>[[ user.add_mobile_phone ]]</span>
                             <span ng-if="!user.add_mobile_phone">Не указан</span>
                         </div>
 
                     </div>
                     <div layout="column" flex>
-                        <div class="user-data">
-                            <span layout="row" flex class="grey-text">Рабочий телефон:</span>
+                        <div class="user-data" layout-sm="row" layout-md="row">
+                            <span flex-sm="50" flex-md="30" layout-gt-md="row" flex class="grey-text">Рабочий телефон:</span>
                             <span>[[ user.landline_phone ]]</span>
                             <span ng-if="!user.landline_phone.length">Не указан</span>
                         </div>
 
-                        <div class="user-data">
-                            <span layout="row" class="grey-text">Доп. рабочий телефон:</span>
+                        <div class="user-data" layout-sm="row" layout-md="row">
+                            <span flex-sm="50" flex-md="30" layout-gt-md="row" class="grey-text">Доп. рабочий телефон:</span>
                             <span>[[ user.add_landline_phone ]]</span>
                             <span ng-if="!user.add_landline_phone.length">Не указан</span>
                         </div>
 
                     </div>
                     <div layout="column" flex="25">
-                        <div class="user-data">
-                            <span layout="row" flex class="grey-text">Skype:</span>
+                        <div class="user-data" layout-sm="row" layout-md="row">
+                            <span flex-sm="50" flex-md="30" layout-gt-md="row" flex class="grey-text">Skype:</span>
                             <span>[[ user.skype ]]</span>
                             <span ng-if="!user.skype.length">Не указан</span>
                         </div>
 
-                        <div class="user-data">
-                            <span layout="row" flex class="grey-text">Почта:</span>
+                        <div class="user-data" layout-sm="row" layout-md="row">
+                            <span flex-sm="50" flex-md="30" layout-gt-md="row" flex class="grey-text">Почта:</span>
                             <span>[[ user.email ]]</span>
                             <span ng-if="!user.email.length">Не указан</span>
                         </div>
 
                     </div>
                     <div layout="column" flex="15">
-                        <div class="user-data">
-                            <span layout="row" flex class="grey-text">Всего объявлений:</span>
+                        <div class="user-data" layout-sm="row" layout-md="row">
+                            <span flex-sm="50" flex-md="30" layout-gt-md="row" flex class="grey-text">Всего объявлений:</span>
                             <span>[[ user.pub_count.all ]]</span>
                         </div>
 
-                        <div class="user-data">
-                            <span layout="row" flex class="grey-text">Из них опубликовано:</span>
+                        <div class="user-data" layout-sm="row" layout-md="row">
+                            <span flex-sm="50" flex-md="30" layout-gt-md="row" flex class="grey-text">Из них опубликовано:</span>
                             <span>[[ user.pub_count.published ]]</span>
                         </div>
-                        <md-button class="md-raised md-primary" ui-sref="userBriefs({ user_hid: user.hid})">Просмотреть</md-button>
                     </div>
                     </div>
-                    <div layout="row">
-                        <md-divider></md-divider>
-                    </div>
-                    <div layout="row" layout-align="center center" flex="100">
-                        <md-button class="md-primary md-raised" ui-sref="userSettings({ user_hid: user.hid})">Настроить аккаунт</md-button>
-
+                    <div layout-gt-sm="row" layout-sm="column" layout-fill layout-align="center center" flex-sm="100"  flex-lg="60">
+                        <md-button layout-fill="sm" flex-md="40" flex-gt-md="30" class="md-primary md-raised" ui-sref="userSettings({ user_hid: user.hid})">Настроить аккаунт</md-button>
+                        <md-button layout-fill="sm" flex-md="40" flex-gt-md="30" class="md-raised md-primary" ui-sref="userBriefs({ user_hid: user.hid})">Просмотреть объявления</md-button>
                     </div>
 
                 </md-list-item>
+                <md-divider></md-divider>
+                </div>
             </md-list>
 
         </md-card-content>

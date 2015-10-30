@@ -9,7 +9,7 @@ md-card {
     }
 
 
-    @media screen and (max-width: 775px) {
+    @media screen and (max-width: 950px) {
         @include size(100% !important, auto);
         min-width: 100% !important;
         margin: 7px 0 !important;

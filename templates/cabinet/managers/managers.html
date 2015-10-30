@@ -49,16 +49,16 @@
     <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left-sidenav" ng-cloak>
         <header layout="column" layout-align="center center">
             <div layout="row">
-                <img ng-src="[[ userData.account.avatar_url ]]" ng-show="userData.account.avatar_url" on-error-src="{{ static }}build/images/common/no-user.png" />
-                <img src="{{ static }}build/images/common/no-user.png" ng-hide="userData.account.avatar_url" />
+                <img ng-src="[[ userData.avatar_url ]]" ng-show="userData.avatar_url" on-error-src="{{ static }}build/images/common/no-user.png" />
+                <img src="{{ static }}build/images/common/no-user.png" ng-hide="userData.avatar_url" />
             </div>
-            <div class="md-padding md-title white-text" layout="row" ng-show="userData.account.first_name && userData.account.last_name">
-                [[ userData.account.full_name ]]
+            <div class="md-padding md-title white-text" layout="row" ng-show="userData.first_name && userData.last_name">
+                [[ userData.full_name ]]
             </div>
         </header>
         <md-content layout="column" layout-padding>
             <div layout="row">
-                <md-button class="md-primary" ng-href="#!/moderating/" ng-click="cabinetCtrl.toggleSidenav()">
+                <md-button class="md-primary" ui-sref="users" ng-click="cabinetCtrl.toggleSidenav()">
                     Пользователи
                 </md-button>
             </div>

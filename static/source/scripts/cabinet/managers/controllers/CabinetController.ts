@@ -9,20 +9,23 @@ namespace Mappino.Cabinet.Managers {
             '$rootScope',
             '$mdSidenav',
             '$mdUtil',
-            '$mdMedia'
+            '$mdMedia',
+            'BAuthService'
         ];
 
         constructor(private $scope: any,
                     private $rootScope: any,
                     private $mdSidenav: any,
                     private $mdUtil: any,
-                    private $mdMedia: any) {
+                    private $mdMedia: any,
+                    private bAuthService: Mappino.Core.BAuth.BAuthService) {
             // ---------------------------------------------------------------------------------------------------------
             $rootScope.loaders = {
                 overlay:    false,
                 navbar:     false,
                 avatar:     false
             };
+            this.$scope.userData = this.bAuthService.user;
         }
 
 

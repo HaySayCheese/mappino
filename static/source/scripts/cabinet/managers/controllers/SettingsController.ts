@@ -70,7 +70,6 @@ namespace Mappino.Cabinet.Managers {
             if (this.$state.includes('settings')) {
                 this.$scope.managerUser = true;
                 this.$scope.profile = this.bAuthService.user;
-                console.log(this.$scope.profile);
                 this.bAuthService.loadProfile()
                     .success(response => {
                         this.initInputsChange();

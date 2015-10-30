@@ -321,6 +321,7 @@ class UserView(ManagersView):
             'last_name': self.__update_last_name,
             'email': self.__update_email,
             'work_email': self.__update_work_email,
+            'mobile_phone': self.__update_mobile_phone_number,
             'add_mobile_phone': self.__update_add_mobile_phone_number,
             'landline_phone': self.__update_landline_phone_number,
             'add_landline_phone': self.__update_add_landline_phone_number,
@@ -493,6 +494,13 @@ class UserView(ManagersView):
             user.save()
 
         return self.PutResponses.ok()
+
+
+    def __update_mobile_phone_number(self, user, phone):
+        return self.PutResponses.ok()
+
+        # note: mobile phone can not be changed by manager.
+
 
     def __update_add_landline_phone_number(self, user, phone):
         if not phone:

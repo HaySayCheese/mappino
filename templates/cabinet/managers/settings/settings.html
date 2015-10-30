@@ -1,17 +1,18 @@
 <div class="settings-page" ng-controller="SettingsController as settingsCtrl">
     <form name="userProfileForm" ng-hide="loaders.base" layout-wrap layout="column" layout-align="center start" layout-padding novalidate>
 
-        <div layout="row" layout-md="column" layout-align="center start" layout-fill>
+        <div layout="row" layout-md="column" layout-sm="column" layout-align="center start" layout-fill>
             <div layout="column" layout-align-md="start center" layout-align-gt-md="start end" layout-fill layout-padding>
                 <md-card layout-fill>
                     <md-card-content>
-                        <h3 class="md-headline blue-text">Основная информация</h3>
+                        <h3 ng-show="managerUser" class="md-headline blue-text">Основная информация</h3>
+                        <h3 ng-hide="managerUser" class="md-headline blue-text">Редактирование данных пользователя</h3>
 
                         <div layout-sm="column" layout="row">
                             <div class="user-block" layout="column" layout-align="center center" flex-gt-sm="45">
-                                <b-auth-user-avatar ng-if="managerUser" class="b-auth-user-avatar--large" ng-hide="loaders.avatar"></b-auth-user-avatar>
-                                <img ng-if="!managerUser" ng-src="[[ profile.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/empty-or-error-user-avatar.png"
+                                <img ng-src="[[ profile.avatar_url ]]" alt="" on-error-src="{{ static }}build/images/common/empty-or-error-user-avatar.png"
                                      ng-if="profile.avatar_url" />
+                                <img src="{{ static }}build/images/common/empty-or-error-user-avatar.png" ng-if="!profile.avatar_url" alt="" />
                                 <md-progress-circular md-mode="indeterminate" ng-show="loaders.avatar"></md-progress-circular>
 
                                 <div layout="row">

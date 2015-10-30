@@ -26,11 +26,7 @@ namespace Mappino.Cabinet.Managers {
                     private $mdDialog: any,
                     private TXT: any) {
             // ---------------------------------------------------------------------------------------------------------
-            $rootScope.loaders = {
-                overlay:    false,
-                navbar:     false,
-                avatar:     false
-            };
+            $rootScope.pageTitle = 'Объявления пользователя';
             $scope.newPublication = this.newPublication;
 
             $scope.userHid = $state.params['user_hid'];

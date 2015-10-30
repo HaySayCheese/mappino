@@ -14,7 +14,7 @@ namespace Mappino.Cabinet.Managers {
                     private $state: ng.ui.IStateService,
                     private managingService: ManagingService) {
             // ---------------------------------------------------------------------------------------------------------
-            $rootScope.pageTitle = 'Менеджмент mappino';
+            $rootScope.pageTitle = 'Пользователи mappino';
             $scope.account = {
                 'mobile_phone' : ''
             };
