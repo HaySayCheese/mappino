@@ -3,7 +3,11 @@
 
     <md-card ng-show="!loaders.overlay">
         <md-card-content>
-            <form name="loginForm" layout="column" flex-gt-md="80" ng-submit="manCtrl.createUser()" novalidate>
+            <div layout="row" layout-padding layout-align="center center">
+                Создать нового пользователя
+            </div>
+            <div layout="row" flex="80" layout-align="center center">
+            <form name="loginForm" layout="column" ng-submit="manCtrl.createUser()" novalidate>
                 <div layout="row">
                     <md-input-container flex="30">
                         <label>Код</label>
@@ -13,7 +17,7 @@
                     </md-input-container>
                     <md-input-container flex="70">
                         <label>Номер телефона</label>
-                        <input type="tel" name="mobilePhone" ng-model="account.mobile_phone" autofocus only-number required>
+                        <input type="tel" name="mobilePhone" ng-model="account.mobile_phone" only-number required>
                         <div ng-messages="loginForm.mobilePhone.$error"
                              ng-show="loginForm.$submitted || loginForm.mobilePhone.$touched">
                             <div ng-message="required">Обязательное поле</div>
@@ -23,12 +27,13 @@
                         </div>
                     </md-input-container>
                 </div>
-                <div layout="row" class="md-padding">
+                <div layout="row">
                     <md-button class="md-raised md-primary" type="submit" flex>
                         Создать
                     </md-button>
                 </div>
             </form>
+            </div>
         </md-card-content>
     </md-card>
 
@@ -105,44 +110,14 @@
                     <div layout="row">
                         <md-divider></md-divider>
                     </div>
-                    <div layout="row">
-                        <md-button ui-sref="userSettings({ user_hid: user.hid})">Настроить аккаунт</md-button>
-                        <span flex></span>
+                    <div layout="row" layout-align="center center" flex="100">
+                        <md-button class="md-primary md-raised" ui-sref="userSettings({ user_hid: user.hid})">Настроить аккаунт</md-button>
 
                     </div>
 
                 </md-list-item>
             </md-list>
 
-            <!--<table class="bordered md-body-1">-->
-                <!--<thead>-->
-                    <!--<tr>-->
-                        <!--<th>Имя пользователя</th>-->
-                        <!--<th>Моб. телефон</th>-->
-                        <!--<th>Доп. моб. телефон</th>-->
-                        <!--<th>Раб. телефон</th>-->
-                        <!--<th>Доп. раб.телефон</th>-->
-                        <!--<th>Skype</th>-->
-                        <!--<th>Почта</th>-->
-                        <!--<th>Количество объявлений</th>-->
-                        <!--<th>Активных объявлений</th>-->
-
-                    <!--</tr>-->
-                <!--</thead>-->
-                <!--<tbody>-->
-                    <!--<tr ng-repeat="user in users">-->
-                        <!--<td flex>[[ user.first_name ]] [[ user.last_name ]]</td>-->
-                        <!--<td flex>[[ user.mobile_phone ]]</td>-->
-                        <!--<td flex>[[ user.add_mobile_phone ]]</td>-->
-                        <!--<td flex>[[ user.landline_phone ]]</td>-->
-                        <!--<td flex>[[ user.add_landline_phone ]]</td>-->
-                        <!--<td flex>[[ user.skype ]]</td>-->
-                        <!--<td flex>[[ user.email ]]</td>-->
-                        <!--<td flex>[[ user.all_pub_count ]]</td>-->
-                        <!--<td flex>[[ user.published_pub_count ]]</td>-->
-                    <!--</tr>-->
-                <!--</tbody>-->
-            <!--</table>-->
         </md-card-content>
     </md-card>
 

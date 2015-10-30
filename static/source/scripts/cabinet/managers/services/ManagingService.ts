@@ -51,7 +51,7 @@ namespace Mappino.Cabinet.Managers {
 
 
         public createUser(userData): ng.IHttpPromise<any> {
-            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/managers/user/`, userData);
+            var promise: ng.IHttpPromise<any> = this.$http.post(`/ajax/api/managers/user/add/`, userData);
 
             promise.success(response => {
                 if (response.code == 0) {

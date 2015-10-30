@@ -12,11 +12,12 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 import phonenumbers
 
-
+# gets all users data
 class AllUsers(ManagersView):
 
     @classmethod
     def publications_count(cls, user_id):
+        """ get count of all publications of user and how many of them is published """
         pubs_all = []
         pubs_published = []
         for tid in OBJECTS_TYPES.values():
@@ -54,7 +55,6 @@ class AllUsers(ManagersView):
 
                 'skype': user.skype,
 
-                # note: work email wil lbe shown if main email address should be hidden
                 'email': user.email ,
                 'pub_count': AllUsers.publications_count(user.id),
 
@@ -106,6 +106,7 @@ class UsersPublications(ManagersView):
 
     @classmethod
     def __briefs_of_user(cls,  user_id):
+        """ gets briefs of user by id  """
         pubs = []
         for tid in OBJECTS_TYPES.values():
             query = HEAD_MODELS[tid].by_user_id(user_id).only('id')
@@ -150,9 +151,6 @@ class UsersPublications(ManagersView):
 
                 'moderator_message': moderators_messages.get(publication[1])  # hash_id
 
-                # ...
-                # other fields here
-                # ...
             }
 
             photo = model.objects.filter(id=publication[0]).only('id')[:1][0].title_photo()
@@ -187,6 +185,7 @@ class UsersPublications(ManagersView):
         return cls.GetResponses.ok(briefs)
 
 
+    # create publication for user by his hash id
     @classmethod
     def post(cls, request, *args):
         user = Users.objects.filter(hash_id=args[0])[0]
@@ -322,7 +321,6 @@ class UserView(ManagersView):
             'last_name': self.__update_last_name,
             'email': self.__update_email,
             'work_email': self.__update_work_email,
-            'mobile_phone': self.__update_mobile_phone_number,
             'add_mobile_phone': self.__update_add_mobile_phone_number,
             'landline_phone': self.__update_landline_phone_number,
             'add_landline_phone': self.__update_add_landline_phone_number,
@@ -355,13 +353,14 @@ class UserView(ManagersView):
 
         user = Users.by_one_of_the_mobile_phones(phone_number)
         if user is None:
-            # if no user with such mobile phone - we need to create new empty user
+            # create new empty user
             user = Users.objects.create_user(phone_number)
+            # return hash id of new user
             return cls.PostResponses.ok(user.hash_id)
         else:
             return cls.PostResponses.user_already_exist()
 
-
+    # update user fields by hash id
     def put(self, request, *args):
         user = Users.objects.filter(hash_id=args[0])[0]
         try:
@@ -446,34 +445,6 @@ class UserView(ManagersView):
         user.save()
         return self.PutResponses.ok()
 
-    def __update_mobile_phone_number(self, user, phone):
-        return self.PutResponses.ok()
-
-        # note: mobile phone temporary can not be changed.
-
-        # if not phone:
-        #     return self.PutResponses.value_required()
-        #
-        #
-        # try:
-        #     phone = Users.objects.parse_phone_number(phone)
-        # except ValueError:
-        #     return self.PutResponses.invalid_value()
-        #
-        #
-        # if user.mobile_phone == phone:
-        #     # already the same
-        #     return self.PutResponses.ok()
-        #
-        # # check for duplicates
-        # if not user.mobile_phone_number_is_free(phone):
-        #     return self.PutResponses.duplicated_value()
-        #
-        # if not user.mobile_phone == phone:
-        #     user.mobile_phone = phone
-        #     user.save()
-        #
-        # return self.PutResponses.ok()
 
     def __update_add_mobile_phone_number(self, user, phone):
         if not phone:
