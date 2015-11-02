@@ -30,8 +30,12 @@ class BanUser(ModeratorsView):
     def post(cls, request):
 
         phone_number = angular_post_parameters(request).get('phone_number', '')
-
         user = Users.objects.filter(mobile_phone=phone_number)[0]
+        for tid in OBJECTS_TYPES.values():
+            query = HEAD_MODELS[tid].by_user_id(user.id).only('id')
+            for publication in query:
+                head = HEAD_MODELS[tid].queryset_by_hash_id(publication.hash_id).only('id', 'owner')[0]
+                head.unpublish()
 
         if BanHandler.check_user(user):
             return cls.PostResponses.number_already_exist()
@@ -40,11 +44,6 @@ class BanUser(ModeratorsView):
             return cls.PostResponses.number_already_exist()
 
         else:
-            for tid in OBJECTS_TYPES.values():
-                query = HEAD_MODELS[tid].by_user_id(user.id).only('id')
-                for publication in query:
-                    head = HEAD_MODELS[tid].queryset_by_hash_id(publication.hash_id).only('id', 'owner')[0]
-                    head.unpublish()
             return cls.PostResponses.ok()
 
 
