@@ -1,9 +1,10 @@
 from apps.views_base import ModeratorsView
-from collective.decorators.ajax import json_response, json_response_not_found
+from collective.decorators.ajax import json_response, json_response_not_found, json_response_bad_request
 from core.managing.ban.classes import BanHandler
 from collective.methods.request_data_getters import angular_post_parameters
 
 from core.managing.ban.models import BannedPhoneNumbers, SuspiciousPhoneNumbers
+from core.publications.constants import OBJECTS_TYPES, HEAD_MODELS
 from core.users.models import Users
 
 
@@ -18,7 +19,7 @@ class BanUser(ModeratorsView):
             }
 
         @classmethod
-        @json_response_not_found
+        @json_response_bad_request
         def number_already_exist(cls):
             return {
                 'code': 2,
@@ -39,6 +40,11 @@ class BanUser(ModeratorsView):
             return cls.PostResponses.number_already_exist()
 
         else:
+            for tid in OBJECTS_TYPES.values():
+                query = HEAD_MODELS[tid].by_user_id(user.id).only('id')
+                for publication in query:
+                    head = HEAD_MODELS[tid].queryset_by_hash_id(publication.hash_id).only('id', 'owner')[0]
+                    head.unpublish()
             return cls.PostResponses.ok()
 
 
@@ -53,7 +59,7 @@ class AddSuspiciousUser(ModeratorsView):
             }
 
         @classmethod
-        @json_response_not_found
+        @json_response_bad_request
         def user_already_suspicious(cls):
             return {
                 'code': 2,
@@ -89,7 +95,7 @@ class RemoveSuspiciousUser(ModeratorsView):
             }
 
         @classmethod
-        @json_response_not_found
+        @json_response_bad_request
         def user_not_suspicious(cls):
             return {
                 'code': 2,
