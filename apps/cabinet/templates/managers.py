@@ -74,3 +74,11 @@ def publications_unpublished_footer(request):
 @render_jinja2_template
 def publications_unpublished_footer(request):
     return 'cabinet/managers/publications/unpublished/parts/unpublished-footer.html'
+
+
+@ensure_csrf_cookie
+@manager_required_or_forbidden
+@etag(generate_template_etag('cabinet/managers/statistics/statistics.html'))
+@render_jinja2_template
+def statistics(request):
+    return 'cabinet/managers/statistics/statistics.html'

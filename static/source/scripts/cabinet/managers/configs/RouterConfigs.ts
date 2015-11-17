@@ -31,6 +31,12 @@ namespace Mappino.Cabinet.Managers {
                         templateUrl: '/ajax/template/cabinet/managers/settings/'
                     })
 
+                    .state('statistics', {
+                        url: "/statistics/",
+                        templateUrl: '/ajax/template/cabinet/managers/statistics/'
+                    })
+
+
                     .state('editing', {
                         url: "/users/:user_hid/publications/:publication_id/edit/",
                         templateUrl: '/ajax/template/cabinet/managers/publication/'

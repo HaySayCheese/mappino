@@ -1,0 +1,36 @@
+<div class="statistics-page" ng-controller="StatisticsController as stCtrl" layout="column" layout-align="center center">
+    <md-card ng-show="!loaders.overlay" layout="column" layout-align="center center">
+        <md-card-content layout="column" flex layout-fill>
+            <h1 class="md-title" layout="row" layout-align="center center" layout-padding>Количество объявлений</h1>
+            <div layout="row" class="md-padding md-body-2 head">
+                <span flex="40">Промежуток времени</span>
+                <span flex="30">Всего</span>
+                <span flex="30">Опубликованых</span>
+            </div>
+            <md-divider></md-divider>
+            <div layout="row" class="md-padding">
+                <span flex="40">За месяц:</span>
+                <span flex="30">[[ statistics.for_month.all ]]</span>
+                <span flex="30">[[ statistics.for_month.published ]]</span>
+            </div>
+            <md-divider></md-divider>
+            <div layout="row" class="md-padding">
+                <span flex="40">За текущую неделю:</span>
+                <span flex="30">[[ statistics.for_current_week.all ]]</span>
+                <span flex="30">[[ statistics.for_current_week.published ]]</span>
+            </div>
+            <md-divider></md-divider>
+            <div layout="row" class="md-padding">
+                <span flex="40">За последнюю неделю:</span>
+                <span flex="30">[[ statistics.for_last_week.all ]]</span>
+                <span flex="30">[[ statistics.for_last_week.published ]]</span>
+            </div>
+            <md-divider></md-divider>
+            <div layout="row" class="md-padding">
+                <span flex="40">За предпоследнюю неделю:</span>
+                <span flex="30">[[ statistics.for_before_last_week.all ]]</span>
+                <span flex="30">[[ statistics.for_before_last_week.published ]]</span>
+            </div>
+        </md-card-content>
+    </md-card>
+</div>

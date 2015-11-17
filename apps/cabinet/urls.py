@@ -20,5 +20,6 @@ urlpatterns = patterns('apps.cabinet',
 
    # Managers API
     url(r'', include('apps.cabinet.api.managers.users.urls')),
+    url(r'', include('apps.cabinet.api.managers.statistics.urls')),
 
 )

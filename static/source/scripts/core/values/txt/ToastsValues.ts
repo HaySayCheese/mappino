@@ -132,6 +132,9 @@ namespace Mappino.Core.Values {
                     },
                     'USER_DATA': {
                         'ERROR': 'Не удалось загрузить данные пользователя'
+                    },
+                    'STATISTICS': {
+                        'ERROR': 'Не удалось загрузить данные статистики'
                     }
                 },
 

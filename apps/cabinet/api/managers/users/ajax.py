@@ -2,7 +2,7 @@
 from apps.common.api.accounts.ajax import LoginManager
 
 from apps.views_base import ManagersView
-from collective.decorators.ajax import json_response, json_response_not_found, json_response_bad_request
+from collective.decorators.ajax import json_response, json_response_bad_request
 from collective.methods.request_data_getters import angular_post_parameters, angular_parameters, angular_put_parameters
 from core.managing.moderators.models import RejectedPublications
 from core.publications.constants import OBJECTS_TYPES, OBJECT_STATES, HEAD_MODELS
@@ -56,6 +56,7 @@ class AllUsers(ManagersView):
                 'skype': user.skype,
 
                 'email': user.email ,
+                'work_email': user.work_email,
                 'pub_count': AllUsers.publications_count(user.id),
 
                 } for user in users]
@@ -110,7 +111,6 @@ class UsersPublications(ManagersView):
         pubs = []
         for tid in OBJECTS_TYPES.values():
             query = HEAD_MODELS[tid].by_user_id(user_id).only('id')
-
             query = query.all().order_by('state_sid', 'created')
 
             pubs.extend(cls.__dump_publications_list(tid, query))

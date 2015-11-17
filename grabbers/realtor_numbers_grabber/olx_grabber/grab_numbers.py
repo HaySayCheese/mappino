@@ -8,7 +8,7 @@ from grabbers.realtor_numbers_grabber.file_manager import add_to_file
 
 driver = Firefox()
 # go to olx
-driver.get("http://chernovtsy.chv.olx.ua/nedvizhimost/?search[private_business]=business")
+driver.get("http://kha.olx.ua/nedvizhimost/arenda-kvartir/kvartiry-posutochno/?search[private_business]=business")
 
 next_page = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.next .pageNextPrev')))
 while next_page is not None:
@@ -23,7 +23,7 @@ while next_page is not None:
         ID = link_address[start_id:end_id]
         try:
             # get request with phone number of owner of publication
-            response = requests.get('http://chernovtsy.chv.olx.ua/ajax/misc/contact/phone/' + ID + '/')
+            response = requests.get('http://lvov.lv.olx.ua/ajax/misc/contact/phone/' + ID + '/')
             print response
             print response.json()['value']
             # format phone number and add to file

@@ -32,9 +32,9 @@ class Contacts(View):
                 'allow_call_requests': preferences.allow_call_requests,
                 'allow_messaging': preferences.is_message_sending_is_allowed,
             }
-
-            if request.user.is_moderator:
-                contacts['is_suspicious'] = BanHandler.check_suspicious_user(user)
+            if request.user.is_authenticated():
+                if request.user.is_moderator:
+                    contacts['is_suspicious'] = BanHandler.check_suspicious_user(user)
 
             # Not all fields may be present.
             # User may omit some of them,

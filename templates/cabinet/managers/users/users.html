@@ -95,7 +95,13 @@
                         <div class="user-data" layout-sm="row" layout-md="row">
                             <span flex-sm="50" flex-md="30" layout-gt-md="row" flex class="grey-text">Почта:</span>
                             <span>[[ user.email ]]</span>
-                            <span ng-if="!user.email.length">Не указан</span>
+                            <span ng-if="!user.email.length">Не указана</span>
+                        </div>
+
+                        <div class="user-data" layout-sm="row" layout-md="row">
+                            <span flex-sm="50" flex-md="30" layout-gt-md="row" flex class="grey-text">Раб. почта:</span>
+                            <span>[[ user.work_email ]]</span>
+                            <span ng-if="!user.work_email.length">Не указана</span>
                         </div>
 
                     </div>

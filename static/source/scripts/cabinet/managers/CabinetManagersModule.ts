@@ -47,4 +47,5 @@ namespace Mappino.Cabinet.Managers {
     app.controller('SettingsController', SettingsController);
     app.controller('ManagingController', ManagingController);
     app.controller('PublicationController', PublicationController);
+    app.controller('StatisticsController', StatisticsController);
 }

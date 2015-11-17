@@ -107,6 +107,23 @@ namespace Mappino.Cabinet.Managers {
             return promise;
 
         }
+
+        public getStatistics() {
+            var promise: ng.IHttpPromise<any> = this.$http.get(`/ajax/api/managers/statistics/`);
+
+            promise.success(response => {});
+
+            promise.error(response => {
+                this.$mdToast.show(
+                    this.$mdToast.simple()
+                        .content(this.TXT.TOASTS.MANAGERS.STATISTICS.ERROR)
+                        .position(this.toastOptions.position)
+                        .hideDelay(this.toastOptions.delay)
+                );
+            });
+
+            return promise;
+        }
     }
 }
 

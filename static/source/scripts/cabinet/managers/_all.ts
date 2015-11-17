@@ -58,6 +58,7 @@
 /// <reference path='controllers/SettingsController.ts' />
 /// <reference path='controllers/ManagingController.ts' />
 /// <reference path='controllers/PublicationController.ts' />
+/// <reference path='controllers/StatisticsController.ts' />
 
 
 

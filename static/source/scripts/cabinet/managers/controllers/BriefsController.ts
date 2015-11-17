@@ -87,7 +87,6 @@ namespace Mappino.Cabinet.Managers {
 
                         for (let i = 0, len = briefs.length; i < len; i++) {
                             var _brief = briefs[i];
-                            console.log(briefs[i]);
 
                             if (_brief.hid == brief.hid) {
                                 if (_brief.state_sid == BRIEF_STATES.REMOVED) {

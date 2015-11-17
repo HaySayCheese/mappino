@@ -52,4 +52,7 @@ urlpatterns += patterns('apps.cabinet.templates.managers',
     url(r'^ajax/template/cabinet/managers/publications/unpublished/(\d+)/$', 'publications_unpublished_form'),
     url(r'^ajax/template/cabinet/managers/publications/unpublished/footer/$', 'publications_unpublished_footer'),
 
+    #statistics
+    url(r'^ajax/template/cabinet/managers/statistics/$', 'statistics'),
+
 )

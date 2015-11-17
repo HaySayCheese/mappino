@@ -57,8 +57,6 @@ namespace Mappino.Cabinet.Managers {
                 photoTooLarge: false,
             };
 
-            this.initMap();
-
         }
 
 
@@ -70,6 +68,7 @@ namespace Mappino.Cabinet.Managers {
                 .success(response => {
                     this.$scope.publication = response.data;
                     this.initInputsChange();
+                    this.initMap();
                     if (response.data.head.state_sid == BRIEF_STATES.PUBLISHED) {
                         this.publicationsService.unpublish({ tid: this.publicationIds.tid, hid: this.publicationIds.hid })
                             .success(response => {
@@ -280,10 +279,10 @@ namespace Mappino.Cabinet.Managers {
                         var latLng = new google.maps.LatLng(this.$scope.publication.head.lat || 50.448159, this.$scope.publication.head.lng || 30.524654);
                         this.map.setCenter(latLng);
                         this.publicationsService.checkField(this.publicationIds, { fieldName: "lat_lng", fieldValue: latLng.lat() + ";" + latLng.lng() });
-                    }, 3000);
+                    }, 1000);
 
                 });
-            }, 4000)
+            }, 2000)
         }
 
 

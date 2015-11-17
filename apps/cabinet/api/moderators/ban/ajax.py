@@ -69,7 +69,6 @@ class AddSuspiciousUser(ModeratorsView):
     def post(cls, request):
 
         phone_number = angular_post_parameters(request).get('phone_number', '')
-
         user = Users.objects.filter(mobile_phone=phone_number)[0]
 
         if BanHandler.check_suspicious_user(user):
@@ -105,7 +104,6 @@ class RemoveSuspiciousUser(ModeratorsView):
     def post(cls, request):
 
         phone_number = angular_post_parameters(request).get('phone_number', '')
-
         user = Users.objects.filter(mobile_phone=phone_number)[0]
 
         if not BanHandler.check_suspicious_user(user):
