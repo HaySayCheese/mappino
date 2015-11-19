@@ -364,7 +364,7 @@ namespace Mappino.Cabinet.Users {
         private getPublicationTypeForAnalytics() {
             var for_rent = this.publicationsService.publication.head['for_rent'] == true;
             var for_sale = this.publicationsService.publication.head['for_sale'] == true;
-            var daily    = this.publicationsService.publication.body['rent_period_sid'] == 0;
+            var daily    = this.publicationsService.publication.rent_terms['period_sid'] == 0;
 
             var aValue = '';
 
