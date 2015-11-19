@@ -10,5 +10,3 @@ def week_days():
         dates[n_week] = [(now_day_1 + datetime.timedelta(days=d+n_week*7)).strftime("%Y-%m-%d") for d in range(7)]
 
     return dates
-
-print week_days()
