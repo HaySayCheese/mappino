@@ -74,7 +74,7 @@ namespace Mappino.Cabinet.Users {
                     .success(response => {
                         this.$rootScope.loaders.overlay = false;
 
-                        this.$window.ga('send', 'event', 'Publication', 'Removed', this.getPublicationTypeForAnalitycs());
+                        this.$window.ga('send', 'event', 'Publication', 'Removed', this.getPublicationTypeForAnalytics());
                         this.$state.go('publications');
                     })
                     .error(response => {
@@ -110,7 +110,7 @@ namespace Mappino.Cabinet.Users {
                         }
                         this.$rootScope.loaders.overlay = false;
                         this.$state.go('publications');
-                        this.$window.ga('send', 'event', 'Publication', 'Published', this.getPublicationTypeForAnalitycs());
+                        this.$window.ga('send', 'event', 'Publication', 'Published', this.getPublicationTypeForAnalytics());
                     })
                 .error(response => {
                     this.$rootScope.loaders.overlay = false;
@@ -361,12 +361,20 @@ namespace Mappino.Cabinet.Users {
 
 
 
-        private getPublicationTypeForAnalitycs() {
+        private getPublicationTypeForAnalytics() {
             var for_rent = this.publicationsService.publication.head['for_rent'] == true;
             var for_sale = this.publicationsService.publication.head['for_sale'] == true;
             var daily    = this.publicationsService.publication.body['rent_period_sid'] == 0;
 
-            return for_sale ? 'Sale' : (daily && for_rent) ? 'Daily': 'Rent';
+            var aValue = '';
+
+            if (for_sale && !for_rent)          aValue = 'Only sale';
+            if (!for_sale && for_rent)          aValue = 'Only rent';
+            if (!for_sale && for_rent && daily) aValue = 'Only daily';
+            if (for_sale && for_rent && !daily) aValue = 'Sale and rent';
+            if (for_sale && for_rent && daily)  aValue = 'Sale and daily';
+
+            return aValue;
         }
 
 
