@@ -10,7 +10,7 @@ from grabbers.realtor_numbers_grabber.file_manager import add_to_file
 driver = webdriver.Firefox()
 retail_driver = webdriver.Firefox()
 # go to dom.ria.com
-driver.get('https://dom.ria.com/ru/search/#page=157&limit=10&from_realty_id=&to_realty_id=&sort=0&category=1&realty_type=0&operation_type=3&state_id=10')
+driver.get('https://dom.ria.com/ru/search/#page=134&limit=10&from_realty_id=&to_realty_id=&sort=0&category=1&realty_type=0&operation_type=4&state_id=10&characteristic[209][from]=&characteristic[209][to]=&characteristic[214][from]=&characteristic[214][to]=&characteristic[216][from]=&characteristic[216][to]=&characteristic[218][from]=&characteristic[218][to]=&characteristic[227][from]=&characteristic[227][to]=&characteristic[228][from]=&characteristic[228][to]=&characteristic[235][from]=&characteristic[235][to]=&characteristic[246]=243&characteristic[280][from]=&characteristic[280][to]=&realty_id_only=&with_phone=&date_from=&date_to=&email=&period=0&city_id[15]=10')
 next_page = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.big-controls .fl-r')))
 while next_page is not None:
     # find all links to publications on current page

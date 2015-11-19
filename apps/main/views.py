@@ -25,3 +25,10 @@ def map(request):
 @render_jinja2_template
 def help(request):
     return 'help/help.html'
+
+
+@etag(generate_template_etag('track/track.html'))
+@ensure_csrf_cookie
+@render_jinja2_template
+def track(request):
+    return 'track/track.html'

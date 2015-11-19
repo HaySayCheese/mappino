@@ -7,6 +7,7 @@ urlpatterns = patterns('apps.main.views',
    url(r'^$', 'landing'),
    url(r'^map/$', 'map'),
    url(r'^help/$', 'help'),
+   url(r'^track/$', 'track'),
 
    # templates
    url(r'', include('apps.main.templates.urls')),
