@@ -14,7 +14,7 @@ namespace Mappino.Cabinet.Users {
     export class PublicationsService {
         private _briefs: Array<Brief> = [];
 
-        private publication: IPublication;
+        private _publication: IPublication;
 
         private toastOptions = {
             position:   'top right',
@@ -137,7 +137,7 @@ namespace Mappino.Cabinet.Users {
             var promise: IHttpPromise<any> = this.$http.get(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/`);
 
             promise.success(response => {
-                this.publication = response.data;
+                this._publication = response.data;
             });
 
             promise.error(response => {
@@ -161,10 +161,10 @@ namespace Mappino.Cabinet.Users {
             });
 
             promise.success(response => {
-                if (!this.publication.photos) {
-                    this.publication.photos = [];
+                if (!this._publication.photos) {
+                    this._publication.photos = [];
                 }
-                this.publication.photos.push(response.data);
+                this._publication.photos.push(response.data);
             });
 
             promise.error(response => {
@@ -185,13 +185,13 @@ namespace Mappino.Cabinet.Users {
             var promise: IHttpPromise<any> = this.$http.delete(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/photos/${photoId}/`);
 
             promise.success(response => {
-                var photos = this.publication.photos;
+                var photos = this._publication.photos;
 
                 for (let i = 0, len = photos.length; i < len; i++) {
                     var photo = photos[i];
 
                     if (photo && photo.hash_id == photoId) {
-                        this.publication.photos.splice(i, 1);
+                        this._publication.photos.splice(i, 1);
                     }
                 }
 
@@ -221,7 +221,7 @@ namespace Mappino.Cabinet.Users {
             var promise: IHttpPromise<any> = this.$http.put(`/ajax/api/cabinet/publications/${publicationIds.tid}:${publicationIds.hid}/photos/${photoId}/title/`, null);
 
             promise.success(response => {
-                var photos = this.publication.photos;
+                var photos = this._publication.photos;
 
                 for (let i = 0, len = photos.length; i < len; i++) {
                     var photo = photos[i];
@@ -297,6 +297,12 @@ namespace Mappino.Cabinet.Users {
 
         public get briefs() {
             return this._briefs;
+        }
+
+
+
+        public get publication() {
+            return this._publication;
         }
     }
 }

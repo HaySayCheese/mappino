@@ -18,6 +18,7 @@ namespace Mappino.Cabinet.Users {
         public static $inject = [
             '$scope',
             '$rootScope',
+            '$window',
             '$state',
             '$timeout',
             '$mdDialog',
@@ -28,6 +29,7 @@ namespace Mappino.Cabinet.Users {
 
         constructor(private $scope: any,
                     private $rootScope: any,
+                    private $window: any,
                     private $state: ng.ui.IStateService,
                     private $timeout: ng.ITimeoutService,
                     private $mdDialog: any,
@@ -70,9 +72,11 @@ namespace Mappino.Cabinet.Users {
                 this.$rootScope.loaders.overlay = true;
                 this.publicationsService.remove(this.publicationIds)
                     .success(response => {
-                    this.$rootScope.loaders.overlay = false;
-                    this.$state.go('publications');
-                })
+                        this.$rootScope.loaders.overlay = false;
+
+                        this.$window.ga('send', 'event', 'Publication', 'Removed', this.getPublicationTypeForAnalitycs());
+                        this.$state.go('publications');
+                    })
                     .error(response => {
                     this.$rootScope.loaders.overlay = false;
                 })
@@ -106,7 +110,8 @@ namespace Mappino.Cabinet.Users {
                         }
                         this.$rootScope.loaders.overlay = false;
                         this.$state.go('publications');
-                })
+                        this.$window.ga('send', 'event', 'Publication', 'Published', this.getPublicationTypeForAnalitycs());
+                    })
                 .error(response => {
                     this.$rootScope.loaders.overlay = false;
                 })
@@ -352,6 +357,16 @@ namespace Mappino.Cabinet.Users {
                 this.$scope.publication.head.for_sale = true;
                 this.checkField('for_sale');
             }
+        }
+
+
+
+        private getPublicationTypeForAnalitycs() {
+            var for_rent = this.publicationsService.publication.head['for_rent'] == true;
+            var for_sale = this.publicationsService.publication.head['for_sale'] == true;
+            var daily    = this.publicationsService.publication.body['rent_period_sid'] == 0;
+
+            return for_sale ? 'Sale' : (daily && for_rent) ? 'Daily': 'Rent';
         }
 
 
